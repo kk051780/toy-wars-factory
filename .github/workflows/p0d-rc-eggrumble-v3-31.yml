@@ -562,10 +562,127 @@ jobs:
           test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
+      - name: Read original #555 nearest eligible human AI source author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
+          path: _gq555_original
+          persist-credentials: false
+      - name: Source-select original #555 into exactly one BotActors; 30 other source bytes unchanged
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq555_original rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
+          mkdir -p artifacts/gq555_official_select
+          python3 - <<'PY'
+          import json,hashlib,copy,os,sys
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          original=Path("artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json")
+          outdir=Path("artifacts/gq555_official_select")
+          author=Path("_gq555_original/quality_gameplay/v3_bot_nearest_human_20261116/patch_nearest.py")
+          raw=author.read_bytes()
+          gitblob=lambda b:hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
+          assert gitblob(raw)=="b176a76833d88b8ac4231965e47e8950d38776e4","RED_ORIGINAL_555_SOURCE_DRIFT"
+          sys.path.insert(0,str(author.parent.resolve()))
+          patch=SourceFileLoader("existing_original_gq555",str(author.resolve())).load_module()
+          sys.path.pop(0)
+          mapper=SourceFileLoader("existing_rc31_map","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          data,source=mapper.flatten(original)
+          bot=("ServerScriptService","EGGRUMBLE_BotActors")
+          neutral=("ServerScriptService","EGGRUMBLE_SwarmCombat")
+          assert len(source)==31 and bot in source and neutral in source,"RED_CANONICAL_SOURCE_AUTHORITY"
+          assert source[neutral].read_text().count("candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)")==1,"RED_541_NEUTRAL_LOST"
+          before=source[bot].read_bytes()
+          after,restored=patch.apply(before)
+          assert restored==before and after!=before,"RED_555_ROLLBACK"
+          assert after.count(b"nearestHumanoid:TakeDamage(BOT_HERO_DAMAGE)")==1
+          assert after.count(b"targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)")==1
+          newfile=outdir/"EGGRUMBLE_BotActors.luau"
+          assert not newfile.exists()
+          newfile.write_bytes(after)
+          selected=copy.deepcopy(data)
+          selected["name"]="EGGRUMBLE_EXISTING_GQ555_BOT_RC31"
+          def walk(node,prefix=()):
+              for name,value in node.items():
+                  if name.startswith("$"):continue
+                  route=prefix+(name,)
+                  if "$path" in value:
+                      if route==bot:value["$path"]=newfile.name
+                  else:walk(value,route)
+          walk(selected["tree"])
+          output=outdir/"GQ555_SELECTED31.project.json"
+          assert not output.exists()
+          output.write_text(json.dumps(selected,ensure_ascii=False,indent=2)+"\n")
+          _,chosen=mapper.flatten(output)
+          assert set(chosen)==set(source) and len(chosen)==31
+          for route,path in source.items():
+              assert chosen[route].read_bytes()==(after if route==bot else path.read_bytes()),"RED_NONBOT_SOURCE_CHANGED"
+          receipt={"selected_original_555":True,"source_count":31,"changed_script":"EGGRUMBLE_BotActors",
+                   "other_source_bytes_exact":30,"neutral_541_retained":True,
+                   "original_author_head_555":"cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d",
+                   "original_patch_gitblob":"b176a76833d88b8ac4231965e47e8950d38776e4",
+                   "original_sha256":hashlib.sha256(before).hexdigest(),"selected_sha256":hashlib.sha256(after).hexdigest(),
+                   "studio_tested":False,"owner_accepted":False}
+          (outdir/"GQ555_SOURCE_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ555_ORIGINAL_SOURCE_SELECT_ONE_BOT_30_UNCHANGED_PASS")
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from importlib.machinery import SourceFileLoader
+          mapper=SourceFileLoader("rcmap","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          _,sources=mapper.flatten(Path("artifacts/gq555_official_select/GQ555_SELECTED31.project.json"))
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ555_ALL_31_NATIVE_SOURCE_COMPILE_PASS")
+          PY
+          python3 _gq555_original/quality_gameplay/v3_bot_nearest_human_20261116/make_native_harness.py \
+            --bot artifacts/gq555_official_select/EGGRUMBLE_BotActors.luau \
+            --out artifacts/gq555_official_select/GQ555_ACTUAL_6.luau
+          /tmp/gq530_all31_native/luau artifacts/gq555_official_select/GQ555_ACTUAL_6.luau \
+            | tee artifacts/gq555_official_select/GQ555_NATIVE.log
+          grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS artifacts/gq555_official_select/GQ555_NATIVE.log
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_SELECTED31.project.json \
+            -o artifacts/gq555_official_select/GQ555_SELECTED31.rbxlx
+          python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          mapper=SourceFileLoader("rcmap","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          oldproj=Path("artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json")
+          newproj=Path("artifacts/gq555_official_select/GQ555_SELECTED31.project.json")
+          _,old=mapper.flatten(oldproj)
+          _,new=mapper.flatten(newproj)
+          bot=("ServerScriptService","EGGRUMBLE_BotActors")
+          assert len(new)==31 and {p for p in old if old[p].read_bytes()!=new[p].read_bytes()}=={bot}
+          place=Path("artifacts/gq555_official_select/GQ555_SELECTED31.rbxlx")
+          found={}
+          for i in ET.parse(place).getroot().iter("Item"):
+              kind=i.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              p=i.find("Properties")
+              assert p is not None
+              name=p.findtext("string[@name='Name']")
+              source=p.findtext("ProtectedString[@name='Source']")
+              if source is None:source=p.findtext("string[@name='Source']")
+              assert name and source is not None and name not in found
+              found[name]=(kind,source.replace("\r\n","\n"))
+          assert len(found)==31 and set(found)=={key[-1] for key in new}
+          for key,path in new.items():
+              kind="Script" if path.name.endswith(".server.luau") else ("LocalScript" if path.name.endswith(".client.luau") else "ModuleScript")
+              assert found[key[-1]]==(kind,path.read_text().replace("\r\n","\n")),"RED_ROJO_SOURCE_CLASS"
+          receipt={"source_exact":"31/31","unchanged_source_count":30,"original_555_selected":True,
+                   "place_bytes":place.stat().st_size,"place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+                   "studio_tested":False}
+          (newproj.parent/"GQ555_ROJO_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ555_ROJO31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq555_official_select/GQ555_SELECTED31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -581,7 +698,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_SELECTED31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -603,7 +720,12 @@ jobs:
           item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
           assert item489["unchanged_source_count"]==30
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_RECEIPT.json").read_text())
+          assert gq555["source_exact"]=="31/31" and gq555["unchanged_source_count"]==30
+          assert gq555["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["ai_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+          assert m["feature_flags"]["AI_NEAREST_ELIGIBLE_HUMAN_555"]
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -624,6 +746,8 @@ jobs:
             "original_author_540_added_in_same_537_host":True,
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
+            "original_author_555_bot_source_selected":True,
+            "original_author_555_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
             "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
