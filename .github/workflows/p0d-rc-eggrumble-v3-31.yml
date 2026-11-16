@@ -14,6 +14,7 @@ on:
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
       - 'rc_fastlane/quality_egg515_rc31/**'
+      - 'rc_fastlane/quality_spectate492_rc32/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -1385,6 +1386,44 @@ jobs:
             "${gq8mode[@]}"
           test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
           echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
+      - name: Checkout immutable original GQ492 eliminated spectator (PR-only, no duplicate author)
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
+          path: _gq492_original
+          persist-credentials: false
+      - name: GQ492 prepare private 32 (current 31 exact + 1 source), native and Rojo Source/Class
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq492_original rev-parse HEAD)" = "eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20"
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_spectate492_rc32 -p 'test_selection.py'
+          original=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
+          base=artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_SELECTED31.project.json
+          selected=artifacts/gq492_private32/GQ492_SELECTED32.project.json
+          receipt=artifacts/gq492_private32/GQ492_RC32_PREP_RECEIPT.json
+          python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py prepare \
+            --base "$base" --source "$original" --out "$selected" --receipt "$receipt"
+          /tmp/gq530_all31_native/luau-compile --text "$original" >/dev/null
+          /tmp/gq530-all31-rojo build "$selected" -o artifacts/gq492_private32/GQ492_SPECTATE32_PRIVATE.rbxlx
+          python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py verify \
+            --base "$base" --source "$original" --out "$selected" --receipt "$receipt" \
+            --place artifacts/gq492_private32/GQ492_SPECTATE32_PRIVATE.rbxlx
+          echo GQ492_PREP32_ONE_CLIENT_31_UNCHANGED_NATIVE_ROJO_SOURCE_EXACT_PASS
+      - name: Upload ORIGINAL #492 spectator proposed 32-source private Place, NOT RC adopted
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ492-SPECTATOR-PRIVATE32-NOT-RC
+          path: |
+            artifacts/gq492_private32/GQ492_SPECTATE32_PRIVATE.rbxlx
+            artifacts/gq492_private32/GQ492_SELECTED32.project.json
+            artifacts/gq492_private32/GQ492_RC32_PREP_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 3
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
         if: success()
         uses: actions/upload-artifact@v4
