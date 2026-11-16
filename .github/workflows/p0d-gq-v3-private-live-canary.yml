@@ -1,0 +1,26 @@
+name: P0D V3 isolated private live canary source QA
+on:
+  push:
+    branches:
+      - quality/p0d-v3-private-live-canary-20261116
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_private_live_canary_20261116/**'
+      - '.github/workflows/p0d-gq-v3-private-live-canary.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  canary-source-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout complete pinned author commit history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Source exact fail-closed contract and negative tests
+        run: python3 -m unittest discover -s quality_gameplay/v3_private_live_canary_20261116/tests -v
+      - name: Compose 22-source canary outside repo; official RC unchanged
+        run: |
+          python3 quality_gameplay/v3_private_live_canary_20261116/compose.py --out "$RUNNER_TEMP/eggrumble-v3-private-canary"
+          python3 -c 'import json,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"eggrumble-v3-private-canary/SOURCE_RECEIPT.json"; v=json.loads(p.read_text()); assert len(v["sources"])==21 and v["modified_guard_sites"]==17 and not v["official_rc_adopted"]; print("CANARY_SOURCE_ONLY_PASS 21 originals + 1 gate; 17 safeguards; PUBLIC_OFF; OFFICIAL_RC_ZERO")'
