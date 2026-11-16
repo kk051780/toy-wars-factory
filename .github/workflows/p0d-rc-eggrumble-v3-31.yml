@@ -1483,7 +1483,7 @@ jobs:
           assert gq582_guard["new_source_count"]==31 and gq582_guard["previous_source_count"]==31
           assert gq582_guard["real_rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           print("GQ582_GUARD_MANIFEST_DEBUG",repr(m["source_heads"].get("zombie_guard582")),repr(m["feature_flags"].get("ZOMBIE_GUARD_CASTLE_LEASH_582")),flush=True)
-          assert m["source_heads"]["zombie_guard582"]=="5769b80ed21f5592adcca1936d2d04934f0089", "RED_GQ582_GUARD_AUTHOR_SHA"
+          assert m["source_heads"]["zombie_guard582"]=="5769b80ed21f5592adcca1936d2d3d04934f0089", "RED_GQ582_GUARD_AUTHOR_SHA"
           assert m["feature_flags"]["ZOMBIE_GUARD_CASTLE_LEASH_582"] is True
           gq525=json.loads(Path("artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json").read_text())
           assert gq525["feature_id"]=="GQ_V3_ITEM_MODE_OWNERSHIP_20261116"
