@@ -52,7 +52,7 @@ class StatusFenceSource(unittest.TestCase):
             out = pathlib.Path(tmp) / "private_status22"
             subprocess.run([sys.executable, str(HERE / "tools/compose_private22.py"),
                             "--out", str(out)], check=True, cwd=ROOT)
-            project = json.loads((out / "project.json").read_text())
+            project = json.loads((out / "EGGRUMBLE_STATUS22.project.json").read_text())
             mapped = []
             def walk(node):
                 if isinstance(node, dict):
@@ -65,7 +65,7 @@ class StatusFenceSource(unittest.TestCase):
             walk(project["tree"])
             self.assertEqual(len(mapped), 22)
             self.assertEqual(len(set(mapped)), 22)
-            orig_project=json.loads((ORIGIN/"EGGRUMBLE_V3_STUDIO.project.json").read_text())
+            orig_project=json.loads((ORIGIN/"EGGRUMBLE_V3_STUDIO.EGGRUMBLE_STATUS22.project.json").read_text())
             old=[]
             walk_origin=lambda node: None
             def walk_before(node):
