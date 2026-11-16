@@ -42,11 +42,11 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C _original_result538 rev-parse HEAD)" = d56262dbe8309cf606877fe39a44cde7dda0d9b5
-          test -s _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s _official_rc31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 -B rc_fastlane/quality_result538_rc32/compose.py \
-            --official-place _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
-            --official-receipt _official_rc31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
-            --official-project _official_rc31/GQ31_ON.project.json \
+            --official-place _official_rc31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --official-receipt _official_rc31/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --official-project _official_rc31/gq530_all31/GQ31_ON.project.json \
             --author-root _original_result538 \
             --out artifacts/gq538_rc32
           python3 -B rc_fastlane/quality_result538_rc32/test_selection.py
@@ -84,9 +84,9 @@ jobs:
           chmod +x /tmp/gq538-rojo
           /tmp/gq538-rojo build artifacts/gq538_rc32/GQ538_RC32_CANDIDATE.project.json -o artifacts/gq538_rc32/GQ538_PRIVATE_RC32.rbxlx
           python3 -B rc_fastlane/quality_result538_rc32/compose.py \
-            --official-place _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
-            --official-receipt _official_rc31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
-            --official-project _official_rc31/GQ31_ON.project.json \
+            --official-place _official_rc31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --official-receipt _official_rc31/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --official-project _official_rc31/gq530_all31/GQ31_ON.project.json \
             --author-root _original_result538 \
             --out artifacts/gq538_rc32 \
             --built-place artifacts/gq538_rc32/GQ538_PRIVATE_RC32.rbxlx
