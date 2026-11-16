@@ -35,7 +35,9 @@ class TestBotWorldCollisionContract(unittest.TestCase):
         self.assertIn('Rules.takeEggs(session.rules,id,1,enemy.id)', src)
         self.assertIn('Rules.depositEggs(session.rules,id,me.heldEggs)', src)
         self.assertIn('Rules.damageCastle(session.rules,enemy.id,id,26)', src)
-        self.assertIn('tryHeroAttack(actor,me,session,lastHit)', src)
+        self.assertIn('tryHeroAttack(actor,me,session,lastHit,bots)', src)
+        self.assertIn('for targetId,targetActor in pairs(bots) do', src)
+        self.assertIn('targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)', src)
 
     def test_wall_and_height_protect_vault_deposit_and_siege(self):
         src = BOT.read_text(encoding="utf-8")
