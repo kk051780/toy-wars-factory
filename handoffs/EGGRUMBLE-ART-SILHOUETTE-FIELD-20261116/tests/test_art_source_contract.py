@@ -48,22 +48,16 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("player.CharacterAdded:Connect(onCharacterAdded)", HERO)
         self.assertIn("task.delay(.35", HERO)
 
-    def test_all_seven_hero_weapon_props_follow_real_hands(self):
-        # Not a synthetic weapon tool: the original combat module owns A/B/C.
-        self.assertIn("MAX_HANDHELD_WEAPON_PARTS = 3", HERO)
-        self.assertIn("made>=MAX_HANDHELD_WEAPON_PARTS", HERO)
-        self.assertIn('FindFirstChild("RightHand",true)', HERO)
-        self.assertIn('FindFirstChild("Right Arm",true)', HERO)
-        self.assertIn('sculptHandheldWeapon(art,char,role)', HERO)
-        self.assertIn('"Weapon_"..role', HERO)
-        for token in (
-            '"Greatsword"', '"Crystal"', '"FangL"', '"FangR"',
-            '"PsySphere"', '"ToolBarrel"', '"HornL"', '"HornR"', '"Crescent"',
-        ):
-            self.assertIn(token, HERO)
-        for forbidden in ("Instance.new(\"Tool\")", "tool.Activated", "Humanoid:TakeDamage"):
-            self.assertNotIn(forbidden, executable_lines(HERO))
-        self.assertLessEqual(13 + 3, 16)
+    def test_no_duplicate_weapons_after_author_claimed_weapon_silhouettes(self):
+        # #482 now owns WeaponSilhouettes. A01 exclusively owns seven BODY forms
+        # and lobby heraldry; no two 3-D handheld weapon objects on the same hero.
+        self.assertNotIn("sculptHandheldWeapon", executable_lines(HERO))
+        self.assertNotIn("MAX_HANDHELD_WEAPON_PARTS", executable_lines(HERO))
+        self.assertNotIn('"Weapon_"..role', executable_lines(HERO))
+        self.assertNotIn("EGGRUMBLE_ClassWeapon", executable_lines(HERO))
+        for role in ROLES:
+            self.assertIn('role=="' + role + '"', HERO)
+        self.assertIn("PART_BUDGET_PER_SUBJECT = 13", HERO)
 
     def test_real_author_item_art_is_capped_and_no_pickup_side_effect(self):
         for snippet in (
