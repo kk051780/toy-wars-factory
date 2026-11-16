@@ -1395,7 +1395,7 @@ jobs:
           gq582_v3=json.loads(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_text())
           assert gq582_v3["source_rojo_exact"]=="31/31" and gq582_v3["other30_script_bytes_identical"]
           assert gq582_v3["off_rollback_old_combat_byte_exact"] and gq582_v3["source_count"]==31
-          assert gq582_v3["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq582_v3["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["zombie_command582"]=="aeb7cbed6e154849804d7d28bd53966410e50364"
           assert m["feature_flags"]["ZOMBIE_NEUTRAL_STABLE_ID_V3"] is True
           gq586=json.loads(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
