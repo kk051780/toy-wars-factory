@@ -124,7 +124,7 @@ def compose(base_project: Path, policy: Path, out: Path) -> dict:
         if nodes[0]=="ServerScriptService":
             text=mapped_source(out,item).read_text(encoding="utf-8")
             import re
-            for dep in re.findall(r'script\\.Parent:WaitForChild\\("([^"]+)"\\)',text):
+            for dep in re.findall(r'script\.Parent:WaitForChild\("([^"]+)"\)',text):
                 assert dep in server, f"Unmapped original sibling {nodes[-1]}->{dep}"
     receipt={
         "status":"PRIVATE_SOURCE_ONLY_NOT_OFFICIAL_RC",
