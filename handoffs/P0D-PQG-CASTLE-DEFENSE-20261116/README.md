@@ -11,9 +11,9 @@ New **server-only live mechanics** (isolated optional module, no duplicated Game
 
 | Defense | In-match effect | Server limits |
 | --- | --- | --- |
-| TURRET | Single nearby hostile hero takes 12 HP real Humanoid damage with a short visible pulse | 35-stud range, real collidable LOS, 2.4 s per owner |
-| TRAP | At entrance, hostile hero takes 8 HP + 1.1 s slowing debuff | 9-stud reach, real collidable LOS, 7 s per owner |
-| SENSOR | Removes stealth from a nearby *hostile* invisible human; reveals position with pulse | 30-stud radius, 1 s frequency, no damage; never touches own team |
+| TURRET | Visible hostile hero takes 12 HP real Humanoid damage with short pulse | 35-stud range, real collidable LOS, 2.4 s per owner; cannot auto-target cloaked Assassin |
+| TRAP | Visible hostile hero takes 8 HP + 1.1 s slowing debuff | 9-stud reach, real collidable LOS, 7 s per owner; cannot detect cloaked Assassin |
+| SENSOR | Removes stealth from a nearby *hostile* invisible human; then the turret/trap can reacquire | 30-stud radius, 1 s frequency, no damage; never touches own team |
 
 Both TEAM and BATTLE_ROYALE use the same matched roster and each player's castle, not a global damage loop. KOs are actual Humanoid health changes only; no fake score event. Destroyed castles never attack. Paid cosmetics and durability caps unchanged. A module never appears unless `loadDefense` selected it. Maximum 16 players/bots and 48 non-colliding anchors per arena. Each session auto-ends after match leaves ACTIVE.
 
@@ -37,7 +37,7 @@ When `session.closeRound` executes, call `session.castleDefenseStop()` if presen
 
 - Authored native regression: `luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau` from this folder. Expected: teammate/owner/defeated/no-module rejection; TEAM/BR target rules; turret/trap LOS; 16-hero cap; cooldown; unknown modes; NaN and negative values.
 - Authored Python source check: `python -m unittest discover -s tests -p 'test_castle_defense_source.py'`.
-- Exact binary native/Rojo build, real session hook, 1-human+15-bot and 2-human+14-bot Studio runs, Android 15-minute median/p10/thermal, FUN and OWNER acceptance remain **NOT_TESTED**. Tests authored are not reported as executed.
+- Dedicated native GitHub workflow is `.github/workflows/p0d-eggrumble-castle-defense-native.yml` (native Luau compile+VM and source ownership Python); **each HEAD requires its own completed run ID and conclusion before claiming PASS**. Rojo build including this module, real session hook, 1-human+15-bot and 2-human+14-bot Studio runs, Android 15-minute median/p10/thermal, FUN and OWNER acceptance remain **NOT_TESTED**. Executing the pure policy in native Luau is not a Roblox engine physics test.
 - Source-lock parent is #482 `fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9`. Only novel files under this handoff path were written, so author-owned feature source hashes are unchanged.
 - Integration path: ORIGINAL #482 author adds optional hook + native/Rojo CI at its latest head; #484 composer checks source instance uniqueness; #220 only authenticated writer performs latest official RC non-force CAS + same-head CI/artifact bytes; #420 & #470 + Studio/Android/OWNER remain the release gates. A small private flag-off is rollback; no save-schema change.
 
