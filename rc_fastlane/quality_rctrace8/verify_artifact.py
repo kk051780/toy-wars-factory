@@ -144,6 +144,11 @@ FEATURE_EVIDENCE = {
   "label.Text=prefix..",
   "refreshQueueBoard(previous)",
   "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
+ "GQ646_LOBBY_SAFE_SPAWN_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+   "-- GQ646_LOBBY_SAFE_SPAWN_BEGIN",
+   "lobbyGround.CanCollide=true",
+   "lobbySpawn.Neutral=true",
+   "if mode and sessions[mode] then return end")),
  "RARE_FIELD_EGG_SCORE_20261117": ("EGGRUMBLE_ScoreBalance", (
    "RARE_FIELD_EGG_CAP=2, RARE_FIELD_EGG_RATE=60",
    "local claimedRareFieldEggs={}",
@@ -276,7 +281,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_33_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_36_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
