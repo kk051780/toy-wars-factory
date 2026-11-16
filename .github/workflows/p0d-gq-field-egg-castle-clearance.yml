@@ -1,0 +1,112 @@
+name: P0D GQ real FIELD eggs castle foundation clearance 8-domain private21
+on:
+  push:
+    branches:
+      - quality/gq-v3-field-egg-castle-clearance-20261116
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-egg-castle-clearance.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-egg-castle-clearance.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check source author, real original geometry and negative old collisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_file=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          test "$(git hash-object "$source_file")" = 7162b209bf67b74a71553217f3f744e072a0365d
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_field_egg_clearance_20261116/tests
+          mkdir -p artifacts
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py \
+            --source "$source_file" --out artifacts/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/private21.py prepare \
+            --base handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --patched artifacts/EGGRUMBLE_LobbyCastleModesPreview.server.luau --out artifacts/PRIVATE21
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/FIELD_EGG_GEOMETRY.native.luau
+      - name: Reuse original author regressions for all eight domains
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -q \
+            -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Compile all real source Luau21 and execute extracted patched geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/egg_clearance_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/egg_clearance_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for file in artifacts/PRIVATE21/*.luau; do
+            /tmp/egg_clearance_luau/luau-compile --text "$file" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" -eq 21
+          /tmp/egg_clearance_luau/luau-compile --text artifacts/FIELD_EGG_GEOMETRY.native.luau >/dev/null
+          /tmp/egg_clearance_luau/luau artifacts/FIELD_EGG_GEOMETRY.native.luau | tee artifacts/FIELD_EGG_NATIVE.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/FIELD_EGG_NATIVE.log
+      - name: Reuse original author's actual castle, seven role, item, lobby and boss Luau VM harnesses
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools
+          for pair in "make_native_rules_harness.py:castle_eggs_team_br" "make_native_combat_harness.py:seven_roles" "make_native_round_replay_harness.py:round_replay_lobby" "make_native_raid_item_harness.py:raid_items" "make_native_boss_session_harness.py:neutral_boss"; do
+            generator="${pair%%:*}"
+            label="${pair##*:}"
+            python3 "$base/$generator" --out "artifacts/ORIGINAL_$label.native.luau"
+            /tmp/egg_clearance_luau/luau-compile --text "artifacts/ORIGINAL_$label.native.luau" >/dev/null
+            /tmp/egg_clearance_luau/luau "artifacts/ORIGINAL_$label.native.luau" >"artifacts/ORIGINAL_$label.log"
+          done
+          echo "GQ_FIELD_EGG_REUSES_FIVE_ORIGINAL_GAMEPLAY_VM_SUITES_PASS"
+      - name: Pinned Rojo real unpublished private21 and script/class byte-exact receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_field_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_field_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_field_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/gq_field_rojo")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq_field_rojo build artifacts/PRIVATE21/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/GQ_FIELD_EGG_CLEARANCE_PRIVATE21_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/private21.py verify \
+            --place artifacts/GQ_FIELD_EGG_CLEARANCE_PRIVATE21_NOT_RC.rbxlx \
+            --package artifacts/PRIVATE21
+      - name: Upload private only actual Place and exact-source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ_FIELD_EGG_PRIVATE21_NO_OFFICIAL_RC
+          path: |
+            artifacts/GQ_FIELD_EGG_CLEARANCE_PRIVATE21_NOT_RC.rbxlx
+            artifacts/PRIVATE21/SOURCE_RECEIPT.json
+            artifacts/PRIVATE21/PLACE_REPORT.json
+            artifacts/FIELD_EGG_NATIVE.log
+            artifacts/ORIGINAL_*.log
+          if-no-files-found: error
+          retention-days: 7
