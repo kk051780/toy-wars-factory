@@ -3,6 +3,8 @@
 -- CLAIM: SCORE_BALANCE only. Reuse original EGGRUMBLE_MatchResultService for result presentation.
 -- KOs are real Humanoid deaths from SwarmCombat.kills, eggs/castles from the authoritative Rules.events.
 -- Scores are deliberately capped PER category to prevent one grind from erasing the egg/castle objectives.
+-- A stolen egg earns *raid* points only on a subsequent home deposit without a drop.
+-- Field eggs are conservatively spent first; no invented per-egg provenance.
 local Results={} -- no Roblox Services: native-Luau executable as real math
 
 local SCORE={
@@ -34,7 +36,7 @@ end
 local function points(row:any):number
  -- Losing a castle does not erase earlier player accomplishments.
  return koPoints(row.ko)
-  +math.min(SCORE.EGG_STEAL_CAP,row.stolen)*SCORE.EGG_STEAL_RATE
+  +math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE
   +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
   +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
   +(if row.alive then SCORE.SURVIVE else 0)
@@ -50,7 +52,8 @@ function Results.build(state:any,kills:any):any
   if c then
    local row={id=tostring(id),team=c.team,alive=c.alive==true,
     isAI=c.isAI==true,ko=integer(kills and kills[id]),
-    stolen=0,deposited=0,castlesDestroyed=0,won=false,score=0}
+    stolen=0,securedSteals=0,pendingSteals=0,pendingField=0,
+    deposited=0,castlesDestroyed=0,won=false,score=0}
    rows[#rows+1]=row;byId[tostring(id)]=row
   end
  end
@@ -58,13 +61,37 @@ function Results.build(state:any,kills:any):any
   local kind=event.type
   if kind=="EGG_TAKEN" then
    local row=byId[tostring(event.thief)]
-   if row then row.stolen+=integer(event.quantity) end
+   -- Only an enemy castle raid counts; unique field-token pickups are not raids.
+   if row and event.source~=nil and event.source~="FIELD" then
+    local quantity=integer(event.quantity)
+    row.stolen+=quantity
+    row.pendingSteals+=quantity
+   end
+  elseif kind=="FIELD_EGG_TAKEN" then
+   local row=byId[tostring(event.owner)]
+   if row then row.pendingField+=1 end
   elseif kind=="EGG_DEPOSIT" then
    local row=byId[tostring(event.owner)]
-   if row then row.deposited+=integer(event.quantity) end
+   if row then
+    local quantity=integer(event.quantity)
+    row.deposited+=quantity
+    -- Conservative attribution: deposit field eggs first. Without per-egg
+    -- provenance, never award more completed raids than could be proven from
+    -- same-life server TAKE + DEPOSIT. A death/drop resets unsettled claims.
+    local fieldUsed=math.min(row.pendingField,quantity)
+    row.pendingField-=fieldUsed
+    local secured=math.min(row.pendingSteals,quantity-fieldUsed)
+    row.pendingSteals-=secured
+    row.securedSteals+=secured
+   end
+  elseif kind=="EGG_DROP" then
+   local row=byId[tostring(event.owner)]
+   if row then row.pendingSteals=0;row.pendingField=0 end
   elseif kind=="CASTLE_FALL" then
    local row=byId[tostring(event.attacker)]
    if row then row.castlesDestroyed+=1 end
+   local fallen=byId[tostring(event.owner)]
+   if fallen then fallen.pendingSteals=0;fallen.pendingField=0 end
   end
  end
  for _,row in ipairs(rows) do
@@ -74,7 +101,7 @@ function Results.build(state:any,kills:any):any
   -- Same total score: reward actual egg/castle objectives BEFORE raw KO volume.
   -- The value is derived exclusively from original server-authoritative events.
   row.objectiveScore=
-   math.min(SCORE.EGG_STEAL_CAP,row.stolen)*SCORE.EGG_STEAL_RATE
+   math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE
    +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
    +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
  end
