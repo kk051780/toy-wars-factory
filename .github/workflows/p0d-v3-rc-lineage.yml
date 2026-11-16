@@ -123,7 +123,7 @@ jobs:
           }
           AUTHOR="$(head_of refs/heads/feature/p0d-pqg-seven-hero-playable-20261116-01)"
           QUALITY="$(head_of refs/heads/quality/eggrumble-v3-spatial-bot-intake-20261116)"
-          ART="$(head_of refs/heads/feature/p0d-eggrumble-art-silhouette-field-20261116)"
+          ART="$(head_of refs/heads/feature/eggrumble-art-silhouette-field-20261116-a01)"
           SCORE="$(head_of refs/heads/quality/eggrumble-v3-score-only-20261116)"
           RC="$(head_of refs/heads/rc/p0d-s1-kids-rc01)"
           test -n "$AUTHOR" && test -n "$QUALITY" && test -n "$ART" && test -n "$SCORE" && test -n "$RC"
