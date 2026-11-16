@@ -47,7 +47,7 @@ local function watch(inst:Instance)
 end
 
 -- DescendantAdded receives the existing SkillFX-created short-lived pieces.
--- No repeated Workspace:GetDescendants() scans and no per-frame part enumeration.
+-- No repeated global scene scans and no per-frame part enumeration.
 local addedConnection = workspace.DescendantAdded:Connect(watch)
 local removingConnection = workspace.DescendantRemoving:Connect(function(inst)
     if inst:IsA("BasePart") then forget(inst) end
