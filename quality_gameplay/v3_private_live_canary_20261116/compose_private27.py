@@ -86,7 +86,7 @@ def overlay(source: str, name: str, filename: str) -> tuple[str, int]:
     if not source.startswith("--!strict\n"):
         raise ValueError(f"strict Luau header missing: {name}")
     if name == "EGGRUMBLE_LobbyCastleModesPreview":
-        replacement = "PrivateGate.advertiseServerReady()"
+        replacement = "PrivateGate.allowed()"
     elif filename.endswith(".client.luau"):
         replacement = "PrivateGate.waitAllowed(8)"
     else:
