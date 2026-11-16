@@ -23,7 +23,8 @@ AUTHORS = {
     "gq_dot": "8f0275692c54874f823d66748d470fb849607df5",
     "gq_warp": "f90875e14446ba86b1c668ba43efa37fbc74be20",
     "gq_stealth": "99ae00fbec2b5057c54e938d741ea99b0caad924",
-    "gq_bot_member": "bb650bc33831d20090deb9aa3a874f35e3843c71",
+    "gq_bot_member": "e78bff41e70564d0b26578e3c3a85f4698e6110e",
+    "gq_ai_duel": "6b52eaf1f2725496277998fe0c5532b7a8fcaab5",
 }
 SELECT = {
     "_gq_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py":
@@ -44,10 +45,8 @@ SELECT = {
 STATUS_NAME = "EGGRUMBLE_StatusTickFence"
 HOST_NAME = "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
 BOT_NAME = "EGGRUMBLE_BotActors.luau"
-PINNED_BOT_HOST_OVERLAYS = {
-    HOST_NAME: "1d482d05325c5ca97166961c05b404b3370f01f8",
-    BOT_NAME: "88f997608834469a79ca4042d05c15c9ba833191",
-}
+PINNED_HOST_SOURCE_BLOB = "1d482d05325c5ca97166961c05b404b3370f01f8"
+PINNED_AI_BOT_SOURCE_BLOB = "832a26c9f713012b924234ce4cf8c1654a75654e"
 
 def git_show(sha: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", f"{sha}:{path}"])
@@ -90,6 +89,25 @@ def build(out: Path) -> dict:
         materialize(Path(pref) / ROOT / COMBAT_NAME,(ROOT / COMBAT_NAME).read_bytes())
     for dest,(owner,src) in SELECT.items():
         materialize(Path(dest),git_show(AUTHORS[owner],src))
+    # Reuse the current #531 author overlay verbatim, selecting its #484 AI-duel
+    # BotActors, not an older #482 BotActors. No second Host/AI authority.
+    member_tool = Path("_gq_bot_member/compose.py")
+    materialize(member_tool,git_show(AUTHORS["gq_bot_member"],
+        "quality_gameplay/v3_bot_human_match_membership_20261116/compose.py"))
+    ai_bot_file=Path("_gq_bot_member/EGGRUMBLE_BotActors.luau")
+    materialize(ai_bot_file,git_show(AUTHORS["gq_ai_duel"],str(ROOT / BOT_NAME)))
+    if git_blob(ai_bot_file.read_bytes())!=PINNED_AI_BOT_SOURCE_BLOB:
+        raise RuntimeError("RED #484 bot duel original source changed")
+    spec_member=importlib.util.spec_from_file_location("gq_real_531",member_tool.resolve())
+    if not spec_member or not spec_member.loader:
+        raise RuntimeError("RED missing existing #531 composer")
+    member_module=importlib.util.module_from_spec(spec_member)
+    spec_member.loader.exec_module(member_module)
+    if member_module.AI_AUTHOR_HEAD!=AUTHORS["gq_ai_duel"] or member_module.AI_BOT_BLOB!=PINNED_AI_BOT_SOURCE_BLOB:
+        raise RuntimeError("RED original #531/484 author lock mismatch")
+    member_report=member_module.run(ROOT,out,ai_bot_file=ai_bot_file)
+    if not member_report["ai_duel_preserved"]:
+        raise RuntimeError("RED #531 did not source-select #484 bot AI")
     # This is the ACTUAL #529 multi-author composer. We do not duplicate its patch logic.
     four_path=Path("quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py")
     spec=importlib.util.spec_from_file_location("gq_real_529",four_path.resolve())
@@ -103,10 +121,15 @@ def build(out: Path) -> dict:
     if undo(five)!=four:
         raise RuntimeError("RED regression to existing #529 multi-author source")
     out.mkdir(parents=True,exist_ok=True)
-    if git_blob((out / HOST_NAME).read_bytes())!=PINNED_BOT_HOST_OVERLAYS[HOST_NAME]:
-        raise RuntimeError("RED #531 original host callback drift")
-    if git_blob((out / BOT_NAME).read_bytes())!=PINNED_BOT_HOST_OVERLAYS[BOT_NAME]:
-        raise RuntimeError("RED #531 original bot author drift")
+    if git_blob((out / HOST_NAME).read_bytes())!=PINNED_HOST_SOURCE_BLOB:
+        raise RuntimeError("RED #531 host callback drift")
+    if git_blob((out / BOT_NAME).read_bytes())!=member_report["source_files"][BOT_NAME]["overlay_blob"]:
+        raise RuntimeError("RED #531 latest BotActors drift")
+    bot=(out / BOT_NAME).read_text()
+    if bot.count("targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)")!=1 or bot.count("for targetId,targetActor in pairs(bots)")!=1:
+        raise RuntimeError("RED latest #484 real bot-to-bot duel disappeared")
+    if bot.count("session.isCurrentHuman(player)")!=1:
+        raise RuntimeError("RED missing one bot-to-human session member fence")
     if five.count("currentHumanMember(session,")!=4 or five.count("humanCombatTargetable(")!=3:
         raise RuntimeError("RED human stealth or current-member gates lost")
     if five.count("StatusTickFence.canTick(")!=1:
@@ -136,6 +159,9 @@ def build(out: Path) -> dict:
         "updated_existing_host_bot_combat":3,
         "added_existing_status_module":1,
         "original_host_bot_owner":AUTHORS["gq_bot_member"],
+        "bot_ai_author_sha":AUTHORS["gq_ai_duel"],
+        "bot_ai_duel_real_damage_preserved":True,
+        "bot_human_current_match_predicate_preserved":True,
         "no_duplicate_game_or_combat":True,
         "rollback_535": "undo Combat patch restores #529 composed Combat exactly",
         "official_rc_adopted":False,
