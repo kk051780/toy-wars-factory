@@ -51,7 +51,7 @@ class Private27ContractTests(unittest.TestCase):
 
     def test_generated_composite_cannot_go_inside_repo(self):
         with self.assertRaises(ValueError):
-            M.build(pathlib.Path("does-not-exist"),pathlib.Path("does-not-exist"),
+            M.build(M.compose.PROJECT,M.compose.HERE/"EGGRUMBLE_PrivateLiveGate.luau",
                     M.compose.REPO/"danger")
 
 if __name__=="__main__":
