@@ -32,7 +32,7 @@ class TestBotWorldCollisionContract(unittest.TestCase):
 
     def test_ai_actions_require_proximity_and_clear_path(self):
         src = BOT.read_text(encoding="utf-8")
-        self.assertIn('if actualDist<=ACTION_DISTANCE and clearActionPath(actor,actors,actualTarget) then', src)
+        self.assertIn('if actualDist<=ACTION_DISTANCE and clearActionPath(actor,actors,actualTarget,actionTarget) then', src)
         self.assertIn('Rules.takeEggs(session.rules,id,1,enemy.id)', src)
         self.assertIn('Rules.depositEggs(session.rules,id,me.heldEggs)', src)
         self.assertIn('Rules.damageCastle(session.rules,enemy.id,id,26)', src)
@@ -46,8 +46,9 @@ class TestBotWorldCollisionContract(unittest.TestCase):
         self.assertIn('math.abs(origin.Y-target.Y)>4.0', src)
         self.assertIn('params.FilterDescendantsInstances={actor,actors}', src)
         self.assertIn('params.RespectCanCollide=true', src)
-        self.assertIn('delta.Unit*(delta.Magnitude-4)', src)
-        self.assertIn('workspace:Raycast(origin+Vector3.new(0,0.4,0)', src)
+        self.assertNotIn('if delta.Magnitude<=4 then return true end',src)
+        self.assertIn('hit.Instance==targetPart',src)
+        self.assertIn('workspace:Raycast(start,segment,params)', src)
 
 
 if __name__ == "__main__":
