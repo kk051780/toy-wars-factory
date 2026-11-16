@@ -55,7 +55,7 @@ class TestFieldEggBotWorldIntegration(unittest.TestCase):
     def test_no_home_trip(self):
         self.assertIn("carry returns home",breaches(bot=BOT.replace("local goHome=me.heldEggs>0","local goHome=false")))
     def test_floating_field_collectible(self):
-        self.assertIn("balanced map egg height",breaches(lobby=LOBB.replace(",-1.35,290+row*200",",3,290+row*200")))
+        self.assertIn("balanced map egg height",breaches(lobby=LOBBY.replace(",-1.35,290+row*200",",3,290+row*200")))
     def test_deposit_missing(self):
         self.assertIn("home deposit",breaches(bot=BOT.replace("Rules.depositEggs(session.rules,id,me.heldEggs)","-- missing")))
     def test_avoid_item_conflict(self):
