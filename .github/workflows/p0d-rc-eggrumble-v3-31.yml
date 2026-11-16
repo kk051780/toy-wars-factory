@@ -92,6 +92,13 @@ jobs:
           ref: cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
           path: _gq555_original_bot
           persist-credentials: false
+      - name: Pin exact original #547 castle+vault GUI source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125
+          path: _gq547_original
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -103,6 +110,7 @@ jobs:
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
           test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
           test "$(git -C _gq539_lobby rev-parse HEAD)" = e003d73d516e65e1817dd281eb1743fa866f3770
+          test "$(git -C _gq547_original rev-parse HEAD)" = b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125
           test "$(git -C _gq555_original_bot rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
@@ -610,10 +618,16 @@ jobs:
             --author "$AUTHOR555/patch_nearest.py" \
             --out "$FINAL555" \
             --place artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
+      - name: Select original #547 two core/vault world GUI property blocks AFTER #555 without new Host
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/quality_castle547_rc31/build_31.py \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
+            --out artifacts/gq547_official_select
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -629,7 +643,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -654,9 +668,14 @@ jobs:
           assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
-          assert gq555["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
+          assert m["source_heads"]["castle_board547"]=="b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125"
+          assert m["feature_flags"]["CASTLE_EGG_BOARD_DISTANCE_547"] is True
+          gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
+          assert gq547["rojo_exact"]=="31/31" and gq547["unchanged_other_scripts"]==30
+          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -678,6 +697,10 @@ jobs:
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
+            "original_author_547_two_world_boards_only":True,
+            "gq547_non_host_30_source_bytes_identical":True,
+            "gq547_off_restores_previous_555_host_exact":True,
+            "gq547_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_555_bot_only_30_preserved":True,
             "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
@@ -711,6 +734,9 @@ jobs:
           name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
           path: |
             artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+            artifacts/gq547_official_select/GQ547_SELECTED31.project.json
+            artifacts/gq547_official_select/GQ547_SOURCE_RECEIPT.json
+            artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON_RECEIPT.json
