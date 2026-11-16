@@ -268,6 +268,31 @@ jobs:
             --heal-patch _v3_heal/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
             --out artifacts/GQ525_PRIVATE34.project.json \
             --out-receipt artifacts/GQ525_PRIVATE34_RECEIPT.json
+      - name: Original game 7-role field castle neutral ITEM lobby and ART author contract regression
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_*quality.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_audio/quality/eggrumble_hit_audio_20261116/tests -p 'test_*.py'
+          echo 'GQ525_34_ORIGINAL_GAME_CHARACTER_FIELD_BATTLE_CASTLE_NEUTRAL_LOBBY_ART_TESTS_PASS'
+      - name: Reuse original #487 SCORE author native Luau VM exactly
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq525_score_original
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau \
+            /tmp/gq525_score_original/Results.luau
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_ScoreBalance.spec.luau \
+            /tmp/gq525_score_original/Cases.luau
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/run_score_balance_native.luau \
+            /tmp/gq525_score_original/Runner.luau
+          (cd /tmp/gq525_score_original && /tmp/gq525_luau/luau Runner.luau) \
+            | tee artifacts/GQ525_SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/GQ525_SCORE_NATIVE.log
       - name: Run original 8-domain author runtime policy suites against same pinned inputs
         run: |
           set -euo pipefail
@@ -326,4 +351,5 @@ jobs:
             artifacts/GQ525_OBJECTIVE_NATIVE.log
             artifacts/GQ525_AUDIO_NATIVE.log
             artifacts/GQ525_MODE34_NATIVE.log
+            artifacts/GQ525_SCORE_NATIVE.log
           retention-days: 1
