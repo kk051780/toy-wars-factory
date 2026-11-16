@@ -1,0 +1,37 @@
+name: P0D V3 live cross-owner source drift intake (read only)
+on:
+  push:
+    branches:
+      - quality/p0d-v3-live-source-drift-20261116
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  latest-v3-source-reconciliation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Regression tests for all eight gameplay domains and stale source pins
+        run: python3 -m unittest discover -v -s rc_source_drift_gate/tests -p 'test_*.py'
+      - name: Compare actual PR heads and publish blockers
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts
+          python3 rc_source_drift_gate/check_live_intake.py --out artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json").read_text())
+          print("AUDIT_STATUS:", r["decision"], "BLOCKERS:", len(r.get("blockers", [])))
+          print("CI execution success is NOT official RC admission or gameplay approval.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-LIVE-RC-INTEGRATION-BLOCKERS-NOT-ADOPTED
+          path: artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json
+          retention-days: 5
