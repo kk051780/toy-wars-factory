@@ -48,10 +48,10 @@ local joined={[1]="TEAM",[2]="TEAM",[3]="TEAM",[4]="BATTLE_ROYALE"}
 local sessions={}
 local mode="TEAM"
 local session={mode="TEAM",rules={phase="ACTIVE",castles={
- ["1"]={id="1",team="RED",alive=true,isAI=false},
- ["2"]={id="2",team="BLUE",alive=true,isAI=false},
- ["3"]={id="3",team="RED",alive=true,isAI=false},
- ["4"]={id="4",team="BLUE",alive=true,isAI=false},
+ ["1"]={id="1",team="RED",alive=true,isAI=false,heldEggs=0},
+ ["2"]={id="2",team="BLUE",alive=true,isAI=false,heldEggs=0},
+ ["3"]={id="3",team="RED",alive=true,isAI=false,heldEggs=0},
+ ["4"]={id="4",team="BLUE",alive=true,isAI=false,heldEggs=0},
 }},botActors={}}
 sessions.TEAM=session
 '''
@@ -140,7 +140,18 @@ def build(combat: str, host: str) -> str:
     callback=host_callback(host)
     if callback.count("sessions[mode]==session")!=1 or callback.count("joined[player.UserId]==mode")!=1:
         raise ValueError("RED original #531 callback degraded")
-    return PREFIX + HELPER + "\n" + hit + "\n" + heal + "\n" + status + "\n" + TESTS + callback + "\n" + AFTER + FINAL + callback + "\n" + FINISH
+    # The existing #529 four-author Combat has an independent stealth helper.
+    # Carry it into the same native VM, never replace or duplicate its behavior.
+    stealth = ""
+    token = "local function humanCombatTargetable("
+    if token in combat:
+        if combat.count(token) != 1:
+            raise ValueError("RED duplicated existing human stealth author")
+        fragment = combat.split(token, 1)[1]
+        if "\nend\n" not in fragment:
+            raise ValueError("RED missing original #529 stealth helper end")
+        stealth = token + fragment.split("\nend\n", 1)[0] + "\nend\n"
+    return PREFIX + stealth + HELPER + "\n" + hit + "\n" + heal + "\n" + status + "\n" + TESTS + callback + "\n" + AFTER + FINAL + callback + "\n" + FINISH
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
