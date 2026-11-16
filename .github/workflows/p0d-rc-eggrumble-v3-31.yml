@@ -1532,6 +1532,34 @@ jobs:
             --base "$base" --source "$original" --out "$selected" --receipt "$receipt" \
             --place artifacts/gq492_private32/GQ492_SPECTATE32_PRIVATE.rbxlx
           echo GQ492_PREP32_ONE_CLIENT_31_UNCHANGED_NATIVE_ROJO_SOURCE_EXACT_PASS
+      - name: Execute ORIGINAL #492 eliminated client real Luau callbacks + 3 mutation negatives
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          harness=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/tools/make_native_spectator_harness.py
+          out=artifacts/gq492_private32
+          python3 "$harness" --out "$out/GQ492_REAL_SPECTATOR_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$out/GQ492_REAL_SPECTATOR_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$out/GQ492_REAL_SPECTATOR_NATIVE.luau" \
+            | tee "$out/GQ492_REAL_SPECTATOR_NATIVE.log"
+          for mark in \
+            NATIVE_SPECTATOR_REAL_CLIENT_LIFECYCLE_PASS \
+            NATIVE_SPECTATOR_CROSS_MODE_ISOLATION_PASS \
+            NATIVE_SPECTATOR_RESET_FLAG_PASS \
+            NATIVE_SPECTATOR_ARENA_REMOVAL_PASS; do
+            grep -q "^$mark$" "$out/GQ492_REAL_SPECTATOR_NATIVE.log"
+          done
+          for mutation in elimination mode recovery; do
+            python3 "$harness" --mutation "$mutation" --out "$out/GQ492_MUTANT_$mutation.luau"
+            /tmp/gq530_all31_native/luau-compile --text "$out/GQ492_MUTANT_$mutation.luau" >/dev/null
+            if /tmp/gq530_all31_native/luau "$out/GQ492_MUTANT_$mutation.luau" \
+              >"$out/GQ492_MUTANT_$mutation.log" 2>&1; then
+              echo "RED: spectator mutation unexpectedly passed: $mutation"; exit 1
+            fi
+            echo "GQ492_MUTANT_REJECTED_$mutation=PASS"
+          done
+          echo "GQ492_CURRENT_RC32_REAL_CLIENT_NATIVE_LIFECYCLE_AND_3_MUTATIONS_PASS"
       - name: Upload ORIGINAL #492 spectator proposed 32-source private Place, NOT RC adopted
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
@@ -1541,6 +1569,7 @@ jobs:
             artifacts/gq492_private32/GQ492_SPECTATE32_PRIVATE.rbxlx
             artifacts/gq492_private32/GQ492_SELECTED32.project.json
             artifacts/gq492_private32/GQ492_RC32_PREP_RECEIPT.json
+            artifacts/gq492_private32/GQ492_REAL_SPECTATOR_NATIVE.log
           if-no-files-found: error
           retention-days: 3
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
