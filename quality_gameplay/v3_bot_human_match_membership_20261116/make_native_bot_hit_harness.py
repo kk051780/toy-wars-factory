@@ -85,6 +85,8 @@ local enemyHealth={Health=100,damage=0}
 function enemyHealth:TakeDamage(d)self.damage+=d end
 local targetActor={Parent=true,PrimaryPart={Position=v(4)}}
 function targetActor:FindFirstChildOfClass(c)return c=="Humanoid" and enemyHealth or nil end
+''' 
+harness+=callbacks[0].strip()+"\n"+fn+"\n"+r'''
 local checks=0
 local function verify(label,wantHit,wantHumanDamage,wantBotDamage,bots)
  humanHealth.damage=0
@@ -96,8 +98,6 @@ local function verify(label,wantHit,wantHumanDamage,wantBotDamage,bots)
  assert(enemyHealth.damage==wantBotDamage,label..": AI duel damage mismatch: "..enemyHealth.damage)
  checks+=1
 end
-''' 
-harness+=callbacks[0].strip()+"\n"+fn+"\n"+r'''
 verify("same mode live human receives genuine 13HP attack",true,13,0)
 joined[101]=nil
 verify("disconnected old castle cannot receive human hit",false,0,0)
