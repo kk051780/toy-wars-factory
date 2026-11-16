@@ -30,7 +30,6 @@ local function makeBillboard(root:BasePart, team:string?):(BillboardGui,TextLabe
  gui.MaxDistance = Policy.MAX_WORLD_VIEW_DISTANCE
  gui.Size = UDim2.fromOffset(88, 27)
  gui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
- gui.ResetOnSpawn = false
  local text = Instance.new("TextLabel")
  text.Name = "Count"
  text.Size = UDim2.fromScale(1,1)
