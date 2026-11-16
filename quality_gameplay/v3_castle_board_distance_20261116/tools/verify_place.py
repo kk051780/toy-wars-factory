@@ -17,7 +17,10 @@ def script_nodes(root):
         name = props.find("string[@name='Name']")
         source = props.find("ProtectedString[@name='Source']")
         if name is None or source is None or name.text is None:
-            raise RuntimeError("Incomplete Rojo script node")
+            raise RuntimeError("Incomplete Rojo script node: class=" + repr(item.attrib.get("class"))
+                + " props=" + repr([(t.tag, t.attrib.get("name"), len(t.text or "")) for t in props])
+                + " name=" + repr(name.text if name is not None else None)
+                + " source=" + repr(source is not None))
         if name.text in out:
             raise RuntimeError(f"Duplicate script name: {name.text}")
         out[name.text] = (item.attrib["class"], source.text or "")
