@@ -29,11 +29,11 @@ JOIN_PATCH = '''local function joinQueue(mode:string,p:Player)
  p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",nil)
  -- GQ8_ROLE_SELECTION_ACK_END
 '''
-ROLE = '''   chosenRole[p.UserId]=role
-   p:SetAttribute("EGGRUMBLE_SelectedRole",role)'''
-ROLE_PATCH = '''   chosenRole[p.UserId]=role
-   p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",nil)
-   p:SetAttribute("EGGRUMBLE_SelectedRole",role)'''
+ROLE = '''  chosenRole[p.UserId]=role
+  p:SetAttribute("EGGRUMBLE_SelectedRole",role)'''
+ROLE_PATCH = '''  chosenRole[p.UserId]=role
+  p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",nil)
+  p:SetAttribute("EGGRUMBLE_SelectedRole",role)'''
 PROMPTS = (
     ('"チーム戦（再操作で解除）"', '"職業選択後｜チーム戦（再操作で解除）"'),
     ('"BR戦（再操作で解除）"', '"職業選択後｜BR戦（再操作で解除）"'),
