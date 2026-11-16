@@ -145,7 +145,20 @@ local function directionTo(from:Vector3,to:Vector3):string
  return arrows[octant]
 end
 
+-- Keep the single objective row and mobile touch toggle on narrow Android screens.
+local function layoutForViewport()
+ local camera=workspace.CurrentCamera
+ local width=if camera then camera.ViewportSize.X else 360
+ local barWidth=math.min(294,math.max(90,width-80))
+ local groupWidth=barWidth+60
+ local left=math.max(4,(width-groupWidth)/2)
+ bar.Size=UDim2.fromOffset(barWidth,30)
+ bar.Position=UDim2.fromOffset(left+barWidth/2,10)
+ toggle.Position=UDim2.fromOffset(left+barWidth+8,10)
+end
+
 local function refresh()
+ layoutForViewport()
  local mode=player:GetAttribute("EGGRUMBLE_QueuedMode")
  local world=workspace:FindFirstChild(SOURCE_ROOT)
  local arena=if typeof(mode)=="string" and world then world:FindFirstChild(mode.."_Arena") else nil
