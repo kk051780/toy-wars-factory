@@ -115,6 +115,7 @@ return function(Rules:any,Alerts:any)
   return node
  end
  Instance={new=mockInstance}
+ Enum={Font={GothamBold="GothamBold"}}
  Color3={fromRGB=function(r:number,g:number,b:number)
   return {_type="Color3",r=r,g=g,b=b}
  end}
