@@ -125,6 +125,88 @@ function Observer.inspect(session:any,rulesModule:any,playersOverride:any?):any
  return report
 end
 
+-- Track only bounded authoritative counters inside ONE live match session.
+-- Caller owns the snapshot: nothing survives a match or changes game state.
+-- Detects cross-domain regressions that a one-shot integrity check misses.
+function Observer.inspectAndTrack(session:any,rulesModule:any,previous:any?,playersOverride:any?):(any,any?)
+ local report=Observer.inspect(session,rulesModule,playersOverride)
+ if not session or not session.rules or type(session.rules.castles)~="table"
+  or type(session.roster)~="table" then return report,nil end
+ local state=session.rules
+ local playerService=playersOverride or Players
+ local snapshot={
+  mode=session.mode,
+  phase=state.phase,
+  world=session.world,
+  roles={},
+  neutralKOs={},
+  castlesAlive={},
+  rosterIds={},
+  eventCount=if type(state.events)=="table" then #state.events else nil,
+ }
+ for _,entry in ipairs(session.roster) do
+  local id=tostring(entry.id)
+  snapshot.rosterIds[id]=true
+  local castle=state.castles[id]
+  if castle then snapshot.castlesAlive[id]=castle.alive==true end
+  if not entry.isAI then
+   local player=playerService and playerService:GetPlayerByUserId(tonumber(id) or -1)
+   if player and player.Parent==playerService then
+    snapshot.roles[id]=player:GetAttribute("EGGRUMBLE_Role")
+   end
+  end
+ end
+ local swarm=session.swarm
+ if type(swarm)=="table" and type(swarm.kills)=="table" then
+  for id,kos in pairs(swarm.kills) do
+   if type(id)=="string" and type(kos)=="number" then
+    snapshot.neutralKOs[id]=kos
+   end
+  end
+ end
+ if not previous then return report,snapshot end
+ if previous.mode~=snapshot.mode then
+  append(report.red,"MATCH_MODE_CHANGED")
+ end
+ if previous.world~=snapshot.world then
+  append(report.red,"MATCH_WORLD_REPLACED")
+ end
+ if (previous.phase=="FINISHED" or previous.phase=="ABANDONED") and state.phase=="ACTIVE" then
+  append(report.red,"FINISHED_MATCH_RESTARTED")
+ end
+ if previous.eventCount~=nil and snapshot.eventCount~=nil
+  and snapshot.eventCount<previous.eventCount then
+  append(report.red,"MATCH_EVENTS_REWOUND")
+ end
+ for id,wasRegistered in pairs(previous.rosterIds or {}) do
+  if wasRegistered and not snapshot.rosterIds[id] then
+   append(report.red,"MATCH_ROSTER_LOST_MEMBER")
+   break
+  end
+ end
+ for id,wasAlive in pairs(previous.castlesAlive or {}) do
+  if wasAlive==false and snapshot.castlesAlive[id]==true then
+   append(report.red,"FALLEN_CASTLE_REVIVED")
+   break
+  end
+ end
+ for id,kos in pairs(previous.neutralKOs or {}) do
+  local nextCount=snapshot.neutralKOs[id]
+  if nextCount~=nil and nextCount<kos then
+   append(report.red,"NEUTRAL_KO_COUNTER_REWOUND")
+   break
+  end
+ end
+ for id,role in pairs(previous.roles or {}) do
+  local nextRole=snapshot.roles[id]
+  if nextRole~=nil and nextRole~=role then
+   append(report.red,"ACTIVE_ROLE_CHANGED")
+   break
+  end
+ end
+ return report,snapshot
+end
+
 -- Read-only, bounded warning fingerprint for mobile/Studio log-flood avoidance.
 -- No player IDs, positions or action contents are logged. Order-independent.
 function Observer.warningSignature(report:any):string
