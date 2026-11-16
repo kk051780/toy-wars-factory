@@ -22,14 +22,17 @@ local function destroyRecord(record:any)
  end
 end
 
-local function makeBillboard(root:BasePart, team:string?):(BillboardGui,TextLabel)
+local function makeBillboard(root:BasePart, team:string?, aiActor:boolean):(BillboardGui,TextLabel)
  local gui = Instance.new("BillboardGui")
  gui.Name = "EGGRUMBLE_CarrierWorldTell"
  gui.Adornee = root
  gui.AlwaysOnTop = false -- preserve solid cover; never a global wallhack.
  gui.MaxDistance = Policy.MAX_WORLD_VIEW_DISTANCE
  gui.Size = UDim2.fromOffset(88, 27)
- gui.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
+ -- The author bot actor already owns a 180x50 BotObjective billboard at
+ -- head (root + 2.25 studs) + 3.3 studs. Do not stack another count
+ -- directly into that 5.55-stud band; humans keep the near-head marker.
+ gui.StudsOffsetWorldSpace = Vector3.new(0, if aiActor then 10.2 else 4, 0)
  local text = Instance.new("TextLabel")
  text.Name = "Count"
  text.Size = UDim2.fromScale(1,1)
@@ -72,7 +75,9 @@ function Tell.start(session:any):boolean
       destroyRecord(old);old=nil;records[id]=nil
      end
      if not old then
-      local gui,label = makeBillboard(rootPart,castle.team)
+      -- Actor may be a takeover bot even when the original roster was human.
+      local botModel = session.botActors and session.botActors[entry.id]
+      local gui,label = makeBillboard(rootPart,castle.team,botModel == actor)
       old = {root=rootPart,gui=gui,label=label,count=0}
       records[id] = old
      end
