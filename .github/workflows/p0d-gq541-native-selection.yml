@@ -1,0 +1,66 @@
+name: P0D GQ541 actual native fallback selection QA
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/gq541_native_fallback_20261116/**'
+      - '.github/workflows/p0d-gq541-native-selection.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-author-native-mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Read immutable actual #541 author and #533 original policy
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
+          path: _gq541
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d3d231612f0da24616514b37dc465c4883e2f304
+          path: _gq533
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Extract exact source-derived target-selection function; create positive and negative native fixtures
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq541 rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
+          test "$(git -C _gq533 rev-parse HEAD)" = d3d231612f0da24616514b37dc465c4883e2f304
+          python3 -m py_compile quality_gameplay/gq541_native_fallback_20261116/build_real_source_native.py
+          python3 quality_gameplay/gq541_native_fallback_20261116/build_real_source_native.py \
+            --author-composer _gq541/quality_gameplay/neutral_melee_pressure_20261116/compose_melee_candidate.py \
+            --policy _gq533/quality_gameplay/neutral_melee_pressure_20261116/EGGRUMBLE_NeutralMeleePolicy.luau \
+            --out /tmp/gq541-real-native.luau
+          python3 quality_gameplay/gq541_native_fallback_20261116/build_real_source_native.py \
+            --author-composer _gq541/quality_gameplay/neutral_melee_pressure_20261116/compose_melee_candidate.py \
+            --policy _gq533/quality_gameplay/neutral_melee_pressure_20261116/EGGRUMBLE_NeutralMeleePolicy.luau \
+            --out /tmp/gq541-wall-mutant.luau --mutant
+      - name: Compile and execute actual original source in Luau VM, reject realistic blocked-target mutant
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq541-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq541-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq541-native/luau-compile --text /tmp/gq541-real-native.luau >/dev/null
+          /tmp/gq541-native/luau-compile --text /tmp/gq541-wall-mutant.luau >/dev/null
+          /tmp/gq541-native/luau /tmp/gq541-real-native.luau | tee /tmp/gq541-native.out
+          grep -q GQ541_REAL_AUTHOR_NATIVE_TARGET_SELECTION_9_CASES_PASS /tmp/gq541-native.out
+          if /tmp/gq541-native/luau /tmp/gq541-wall-mutant.luau >/tmp/gq541-wall-mutant.out 2>&1; then
+            echo "RED: blocked-target regression mutant unexpectedly passed"; exit 1
+          fi
+          grep -q "GQ541_NATIVE_FAIL wall_fallback" /tmp/gq541-wall-mutant.out
+          echo GQ541_ACTUAL_ORIGINAL_LUAU_NATIVE_MUTATION_CAUGHT
+      - name: Declare genuine gate scope
+        run: |
+          echo "Source-derived Luau VM PASS only. No Roblox Studio, Android, owner FUN, official source CAS, main/merge or Publish performed."
