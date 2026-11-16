@@ -128,15 +128,12 @@ function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(b
  for _,other in ipairs(workspace:GetPartBoundsInBox(cf,dims+Vector3.new(1,1,1),params)) do
   -- Many Humanoid body parts are CanCollide=false; they must still block construction.
   local model=other:FindFirstAncestorOfClass("Model")
-  if model and model:FindFirstChildOfClass("Humanoid") then
-   return false,"HUMANOID_OVERLAP"
-  end
-  -- Ignore only the actual session's traversable floor and authored routes.
-  -- Reject same-named geometry in a different arena or foreign Workspace container.
+  local isHumanoid=model~=nil and model:FindFirstChildOfClass("Humanoid")~=nil
+  -- Only the actual session floor/routes are exempt, never copied map objects.
   local isOwnGround=other:IsDescendantOf(session.world)
-   and (other.Name=="TacticalBattlefield" or other.Name:match("^TacticalRoute_"))
-  if other.CanCollide and not isOwnGround then
-   return false,"OBSTACLE_OR_CONSTRUCT"
+   and (other.Name=="TacticalBattlefield" or other.Name:match("^TacticalRoute_")~=nil)
+  if Policy.blocksPlacement(other.CanCollide,isOwnGround,isHumanoid) then
+   return false,if isHumanoid then "HUMANOID_OVERLAP" else "OBSTACLE_OR_CONSTRUCT"
   end
  end
  -- Nothing yields between the final capacity+world guards and creation.
