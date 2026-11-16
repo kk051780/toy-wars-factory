@@ -57,6 +57,13 @@ jobs:
         with: {repository: kk051780/toy-wars-factory, ref: f90875e14446ba86b1c668ba43efa37fbc74be20, path: _gq_warp, persist-credentials: false}
       - uses: actions/checkout@v4
         with: {repository: kk051780/toy-wars-factory, ref: 6846e9d55d07f0204748bbb8f46eef08f46c1b04, path: _gq_member, persist-credentials: false}
+      - name: Read exact ORIGINAL #541 fallback author (never replicate their gameplay logic)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
+          path: _gq541_original_fallback
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -64,6 +71,7 @@ jobs:
           test "$(git -C _v3_member rev-parse HEAD)" = e78bff41e70564d0b26578e3c3a85f4698e6110e
           test "$(git -C _gq_member rev-parse HEAD)" = 6846e9d55d07f0204748bbb8f46eef08f46c1b04
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
+          test "$(git -C _gq541_original_fallback rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -86,6 +94,8 @@ jobs:
           assert m["canonical_branch"]=="rc/p0d-s1-kids-rc01"
           assert m["source_heads"]["fused_gameplay_quality530"]=="f5594979f7ad1852442ea917fbd5f3bdad1698ec"
           assert m["source_heads"]["neutral_melee533"]=="d3d231612f0da24616514b37dc465c4883e2f304"
+          assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
+          assert m["feature_flags"]["NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541"] is True
           assert m["source_heads"]["membership_host531"]=="e78bff41e70564d0b26578e3c3a85f4698e6110e"
           assert m["feature_flags"]["DEAD_CASTER_FENCE_530"]
           assert not m["publication_authorized"]
@@ -239,10 +249,47 @@ jobs:
           python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_all_domain31.py \
             --out artifacts/gq530_all31 --off --place artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
           echo GQ31_EIGHT_DOMAIN_ALL_AUTHOR_ON_OFF_PRIVATE_SOURCE_CLASS_EXACT_PASS
+      - name: Select ORIGINAL #541 source into ONE of verified 31, recompile all and true Rojo verify
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq541_official_select
+          python3 rc_fastlane/select_gq541_original_neutral_fallback.py \
+            --source-project artifacts/gq530_all31/GQ31_ON.project.json \
+            --original-author _v3_melee/quality_gameplay/neutral_melee_pressure_20261116/compose_melee_candidate.py \
+            --new-author _gq541_original_fallback/quality_gameplay/neutral_melee_pressure_20261116/compose_melee_candidate.py \
+            --out artifacts/gq541_official_select/GQ31_SELECTED.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          mod=SourceFileLoader("original541","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          project=Path("artifacts/gq541_official_select/GQ31_SELECTED.project.json")
+          _,sources=mod.flatten(project)
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ541_AUTHENTIC_ALL_31_SELECTED_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            -o artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/select_gq541_original_neutral_fallback.py \
+            --source-project artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --original-project artifacts/gq530_all31/GQ31_ON.project.json \
+            --verify-place artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          receipt=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert receipt["script_count"]==receipt["rojo_exact_scripts"]==31
+          assert receipt["other_sources_byte_exact"]==30
+          assert not receipt["formal_rc_write"] and not receipt["studio_android_verified"]
+          print("GQ541_CANONICAL_ONE_SWARM_31_OF_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq530_all31/GQ31_ON_PRIVATE.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -258,7 +305,11 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==(base/"GQ31_ON_PRIVATE.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq541["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
+          assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           details={
             "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
                       if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
@@ -269,7 +320,10 @@ jobs:
             "source_author_heads":m["source_heads"],
             "script_count":31,
             "script_source_and_class_exact":"31/31",
-            "original_owner30_untouched_except_combat":29,
+            "original_31_untouched_except_selected_neutral_swarm":30,
+            "base_owner30_untouched_except_combat_before_541":29,
+            "original_author_541_selected_into_one_swarm":True,
+            "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
             "rollback_on_off_combat_bytes":160,
             "place_name":place.name,
@@ -300,4 +354,7 @@ jobs:
             artifacts/gq530_all31/GQ31_OFF_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON.project.json
             artifacts/gq530_all31/GQ31_OFF.project.json
+            artifacts/gq541_official_select/GQ31_SELECTED.project.json
+            artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq541_official_select/GQ541_SELECTED_SOURCE_RECEIPT.json
           retention-days: 3
