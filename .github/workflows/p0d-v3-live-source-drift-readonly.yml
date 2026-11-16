@@ -58,7 +58,7 @@ jobs:
               "next_owner":"#482 game host; #485 ART runtime; #220 official authenticated CAS"
           }
           target=Path("artifacts/P0D_STATIC_PRODUCT_PREFLIGHT_NO_GO.json")
-          target.write_text(json.dumps(detail,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+          target.write_text(json.dumps(detail,ensure_ascii=False,indent=2),encoding="utf-8")
           print("RC_PRIVATE_SOURCE_STATUS",detail["source_intake"])
           print("NONSTUDIO_ART_PREFLIGHT",detail["static_nonstudio_art_gate"],
                 "ISSUES",len(issues))
