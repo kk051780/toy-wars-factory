@@ -146,6 +146,59 @@ queued.attributes.EGGRUMBLE_QueuedMode="BATTLE_ROYALE"
 pending[1].fn()
 check(queued.loads==1,"old lobby retry touched an active new match")
 
+-- A bot-filled active session must not block the next arrival once the final human leaves.
+pending={}
+local orphanTeam={mode="TEAM",rules={phase="ACTIVE",winner=nil},
+ roster={{id="201",isAI=false,team="RED"},{id="AI_1",isAI=true,team="BLUE"}}}
+local present={[201]="TEAM"}
+playersService.active[201]={UserId=201}
+local orphanCloses=0
+check(Replay.abandonIfEmpty(orphanTeam,present,function() orphanCloses+=1 end)==false,
+ "connected human was incorrectly abandoned")
+check(orphanCloses==0,"connected session was closed")
+present[201]=nil -- PlayerRemoving has already cleared joined
+check(Replay.abandonIfEmpty(orphanTeam,present,function() orphanCloses+=1 end)==true,
+ "last-human disconnect must abandon orphan AI match")
+check(orphanCloses==1,"orphan cleanup did not run exactly once")
+check(orphanTeam.roundReplayScheduled==true,"abandonment must lock duplicate cleanup")
+check(#pending==0,"orphan match must not wait for a fake winner or 10s result")
+check(Replay.abandonIfEmpty(orphanTeam,present,function() error("double teardown") end)==false,
+ "orphan cleanup repeated")
+check(orphanTeam.rules.winner==nil,"orphan cleanup fabricated a victorious bot")
+
+-- Mixed teams: keep the match while at least one real human is still present.
+local twoHumans={mode="TEAM",rules={phase="ACTIVE",winner=nil},
+ roster={{id="301",isAI=false,team="RED"},{id="302",isAI=false,team="BLUE"},
+         {id="AI_1",isAI=true,team="BLUE"}}}
+local stillJoined={[301]="TEAM",[302]="TEAM"}
+playersService.active[301]={UserId=301}
+playersService.active[302]={UserId=302}
+local humanCloses=0
+stillJoined[301]=nil
+check(Replay.abandonIfEmpty(twoHumans,stillJoined,function() humanCloses+=1 end)==false,
+ "one remaining player must preserve PvP match")
+check(humanCloses==0,"one remaining player was torn down")
+stillJoined[302]=nil
+check(Replay.abandonIfEmpty(twoHumans,stillJoined,function() humanCloses+=1 end)==true,
+ "empty human session did not release arena")
+check(humanCloses==1,"second abandonment must close exactly once")
+
+-- A genuinely finished match must keep its result banner, not be abandoned.
+local finished=phase("FINISHED","RED")
+finished.roster={{id="401",isAI=false}}
+finished.mode="TEAM"
+local fakeCloses=0
+check(Replay.abandonIfEmpty(finished,{},function() fakeCloses+=1 end)==false,
+ "genuine result banner was bypassed")
+check(fakeCloses==0,"result of a finished round was thrown away")
+
+-- Ownership: never abandon a live match based on an unrelated mode's joined table.
+local isolated={mode="BATTLE_ROYALE",rules={phase="ACTIVE",winner=nil},
+ roster={{id="501",isAI=false},{id="AI_1",isAI=true}}}
+playersService.active[501]={UserId=501}
+check(Replay.abandonIfEmpty(isolated,{[501]="BATTLE_ROYALE"},function() error("wrong mode") end)==false,
+ "BR user must preserve BR match")
+
 -- Left players are ignored, and no cross-player mutations occur after removal.
 local gone={Parent=nil,UserId=126,attributes={}}
 function gone:SetAttribute(key:string,v:any) self.attributes[key]=v end
