@@ -290,7 +290,7 @@ attributes.EGGRUMBLE_QueuedMode="TEAM"
 local toolOff,toolReason=Build.equip(session,p,false)
 check(not toolOff and toolReason=="FEATURE_OFF","BUILDER_TOOL_OFF")
 check(#createdTools==0,"BUILDER_TOOL_OFF_NO_ITEMS")
-local toolOK,toolReady=Build.equip(session,p,true)
+local toolOK,toolReady=Build.equip(session,p,true,true)
 check(toolOK and toolReady=="TOOLS_READY","BUILDER_TOOLS_SERVER_GRANTED")
 check(#createdTools==2,"BUILDER_TWO_TOOLS_NO_REMOTE")
 check(createdTools[1].Name=="EGGRUMBLE_SKILL_CONSTRUCT_WALL","BUILDER_WALL_TOOL_NAMED")
@@ -305,7 +305,7 @@ firstWall.Activated:Fire()
 check(#created==n+1,"EQUIPPED_SERVER_TOOL_CREATES_WALL")
 Build.clear(session)
 local old=firstWall
-toolOK,toolReady=Build.equip(session,p,true)
+toolOK,toolReady=Build.equip(session,p,true,true)
 check(toolOK and toolReady=="TOOLS_READY","BUILDER_RESYNC_OK")
 check(old.wasDestroyed and old.Parent==nil,"BUILDER_OLD_TOOL_REMOVED")
 check(#createdTools==4,"BUILDER_TOOLS_REGENERATED")
@@ -322,6 +322,14 @@ session.rules.phase="FINISHED"
 currentTool.Activated:Fire()
 check(#created==staleN,"BUILDER_TOOL_TERMINAL_PHASE_GUARD")
 session.rules.phase="ACTIVE"
+Build.clear(session)
+
+-- Default candidate RC input does not show an unusable bridge on a flat map.
+local beforeWallOnly=#createdTools
+local wallOnlyReady,wallOnlyReason=Build.equip(session,p,true)
+check(wallOnlyReady and wallOnlyReason=="TOOLS_READY","BUILDER_WALL_ONLY_READY")
+check(#createdTools==beforeWallOnly+1,"BUILDER_BRIDGE_HIDDEN_ON_FLAT_FIELD")
+check(createdTools[#createdTools].Name=="EGGRUMBLE_SKILL_CONSTRUCT_WALL","BUILDER_WALL_ONLY_TOOL")
 Build.clear(session)
 
 print("GQ_BUILDER_RUNTIME_MOCK_PASS assertions="..tostring(assertions))
