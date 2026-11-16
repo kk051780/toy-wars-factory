@@ -17,8 +17,7 @@ BEFORE = '''  local path=PathfindingService:CreatePath({
    WaypointSpacing=8,Costs={Water=15},
   })
   local ok=pcall(function()
-   path=candidate
-   candidate:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
+   path:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
   end)
   inFlight=math.max(0,inFlight-1)
   if states[id]~=state or not model.Parent then
