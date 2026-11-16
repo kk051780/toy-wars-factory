@@ -33,6 +33,7 @@ local DISPLAY_DISTANCES:{[string]:number}={
 local DESKTOP_DISTANCE_MULTIPLIER=1.75
 local MAX_ANCESTOR_STEPS=7
 local records:{[BasePart]:number}={}
+local hidden:{[BasePart]:boolean}={}
 local trackedCount=0
 local limit=if MOBILE then 1 else DESKTOP_DISTANCE_MULTIPLIER
 
@@ -66,6 +67,7 @@ local function remove(instance:Instance)
  -- visibility before removing our local, reversible LOD ownership.
  if instance.Parent then instance.LocalTransparencyModifier=0 end
  records[instance]=nil
+ hidden[instance]=nil
  trackedCount=math.max(0,trackedCount-1)
 end
 
@@ -84,11 +86,16 @@ task.spawn(function()
     remove(part)
    else
     local delta=part.Position-viewpoint
-    local maxDist=distance*limit
+    -- 12% distance hysteresis: stop visible armor, eggs and distant gates
+    -- flickering when the camera moves across a threshold during a dash.
+    -- Nearward return deliberately happens earlier than outward hiding.
+    local wasFar=hidden[part] or false
+    local margin=if wasFar then .88 else 1.12
+    local maxDist=distance*limit*margin
     local isFar=delta:Dot(delta)>maxDist*maxDist
-    local transparency=if isFar then 1 else 0
-    if part.LocalTransparencyModifier~=transparency then
-     part.LocalTransparencyModifier=transparency
+    if isFar~=wasFar then
+     hidden[part]=isFar
+     part.LocalTransparencyModifier=if isFar then 1 else 0
     end
    end
   end
