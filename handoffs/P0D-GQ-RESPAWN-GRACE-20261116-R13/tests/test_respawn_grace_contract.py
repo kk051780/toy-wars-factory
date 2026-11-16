@@ -83,7 +83,7 @@ class RespawnGraceContracts(unittest.TestCase):
     def test_leaving_dying_or_round_end_clears_own_forcefield(self):
         for snippet in ('humanoid.Died:Connect(revoke)',
                         'player.CharacterRemoving:Connect',
-                        'Players.PlayerRemoving:Connect(clear)',
+                        'Players.PlayerRemoving:Connect(function(player: Player)',
                         'EGGRUMBLE_QueuedMode',
                         'EGGRUMBLE_Eliminated',
                         'state.shield:Destroy()'):
