@@ -50,7 +50,7 @@ class AudioContract(unittest.TestCase):
             self.assertIn(token,self.source)
         self.assertIn('if not RunService:IsStudio() then return end',self.source)
     def test_seven_roles_and_sound_cap(self):
-        roles=re.findall(r'^\\s*(WARRIOR|MAGE|NINJA|TRAPPER|BUILDER|BEAST|ZOMBIE)\\s*=\\{id=',self.source,re.M)
+        roles=[name for name in ("WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE") if f"{name}={{id=" in self.source]
         self.assertEqual(7,len(roles))
         self.assertEqual(7,len(set(roles)))
         self.assertEqual(7,self.source.count('id="rbxasset://sounds/'))
