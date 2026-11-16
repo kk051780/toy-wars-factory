@@ -32,6 +32,13 @@ jobs:
             /tmp/gq-zombie-native/luau-compile --text "$source" >/dev/null
           done
           /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_command_native.luau
+          python3 -B quality_gameplay/v3_zombie_command_20261116/build_neutral_identity_native.py \
+            --composer quality_gameplay/v3_zombie_command_20261116/compose_original_single_combat.py \
+            --out artifacts/gq_zombie_neutral_unique_actual.luau
+          /tmp/gq-zombie-native/luau-compile --text artifacts/gq_zombie_neutral_unique_actual.luau >/dev/null
+          /tmp/gq-zombie-native/luau artifacts/gq_zombie_neutral_unique_actual.luau \
+            | tee artifacts/gq582_neutral_unique_native.txt
+          grep -q GQ582_ACTUAL_NEUTRAL_INSTANCE_ID_NATIVE_PASS artifacts/gq582_neutral_unique_native.txt
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
