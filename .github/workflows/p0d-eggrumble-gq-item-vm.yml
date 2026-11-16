@@ -1,0 +1,40 @@
+name: P0D GQ original field ITEM plus shared Guard native Luau runtime
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_InteractionGuard.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py'
+      - '.github/workflows/p0d-eggrumble-gq-item-vm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-item-vm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original ITEM and Guard source contracts
+        run: |
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests \
+            -p 'test_*contract.py' -q
+      - name: Build official Luau native CLI in isolated runner
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-item-luau
+          cmake -S /tmp/p0d-item-luau -B /tmp/p0d-item-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-item-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Execute ORIGINAL ITEM and ORIGINAL Guard with deterministic Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/eggrumble-original-item-guard-native.luau
+          /tmp/p0d-item-luau/build/luau-compile /tmp/eggrumble-original-item-guard-native.luau >/dev/null
+          /tmp/p0d-item-luau/build/luau /tmp/eggrumble-original-item-guard-native.luau
+      - name: Declare engine limit
+        run: |
+          echo "Native Luau original item and original guard: functional VM proof only"
+          echo "Roblox Studio physics, Android, official RC CAS and OWNER FUN: NOT_TESTED"
