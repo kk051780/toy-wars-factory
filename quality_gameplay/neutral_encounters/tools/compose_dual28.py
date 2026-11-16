@@ -141,6 +141,18 @@ def compose(base26,original_swarm,pacing_composer,pacing_policy,fair_policy,out)
     generated.write_text(combined,encoding="utf-8")
     current=copy.deepcopy(original)
     current["name"]="EGGRUMBLE_V3_GQ_NEUTRAL_PACING_AND_FAIRNESS_28_PRIVATE"
+    # Original #484 26-source project paths are relative to its artifacts folder.
+    # The #501 private overlay may be generated in a different folder: remap
+    # file references, never rewrite the original 25 source bytes.
+    def remap(node,prefix=()):
+        for name,part in node.items():
+            if name.startswith("$"):continue
+            key=prefix+(name,)
+            if "$path" in part:
+                assert set(part)=={"$path"} and key in old
+                part["$path"]=os.path.relpath(old[key],out.parent).replace(os.sep,"/")
+            else:remap(part,key)
+    remap(current["tree"])
     tree=current["tree"]
     server=tree["ServerScriptService"]
     client=tree["StarterPlayer"]["StarterPlayerScripts"]
