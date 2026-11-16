@@ -781,7 +781,7 @@ jobs:
             | tee artifacts/gq551_official_select/GQ523_NATIVE_GEOMETRY_LOG.txt
           grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS \
             artifacts/gq551_official_select/GQ523_NATIVE_GEOMETRY_LOG.txt
-      - name: Real final Rojo 31 Source/Class exact: original #523 Host layout, original #547 castle boards retained
+      - name: Real final Rojo 31 Source/Class exact for original #523 Host layout and original #547 castle boards
         shell: bash
         run: |
           set -euo pipefail
