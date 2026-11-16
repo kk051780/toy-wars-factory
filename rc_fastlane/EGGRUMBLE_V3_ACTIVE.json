@@ -35,6 +35,7 @@
     "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770",
     "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
     "bot_nearest555": "cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d",
+    "original_route536": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
     "boss_wave518": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
   },
   "feature_flags": {
@@ -49,11 +50,12 @@
     "LOBBY_NEARBY_BOARDS_539": true,
     "ORIGINAL_ITEM_AUTHOR_489": true,
     "BOT_NEAREST_CURRENT_HUMAN_555": true,
+    "BOT_ROUTE_FULLSTEP_536": true,
     "BOSS_SHOCKWAVE_WALL_OCCLUSION_518": true
   },
-  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native; original #555 nearest eligible human actual 6 native cases; last BotActors selected 31/31 native",
-  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539; after original #489 Item, original #555 one BotActors source selected final Rojo 31/31 Source/Class exact",
-  "reverse_gate": "Disable #555 source selection and restore existing #489 canonical BotActors byte exact; 30 other scripts and existing #541 #537 #540 #539 #489 unchanged.",
+  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native; original #555 nearest eligible human actual 6 native cases; last BotActors selected 31/31 native; original #536 full-step nav native differential + selected current31",
+  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539; after original #489 Item, original #555 one BotActors source selected final Rojo 31/31 Source/Class exact; original #536 patched Router real Source/Class 31 after #555 bot",
+  "reverse_gate": "Disable #555 source selection and restore existing #489 canonical BotActors byte exact; 30 other scripts and existing #541 #537 #540 #539 #489 unchanged.; omit #536 route selected to restore exact #555 current31",
   "legacy_s1_profile": "rich51",
   "legacy_s1_unchanged": true,
   "studio_2client": "NOT_TESTED",
@@ -61,8 +63,8 @@
   "art_fun_owner": "NO_GO",
   "publication_authorized": false,
   "next_gate": "Same-HEAD CI on PR and formal nonforce expected-SHA CAS then official same-head V3+S1 CI Place+ZIP; Studio TEAM/BR and Android15m pending.",
-  "rollback": "Unselect #555 BotActors to exact prior original #531 AI actor source. Preserve all #541/#537/#540/#539/#489 and rich51 primary.",
-  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.; original #489 Item author source added as next original select (count still 31), intended RC only after #220 CAS",
+  "rollback": "Unselect #555 BotActors to exact prior original #531 AI actor source. Preserve all #541/#537/#540/#539/#489 and rich51 primary.; original #536 OFF builds unchanged GQ555_FINAL_SELECTED31 project; preserve #555 BotActors",
+  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.; original #489 Item author source added as next original select (count still 31), intended RC only after #220 CAS; original #536 routeClear existing author one-line source-select after original #555 BotActors",
   "status": "RC31_COMPANION_SOURCE_ADOPTED_OFFICIAL_BRANCH_CI_VERIFIED_AT_RECORDED_HEAD",
   "last_verified_rc_run": {
     "rc_head_sha": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",

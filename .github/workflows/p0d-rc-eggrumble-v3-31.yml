@@ -610,6 +610,77 @@ jobs:
             --author "$AUTHOR555/patch_nearest.py" \
             --out "$FINAL555" \
             --place artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
+      - name: Fetch EXISTING immutable #536 original author raycast overlay (not another AI writer)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          path: _gq536_original_route_author
+          persist-credentials: false
+      - name: Source-select original #536 only into current 31 BotPathRouter; preserve other 30 scripts exactly
+        env:
+          GQ_ROUTE536_AUTHOR: _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py
+          GQ_ROUTE536_ORIGINAL: _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau
+          GQ_ROUTE536_BASE31: artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq536_original_route_author rev-parse HEAD)" = cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          python3 -B -m unittest discover -s rc_fastlane/quality_route536_rc31 -p 'test_selector.py' -v
+          python3 -B rc_fastlane/quality_route536_rc31/select_original536_route.py select \
+            --base "$GQ_ROUTE536_BASE31" --author "$GQ_ROUTE536_AUTHOR" \
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_route536_rc31")
+          from select_original536_route import flat
+          _,source=flat(Path("artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json"))
+          assert len(source)==31
+          for file in source.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                           stdout=subprocess.DEVNULL,check=True)
+          print("GQ536_CURRENT_OFFICIAL31_ALL_NATIVE_COMPILE_PASS",len(source))
+          PY
+      - name: Execute existing author's real routeClear and Router.navigate source through native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq536_native
+          python3 _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py \
+            --original _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau \
+            --patched artifacts/gq555_official_select/GQ536_ORIGINAL_AUTHOR_SINGLE_ROUTER.luau \
+            --output-dir artifacts/gq536_native
+          for t in original patched; do
+            /tmp/gq530_all31_native/luau-compile --text artifacts/gq536_native/$t.spec.luau >/dev/null
+            /tmp/gq530_all31_native/luau artifacts/gq536_native/$t.spec.luau
+          done
+          python3 _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py \
+            --original _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau \
+            --patched artifacts/gq555_official_select/GQ536_ORIGINAL_AUTHOR_SINGLE_ROUTER.luau \
+            --outdir artifacts/gq536_native
+          for t in original fixed mutant; do
+            /tmp/gq530_all31_native/luau-compile --text artifacts/gq536_native/navigate-$t.spec.luau >/dev/null
+          done
+          /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-original.spec.luau
+          /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-fixed.spec.luau
+          if /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-mutant.spec.luau; then
+            echo 'RED_ORIGINAL536_TAIL_WALL_UNSAFE_MUTANT_PASSED'
+            exit 1
+          fi
+          echo GQ536_AUTHOR_ACTUAL_ROUTER_NAVIGATE_AND_UNSAFE_MUTANT_DIFFERENTIAL_PASS
+      - name: Real selected final 31 Rojo Source and Class exact after original #536 AI route
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
+            -o artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx
+          python3 -B rc_fastlane/quality_route536_rc31/select_original536_route.py verify \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
+            --author _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
+            --place artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx
+          echo 'GQ536_RC31_ORIGINAL_AI_ROUTE_SELECTED=PASS; OFF=CURRENT_OFFICIAL_ITEM489_31; FORMAL_ADOPTION=AUTH_CAS_ONLY'
       - name: Checkout immutable original #518 boss wall-occlusion author
         uses: actions/checkout@v4
         with:
@@ -628,7 +699,7 @@ jobs:
           from pathlib import Path
           from importlib.machinery import SourceFileLoader
           parent=Path("artifacts/gq555_official_select")
-          base=parent/"GQ555_FINAL_SELECTED31.project.json"
+          base=parent/"GQ555_ROUTE536_FINAL_SELECTED31.project.json"
           out=parent/"GQ518_SELECTED31.project.json"
           patchpath=Path("_gq518_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py")
           blob=lambda b:hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
@@ -681,7 +752,7 @@ jobs:
           from importlib.machinery import SourceFileLoader
           m=SourceFileLoader("mapping","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
           folder=Path("artifacts/gq555_official_select")
-          _,old=m.flatten(folder/"GQ555_FINAL_SELECTED31.project.json")
+          _,old=m.flatten(folder/"GQ555_ROUTE536_FINAL_SELECTED31.project.json")
           _,new=m.flatten(folder/"GQ518_SELECTED31.project.json")
           boss=("ServerScriptService","EGGRUMBLE_NeutralStoneGiant")
           assert len(new)==31 and {k for k in new if new[k].read_bytes()!=old[k].read_bytes()}=={boss}
@@ -753,18 +824,22 @@ jobs:
           gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
           assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          route536=json.loads(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_text())
+          assert route536["real_rojo_exact_31"] and route536["others_byte_exact"]==30
+          assert route536["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx").read_bytes()).hexdigest()
           gq518=json.loads(Path("artifacts/gq555_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert gq518["source_class_exact"]==31 and gq518["unchanged_source_count"]==30
           assert gq518["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["BOSS_SHOCKWAVE_WALL_OCCLUSION_518"]
           assert m["source_heads"]["boss_wave518"]=="f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
+          assert route536["selected_author_patch_git_blob"]=="651d4c6e92bfe8595eeadb438b594797bd473e77"
+          assert m["feature_flags"]["BOT_ROUTE_FULLSTEP_536"] and m["source_heads"]["original_route536"]=="cdf4fe5f231c998532963c5c16d9525d20a69e7e"
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
-          assert m["feature_flags"]["BOSS_SHOCKWAVE_WALL_OCCLUSION_518"]
           details={
-            "original_518_boss_source_selected":True,
             "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
                       if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
                       else "CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
@@ -783,6 +858,11 @@ jobs:
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
             "original_author_555_bot_only_30_preserved":True,
+            "original_author_536_single_botpathrouter_source_selected":True,
+            "original_author_518_boss_source_selected":True,
+            "original_author_518_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "other_30_current_original_author_source_exact_after_536":True,
+            "selected_536_router_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
@@ -839,6 +919,8 @@ jobs:
             artifacts/gq555_official_select/GQ555_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json
             artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
+            artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
