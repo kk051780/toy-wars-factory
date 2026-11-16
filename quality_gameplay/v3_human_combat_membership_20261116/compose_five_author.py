@@ -45,8 +45,10 @@ SELECT = {
 STATUS_NAME = "EGGRUMBLE_StatusTickFence"
 HOST_NAME = "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
 BOT_NAME = "EGGRUMBLE_BotActors.luau"
+ROUTER_NAME = "EGGRUMBLE_BotPathRouter.luau"
 PINNED_HOST_SOURCE_BLOB = "1d482d05325c5ca97166961c05b404b3370f01f8"
 PINNED_AI_BOT_SOURCE_BLOB = "832a26c9f713012b924234ce4cf8c1654a75654e"
+PINNED_AI_ROUTER_SOURCE_BLOB = "d9841bb874659129cae6c930bce302ff6936ac4a"
 
 def git_show(sha: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", f"{sha}:{path}"])
@@ -98,6 +100,12 @@ def build(out: Path) -> dict:
     materialize(ai_bot_file,git_show(AUTHORS["gq_ai_duel"],str(ROOT / BOT_NAME)))
     if git_blob(ai_bot_file.read_bytes())!=PINNED_AI_BOT_SOURCE_BLOB:
         raise RuntimeError("RED #484 bot duel original source changed")
+    router_source=git_show(AUTHORS["gq_ai_duel"],str(ROOT / ROUTER_NAME))
+    if git_blob(router_source)!=PINNED_AI_ROUTER_SOURCE_BLOB:
+        raise RuntimeError("RED #484 real bot path router source changed")
+    # Source-select the genuine current #484 navigation author, not the
+    # incompatible prior #482 route. Do not invent a second navigator.
+    materialize(out/ROUTER_NAME,router_source)
     spec_member=importlib.util.spec_from_file_location("gq_real_531",member_tool.resolve())
     if not spec_member or not spec_member.loader:
         raise RuntimeError("RED missing existing #531 composer")
@@ -126,6 +134,11 @@ def build(out: Path) -> dict:
     if git_blob((out / BOT_NAME).read_bytes())!=member_report["source_files"][BOT_NAME]["overlay_blob"]:
         raise RuntimeError("RED #531 latest BotActors drift")
     bot=(out / BOT_NAME).read_text()
+    router=(out / ROUTER_NAME).read_text()
+    if "PathfindingService:CreatePath" not in router or "path:ComputeAsync" not in router:
+        raise RuntimeError("RED #484 navigator losing real pathfinder")
+    if "local ok=pcall(function()\n   path=PathfindingService:CreatePath" not in router:
+        raise RuntimeError("RED #484 CreatePath fault recovery lost")
     if bot.count("targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)")!=1 or bot.count("for targetId,targetActor in pairs(bots)")!=1:
         raise RuntimeError("RED latest #484 real bot-to-bot duel disappeared")
     if bot.count("session.isCurrentHuman(player)")!=1:
@@ -155,12 +168,15 @@ def build(out: Path) -> dict:
         "four_combat_529_sha256":hashlib.sha256(four.encode()).hexdigest(),
         "five_combat_535_sha256":hashlib.sha256(five.encode()).hexdigest(),
         "sources_expected":22,
-        "original_script_sources_unmodified":18,
-        "updated_existing_host_bot_combat":3,
+        "original_script_sources_unmodified":17,
+        "updated_existing_host_bot_combat_router":4,
         "added_existing_status_module":1,
         "original_host_bot_owner":AUTHORS["gq_bot_member"],
         "bot_ai_author_sha":AUTHORS["gq_ai_duel"],
         "bot_ai_duel_real_damage_preserved":True,
+        "bot_ai_pathfinder_source_preserved":True,
+        "bot_ai_router_blob":PINNED_AI_ROUTER_SOURCE_BLOB,
+        "bot_ai_router_last_stud_ray_defect_from_gq536":"YELLOW_EXISTING_AUTHOR_536_PENDING",
         "bot_human_current_match_predicate_preserved":True,
         "no_duplicate_game_or_combat":True,
         "rollback_535": "undo Combat patch restores #529 composed Combat exactly",
