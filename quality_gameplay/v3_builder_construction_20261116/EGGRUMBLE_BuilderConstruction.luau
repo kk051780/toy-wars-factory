@@ -198,6 +198,43 @@ function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(b
  monitorSession(session,s)
  return true,kind
 end
+-- Add server-owned Tool input to the ORIGINAL role system. This is not a
+-- second Game or Remote: the original Host calls this after HeroCombat.equip.
+-- Preserves original BUILDER A/B/C skills, including its turret.
+function Build.equip(session:any,p:Player,serverEnabled:boolean?):(boolean,string)
+ if serverEnabled~=true then return false,"FEATURE_OFF" end
+ local character=getActor(session,p)
+ if not character then return false,"NOT_AUTHORIZED" end
+ local backpack=p:FindFirstChildOfClass("Backpack")
+ if not backpack then return false,"NO_BACKPACK" end
+ local prefix="EGGRUMBLE_SKILL_CONSTRUCT_"
+ -- Respawn/re-equip may be called twice. Never leave old callbacks/tools live.
+ for _,container in ipairs({backpack,character}) do
+  for _,tool in ipairs(container:GetChildren()) do
+   if tool:IsA("Tool") and string.sub(tool.Name,1,#prefix)==prefix then
+    tool:Destroy()
+   end
+  end
+ end
+ for _,kind in ipairs({"WALL","BRIDGE"}) do
+  local tool=Instance.new("Tool")
+  tool.Name=prefix..kind
+  tool.ToolTip=if kind=="WALL" then "建築士｜防壁（9秒・再使用13秒）"
+   else "建築士｜橋（真の溝のみ・9秒・再使用17秒）"
+  tool.RequiresHandle=false
+  tool.CanBeDropped=false
+  local originalCharacter=character
+  tool.Activated:Connect(function()
+   -- Roblox's existing Tool/equip transport is the ONLY input. No client
+   -- coordinates, new Remote, duplicate HP/damage/score/Store authority.
+   if p.Character~=originalCharacter or tool.Parent~=originalCharacter then return end
+   Build.place(session,p,kind,true)
+  end)
+  tool.Parent=backpack
+ end
+ return true,"TOOLS_READY"
+end
+
 function Build.clear(session:any):()
  local s=bySession[session]
  if not s then return end
