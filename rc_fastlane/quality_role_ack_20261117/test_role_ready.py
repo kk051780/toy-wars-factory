@@ -28,7 +28,7 @@ class RoleAckTests(unittest.TestCase):
         after = apply(before)
         self.assertNotEqual(before, after)
         self.assertEqual(before, revert(after))
-        self.assertIn(FEATURE.split("_20261117")[0][:4], "GQ8")
+        self.assertTrue(FEATURE.startswith("GQ8_"))
         self.assertIn(JOIN_PATCH, after)
         self.assertIn(ROLE_PATCH, after)
 
