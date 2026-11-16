@@ -3,6 +3,9 @@
 -- Studio-only, server-attributed real Humanoid deaths; NOT production optimized nor tested.
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local Debris=game:GetService("Debris")
+local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
+local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
 local Swarm={}
 local LIMIT=110
 local SPAWN_TICK=.18
@@ -50,15 +53,41 @@ function Swarm.start(session:any)
  local kills:{[string]:number}={}
  local lastBotHit:{[string]:number}={}
  local total=0
+ local comboById:{[string]:number}={}
+ local lastKillAt:{[string]:number}={}
+ local bestCombo:{[string]:number}={}
  local ended=false
  local function credit(id:string)
   kills[id]=(kills[id] or 0)+1
   total+=1
   local n=kills[id]
+  local now=os.clock()
+  local combo=if now-(lastKillAt[id] or -100)<4 then (comboById[id] or 0)+1 else 1
+  comboById[id]=combo
+  lastKillAt[id]=now
+  bestCombo[id]=math.max(bestCombo[id] or 0,combo)
   local p=Players:GetPlayerByUserId(tonumber(id) or -1)
   if p then
    labelKo(p,n)
    p:SetAttribute("EGGRUMBLE_BattleLevel",math.min(50,1+math.floor(n/25)))
+   p:SetAttribute("EGGRUMBLE_Combo",combo)
+   p:SetAttribute("EGGRUMBLE_BestCombo",bestCombo[id])
+   if combo%25==0 then
+    local character=p.Character
+    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+    if root then
+     -- Light diegetic KO celebration, never a giant permanently blocking mobile HUD.
+     local gui=Instance.new("BillboardGui")
+     gui.Name="EGGRUMBLE_ComboBurst";gui.Size=UDim2.fromOffset(150,45)
+     gui.StudsOffset=Vector3.new(0,4,0);gui.AlwaysOnTop=false;gui.Parent=root
+     local txt=Instance.new("TextLabel")
+     txt.Size=UDim2.fromScale(1,1);txt.BackgroundTransparency=1
+     txt.TextColor3=Color3.fromRGB(255,216,78)
+     txt.TextStrokeTransparency=.15;txt.Font=Enum.Font.GothamBlack
+     txt.TextScaled=true;txt.Text=tostring(combo).." COMBO!"
+     txt.Parent=gui;Debris:AddItem(gui,.95)
+    end
+   end
    p:SetAttribute("EGGRUMBLE_SlashEvolution",if n>=100 then "TEMPEST" elseif n>=40 then "WAVE" else "BASE")
   end
   session.neutralTotal=total
@@ -70,7 +99,11 @@ function Swarm.start(session:any)
   h.Died:Connect(function()
    live[m]=nil
    local id=h:GetAttribute("LastAttackerId")
-   if type(id)=="string" and session.rules.castles[id] then credit(id) end
+   if type(id)=="string" and session.rules.castles[id] then
+    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)
+    ImpactFeedback.ko(all,m,attacker and (attacker:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR")
+    credit(id)
+   end
    task.delay(.25,function() if m.Parent then m:Destroy() end end)
   end)
  end
@@ -102,7 +135,7 @@ function Swarm.start(session:any)
   if delta.Magnitude<=.01 then return true end
   return workspace:Raycast(origin,delta,params)==nil
  end
- local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model):number
+ local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number
   if session.rules.phase~="ACTIVE" then return 0 end
   local player=session.rules.castles[id]
   if not player or not player.alive then return 0 end
@@ -111,7 +144,9 @@ function Swarm.start(session:any)
    if m.Parent and h.Health>0 and m.PrimaryPart then
     local delta=m.PrimaryPart.Position-at
     local dis=math.sqrt(delta.X*delta.X+delta.Z*delta.Z)
-    if dis<=radius then table.insert(nearest,{target=h,dist=dis}) end
+    if AttackGeometry.allowed(origin,at,m.PrimaryPart.Position,radius,shape) then
+     table.insert(nearest,{target=h,dist=dis})
+    end
    end
   end
   table.sort(nearest,function(x,y)return x.dist<y.dist end)
@@ -126,6 +161,8 @@ function Swarm.start(session:any)
    if model and model:IsA("Model") and lineOfSightToNeutral(origin,attacker,model) then
     h:SetAttribute("LastAttackerId",id)
     h:TakeDamage(damage)
+    local user=Players:GetPlayerByUserId(tonumber(id) or -1)
+    ImpactFeedback.hit(model,user and (user:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR")
     hits+=1
    end
   end
@@ -133,14 +170,19 @@ function Swarm.start(session:any)
  end
  local api={
   kills=kills,
-  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number):number
+  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number
    local character=player.Character
    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
    local humanoid=character and character:FindFirstChildOfClass("Humanoid")
    if not character or not root or not humanoid or humanoid.Health<=0 then return 0 end
    -- Splash center is server-generated and stays in reach of the living attacker.
    if (at-root.Position).Magnitude>36 then return 0 end
-   return strike(tostring(player.UserId),at,radius,damage,root.Position+Vector3.new(0,1,0),character)
+   -- Survival-like neutral-only momentum: max +12%, NEVER affects human PvP/castle HP.
+   local currentCombo=if os.clock()-(lastKillAt[tostring(player.UserId)] or -100)<4
+    then (comboById[tostring(player.UserId)] or 0) else 0
+   local bonus=if currentCombo>=60 then 1.12 elseif currentCombo>=20 then 1.06 else 1
+   return strike(tostring(player.UserId),at,radius,damage*bonus,
+    root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE")
   end,
   damageFromBot=function(botId:string,at:Vector3):number
    local actor=session.botActors and session.botActors[botId]
@@ -152,7 +194,7 @@ function Swarm.start(session:any)
    if now-(lastBotHit[botId] or 0)<BOT_ATTACK_CD then return 0 end
    lastBotHit[botId]=now
    local center=root.Position+root.CFrame.LookVector*3
-   return strike(botId,center,9,NEUTRAL_HEALTH,root.Position+Vector3.new(0,1,0),actor)
+   return strike(botId,center,9,NEUTRAL_HEALTH,root.Position+Vector3.new(0,1,0),actor,"FANG")
   end,
   getAliveCount=function():number
    local n=0;for m,h in pairs(live) do if m.Parent and h.Health>0 then n+=1 end end

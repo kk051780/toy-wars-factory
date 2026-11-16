@@ -41,7 +41,7 @@ class TestNeutralSwarmLineOfSight(unittest.TestCase):
         self.assertIn('local root=character and character:FindFirstChild("HumanoidRootPart")', s)
         self.assertIn("humanoid.Health<=0 then return 0", s)
         self.assertIn("if (at-root.Position).Magnitude>36 then return 0", s)
-        self.assertIn("root.Position+Vector3.new(0,1,0),character)", s)
+        self.assertIn("root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\")", s)
 
     def test_bot_aoe_origin_is_real_live_bot(self):
         s = self.source
@@ -49,7 +49,7 @@ class TestNeutralSwarmLineOfSight(unittest.TestCase):
         self.assertIn("if not actor or not root or not h or h.Health<=0 then return 0", s)
         self.assertIn("if (root.Position-at).Magnitude>5 then return 0", s)
         self.assertIn("local center=root.Position+root.CFrame.LookVector*3", s)
-        self.assertIn("root.Position+Vector3.new(0,1,0),actor)", s)
+        self.assertIn("root.Position+Vector3.new(0,1,0),actor,\"FANG\")", s)
 
     def test_neutral_navigation_never_forces_through_solid_wall(self):
         s = self.source

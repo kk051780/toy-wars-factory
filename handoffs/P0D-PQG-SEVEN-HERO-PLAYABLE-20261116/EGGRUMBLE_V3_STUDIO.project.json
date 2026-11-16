@@ -37,8 +37,23 @@
       "EGGRUMBLE_RoundReplay": {
         "$path": "EGGRUMBLE_RoundReplay.luau"
       },
+      "EGGRUMBLE_AttackGeometry": {
+        "$path": "EGGRUMBLE_AttackGeometry.luau"
+      },
+      "EGGRUMBLE_ImpactFeedback": {
+        "$path": "EGGRUMBLE_ImpactFeedback.luau"
+      },
       "EGGRUMBLE_ScoreBalance": {
         "$path": "EGGRUMBLE_ScoreBalance.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "EGGRUMBLE_CombatFeel": {
+          "$path": "EGGRUMBLE_CombatFeel.client.luau"
+        }
       }
     }
   }

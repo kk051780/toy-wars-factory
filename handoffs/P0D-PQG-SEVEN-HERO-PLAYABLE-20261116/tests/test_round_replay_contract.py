@@ -1,0 +1,70 @@
+"""EGGRUMBLE V3 round lifecycle regression; source contracts, not Roblox Studio play.
+No second game owner, score system or lobby GUI is allowed.
+"""
+import json
+import unittest
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+LOBBY=(ROOT/"EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text("utf-8")
+REPLAY=(ROOT/"EGGRUMBLE_RoundReplay.luau").read_text("utf-8")
+RESULT=(ROOT/"EGGRUMBLE_MatchResultService.luau").read_text("utf-8")
+PROJECT=json.loads((ROOT/"EGGRUMBLE_V3_STUDIO.project.json").read_text("utf-8"))
+
+class RoundReplayContract(unittest.TestCase):
+    def test_replay_only_after_results_and_real_winner(self):
+        self.assertIn('session.rules.phase~="FINISHED"',REPLAY)
+        self.assertIn("session.rules.winner==nil then return false end",REPLAY)
+        self.assertIn("session.roundReplayScheduled=true",REPLAY)
+        self.assertIn("RoundReplay.schedule(session,session.closeRound)",LOBBY)
+        result=LOBBY.index("ResultService.showIfFinished(session,queue,mode)")
+        replay=LOBBY.index("RoundReplay.schedule(session,session.closeRound)")
+        self.assertLess(result,replay)
+
+    def test_hold_result_before_releasing_player(self):
+        self.assertIn("Replay.RESULT_HOLD_SECONDS=10",REPLAY)
+        self.assertIn("local DISPLAY_SECONDS=8",RESULT)
+        self.assertIn("task.delay(Replay.RESULT_HOLD_SECONDS,function()",REPLAY)
+        self.assertIn("if session.rules.phase==\"FINISHED\" then closeRound() end",REPLAY)
+
+    def test_requeue_modes_are_independent_and_old_round_cannot_wipe_new(self):
+        for line in ("if sessions[mode]~=session or session.rules.phase~=\"FINISHED\" then return end",
+                     "sessions[mode]=nil","queues[mode]={}","queueEpoch[mode]+=1",
+                     "local expectedEpoch=queueEpoch[mode]",
+                     "if queueEpoch[mode]==expectedEpoch then startSession(mode) end"):
+            with self.subTest(line=line):
+                self.assertIn(line,LOBBY)
+        self.assertNotIn("sessions={}",LOBBY)
+        self.assertNotIn("queues={TEAM={},BATTLE_ROYALE={}}\n  -- reset",LOBBY)
+
+    def test_lifecycle_callbacks_disconnected_after_round(self):
+        self.assertIn("lifeConnections={},",LOBBY)
+        self.assertIn("connection:Disconnect()",LOBBY)
+        self.assertIn("table.insert(session.lifeConnections,humanoid.Died:Connect(function()",LOBBY)
+        self.assertIn("table.insert(session.lifeConnections,player.CharacterAdded:Connect(bindCarrierLife))",LOBBY)
+        self.assertIn("table.insert(session.lifeConnections,p.CharacterAdded:Connect(function(character)",LOBBY)
+        self.assertIn("session.world:Destroy()",LOBBY)
+
+    def test_saved_role_options_remain_but_match_attributes_reset(self):
+        self.assertIn("SevenRoleCombat.clear(player)",LOBBY)
+        self.assertIn("RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))",LOBBY)
+        self.assertIn('p:SetAttribute("EGGRUMBLE_QueuedMode",nil)',REPLAY)
+        self.assertIn('p:SetAttribute("EGGRUMBLE_Eliminated",nil)',REPLAY)
+        self.assertIn('p:SetAttribute("EGGRUMBLE_NeutralKOs",0)',REPLAY)
+        self.assertIn('p:SetAttribute("EGGRUMBLE_SlashEvolution","BASE")',REPLAY)
+        self.assertIn('ko.Value=0',REPLAY)
+        self.assertNotIn('p:SetAttribute("EGGRUMBLE_SelectedRole",nil)',REPLAY)
+
+    def test_single_rojo_game_host_and_no_remote_or_stores(self):
+        scripts=PROJECT["tree"]["ServerScriptService"]
+        self.assertEqual(scripts["EGGRUMBLE_RoundReplay"]["$path"],"EGGRUMBLE_RoundReplay.luau")
+        self.assertEqual(sum(x=="EGGRUMBLE_LobbyCastleModesPreview" for x in scripts),1)
+        self.assertNotIn("Game",scripts)
+        for forbidden in ("RemoteEvent","DataStoreService","MarketplaceService",
+                          "TeleportService","PromptProductPurchase"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden,REPLAY)
+        self.assertIn('assert(RunService:IsStudio()',REPLAY)
+
+if __name__=="__main__":
+    unittest.main()
