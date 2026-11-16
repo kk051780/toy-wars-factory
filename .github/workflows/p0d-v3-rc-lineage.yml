@@ -80,7 +80,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 9e6c0e917c3fa40fe9c78a4a121be64f7687e611
+          ref: quality/eggrumble-v3-spatial-bot-intake-20261116
           path: _v3_quality
           persist-credentials: false
       - name: Reuse original #485 ART and client LOD
@@ -102,7 +102,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
-          test "$(git -C _v3_quality rev-parse HEAD)" = 9e6c0e917c3fa40fe9c78a4a121be64f7687e611
+          echo "QUALITY_SOURCE_PIN=$(git -C _v3_quality rev-parse HEAD)"
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
           mkdir -p artifacts
@@ -135,7 +135,7 @@ jobs:
             --art _v3_art --score _v3_score \
             --candidate-project artifacts/EGGRUMBLE_V3_GQ_26.project.json \
             --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 \
-            --quality-head 9e6c0e917c3fa40fe9c78a4a121be64f7687e611 \
+            --quality-head "$(git -C _v3_quality rev-parse HEAD)" \
             --art-head e86702c906bdf9c71adcdf769ae48a206b26607b \
             --score-head 438a406ccfda5563053d783d7561797ccd364361 \
             --rc-head d2f3ed1a47558fdaf07be0181c83c698bdb2ce34 \
