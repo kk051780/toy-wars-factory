@@ -173,7 +173,6 @@ def verify_place(project_path:Path, original_project:Path, place_path:Path):
     receipt={"rojo_source_class_exact":31,"other_original_sources_byte_exact":30,
              "place_bytes":place_path.stat().st_size,
              "place_sha256":digest(place_path.read_bytes()),"studio_tested":False}
-    print("GQ537_TRUE_ROJO_SELECTED_31_SOURCE_CLASS_PASS",receipt)
     return receipt
 
 def main():
