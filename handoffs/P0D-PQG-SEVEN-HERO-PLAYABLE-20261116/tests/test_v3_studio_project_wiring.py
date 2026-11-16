@@ -24,6 +24,7 @@ REQUIRED = {
     "EGGRUMBLE_FieldItemPickups": "EGGRUMBLE_FieldItemPickups.luau",
     "EGGRUMBLE_RaidItemIntake": "EGGRUMBLE_RaidItemIntake.luau",
     "EGGRUMBLE_NeutralStoneGiant": "EGGRUMBLE_NeutralStoneGiant.luau",
+    "EGGRUMBLE_BossSessionFence": "EGGRUMBLE_BossSessionFence.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
     "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
