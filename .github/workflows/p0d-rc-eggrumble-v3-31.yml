@@ -645,7 +645,8 @@ jobs:
           item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
           assert item489["unchanged_source_count"]==30
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          # Existing #489 receipt describes its prior 31-script Place, before #551 Host selection.
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           gq551=json.loads(Path("artifacts/gq551_official_select/GQ551_RC31_VERIFIED_PLACE_RECEIPT.json").read_text())
           assert gq551["rojo_real_source_class_exact"]=="31/31"
