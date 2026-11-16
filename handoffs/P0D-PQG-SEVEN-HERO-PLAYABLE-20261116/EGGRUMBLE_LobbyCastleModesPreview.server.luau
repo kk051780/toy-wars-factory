@@ -317,7 +317,12 @@ local function startSession(mode:string)
      if p.Parent and joined[p.UserId]==mode and p.Character==character
       and session.rules.phase=="ACTIVE" then
       local castle=session.rules.castles[tostring(p.UserId)]
-      if castle and castle.alive then SevenRoleCombat.equip(session,p,role) end
+      if castle and castle.alive then
+       -- New life must never inherit the previous avatar's Assassin stealth window.
+       -- BotActors reads this Player attribute before its server-side damage.
+       p:SetAttribute("EGGRUMBLE_StealthUntil",nil)
+       SevenRoleCombat.equip(session,p,role)
+      end
      end
     end)
    end))
