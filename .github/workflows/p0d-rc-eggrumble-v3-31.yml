@@ -59,6 +59,17 @@ jobs:
           test "$(git -C _gq_member rev-parse HEAD)" = 6846e9d55d07f0204748bbb8f46eef08f46c1b04
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
           test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
+          # #529 four-author composer reads the original source at its historical
+          # repository-relative path. In this multi-checkout job it lives under
+          # _v3_original. Bind only that immutable author's source; do not copy
+          # or modify game code, and fail closed if it no longer matches.
+          mkdir -p handoffs
+          test ! -e handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          test ! -L handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          test -f _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau
+          test "$(git hash-object _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau)" = 66e666418b7c23d41f87faa5d61eb6e2770a463e
+          ln -s "$(pwd)/_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116" handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          test "$(git hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau)" = 66e666418b7c23d41f87faa5d61eb6e2770a463e
           mkdir -p quality_gameplay
           test ! -e quality_gameplay/v3_dead_caster_fence_20261116
           ln -s "$(pwd)/_gq530_official_source/quality_gameplay/v3_dead_caster_fence_20261116" quality_gameplay/v3_dead_caster_fence_20261116
