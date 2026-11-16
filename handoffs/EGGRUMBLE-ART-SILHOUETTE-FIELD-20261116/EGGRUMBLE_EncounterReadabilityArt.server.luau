@@ -244,7 +244,10 @@ end
 local function decorateModeGate(gate:BasePart)
  if marked[gate] then return end
  if gate.Name~="TEAM_PORTAL" and gate.Name~="BATTLE_ROYALE_PORTAL" then return end
- if not previewFor(gate) then return end
+ -- Both existing V3 portals and the author's separate 7-class UX preview
+ -- share this decorative gate, but never share queue/selection authority.
+ local parent=gate.Parent
+ if not previewFor(gate) and not (parent and parent.Name=="EGGRUMBLE_LobbyUX") then return end
  marked[gate]=true
  local team=gate.Name=="TEAM_PORTAL"
  local c=if team then maroon else steel
@@ -389,6 +392,12 @@ local function decorateStandaloneCastle(model:Model)
 end
 
 local function process(instance:Instance)
+ if instance:IsA("BasePart")
+  and (instance.Name=="TEAM_PORTAL" or instance.Name=="BATTLE_ROYALE_PORTAL")
+  and instance.Parent and instance.Parent.Name=="EGGRUMBLE_LobbyUX" then
+  decorateModeGate(instance)
+  return
+ end
  -- Independent #482 boss and physical castle are owned by their original authors;
  -- observe their completed parts, never replace their scripts or objects.
  if instance:IsA("Model") and instance.Name=="NEUTRAL_BOSS_STONE_GIANT" then
