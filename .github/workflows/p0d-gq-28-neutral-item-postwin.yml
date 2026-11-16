@@ -161,6 +161,24 @@ jobs:
           if /tmp/p0d_native28/luau artifacts/POSTWIN_UNFENCED_MUTANT.luau >artifacts/POSTWIN_MUTANT.log 2>&1; then exit 1; fi
           grep -q 'late death produces zero eggs/tokens' artifacts/POSTWIN_MUTANT.log
           echo NEGATIVE_UNFENCED_MUTANT_REJECTED
+      - name: Run 12 deterministic FULL 16-slot TEAM/BR egg conservation stress and negative mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/make_16slot_stress_native.py \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/16SLOT_STRESS_NATIVE.luau \
+            --mutant-out artifacts/16SLOT_UNFENCED_MUTANT.luau
+          /tmp/p0d_native28/luau-compile --text artifacts/16SLOT_STRESS_NATIVE.luau >/dev/null
+          /tmp/p0d_native28/luau-compile --text artifacts/16SLOT_UNFENCED_MUTANT.luau >/dev/null
+          /tmp/p0d_native28/luau artifacts/16SLOT_STRESS_NATIVE.luau | tee artifacts/16SLOT_STRESS_NATIVE.log
+          grep -q GQ509_16SLOT_FUZZ_CONSERVATION_PASS artifacts/16SLOT_STRESS_NATIVE.log
+          if /tmp/p0d_native28/luau artifacts/16SLOT_UNFENCED_MUTANT.luau >artifacts/16SLOT_UNFENCED_MUTANT.log 2>&1; then
+            echo 'RED_16SLOT_UNFENCED_MUTANT_FALSE_PASS' >&2
+            exit 1
+          fi
+          grep -q GQ509_16SLOT_.*_LATE_DEATH_ZERO artifacts/16SLOT_UNFENCED_MUTANT.log
+          echo GQ509_16SLOT_NEGATIVE_MUTANT_REJECTED
       - name: Execute ORIGINAL item/guard, neutral fairness, neutral pacing native VMs
         shell: bash
         run: |
@@ -230,3 +248,5 @@ jobs:
             artifacts/NEUTRAL_PACE_NATIVE.log
             artifacts/COUPLED_RULES_ITEM_NATIVE.log
             artifacts/COUPLED_RULES_ITEM_MUTANT.log
+            artifacts/16SLOT_STRESS_NATIVE.log
+            artifacts/16SLOT_UNFENCED_MUTANT.log
