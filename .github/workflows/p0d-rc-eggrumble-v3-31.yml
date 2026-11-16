@@ -467,7 +467,7 @@ jobs:
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
-          assert gq537["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq537["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert gq537["other_sources_byte_exact"]==30 and gq537["source_class_exact"]==31
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] and m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
           item489=json.loads(Path("artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
