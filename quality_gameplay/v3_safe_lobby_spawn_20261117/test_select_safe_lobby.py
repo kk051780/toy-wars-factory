@@ -30,7 +30,7 @@ class LobbySourceContract(unittest.TestCase):
     def test_inserts_only_once_and_off_is_exact(self):
         selected = mod.apply(ORIGINAL_HOST)
         self.assertEqual(selected.count(mod.MARKER), 1)
-        self.assertEqual(selected.count("SpawnLocation"), 2)  # finder + new instance
+        self.assertEqual(selected.count('Instance.new("SpawnLocation")'), 1)  # exactly one fallback spawn
         self.assertEqual(mod.rollback(selected), ORIGINAL_HOST)
         self.assertEqual(selected.count("local function board("), 1)
         self.assertIn('joined[player.UserId]~=nil', selected)
