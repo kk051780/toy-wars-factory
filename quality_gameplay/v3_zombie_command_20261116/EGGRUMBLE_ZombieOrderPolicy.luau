@@ -7,6 +7,7 @@ local LIMIT = 3
 local LIFETIME = 14
 local MELEE_RANGE = 5
 local ACQUIRE_RANGE = 48
+local GUARD_LEASH = 12 -- castle-defense order must not attack while outside its local perimeter
 local HIT_COOLDOWN = 1.5
 local SQUAD_COOLDOWN = 0.4
 
@@ -87,9 +88,11 @@ end
 
 local function selectTarget(state, unit, snapshot)
     local best = nil
+    local guardAnchor = if state.order == "GUARD" then (snapshot.guardPoint or snapshot.ownerPosition) else nil
     local bestDistance = ACQUIRE_RANGE
     for _, candidate in ipairs(snapshot.targets or {}) do
-        if eligible(candidate, state.matchToken) then
+        if eligible(candidate, state.matchToken)
+            and (state.order ~= "GUARD" or (guardAnchor ~= nil and distance(candidate, guardAnchor) <= GUARD_LEASH)) then
             local d = distance(unit, candidate)
             if d <= ACQUIRE_RANGE then
                 if state.order == "FOCUS" then
@@ -120,6 +123,12 @@ function Policy.step(state, now, snapshot)
             state.count -= 1
             table.insert(actions, { kind = "DESPAWN", unitId = unitId })
         else
+            -- Returning defenders never stall outside their castle chasing / hitting roadside enemies.
+            local guardAnchor = if state.order == "GUARD" then (snapshot.guardPoint or snapshot.ownerPosition) else nil
+            if guardAnchor and distance(unit, guardAnchor) > GUARD_LEASH then
+                table.insert(actions, { kind = "MOVE", unitId = unitId,
+                    x = guardAnchor.x, z = guardAnchor.z })
+            else
             local target, d = selectTarget(state, unit, snapshot)
             if target and d <= MELEE_RANGE then
                 local canSee = snapshot.visible ~= nil
@@ -134,7 +143,7 @@ function Policy.step(state, now, snapshot)
                 end
             else
                 local waypoint = nil
-                if state.order == "GUARD" then waypoint = snapshot.guardPoint
+                if state.order == "GUARD" then waypoint = guardAnchor
                 elseif target then waypoint = { x = target.x, z = target.z }
                 else waypoint = snapshot.ownerPosition end
                 if waypoint then
@@ -144,6 +153,7 @@ function Policy.step(state, now, snapshot)
                     })
                 end
             end
+            end -- guard-return fence
         end
     end
     return actions
@@ -152,4 +162,5 @@ end
 Policy.MAX_UNITS = LIMIT
 Policy.TTL_SECONDS = LIFETIME
 Policy.HIT_COOLDOWN_SECONDS = HIT_COOLDOWN
+Policy.GUARD_LEASH_STUDS = GUARD_LEASH
 return Policy
