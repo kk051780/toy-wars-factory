@@ -10,6 +10,13 @@ Current private V3 host sets `EGGRUMBLE_Eliminated=true` and teleports a defeate
 - Add precisely one mapping to the existing original-author private V3 Rojo project. No other mapped source or original-author Game file is edited.
 - No new Remote, HP, damage, reward, save, inventory, matchmaking or purchase authority. Only Studio private preview runs it. The display is invisible to active players.
 
+
+## Native behavioral acceptance — same-source execution, not engine certification
+- [run #43801048568](https://github.com/kk051780/toy-wars-factory/actions/runs/43801048568) **SUCCESS** on source HEAD \`895caeef56492d4290101929ae916f67a73450c0\`: the unchanged **original spectator CLIENT LocalScript** is executed under the fixed pinned native Luau VM using explicit small Roblox API fakes. Real handlers tested: active no camera takeover; server-acknowledged castle elimination; 44x44 touch controls; keyboard consumed/not consumed; strict TEAM/BR arena isolation; player elimination reset; match arena deletion; camera type, subject, lookAt and Focus restoration.
+- Negative control **three mutation variants rejected by actually executing** the modified real source: flipped elimination test, removed own-arena membership test, disabled GUI cleanup. Static proof is not used as gameplay evidence.
+- Test generator \`tools/make_native_spectator_harness.py\`; CI \`.github/workflows/p0d-eggrumble-spectator-native-lifecycle.yml\`. The VM mocks cover those calls but **do not simulate Roblox's physical camera, replication timing, R6/R15, mobile safe areas or server disconnect**. Real Studio 1+15, 2+14, Android15min and OWNER FUN are still not tested.
+- Next mandatory verification: same FINAL head 22-source and 27-source actual Rojo SourceExact results; original authors #482/#484/#485/#487 HEAD drift reconciliation (#490/#491), then sole authenticated #220 nonforce CAS official RC adoption.
+
 ## Rollback
 Delete the single `EGGRUMBLE_EliminatedSpectate` mapping from the V3 project; no migrations. Discard this isolated draft. No official RC/main/Roblox publication change.
 
