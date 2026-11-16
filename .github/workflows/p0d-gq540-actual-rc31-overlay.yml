@@ -1,0 +1,80 @@
+name: P0D GQ540 actual canonical RC31 original-source overlay proof
+on:
+  pull_request:
+    branches: [quality/eggrumble-v3-spatial-bot-intake-20261116]
+    paths:
+      - 'quality_gameplay/v3_respawn_stealth_20261116/**'
+      - '.github/workflows/p0d-gq540-actual-rc31-overlay.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-rc31-single-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch immutable official RC companion31 actual Place and author receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          run-id: 43852865328
+          github-token: ${{ github.token }}
+          repository: kk051780/toy-wars-factory
+          path: _official_rc31
+      - name: Source-exact reconstruct real original 31 author Lua sources
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_respawn_stealth_20261116/extract_official31_artifact.py \
+            --place _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --project _official_rc31/GQ31_ON.project.json \
+            --receipt _official_rc31/GQ31_ON_RECEIPT.json \
+            --out artifacts/gq540_original31
+      - name: Source-select one inherited Assassin cleanup on top of real RC31 Host
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --project artifacts/gq540_original31/BASE31_FROM_OFFICIAL_RC.project.json \
+            --receipt _official_rc31/GQ31_ON_RECEIPT.json \
+            --out artifacts/gq540_overlay31
+      - name: Download source-locked Rojo 7.7.1 for private rebuilt Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq540-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq540-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq540-rojo.zip") as z:
+              choices=[name for name in z.namelist() if name.endswith("rojo")]
+              assert len(choices)==1, choices
+              Path("/tmp/gq540-rojo").write_bytes(z.read(choices[0]))
+          PY
+          chmod +x /tmp/gq540-rojo
+      - name: Compile true 31-script private Roblox Studio Place via Rojo
+        run: |
+          set -euo pipefail
+          /tmp/gq540-rojo build artifacts/gq540_overlay31/GQ540_RC31_CANDIDATE.project.json \
+            -o artifacts/gq540_overlay31/EGGRUMBLE_GQ540_RC31_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --project artifacts/gq540_overlay31/GQ540_RC31_CANDIDATE.project.json \
+            --receipt artifacts/gq540_overlay31/GQ540_RC31_CANDIDATE_RECEIPT.json \
+            --out artifacts/gq540_overlay31 \
+            --place artifacts/gq540_overlay31/EGGRUMBLE_GQ540_RC31_PRIVATE.rbxlx
+          test "$(find artifacts/gq540_original31 -maxdepth 1 -type f -name '*.luau' | wc -l)" -eq 31
+          test "$(find artifacts/gq540_overlay31 -maxdepth 1 -type f -name '*.server.luau' | wc -l)" -eq 1
+          echo "GQ540_REAL_OFFICIAL_RC31_SINGLE_SOURCE_DELTA_AND_PRIVATE_PLACE_PASS"
+      - name: Preserve private Place and byte-exact original author receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ540-OFFICIAL-RC31-ASSASSIN-RESPAWN-PRIVATE-NO-CAS
+          retention-days: 7
+          path: |
+            artifacts/gq540_overlay31/EGGRUMBLE_GQ540_RC31_PRIVATE.rbxlx
+            artifacts/gq540_overlay31/GQ540_RC31_CANDIDATE_RECEIPT.json
+            artifacts/gq540_original31/SOURCE_ORIGIN.json
+          if-no-files-found: error
