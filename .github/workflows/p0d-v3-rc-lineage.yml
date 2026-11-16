@@ -172,6 +172,7 @@ jobs:
           assert receipt["status"] in (
               "SOURCE_READY_PRODUCTION_BLOCKED",
               "SOURCE_READY_PRODUCTION_NOT_VERIFIED",
+              "SOURCE_COMPOSED_AUTHOR_CI_PENDING",
           ), receipt
           assert not receipt["owner_accepted"]
           assert receipt["official_rc_integration"] == "NOT_INTEGRATED_OR_UNVERIFIED"
