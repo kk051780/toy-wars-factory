@@ -14,8 +14,8 @@ MEMBER_BEFORE = '  if pc and pc.alive and pc.id~=my.id and (session.mode~="TEAM"
 MEMBER_AFTER = ('  if pc and pc.alive and pc.id~=my.id\n'
                 '   and session.isCurrentHuman~=nil and session.isCurrentHuman(player)\n'
                 '   and (session.mode~="TEAM" or pc.team~=my.team) then')
-START = "  -- Bot-vs-human combat actually checks spatial distance and humanoid health.\n"
-END = "  -- Enemy moving AI heroes must fight one another in bot-filled matches, too.\n"
+START = " -- Bot-vs-human combat actually checks spatial distance and humanoid health.\n"
+END = " -- Enemy moving AI heroes must fight one another in bot-filled matches, too.\n"
 
 REPLACEMENT = """  -- Choose the nearest *eligible* human within the same current match.
   -- Enumeration order from Players:GetPlayers() is not combat priority.
