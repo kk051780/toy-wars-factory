@@ -1610,6 +1610,34 @@ jobs:
             --original-author "$SRC/tools/stage_private_v3.py" \
             --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
           echo GQ527_LATEST31_ORIGINAL_BOT_CASTLE_SIEGE_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS
+      - name: GQ646 independent PREP — lobby safe ground, neutral spawn, 31-source native Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ527_SIEGE_SELECTED31.project.json
+          OUT=$DIR/GQ646_LOBBY_SAFE_SELECTED31.project.json
+          PLACE=$DIR/GQ646_LOBBY_SAFE_REAL_ROJO31.rbxlx
+          PATCH=rc_fastlane/quality_lobby_safe_spawn_20261117/select_safe_lobby.py
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_lobby_safe_spawn_20261117 -p 'test_*.py'
+          python3 -B "$PATCH" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import importlib.util,subprocess,sys
+          from pathlib import Path
+          script="rc_fastlane/quality_lobby_safe_spawn_20261117/select_safe_lobby.py"
+          spec=importlib.util.spec_from_file_location("gq646",script)
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          _,sources,target=m.mapping(Path(sys.argv[1]))
+          assert len(sources)==31 and target[-1]=="EGGRUMBLE_LobbyCastleModesPreview"
+          for src in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(src)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ646_REAL_31_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$PATCH" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ646_PREP_CANDIDATE_ONLY_NOT_OFFICIAL_RC_NO_STUDIO_ENGINE_PASS
+
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
@@ -1952,6 +1980,9 @@ jobs:
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ646_LOBBY_SAFE_REAL_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ527_REAL_RULES_NATIVE41.log
             artifacts/gq515_official_select/GQ527_REAL_BOT_NATIVE16.log
             artifacts/gq515_official_select/GQ527_PURE_PACING_NATIVE37.log
