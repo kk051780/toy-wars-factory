@@ -142,9 +142,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 _quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_r13_current27_luau/luau
-          python3 _quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_r13_current27_luau/luau
-          python3 _quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq_r13_current27_luau/luau
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_r13_current27_luau/luau)
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_r13_current27_luau/luau)
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq_r13_current27_luau/luau)
       - name: Download SHA-pinned Rojo v7.7.1 build tool
         shell: bash
         run: |
