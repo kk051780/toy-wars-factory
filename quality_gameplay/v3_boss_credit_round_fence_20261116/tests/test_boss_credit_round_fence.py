@@ -34,7 +34,7 @@ class BossCreditFenceContract(unittest.TestCase):
     def test_script_does_not_replace_game_or_erase_current_match_on_boot(self):
         script = (DIR / "EGGRUMBLE_BossCreditRoundFence.server.luau").read_text()
         required = [
-            'RunService:IsStudio()', 'Players.PlayerAdded:Connect(bind)',
+            'Players.PlayerAdded:Connect(bind)',
             'Players.PlayerRemoving:Connect(unbind)', 'GetAttributeChangedSignal(MODE)',
             'Policy.shouldReset(previous, current)', 'player:SetAttribute(COUNTER, 0)',
             'if initial == nil and player.Parent == Players then',
@@ -42,7 +42,8 @@ class BossCreditFenceContract(unittest.TestCase):
         ]
         for fragment in required:
             self.assertIn(fragment, script)
-        for forbidden in ["RemoteEvent", "TakeDamage", "DataStore", "LoadCharacter", "Destroy()"]:
+        # Live ServerScripts must not silently no-op after the original game is upgraded.
+        for forbidden in ["RunService:IsStudio()", "Studio-only", "RemoteEvent", "TakeDamage", "DataStore", "LoadCharacter", "Destroy()"]:
             self.assertNotIn(forbidden, script)
 
     def test_shadow_rojo_project_reuses_author_21_sources_unchanged(self):
@@ -60,6 +61,7 @@ class BossCreditFenceContract(unittest.TestCase):
                 self.assertEqual(copied[key], {"$path": "../../handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/" + value["$path"]})
         self.assertEqual(new_server["EGGRUMBLE_BossCreditPolicy"], {"$path": "EGGRUMBLE_BossCreditPolicy.luau"})
         self.assertEqual(new_server["EGGRUMBLE_BossCreditRoundFence"], {"$path": "EGGRUMBLE_BossCreditRoundFence.server.luau"})
+        self.assertEqual(shadow["tree"]["ServerScriptService"]["$className"], "ServerScriptService")
         self.assertEqual(set(new_server) - set(old_server),
                          {"EGGRUMBLE_BossCreditPolicy", "EGGRUMBLE_BossCreditRoundFence"})
 
