@@ -608,7 +608,8 @@ jobs:
                   if name.startswith("$"):continue
                   route=prefix+(name,)
                   if "$path" in value:
-                      if route==bot:value["$path"]=newfile.name
+                      target=newfile if route==bot else source[route]
+                      value["$path"]=os.path.relpath(target,outdir).replace(os.sep,"/")
                   else:walk(value,route)
           walk(selected["tree"])
           output=outdir/"GQ555_SELECTED31.project.json"
