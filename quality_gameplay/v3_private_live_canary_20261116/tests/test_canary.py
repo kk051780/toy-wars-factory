@@ -43,6 +43,8 @@ class PrivateLiveCanaryTests(unittest.TestCase):
         host = (self.out / "sources" / "EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text()
         self.assertIn("if not PrivateGate.advertiseServerReady() then return end", host)
         self.assertNotIn("if not RunService:IsStudio() then return end", host)
+        self.assertEqual(host.count(compose.WORLD_WATCH),1)
+        self.assertIn('PrivateGate.watchWorld(folder)',host)
 
     def test_clients_wait_for_server_ready(self):
         for name in compose.ORIGINAL_CLIENT:
@@ -53,6 +55,9 @@ class PrivateLiveCanaryTests(unittest.TestCase):
         self.assertIn('game.PrivateServerId=="" then return false', gate)
         self.assertIn('GetAttribute(Gate.OPT_IN_ATTRIBUTE)==true', gate)
         self.assertIn("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,true)", gate)
+        self.assertIn("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)", gate)
+        self.assertIn("if world.Parent then world:Destroy() end",gate)
+        self.assertIn("while world.Parent and Gate.serverAllowed()",gate)
 
     def test_only_isolated_original_21_plus_gate_are_mapped(self):
         maps = compose.mapped_files(json.loads(compose.PROJECT.read_text()))
