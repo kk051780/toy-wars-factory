@@ -103,6 +103,7 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
    local h=character and character:FindFirstChildOfClass("Humanoid")
    if character and root and h and h.Health>0 and (root.Position-at).Magnitude<11
+    and os.clock()>=(player:GetAttribute("EGGRUMBLE_StealthUntil") or 0)
     and clearHeroStrike(actor,character,at+Vector3.new(0,1.5,0),root.Position+Vector3.new(0,1,0)) then
     lastHit[my.id]=now
     h:TakeDamage(BOT_HERO_DAMAGE)
@@ -169,7 +170,8 @@ function BotActors.start(session:any,Rules:any):()
           elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
-         local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)
+         local slow=if (actor:GetAttribute("EGGRUMBLE_SlowUntil") or 0)>now then .45 else 1
+         local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK*slow,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
