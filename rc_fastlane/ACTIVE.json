@@ -31,6 +31,25 @@
       "source_count": 21,
       "core": "S1 original egg/castle/trap/coach",
       "optional": []
+    },
+    "eggrumble_v3_31": {
+      "source_commit": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
+      "source_count": 31,
+      "core": "7 playable roles; castle+egg+field; current AI; one combat; one Swarm; neutral melee/pacing/target fairness/budget; items; lobby; ART and SCORE; current human membership",
+      "kind": "parallel_canonical_rc_companion_source_profile",
+      "source_manifest": "rc_fastlane/EGGRUMBLE_V3_ACTIVE.json",
+      "build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-31.yml",
+      "status": "RC_SOURCE_REGISTERED_WAIT_SAME_HEAD_BUILD",
+      "main_s1_profile_unmodified": true,
+      "game_authority_isolated_from_s1": true,
+      "expected_script_count": 31,
+      "release_place": "EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx",
+      "original_owners_selected_immutable": true,
+      "dead_caster_fence_530_enabled": true,
+      "rollback": "Switch off companion profile; S1 active_profile remains rich51. Gate-only OFF retains all other 30-source repair work.",
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "publish_authorized": false
     }
   },
   "required_fast_gates": [
@@ -149,5 +168,14 @@
       "real_android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
     }
+  },
+  "eggrumble_v3_companion": {
+    "registered_jst": "2026-11-16",
+    "status": "SOURCE_ON_RC_BRANCH_CI_PENDING",
+    "authoritative_build_ref": "rc/p0d-s1-kids-rc01",
+    "proof": "same-HEAD workflow success, Rojo 31/31 source and class exact, place SHA/size, rollback",
+    "source_selection": "immutable refs in rc_fastlane/EGGRUMBLE_V3_ACTIVE.json",
+    "last_quality_source_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/43847278518",
+    "studio_android_owner": "NOT_TESTED"
   }
 }
