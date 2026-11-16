@@ -1,0 +1,185 @@
+name: P0D GQ BUILDER temporary wall/bridge independent native and private 23-source
+on:
+  push:
+    branches:
+      - quality/gq-builder-real-wall-bridge-20261116
+    paths:
+      - 'quality_gameplay/v3_builder_construction_20261116/**'
+      - '.github/workflows/p0d-gq-builder-wall-bridge.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_builder_construction_20261116/**'
+      - '.github/workflows/p0d-gq-builder-wall-bridge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  native-source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate source contract, original author HEAD, and 23-source map
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          python3 -m unittest discover -s quality_gameplay/v3_builder_construction_20261116 -p 'test_*.py' -v
+          python3 quality_gameplay/v3_builder_construction_20261116/make_private_project.py
+      - name: Obtain immutable native Luau compiler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_builder_native_luau
+          persist-credentials: false
+      - name: Compile the exact 23 sources and run real native policy negatives
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_builder_native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_builder_native_luau -B /tmp/gq_builder_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_builder_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path('quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BUILDER_PRIVATE.project.json')
+          def mapped(n):
+              if isinstance(n,dict):
+                  if '$path' in n: yield (project.parent/n['$path']).resolve(strict=True)
+                  else:
+                      for k,v in n.items():
+                          if k!='$path': yield from mapped(v)
+          sources=list(mapped(json.loads(project.read_text())['tree']))
+          assert len(sources)==23,len(sources)
+          for f in sources:
+              subprocess.run(['/tmp/gq_builder_native/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+          print('BUILDER_NATIVE_23_OF_23_PASS')
+          PY
+          /tmp/gq_builder_native/luau quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BuilderPlacementPolicy.spec.luau
+          python3 quality_gameplay/v3_builder_construction_20261116/make_native_runtime_spec.py
+          /tmp/gq_builder_native/luau quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BuilderConstruction.runtime.generated.luau
+      - name: Install Rojo 7.7.1 with frozen release zip digest
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_builder_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_builder_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_builder_rojo.zip') as z:
+              candidates=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(candidates)==1
+              p=Path('/tmp/gq_builder_rojo')
+              p.write_bytes(z.read(candidates[0]));p.chmod(0o755)
+          PY
+          mkdir -p artifacts
+          /tmp/gq_builder_rojo build quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BUILDER_PRIVATE.project.json -o artifacts/EGGRUMBLE_GQ_BUILDER_PRIVATE_23.rbxlx
+      - name: Verify Rojo embedded byte/class exact and publish private evidence only
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BUILDER_PRIVATE.project.json')
+          place=Path('artifacts/EGGRUMBLE_GQ_BUILDER_PRIVATE_23.rbxlx')
+          expected={}
+          def scan(node):
+              for name,val in node.items():
+                  if name.startswith('$') or not isinstance(val,dict):continue
+                  if '$path' in val:
+                      p=(project.parent/val['$path']).resolve(strict=True)
+                      klass='Script' if p.name.endswith('.server.luau') else ('LocalScript' if p.name.endswith('.client.luau') else 'ModuleScript')
+                      assert name not in expected
+                      expected[name]=(p,klass)
+                  else:scan(val)
+          scan(json.loads(project.read_text())['tree'])
+          assert len(expected)==23
+          actual={}
+          for node in ET.fromstring(place.read_bytes()).iter('Item'):
+              klass=node.attrib.get('class')
+              if klass not in ('ModuleScript','Script','LocalScript'):continue
+              props=node.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              assert name is not None and src is not None
+              assert name not in actual,('duplicate',name)
+              actual[name]=(klass,src.replace('\r\n','\n'))
+          assert len(actual)==23,(len(actual),set(expected)-set(actual))
+          for name,(path,klass) in expected.items():
+              assert actual[name][0]==klass,('class',name)
+              assert actual[name][1]==path.read_text(encoding='utf-8').replace('\r\n','\n'),('source-drift',name)
+          receipt={'candidate_sha':os.environ['GITHUB_SHA'],
+           'author_unchanged_sha':'fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9',
+           'source_exact_count':23,'original_source_count':21,
+           'new_optional_module_count':2,'default_enabled':False,
+           'private_place_bytes':place.stat().st_size,
+           'private_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+           'formal_rc_adopted':False,'native_engine':'NOT_TESTED',
+           'studio':'NOT_TESTED','android':'NOT_TESTED','owner_accept':False}
+          Path('artifacts/GQ_BUILDER_PRIVATE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('PRIVATE_BUILDER_SOURCE_EXACT_23_OF_23',receipt['private_place_bytes'])
+          PY
+      - name: Store PRIVATE candidate and receipt (not official RC)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-BUILDER-PRIVATE23-NEVER-PUBLISH
+          path: |
+            artifacts/EGGRUMBLE_GQ_BUILDER_PRIVATE_23.rbxlx
+            artifacts/GQ_BUILDER_PRIVATE_RECEIPT.json
+          retention-days: 7
+
+      - name: Download pinned ACTUAL official RC31 built Place (no branch write)
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 43946089311
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          repository: kk051780/toy-wars-factory
+          github-token: ${{ github.token }}
+          path: artifacts/pinned_official31
+      - name: Verify original official31 unchanged and build independent Builder33
+        run: |
+          set -euo pipefail
+          mapfile -t places < <(find artifacts/pinned_official31 -type f -name 'EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx' | sort)
+          test "${#places[@]}" -eq 1
+          python3 quality_gameplay/v3_builder_construction_20261116/select_official31_builder33.py select \
+            --official-place "${places[0]}" --out artifacts/gq_builder33
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path('artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json')
+          nodes=json.loads(project.read_text())['tree']
+          files=[]
+          def walk(t):
+              for k,val in t.items():
+                  if k.startswith('$') or not isinstance(val,dict):continue
+                  if '$path' in val:files.append((project.parent/val['$path']).resolve(strict=True))
+                  else:walk(val)
+          walk(nodes)
+          assert len(files)==33,len(files)
+          for path in files:
+              subprocess.run(['/tmp/gq_builder_native/luau-compile','--text',str(path)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print('GQ522_ACTUAL_OFFICIAL31_PLUS_BUILDER33_NATIVE_33_OF_33_PASS')
+          PY
+          /tmp/gq_builder_rojo build artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json \
+            -o artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+          python3 quality_gameplay/v3_builder_construction_20261116/select_official31_builder33.py verify \
+            --project artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json \
+            --rojo artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+      - name: Upload PRIVATE official31-derived Builder33 (NEVER production RC)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ522-ORIGINAL-RC31-PLUS-BUILDER33-PRIVATE
+          path: |
+            artifacts/gq_builder33/GQ522_REAL31_TO33_RECEIPT.json
+            artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+            artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json
+            artifacts/gq_builder33/source33/
+          retention-days: 7
