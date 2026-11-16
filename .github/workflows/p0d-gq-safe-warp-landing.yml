@@ -30,6 +30,9 @@ jobs:
           python3 -B -m unittest discover -v -s quality_gameplay/v3_safe_warp_landing_20261116/tests
           mkdir -p artifacts
           python3 quality_gameplay/v3_safe_warp_landing_20261116/compose_private21.py prepare --out artifacts/PRIVATE21
+          python3 quality_gameplay/v3_safe_warp_landing_20261116/make_native_warp_harness.py \
+            --patched artifacts/PRIVATE21/EGGRUMBLE_SevenRoleCombat.luau \
+            --out artifacts/GQ_SAFE_WARP_NATIVE.spec.luau
       - name: Check original author 8-domain behavior source contracts
         shell: bash
         run: |
@@ -48,7 +51,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _native_luau -B /tmp/gq_warp_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq_warp_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq_warp_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           n=0
           for file in artifacts/PRIVATE21/*.luau; do
             /tmp/gq_warp_luau/luau-compile --text "$file" > /dev/null
@@ -56,6 +59,9 @@ jobs:
           done
           test "$n" -eq 21
           echo "GQ_SAFE_WARP_NATIVE_LUAU_COMPILE_PASS_21"
+          /tmp/gq_warp_luau/luau-compile --text artifacts/GQ_SAFE_WARP_NATIVE.spec.luau > /dev/null
+          /tmp/gq_warp_luau/luau artifacts/GQ_SAFE_WARP_NATIVE.spec.luau | tee artifacts/GQ_SAFE_WARP_NATIVE.log
+          grep -q GQ_SAFE_WARP_ORIGINAL_PATCHED_LUAU_11_SCENARIOS_PASS artifacts/GQ_SAFE_WARP_NATIVE.log
       - name: Pinned original Rojo builds actual private21 Place
         shell: bash
         run: |
@@ -82,5 +88,6 @@ jobs:
           path: |
             artifacts/GQ_SAFE_WARP_PRIVATE21_NOT_RC.rbxlx
             artifacts/PRIVATE21/SOURCE_LOCK.json
+            artifacts/GQ_SAFE_WARP_NATIVE.log
           if-no-files-found: error
           retention-days: 7
