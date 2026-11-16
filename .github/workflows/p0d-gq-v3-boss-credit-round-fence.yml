@@ -18,13 +18,19 @@ jobs:
       - uses: actions/checkout@v4
       - name: Confirm exact original author + 23-source wiring + source safety
         run: python3 -m unittest discover -s quality_gameplay/v3_boss_credit_round_fence_20261116/tests -p 'test_*.py' -v
-      - name: Build public Luau CLI for real VM and compile
+      - name: Checkout immutable original-author-compatible Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau_fixed
+          persist-credentials: false
+      - name: Build immutable Luau CLI for real VM and compile
         run: |
           set -euo pipefail
-          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-v3-luau
-          cmake -S /tmp/gq-v3-luau -B /tmp/gq-v3-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          test "$(git -C _gq_luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau_fixed -B /tmp/gq-v3-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
           cmake --build /tmp/gq-v3-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
-          git -C /tmp/gq-v3-luau rev-parse HEAD
       - name: Native Luau syntax and 13 real VM boundary cases
         run: |
           set -euo pipefail
@@ -34,6 +40,9 @@ jobs:
           python3 "$ROOT/make_native_harness.py" /tmp/boss_credit_fence_native.luau
           /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_fence_native.luau >/dev/null
           /tmp/gq-v3-luau/build/luau /tmp/boss_credit_fence_native.luau
+          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_actual_observer.luau
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_actual_observer.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_actual_observer.luau
       - name: Acquire checksum-pinned Rojo 7.7.1 and build real unpublished 23-source Place
         run: |
           set -euo pipefail
@@ -62,5 +71,5 @@ jobs:
           retention-days: 3
       - name: Evidence boundary
         run: |
-          echo 'NATIVE_LUAU_POLICY+SOURCE_CONTRACT: evaluated'
+          echo 'PINNED_LUAU_POLICY_13+ACTUAL_SERVER_OBSERVER_18+SOURCE_CONTRACT: evaluated'
           echo 'ACTUAL_ROBLOX_STUDIO+ANDROID+OFFICIAL_RC+OWNER: NOT_TESTED'
