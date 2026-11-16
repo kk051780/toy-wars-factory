@@ -23,6 +23,9 @@ end
 vecMeta.__sub=function(a,b)
  return setmetatable({x=a.x-b.x,y=a.y-b.y,z=a.z-b.z},vecMeta)
 end
+vecMeta.__add=function(a,b)
+ return setmetatable({x=a.x+b.x,y=a.y+b.y,z=a.z+b.z},vecMeta)
+end
 local Vector3={}
 function Vector3.new(x,y,z) return setmetatable({x=x,y=y,z=z},vecMeta) end
 local position=Vector3.new(2,0,0)
