@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          ref: 81088f99b2ea60bbffc0eaa860c46338203f0808
           path: _v3_quality
           persist-credentials: false
       - name: Read original ART author #485
@@ -58,7 +58,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _v3_objective rev-parse HEAD)" = fbea37b356d9552ffbc3f08db98b49e521548524
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
-          test "$(git -C _v3_quality rev-parse HEAD)" = 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          test "$(git -C _v3_quality rev-parse HEAD)" = 81088f99b2ea60bbffc0eaa860c46338203f0808
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
       - name: Run 26-source preservation and local client safety negatives
@@ -103,7 +103,7 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _luau_fixed
           persist-credentials: false
-      - name: Compile all 27 scripts in actual native Luau
+      - name: Compile all 28 scripts in actual native Luau
         run: |
           set -euo pipefail
           test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
@@ -144,7 +144,7 @@ jobs:
               f.write_bytes(z.read(names[0]));f.chmod(0o755)
           PY
           /tmp/gq27_rojo build artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO28.project.json -o artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO28_PRIVATE.rbxlx
-      - name: Independent 27/27 exact source and script class readback
+      - name: Independent 28/28 exact source and script class readback
         run: |
           set -euo pipefail
           python3 - <<'PY'
@@ -189,7 +189,7 @@ jobs:
           Path('artifacts/GQ_OBJECTIVE_AUDIO_28_RECEIPT.json').write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+'\n')
           print('GQ_AUTHOR_ART_SCORE_OBJECTIVE_AUDIO_28_SOURCE_EXACT_PASS',provenance['place_bytes'],provenance['place_sha256'])
           PY
-      - name: Upload unpublished 27-script candidate and source receipts
+      - name: Upload unpublished 28-script candidate and source receipts
         if: success()
         uses: actions/upload-artifact@v4
         with:
