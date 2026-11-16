@@ -736,7 +736,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -752,7 +752,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -787,7 +787,12 @@ jobs:
           assert m["feature_flags"]["CASTLE_EGG_BOARD_DISTANCE_547"] is True
           gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
           assert gq547["rojo_exact"]=="31/31" and gq547["unchanged_other_scripts"]==30
-          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq538=json.loads(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_text())
+          assert gq538["rojo_source_class_exact"]=="31/31" and gq538["other_30_sources_byte_exact"]
+          assert gq538["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["result_retry538"]=="d56262dbe8309cf606877fe39a44cde7dda0d9b5"
+          assert m["feature_flags"]["RESULT_GUI_BOUNDED_RETRY_538"] is True
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
@@ -816,6 +821,9 @@ jobs:
             "gq547_off_restores_previous_536_host_exact":True,
             "gq547_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_555_bot_only_30_preserved":True,
+            "original_author_538_one_result_inline_selected":True,
+            "original_538_other_30_sources_unchanged":True,
+            "original_538_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_536_single_botpathrouter_source_selected":True,
             "other_30_current_original_author_source_exact_after_536":True,
             "selected_536_router_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_bytes()).hexdigest(),
@@ -854,6 +862,10 @@ jobs:
             artifacts/gq547_official_select/GQ547_SELECTED31.project.json
             artifacts/gq547_official_select/GQ547_SOURCE_RECEIPT.json
             artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ538_SELECTED31_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON_RECEIPT.json
