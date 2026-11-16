@@ -53,7 +53,7 @@ class RoundReplayContract(unittest.TestCase):
         self.assertIn("task.delay(1,function()",REPLAY)
         self.assertIn('p:GetAttribute("EGGRUMBLE_QueuedMode")~=nil',REPLAY)
         self.assertIn("if alive and alive.Health>0 then return end",REPLAY)
-        self.assertIn("RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))",LOBBY)
+        self.assertIn("RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5),session.walkBaseline[tostring(player.UserId)])",LOBBY)
         self.assertIn('p:SetAttribute("EGGRUMBLE_QueuedMode",nil)',REPLAY)
         self.assertIn('p:SetAttribute("EGGRUMBLE_Eliminated",nil)',REPLAY)
         self.assertIn('p:SetAttribute("EGGRUMBLE_NeutralKOs",0)',REPLAY)
@@ -109,6 +109,20 @@ class RoundReplayContract(unittest.TestCase):
         n=LOBBY.index(arrive)
         self.assertIn("SevenRoleCombat.equip(session,p,role)",LOBBY[n:n+130])
         self.assertNotIn("RemoteEvent",REPLAY)
+
+    def test_previous_match_item_shield_dash_and_debuff_do_not_transfer(self):
+        self.assertIn("function Replay.captureWalkBaseline(",REPLAY)
+        self.assertIn("session.walkBaseline[tostring(p.UserId)]=RoundReplay.captureWalkBaseline(p)",LOBBY)
+        self.assertIn("walkBaseline={}",LOBBY)
+        self.assertIn('ch:FindFirstChild("EGGRUMBLE_ItemShield")',REPLAY)
+        self.assertIn('shield:IsA("ForceField")',REPLAY)
+        self.assertIn("shield:Destroy()",REPLAY)
+        self.assertIn("hum.WalkSpeed=original",REPLAY)
+        self.assertIn('hum:SetAttribute("EGGRUMBLE_OriginalWalkSpeed",nil)',REPLAY)
+        self.assertIn('hum:SetAttribute("EGGRUMBLE_SlowExpiry",nil)',REPLAY)
+        self.assertIn('hum:SetAttribute("EGGRUMBLE_MarkedUntil",nil)',REPLAY)
+        self.assertIn("baseWalkSpeed<=32",REPLAY)
+        self.assertNotIn("MarketplaceService",REPLAY)
 
     def test_single_rojo_game_host_and_no_remote_or_stores(self):
         scripts=PROJECT["tree"]["ServerScriptService"]

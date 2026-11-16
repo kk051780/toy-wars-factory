@@ -54,11 +54,15 @@ class ExistingLanesIntegration(unittest.TestCase):
         self.assertIn('if session.mode=="TEAM" then -620 else 620',INTAKE)
         self.assertIn('origin+Vector3.new(xCenter+site.x,1.8,site.z)',INTAKE)
         self.assertIn('local consumed:{[string]:boolean}={}',ITEMS)
-        self.assertIn('if consumed[id] or not part.Parent or not canUse(player,session) then return end',ITEMS)
+        self.assertIn('if consumed[id] or not part.Parent or not part.CanQuery or not canUse(player,session) then return end',ITEMS)
         self.assertIn('consumed[id]=true;lastUse[key]=now',ITEMS)
         self.assertIn('castle.alive==true and session.rules.phase=="ACTIVE"',ITEMS)
         self.assertIn('if (root.Position-part.Position).Magnitude>10 then return end',ITEMS)
         self.assertIn('prompt.Enabled=false',ITEMS)
+        self.assertIn('local RESPAWN_SECONDS=35',ITEMS)
+        self.assertIn('if not matchActive() or not part.Parent then return end',ITEMS)
+        self.assertIn('part.Transparency=0;part.CanQuery=true;prompt.Enabled=true',ITEMS)
+        self.assertIn('session.itemStop=function()',ITEMS)
 
     def test_source_owned_code_not_doubled_or_running_standalones(self):
         server=PROJECT["tree"]["ServerScriptService"]

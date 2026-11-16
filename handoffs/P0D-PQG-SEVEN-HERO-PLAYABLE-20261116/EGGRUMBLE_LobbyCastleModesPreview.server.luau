@@ -137,7 +137,7 @@ local function startSession(mode:string)
  local session={
   mode=mode,roster=roster,rules=Rules.new(mode,roster,24),
   castleLocations={},castleModels={},world=Instance.new("Folder"),groundY=root.Y-3,
-  lifeConnections={},
+  lifeConnections={},walkBaseline={},
  }
  session.world.Name=mode.."_Arena";session.world.Parent=folder
  local worldX=mode=="TEAM" and -620 or 620
@@ -178,7 +178,7 @@ local function startSession(mode:string)
      joined[player.UserId]=nil
      SevenRoleCombat.clear(player)
      InteractionGuard.clear(player) -- avoid prompt cooldown state leaking across rounds
-     RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))
+     RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5),session.walkBaseline[tostring(player.UserId)])
     end
    end
   end
@@ -310,6 +310,8 @@ local function startSession(mode:string)
  end
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
+   -- Persist only for this one server-owned session; never trust client attributes.
+   session.walkBaseline[tostring(p.UserId)]=RoundReplay.captureWalkBaseline(p)
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
    local idx=table.find(humans,tostring(p.UserId))
    if rootPart and idx then rootPart.CFrame=CFrame.new(getCastlePoint(mode,idx)+Vector3.new(0,7,-45)) end
