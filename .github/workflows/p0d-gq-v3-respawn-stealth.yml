@@ -1,0 +1,22 @@
+name: P0D GQ V3 Respawn Stealth Source Contract
+on:
+  pull_request:
+    branches:
+      - quality/eggrumble-v3-spatial-bot-intake-20261116
+    paths:
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau"
+      - "quality_gameplay/v3_respawn_stealth_20261116/**"
+      - ".github/workflows/p0d-gq-v3-respawn-stealth.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Test exactly-one-host cleanup, epoch fence, bot hit and rollback
+        run: python3 -m unittest discover -s quality_gameplay/v3_respawn_stealth_20261116 -p 'test_*.py' -v
