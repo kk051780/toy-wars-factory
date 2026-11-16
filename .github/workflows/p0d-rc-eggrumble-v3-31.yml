@@ -64,6 +64,13 @@ jobs:
           ref: 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           path: _gq541_original_fallback
           persist-credentials: false
+      - name: Checkout original #537 castle deposit visual refresh (no new Host authority)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9e77a7f78147b68ce7d347131effb7475e6b74e2
+          path: _gq537_original
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -71,6 +78,8 @@ jobs:
           test "$(git -C _v3_member rev-parse HEAD)" = e78bff41e70564d0b26578e3c3a85f4698e6110e
           test "$(git -C _gq_member rev-parse HEAD)" = 6846e9d55d07f0204748bbb8f46eef08f46c1b04
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
+          test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
+          python3 rc_fastlane/tests/test_gq537_rc31_source_selection.py
           test "$(git -C _gq541_original_fallback rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
@@ -286,10 +295,52 @@ jobs:
           assert not receipt["formal_rc_write"] and not receipt["studio_android_verified"]
           print("GQ541_CANONICAL_ONE_SWARM_31_OF_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
           PY
+      - name: Select original #537 one-callback castle egg board refresh into existing #541 31-source
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq537_official_select
+          python3 rc_fastlane/select_gq537_original_castle_deposit.py \
+            --source-project artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --original-owner-host _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --original-author-537 _gq537_original/quality_gameplay/v3_castle_deposit_refresh_20261116/compose.py \
+            --out artifacts/gq537_official_select/GQ31_SELECTED_GQ537.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          mod=SourceFileLoader("gq537","rc_fastlane/select_gq537_original_castle_deposit.py").load_module()
+          project=Path("artifacts/gq537_official_select/GQ31_SELECTED_GQ537.project.json")
+          _,sources=mod.flatten(project)
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          assert "if ok then session.refresh() end" in sources[mod.HOST].read_text()
+          print("GQ537_CANONICAL_31_SELECTED_LUAU_COMPILE_PASS")
+          PY
+          python3 _gq537_original/quality_gameplay/v3_castle_deposit_refresh_20261116/native_callback_test.py \
+            --source artifacts/gq537_official_select/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --luau /tmp/gq530_all31_native/luau | tee artifacts/gq537_official_select/NATIVE_DEPOSIT_CALLBACK.log
+          grep -q GQ_DEPOSIT_REFRESH_ACTUAL_CALLBACK_NATIVE_7_7_PASS artifacts/gq537_official_select/NATIVE_DEPOSIT_CALLBACK.log
+          /tmp/gq530-all31-rojo build artifacts/gq537_official_select/GQ31_SELECTED_GQ537.project.json \
+            -o artifacts/gq537_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/select_gq537_original_castle_deposit.py \
+            --source-project artifacts/gq537_official_select/GQ31_SELECTED_GQ537.project.json \
+            --original-project artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --verify-place artifacts/gq537_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq537_official_select/GQ537_ROJO_SOURCE_EXACT_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          receipt=json.loads(Path("artifacts/gq537_official_select/GQ537_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert receipt["rojo_source_class_exact"]==31
+          assert receipt["other_original_sources_byte_exact"]==30
+          assert not receipt["studio_tested"]
+          print("GQ537_AUTHOR_ORIGINAL_HOST_CALLBACK_31_SOURCE_CLASS_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq537_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -305,11 +356,16 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq537_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
+          assert m["source_heads"]["castle_deposit_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          assert m["feature_flags"]["CASTLE_DEPOSIT_BOARD_REFRESH_537"] is True
+          gq537=json.loads(Path("artifacts/gq537_official_select/GQ537_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq537["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq537["rojo_source_class_exact"]==31 and gq537["other_original_sources_byte_exact"]==30
           details={
             "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
                       if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
@@ -323,6 +379,9 @@ jobs:
             "original_31_untouched_except_selected_neutral_swarm":30,
             "base_owner30_untouched_except_combat_before_541":29,
             "original_author_541_selected_into_one_swarm":True,
+            "original_author_537_selected_into_one_host":True,
+            "selected_537_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq537_official_select/GQ537_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "other_runtime_source_bytes_exact_after_537":30,
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
             "rollback_on_off_combat_bytes":160,
@@ -357,4 +416,8 @@ jobs:
             artifacts/gq541_official_select/GQ31_SELECTED.project.json
             artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json
             artifacts/gq541_official_select/GQ541_SELECTED_SOURCE_RECEIPT.json
+            artifacts/gq537_official_select/GQ31_SELECTED_GQ537.project.json
+            artifacts/gq537_official_select/GQ537_ROJO_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq537_official_select/GQ537_SELECTED_31_RECEIPT.json
+            artifacts/gq537_official_select/NATIVE_DEPOSIT_CALLBACK.log
           retention-days: 3
