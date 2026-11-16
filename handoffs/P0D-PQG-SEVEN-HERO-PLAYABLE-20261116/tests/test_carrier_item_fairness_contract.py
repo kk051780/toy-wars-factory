@@ -30,6 +30,16 @@ class CarrierItemFairness(unittest.TestCase):
         self.assertIn('task.delay(5,restoreSpeed)', SOURCE)
         self.assertIn('task.delay(4,clearShield)', SOURCE)
 
+    def test_old_round_dash_timer_cannot_clobber_new_round(self):
+        self.assertIn('local buffCharacter=player.Character', SOURCE)
+        self.assertIn('if not matchActive() or player.Character~=buffCharacter then return end', SOURCE)
+        self.assertLess(SOURCE.index('if not matchActive() or player.Character~=buffCharacter'),
+                        SOURCE.index('hum.WalkSpeed=previous'))
+        vm = (Path(__file__).resolve().parents[1] / 'tools/make_native_field_item_harness.py').read_text()
+        self.assertIn('retired.itemStop()', vm)
+        self.assertIn('runTo(now+3.25)', vm)
+        self.assertIn('retired round timer must not overwrite new round active DASH', vm)
+
     def test_v3_reuses_original_shared_server_los_guard(self):
         self.assertIn('script.Parent:FindFirstChild("EGGRUMBLE_InteractionGuard")', SOURCE)
         self.assertIn('session.mode=="TEAM" or session.mode=="BATTLE_ROYALE"', SOURCE)
