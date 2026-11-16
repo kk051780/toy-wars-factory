@@ -32,4 +32,13 @@ check(P.safeDistance(51))
 check(not P.safeDistance(50.9))
 check(not P.safeDistance(-1))
 check(not P.safeDistance(0/0))
+check(P.blocksPlacement(false,false,true)) -- body parts can be noncollidable
+check(P.blocksPlacement(true,false,true))
+check(P.blocksPlacement(true,false,false)) -- solid foreign wall
+check(P.blocksPlacement(true,false,false)) -- foreign same-name floor rejected upstream
+check(not P.blocksPlacement(false,false,false)) -- noncollidable decoration
+check(not P.blocksPlacement(true,true,false)) -- own floor
+check(P.blocksPlacement(nil,false,false)) -- fail closed on invalid CanCollide
+check(P.blocksPlacement(nil,false,true))
+check(not P.blocksPlacement(false,true,false))
 print("GQ_BUILDER_NATIVE_POLICY_PASS assertions="..tostring(n))
