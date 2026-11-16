@@ -35,6 +35,7 @@ class SpectateContract(unittest.TestCase):
         self.assertRegex(self.src, r'GetAttribute\("EGGRUMBLE_Eliminated"\)\s*~=\s*true')
         self.assertIn("if not active then return end", self.src)
         self.assertIn("gui.Enabled = false", self.src)
+        self.assertIn("camera.Focus = CFrame.new(focus)", self.src)
 
     def test_cleanup_and_camera_recovery(self):
         for required in ("restoreCamera()", "exitSpectate()", "getOwnArena()",
