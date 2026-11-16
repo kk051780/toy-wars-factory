@@ -181,9 +181,10 @@ local function decorateAI(model:Model)
  local parent=Instance.new("Folder")
  parent.Name="EGGRUMBLE_BotVisuals"
  parent.Parent=model
+ -- AI is moved by PivotTo; unanchored welded armor must follow the moving actor.
  -- Universal soldier armor: leave AI's actual combat role unchanged.
  local function g(name:string,shape:string,offset:CFrame,size:Vector3,color:Color3)
-  piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,true)
+  piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,false)
  end
  g("ChestV","Wedge",CFrame.new(0,.3,-.92)*CFrame.Angles(0,math.pi,0),Vector3.new(1.9,1.6,.55),primary)
  for _,side in ipairs({-1,1}) do
