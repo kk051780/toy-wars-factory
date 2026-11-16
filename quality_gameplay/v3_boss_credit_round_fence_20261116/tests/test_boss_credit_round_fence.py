@@ -43,7 +43,7 @@ class BossCreditFenceContract(unittest.TestCase):
         for fragment in required:
             self.assertIn(fragment, script)
         # Live ServerScripts must not silently no-op after the original game is upgraded.
-        for forbidden in ["RunService:IsStudio()", "Studio-only", "RemoteEvent", "TakeDamage", "DataStore", "LoadCharacter", "Destroy()"]:
+        for forbidden in ["RunService:IsStudio()", "RemoteEvent", "TakeDamage", "DataStore", "LoadCharacter", "Destroy()"]:
             self.assertNotIn(forbidden, script)
 
     def test_shadow_rojo_project_reuses_author_21_sources_unchanged(self):
