@@ -28,25 +28,28 @@
     "dot516": "8f0275692c54874f823d66748d470fb849607df5",
     "warp524": "f90875e14446ba86b1c668ba43efa37fbc74be20",
     "current_human535": "6846e9d55d07f0204748bbb8f46eef08f46c1b04",
-    "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec"
+    "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
+    "neutral_fallback541": "6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
     "HUMAN_MATCH_MEMBERSHIP_535": true,
     "HUMAN_BOT_MATCH_MEMBERSHIP_531": true,
     "NEUTRAL_MELEE_533": true,
-    "SHARED_NEUTRAL_BUDGET_528": true
+    "SHARED_NEUTRAL_BUDGET_528": true,
+    "NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541": true
   },
-  "native_gate": "31 source scripts compiler ON and OFF; actual 84 skill cases; 14 human member; neutral melee and shared budget native",
-  "rojo_gate": "Rojo 7.7.1 SHA-locked; embedded Script Source+Class exact 31/31 ON and OFF",
-  "reverse_gate": "DEAD_CASTER_FENCE_530 OFF must reverse exactly 160 bytes of single Combat and keep prior owners byte exact",
+  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation",
+  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31",
+  "reverse_gate": "Unselect #541 original neutral fallback to prior #533 Swarm byte-exact; previous #530 Combat 160-byte OFF rollback unchanged",
   "legacy_s1_profile": "rich51",
   "legacy_s1_unchanged": true,
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "publication_authorized": false,
-  "next_gate": "Official same-head RC branch CI success, artifact id / canonical .rbxlx byte size + SHA, then Studio/Android/OWNER",
-  "rollback": "Set enabled false and stop V3 companion workflow; older S1 active_profile remains rich51. DEAD_CASTER_FENCE_530 OFF build returns previous four-author behavior while preserving other V3 fixes",
-  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game."
+  "next_gate": "Authenticated #220 sole-writer nonforce CAS; official same-HEAD native31 and true selected Rojo31 artifact SHA+bytes; Studio TEAM/BR 1+15 AI, 2 clients, Android, art+fun and OWNER",
+  "rollback": "Disable source selector #541 and rebuild original #530 V3 companion31; original rich51 S1 active_profile unaffected. Retain #530 Combat OFF rollback separately. No main, publish or billing.",
+  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.",
+  "official_source_overlay_notes": "Original author #541 immutable composer selected into existing one neutral Swarm; 30/31 other V3 sources unchanged vs baseline original31. No new game authority, no script-count increase."
 }
