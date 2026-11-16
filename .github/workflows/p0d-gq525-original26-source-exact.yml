@@ -102,7 +102,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/gq525_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
-            --candidate artifacts --out /tmp/gq525_item_mode_native.luau
+            --candidate artifacts/gq525_source_selected_only --out /tmp/gq525_item_mode_native.luau
           /tmp/gq525_luau/luau-compile /tmp/gq525_item_mode_native.luau >/dev/null
           /tmp/gq525_luau/luau /tmp/gq525_item_mode_native.luau | tee artifacts/GQ525_ITEM_VM.log
           grep -q 'NATIVE_LUAU_ITEM_MODE_GUARD' artifacts/GQ525_ITEM_VM.log
