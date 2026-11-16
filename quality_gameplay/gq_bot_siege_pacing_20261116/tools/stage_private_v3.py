@@ -60,7 +60,9 @@ def stage(output: Path) -> dict:
             for old in [OLD_REQUIRE, OLD_GATE, OLD_DAMAGE]:
                 if text.count(old) != 1:
                     raise ValueError("author anchor drift: " + old)
-            text = (text.replace(OLD_REQUIRE, NEW_REQUIRE)\n                   .replace(OLD_GATE, NEW_GATE)\n                   .replace(OLD_DAMAGE, NEW_DAMAGE))
+            text = (text.replace(OLD_REQUIRE, NEW_REQUIRE)
+                   .replace(OLD_GATE, NEW_GATE)
+                   .replace(OLD_DAMAGE, NEW_DAMAGE))
             raw = text.encode("utf-8")
         (source_dir / name).write_bytes(raw)
         staged_hashes[name] = sha256(raw)
