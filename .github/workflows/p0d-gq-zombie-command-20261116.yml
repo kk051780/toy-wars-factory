@@ -1,0 +1,54 @@
+name: P0D GQ Zombie Commander unique server policy native QA
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_zombie_command_20261116/**'
+      - '.github/workflows/p0d-gq-zombie-command-20261116.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-native-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Compile actual new Luau and exercise native policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq-zombie-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-zombie-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for source in quality_gameplay/v3_zombie_command_20261116/*.luau; do
+            /tmp/gq-zombie-native/luau-compile --text "$source" >/dev/null
+          done
+          /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_command_native.luau
+      - name: Enforce isolated private source lane and forbid unauthorized RC writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('quality_gameplay/v3_zombie_command_20261116')
+          policy=(root/'EGGRUMBLE_ZombieOrderPolicy.luau').read_text()
+          adapter=(root/'EGGRUMBLE_ZombieSquadRuntime.luau').read_text()
+          assert 'function Policy.step' in policy
+          assert 'function Runtime.begin' in adapter
+          assert 'opts.hit' in adapter
+          assert 'RunService:IsServer()' in adapter
+          assert 'SetNetworkOwner(nil)' in adapter
+          assert 'function Runtime.stop' in adapter
+          assert 'Instance.new("RemoteEvent")' not in adapter
+          assert 'DataStoreService' not in adapter
+          assert 'Humanoid:TakeDamage' not in adapter
+          print('GQ_ZOMBIE_NO_DUPLICATE_DAMAGE_REMOTE_OR_STORE_PASS')
+          PY
