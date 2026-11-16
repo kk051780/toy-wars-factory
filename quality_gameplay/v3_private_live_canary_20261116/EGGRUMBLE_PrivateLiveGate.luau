@@ -29,6 +29,28 @@ function Gate.advertiseServerReady():boolean
  return true
 end
 
+
+-- When an isolated private test session has started, clearing the server-owned
+-- opt-in must also withdraw the client READY signal and remove the test arena.
+-- Never touches the production Game, Store, Remote, HP or scoring services.
+-- Source-only QA: Roblox live runtime lifecycle still requires Studio/Android tests.
+function Gate.watchWorld(world:Instance):boolean
+ if not RunService:IsServer() then return false end
+ if RunService:IsStudio() then return true end
+ if not Gate.serverAllowed() then
+  ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)
+  if world.Parent then world:Destroy() end
+  return false
+ end
+ task.spawn(function()
+  while world.Parent and Gate.serverAllowed() do task.wait(0.25) end
+  -- A cancelled PRIVATE server cannot keep showing a server READY lease.
+  ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)
+  if world.Parent then world:Destroy() end
+ end)
+ return true
+end
+
 function Gate.waitAllowed(seconds:number?):boolean
  if RunService:IsStudio() then return true end
  if RunService:IsServer() then return Gate.allowed() end
