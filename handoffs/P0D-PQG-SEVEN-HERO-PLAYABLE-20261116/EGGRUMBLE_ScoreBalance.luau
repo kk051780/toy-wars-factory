@@ -6,7 +6,7 @@
 local Results={} -- no Roblox Services: native-Luau executable as real math
 
 local SCORE={
- KO_CAP=1200, KO_RATE=6,
+ KO_CAP=1200, KO_STAGE1=100, KO_STAGE2=1000, KO_STAGE3=10000, KO_STOP=30000,
  EGG_STEAL_CAP=7, EGG_STEAL_RATE=170,
  EGG_DEPOSIT_CAP=8, EGG_DEPOSIT_RATE=120,
  CASTLE_CAP=3, CASTLE_RATE=440,
@@ -19,9 +19,21 @@ local function integer(value:any):number
  return math.floor(value)
 end
 
+-- Reward the first satisfying 100 KOs strongly, then keep real progress up to
+-- 30,000 KOs (100 / 1,000 / 10,000 / 30,000 milestones) without displacing eggs.
+-- Every KO milestone derives only from server-attributed actual Humanoid deaths.
+local function koPoints(realKOs:number):number
+ local k=math.min(SCORE.KO_STOP,realKOs)
+ local earned=math.min(k,100)*6
+  +math.max(0,math.min(k-100,900))*.3
+  +math.max(0,math.min(k-1000,9000))*.03
+  +math.max(0,k-10000)*.003
+ return math.min(SCORE.KO_CAP,math.floor(earned+0.0000001))
+end
+
 local function points(row:any):number
  -- Losing a castle does not erase earlier player accomplishments.
- return math.min(SCORE.KO_CAP,row.ko*SCORE.KO_RATE)
+ return koPoints(row.ko)
   +math.min(SCORE.EGG_STEAL_CAP,row.stolen)*SCORE.EGG_STEAL_RATE
   +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
   +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
