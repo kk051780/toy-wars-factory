@@ -9,3 +9,5 @@
 - **今後の取込ルール:** #220唯一ブランチwriterとして毎回最新HEADをfetch、非force compare-and-swap（Expected SHA一致を厳格化）、同一HEAD CIとPlace/ZIP実バイトを検証。前HEADに対応したCI結果を新HEAD合格とみなさない。新しい作者候補には源SHA・既存職/城/卵/ITEM/ART/SCORE影響・OFF戻しを照合。新規本線に重複のCombatやGameを増やさない。
 - **未実施/NO_GO:** Roblox StudioのTEAM/BR 2client・ソロ1+15AIで実動作確認、Android低性能15分、PC/Androidアート4.5/4.0、FUN最初3分、OWNER受入。CI成功は人間の面白さや公開承認を意味しない。
 - **発行・main/課金:** 未承認・未実施。企画67件の全件完了とは判定しない（旧31/67はS1履歴値）。
+
+- **2026-11-16 #551 RC候補（正式#547後）**：#547城/卵看板と#536移動、#555 AIを保持し、#551作者固定SHAから同一Hostの死亡通知ガードだけを追加。実Native7・全31 Native/Rojo・他30完全一致の同HEAD CI必須。正式CAS採用/Studio/Android/FUN/OWNERは未完了。
