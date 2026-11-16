@@ -29,14 +29,37 @@ NEW_RANGE = '''   and (otherRoot.Position-root.Position).Magnitude<=22
     otherRoot.Position+Vector3.new(0,1,0),sourceCharacter,char)) then
    h.Health=math.min(h.MaxHealth,h.Health+25)'''
 
+BOT_TAIL = '''  end
+ end
+end
+-- Status effects are real server damage / movement changes (not only colored VFX).'''
+BOT_HEAL = '''  end
+ end
+ -- Team support must also serve existing server-owned companion AI.
+ -- No extra healer, Remote, Game or score authority; keep BR strictly self-only.
+ if session.mode=="TEAM" then
+  for id,bot in pairs(session.botActors or {}) do
+   local teammate=session.rules.castles[id]
+   local botRoot=bot and bot.PrimaryPart
+   local botHum=bot and bot:FindFirstChildOfClass("Humanoid")
+   if teammate and teammate.alive and teammate.team==state.team
+    and bot and bot.Parent and botRoot and botHum and botHum.Health>0
+    and (botRoot.Position-root.Position).Magnitude<=22
+    and lineClear(root.Position+Vector3.new(0,1.5,0),
+     botRoot.Position+Vector3.new(0,1,0),sourceCharacter,bot) then
+    botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)
+   end
+  end
+ end
+end
+-- Status effects are real server damage / movement changes (not only colored VFX).'''
+
 def git_blob(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 def source_function(source: str, beginning: str, ending: str) -> str:
     assert source.count(beginning) == 1 and source.count(ending) == 1
-    return source.split(beginning, 1)[1].split(ending, 1)[0].join([]) if False else (
-        beginning + source.split(beginning, 1)[1].split(ending, 1)[0] + "\nend\n"
-    )
+    return beginning + source.split(beginning, 1)[1].split(ending, 1)[0] + "\nend\n"
 
 def patch(source: str) -> str:
     for old in (OLD_GUARD, OLD_RANGE):
@@ -44,9 +67,13 @@ def patch(source: str) -> str:
             raise AssertionError("author source drift; abort instead of applying fuzzy patch")
     if source.count("local function lineClear(") != 1:
         raise AssertionError("cannot reuse original LOS authority")
+    if source.count(BOT_TAIL) != 1:
+        raise AssertionError("author heal function tail drift; abort")
     changed = source.replace(OLD_GUARD, NEW_GUARD).replace(OLD_RANGE, NEW_RANGE)
+    changed = changed.replace(BOT_TAIL, BOT_HEAL)
     assert changed != source
     assert changed.count('h.Health=math.min(h.MaxHealth,h.Health+25)') == 1
+    assert changed.count('botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)') == 1
     # No damage, cooldown, target mode, neutral, castle, AI, item, lobby edits.
     assert changed.count("function HeroCombat.equip") == source.count("function HeroCombat.equip")
     return changed
@@ -87,8 +114,23 @@ local function characterOf(p)
 end
 local session={mode="TEAM",rules={castles={
  ["1"]={team="RED",alive=true},["2"]={team="RED",alive=true},
- ["3"]={team="BLUE",alive=true},["4"]={team="RED",alive=true}
+ ["3"]={team="BLUE",alive=true},["4"]={team="RED",alive=true},
+ ["AI_1"]={team="RED",alive=true},["AI_2"]={team="BLUE",alive=true},
+ ["AI_3"]={team="RED",alive=true},["AI_4"]={team="RED",alive=true}
 }}}
+local function mkbot(x,hp)
+ local bot={Parent=true,PrimaryPart={Position=v(x,0,0)},hum={Health=hp,MaxHealth=100}}
+ function bot:FindFirstChildOfClass(name)
+  assert(name=="Humanoid")
+  return self.hum
+ end
+ return bot
+end
+local goodBot=mkbot(8,50)
+local enemyBot=mkbot(6,50)
+local farBot=mkbot(28,50)
+local deadBot=mkbot(7,0)
+session.botActors={AI_1=goodBot,AI_2=enemyBot,AI_3=farBot,AI_4=deadBot}
 '''
     cases = r'''
 -- 1. Source heal and ally: a solid wall cannot be bypassed.
@@ -133,6 +175,41 @@ if FIXED then
  healAllies(session,source,source.root)
  assert(source.h.Health==55 and ally.h.Health==60,"stale actor must not heal")
 end
+-- 7. Existing teammate bots share the original MAGE heal in TEAM only.
+if FIXED then
+ source.Character={tag="source"}
+ source.h.Health=100;ally.h.Health=100
+ session.mode="TEAM"
+ blocked=true;goodBot.hum.Health=50;enemyBot.hum.Health=50
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==50,"blocked AI teammate must not heal")
+ blocked=false
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==75,"unblocked TEAM AI should receive exact +25")
+ assert(enemyBot.hum.Health==50,"enemy bot cannot receive opponent heal")
+ assert(farBot.hum.Health==50 and deadBot.hum.Health==0,
+  "out-of-range or dead AI bot healed")
+ -- 8. BR is always self-only, even if old TEAM bot state lingers.
+ session.mode="BATTLE_ROYALE"
+ goodBot.hum.Health=55
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==55,"BR may not heal TEAM bots")
+ -- 9. Eliminated / despawned team AI never benefits from MAGE support.
+ session.mode="TEAM"
+ session.rules.castles["AI_1"].alive=false
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==55,"fallen castle bot must not heal")
+ session.rules.castles["AI_1"].alive=true
+ goodBot.Parent=nil
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==55,"destroyed AI model must not heal")
+ goodBot.Parent=true
+ -- 10. HP caps apply to teammate AI as to human allies.
+ goodBot.hum.Health=95
+ healAllies(session,source,source.root)
+ assert(goodBot.hum.Health==100,"AI heal must cap at maximum")
+ print("MAGE_TEAM_BOT_HEAL_NATIVE_VM_CASES_PASS")
+end
 print("MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS",FIXED and "FIXED" or "ORIGINAL_BUG_REPRODUCED")
 '''
     header = f"local FIXED={'true' if fixed else 'false'}\nlocal EXPECTED_WALL_HEALTH={60 if fixed else 85}\n"
@@ -149,15 +226,16 @@ def main() -> None:
     before = raw.decode("utf-8")
     after = patch(before)
     diff = list(difflib.unified_diff(before.splitlines(), after.splitlines(), lineterm=""))
-    assert sum(line.startswith("+") and not line.startswith("+++") for line in diff) == 5, diff
-    assert sum(line.startswith("-") and not line.startswith("---") for line in diff) == 2, diff
+    added = sum(line.startswith("+") and not line.startswith("+++") for line in diff)
+    removed = sum(line.startswith("-") and not line.startswith("---") for line in diff)
+    assert added == 23 and removed == 2, (added, removed, diff)
     for path, text in ((args.patched, after),
                        (args.harness, harness(after, fixed=True)),
                        (args.original_harness, harness(before, fixed=False))):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
     print("OWNER_BLOB_PIN", SOURCE_BLOB)
-    print("MAGE_HEAL_MINIMAL_PATCH_PASS", "added=5", "deleted=2")
+    print("MAGE_HEAL_MINIMAL_PATCH_PASS", f"added={added}", f"deleted={removed}")
     print("ORIGINAL_AUTHOR_SCRIPT_UNMODIFIED", SOURCE)
 
 if __name__ == "__main__":
