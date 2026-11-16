@@ -1,9 +1,9 @@
 # GQ8 — EGGRUMBLE official RC31: lobby void / missing spawn
 
 ## Reproduced source evidence
-Official RC HEAD: ad2a1d885510966c5d946fdf97e0f44f07c15fb7. Same-HEAD official Actions run: 43955472445 SUCCESS. Artifact 14271996855.
+Official RC HEAD: 0aa30990a205e67400d31728e39d87e48c6b886d. Same-HEAD official Actions run: 43956786259 SUCCESS. Artifact 14270948701.
 
-Actual 31-source Place SHA256: d8ffd1bb2957056f7a0dc69b9d4cb8a6b52c0a4140c5a7971bf89dce86cddeca. Parsed official .rbxlx contains zero Part/SpawnLocation Instances under Workspace. Single server Host EGGRUMBLE_LobbyCastleModesPreview SHA256: 9fd1f9211ff8f99cecc1dff1c09ff66e61ea4575a19e6c7f440b6932f00ddc37. It uses an existing SpawnLocation or (0,4,0) and creates class/gate stands but no solid lobby floor or fallback SpawnLocation. This is a source-confirmed void-spawn risk consistent with OWNER "no lobby; dies immediately"; Studio causality is NOT TESTED.
+Actual 31-source Place SHA256: 1392bf09e31d16c3994c8b800982a8b378ec69c3063b1a963697ec785e28c2e9. Parsed official .rbxlx contains zero Part/SpawnLocation Instances under Workspace. Single server Host EGGRUMBLE_LobbyCastleModesPreview SHA256: 086d8125c2c2f76e7de3c13bb14f7519c36bec91502ff57ae9b1574cd321b846. It uses an existing SpawnLocation or (0,4,0) and creates class/gate stands but no solid lobby floor or fallback SpawnLocation. This is a source-confirmed void-spawn risk consistent with OWNER "no lobby; dies immediately"; Studio causality is NOT TESTED.
 
 ## Distinct source modification
 - One preexisting Host source only, all other 30 original scripts unchanged, 31/31 class/identity exact, no new Game/Remote/Store/Combat/SCORE/AI authority.
@@ -22,3 +22,5 @@ Rollback: remove the single exact Host inserted fragment. The original Host and 
 Studio Solo: first avatar lands on real floor; all 7 class stands and both portals reachable; wait/queue/cancel; match start; death/respawn at own castle; results return to lobby; reconnect; 2 clients; low-end Android 15 min; kid FUN first 3 min. Until confirmed: STUDIO_NOT_TESTED, ANDROID_NOT_TESTED, FUN_NO_GO, PUBLICATION_NOT_AUTHORIZED.
 
 Eight-domain cross gate: Characters / Field / Battle / Castle / Neutral / Items / Lobby / Balance preserved by 30-source exactness; lobby collision, transitions and gameplay must still be verified in actual Roblox engine.
+
+Latest official 0aa includes P0D-006 rare FIELD_4/5 eggs in the same Host; this patch inserts only before the existing board helper and leaves all rare egg code exact.
