@@ -1456,7 +1456,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ615_QUEUE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1472,7 +1472,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ615_QUEUE_TRUE_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1572,7 +1572,14 @@ jobs:
           assert beast618["source_count"]==31 and beast618["original_30_scripts_byte_identical"]
           assert beast618["off_previous_combat_exact"] and beast618["actual_rojo31_source_class"]=="31/31"
           assert beast618["exact_original_combat_sha256"]==gq582_v3["upgraded_combat_sha256"]
-          assert beast618["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert beast618["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq615=json.loads(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_text())
+          assert gq615["source_count"]==31 and gq615["all_other30_byte_exact"] and gq615["rollback_current_host_byte_exact"]
+          assert gq615["source_exact_rojo_verified"] and gq615["real_rojo_source_class_path"]=="31/31"
+          assert gq615["private_rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq615["feature_id"]=="GQ_V3_LOBBY_QUEUE_ETA_20261117"
+          assert m["feature_flags"]["LOBBY_QUEUE_ETA_615"] is True
+          assert m["source_heads"]["lobby_queue615"]=="849d82e399f342e5212b5dc16cba76b04c1d2c7a"
           assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
           assert m["source_heads"]["gq618_beast_escort"]=="131313d645d2a5a67abd117c2c3d0459ee46d210"
           assert guard611["original_blob"]=="ac51ce2077814c7509b8eaf6dafbd05b04a9a1fe"
@@ -1628,7 +1635,9 @@ jobs:
             "source_author_heads":m["source_heads"],
             "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq611_prompt_reach_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json").read_bytes()).hexdigest(),
-             "gq618_beast_real_server_humanoid_selected":True,
+             "gq615_queue_12s_original_author_selected":True,
+            "gq615_queue_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq618_beast_real_server_humanoid_selected":True,
              "gq618_existing_combat_other30_exact":True,
              "gq618_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
@@ -1751,6 +1760,10 @@ jobs:
             artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
             artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json
             artifacts/gq515_official_select/GQ611_PROMPT_REACH_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ615_QUEUE_CURRENT31.project.json
+            artifacts/gq515_official_select/GQ615_QUEUE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ615_CURRENT_QUEUE_NATIVE10.log
             artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
             artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
             artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
