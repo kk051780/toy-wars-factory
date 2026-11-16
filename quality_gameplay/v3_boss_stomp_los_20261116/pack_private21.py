@@ -76,7 +76,7 @@ def verify(place:Path,package:Path):
   if code is None:code=props.findtext("string[@name='Source']")
   assert code is not None,"script without source: "+name
   assert name not in observed,"duplicate script instance "+name
-  observed[name]=((code or "").replace("\\r\\n","\\n").encode("utf-8"),cls)
+  observed[name]=((code or "").replace(chr(13)+chr(10),chr(10)).encode("utf-8"),cls)
  expected=json.loads((package/"SOURCE_RECEIPT.json").read_text())
  for file in expected["sources"]:
   name=file.replace(".server.luau","").replace(".client.luau","").replace(".luau","")
