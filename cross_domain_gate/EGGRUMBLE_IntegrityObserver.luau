@@ -2,7 +2,7 @@
 -- PRIVATE / Studio-only. Read-only 7-domain runtime integrity observer.
 -- It never changes CastleMatchRules, damage, scores, eggs, items or player state.
 -- Integration is source-selective in private 27-script composer; NOT official RC.
-local Players=game:GetService("Players")
+local Players=if game then game:GetService("Players") else nil
 local Observer={}
 local ROLES={
  WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true,
@@ -12,7 +12,8 @@ local function append(list:{string},code:string)
  table.insert(list,code)
 end
 
-function Observer.inspect(session:any,rulesModule:any):any
+function Observer.inspect(session:any,rulesModule:any,playersOverride:any?):any
+ local playerService=playersOverride or Players
  local report={red={},yellow={},checked={
   character=false,field=false,battle=false,castle=false,neutral=false,item=false,lobby=false,
  }}
@@ -114,8 +115,8 @@ function Observer.inspect(session:any,rulesModule:any):any
  report.checked.lobby=true
  for _,entry in ipairs(session.roster) do
   if not entry.isAI then
-   local player=Players:GetPlayerByUserId(tonumber(entry.id) or -1)
-   if player and player.Parent==Players then
+   local player=playerService and playerService:GetPlayerByUserId(tonumber(entry.id) or -1)
+   if player and player.Parent==playerService then
     local role=player:GetAttribute("EGGRUMBLE_Role")
     if not ROLES[role] then append(report.yellow,"HUMAN_ROLE_NOT_ACKNOWLEDGED") end
    end
