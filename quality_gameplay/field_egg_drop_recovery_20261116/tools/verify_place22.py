@@ -53,6 +53,6 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--project",required=True,type=Path)
     parser.add_argument("--place",required=True,type=Path)
-    parser.add_argument("--expected-count",type=int,choices=(22,27),default=22)
+    parser.add_argument("--expected-count",type=int,choices=(22,27,29),default=22)
     a=parser.parse_args()
     verify(a.project,a.place,a.expected_count)
