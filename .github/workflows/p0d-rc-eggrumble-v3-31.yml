@@ -6,6 +6,12 @@ on:
       - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
+      - 'rc_fastlane/ACTIVE.json'
+      - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -58,7 +64,13 @@ jobs:
           test "$(git -C _v3_member rev-parse HEAD)" = e78bff41e70564d0b26578e3c3a85f4698e6110e
           test "$(git -C _gq_member rev-parse HEAD)" = 6846e9d55d07f0204748bbb8f46eef08f46c1b04
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
-          test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
+            echo "GQ_PREMERGE_TO_RC_VALIDATION"
+          else
+            test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
+            echo "GQ_OFFICIAL_RC_BRANCH_VALIDATION"
+          fi
           mkdir -p quality_gameplay
           test ! -e quality_gameplay/v3_dead_caster_fence_20261116
           ln -s "$(pwd)/_gq530_official_source/quality_gameplay/v3_dead_caster_fence_20261116" quality_gameplay/v3_dead_caster_fence_20261116
@@ -237,14 +249,18 @@ jobs:
           src=json.loads((base/"GQ31_ON_RECEIPT.json").read_text())
           off=json.loads((base/"GQ31_OFF_RECEIPT.json").read_text())
           place=base/"EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx"
-          assert os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"
+          assert (os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"
+                  or (os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
+                      and os.environ.get("GITHUB_BASE_REF")=="rc/p0d-s1-kids-rc01"))
           assert m["source_count"]==src["source_count"]==off["source_count"]==31
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
           assert place.read_bytes()==(base/"GQ31_ON_PRIVATE.rbxlx").read_bytes()
           details={
-            "status":"CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED",
+            "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
+                      if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
+                      else "CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
             "release_profile":"eggrumble_v3_31",
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
@@ -259,6 +275,7 @@ jobs:
             "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
             "private_qa_receipt_sha256":hashlib.sha256((base/"GQ31_ON_RECEIPT.json").read_bytes()).hexdigest(),
             "s1_active_profile_unchanged":True,
+            "official_rc_commit_verified":os.environ.get("GITHUB_EVENT_NAME")=="push",
             "real_studio_2client":"NOT_TESTED",
             "android_15min":"NOT_TESTED",
             "owner_acceptance":"NOT_TESTED",
