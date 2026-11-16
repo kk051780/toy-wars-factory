@@ -651,7 +651,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -667,7 +667,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -692,7 +692,12 @@ jobs:
           assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
-          assert gq555["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          gq538=json.loads(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_text())
+          assert gq538["rojo_source_class_exact"]=="31/31" and gq538["other_30_sources_byte_exact"]
+          assert gq538["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["result_retry538"]=="d56262dbe8309cf606877fe39a44cde7dda0d9b5"
+          assert m["feature_flags"]["RESULT_GUI_BOUNDED_RETRY_538"] is True
+          assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
@@ -717,6 +722,9 @@ jobs:
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
             "original_author_555_bot_only_30_preserved":True,
+            "original_author_538_one_result_inline_selected":True,
+            "original_538_other_30_sources_unchanged":True,
+            "original_538_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
@@ -772,6 +780,10 @@ jobs:
             artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
             artifacts/gq555_official_select/GQ555_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ538_SELECTED31_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
