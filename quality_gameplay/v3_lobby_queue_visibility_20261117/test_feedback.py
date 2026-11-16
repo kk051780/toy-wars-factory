@@ -94,8 +94,9 @@ class LobbyQueueFeedbackTests(unittest.TestCase):
 
     def test_duplicate_portal_prompt_rejected(self):
         with self.assertRaisesRegex(ValueError,"multiplicity"):
-            apply(self.source.replace('prompt(gateTeam,"参加する"',
-                                      'prompt(gateTeam,"参加する"\n'+'prompt(gateTeam,"参加する"',1))
+            apply(self.source.replace('prompt(gateTeam,"参加する","チーム戦（再操作で解除）"',
+                                      'prompt(gateTeam,"参加する","チーム戦（再操作で解除）"\n' +
+                                      'prompt(gateTeam,"参加する","チーム戦（再操作で解除）"',1))
 
     def test_missing_author_join_rejected(self):
         with self.assertRaisesRegex(ValueError,"multiplicity"):
