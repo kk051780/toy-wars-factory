@@ -109,8 +109,12 @@ def extract_forest(source:str):
     a=source.index(start)
     b=source.index(stop,a)+len("  end")
     chunk=source[a:b]
-    if chunk.count(OLD_FOREST)+chunk.count(NEW_FOREST)!=1:
+    if chunk.count(OLD_FOREST)!=1 or chunk.count(NEW_FOREST) not in (0,1):
         raise ValueError("RED: unexpected exact tree expression")
+    # NEW_FOREST contains OLD_FOREST as a prefix; count the old/new exact
+    # alternatives without double-counting that shared prefix.
+    if chunk.count(NEW_FOREST)==1 and chunk.count(OLD_FOREST)!=1:
+        raise ValueError("RED: duplicate forest expression")
     return chunk
 
 def extract_item_list(source:str):
