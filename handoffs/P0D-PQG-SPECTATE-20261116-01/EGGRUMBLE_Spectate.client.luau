@@ -25,11 +25,12 @@ gui.DisplayOrder = 12
 gui.Enabled = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
+local touchLayout = UserInputService.TouchEnabled
 local panel = Instance.new("Frame")
 panel.Name = "SpectateControls"
 panel.AnchorPoint = Vector2.new(1, 0)
 panel.Position = UDim2.new(1, -12, 0, 78)
-panel.Size = UDim2.fromOffset(204, 38)
+panel.Size = UDim2.fromOffset(if touchLayout then 252 else 204, if touchLayout then 56 else 38)
 panel.BackgroundColor3 = Color3.fromRGB(21, 27, 37)
 panel.BackgroundTransparency = .16
 panel.BorderSizePixel = 0
@@ -38,8 +39,8 @@ Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 8)
 
 local function control(text: string, x: number): TextButton
     local button = Instance.new("TextButton")
-    button.Size = UDim2.fromOffset(34, 30)
-    button.Position = UDim2.fromOffset(x, 4)
+    button.Size = UDim2.fromOffset(if touchLayout then 44 else 34, if touchLayout then 44 else 30)
+    button.Position = UDim2.fromOffset(x, if touchLayout then 6 else 4)
     button.Text = text
     button.TextScaled = true
     button.Font = Enum.Font.GothamBold
@@ -51,10 +52,10 @@ local function control(text: string, x: number): TextButton
     return button
 end
 local left = control("◀", 4)
-local right = control("▶", 166)
+local right = control("▶", if touchLayout then 204 else 166)
 local label = Instance.new("TextLabel")
-label.Position = UDim2.fromOffset(40, 3)
-label.Size = UDim2.fromOffset(124, 32)
+label.Position = UDim2.fromOffset(if touchLayout then 54 else 40, if touchLayout then 7 else 3)
+label.Size = UDim2.fromOffset(if touchLayout then 144 else 124, if touchLayout then 42 else 32)
 label.BackgroundTransparency = 1
 label.TextColor3 = Color3.fromRGB(243, 245, 249)
 label.Font = Enum.Font.GothamMedium
