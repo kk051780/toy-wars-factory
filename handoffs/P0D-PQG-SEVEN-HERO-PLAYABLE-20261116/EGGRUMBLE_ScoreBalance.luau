@@ -5,6 +5,7 @@
 -- Scores are deliberately capped PER category to prevent one grind from erasing the egg/castle objectives.
 -- A stolen egg earns *raid* points only on a subsequent home deposit without a drop.
 -- Field eggs are conservatively spent first; no invented per-egg provenance.
+-- TEAM castle-support points are server-event-derived, not imaginary siege hits.
 local Results={} -- no Roblox Services: native-Luau executable as real math
 
 local SCORE={
@@ -12,6 +13,7 @@ local SCORE={
  EGG_STEAL_CAP=7, EGG_STEAL_RATE=170,
  EGG_DEPOSIT_CAP=8, EGG_DEPOSIT_RATE=120,
  CASTLE_CAP=3, CASTLE_RATE=440,
+ TEAM_CASTLE_SUPPORT_CAP=3, TEAM_CASTLE_SUPPORT_RATE=90,
  SURVIVE=200, WIN=500,
 }
 Results.SCORE=SCORE
@@ -39,6 +41,7 @@ local function points(row:any):number
   +math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE
   +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
   +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
+  +math.min(SCORE.TEAM_CASTLE_SUPPORT_CAP,row.teamCastleSupport)*SCORE.TEAM_CASTLE_SUPPORT_RATE
   +(if row.alive then SCORE.SURVIVE else 0)
   +(if row.won then SCORE.WIN else 0)
 end
@@ -53,10 +56,11 @@ function Results.build(state:any,kills:any):any
    local row={id=tostring(id),team=c.team,alive=c.alive==true,
     isAI=c.isAI==true,ko=integer(kills and kills[id]),
     stolen=0,securedSteals=0,pendingSteals=0,pendingField=0,
-    deposited=0,castlesDestroyed=0,won=false,score=0}
+    deposited=0,castlesDestroyed=0,teamCastleSupport=0,won=false,score=0}
    rows[#rows+1]=row;byId[tostring(id)]=row
   end
  end
+ local fallenSoFar={} -- replay source-true event order; future deaths are not retroactive
  for _,event in ipairs(state.events) do
   local kind=event.type
   if kind=="EGG_TAKEN" then
@@ -89,9 +93,22 @@ function Results.build(state:any,kills:any):any
    if row then row.pendingSteals=0;row.pendingField=0 end
   elseif kind=="CASTLE_FALL" then
    local row=byId[tostring(event.attacker)]
-   if row then row.castlesDestroyed+=1 end
+   if row then
+    row.castlesDestroyed+=1
+    -- TEAM only: teammates whose personal castle still stood at this siege
+    -- earn small cooperative credit. Final-blow owner already earns 440.
+    -- This is NOT an invented direct hit, heal, or assist event.
+    if state.mode=="TEAM" and row.team~=nil then
+     for _,ally in ipairs(rows) do
+      if ally.id~=row.id and ally.team==row.team and not fallenSoFar[ally.id] then
+       ally.teamCastleSupport+=1
+      end
+     end
+    end
+   end
    local fallen=byId[tostring(event.owner)]
    if fallen then fallen.pendingSteals=0;fallen.pendingField=0 end
+   fallenSoFar[tostring(event.owner)]=true
   end
  end
  for _,row in ipairs(rows) do
@@ -104,6 +121,7 @@ function Results.build(state:any,kills:any):any
    math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE
    +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
    +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
+   +math.min(SCORE.TEAM_CASTLE_SUPPORT_CAP,row.teamCastleSupport)*SCORE.TEAM_CASTLE_SUPPORT_RATE
  end
  table.sort(rows,function(a,b)
   if a.score~=b.score then return a.score>b.score end
