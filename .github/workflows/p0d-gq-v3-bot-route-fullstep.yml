@@ -58,6 +58,25 @@ jobs:
           echo 'NATIVE SOURCE-GEOMETRY: owner old ray fails last stud; private overlay covers full step.'
           echo 'ACTUAL STUDIO/ANDROID/OWNER/FORMAL RC INTEGRATION=NOT TESTED.'
 
+      - name: Execute full original Router.navigate and verify no physical PivotTo through tail wall
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py \
+            --original /tmp/gq-route/original.luau \
+            --patched /tmp/gq-route/overlay.luau \
+            --outdir /tmp/gq-route
+          for variant in original fixed mutant; do
+            /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/navigate-$variant.spec.luau >/dev/null
+          done
+          /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-original.spec.luau
+          /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-fixed.spec.luau
+          if /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-mutant.spec.luau; then
+            echo 'RED: reverting full-step ray unexpectedly passed physical-move safety assertions'
+            exit 1
+          fi
+          echo 'GQ_FULL_ROUTER_NAVIGATE_POSITIVE_AND_UNSAFE_MUTANT_NEGATIVE_PASS'
+
   private26-source-place:
     runs-on: ubuntu-latest
     timeout-minutes: 18
