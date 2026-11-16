@@ -54,6 +54,9 @@ end
 function Tell.start(session:any):boolean
  assert(session and session.world and session.rules and session.roster, "server match session required")
  if session._carrierWorldTellStarted then return false end
+ -- Server-only optional RC rollback switch. false means do not start; nil keeps
+ -- existing preview behavior. Never derive this state from a client Remote.
+ if session.carrierWorldTellEnabled == false then return false end
  if session.rules.phase ~= "ACTIVE" or session.rules.winner ~= nil then return false end
  -- Author-owned V3 field part is the one physical arena identity. If missing,
  -- fail closed: never emit a guessed badge in the lobby or another mode.
@@ -63,7 +66,8 @@ function Tell.start(session:any):boolean
  local records:{[string]:any} = {}
  task.spawn(function()
   while session.world.Parent ~= nil and session.rules.phase == "ACTIVE"
-   and session.rules.winner == nil do
+   and session.rules.winner == nil
+   and session.carrierWorldTellEnabled ~= false do
    for _,entry in ipairs(session.roster) do
     local id = tostring(entry.id)
     local castle = session.rules.castles[id]
