@@ -162,8 +162,9 @@ local function startSession(mode:string)
  end
  sessions[mode]=session
  -- Clean up only this finished match; queues and matches for the other mode survive.
- session.closeRound=function()
-  if sessions[mode]~=session or session.rules.phase~="FINISHED" then return end
+ session.closeRound=function(abandoned:boolean?)
+  if sessions[mode]~=session or (not abandoned and session.rules.phase~="FINISHED") then return end
+  if abandoned then session.rules.phase="ABANDONED" end
   for _,connection in ipairs(session.lifeConnections) do connection:Disconnect() end
   for _,entry in ipairs(session.roster) do
    if not entry.isAI then
@@ -311,14 +312,24 @@ end
 
 local function joinQueue(mode:string,p:Player)
  if sessions[mode] then return end
- if joined[p.UserId] then return end
+ local previous=joined[p.UserId]
+ if previous then
+  -- Joining the same gate cancels; choosing the other switches mode while waiting.
+  -- Never remove a player from a live match.
+  if sessions[previous] then return end
+  if not RoundReplay.leaveWaitingQueue(previous,p,queues,joined,queueEpoch,sessions) then return end
+  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
+  if previous==mode then return end
+ end
  joined[p.UserId]=mode
  table.insert(queues[mode],p)
  p:SetAttribute("EGGRUMBLE_QueuedMode",mode)
  if #queues[mode]==1 then
   local expectedEpoch=queueEpoch[mode]
   task.delay(COUNTDOWN,function()
-   if queueEpoch[mode]==expectedEpoch then startSession(mode) end
+   if RoundReplay.canStartCountdown(mode,expectedEpoch,queues,queueEpoch,sessions) then
+    startSession(mode)
+   end
   end)
  end
  if #queues[mode]>=MODE_SEATS then startSession(mode) end
@@ -338,8 +349,8 @@ local gateTeam=block(folder,"TEAM_PORTAL",root+Vector3.new(-12,6,28),Vector3.new
 local gateBR=block(folder,"BATTLE_ROYALE_PORTAL",root+Vector3.new(12,6,28),Vector3.new(9,12,2),Color3.fromRGB(79,132,230))
 board(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北")
 board(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者")
-prompt(gateTeam,"参加する","チーム戦",function(p) joinQueue("TEAM",p) end)
-prompt(gateBR,"参加する","バトルロワイヤル",function(p) joinQueue("BATTLE_ROYALE",p) end)
+prompt(gateTeam,"参加する","チーム戦（再操作で解除）",function(p) joinQueue("TEAM",p) end)
+prompt(gateBR,"参加する","BR戦（再操作で解除）",function(p) joinQueue("BATTLE_ROYALE",p) end)
 for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
  local stand=block(folder,"DEFENSE_"..name,root+Vector3.new((i-3)*9,1,47),Vector3.new(5,3,5),Color3.fromRGB(149,164,121))
  board(stand,name.."\n出撃前の防衛選択")
@@ -352,12 +363,13 @@ for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
 end
 Players.PlayerRemoving:Connect(function(p)
  InteractionGuard.clear(p)
- local mode=joined[p.UserId];joined[p.UserId]=nil
+ local mode=joined[p.UserId]
  if mode and not sessions[mode] then
-  local q=queues[mode]
-  local idx=table.find(q,p)
-  if idx then table.remove(q,idx) end
+  -- Cancel countdown if the last queued human disconnects; the next entrant
+  -- must receive a fresh full COUNTDOWN rather than inherit the stale timer.
+  RoundReplay.leaveWaitingQueue(mode,p,queues,joined,queueEpoch,sessions)
  end
+ joined[p.UserId]=nil
  chosenDefense[p.UserId]=nil
  chosenRole[p.UserId]=nil
  SevenRoleCombat.clear(p)
@@ -366,8 +378,13 @@ Players.PlayerRemoving:Connect(function(p)
   local ch=p.Character
   local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
   scene.dropCarrierEggs(tostring(p.UserId),rootPart and rootPart.Position or scene.castleLocations[tostring(p.UserId)] or root)
-  -- Team match integrity: preserve an active owner's castle and assign AI to defend it.
-  if sessions[mode].takeover then sessions[mode].takeover(tostring(p.UserId)) end
+  -- If no human remains, retire the bot-only arena immediately instead of
+  -- trapping the next player behind an occupied session forever.
+  local abandoned=RoundReplay.abandonIfEmpty(scene,joined,function()
+   scene.closeRound(true)
+  end)
+  -- Preserve an existing match by transferring a disconnected castle to AI.
+  if not abandoned and scene.takeover then scene.takeover(tostring(p.UserId)) end
  end
 end)
 print("[EGGRUMBLE V3] Studio-only two mode gates; moving AI actors, shared horde and castle multi-egg combat; real platform matchmaking/production AI UNIMPLEMENTED")

@@ -8,6 +8,7 @@ local CombatBalance=require(script.Parent:WaitForChild("EGGRUMBLE_CombatBalance"
 local SkillFX=require(script.Parent:WaitForChild("EGGRUMBLE_SkillFX"))
 local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
 local WeaponSilhouettes=require(script.Parent:WaitForChild("EGGRUMBLE_WeaponSilhouettes"))
+local DivineMantle=require(script.Parent:WaitForChild("EGGRUMBLE_DivineMantle"))
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local HeroCombat={}
 local ORDER={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
@@ -21,6 +22,7 @@ local JOBS={
  ZOMBIE={name="呪術師",color=Color3.fromRGB(164,78,164),weapon="呪印杖",skills={"呪印波動","疫病霧","不死軍団"}},
 }
 local lastByPlayer:{[number]:{[string]:number}}={}
+local castSequence:{[number]:number}={}
 local function makeEffect(parent:Instance,at:Vector3,size:Vector3,color:Color3,lifetime:number):Part
  local p=Instance.new("Part")
  p.Name="ClassSkillVFX";p.Shape=Enum.PartType.Ball;p.Anchored=true
@@ -230,9 +232,14 @@ local function execute(session:any,p:Player,role:string,slot:string)
  local cd=spec.cooldown
  if now-(perPlayer[key] or -10000)<cd then return end
  perPlayer[key]=now
+ -- One atomic, server-confirmed cast signature for local R6/R15/AJU presentation.
+ -- No client request can authorize damage: tools, ownership and cooldown are above.
+ castSequence[p.UserId]=(castSequence[p.UserId] or 0)+1
+ p:SetAttribute("EGGRUMBLE_SkillCastSignature",
+  role..":"..slot..":"..tostring(castSequence[p.UserId]))
  local def=JOBS[role]
- local boost=if role=="WARRIOR" and now<(p:GetAttribute("EGGRUMBLE_KamiUntil") or 0) then 1.6
-  elseif role=="BEAST" and now<(p:GetAttribute("EGGRUMBLE_GiantFeedUntil") or 0) then 1.2 else 1
+ local boost=if role=="WARRIOR" and now<(char:GetAttribute("EGGRUMBLE_KamiUntil") or 0) then 1.6
+  elseif role=="BEAST" and now<(char:GetAttribute("EGGRUMBLE_GiantFeedUntil") or 0) then 1.2 else 1
  local function blast(distance:number?,radius:number?,damage:number?):number
   -- Delayed bursts never hit after death, castle elimination or a new character spawn.
   if not p.Parent or p.Character~=char or h.Health<=0
@@ -258,8 +265,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
     end)
    end
   else
-   p:SetAttribute("EGGRUMBLE_KamiUntil",now+6)
-   makeEffect(session.world,root.Position,Vector3.new(13,13,13),Color3.fromRGB(246,222,92),.9)
+   DivineMantle.activate(p,6)
    blast()
   end
  elseif role=="MAGE" then
@@ -307,7 +313,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
   if slot=="A" then blast()
   elseif slot=="B" then
    local giant=makeEffect(session.world,rootAdvance(root,11),Vector3.new(12,15,12),def.color,1.6)
-   giant.Name="BeastFeedGiant";p:SetAttribute("EGGRUMBLE_GiantFeedUntil",now+5);blast()
+   giant.Name="BeastFeedGiant";char:SetAttribute("EGGRUMBLE_GiantFeedUntil",now+5);blast()
   else
    for i=1,3 do
     local angle=i*math.pi*2/3
@@ -352,6 +358,8 @@ function HeroCombat.equip(session:any,p:Player,role:string):()
  if not backpack then return end
  local current=p.Character
  if not current then return end
+ DivineMantle.cancel(p)
+ current:SetAttribute("EGGRUMBLE_GiantFeedUntil",0)
  p:SetAttribute("EGGRUMBLE_Role",role)
  WeaponSilhouettes.attach(p,role)
  for _,container in ipairs({backpack,current}) do
@@ -377,6 +385,9 @@ end
 function HeroCombat.clear(p:Player)
  lastByPlayer[p.UserId]=nil
  ImpactFeedback.clear(p)
+ DivineMantle.cancel(p)
+ local c=p.Character
+ if c then c:SetAttribute("EGGRUMBLE_GiantFeedUntil",0) end
  WeaponSilhouettes.clear(p)
  for _,container in ipairs({p:FindFirstChildOfClass("Backpack"),p.Character}) do
   if container then
