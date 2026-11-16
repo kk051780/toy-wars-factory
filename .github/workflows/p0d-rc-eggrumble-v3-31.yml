@@ -355,7 +355,9 @@ jobs:
           assert src["combat_sha256"]!=off["combat_sha256"]
           assert place.read_bytes()==Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
-          assert gq541["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          previous_541_place=Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx")
+          assert gq541["place_sha256"]==hashlib.sha256(previous_541_place.read_bytes()).hexdigest()
+          assert previous_541_place.read_bytes()!=place.read_bytes()
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           gq540=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
