@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parents[1]
-ROOT = Path(__file__).resolve().parents[3]
+HERE = Path(__file__).resolve().parents[0]
+ROOT = Path(__file__).resolve().parents[2]
 AUTHOR = (ROOT / "_gq492_original" / "handoffs" /
           "P0D-PQG-SPECTATE-20261116-01" / "EGGRUMBLE_Spectate.client.luau")
 spec = importlib.util.spec_from_file_location("gq492_admission", HERE / "admit_spectator.py")
