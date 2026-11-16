@@ -71,7 +71,9 @@ jobs:
             test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
             echo "GQ_OFFICIAL_RC_BRANCH_VALIDATION"
           fi
-          mkdir -p quality_gameplay
+          mkdir -p quality_gameplay handoffs
+          test ! -e handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          ln -s "$(pwd)/_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116" handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
           test ! -e quality_gameplay/v3_dead_caster_fence_20261116
           ln -s "$(pwd)/_gq530_official_source/quality_gameplay/v3_dead_caster_fence_20261116" quality_gameplay/v3_dead_caster_fence_20261116
           ln -s "$(pwd)/_gq_pvp/quality_gameplay/v3_human_stealth_pvp_20261116" quality_gameplay/v3_human_stealth_pvp_20261116
