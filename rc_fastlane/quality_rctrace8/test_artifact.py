@@ -22,6 +22,9 @@ def fixture():
             sources.setdefault(script,set()).update(tokens)
     for _,(script,tokens) in gq8.FEATURE_EVIDENCE.items():
         sources.setdefault(script,set()).update((tokens,) if isinstance(tokens,str) else tokens)
+    for owners in gq8.CROSS_SCRIPT_FEATURE_EVIDENCE.values():
+        for script,tokens in owners.items():
+            sources.setdefault(script,set()).update(tokens)
     for name in gq8.ROLE_CLASSES:
         sources.setdefault(name,set())
     i=0
@@ -38,6 +41,7 @@ def fixture():
         ET.SubElement(props,"ProtectedString",{"name":"Source"}).text="\n".join(sorted(tokens))
     raw=ET.tostring(root,encoding="utf-8")
     flags={f:True for f in gq8.FEATURE_EVIDENCE}
+    flags.update({f:True for f in gq8.CROSS_SCRIPT_FEATURE_EVIDENCE})
     heads={"original_game482":"f"*40,"carrier_stale_avatar551":"e"*40}
     manifest={"canonical_branch":"rc/p0d-s1-kids-rc01","profile":"eggrumble_v3_31",
               "source_count":31,"enabled":True,"source_heads":heads,
@@ -82,11 +86,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_26_known_flags(self):
+    def test_valid_covers_eight_domains_and_27_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],26)
+        self.assertEqual(v["verified_flag_count"],27)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -183,7 +187,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
-    def test_current26_manifest_anchors_enforce_all_seven_late_flags(self):
+    def test_current27_manifest_anchors_enforce_all_seven_late_flags(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
@@ -199,7 +203,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],26)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],27)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
@@ -221,21 +225,36 @@ class Gate(unittest.TestCase):
                 with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
                     gq8.verify(b,r,m,a,HEAD)
 
-    def test_weak_markers_alone_must_not_certify_real_gameplay_source(self):
-        # A comment flag / commander declaration / policy module is not the
-        # active guard or the actual command. Keep all 26 current RC flags.
-        weak_flags={
-            "FIELD_CARRIER_OFFARENA_DROP_515":
-                "DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,",
-            "ZOMBIE_COMMAND_SQUAD_582": "ZombieCommander.begin(p,",
-            "DEPOSIT_CURRENT_SESSION_586": "joined[p.UserId]~=session.mode",
-        }
-        for flag,critical in weak_flags.items():
+    def test_live_item525_must_exist_in_both_host_and_item_scripts(self):
+        flag="ITEM_CURRENT_SESSION_525"
+        owners=gq8.CROSS_SCRIPT_FEATURE_EVIDENCE[flag]
+        for script,anchors in owners.items():
+            for anchor in anchors:
+                with self.subTest(script=script,anchor=anchor):
+                    b,r,m,a=fixture()
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],27)
+                    b=drop_anchor(b,script,anchor)
+                    rehash(b,r)
+                    with self.assertRaisesRegex(gq8.RedGate,
+                        "FEATURE_FALSE_ON_"+flag):
+                        gq8.verify(b,r,m,a,HEAD)
+
+    def test_live_item525_cannot_certify_disabled_flag_or_only_one_side(self):
+        b,r,m,a=fixture()
+        m["feature_flags"]["ITEM_CURRENT_SESSION_525"]=False
+        with self.assertRaisesRegex(gq8.RedGate,
+            "FEATURE_FLAG_DISABLED_OR_UNKNOWN_ITEM_CURRENT_SESSION_525"):
+            gq8.verify(b,r,m,a,HEAD)
+
+    def test_weak_markers_cannot_certify_missing_real_guards(self):
+        for flag,script,anchor in (
+            ("FIELD_CARRIER_OFFARENA_DROP_515","EGGRUMBLE_LobbyCastleModesPreview","function Drop.recover("),
+            ("ZOMBIE_COMMAND_SQUAD_582","EGGRUMBLE_SevenRoleCombat","ZombieCommander.begin(p,"),
+            ("DEPOSIT_CURRENT_SESSION_586","EGGRUMBLE_LobbyCastleModesPreview","joined[p.UserId]~=session.mode"),
+        ):
             with self.subTest(flag=flag):
                 b,r,m,a=fixture()
-                script,anchors=gq8.FEATURE_EVIDENCE[flag]
-                self.assertIn(critical,anchors)
-                b=drop_anchor(b,script,critical)
+                b=drop_anchor(b,script,anchor)
                 rehash(b,r)
                 self.assertTrue(m["feature_flags"][flag])
                 with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):

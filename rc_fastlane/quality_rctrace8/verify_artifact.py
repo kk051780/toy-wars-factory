@@ -129,6 +129,21 @@ FEATURE_EVIDENCE = {
 
 }
 
+# The 27th official flag belongs to TWO existing server-authority scripts.
+# One-side-only presence must not be certified as an integrated item fence.
+CROSS_SCRIPT_FEATURE_EVIDENCE = {
+ "ITEM_CURRENT_SESSION_525": {
+  "EGGRUMBLE_LobbyCastleModesPreview": (
+   "session.canCollectWorldItem=function(actor:Player):boolean",
+   "sessions[mode]==session",
+   "joined[actor.UserId]==mode"),
+  "EGGRUMBLE_FieldItemPickups": (
+   "local authorize=session.canCollectWorldItem",
+   "pcall(authorize,player)",
+   "if not ok or allowed~=true then return false end"),
+ },
+}
+
 class RedGate(ValueError):
     pass
 
@@ -206,6 +221,13 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         require(bool(required),"FEATURE_SOURCE_EMPTY_"+flag)
         for anchor in required:
             require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+    for flag,owners in CROSS_SCRIPT_FEATURE_EVIDENCE.items():
+        require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
+        for script,anchors in owners.items():
+            require(script in scripts,"FEATURE_FALSE_ON_"+flag+"_"+script)
+            for anchor in anchors:
+                require(anchor in scripts[script][1],
+                        "FEATURE_FALSE_ON_"+flag+"_"+script)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
@@ -213,8 +235,8 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         "official_rc_head":expected_head,"studio_place_bytes":len(place),
         "studio_place_sha256":placehash,"script_count":len(scripts),
         "domains":by_domain,
-        "verified_flag_count":len(FEATURE_EVIDENCE),
-        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)),
+        "verified_flag_count":len(FEATURE_EVIDENCE)+len(CROSS_SCRIPT_FEATURE_EVIDENCE),
+        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)-set(CROSS_SCRIPT_FEATURE_EVIDENCE)),
         "legacy_s1_default":"rich51",
         "real_studio_2client":"NOT_TESTED",
         "android_15min":"NOT_TESTED","owner_fun":"NOT_TESTED",
@@ -239,7 +261,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_26_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_27_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
