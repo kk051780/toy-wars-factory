@@ -51,3 +51,63 @@ jobs:
           /tmp/p0d_egg_carrier_luau/luau EGGRUMBLE_CarrierBotTargeting.spec.luau | tee /tmp/p0d_carrier_native.log
           grep -q 'CARRIER_BOT_TARGET_NATIVE_PASS 24 checks' /tmp/p0d_carrier_native.log
           echo 'SOURCE_TEST_PASS; STUDIO/ANDROID/FUN/RC_NOT_TESTED'
+      - name: Pinned Rojo full 22-source-exact private V3 Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo_stealth.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo_stealth.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_rojo_stealth.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              binary=Path('/tmp/p0d_rojo_stealth')
+              binary.write_bytes(z.read(names[0]))
+              binary.chmod(0o755)
+          PY
+          /tmp/p0d_rojo_stealth build handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_CARRIER_STEALTH_PRIVATE.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          base=Path('handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          project=json.loads((base/'EGGRUMBLE_V3_STUDIO.project.json').read_text(encoding='utf-8'))['tree']
+          expected={}
+          for names in (project['ServerScriptService'],project['StarterPlayer']['StarterPlayerScripts']):
+              for name,data in names.items():
+                  if name=='$className':continue
+                  source=data['$path']
+                  kind='Script' if source.endswith('.server.luau') else ('LocalScript' if source.endswith('.client.luau') else 'ModuleScript')
+                  assert name not in expected,name
+                  expected[name]=(kind,source)
+          assert len(expected)==22,('unexpected V3 source count',len(expected))
+          built=Path('artifacts/EGGRUMBLE_V3_CARRIER_STEALTH_PRIVATE.rbxlx')
+          tree=ET.fromstring(built.read_bytes())
+          matched={}
+          for item in tree.iter('Item'):
+              prop=item.find('Properties')
+              if prop is None:continue
+              name=prop.findtext("string[@name='Name']")
+              if name not in expected:continue
+              assert name not in matched,('duplicate name',name)
+              content=prop.findtext("string[@name='Source']")
+              if content is None:content=prop.findtext("ProtectedString[@name='Source']")
+              assert content is not None,('missing source',name)
+              cls,source=expected[name]
+              assert item.attrib['class']==cls,(name,cls,item.attrib['class'])
+              assert content.replace('\\r\\n','\\n')==(base/source).read_text(encoding='utf-8').replace('\\r\\n','\\n'),('byte text mismatch',name)
+              matched[name]=True
+          assert set(matched)==set(expected),('missing/extra original sources',set(expected)-set(matched))
+          digest=hashlib.sha256(built.read_bytes()).hexdigest()
+          print('GQ_CARRIER_V3_22_OF_22_EXACT_ROJO_PASS',len(matched))
+          print('UNPUBLISHED_PRIVATE_PLACE_BYTES',built.stat().st_size,'SHA256',digest)
+          (Path('artifacts')/'SOURCE_ONLY_STATUS.txt').write_text('22/22 source identity, not gameplay or mobile evidence; official RC not integrated',encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-CARRIER-WIND-PRIVATE22-SOURCE-ONLY-NOT-RC
+          path: artifacts/
+          retention-days: 3
