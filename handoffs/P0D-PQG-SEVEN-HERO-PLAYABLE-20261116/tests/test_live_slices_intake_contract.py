@@ -35,12 +35,17 @@ class ExistingLanesIntegration(unittest.TestCase):
     def test_existing_real_item_author_called_once_not_rewritten(self):
         self.assertIn('local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))',HOST)
         self.assertIn('local RaidItemIntake=require(script.Parent:WaitForChild("EGGRUMBLE_RaidItemIntake"))',HOST)
-        self.assertEqual(HOST.count('session.fieldItemCount=RaidItemIntake.start(session,root,FieldItems)'),1)
+        self.assertEqual(HOST.count('return RaidItemIntake.start(session,root,FieldItems)'),1)
         self.assertLess(HOST.index("Rules.start(session.rules)"),
-                        HOST.index("session.fieldItemCount=RaidItemIntake.start("))
+                        HOST.index("return RaidItemIntake.start("))
+        self.assertIn('session.itemIntakeStatus="YELLOW_ITEM_OPTIONAL"',HOST)
+        self.assertIn('session.fieldItemCount=0',HOST)
+        self.assertIn('session.itemIntakeStatus="READY"',HOST)
         self.assertIn("authorItems.start(session,points)",INTAKE)
         self.assertIn('assert(session.itemIntakeStarted~=true',INTAKE)
-        self.assertIn('if not ok then session.itemIntakeStarted=false;error(err) end',INTAKE)
+        self.assertIn('if partial then partial:Destroy() end',INTAKE)
+        self.assertIn('session.itemIntakeStarted=false',INTAKE)
+        self.assertIn('error(err)',INTAKE)
         self.assertNotIn('function Items.start(',INTAKE)
         self.assertNotIn('Instance.new("ProximityPrompt")',INTAKE)
 
