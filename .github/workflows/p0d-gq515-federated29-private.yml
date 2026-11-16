@@ -7,6 +7,7 @@ on:
       - 'quality_gameplay/field_egg_drop_recovery_20261116/**'
       - '.github/workflows/p0d-gq515-federated29-private.yml'
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 jobs:
