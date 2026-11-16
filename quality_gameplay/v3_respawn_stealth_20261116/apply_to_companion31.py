@@ -23,6 +23,18 @@ NEW="""      if castle and castle.alive then
        SevenRoleCombat.equip(session,p,role)
       end"""
 
+# The existing official RC31 is authored from #482's longer physical-return
+# callback, whereas #484 has a condensed preview callback. Handle only these
+# two pinned, explicitly known hosts; fail closed for any other source.
+ALT_OLD="""       if rootPart and RoundReplay.returnToActiveCastle(session,p,character,home+Vector3.new(0,7,-45)) then
+        SevenRoleCombat.equip(session,p,role)
+       end"""
+ALT_NEW="""       if rootPart and RoundReplay.returnToActiveCastle(session,p,character,home+Vector3.new(0,7,-45)) then
+        -- Reset only the previous avatar's stealth, after valid physical return.
+        p:SetAttribute("EGGRUMBLE_StealthUntil",nil)
+        SevenRoleCombat.equip(session,p,role)
+       end"""
+
 def digest(data:bytes)->str:
     return hashlib.sha256(data).hexdigest()
 
@@ -51,25 +63,34 @@ def scan(project:Path):
     return doc,found
 
 def apply(host:str,bot:str)->str:
-    if host.count(OLD)!=1 or host.count(NEW)!=0:
+    # A valid Author31 may have either original #482 physical return or #484
+    # shortened callback. Never change any unrecognized Host implementation.
+    if host.count(NEW) or host.count(ALT_NEW):
+        raise ValueError("RED_ALREADY_PATCHED")
+    variant=(OLD,NEW) if host.count(OLD)==1 and ALT_OLD not in host else (
+      (ALT_OLD,ALT_NEW) if host.count(ALT_OLD)==1 and OLD not in host else None)
+    if variant is None:
         raise ValueError("RED_HOST_RESPAWN_ANCHOR_CHANGED_OR_ALREADY_PATCHED")
+    old,new=variant
     if host.count("session.isCurrentHuman=function")!=1 or bot.count("session.isCurrentHuman(player)")!=1:
         raise ValueError("RED_GQ531_CURRENT_MATCH_AUTHORITY_MISSING")
-    if 'p.CharacterAdded:Connect(function(character)' not in host:
-        raise ValueError("RED_NO_CHARACTERADDED")
-    start=host.index('p.CharacterAdded:Connect(function(character)')
-    block=host[start:start+1150]
-    needles=[
-      'p.Character==character',
-      'session.rules.phase=="ACTIVE"',
-      'local castle=session.rules.castles[tostring(p.UserId)]',
-      OLD,
-    ]
+    token='p.CharacterAdded:Connect(function(character)'
+    if host.count(token)!=1:
+        raise ValueError("RED_NOT_EXACTLY_ONE_CURRENT_CHARACTER_CALLBACK")
+    start=host.index(token)
+    block=host[start:start+1500]
+    needles=['p.Character==character','session.rules.phase=="ACTIVE"']
+    if old==ALT_OLD:
+        needles+=['if castle and castle.alive and home then',
+                  'if rootPart and RoundReplay.returnToActiveCastle(']
+    else:
+        needles+=['local castle=session.rules.castles[tostring(p.UserId)]']
+    needles+=[old]
     pos=[block.find(x) for x in needles]
     if min(pos)<0 or pos!=sorted(pos):
         raise ValueError("RED_NOT_CURRENT_AVATAR_ACTIVE_LIVE_CASTLE")
-    result=host.replace(OLD,NEW,1)
-    if result.replace(NEW,OLD,1)!=host:
+    result=host.replace(old,new,1)
+    if result.replace(new,old,1)!=host:
         raise ValueError("RED_ROLLBACK_NOT_EXACT")
     return result
 
