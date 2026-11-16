@@ -71,9 +71,16 @@ function Results.build(state:any,kills:any):any
   row.won=state.phase=="FINISHED" and state.winner~=nil and
    (if state.mode=="TEAM" then row.team==state.winner else row.id==tostring(state.winner))
   row.score=points(row)
+  -- Same total score: reward actual egg/castle objectives BEFORE raw KO volume.
+  -- The value is derived exclusively from original server-authoritative events.
+  row.objectiveScore=
+   math.min(SCORE.EGG_STEAL_CAP,row.stolen)*SCORE.EGG_STEAL_RATE
+   +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE
+   +math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE
  end
  table.sort(rows,function(a,b)
   if a.score~=b.score then return a.score>b.score end
+  if a.objectiveScore~=b.objectiveScore then return a.objectiveScore>b.objectiveScore end
   if a.ko~=b.ko then return a.ko>b.ko end
   return a.id<b.id
  end)
