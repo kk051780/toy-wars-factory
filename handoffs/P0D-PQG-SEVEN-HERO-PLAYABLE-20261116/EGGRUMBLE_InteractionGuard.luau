@@ -15,6 +15,7 @@ local COOLDOWN={
  ["旗の装飾変更"]=0.5,
  ["参加する"]=1.0,
  ["装備する"]=0.5,
+ ["職業選択"]=0.4,
 }
 local lastByPlayer:{[number]:{[string]:number}}={}
 local function positionValid(actor:Player,part:BasePart):boolean
