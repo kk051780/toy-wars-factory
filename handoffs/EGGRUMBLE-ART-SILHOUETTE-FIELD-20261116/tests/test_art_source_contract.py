@@ -262,6 +262,21 @@ class VisualLayersSourceContract(unittest.TestCase):
                     if name != "$className":
                         self.assertTrue((output.parent / node["$path"]).resolve().is_file())
 
+    def test_face_on_medallions_and_actual_rojo_artifact_delivery_contract(self):
+        # Cylinders have their long axis along local X; rotate about Y to face
+        # the castle/vault/portal viewer instead of showing their thin edge.
+        self.assertIn('CFrame.new(0,0,-.42)*CFrame.Angles(0,math.rad(90),0)', ENCOUNTERS)
+        self.assertIn('CFrame.new(0,6.9,-1.28)*CFrame.Angles(0,math.rad(90),0)', ENCOUNTERS)
+        workflow = (ROOT.parents[1] / ".github/workflows/p0d-eggrumble-art-a01-source.yml").read_text(encoding="utf-8")
+        self.assertIn('rojo build "$project" --output "$destination"', workflow)
+        self.assertIn('test -s "$destination"', workflow)
+        self.assertIn('art-private-builds/EGGRUMBLE_A01_PRIVATE_', workflow)
+        self.assertIn("actions/upload-artifact@v4", workflow)
+        self.assertIn("retention-days: 3", workflow)
+        self.assertNotIn("rojo plugin install", workflow)
+        self.assertNotIn("rojo serve", workflow)
+        self.assertNotIn("rojo publish", workflow)
+
     def test_dynamic_latest_author_studio_manifest_is_non_mutating(self):
         tool_path = ROOT / "tools" / "compose_current_v3_art.py"
         self.assertTrue(tool_path.exists())
