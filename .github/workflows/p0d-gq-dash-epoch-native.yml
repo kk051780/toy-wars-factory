@@ -1,0 +1,53 @@
+name: GQ unique V3 DASH epoch fence native
+on:
+  push:
+    branches: [quality/gq-v3-item-dash-epoch-fence-20261116-01]
+    paths:
+      - 'quality_gameplay/v3_item_dash_epoch_fence_20261116/**'
+      - '.github/workflows/p0d-gq-dash-epoch-native.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_item_dash_epoch_fence_20261116/**'
+      - '.github/workflows/p0d-gq-dash-epoch-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact author source, OFF rollback, ON generated ITEM
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_item_dash_epoch_fence_20261116
+          python3 -B -m unittest discover -s "$root/tests" -p 'test_compose_dash.py' -v
+          python3 "$root/compose_dash.py" --out /tmp/gq_item_off.luau
+          python3 "$root/compose_dash.py" --enabled --out /tmp/gq_item_on.luau
+          cmp -s /tmp/gq_item_off.luau handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Pinned native Luau compile and policy VM regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau -B /tmp/gq_dash_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_dash_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=quality_gameplay/v3_item_dash_epoch_fence_20261116
+          /tmp/gq_dash_luau/luau-compile "$root/EGGRUMBLE_DashLease.luau" >/dev/null
+          /tmp/gq_dash_luau/luau-compile "$root/tests/test_dash_lease.luau" >/dev/null
+          /tmp/gq_dash_luau/luau-compile /tmp/gq_item_on.luau >/dev/null
+          /tmp/gq_dash_luau/luau-compile /tmp/gq_item_off.luau >/dev/null
+          cd "$root/tests"
+          /tmp/gq_dash_luau/luau test_dash_lease.luau | tee /tmp/gq_dash_vm.log
+          grep -q GQ_ITEM_DASH_EPOCH_NATIVE_PASS /tmp/gq_dash_vm.log
+          echo "GQ_DASH_SOURCE_QA_PASS PRIVATE_ONLY CLAIM_NOT_GRANTED RC_NOT_CHANGED STUDIO_NOT_RUN"
