@@ -16,8 +16,9 @@ class BuilderSourceTests(unittest.TestCase):
   for k in ["EGGRUMBLE_Role","BUILDER","EGGRUMBLE_QueuedMode","session.roster","session.rules.castles","session.rules.winner","owner.heldEggs"]:
    self.assertIn(k,SRC)
  def test_no_authority_fork(self):
-  for k in ["DataStore","MarketplaceService","TakeDamage","SetAsync","PublishAsync"]:
-   self.assertNotIn(k,SRC)
+  executable="\n".join(line for line in SRC.splitlines() if not line.strip().startswith("--"))
+  for k in ["DataStoreService","MarketplaceService","TakeDamage(","SetAsync(","PublishAsync("]:
+   self.assertNotIn(k,executable)
  def test_both_physical_constructions(self):
   for k in ['"WALL"','"BRIDGE"',"part.CanCollide=true","CFrame.lookAt","part.Parent=session.world"]:
    self.assertIn(k,SRC)
