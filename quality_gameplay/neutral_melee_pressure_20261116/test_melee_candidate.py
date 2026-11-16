@@ -55,7 +55,7 @@ class NeutralMeleeSourceTests(unittest.TestCase):
             self.assertEqual(service["EGGRUMBLE_NeutralMeleePolicy"]["$path"],"EGGRUMBLE_NeutralMeleePolicy.luau")
             self.assertEqual((out/"EGGRUMBLE_NeutralMeleePolicy.luau").read_bytes(),
                 (HERE/"EGGRUMBLE_NeutralMeleePolicy.luau").read_bytes())
-            self.assertEqual(len(service),20)
+            self.assertEqual(len(service),21)  # includes $className; 20 real server scripts
             self.assertTrue((out/"EGGRUMBLE_SwarmCombat.luau").is_file())
 
 if __name__=="__main__":
