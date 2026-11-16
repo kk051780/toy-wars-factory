@@ -44,7 +44,7 @@ def main(project_path,place_path):
     for name,(key,relative) in mapped.items():
         data=(project_path.parent/relative).resolve(strict=True).read_text(encoding="utf-8").replace("\r\n","\n")
         actual_class,actual=place[name]
-        expect_class="LocalScript" if key[0]=="StarterPlayer" else ("Script" if name.endswith("Preview") else "ModuleScript")
+        expect_class="LocalScript" if key[0]=="StarterPlayer" else ("Script" if name in {"EGGRUMBLE_LobbyCastleModesPreview","EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_EncounterReadabilityArt","EGGRUMBLE_FlagshipFieldArt"} else "ModuleScript")
         assert actual_class==expect_class,(name,actual_class,expect_class)
         assert data==actual,("byte-different Luau Source",name)
         sha256[name]=hashlib.sha256(data.encode("utf-8")).hexdigest()

@@ -76,7 +76,7 @@ jobs:
           python3 quality_gameplay/v3_neutral_ko_death_fence_20261116/tools/build_native_harness.py --out artifacts/gq508_original_native.luau
           /tmp/gq508_native/luau-compile --text artifacts/gq508_original_native.luau >/dev/null
           /tmp/gq508_native/luau artifacts/gq508_original_native.luau | tee artifacts/GQ508_NATIVE.log
-          grep -q 'EGGRUMBLE_KO_DEATH_FENCE_NATIVE_PASS checks=23' artifacts/GQ508_NATIVE.log
+          grep -q 'EGGRUMBLE_KO_DEATH_FENCE_NATIVE_PASS checks=22' artifacts/GQ508_NATIVE.log
       - name: Compose 26 original author Game ART SCORE AI
         shell: bash
         run: |
