@@ -1849,7 +1849,7 @@ jobs:
           test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
           echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
       - name: Checkout original GQ492 spectator client immutable source, one new client only
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
@@ -1857,12 +1857,12 @@ jobs:
           path: _gq492_original
           persist-credentials: false
       - name: Reuse GQ492 original one LocalScript on current BEAST+ZOMBIE-GUARD 31; native32/true Rojo32
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
-          python3 -B -m unittest discover -v -s rc_fastlane/quality_spectate492_rc32 -p 'test_selection.py'
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_spectate492_rc32 -p 'test_*.py'
           original=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
           base=artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
           selected=artifacts/gq492_latest32/GQ492_SELECTED32.project.json
@@ -1883,8 +1883,22 @@ jobs:
           assert o["studio_only_original_source"] and o["formal_rc_adopted"] is False
           print("GQ492_MACHINE_SOURCE_LOCK_31_UNCHANGED_PLUS_ONE_STUDIO_PREVIEW_PASS")
           PY
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("rc_fastlane/quality_spectate492_rc32/RELEASE_PROFILE.json").read_text())
+          assert d["schema"]=="EGGRUMBLE_OPTIONAL_STUDIO_SPECTATOR32_PROFILE_V1"
+          assert d["canonical_runtime_script_count"]==31 and d["optional_preview_script_count"]==32
+          assert not d["enabled_by_default"] and not d["production_runtime_enabled"]
+          assert d["base"]=="artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json"
+          assert d["actual_roblox_publish"] is False
+          print("GQ492_STUDIO32_OPTIONAL_PROFILE_OFF_BY_DEFAULT_PASS")
+          PY
           python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py prepare \
             --base "$base" --source "$original" --out "$selected" --receipt "$receipt"
+          python3 -B rc_fastlane/quality_spectate492_rc32/verify_draw_spectator_bridge.py \
+            --base "$base" --original "$original" \
+            --out artifacts/gq492_latest32/GQ492_GQ499_DRAW_BRIDGE_RECEIPT.json
           python3 - "$selected" <<'PY'
           import importlib.util,subprocess,sys,json
           from pathlib import Path
@@ -1924,7 +1938,7 @@ jobs:
           print("GQ492_LATEST_RC31_CANONICAL_PLACE_PRESERVED_ALL31_PLUS_ONE_PASS")
           PY
       - name: Original GQ492 client actual native lifecycle and 3 source mutations
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
         shell: bash
         run: |
           set -euo pipefail
@@ -1946,15 +1960,17 @@ jobs:
           done
           echo "GQ492_LATEST32_REAL_CLIENT_LIFECYCLE_AND_MUTATIONS_PASS"
       - name: Upload GQ492 current31 plus one original spectator private PREP, not official RC
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
         uses: actions/upload-artifact@v4
         with:
-          name: GQ492-CURRENT-PRIVATE32-NOT-FORMAL-RC
+          name: GQ492-OPTIONAL-STUDIO32-PREVIEW-NOT-ACTIVE
           path: |
             artifacts/gq492_latest32/GQ492_SPECTATE32_PRIVATE.rbxlx
             artifacts/gq492_latest32/GQ492_SELECTED32.project.json
             artifacts/gq492_latest32/GQ492_RC32_PREP_RECEIPT.json
             artifacts/gq492_latest32/GQ492_REAL_SPECTATOR_NATIVE.log
+            artifacts/gq492_latest32/GQ492_GQ499_DRAW_BRIDGE_RECEIPT.json
+            rc_fastlane/quality_spectate492_rc32/RELEASE_PROFILE.json
           if-no-files-found: error
           retention-days: 3
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
