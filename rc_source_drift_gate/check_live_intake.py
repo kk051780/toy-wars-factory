@@ -273,6 +273,75 @@ def evaluate_active26(prs: dict, author_project: dict, author_blobs: dict,
     }
     return report
 
+
+# Effective source selection follows the SOURCE OWNER's actual current26
+# contract, not the old 16-game Rojo map or stale raw author-only files.
+# We inspect *only* runtime guards here; full byte/source provenance is
+# deliberately owned by the existing #491 lineage gate.
+ACTIVATION_OVERLAY_OWNER = {
+    "EGGRUMBLE_BotActors": "quality",
+    "EGGRUMBLE_MatchResultService": "score",
+}
+HOST_NAME = "EGGRUMBLE_LobbyCastleModesPreview"
+HOST_GUARD = "if not RunService:IsStudio() then return end"
+HOST_RAMP_ANCHOR = " -- Hollow, traversable standard castle shell:"
+
+
+def select_current26_runtime_sources(prs: dict, author_project: dict,
+                                     composer_text: str, read_pinned=github_file):
+    """Select the actual quality/score originals for the composed 26-source Place.
+
+    The host is a generated source with a castle ramp added *later* in the file.
+    Require the composer uses that exact later-anchor replacement and that the
+    executable Studio-only guard exists in the unaffected prefix. Do not invent
+    a generated host SHA, or describe author bytes as assembled Place bytes.
+    """
+    mapped = project_nodes(author_project)
+    missing = set(REQUIRED_RUNTIME_SOURCES) - set(mapped)
+    if missing:
+        raise ValueError("runtime_module_missing:" + ",".join(sorted(missing)))
+    required = ("def apply_ramp(", "return author_source.replace(end,ramp+",
+                "EGGRUMBLE_MatchResultService", "EGGRUMBLE_BotActors",
+                'server[name]=source_path(out,src)',
+                'server["EGGRUMBLE_MatchResultService"]=source_path(out,result)')
+    absent = [anchor for anchor in required if anchor not in composer_text]
+    if absent:
+        raise ValueError("current26_runtime_overlay_untrusted:" + ",".join(absent))
+    sources = {}
+    provenance = {}
+    for name in REQUIRED_RUNTIME_SOURCES:
+        owner = ACTIVATION_OVERLAY_OWNER.get(name, "author")
+        path = mapped[name]["path"]
+        ref = prs[owner]["head"]["sha"]
+        body = read_pinned(path, ref)
+        if not isinstance(body, str):
+            raise ValueError("empty_runtime_source:" + name)
+        if name == HOST_NAME:
+            if HOST_GUARD not in body:
+                # No early guard is fine, but still require untouched host
+                # prefix and the current composer's surgical source contract.
+                pass
+            else:
+                if HOST_RAMP_ANCHOR not in body or body.index(HOST_GUARD) > body.index(HOST_RAMP_ANCHOR):
+                    raise ValueError("host_guard_not_in_untouched_prefix")
+            provenance[name] = {
+                "selected_owner": owner,
+                "selected_commit": ref,
+                "evidence_region": "AUTHOR_HOST_PREFIX_BEFORE_COMPOSER_RAMP",
+                "assembled_host_sha256": "NOT_CLAIMED",
+                "path": path,
+            }
+        else:
+            provenance[name] = {
+                "selected_owner": owner,
+                "selected_commit": ref,
+                "evidence_region": "COMPOSER_SELECTED_OWNER_FILE",
+                "path": path,
+            }
+        sources[name] = body
+    return sources, provenance
+
+
 def live_audit() -> dict:
     prs = {name: api("pulls/" + str(number)) for name,number in PRS.items()}
     author_sha = prs["author"]["head"]["sha"]
@@ -291,10 +360,12 @@ def live_audit() -> dict:
     # Independent, non-invasive runtime boundary for all 8 domains. A native
     # source/Place PASS cannot prove the Studio-only preview works in a normal
     # Roblox server or Android client.
-    nodes = project_nodes(author_project)
-    runtime_sources = {name: github_file(nodes[name]["path"], author_sha)
-                       for name in REQUIRED_RUNTIME_SOURCES if name in nodes}
+    runtime_sources, selected = select_current26_runtime_sources(
+        prs, author_project, composer, read_pinned=github_file)
     report["runtime_activation"] = evaluate_runtime_activation(runtime_sources)
+    report["runtime_activation"]["effective_26_source_selection"] = selected
+    report["runtime_activation"]["composed_host_byte_identity"] = (
+        "NOT_ATTESTED_HERE_EXISTING_491_OWNS_SOURCE_PROVENANCE")
     report["product_go"] = False
     return report
 
