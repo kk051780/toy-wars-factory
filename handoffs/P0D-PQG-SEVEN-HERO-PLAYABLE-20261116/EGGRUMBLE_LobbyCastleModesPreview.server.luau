@@ -10,6 +10,7 @@ local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
+local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -17,6 +18,7 @@ local queues:{[string]:{Player}}={TEAM={},BATTLE_ROYALE={}}
 local sessions:{[string]:any}={}
 local joined:{[number]:string}={}
 local chosenDefense:{[number]:string}={}
+local chosenRole:{[number]:string}={}
 local MODE_SEATS=16 -- humans + AI combined; change only after measured server/client QA
 local COUNTDOWN=12 -- seconds for private preview only
 
@@ -209,8 +211,7 @@ local function startSession(mode:string)
      if rootPart then rootPart.CFrame=CFrame.new(root+Vector3.new(0,12,-35)) end
      local backpack=player:FindFirstChildOfClass("Backpack")
      if backpack then
-      local tool=backpack:FindFirstChild("EGGRUMBLE_TestBlade")
-      if tool then tool:Destroy() end
+      SevenRoleCombat.clear(player)
      end
     end
    end
@@ -264,56 +265,21 @@ local function startSession(mode:string)
  -- before stealing/depositing eggs or damaging the castle. No remote numerical sieges.
  BotActors.start(session,Rules)
  SwarmCombat.start(session)
+ -- All seven roles now use the SAME neutral, AI-duel, castle/egg V3 session.
+ -- Select role in the lobby; default 武神 if the human enters a portal immediately.
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
-   local backpack=p:FindFirstChildOfClass("Backpack")
-   if backpack then
-    local tool=Instance.new("Tool");tool.Name="EGGRUMBLE_TestBlade"
-    tool.CanBeDropped=false;tool.RequiresHandle=true
-    local grip=Instance.new("Part");grip.Name="Handle";grip.Size=Vector3.new(.5,3.8,.4)
-    grip.Material=Enum.Material.Metal;grip.Color=Color3.fromRGB(251,216,135);grip.Parent=tool
-    local lastAttack=0
-    tool.Activated:Connect(function()
-     if joined[p.UserId]~=mode or session.rules.phase~="ACTIVE" then return end
-     local my=session.rules.castles[tostring(p.UserId)]
-     if not my or not my.alive or os.clock()-lastAttack<.45 then return end
-     local character=p.Character
-     local rootPart=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
-     if not character or not rootPart then return end
-     lastAttack=os.clock()
-     local affected=0
-     -- Never let a human strike an AI through a collidable castle wall or gate.
-     local swordRay=RaycastParams.new()
-     swordRay.FilterType=Enum.RaycastFilterType.Exclude
-     swordRay.FilterDescendantsInstances={character}
-     swordRay.RespectCanCollide=true
-     local tier=p:GetAttribute("EGGRUMBLE_SlashEvolution") or "BASE"
-     local length=if tier=="TEMPEST" then 30 elseif tier=="WAVE" then 23 else 15
-     local radius=if tier=="TEMPEST" then 23 elseif tier=="WAVE" then 17 else 11
-     -- The same human attack damages real neutral NPCs; actual Humanoid deaths grant KOs.
-     if session.swarm then
-      session.swarm.damageFromPlayer(p,rootPart.Position+rootPart.CFrame.LookVector*length,
-       radius,if tier=="TEMPEST" then 75 else 38)
-     end
-     for id,actor in pairs(session.botActors or {}) do
-      local c=session.rules.castles[id]
-      local ar=actor and actor.PrimaryPart
-      if c and c.alive and ar and (mode~="TEAM" or c.team~=my.team)
-       and (ar.Position-rootPart.Position).Magnitude<14 then
-       local h=actor:FindFirstChildOfClass("Humanoid")
-       if h and h.Health>0 and affected<3 then
-        local from=rootPart.Position+Vector3.new(0,1,0)
-        local to=ar.Position+Vector3.new(0,1,0)
-        if workspace:Raycast(from,to-from,swordRay)==nil then
-         h:TakeDamage(42)
-         affected+=1
-        end
-       end
-      end
+   local role=chosenRole[p.UserId] or "WARRIOR"
+   SevenRoleCombat.equip(session,p,role)
+   p.CharacterAdded:Connect(function(character)
+    task.delay(.8,function()
+     if p.Parent and joined[p.UserId]==mode and p.Character==character
+      and session.rules.phase=="ACTIVE" then
+      local castle=session.rules.castles[tostring(p.UserId)]
+      if castle and castle.alive then SevenRoleCombat.equip(session,p,role) end
      end
     end)
-    tool.Parent=backpack
-   end
+   end)
   end
  end
 
@@ -327,6 +293,17 @@ local function joinQueue(mode:string,p:Player)
  p:SetAttribute("EGGRUMBLE_QueuedMode",mode)
  if #queues[mode]==1 then task.delay(COUNTDOWN,function() startSession(mode) end) end
  if #queues[mode]>=MODE_SEATS then startSession(mode) end
+end
+-- Seven job-selection stands: small world prompts, no permanent large HUD.
+for i,role in ipairs(SevenRoleCombat.roleOrder()) do
+ local data=SevenRoleCombat.info(role)
+ local stand=block(folder,"ROLE_"..role,root+Vector3.new((i-4)*9,1,69),Vector3.new(5,4,5),data.color)
+ board(stand,data.name.."\n"..data.weapon)
+ prompt(stand,"職業選択",data.name,function(p)
+  if joined[p.UserId] and sessions[joined[p.UserId]] then return end
+  chosenRole[p.UserId]=role
+  p:SetAttribute("EGGRUMBLE_SelectedRole",role)
+ end)
 end
 local gateTeam=block(folder,"TEAM_PORTAL",root+Vector3.new(-12,6,28),Vector3.new(9,12,2),Color3.fromRGB(206,74,67))
 local gateBR=block(folder,"BATTLE_ROYALE_PORTAL",root+Vector3.new(12,6,28),Vector3.new(9,12,2),Color3.fromRGB(79,132,230))
@@ -353,6 +330,8 @@ Players.PlayerRemoving:Connect(function(p)
   if idx then table.remove(q,idx) end
  end
  chosenDefense[p.UserId]=nil
+ chosenRole[p.UserId]=nil
+ SevenRoleCombat.clear(p)
  if mode and sessions[mode] and sessions[mode].rules.phase=="ACTIVE" then
   local scene=sessions[mode]
   local ch=p.Character
