@@ -13,7 +13,7 @@ from pathlib import Path
 
 REQUIRE_ANCHOR='local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))\n'
 REQUIRE_INJECT='local IntegrityObserver=require(script.Parent:WaitForChild("EGGRUMBLE_IntegrityObserver"))\n'
-START_ANCHOR='  SwarmCombat.start(session)\n'
+START_ANCHOR=' SwarmCombat.start(session)\n'
 START_INJECT='''  -- Optional GQ shadow observer. Never alter match or suppress combat.
   task.spawn(function()
    while sessions[mode]==session and session.rules.phase=="ACTIVE" do
