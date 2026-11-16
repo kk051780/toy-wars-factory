@@ -179,6 +179,6 @@ return function(Rules:any,Alerts:any)
  Rules.depositEggs(visuals,"A",1)
  Alerts.process(session)
  eq(#instances,3,"repeated events reuse one banner and one label")
- eq(title.Text,"卵強奪！防衛せよ","enemy flag never shows another player's delivery")
+ eq(title.Text,"城が攻撃中！","enemy flag never shows another player's delivery")
  return true
 end
