@@ -1687,7 +1687,7 @@ jobs:
           queue615=json.loads(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_text())
           assert queue615["source_count"]==31 and queue615["all_other30_byte_exact"] and queue615["rollback_current_host_byte_exact"]
           assert queue615["real_rojo_source_class_path"]=="31/31" and queue615["source_exact_rojo_verified"]
-          assert queue615["private_rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert queue615["private_rojo_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["LOBBY_QUEUE_ETA_615"] is True
           assert m["source_heads"]["lobby_queue_eta615"]=="849d82e399f342e5212b5dc16cba76b04c1d2c7a"
           assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
