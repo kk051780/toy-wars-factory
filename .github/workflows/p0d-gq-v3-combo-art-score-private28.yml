@@ -1,0 +1,128 @@
+name: EGGRUMBLE GQ combo-only original full-game ART SCORE 28-source private
+on:
+  push:
+    branches:
+      - quality/gq-v3-round-attribute-fence-20261116
+    paths:
+      - 'quality_gameplay/v3_round_attribute_fence_20261116/tools/compose_private28.py'
+      - 'quality_gameplay/v3_round_attribute_fence_20261116/tools/verify_private28.py'
+      - '.github/workflows/p0d-gq-v3-combo-art-score-private28.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-game28:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original immutable author Game21
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Latest verified existing quality AI/ramp composer (no reimplementation)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Original immutable ART4
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Original immutable SCORE1
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify source pinning
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_round_attribute_fence_20261116/tests
+      - name: Use ONLY the existing artist's and quality owner's composers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_LATEST_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_LATEST_ART.project.json \
+            --out artifacts/GQ_V3_BASE26.project.json
+          python3 quality_gameplay/v3_round_attribute_fence_20261116/tools/compose_private28.py \
+            --base26 artifacts/GQ_V3_BASE26.project.json \
+            --root quality_gameplay/v3_round_attribute_fence_20261116 \
+            --out artifacts/GQ_V3_COMBO28.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Pinned native Luau 28 script syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq_combo28_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_combo28_luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/GQ_V3_COMBO28.project.json").resolve(strict=True)
+          def scripts(node):
+              for k,v in node.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:yield (p.parent/v["$path"]).resolve(strict=True)
+                  else:yield from scripts(v)
+          f=list(scripts(json.loads(p.read_text())["tree"]))
+          assert len(f)==28 and len(set(f))==28
+          for src in f:subprocess.run(["/tmp/gq_combo28_luau/luau-compile","--text",str(src)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_COMBO_28_NATIVE_SOURCE_PASS")
+          PY
+      - name: Pin genuine Rojo 7.7.1 ZIP hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_combo28_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_combo28_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_combo28_rojo.zip") as z:
+              names=[i for i in z.namelist() if i.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq_combo28_rojo");p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+      - name: Build genuine private Place and read back exactly 28 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq_combo28_rojo build artifacts/GQ_V3_COMBO28.project.json -o artifacts/GQ_V3_COMBO28_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_round_attribute_fence_20261116/tools/verify_private28.py artifacts/GQ_V3_COMBO28.project.json artifacts/GQ_V3_COMBO28_NOT_RC.rbxlx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-COMBO-ART-SCORE28-PRIVATE-NOT-OFFICIAL-RC
+          path: |
+            artifacts/GQ_V3_COMBO28_NOT_RC.rbxlx
+            artifacts/GQ_V3_COMBO28.project.json
+            artifacts/GQ_COMBO28_SOURCE_RECEIPT.json
+          retention-days: 2

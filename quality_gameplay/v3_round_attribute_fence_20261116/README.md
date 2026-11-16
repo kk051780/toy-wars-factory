@@ -13,3 +13,9 @@ New pure `EGGRUMBLE_RoundAttributeFence.luau` defines `TEAM/BATTLE_ROYALE -> nil
 ## Proof / remaining gates
 Nine Python source-positive/negative contracts, pinned Luau 23/23 syntax, actual pure module native VM including boss-attr noninterference, pinned Rojo 23/23 byte-source verification in Actions. Check exact candidate HEAD and CI before calling ready.
 No in-engine Studio 2-client, 15-minute Android, ART/FUN comparison, human OWNER acceptance. Official RC is under authenticated sole writer #220. Requires #218 scope review/CLAIM, #482 original author ACK, same latest official HEAD source-selective CAS native+Rojo and ZIP/Place/rollback. No RC or main writes/merge/publish/payments.
+
+
+## Cross-domain original-source integration (additional private QA)
+The optional composer `tools/compose_private28.py` **reuses** original #484 26-game+ART+SCORE composer, then **only adds** the two combo Scripts, retaining all 26 original mapped file paths and Script sources (28 exact total). CI `p0d-gq-v3-combo-art-score-private28.yml` pinned original HEADs: #482 `fe67d31...`, #484 `6b52eaf...`, #485 `e86702...`, #487 `438a406...`. Original 7 jobs, 3 routes, real combat/egg/castle/neutral, 9 field items, TEAM/BR lobby, ART and SCORE stay owned by original authors. Native syntax28 and real Rojo28 source/class exact are **separate evidence** from engine, device and official RC acceptance. Source pin must be rechecked at #220 adoption.
+
+Important: The 26+2 composite does not include all other pending optional PRs (#489 fairness, #494 pacing, #514 boss). It is a compatibility proof only, not a full latest release or formal source adoption.
