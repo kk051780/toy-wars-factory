@@ -1,0 +1,46 @@
+name: P0D GQ V3 isolated AI nav CreatePath recovery
+on:
+  push:
+    paths:
+      - 'quality_gameplay/v3_nav_createpath_recovery_20261116/**'
+      - '.github/workflows/p0d-gq-nav-createpath-recovery.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_nav_createpath_recovery_20261116/**'
+      - '.github/workflows/p0d-gq-nav-createpath-recovery.yml'
+jobs:
+  original-source-locked:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read immutable original author source (without changing any branch)
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTHOR=fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          git fetch --no-tags origin feature/p0d-pqg-seven-hero-playable-20261116-01
+          mkdir -p /tmp/gq-v3-nav
+          git show "$AUTHOR":handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau > /tmp/gq-v3-nav/original.luau
+          test -s /tmp/gq-v3-nav/original.luau
+      - name: Source-exact original-author-only fail-closed overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_nav_createpath_recovery_20261116/patch_nav.py \
+            --source /tmp/gq-v3-nav/original.luau \
+            --output /tmp/gq-v3-nav/patched.luau
+      - name: Prove source drift rejection and preserved navigation behavior
+        shell: bash
+        env:
+          GQ_NAV_ORIGINAL_SOURCE: /tmp/gq-v3-nav/original.luau
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover \
+            -s quality_gameplay/v3_nav_createpath_recovery_20261116 \
+            -p 'test_*.py' -v
+          test -s /tmp/gq-v3-nav/patched.luau
+          echo 'SOURCE_ONLY: no native Luau, Rojo, Studio or official RC PASS claimed.'
