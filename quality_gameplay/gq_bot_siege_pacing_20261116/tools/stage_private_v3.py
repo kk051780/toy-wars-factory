@@ -14,6 +14,8 @@ NEW_REQUIRE = OLD_REQUIRE + '\nlocal SiegePacing=require(script.Parent:WaitForCh
 OLD_GATE = 'elseif now-(lastSiege[id] or 0)>=SIEGE_INTERVAL then'
 NEW_GATE = ('elseif now-(lastSiege[id] or 0)>=SIEGE_INTERVAL '
             'and SiegePacing.allow(session,enemy.id,id,now) then')
+OLD_DAMAGE = 'local ok,result=pcall(function() return Rules.damageCastle(session.rules,enemy.id,id,26) end)\n           if ok then'
+NEW_DAMAGE = 'local ok,result=pcall(function() return Rules.damageCastle(session.rules,enemy.id,id,26) end)\n           if not ok then SiegePacing.cancelFailed(session,enemy.id,id,now) end\n           if ok then'
 
 
 def sha256(raw: bytes) -> str:
@@ -55,10 +57,10 @@ def stage(output: Path) -> dict:
             if git_blob(raw) != AUTHOR_BOT_BLOB:
                 raise ValueError("original BotActors source SHA mismatch; re-CLAIM before patch")
             text = raw.decode("utf-8")
-            for old in [OLD_REQUIRE, OLD_GATE]:
+            for old in [OLD_REQUIRE, OLD_GATE, OLD_DAMAGE]:
                 if text.count(old) != 1:
                     raise ValueError("author anchor drift: " + old)
-            text = text.replace(OLD_REQUIRE, NEW_REQUIRE).replace(OLD_GATE, NEW_GATE)
+            text = (text.replace(OLD_REQUIRE, NEW_REQUIRE)\n                   .replace(OLD_GATE, NEW_GATE)\n                   .replace(OLD_DAMAGE, NEW_DAMAGE))
             raw = text.encode("utf-8")
         (source_dir / name).write_bytes(raw)
         staged_hashes[name] = sha256(raw)
