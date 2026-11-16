@@ -17,6 +17,25 @@ function Replay.schedule(session:any,closeRound:()->()):boolean
  return true
 end
 
+-- Abandon a bot-filled preview if its final human leaves.
+-- Preserve any match where at least one original human remains connected.
+-- No fabricated winner, KO or result panel is produced for an empty match.
+function Replay.abandonIfEmpty(session:any,joined:{[number]:string},closeRound:()->()):boolean
+ assert(RunService:IsStudio(),"Studio preview only")
+ if session.rules.phase~="ACTIVE" or session.roundReplayScheduled then return false end
+ for _,entry in ipairs(session.roster) do
+  if not entry.isAI then
+   local userId=tonumber(entry.id)
+   if userId and joined[userId]==session.mode and Players:GetPlayerByUserId(userId) then
+    return false
+   end
+  end
+ end
+ session.roundReplayScheduled=true
+ closeRound()
+ return true
+end
+
 function Replay.resetHuman(p:Player,returnTo:Vector3):()
  if p.Parent~=Players then return end
  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
