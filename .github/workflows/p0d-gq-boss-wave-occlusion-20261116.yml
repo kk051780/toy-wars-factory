@@ -90,6 +90,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: private-original-boss-wave-source-only-NOT-RC
-          path: |\n            build/private_boss_wave/\n            build/private_v3/
+          path: |
+            build/private_boss_wave/
+            build/private_v3/
           retention-days: 3
           if-no-files-found: error
