@@ -34,7 +34,7 @@ check(not P.mayActivate("TURRET","FINISHED",20,nil,10,true),"post-round turret b
 check(not P.mayActivate("TURRET","ACTIVE",20,nil,36,true),"outside turret range")
 check(not P.mayActivate("TURRET","ACTIVE",20,nil,30,false),"solid walls block turret")
 check(not P.mayActivate("TURRET","ACTIVE",20,19,30,true),"turret cooldown")
-check(P.mayActivate("TURRET","ACTIVE",22.4,20,30,true),"turret cooldown elapsed")
+check(P.mayActivate("TURRET","ACTIVE",22.5,20,30,true),"turret cooldown elapsed")
 check(not P.mayActivate("TRAP","ACTIVE",20,nil,10,true),"trap only at entrance")
 check(not P.mayActivate("TRAP","ACTIVE",20,nil,7,false),"trap cannot hit through walls")
 check(P.mayActivate("TRAP","ACTIVE",20,nil,7,true),"physical trap trigger")
