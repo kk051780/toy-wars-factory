@@ -617,6 +617,77 @@ jobs:
             --author "$AUTHOR555/patch_nearest.py" \
             --out "$FINAL555" \
             --place artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
+      - name: Fetch EXISTING immutable #536 original author raycast overlay (not another AI writer)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          path: _gq536_original_route_author
+          persist-credentials: false
+      - name: Source-select original #536 only into current 31 BotPathRouter; preserve other 30 scripts exactly
+        env:
+          GQ_ROUTE536_AUTHOR: _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py
+          GQ_ROUTE536_ORIGINAL: _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau
+          GQ_ROUTE536_BASE31: artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq536_original_route_author rev-parse HEAD)" = cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          python3 -B -m unittest discover -s rc_fastlane/quality_route536_rc31 -p 'test_selector.py' -v
+          python3 -B rc_fastlane/quality_route536_rc31/select_original536_route.py select \
+            --base "$GQ_ROUTE536_BASE31" --author "$GQ_ROUTE536_AUTHOR" \
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_route536_rc31")
+          from select_original536_route import flat
+          _,source=flat(Path("artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json"))
+          assert len(source)==31
+          for file in source.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                           stdout=subprocess.DEVNULL,check=True)
+          print("GQ536_CURRENT_OFFICIAL31_ALL_NATIVE_COMPILE_PASS",len(source))
+          PY
+      - name: Execute existing author's real routeClear and Router.navigate source through native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq536_native
+          python3 _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py \
+            --original _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau \
+            --patched artifacts/gq555_official_select/GQ536_ORIGINAL_AUTHOR_SINGLE_ROUTER.luau \
+            --output-dir artifacts/gq536_native
+          for t in original patched; do
+            /tmp/gq530_all31_native/luau-compile --text artifacts/gq536_native/$t.spec.luau >/dev/null
+            /tmp/gq530_all31_native/luau artifacts/gq536_native/$t.spec.luau
+          done
+          python3 _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py \
+            --original _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau \
+            --patched artifacts/gq555_official_select/GQ536_ORIGINAL_AUTHOR_SINGLE_ROUTER.luau \
+            --outdir artifacts/gq536_native
+          for t in original fixed mutant; do
+            /tmp/gq530_all31_native/luau-compile --text artifacts/gq536_native/navigate-$t.spec.luau >/dev/null
+          done
+          /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-original.spec.luau
+          /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-fixed.spec.luau
+          if /tmp/gq530_all31_native/luau artifacts/gq536_native/navigate-mutant.spec.luau; then
+            echo 'RED_ORIGINAL536_TAIL_WALL_UNSAFE_MUTANT_PASSED'
+            exit 1
+          fi
+          echo GQ536_AUTHOR_ACTUAL_ROUTER_NAVIGATE_AND_UNSAFE_MUTANT_DIFFERENTIAL_PASS
+      - name: Real selected final 31 Rojo Source and Class exact after original #536 AI route
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
+            -o artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx
+          python3 -B rc_fastlane/quality_route536_rc31/select_original536_route.py verify \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
+            --author _gq536_original_route_author/quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
+            --place artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx
+          echo 'GQ536_RC31_ORIGINAL_AI_ROUTE_SELECTED=PASS; OFF=CURRENT_OFFICIAL_ITEM489_31; FORMAL_ADOPTION=AUTH_CAS_ONLY'
       - name: Select original #517 heal-no-waste into existing ONE #489 ITEM; Native31 and true Rojo31
         shell: bash
         run: |
@@ -624,15 +695,15 @@ jobs:
           test "$(git -C _gq517_original rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
           python3 -m py_compile rc_fastlane/quality_heal517_rc31/select_original_heal517.py
           python3 -B rc_fastlane/quality_heal517_rc31/select_original_heal517.py prepare \
-            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
+            --base artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
             --author517 _gq517_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
-            --out artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json
           python3 - <<'PY'
           import subprocess,sys
           from pathlib import Path
           sys.path.insert(0,"rc_fastlane/quality_heal517_rc31")
           from select_original_heal517 import collect
-          _,files=collect(Path("artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json"))
+          _,files=collect(Path("artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json"))
           assert len(files)==31
           for source in files.values():
               subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
@@ -643,18 +714,18 @@ jobs:
             artifacts/gq555_official_select/GQ_ITEM489_HEAL517_SINGLE.luau \
             artifacts/gq555_official_select/GQ517_REAL_HEAL_POLICY_NATIVE.luau
           /tmp/gq530_all31_native/luau artifacts/gq555_official_select/GQ517_REAL_HEAL_POLICY_NATIVE.luau
-          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json \
-            -o artifacts/gq555_official_select/GQ555_HEAL517_RC31_TRUE_ROJO.rbxlx
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json \
+            -o artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_RC31_TRUE_ROJO.rbxlx
           python3 -B rc_fastlane/quality_heal517_rc31/select_original_heal517.py verify \
-            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
-            --out artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json \
-            --place artifacts/gq555_official_select/GQ555_HEAL517_RC31_TRUE_ROJO.rbxlx
-          GQ517_TEST_DIR=artifacts/gq555_official_select GQ517_TEST_BASE=GQ555_FINAL_SELECTED31.project.json GQ517_TEST_ON=GQ555_HEAL517_SELECTED31.project.json python3 -B -m unittest discover -s rc_fastlane/quality_heal517_rc31 -p 'test_selection.py' -v
+            --base artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
+            --out artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json \
+            --place artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_RC31_TRUE_ROJO.rbxlx
+          GQ517_TEST_DIR=artifacts/gq555_official_select GQ517_TEST_BASE=GQ555_ROUTE536_FINAL_SELECTED31.project.json GQ517_TEST_ON=GQ555_ROUTE536_HEAL517_SELECTED31.project.json python3 -B -m unittest discover -s rc_fastlane/quality_heal517_rc31 -p 'test_selection.py' -v
           echo "GQ517_RC31_SINGLE_ITEM_ALL_31_NATIVE_TRUE_ROJO_VERIFIED"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq555_official_select/GQ555_HEAL517_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -670,7 +741,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_HEAL517_RC31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_RC31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -696,11 +767,16 @@ jobs:
           gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
           assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          route536=json.loads(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_text())
+          assert route536["real_rojo_exact_31"] and route536["others_byte_exact"]==30
+          assert route536["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx").read_bytes()).hexdigest()
           heal517=json.loads(Path("artifacts/gq555_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_text())
           assert heal517["source_class_exact"]==31 and heal517["original_other_source_bytes_exact"]==30
           assert heal517["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["source_heads"]["heal_no_waste517"]=="c8a324ad7bb40648d82a5828cbf54e217585fefd"
           assert m["feature_flags"]["HEAL_NO_WASTE_517"] is True
+          assert route536["selected_author_patch_git_blob"]=="651d4c6e92bfe8595eeadb438b594797bd473e77"
+          assert m["feature_flags"]["BOT_ROUTE_FULLSTEP_536"] and m["source_heads"]["original_route536"]=="cdf4fe5f231c998532963c5c16d9525d20a69e7e"
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
@@ -724,9 +800,12 @@ jobs:
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
+            "original_author_555_bot_only_30_preserved":True,
+            "original_author_536_single_botpathrouter_source_selected":True,
+            "other_30_current_original_author_source_exact_after_536":True,
+            "selected_536_router_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_517_heal_guard_inside_single_item":True,
             "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
-            "original_author_555_bot_only_30_preserved":True,
             "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
@@ -783,7 +862,9 @@ jobs:
             artifacts/gq555_official_select/GQ555_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json
             artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
-            artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json
             artifacts/gq555_official_select/GQ517_HEAL_RC31_RECEIPT.json
             artifacts/gq555_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
           retention-days: 3
@@ -799,13 +880,13 @@ jobs:
             artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           if-no-files-found: error
           retention-days: 3
-      - name: Preserve original #517 HEAL private source QA Place (not RC)
+      - name: Preserve #517 HEAL private 31-script source-rebased Place (not official RC)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: GQ517-HEAL-PRIVATE31-SOURCE-EXACT-NOT-FORMAL-RC
           path: |
-            artifacts/gq555_official_select/GQ555_HEAL517_RC31_TRUE_ROJO.rbxlx
+            artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_RC31_TRUE_ROJO.rbxlx
             artifacts/gq555_official_select/GQ517_HEAL_RC31_RECEIPT.json
-            artifacts/gq555_official_select/GQ555_HEAL517_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ555_ROUTE536_HEAL517_SELECTED31.project.json
           retention-days: 3
