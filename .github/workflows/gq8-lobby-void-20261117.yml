@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/gq8_official
-          gh run download 43955472445 --repo kk051780/toy-wars-factory \
+          gh run download 43956786259 --repo kk051780/toy-wars-factory \
             --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
             --dir /tmp/gq8_official
           test -s /tmp/gq8_official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
