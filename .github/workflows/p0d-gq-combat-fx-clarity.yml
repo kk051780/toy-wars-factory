@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _gq_fx_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _gq_fx_pinned_luau -B /tmp/gq_fx_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq_fx_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq_fx_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import json,subprocess
           from pathlib import Path
@@ -51,6 +51,11 @@ jobs:
               subprocess.run(['/tmp/gq_fx_luau/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
           print('PINNED_NATIVE_COMPILE_23_OF_23_PASS')
           PY
+      - name: Execute REAL native Luau FX policy cases
+        run: |
+          set -euo pipefail
+          /tmp/gq_fx_luau/luau handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/tests/EGGRUMBLE_CombatFXBudget.spec.luau
+          echo "NATIVE_VM_FX_POLICY_22_ASSERTIONS_PASS"
       - name: Install pinned Rojo binary with checksum verification
         run: |
           set -euo pipefail
