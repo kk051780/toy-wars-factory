@@ -105,11 +105,23 @@ jobs:
             echo "ROJO_PRIVATE_BUILD_PASS=${mode}"
           done
           echo "ROJO_SOURCE_BUILDS=5/5 (Studio Play/Android/official RC still NOT_RUN)"
+      - name: Generate reproducible source-exact RC handoff manifest (not RC integration)
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/make_rc_source_handoff.py \
+            --author-checkout author-current \
+            --project-dir .art-preview-generated \
+            --private-dir art-private-builds \
+            --art-head "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json
+          python3 -m json.tool art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json >/dev/null
       - name: Save isolated private Studio source-only places as workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: EGGRUMBLE-A01-PRIVATE-STUDIO-PLACES-NOT-RC
-          path: art-private-builds/EGGRUMBLE_A01_PRIVATE_*.rbxlx
+          path: |
+            art-private-builds/EGGRUMBLE_A01_PRIVATE_*.rbxlx
+            art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json
           retention-days: 3
           if-no-files-found: error
       - name: Report boundaries
