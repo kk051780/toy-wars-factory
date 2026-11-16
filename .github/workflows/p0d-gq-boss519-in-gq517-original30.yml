@@ -1,4 +1,4 @@
-name: P0D GQ canonical #518 original boss LOS in existing #517 single30 intake
+name: P0D GQ #518 boss and #520+#523 field in existing original 30 source
 on:
   push:
     branches:
@@ -83,6 +83,20 @@ jobs:
           repository: kk051780/toy-wars-factory
           ref: f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
           path: _los_original
+          persist-credentials: false
+      - name: Reuse independent original #520 ridge author (no own terrain code)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          path: _ridge_original
+          persist-credentials: false
+      - name: Reuse original #523 field egg author (no new egg code)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 7447761aee570f54d57d125e79d21c9cb05bc889
+          path: _egg_original
           persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
         shell: bash
@@ -351,6 +365,67 @@ jobs:
             --place artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx \
             --receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json
           echo "GQ_SELECTED_SINGLE_ORIGINAL_BOSS_ONLY NOT_FORMAL_RC"
+      - name: Reuse original ridge #520 + field-egg #523 in canonical #518 boss original30 single-game place
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _ridge_original rev-parse HEAD)" = f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          test "$(git -C _egg_original rev-parse HEAD)" = 7447761aee570f54d57d125e79d21c9cb05bc889
+          python3 -B -m unittest discover -q -s _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/tests
+          python3 -B -m unittest discover -q -s _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116 -p 'test_*.py'
+          original=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/compose_8domain.py prepare \
+            --base artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --base-receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json \
+            --author-host "_game_original/$original/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --quality-host "_quality_original/$original/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --raid-item "_game_original/$original/EGGRUMBLE_RaidItemIntake.luau" \
+            --quality-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --ridge-composer _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/augment_current26.py \
+            --ridge-patch _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/patch_ridge.py \
+            --egg-patch _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py \
+            --outdir artifacts/GQ521_BOSS_FIELD30
+          python3 _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/GQ521_BOSS_FIELD30/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau
+          /tmp/gq_heal_native/luau-compile artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau | tee artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json")
+          raw=json.loads(project.read_text())["tree"]
+          names=[]
+          def walk(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile",str(p)],
+                      check=True,stdout=subprocess.DEVNULL)
+                  names.append(p.name)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):walk(v)
+          walk(raw)
+          assert len(names)==30 and len(set(names))==30,("duplicate/absent script",names)
+          print("GQ521_518_BOSS_520_RIDGE_523_EGGS_NATIVE30_ALL_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            -o artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/compose_8domain.py verify \
+            --project artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            --place artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-ORIGINAL-518-520-523-SINGLE-GAME30-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+            artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json
+            artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL8DOMAIN30_RECEIPT.json
+            artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
           name: GQ518-ORIGINAL-LOS-IN-GQ517-30-SOURCE-PRIVATE-NOT-RC
