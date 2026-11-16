@@ -64,10 +64,10 @@ def flatten(path:Path):
 def patch(old:str)->str:
     for token in ("if not RunService:IsStudio() then return end",
                   'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
-                  "if reduced() then return end","local thisPulse=pulse",
+                  "local thisPulse=pulse",
                   "local RECENT_CD=.12","task.delay(.17,function()"):
         if old.count(token)!=1:raise ValueError("RED_EXISTING_CLIENT_DRIFT "+token)
-    for anchor in (LABEL_ANCHOR,PULSE_ANCHOR):
+    if old.count("if reduced() then return end")!=2:\n        raise ValueError("RED_REDUCED_EFFECTS_GATE_DRIFT")\n    for anchor in (LABEL_ANCHOR,PULSE_ANCHOR):
         if old.count(anchor)!=1:raise ValueError("RED_ANCHOR_DRIFT")
     if "ConfirmedHit042" in old:raise ValueError("RED_ALREADY_PORTED")
     new=old.replace(LABEL_ANCHOR,LABEL_ANCHOR+LABEL_ADD,1)
