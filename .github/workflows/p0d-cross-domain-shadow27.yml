@@ -18,7 +18,7 @@ jobs:
       - name: Checkout original GQ 26 composer (pinned)
         uses: actions/checkout@v4
         with:
-          ref: 2e398765578d827c24e173126136c572b297533b
+          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
           path: _gq_original
           persist-credentials: false
       - name: Checkout owner original game 7 domains (pinned)
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _gq_original rev-parse HEAD)" = 2e398765578d827c24e173126136c572b297533b
+          test "$(git -C _gq_original rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
@@ -111,9 +111,9 @@ jobs:
           (cd _gq_original && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_luau/luau) | tee artifacts/GQ_NAV_NATIVE.log
           grep -q GQ_NAV_STALE_GOAL_NEGATIVE_PASS artifacts/GQ_NAV_NATIVE.log
           grep -q GQ_CREATEPATH_EXCEPTION_MUTANT_NEGATIVE_PASS artifacts/GQ_NAV_NATIVE.log
-          python3 cross_domain_gate/test_original_ai_target_native.py \
-            --luau /tmp/gq_luau/luau --quality _gq_original | tee artifacts/GQ_GHOST_ACTION_NATIVE.log
-          grep -q GQ_GHOST_TARGET_GUARD_MUTATION_REJECTED artifacts/GQ_GHOST_ACTION_NATIVE.log
+          (cd _gq_original && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_luau/luau) | tee artifacts/GQ_ACTION_LOS_NATIVE.log
+          grep -q GQ_ACTION_LOS_NATIVE_PASS artifacts/GQ_ACTION_LOS_NATIVE.log
+          grep -q GQ_ACTION_LOS_MUTANT_NEGATIVE_3_OF_3_PASS artifacts/GQ_ACTION_LOS_NATIVE.log
       - name: Acquire pinned Rojo and build unpublished private Place
         shell: bash
         run: |
@@ -184,5 +184,5 @@ jobs:
             artifacts/SOURCE_RECEIPT.json
             artifacts/GQ_OBSERVER_NATIVE.log
             artifacts/GQ_NAV_NATIVE.log
-            artifacts/GQ_GHOST_ACTION_NATIVE.log
+            artifacts/GQ_ACTION_LOS_NATIVE.log
           retention-days: 3
