@@ -86,8 +86,9 @@ function Items.start(session:any,positions:{Vector3}):()
     hum.Health=math.min(hum.MaxHealth,hum.Health+35)
    elseif kind=="DASH" then
     local previous=hum.WalkSpeed
-    local boosted=math.max(previous,27)
-    hum.WalkSpeed=boosted
+    -- Preserve the original speed-source contract for all existing ITEM tests.
+    hum.WalkSpeed=math.max(previous,27)
+    local boosted=hum.WalkSpeed
     local function restoreSpeed()
      -- Never stomp a subsequent skill's newer speed decision.
      if hum.Parent and hum.Health>0 and hum.WalkSpeed==boosted then
