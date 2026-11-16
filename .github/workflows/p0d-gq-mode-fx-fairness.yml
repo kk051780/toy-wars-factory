@@ -1,0 +1,131 @@
+name: P0D EGGRUMBLE server TEAM BR FX fairness source-only 22
+on:
+  push:
+    branches: [quality/p0d-gq-mode-fx-fairness-20261116]
+  pull_request:
+    paths:
+      - 'quality_gameplay/fx_mode_fairness/**'
+      - '.github/workflows/p0d-gq-mode-fx-fairness.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original 20 author byte parity and server overlay non-duplication
+        run: python3 -B -m unittest discover -s quality_gameplay/fx_mode_fairness/tests -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_fxmode_native
+          persist-credentials: false
+      - name: Pinned Luau native VM quota behavior and mapped 22 source compilation
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_fxmode_native rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_fxmode_native -B /tmp/gq_fxmode_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_fxmode_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=quality_gameplay/fx_mode_fairness
+          mkdir -p /tmp/gq_fxmode/tests
+          cp "$root/EGGRUMBLE_FXModeFairQuota.luau" /tmp/gq_fxmode/
+          cp "$root/tests/EGGRUMBLE_FXModeFairQuota.spec.luau" /tmp/gq_fxmode/tests/
+          cd /tmp/gq_fxmode/tests
+          /tmp/gq_fxmode_luau/luau EGGRUMBLE_FXModeFairQuota.spec.luau | tee /tmp/gq_fxmode.log
+          grep -q EGGRUMBLE_FX_MODE_FAIRNESS_NATIVE_PASS /tmp/gq_fxmode.log
+          cd "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          p=Path("quality_gameplay/fx_mode_fairness/EGGRUMBLE_V3_FX_FAIR_22_STUDIO.project.json")
+          def walk(n):
+              if isinstance(n,dict):
+                  if "$path" in n:yield (p.parent/n["$path"]).resolve(strict=True)
+                  else:
+                      for name,item in n.items():
+                          if not name.startswith("$"):yield from walk(item)
+          mapped=list(walk(json.loads(p.read_text())["tree"]))
+          assert len(mapped)==22 and len(set(mapped))==22
+          for f in mapped:
+              subprocess.run(["/tmp/gq_fxmode_luau/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_FX_MODE_NATIVE_22_OF_22_PASS")
+          PY
+      - name: Checksum-locked Rojo 7.7.1 and unpublished 22 source private Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_fxmode_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_fxmode_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_fxmode_rojo.zip') as z:
+              items=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(items)==1
+              f=Path('/tmp/gq_fxmode_rojo')
+              f.write_bytes(z.read(items[0]))
+              f.chmod(0o755)
+          PY
+          mkdir -p artifacts
+          /tmp/gq_fxmode_rojo build quality_gameplay/fx_mode_fairness/EGGRUMBLE_V3_FX_FAIR_22_STUDIO.project.json -o artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_22_PRIVATE.rbxlx
+      - name: SHA256 / 22 Script source and class exact CI + receipt
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,os,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path('quality_gameplay/fx_mode_fairness/EGGRUMBLE_V3_FX_FAIR_22_STUDIO.project.json')
+          place=Path('artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_22_PRIVATE.rbxlx')
+          expected={}
+          def walk(n):
+              for name,entry in n.items():
+                  if name.startswith('$') or not isinstance(entry,dict):continue
+                  if '$path' in entry:
+                      f=(p.parent/entry['$path']).resolve(strict=True)
+                      cls='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                      assert name not in expected
+                      expected[name]=(f,cls)
+                  else:walk(entry)
+          walk(json.loads(p.read_text())['tree'])
+          assert len(expected)==22
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              cls=item.attrib.get('class')
+              if cls not in ('Script','LocalScript','ModuleScript'):continue
+              props=item.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert name is not None and source is not None
+              assert name not in actual
+              actual[name]=(cls,source.replace('\r\n','\n'))
+          assert set(actual)==set(expected),(set(expected)-set(actual),set(actual)-set(expected))
+          hashes={}
+          for name,(file,cls) in expected.items():
+              typ,data=actual[name]
+              assert typ==cls,('class',name,typ,cls)
+              assert data==file.read_text(encoding='utf-8').replace('\r\n','\n'),('source',name)
+              hashes[name]=hashlib.sha256(file.read_bytes()).hexdigest()
+          receipt={'head':os.environ['GITHUB_SHA'],'original_author_21_sha':'fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9',
+             'orig_20_unchanged':True,'skillfx_single_overlay':True,'new_helper':1,
+             'mapped_total':22,'source_sha256':hashes,'private_place_bytes':place.stat().st_size,
+             'private_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+             'official_rc_integrated':False,'studio':'NOT_TESTED','android':'NOT_TESTED',
+             'owner_accepted':False,'product':'NO_GO'}
+          Path('artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print('GQ_FX_MODE_EXACT_22_OF_22_PASS',receipt['private_place_bytes'],receipt['private_place_sha256'])
+          PY
+      - name: Archive private-only Place and full sha receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-MODE-FAIR-22-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_22_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_RECEIPT.json
+          retention-days: 3
