@@ -10,8 +10,8 @@ local Players=game:GetService("Players")
 if not RunService:IsStudio() then return end
 
 local ROOT_NAME="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
-local MAX_DECORATED_NEUTRALS_PER_ARENA=36
-local MAX_DECORATED_EGGS_PER_ARENA=48
+local MAX_DECORATED_NEUTRALS_PER_ARENA=24
+local MAX_DECORATED_EGGS_PER_ARENA=40
 local MAX_SIMULTANEOUS_KO_BURSTS=8
 local MAX_GATE_PIECES=7
 local activeNeutrals:{[Instance]:number}={}
@@ -181,9 +181,6 @@ local function decorateVault(part:BasePart)
   CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
   if isVault then gold else jade,Enum.Material.Metal)
  -- Distinguish enemy-vault theft from your own deposit through shape and color.
- jewel(art,part,"StationPeak","Wedge",Vector3.new(1.5,1.1,1.6),
-  CFrame.new(0,part.Size.Y/2+1.25,0),
-  if isVault then ceramic else steel,Enum.Material.Slate)
 end
 
 local function decorateModeGate(gate:BasePart)
