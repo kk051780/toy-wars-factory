@@ -1261,10 +1261,54 @@ jobs:
             --runtime "$V3/EGGRUMBLE_ZombieSquadRuntime.luau" \
             --place "$DIR/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx"
           echo GQ582_V3_SINGLE_EXISTING_COMBAT_OTHER30_EXACT_NATIVE31_REAL_ROJO31_PASS
+      - name: Pin original unique GQ618 BEAST author (source only, no duplicate Combat runtime)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 131313d645d2a5a67abd117c2c3d0459ee46d210
+          path: _gq618_beast_original
+          persist-credentials: false
+      - name: GQ618 live current31 single-Combat BEAST real Humanoid — native31, Rojo31, 30 other exact, OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq618_beast_original rev-parse HEAD)" = 131313d645d2a5a67abd117c2c3d0459ee46d210
+          SRC=_gq618_beast_original/quality_gameplay/v3_beast_escort_20261117
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ586_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json
+          OUT=$DIR/GQ618_BEAST_SELECTED31.project.json
+          LOCK=$(python3 -c 'import json; print(json.load(open("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json"))["upgraded_combat_sha256"])')
+          python3 -m py_compile "$SRC/compose_single_combat.py" "$SRC/select_current31.py"
+          python3 - "$BASE" "$LOCK" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan,COMBAT
+          project,parts=scan(Path(sys.argv[1]))
+          actual=hashlib.sha256(parts[COMBAT].read_bytes()).hexdigest()
+          assert actual==sys.argv[2],(actual,sys.argv[2])
+          assert len(parts)==31
+          print("GQ618_PINNED_ZOMBIE582_V3_SELECTED_COMBAT_SHA256_MATCH")
+          PY
+          python3 -B "$SRC/select_current31.py" prepare --base "$BASE" --out "$OUT" --runtime "$SRC/EGGRUMBLE_BeastEscort.luau" --expected-sha256 "$LOCK"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan
+          _,parts=scan(Path(sys.argv[1]))
+          assert len(parts)==31
+          for file in parts.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ618_REAL_CURRENT31_ALL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
+          python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --runtime "$SRC/EGGRUMBLE_BeastEscort.luau" --expected-sha256 "$LOCK" --place "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
+          echo GQ618_REAL_BEAST_31_SOURCE_CLASS_OTHER30_BYTE_EXACT_OFF_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1280,7 +1324,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1357,7 +1401,14 @@ jobs:
           gq582_v3=json.loads(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_text())
           assert gq582_v3["source_rojo_exact"]=="31/31" and gq582_v3["other30_script_bytes_identical"]
           assert gq582_v3["off_rollback_old_combat_byte_exact"] and gq582_v3["source_count"]==31
-          assert gq582_v3["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq582_v3["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          beast618=json.loads(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_text())
+          assert beast618["source_count"]==31 and beast618["original_30_scripts_byte_identical"]
+          assert beast618["off_previous_combat_exact"] and beast618["actual_rojo31_source_class"]=="31/31"
+          assert beast618["exact_original_combat_sha256"]==gq582_v3["upgraded_combat_sha256"]
+          assert beast618["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
+          assert m["source_heads"]["gq618_beast_escort"]=="131313d645d2a5a67abd117c2c3d0459ee46d210"
           assert m["source_heads"]["zombie_command582"]=="aeb7cbed6e154849804d7d28bd53966410e50364"
           assert m["feature_flags"]["ZOMBIE_NEUTRAL_STABLE_ID_V3"] is True
           gq586=json.loads(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
@@ -1414,6 +1465,9 @@ jobs:
             "source_author_heads":m["source_heads"],
             "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
+             "gq618_beast_real_server_humanoid_selected":True,
+             "gq618_existing_combat_other30_exact":True,
+             "gq618_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq586_current_match_deposit_selected":True,
             "gq586_other_30_original_scripts_preserved":True,
             "gq586_single_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
@@ -1525,6 +1579,9 @@ jobs:
             artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
             artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json
+            artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau
             artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.log
