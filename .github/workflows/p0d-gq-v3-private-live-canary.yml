@@ -13,14 +13,108 @@ permissions:
 jobs:
   canary-source-qa:
     runs-on: ubuntu-latest
+    timeout-minutes: 18
     steps:
-      - name: Checkout complete pinned author commit history
+      - name: Checkout full author source history (no writable token)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Source exact fail-closed contract and negative tests
+          persist-credentials: false
+      - name: Author 21-source immutable pin and negative source tests
         run: python3 -m unittest discover -s quality_gameplay/v3_private_live_canary_20261116/tests -v
-      - name: Compose 22-source canary outside repo; official RC unchanged
+      - name: Compose exactly 21 original sources + 1 private gate outside the repository
         run: |
+          set -euo pipefail
           python3 quality_gameplay/v3_private_live_canary_20261116/compose.py --out "$RUNNER_TEMP/eggrumble-v3-private-canary"
-          python3 -c 'import json,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"eggrumble-v3-private-canary/SOURCE_RECEIPT.json"; v=json.loads(p.read_text()); assert len(v["sources"])==21 and v["modified_guard_sites"]==17 and not v["official_rc_adopted"]; print("CANARY_SOURCE_ONLY_PASS 21 originals + 1 gate; 17 safeguards; PUBLIC_OFF; OFFICIAL_RC_ZERO")'
+          python3 -c 'import json,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"eggrumble-v3-private-canary/SOURCE_RECEIPT.json"; v=json.loads(p.read_text()); assert len(v["sources"])==21 and v["modified_guard_sites"]==17 and not v["official_rc_adopted"]; print("CANARY_SOURCE_COMPOSITE_PASS 21 originals + 1 gate, PUBLIC_OFF, RC_ZERO")'
+      - name: Checkout SHA-pinned Luau compiler and VM (test only)
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_private_gate_luau
+          persist-credentials: false
+      - name: Native compile all 22 mapped scripts + execute actual server gate in Luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_private_gate_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_private_gate_luau -B /tmp/p0d_private_gate_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_private_gate_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for f in "$RUNNER_TEMP"/eggrumble-v3-private-canary/sources/*.luau; do
+            /tmp/p0d_private_gate_luau/luau-compile --text "$f" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" = 22
+          python3 quality_gameplay/v3_private_live_canary_20261116/native_gate_harness.py --out "$RUNNER_TEMP/private_gate_native.luau"
+          /tmp/p0d_private_gate_luau/luau-compile --text "$RUNNER_TEMP/private_gate_native.luau" >/dev/null
+          /tmp/p0d_private_gate_luau/luau "$RUNNER_TEMP/private_gate_native.luau" | tee "$RUNNER_TEMP/PRIVATE_GATE_VM.log"
+          grep -q PRIVATE_GATE_NATIVE_11_CASES_PASS "$RUNNER_TEMP/PRIVATE_GATE_VM.log"
+          echo "NATIVE_COMPILE_22_OF_22_PASS"
+      - name: Download checksum-pinned Rojo 7.7.1 and build unpublished 22-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_private_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_private_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_private_rojo.zip") as z:
+              paths = [s for s in z.namelist() if s.split("/")[-1]=="rojo"]
+              assert len(paths)==1
+              out = Path("/tmp/gq_private_rojo")
+              out.write_bytes(z.read(paths[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq_private_rojo build "$RUNNER_TEMP/eggrumble-v3-private-canary/EGGRUMBLE_V3_PRIVATE_CANARY.project.json" -o "$RUNNER_TEMP/eggrumble-v3-private-canary/EGGRUMBLE_V3_PRIVATE_UNPUBLISHED.rbxlx"
+      - name: Verify actual Rojo Place contains 22 exact class/path/source pairs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,xml.etree.ElementTree as ET
+          out=pathlib.Path(os.environ["RUNNER_TEMP"])/"eggrumble-v3-private-canary"
+          project=json.loads((out/"EGGRUMBLE_V3_PRIVATE_CANARY.project.json").read_text())["tree"]
+          receipt=json.loads((out/"SOURCE_RECEIPT.json").read_text())
+          expected={}
+          def walk(node):
+              for key,val in node.items():
+                  if key.startswith("$") or not isinstance(val,dict):continue
+                  if "$path" in val:
+                      f=out/val["$path"]
+                      cl="Script" if f.name.endswith(".server.luau") else ("LocalScript" if f.name.endswith(".client.luau") else "ModuleScript")
+                      assert key not in expected,key
+                      expected[key]=(cl,f.read_text().replace("\r\n","\n"))
+                  else:walk(val)
+          walk(project)
+          assert len(expected)==22,len(expected)
+          place=out/"EGGRUMBLE_V3_PRIVATE_UNPUBLISHED.rbxlx"
+          found={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              cl=item.get("class")
+              if cl not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name and name not in found,(name,cl)
+              code=props.findtext("ProtectedString[@name='Source']")
+              if code is None:code=props.findtext("string[@name='Source']")
+              assert code is not None,(name,cl)
+              found[name]=(cl,code.replace("\r\n","\n"))
+          assert expected==found, {"missing":list(set(expected)-set(found)),"extra":list(set(found)-set(expected)),
+                                  "different":[k for k in expected.keys()&found.keys() if expected[k]!=found[k]]}
+          receipt["private_place_bytes"]=place.stat().st_size
+          receipt["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          (out/"SOURCE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
+          print("PRIVATE_ROJO_SOURCE_EXACT_22_OF_22_PASS",receipt["private_place_bytes"],receipt["private_place_sha256"])
+          print("OFFICIAL_RC_0 STUDIO_ENGINE_UNTESTED ANDROID_UNTESTED OWNER_ACCEPTED_0")
+          PY
+      - name: Preserve only short-lived unpublished QA artifact, never publish game
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ_PRIVATE22_SOURCE_NO_RC
+          path: |
+            ${{ runner.temp }}/eggrumble-v3-private-canary/EGGRUMBLE_V3_PRIVATE_UNPUBLISHED.rbxlx
+            ${{ runner.temp }}/eggrumble-v3-private-canary/EGGRUMBLE_V3_PRIVATE_CANARY.project.json
+            ${{ runner.temp }}/eggrumble-v3-private-canary/SOURCE_RECEIPT.json
+            ${{ runner.temp }}/PRIVATE_GATE_VM.log
+          retention-days: 3
