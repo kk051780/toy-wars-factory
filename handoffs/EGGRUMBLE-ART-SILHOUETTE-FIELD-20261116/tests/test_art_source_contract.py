@@ -33,7 +33,7 @@ class VisualLayersSourceContract(unittest.TestCase):
             'local DISPLAY_DISTANCES:',
             'if part.Name:sub(1,4)~="ART_" then return nil end',
             'local dist=DISPLAY_DISTANCES[ancestor.Name]',
-            'part.LocalTransparencyModifier=transparency',
+            'part.LocalTransparencyModifier=if isFar then 1 else 0',
             'workspace.DescendantAdded:Connect(register)',
             'workspace.DescendantRemoving:Connect(remove)',
             'local delta=part.Position-viewpoint',
@@ -55,6 +55,38 @@ class VisualLayersSourceContract(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, body)
         self.assertNotIn('ART_TrueNeutralKOCue', CLIENT)
+
+    def test_camera_distance_lod_hysteresis_prevents_edge_popping(self):
+        # Original part state is reversible; no repeated 1.2s disappear/appear
+        # oscillation at the same distance when the camera crosses the margin.
+        for token in (
+            'local hidden:{[BasePart]:boolean}={}',
+            'local wasFar=hidden[part] or false',
+            'local margin=if wasFar then .88 else 1.12',
+            'if isFar~=wasFar then',
+            'hidden[part]=isFar',
+            'hidden[instance]=nil',
+        ):
+            self.assertIn(token, CLIENT)
+
+        def next_hidden(distance: float, old_hidden: bool, threshold: float = 100.0) -> bool:
+            margin = .88 if old_hidden else 1.12
+            return distance * distance > (threshold * margin)**2
+
+        self.assertFalse(next_hidden(100, False))
+        self.assertFalse(next_hidden(110, False))
+        self.assertTrue(next_hidden(113, False))
+        self.assertTrue(next_hidden(100, True))
+        self.assertTrue(next_hidden(89, True))
+        self.assertFalse(next_hidden(87, True))
+
+    def test_duplicate_role_attributes_do_not_rebuild_identical_costume(self):
+        self.assertIn('existing:GetAttribute("EGGRUMBLE_VisualRole")==role', HERO)
+        self.assertIn('existing:GetAttribute("EGGRUMBLE_VisualAnchor")==anchor.Name', HERO)
+        self.assertIn('art:SetAttribute("EGGRUMBLE_VisualRole",role)', HERO)
+        self.assertIn('art:SetAttribute("EGGRUMBLE_VisualAnchor",anchor.Name)', HERO)
+        self.assertIn('if existing then existing:Destroy() end', HERO)
+        self.assertIn('sculpt(art,anchor,role,false)', HERO)
 
     def test_exact_client_lod_rojo_node_and_author_combat_feel_preserved(self):
         tool_path=ROOT / "tools" / "compose_current_v3_art.py"
