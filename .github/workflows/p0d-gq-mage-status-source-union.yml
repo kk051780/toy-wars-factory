@@ -28,14 +28,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: dfafbd8ca92eff3017a49fb010e696f6afc07455
+          ref: 8f0275692c54874f823d66748d470fb849607df5
           path: _gq_status_owner
           persist-credentials: false
       - name: Compose EXACT one existing Combat with #510 MAGE plus #516 status
         run: |
           set -euo pipefail
           test "$(git -C _gq_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
-          test "$(git -C _gq_status_owner rev-parse HEAD)" = dfafbd8ca92eff3017a49fb010e696f6afc07455
+          test "$(git -C _gq_status_owner rev-parse HEAD)" = 8f0275692c54874f823d66748d470fb849607df5
           mkdir -p artifacts
           python3 _gq_status_owner/quality_gameplay/v3_status_tick_fence_20261116/tools/compose_with_mage_author.py \
             --mage-builder quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py \
