@@ -68,14 +68,21 @@ def rehash(data,receipt):
     receipt["place_sha256"]=hashlib.sha256(data).hexdigest()
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_fourteen_known_flags(self):
+    def test_valid_covers_eight_domains_and_eighteen_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],17)
+        self.assertEqual(v["verified_flag_count"],18)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
+    def test_missing_original_roster16_guard_in_actual_place_is_red(self):
+        b,r,m,a=fixture()
+        n="EGGRUMBLE_CastleMatchRules"
+        b=change_source(b,n,"M.MAX_HERO_SLOTS=16\nlimit>=2 and limit<=32\n#roster>=2 and #roster<=32")
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,"DOMAIN_|FEATURE_FALSE_ON"):
+            gq8.verify(b,r,m,a,HEAD)
     def test_stale_rc_head_must_fail(self):
         b,r,m,a=fixture()
         with self.assertRaisesRegex(gq8.RedGate,"ARTIFACT_STALE_WRONG_HEAD"):
