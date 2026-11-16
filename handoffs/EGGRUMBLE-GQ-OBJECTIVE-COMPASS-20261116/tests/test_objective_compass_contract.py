@@ -74,14 +74,35 @@ class CompassContract(unittest.TestCase):
             "bar.Visible=false", "toggle.Visible=false",
             "marker.Enabled=false", "marker.MaxDistance=380",
             "os.clock()-visibleSince>INITIAL_SECONDS",
-            "if processed or input.KeyCode", "marker.Adornee=nil",
+            "if processed or not toggle.Visible then return end", "marker.Adornee=nil",
             "layoutForViewport()", "camera.ViewportSize.X",
-            "math.min(294,math.max(90,width-80))",
+            "math.min(294,math.max(90,width-132))",
         ):
             self.assertIn(required, self.src)
         self.assertEqual(len(re.findall(r"Heartbeat:Connect", self.src)), 1)
         self.assertNotIn("RenderStepped", self.src)
         self.assertNotIn("AlwaysOnTop=true", self.src)
+
+    def test_manual_return_home_preserves_server_egg_authority(self):
+        for token in (
+            'returnHome.Name="ManualReturnHome"',
+            'returnHome.Visible=expanded',
+            'manuallyReturning=not manuallyReturning',
+            'homeSelected:boolean',
+            'if homeSelected then',
+            'return home,"自城へ帰還（手動）"',
+            'return nil,"自城へ帰還（手動）"',
+            'Enum.KeyCode.H',
+            'lastMode=mode;expanded=true;visibleSince=os.clock();manuallyReturning=false',
+            'currentTarget=nil;lastMode="";manuallyReturning=false',
+            'returnHome.Position=UDim2.fromOffset(left+barWidth+6,10)',
+            'toggle.Position=UDim2.fromOffset(left+barWidth+60,10)',
+        ):
+            self.assertIn(token, self.src)
+        self.assertLess(self.src.index("if homeSelected then"),
+                        self.src.index("local item,itemDistance="))
+        self.assertNotIn("EGGRUMBLE_CarriedEggs", self.src)
+        self.assertNotIn("GetAttribute(\"heldEggs\")", self.src)
 
 if __name__ == "__main__":
     unittest.main()
