@@ -20,7 +20,7 @@ EXPECTED = 26
 def sha_file(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
-def scripts(project: Path):
+def scripts(project: Path, expected_count=EXPECTED):
     project=project.resolve(strict=True)
     obj=json.loads(project.read_text(encoding="utf-8"))
     if obj.get("tree",{}).get("$className")!="DataModel":
@@ -45,8 +45,8 @@ def scripts(project: Path):
                 if not name.startswith("$"):
                     descend(child,chain+(name,))
     descend(obj["tree"])
-    if len(result)!=EXPECTED or HOST not in result or result[HOST][2]!="Script":
-        raise ValueError("RED: base 26 source/host contract drift")
+    if len(result)!=expected_count or HOST not in result or result[HOST][2]!="Script":
+        raise ValueError("RED: base source/host contract drift")
     return obj,result
 
 def original_composed_host(author: str, quality: str, composer: Path) -> str:
