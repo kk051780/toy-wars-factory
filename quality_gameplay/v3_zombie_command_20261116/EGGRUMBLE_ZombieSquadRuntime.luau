@@ -103,7 +103,7 @@ function Runtime.begin(player: Player, opts: any): (boolean, string?)
                     data.humanoid:MoveTo(Vector3.new(action.x, data.root.Position.Y, action.z))
                 elseif action.kind == "ATTACK" then
                     -- The single original server Combat authority decides actual damage/credit.
-                    local authorized = pcall(opts.hit, player, action.targetId, action.damage, epoch)
+                    local authorized = pcall(opts.hit, player, action.targetId, action.damage, epoch, data.root)
                     if not authorized then stop(); return end
                 elseif action.kind == "DESPAWN" then
                     data.model:Destroy()
