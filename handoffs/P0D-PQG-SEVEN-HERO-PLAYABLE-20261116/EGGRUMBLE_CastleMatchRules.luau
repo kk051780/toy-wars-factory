@@ -243,6 +243,10 @@ function M.depositEggs(m:any,actorId:any,quantity:number):number
  return c.depositedEggs
 end
 function M.onCarrierEliminated(m:any,id:any)
+ -- Late Humanoid.Died callbacks may arrive after the decisive castle fall.
+ -- The terminal result is immutable: do not mint field tokens or rewrite egg
+ -- ownership/score events after winner is known. Keep active death idempotent.
+ if m.phase~="ACTIVE" or m.winner~=nil then return 0,{} end
  local c=castleOf(m,id)
  local dropped=c.heldEggs;c.heldEggs=0;m.fieldEggs+=dropped
  local ids={}
