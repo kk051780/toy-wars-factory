@@ -195,8 +195,9 @@ print("GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_16_SCENARIOS_PASS",numCases)
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--out",required=True,type=pathlib.Path)
+    parser.add_argument("--source",type=pathlib.Path,default=PATCH)
     args=parser.parse_args()
-    text=PATCH.read_text(encoding="utf8")
+    text=args.source.read_text(encoding="utf8")
     assert text.count(MARKER)==1 and text.count(AFTER)==1
     start=text.index(MARKER)
     end=text.index(AFTER,start)
