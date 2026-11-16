@@ -51,6 +51,18 @@ jobs:
           /tmp/gq_bot_luau/luau-compile --text /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE.native.luau >/dev/null
           /tmp/gq_bot_luau/luau /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE.native.luau | tee /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE_NATIVE.log
           grep -q GQ_BOT_SIEGE_PACING_NATIVE_PASS /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE_NATIVE.log
+      - name: Run extracted real original BotActors 4-bot castle damage clause in native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=quality_gameplay/gq_bot_siege_pacing_20261116
+          private=/tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+          python3 "$base/tools/generate_native_bot_action_harness.py" \
+            --source "$private/src/EGGRUMBLE_BotActors.luau" \
+            --out "$private/BOT_ACTION.native.luau"
+          /tmp/gq_bot_luau/luau-compile --text "$private/BOT_ACTION.native.luau" >/dev/null
+          /tmp/gq_bot_luau/luau "$private/BOT_ACTION.native.luau" | tee "$private/BOT_ACTION_NATIVE.log"
+          grep -q GQ_BOT_SIEGE_ACTUAL_AUTHOR_BRANCH_NATIVE_PASS "$private/BOT_ACTION_NATIVE.log"
       - name: Pinned Rojo 7.7.1 real private Place and 22 exact source/class verification
         shell: bash
         run: |
@@ -76,7 +88,7 @@ jobs:
         run: |
           set -euo pipefail
           cd /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
-          zip -q -r /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip private_v3.project.json source_lock.json src BOT_SIEGE_NATIVE.log GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          zip -q -r /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip private_v3.project.json source_lock.json src BOT_SIEGE_NATIVE.log BOT_ACTION_NATIVE.log GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
           stat -c 'PRIVATE_ZIP_BYTES=%s' /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
           sha256sum /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
       - uses: actions/upload-artifact@v4
