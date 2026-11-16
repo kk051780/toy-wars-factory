@@ -1,0 +1,31 @@
+# EGGRUMBLE V3 — GQ BUILDER WALL / BRIDGE, SOURCE candidate
+**Status: SOURCE_WIP / SOFT_CLAIM_REQUEST / NOT_GRANTED / NOT IN OFFICIAL RC / NOT RELEASE-READY**
+
+## Concept fidelity vs source
+- Origin: #219 and #470 require all seven jobs' actual signature abilities. Existing author-owned #482 EGGRUMBLE_SevenRoleCombat.luau BUILDER-C draws a short-lived turret plus damage pulses but contains no physically traversable wall or bridge. This new slice covers only missing physical construction, not reimplementation of current skills.
+- Original Game/7-role/castle/egg/AI/neutral/field/item/TEAM+BR lobby/ART/SCORE remain untouched at author HEAD fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9. The two server ModuleScripts add no replacement Game, Remote, Store, role selector or client input.
+- #500 handles castle-defense turret/trap/SENSOR; #520 handles TEAM ridge/item. This module owns neither.
+- A private Place that includes modules does NOT mean the BUILDER action is wired. Gameplay activation is UNTESTED.
+
+## Original owner hookup contract; not done
+Only after #482 author ACK and #218 hard claim may the original server-owned dispatcher invoke BuilderConstruction.place(session, player, "WALL", true) or place(...,"BRIDGE",true). The server selects kind; never trust client-supplied coordinates or introduce another Remote. BUILDER skill C must not silently lose existing turret pulses. The original owner must provide an explicit player choice and actual skill hook. The original session.closeRound should call BuilderConstruction.clear(session), with 9-second delayed cleanup as redundancy.
+
+## Safety & limits
+- Default feature OFF; human roster, match mode, alive castle, real Player+Character, role, no carried egg and active match checks.
+- Uses ground only from the current match arena, bounds and support checks, castle/pickup/goal exclusions, occupied obstacle detection, and full rollback.
+- Hero cap 2, match cap 12, WALL cooldown 13s, BRIDGE cooldown 17s, auto removal after 9s.
+- Actual bridge gap traversal is UNPROVEN: current demo TacticalBattlefield is a largely continuous grass slab.
+
+## Private native/source-exact CI
+make_private_project.py selects precisely the original 21 scripts plus 2 optional server modules. Pinned Luau compile, native pure-policy negatives, pinned Rojo 7.7.1 PRIVATE Studio Place and 23 source+class exact XML audit. The private Place or artifact ZIP byte count is never official RC capacity. Even source PASS is not actual Roblox Studio gameplay verification.
+
+## Balanced 8-domain intake
+CHARACTER=BUILDER construction, FIELD=valid placement, BATTLE=no new damage, CASTLE=gate clearance, NEUTRAL=no horde/KO authority change, ITEM=no egg/collectible blockage, LOBBY=TEAM/BR real session and cleanup, BALANCE=bounded duration/rate/count; all original author systems left intact.
+
+## Official RC adoption checklist
+1. #218 hard claim and #482 author ACK; reconcile current original owner HEAD and reject overlapping Game/Combat authority.
+2. Exact native Luau and private Rojo source proof, compare against current 8-domain host.
+3. Only #220 authenticated sole writer selects the original-author hook plus optional modules for current rc/p0d-s1-kids-rc01 using expected-SHA nonforce CAS. Record new official HEAD, same HEAD native/Rojo/SourceLock, ZIP/Place bytes and rollback, ACK.
+4. Studio 1+15 AI/2 clients TEAM+BR real bridge gap and wall occlusion, low Android 15min and #420 ART/FUN, #470 product/OWNER acceptance. Absent proof means PRODUCT_NO_GO.
+
+Rollback: flag OFF, remove the two mapped optional modules and original-author hook, preserve original BUILDER turret, run clear(session); no persistent schema changes. No main write, PR merge, Publish, payment or Windows operations.
