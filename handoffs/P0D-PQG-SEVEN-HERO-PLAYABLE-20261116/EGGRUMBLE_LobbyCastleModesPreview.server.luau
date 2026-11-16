@@ -10,6 +10,7 @@ local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
+local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
@@ -214,6 +215,8 @@ local function startSession(mode:string)
    end
   end
   if session.rules.winner~=nil then
+   -- Short factual result shown exactly once, never a permanent play-blocking HUD.
+   ResultService.showIfFinished(session,queue,mode)
    print("[EGGRUMBLE "..mode.."] Castle elimination winner:",session.rules.winner)
   end
  end
