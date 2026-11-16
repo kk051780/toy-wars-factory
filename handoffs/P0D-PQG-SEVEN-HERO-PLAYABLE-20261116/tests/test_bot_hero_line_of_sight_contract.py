@@ -39,7 +39,7 @@ class TestBotHeroLineOfSight(unittest.TestCase):
         self.assertIn("return workspace:Raycast(source,delta,ray)==nil",src)
         self.assertIn("and count<5 and lineClear(",src)
         ray=src.index("and count<5 and lineClear(")
-        hit=src.index("h:TakeDamage(damage)")
+        hit=src.index("h:TakeDamage(damage*duel)")
         self.assertLess(ray,hit)
         self.assertNotIn("EGGRUMBLE_TestBlade",PREVIEW.read_text(encoding="utf-8"))
 
