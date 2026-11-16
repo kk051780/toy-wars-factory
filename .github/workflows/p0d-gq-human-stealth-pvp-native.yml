@@ -66,6 +66,7 @@ jobs:
           if /tmp/gq_stealth_luau/luau artifacts/STEALTH_ORIGINAL_NATIVE.luau >/tmp/orig.log 2>&1; then
             echo "RED: original hidden-target defect did not reproduce";exit 1
           fi
+          cat /tmp/orig.log
           grep -q HIDDEN_HUMAN_WAS_DAMAGED /tmp/orig.log
           echo "GQ_HUMAN_STEALTH_ORIGINAL_DEFECT_REPRODUCED"
           /tmp/gq_stealth_luau/luau artifacts/STEALTH_FIXED_NATIVE.luau | tee /tmp/fixed.log
