@@ -944,6 +944,25 @@ jobs:
           (base/"EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json").write_text(json.dumps(details,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
           print("EGGRUMBLE_V3_OFFICIAL_RC31_STUDIO_PLACE_SOURCE_EXACT_READY",place.stat().st_size,details["place_sha256"])
           PY
+      - name: GQ8 independent artifact truth gate — actual built Place, eight domains and all official enabled flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_rctrace8 -p 'test_*.py'
+          gq8mode=()
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            gq8mode+=(--pr-premerge)
+          fi
+          python3 -B rc_fastlane/quality_rctrace8/verify_artifact.py \
+            --artifact-dir artifacts/gq530_all31 \
+            --manifest rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
+            --active rc_fastlane/ACTIVE.json \
+            --rc-head "$GITHUB_SHA" \
+            --out artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json \
+            "${gq8mode[@]}"
+          test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
+          echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
         if: success()
         uses: actions/upload-artifact@v4
@@ -965,6 +984,7 @@ jobs:
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+            artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON_RECEIPT.json
             artifacts/gq530_all31/GQ31_OFF_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON.project.json
