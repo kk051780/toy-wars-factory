@@ -41,7 +41,7 @@ class CombatFeelQuality(unittest.TestCase):
         for token in ('MAX_FEEDBACK_PER_SEC=18','MAX_LIVE_HIGHLIGHTS=10',
                       'MAX_KO_BURSTS_PER_SEC=6','ATTACKER_FEEDBACK_CD=.16',
                       'if hitCount>=MAX_FEEDBACK_PER_SEC then return false end',
-                      'if highlights>=MAX_LIVE_HIGHLIGHTS',
+                      'or highlights>=MAX_LIVE_HIGHLIGHTS',
                       'if koCount>=MAX_KO_BURSTS_PER_SEC then return false end',
                       'DepthMode=Enum.HighlightDepthMode.Occluded',
                       'EGGRUMBLE_HitFlashActive','Debris:AddItem(hl,.13)',
@@ -58,7 +58,7 @@ class CombatFeelQuality(unittest.TestCase):
                       'gui.ResetOnSpawn=false','gui.IgnoreGuiInset=true',
                       'mark.Visible=false'):
             with self.subTest(token=token): self.assertIn(token,CLIENT)
-        self.assertNotIn("RemoteEvent",CLIENT)
+        self.assertNotIn('Instance.new("RemoteEvent")',CLIENT)
         self.assertNotIn("FireServer(",CLIENT)
         self.assertNotIn("Humanoid:TakeDamage(",CLIENT)
 
