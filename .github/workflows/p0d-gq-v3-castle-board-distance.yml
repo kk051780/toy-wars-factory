@@ -1,0 +1,78 @@
+name: GQ V3 existing castle board distance source/native/Rojo only
+
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_castle_board_distance_20261116/**'
+      - '.github/workflows/p0d-gq-v3-castle-board-distance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-native-private-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test immutable original, exact 2-board overlay, OFF rollback, 8-domain preservation
+        run: |
+          python3 -m unittest discover -v \
+            -s quality_gameplay/v3_castle_board_distance_20261116/tests -p 'test_*.py'
+      - name: Compose original 21-source private V3 Rojo project, one original Host overlay
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_castle_board_distance_20261116/tools/compose.py \
+            --out quality_gameplay/v3_castle_board_distance_20261116/_private_stage
+          python3 -m json.tool quality_gameplay/v3_castle_board_distance_20261116/_private_stage/private.project.json >/dev/null
+      - name: Native compile the generated Host and all unchanged author Luau
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-castle-board-luau
+          cmake -S /tmp/gq-castle-board-luau -B /tmp/gq-castle-board-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-castle-board-luau/build --target Luau.Compile.CLI -j 4
+          for f in \
+            quality_gameplay/v3_castle_board_distance_20261116/_private_stage/HostOverlay.server.luau \
+            handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/*.luau; do
+            /tmp/gq-castle-board-luau/build/luau-compile "$f" >/dev/null
+          done
+          echo "NATIVE_LUAU_HOST_AND_ORIGINAL_SOURCE=PASS"
+      - name: Install pinned official Rojo 7.7.0 private build CLI
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq-castle-board-rojo
+          curl --fail --location --retry 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip \
+            -o /tmp/gq-castle-board-rojo.zip
+          unzip -q /tmp/gq-castle-board-rojo.zip -d /tmp/gq-castle-board-rojo
+          chmod +x /tmp/gq-castle-board-rojo/rojo
+          /tmp/gq-castle-board-rojo/rojo --version
+      - name: Build and inspect actual PRIVATE 21-Luau Studio Place
+        run: |
+          set -euo pipefail
+          STAGE=quality_gameplay/v3_castle_board_distance_20261116/_private_stage
+          /tmp/gq-castle-board-rojo/rojo build "$STAGE/private.project.json" \
+            --output "$STAGE/EGGRUMBLE_BOARD_DISTANCE_PRIVATE_NOT_RC.rbxlx"
+          test -s "$STAGE/EGGRUMBLE_BOARD_DISTANCE_PRIVATE_NOT_RC.rbxlx"
+          python3 quality_gameplay/v3_castle_board_distance_20261116/tools/verify_place.py \
+            --project "$STAGE/private.project.json" \
+            --place "$STAGE/EGGRUMBLE_BOARD_DISTANCE_PRIVATE_NOT_RC.rbxlx"
+          wc -c "$STAGE/EGGRUMBLE_BOARD_DISTANCE_PRIVATE_NOT_RC.rbxlx"
+          sha256sum "$STAGE/EGGRUMBLE_BOARD_DISTANCE_PRIVATE_NOT_RC.rbxlx"
+      - name: Save only PRIVATE source evidence; no merge / publish / official RC write
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-V3-BOARD-DISTANCE-PRIVATE-NOT-RC
+          path: |
+            quality_gameplay/v3_castle_board_distance_20261116/_private_stage/*.rbxlx
+            quality_gameplay/v3_castle_board_distance_20261116/_private_stage/receipt.json
+            quality_gameplay/v3_castle_board_distance_20261116/_private_stage/HostOverlay.server.luau
+          retention-days: 3
+          if-no-files-found: error
+      - name: Explicit unfinished acceptance gates
+        run: |
+          echo "GQ SOURCE/NATIVE/REAL PRIVATE ROJO: check previous steps."
+          echo "OFFICIAL_RC_ADOPTED=0; STUDIO/ANDROID/FUN/ART/OWNER=NOT_TESTED."
+          echo "No original author source changed; no main / merge / paid action / Roblox publish."
