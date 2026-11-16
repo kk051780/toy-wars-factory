@@ -16,10 +16,10 @@ function Castle.build(parent:Instance,origin:Vector3,teamColor:Color3):any
  local w=40;local depth=48;local height=18
  brick(m,"Foundation",CFrame.new(origin+Vector3.new(0,-1,0)),Vector3.new(w,2,depth),stone,true)
  -- Door is on negative Z. Keep a 10-stud opening for avatars, bots and mobile camera.
- for _,x in ipairs({-15,15}) do
-  brick(m,"FrontWallPier",CFrame.new(origin+Vector3.new(x,9,-depth/2)),Vector3.new(10,height,3),stone,true)
+ for _,x in ipairs({-12.5,12.5}) do
+  brick(m,"FrontWallPier",CFrame.new(origin+Vector3.new(x,9,-depth/2)),Vector3.new(15,height,3),stone,true)
  end
- brick(m,"DoorLintel",CFrame.new(origin+Vector3.new(0,15,-depth/2)),Vector3.new(20,6,3),stone,true)
+ brick(m,"DoorLintel",CFrame.new(origin+Vector3.new(0,15,-depth/2)),Vector3.new(10,6,3),stone,true)
  brick(m,"BackWall",CFrame.new(origin+Vector3.new(0,9,depth/2)),Vector3.new(w,height,3),stone,true)
  for _,x in ipairs({-w/2,w/2}) do
   brick(m,"SideWall",CFrame.new(origin+Vector3.new(x,9,0)),Vector3.new(3,height,depth),stone,true)
