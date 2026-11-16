@@ -1,0 +1,113 @@
+name: P0D GQ unique V3 bot siege shared castle pace private22
+on:
+  push:
+    branches:
+      - quality/gq-v3-bot-siege-dps-cap-20261116
+    paths:
+      - 'quality_gameplay/gq_bot_siege_pacing_20261116/**'
+      - '.github/workflows/p0d-gq-bot-siege-pacing-private22.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/gq_bot_siege_pacing_20261116/**'
+      - '.github/workflows/p0d-gq-bot-siege-pacing-private22.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-22-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin source author and stage one gated bot attack plus new module
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=quality_gameplay/gq_bot_siege_pacing_20261116
+          python3 -B -m unittest discover -v -s "$base/tests"
+          python3 "$base/tools/stage_private_v3.py" --out /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Native Luau compiler + actual TEAM/BR VM regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau -B /tmp/gq_bot_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_bot_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for file in /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/src/*.luau; do
+            /tmp/gq_bot_luau/luau-compile --text "$file" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" -eq 22
+          python3 quality_gameplay/gq_bot_siege_pacing_20261116/tools/generate_native_harness.py --out /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE.native.luau
+          /tmp/gq_bot_luau/luau-compile --text /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE.native.luau >/dev/null
+          /tmp/gq_bot_luau/luau /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE.native.luau | tee /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE_NATIVE.log
+          grep -q GQ_BOT_SIEGE_PACING_NATIVE_PASS /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/BOT_SIEGE_NATIVE.log
+      - name: Run extracted real original BotActors 4-bot castle damage clause in native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=quality_gameplay/gq_bot_siege_pacing_20261116
+          private=/tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+          python3 "$base/tools/generate_native_bot_action_harness.py" \
+            --source "$private/src/EGGRUMBLE_BotActors.luau" \
+            --out "$private/BOT_ACTION.native.luau"
+          /tmp/gq_bot_luau/luau-compile --text "$private/BOT_ACTION.native.luau" >/dev/null
+          /tmp/gq_bot_luau/luau "$private/BOT_ACTION.native.luau" | tee "$private/BOT_ACTION_NATIVE.log"
+          grep -q GQ_BOT_SIEGE_ACTUAL_AUTHOR_BRANCH_NATIVE_PASS "$private/BOT_ACTION_NATIVE.log"
+      - name: Real original author CastleMatchRules plus extracted BotActors and siege pacing native
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=quality_gameplay/gq_bot_siege_pacing_20261116
+          private=/tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+          python3 "$base/tools/generate_native_author_rules_harness.py" \
+            --actor "$private/src/EGGRUMBLE_BotActors.luau" \
+            --rules "$private/src/EGGRUMBLE_CastleMatchRules.luau" \
+            --out "$private/AUTHOR_RULES_BOT.native.luau"
+          /tmp/gq_bot_luau/luau-compile --text "$private/AUTHOR_RULES_BOT.native.luau" >/dev/null
+          /tmp/gq_bot_luau/luau "$private/AUTHOR_RULES_BOT.native.luau" | tee "$private/AUTHOR_RULES_BOT_NATIVE.log"
+          grep -q GQ_ORIGINAL_RULES_PLUS_REAL_BOT_BRANCH_NATIVE_PASS "$private/AUTHOR_RULES_BOT_NATIVE.log"
+      - name: Pinned Rojo 7.7.1 real private Place and 22 exact source/class verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_bot_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_bot_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_bot_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              dest=Path("/tmp/gq_bot_rojo")
+              dest.write_bytes(z.read(names[0]))
+              dest.chmod(0o755)
+          PY
+          /tmp/gq_bot_rojo build /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/private_v3.project.json -o /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          python3 quality_gameplay/gq_bot_siege_pacing_20261116/tools/verify_private_place.py --folder /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC --place /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          stat -c 'PRIVATE_PLACE_BYTES=%s' /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          sha256sum /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+      - name: Package unpublished audit receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+          zip -q -r /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip private_v3.project.json source_lock.json src BOT_SIEGE_NATIVE.log BOT_ACTION_NATIVE.log AUTHOR_RULES_BOT_NATIVE.log GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          stat -c 'PRIVATE_ZIP_BYTES=%s' /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
+          sha256sum /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ_BOT_SIEGE_PRIVATE22_NOT_OFFICIAL_RC
+          path: |
+            /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
+          if-no-files-found: error
+          retention-days: 7
