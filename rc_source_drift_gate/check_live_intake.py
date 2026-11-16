@@ -15,6 +15,7 @@ import posixpath
 import re
 import urllib.request
 from pathlib import Path
+from runtime_activation import REQUIRED_RUNTIME_SOURCES, evaluate_runtime_activation
 from urllib.parse import quote
 
 REPO = "kk051780/toy-wars-factory"
@@ -285,14 +286,26 @@ def live_audit() -> dict:
     from urllib.parse import urlencode
     runs = api("actions/runs?" + urlencode(
         {"branch": CURRENT26_BRANCH, "per_page": 60})).get("workflow_runs", [])
-    return evaluate_active26(prs, author_project, author_blobs, quality_blobs,
-                             workflow, composer, runs, official)
+    report = evaluate_active26(prs, author_project, author_blobs, quality_blobs,
+                               workflow, composer, runs, official)
+    # Independent, non-invasive runtime boundary for all 8 domains. A native
+    # source/Place PASS cannot prove the Studio-only preview works in a normal
+    # Roblox server or Android client.
+    nodes = project_nodes(author_project)
+    runtime_sources = {name: github_file(nodes[name]["path"], author_sha)
+                       for name in REQUIRED_RUNTIME_SOURCES if name in nodes}
+    report["runtime_activation"] = evaluate_runtime_activation(runtime_sources)
+    report["product_go"] = False
+    return report
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("P0D_LIVE_RC_SOURCE_DRIFT.json"))
     parser.add_argument("--strict", action="store_true",
-                        help="Nonzero when latest source reconciliation is blocked")
+                        help="Nonzero when latest SOURCE reconciliation is blocked")
+    parser.add_argument("--require-no-studio-only-guards", action="store_true",
+                        help="Separate product-preflight code 3 for Studio-only source guards; "
+                             "even when this passes, real device evidence remains required")
     args = parser.parse_args()
     try:
         report = live_audit()
@@ -307,6 +320,11 @@ def main() -> None:
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if args.strict and report["decision"] != "SOURCE_REVIEW_READY_ONLY":
         raise SystemExit(2)
+    if args.require_no_studio_only_guards:
+        activation = report.get("runtime_activation", {})
+        if activation.get("production_runtime") != "NOT_VERIFIED_FAIL_CLOSED" or \
+           activation.get("source_guard_inspection") != "COMPLETE":
+            raise SystemExit(3)
 
 
 if __name__ == "__main__":
