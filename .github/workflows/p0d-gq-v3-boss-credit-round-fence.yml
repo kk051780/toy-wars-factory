@@ -135,13 +135,19 @@ jobs:
             --project artifacts/GQ_BOSS_CURRENT_28.project.json \
             --place artifacts/GQ_BOSS_CURRENT_28_PRIVATE.rbxlx \
             --receipt artifacts/GQ_BOSS_CURRENT28_SOURCE_RECEIPT.json
-      - name: Upload exact candidate Place and SHA/bytes receipt for sole RC writer
+      - name: Upload original 21 plus our 2 scripts single-scope 23-source Place
         uses: actions/upload-artifact@v4
         with:
           name: EGGRUMBLE-GQ-BOSS-CREDIT-23-SOURCE-PRIVATE
           path: |
             artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx
             artifacts/BOSS_CREDIT_SOURCE_EXACT_RECEIPT.json
+          retention-days: 3
+      - name: Upload original author GAME AI ART SCORE26 plus our 2 source composite
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-BOSS-CREDIT-CURRENT28-SOURCE-PRIVATE
+          path: |
             artifacts/GQ_BOSS_CURRENT_28_PRIVATE.rbxlx
             artifacts/GQ_BOSS_CURRENT28_SOURCE_RECEIPT.json
             artifacts/GQ_BOSS_CURRENT_28.project.json
