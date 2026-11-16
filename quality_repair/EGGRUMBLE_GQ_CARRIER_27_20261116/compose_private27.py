@@ -50,12 +50,12 @@ def main() -> None:
     qdir = (a.quality / GAME).resolve(strict=True)
     carrier_file = (a.carrier / GAME / POLICY).resolve(strict=True)
     fixed = (out.parent / "_quality_502").resolve()
-    fixed.mkdir(exist_ok=True)
+    (fixed / GAME).mkdir(parents=True, exist_ok=True)
     for f in (BOT, NAV, HOST):
         source = (qdir / f).read_text(encoding="utf-8")
         if f == BOT:
             source = patch_original_quality_bot(source)
-        (fixed / f).write_text(source, encoding="utf-8")
+        (fixed / GAME / f).write_text(source, encoding="utf-8")
     policy = carrier_file.read_text(encoding="utf-8")
     assert "function Targeting.canStrike" in policy
     assert "if carriedEggs > 0 then" in policy
