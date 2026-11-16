@@ -15,7 +15,7 @@ local function signal()
  local s={listeners={}}
  function s:Connect(fn)
   local conn={active=true}
-  conn:Disconnect=function(self) self.active=false end
+  function conn:Disconnect() self.active=false end
   table.insert(self.listeners,{conn=conn,fn=fn})
   return conn
  end
