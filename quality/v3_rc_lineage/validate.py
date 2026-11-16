@@ -31,6 +31,33 @@ MANDATORY = frozenset(
     EGGRUMBLE_CombatFeel EGGRUMBLE_ProceduralSkills
     """.split()
 )
+# Exclusive original sources; adding another Game/ART/score engine is not intake.
+OWNERS = {
+    "EGGRUMBLE_BotActors": "#484",
+    "EGGRUMBLE_BotPathRouter": "#484",
+    "EGGRUMBLE_LobbyCastleModesPreview": "#484",
+    "EGGRUMBLE_MatchResultService": "#487",
+    "EGGRUMBLE_ScoreBalance": "#487",
+    "EGGRUMBLE_HeroSilhouetteArt": "#485",
+    "EGGRUMBLE_FlagshipFieldArt": "#485",
+    "EGGRUMBLE_EncounterReadabilityArt": "#485",
+    "EGGRUMBLE_ArtDistanceLOD": "#485",
+}
+EXTRA = frozenset({
+    "EGGRUMBLE_ScoreBalance", "EGGRUMBLE_HeroSilhouetteArt",
+    "EGGRUMBLE_FlagshipFieldArt", "EGGRUMBLE_EncounterReadabilityArt",
+    "EGGRUMBLE_ArtDistanceLOD",
+})
+SERVER_SCRIPTS = {
+    "EGGRUMBLE_LobbyCastleModesPreview",
+    "EGGRUMBLE_HeroSilhouetteArt",
+    "EGGRUMBLE_FlagshipFieldArt",
+    "EGGRUMBLE_EncounterReadabilityArt",
+}
+CLIENT_SCRIPTS = {
+    "EGGRUMBLE_CombatFeel", "EGGRUMBLE_ProceduralSkills",
+    "EGGRUMBLE_ArtDistanceLOD",
+}
 DOMAIN_NAMES = {
     "character": "EGGRUMBLE_SevenRoleCombat",
     "field": "EGGRUMBLE_BotPathRouter",
@@ -70,7 +97,7 @@ def inventory(root: Path, project: Path, errors: list[str], label: str) -> dict:
             if not isinstance(path, str) or not path.endswith(".luau"):
                 errors.append(f"{label}: bad Luau source path {name}")
                 return
-            actual = (root / path).resolve()
+            actual = (project.parent / path).resolve()
             if not actual.is_relative_to(root.resolve()) or not actual.is_file():
                 errors.append(f"{label}: missing or escaping source {name} -> {path}")
                 return
@@ -84,6 +111,10 @@ def inventory(root: Path, project: Path, errors: list[str], label: str) -> dict:
                 errors.append(f"{label}: client script is on server {name}")
             if placement == CLIENT and not path.endswith(".client.luau"):
                 errors.append(f"{label}: non-client script is in player scripts {name}")
+            if placement == SERVER and path.endswith(".server.luau") and name not in SERVER_SCRIPTS:
+                errors.append(f"{label}: second unapproved server Script {name}")
+            if placement == CLIENT and name not in CLIENT_SCRIPTS:
+                errors.append(f"{label}: unapproved additional client Script {name}")
             if placement == SERVER and name == "EGGRUMBLE_LobbyCastleModesPreview":
                 if not path.endswith(".server.luau"):
                     errors.append(f"{label}: match host not server Script")
@@ -125,25 +156,46 @@ def check(author_dir: Path, candidate_dir: Path, author_project: Path,
     if not isinstance(overlays, dict):
         errors.append("provenance: overlays must be a name-indexed object")
         overlays = {}
+    additions = set(candidate) - set(original)
+    if additions and additions != EXTRA:
+        errors.append(
+            "candidate: incomplete or unknown 26-source expansion: "
+            + ",".join(sorted(additions.symmetric_difference(EXTRA)))
+        )
+    expected = provenance.get("expected_candidate_sources")
+    if expected is not None and (not isinstance(expected, int) or isinstance(expected, bool)
+                                 or expected != len(candidate)):
+        errors.append("provenance: candidate source count does not match")
     for name in sorted(original.keys() - candidate.keys()):
         errors.append(f"candidate: deleted author source {name}")
     for name in sorted(candidate.keys()):
         current = candidate[name]
         prior = original.get(name)
         overlay = overlays.get(name)
-        if prior and current == prior:
+        # A composer is allowed to remap unchanged original bytes to a different
+        # worktree path. Do not treat path relocation as an authored code change.
+        if prior and current["sha256"] == prior["sha256"] and current["place"] == prior["place"]:
             if overlay is not None:
                 errors.append(f"{name}: declared overlay without actual change")
             continue
         if not isinstance(overlay, dict):
             errors.append(f"{name}: changed/added source lacks owner-scoped overlay")
             continue
+        expected_owner = OWNERS.get(name)
+        if expected_owner is None:
+            errors.append(f"{name}: owner has no approved source-modification scope")
+        elif overlay.get("owner") != expected_owner:
+            errors.append(f"{name}: unauthorized owner {overlay.get('owner')!r}; expected {expected_owner}")
         for field in ("owner", "feature_id", "reason", "rollback"):
             if not isinstance(overlay.get(field), str) or not overlay[field].strip():
                 errors.append(f"{name}: overlay requires {field}")
+        if not isinstance(overlay.get("sha256"), str) or not SHA64.fullmatch(overlay["sha256"]):
+            errors.append(f"{name}: invalid candidate SHA256")
         if overlay.get("sha256") != current["sha256"]:
             errors.append(f"{name}: source hash differs from approved overlay")
         if prior:
+            if not isinstance(overlay.get("original_sha256"), str) or not SHA64.fullmatch(overlay["original_sha256"]):
+                errors.append(f"{name}: invalid original SHA256")
             if overlay.get("original_sha256") != prior["sha256"]:
                 errors.append(f"{name}: source predecessor was not pinned")
             if prior["place"] != current["place"]:
@@ -152,8 +204,13 @@ def check(author_dir: Path, candidate_dir: Path, author_project: Path,
             errors.append(f"{name}: new source must not invent an original digest")
     for name in sorted(overlays.keys() - candidate.keys()):
         errors.append(f"provenance: orphaned overlay {name}")
-    if len(candidate) != len(set(candidate)):
-        errors.append("candidate: duplicate runtime names")
+    # A complete 26-script composite has precisely 23 server and 3 client
+    # executable sources. Inventory presence is not Studio execution proof.
+    if additions == EXTRA:
+        server = sum(x["place"] == "ServerScriptService" for x in candidate.values())
+        client = sum(x["place"] == "StarterPlayer/StarterPlayerScripts" for x in candidate.values())
+        if (server, client) != (23, 3):
+            errors.append(f"candidate: 26-source service partition wrong: {(server, client)}")
     status = "SOURCE_GATE_PASS" if not errors else "SOURCE_NO_GO"
     return {
         "schema": SCHEMA,
