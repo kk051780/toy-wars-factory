@@ -10,6 +10,11 @@
 ## Original owner hookup contract; not done
 Only after #482 author ACK and #218 hard claim may the original server-owned dispatcher invoke BuilderConstruction.place(session, player, "WALL", true) or place(...,"BRIDGE",true). The server selects kind; never trust client-supplied coordinates or introduce another Remote. BUILDER skill C must not silently lose existing turret pulses. The original owner must provide an explicit player choice and actual skill hook. The original session.closeRound should call BuilderConstruction.clear(session), with 9-second delayed cleanup as redundancy.
 
+## Current-match identity fence (source-only correction)
+- Reuses original #531 Host `session.isCurrentHuman(player)` callback, already selected in the current official V3 companion Host, instead of creating another Game/Remote or trusting old `session.roster` alone.
+- Builder placement now fails closed for same-mode stale sessions, missing Host membership callback, and callback errors; three new native runtime negative cases plus source contract assertions.
+- The wall/bridge ability still requires a real server-owned skill hook and actual traversable map geometry. This correction is not formal RC adoption or Studio proof.
+
 ## Safety & limits
 - Default feature OFF; human roster, match mode, alive castle, real Player+Character, role, no carried egg and active match checks.
 - Uses ground only from the current match arena, bounds and support checks, castle/pickup/goal exclusions, occupied obstacle detection, and full rollback.
