@@ -16,7 +16,12 @@ import subprocess
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-from rc_fastlane.quality_ko508_rc31.select_original508_neutral_ko import mapping
+from importlib.machinery import SourceFileLoader
+
+mapping = SourceFileLoader(
+    "gq508_pinned_project_mapper",
+    "rc_fastlane/quality_ko508_rc31/select_original508_neutral_ko.py"
+).load_module().mapping
 
 SLOT = ("ServerScriptService", "EGGRUMBLE_CastleMatchRules")
 AUTHOR_HEAD = "60b67c8dade80ff7ccd1d97e03480ba333977084"
