@@ -34,7 +34,8 @@
     "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4",
     "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770",
     "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
-    "bot_nearest555": "cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+    "bot_nearest555": "cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d",
+    "bot_route_fullstep536": "cdf4fe5f231c998532963c5c16d9525d20a69e7e"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -47,7 +48,8 @@
     "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true,
     "LOBBY_NEARBY_BOARDS_539": true,
     "ORIGINAL_ITEM_AUTHOR_489": true,
-    "BOT_NEAREST_CURRENT_HUMAN_555": true
+    "BOT_NEAREST_CURRENT_HUMAN_555": true,
+    "BOT_ROUTE_LAST_STUD_RAY536": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native; original #555 nearest eligible human actual 6 native cases; last BotActors selected 31/31 native",
   "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539; after original #489 Item, original #555 one BotActors source selected final Rojo 31/31 Source/Class exact",
@@ -104,5 +106,16 @@
     "android": "NOT_TESTED",
     "owner_fun": "NO_GO"
   },
-  "selected_candidate_555_studio_tested": false
+  "selected_candidate_555_studio_tested": false,
+  "gq536": {
+    "original_author_pr": 536,
+    "original_head": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
+    "original_router_parent": "6b52eaf1f2725496277998fe0c5532b7a8fcaab5",
+    "fix": "routeClear uses full requested AI movement step for solid-wall raycast, not min(8,distance)",
+    "scope": "only ONE existing BotPathRouter; all other selected 30/31 source unchanged after #555",
+    "red_gates": "original source Git blob, exact source hunk rollback, real RouteClear + Router.navigate native original/mutant, Rojo31/31, no duplicate Game/Bot",
+    "rollback": "select prior #555 canonical31 mapping, retaining existing BotActors/Host/Swarm/Item",
+    "status": "PR_PREMERGE_CI_PENDING",
+    "studio_android_fun_owner": "NO_GO"
+  }
 }
