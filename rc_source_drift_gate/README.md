@@ -36,3 +36,47 @@ python3 rc_source_drift_gate/check_live_intake.py --strict
 #220 alone is the authenticated official RC writer. It must verify latest sources and branch provenance, sole authoritative Game/Remote/HP/score/save state, full source-lock, pinned native Luau+Rojo actual Place, rollback and non-force CAS; reply with official SHA and **official** ZIP bytes / KiB and Place bytes when measured. Other authors own gameplay repair on their own scope. Studio 1+15 AI, 2+14 AI, Android 15m, ART #420, FUN and OWNER stay NO_GO until actually observed. Never merge the stacked #484 PR wholesale or treat the artifact as an authorized production build.
 
 No main writes, protected RC branch writes, PR merge, Roblox publish or payments from #490.
+
+
+## V3 optional runtime activation evidence — actual source, not an engine test
+
+This same PR additionally implements `runtime_activation.py` and seven new tests.
+After checking all current26 original author/compiler/head conditions, the live
+gate reads five **original** #482 files from the exact pinned author SHA via
+read-only GitHub API, recording sha256 and line-specific executable guards:
+
+1. `EGGRUMBLE_LobbyCastleModesPreview.server.luau` early-returns when
+   `not RunService:IsStudio()` (before any V3 lobby/session initialization).
+2. `EGGRUMBLE_BotActors.luau` requires Studio in `start`.
+3. `EGGRUMBLE_SevenRoleCombat.luau` requires Studio in `equip`.
+4. `EGGRUMBLE_RoundReplay.luau` asserts Studio during match cleanup.
+5. `EGGRUMBLE_MatchResultService.luau` asserts Studio before results.
+
+The top-level lobby guard blocks **all eight gameplay domains** in the V3
+preview when launched as an unmodified normal Roblox server: character, field,
+battle, castle/egg, neutral, item, lobby, balance. This does **not** imply the
+legacy official RC branch itself cannot run; it proves that copying the V3
+Studio-only host wholesale is not a production-equivalent runtime solution.
+
+The output field `runtime_activation.production_runtime` is
+`BLOCKED_STUDIO_ONLY_GAME_HOST` when executable guards appear. The distinct
+`decision=SOURCE_REVIEW_READY_ONLY` may remain true for private SOURCE
+review under OWNER's V6 YELLOW nonfatal flow, but `product_go=false` remains
+mandatory. Removing those guards without a single authoritative host adapter
+can create duplicate Game/Remote/HP/egg/score/Store, so #490 **never edits
+them**. The original #482 author and authenticated sole #220 RC writer must
+selectively reconcile production host, with negative tests and rollback.
+
+For a strict *absence-of-known-guard* preflight use:
+
+    python3 rc_source_drift_gate/check_live_intake.py --require-no-studio-only-guards
+
+It exits 3 while Studio-only or missing mandatory authority sources remain.
+Even a zero result would mean only *known static guards absent*, never Studio
+2-client, Android, FUN, ART or OWNER acceptance.
+
+**Source test run**: #490 Actions 43800168895 / head
+`52c0bf835d13eb76f74f476d42fdaf6b8923274e`: 21/21 regression
+cases completed SUCCESS, actual author code guard inspection confirmed
+`BLOCKED_STUDIO_ONLY_GAME_HOST` and all eight-domain impact. Not an
+engine execution or official RC adoption.
