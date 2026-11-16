@@ -1,0 +1,94 @@
+name: GQ V3 result GUI transient private source/native/Rojo
+on:
+  push:
+    branches: [quality/gq-v3-result-transient-gui-20261116-01]
+    paths:
+      - 'quality_gameplay/v3_result_transient_gui_20261116/**'
+      - '.github/workflows/p0d-gq-v3-result-gui-retry.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_result_transient_gui_20261116/**'
+      - '.github/workflows/p0d-gq-v3-result-gui-retry.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-native-private23:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source lock, original score provenance, rollback and negative mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_result_transient_gui_20261116
+          python3 -B -m unittest discover -s "$root/tests" -p 'test_source_exact.py' -v
+          python3 "$root/compose_result.py" --out /tmp/gq_result_off.luau
+          python3 "$root/compose_result.py" --enabled --out /tmp/gq_result_on.luau
+          cmp -s /tmp/gq_result_off.luau handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_MatchResultService.luau
+          python3 "$root/stage_private.py" --out /tmp/GQ_RESULT_OFF22_NOT_RC
+          python3 "$root/stage_private.py" --on --out /tmp/GQ_RESULT_ON23_NOT_RC
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_result_luau
+          persist-credentials: false
+      - name: Native Luau compiler and actual pure policy execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_result_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_result_luau -B /tmp/gq_result_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_result_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=quality_gameplay/v3_result_transient_gui_20261116
+          /tmp/gq_result_luau/luau-compile --text "$root/EGGRUMBLE_ResultRetry.luau" >/dev/null
+          /tmp/gq_result_luau/luau-compile --text "$root/tests/test_result_retry.luau" >/dev/null
+          for mode in OFF22 ON23; do
+            folder=/tmp/GQ_RESULT_"$mode"_NOT_RC
+            count=0
+            for file in "$folder"/src/*.luau; do
+              /tmp/gq_result_luau/luau-compile --text "$file" >/dev/null
+              count=$((count+1))
+            done
+            if [ "$mode" = OFF22 ]; then test "$count" -eq 22; else test "$count" -eq 23; fi
+          done
+          cd "$root/tests"
+          /tmp/gq_result_luau/luau test_result_retry.luau | tee /tmp/gq_result_vm.log
+          grep -q GQ_RESULT_RETRY_NATIVE_PASS /tmp/gq_result_vm.log
+      - name: Pinned genuine private Rojo v7.7.1 OFF22 and ON23 source/class exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_result_transient_gui_20261116
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_result_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_result_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_result_rojo.zip') as z:
+              names=[name for name in z.namelist() if name.split('/')[-1]=='rojo']
+              assert len(names)==1
+              path=Path('/tmp/gq_result_rojo')
+              path.write_bytes(z.read(names[0]))
+              path.chmod(0o755)
+          PY
+          for mode in OFF22 ON23; do
+            folder=/tmp/GQ_RESULT_"$mode"_NOT_RC
+            place="$folder"/GQ_RESULT_"$mode"_NOT_RC.rbxlx
+            /tmp/gq_result_rojo build "$folder/private.project.json" -o "$place"
+            python3 "$root/verify_private.py" --folder "$folder" --place "$place"
+          done
+          cd /tmp
+          zip -q -r /tmp/GQ_RESULT_PRIVATE22_23_NOT_RC.zip GQ_RESULT_OFF22_NOT_RC GQ_RESULT_ON23_NOT_RC
+          stat -c 'GQ_RESULT_PRIVATE_ZIP_BYTES=%s' /tmp/GQ_RESULT_PRIVATE22_23_NOT_RC.zip
+          sha256sum /tmp/GQ_RESULT_PRIVATE22_23_NOT_RC.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ_RESULT_PRIVATE_OFF22_ON23_NOT_RC
+          path: /tmp/GQ_RESULT_PRIVATE22_23_NOT_RC.zip
+          if-no-files-found: error
+          retention-days: 7
