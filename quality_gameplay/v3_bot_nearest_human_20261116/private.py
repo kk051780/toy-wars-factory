@@ -36,7 +36,7 @@ def assemble(author:Path, member:Path, out:Path):
     bot_raw=(member/BOT).read_bytes()
     on,off=apply(bot_raw)
     host=(member/HOST).read_bytes()
-    if host.count(b"session.isCurrentHuman=function")!=1 or host.count(b"joined[player.UserId]==mode")!=1:
+    if host.count(b"session.isCurrentHuman=function")!=1 or host.count(b"and session.rules.castles[tostring(player.UserId)].isAI~=true")!=1:
         raise ValueError("RED actual #531 Host membership lost")
     out.mkdir(parents=True,exist_ok=True)
     source_hashes={}
