@@ -154,7 +154,7 @@ class TestRCLineage(unittest.TestCase):
         cp["tree"]["ServerScriptService"]["EGGRUMBLE_CombatFeel"] = n
         self.candidate_project.write_text(json.dumps(cp), encoding="utf-8")
         out = self.run_check()
-        self.assertIn("disallowed runtime placement", " ".join(out["errors"]))
+        self.assertIn("client script is on server", " ".join(out["errors"]))
 
     def test_missing_overlay_owner_and_rollback_rejected(self):
         name = "EGGRUMBLE_BotActors"
