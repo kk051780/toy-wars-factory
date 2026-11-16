@@ -11,8 +11,8 @@ def build(selected: str) -> str:
     fragment = selected[begin:stop]
     assert fragment.count('session.takeover=function') == 1
     return '''-- Actual selected original-author BotActors takeover callback.
-local home=setmetatable({}, {__add=function(_,_) return {position="at-home"} end})
-local Vector3={new=function(_,_,_) return {} end}
+local home=setmetatable({}, {__add=function(left,right) return {position="at-home"} end})
+local Vector3={new=function(x,y,z) return {x=x,y=y,z=z} end}
 local folder={Parent=true}
 local actors={Parent=true}
 local bots={}
