@@ -16,6 +16,7 @@ if session.world.Parent then session.world:Destroy() end
 BotActors.start(session,Rules)
 SwarmCombat.start(session)
 SevenRoleCombat.equip(session,p,role)
+SevenRoleCombat.equip(session,p,role)
 RaidItemIntake.start(session,root,FieldItems)
 NeutralStoneGiant.spawn(session.world,
 """
