@@ -93,6 +93,8 @@ def overlay(source: str, name: str, filename: str) -> tuple[str, int]:
         replacement = "PrivateGate.allowed()"
     inject = 'local PrivateGate=require(game:GetService("ReplicatedStorage"):WaitForChild("EGGRUMBLE_PrivateLiveGate"))'
     final = source.replace("--!strict\n", "--!strict\n" + inject + "\n", 1).replace(compose.CALL, replacement)
+    if name == "EGGRUMBLE_LobbyCastleModesPreview":
+        final = compose.add_private_world_watch(final)
     if compose.CALL in final or final.count(replacement) != actual:
         raise ValueError("guard replacement incomplete")
     return final, actual
