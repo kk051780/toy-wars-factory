@@ -12,6 +12,7 @@ local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
+local RaidAlerts=require(script.Parent:WaitForChild("EGGRUMBLE_RaidAlerts"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
 -- Existing ITEM author remains the one and only effect/collection implementation.
 local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
@@ -113,7 +114,11 @@ local function createWorldCastle(session:any,entry:any,index:number)
  prompt(deposit,"卵を納入","自分の城",function(p)
   if tostring(p.UserId)~=entry.id or not session.rules then return end
   local c=session.rules.castles[entry.id]
-  if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end
+  if c.alive and c.heldEggs>0 then
+   local deposited=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
+   -- Players must see a completed deposit immediately, without waiting for a bot tick.
+   if deposited then session.refresh() end
+  end
  end)
  local vault=block(model,"EggVault",at+Vector3.new(0,3,6),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
  board(vault,"卵倉庫")
@@ -222,6 +227,14 @@ local function startSession(mode:string)
   return dropped
  end
  session.refresh=function()
+  -- Optional cosmetic lane: a failed alert must never stop egg/castle/AI gameplay.
+  if session.raidAlertsDisabled~=true then
+   local alertOk,alertErr=pcall(RaidAlerts.process,session)
+   if not alertOk then
+    session.raidAlertsDisabled=true
+    warn("[EGGRUMBLE GQ] YELLOW_RAID_ALERTS_OPTIONAL:",alertErr)
+   end
+  end
   for id,bits in pairs(session.castleModels) do
    local c=session.rules.castles[id]
    if c then
@@ -265,6 +278,9 @@ local function startSession(mode:string)
   end)
  end
  Rules.start(session.rules)
+ -- Seed the original castle-HP snapshot before any player or bot deals siege damage.
+ -- This also paints the initial scoreboard exactly once in the existing refresh path.
+ session.refresh()
  -- Connect existing HEAL/DASH/SHIELD world pickups to *both* actual match modes,
  -- without spawning separate item preview worlds or inventing a second inventory.
  local itemsOK,itemCountOrError=pcall(function()

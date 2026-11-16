@@ -1,0 +1,115 @@
+name: P0D GQ RaidAlerts source-exact unpublished private V3 Place
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidAlerts.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
+      - '.github/workflows/p0d-gq-raid-alerts-private-rojo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-place-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download checksum-locked Rojo 7.7.1 (no Roblox publication)
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_gq_alert_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_gq_alert_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_gq_alert_rojo.zip') as z:
+              binaries=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(binaries)==1,binaries
+              out=Path('/tmp/p0d_gq_alert_rojo')
+              out.write_bytes(z.read(binaries[0]))
+              out.chmod(0o755)
+          PY
+      - name: Compose real 22-source V3 candidate from unchanged author modules + isolated alert
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          /tmp/p0d_gq_alert_rojo build handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_RAID_ALERT_PRIVATE22.rbxlx
+      - name: Verify exact source bytes and sole match host in generated Place
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, hashlib, os, subprocess, xml.etree.ElementTree as ET
+          from pathlib import Path
+          proj=Path('handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_V3_RAID_ALERT_PRIVATE22.rbxlx')
+          raw=json.loads(proj.read_text(encoding='utf-8'))
+          tree=raw['tree']
+          def walk(node,parts=()):
+              result={}
+              for key,value in node.items():
+                  if key.startswith('$') or not isinstance(value,dict): continue
+                  loc=parts+(key,)
+                  if '$path' in value:
+                      source=(proj.parent/value['$path']).resolve(strict=True)
+                      cls='Script' if source.name.endswith('.server.luau') else ('LocalScript' if source.name.endswith('.client.luau') else 'ModuleScript')
+                      result[loc]=(source,cls)
+                  else: result.update(walk(value,loc))
+              return result
+          expected=walk(tree)
+          assert len(expected)==22,len(expected)
+          assert sum(cls=='Script' for _,cls in expected.values())==1,'two match hosts'
+          assert sum(cls=='LocalScript' for _,cls in expected.values())==2,'client code missing or duplicated'
+          assert ('ServerScriptService','EGGRUMBLE_RaidAlerts') in expected
+          assert ('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview') in expected
+          actual={}
+          for node in ET.fromstring(place.read_bytes()).iter('Item'):
+              cls=node.attrib.get('class')
+              if cls not in ('Script','LocalScript','ModuleScript'): continue
+              props=node.find('Properties')
+              if props is None: continue
+              name=props.findtext("string[@name='Name']")
+              if name is None: continue
+              assert name not in actual,('duplicate active script name',name)
+              code=props.findtext("ProtectedString[@name='Source']")
+              if code is None: code=props.findtext("string[@name='Source']")
+              assert code is not None,('missing embedded source',name)
+              actual[name]=(cls,code.replace('\r\n','\n'))
+          assert len(actual)==len(expected),(len(actual),len(expected))
+          manifest={}
+          for name,(source,cls) in expected.items():
+              got=actual.get(name[-1])
+              assert got is not None,('missing',name)
+              assert got[0]==cls,('wrong Roblox script class',name,cls,got[0])
+              original=source.read_text(encoding='utf-8').replace('\r\n','\n')
+              assert got[1]==original,('SOURCE MISMATCH',name)
+              manifest['/'.join(name)]=hashlib.sha256(original.encode('utf-8')).hexdigest()
+          receipt={
+              'kind':'UNPUBLISHED_PRIVATE_STUDIO_PLACE_SOURCE_ONLY',
+              'checked_out_git_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+              'script_count':len(actual),
+              'server_modules':19,
+              'server_game_hosts':1,
+              'client_scripts':2,
+              'source_sha256':manifest,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'place_bytes':place.stat().st_size,
+              'studio':'NOT_TESTED',
+              'android':'NOT_TESTED',
+              'official_rc_integrated':False,
+              'owner_accepted':False,
+              'published':False,
+          }
+          Path('artifacts/RAID_ALERTS_PRIVATE_SOURCE_EXACT_RECEIPT.json').write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+          print('RAID_ALERTS_PRIVATE_PLACE_SOURCE_EXACT_22_OF_22_PASS',receipt['place_sha256'],receipt['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-GQ-RAID-ALERTS-PRIVATE22-NO-PUBLISH
+          path: |
+            artifacts/EGGRUMBLE_V3_RAID_ALERT_PRIVATE22.rbxlx
+            artifacts/RAID_ALERTS_PRIVATE_SOURCE_EXACT_RECEIPT.json
+          retention-days: 7

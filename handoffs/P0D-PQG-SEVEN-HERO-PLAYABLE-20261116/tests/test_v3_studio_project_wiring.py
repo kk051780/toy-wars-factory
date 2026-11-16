@@ -23,6 +23,7 @@ REQUIRED = {
     "EGGRUMBLE_DivineMantle": "EGGRUMBLE_DivineMantle.luau",
     "EGGRUMBLE_FieldItemPickups": "EGGRUMBLE_FieldItemPickups.luau",
     "EGGRUMBLE_RaidItemIntake": "EGGRUMBLE_RaidItemIntake.luau",
+    "EGGRUMBLE_RaidAlerts": "EGGRUMBLE_RaidAlerts.luau",
     "EGGRUMBLE_NeutralStoneGiant": "EGGRUMBLE_NeutralStoneGiant.luau",
     "EGGRUMBLE_BossSessionFence": "EGGRUMBLE_BossSessionFence.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
