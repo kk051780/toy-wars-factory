@@ -12,7 +12,7 @@ permissions:
 jobs:
   isolated-native-rojo:
     runs-on: ubuntu-latest
-    timeout-minutes: 27
+    timeout-minutes: 33
     steps:
       - uses: actions/checkout@v4
         with:
@@ -490,4 +490,109 @@ jobs:
             artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27_PRIVATE.rbxlx
             artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json
             artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json
+          retention-days: 3
+
+      - name: Original #494 neutral pacing owner immutable checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing_original
+          persist-credentials: false
+      - name: Original #501 neutral encounter fairness owner immutable checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_fair_original
+          persist-credentials: false
+      - name: Run original #501 source-contract tests on exact #494 original patch and 26 composer
+        env:
+          P0D_GQ494_COMPOSER: _v3_pacing_original/quality_gameplay/neutral_pacing/tools/compose_private_v3.py
+          P0D_GQ494_POLICY: _v3_pacing_original/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau
+          P0D_V3_ORIGINAL_SWARM: _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau
+          P0D_GQ_ORIGINAL26_PROJECT: artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_pacing_original rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_fair_original rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          python3 -B -m unittest discover -s _v3_fair_original/quality_gameplay/neutral_encounters/tests -p 'test_*.py' -v
+      - name: Reuse exact #501 dual-author composer without writing owner files
+        run: |
+          set -euo pipefail
+          python3 _v3_fair_original/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json \
+            --original-swarm _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing_original/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing_original/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_fair_original/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/GQ_ORIGINAL494_501_NEUTRAL28.project.json
+      - name: Reuse #494 and #501 ORIGINAL native policy tests with current 29-source game
+        run: |
+          set -euo pipefail
+          python3 _v3_pacing_original/quality_gameplay/neutral_pacing/tools/build_native_harness.py \
+            --out /tmp/gq_status/ActualOriginal494Pacing.spec.luau
+          python3 _v3_fair_original/quality_gameplay/neutral_encounters/tools/build_native_harness.py \
+            --out /tmp/gq_status/ActualOriginal501Fairness.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualOriginal494Pacing.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualOriginal501Fairness.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualOriginal494Pacing.spec.luau | tee /tmp/gq494_real_native.log
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualOriginal501Fairness.spec.luau | tee /tmp/gq501_real_native.log
+          grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' /tmp/gq494_real_native.log
+          grep -q 'NEUTRAL_ENCOUNTER_NATIVE: PASS' /tmp/gq501_real_native.log
+      - name: Source-lock #494+#501 neutral and existing four fixes into ONE 29-source Place
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_neutral_federated29.py prepare \
+            --base26 artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json \
+            --four27 artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json \
+            --dual28 artifacts/GQ_ORIGINAL494_501_NEUTRAL28.project.json \
+            --four-receipt artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json \
+            --dual-receipt artifacts/DUAL28_SOURCE_RECEIPT.json \
+            --out artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            --receipt artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
+      - name: Native Luau all 29 mapped Game AI ART SCORE COMBAT ITEM EGG NEUTRAL
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess
+          project=Path("artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json")
+          receipt=json.loads(Path("artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json").read_text())
+          mapped={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:
+                      assert k not in mapped
+                      mapped[k]=(project.parent/v["$path"]).resolve(strict=True)
+                  else:walk(v)
+          walk(json.loads(project.read_text())["tree"])
+          assert len(mapped)==29 and set(mapped)==set(receipt["source29_sha256"])
+          for name,script in mapped.items():
+              assert hashlib.sha256(script.read_bytes()).hexdigest()==receipt["source29_sha256"][name],name
+              subprocess.run(["/tmp/gq_status_luau/luau-compile","--text",str(script)],
+                             check=True,stdout=subprocess.DEVNULL)
+          assert receipt["byte_identical_original26"]==22
+          assert len(receipt["original_unchanged_names"])==22
+          print("GQ_516_ALL8_SIX_AUTHOR_LUAU_29_OF_29_PASS")
+          PY
+      - name: Rojo actual combined 29-source private Place and source/class exact proof
+        run: |
+          set -euo pipefail
+          /tmp/gq_status_rojo build artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            -o artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_neutral_federated29.py verify \
+            --project artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            --place artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx \
+            --receipt artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
+          echo "PRIVATE_SOURCE_NOT_OFFICIAL_RC_OR_GAMEPLAY_QA"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-ALL8-CURRENT29-ORIGINAL-AUTHORS-PRIVATE-NO-RC
+          path: |
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
           retention-days: 3
