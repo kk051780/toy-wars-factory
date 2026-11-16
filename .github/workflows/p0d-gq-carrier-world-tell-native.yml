@@ -1,0 +1,40 @@
+name: P0D GQ isolated carrier world tell (native source-only)
+on:
+  push:
+    branches:
+      - quality/gq-egg-carrier-world-tell-20261116
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact author source, 23-source private candidate and negative checks
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/carrier_world_tell_20261116 -p 'test_*.py' -v
+          python3 quality_gameplay/carrier_world_tell_20261116/compose.py --out /tmp/eggrumble-carrier-private
+      - name: Build Luau native CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-luau
+          cmake -S /tmp/gq-luau -B /tmp/gq-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Real authored Luau syntax plus 18 policy VM cases
+        run: |
+          set -euo pipefail
+          for source in quality_gameplay/carrier_world_tell_20261116/*.luau; do
+            /tmp/gq-luau/build/luau-compile "$source" >/dev/null
+          done
+          python3 quality_gameplay/carrier_world_tell_20261116/make_native_harness.py --out /tmp/carrier-policy-native.luau
+          /tmp/gq-luau/build/luau-compile /tmp/carrier-policy-native.luau >/dev/null
+          /tmp/gq-luau/build/luau /tmp/carrier-policy-native.luau
+      - name: Export private source-only candidate; official RC untouched
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_CARRIER_TELL_PRIVATE_23_SOURCE_NO_RC
+          path: /tmp/eggrumble-carrier-private/
+          retention-days: 3
