@@ -73,8 +73,8 @@ def transform(before:str,mod,policy:str):
         raise ValueError("RED_SIEGE_ALREADY_SELECTED")
     for s in (mod.OLD_REQUIRE,mod.OLD_GATE,mod.OLD_DAMAGE):
         if before.count(s)!=1:raise ValueError("RED_SIEGE_ORIGINAL_CURRENT_BOT_DRIFT")
-    block="local SiegePacing=(function()\\n"+policy+"\\nend)()"
-    after=before.replace(mod.OLD_REQUIRE,mod.OLD_REQUIRE+"\\n"+block,1)
+    block="local SiegePacing=(function()\n"+policy+"\nend)()"
+    after=before.replace(mod.OLD_REQUIRE,mod.OLD_REQUIRE+"\n"+block,1)
     after=after.replace(mod.OLD_GATE,mod.NEW_GATE,1)
     after=after.replace(mod.OLD_DAMAGE,mod.NEW_DAMAGE,1)
     if after.count("SiegePacing.allow(session,enemy.id,id,now)")!=1:
@@ -83,8 +83,8 @@ def transform(before:str,mod,policy:str):
         raise ValueError("RED_AUTHOR_FAILED_DAMAGE_ROLLBACK_NOT_ONCE")
     inverted=after.replace(mod.NEW_DAMAGE,mod.OLD_DAMAGE,1)
     inverted=inverted.replace(mod.NEW_GATE,mod.OLD_GATE,1)
-    if inverted.count(mod.OLD_REQUIRE+"\\n"+block)!=1:raise ValueError("RED_SIEGE_INLINE_ROLLBACK_DRIFT")
-    inverted=inverted.replace(mod.OLD_REQUIRE+"\\n"+block,mod.OLD_REQUIRE,1)
+    if inverted.count(mod.OLD_REQUIRE+"\n"+block)!=1:raise ValueError("RED_SIEGE_INLINE_ROLLBACK_DRIFT")
+    inverted=inverted.replace(mod.OLD_REQUIRE+"\n"+block,mod.OLD_REQUIRE,1)
     if inverted!=before:raise ValueError("RED_BOT_OFF_ROLLBACK_BYTE_DRIFT")
     return after
 
@@ -101,7 +101,7 @@ def prepare(base:Path,out:Path,original_author:Path,policy:Path):
     node=latest["tree"]
     for key in target:node=node[key]
     node["$path"]=OUTPUT_NAME
-    out.write_text(json.dumps(latest,ensure_ascii=False,indent=2)+"\\n",encoding="utf8")
+    out.write_text(json.dumps(latest,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     _,new,new_target=mapping(out)
     changed=[key for key in old if old[key].read_bytes()!=new[key].read_bytes()]
     if set(old)!=set(new) or new_target!=target or changed!=[target]:
@@ -118,7 +118,7 @@ def prepare(base:Path,out:Path,original_author:Path,policy:Path):
         "mode_isolation":"TEAM_BATTLE_ROYALE","per_target_siege_seconds":7,
         "rojo_source_class_exact":"NOT_TESTED",
         "official_rc_adopted":False,"engine_android_fun_owner":"NOT_TESTED"}
-    (out.parent/RECEIPT).write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\\n",encoding="utf8")
+    (out.parent/RECEIPT).write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n",encoding="utf8")
     print("GQ527_ORIGINAL_AUTHOR_ONE_BOT_OTHER30_EXACT_OFF_ROLLBACK_PASS")
 
 def verify(base:Path,out:Path,place:Path,original_author:Path,policy:Path):
@@ -139,13 +139,13 @@ def verify(base:Path,out:Path,place:Path,original_author:Path,policy:Path):
         text=prop.findtext("ProtectedString[@name='Source']")
         if text is None:text=prop.findtext("string[@name='Source']")
         if not name or text is None or name in embedded:raise ValueError("RED_ROJO_BAD_SOURCE")
-        embedded[name]=(cls,text.replace("\\r\\n","\\n"))
+        embedded[name]=(cls,text.replace("\r\n","\n"))
     if len(embedded)!=31 or {k[-1] for k in new}!=set(embedded):
         raise ValueError("RED_ROJO_SCRIPT_COUNT_OR_NAMES")
     for key,source in new.items():
         klass=("Script" if source.name.endswith(".server.luau") else
                "LocalScript" if source.name.endswith(".client.luau") else "ModuleScript")
-        if embedded[key[-1]]!=(klass,source.read_text(encoding="utf8").replace("\\r\\n","\\n")):
+        if embedded[key[-1]]!=(klass,source.read_text(encoding="utf8").replace("\r\n","\n")):
             raise ValueError("RED_ROJO_SOURCE_CLASS_"+key[-1])
     receipt_path=out.parent/RECEIPT
     receipt=json.loads(receipt_path.read_text())
@@ -153,7 +153,7 @@ def verify(base:Path,out:Path,place:Path,original_author:Path,policy:Path):
         raise ValueError("RED_OFF_ROLLBACK_RECEIPT")
     receipt.update(rojo_source_class_exact="31/31",actual_place_bytes=place.stat().st_size,
                    actual_place_sha256=sha(place.read_bytes()))
-    receipt_path.write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\\n",encoding="utf8")
+    receipt_path.write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n",encoding="utf8")
     print("GQ527_REAL_ROJO31_ONE_BOT_SOURCE_CLASS_OFF_EXACT_PASS",receipt["actual_place_bytes"])
 
 if __name__=="__main__":
