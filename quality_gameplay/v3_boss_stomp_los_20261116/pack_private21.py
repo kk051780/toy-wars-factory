@@ -70,11 +70,13 @@ def verify(place:Path,package:Path):
   if cls not in ("ModuleScript","Script","LocalScript"): continue
   props=item.find("Properties")
   if props is None:continue
-  name=props.find("string[@name='Name']")
-  code=props.find("ProtectedString[@name='Source']")
-  if name is None or code is None:continue
-  assert name.text not in observed,"duplicate script instance "+str(name.text)
-  observed[name.text]=((code.text or "").encode("utf-8"),cls)
+  name=props.findtext("string[@name='Name']")
+  if not name:continue
+  code=props.findtext("ProtectedString[@name='Source']")
+  if code is None:code=props.findtext("string[@name='Source']")
+  assert code is not None,"script without source: "+name
+  assert name not in observed,"duplicate script instance "+name
+  observed[name]=((code or "").replace("\\r\\n","\\n").encode("utf-8"),cls)
  expected=json.loads((package/"SOURCE_RECEIPT.json").read_text())
  for file in expected["sources"]:
   name=file.replace(".server.luau","").replace(".client.luau","").replace(".luau","")
