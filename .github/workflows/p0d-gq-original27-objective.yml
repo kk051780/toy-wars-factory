@@ -1,4 +1,4 @@
-name: P0D GQ Objective Compass with current original game ART SCORE 27
+name: P0D GQ original 27 with item cargo LOS and AI route safety
 on:
   push:
     branches: ['quality/p0d-eggrumble-objective-compass-20261116']
@@ -39,6 +39,13 @@ jobs:
           ref: e86702c906bdf9c71adcdf769ae48a206b26607b
           path: _v3_art
           persist-credentials: false
+      - name: Read exact original ITEM safety author #489
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6f268e3467dc605531bac8271642fcd8e5498af4
+          path: _v3_item
+          persist-credentials: false
       - name: Read original SCORE author #487
         uses: actions/checkout@v4
         with:
@@ -53,6 +60,9 @@ jobs:
           test "$(git -C _v3_quality rev-parse HEAD)" = 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_item rev-parse HEAD)" = 6f268e3467dc605531bac8271642fcd8e5498af4
+          ITEM=_v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+          test "$(git -C _v3_item hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau)" = 7b256b591325d6874582f91212bae040413fc341
       - name: Run 26-source preservation and local client safety negatives
         run: |
           set -euo pipefail
@@ -71,13 +81,15 @@ jobs:
           python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
             --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
             --art-project artifacts/ART_ORIGINAL.project.json --out artifacts/GAME_ART_SCORE_26.project.json
-      - name: Add only one original GQ LocalScript without touching any original source
+      - name: Overlay ONLY original owner item fairness plus new GQ client without touching other 25 sources
         run: |
           set -euo pipefail
           python3 handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tools/overlay_current26.py \
             --base-project artifacts/GAME_ART_SCORE_26.project.json \
             --base-receipt artifacts/SOURCE_RECEIPT.json \
             --new-script handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_ObjectiveCompass.client.luau \
+            --item-source _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --item-sha256 "$(sha256sum _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau | cut -d' ' -f1)" \
             --out artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json
       - name: Read pinned native Luau compiler
         uses: actions/checkout@v4
@@ -112,6 +124,13 @@ jobs:
         run: |
           set -euo pipefail
           (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse #489 author's real ITEM and Guard native VM in both match modes
+        run: |
+          set -euo pipefail
+          python3 _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq27_original_item_vm.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq27_original_item_vm.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq27_original_item_vm.luau
       - name: Download checksum-locked Rojo 7.7.1 and create unpublished actual Place
         run: |
           set -euo pipefail
@@ -149,7 +168,9 @@ jobs:
                   else:out.update(flatten(v))
               return out
           expected=flatten(tree)
-          assert len(expected)==27 and provenance['original_26_sources_preserved']
+          assert len(expected)==27 and provenance['original_25_source_paths_preserved']
+          assert provenance['item_source_selectively_replaced']
+          assert not provenance['original_26_sources_preserved']
           assert len(tree['ServerScriptService'])-1==23
           assert len(tree['StarterPlayer']['StarterPlayerScripts'])-1==4
           actual={}
