@@ -46,8 +46,8 @@ def one(src: str, old: str, new: str, label: str) -> str:
     amount = src.count(old)
     if amount != 1:
         raise ValueError(f"RED {label}: expected one exact anchor, got {amount}")
-    if new in src and old != new:
-        raise ValueError(f"RED {label}: already patched")
+    # A reverse patch's shorter replacement may already occur as a substring of
+    # the longer exact anchor. The unique-anchor check above is authoritative.
     out = src.replace(old, new, 1)
     if out.replace(new, old, 1) != src:
         raise AssertionError(f"RED {label}: nonreversible")
