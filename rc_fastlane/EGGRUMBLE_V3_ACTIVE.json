@@ -30,7 +30,8 @@
     "current_human535": "6846e9d55d07f0204748bbb8f46eef08f46c1b04",
     "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
     "neutral_fallback541": "6fc0261d21a3aa260fa7bcf19b1b177d4994570a",
-    "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2"
+    "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
+    "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -39,11 +40,12 @@
     "NEUTRAL_MELEE_533": true,
     "SHARED_NEUTRAL_BUDGET_528": true,
     "NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541": true,
-    "CASTLE_EGG_DEPOSIT_REFRESH_537": true
+    "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
+    "ORIGINAL_ITEM_AUTHOR_489": true
   },
-  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation",
-  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31",
-  "reverse_gate": "Unselect #541 original neutral fallback to prior #533 Swarm byte-exact; previous #530 Combat 160-byte OFF rollback unchanged",
+  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; immutable author #489 single Item in #541+#537 selection native31",
+  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; selected author #489 Item with existing #541+#537 canonical real Source/Class exact31",
+  "reverse_gate": "Unselect #541 original neutral fallback to prior #533 Swarm byte-exact; previous #530 Combat 160-byte OFF rollback unchanged; disable #489 source-select to byte-exact #541+#537 Item original (other30 preserved)",
   "legacy_s1_profile": "rich51",
   "legacy_s1_unchanged": true,
   "studio_2client": "NOT_TESTED",
@@ -51,8 +53,8 @@
   "art_fun_owner": "NO_GO",
   "publication_authorized": false,
   "next_gate": "Authenticated #220 sole-writer nonforce CAS; official same-HEAD native31 and true selected Rojo31 artifact SHA+bytes; Studio TEAM/BR 1+15 AI, 2 clients, Android, art+fun and OWNER",
-  "rollback": "Disable source selector #541 and rebuild original #530 V3 companion31; original rich51 S1 active_profile unaffected. Retain #530 Combat OFF rollback separately. No main, publish or billing.",
-  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.",
+  "rollback": "Disable source selector #541 and rebuild original #530 V3 companion31; original rich51 S1 active_profile unaffected. Retain #530 Combat OFF rollback separately. No main, publish or billing.; to rollback #489 Item return unchanged GQ31_SELECTED_537 project and rerun official native/Rojo without dropping #541 or #537",
+  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.; #489 original Item source selection staged via PR #549 to official companion only on authenticated writer CAS; no new Item module",
   "status": "RC31_COMPANION_SOURCE_ADOPTED_OFFICIAL_BRANCH_CI_VERIFIED_AT_RECORDED_HEAD",
   "last_verified_rc_run": {
     "rc_head_sha": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",
