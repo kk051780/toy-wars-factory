@@ -84,6 +84,17 @@ class PrivateLiveCanaryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             compose.build(self.out)
 
+
+    def test_private_gate_one_host_authority_and_irreversible_revoke(self):
+        gate=(compose.HERE/"EGGRUMBLE_PrivateLiveGate.luau").read_text(encoding="utf-8")
+        self.assertIn("local activeWorld:Instance?=nil",gate)
+        self.assertIn("local permanentlyRevoked=false",gate)
+        self.assertIn("GetAttributeChangedSignal(Gate.OPT_IN_ATTRIBUTE)",gate)
+        self.assertIn("if activeWorld~=world and world.Parent then world:Destroy() end",gate)
+        self.assertIn("permanentlyRevoked=true",gate)
+        self.assertIn("if not RunService:IsStudio() and (not activeWorld or not activeWorld.Parent)",gate)
+        self.assertLess(gate.index("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)"),gate.index("if world.Parent then world:Destroy() end"))
+
     def test_status_never_claims_official_rc_or_engine_pass(self):
         self.assertEqual(self.manifest["runtime"], "ISOLATED_PRIVATE_CANARY_ONLY")
         self.assertEqual(self.manifest["startup_default"], "OFF")
