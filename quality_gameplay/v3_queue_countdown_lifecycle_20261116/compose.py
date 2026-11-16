@@ -7,21 +7,21 @@ from pathlib import Path
 OWNER_HEAD = "6b52eaf1f2725496277998fe0c5532b7a8fcaab5"
 OWNER_HOST_BLOB = "c1ff23cd2883401d44d6fc47311bebcfd53eb1c6"
 OWNER_PATH = "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
-BEFORE = """  if mode and not sessions[mode] then
-   local q=queues[mode]
-   local idx=table.find(q,p)
-   if idx then table.remove(q,idx) end
-  end"""
-AFTER = """  if mode and not sessions[mode] then
-   local q=queues[mode]
-   local idx=table.find(q,p)
-   if idx then
-    table.remove(q,idx)
-    -- Cancel the abandoned first-player timer only when nobody remains.
-    -- A subsequent first entrant receives the full COUNTDOWN seconds.
-    if #q==0 then queueEpoch[mode]+=1 end
-   end
-  end"""
+BEFORE = """ if mode and not sessions[mode] then
+  local q=queues[mode]
+  local idx=table.find(q,p)
+  if idx then table.remove(q,idx) end
+ end"""
+AFTER = """ if mode and not sessions[mode] then
+  local q=queues[mode]
+  local idx=table.find(q,p)
+  if idx then
+   table.remove(q,idx)
+   -- Cancel the abandoned first-player timer only when nobody remains.
+   -- A subsequent first entrant receives the full COUNTDOWN seconds.
+   if #q==0 then queueEpoch[mode]+=1 end
+  end
+ end"""
 MARKER = "if #q==0 then queueEpoch[mode]+=1 end"
 
 def blob_sha(data: bytes) -> str:
