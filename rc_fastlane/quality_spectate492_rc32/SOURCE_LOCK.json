@@ -1,0 +1,35 @@
+{
+  "schema": "GQ492_CURRENT31_TO_PRIVATE32_SOURCE_LOCK_V1",
+  "feature_id": "GQ470_CASTLE_ELIMINATION_SPECTATE_492",
+  "original_author": {
+    "pr": 492,
+    "commit": "eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
+    "git_blob": "c39b2d3cc481052940b9d11a6fc695261a9b1e40",
+    "path": "handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau"
+  },
+  "author_intake_reuse": {
+    "pr": 613,
+    "code_path": "rc_fastlane/quality_spectate492_rc32/admit_spectator.py"
+  },
+  "start_official_rc": "89cbeb03d74ddbe3408ef805fed6683ff6abc508",
+  "active_runtime_profile": "eggrumble_v3_31",
+  "existing_current_project": "artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json",
+  "existing_current_exact_place": "artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx",
+  "selected_private32_project": "artifacts/gq492_latest32/GQ492_SELECTED32.project.json",
+  "selected_private32_place": "artifacts/gq492_latest32/GQ492_SPECTATE32_PRIVATE.rbxlx",
+  "expected_before_scripts": 31,
+  "expected_after_scripts": 32,
+  "expected_other_sources_byte_identical": 31,
+  "new_client_script_name": "EGGRUMBLE_EliminatedSpectate",
+  "new_class": "LocalScript",
+  "new_location": "StarterPlayer/StarterPlayerScripts",
+  "native_luau_all32": true,
+  "original_native_lifecycle_and_3_mutations": true,
+  "rollback": "Unmap only EGGRUMBLE_EliminatedSpectate and retain every one of the 31 current Script Source/Class objects byte-identical.",
+  "author_ack_required": false,
+  "production_publish_authorized": false,
+  "studio_only_original_source": true,
+  "formal_rc_adopted": false,
+  "studio_android_fun_owner": "NOT_TESTED",
+  "status": "CANDIDATE_SOURCE_ONLY_NO_OFFICIAL_CAS"
+}
