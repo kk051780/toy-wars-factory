@@ -30,7 +30,7 @@ def main():
     assert blob_sha(author)==AUTHOR_GIT_BLOB,"author source drift"
     target=args.out.resolve()
     target.mkdir(parents=True,exist_ok=False)
-    src_proj=json.loads((ORIGIN/"EGGRUMBLE_V3_STUDIO.project.json").read_text())
+    src_proj=json.loads((ORIGIN/"EGGRUMBLE_V3_STUDIO.EGGRUMBLE_STATUS22.project.json").read_text())
     paths=list(mapped_paths(src_proj["tree"]))
     assert len(paths)==21 and len(set(paths))==21, "expected pinned 21 scripts"
     assert paths.count("EGGRUMBLE_SevenRoleCombat.luau")==1
@@ -50,7 +50,7 @@ def main():
     assert "EGGRUMBLE_StatusTickFence" not in server
     server["EGGRUMBLE_StatusTickFence"]={"$path":policy}
     assert len(list(mapped_paths(src_proj["tree"])))==22
-    (target/"project.json").write_text(json.dumps(src_proj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    (target/"EGGRUMBLE_STATUS22.project.json").write_text(json.dumps(src_proj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     receipt={
         "baseline_author_sha":"fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
         "baseline_combat_git_blob_sha":AUTHOR_GIT_BLOB,
