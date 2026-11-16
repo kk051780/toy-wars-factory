@@ -152,7 +152,7 @@ FEATURE_EVIDENCE = {
   "GQ646_LOBBY_SAFE_SPAWN_BEGIN",
   "lobbyGround.CanCollide=true",
   "lobbySpawn.Neutral=true",
-  'if mode and sessions[mode] then return end',
+  'if not player.Parent or player.Character~=character then return end',
   'hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))')),
  "MATCH_DEADLINE_DRAW_499": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local deadlineLease=Deadline.new(os.clock(),deadlineId)",
