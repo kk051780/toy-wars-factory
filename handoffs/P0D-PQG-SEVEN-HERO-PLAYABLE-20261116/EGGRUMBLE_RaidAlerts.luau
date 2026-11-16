@@ -35,6 +35,27 @@ function Alerts.collect(events:{any},lastIndex:number):({Signal},number)
  return out,#events
 end
 
+-- Observe only original server-owned castle HP, with a per-session cooldown.
+-- The host primes this after Rules.start, before combat begins.
+function Alerts.siegeSignals(castles:{[string]:any},previousHP:{[string]:number},lastShownAt:{[string]:number},now:number):{Signal}
+ assert(type(castles)=="table" and type(previousHP)=="table" and type(lastShownAt)=="table","invalid siege snapshot")
+ assert(type(now)=="number" and now==now,"invalid clock")
+ local out:{Signal}={}
+ for id,castle in pairs(castles) do
+  local hp=castle.hp
+  if type(hp)=="number" and hp==hp then
+   local previous=previousHP[id]
+   previousHP[id]=hp
+   if previous and hp<previous and hp>0 and castle.alive and
+    (lastShownAt[id]==nil or now-lastShownAt[id]>=7) then
+    lastShownAt[id]=now
+    table.insert(out,{kind="SIEGE",castleId=tostring(id),duration=2.5})
+   end
+  end
+ end
+ return out
+end
+
 local function render(session:any,signal:Signal)
  local bits=session.castleModels and session.castleModels[signal.castleId]
  local castle=session.rules and session.rules.castles[signal.castleId]
@@ -65,10 +86,12 @@ local function render(session:any,signal:Signal)
  if not label then return end
  local oldColor=banner:GetAttribute("EGGRUMBLE_AlertBaseColor")
  if typeof(oldColor)~="Color3" then banner:SetAttribute("EGGRUMBLE_AlertBaseColor",banner.Color) end
- local color=if signal.kind=="RAID" then Color3.fromRGB(249,83,62)
+ local color=if signal.kind=="SIEGE" then Color3.fromRGB(245,163,63)
+  elseif signal.kind=="RAID" then Color3.fromRGB(249,83,62)
   elseif signal.kind=="FALL" then Color3.fromRGB(104,91,91)
   else Color3.fromRGB(99,217,148)
- local copy=if signal.kind=="RAID" then "卵強奪！防衛せよ"
+ local copy=if signal.kind=="SIEGE" then "城が攻撃中！"
+  elseif signal.kind=="RAID" then "卵強奪！防衛せよ"
   elseif signal.kind=="FALL" then "城が陥落！" else "卵を納入！"
  label.Text=copy
  notice.Enabled=true
@@ -90,7 +113,12 @@ function Alerts.process(session:any)
  if session.alertSourceRules~=session.rules then
   session.alertSourceRules=session.rules
   session.alertCursor=0
+  session.alertLastHP={}
+  session.alertLastSiege={}
  end
+ local siegeSignals=Alerts.siegeSignals(session.rules.castles,session.alertLastHP,session.alertLastSiege,os.clock())
+ for _,signal in ipairs(siegeSignals) do render(session,signal) end
+ -- Real egg theft/deposit/fall takes priority when simultaneous with siege.
  local signals,nextCursor=Alerts.collect(session.rules.events,session.alertCursor or 0)
  session.alertCursor=nextCursor
  for _,signal in ipairs(signals) do render(session,signal) end
