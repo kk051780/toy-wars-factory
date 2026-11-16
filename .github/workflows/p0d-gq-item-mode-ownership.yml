@@ -63,11 +63,16 @@ jobs:
           git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-mode-luau
           cmake -S /tmp/p0d-mode-luau -B /tmp/p0d-mode-luau/build \
             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
-          cmake --build /tmp/p0d-mode-luau/build --target Luau.Compile.CLI -j 4
+          cmake --build /tmp/p0d-mode-luau/build --target Luau.Compile.CLI Luau.Repl.CLI -j 4
           /tmp/p0d-mode-luau/build/luau-compile \
             /tmp/p0d-mode-patched/EGGRUMBLE_LobbyCastleModesPreview.server.luau >/dev/null
           /tmp/p0d-mode-luau/build/luau-compile \
             /tmp/p0d-mode-patched/EGGRUMBLE_FieldItemPickups.luau >/dev/null
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate /tmp/p0d-mode-patched \
+            --out /tmp/p0d-item-mode-native.luau
+          /tmp/p0d-mode-luau/build/luau-compile /tmp/p0d-item-mode-native.luau >/dev/null
+          /tmp/p0d-mode-luau/build/luau /tmp/p0d-item-mode-native.luau
       - name: Non-release conclusion
         run: |
           echo "No game source changed in original authors/official RC/main."
