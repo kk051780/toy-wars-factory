@@ -78,6 +78,13 @@ jobs:
           ref: 40a79702a3ca949e2bf65f9108126a34d44c88b4
           path: _gq540_original_respawn
           persist-credentials: false
+      - name: Reuse immutable #555 original BotActors target fairness patch
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
+          path: _gq555_original_bot
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -88,6 +95,7 @@ jobs:
           test "$(git -C _gq541_original_fallback rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
           test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
+          test "$(git -C _gq555_original_bot rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -445,6 +453,50 @@ jobs:
           assert r["source_exact"]=="31/31" and r["unchanged_scripts"]==30
           assert r["only_host_changed"] and r["original_gq541_swarm_preserved"]
           print("GQ540_ORIGINAL_HOST_AFTER_537_NATIVE_ROJO_PASS",r["place_bytes"],r["place_sha256"])
+          PY
+      - name: Select original #555 into ONE BotActors after existing #541+#537+#540 native31 Rojo31 ON/OFF
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq555_official_select
+          python3 rc_fastlane/select_gq555_original_bot_nearest.py \
+            --base31 artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --author _gq555_original_bot/quality_gameplay/v3_bot_nearest_human_20261116/patch_nearest.py \
+            --out artifacts/gq555_official_select
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("gq555","rc_fastlane/select_gq555_original_bot_nearest.py").load_module()
+          for mode in ("ON","OFF"):
+              _,mapped=m.scan(Path("artifacts/gq555_official_select/GQ555_"+mode+".project.json"))
+              assert len(mapped)==31
+              for f in mapped.values():
+                  subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+              print("GQ555_REAL_FULL31_NATIVE_COMPILE_PASS",mode,len(mapped))
+          PY
+          python3 _gq555_original_bot/quality_gameplay/v3_bot_nearest_human_20261116/make_native_harness.py \
+            --bot artifacts/gq555_official_select/EGGRUMBLE_BotActors_GQ555_ON.luau \
+            --out artifacts/gq555_official_select/REAL_GQ555_NATIVE6.luau
+          /tmp/gq530_all31_native/luau artifacts/gq555_official_select/REAL_GQ555_NATIVE6.luau | tee /tmp/gq555-native6.log
+          grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS /tmp/gq555-native6.log
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_ON.project.json \
+            -o artifacts/gq555_official_select/GQ555_SELECTED_31_TRUE_ROJO.rbxlx
+          /tmp/gq530-all31-rojo build artifacts/gq555_official_select/GQ555_OFF.project.json \
+            -o artifacts/gq555_official_select/GQ555_OFF_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/select_gq555_original_bot_nearest.py \
+            --base31 artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --author _gq555_original_bot/quality_gameplay/v3_bot_nearest_human_20261116/patch_nearest.py \
+            --out artifacts/gq555_official_select \
+            --verify-place artifacts/gq555_official_select/GQ555_SELECTED_31_TRUE_ROJO.rbxlx \
+            --verify-off-place artifacts/gq555_official_select/GQ555_OFF_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq555_official_select/VERIFY_GQ555.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/gq555_official_select/VERIFY_GQ555.json").read_text())
+          assert r["on_source_class_exact"]==r["off_source_class_exact"]==31
+          assert r["unchanged_original_author_sources"]==30 and r["original_off_recovered"]
+          print("GQ555_ORIGINAL_BOT_AFTER_540_NATIVE_ROJO31_ON_OFF_PASS",r["on_place_bytes"])
           PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
