@@ -144,6 +144,13 @@ FEATURE_EVIDENCE = {
   "label.Text=prefix..",
   "refreshQueueBoard(previous)",
   "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
+ "GQ8_ROLE_SELECTION_ACK_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ8_ROLE_SELECTION_ACK_BEGIN",
+  'if chosenRole[p.UserId]==nil then',
+  'p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",true)',
+  'p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",nil)',
+  "職業選択後｜チーム戦（再操作で解除）",
+  "職業選択後｜BR戦（再操作で解除）")),
  "GQ646_LOBBY_SAFE_SPAWN_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
    "-- GQ646_LOBBY_SAFE_SPAWN_BEGIN",
    "lobbyGround.CanCollide=true",
