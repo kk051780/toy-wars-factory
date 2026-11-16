@@ -171,6 +171,7 @@ local function startSession(mode:string)
     if player and joined[player.UserId]==mode then
      joined[player.UserId]=nil
      SevenRoleCombat.clear(player)
+     InteractionGuard.clear(player) -- avoid prompt cooldown state leaking across rounds
      RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))
     end
    end
