@@ -74,8 +74,13 @@ function Tell.start(session:any):boolean
    while session.world.Parent ~= nil and field.Parent == session.world
    and session.rules.phase == "ACTIVE" and session.rules.winner == nil
    and session.carrierWorldTellEnabled ~= false do
+   -- The host can alter its current participants before a whole world is
+   -- retired. Never leave an old avatar billboard for a seat no longer
+   -- present in the match's CURRENT server roster.
+   local activeIds:{[string]:boolean} = {}
    for _,entry in ipairs(session.roster) do
     local id = tostring(entry.id)
+    activeIds[id] = true
     -- One malformed avatar must not blank the other 15 player markers.
     -- Isolate its cosmetic inspection, not the original game/Rules code.
     local seatOk,seatError = pcall(function()
@@ -140,6 +145,18 @@ function Tell.start(session:any):boolean
       warn("[GQ511] optional carrier actor label isolated: "..tostring(seatError))
      end
     end
+   end
+   -- Purge retired roster slots, including their one-per-failure warning
+   -- state. Only this optional cosmetic state is cleaned; original castle,
+   -- egg, item, death, AI and match ownership are authoritative elsewhere.
+   for id,record in pairs(records) do
+    if not activeIds[id] then
+     pcall(destroyRecord,record)
+     records[id] = nil
+    end
+   end
+   for id in pairs(faulted) do
+    if not activeIds[id] then faulted[id] = nil end
    end
    task.wait(Policy.POLL_SECONDS)
    end
