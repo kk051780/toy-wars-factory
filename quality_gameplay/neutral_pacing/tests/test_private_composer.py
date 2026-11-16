@@ -37,7 +37,7 @@ class TestPrivateComposer(unittest.TestCase):
                '    and session.rules.castles[id] and session.rules.castles[id].alive then')
         self.assertIn(guard,after)
         self.assertEqual(after.count("h.Died:Connect("),1)
-        self.assertEqual(after.count("credit(id)"),1)
+        self.assertEqual(after.count("\n    credit(id)"),1)
         self.assertEqual(after.count("ImpactFeedback.ko("),1)
         self.assertLess(after.index(guard),after.index("credit(id)"))
         # This new condition must be impossible in FINISHED/ABANDONED and
