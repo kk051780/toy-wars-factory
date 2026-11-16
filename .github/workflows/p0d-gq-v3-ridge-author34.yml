@@ -1,0 +1,365 @@
+name: P0D GQ520 original34 neutral and Ridge only no RC
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_central_ridge_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-v3-ridge-author34.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  original-author-26-plus-8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Read GQ objective client only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reuse original #504 composer and audio ONLY, exactly pinned
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 385d3242cbc8d0a3008ee818d8dc30040170fce6
+          path: _v3_audio
+          persist-credentials: false
+      - name: Reuse pinned original objective compass from #496
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 7005fe0916ff157d770b638ac70efaef9396e0f5
+          path: _v3_objective
+          persist-credentials: false
+      - name: Pin existing #503 original cosmetic FX scripts (no source rewrites)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9f9202988fdb3e983d6ae42ea4cf7de0a501c699
+          path: _v3_fx
+          persist-credentials: false
+      - name: Pin unchanged original #500 active castle defense modules and source patch
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: abc4bd0edad4a07b159ee08d867dbdd6977f37ee
+          path: _v3_castle
+          persist-credentials: false
+      - name: Pin original #494 single Swarm pacing source and patch engine
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing
+          persist-credentials: false
+      - name: Pin original #501 neutral encounter fairness and dual patch engine
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_neutral
+          persist-credentials: false
+      - name: Read immutable original V3 game author #482
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Read existing GQ AI and ramp author #484
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Read original ART author #485
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Read original SCORE author #487
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Confirm exact original #504 source composer immutable
+        run: |
+          test "$(git -C _v3_audio rev-parse HEAD)" = 385d3242cbc8d0a3008ee818d8dc30040170fce6
+      - name: Check all immutable cross-chat author versions
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_castle rev-parse HEAD)" = abc4bd0edad4a07b159ee08d867dbdd6977f37ee
+          test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_neutral rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          test "$(git -C _v3_fx rev-parse HEAD)" = 9f9202988fdb3e983d6ae42ea4cf7de0a501c699
+          test "$(git -C _v3_objective rev-parse HEAD)" = 7005fe0916ff157d770b638ac70efaef9396e0f5
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+      - name: Run 26-source preservation and local client safety negatives
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v -s _v3_audio/quality/eggrumble_hit_audio_20261116/tests -p 'test_*.py'
+      - name: Execute GQ520 geometry, 34-original provenance and native original 7-role source QA
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/v3_central_ridge_clearance_20261116 -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -q
+      - name: Reuse original ART artist tool (no duplicate visuals)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/ART_ORIGINAL.project.json
+      - name: Reuse exactly one existing #484 author and ART and SCORE 26-source composer
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/ART_ORIGINAL.project.json --out artifacts/GAME_ART_SCORE_26.project.json
+      - name: Add only one original GQ LocalScript without touching any original source
+        run: |
+          set -euo pipefail
+          python3 _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tools/overlay_current26.py \
+            --base-project artifacts/GAME_ART_SCORE_26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --new-script _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_ObjectiveCompass.client.luau \
+            --out artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json
+      - name: Layer own confirmed-hit audio onto intact original 27 scripts
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/overlay_composed27.py \
+            --base-project artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json \
+            --base-receipt artifacts/GQ_OBJECTIVE_27_RECEIPT.json \
+            --audio-script _v3_audio/quality/eggrumble_hit_audio_20261116/EGGRUMBLE_RealHitAudio.client.luau \
+            --out artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO28.project.json
+      - name: Add original #503 FX budget + FX visibility only (zero gameplay edits)
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_fx30.py \
+            --base-project artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO28.project.json \
+            --base-receipt artifacts/GQ_OBJECTIVE_AUDIO_28_RECEIPT.json \
+            --budget-script _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/EGGRUMBLE_CombatFXBudget.luau \
+            --client-script _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/EGGRUMBLE_CombatFXClarity.client.luau \
+            --output artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO_FX30.project.json
+      - name: Connect unchanged #500 real castle modules to exactly one private host copy
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_castle32.py \
+            --base-project artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ_AUDIO_FX30.project.json \
+            --base-receipt artifacts/GQ_AUDIO_FX30_RECEIPT.json \
+            --castle-composer _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/compose_private28.py \
+            --castle-live _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/EGGRUMBLE_CastleDefenseLive.luau \
+            --castle-policy _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/EGGRUMBLE_CastleDefensePolicy.luau \
+            --out artifacts/EGGRUMBLE_GQ_AUDIO_FX_CASTLE32.project.json
+      - name: Reuse original #500 castle owner's negative source-contract tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/tests -p 'test_*.py'
+      - name: Reuse original #494+#501's one Swarm, 2 original policies on native author26
+        run: |
+          set -euo pipefail
+          python3 _v3_neutral/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/GAME_ART_SCORE_26.project.json \
+            --original-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_neutral/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json
+      - name: Select only original dual neutral Swarm+two modules in exact 32-source game
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_neutral34.py \
+            --base-project artifacts/EGGRUMBLE_GQ_AUDIO_FX_CASTLE32.project.json \
+            --base-receipt artifacts/GQ_AUDIO_FX_CASTLE32_RECEIPT.json \
+            --neutral-project artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json \
+            --neutral-receipt artifacts/DUAL28_SOURCE_RECEIPT.json \
+            --out artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json
+      - name: Read pinned native Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile all 34 original+audio+FX+castle+neutral scripts in actual native Luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq27_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq27_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json')
+          def sources(node):
+              if isinstance(node,dict):
+                  if '$path' in node:yield (p.parent/node['$path']).resolve(strict=True)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith('$'):yield from sources(v)
+          files=list(sources(json.loads(p.read_text())['tree']))
+          assert len(files)==34
+          for f in files:
+              subprocess.run(['/tmp/gq27_native/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+          print('GQ_ORIGINAL_GAME_NEUTRAL_NATIVE_34_OF_34_PASS')
+          PY
+      - name: Execute actual hit-audio LocalScript in native Luau VM (live signal/KO/mute safety)
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/make_native_hit_audio_harness.py --out /tmp/eggrumble-gq-audio-native.luau
+          /tmp/gq27_native/luau-compile --text /tmp/eggrumble-gq-audio-native.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/eggrumble-gq-audio-native.luau
+      - name: Verify actual #482 server-confirmed hit to #504 audio client in the same native VM
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/make_native_hit_pipeline_harness.py \
+            --author-impact _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ImpactFeedback.luau \
+            --out /tmp/eggrumble-gq-hit-authoritative-pipeline.luau
+          /tmp/gq27_native/luau-compile --text /tmp/eggrumble-gq-hit-authoritative-pipeline.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/eggrumble-gq-hit-authoritative-pipeline.luau
+      - name: Reuse #484 author's actual native bot path retarget regression
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq27_native/luau)
+      - name: Execute original #503 FX budget's native Luau hysteresis behavior
+        run: |
+          set -euo pipefail
+          /tmp/gq27_native/luau _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/tests/EGGRUMBLE_CombatFXBudget.spec.luau
+      - name: Execute exact original #500 castle defense TEAM/BR turret/trap/sensor VM
+        run: |
+          set -euo pipefail
+          (cd _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116 && /tmp/gq27_native/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau)
+      - name: Run exact original #494 neutral supply 15-min policy and #501 solo encounter policy
+        run: |
+          set -euo pipefail
+          python3 _v3_pacing/quality_gameplay/neutral_pacing/tools/build_native_harness.py --out /tmp/gq-original-neutral-pacing.luau
+          python3 _v3_neutral/quality_gameplay/neutral_encounters/tools/build_native_harness.py --out /tmp/gq-original-neutral-encounter.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq-original-neutral-pacing.luau >/dev/null
+          /tmp/gq27_native/luau-compile --text /tmp/gq-original-neutral-encounter.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq-original-neutral-pacing.luau
+          /tmp/gq27_native/luau /tmp/gq-original-neutral-encounter.luau
+      - name: Reuse latest #484 neutral-call fault tolerance in actual Luau VM
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse latest #496 real objective selection TEAM/BR native Luau VM
+        run: |
+          set -euo pipefail
+          python3 _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests/make_native_objective_harness.py --out /tmp/gq-objective-current-native.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq-objective-current-native.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq-objective-current-native.luau
+      - name: Download checksum-locked Rojo 7.7.1 and create unpublished actual Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq27_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              f=Path('/tmp/gq27_rojo')
+              f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+          /tmp/gq27_rojo build artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json -o artifacts/EGGRUMBLE_GAME_NEUTRAL34_PRIVATE.rbxlx
+      - name: Independent 34/34 exact source and script class readback
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_GAME_NEUTRAL34_PRIVATE.rbxlx')
+          tree=json.loads(project.read_text(encoding='utf-8'))['tree']
+          provenance=json.loads(Path('artifacts/GQ_GAME34_NEUTRAL_RECEIPT.json').read_text(encoding='utf-8'))
+          def flatten(node):
+              out={}
+              for n,v in node.items():
+                  if n.startswith('$') or not isinstance(v,dict):continue
+                  if '$path' in v:
+                      assert n not in out,n
+                      f=(project.parent/v['$path']).resolve(strict=True)
+                      typ='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                      out[n]=(typ,f.read_text(encoding='utf-8').replace('\r\n','\n'))
+                  else:out.update(flatten(v))
+              return out
+          expected=flatten(tree)
+          assert len(expected)==34 and provenance['unchanged_previous_count']==31
+          assert len(tree['ServerScriptService'])-1==27
+          assert len(tree['StarterPlayer']['StarterPlayerScripts'])-1==7
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              typ=item.attrib.get('class')
+              if typ not in {'Script','LocalScript','ModuleScript'}:continue
+              props=item.find('Properties')
+              if props is None:continue
+              n=props.findtext("string[@name='Name']")
+              code=props.findtext("ProtectedString[@name='Source']")
+              if code is None:code=props.findtext("string[@name='Source']")
+              assert n not in actual and code is not None
+              actual[n]=(typ,code.replace('\r\n','\n'))
+          assert expected==actual,{'missing':sorted(set(expected)-set(actual)),
+                                   'extra':sorted(set(actual)-set(expected)),
+                                   'changed':[x for x in expected.keys()&actual.keys() if expected[x]!=actual[x]]}
+          provenance.update({'candidate_sha':os.environ['GITHUB_SHA'],
+                             'place_bytes':place.stat().st_size,
+                             'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()})
+          Path('artifacts/GQ_GAME34_NEUTRAL_RECEIPT.json').write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+'\n')
+          print('GQ_ORIGINAL_GAME_NEUTRAL_34_SOURCE_EXACT_PASS',provenance['place_bytes'],provenance['place_sha256'])
+          PY
+      - name: Overlay only GQ520 CentralRidge FIELD and SHIELD clearance onto actual original #504 private34
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/overlay_original34.py prepare \
+            --project artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json \
+            --receipt-file artifacts/GQ_GAME34_NEUTRAL_RECEIPT.json \
+            --original-host _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --item _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau \
+            --out artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/v3_central_ridge_clearance_20261116")
+          from augment_current26 import scripts
+          p=Path("artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json")
+          _,sources=scripts(p,34)
+          for name,(_,source,_,_) in sorted(sources.items()):
+              subprocess.run(["/tmp/gq27_native/luau-compile","--text",str(source)],
+                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ520_RIDGE_AUTHOR34_ALL_NATIVE_LUAU_34_OF_34_PASS")
+          PY
+      - name: Build exact GQ520 original34 single-hunk REAL private Place and verify actual Luau source
+        run: |
+          set -euo pipefail
+          /tmp/gq27_rojo build artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json \
+            -o artifacts/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/overlay_original34.py verify \
+            --project artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json \
+            --place artifacts/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx
+          echo "OFFICIAL_RC=UNCHANGED / 34-SOURCE PRIVATE NO CAS / STUDIO ANDROID=NOT_TESTED"
+      - name: Upload unpublished original34 + GQ520 source-only one-hunk private34 proofs
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ520-ORIGINAL34-RIDGE-SHIELD-CLEARANCE-NOT-OFFICIAL-RC
+          path: |
+            artifacts/EGGRUMBLE_GAME_NEUTRAL34_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GAME_NEUTRAL34.project.json
+            artifacts/GQ_GAME34_NEUTRAL_RECEIPT.json
+            artifacts/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx
+            artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json
+            artifacts/GQ520_RIDGE34_OnlyHost.server.luau
+            artifacts/GQ520_PRIVATE34_RECEIPT.json
+          retention-days: 3
