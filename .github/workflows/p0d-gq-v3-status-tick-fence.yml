@@ -1,0 +1,124 @@
+name: P0D GQ V3 delayed status tick safe source-only 22
+on:
+  push:
+    branches: [quality/p0d-gq-v3-status-tick-fence-20261116]
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_status_tick_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-status-tick-fence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact author blob, source delta and 22-source generated composition
+        run: python3 -B -m unittest discover -s quality_gameplay/v3_status_tick_fence_20261116/tests -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_status_native
+          persist-credentials: false
+      - name: Pinned native Luau 13 regressions and all private 22 scripts compile
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_status_native rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_status_native -B /tmp/gq_status_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_status_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          mkdir -p /tmp/gq_status
+          cp "$root/EGGRUMBLE_StatusTickFence.luau" /tmp/gq_status/StatusFence.luau
+          cp "$root/tests/StatusFenceNative.spec.luau" /tmp/gq_status/Spec.luau
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau ./Spec.luau | tee /tmp/gq_status_native.log
+          grep -q GQ_V3_STATUS_TICK_FENCE_NATIVE_13_CASES_PASS /tmp/gq_status_native.log
+          cd "$GITHUB_WORKSPACE"
+          python3 "$root/tools/compose_private22.py" --out artifacts/status22
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          root=Path('artifacts/status22')
+          tree=json.loads((root/'project.json').read_text())['tree']
+          def walk(n):
+              if isinstance(n,dict):
+                  if '$path' in n:yield (root/n['$path']).resolve(strict=True)
+                  else:
+                      for k,v in n.items():
+                          if not k.startswith('$'):yield from walk(v)
+          files=list(walk(tree))
+          assert len(files)==22 and len(set(files))==22
+          for f in files:subprocess.run(['/tmp/gq_status_luau/luau-compile','--text',str(f)],stdout=subprocess.DEVNULL,check=True)
+          print('GQ_STATUS_22_NATIVE_22_OF_22_PASS')
+          PY
+      - name: Checksum pinned Rojo 7.7.1 and unpublished private 22-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_status_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_status_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_status_rojo.zip') as z:
+              items=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(items)==1
+              dst=Path('/tmp/gq_status_rojo')
+              dst.write_bytes(z.read(items[0]));dst.chmod(0o755)
+          PY
+          /tmp/gq_status_rojo build artifacts/status22/project.json -o artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
+      - name: Check embedded scripts/classes/byte-exact sources in Rojo Place
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,xml.etree.ElementTree as ET,os
+          root=Path('artifacts/status22')
+          place=Path('artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx')
+          tree=json.loads((root/'project.json').read_text())['tree']
+          want={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith('$') or not isinstance(v,dict):continue
+                  if '$path' in v:
+                      f=(root/v['$path']).resolve(strict=True)
+                      cls='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                      assert k not in want
+                      want[k]=(cls,f.read_text().replace('\r\n','\n'))
+                  else:walk(v)
+          walk(tree)
+          assert len(want)==22
+          got={}
+          for e in ET.fromstring(place.read_bytes()).iter('Item'):
+              cls=e.attrib.get('class')
+              if cls not in ('Script','LocalScript','ModuleScript'):continue
+              p=e.find('Properties')
+              if p is None:continue
+              name=p.findtext("string[@name='Name']")
+              value=p.findtext("ProtectedString[@name='Source']")
+              if value is None:value=p.findtext("string[@name='Source']")
+              assert name and value is not None and name not in got
+              got[name]=(cls,value.replace('\r\n','\n'))
+          assert want==got,{"missing":sorted(set(want)-set(got)),"extra":sorted(set(got)-set(want)),
+                            "changed":sorted(k for k in set(want)&set(got) if want[k]!=got[k])}
+          receipt=json.loads((root/'SOURCE_RECEIPT.json').read_text())
+          receipt.update({"candidate_sha":os.environ["GITHUB_SHA"],
+              "private_place_bytes":place.stat().st_size,
+              "private_place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+              "source_exact_rojo":"22/22",
+              "official_rc_integrated":False})
+          Path('artifacts/GQ_STATUS22_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('GQ_STATUS22_ROJO_EXACT_22_OF_22_PASS',place.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-STATUS-FENCE-22-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
+            artifacts/GQ_STATUS22_RECEIPT.json
+          retention-days: 3
