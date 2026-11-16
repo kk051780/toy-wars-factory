@@ -2,6 +2,10 @@ name: P0D GQ V3 abandoned queue timer source/native/private Place
 on:
   push:
     branches: ['quality/gq-v3-empty-queue-timer-20261116-01']
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_queue_countdown_lifecycle_20261116/**'
+      - '.github/workflows/p0d-gq-v3-empty-queue-timer.yml'
   workflow_dispatch:
 permissions:
   contents: read
