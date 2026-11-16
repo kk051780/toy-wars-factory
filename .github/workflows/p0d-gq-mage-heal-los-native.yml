@@ -1,0 +1,44 @@
+name: P0D GQ MAGE heal line-of-sight source VM
+
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_mage_heal_los_20261116/**'
+      - '.github/workflows/p0d-gq-mage-heal-los-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mage-heal-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin original role author and generate only isolated patched output
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py \
+            --patched /tmp/GQ_SevenRoleCombat_MAGE_HEAL_LOS.luau \
+            --harness /tmp/GQ_MAGE_HEAL_LOS_NATIVE.luau \
+            --original-harness /tmp/GQ_MAGE_ORIGINAL_BUG_REPRO.luau
+          git diff --exit-code -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+      - name: Compile real Luau source and execute original-vs-repaired behavior
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/luau-mage
+          cmake -S /tmp/luau-mage -B /tmp/luau-mage/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/luau-mage/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          for f in /tmp/GQ_SevenRoleCombat_MAGE_HEAL_LOS.luau \
+            /tmp/GQ_MAGE_HEAL_LOS_NATIVE.luau /tmp/GQ_MAGE_ORIGINAL_BUG_REPRO.luau; do
+            /tmp/luau-mage/build/luau-compile "$f" >/dev/null
+          done
+          /tmp/luau-mage/build/luau /tmp/GQ_MAGE_ORIGINAL_BUG_REPRO.luau
+          /tmp/luau-mage/build/luau /tmp/GQ_MAGE_HEAL_LOS_NATIVE.luau
+      - name: State the hard acceptance boundary
+        run: |
+          echo "SOURCE_ONLY + original gameplay path preserved"
+          echo "ORIGINAL_V3_21_SCRIPTS = unmodified"
+          echo "NO SAME-HEAD ROJO PLACE / NO OFFICIAL RC CAS / NO STUDIO / NO ANDROID / NO OWNER FUN"

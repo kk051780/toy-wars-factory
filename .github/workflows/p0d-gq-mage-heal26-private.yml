@@ -1,0 +1,197 @@
+name: P0D GQ MAGE heal LOS original26 private Place
+
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_mage_heal_los_20261116/**'
+      - '.github/workflows/p0d-gq-mage-heal26-private.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mage-heal-private26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout independent MAGE patch source (not official RC)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout independent original #482 exact author (shallow-safe proof)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_author
+          persist-credentials: false
+      - name: Checkout current original #484 AI/composer (pinned SHA)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout original #485 ART (pinned SHA)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout original #487 SCORE (pinned SHA)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify all author identities and 21 untouched game sources
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          diff -qr _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          mkdir -p artifacts
+      - name: Compose original author game and artist assets with #485 own tool
+        run: |
+          set -euo pipefail
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_MAGE_ART.project.json
+      - name: Reuse #484 original 26-source AI ART SCORE composer without edits
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_author --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_MAGE_ART.project.json \
+            --out artifacts/GQ_MAGE26.project.json
+      - name: Generate original combat heal-only patch and exact 26-source overlay
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py \
+            --patched artifacts/EGGRUMBLE_SevenRoleCombat_MAGE_HEAL_LOS.luau \
+            --harness artifacts/GQ_MAGE_HEAL_LOS_NATIVE.luau \
+            --original-harness artifacts/GQ_MAGE_ORIGINAL_BUG_REPRO.luau
+          python3 quality_gameplay/v3_mage_heal_los_20261116/compose_heal26.py \
+            --project artifacts/GQ_MAGE26.project.json \
+            --candidate artifacts/EGGRUMBLE_SevenRoleCombat_MAGE_HEAL_LOS.luau \
+            --receipt artifacts/SOURCE_RECEIPT.json
+          diff -qr _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+      - name: Checkout fixed native Luau compiler at #484 toolchain revision
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native compile exact 26 mapped scripts and execute original vs repaired MAGE
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq_mage26_native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_mage26_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ_MAGE26.project.json").resolve()
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          def walk(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (project.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for key,value in node.items():
+                          if not key.startswith("$"):
+                              yield from walk(value)
+          sources=list(walk(tree))
+          assert len(sources)==26,len(sources)
+          assert len(set(sources))==26
+          for p in sources:
+              subprocess.run(["/tmp/gq_mage26_native/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          for p in ("artifacts/GQ_MAGE_ORIGINAL_BUG_REPRO.luau",
+                    "artifacts/GQ_MAGE_HEAL_LOS_NATIVE.luau"):
+              subprocess.run(["/tmp/gq_mage26_native/luau-compile","--text",p],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_MAGE26_ALL_NATIVE_26_PASS")
+          PY
+          /tmp/gq_mage26_native/luau artifacts/GQ_MAGE_ORIGINAL_BUG_REPRO.luau
+          /tmp/gq_mage26_native/luau artifacts/GQ_MAGE_HEAL_LOS_NATIVE.luau
+      - name: Acquire checksum-verified Rojo and build actual unpublished 26-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_mage_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_mage_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq_mage_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              f=Path("/tmp/gq_mage_rojo")
+              f.write_bytes(z.read(names[0]))
+              f.chmod(0o755)
+          PY
+          /tmp/gq_mage_rojo build artifacts/GQ_MAGE26.project.json -o artifacts/GQ_MAGE_HEAL26_PRIVATE.rbxlx
+      - name: Prove Rojo 26/26 exact embedded source, class, and unique owner authority
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path("artifacts/GQ_MAGE26.project.json").resolve()
+          place=Path("artifacts/GQ_MAGE_HEAL26_PRIVATE.rbxlx")
+          receipt_path=Path("artifacts/SOURCE_RECEIPT.json")
+          receipt=json.loads(receipt_path.read_text(encoding="utf-8"))
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          def visit(node,out):
+              for name,item in node.items():
+                  if name.startswith("$") or not isinstance(item,dict):continue
+                  if "$path" in item:
+                      assert name not in out,name
+                      file=(project.parent/item["$path"]).resolve(strict=True)
+                      kind="Script" if file.name.endswith(".server.luau") else ("LocalScript" if file.name.endswith(".client.luau") else "ModuleScript")
+                      out[name]=(kind,file.read_text(encoding="utf-8").replace("\r\n","\n"))
+                      assert receipt["source_sha256"][name]==hashlib.sha256(file.read_bytes()).hexdigest(),name
+                  else:visit(item,out)
+          expected={}
+          visit(tree,expected)
+          assert len(expected)==26 and receipt["script_count"]==26
+          assert sum(1 for k in expected if k=="EGGRUMBLE_SevenRoleCombat")==1
+          actual={}
+          for node in ET.fromstring(place.read_bytes()).iter("Item"):
+              kind=node.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              props=node.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name not in actual,name
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,("Missing Source",name)
+              actual[name]=(kind,source.replace("\r\n","\n"))
+          assert expected==actual,{
+            "missing":sorted(set(expected)-set(actual)),
+            "extra":sorted(set(actual)-set(expected)),
+            "different":[k for k in set(expected)&set(actual) if expected[k]!=actual[k]]
+          }
+          receipt["mage_heal_los"]["native_source_exact"]=True
+          receipt["mage_heal_los"]["rojo_source_exact"]=True
+          receipt["place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt["place_bytes"]=place.stat().st_size
+          receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("GQ_MAGE_HEAL_SOURCE_EXACT_26_OF_26_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
+      - name: Upload unpublished candidate evidence only, never official release
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-MAGE-HEAL26-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ_MAGE_HEAL26_PRIVATE.rbxlx
+            artifacts/GQ_MAGE26.project.json
+            artifacts/SOURCE_RECEIPT.json
+          retention-days: 3
