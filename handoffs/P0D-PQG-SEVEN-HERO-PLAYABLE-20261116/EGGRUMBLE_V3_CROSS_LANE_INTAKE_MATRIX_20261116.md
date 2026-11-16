@@ -11,13 +11,13 @@ OWNER指示：「他と同じことはするな。キャラ、フィールド、
 | バトル | `AttackGeometry`,`SevenRoleCombat`,`SkillFX`,`ImpactFeedback` | V3同一試合に接続済 | 音・豪華専用モーション/低Android実機/対人実測 |
 | 個人城・卵 | `CastleMatchRules`、V3個人城モデル、独立 `EnterableCastleInterior` | V3本体の城/複数卵/盗取/全城脱落は接続済、独立Interiorは未採用 | **新Interiorを重ねると城門・壁・卵倉庫が二重化**する。作者#城/#220が既存構造を置換するまでは合流禁止 |
 | 中立兵 | `SwarmCombat`＋独立 `NeutralStoneGiant` | 大群/本物KOは統合済、石の巨人は独立試作 | **StoneGiantの元ソースにsessionActive/canEngageオプションを追加して誤被弾防止、V3に各モード1体をSOURCE統合済**。独立した新ボスを複製せず、7職技→弱点実HPの攻撃配線を追加。実Studio/Androidで同時2モードの本当に安全な動作は未検証 |
-| **アイテム** | **既存 `FieldItemPickups` の本体を無変更再使用** | **今回 `RaidItemIntake` でTEAM・BR双方へ初めてSOURCE接続** | 9個を3攻略路×左右中央に分散。取得1回/クールダウン/所有城生存を既存作者がサーバ検証。Studio取得/スマホ入力未試験 |
+| **アイテム** | **既存 `FieldItemPickups` の本体を無変更再使用** | **今回 `RaidItemIntake` でTEAM・BR双方へ初めてSOURCE接続** | 9個を3攻略路×左右中央に分散。各生成回1回取得・35秒後再出現/クールダウン/所有城生存を既存作者がサーバ検証。Studio取得/スマホ入力未試験 |
 | ロビー | V3内の7職台座/TEAM・BRポータル＋独立 `LobbyUXPreview` | V3本体の実キュー・AI枠補充は接続済、独立LobbyUXは未採用 | 独立プレビューは選択属性だけで実キュー開始しない。台座と入口を**二重生成しない**。#ロビー作者の改善点を現行V3へ source-selective |
 | バランス | `CastleMatchRules`,`CombatBalance`と独立 `BalanceMetrics` | 城HP/防衛予算・技CD・7職数値はV3ルールとして使用 | `BalanceMetrics`の理論的な動的NPC予算やスコアは**試合未接続**。source合格や数字をStudio実測と混同しない |
 
 ## 今回実装した「アイテムの公平な3×3配置」
 
-**追加ファイル** `EGGRUMBLE_RaidItemIntake.luau`。源泉 `EGGRUMBLE_FieldItemPickups.luau` は**一字も変更していない**。本体は常に同じ順序で HEAL→DASH→SHIELD を9回循環するため、配列順に配置座標を並べ、3攻略路（z=300/470/640）と左/中央/右（x=-140/0/140）**各行・各列に3種類をちょうど1つずつ配置する**。TEAMはx中心-620、BRは+620で別マップ。公式Gameや複数プレビューへ二重起動しない。対人/対城/課金強化は追加せず、既存の単回使用と生存判定をそのまま維持。
+**追加ファイル** `EGGRUMBLE_RaidItemIntake.luau`。源泉 `EGGRUMBLE_FieldItemPickups.luau` はこの統合作業では**無変更**。別担当が35秒再出現を追加しており、その実装を尊重して契約QAのみ追随している。本体は常に同じ順序で HEAL→DASH→SHIELD を9回循環するため、配列順に配置座標を並べ、3攻略路（z=300/470/640）と左/中央/右（x=-140/0/140）**各行・各列に3種類をちょうど1つずつ配置する**。TEAMはx中心-620、BRは+620で別マップ。公式Gameや複数プレビューへ二重起動しない。対人/対城/課金強化は追加せず、既存の取得回ごと原子的ロック・35秒再出現と生存判定をそのまま維持。
 
 - `EGGRUMBLE_LobbyCastleModesPreview.server.luau` の **Rules.startの後** `RaidItemIntake.start(session,root,FieldItems)` を **1回だけ**呼ぶ。試合終了時は session.world破棄で全アイテムが消える。
 - Sourceが壊れてもコア試合を止めない。任意アイテム連結の例外は `YELLOW_ITEM_OPTIONAL` と警告、部分的なフィールドアイテム模型を破棄し、複数卵・城・大群は継続。**ゲーム内の試合ルールそのものの障害はREDとして扱う**。
