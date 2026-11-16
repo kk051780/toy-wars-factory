@@ -33,7 +33,7 @@ def iter_paths(tree,folder):
 def compose(base26:Path,out:Path):
     base26=base26.resolve(strict=True)
     out=out.resolve()
-    assert out!=base26 and out.parent!=base26.parent, "must use separate new output folder"
+    assert out!=base26 and out!=base26.parent, "must use separate new output folder"
     project=json.loads(base26.read_text(encoding="utf-8"))
     tree=project["tree"]
     server=tree["ServerScriptService"]
@@ -50,6 +50,17 @@ def compose(base26:Path,out:Path):
     updated=text.replace(REQUIRE,REQUIRE+INSERT,1).replace(ORIGINAL,REPLACEMENT,1)
     assert updated!=text
     out.mkdir(parents=True,exist_ok=True)
+    # #484 paths are relative to its own 26-project. The moved 27-project
+    # MUST retain the exact same physical source bytes when rooted in out.
+    def rebase(node):
+        for name,child in node.items():
+            if name.startswith("$"): continue
+            if "$path" in child:
+                source=(base26.parent/child["$path"]).resolve(strict=True)
+                child["$path"]=os.path.relpath(source,out).replace(os.sep,"/")
+            else:
+                rebase(child)
+    rebase(tree)
     host_path=out/(HOST+".server.luau")
     host_path.write_text(updated,encoding="utf-8")
     server[HOST]={"$path":os.path.relpath(host_path,out).replace(os.sep,"/")}
