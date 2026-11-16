@@ -155,19 +155,138 @@ def evaluate(prs: dict, author_project: dict, quality_project: dict,
     return report
 
 
+
+# Source-of-truth for the current 26-source composer. The older ART/SCORE21
+# workflow is intentionally retained by the original author as a historical
+# comparison and MUST NOT be used to judge the active 26-source integration.
+CURRENT26_WORKFLOW = ".github/workflows/p0d-eggrumble-gq-current26-private.yml"
+CURRENT26_COMPOSER = "quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py"
+CURRENT26_RUN_NAME = "P0D GQ current V3 author plus ART SCORE 26-source private build"
+CURRENT26_BRANCH = "quality/eggrumble-v3-spatial-bot-intake-20261116"
+CURRENT26_ART = frozenset({
+    "EGGRUMBLE_HeroSilhouetteArt", "EGGRUMBLE_FlagshipFieldArt",
+    "EGGRUMBLE_EncounterReadabilityArt", "EGGRUMBLE_ArtDistanceLOD",
+})
+CURRENT26_SCORES = frozenset({"EGGRUMBLE_ScoreBalance", "EGGRUMBLE_MatchResultService"})
+
+
+def current26_pins(workflow_text: str) -> list[str]:
+    """Get only the three live original-author checkouts, not the Luau tool ref."""
+    start = workflow_text.find("Read fixed latest game SOURCE from original author PR482")
+    end = workflow_text.find("Build fixed Luau native compiler and test runner")
+    if start < 0 or end <= start:
+        raise ValueError("current 26-source checkout section missing")
+    return re.findall(r"(?m)^\s*ref:\s*([0-9a-f]{40})\s*$",
+                      workflow_text[start:end])
+
+
+def evaluate_active26(prs: dict, author_project: dict, author_blobs: dict,
+                      quality_blobs: dict, workflow_text: str, composer_text: str,
+                      workflow_runs: list, official_sha: str) -> dict:
+    """Evaluate the *active* 26-source build, not the retired game-core manifest.
+
+    The generator's source-exact output is attested only by its own exact-HEAD
+    Action run; no assertion here asserts Studio operation or official adoption.
+    """
+    author = project_nodes(author_project)
+    defects = []
+    domains = {}
+    for domain, required in DOMAINS.items():
+        missing = sorted("EGGRUMBLE_" + stem for stem in required
+                         if "EGGRUMBLE_" + stem not in author)
+        domains[domain] = {"author_source_present": not missing,
+                           "missing": missing,
+                           "current26_coverage": "AUTHOR_21_PLUS_4ART_1SCORE_BUILD_CI_REQUIRED"}
+        if missing:
+            defects.append("author_contract_missing:" + domain + ":" + ",".join(missing))
+    if len(author) != 21:
+        defects.append("author_expected_21_game_scripts_actual_" + str(len(author)))
+    services = {name: node["service"] for name,node in author.items()}
+    if sum(v == "ServerScriptService" for v in services.values()) != 19:
+        defects.append("author_server_count_not_19")
+    if sum(v == "StarterPlayer/StarterPlayerScripts" for v in services.values()) != 2:
+        defects.append("author_client_count_not_2")
+    for name,entry in author.items():
+        if not author_blobs.get(entry["path"]):
+            defects.append("author_blob_unknown:" + name)
+
+    pins = current26_pins(workflow_text)
+    if len(pins) != 3:
+        defects.append("current26_workflow_expected_three_author_pins")
+    for idx, role in enumerate(("author", "art", "score")):
+        if len(pins) <= idx or pins[idx] != prs[role]["head"]["sha"]:
+            defects.append("current26_" + role + "_pin_stale")
+
+    # Require actual source-composer and its claimed selection algorithm from
+    # the quality author; do not mistake the old 16-source test project as output.
+    required_contract = [
+        "def apply_ramp(", "EGGRUMBLE_BotActors", "EGGRUMBLE_BotPathRouter",
+        "EGGRUMBLE_LobbyCastleModesPreview", "EGGRUMBLE_ProceduralSkills",
+        "EGGRUMBLE_RaidItemIntake", "EGGRUMBLE_NeutralStoneGiant",
+        "EGGRUMBLE_BossSessionFence", "EGGRUMBLE_ScoreBalance",
+        "EGGRUMBLE_ArtDistanceLOD", "assert len(server)-1==23 and len(client)-1==3",
+        'assert len(mapped)==26', '\"source_sha256\"',
+    ]
+    for contract in required_contract:
+        if contract not in composer_text:
+            defects.append("current26_composer_contract_missing:" + contract)
+    for part in (CURRENT26_WORKFLOW, CURRENT26_COMPOSER):
+        if part not in quality_blobs:
+            defects.append("current26_quality_file_missing:" + part)
+    if not HEX40.fullmatch(official_sha):
+        defects.append("official_rc_head_unknown")
+
+    current_head = prs["quality"]["head"]["sha"]
+    qualified_runs = [run for run in workflow_runs
+                      if run.get("name") == CURRENT26_RUN_NAME
+                      and run.get("head_sha") == current_head]
+    latest_run = qualified_runs[0] if qualified_runs else {}
+    if latest_run.get("status") != "completed" or latest_run.get("conclusion") != "success":
+        defects.append("current26_samehead_CI_not_success")
+    # The workflow source is reviewed read-only, the real Rojo native pass
+    # remains the job's actual conclusion, not a fabricated runtime claim.
+    report = {
+        "schema": "P0D_EGGRUMBLE_LIVE_RC_INTAKE_DRIFT_V2",
+        "decision": "SOURCE_RECONCILIATION_REQUIRED" if defects else "SOURCE_REVIEW_READY_ONLY",
+        "source_candidate": "CURRENT26_21_GAME_4_ART_1_SCORE",
+        "heads": {role: pr["head"]["sha"] for role,pr in prs.items()},
+        "official_rc_head": official_sha,
+        "official_rc_adopted": "NOT_VERIFIED_REQUIRES_220_CAS_RECEIPT",
+        "studio_android_art_fun_owner": "NOT_VERIFIED",
+        "author_script_count": len(author),
+        "target_candidate_script_count": 26,
+        "expected_server_scripts": 23,
+        "expected_client_scripts": 3,
+        "domains": domains,
+        "pinned_source_heads": dict(zip(("author", "art", "score"),pins)),
+        "composite_ci": {
+            "head": current_head,
+            "run_id": latest_run.get("id"),
+            "status": latest_run.get("status", "NOT_FOUND"),
+            "conclusion": latest_run.get("conclusion", "NOT_FOUND"),
+            "run_url": latest_run.get("html_url"),
+        },
+        "obsolete_21_source_workflow_not_used_as_latest_proof": True,
+        "blockers": defects,
+        "next_owner": "#484 for current26 composite; #220 ONLY for official RC integration",
+    }
+    return report
+
 def live_audit() -> dict:
-    prs = {name: api("pulls/" + str(number)) for name, number in PRS.items()}
+    prs = {name: api("pulls/" + str(number)) for name,number in PRS.items()}
     author_sha = prs["author"]["head"]["sha"]
     quality_sha = prs["quality"]["head"]["sha"]
     author_project = json.loads(github_file(PROJECT, author_sha))
-    quality_project = json.loads(github_file(PROJECT, quality_sha))
-    composer_text = github_file(COMPOSER, quality_sha)
+    workflow = github_file(CURRENT26_WORKFLOW, quality_sha)
+    composer = github_file(CURRENT26_COMPOSER, quality_sha)
     author_blobs = tree_blobs(api("git/trees/" + author_sha + "?recursive=1"))
     quality_blobs = tree_blobs(api("git/trees/" + quality_sha + "?recursive=1"))
     official = api("git/ref/heads/" + OFFICIAL)["object"]["sha"]
-    return evaluate(prs, author_project, quality_project, composer_text,
-                    author_blobs, quality_blobs, official)
-
+    from urllib.parse import urlencode
+    runs = api("actions/runs?" + urlencode(
+        {"branch": CURRENT26_BRANCH, "per_page": 60})).get("workflow_runs", [])
+    return evaluate_active26(prs, author_project, author_blobs, quality_blobs,
+                             workflow, composer, runs, official)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
