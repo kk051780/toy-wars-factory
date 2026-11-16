@@ -31,7 +31,8 @@
     "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
     "neutral_fallback541": "6fc0261d21a3aa260fa7bcf19b1b177d4994570a",
     "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
-    "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4"
+    "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4",
+    "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -41,7 +42,8 @@
     "SHARED_NEUTRAL_BUDGET_528": true,
     "NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541": true,
     "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
-    "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true
+    "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true,
+    "LOBBY_NEARBY_BOARDS_539": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native",
   "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact",
@@ -85,5 +87,17 @@
   "legacy_s1_default_not_replaced": true,
   "owner_approval_wait_blocker": false,
   "rc_active_source_artifact_proof_complete": true,
-  "official_source_overlay_notes": "Original #541 Swarm plus exact original #537 egg-deposit Host retained; append original #540 stealth respawn fence to SAME Host, no second authority. Source count31. Final parent #537 -> #540 30/31 byte identical. Native/Rojo before actual Studio."
+  "official_source_overlay_notes": "Original #541 Swarm plus exact original #537 egg-deposit Host retained; append original #540 stealth respawn fence to SAME Host, no second authority. Source count31. Final parent #537 -> #540 30/31 byte identical. Native/Rojo before actual Studio.",
+  "gq539": {
+    "source_pr": 539,
+    "source_head": "e003d73d516e65e1817dd281eb1743fa866f3770",
+    "base_rc_head": "1b2c629d2d2060742caa8355ee7b12d23bf5ebb8",
+    "after": "Original #541 Swarm/#537 deposit Host/#540 assassin respawn Host",
+    "select": "one Host extra helper+four lobby board calls; other 30 scripts untouched",
+    "castle_vault_board": "PR547 independent owner",
+    "rollback": "Revert only lobby-helper/four calls to original #540 Host, keep #540/#537/#541",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NO_GO"
+  }
 }
