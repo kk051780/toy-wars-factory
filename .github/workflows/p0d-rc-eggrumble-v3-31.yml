@@ -603,6 +603,10 @@ jobs:
             | tee artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
           grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS \
             artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
+            artifacts/gq536_official_select/GQ536_SELECTED31.project.json
+            artifacts/gq536_official_select/GQ536_RC31_SOURCE_RECEIPT.json
+            artifacts/gq536_official_select/navigate-fixed.log
+            artifacts/gq536_official_select/patched-ray.log
           /tmp/gq530-all31-rojo build "$FINAL555" \
             -o artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
           python3 rc_fastlane/select_gq555_original_bot_nearest.py verify \
@@ -610,10 +614,75 @@ jobs:
             --author "$AUTHOR555/patch_nearest.py" \
             --out "$FINAL555" \
             --place artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
+      - name: Read immutable original author #536 BotPathRouter full-step ray source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          path: _gq536_original_router
+          persist-credentials: false
+      - name: Use exact existing #536 single Router hunk after official #555 BotActors; keep 30 unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTHOR536=_gq536_original_router/quality_gameplay/v3_bot_route_fullstep_20261116
+          BASE555=artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+          OUT536=artifacts/gq536_official_select/GQ536_SELECTED31.project.json
+          test "$(git -C _gq536_original_router rev-parse HEAD)" = cdf4fe5f231c998532963c5c16d9525d20a69e7e
+          export GQ_ROUTE_ORIGINAL="$PWD/_v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau"
+          python3 -B -m unittest discover -s "$AUTHOR536" -p 'test_source.py' -v
+          mkdir -p artifacts/gq536_official_select
+          python3 -B rc_fastlane/quality_route536_rc31/select_original_fullstep.py prepare \
+            --base "$BASE555" --out "$OUT536" --author "$AUTHOR536/source_patch.py"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_route536_rc31")
+          from select_original_fullstep import flat
+          _,src=flat(Path("artifacts/gq536_official_select/GQ536_SELECTED31.project.json"))
+          assert len(src)==31
+          for f in src.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ536_ORIGINAL_FULLSTEP_ALL_31_CURRENT_NATIVE_COMPILE_PASS")
+          PY
+      - name: Execute original authored routeClear 6 cases and REAL Router.navigate 6 cases; reject mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTHOR536=_gq536_original_router/quality_gameplay/v3_bot_route_fullstep_20261116
+          O="$PWD/_v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau"
+          P=artifacts/gq536_official_select/GQ536_EXISTING_BotPathRouter.luau
+          OUT=artifacts/gq536_official_select
+          python3 "$AUTHOR536/make_native_ray_harness.py" --original "$O" --patched "$P" --output-dir "$OUT"
+          python3 "$AUTHOR536/make_native_navigate_harness.py" --original "$O" --patched "$P" --outdir "$OUT"
+          /tmp/gq530_all31_native/luau "$OUT/original.spec.luau" | tee "$OUT/original-ray.log"
+          /tmp/gq530_all31_native/luau "$OUT/patched.spec.luau" | tee "$OUT/patched-ray.log"
+          /tmp/gq530_all31_native/luau "$OUT/navigate-original.spec.luau" | tee "$OUT/navigate-original.log"
+          /tmp/gq530_all31_native/luau "$OUT/navigate-fixed.spec.luau" | tee "$OUT/navigate-fixed.log"
+          grep -q GQ_NATIVE_PATCH_FULLSTEP_RAY "$OUT/patched-ray.log"
+          grep -q GQ_FULL_NAVIGATE_SAFE_FULLSTEP "$OUT/navigate-fixed.log"
+          if /tmp/gq530_all31_native/luau "$OUT/navigate-mutant.spec.luau" >"$OUT/old-ray-mutant.log" 2>&1; then
+              echo "RED: original 8-stud-ray mutant did not fail 9-stud movement"; exit 1
+          fi
+          grep -q 'actual Router.navigate move/block mismatch' "$OUT/old-ray-mutant.log"
+          echo GQ536_ORIGINAL_NAVIGATE_6_CASES_AND_OLD_LAST_STUD_MUTANT_REJECTED
+      - name: Exact real Rojo Place from one #536 Router; verify 31 Script class/source and rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq536_official_select/GQ536_SELECTED31.project.json \
+            -o artifacts/gq536_official_select/GQ536_REAL_31_SOURCE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_route536_rc31/select_original_fullstep.py verify \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
+            --out artifacts/gq536_official_select/GQ536_SELECTED31.project.json \
+            --author _gq536_original_router/quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --place artifacts/gq536_official_select/GQ536_REAL_31_SOURCE_ROJO.rbxlx
+          echo GQ536_30_PRIOR_AUTHOR_SCRIPTS_BYTE_EXACT_AND_ONE_ROUTER_ROJO_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq536_official_select/GQ536_REAL_31_SOURCE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -629,7 +698,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq536_official_select/GQ536_REAL_31_SOURCE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -654,7 +723,13 @@ jobs:
           assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
-          assert gq555["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq536=json.loads(Path("artifacts/gq536_official_select/GQ536_RC31_SOURCE_RECEIPT.json").read_text())
+          assert gq536["real_rojo_source_class_exact"]=="31/31"
+          assert gq536["other_thirty_selected_rc_sources_byte_exact"]==30
+          assert gq536["rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["bot_route_fullstep536"]=="cdf4fe5f231c998532963c5c16d9525d20a69e7e"
+          assert m["feature_flags"]["BOT_ROUTE_LAST_STUD_RAY536"] is True
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
@@ -678,6 +753,10 @@ jobs:
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
+            "original_author_536_last_stud_router_source_selected":True,
+            "gq536_other_30_existing_author_source_byte_exact":30,
+            "gq536_original_nav_real_6_cases_and_mutant_rejected":True,
+            "gq536_original_receipt_sha256":hashlib.sha256(Path("artifacts/gq536_official_select/GQ536_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_555_bot_only_30_preserved":True,
             "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
