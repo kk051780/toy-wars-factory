@@ -16,22 +16,38 @@ output.Name = "EGGRUMBLE_StudioLiveObserver_JSON"
 output.Value = "{}"
 output.Parent = ServerStorage
 
-local counters = {
- TEAM = {neutralDamageEvents = 0, neutralDeaths = 0, botDamageEvents = 0, botDeaths = 0, itemConsumeTransitions = 0},
- BATTLE_ROYALE = {neutralDamageEvents = 0, neutralDeaths = 0, botDamageEvents = 0, botDeaths = 0, itemConsumeTransitions = 0},
-}
+-- Counters are scoped to a physical round Arena identity, not to the reusable mode name.
+-- Without this, round B inherits round A's KO/item history.
+local function newCounters()
+ return {neutralDamageEvents = 0, neutralDeaths = 0, botDamageEvents = 0,
+  botDeaths = 0, itemConsumeTransitions = 0}
+end
+local counters = {TEAM = newCounters(), BATTLE_ROYALE = newCounters()}
+local activeArena: {[string]: Instance} = {}
+local roundSerial = {TEAM = 0, BATTLE_ROYALE = 0}
 local observedHumanoids = setmetatable({}, {__mode = "k"})
 local observedItems = setmetatable({}, {__mode = "k"})
 local observedWorlds = setmetatable({}, {__mode = "k"})
 
-local function modeOf(node: Instance): string?
+local function arenaOf(node: Instance): Instance?
  local cursor: Instance? = node
  while cursor do
-  if cursor.Name == "TEAM_Arena" then return "TEAM" end
-  if cursor.Name == "BATTLE_ROYALE_Arena" then return "BATTLE_ROYALE" end
+  if cursor.Name == "TEAM_Arena" or cursor.Name == "BATTLE_ROYALE_Arena" then
+   return cursor
+  end
   cursor = cursor.Parent
  end
  return nil
+end
+
+local function modeOf(node: Instance): string?
+ local arena = arenaOf(node)
+ if not arena then return nil end
+ return if arena.Name == "TEAM_Arena" then "TEAM" else "BATTLE_ROYALE"
+end
+
+local function fromCurrentRound(mode: string, arena: Instance): boolean
+ return activeArena[mode] == arena and arena.Parent ~= nil
 end
 
 local function classification(model: Instance): string?
@@ -49,11 +65,13 @@ local function observeHumanoid(h: Humanoid)
  local parent = h.Parent
  if not parent or not parent:IsA("Model") then return end
  local kind = classification(parent)
- local mode = modeOf(parent)
- if not kind or not mode then return end
+ local arena = arenaOf(parent)
+ local mode = arena and modeOf(arena)
+ if not kind or not arena or not mode then return end
  observedHumanoids[h] = true
  local priorHealth = h.Health
  h.HealthChanged:Connect(function(now)
+  if not fromCurrentRound(mode, arena) then return end
   -- Actual server Humanoid health decrease; not a confirmed attacking player.
   if now < priorHealth - 0.001 then
    local key = if kind == "neutral" then "neutralDamageEvents" else "botDamageEvents"
@@ -62,6 +80,7 @@ local function observeHumanoid(h: Humanoid)
   priorHealth = now
  end)
  h.Died:Connect(function()
+  if not fromCurrentRound(mode, arena) then return end
   local key = if kind == "neutral" then "neutralDeaths" else "botDeaths"
   counters[mode][key] += 1
  end)
@@ -72,11 +91,13 @@ local function observeItem(part: BasePart)
  local folder = part.Parent
  if not folder or folder.Name ~= "EGGRUMBLE_FieldItems" or
   not string.match(part.Name, "^ITEM_%d+_") then return end
- local mode = modeOf(part)
- if not mode then return end
+ local arena = arenaOf(part)
+ local mode = arena and modeOf(arena)
+ if not arena or not mode then return end
  observedItems[part] = true
  local available = part.CanQuery
  part:GetPropertyChangedSignal("CanQuery"):Connect(function()
+  if not fromCurrentRound(mode, arena) then return end
   local nextValue = part.CanQuery
   -- True->false is the author's actual consumed transition, not mere prompt input.
   if available and not nextValue then counters[mode].itemConsumeTransitions += 1 end
@@ -94,6 +115,12 @@ end
 
 local function watchArena(arena: Instance)
  if observedWorlds[arena] then return end
+ local mode = modeOf(arena)
+ if not mode then return end
+ -- Only the newest physical Arena with a given mode is allowed to credit events.
+ activeArena[mode] = arena
+ roundSerial[mode] += 1
+ counters[mode] = newCounters()
  observedWorlds[arena] = true
  arena.DescendantAdded:Connect(watchDescendant)
  for _,x in ipairs(arena:GetDescendants()) do watchDescendant(x) end
@@ -126,7 +153,9 @@ local function scanMode(mode: string)
  local root = rootFolder()
  local arena = root and root:FindFirstChild(mode .. "_Arena")
  if not arena then
-  return {state = "NOT_STARTED", counts = counts, observedEvents = counters[mode]}
+  -- Do not display the finished round's counters as belonging to the next match.
+  return {state = "NOT_STARTED", counts = counts, observedEvents = newCounters(),
+   lastStartedRoundSequence = roundSerial[mode]}
  end
  for _,x in ipairs(arena:GetDescendants()) do
   if x:IsA("BasePart") then
@@ -154,7 +183,8 @@ local function scanMode(mode: string)
    end
   end
  end
- return {state = "WORLD_OBSERVED", counts = counts, observedEvents = counters[mode]}
+ return {state = "WORLD_OBSERVED", roundSequence = roundSerial[mode],
+  counts = counts, observedEvents = counters[mode]}
 end
 
 local function scanPlayers()
