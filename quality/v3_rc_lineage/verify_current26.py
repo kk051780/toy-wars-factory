@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -45,13 +46,39 @@ def original_owner_bytes(name: str, quality: Path, art: Path, score: Path) -> by
 
 def verify(args) -> dict:
     roots = (args.author, args.quality, args.art, args.score)
+    quality_metadata_advance = []
+
     for key, root in zip(("author", "quality", "art", "score"), roots):
         if not SHA40.fullmatch(getattr(args, key + "_head")):
             raise ValueError(key + " pin is not a commit SHA")
         if not SHA40.fullmatch(getattr(args, "live_" + key)):
             raise ValueError(key + " current HEAD unknown")
         if getattr(args, key + "_head") != getattr(args, "live_" + key):
-            raise ValueError("STALE_" + key.upper() + "_HEAD: owner changed during composition")
+            if key != "quality":
+                raise ValueError("STALE_" + key.upper() + "_HEAD: owner changed during composition")
+            # #484 frequently adds CI/test-only commits. Compare actual Git
+            # trees, not commit timestamps: no stale game source may enter RC.
+            try:
+                changed = subprocess.check_output(
+                    ["git", "-C", str(root), "diff", "--name-only",
+                     args.quality_head, args.live_quality],
+                    text=True, stderr=subprocess.STDOUT,
+                ).splitlines()
+            except subprocess.CalledProcessError as exc:
+                raise ValueError("Cannot prove #484 source-equivalent latest HEAD: " + exc.output)
+            source_changes = [
+                p for p in changed
+                if (p.startswith(GAME + "/") and
+                    (p.endswith(".luau") or p.endswith(".project.json")))
+                or p == "quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py"
+            ]
+            if source_changes:
+                raise ValueError(
+                    "STALE_QUALITY_GAME_SOURCE: recompose latest #484, changed "
+                    + ", ".join(source_changes)
+                )
+            quality_metadata_advance = changed
+
         if not root.is_dir() or not root.resolve().is_relative_to(args.workspace.resolve()):
             raise ValueError("Unsafe or missing original owner tree: " + key)
     if not SHA40.fullmatch(args.rc_head) or args.rc_head != args.live_rc:
@@ -123,6 +150,11 @@ def verify(args) -> dict:
     report = check(args.workspace, args.workspace, author_project,
                    candidate_project, provenance, args.live_author, args.live_rc)
     report["owner_heads"] = provenance["original_owner_heads"]
+    report["quality_live_head"] = args.live_quality
+    report["quality_source_equivalent_to_live_head"] = True
+    report["quality_metadata_only_changes_since_pinned"] = quality_metadata_advance
+    report["quality_latest_CI_required_for_RC"] = bool(quality_metadata_advance)
+
     report["composer"] = "REUSED_ORIGINAL_484"
     report["actual_candidate_project"] = str(candidate_project)
     report["candidate_project_sha256"] = sha(candidate_project.read_bytes())
