@@ -294,6 +294,68 @@ jobs:
           assert not receipt["formal_rc_write"] and not receipt["studio_android_verified"]
           print("GQ541_CANONICAL_ONE_SWARM_31_OF_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
           PY
+      - name: Source-select original GQ539 nearby lobby ONLY after #541, verify 31 real Luau and Rojo
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s _gq539_lobby/quality_gameplay/v3_lobby_nearby_20261116/tests -p 'test_*.py'
+          mkdir -p artifacts/gq539_official_select
+          HOST_BLOB="$(python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          proj=Path("artifacts/gq541_official_select/GQ31_SELECTED.project.json")
+          dat=json.loads(proj.read_text())
+          paths=[]
+          def walk(node):
+              for name,v in node.items():
+                  if isinstance(v,dict):
+                      if "$path" in v:
+                          paths.append((name,(proj.parent/v["$path"]).resolve()))
+                      else:walk(v)
+          walk(dat["tree"])
+          original=[p for name,p in paths if name=="EGGRUMBLE_LobbyCastleModesPreview"]
+          assert len(paths)==31 and len(original)==1
+          payload=original[0].read_bytes()
+          print(hashlib.sha1(b"blob "+str(len(payload)).encode()+b"\0"+payload).hexdigest())
+          PY
+          )"
+          python3 _gq539_lobby/quality_gameplay/v3_lobby_nearby_20261116/select_original_host.py \
+            --project artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --host-blob "$HOST_BLOB" \
+            --out artifacts/gq539_official_select
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          proj=Path("artifacts/gq539_official_select/GQ539_SELECTED31.project.json")
+          dat=json.loads(proj.read_text())
+          paths=[]
+          def walk(node):
+              for name,v in node.items():
+                  if isinstance(v,dict):
+                      if "$path" in v:
+                          paths.append((proj.parent/v["$path"]).resolve())
+                      else:walk(v)
+          walk(dat["tree"])
+          assert len(paths)==31
+          for p in paths:
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(p)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ539_EXACT_31_SELECTED_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build artifacts/gq539_official_select/GQ539_SELECTED31.project.json \
+            -o artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/verify_gq539_rc31_place.py \
+            --base artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --selected artifacts/gq539_official_select/GQ539_SELECTED31.project.json \
+            --place artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_text())
+          assert m["script_count"]==m["rojo_exact_scripts"]==31
+          assert m["other_sources_byte_exact"]==30 and m["rollback_byte_exact"]
+          print("GQ539_RC31_ONE_HOST_30_UNCHANGED_ROJO_EXACT_PASS",m["place_bytes"],m["place_sha256"])
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
