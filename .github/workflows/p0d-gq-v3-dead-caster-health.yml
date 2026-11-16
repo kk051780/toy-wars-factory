@@ -28,8 +28,25 @@ jobs:
           set -euo pipefail
           git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-luau
           cmake -S /tmp/gq-luau -B /tmp/gq-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
-          cmake --build /tmp/gq-luau/build --target Luau.Compile.CLI -j 4
+          cmake --build /tmp/gq-luau/build --target Luau.Compile.CLI Luau.Repl.CLI -j 4
           /tmp/gq-luau/build/luau-compile /tmp/EGGRUMBLE_SevenRoleCombat_ON.luau >/dev/null
           /tmp/gq-luau/build/luau-compile /tmp/EGGRUMBLE_SevenRoleCombat_OFF.luau >/dev/null
           echo "SOURCE_LOCK / ROLLBACK / NATIVE_PARSE = PASS"
           echo "ENGINE_STUDIO / FULL_7_JOB_INTERACTION / PRIVATE_ROJO / OFFICIAL_RC / ANDROID / OWNER = NOT_TESTED"
+      - name: Execute ORIGINAL seven-role server cast entry in Native Luau VM — 84 states
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/make_native_cast_fence_harness.py --out /tmp/GQ_Caster_ON.spec.luau
+          /tmp/gq-luau/build/luau-compile /tmp/GQ_Caster_ON.spec.luau >/dev/null
+          /tmp/gq-luau/build/luau /tmp/GQ_Caster_ON.spec.luau
+      - name: Prove no-health-gate mutant fails the SAME native 84-state test
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/make_native_cast_fence_harness.py --mutant --out /tmp/GQ_Caster_MUTANT.spec.luau
+          /tmp/gq-luau/build/luau-compile /tmp/GQ_Caster_MUTANT.spec.luau >/dev/null
+          if /tmp/gq-luau/build/luau /tmp/GQ_Caster_MUTANT.spec.luau; then
+            echo "RED: original source mutant survived dead-caster regression"
+            exit 1
+          fi
+          echo "MUTANT_REJECTED: actual old dead-caster logic violates the 84-case contract"
+          echo "REAL_ROBLOX_ENGINE / PRIVATE_PLACE / OFFICIAL_RC / ANDROID / OWNER = NOT_TESTED"
