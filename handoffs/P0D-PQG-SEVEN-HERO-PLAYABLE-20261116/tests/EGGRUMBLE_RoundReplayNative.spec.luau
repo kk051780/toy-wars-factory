@@ -64,8 +64,12 @@ studio=true
 
 -- Human case: clear per-round KO, stealth etc while retaining chosen role.
 local ret={x=5,y=8,z=-5}
-local health={Health=100}
+local health={Health=100,WalkSpeed=20,attributes={EGGRUMBLE_OriginalWalkSpeed=20,EGGRUMBLE_SlowExpiry=99999,EGGRUMBLE_MarkedUntil=99999}}
+function health:SetAttribute(name:string,value:any) self.attributes[name]=value end
 local root={CFrame=nil}
+local shield={Parent=true,destroyed=false}
+function shield:IsA(typeName:string) return typeName=="ForceField" end
+function shield:Destroy() self.Parent=nil;self.destroyed=true end
 local stats={ko={Value=29}}
 function stats:FindFirstChild(key)
  return if key=="NeutralKO" then self.ko else nil
@@ -85,10 +89,22 @@ function human.Character:FindFirstChildOfClass(typeName:string)
  return if typeName=="Humanoid" then self.humanoid else nil
 end
 function human.Character:FindFirstChild(name:string)
- return if name=="HumanoidRootPart" then self.root else nil
+ return if name=="HumanoidRootPart" then self.root
+  elseif name=="EGGRUMBLE_ItemShield" then shield else nil
 end
 function human:LoadCharacter() self.loads+=1 end
-check(Replay.resetHuman(human,ret)==nil,"reset should return no value")
+local serverBaseline=Replay.captureWalkBaseline(human)
+check(serverBaseline==20,"actual server pre-item walk speed not recorded")
+health.WalkSpeed=27 -- original FieldItemPickups.DASH applies this for five seconds
+check(Replay.resetHuman(human,ret,serverBaseline)==nil,"reset should return no value")
+check(health.WalkSpeed==20,"DASH speed persisted into next lobby")
+check(health.attributes.EGGRUMBLE_OriginalWalkSpeed==nil and health.attributes.EGGRUMBLE_SlowExpiry==nil,
+ "old combat slow restored speed after item/lobby reset")
+check(health.attributes.EGGRUMBLE_MarkedUntil==nil,"old mark status persisted")
+check(shield.destroyed and shield.Parent==nil,"old field item SHIELD persisted into next match")
+health.WalkSpeed=1000
+check(Replay.captureWalkBaseline(human)==16,"out-of-range walk speed must not become next match baseline")
+health.WalkSpeed=20
 check(root.CFrame and root.CFrame.position==ret,"alive human not returned to lobby")
 check(human.loads==0,"alive human was forcibly respawned")
 check(human.attributes.EGGRUMBLE_SelectedRole=="MAGE","chosen role lost")
