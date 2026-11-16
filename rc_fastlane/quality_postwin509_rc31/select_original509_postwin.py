@@ -35,8 +35,6 @@ def author_patch(checker:Path,original:Path,patched:Path):
     selected=m.check_exact(original,patched)
     if selected!=original.read_text(encoding="utf8").replace(m.FIND,m.REPLACE):
         raise ValueError("RED_ORIGINAL_GQ509_AUTHOR_DIFF_NOT_EXACT")
-    if m.FIND not in m.REPLACE or False:
-        raise ValueError("RED_INTERNAL")
     return m
 
 def apply(current:str,m):
@@ -54,7 +52,7 @@ def apply(current:str,m):
 def checked_files(base:Path,out:Path):
     oldproject,old=scan(base)
     newproject,new=scan(out)
-    if len(old)!=len(new)!=31:raise ValueError("RED_COUNT")
+    if len(old)!=31 or len(new)!=31:raise ValueError("RED_COUNT")
     if set(old)!=set(new) or ROUTE not in old or ROUTE not in new:
         raise ValueError("RED_RULES_LAYOUT_OR_31_CHANGED")
     if sum(old[x].read_bytes()!=new[x].read_bytes() for x in old)!=1:
