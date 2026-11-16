@@ -176,6 +176,23 @@ jobs:
           grep -q NEUTRAL_ENCOUNTER_NATIVE artifacts/NEUTRAL_FAIR_NATIVE.log
           grep -q NEUTRAL_PACING_NATIVE_PASS artifacts/NEUTRAL_PACE_NATIVE.log
           echo ALL_3_ORIGINAL_AUTHOR_LUAU_VM_PASS
+      - name: Run REAL Rules+Item+Guard in one shared TEAM/BR session, reject broken inventory mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/rules_item_coupled_native.py \
+            --original-item-builder _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out artifacts/COUPLED_RULES_ITEM_NATIVE.luau \
+            --mutant-out artifacts/COUPLED_RULES_ITEM_MUTANT.luau
+          /tmp/p0d_native28/luau-compile --text artifacts/COUPLED_RULES_ITEM_NATIVE.luau >/dev/null
+          /tmp/p0d_native28/luau-compile --text artifacts/COUPLED_RULES_ITEM_MUTANT.luau >/dev/null
+          /tmp/p0d_native28/luau artifacts/COUPLED_RULES_ITEM_NATIVE.luau | tee artifacts/COUPLED_RULES_ITEM_NATIVE.log
+          grep -q COUPLED_REAL_RULES_ITEM_GUARD_NATIVE_PASS artifacts/COUPLED_RULES_ITEM_NATIVE.log
+          if /tmp/p0d_native28/luau artifacts/COUPLED_RULES_ITEM_MUTANT.luau > artifacts/COUPLED_RULES_ITEM_MUTANT.log 2>&1; then
+            echo 'BROKEN_INVENTORY_MUTANT_FALSE_PASS';exit 1
+          fi
+          grep -q COUPLED_RULES_ITEM_TEAM_REAL_FIELD_PICKUP artifacts/COUPLED_RULES_ITEM_MUTANT.log
+          echo COUPLED_NATIVE_MUTANT_REJECTED
       - name: Download fixed digest Rojo v7.7.1 and build actual private Place
         shell: bash
         run: |
@@ -211,3 +228,5 @@ jobs:
             artifacts/ITEM_ORIGINAL_NATIVE.log
             artifacts/NEUTRAL_FAIR_NATIVE.log
             artifacts/NEUTRAL_PACE_NATIVE.log
+            artifacts/COUPLED_RULES_ITEM_NATIVE.log
+            artifacts/COUPLED_RULES_ITEM_MUTANT.log
