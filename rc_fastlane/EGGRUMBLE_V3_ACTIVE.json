@@ -30,7 +30,8 @@
     "current_human535": "6846e9d55d07f0204748bbb8f46eef08f46c1b04",
     "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
     "neutral_fallback541": "6fc0261d21a3aa260fa7bcf19b1b177d4994570a",
-    "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2"
+    "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
+    "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -39,7 +40,8 @@
     "NEUTRAL_MELEE_533": true,
     "SHARED_NEUTRAL_BUDGET_528": true,
     "NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541": true,
-    "CASTLE_EGG_DEPOSIT_REFRESH_537": true
+    "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
+    "LOBBY_NEARBY_BOARDS_539": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation",
   "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31",
@@ -83,5 +85,18 @@
   "legacy_s1_default_not_replaced": true,
   "owner_approval_wait_blocker": false,
   "rc_active_source_artifact_proof_complete": true,
-  "official_source_overlay_notes": "Original author #541 immutable composer selected into existing one neutral Swarm; 30/31 other V3 sources unchanged vs baseline original31. No new game authority, no script-count increase."
+  "official_source_overlay_notes": "Original author #541 immutable composer selected into existing one neutral Swarm; 30/31 other V3 sources unchanged vs baseline original31. No new game authority, no script-count increase.",
+  "gq539": {
+    "source_pr": 539,
+    "source_commit": "e003d73d516e65e1817dd281eb1743fa866f3770",
+    "selector": "PR539 original pinned source; after official original #541 Swarm and #537 Host deposit",
+    "selected_script_count": 31,
+    "other_original_src_unchanged": 30,
+    "scope": "7 roles + TEAM/BR mode gates + defense lobby ONLY; no castle/vault board modification (PR547 owner)",
+    "rollback": "Return to canonical #537 Host; preserves #541 Swarm",
+    "studio_2client": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NO_GO",
+    "status": "RC_CANDIDATE_NOT_FORMALLY_ADOPTED"
+  }
 }
