@@ -107,7 +107,7 @@ jobs:
           test "$count" -eq 27
           python3 quality_gameplay/v3_private_live_canary_20261116/native_gate_harness.py --out "$RUNNER_TEMP/private27_vm.luau"
           /tmp/gq_private27_luau/luau "$RUNNER_TEMP/private27_vm.luau" | tee "$RUNNER_TEMP/PRIVATE27_VM.log"
-          grep -q PRIVATE_GATE_NATIVE_28_CASES_PASS "$RUNNER_TEMP/PRIVATE27_VM.log"
+          grep -q PRIVATE_GATE_NATIVE_51_CASES_PASS "$RUNNER_TEMP/PRIVATE27_VM.log"
           echo "GQ_V3_NATIVE_27_OF_27_PASS"
       - name: Build unpublished Rojo27 Place with pinned 7.7.1 binary SHA
         shell: bash
