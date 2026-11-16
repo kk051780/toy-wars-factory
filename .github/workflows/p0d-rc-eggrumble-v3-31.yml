@@ -1410,10 +1410,51 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --runtime "$SRC/EGGRUMBLE_BeastEscort.luau" --expected-sha256 "$LOCK" --place "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           echo GQ618_REAL_BEAST_31_SOURCE_CLASS_OTHER30_BYTE_EXACT_OFF_PASS
+      - name: Checkout original GQ615 TEAM BR queue display author immutable source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 849d82e399f342e5212b5dc16cba76b04c1d2c7a
+          path: _gq615_lobby_queue_original
+          persist-credentials: false
+      - name: GQ615 one existing current31 Host queue visibility Native31 real10 and Rojo31 exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq615_lobby_queue_original rev-parse HEAD)" = 849d82e399f342e5212b5dc16cba76b04c1d2c7a
+          SRC=_gq615_lobby_queue_original/quality_gameplay/v3_lobby_queue_visibility_20261117
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ618_BEAST_SELECTED31.project.json
+          OUT=$DIR/GQ615_QUEUE_SELECTED31.project.json
+          PLACE=$DIR/GQ615_QUEUE_REAL_ROJO31.rbxlx
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_feedback.py'
+          python3 -m py_compile "$SRC/select_feedback.py" "$SRC/intake31.py" "$SRC/private31.py"
+          python3 -B "$SRC/intake31.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$SRC" "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,sys.argv[1])
+          from intake31 import mapping
+          _,scripts,host=mapping(Path(sys.argv[2]))
+          assert len(scripts)==31 and host[-1]=="EGGRUMBLE_LobbyCastleModesPreview"
+          for source in scripts.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ615_LATEST_ALL31_NATIVE_LUAU_COMPILE_PASS")
+          PY
+          python3 -B "$SRC/private31.py" harness \
+            --source "$DIR/GQ615_CANONICAL_CURRENT_HOST_ONLY.server.luau" \
+            --out "$DIR/GQ615_ACTUAL_QUEUE_NATIVE10.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ615_ACTUAL_QUEUE_NATIVE10.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ615_ACTUAL_QUEUE_NATIVE10.luau" \
+            | tee "$DIR/GQ615_ACTUAL_QUEUE_NATIVE10.log"
+          grep -q 'GQ615_REAL_QUEUE_TEXT_NATIVE_10_CASES_PASS' "$DIR/GQ615_ACTUAL_QUEUE_NATIVE10.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/intake31.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ615_ONE_CURRENT_HOST_OTHER30_EXACT_OFF_NATIVE31_ROJO31_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ615_QUEUE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1429,7 +1470,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ615_QUEUE_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1529,7 +1570,15 @@ jobs:
           assert beast618["source_count"]==31 and beast618["original_30_scripts_byte_identical"]
           assert beast618["off_previous_combat_exact"] and beast618["actual_rojo31_source_class"]=="31/31"
           assert beast618["exact_original_combat_sha256"]==gq582_v3["upgraded_combat_sha256"]
-          assert beast618["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert beast618["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          lobby615=json.loads(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_text())
+          assert lobby615["feature_id"]=="GQ_V3_LOBBY_QUEUE_ETA_20261117"
+          assert lobby615["source_count"]==31 and lobby615["all_other30_byte_exact"]
+          assert lobby615["rollback_current_host_byte_exact"] and lobby615["source_exact_rojo_verified"]
+          assert lobby615["real_rojo_source_class_path"]=="31/31"
+          assert lobby615["private_rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ_V3_LOBBY_QUEUE_ETA_20261117"] is True
+          assert m["source_heads"]["lobby_queue615"]=="849d82e399f342e5212b5dc16cba76b04c1d2c7a"
           assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
           assert m["source_heads"]["gq618_beast_escort"]=="131313d645d2a5a67abd117c2c3d0459ee46d210"
           assert guard611["original_blob"]=="ac51ce2077814c7509b8eaf6dafbd05b04a9a1fe"
@@ -1588,6 +1637,7 @@ jobs:
              "gq618_beast_real_server_humanoid_selected":True,
              "gq618_existing_combat_other30_exact":True,
              "gq618_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq615_lobby_queue_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
             "gq586_current_match_deposit_selected":True,
             "gq586_other_30_original_scripts_preserved":True,
@@ -1711,6 +1761,9 @@ jobs:
             artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
             artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
             artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ615_QUEUE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ615_ACTUAL_QUEUE_NATIVE10.log
             artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ611_NATIVE13_RESULT.log
             artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
