@@ -167,3 +167,9 @@ jobs:
             artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
             artifacts/field27/real_rules_drop_native.receipt.txt
       - run: echo 'PRIVATE27_ONLY; OFFICIAL_RC_WRITER_220_REQUIRED; STUDIO_ANDROID_FUN_OWNER_NOT_RUN'
+
+  original-29-federation:
+    name: Federate 8 owned areas into private29 without RC write
+    uses: ./.github/workflows/p0d-gq515-federated29-private.yml
+    permissions:
+      contents: read
