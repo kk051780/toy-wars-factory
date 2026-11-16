@@ -31,6 +31,17 @@ class BuilderSourceTests(unittest.TestCase):
  def test_bounded_lifetime_and_cleanup(self):
   for k in ["Policy.capacity","Policy.cooldown","task.delay(Policy.LIFETIME","function Build.clear","entry.part:Destroy()"]:
    self.assertIn(k,SRC)
+ def test_workspace_humanoids_in_collision_scope(self):
+  self.assertIn("params.FilterDescendantsInstances={workspace}",SRC)
+  self.assertIn('FindFirstAncestorOfClass("Model")',SRC)
+  self.assertIn('FindFirstChildOfClass("Humanoid")',SRC)
+  self.assertIn('Policy.blocksPlacement(other.CanCollide,isOwnGround,isHumanoid)',SRC)
+  self.assertIn("HUMANOID_OVERLAP",SRC)
+ def test_foreign_floor_name_is_not_exempt(self):
+  self.assertIn("other:IsDescendantOf(session.world)",SRC)
+  self.assertIn('other.Name=="TacticalBattlefield"',SRC)
+  self.assertIn('other.Name:match("^TacticalRoute_")~=nil',SRC)
+  self.assertIn("canCollide~=false and ownGround~=true",POL)
  def test_runtime_limits(self):
   for k in ["MAX_PER_HERO=2","MAX_PER_SESSION=12","LIFETIME=9","WALL=13","BRIDGE=17"]:
    self.assertIn(k,POL)
