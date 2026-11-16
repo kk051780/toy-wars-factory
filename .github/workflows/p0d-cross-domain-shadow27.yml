@@ -105,6 +105,10 @@ jobs:
           cp cross_domain_gate/observer_native.spec.luau /tmp/gq_observer_native/Runner.luau
           (cd /tmp/gq_observer_native && /tmp/gq_luau/luau Runner.luau) | tee artifacts/GQ_OBSERVER_NATIVE.log
           grep -q GQ_7DOMAIN_OBSERVER_REAL_LUAU_NATIVE_BEHAVIOR artifacts/GQ_OBSERVER_NATIVE.log
+          grep -q GQ_OBSERVER_WARNING_DEDUP_NATIVE_PASS artifacts/GQ_OBSERVER_NATIVE.log
+          # Execute #484 author's new real navigation-target regression, not a copied implementation.
+          (cd _gq_original && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_luau/luau) | tee artifacts/GQ_NAV_NATIVE.log
+          grep -q GQ_NAV_STALE_GOAL_NEGATIVE_PASS artifacts/GQ_NAV_NATIVE.log
       - name: Acquire pinned Rojo and build unpublished private Place
         shell: bash
         run: |
@@ -174,4 +178,5 @@ jobs:
             artifacts/EGGRUMBLE_GQ27_SHADOW_PRIVATE.rbxlx
             artifacts/SOURCE_RECEIPT.json
             artifacts/GQ_OBSERVER_NATIVE.log
+            artifacts/GQ_NAV_NATIVE.log
           retention-days: 3
