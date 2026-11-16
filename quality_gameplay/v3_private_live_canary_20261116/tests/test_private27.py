@@ -55,6 +55,17 @@ class Private27ContractTests(unittest.TestCase):
             M.overlay(source,"EGGRUMBLE_LobbyCastleModesPreview",
                       "EGGRUMBLE_LobbyCastleModesPreview.server.luau")
 
+
+    def test_private_gate_one_host_authority_and_irreversible_revoke(self):
+        gate=(M.compose.HERE/"EGGRUMBLE_PrivateLiveGate.luau").read_text(encoding="utf-8")
+        self.assertIn("local activeWorld:Instance?=nil",gate)
+        self.assertIn("local permanentlyRevoked=false",gate)
+        self.assertIn("GetAttributeChangedSignal(Gate.OPT_IN_ATTRIBUTE)",gate)
+        self.assertIn("if activeWorld~=world and world.Parent then world:Destroy() end",gate)
+        self.assertIn("permanentlyRevoked=true",gate)
+        self.assertIn("if not RunService:IsStudio() and (not activeWorld or not activeWorld.Parent)",gate)
+        self.assertLess(gate.index("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)"),gate.index("if world.Parent then world:Destroy() end"))
+
     def test_unprotected_author_script_is_byte_identical(self):
         raw="--!strict\nreturn {someOriginalGameAuthority=true}\n"
         out, n=M.overlay(raw,"EGGRUMBLE_CastleMatchRules","EGGRUMBLE_CastleMatchRules.luau")
