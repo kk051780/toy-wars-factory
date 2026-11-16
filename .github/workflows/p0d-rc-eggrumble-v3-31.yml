@@ -1118,10 +1118,72 @@ jobs:
             --runtime "$ROOT582/EGGRUMBLE_ZombieSquadRuntime.luau" \
             --place artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx
           echo GQ582_RC31_SAME_COMBAT_NATIVE31_ROJO31_OTHER30_EXACT_PASS
+      - name: Reuse immutable original #582 v3 (duplicate neutral Names, cross-mode human fence) once
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: aeb7cbed6e154849804d7d28bd53966410e50364
+          path: _gq582_zombie_v3
+          persist-credentials: false
+      - name: Upgrade only CURRENT original #582-v2 Combat to v3 author code; 30 other authors byte exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq582_zombie_original rev-parse HEAD)" = 497ff09e7d148e591691f5b1e3f5c543d6794ee8
+          test "$(git -C _gq582_zombie_v3 rev-parse HEAD)" = aeb7cbed6e154849804d7d28bd53966410e50364
+          V2=_gq582_zombie_original/quality_gameplay/v3_zombie_command_20261116
+          V3=_gq582_zombie_v3/quality_gameplay/v3_zombie_command_20261116
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ515_ZOMBIE582_SELECTED31.project.json
+          OUT=$DIR/GQ515_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json
+          python3 -m py_compile rc_fastlane/quality_zombie582_rc31/upgrade_original_zombie582_v3.py
+          python3 -B rc_fastlane/quality_zombie582_rc31/upgrade_original_zombie582_v3.py prepare \
+            --base "$BASE" --out "$OUT" \
+            --v2 "$V2/compose_original_single_combat.py" \
+            --v3 "$V3/compose_original_single_combat.py" \
+            --policy "$V3/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --runtime "$V3/EGGRUMBLE_ZombieSquadRuntime.luau"
+          python3 -B "$V3/build_neutral_identity_native.py" \
+            --composer "$V3/compose_original_single_combat.py" \
+            --out "$DIR/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau" \
+            | tee "$DIR/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.log"
+          grep -q 'GQ582_ACTUAL_NEUTRAL_INSTANCE_ID_NATIVE_PASS checks=12' "$DIR/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.log"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan
+          _,files=scan(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json"))
+          assert len(files)==31
+          for f in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ582_V3_ACTUAL_LUAU31_NATIVE_ALL_PASS")
+          PY
+      - name: Real pinned Rojo31 Source and Class exact of original Zombie v3 after v2 on one Combat
+        shell: bash
+        run: |
+          set -euo pipefail
+          V2=_gq582_zombie_original/quality_gameplay/v3_zombie_command_20261116
+          V3=_gq582_zombie_v3/quality_gameplay/v3_zombie_command_20261116
+          DIR=artifacts/gq515_official_select
+          /tmp/gq530-all31-rojo build "$DIR/GQ515_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json" \
+            -o "$DIR/GQ515_ZOMBIE582_V3_REAL_ROJO31.rbxlx"
+          python3 -B rc_fastlane/quality_zombie582_rc31/upgrade_original_zombie582_v3.py verify \
+            --base "$DIR/GQ515_ZOMBIE582_SELECTED31.project.json" \
+            --out "$DIR/GQ515_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json" \
+            --v2 "$V2/compose_original_single_combat.py" \
+            --v3 "$V3/compose_original_single_combat.py" \
+            --policy "$V3/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --runtime "$V3/EGGRUMBLE_ZombieSquadRuntime.luau" \
+            --place "$DIR/GQ515_ZOMBIE582_V3_REAL_ROJO31.rbxlx"
+          echo GQ582_V3_SINGLE_EXISTING_COMBAT_OTHER30_EXACT_NATIVE31_REAL_ROJO31_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ515_ZOMBIE582_V3_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1137,7 +1199,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_V3_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1206,10 +1268,16 @@ jobs:
           assert m["feature_flags"]["TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"] is True
           assert m["source_heads"]["original_roster583"]=="60b67c8dade80ff7ccd1d97e03480ba333977084"
           assert m["feature_flags"]["ROSTER16_HARDCAP_583"] is True
+          gq582_v3=json.loads(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_text())
+          assert gq582_v3["source_rojo_exact"]=="31/31" and gq582_v3["other30_script_bytes_identical"]
+          assert gq582_v3["off_rollback_old_combat_byte_exact"] and gq582_v3["source_count"]==31
+          assert gq582_v3["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["zombie_command582"]=="aeb7cbed6e154849804d7d28bd53966410e50364"
+          assert m["feature_flags"]["ZOMBIE_NEUTRAL_STABLE_ID_V3"] is True
           gq582=json.loads(Path("artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq582["real_rojo_source_class_exact"]=="31/31" and gq582["unchanged_previous_scripts"]==30
-          assert gq582["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
-          assert m["source_heads"]["zombie_command582"]=="497ff09e7d148e591691f5b1e3f5c543d6794ee8"
+          assert gq582["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["zombie_command582_v2_origin"]=="497ff09e7d148e591691f5b1e3f5c543d6794ee8"
           assert m["feature_flags"]["ZOMBIE_COMMAND_SQUAD_582"] is True
           gq515=json.loads(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_text())
           assert gq515["rojo_source_class_exact"]=="31/31" and gq515["other_30_scripts_byte_exact"]
@@ -1249,6 +1317,8 @@ jobs:
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
             "source_author_heads":m["source_heads"],
+            "gq582_v3_neutral_identity_exact_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "zombie_v3_neutral_target_identity_unique_and_current_humans_only":True,
             "script_count":31,
             "script_source_and_class_exact":"31/31",
             "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
@@ -1350,6 +1420,10 @@ jobs:
             artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json
             artifacts/gq515_official_select/GQ515_ZOMBIE582_SELECTED31.project.json
             artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json
+            artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau
+            artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.log
             artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
             artifacts/gq515_official_select/GQ515_NATIVE18_RESULT.log
             artifacts/gq583_official_select/GQ583_ORIGINAL_NATIVE.spec.luau
