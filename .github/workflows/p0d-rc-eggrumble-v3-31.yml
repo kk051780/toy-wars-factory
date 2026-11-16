@@ -7,6 +7,7 @@ on:
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
       - 'rc_fastlane/quality_egg515_rc31/**'
+      - 'rc_fastlane/quality_rctrace8/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -14,6 +15,7 @@ on:
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
       - 'rc_fastlane/quality_egg515_rc31/**'
+      - 'rc_fastlane/quality_rctrace8/**'
   workflow_dispatch:
 permissions:
   contents: read
