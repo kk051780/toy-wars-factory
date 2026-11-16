@@ -14,7 +14,7 @@ on:
 permissions:
   contents: read
 jobs:
-  budget-native-only:
+  budget-native-rojo-private22:
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
@@ -58,9 +58,59 @@ jobs:
           grep -q GQ_DUAL_MODE_NEUTRAL_BUDGET_NATIVE_PASS /tmp/gq_dual_budget/native.log
           git rev-parse HEAD > /tmp/gq_dual_budget/pinned_head.txt
           sha256sum quality_gameplay/gq_dual_mode_neutral_budget_20261116/EGGRUMBLE_DualModeNeutralBudget.luau > /tmp/gq_dual_budget/policy_sha256.txt
+      - name: Stage pinned original V3 21 OFF and unique optional 22 ON
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/gq_dual_mode_neutral_budget_20261116
+          python3 "$root/tools/compose_private_v3.py" --mode OFF --out /tmp/GQ528_V3_OFF21_NOT_RC
+          python3 "$root/tools/compose_private_v3.py" --mode ON --out /tmp/GQ528_V3_ON22_NOT_RC
+          for pair in "OFF21 21" "ON22 22"; do
+            read -r tag want <<< "$pair"
+            folder=/tmp/GQ528_V3_"$tag"_NOT_RC
+            count=0
+            for file in "$folder"/src/*.luau; do
+              /tmp/gq_dual_luau/luau-compile --text "$file" >/dev/null
+              count=$((count+1))
+            done
+            test "$count" -eq "$want"
+          done
+          cp /tmp/GQ528_V3_ON22_NOT_RC/source_lock_receipt.json /tmp/gq_dual_budget/ON22_source_receipt.json
+          cp /tmp/GQ528_V3_OFF21_NOT_RC/source_lock_receipt.json /tmp/gq_dual_budget/OFF21_source_receipt.json
+      - name: Pinned Rojo 7.7.1 real unpublished OFF21 and ON22 private Source exact Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq528_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq528_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq528_rojo.zip") as z:
+              names=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq528_rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          for mode in OFF21 ON22; do
+            folder=/tmp/GQ528_V3_"$mode"_NOT_RC
+            place="$folder"/GQ528_V3_"$mode"_NOT_RC.rbxlx
+            /tmp/gq528_rojo build "$folder/private_v3.project.json" -o "$place"
+            python3 quality_gameplay/gq_dual_mode_neutral_budget_20261116/tools/verify_private_place.py --folder "$folder" --place "$place"
+            stat -c "$mode PRIVATE_PLACE_BYTES=%s" "$place"
+            sha256sum "$place"
+            cp "$place" "/tmp/gq_dual_budget/GQ528_V3_"$mode"_NOT_RC.rbxlx"
+          done
+          cd /tmp/gq_dual_budget
+          zip -q -r /tmp/GQ528_DUAL_NEUTRAL_PRIVATE_ON22_OFF21_NOT_RC.zip .
+          stat -c 'PRIVATE_ZIP_BYTES=%s' /tmp/GQ528_DUAL_NEUTRAL_PRIVATE_ON22_OFF21_NOT_RC.zip
+          sha256sum /tmp/GQ528_DUAL_NEUTRAL_PRIVATE_ON22_OFF21_NOT_RC.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ_DUAL_MODE_NEUTRAL_BUDGET_NATIVE_ONLY_NOT_RC
-          path: /tmp/gq_dual_budget/
+          name: GQ_DUAL_MODE_NEUTRAL_BUDGET_PRIVATE22_ROJO_NOT_RC
+          path: |
+            /tmp/gq_dual_budget/
+            /tmp/GQ528_DUAL_NEUTRAL_PRIVATE_ON22_OFF21_NOT_RC.zip
           if-no-files-found: error
           retention-days: 7
