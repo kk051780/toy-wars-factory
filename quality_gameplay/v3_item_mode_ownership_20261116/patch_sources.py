@@ -19,7 +19,7 @@ ITEM_NAME = "EGGRUMBLE_FieldItemPickups.luau"
 MARKER = "-- GQ_V3_ITEM_MODE_OWNERSHIP_20261116"
 
 ITEM_ANCHOR = "local function canUse(player:Player,session:any):boolean\n"
-HOST_ANCHOR = "  sessions[mode]=session\n"
+HOST_ANCHOR = " sessions[mode]=session\n"
 
 ITEM_INSERT = """ -- GQ_V3_ITEM_MODE_OWNERSHIP_20261116: a stale castle roster is not a live queue.
  -- Authorization is a server-only closure from the original TEAM/BR host.
