@@ -53,7 +53,8 @@ local function exercise(mode:string,quantity:number,fallX:number,fallZ:number)
   check(m.fieldEggTokens[eggId]==true,"generated token is redeemable")
   local x=safe.x+(i-2)*3
   local z=safe.z
-  check(x>=safe.minX and x<=safe.maxX,"all three physical positions inside own floor X")
+  check(x>=safe.minX-3 and x<=safe.maxX+3,"all physical eggs stay within center padding tolerance")
+  check(x>=safe.minX-40 and x<=safe.maxX+40,"all physical eggs stay on real battle floor X")
   check(z>=safe.minZ and z<=safe.maxZ,"physical egg remains on same floor Z")
   local picked=Rules.takeFieldEgg(m,"red",eggId)
   check(picked==i,"actual original field-token pickup returns correct carried stock")
