@@ -52,3 +52,52 @@ jobs:
           /tmp/p0d_dash_luau/luau-compile /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau >/dev/null
           sha256sum /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau
           echo "SOURCE_ONLY_NOGAMEAUTH; FORMAL_RC_ADOPTED=0; STUDIO_ANDROID_NOT_TESTED"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _gq543_author_v3
+          persist-credentials: false
+      - name: Compose exactly one patched ITEM into all original 21 real V3 author scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq543_author_v3 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          mkdir -p artifacts
+          python3 quality_gameplay/v3_item_dash_round_fence_20261116/compose_private21.py prepare \
+            --author-root _gq543_author_v3/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --out artifacts/GQ543_PRIVATE21
+          find artifacts/GQ543_PRIVATE21 -name '*.luau' -print0 |
+            while IFS= read -r -d '' f; do /tmp/p0d_dash_luau/luau-compile "$f" >/dev/null; done
+          echo "ORIGINAL_AUTHOR21_ALL_NATIVE_LUAU_PASS"
+      - name: Build checksum-pinned private Rojo Place and verify 21/21 actual embedded source classes
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq543_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq543_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq543_rojo.zip") as z:
+            matches=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+            assert len(matches)==1, matches
+            dst=Path("/tmp/gq543_rojo")
+            dst.write_bytes(z.read(matches[0]))
+            dst.chmod(0o755)
+          PY
+          /tmp/gq543_rojo build artifacts/GQ543_PRIVATE21/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/GQ543_PRIVATE21_NOT_OFFICIAL.rbxlx
+          python3 quality_gameplay/v3_item_dash_round_fence_20261116/compose_private21.py verify \
+            --author-root _gq543_author_v3/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --out artifacts/GQ543_PRIVATE21 \
+            --place artifacts/GQ543_PRIVATE21_NOT_OFFICIAL.rbxlx
+      - name: Preserve source-exact private integrated evidence for #220
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ543-DASH-SINGLE-ITEM-ORIGINAL-V3-PRIVATE21-NOT-RC
+          path: |
+            artifacts/GQ543_PRIVATE21/EGGRUMBLE_V3_STUDIO.project.json
+            artifacts/GQ543_PRIVATE21/EGGRUMBLE_FieldItemPickups.luau
+            artifacts/GQ543_PRIVATE21_NOT_OFFICIAL.rbxlx
+          if-no-files-found: error
