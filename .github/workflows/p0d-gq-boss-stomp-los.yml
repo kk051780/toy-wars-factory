@@ -1,0 +1,96 @@
+name: P0D GQ original boss stomp wall LOS real private21 source QA
+on:
+  push:
+    branches:
+      - quality/gq-v3-boss-stomp-wall-los-20261116
+    paths:
+      - 'quality_gameplay/v3_boss_stomp_los_20261116/**'
+      - '.github/workflows/p0d-gq-boss-stomp-los.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_boss_stomp_los_20261116/**'
+      - '.github/workflows/p0d-gq-boss-stomp-los.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-v3-boss-los:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin original #482 author game and all 8 domains
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" != ""
+          file=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_NeutralStoneGiant.luau
+          test "$(git hash-object "$file")" = 2670618cba320c51936c750a10e43c194cada0f0
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_boss_stomp_los_20261116/tests
+          mkdir -p artifacts
+          python3 quality_gameplay/v3_boss_stomp_los_20261116/apply_stomp_los.py \
+            --source "$file" --out artifacts/EGGRUMBLE_NeutralStoneGiant.luau
+          python3 quality_gameplay/v3_boss_stomp_los_20261116/pack_private21.py prepare \
+            --base handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --patched artifacts/EGGRUMBLE_NeutralStoneGiant.luau --out artifacts/PRIVATE21
+          python3 quality_gameplay/v3_boss_stomp_los_20261116/make_native_los_test.py \
+            --patched artifacts/EGGRUMBLE_NeutralStoneGiant.luau \
+            --out artifacts/BOSS_STOMP_NATIVE.spec.luau
+      - name: Reuse author source tests (7 jobs, battlefield, castle/egg, neutral, item, lobby, balance)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -q \
+            -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Compile 21 actual sources and execute original patched LOS helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/gq_boss_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_boss_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for file in artifacts/PRIVATE21/*.luau; do
+            /tmp/gq_boss_luau/luau-compile --text "$file" >/dev/null
+          done
+          /tmp/gq_boss_luau/luau-compile --text artifacts/BOSS_STOMP_NATIVE.spec.luau >/dev/null
+          /tmp/gq_boss_luau/luau artifacts/BOSS_STOMP_NATIVE.spec.luau | tee artifacts/BOSS_STOMP_NATIVE.log
+          grep -q GQ_BOSS_ACTUAL_LUAU_STOMP_LOS_3_CASES_PASS artifacts/BOSS_STOMP_NATIVE.log
+      - name: Reuse pinned Rojo and build genuine unpublished 21-script Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_boss_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_boss_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_boss_rojo.zip") as z:
+              paths=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(paths)==1
+              out=Path("/tmp/gq_boss_rojo")
+              out.write_bytes(z.read(paths[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq_boss_rojo build artifacts/PRIVATE21/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/GQ_BOSS_STOMP_PRIVATE21_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_boss_stomp_los_20261116/pack_private21.py verify \
+            --place artifacts/GQ_BOSS_STOMP_PRIVATE21_NOT_RC.rbxlx \
+            --package artifacts/PRIVATE21
+      - name: Upload PRIVATE ONLY source receipt and unpublished Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ_BOSS_STOMP_PRIVATE21_NOT_OFFICIAL_RC
+          path: |
+            artifacts/GQ_BOSS_STOMP_PRIVATE21_NOT_RC.rbxlx
+            artifacts/PRIVATE21/SOURCE_RECEIPT.json
+            artifacts/PRIVATE21/PRIVATE_PLACE_REPORT.json
+            artifacts/BOSS_STOMP_NATIVE.log
+          if-no-files-found: error
+          retention-days: 7
