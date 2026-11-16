@@ -87,5 +87,14 @@ class ImmutableSpectate32Intake(unittest.TestCase):
             admit.prepare(self.base, AUTHOR, self.base, self.receipt)
 
 
+    def test_exact_official_base_sha_is_in_receipt(self):
+        sha="89cbeb03d74ddbe3408ef805fed6683ff6abc508"
+        admit.prepare(self.base, AUTHOR, self.out, self.receipt, rc_head=sha)
+        self.assertEqual(json.loads(self.receipt.read_text())["base_rc_head"], sha)
+
+    def test_invalid_official_base_sha_is_red(self):
+        with self.assertRaisesRegex(ValueError, "current official RC HEAD"):
+            admit.prepare(self.base, AUTHOR, self.out, self.receipt, rc_head="not-fixed")
+
 if __name__ == "__main__":
     unittest.main()

@@ -60,7 +60,9 @@ def checked_original(source):
     return data
 
 
-def prepare(base, source, out, receipt):
+def prepare(base, source, out, receipt, rc_head=None):
+    if rc_head is not None and (len(rc_head) != 40 or any(c not in "0123456789abcdef" for c in rc_head)):
+        raise ValueError("RED: current official RC HEAD must be exact 40 lowercase SHA")
     base = base.resolve(strict=True)
     source = source.resolve(strict=True)
     checked_original(source)
@@ -106,7 +108,7 @@ def prepare(base, source, out, receipt):
         raise ValueError("RED: original spectator not LocalScript")
     evidence = {
         "kind": "PRIVATE_RC32_PREMERGE_NOT_OFFICIAL",
-        "base_rc_head": "9466312436d9567db8bb464a57b664d133f6a6cf",
+        "base_rc_head": rc_head or "LOCAL_TEST_ONLY_UNPINNED",
         "original_spectator_author": AUTHOR_HEAD,
         "original_spectator_blob": AUTHOR_BLOB,
         "existing_gameplay_sources_unchanged": 31,
@@ -175,9 +177,10 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--receipt", type=Path, required=True)
     parser.add_argument("--place", type=Path)
+    parser.add_argument("--rc-head", default=None)
     args = parser.parse_args()
     if args.operation == "prepare":
-        prepare(args.base, args.source, args.out, args.receipt)
+        prepare(args.base, args.source, args.out, args.receipt, rc_head=args.rc_head)
     else:
         if args.place is None:
             parser.error("verify requires --place")
