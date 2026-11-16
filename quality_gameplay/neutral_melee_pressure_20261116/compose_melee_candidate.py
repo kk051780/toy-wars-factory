@@ -34,7 +34,7 @@ def patch(original: str) -> str:
    local ch=p.Character
    local root=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
    local hum=ch and ch:FindFirstChildOfClass("Humanoid")
-   if p.Parent and castle and castle.alive and root and hum and hum.Health>0 then
+   if p.Parent and p:GetAttribute("EGGRUMBLE_QueuedMode")==session.mode\n    and castle and castle.alive and root and hum and hum.Health>0 then
     table.insert(victims,{root=root,humanoid=hum})
    end
   end
