@@ -199,6 +199,36 @@ eq("damaged parent marker destroyed",hgui.destroyed,true)
 hgui=select(2,liveOn(hr))
 eq("all UI repairs leave one human and one AI badge",countLiveAll(),2)
 
+-- Server-side visual drift while the actual egg count stays at 2: repair
+-- render visibility/geometry and the authoritative caption without creating
+-- another BillboardGui, sending Remotes, or modifying egg ownership.
+local markerBeforeDrift=select(2,liveOn(hr))
+local labelBeforeDrift=nil
+for _,item in ipairs(__instances) do
+ if item.__class=="TextLabel" and item.Parent==markerBeforeDrift then
+  labelBeforeDrift=item
+ end
+end
+eq("label exists for drift repair",labelBeforeDrift~=nil,true)
+markerBeforeDrift.AlwaysOnTop=true
+markerBeforeDrift.MaxDistance=9999
+markerBeforeDrift.Enabled=false
+labelBeforeDrift.Visible=false
+labelBeforeDrift.Text="🥚×999"
+step()
+eq("server corrects invalid always-on-top marker",markerBeforeDrift.AlwaysOnTop,false)
+eq("server corrects global-distance label",markerBeforeDrift.MaxDistance,70)
+eq("server re-enables cosmetic GUI",markerBeforeDrift.Enabled,true)
+eq("server re-enables cosmetic text",labelBeforeDrift.Visible,true)
+eq("real server count restores caption",labelBeforeDrift.Text,"🥚×2")
+eq("drift corrected without new GUI",select(2,liveOn(hr)),markerBeforeDrift)
+eq("drift corrected without extra markers",countLiveAll(),2)
+eq("drift corrected without new egg units",a.rules.castles["100"].heldEggs,2)
+eq("second tick is idempotent",NativeTell.start(a),false)
+step()
+eq("steady visual correction still one human marker",liveOn(hr),1)
+eq("steady visual correction still one bot marker",liveOn(br),1)
+
 a.rules.castles["100"].heldEggs=3
 step()
 local n,updated=liveOn(hr)
