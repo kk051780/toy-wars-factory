@@ -1,0 +1,130 @@
+name: EGGRUMBLE ART-A01 dedicated source contract
+on:
+  pull_request:
+    paths:
+      - "handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/**"
+      - ".github/workflows/p0d-eggrumble-art-a01-source.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify visual-only art and both exact-path studio project maps
+        run: python3 -m unittest discover -v -s handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p "test_*.py"
+      - name: Validate standalone project JSON syntax
+        run: |
+          python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_V3_ART_STUDIO.project.json >/dev/null
+          python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_SEVEN_HERO_ART_STUDIO.project.json >/dev/null
+      - name: Read-only checkout of latest original V3 writer source (PR #482)
+        uses: actions/checkout@v4
+        with:
+          ref: feature/p0d-pqg-seven-hero-playable-20261116-01
+          path: author-current
+          persist-credentials: false
+      - name: Dynamically compose latest V3 author source plus three art-only Scripts
+        run: |
+          python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --author-project author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json
+          python3 -m json.tool .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json >/dev/null
+          echo "Combined mapping is generated for source inspection; Native/Rojo/Studio still NOT_RUN"
+      - name: Compose four original independent gameplay previews with visual layers
+        run: |
+          set -euo pipefail
+          for spec in \
+            "boss EGGRUMBLE_NEUTRAL_BOSS_STUDIO.project.json" \
+            "castle EGGRUMBLE_CASTLE_INTERIOR_STUDIO.project.json" \
+            "lobby EGGRUMBLE_LOBBY_UX_STUDIO.project.json" \
+            "item EGGRUMBLE_ITEM_STUDIO.project.json"; do
+            read -r target source_name <<<"$spec"
+            python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+              --target "$target" \
+              --author-project "author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/$source_name" \
+              --out ".art-preview-generated/$target.project.json"
+            python3 -m json.tool ".art-preview-generated/$target.project.json" >/dev/null
+          done
+          echo "ALL_INDEPENDENT_PREVIEW_SOURCE_MAPS=PASS (no simultaneous preview scripts)"
+      - name: Build authoritative open-source Luau compiler for actual art syntax
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/eggrumble-art-a01-luau
+          cmake -S /tmp/eggrumble-art-a01-luau -B /tmp/eggrumble-art-a01-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/eggrumble-art-a01-luau/build --target Luau.Compile.CLI -j 4
+          test -x /tmp/eggrumble-art-a01-luau/build/luau-compile
+      - name: NATIVE compile each art layer and every current author V3 source
+        run: |
+          set -euo pipefail
+          for source in handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.server.luau \
+                       handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.client.luau; do
+            echo "NATIVE ART PARSE $source"
+            /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
+          done
+          find author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 -maxdepth 1 -type f -name '*.luau' -print0 |
+            while IFS= read -r -d '' source; do
+              echo "NATIVE AUTHOR PARSE $source"
+              /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
+            done
+          echo "NATIVE_LUAU_ART_AND_AUTHOR_SYNTAX=PASS (not Roblox Studio runtime)"
+      - name: Install official pinned Rojo 7.7.0 CLI (private build only)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/eggrumble-a01-rojo
+          curl --fail --location --retry 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip \
+            --output /tmp/eggrumble-a01-rojo.zip
+          unzip -q /tmp/eggrumble-a01-rojo.zip -d /tmp/eggrumble-a01-rojo
+          chmod +x /tmp/eggrumble-a01-rojo/rojo
+          /tmp/eggrumble-a01-rojo/rojo --version
+      - name: Produce five private Rojo Studio source-only places without publishing
+        run: |
+          set -euo pipefail
+          mkdir -p art-private-builds
+          for mode in v3 boss castle lobby item; do
+            if [[ "$mode" == v3 ]]; then
+              project=".art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json"
+            else
+              project=".art-preview-generated/$mode.project.json"
+            fi
+            destination=".art-preview-generated/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
+            /tmp/eggrumble-a01-rojo/rojo build "$project" --output "$destination"
+            test -s "$destination"
+            # The A01 LOD is client-only, and MUST be in every private place.
+            grep -q "EGGRUMBLE_ArtDistanceLOD" "$destination"
+            if [[ "$mode" == v3 ]]; then
+              # Latest author's mobile combat camera and hit-feedback stay intact.
+              grep -q "EGGRUMBLE_CombatFeel" "$destination"
+            fi
+            cp "$destination" "art-private-builds/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
+            echo "ROJO_PRIVATE_BUILD_PASS=${mode}"
+          done
+          echo "ROJO_SOURCE_BUILDS=5/5 (Studio Play/Android/official RC still NOT_RUN)"
+      - name: Generate reproducible source-exact RC handoff manifest (not RC integration)
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/make_rc_source_handoff.py \
+            --author-checkout author-current \
+            --project-dir .art-preview-generated \
+            --private-dir art-private-builds \
+            --art-head "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json
+          python3 -m json.tool art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json >/dev/null
+      - name: Save isolated private Studio source-only places as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-A01-PRIVATE-STUDIO-PLACES-NOT-RC
+          path: |
+            art-private-builds/EGGRUMBLE_A01_PRIVATE_*.rbxlx
+            art-private-builds/EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json
+          retention-days: 3
+          if-no-files-found: error
+      - name: Report boundaries
+        run: |
+          echo "CI ACTUALLY ran Native Luau parsing + five private Rojo place builds + client script presence."
+          echo "Studio Play/Android frame performance/FUN/ART/OWNER acceptance and RC Publish remain NOT_RUN."
