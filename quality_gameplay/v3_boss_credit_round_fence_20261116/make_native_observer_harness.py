@@ -124,7 +124,7 @@ check(idle:GetAttribute(COUNTER)==0, "separate player unaffected by leaving")
 assert(checked==18, "unexpected coverage drift: " .. tostring(checked))
 print("BOSS_CREDIT_ACTUAL_OBSERVER_NATIVE: 18/18 PASS")
 '''
-output = mock + "\n(function()\n" + observer + "\nend)()\n" + cases
+output = mock + "\nlocal observerBoot = (function()\n" + observer + "\nend)()\n" + cases
 out = Path(sys.argv[1])
 out.write_text(output,encoding="utf-8")
 print(out)
