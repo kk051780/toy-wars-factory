@@ -1746,6 +1746,101 @@ jobs:
             "${gq8mode[@]}"
           test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
           echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
+      - name: Checkout original GQ492 spectator client immutable source, one new client only
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
+          path: _gq492_original
+          persist-credentials: false
+      - name: Reuse GQ492 original one LocalScript on current BEAST+ZOMBIE-GUARD 31; native32/true Rojo32
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_spectate492_rc32 -p 'test_selection.py'
+          original=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
+          base=artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json
+          selected=artifacts/gq492_latest32/GQ492_SELECTED32.project.json
+          receipt=artifacts/gq492_latest32/GQ492_RC32_PREP_RECEIPT.json
+          private_place=artifacts/gq492_latest32/GQ492_SPECTATE32_PRIVATE.rbxlx
+          test -s artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx
+          python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py prepare \
+            --base "$base" --source "$original" --out "$selected" --receipt "$receipt"
+          python3 - "$selected" <<'PY'
+          import importlib.util,subprocess,sys,json
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location("spectator_gate","rc_fastlane/quality_spectate492_rc32/admit_spectator.py")
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          project=Path(sys.argv[1]);mapped=module.source_map(json.loads(project.read_text()),project)
+          assert len(mapped)==32
+          for path,_ in mapped.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ492_LATEST_NATIVE_LUAU_COMPILE_32_32_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$selected" -o "$private_place"
+          python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py verify \
+            --base "$base" --source "$original" --out "$selected" --receipt "$receipt" --place "$private_place"
+          python3 - "$private_place" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          def sources(path):
+              results={}
+              for item in ET.parse(path).getroot().iter("Item"):
+                  cls=item.get("class")
+                  if cls not in ("Script","LocalScript","ModuleScript"):continue
+                  props=item.find("Properties")
+                  if props is None:continue
+                  name=props.findtext("string[@name='Name']")
+                  source=props.findtext("ProtectedString[@name='Source']")
+                  if source is None: source=props.findtext("string[@name='Source']")
+                  assert name and name not in results and source is not None
+                  results[name]=(cls,source.replace("\r\n","\n"))
+              return results
+          before=sources(Path("artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx"))
+          after=sources(Path(sys.argv[1]))
+          assert len(before)==31 and len(after)==32
+          assert after["EGGRUMBLE_EliminatedSpectate"][0]=="LocalScript"
+          assert set(after)==set(before)|{"EGGRUMBLE_EliminatedSpectate"}
+          assert all(after[n]==body for n,body in before.items())
+          print("GQ492_LATEST_RC31_CANONICAL_PLACE_PRESERVED_ALL31_PLUS_ONE_PASS")
+          PY
+      - name: Original GQ492 client actual native lifecycle and 3 source mutations
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          harness=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/tools/make_native_spectator_harness.py
+          out=artifacts/gq492_latest32
+          python3 "$harness" --out "$out/GQ492_REAL_SPECTATOR_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$out/GQ492_REAL_SPECTATOR_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$out/GQ492_REAL_SPECTATOR_NATIVE.luau" | tee "$out/GQ492_REAL_SPECTATOR_NATIVE.log"
+          for mark in NATIVE_SPECTATOR_REAL_CLIENT_LIFECYCLE_PASS NATIVE_SPECTATOR_CROSS_MODE_ISOLATION_PASS NATIVE_SPECTATOR_RESET_FLAG_PASS NATIVE_SPECTATOR_ARENA_REMOVAL_PASS; do
+            grep -q "^$mark$" "$out/GQ492_REAL_SPECTATOR_NATIVE.log"
+          done
+          for mutation in elimination mode recovery; do
+            python3 "$harness" --mutation "$mutation" --out "$out/GQ492_MUTANT_$mutation.luau"
+            /tmp/gq530_all31_native/luau-compile --text "$out/GQ492_MUTANT_$mutation.luau" >/dev/null
+            if /tmp/gq530_all31_native/luau "$out/GQ492_MUTANT_$mutation.luau" >"$out/GQ492_MUTANT_$mutation.log" 2>&1; then
+              echo "RED: GQ492 mutation unexpectedly passed $mutation"; exit 1
+            fi
+            echo "GQ492_MUTANT_REJECTED_$mutation=PASS"
+          done
+          echo "GQ492_LATEST32_REAL_CLIENT_LIFECYCLE_AND_MUTATIONS_PASS"
+      - name: Upload GQ492 current31 plus one original spectator private PREP, not official RC
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ492-CURRENT-PRIVATE32-NOT-FORMAL-RC
+          path: |
+            artifacts/gq492_latest32/GQ492_SPECTATE32_PRIVATE.rbxlx
+            artifacts/gq492_latest32/GQ492_SELECTED32.project.json
+            artifacts/gq492_latest32/GQ492_RC32_PREP_RECEIPT.json
+            artifacts/gq492_latest32/GQ492_REAL_SPECTATOR_NATIVE.log
+          if-no-files-found: error
+          retention-days: 3
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
         if: success()
         uses: actions/upload-artifact@v4
