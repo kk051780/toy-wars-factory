@@ -107,10 +107,14 @@ def prepare(base:Path, base_receipt:Path, author_host:Path, quality_host:Path,
     generated=outdir/"EGGRUMBLE_LobbyCastleModesPreview.private.server.luau"
     generated.write_text(patched,encoding="utf-8")
     current=copy.deepcopy(obj)
-    node=current["tree"]
-    for key in original[HOST][0]:
-        node=node[key]
-    node["$path"]=Path(os.path.relpath(generated,outdir)).as_posix()
+    # The original #484 project lives one directory ABOVE this isolated output.
+    # Rebase every path (not its file contents) so Rojo resolves the same 25 owners.
+    for name,(chain,source_path,_,_) in original.items():
+        node=current["tree"]
+        for key in chain:
+            node=node[key]
+        chosen=generated if name==HOST else source_path
+        node["$path"]=Path(os.path.relpath(chosen,outdir)).as_posix()
     current["name"]="GQ520_AUTHOR26_RIDGE_ONLY_UNPUBLISHED_NOT_OFFICIAL_RC"
     project=outdir/"GQ520_RIDGE_AUTHOR26.project.json"
     project.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
