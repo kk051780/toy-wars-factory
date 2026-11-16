@@ -950,10 +950,64 @@ jobs:
             --out artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
             --place artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
           echo GQ580_OFFICIAL_CANDIDATE_SINGLE_BOT_30_PRESERVED_SOURCE_CLASS_31_NATIVE_PASS
+      - name: Fetch IMMUTABLE original GQ515 bounded field egg-drop source (no duplicate Host)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fee49d82816e65448f1b0b5803bba6fe06b17229
+          path: _gq515_original
+          persist-credentials: false
+      - name: Apply ORIGINAL #515 off-arena TEAM/BR egg bounds to current #580 Host only
+        run: |
+          set -euo pipefail
+          AUTHOR515=_gq515_original/quality_gameplay/field_egg_drop_recovery_20261116
+          BASE580=artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json
+          OUT515=artifacts/gq515_official_select
+          test "$(git -C _gq515_original rev-parse HEAD)" = fee49d82816e65448f1b0b5803bba6fe06b17229
+          python3 -B rc_fastlane/quality_egg515_rc31/select_original_egg_bounds.py prepare \
+            --base "$BASE580" \
+            --author "$AUTHOR515/EGGRUMBLE_FieldEggDropBounds.luau" \
+            --out "$OUT515"
+          python3 -B -m unittest discover -s rc_fastlane/quality_egg515_rc31 -p test_selection.py -v
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          import subprocess
+          s=SourceFileLoader("gq515_exact","rc_fastlane/quality_egg515_rc31/select_original_egg_bounds.py").load_module()
+          _,mapped=s.original_mapper().scan(Path("artifacts/gq515_official_select/GQ515_SELECTED31.project.json"))
+          assert len(mapped)==31
+          for p in mapped.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(p)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ515_ORIGINAL_30_OTHER_CURRENT_31_NATIVE_ALL_PASS",len(mapped))
+          PY
+      - name: Run real GQ515 author 18 native TEAM/BR boundary and invalid-coordinate scenarios
+        run: |
+          set -euo pipefail
+          AUTHOR515=_gq515_original/quality_gameplay/field_egg_drop_recovery_20261116
+          python3 -B rc_fastlane/quality_egg515_rc31/make_native.py \
+            --policy "$AUTHOR515/EGGRUMBLE_FieldEggDropBounds.luau" \
+            --spec "$AUTHOR515/tests/spec_native.luau" \
+            --out artifacts/gq515_official_select/GQ515_NATIVE_ORIGINAL18.luau
+          /tmp/gq530_all31_native/luau-compile --text artifacts/gq515_official_select/GQ515_NATIVE_ORIGINAL18.luau >/dev/null
+          /tmp/gq530_all31_native/luau artifacts/gq515_official_select/GQ515_NATIVE_ORIGINAL18.luau \
+            | tee artifacts/gq515_official_select/GQ515_NATIVE18_LOG.txt
+          grep -q 'EGGRUMBLE_FIELD_EGG_RECOVERY_NATIVE_PASS checks=18' artifacts/gq515_official_select/GQ515_NATIVE18_LOG.txt
+      - name: Real Rojo 7.7.1 source/class exact 31/31 after GQ580, with GQ515 only current Host
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq515_official_select/GQ515_SELECTED31.project.json \
+            -o artifacts/gq515_official_select/GQ515_FINAL31_REAL_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_egg515_rc31/select_original_egg_bounds.py verify \
+            --base artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
+            --author _gq515_original/quality_gameplay/field_egg_drop_recovery_20261116/EGGRUMBLE_FieldEggDropBounds.luau \
+            --out artifacts/gq515_official_select/GQ515_SELECTED31.project.json \
+            --place artifacts/gq515_official_select/GQ515_FINAL31_REAL_ROJO.rbxlx
+          echo GQ515_ONE_ORIGINAL_HOST_SOURCE_OTHER_30_BYTE_EXACT_NATIVE18_ROJO31_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ515_FINAL31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -969,7 +1023,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_FINAL31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1026,7 +1080,13 @@ jobs:
           assert gq580["source_count"]==31 and gq580["others_byte_exact"]==30
           assert gq580["rollback_bot_exact"] and gq580["real_rojo_exact"]=="31/31"
           assert gq580["formal_rc_adopted"] is False
-          assert gq580["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          gq515=json.loads(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_text())
+          assert gq515["rojo_source_class_exact"]=="31/31" and gq515["other_30_scripts_byte_exact"]
+          assert gq515["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq515["author_policy_git_blob"]=="3114c469169ad667978485d5b8d0b038a2dbd4f5"
+          assert m["source_heads"]["field_egg_drop_bounds515"]=="fee49d82816e65448f1b0b5803bba6fe06b17229"
+          assert m["feature_flags"]["FIELD_CARRIER_OFFARENA_DROP_515"] is True
+          assert gq580["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["ai_takeover580"]=="6dfd892063a95d61997dbd5b59d5daa7053e9df7"
           assert m["feature_flags"]["AI_TAKEOVER_TERMINAL_FENCE_580"] is True
           assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
@@ -1070,6 +1130,10 @@ jobs:
             "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_580_ai_takeover_terminal_fence_in_one_bot":True,
             "gq580_other_30_existing_source_bytes_exact":True,
+            "original_author_515_field_egg_recovery_one_host_selected":True,
+            "original_author_515_other30_byte_exact":True,
+            "original_author_515_native_18_scenarios":18,
+            "original_author_515_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
             "gq580_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_508_neutral_ko_death_credit_selected_inline":True,
             "original_508_other_30_sources_exact":True,
@@ -1156,6 +1220,10 @@ jobs:
             artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
             artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json
             artifacts/gq538_official_select/GQ580_NATIVE7_RESULT.txt
+            artifacts/gq515_official_select/GQ515_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ515_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_NATIVE18_LOG.txt
             artifacts/gq538_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
