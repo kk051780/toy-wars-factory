@@ -79,7 +79,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 33 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 34 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -156,6 +156,14 @@ FEATURE_EVIDENCE = {
   "SiegePacing.allow(session,enemy.id,id,now)",
   "SiegePacing.cancelFailed(session,enemy.id,id,now)",
   "local SiegePacing=(function()")),
+ "BUILDER_WALL_SERVER_TOOL_522": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ522_ORIGINAL_BUILDER_WALL_ONLY_INLINE_RC31",
+  "function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?)",
+  "tool.Activated:Connect(function()",
+  "BuilderConstruction.equip(session,p,true,false)",
+  "BuilderConstruction.clear(session)",
+  "Policy.MAX_PER_HERO=2",
+  "Policy.LIFETIME=9")),
 
 }
 
@@ -269,7 +277,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_33_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_34_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
