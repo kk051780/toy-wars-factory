@@ -102,8 +102,8 @@ end
 local function bindCharacter(character:Model)
  clearHumanoidBindings()
  stopVoices()
- local humanoid=character:FindFirstChildOfClass("Humanoid")
-  or character:WaitForChild("Humanoid",5)
+ local humanoid=(character:FindFirstChildOfClass("Humanoid")
+  or character:WaitForChild("Humanoid",5))::Humanoid?
  if closed or player.Character~=character or not humanoid then return end
  onHealth=humanoid.HealthChanged:Connect(function(health)
   if health<=0 then stopVoices() end
