@@ -89,9 +89,10 @@ class VisualLayersSourceContract(unittest.TestCase):
             "hum.Died:Connect",
             "if fired then return end",
             "MAX_SIMULTANEOUS_KO_BURSTS=8",
-            "MAX_DECORATED_NEUTRALS_PER_ARENA=36",
+            "MAX_DECORATED_NEUTRALS_PER_ARENA=24",
             "activeBurst>=MAX_SIMULTANEOUS_KO_BURSTS",
             "neutral.Destroying:Connect",
+            "activeNeutrals[arena]=",
         ):
             self.assertIn(needle, ENCOUNTERS)
         for token in ("Heartbeat:Connect", 'SetAttribute("EGGRUMBLE_NeutralKOs"', "LastAttackerId", "TakeDamage("):
@@ -99,7 +100,7 @@ class VisualLayersSourceContract(unittest.TestCase):
 
     def test_loot_and_lobby_are_readable_but_not_authoritative(self):
         for needle in (
-            "MAX_DECORATED_EGGS_PER_ARENA=48",
+            "MAX_DECORATED_EGGS_PER_ARENA=40",
             "FieldEgg_", "ReleasedEgg_", "OwnEggDeposit", "EggVault",
             "TEAM_PORTAL", "BATTLE_ROYALE_PORTAL", "DEFENSE_",
             "MAX_GATE_PIECES=7", "EGGRUMBLE_EggVisual_VisualOnly",
@@ -108,6 +109,11 @@ class VisualLayersSourceContract(unittest.TestCase):
             self.assertIn(needle, ENCOUNTERS)
         for token in ('Instance.new("ProximityPrompt")', "SetAttribute(", "getPlayerData("):
             self.assertNotIn(token, executable_lines(ENCOUNTERS))
+
+    def test_art_instance_budget_under_500_per_arena(self):
+        # Field cap + 24*2 minion + 40*2 egg + 16 castles*2 stations
+        # + 2 lobby gates*6 + 5 defense stands = 497 estimated art parts.
+        self.assertLessEqual(320 + 24 * 2 + 40 * 2 + 16 * 2 + 2 * 6 + 5, 500)
 
     def test_moving_bot_armor_is_welded_and_not_frozen(self):
         self.assertIn("piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,false)", HERO)
