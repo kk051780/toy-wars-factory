@@ -3,6 +3,7 @@
 -- Displays only source-true server results (castle outcome, actual neutral KO, egg delivery).
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local ScoreBalance=require(script.Parent:WaitForChild("EGGRUMBLE_ScoreBalance"))
 local ResultService={}
 local DISPLAY_SECONDS=8
 
@@ -14,7 +15,7 @@ local function castleEliminations(events:{any},attackerId:string):number
  return n
 end
 
-local function resultText(session:any,player:Player,mode:string):(string,string)
+local function resultText(session:any,player:Player,mode:string,ranking:any):(string,string)
  local id=tostring(player.UserId)
  local castle=session.rules.castles[id]
  if not castle then return "試合終了","観戦をありがとう" end
@@ -25,7 +26,11 @@ local function resultText(session:any,player:Player,mode:string):(string,string)
  if session.swarm and session.swarm.kills then kos=session.swarm.kills[id] or 0 end
  local eggs=castle.depositedEggs or 0
  local fallen=castleEliminations(session.rules.events or {},id)
- return status,"中立撃破 "..tostring(kos).."   卵納入 "..tostring(eggs).."   城攻略 "..tostring(fallen)
+ local place=0;local points=0;local stolen=0
+ for index,row in ipairs(ranking.rows) do
+  if row.id==id then place=index;points=row.score;stolen=row.stolen;break end
+ end
+ return status,string.format("%d位 %d点｜KO%d 卵%d/%d 城%d",place,points,kos,stolen,eggs,fallen)
 end
 
 local function makeResultGui(player:Player,title:string,stats:string,won:boolean)
@@ -93,11 +98,12 @@ function ResultService.showIfFinished(session:any,queue:{Player},mode:string):bo
   or session.rules.winner==nil then return false end
  -- Consume a finished round once so repeated refresh cannot spam the result overlay.
  session.resultsDelivered=true
+ local ranking=ScoreBalance.build(session.rules,session.swarm and session.swarm.kills or {})
  for _,player in ipairs(queue) do
   if player.Parent==Players then
    local castle=session.rules.castles[tostring(player.UserId)]
    if castle then
-    local title,stats=resultText(session,player,mode)
+    local title,stats=resultText(session,player,mode,ranking)
     local won=if mode=="TEAM" then session.rules.winner==castle.team
      else session.rules.winner==tostring(player.UserId)
     makeResultGui(player,title,stats,won)
