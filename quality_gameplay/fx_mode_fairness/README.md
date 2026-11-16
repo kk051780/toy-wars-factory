@@ -1,0 +1,15 @@
+# EGGRUMBLE V3 / independent server-side TEAM–BR combat VFX fairness
+
+Unlike **#503 client FX distance LOD** or closed duplicate #498, this candidate fixes a **server-side cross-mode starvation** in the original 72-live-Part skill emitter. Its parent #482 SkillFX shared one global `active` count across both TEAM and BR, and returned before creating **any** flash/ring/skill silhouette at the >66 active threshold. Concurrent mode A explosions can suppress mode B's real hit cues even though mode B gameplay still deals damage.
+
+## Minimal original-source-selective actual Luau implementation
+- NEW `EGGRUMBLE_FXModeFairQuota.luau`: bounded pure Luau ticket allocator (72 global, 12 reserved for opposite mode, 36/36 fresh allocations after both modes emit). Cancels unknown/invalid arena, double release safely, supports per-instance state; no Game, HUD, damage, remote, DataStore, score, economy, AI, castle or lobby.
+- NEW `EGGRUMBLE_SkillFX_ModeFair_Overlay.luau`: a **selective copy of original #482 `EGGRUMBLE_SkillFX.luau`**, with only one require/new, lease on Part creation, lease release at the same existing `task.delay` cleanup, and a per-mode preflight instead of the single global preflight. All seven original role geometries, colors, lifetime, actual damage and boss/item logic preserved.
+- NEW alternate `EGGRUMBLE_V3_FX_FAIR_22_STUDIO.project.json` maps the original author 21 sources (20 byte-exact unchanged, one selective FX overlay), plus one new helper = **22 sources**. Same server Game, TEAM/BR, 7 roles, field/neutral/castles/eggs/items/lobby. Not a second Game.
+- Native Luau tests cover solo cap60, other mode guaranteed 12 headroom, two-mode 36/36 eventual equilibrium, global cap72, timeouts/double release. Actual original SkillFX compile and 22-source Rojo Place source exact are separate CI stages.
+
+## Non-overlap and ownership
+This is private **SOURCE_PREP / DRAFT**, SOFT_CLAIM NOT GRANTED. Do not write to #482 author path; request author accept the 4 anchor changes only, then #484 composer builds the newest 26-source (or newer) source-exact composite without overwriting core. #503 owns **client cosmetic distance LOD**, not this server-side cross-match lease. #494/#501 own neutral spawn and fairness, #499 round timer, #500 castle defense, #489 item, #485 ART, #487 SCORE, #220 official authenticated RC write. **Rollback:** restore original #482 SkillFX source blob and remove `FXModeFairQuota` map+file. Entire overlay is source-exact, not certified gameplay.
+
+## Actual gameplay quality acceptance
+In unpublished Studio, start TEAM + BR simultaneous 1+15 AI/2+14 AI and spam A/B/C from all 7 jobs. Inspect every mode's FX counts vs 72 global, 60 one-mode, 36-mode steady state, hit marker & critical skill cues, group neutral KO/actual damage unaffected. Repeat start/stop/replays and disposal, ensure no leaks. On 2GB low-end Android 15min verify FPS (median>=30/p10>=25), quality and heat against #420, and independent #470 fun & owner. No mobile/runtime result from native/Place proof; no Roblox publish or monetization.
