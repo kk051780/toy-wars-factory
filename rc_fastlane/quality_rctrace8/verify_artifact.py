@@ -60,7 +60,12 @@ RULES = {
     "local function nearbyBoard(", "session.isCurrentHuman=function",
   )},
  "balance": {
-  "EGGRUMBLE_CombatBalance": ("return Balance",),
+  "EGGRUMBLE_CastleMatchRules": (
+  "M.MAX_HERO_SLOTS=16",
+  "limit>=2 and limit<=M.MAX_HERO_SLOTS",
+  "#roster>=2 and #roster<=M.MAX_HERO_SLOTS",
+ ),
+ "EGGRUMBLE_CombatBalance": ("return Balance",),
   "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",),
   "EGGRUMBLE_ScoreBalance": (),
  },
@@ -76,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 17 are known to be source-selected in the current official V3 branch.
+# These 18 are known to be source-selected in the proposed RC31 after #583.
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -97,6 +102,7 @@ FEATURE_EVIDENCE = {
  "FIELD_EGGS_CASTLE_FOUNDATION_CLEARANCE_523": (
    "EGGRUMBLE_LobbyCastleModesPreview",
    'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}'),
+ "ROSTER16_HARDCAP_583": ("EGGRUMBLE_CastleMatchRules", "#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "HEAL_NO_WASTE_517": ("EGGRUMBLE_FieldItemPickups",
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
 
