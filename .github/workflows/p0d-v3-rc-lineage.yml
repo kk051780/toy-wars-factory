@@ -142,6 +142,42 @@ jobs:
             --live-author "$AUTHOR" --live-quality "$QUALITY" \
             --live-art "$ART" --live-score "$SCORE" --live-rc "$RC" \
             --out artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json
+      - name: Reuse existing #490 independent live activation and current26 drift source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a91f5550a5ebe86abc62e0f06a7e43fbc706c
+          path: _gq490_existing
+          persist-credentials: false
+      - name: Compose real owner byte provenance with reused #490 eight-domain production gate
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 _gq490_existing/rc_source_drift_gate/check_live_intake.py \
+            --out artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json
+          python3 quality/v3_rc_lineage/admission_receipt.py \
+            --source artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json \
+            --composer artifacts/SOURCE_RECEIPT.json \
+            --live artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json \
+            --out artifacts/GQ_RC_INTAKE_RECEIPT.json
+          # A production Studio-only blocker must remain visible, but it is
+          # NOT a reason to discard a verified private SOURCE-only candidate.
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("artifacts/GQ_RC_INTAKE_RECEIPT.json")
+          receipt=json.loads(p.read_text())
+          assert receipt["status"] in (
+              "SOURCE_READY_PRODUCTION_BLOCKED",
+              "SOURCE_READY_PRODUCTION_NOT_VERIFIED",
+          ), receipt
+          assert not receipt["owner_accepted"]
+          assert receipt["official_rc_integration"] == "NOT_INTEGRATED_OR_UNVERIFIED"
+          print("P0D_GQ_RC_26_SOURCE_REVIEW_GATE_PASS_PRODUCT_NOT_APPROVED",
+                receipt["status"])
+          PY
       - name: Upload SOURCE ONLY receipt even when current heads move
         if: always()
         uses: actions/upload-artifact@v4
@@ -150,5 +186,7 @@ jobs:
           path: |
             artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json
             artifacts/SOURCE_RECEIPT.json
+            artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json
+            artifacts/GQ_RC_INTAKE_RECEIPT.json
           if-no-files-found: warn
           retention-days: 3
