@@ -59,6 +59,47 @@ jobs:
             --out /tmp/p0d-bot-human-membership-native.luau
           /tmp/p0d-native-luau/build/luau-compile /tmp/p0d-bot-human-membership-native.luau > /dev/null
           /tmp/p0d-native-luau/build/luau /tmp/p0d-bot-human-membership-native.luau
+      - name: Assemble original21 with exactly two source-locked membership patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/private21.py" assemble --out "$GQ_PATCHED_DIR"
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d-native-luau/build/luau-compile "$file" > /dev/null
+            count=$((count+1))
+          done < <(find "$GQ_PATCHED_DIR" -name '*.luau' -type f -print0)
+          test "$count" -eq 21
+          echo "GQ_NATIVE_EXACT_21_OF_21_PASS $count"
+      - name: Build 21-source UNPUBLISHED private Place using checksum-pinned Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_gq_rojo_771.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_gq_rojo_771.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_gq_rojo_771.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1,names
+              target=Path("/tmp/p0d_gq_rojo_771")
+              target.write_bytes(z.read(names[0]))
+              target.chmod(0o755)
+          PY
+          /tmp/p0d_gq_rojo_771 build \
+            "$GQ_PATCHED_DIR/EGGRUMBLE_V3_STUDIO.project.json" \
+            -o "$GQ_PATCHED_DIR/GQ_BOT_HUMAN_MATCH_PRIVATE21.rbxlx"
+      - name: Verify all 21 real Rojo embedded script Source and class and ZIP receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/private21.py" verify \
+            --out "$GQ_PATCHED_DIR" \
+            --place "$GQ_PATCHED_DIR/GQ_BOT_HUMAN_MATCH_PRIVATE21.rbxlx"
+          echo "PRIVATE21=SOURCE_EXACT. FORMAL_RC/ENGINE/ANDROID/OWNER=NOT_TESTED"
       - name: Preserve exact candidate evidence (not official Place)
         if: always()
         uses: actions/upload-artifact@v4
@@ -67,6 +108,9 @@ jobs:
           path: |
             /tmp/p0d-v3-gq-bot-patched/*.luau
             /tmp/p0d-v3-gq-bot-patched/overlay_source_lock.json
+            /tmp/p0d-v3-gq-bot-patched/EGGRUMBLE_V3_STUDIO.project.json
+            /tmp/p0d-v3-gq-bot-patched/PRIVATE21_RECEIPT.json
+            /tmp/p0d-v3-gq-bot-patched/GQ_BOT_HUMAN_MATCH_PRIVATE21.rbxlx
           if-no-files-found: warn
       - name: Mark honest downstream gates
         run: |
