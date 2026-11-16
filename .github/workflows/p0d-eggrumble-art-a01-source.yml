@@ -1,0 +1,26 @@
+name: EGGRUMBLE ART-A01 dedicated source contract
+on:
+  pull_request:
+    paths:
+      - "handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/**"
+      - ".github/workflows/p0d-eggrumble-art-a01-source.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify visual-only art and both exact-path studio project maps
+        run: python3 -m unittest discover -v -s handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p "test_*.py"
+      - name: Validate standalone project JSON syntax
+        run: |
+          python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_V3_ART_STUDIO.project.json >/dev/null
+          python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_SEVEN_HERO_ART_STUDIO.project.json >/dev/null
+      - name: Report boundaries
+        run: |
+          echo "SOURCE REGRESSION ONLY — NOT Native Luau/Rojo/Studio/Android/FUN/OWNER acceptance."
