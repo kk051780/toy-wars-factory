@@ -51,15 +51,20 @@ function Instance.new(className)
  return obj
 end
 local soundService=Instance.new("SoundService")
-local humanoid={Health=100}
+local humanoid={Health=100,HealthChanged=signal(),Died=signal()}
 local character={}
 function character:FindFirstChildOfClass(name)
  if name=="Humanoid" then return humanoid end
  return nil
 end
+function character:WaitForChild(name,_timeout)
+ if name=="Humanoid" then return humanoid end
+ return nil
+end
 local attributes={}
 local signals={}
-local player={Character=character,AncestryChanged=signal()}
+local player={Character=character,AncestryChanged=signal(),
+ CharacterAdded=signal(),CharacterRemoving=signal()}
 function player:GetAttribute(key)
  return attributes[key]
 end
@@ -160,12 +165,51 @@ fakeTime=6.3
 send(15,"ZOMBIE","C",2)
 check(#plays-before==7,"second window recovered")
 check(plays[#plays].vol<=.30,"all roles volume cap")
+-- Character lifecycle: a still-playing hit must stop on low HP or Died,
+-- and old Humanoid signals must NOT affect a newly spawned character.
+fakeTime=6.5
+send(16,"BEAST","A",1)
+check(not allSilent(),"death test has live audio")
+humanoid.Health=0
+humanoid.HealthChanged:Fire(0)
+check(allSilent(),"zero HP immediately stops current audio")
+humanoid.Health=100
+fakeTime=6.8
+send(17,"BEAST","A",1)
+check(not allSilent(),"health recovery permits a new hit")
+humanoid.Died:Fire()
+check(allSilent(),"Humanoid.Died immediately stops current audio")
+fakeTime=7.2
+send(18,"NINJA","A",1)
+check(not allSilent(),"new hit before character swap plays")
+player.CharacterRemoving:Fire(character)
+check(allSilent(),"character removing immediately stops audio")
+local oldHumanoid=humanoid
+local nextHumanoid={Health=100,HealthChanged=signal(),Died=signal()}
+humanoid=nextHumanoid
+local nextCharacter={}
+function nextCharacter:FindFirstChildOfClass(name)
+ if name=="Humanoid" then return humanoid end
+ return nil
+end
+function nextCharacter:WaitForChild(name,_timeout)
+ return self:FindFirstChildOfClass(name)
+end
+player.Character=nextCharacter
+player.CharacterAdded:Fire(nextCharacter)
+fakeTime=7.5
+send(19,"WARRIOR","A",1)
+check(not allSilent(),"new life retains hit feedback")
+oldHumanoid.Died:Fire()
+check(not allSilent(),"stale Humanoid.Died must not stop new life")
+nextHumanoid.Died:Fire()
+check(allSilent(),"new Humanoid.Died stops audio")
 player.AncestryChanged:Fire(player,nil)
 check(allSilent(),"leaving destroys current sound playback")
 check(folder.Parent==nil,"leaving removes optional audio group")
 local n=#plays
-fakeTime=7
-send(16,"MAGE","A",1)
+fakeTime=8
+send(20,"MAGE","A",1)
 check(#plays==n,"signal cleanup disables future plays")
 print("GQ_REAL_AUDIO_NATIVE_VM_PASS",checks,"runtime behavior checks")
 '''
@@ -174,7 +218,8 @@ def main():
     ap.add_argument("--out", required=True, type=Path)
     args = ap.parse_args()
     source = SOURCE.read_text(encoding="utf-8")
-    if "local onMute=" not in source or "local onEliminated=" not in source:
+    if ("local onMute=" not in source or "local onEliminated=" not in source
+            or "local onCharacterAdded=" not in source or "local onCharacterRemoving=" not in source):
         raise ValueError("audio source no longer has expected mute/KO wiring")
     # Execute the actual source as a block. Roblox objects are only minimal stubs.
     args.out.write_text(PRELUDE + "\ndo\n" + source + "\nend\n" + POSTLUDE, encoding="utf-8")
