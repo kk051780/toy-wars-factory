@@ -74,6 +74,7 @@ local function readCast(player:Player)
  local count=0
  for _ in pairs(active) do count+=1 end
  if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end
+ if active[player.UserId] then resetPose(active[player.UserId]) end
  active[player.UserId]={
   player=player,char=c,role=role,slot=slot,start=os.clock(),
   duration=DURATION[slot] or .3,joints=joints(c),
