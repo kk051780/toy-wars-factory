@@ -147,7 +147,9 @@ jobs:
           assert src.count("humanCombatTargetable(")==2
           p.write_text(src,encoding="utf-8")
           PY
+          cp _gq_dot/quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_StatusTickFence.luau artifacts/gq530_five/StatusFence.luau
           /tmp/gq530_native/luau-compile --text artifacts/gq530_five/REAL_DOT.luau >/dev/null
+          /tmp/gq530_native/luau-compile --text artifacts/gq530_five/StatusFence.luau >/dev/null
           (cd artifacts/gq530_five && /tmp/gq530_native/luau REAL_DOT.luau) | tee /tmp/gq530dot.log
           grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq530dot.log
       - name: Source-pinned Rojo 7.7.1 builds ON22 and rollback OFF22 private Places
