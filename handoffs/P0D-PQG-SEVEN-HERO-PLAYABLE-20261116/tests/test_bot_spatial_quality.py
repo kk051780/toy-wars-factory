@@ -25,6 +25,7 @@ def defects(bot,router,lobby):
       "server egg/siege LOS": "clearActionPath(actor,actors,actualTarget,actionTarget)" in bot and "actualDist<=ACTION_DISTANCE" in bot,
       "no close-range through-wall bypass": "if delta.Magnitude<=4 then return true end" not in bot and "workspace:Raycast(start,segment,params)" in bot,
       "only exact target part can end LOS": "targetPart:BasePart?" in bot and "hit.Instance==targetPart" in bot,
+      "no ghost action on absent world target": "if not targetPart or not targetPart.Parent then return false end" in bot,
       "all server action targets resolved": all(x in bot for x in ('"OwnEggDeposit"','"EggVault"',"actionTarget=fieldPart","actionTarget=enemyCastle and enemyCastle.door")),
       "bot-v-bot current-roster source": "for targetId,targetActor in pairs(bots) do" in bot and "local enemyCastle=session.rules.castles[targetId]" in bot,
       "bot-v-bot actual humanoid damage": "targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)" in bot and "targetHumanoid.Health>0" in bot,
@@ -84,6 +85,9 @@ class TestCastleGroundedMovement(unittest.TestCase):
         self.assertIn("only exact target part can end LOS",self.broken(bot=self.bot.replace("hit.Instance==targetPart","hit.Instance~=nil")))
     def test_missing_item_target(self):
         self.assertIn("all server action targets resolved",self.broken(bot=self.bot.replace("actionTarget=fieldPart","actionTarget=nil")))
+    def test_absent_physical_interactable_denied(self):
+        self.assertIn("no ghost action on absent world target",
+                      self.broken(bot=self.bot.replace("if not targetPart or not targetPart.Parent then return false end","-- removed world target guard")))
     def test_bot_duel_disabled(self):
         self.assertIn("bot-v-bot current-roster source",self.broken(bot=self.bot.replace("for targetId,targetActor in pairs(bots) do","if false then")))
     def test_bot_duel_fake_damage(self):
