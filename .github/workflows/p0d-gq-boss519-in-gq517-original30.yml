@@ -1,4 +1,4 @@
-name: P0D GQ read-only original #519 boss LOS in existing #517 single30 intake
+name: P0D GQ canonical #518 original boss LOS in existing #517 single30 intake
 on:
   push:
     branches:
@@ -77,11 +77,11 @@ jobs:
           ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
           path: _heal_original
           persist-credentials: false
-      - name: Reuse sole selected #519 original boss wall LOS generated overlay
+      - name: Reuse sole selected canonical #518 original boss wall LOS generated overlay
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 9622fe2990fecb556444ae2973a1ca9f4d11b67b
+          ref: f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
           path: _los_original
           persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
@@ -305,28 +305,28 @@ jobs:
             --place artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx \
             --receipt artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json \
             --compiler /tmp/gq_heal_native/luau-compile
-      - name: Select ONE #519 boss into complete original #517 30 and run actual patched-native + Rojo QA
+      - name: Select ONE canonical #518 boss into complete original #517 30 and run actual patched-native + Rojo QA
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _heal_original rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
-          test "$(git -C _los_original rev-parse HEAD)" = 9622fe2990fecb556444ae2973a1ca9f4d11b67b
+          test "$(git -C _los_original rev-parse HEAD)" = f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
           python3 -B quality_gameplay/boss_los_30source_intake_20261116/intake.py prepare \
             --base artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
-            --out artifacts/GQ519_SELECTED_ORIGINAL30.project.json \
-            --receipt artifacts/GQ519_SELECTED_ORIGINAL30_RECEIPT.json \
+            --out artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json \
             --boss artifacts/EGGRUMBLE_NeutralStoneGiant.luau \
-            --author-tool _los_original/quality_gameplay/v3_boss_stomp_los_20261116/apply_stomp_los.py
-          python3 _los_original/quality_gameplay/v3_boss_stomp_los_20261116/make_native_los_test.py \
+            --author-tool _los_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py
+          python3 quality_gameplay/boss_los_30source_intake_20261116/make_native_518.py \
             --patched artifacts/EGGRUMBLE_NeutralStoneGiant.luau \
             --out artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau
           /tmp/gq_heal_native/luau-compile artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau >/dev/null
-          /tmp/gq_heal_native/luau artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau | tee artifacts/GQ519_NATIVE_LOS.log
-          grep -q GQ_BOSS_ACTUAL_LUAU_STOMP_LOS_3_CASES_PASS artifacts/GQ519_NATIVE_LOS.log
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau | tee artifacts/GQ518_NATIVE_LOS.log
+          grep -q GQ518_ACTUAL_AUTHORED_LUAU_BOSS_OCCLUSION_5_CASES_PASS artifacts/GQ518_NATIVE_LOS.log
           python3 - <<'PY'
           import json,subprocess
           from pathlib import Path
-          project=Path("artifacts/GQ519_SELECTED_ORIGINAL30.project.json")
+          project=Path("artifacts/GQ518_SELECTED_ORIGINAL30.project.json")
           tree=json.loads(project.read_text())["tree"]
           names=set()
           def visit(node):
@@ -342,23 +342,23 @@ jobs:
                       if not k.startswith("$"):visit(v)
           visit(tree)
           assert len(names)==30,len(names)
-          print("GQ519_PLUS_GQ517_ACTUAL_NATIVE30_ALL_PASS")
+          print("GQ518_PLUS_GQ517_ACTUAL_NATIVE30_ALL_PASS")
           PY
-          /tmp/gq_heal_rojo build artifacts/GQ519_SELECTED_ORIGINAL30.project.json \
-            -o artifacts/GQ519_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
+          /tmp/gq_heal_rojo build artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            -o artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
           python3 -B quality_gameplay/boss_los_30source_intake_20261116/intake.py verify \
-            --project artifacts/GQ519_SELECTED_ORIGINAL30.project.json \
-            --place artifacts/GQ519_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx \
-            --receipt artifacts/GQ519_SELECTED_ORIGINAL30_RECEIPT.json
+            --project artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --place artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json
           echo "GQ_SELECTED_SINGLE_ORIGINAL_BOSS_ONLY NOT_FORMAL_RC"
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ519-ORIGINAL-LOS-IN-GQ517-30-SOURCE-PRIVATE-NOT-RC
+          name: GQ518-ORIGINAL-LOS-IN-GQ517-30-SOURCE-PRIVATE-NOT-RC
           path: |
-            artifacts/GQ519_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
-            artifacts/GQ519_SELECTED_ORIGINAL30.project.json
-            artifacts/GQ519_SELECTED_ORIGINAL30_RECEIPT.json
-            artifacts/GQ519_NATIVE_LOS.log
+            artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
+            artifacts/GQ518_SELECTED_ORIGINAL30.project.json
+            artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json
+            artifacts/GQ518_NATIVE_LOS.log
           retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
