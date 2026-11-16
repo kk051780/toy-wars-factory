@@ -44,7 +44,8 @@ class SourceDriftGateTest(unittest.TestCase):
     def test_missing_new_boss_item_skill_modules_rejects_old_composite(self):
         prs, a, q, comp, ab, qb, rc = fixture()
         for n in ("EGGRUMBLE_BossSessionFence", "EGGRUMBLE_NeutralStoneGiant",
-                  "EGGRUMBLE_RaidItemIntake", "EGGRUMBLE_ProceduralSkills"):
+                  "EGGRUMBLE_RaidItemIntake", "EGGRUMBLE_ProceduralSkills",
+                  "EGGRUMBLE_DivineMantle"):
             for service in (q["tree"]["ServerScriptService"],
                             q["tree"]["StarterPlayer"]["StarterPlayerScripts"]):
                 service.pop(n, None)
