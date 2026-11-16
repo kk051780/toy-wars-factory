@@ -28,9 +28,15 @@ Only the new gq_runtime_probe/ path belongs to this candidate. No original sourc
 - Part counts do not certify that a path is traversable or a castle door works. Actual Studio play and video still required.
 - Always returns OBSERVATION_ONLY_PRODUCT_NO_GO. This is an instrument, not automatic gameplay acceptance.
 
+## Round-replay regression to verify in actual Studio
+- Start TEAM round A. Hit/defeat a real neutral and consume one existing item; capture JSON with roundSequence = N and nonzero per-round events.
+- Finish the match and allow the arena to be destroyed. The next NOT_STARTED snapshot must have zero current-round event counters; it must not present A's kills as a new match.
+- Start TEAM round B. Verify roundSequence = N+1, all event counters initially zero. Replaying B actions should increment only B. Let any delayed callbacks from a destroyed A entity fire; they must not credit B.
+- Do the same separately for BATTLE_ROYALE without losing TEAM's observations. These steps are a future Studio real-engine test; until executed, round isolation is SOURCE+NATIVE_PARSE only, not engine-certified.
+
 ## Tests and handoff
 Execute: python -m unittest discover -s gq_runtime_probe/tests -v
 
-These tests only validate the observer's source structure and prohibited mutation patterns; they do not run Roblox Studio or the native Luau VM. #220 may selectively include the observer in a test-only RC build after path claim, latest-source SHA, provenance, rollback, and authority checks. The official RC is not changed by this candidate.
+The dedicated GitHub workflow also compiles this original observer with a pinned open-source native Luau compiler, while the Python tests validate source structure, round isolation contracts and prohibited mutation patterns. Neither actually runs Roblox Studio or verifies the full game in a native Luau VM. #220 may selectively include the observer in a test-only RC build after path claim, latest-source SHA, provenance, rollback, and authority checks. The official RC is not changed by this candidate.
 
 Rollback: remove one Script from ServerScriptService; its ServerStorage JSON StringValue disappears with the test Place. No live game paths are changed.
