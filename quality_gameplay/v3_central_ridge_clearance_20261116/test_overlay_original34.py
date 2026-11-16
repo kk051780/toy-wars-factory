@@ -24,7 +24,7 @@ class RidgeOnExisting34Test(unittest.TestCase):
 
     def test_02_refuse_missing_castle_owner_hook(self):
         with self.assertRaisesRegex(ValueError,"CastleDefense.start"):
-            patch34(self.author,self.author,self.item)
+            patch34(self.host.replace("CastleDefense.start(session)", "CastleDefense.noStart(session)"),self.author,self.item)
 
     def test_03_refuse_second_application(self):
         once=patch34(self.host,self.author,self.item)
