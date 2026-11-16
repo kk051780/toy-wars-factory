@@ -108,6 +108,15 @@ function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(b
  local far=groundAt(session,root.Position+direction*(if kind=="WALL" then 12 else 24))
  if not near or not far then return false,"NO_SUPPORT" end
  if not Policy.support(near.Y,far.Y,root.Position.Y) then return false,"UNSAFE_SLOPE" end
+ -- A bridge over intact grass is a useless platform, not a crossing.
+ -- Validate the MIDPOINT in the same active arena, not a client-provided hit.
+ -- Ground under a riverbed can be lower; an actual gap yields nil.
+ if kind=="BRIDGE" then
+  local middle=groundAt(session,root.Position+direction*15.5)
+  if not Policy.bridgeGap(if middle then middle.Y else nil,math.min(near.Y,far.Y)) then
+   return false,"NO_GAP"
+  end
+ end
  local center=(near+far)*0.5
  if not fieldContains(session,center) or not fieldContains(session,near)
   or not fieldContains(session,far) then return false,"FIELD_BOUNDS" end
