@@ -67,8 +67,9 @@ class CombatBalanceAndArtGate(unittest.TestCase):
                       'local cd=spec.cooldown','local forward=distance or spec.reach',
                       'local area=radius or spec.radius',
                       'local amount=damage or spec.damage',
-                      'secondaryEffect(session,p,root,char,center,area,spec.effect)',
-                      'SkillFX.emit(session.world,role,slot,'):
+                      'secondaryEffect(session,p,root,char,center,area,spec.effect,spec.shape)',
+                      'SkillFX.emit(session.world,role,slot,',
+                      'AttackGeometry.allowed(root.Position,center,er.Position,range,shape)'):
             with self.subTest(token=token):
                 self.assertIn(token,HERO)
         self.assertNotIn('local COOLDOWNS={A=.52,B=5.5,C=13}',HERO)

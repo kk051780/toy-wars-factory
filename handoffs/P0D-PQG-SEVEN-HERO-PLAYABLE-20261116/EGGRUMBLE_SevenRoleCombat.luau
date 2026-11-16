@@ -6,6 +6,8 @@ local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 local CombatBalance=require(script.Parent:WaitForChild("EGGRUMBLE_CombatBalance"))
 local SkillFX=require(script.Parent:WaitForChild("EGGRUMBLE_SkillFX"))
+local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
+local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local HeroCombat={}
 local ORDER={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local JOBS={
@@ -44,7 +46,7 @@ local function lineClear(source:Vector3,to:Vector3,first:Model,second:Model):boo
  ray.FilterDescendantsInstances={first,second};ray.RespectCanCollide=true
  return workspace:Raycast(source,delta,ray)==nil
 end
-local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number):number
+local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number,shape:string):number
  local state=session.rules.castles[tostring(player.UserId)]
  if not state or not state.alive then return 0 end
  local count=0
@@ -54,7 +56,7 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
   local h=enemy and enemy:FindFirstChildOfClass("Humanoid")
   if target and target.alive and (session.mode~="TEAM" or target.team~=state.team)
    and er and h and h.Health>0
-   and (er.Position-center).Magnitude<=range
+   and AttackGeometry.allowed(root.Position,center,er.Position,range,shape)
    and (er.Position-root.Position).Magnitude<=36
    and count<5 and lineClear(root.Position+Vector3.new(0,1.5,0),er.Position,char,enemy) then
    -- War God has a deliberate single-target duelist edge against a lone opponent.
@@ -72,12 +74,13 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
    local duel=if player:GetAttribute("EGGRUMBLE_Role")=="WARRIOR" and loneEnemy then 1.25 else 1
    local mark=if (h:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
    h:TakeDamage(damage*duel*mark)
+   ImpactFeedback.hit(enemy,player:GetAttribute("EGGRUMBLE_Role") or "WARRIOR")
    count+=1
   end
  end
  return count
 end
-local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number):number
+local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number,shape:string):number
  local state=session.rules.castles[tostring(p.UserId)]
  if not state or not state.alive then return 0 end
  local count=0
@@ -87,7 +90,7 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
   if enemyPlayer~=p and enemyState and enemyState.alive
    and (session.mode~="TEAM" or enemyState.team~=state.team)
    and enemyChar and enemyRoot and enemyHum and enemyHum.Health>0
-   and (enemyRoot.Position-center).Magnitude<=range
+   and AttackGeometry.allowed(root.Position,center,enemyRoot.Position,range,shape)
    and (enemyRoot.Position-root.Position).Magnitude<=36
    and count<4 and lineClear(root.Position+Vector3.new(0,1.5,0),
     enemyRoot.Position+Vector3.new(0,1,0),char,enemyChar) then
@@ -97,18 +100,19 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
     and (enemyRoot.Position-root.Position).Magnitude<=18 then 1.25 else 1
    local mark=if (enemyHum:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
    enemyHum:TakeDamage(damage*duel*mark)
+   ImpactFeedback.hit(enemyChar,p:GetAttribute("EGGRUMBLE_Role") or "WARRIOR")
    count+=1
   end
  end
  return count
 end
-local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at:Vector3,range:number,damage:number,c:Color3):number
+local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at:Vector3,range:number,damage:number,c:Color3,shape:string):number
  -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.
  local count=0
- if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage) end
- count+=hitBotHeroes(session,p,root,char,at,range,damage)
- count+=hitHumanHeroes(session,p,root,char,at,range,damage)
- makeEffect(session.world,at,Vector3.new(range*1.3,2,range*1.3),c,.35)
+ if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage,shape) end
+ count+=hitBotHeroes(session,p,root,char,at,range,damage,shape)
+ count+=hitHumanHeroes(session,p,root,char,at,range,damage,shape)
+ -- Unique visual feedback is produced by SkillFX.emit, not a repeated generic orb.
  return count
 end
 local function safeMove(char:Model,root:BasePart,amount:number):boolean
@@ -128,17 +132,6 @@ local function safeMove(char:Model,root:BasePart,amount:number):boolean
  char:PivotTo(CFrame.new(Vector3.new(landing.X,downward.Position.Y+3,landing.Z),landing+v))
  return true
 end
-local function slowEnemies(session:any,player:Player,center:Vector3,radius:number)
- local state=session.rules.castles[tostring(player.UserId)]
- if not state then return end
- for id,actor in pairs(session.botActors or {}) do
-  local c=session.rules.castles[id]
-  if c and c.alive and (session.mode~="TEAM" or c.team~=state.team)
-   and actor.PrimaryPart and (actor.PrimaryPart.Position-center).Magnitude<radius then
-   actor:SetAttribute("EGGRUMBLE_SlowUntil",os.clock()+3)
-  end
- end
-end
 local function healAllies(session:any,player:Player,root:BasePart)
  local state=session.rules.castles[tostring(player.UserId)]
  if not state then return end
@@ -155,7 +148,7 @@ end
 -- Status effects are real server damage / movement changes (not only colored VFX).
 -- Hard caps and team checks keep control roles useful without stun-locking a duel.
 local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
- center:Vector3,radius:number,effect:string)
+ center:Vector3,radius:number,effect:string,shape:string)
  if effect~="CHILL_2S" and effect~="SLOW_3S" and effect~="BURN_3S"
   and effect~="MARK" and effect~="PUSH" and effect~="PREDATOR" then return end
  local state=session.rules.castles[tostring(p.UserId)]
@@ -202,7 +195,7 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
   local hum=actor and actor:FindFirstChildOfClass("Humanoid")
   if target and target.alive and enemy and hum
    and (session.mode~="TEAM" or target.team~=state.team)
-   and (enemy.Position-center).Magnitude<=radius
+   and AttackGeometry.allowed(root.Position,center,enemy.Position,radius,shape)
    and (enemy.Position-root.Position).Magnitude<=36
    and lineClear(root.Position+Vector3.new(0,1,0),enemy.Position,char,actor) then
    apply(hum,actor)
@@ -213,7 +206,7 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
   local enemyChar,enemyRoot,hum=characterOf(targetPlayer)
   if targetPlayer~=p and target and target.alive and enemyChar and enemyRoot and hum
    and (session.mode~="TEAM" or target.team~=state.team)
-   and (enemyRoot.Position-center).Magnitude<=radius
+   and AttackGeometry.allowed(root.Position,center,enemyRoot.Position,radius,shape)
    and (enemyRoot.Position-root.Position).Magnitude<=36
    and lineClear(root.Position+Vector3.new(0,1,0),enemyRoot.Position, char,enemyChar) then
    apply(hum,nil)
@@ -247,9 +240,10 @@ local function execute(session:any,p:Player,role:string,slot:string)
   local area=radius or spec.radius
   local amount=damage or spec.damage
   local center=rootAdvance(root,forward)
-  local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color)
-  secondaryEffect(session,p,root,char,center,area,spec.effect)
+  local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color,spec.shape)
+  secondaryEffect(session,p,root,char,center,area,spec.effect,spec.shape)
   SkillFX.emit(session.world,role,slot,root.Position,root.CFrame.LookVector,center,area)
+  ImpactFeedback.attacker(p,role,slot,hits)
   return hits
  end
  if role=="WARRIOR" then
@@ -286,7 +280,6 @@ local function execute(session:any,p:Player,role:string,slot:string)
  elseif role=="TRAPPER" then
   if slot=="A" then blast()
   elseif slot=="B" then
-   slowEnemies(session,p,rootAdvance(root,15),20)
    blast()
   else
    if owner.heldEggs==0 then safeMove(char,root,20) end
@@ -330,7 +323,6 @@ local function execute(session:any,p:Player,role:string,slot:string)
  elseif role=="ZOMBIE" then
   if slot=="A" then blast()
   elseif slot=="B" then
-   slowEnemies(session,p,rootAdvance(root,12),18)
    blast()
   else
    for i=1,3 do
@@ -382,6 +374,7 @@ function HeroCombat.equip(session:any,p:Player,role:string):()
 end
 function HeroCombat.clear(p:Player)
  lastByPlayer[p.UserId]=nil
+ ImpactFeedback.clear(p)
  for _,container in ipairs({p:FindFirstChildOfClass("Backpack"),p.Character}) do
   if container then
    for _,item in ipairs(container:GetChildren()) do
