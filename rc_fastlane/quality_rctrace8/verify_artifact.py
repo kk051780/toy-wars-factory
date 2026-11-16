@@ -103,6 +103,8 @@ FEATURE_EVIDENCE = {
  "ROSTER16_HARDCAP_583": ("EGGRUMBLE_CastleMatchRules","#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "HEAL_NO_WASTE_517": ("EGGRUMBLE_FieldItemPickups",
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
+ "VERTICAL_HIT_FAIRNESS_595": ("EGGRUMBLE_AttackGeometry",
+  "if dy~=dy or math.abs(dy)>math.min(radius,14) then return false end"),
 
 }
 
