@@ -17,7 +17,9 @@ local function actorFor(session:any, entry:any):Model?
 end
 
 local function destroyRecord(record:any)
- if record and record.gui and record.gui.Parent then
+ if record and record.gui then
+  -- Destroy even if a different script already detached the Gui. This is
+  -- a read-only cosmetic leaf: never leave a stale disconnected instance.
   record.gui:Destroy()
  end
 end
@@ -79,7 +81,12 @@ function Tell.start(session:any):boolean
     if not visible or not rootPart then
      if old then destroyRecord(old);records[id]=nil end
     else
-     if old and old.root ~= rootPart then
+     if old and (old.root ~= rootPart
+      or old.gui.Parent ~= rootPart or old.gui.Adornee ~= rootPart
+      or old.label.Parent ~= old.gui) then
+      -- External appearance cleanup can remove/reparent only this billboard
+      -- while the avatar and heldEggs remain unchanged. Recreate it once;
+      -- never reset item amounts, match time or other game state.
       destroyRecord(old);old=nil;records[id]=nil
      end
      if not old then
