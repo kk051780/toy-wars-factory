@@ -14,6 +14,12 @@ local function canUse(player:Player,session:any):boolean
  local castle=roster and roster[tostring(player.UserId)]
  return castle~=nil and castle.alive==true and session.rules.phase=="ACTIVE"
 end
+-- Read the authoritative match roster. Client attributes cannot grant egg-carrier immunity.
+local function carryingEnemyEggs(player:Player,session:any):boolean
+ local castles=session and session.rules and session.rules.castles
+ local castle=castles and castles[tostring(player.UserId)]
+ return castle~=nil and type(castle.heldEggs)=="number" and castle.heldEggs>0
+end
 local function characterState(player:Player):(Humanoid?,BasePart?)
  local c=player.Character
  if not c then return nil,nil end
@@ -31,6 +37,20 @@ function Items.start(session:any,positions:{Vector3}):()
  local active=true
  local function matchActive():boolean
   return active and folder.Parent~=nil and session.rules and session.rules.phase=="ACTIVE"
+ end
+ -- A player can take eggs *after* activating a buff. Cancel that buff as soon as
+ -- cargo is observed (<=0.25s), rather than only rejecting new pickups.
+ -- The loop is bounded to one short-lived item effect and stops after the match.
+ local function cancelBuffIfCarrier(player:Player,duration:number,undo:()->())
+  task.spawn(function()
+   for _=1,math.ceil(duration*4) do
+    task.wait(.25)
+    if not matchActive() or carryingEnemyEggs(player,session) then
+     undo()
+     return
+    end
+   end
+  end)
  end
  local serial=0
  for i,pos in ipairs(positions) do
@@ -53,6 +73,9 @@ function Items.start(session:any,positions:{Vector3}):()
    local hum,root=characterState(player)
    if not hum or not root or hum.Health<=0 then return end
    if (root.Position-part.Position).Magnitude>10 then return end
+   -- DASH/SHIELD must not turn an egg run into invulnerable high-speed escape.
+   -- Rejected pickups stay visible and do NOT consume the item or cooldown.
+   if kind~="HEAL" and carryingEnemyEggs(player,session) then return end
    local key=tostring(player.UserId)..":"..kind
    local now=os.clock()
    if now-(lastUse[key] or -100000)<def.cooldown then return end
@@ -63,18 +86,24 @@ function Items.start(session:any,positions:{Vector3}):()
     hum.Health=math.min(hum.MaxHealth,hum.Health+35)
    elseif kind=="DASH" then
     local previous=hum.WalkSpeed
-    hum.WalkSpeed=math.max(previous,27)
-    task.delay(5,function()
-     if hum.Parent and hum.Health>0 and hum.WalkSpeed==math.max(previous,27) then
+    local boosted=math.max(previous,27)
+    hum.WalkSpeed=boosted
+    local function restoreSpeed()
+     -- Never stomp a subsequent skill's newer speed decision.
+     if hum.Parent and hum.Health>0 and hum.WalkSpeed==boosted then
       hum.WalkSpeed=previous
      end
-    end)
+    end
+    cancelBuffIfCarrier(player,5,restoreSpeed)
+    task.delay(5,restoreSpeed)
    else
     local char=player.Character
     if char then
      local force=Instance.new("ForceField")
      force.Name="EGGRUMBLE_ItemShield";force.Visible=true;force.Parent=char
-     task.delay(4,function() if force.Parent then force:Destroy() end end)
+     local function clearShield() if force.Parent then force:Destroy() end end
+     cancelBuffIfCarrier(player,4,clearShield)
+     task.delay(4,clearShield)
     end
    end
    part.Transparency=1;part.CanQuery=false
