@@ -1,0 +1,238 @@
+name: P0D GQ530 6-author Combat+531 Host+484 AI private22 atomic gate
+on:
+  push:
+    branches: [quality/gq-v3-dead-caster-fence-20261116-01]
+    paths:
+      - 'quality_gameplay/v3_dead_caster_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-dead-caster-six-author.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_dead_caster_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-dead-caster-six-author.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  six-author-one-combat-one-host-current-ai:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pinned original human stealth #529 four author composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 99ae00fbec2b5057c54e938d741ea99b0caad924
+          path: _gq_pvp
+          persist-credentials: false
+      - name: Pinned original Mage team heal #510
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0338bd13f9d3d199972bd4cd30e467443083dffa
+          path: _gq_mage
+          persist-credentials: false
+      - name: Pinned original DOT lifecycle #516
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f0275692c54874f823d66748d470fb849607df5
+          path: _gq_dot
+          persist-credentials: false
+      - name: Pinned original warp #524
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f90875e14446ba86b1c668ba43efa37fbc74be20
+          path: _gq_warp
+          persist-credentials: false
+      - name: Pinned original human current-member #535 (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6846e9d55d07f0204748bbb8f46eef08f46c1b04
+          path: _gq_member
+          persist-credentials: false
+      - name: Pinned original host bot membership #531 (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e78bff41e70564d0b26578e3c3a85f4698e6110e
+          path: _gq_host
+          persist-credentials: false
+      - name: Pinned original live AI duel #484 (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _gq_ai
+          persist-credentials: false
+      - name: Verify pins, source-owner no mutation and one original #529 composer
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_pvp rev-parse HEAD)" = 99ae00fbec2b5057c54e938d741ea99b0caad924
+          test "$(git -C _gq_member rev-parse HEAD)" = 6846e9d55d07f0204748bbb8f46eef08f46c1b04
+          test "$(git -C _gq_host rev-parse HEAD)" = e78bff41e70564d0b26578e3c3a85f4698e6110e
+          test "$(git -C _gq_ai rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          git fetch --depth 1 origin fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          git diff --exit-code fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          test ! -e quality_gameplay/v3_human_stealth_pvp_20261116
+          ln -s "$(pwd)/_gq_pvp/quality_gameplay/v3_human_stealth_pvp_20261116" quality_gameplay/v3_human_stealth_pvp_20261116
+          python3 -m unittest discover -s quality_gameplay/v3_dead_caster_fence_20261116/tests -v
+      - name: Compose source-locked atomic 6-author ON22 and 530-OFF22 preserving 535+531+484
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py \
+            --out artifacts/gq530_six
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py \
+            --out artifacts/gq530_six --off
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          import sys
+          sys.path.insert(0,str(Path("quality_gameplay/v3_dead_caster_fence_20261116/tools").resolve()))
+          m=SourceFileLoader("six","quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py").load_module()
+          p=Path("artifacts/gq530_six")
+          on=(p/"COMBAT_ON.luau").read_text()
+          off=(p/"COMBAT_OFF.luau").read_text()
+          assert on.count(m.REPLACEMENT)==1
+          assert on.replace(m.REPLACEMENT,m.ENTRY,1)==off
+          assert len(on.encode())-len(off.encode())==160
+          for mode in ("ON","OFF"):
+            manifest=json.loads((p/(mode+"22_RECEIPT.json")).read_text())
+            assert manifest["script_count"]==22
+            assert manifest["original_author_source_untouched"]==18
+            assert manifest["reuses_current_ai_484"]
+            assert manifest["current_member_gate_535_enabled"]
+            assert manifest["dead_guard_530_enabled"]==(mode=="ON")
+          print("GQ530_SIX_AUTHOR_530_ON_OFF_PRESERVES_CURRENT_535_531_484_EXACT")
+          PY
+      - name: Pinned Luau compiler and native VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Compile actual source22 and real execute 84 and original 535 14 membership cases
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq530_six_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq530_six_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("four","quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py").load_module()
+          root=Path("artifacts/gq530_six").resolve()
+          for mode in ("ON","OFF"):
+            project=root/(mode+"22.project.json")
+            sources=m.scripts(json.loads(project.read_text()),project.parent)
+            assert len(sources)==22
+            for name,(kind,path) in sources.items():
+              subprocess.run(["/tmp/gq530_six_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+            print("GQ530_SIX_SOURCE_22_LUAU_COMPILE_PASS",mode)
+          PY
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/six_native.py \
+            --combat artifacts/gq530_six/COMBAT_ON.luau --out artifacts/gq530_six/REAL_EXECUTE_84.luau
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/six_native.py \
+            --combat artifacts/gq530_six/COMBAT_ON.luau --mutant --out artifacts/gq530_six/OLD_DEAD_CASTER_MUTANT.luau
+          /tmp/gq530_six_native/luau artifacts/gq530_six/REAL_EXECUTE_84.luau | tee /tmp/gq530-six84.log
+          grep -q NATIVE_REAL_AUTHOR_EXECUTE_84_CASES_PASS /tmp/gq530-six84.log
+          if /tmp/gq530_six_native/luau artifacts/gq530_six/OLD_DEAD_CASTER_MUTANT.luau; then
+            echo 'RED: six-author unguarded mutant passed'
+            exit 1
+          fi
+          echo GQ530_6_AUTHOR_DEAD_CASTER_MUTANT_REJECTED
+          python3 _gq_member/quality_gameplay/v3_human_combat_membership_20261116/make_native_harness.py \
+            --combat artifacts/gq530_six/COMBAT_ON.luau \
+            --host artifacts/gq530_six/reused_531_authors/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/gq530_six/REAL_HUMAN_MEMBERSHIP_14.luau
+          /tmp/gq530_six_native/luau artifacts/gq530_six/REAL_HUMAN_MEMBERSHIP_14.luau | tee /tmp/gq530-member14.log
+          grep -q GQ_HUMAN_COMBAT_MEMBERSHIP_REAL_SOURCE_14_CASES_PASS /tmp/gq530-member14.log
+      - name: Re-run #531 original current AI duel real BotActors/Host membership and mutate bug
+        run: |
+          set -euo pipefail
+          HOST=artifacts/gq530_six/reused_531_authors/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          BOT=artifacts/gq530_six/reused_531_authors/EGGRUMBLE_BotActors.luau
+          HARNESS=_gq_host/quality_gameplay/v3_bot_human_match_membership_20261116/make_native_bot_hit_harness.py
+          python3 "$HARNESS" --patched-host "$HOST" --patched-bot "$BOT" \
+            --out artifacts/gq530_six/REAL_484_BOT_DUEL.luau
+          /tmp/gq530_six_native/luau artifacts/gq530_six/REAL_484_BOT_DUEL.luau | tee /tmp/gq530-bot14.log
+          python3 "$HARNESS" --patched-host "$HOST" --patched-bot "$BOT" \
+            --mutant --out artifacts/gq530_six/OLD_UNGUARDED_BOT_MUTANT.luau
+          if /tmp/gq530_six_native/luau artifacts/gq530_six/OLD_UNGUARDED_BOT_MUTANT.luau; then
+            echo 'RED: six-author old unguarded Bot mutant passed'
+            exit 1
+          fi
+          echo GQ530_6_AUTHOR_ORIGINAL484_BOT_AI_DUEL_AND_MEMBERSHIP_MUTANT_REJECTED
+      - name: Re-run original #529 PvP and original #510 Mage with real #535 single membership helper
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          pv=SourceFileLoader("pvp","quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py").load_module()
+          mage=SourceFileLoader("mage","_gq_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py").load_module()
+          member=SourceFileLoader("mem","_gq_member/quality_gameplay/v3_human_combat_membership_20261116/compose.py").load_module()
+          root=Path("artifacts/gq530_six")
+          src=(root/"COMBAT_ON.luau").read_text()
+          rules=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau").read_text()
+          pvp=pv.harness(src,True)
+          token="local function hitHumanHeroes("
+          assert pvp.count(token)==1
+          pvp=pvp.replace(token,member.HELPER+token,1)
+          assert pvp.count("local function attack()")==1
+          pvp=pvp.replace("local function attack()","session.isCurrentHuman=function(_) return true end\nlocal function attack()",1)
+          (root/"REAL_PVP.luau").write_text(pvp)
+          m=mage.harness(src,fixed=True,rules=rules)
+          token="local function healAllies("
+          assert m.count(token)==1
+          m=m.replace(token,member.HELPER+token,1)
+          token='local session={mode="TEAM",rules={castles=castles}}'
+          assert m.count(token)==1
+          m=m.replace(token,token+"\nsession.isCurrentHuman=function(_) return true end",1)
+          (root/"REAL_MAGE.luau").write_text(m)
+          PY
+          /tmp/gq530_six_native/luau artifacts/gq530_six/REAL_PVP.luau | tee /tmp/gq530-pvp12.log
+          grep -q GQ_HUMAN_STEALTH_PVP_REAL_SOURCE_12_CASES_PASS /tmp/gq530-pvp12.log
+          /tmp/gq530_six_native/luau artifacts/gq530_six/REAL_MAGE.luau | tee /tmp/gq530-mage.log
+          grep -q MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS /tmp/gq530-mage.log
+      - name: Checksum-pinned Rojo 7.7.1 and real PRIVATE ON22 and OFF22 Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq530_six_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq530_six_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq530_six_rojo.zip") as z:
+            found=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(found)==1
+            target=Path("/tmp/gq530_six_rojo")
+            target.write_bytes(z.read(found[0]))
+            target.chmod(0o755)
+          PY
+          /tmp/gq530_six_rojo build artifacts/gq530_six/ON22.project.json -o artifacts/gq530_six/ON22_PRIVATE_NOT_RC.rbxlx
+          /tmp/gq530_six_rojo build artifacts/gq530_six/OFF22.project.json -o artifacts/gq530_six/OFF22_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py \
+            --out artifacts/gq530_six --place artifacts/gq530_six/ON22_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py \
+            --out artifacts/gq530_six --off --place artifacts/gq530_six/OFF22_PRIVATE_NOT_RC.rbxlx
+          echo GQ530_SIX_AUTHOR_HOST_AI_AND_COMBAT_ON_OFF_REAL_ROJO_22_SOURCE_CLASS_EXACT_PASS
+      - name: Upload only private reversible source proof; no official RC artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ530-SIX-COMBAT-HOST-AI-ON-OFF-PRIVATE22-NOT-RC
+          path: |
+            artifacts/gq530_six/ON22_RECEIPT.json
+            artifacts/gq530_six/OFF22_RECEIPT.json
+            artifacts/gq530_six/ON22.project.json
+            artifacts/gq530_six/OFF22.project.json
+            artifacts/gq530_six/ON22_PRIVATE_NOT_RC.rbxlx
+            artifacts/gq530_six/OFF22_PRIVATE_NOT_RC.rbxlx
+          retention-days: 3
