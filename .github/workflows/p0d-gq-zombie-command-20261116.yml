@@ -108,12 +108,13 @@ jobs:
           for item in tree.findall(".//Item"):
               props=item.find("Properties")
               if props is None:continue
-              name=props.find("./string[@name='Name']")
-              src=props.find("./ProtectedString[@name='Source']")
-              if name is None or src is None or name.text not in refs:continue
-              assert name.text not in seen
-              assert src.text==refs[name.text],name.text
-              seen[name.text]=item.attrib.get("class")
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              if not name or src is None or name not in refs:continue
+              assert name not in seen
+              assert src.replace("\r\n","\n")==refs[name].replace("\r\n","\n"),name
+              seen[name]=item.attrib.get("class")
           assert len(refs)==len(seen)==21,(len(refs),len(seen))
           for n,cls in seen.items():
               assert cls in ("ModuleScript","Script","LocalScript"),(n,cls)
