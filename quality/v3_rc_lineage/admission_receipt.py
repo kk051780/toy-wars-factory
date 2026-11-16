@@ -34,6 +34,7 @@ def evaluate(source: dict, build: dict, live: dict) -> dict:
     #488 is the sole owner of real device evidence. Absence remains NOT_TESTED.
     """
     errors: list[str] = []
+    pending: list[str] = []
     if source.get("schema") != SOURCE_SCHEMA or source.get("status") != "SOURCE_GATE_PASS":
         errors.append("SOURCE_LINEAGE_NOT_GREEN")
     if source.get("full_26_owner_byte_identity") is not True:
@@ -77,14 +78,26 @@ def evaluate(source: dict, build: dict, live: dict) -> dict:
     if build.get("status") != "SOURCE_ONLY_NOT_OFFICIAL_RC":
         errors.append("UNEXPECTED_AUTHOR_COMPOSER_RELEASE_STATE")
 
-    if live.get("schema") != LIVE_SCHEMA or \
-       live.get("decision") != "SOURCE_REVIEW_READY_ONLY" or live.get("blockers"):
+    live_blockers = live.get("blockers")
+    if live.get("schema") != LIVE_SCHEMA or not isinstance(live_blockers, list):
+        errors.append("LIVE_26_SOURCE_INSPECTION_UNAVAILABLE")
+    elif live.get("decision") == "SOURCE_RECONCILIATION_REQUIRED" and \
+         live_blockers == ["current26_samehead_CI_not_success"]:
+        # Genuine #484 Actions may still be running while the source bytes are
+        # already verified. Preserve an explicit pending state, not a fake RED.
+        pending.append("WAIT_484_SAMEHEAD_SOURCE_CI")
+    elif live.get("decision") != "SOURCE_REVIEW_READY_ONLY" or live_blockers:
         errors.append("LIVE_26_SOURCE_DRIFT_OR_CI_BLOCKED")
     if live.get("target_candidate_script_count") != 26:
         errors.append("LIVE_26_SCRIPT_TOTAL_UNVERIFIED")
-    if live.get("composite_ci", {}).get("head") != live_shas.get("quality") or \
-       live.get("composite_ci", {}).get("conclusion") != "success" or \
-       live.get("composite_ci", {}).get("status") != "completed":
+    observed_ci = live.get("composite_ci")
+    if not isinstance(observed_ci, dict) or observed_ci.get("head") != live_shas.get("quality"):
+        errors.append("LATEST_COMPOSITE_CI_HEAD_MISMATCH")
+    elif observed_ci.get("status") in ("queued", "pending", "in_progress", "requested",
+                                     "waiting") and observed_ci.get("conclusion") is None:
+        if "WAIT_484_SAMEHEAD_SOURCE_CI" not in pending:
+            pending.append("WAIT_484_SAMEHEAD_SOURCE_CI")
+    elif observed_ci.get("status") != "completed" or observed_ci.get("conclusion") != "success":
         errors.append("LATEST_COMPOSITE_CI_NOT_GREEN")
 
     # The production-source gate belongs solely to #490. Do not independently
@@ -107,27 +120,31 @@ def evaluate(source: dict, build: dict, live: dict) -> dict:
        live.get("product_go") is not False:
         errors.append("PREMATURE_RC_OR_OWNER_ACCEPTANCE_CLAIM")
 
-    status = "SOURCE_NO_GO" if errors else (
-        "SOURCE_READY_PRODUCTION_BLOCKED" if production == "BLOCKED_STUDIO_ONLY_GAME_HOST"
-        else "SOURCE_READY_PRODUCTION_NOT_VERIFIED"
-    )
+    status = ("SOURCE_NO_GO" if errors else
+              "SOURCE_COMPOSED_AUTHOR_CI_PENDING" if pending else
+              "SOURCE_READY_PRODUCTION_BLOCKED" if production == "BLOCKED_STUDIO_ONLY_GAME_HOST"
+              else "SOURCE_READY_PRODUCTION_NOT_VERIFIED")
     return {
         "schema": "P0D_GQ_491_CROSS_OWNER_RC_INTAKE_RECEIPT_V1",
         "status": status,
         "source_provenance_pass": not errors,
+        "source_ci_pending": pending,
         "candidate_source_scripts": 26 if not errors else "UNVERIFIED",
         "source_author_heads": original_shas,
         "source_quality_live_head": source.get("quality_live_head"),
         "private_composite_ci": live.get("composite_ci"),
         "official_rc_head_read_only": official,
         "official_rc_integration": "NOT_INTEGRATED_OR_UNVERIFIED",
-        "source_admission": "REVIEW_BY_220_ONLY" if not errors else "BLOCKED",
+        "source_admission": ("BLOCKED" if errors else
+                             "WAIT_FOR_484_SAMEHEAD_CI" if pending else
+                             "REVIEW_BY_220_ONLY"),
         "production_runtime": production or "UNKNOWN_FAIL_CLOSED",
         "production_blocked_domains": blocked_domains if production == "BLOCKED_STUDIO_ONLY_GAME_HOST" else [],
         "domain_stage": {
             name: {
                 "source_present": inventory.get(name) is True,
-                "private_source_review": "PASS" if not errors else "NO_GO",
+                "private_source_review": ("NO_GO" if errors else
+                                          "PENDING_AUTHOR_CI" if pending else "PASS"),
                 "studio_runtime": "NOT_TESTED",
                 "android_15min": "NOT_TESTED",
                 "product_go": False,
