@@ -35,6 +35,28 @@ function Pace.allow(session:any, targetId:any, botId:any, now:number):boolean
   return false
  end
  lastByCastle[key] = now
+ -- Track which bot acquired this exact timestamp; failure cancel must not
+ -- erase another bot\'s newer authorized damage.
+ local owners = session._gqBotSiegeOwnerByCastle
+ if not owners then
+  owners = {}
+  session._gqBotSiegeOwnerByCastle = owners
+ end
+ owners[key] = tostring(botId)
+ return true
+end
+
+-- Only the existing BotActors pcall failure path uses this. Keep the
+-- reservation atomic: do not release a legitimate hit or a newer holder.
+function Pace.cancelFailed(session:any,targetId:any,botId:any,now:number):boolean
+ if type(session)~="table" or type(now)~="number" or now~=now then return false end
+ local times = session._gqLastBotSiegeByCastle
+ local owners = session._gqBotSiegeOwnerByCastle
+ if type(times)~="table" or type(owners)~="table" then return false end
+ local key = tostring(targetId)
+ if times[key]~=now or owners[key]~=tostring(botId) then return false end
+ times[key]=nil
+ owners[key]=nil
  return true
 end
 
