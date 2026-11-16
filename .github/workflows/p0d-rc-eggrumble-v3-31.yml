@@ -9,6 +9,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -19,6 +20,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
 permissions:
@@ -1508,10 +1510,53 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/intake31.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ615_CURRENT31_REAL_NATIVE31_NATIVE10_ROJO31_OTHER30_ROLLBACK_PASS
+      - name: Pin original GQ499 match 900s deadline policy (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: da14aca5460ebb04c692ebbf90b76378dd3dfe6b
+          path: _gq499_original_deadline
+          persist-credentials: false
+      - name: Source-select GQ499 one current31 Host after original GQ582 GUARD; native, 31 Rojo, rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq499_original_deadline rev-parse HEAD)" = da14aca5460ebb04c692ebbf90b76378dd3dfe6b
+          DIR=artifacts/gq515_official_select
+          ORIGINAL=_gq499_original_deadline/quality_gameplay/v3_match_deadline_20261116
+          BASE=$DIR/GQ615_LOBBY_QUEUE_SELECTED31.project.json
+          OUT=$DIR/GQ499_DEADLINE_SELECTED31.project.json
+          PLACE=$DIR/GQ499_DEADLINE_REAL_ROJO31.rbxlx
+          python3 -B rc_fastlane/quality_deadline499_current31/select_original_deadline.py prepare \
+            --base "$BASE" --out "$OUT" --policy "$ORIGINAL/EGGRUMBLE_DeadlinePolicy.luau"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,importlib.util
+          p="rc_fastlane/quality_deadline499_current31/select_original_deadline.py"
+          spec=importlib.util.spec_from_file_location("gq499",p)
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,files=mod.flatten(Path("artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json"))
+          assert len(files)==31
+          for f in files.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ499_REAL_CURRENT31_ALL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          python3 "$ORIGINAL/tools/make_native_deadline_harness.py" \
+            --out "$DIR/GQ499_ORIGINAL_POLICY_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ499_ORIGINAL_POLICY_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ499_ORIGINAL_POLICY_NATIVE.luau" \
+            | tee "$DIR/GQ499_ORIGINAL_POLICY_NATIVE.log"
+          grep -q 'EGGRUMBLE_V3_DEADLINE_NATIVE_ASSERTIONS_PASS=' "$DIR/GQ499_ORIGINAL_POLICY_NATIVE.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B rc_fastlane/quality_deadline499_current31/select_original_deadline.py verify \
+            --base "$BASE" --out "$OUT" --policy "$ORIGINAL/EGGRUMBLE_DeadlinePolicy.luau" \
+            --place "$PLACE"
+          echo "GQ499_ORIGINAL_900S_ONE_HOST_ALL31_TRUE_ROJO_OFF_BYTES_EXACT_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1527,7 +1572,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1627,6 +1672,11 @@ jobs:
           assert gq582_guard["true_rojo_source_class_exact"]=="31/31" and gq582_guard["other_30_original_scripts_byte_exact"]
           assert gq582_guard["off_reselect_old_combat_byte_exact"] and gq582_guard["new_source_count"]==31
           assert gq582_guard["real_rojo_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          gq499=json.loads(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_text())
+          assert gq499["real_rojo_exact"]=="31/31" and gq499["other30_bytes_exact"] and gq499["off_inverse_byte_exact"]
+          assert gq499["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
+          assert m["source_heads"]["match_deadline499"]=="da14aca5460ebb04c692ebbf90b76378dd3dfe6b"
           assert m["source_heads"]["zombie_guard582"]=="5769b80ed21f5592adcca1936d2d3d04934f0089"
           assert m["feature_flags"]["ZOMBIE_GUARD_CASTLE_LEASH_582"] is True
           beast618=json.loads(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_text())
@@ -1704,7 +1754,8 @@ jobs:
              "gq615_30_other_current_sources_exact":True,
              "gq615_rollback_current_host_exact":True,
              "gq615_rojo31_source_class_path_exact":True,
-             "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq499_original_timeout_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
             "gq586_current_match_deposit_selected":True,
             "gq586_other_30_original_scripts_preserved":True,
@@ -1829,6 +1880,9 @@ jobs:
             artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
             artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ499_ORIGINAL_POLICY_NATIVE.log
             artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ615_NATIVE10_RESULT.log
             artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json
