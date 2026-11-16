@@ -75,9 +75,12 @@ jobs:
           python3 "$ROOT/make_native_harness.py" /tmp/boss_credit_fence_native.luau
           /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_fence_native.luau >/dev/null
           /tmp/gq-v3-luau/build/luau /tmp/boss_credit_fence_native.luau
-          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_actual_observer.luau
-          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_actual_observer.luau >/dev/null
-          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_actual_observer.luau
+          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_studio_observer.luau studio
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_studio_observer.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_studio_observer.luau
+          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_live_server_observer.luau live-server
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_live_server_observer.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_live_server_observer.luau
       - name: Compose existing author GAME+AI+ART+SCORE current26, then append only our 2 server scripts
         run: |
           set -euo pipefail
@@ -154,5 +157,5 @@ jobs:
           retention-days: 3
       - name: Evidence boundary
         run: |
-          echo 'PINNED_LUAU_POLICY_13+ACTUAL_SERVER_OBSERVER_18+SOURCE_CONTRACT: evaluated'
+          echo 'PINNED_LUAU_POLICY_13+ACTUAL_SERVER_OBSERVER_18_STUDIO+18_LIVE_SIM+SOURCE_CONTRACT: evaluated'
           echo 'ACTUAL_ROBLOX_STUDIO+ANDROID+OFFICIAL_RC+OWNER: NOT_TESTED'
