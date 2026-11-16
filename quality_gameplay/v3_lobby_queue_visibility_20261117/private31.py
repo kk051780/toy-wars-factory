@@ -150,6 +150,9 @@ def prepare(official:Path,receipt:Path,out:Path,head:str,run:int,zip_bytes:int):
         undone=undone.replace(new_hunk,old_hunk,1)
     if undone!=old:
         raise ValueError("RED_ROLLBACK_CURRENT_HOST_NOT_BYTE_EXACT")
+    # Independent original exact 31 source project for the formal-ready
+    # current Host source selector. No second Game/source is ever introduced.
+    source_only_project(original.getroot(),out/"official_source31")
     candidate=out/"GQ615_FULL_OFFICIAL_PLACE_HOST_ONLY_PRIVATE.rbxlx"
     selected.write(candidate,encoding="utf-8",xml_declaration=True)
     actual=ET.parse(candidate)
