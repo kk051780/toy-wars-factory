@@ -74,9 +74,11 @@ def flatten(path:Path):
 def patch_host(original:str,anchor:str=ANCHOR,replacement:str=REPLACEMENT)->str:
     if original.count(anchor)!=1 or replacement in original:
         raise ValueError("RED_UNIQUE_GQ537_DEPOSIT_ANCHOR_MISSING_OR_ALREADY_FIXED")
-    for marker in ("session.isCurrentHuman=function","gqDualBudget=GQDualBudget.new(",
-                   "RoundReplay.leaveWaitingQueue(", "RoundReplay.canStartCountdown("):
-        if original.count(marker)!=1:
+    for marker,expected in (("session.isCurrentHuman=function",1),
+                            ("gqDualBudget=GQDualBudget.new(",1),
+                            ("RoundReplay.leaveWaitingQueue(",2),
+                            ("RoundReplay.canStartCountdown(",1)):
+        if original.count(marker)!=expected:
             raise ValueError("RED_31_HOST_OWNER_CONTROL_MISSING "+marker)
     result=original.replace(anchor,replacement,1)
     if result.replace(replacement,anchor,1)!=original:
