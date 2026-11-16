@@ -1,0 +1,48 @@
+name: P0D GQ RC31 live evidence receipt (read-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/rc31_live_receipt_20261116/**'
+      - '.github/workflows/p0d-gq-rc31-live-receipt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receipt-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: 13 standard-library mutation and invariance tests
+        run: python3 -m unittest discover -s quality_gameplay/rc31_live_receipt_20261116 -p 'test_*.py' -v
+      - name: Compare canonical official live ref to recorded receipt HEAD (no source writes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin \
+            "refs/heads/rc/p0d-s1-kids-rc01:refs/remotes/origin/rc/p0d-s1-kids-rc01"
+          OFFICIAL_HEAD="$(git rev-parse refs/remotes/origin/rc/p0d-s1-kids-rc01)"
+          python3 quality_gameplay/rc31_live_receipt_20261116/receipt_audit.py \
+            --repo-root . --official-head "$OFFICIAL_HEAD" \
+            --output artifacts/RC31_LIVE_RECEIPT_AUDIT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/RC31_LIVE_RECEIPT_AUDIT.json").read_text())
+          assert len(r["eight_lane_author_pins_present"]) == 8
+          assert r["source_count"] == 31
+          assert r["same_head_actual_ci"] == "NOT_VERIFIED_BY_THIS_AUDIT"
+          if not r["recorded_receipts_match_live_head"]:
+              print("::warning::Recorded receipt SHA is historical; never reuse it as current CI proof")
+          if not r["v3_is_primary"]:
+              print("::notice::RC31 companion exists, but active primary profile is not V3")
+          PY
+      - name: Upload audit evidence only (not a Studio build)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-RC31-LIVE-RECEIPT-READONLY
+          path: artifacts/RC31_LIVE_RECEIPT_AUDIT.json
+          if-no-files-found: error
