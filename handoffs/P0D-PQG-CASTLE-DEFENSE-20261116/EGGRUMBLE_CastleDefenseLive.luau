@@ -59,7 +59,7 @@ local function pulse(parent:Instance,pos:Vector3,color:Color3)
  Debris:AddItem(ring,.22)
 end
 
-local function snare(model:Model,hum:Humanoid,now:number,isAI:boolean)
+local function snare(session:any,model:Model,hum:Humanoid,now:number,isAI:boolean)
  local expires=now+1.1
  if isAI then
   -- Reuse the original BotActors speed-reduction contract.
@@ -78,7 +78,9 @@ local function snare(model:Model,hum:Humanoid,now:number,isAI:boolean)
   math.max(hum:GetAttribute("EGGRUMBLE_SlowExpiry") or 0,expires))
  hum.WalkSpeed=math.max(8,math.min(hum.WalkSpeed,base*.72))
  task.delay(1.2,function()
-  if hum.Parent and hum.Health>0
+  -- A delayed callback must not overwrite a new round's movement baseline.
+  if session.rules.phase=="ACTIVE" and session.world.Parent
+   and hum.Parent and hum.Health>0
    and os.clock()>=(hum:GetAttribute("EGGRUMBLE_SlowExpiry") or math.huge)
    and hum:GetAttribute("EGGRUMBLE_OriginalWalkSpeed")==base then
    hum.WalkSpeed=base
@@ -165,7 +167,7 @@ function Defense.start(session:any):()->()
   else
    closest.hum:TakeDamage(Policy.CONFIG[kind].damage)
    if kind=="TRAP" and closest.hum.Health>0 then
-    snare(closest.model,closest.hum,now,targetState.isAI==true)
+    snare(session,closest.model,closest.hum,now,targetState.isAI==true)
    end
   end
   pulse(folder,closest.root.Position,COLORS[kind])
