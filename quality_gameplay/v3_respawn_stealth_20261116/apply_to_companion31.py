@@ -81,8 +81,7 @@ def apply(host:str,bot:str)->str:
     block=host[start:start+1500]
     needles=['p.Character==character','session.rules.phase=="ACTIVE"']
     if old==ALT_OLD:
-        needles+=['if castle and castle.alive and home then',
-                  'if rootPart and RoundReplay.returnToActiveCastle(']
+        needles+=['if castle and castle.alive and home then']
     else:
         needles+=['local castle=session.rules.castles[tostring(p.UserId)]']
     needles+=[old]
