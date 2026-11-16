@@ -14,8 +14,8 @@ Outputs a separate **23-source** Rojo project plus exact-source SHA-256 receipt 
 
 ## Verification and intake status
 - Python source-exact and negative contracts; Native Luau compilation of both scripts and actual Luau VM tests of the **same** policy source.
-- GitHub Actions emits private *source-only* Rojo config+receipt; not a real Studio-tested .rbxlx. A compiled Place, Studio with 1 human+15 AI, simultaneous TEAM/BR, real line-of-sight with walls, low-end Android FPS/ART, 15-min endurance, OWNER fun test remain **NOT RUN** until measured.
+- GitHub Actions now builds an actual unpublished **154,555-byte Rojo .rbxlx Place** with **23/23 exact source/class readback**, plus its SHA256 receipt. This is a real generated Place, but not a Studio play validation. Studio with 1 human+15 AI, simultaneous TEAM/BR, real line-of-sight with walls, low-end Android FPS/ART, 15-min endurance, OWNER fun test remain **NOT RUN** until measured.
 - RC merge requires sole writer #220 CLAIM, current HEAD, source-lock, CAS, same-HEAD Rojo/Place, rollback, #420/#470/OWNER. **Never auto-merge, push official RC/main, publish or spend money.**
 - Rollback in private preview: remove only \`EGGRUMBLE_CarrierWorldTell\` and \`EGGRUMBLE_CarrierTellPolicy\` plus two generated host hook lines.
 
-**Implementation progress**: original module + pure policy + private source composer + regression QA committed to isolated branch; RC adopted 0 until #220 proves otherwise. No false Studio or product GO claim.
+**Implementation progress**: source+native VM+23-source Rojo Place generation complete. Latest passing gate: Actions #43803585890, commit `698d8560d015b06d488fd7495e016989b6ee5a62`, artifact ID `14196888215` (expires Nov 19 UTC), private Place SHA256 `b3ab5bfb84a69eb4afafd42a0704ca9952e33485e1f5b6d3a949f6ae9eb785bd`. Studio/Android/OWNER remain NOT_RUN; official RC adopted 0 until #220 proves otherwise. No false product GO claim.
