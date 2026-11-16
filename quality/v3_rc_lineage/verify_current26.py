@@ -33,6 +33,15 @@ def sha(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def quality_gameplay_drift(paths: list[str]) -> list[str]:
+    """Only byte-changing game sources and the original composer invalidate SOURCE."""
+    composer = "quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py"
+    return [p for p in paths
+            if (p.startswith(GAME + "/") and
+                (p.endswith(".luau") or p.endswith(".project.json")))
+            or p == composer]
+
+
 def original_owner_bytes(name: str, quality: Path, art: Path, score: Path) -> bytes:
     if name in QUALITY_MODULES:
         return (quality / GAME / (name + ".luau")).read_bytes()
@@ -66,12 +75,7 @@ def verify(args) -> dict:
                 ).splitlines()
             except subprocess.CalledProcessError as exc:
                 raise ValueError("Cannot prove #484 source-equivalent latest HEAD: " + exc.output)
-            source_changes = [
-                p for p in changed
-                if (p.startswith(GAME + "/") and
-                    (p.endswith(".luau") or p.endswith(".project.json")))
-                or p == "quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py"
-            ]
+            source_changes = quality_gameplay_drift(changed)
             if source_changes:
                 raise ValueError(
                     "STALE_QUALITY_GAME_SOURCE: recompose latest #484, changed "
