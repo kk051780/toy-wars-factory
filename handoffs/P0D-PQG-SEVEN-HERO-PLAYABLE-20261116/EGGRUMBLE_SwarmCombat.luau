@@ -3,6 +3,7 @@
 -- Studio-only, server-attributed real Humanoid deaths; NOT production optimized nor tested.
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local Swarm={}
 local LIMIT=110
 local SPAWN_TICK=.18
@@ -102,7 +103,7 @@ function Swarm.start(session:any)
   if delta.Magnitude<=.01 then return true end
   return workspace:Raycast(origin,delta,params)==nil
  end
- local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model):number
+ local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number
   if session.rules.phase~="ACTIVE" then return 0 end
   local player=session.rules.castles[id]
   if not player or not player.alive then return 0 end
@@ -111,7 +112,9 @@ function Swarm.start(session:any)
    if m.Parent and h.Health>0 and m.PrimaryPart then
     local delta=m.PrimaryPart.Position-at
     local dis=math.sqrt(delta.X*delta.X+delta.Z*delta.Z)
-    if dis<=radius then table.insert(nearest,{target=h,dist=dis}) end
+    if AttackGeometry.allowed(origin,at,m.PrimaryPart.Position,radius,shape) then
+     table.insert(nearest,{target=h,dist=dis})
+    end
    end
   end
   table.sort(nearest,function(x,y)return x.dist<y.dist end)
@@ -133,14 +136,14 @@ function Swarm.start(session:any)
  end
  local api={
   kills=kills,
-  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number):number
+  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number
    local character=player.Character
    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
    local humanoid=character and character:FindFirstChildOfClass("Humanoid")
    if not character or not root or not humanoid or humanoid.Health<=0 then return 0 end
    -- Splash center is server-generated and stays in reach of the living attacker.
    if (at-root.Position).Magnitude>36 then return 0 end
-   return strike(tostring(player.UserId),at,radius,damage,root.Position+Vector3.new(0,1,0),character)
+   return strike(tostring(player.UserId),at,radius,damage,root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE")
   end,
   damageFromBot=function(botId:string,at:Vector3):number
    local actor=session.botActors and session.botActors[botId]
@@ -152,7 +155,7 @@ function Swarm.start(session:any)
    if now-(lastBotHit[botId] or 0)<BOT_ATTACK_CD then return 0 end
    lastBotHit[botId]=now
    local center=root.Position+root.CFrame.LookVector*3
-   return strike(botId,center,9,NEUTRAL_HEALTH,root.Position+Vector3.new(0,1,0),actor)
+   return strike(botId,center,9,NEUTRAL_HEALTH,root.Position+Vector3.new(0,1,0),actor,"FANG")
   end,
   getAliveCount=function():number
    local n=0;for m,h in pairs(live) do if m.Parent and h.Health>0 then n+=1 end end
