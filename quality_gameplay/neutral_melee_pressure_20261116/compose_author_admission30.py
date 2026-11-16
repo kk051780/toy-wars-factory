@@ -85,7 +85,7 @@ def compose(base29:Path, author528:Path,author531:Path,policy528:Path,out:Path)-
         "neutral_melee_human_membership"
     )
     assert bounded_swarm.count("session.isCurrentHuman(p)")==2
-    for tok in ('SpawnPacing.step(','EncounterFair.chooseIndex(','nearest.humanoid:TakeDamage(Melee.DAMAGE)',
+    for tok in ('SpawnPacing.step(','EncounterFair.chooseIndex(','candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)',
                 'local function credit(','h.Died:Connect(','ImpactFeedback.ko(',
                 'session.neutralBudget:acquire(','session.neutralBudget:release('):
         assert bounded_swarm.count(tok)==1 or (
