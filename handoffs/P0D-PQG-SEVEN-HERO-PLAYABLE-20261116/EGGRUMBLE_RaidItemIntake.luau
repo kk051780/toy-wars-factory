@@ -65,7 +65,13 @@ function RaidItems.start(session:any,origin:Vector3,authorItems:any):number
  -- Mark first, to prevent reentrant startup spawning a second item set.
  session.itemIntakeStarted=true
  local ok,err=pcall(function() authorItems.start(session,points) end)
- if not ok then session.itemIntakeStarted=false;error(err) end
+ if not ok then
+  -- Optional gameplay slice: remove any partial pickups before allowing a retry.
+  local partial=session.world and session.world:FindFirstChild("EGGRUMBLE_FieldItems")
+  if partial then partial:Destroy() end
+  session.itemIntakeStarted=false
+  error(err)
+ end
  return #points
 end
 return RaidItems

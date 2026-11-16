@@ -249,6 +249,19 @@ local function execute(session:any,p:Player,role:string,slot:string)
   local amount=damage or spec.damage
   local center=rootAdvance(root,forward)
   local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color,spec.shape)
+  -- The original author-owned StoneGiant is a real optional shared-world enemy,
+  -- not a second neutral boss implementation or an invented regular KO.
+  local boss=session.boss
+  local weakpoint=boss and boss.weakpoint
+  if boss and boss.model and boss.model.Parent and weakpoint and weakpoint.Parent
+   and AttackGeometry.allowed(root.Position,center,weakpoint.Position,area,spec.shape)
+   and lineClear(root.Position+Vector3.new(0,1.5,0),weakpoint.Position,char,boss.model) then
+   local validBossHit=boss.damageFrom(p,math.min(100,amount*boost),true)
+   if validBossHit then
+    hits+=1
+    if boss.model.Parent then ImpactFeedback.hit(boss.model,role) end
+   end
+  end
   secondaryEffect(session,p,root,char,center,area,spec.effect,spec.shape)
   SkillFX.emit(session.world,role,slot,root.Position,root.CFrame.LookVector,center,area)
   ImpactFeedback.attacker(p,role,slot,hits)

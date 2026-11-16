@@ -27,6 +27,11 @@ function Items.start(session:any,positions:{Vector3}):()
  local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_FieldItems";folder.Parent=session.world
  local lastUse:{[string]:number}={}
  local consumed:{[string]:boolean}={}
+ local RESPAWN_SECONDS=35
+ local active=true
+ local function matchActive():boolean
+  return active and folder.Parent~=nil and session.rules and session.rules.phase=="ACTIVE"
+ end
  local serial=0
  for i,pos in ipairs(positions) do
   local kind=({"HEAL","DASH","SHIELD"})[(i-1)%3+1]
@@ -44,7 +49,7 @@ function Items.start(session:any,positions:{Vector3}):()
   prompt.MaxActivationDistance=8;prompt.RequiresLineOfSight=true
   prompt.HoldDuration=.2;prompt.Parent=part
   prompt.Triggered:Connect(function(player:Player)
-   if consumed[id] or not part.Parent or not canUse(player,session) then return end
+   if consumed[id] or not part.Parent or not part.CanQuery or not canUse(player,session) then return end
    local hum,root=characterState(player)
    if not hum or not root or hum.Health<=0 then return end
    if (root.Position-part.Position).Magnitude>10 then return end
@@ -72,8 +77,17 @@ function Items.start(session:any,positions:{Vector3}):()
      task.delay(4,function() if force.Parent then force:Destroy() end end)
     end
    end
-   part:Destroy()
+   part.Transparency=1;part.CanQuery=false
+   task.delay(RESPAWN_SECONDS,function()
+    if not matchActive() or not part.Parent then return end
+    consumed[id]=nil
+    part.Transparency=0;part.CanQuery=true;prompt.Enabled=true
+   end)
   end)
+ end
+ session.itemStop=function()
+  active=false
+  if folder.Parent then folder:Destroy() end
  end
 end
 return Items
