@@ -1,0 +1,27 @@
+name: P0D GQ unique 67 feature eight-domain source evidence gate
+on:
+  push:
+    branches:
+      - quality/gq-v3-concept-trace-20261116-01
+    paths:
+      - 'quality_gameplay/v3_design_trace_20261116/**'
+      - '.github/workflows/p0d-gq-v3-design-trace.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_design_trace_20261116/**'
+      - '.github/workflows/p0d-gq-v3-design-trace.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only-concept-trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify the pinned catalogue maps all 67 design rows without RC or owner inflation
+        run: python3 quality_gameplay/v3_design_trace_20261116/check_trace.py
+      - name: Execute 9 independent negative-case consistency regressions
+        run: python3 -m unittest discover -s quality_gameplay/v3_design_trace_20261116 -p 'test_trace.py' -v
