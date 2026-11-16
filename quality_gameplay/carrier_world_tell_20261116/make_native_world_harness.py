@@ -408,6 +408,22 @@ eq("16-seat BR starts",NativeTell.start(fullBR),true)
 step()
 eq("no GUI leak at full two arenas (32 max)",countLiveAll(),32)
 eq("one task per arena not per player",__spawned,4)
+-- Distinct from Character replacement: if the hosting match removes a
+-- roster entry but keeps its avatar and castle alive, only its stale
+-- cosmetic badge must disappear. Original held eggs remain untouched.
+local departed=table.remove(fullTeam.roster,8)
+eq("retired slot is the expected original AI seat",departed.id,"TEAM_BOT_8")
+local departedRoot=fullTeam.botActors[departed.id]:FindFirstChild("HumanoidRootPart")
+eq("retiring AI roster slot does not alter real castle egg",fullTeam.rules.castles[departed.id].heldEggs,1)
+step()
+eq("roster departure destroys exactly its obsolete marker",liveOn(departedRoot),0)
+eq("TEAM fifteen and BR sixteen labels remain",countLiveAll(),31)
+eq("both match observers remain running after roster change",#__threads,2)
+eq("authoritative castle eggs kept after roster removal",fullTeam.rules.castles[departed.id].heldEggs,1)
+table.insert(fullTeam.roster,8,departed)
+step()
+eq("roster seat returns with correct label",liveOn(departedRoot),1)
+eq("roster reentry restores 32 labels without duplicates",countLiveAll(),32)
 local aId="TEAM_BOT_7"
 fullTeam.rules.castles[aId].heldEggs=0
 step()
@@ -504,6 +520,23 @@ eq("warning describes the actual failed dependency",
 step()
 eq("repeated broken actor does not flood warnings",#__warnings,warningsBefore+1)
 eq("repeated broken actor cannot duplicate markers",countLiveAll(),31)
+-- Retirement of an already-faulty seat also clears its warning-streak cache.
+-- Rejoining as a still-faulty seat is a new bounded diagnostic episode.
+local departedFault=nil
+for i,entry in ipairs(faultTeam.roster) do
+ if entry.id=="TEAM_BOT_5" then
+  departedFault=table.remove(faultTeam.roster,i)
+  break
+ end
+end
+eq("faulted seat was actually removed from the roster",departedFault~=nil,true)
+step()
+eq("removing faulty seat does not hide healthy TEAM/BR users",countLiveAll(),31)
+eq("retired fault does not spam one more warning",#__warnings,warningsBefore+1)
+table.insert(faultTeam.roster,departedFault)
+step()
+eq("still-faulty rejoined seat logs one new bounded warning",#__warnings,warningsBefore+2)
+eq("faulted rejoin still leaves 31 healthy labels",countLiveAll(),31)
 faultBot.FindFirstChild=oldFindChild
 step()
 eq("healthy bot automatically restores its own marker",liveOn(faultRoot),1)
@@ -513,7 +546,7 @@ function faultBot:FindFirstChild(name)
  error("SIMULATED_STALE_BOT_VISUAL_API")
 end
 step()
-eq("new separate failure after recovery produces one warning",#__warnings,warningsBefore+2)
+eq("new separate failure after recovery produces one warning",#__warnings,warningsBefore+3)
 eq("second failure still preserves 31 healthy labels",countLiveAll(),31)
 faultBot.FindFirstChild=oldFindChild
 step()
