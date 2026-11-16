@@ -83,11 +83,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_33_known_flags(self):
+    def test_valid_covers_eight_domains_and_34_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],33)
+        self.assertEqual(v["verified_flag_count"],34)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -218,7 +218,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],33)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],34)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
