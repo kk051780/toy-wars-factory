@@ -74,36 +74,19 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
         if props is None or props.findtext("string[@name='Name']")!=name:
             continue
         source=props.find("ProtectedString[@name='Source']")
-        if source is None:raise AssertionError("missing source")
-        if source.text is None or source.text.count(anchor)!=1:
-            raise AssertionError("missing or duplicate anchor "+anchor)
-        source.text=source.text.replace(anchor,"-- selected source anchor removed",1)
+        if source is None or source.text is None or source.text.count(anchor)!=1:
+            raise AssertionError("Missing or duplicate fixture anchor "+anchor)
+        source.text=source.text.replace(anchor,"-- GQ8 source mutation removed",1)
         return ET.tostring(root,encoding="utf-8")
-    raise AssertionError("missing script "+name)
+    raise AssertionError("Missing script "+name)
 
-def fixture_with_current_26_flags():
-    raw,receipt,manifest,active=fixture()
-    root=ET.fromstring(raw)
-    by_name={}
-    for item in root.iter("Item"):
-        props=item.find("Properties")
-        if props is not None:
-            by_name[props.findtext("string[@name='Name']")]=props
-    for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
-        source=by_name[script].find("ProtectedString[@name='Source']")
-        source.text=(source.text or "")+"\n"+"\n".join(anchors)
-        manifest["feature_flags"][flag]=True
-    raw=ET.tostring(root,encoding="utf-8")
-    rehash(raw,receipt)
-    return raw,receipt,manifest,active
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_twenty_one_current_flags(self):
+    def test_valid_covers_eight_domains_and_26_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],21)
-        self.assertEqual(v["unassessed_new_flags"],[])
+        self.assertEqual(v["verified_flag_count"],26)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -190,83 +173,6 @@ class Gate(unittest.TestCase):
         r["source_author_heads"]["carrier_stale_avatar551"]="b"*40
         with self.assertRaisesRegex(gq8.RedGate,"AUTHOR_SHA_MANIFEST_ARTIFACT_DRIFT"):
             gq8.verify(b,r,m,a,HEAD)
-    def test_ko508_existing_author_policy_is_not_silently_unassessed(self):
-        b,r,m,a=fixture()
-        anchor="and KoFence.mayCredit(session,id,m,all) then"
-        self.assertTrue(m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"])
-        result=gq8.verify(b,r,m,a,HEAD)
-        self.assertEqual(result["verified_flag_count"],21)
-        self.assertEqual(result["unassessed_new_flags"],[])
-        root=ET.fromstring(b)
-        found=False
-        for item in root.findall("Item"):
-            props=item.find("Properties")
-            if props is not None and props.findtext("string[@name='Name']")=="EGGRUMBLE_SwarmCombat":
-                source=props.find("ProtectedString[@name='Source']")
-                self.assertIsNotNone(source)
-                self.assertIn(anchor,source.text)
-                source.text=source.text.replace(anchor,"-- KO508 policy call removed",1)
-                found=True
-                break
-        self.assertTrue(found)
-        b=ET.tostring(root,encoding="utf-8")
-        rehash(b,r)
-        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_NEUTRAL_DEATH_KO_CURRENT_OWNER_508"):
-            gq8.verify(b,r,m,a,HEAD)
-
-    def test_ko508_disabled_flag_cannot_be_certified(self):
-        b,r,m,a=fixture()
-        m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"]=False
-        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_NEUTRAL_DEATH_KO_CURRENT_OWNER_508"):
-            gq8.verify(b,r,m,a,HEAD)
-
-    def test_580_terminal_ai_takeover_absent_fails_closed(self):
-        b,r,m,a=fixture()
-        self.assertEqual(gq8.verify(b,r,m,a,HEAD)["unassessed_new_flags"],[])
-        b=drop_anchor(b,"EGGRUMBLE_BotActors",
-            'if session.rules.phase~="ACTIVE" or not folder.Parent then return false end')
-        rehash(b,r)
-        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_AI_TAKEOVER_TERMINAL_FENCE_580"):
-            gq8.verify(b,r,m,a,HEAD)
-
-    def test_520_ridge_and_forest_each_needed_for_one_enabled_flag(self):
-        ridge="CentralRidgeRight"
-        forest="local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)"
-        for missing in (ridge,forest):
-            with self.subTest(missing=missing):
-                b,r,m,a=fixture()
-                b=drop_anchor(b,"EGGRUMBLE_LobbyCastleModesPreview",missing)
-                rehash(b,r)
-                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"):
-                    gq8.verify(b,r,m,a,HEAD)
-
-    def test_580_and_520_disabled_flags_cannot_be_certified(self):
-        for flag in ("AI_TAKEOVER_TERMINAL_FENCE_580","TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"):
-            with self.subTest(flag=flag):
-                b,r,m,a=fixture()
-                m["feature_flags"][flag]=False
-                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
-                    gq8.verify(b,r,m,a,HEAD)
-
-    def test_current_rc_each_secondary_source_anchor_missing_is_red(self):
-        for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
-            for anchor in anchors[1:]:
-                with self.subTest(flag=flag,anchor=anchor):
-                    raw,receipt,manifest,active=fixture_with_current_26_flags()
-                    raw=drop_anchor(raw,script,anchor)
-                    rehash(raw,receipt)
-                    with self.assertRaisesRegex(gq8.RedGate,
-                        "FEATURE_FALSE_ON_"+flag):
-                        gq8.verify(raw,receipt,manifest,active,HEAD)
-
-    def test_current_rc_rejects_false_new_zombie_flag_without_command_source(self):
-        b,r,m,a=fixture_with_current_26_flags()
-        b=drop_anchor(b,"EGGRUMBLE_SevenRoleCombat",
-            "ZombieCommander.begin(p,")
-        rehash(b,r)
-        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_ZOMBIE_COMMAND_SQUAD_582"):
-            gq8.verify(b,r,m,a,HEAD)
-
     def test_no_misrepresented_studio_or_publish(self):
         b,r,m,a=fixture()
         r["roblox_publish"]=True
@@ -277,39 +183,69 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
+    def test_current26_manifest_anchors_enforce_all_seven_late_flags(self):
+        late=(
+            "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
+            "AI_TAKEOVER_TERMINAL_FENCE_580",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "FIELD_CARRIER_OFFARENA_DROP_515",
+            "ZOMBIE_COMMAND_SQUAD_582",
+            "DEPOSIT_CURRENT_SESSION_586",
+            "ZOMBIE_NEUTRAL_STABLE_ID_V3",
+        )
+        for flag in late:
+            script,anchors=gq8.FEATURE_EVIDENCE[flag]
+            anchors=(anchors,) if isinstance(anchors,str) else anchors
+            for anchor in anchors:
+                with self.subTest(flag=flag,anchor=anchor):
+                    b,r,m,a=fixture()
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],26)
+                    b=drop_anchor(b,script,anchor)
+                    rehash(b,r)
+                    with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
+                        gq8.verify(b,r,m,a,HEAD)
+
+    def test_late_flags_cannot_claim_certification_when_disabled(self):
+        for flag in (
+            "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
+            "AI_TAKEOVER_TERMINAL_FENCE_580",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "FIELD_CARRIER_OFFARENA_DROP_515",
+            "ZOMBIE_COMMAND_SQUAD_582",
+            "DEPOSIT_CURRENT_SESSION_586",
+            "ZOMBIE_NEUTRAL_STABLE_ID_V3",
+        ):
+            with self.subTest(flag=flag):
+                b,r,m,a=fixture()
+                m["feature_flags"][flag]=False
+                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
+                    gq8.verify(b,r,m,a,HEAD)
+
+    def test_weak_markers_alone_must_not_certify_real_gameplay_source(self):
+        # A comment flag / commander declaration / policy module is not the
+        # active guard or the actual command. Keep all 26 current RC flags.
+        weak_flags={
+            "FIELD_CARRIER_OFFARENA_DROP_515":
+                "DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,",
+            "ZOMBIE_COMMAND_SQUAD_582": "ZombieCommander.begin(p,",
+            "DEPOSIT_CURRENT_SESSION_586": "joined[p.UserId]~=session.mode",
+        }
+        for flag,critical in weak_flags.items():
+            with self.subTest(flag=flag):
+                b,r,m,a=fixture()
+                script,anchors=gq8.FEATURE_EVIDENCE[flag]
+                self.assertIn(critical,anchors)
+                b=drop_anchor(b,script,critical)
+                rehash(b,r)
+                self.assertTrue(m["feature_flags"][flag])
+                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
+                    gq8.verify(b,r,m,a,HEAD)
+
     def test_s1_default_must_remain_unchanged_for_this_profile(self):
         b,r,m,a=fixture()
         a["active_profile"]="eggrumble_v3_31"
         with self.assertRaisesRegex(gq8.RedGate,"S1_LEGACY_CHANGED_WITHOUT_OWNER"):
             gq8.verify(b,r,m,a,HEAD)
-
-    def test_current_rc26_flags_are_individually_source_proved(self):
-        b,r,m,a=fixture_with_current_26_flags()
-        result=gq8.verify(b,r,m,a,HEAD)
-        self.assertEqual(result["verified_flag_count"],26)
-        self.assertEqual(len(result["verified_optional_flags"]),5)
-        self.assertEqual(result["unassessed_new_flags"],[])
-        for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
-            with self.subTest(flag=flag):
-                raw,receipt,manifest,active=fixture_with_current_26_flags()
-                raw=drop_anchor(raw,script,anchors[0])
-                rehash(raw,receipt)
-                with self.assertRaisesRegex(gq8.RedGate,
-                    "FEATURE_FALSE_ON_"+flag):
-                    gq8.verify(raw,receipt,manifest,active,HEAD)
-
-    def test_current_rc_optional_flags_cannot_be_disabled_or_falsely_assessed(self):
-        for flag in gq8.OPTIONAL_FEATURE_EVIDENCE:
-            with self.subTest(flag=flag):
-                b,r,m,a=fixture_with_current_26_flags()
-                m["feature_flags"][flag]=False
-                with self.assertRaisesRegex(gq8.RedGate,
-                    "FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
-                    gq8.verify(b,r,m,a,HEAD)
-        b,r,m,a=fixture()
-        result=gq8.verify(b,r,m,a,HEAD)
-        self.assertEqual(result["verified_flag_count"],21)
-        self.assertEqual(result["verified_optional_flags"],[])
 
 if __name__=="__main__":
     unittest.main()
