@@ -6,6 +6,8 @@ This is NOT a Luau compiler, real Studio device, or art/FUN approval.
 from pathlib import Path
 import re
 import json
+import os
+from unittest.mock import patch
 import unittest
 import importlib.util
 import tempfile
@@ -508,6 +510,78 @@ class VisualLayersSourceContract(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Missing latest author V3 module"):
                 module.compose(author, base / "composed.project.json", ROOT)
             self.assertFalse((base / "composed.project.json").exists())
+
+    def test_immutable_rc_source_handoff_proves_five_private_places_not_adoption(self):
+        tool_path=ROOT/"tools"/"make_rc_source_handoff.py"
+        spec=importlib.util.spec_from_file_location("a01_rc_source_handoff",tool_path)
+        module=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp)
+            author=base/"author"
+            projects=base/"projects"
+            places=base/"places"
+            for d in (author,projects,places):
+                d.mkdir()
+            source=author/"OriginalGame.luau"
+            source.write_text("return {}\\n",encoding="utf-8")
+            combat=author/"EGGRUMBLE_CombatFeel.client.luau"
+            combat.write_text("return {}\\n",encoding="utf-8")
+            for mode in module.MODES:
+                game={"$className":"ServerScriptService",
+                      "OriginalGame":{"$path":os.path.relpath(source,projects)}}
+                for art_name in ("EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_FlagshipFieldArt",
+                                 "EGGRUMBLE_EncounterReadabilityArt"):
+                    if mode=="v3" or (
+                        mode=="lobby" and art_name in (
+                            "EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_EncounterReadabilityArt")
+                    ) or (mode in ("boss","castle","item") and
+                          art_name=="EGGRUMBLE_EncounterReadabilityArt"):
+                        full=ROOT/(art_name+".server.luau")
+                        game[art_name]={"$path":os.path.relpath(full,projects)}
+                client={"$className":"StarterPlayerScripts",
+                        "EGGRUMBLE_ArtDistanceLOD":{"$path":os.path.relpath(
+                            ROOT/"EGGRUMBLE_ArtDistanceLOD.client.luau",projects)}}
+                if mode=="v3":
+                    client["EGGRUMBLE_CombatFeel"]={"$path":os.path.relpath(combat,projects)}
+                tree={"$className":"DataModel","ServerScriptService":game,
+                      "StarterPlayer":{"$className":"StarterPlayer",
+                        "StarterPlayerScripts":client}}
+                project_name=("EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json"
+                              if mode=="v3" else mode+".project.json")
+                (projects/project_name).write_text(json.dumps({"tree":tree}),encoding="utf-8")
+                (places/("EGGRUMBLE_A01_PRIVATE_"+mode+".rbxlx")).write_bytes(b"x"*1300+mode.encode())
+            destination=places/"EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json"
+            with patch.object(module,"git_head",return_value="b"*40):
+                result=module.generate(author,projects,places,destination,"a"*40)
+            self.assertEqual(result["art_branch_requested_head"],"a"*40)
+            self.assertEqual(result["author_read_only_checkout_head"],"b"*40)
+            self.assertFalse(result["rc_adopted"])
+            self.assertEqual(result["studio_play"],"NOT_RUN")
+            self.assertEqual(result["android_15min"],"NOT_RUN")
+            self.assertEqual(set(result["private_modes"]),set(module.MODES))
+            self.assertEqual(len(result["private_modes"]["v3"]["sources"]),6)
+            self.assertEqual(json.loads(destination.read_text(encoding="utf-8")),result)
+            self.assertEqual(source.read_text(encoding="utf-8"),"return {}\\n")
+
+    def test_art_rc_provenance_manifest_refuses_unowned_or_missing_source(self):
+        script=(ROOT/"tools"/"make_rc_source_handoff.py").read_text(encoding="utf-8")
+        for marker in (
+            'candidate.is_relative_to(art_path)', 'candidate.is_relative_to(author_checkout)',
+            'raise ValueError("Unexpected source outside isolated ownership:',
+            'if len(unique_art_paths)!=4:',
+            'if len(lod)!=1',
+            'if not any(x["name"]=="EGGRUMBLE_CombatFeel.client.luau"',
+            '"place_sha256":sha256(place)',
+            '"rc_adopted":False',
+            '"official_rc_writer":"#220_ONLY"',
+            'print("OFFICIAL_RC_CAS_ADOPTED=0',
+        ):
+            self.assertIn(marker,script)
+        workflow=(ROOT.parents[1]/".github/workflows/p0d-eggrumble-art-a01-source.yml").read_text(encoding="utf-8")
+        self.assertIn("tools/make_rc_source_handoff.py",workflow)
+        self.assertIn("EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json",workflow)
+        self.assertIn("github.event.pull_request.head.sha",workflow)
 
     def test_reversible_visual_only_namespaces(self):
         self.assertIn('"EGGRUMBLE_RoleVisuals"', HERO)
