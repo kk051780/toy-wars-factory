@@ -18,7 +18,7 @@ In unpublished Studio, start TEAM + BR simultaneous 1+15 AI/2+14 AI and spam A/B
 ## Integrated PRIVATE27 source-exact proof (NOT official RC)
 The same dedicated workflow now reuses **the original #485 artist composer** and **#484 current26 composer** at fixed SHAs, rather than implementing either again. Immutable inputs:
 - Original #482 fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
-- #484 composer+AI 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+- #484 composer+AI 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
 - #485 visual ART e86702c906bdf9c71adcdf769ae48a206b26607b
 - #487 score 438a406ccfda5563053d783d7561797ccd364361
 
