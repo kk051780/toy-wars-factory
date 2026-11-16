@@ -225,6 +225,32 @@ if FIXED then
  goodBot.hum.Health=95
  healAllies(session,source,source.root)
  assert(goodBot.hum.Health==100,"AI heal must cap at maximum")
+ -- 11. Actual original single-human TEAM roster must heal AI_2 (friend)
+ -- but must NOT heal AI_1 (enemy), with no fabricated teammate IDs.
+ local soloCastles={}
+ for _,entry in ipairs(solo) do
+  soloCastles[entry.id]={team=entry.team,alive=true}
+ end
+ session.rules.castles=soloCastles
+ session.botActors={AI_1=enemyBot,AI_2=goodBot}
+ source.h.Health=70;goodBot.hum.Health=40;enemyBot.hum.Health=40
+ blocked=false
+ healAllies(session,source,source.root)
+ assert(source.h.Health==95 and goodBot.hum.Health==65,
+  "original solo 1+15 TEAM must actually restore own and AI_2 health")
+ assert(enemyBot.hum.Health==40,
+  "original solo TEAM enemy AI_1 must never be healed")
+ -- 12. Original Royale roster has no team; AI must never receive ally heals.
+ local royale=M.makeRoster("BATTLE_ROYALE",{"1"},16)
+ for _,entry in ipairs(royale) do
+  assert(entry.team==nil,"original royale must not invent a team")
+ end
+ session.mode="BATTLE_ROYALE"
+ source.h.Health=65;goodBot.hum.Health=60;enemyBot.hum.Health=60
+ healAllies(session,source,source.root)
+ assert(source.h.Health==90 and goodBot.hum.Health==60
+  and enemyBot.hum.Health==60,"BR self only even with bots present")
+ print("MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS")
  print("MAGE_TEAM_BOT_HEAL_NATIVE_VM_CASES_PASS")
 end
 print("MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS",FIXED and "FIXED" or "ORIGINAL_BUG_REPRODUCED")
