@@ -105,6 +105,7 @@ def overlay(base27: Path, dest: Path):
         "combined_swarm_sha256":sha(host),"fence_sha256":sha(fence),
         "source_parent_494":"af8cd79f4217d187429270d29e6d44eb01725ff2",
         "source_parent_482":"fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
+        "source_parent_484":"6b52eaf1f2725496277998fe0c5532b7a8fcaab5",
         "studio":"NOT_TESTED","android":"NOT_TESTED","owner":"NOT_ACCEPTED",
         "rollback":"discard this overlay and reuse #494 unchanged source27"
     }

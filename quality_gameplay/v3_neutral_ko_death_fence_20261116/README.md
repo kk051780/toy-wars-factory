@@ -37,3 +37,7 @@ Python contract tests examine source and semantic mirror but do NOT prove native
 ## 2026-11-16: upstream #494 already fixed part of this defect
 
 This lane does **not** reimplement #494's post-match / eliminated-castle KO guard. Existing [#494](https://github.com/kk051780/toy-wars-factory/pull/494) patched those state checks into the **single original** `SwarmCombat.h.Died` callback. Our narrow independent addition is **physical model + horde + current Arena/world lifecycle identity**. In the 28-source private candidate, the original 26 ART/AI/Game/SCORE sources are reused by #484's existing composer, #494's original 27 source *is not duplicated*, and this lane adds one pure identity module plus one Boolean condition to that same original callback. No new scoring writer, connection or enemy spawner. Original-owner approval and #220 official CAS are still required. The private 28-source Place proves packaging / source exact only, not Studio runtime, Android, FUN or OWNER GO.
+
+## Newest AI author rebase
+
+The first native/source-exact 28-script run #43802485867 validated #484 HEAD `2aeb4fd856657c9298a2763d9204d0c9d9b031cb` and #494 HEAD `af8cd79f4217d187429270d29e6d44eb01725ff2` (no original author writes). Immediately after verification, #484 advanced to `6b52eaf1f2725496277998fe0c5532b7a8fcaab5` for AI neutral-fault isolation. This workflow pins that newer GQ/AI HEAD for an independent *new* 28-script same-HEAD build. It does not assert that the first place included the newer AI patch.
