@@ -61,13 +61,17 @@ CALL = "RunService:IsStudio()"
 INJECT = 'local PrivateGate=require(game:GetService("ReplicatedStorage"):WaitForChild("EGGRUMBLE_PrivateLiveGate"))'
 WORLD_MARKER='folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace'
 WORLD_WATCH='if not PrivateGate.watchWorld(folder) then return end'
+BOOT_DONE_MARKER='print("[EGGRUMBLE V3] Studio-only two mode gates;'
+BOOT_READY='if not PrivateGate.advertiseServerReady() then folder:Destroy();return end'
 
 def add_private_world_watch(source: str) -> str:
     # The original host is the ONLY owner of this arena root. Never hook a
     # duplicate Game or subscribe globally to all of Workspace.
-    if source.count(WORLD_MARKER) != 1 or WORLD_WATCH in source:
-        raise ValueError("private host anchor moved or already watched")
-    return source.replace(WORLD_MARKER, WORLD_MARKER+"\n"+WORLD_WATCH, 1)
+    if (source.count(WORLD_MARKER) != 1 or source.count(BOOT_DONE_MARKER) != 1
+            or WORLD_WATCH in source or BOOT_READY in source):
+        raise ValueError("private host arena or boot completion anchor moved/already registered")
+    mounted = source.replace(WORLD_MARKER, WORLD_MARKER+"\n"+WORLD_WATCH, 1)
+    return mounted.replace(BOOT_DONE_MARKER,BOOT_READY+"\n"+BOOT_DONE_MARKER,1)
 assert len(ORIGINAL_SERVER) == 19 and len(ORIGINAL_CLIENT) == 2
 assert sum(GUARDS.values()) == 17
 
@@ -92,7 +96,8 @@ def transform(source: str, name: str) -> tuple[str, int]:
     if name in ORIGINAL_CLIENT:
         replacement = "PrivateGate.waitAllowed(8)"
     elif name == "EGGRUMBLE_LobbyCastleModesPreview.server.luau":
-        replacement = "PrivateGate.advertiseServerReady()"
+        # Early host guard must NOT claim readiness before lobby/portals are built.
+        replacement = "PrivateGate.allowed()"
     else:
         replacement = "PrivateGate.allowed()"
     patched = source.replace(CALL, replacement)
