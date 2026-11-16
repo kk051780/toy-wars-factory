@@ -143,7 +143,8 @@ function Defense.start(session:any):()->()
       and (distance<best or (distance==best and closest and enemyId<closest.id)) then
       local los=kind=="SENSOR" or clearRay(part.Position,root.Position,model,folder)
       if Policy.mayActivate(kind,"ACTIVE",now,last[id][kind],distance,los) then
-       if kind~="SENSOR" or (player and (player:GetAttribute("EGGRUMBLE_StealthUntil") or 0)>now) then
+       local stealthUntil=player and (player:GetAttribute("EGGRUMBLE_StealthUntil") or 0) or 0
+       if Policy.canAcquire(kind,now,stealthUntil) then
         best=distance
         closest={id=enemyId,model=model,hum=hum,root=root,player=player}
        end
