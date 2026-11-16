@@ -128,6 +128,13 @@ jobs:
           set -euo pipefail
           /tmp/gq28_native/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau | tee ../../artifacts/CASTLE_DEFENSE_VM.log
           grep -q 'EGGRUMBLE_CASTLE_DEFENSE_NATIVE_POLICY_PASS 46' ../../artifacts/CASTLE_DEFENSE_VM.log
+      - name: Native execute latest owner #484 AI castle LOS path retarget and neutral fault recovery
+        working-directory: _v3_quality
+        run: |
+          set -euo pipefail
+          python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq28_native/luau
+          python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq28_native/luau
+          python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq28_native/luau
       - name: Acquire checksum-verified Rojo 7.7.1 binary for private build
         run: |
           set -euo pipefail
