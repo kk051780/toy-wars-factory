@@ -63,3 +63,12 @@ BEAST召喚Follower/乗物なし、ZOMBIE実AI指揮なし。V3原作者の現�
 5 Luaを読み取り専用でダウンロードし、再検査する。
 `test_source_probe.py` は8つの偽証/欠落例を試す。
 本PRの新しい実ゲームLuau/3D書き込みは **0**。
+
+
+## 第3段：公式RCのLIVE同一HEAD認証（2026-11-16）
+- `check_rc_freshness.py` はGitHub APIから**正式RC branch HEADと公式Actions runを別々にGET**。
+- 本追跡表の40桁HEAD・run URL/ID・実runのHEAD/branch/repository/status/conclusionを全て突合する。
+- 旧HEADの成功runや別branch/別repoの成功runを最新RCの成功証拠として使えない。RC更新時には台帳のピンを更新し再検証。
+- アーティファクトZIP容量、Studio・Android・OWNER FUNはこの検証で測れないためUNKNOWN/NO_GOを維持する。
+- `test_rc_freshness.py` は10種類の偽証・競合更新・失敗状態を拒否する負例テスト。
+- **本作業は既存#526所有フォルダと読取専用CIだけ**。正式RCへのゲームLuau新規採用数0、主Game/HUD・他担当PR無変更。
