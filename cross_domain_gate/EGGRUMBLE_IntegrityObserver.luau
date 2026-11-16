@@ -125,4 +125,37 @@ function Observer.inspect(session:any,rulesModule:any,playersOverride:any?):any
  return report
 end
 
+-- Read-only, bounded warning fingerprint for mobile/Studio log-flood avoidance.
+-- No player IDs, positions or action contents are logged. Order-independent.
+function Observer.warningSignature(report:any):string
+ if type(report)~="table" then return "INVALID_REPORT" end
+ local tokens={}
+ for _,severity in ipairs({"red","yellow"}) do
+  local entries=report[severity]
+  if type(entries)~="table" then
+   table.insert(tokens,severity..":INVALID")
+  else
+   local unique={}
+   for _,code in ipairs(entries) do
+    if type(code)=="string" and #code>0 and #code<=96 then
+     unique[code]=true
+    end
+   end
+   local keys={}
+   for code in pairs(unique) do table.insert(keys,code) end
+   table.sort(keys)
+   for _,code in ipairs(keys) do table.insert(tokens,severity..":"..code) end
+  end
+ end
+ return table.concat(tokens,"|")
+end
+
+function Observer.warningDelta(previous:string?,report:any):(string,boolean,boolean)
+ local current=Observer.warningSignature(report)
+ local changed=current~=previous
+ -- No initial clean health ping; log recovery once after a previous error.
+ local emit=changed and (current~="" or (previous~=nil and previous~=""))
+ return current,emit,(current=="" and emit)
+end
+
 return Observer
