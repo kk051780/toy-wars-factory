@@ -22,7 +22,10 @@ def defects(bot,router,lobby):
       "guard before move": router.find("if grounded==nil then")>=0 and router.find("model:PivotTo(CFrame.lookAt(smoothed,smoothed+direction))")>router.find("if grounded==nil then"),
       "visible world walls": "params.FilterDescendantsInstances={actors}" in router and "params.RespectCanCollide=true" in router,
       "no instant wall phase": "if not routeClear(here,here+direction*step,actors) then" in router,
-      "server egg/siege LOS": "clearActionPath(actor,actors,actualTarget)" in bot and "actualDist<=ACTION_DISTANCE" in bot,
+      "server egg/siege LOS": "clearActionPath(actor,actors,actualTarget,actionTarget)" in bot and "actualDist<=ACTION_DISTANCE" in bot,
+      "no close-range through-wall bypass": "if delta.Magnitude<=4 then return true end" not in bot and "workspace:Raycast(start,segment,params)" in bot,
+      "only exact target part can end LOS": "targetPart:BasePart?" in bot and "hit.Instance==targetPart" in bot,
+      "all server action targets resolved": all(x in bot for x in ('"OwnEggDeposit"','"EggVault"',"actionTarget=fieldPart","actionTarget=enemyCastle and enemyCastle.door")),
       "bot-v-bot current-roster source": "for targetId,targetActor in pairs(bots) do" in bot and "local enemyCastle=session.rules.castles[targetId]" in bot,
       "bot-v-bot actual humanoid damage": "targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)" in bot and "targetHumanoid.Health>0" in bot,
       "bot-v-bot no friendly fire": 'session.mode~="TEAM" or enemyCastle.team~=my.team' in bot,
@@ -74,7 +77,13 @@ class TestCastleGroundedMovement(unittest.TestCase):
     def test_ignore_world_walls(self):
         self.assertIn("visible world walls",self.broken(router=self.router.replace("params.FilterDescendantsInstances={actors}","params.FilterDescendantsInstances={session.world}")))
     def test_disable_attack_los(self):
-        self.assertIn("server egg/siege LOS",self.broken(bot=self.bot.replace("clearActionPath(actor,actors,actualTarget)","true")))
+        self.assertIn("server egg/siege LOS",self.broken(bot=self.bot.replace("clearActionPath(actor,actors,actualTarget,actionTarget)","true")))
+    def test_short_range_wall_bypass(self):
+        self.assertIn("no close-range through-wall bypass",self.broken(bot=self.bot.replace("if segment.Magnitude<=0.01 then return true end","if delta.Magnitude<=4 then return true end")))
+    def test_wrong_target_part_los_bypass(self):
+        self.assertIn("only exact target part can end LOS",self.broken(bot=self.bot.replace("hit.Instance==targetPart","hit.Instance~=nil")))
+    def test_missing_item_target(self):
+        self.assertIn("all server action targets resolved",self.broken(bot=self.bot.replace("actionTarget=fieldPart","actionTarget=nil")))
     def test_bot_duel_disabled(self):
         self.assertIn("bot-v-bot current-roster source",self.broken(bot=self.bot.replace("for targetId,targetActor in pairs(bots) do","if false then")))
     def test_bot_duel_fake_damage(self):
