@@ -811,10 +811,63 @@ jobs:
             --author _gq523_original_field/quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py \
             --place artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx
           echo "GQ523_ORIGINAL_FIELD_ONLY_ONE_HOST_30_UNCHANGED_REVERSE_EXACT"
+      - name: Checkout exact original #508 current-neutral death KO source at immutable SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 101a77b2f7dd041fe4f17d31f67cf7232ba4cda1
+          path: _gq508_original_neutral_ko
+          persist-credentials: false
+      - name: Source-select original #508 policy INLINE on one existing Swarm after original #523
+        env:
+          GQ508_AUTHOR_POLICY: _gq508_original_neutral_ko/quality_gameplay/v3_neutral_ko_death_fence_20261116/EGGRUMBLE_NeutralKoDeathFence.luau
+          GQ508_BASE31: artifacts/gq538_official_select/GQ523_SELECTED31.project.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq508_original_neutral_ko rev-parse HEAD)" = 101a77b2f7dd041fe4f17d31f67cf7232ba4cda1
+          python3 -B -m unittest discover -s rc_fastlane/quality_ko508_rc31 -p 'test_selection.py' -v
+          python3 -B rc_fastlane/quality_ko508_rc31/select_original508_neutral_ko.py prepare \
+            --base "$GQ508_BASE31" --author "$GQ508_AUTHOR_POLICY" \
+            --out artifacts/gq538_official_select/GQ523_GQ508_SELECTED31.project.json
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_ko508_rc31")
+          from select_original508_neutral_ko import mapping
+          _,files=mapping(Path("artifacts/gq538_official_select/GQ523_GQ508_SELECTED31.project.json"))
+          assert len(files)==31
+          for path in files.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                           stdout=subprocess.DEVNULL,check=True)
+          print("GQ508_EXACT_ONE_SWARM_OTHER30_ALL_NATIVE31_PASS")
+          PY
+      - name: Execute existing author #508 ACTUAL pure Luau KO identity gate positive and negative scenarios
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _gq508_original_neutral_ko/quality_gameplay/v3_neutral_ko_death_fence_20261116/tools/build_native_harness.py \
+            --out artifacts/gq538_official_select/GQ508_AUTHOR_SOURCE_NATIVE.luau
+          /tmp/gq530_all31_native/luau-compile --text artifacts/gq538_official_select/GQ508_AUTHOR_SOURCE_NATIVE.luau >/dev/null
+          /tmp/gq530_all31_native/luau artifacts/gq538_official_select/GQ508_AUTHOR_SOURCE_NATIVE.luau \
+            | tee artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
+          grep -q EGGRUMBLE_KO_DEATH_FENCE_NATIVE_PASS artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
+      - name: Real final 31 Rojo source and script class exact for original #508 single Swarm
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq538_official_select/GQ523_GQ508_SELECTED31.project.json \
+            -o artifacts/gq538_official_select/GQ523_GQ508_SELECTED31_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_ko508_rc31/select_original508_neutral_ko.py verify \
+            --base artifacts/gq538_official_select/GQ523_SELECTED31.project.json \
+            --author _gq508_original_neutral_ko/quality_gameplay/v3_neutral_ko_death_fence_20261116/EGGRUMBLE_NeutralKoDeathFence.luau \
+            --out artifacts/gq538_official_select/GQ523_GQ508_SELECTED31.project.json \
+            --place artifacts/gq538_official_select/GQ523_GQ508_SELECTED31_TRUE_ROJO.rbxlx
+          echo GQ508_EXACT_ORIGINAL_AUTHOR_INLINE_KO_FENCE_31_SCRIPTS_OTHER30_EXACT
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ523_GQ508_SELECTED31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -830,7 +883,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_GQ508_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -874,7 +927,14 @@ jobs:
           assert gq538["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
           gq523=json.loads(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_text())
           assert gq523["rojo31_source_class_exact"]=="31/31" and gq523["other30_scripts_byte_exact"] and gq523["rollback_to_previous_host_exact"]
-          assert gq523["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq523["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          ko508=json.loads(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_text())
+          assert ko508["real_rojo_source_class_exact"]=="31/31" and ko508["other_30_byte_identical"]
+          assert ko508["off_rollback_byte_exact"] and ko508["no_extra_script_or_score_authority"]
+          assert ko508["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert ko508["original_author508_policy_git_blob"]=="00eed6aa306656eded1e3c9fc62acdf1a86ce248"
+          assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
+          assert m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"] is True
           assert m["source_heads"]["field_egg523"]=="54ea74aa15e387d83512566715f44216ba8587a2"
           assert m["feature_flags"]["FIELD_EGGS_CASTLE_FOUNDATION_CLEARANCE_523"] is True
           assert m["source_heads"]["result_retry538"]=="d56262dbe8309cf606877fe39a44cde7dda0d9b5"
@@ -912,6 +972,9 @@ jobs:
             "original_538_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
              "original_author_523_field_egg_castle_clearance_selected":True,
              "gq523_field_egg_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_508_one_current_neutral_death_gate":True,
+            "other_30_sources_exact_after508":True,
+            "original508_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq547_other_30_current_original_scripts_byte_exact":True,
             "gq547_off_restores_previous_536_host_exact":True,
             "gq547_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
@@ -962,6 +1025,9 @@ jobs:
             artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json
             artifacts/gq538_official_select/GQ523_SELECTED31.project.json
             artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_GQ508_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
