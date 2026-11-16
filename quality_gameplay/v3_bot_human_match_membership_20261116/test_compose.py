@@ -22,6 +22,7 @@ class MembershipOverlayQA(unittest.TestCase):
         self.assertEqual(host.replace(HOST_AFTER, HOST_BEFORE), HOST_FIXTURE)
         self.assertEqual(bot.replace(BOT_AFTER, BOT_BEFORE), BOT_FIXTURE)
         self.assertIn("joined[player.UserId]==mode", host)
+        self.assertIn(".isAI~=true", host)
         self.assertIn("sessions[mode]==session", host)
         self.assertIn('session.rules.phase=="ACTIVE"', host)
         self.assertIn("player.Parent==Players", host)
