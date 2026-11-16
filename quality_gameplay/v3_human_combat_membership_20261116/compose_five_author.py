@@ -46,7 +46,7 @@ STATUS_NAME = "EGGRUMBLE_StatusTickFence"
 HOST_NAME = "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
 BOT_NAME = "EGGRUMBLE_BotActors.luau"
 ROUTER_NAME = "EGGRUMBLE_BotPathRouter.luau"
-PINNED_HOST_SOURCE_BLOB = "1d482d05325c5ca97166961c05b404b3370f01f8"
+PINNED_AI_HOST_SOURCE_BLOB = "c1ff23cd2883401d44d6fc47311bebcfd53eb1c6"
 PINNED_AI_BOT_SOURCE_BLOB = "832a26c9f713012b924234ce4cf8c1654a75654e"
 PINNED_AI_ROUTER_SOURCE_BLOB = "d9841bb874659129cae6c930bce302ff6936ac4a"
 
@@ -116,6 +116,32 @@ def build(out: Path) -> dict:
     member_report=member_module.run(ROOT,out,ai_bot_file=ai_bot_file)
     if not member_report["ai_duel_preserved"]:
         raise RuntimeError("RED #531 did not source-select #484 bot AI")
+    # The original #484 Host contains traversable castle access ramps and the
+    # authoritative AI staging environment. Build #531's one callback against
+    # THAT exact parent Host instead of reverting the gameplay world to #482.
+    ai_host_bytes=git_show(AUTHORS["gq_ai_duel"],str(ROOT / HOST_NAME))
+    if git_blob(ai_host_bytes)!=PINNED_AI_HOST_SOURCE_BLOB:
+        raise RuntimeError("RED current #484 Host original source drift")
+    ai_host=ai_host_bytes.decode("utf-8")
+    if ai_host.count('"CastleAccessRamp"')!=1 or ai_host.count("BotActors.start(session,Rules)")!=1:
+        raise RuntimeError("RED #484 castle traversal or AI start contract drift")
+    final_host=member_module.replace_exact(ai_host,member_module.HOST_BEFORE,
+        member_module.HOST_AFTER,HOST_NAME)
+    if final_host.replace(member_module.HOST_AFTER,member_module.HOST_BEFORE,1)!=ai_host:
+        raise RuntimeError("RED #531 callback rollback lost #484 Host")
+    if final_host.count("session.isCurrentHuman=function")!=1:
+        raise RuntimeError("RED #531 host callback missing or duplicated")
+    materialize(out / HOST_NAME,final_host.encode("utf-8"))
+    member_report["selected_host_author_head"]=AUTHORS["gq_ai_duel"]
+    member_report["source_files"][HOST_NAME]={
+        "owner_blob": PINNED_AI_HOST_SOURCE_BLOB,
+        "overlay_blob": git_blob(final_host.encode("utf-8")),
+        "sha256": hashlib.sha256(final_host.encode("utf-8")).hexdigest(),
+        "bytes":len(final_host.encode("utf-8")),
+        "changed_lines":8,
+    }
+    (out / "overlay_source_lock.json").write_text(
+        json.dumps(member_report,indent=2,sort_keys=True)+"\n",encoding="utf-8")
     # This is the ACTUAL #529 multi-author composer. We do not duplicate its patch logic.
     four_path=Path("quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py")
     spec=importlib.util.spec_from_file_location("gq_real_529",four_path.resolve())
@@ -129,8 +155,8 @@ def build(out: Path) -> dict:
     if undo(five)!=four:
         raise RuntimeError("RED regression to existing #529 multi-author source")
     out.mkdir(parents=True,exist_ok=True)
-    if git_blob((out / HOST_NAME).read_bytes())!=PINNED_HOST_SOURCE_BLOB:
-        raise RuntimeError("RED #531 host callback drift")
+    if git_blob((out / HOST_NAME).read_bytes())!=member_report["source_files"][HOST_NAME]["overlay_blob"]:
+        raise RuntimeError("RED #531 callback changed or #484 Host drift")
     if git_blob((out / BOT_NAME).read_bytes())!=member_report["source_files"][BOT_NAME]["overlay_blob"]:
         raise RuntimeError("RED #531 latest BotActors drift")
     bot=(out / BOT_NAME).read_text()
@@ -173,6 +199,9 @@ def build(out: Path) -> dict:
         "added_existing_status_module":1,
         "original_host_bot_owner":AUTHORS["gq_bot_member"],
         "bot_ai_author_sha":AUTHORS["gq_ai_duel"],
+        "original_484_host_castle_ramp_preserved":True,
+        "original_484_host_author_blob":PINNED_AI_HOST_SOURCE_BLOB,
+        "single_host_callback_531":True,
         "bot_ai_duel_real_damage_preserved":True,
         "bot_ai_pathfinder_source_preserved":True,
         "bot_ai_router_blob":PINNED_AI_ROUTER_SOURCE_BLOB,
