@@ -1,0 +1,256 @@
+name: P0D GQ original ART plus existing SCORE private game
+on:
+  push:
+    branches:
+      - 'quality/eggrumble-v3-spatial-bot-intake-20261116'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  full-source-with-existing-score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - name: Read existing 16-script isolated quality V3 source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read unmodified ART-A01 original author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eade22eac9cb4185c8bb0bb644833c51039db771
+          path: _p0d_gq_art_fixed
+          persist-credentials: false
+
+      - name: Read unmodified SCORE original author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 3aa3839000e26f7d3585e54baedc551ef0a32fa1
+          path: _p0d_gq_score_fixed
+          persist-credentials: false
+
+      - name: Run original art tests and confirm frozen ART/SCORE Git commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_gq_art_fixed rev-parse HEAD)" = eade22eac9cb4185c8bb0bb644833c51039db771
+          test "$(git -C _p0d_gq_score_fixed rev-parse HEAD)" = 3aa3839000e26f7d3585e54baedc551ef0a32fa1
+          python3 -m unittest discover -v -s _p0d_gq_art_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+
+      - name: Invoke original art composer's unmodified source, then overlay SCORE original in temporary manifest ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _p0d_gq_art_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_V3_GQ_WITH_ORIGINAL_ART20.project.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          source=Path("artifacts/EGGRUMBLE_V3_GQ_WITH_ORIGINAL_ART20.project.json").resolve(strict=True)
+          target=Path("artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21.project.json").resolve()
+          scoreRoot=Path("_p0d_gq_score_fixed/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116").resolve(strict=True)
+          gameRoot=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116").resolve(strict=True)
+          original=json.loads((gameRoot/"EGGRUMBLE_V3_STUDIO.project.json").read_text(encoding="utf-8"))
+          project=json.loads(source.read_text(encoding="utf-8"))
+          server=project["tree"]["ServerScriptService"]
+          originalServer=original["tree"]["ServerScriptService"]
+          assert len(originalServer)-1==15 and "EGGRUMBLE_ScoreBalance" not in originalServer
+          assert "EGGRUMBLE_MatchResultService" in server and "EGGRUMBLE_ScoreBalance" not in server
+          assert len(server)-1==18,("base game 15 + original ART 3",len(server)-1)
+          client=project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+          assert set(client)-{"$className"}=={"EGGRUMBLE_CombatFeel","EGGRUMBLE_ArtDistanceLOD"}
+          result=scoreRoot/"EGGRUMBLE_MatchResultService.luau"
+          score=scoreRoot/"EGGRUMBLE_ScoreBalance.luau"
+          assert result.is_file() and score.is_file()
+          assert 'ScoreBalance=require(script.Parent:WaitForChild("EGGRUMBLE_ScoreBalance"))' in result.read_text(encoding="utf-8")
+          assert "local ranking=ScoreBalance.build(session.rules,session.swarm and session.swarm.kills or {})" in result.read_text(encoding="utf-8")
+          assert 'row.securedSteals' in score.read_text(encoding="utf-8") and 'row.teamCastleSupport' in score.read_text(encoding="utf-8")
+          # Preserve every game and ART source path; replace only the one original
+          # match-end ModuleScript with SCORE author's exact version, add ScoreBalance.
+          server["EGGRUMBLE_MatchResultService"]={"$path":os.path.relpath(result,target.parent).replace(os.sep,"/")}
+          server["EGGRUMBLE_ScoreBalance"]={"$path":os.path.relpath(score,target.parent).replace(os.sep,"/")}
+          assert len(server)-1==19
+          project["name"]="EGGRUMBLE_GQ_ART_SCORE_PRIVATE_NO_PUBLISH"
+          target.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("PRIVATE_ART_AND_SCORE_SOURCE_MAPPING_PASS",len(server)-1,"SERVER",len(client)-1,"CLIENT")
+          PY
+
+      - name: Build pinned Luau Repl and compiler to actually run original SCORE native cases
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_gq_native_fixed
+          persist-credentials: false
+
+      - name: Native-compile each of 21 original Luau sources and execute real SCORE author test suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_gq_native_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_gq_native_fixed -B /tmp/p0d_gq_score_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_gq_score_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21.project.json").resolve()
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          def paths(x):
+              if isinstance(x,dict):
+                  if "$path" in x:yield (project.parent/x["$path"]).resolve(strict=True)
+                  else:
+                      for name,v in x.items():
+                          if not name.startswith("$"):yield from paths(v)
+          source=list(paths(tree))
+          assert len(source)==21,len(source)
+          for p in source:
+              subprocess.run(["/tmp/p0d_gq_score_luau/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_EXISTING_GAME_ART_SCORE_NATIVE_COMPILE_PASS",len(source))
+          PY
+          root=_p0d_gq_score_fixed/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          mkdir -p /tmp/p0d_gq_score_vm
+          cp "$root/EGGRUMBLE_ScoreBalance.luau" /tmp/p0d_gq_score_vm/Results.luau
+          cp "$root/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/p0d_gq_score_vm/Cases.luau
+          cp "$root/tests/run_score_balance_native.luau" /tmp/p0d_gq_score_vm/Runner.luau
+          (cd /tmp/p0d_gq_score_vm && /tmp/p0d_gq_score_luau/luau Runner.luau) | tee artifacts/ORIGINAL_SCORE_NATIVE_VM.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/ORIGINAL_SCORE_NATIVE_VM.log
+          echo "ORIGINAL_SCORE_LUAU_FUNCTIONAL_CASES_PASS"
+
+      - name: Build checksum-pinned actual Rojo 21-source private Studio Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_gq_score_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_gq_score_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_gq_score_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/p0d_gq_score_rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/p0d_gq_score_rojo build artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21.project.json \
+            -o artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21_PRIVATE.rbxlx
+
+      - name: Independently compare 21 built script bytes, source authorities, service types and single Game host
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          original=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json").resolve()
+          artbase=Path("artifacts/EGGRUMBLE_V3_GQ_WITH_ORIGINAL_ART20.project.json").resolve()
+          combo=Path("artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21.project.json").resolve()
+          scoreRoot=Path("_p0d_gq_score_fixed/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116").resolve()
+          artRoot=Path("_p0d_gq_art_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116").resolve()
+          place=Path("artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21_PRIVATE.rbxlx")
+          def manifest(project):
+              tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+              def rec(node,at=()):
+                  out={}
+                  for name,child in node.items():
+                      if name.startswith("$") or not isinstance(child,dict):continue
+                      key=at+(name,)
+                      if "$path" in child:
+                          real=(project.parent/child["$path"]).resolve(strict=True)
+                          cls="Script" if real.name.endswith(".server.luau") else ("LocalScript" if real.name.endswith(".client.luau") else "ModuleScript")
+                          out[key]=(real,cls)
+                      else:out.update(rec(child,key))
+                  return out
+              return rec(tree)
+          game=manifest(original);decorated=manifest(artbase);full=manifest(combo)
+          assert len(game)==16 and len(decorated)==20 and len(full)==21,(len(game),len(decorated),len(full))
+          resultKey=("ServerScriptService","EGGRUMBLE_MatchResultService")
+          scoreKey=("ServerScriptService","EGGRUMBLE_ScoreBalance")
+          assert resultKey in game and resultKey in full and scoreKey not in decorated and scoreKey in full
+          assert all(full[k]==game[k] for k in game if k!=resultKey),("game source overwritten beyond score result",set(game))
+          artist=set(decorated)-set(game)
+          assert artist=={
+              ("ServerScriptService","EGGRUMBLE_HeroSilhouetteArt"),
+              ("ServerScriptService","EGGRUMBLE_FlagshipFieldArt"),
+              ("ServerScriptService","EGGRUMBLE_EncounterReadabilityArt"),
+              ("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_ArtDistanceLOD"),
+          },artist
+          assert all(full[k]==decorated[k] for k in artist),("original visual files modified")
+          for k in artist:
+              want=artRoot/(k[-1]+(".client.luau" if k[-1]=="EGGRUMBLE_ArtDistanceLOD" else ".server.luau"))
+              assert full[k][0]==want
+          for k in (resultKey,scoreKey):
+              assert full[k][0]==scoreRoot/(k[-1]+".luau")
+          assert scoreKey not in game and full[resultKey]!=game[resultKey]
+          assert full[scoreKey][1]=="ModuleScript" and full[resultKey][1]=="ModuleScript"
+          assert game[("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_CombatFeel")]==full[("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_CombatFeel")]
+          assert sum(cls=="Script" for _,cls in full.values())==4
+          assert sum(cls=="LocalScript" for _,cls in full.values())==2
+          assert sum(cls=="ModuleScript" for _,cls in full.values())==15
+          assert sum(1 for k,(_,cls) in full.items() if cls=="Script" and k[-1]=="EGGRUMBLE_LobbyCastleModesPreview")==1
+          # Cross-source closure. The score module must resolve to same
+          # ServerScriptService sibling, and item/AI/role/neutral requires remain.
+          import re
+          server={k[-1] for k in full if k[0]=="ServerScriptService"}
+          for k,(src,cls) in full.items():
+              if k[0]!="ServerScriptService":continue
+              for req in re.findall(r'script\.Parent:WaitForChild\("([^"]+)"\)',src.read_text(encoding="utf-8")):
+                  assert req in server,("unmapped required module",k,req)
+          tree=ET.fromstring(place.read_bytes())
+          actual={}
+          for item in tree.iter("Item"):
+              cls=item.attrib.get("class")
+              if cls not in ("ModuleScript","Script","LocalScript"):continue
+              prop=item.find("Properties")
+              if prop is None:continue
+              name=prop.findtext("string[@name='Name']")
+              code=prop.findtext("ProtectedString[@name='Source']")
+              if code is None:code=prop.findtext("string[@name='Source']")
+              assert name is not None and code is not None
+              assert name not in actual,("duplicate original script",name)
+              actual[name]=(cls,code.replace("\r\n","\n"))
+          assert len(actual)==21,("extra/absent executable source",len(actual))
+          for k,(src,cls) in full.items():
+              name=k[-1]
+              assert name in actual and actual[name][0]==cls,("incorrect script identity",name)
+              assert actual[name][1]==src.read_text(encoding="utf-8").replace("\r\n","\n"),("not original source",name)
+          digest=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={
+              "quality_commit":os.environ["GITHUB_SHA"],
+              "art_author_commit":"eade22eac9cb4185c8bb0bb644833c51039db771",
+              "score_author_commit":"3aa3839000e26f7d3585e54baedc551ef0a32fa1",
+              "game_original_scripts_retained_without_edits":15,
+              "original_game_result_overlaid_by_score_author":1,
+              "new_original_score_balance_module":1,
+              "art_author_scripts_retained":4,
+              "total_source_exact":21,"server_sources":19,"client_local_scripts":2,
+              "place_bytes":place.stat().st_size,"place_sha256":digest,
+              "studio_play":"NOT_RUN","android":"NOT_RUN","official_rc":"NOT_INTEGRATED",
+              "score_runtime_by_score_author":"NATIVE_PURE_LUAU_ONLY",
+              "owner_accepted":False,"published":False,
+              "note":"Later original #482 feature commits not in this isolated source snapshot; require latest author intake and engine QA"
+          }
+          Path("artifacts/SCORE_ART_GQ_SOURCE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("EGGRUMBLE_GQ_ORIGINAL_ART_SCORE_COMPOSITE_SOURCE_EXACT_PASS",len(full))
+          print("PRIVATE_ART_SCORE_PLACE_BYTES",place.stat().st_size,"SHA256",digest)
+          print("LIVE_STUDIO_ANDROID_ART_FUN_OWNER_PRODUCT=NO_GO")
+          PY
+
+      - name: Upload actual private 21-script combined game / original ART / original SCORE Place
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-V3-GQ-ART-SCORE-21-SOURCE-ONLY-NOPUBLISH
+          path: |
+            artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_V3_GQ_ART_SCORE21.project.json
+            artifacts/SCORE_ART_GQ_SOURCE_RECEIPT.json
+            artifacts/ORIGINAL_SCORE_NATIVE_VM.log
+          retention-days: 7
