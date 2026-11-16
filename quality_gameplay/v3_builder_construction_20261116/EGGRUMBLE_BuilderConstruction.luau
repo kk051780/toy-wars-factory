@@ -120,12 +120,24 @@ function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(b
  local cf=CFrame.lookAt(at,at+direction)
  -- No overlapping player models, solid obstacles, or other walls/bridges.
  local params=OverlapParams.new()
+ -- Include characters parented to Workspace, not only the per-mode arena Folder.
+ -- A server-owned Player character is normally NOT under session.world.
  params.FilterType=Enum.RaycastFilterType.Include
- params.FilterDescendantsInstances={session.world}
+ params.FilterDescendantsInstances={workspace}
  params.MaxParts=0
  for _,other in ipairs(workspace:GetPartBoundsInBox(cf,dims+Vector3.new(1,1,1),params)) do
-  if other.CanCollide and other.Name~="TacticalBattlefield"
-   and not other.Name:match("^TacticalRoute_") then return false,"OBSTACLE_OR_CONSTRUCT" end
+  -- Many Humanoid body parts are CanCollide=false; they must still block construction.
+  local model=other:FindFirstAncestorOfClass("Model")
+  if model and model:FindFirstChildOfClass("Humanoid") then
+   return false,"HUMANOID_OVERLAP"
+  end
+  -- Ignore only the actual session's traversable floor and authored routes.
+  -- Reject same-named geometry in a different arena or foreign Workspace container.
+  local isOwnGround=other:IsDescendantOf(session.world)
+   and (other.Name=="TacticalBattlefield" or other.Name:match("^TacticalRoute_"))
+  if other.CanCollide and not isOwnGround then
+   return false,"OBSTACLE_OR_CONSTRUCT"
+  end
  end
  -- Nothing yields between the final capacity+world guards and creation.
  local part=Instance.new("Part")
