@@ -133,7 +133,7 @@ def prepare(base:Path,out:Path,receipt:Path,original_host:Path,ai_host:Path,ai_c
  receipt.write_text(json.dumps(lock,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
  print("GQ531_PRIVATE30_PATCH_ONLY_2_OF_30_PASS",len(set(selection)-changed),len(changed))
 
-def verify(base:Path,out:Path,receipt:Path,place:Path):
+def verify(base:Path,out:Path,receipt:Path,place:Path,original_host:Path,ai_host:Path,ai_composer:Path):
  lock=json.loads(receipt.read_text(encoding="utf-8"))
  assert lock["mode"]==SCHEME and lock["official_rc_adopted"] is False
  assert lock["base_project_sha256"]==sha(base.read_bytes()),"RED: base project changed"
@@ -145,9 +145,11 @@ def verify(base:Path,out:Path,receipt:Path,place:Path):
  assert set(lock["unchanged_owners"])==set(original)-{HOST,BOT}
  for n,expected in lock["unchanged_owners"].items():
   assert original[n]==mapped_out[n] and mapped_out[n]["sha256"]==expected,("RED: another author mutated",n)
+ assert verify_host_lineage(original[HOST]["source"],original_host,ai_host,ai_composer)==lock["prior_host_bot"][HOST]["sha256"]
  for n,blob in EXPECTED_484_BLOBS.items():
   assert git_blob_sha(original[n]["source"].read_bytes())==blob
   assert original[n]["source"]!=mapped_out[n]["source"]
+ assert original[HOST]["source"]!=mapped_out[HOST]["source"]
  assert mapped_out[HOST]["class"]=="Script" and mapped_out[BOT]["class"]=="ModuleScript"
  assert mapped_out[HOST]["source"].read_text().count("session.isCurrentHuman=function")==1
  assert mapped_out[BOT]["source"].read_text().count("session.isCurrentHuman(player)")==1
@@ -179,8 +181,11 @@ if __name__=="__main__":
  p.add_argument("--out",type=Path,required=True)
  p.add_argument("--receipt",type=Path,required=True)
  p.add_argument("--place",type=Path)
+ p.add_argument("--original-host",type=Path,required=True)
+ p.add_argument("--ai-host",type=Path,required=True)
+ p.add_argument("--ai-composer",type=Path,required=True)
  a=p.parse_args()
- if a.mode=="prepare":prepare(a.base,a.out,a.receipt)
+ if a.mode=="prepare":prepare(a.base,a.out,a.receipt,a.original_host,a.ai_host,a.ai_composer)
  else:
   if not a.place:p.error("--place is required")
-  verify(a.base,a.out,a.receipt,a.place)
+  verify(a.base,a.out,a.receipt,a.place,a.original_host,a.ai_host,a.ai_composer)
