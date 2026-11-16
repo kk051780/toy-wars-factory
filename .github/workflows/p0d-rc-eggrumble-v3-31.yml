@@ -905,10 +905,57 @@ jobs:
             --out artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
             --place artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx
           echo GQ508_EXACT_ORIGINAL_AUTHOR_INLINE_KO_FENCE_31_SCRIPTS_OTHER30_EXACT
+      - name: Read IMMUTABLE existing original #520 author RIDGE SHIELD + FOREST DASH source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: b2b89d7eaed2bdeeee163eb16d05d541d002e800
+          path: _gq520_original
+          persist-credentials: false
+      - name: Select original GQ520 two collidable terrain hunks in existing #508 canonical Host, original Native and Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq520_original rev-parse HEAD)" = b2b89d7eaed2bdeeee163eb16d05d541d002e800
+          ROOT520=_gq520_original/quality_gameplay/v3_central_ridge_clearance_20261116
+          PYTHONPATH="$ROOT520" python3 -B -m unittest discover -v -s "$ROOT520" -p test_patch_ridge.py
+          PYTHONPATH="$ROOT520" python3 -B -m unittest discover -v -s "$ROOT520" -p test_forest_dash.py
+          python3 -B rc_fastlane/quality_gq520_rc31/select_original_ridge_forest520.py prepare \
+            --base artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json \
+            --author "$ROOT520"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("m","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          _,src=m.flatten(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json"))
+          assert len(src)==31
+          for file in src.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ520_SELECTED_ALL_CURRENT31_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530_all31_native/luau-compile --text artifacts/gq538_official_select/GQ520_ORIGINAL_FOREST_ITEM_NATIVE.luau >/dev/null
+          /tmp/gq530_all31_native/luau-compile --text artifacts/gq538_official_select/GQ520_ORIGINAL_RIDGE_CORRIDOR_NATIVE.luau >/dev/null
+          /tmp/gq530_all31_native/luau artifacts/gq538_official_select/GQ520_ORIGINAL_FOREST_ITEM_NATIVE.luau \
+            | tee artifacts/gq538_official_select/GQ520_FOREST_NATIVE_LOG.txt
+          grep -q GQ520_FOREST_DASH_COLLISION_NEGATIVE_PASS artifacts/gq538_official_select/GQ520_FOREST_NATIVE_LOG.txt
+          /tmp/gq530_all31_native/luau artifacts/gq538_official_select/GQ520_ORIGINAL_RIDGE_CORRIDOR_NATIVE.luau \
+            | tee artifacts/gq538_official_select/GQ520_RIDGE_NATIVE_LOG.txt
+          grep -q GQ520_LOS_PATH_NEGATIVE_PASS artifacts/gq538_official_select/GQ520_RIDGE_NATIVE_LOG.txt
+          /tmp/gq530-all31-rojo build artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json \
+            -o artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31_REAL_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_gq520_rc31/select_original_ridge_forest520.py verify \
+            --base artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json \
+            --author "$ROOT520" \
+            --place artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31_REAL_ROJO.rbxlx
+          echo "GQ520_SINGLE_HOST_TWO_ORIGINAL_HUNKS_ONLY_30_OTHER_SOURCE_EXACT_31_ROJO_COMPLETE"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -924,7 +971,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -975,7 +1022,16 @@ jobs:
           ko508=json.loads(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_text())
           assert ko508["real_rojo_source_class_exact"]=="31/31" and ko508["other_30_byte_identical"]
           assert ko508["off_rollback_byte_exact"] and ko508["no_extra_script_or_score_authority"]
-          assert ko508["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert ko508["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          ridgeforest520=json.loads(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json").read_text())
+          assert ridgeforest520["real_rojo_script_class_source_exact"]=="31/31"
+          assert ridgeforest520["other_30_sources_byte_exact"] and ridgeforest520["two_original_520_hunks_reverse_exact"]
+          assert ridgeforest520["original_523_field_egg_rows_preserved"] and ridgeforest520["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert ridgeforest520["terrain_geo_source_only"]["ridge_passage_studs"]==24
+          assert ridgeforest520["terrain_geo_source_only"]["dash_tree_before"]==[1]
+          assert ridgeforest520["terrain_geo_source_only"]["dash_tree_after"]==[]
+          assert m["source_heads"]["ridge_forest520"]=="b2b89d7eaed2bdeeee163eb16d05d541d002e800"
+          assert m["feature_flags"]["TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"] is True
           assert ko508["original_author508_policy_git_blob"]=="00eed6aa306656eded1e3c9fc62acdf1a86ce248"
           assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
           assert m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"] is True
@@ -1019,6 +1075,8 @@ jobs:
             "original_author_508_neutral_ko_death_credit_selected_inline":True,
             "original_508_other_30_sources_exact":True,
             "original_508_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_520_team_SHIELD_ridge_DASH_tree_clearance_selected":True,
+            "original_520_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_538_other_30_sources_byte_identical":True,
             "original_538_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
              "original_author_523_field_egg_castle_clearance_selected":True,
@@ -1097,6 +1155,10 @@ jobs:
             artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json
             artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json
             artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json
+            artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ520_RIDGE_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ520_FOREST_NATIVE_LOG.txt
             artifacts/gq538_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
