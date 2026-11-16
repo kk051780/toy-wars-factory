@@ -33,7 +33,8 @@
     "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
     "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4",
     "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770",
-    "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
+    "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
+    "castle_board547": "b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -45,7 +46,8 @@
     "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
     "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true,
     "LOBBY_NEARBY_BOARDS_539": true,
-    "ORIGINAL_ITEM_AUTHOR_489": true
+    "ORIGINAL_ITEM_AUTHOR_489": true,
+    "CASTLE_EGG_BOARD_DISTANCE_547": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native",
   "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539",
@@ -101,5 +103,20 @@
     "studio": "NOT_TESTED",
     "android": "NOT_TESTED",
     "owner_fun": "NO_GO"
+  },
+  "gq547": {
+    "original_pr": 547,
+    "original_head": "b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125",
+    "base_rc_head": "6ff632064ab5eca456161bb342b4a89aeb150717",
+    "original_author_host_blob": "7162b209bf67b74a71553217f3f744e072a0365d",
+    "patch_ownership": "castle HP core BillboardGui MaxDistance65 and EggVault MaxDistance40 only",
+    "nonoverlap": "#539 owns seven-role/TEAM/BR lobby labels; #537 owns HP/egg live refresh; #489 item; #541 neutral; #540 respawn",
+    "source_count": 31,
+    "unchanged_script_count": 30,
+    "rollback": "Remove the exact two original #547 core/vault GUI insertions; restore immediate original #489 Host and preserve every other source",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "kid_fun": "NO_GO",
+    "status": "ISOLATED_PR_PREMERGE_NOT_OFFICIAL_CAS_YET"
   }
 }
