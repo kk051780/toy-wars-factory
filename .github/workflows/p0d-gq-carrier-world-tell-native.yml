@@ -1,4 +1,4 @@
-name: P0D GQ isolated carrier world tell (native source-only)
+name: P0D GQ carrier world tell 23-source actual Rojo Place
 on:
   push:
     branches:
@@ -16,7 +16,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s quality_gameplay/carrier_world_tell_20261116 -p 'test_*.py' -v
-          python3 quality_gameplay/carrier_world_tell_20261116/compose.py --out /tmp/eggrumble-carrier-private
+          python3 quality_gameplay/carrier_world_tell_20261116/compose.py --out artifacts/carrier-world-private
       - name: Build Luau native CLI
         run: |
           set -euo pipefail
@@ -32,9 +32,31 @@ jobs:
           python3 quality_gameplay/carrier_world_tell_20261116/make_native_harness.py --out /tmp/carrier-policy-native.luau
           /tmp/gq-luau/build/luau-compile /tmp/carrier-policy-native.luau >/dev/null
           /tmp/gq-luau/build/luau /tmp/carrier-policy-native.luau
-      - name: Export private source-only candidate; official RC untouched
+      - name: Checksum-locked Rojo 7.7.1 private 23-script Place build
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_carrier_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_carrier_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_carrier_rojo.zip') as z:
+            names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(names)==1
+            binary=Path('/tmp/gq_carrier_rojo')
+            binary.write_bytes(z.read(names[0]));binary.chmod(0o755)
+          PY
+          /tmp/gq_carrier_rojo build artifacts/carrier-world-private/EGGRUMBLE_CARRIER_TELL_PRIVATE.project.json -o artifacts/carrier-world-private/EGGRUMBLE_CARRIER_TELL_PRIVATE.rbxlx
+      - name: Independently read back all actual Place source/class bytes 23/23
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/carrier_world_tell_20261116/verify_place.py \
+            --project artifacts/carrier-world-private/EGGRUMBLE_CARRIER_TELL_PRIVATE.project.json \
+            --place artifacts/carrier-world-private/EGGRUMBLE_CARRIER_TELL_PRIVATE.rbxlx \
+            --receipt artifacts/carrier-world-private/receipt.json
+      - name: Export actual unpublished Rojo Place and source receipt; official RC untouched
         uses: actions/upload-artifact@v4
         with:
-          name: EGGRUMBLE_CARRIER_TELL_PRIVATE_23_SOURCE_NO_RC
-          path: /tmp/eggrumble-carrier-private/
+          name: EGGRUMBLE_CARRIER_TELL_PRIVATE_23_PLACE_NO_RC
+          path: artifacts/carrier-world-private/
           retention-days: 3
