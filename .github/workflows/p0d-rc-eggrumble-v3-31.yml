@@ -377,7 +377,7 @@ jobs:
           assert src["combat_sha256"]!=off["combat_sha256"]
           assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
-          assert gq541["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           assert m["source_heads"]["lobby_world_539"]=="e003d73d516e65e1817dd281eb1743fa866f3770"
