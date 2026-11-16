@@ -297,7 +297,117 @@ local function decorateDefense(stand:BasePart)
  -- Only the original server rules determine a module's defensive power.
 end
 
+-- Distinct boss silhouette on the ORIGINAL isolated neutral-boss preview.
+-- The authored StoneGiant still owns its core HP, 2s red telegraph and damage.
+local MAX_BOSS_ORNAMENT_PARTS=5
+local function decorateStoneGiant(model:Model)
+ if marked[model] or model.Name~="NEUTRAL_BOSS_STONE_GIANT" then return end
+ local torso=model:FindFirstChild("Torso")
+ local head=model:FindFirstChild("Head")
+ local core=model:FindFirstChild("CoreWeakpoint")
+ if not torso or not torso:IsA("BasePart")
+  or not head or not head:IsA("BasePart")
+  or not core or not core:IsA("BasePart") then return end
+ marked[model]=true
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_StoneGiantVisual_VisualOnly"
+ art.Parent=model
+ local made=0
+ local function add(anchor:BasePart,name:string,kind:string,size:Vector3,offset:CFrame,
+  color:Color3,material:Enum.Material):BasePart?
+  if made>=MAX_BOSS_ORNAMENT_PARTS then return nil end
+  made+=1
+  return jewel(art,anchor,name,kind,size,offset,color,material)
+ end
+ -- Shoulder monoliths, stone mask, sapphire chest bezel; attack core stays
+ -- the ORIGINAL untouched CoreWeakpoint ProximityPrompt's only parent.
+ for _,side in ipairs({-1,1}) do
+  add(torso,"MonolithShoulder"..side,"Wedge",Vector3.new(3.6,5.0,3.8),
+   CFrame.new(side*5.0,3.8,.3)*CFrame.Angles(0,math.rad(side*18),0),
+   dark,Enum.Material.Slate)
+ end
+ add(head,"BrokenCrown","Wedge",Vector3.new(5.7,3.0,4.1),
+  CFrame.new(0,3.35,.15),ceramic,Enum.Material.Limestone)
+ local bezel=add(core,"WeakpointBezel","Cylinder",Vector3.new(.22,3.8,3.8),
+  CFrame.new(0,0,.5)*CFrame.Angles(0,0,math.rad(90)),core.Color,Enum.Material.Metal)
+ add(torso,"HeartRunicRidge","Wedge",Vector3.new(2.7,2.6,.7),
+  CFrame.new(0,-2.7,-3.0),steel,Enum.Material.Slate)
+ if bezel then
+  -- Red phase is read from real server-owned weak-point health color only.
+  core:GetPropertyChangedSignal("Color"):Connect(function()
+   if core.Parent and bezel.Parent then bezel.Color=core.Color end
+  end)
+ end
+end
+
+-- The independent original CASTLE INTERIOR has an actually openable gate and
+-- real walkable vault. Add heraldry which fades WITH the real gate, instead of
+-- forming a new invisible obstruction or fake entrance.
+local MAX_CASTLE_INTERIOR_ART_PARTS=5
+local function decorateStandaloneCastle(model:Model)
+ if marked[model] or model.Name~="EGGRUMBLE_EnterableCastle" then return end
+ local gate=model:FindFirstChild("CastleGate")
+ local vault=model:FindFirstChild("EggVault")
+ local core=model:FindFirstChild("SiegeCore")
+ if not gate or not gate:IsA("BasePart")
+  or not vault or not vault:IsA("BasePart")
+  or not core or not core:IsA("BasePart") then return end
+ marked[model]=true
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_InteriorHeraldry_VisualOnly"
+ art.Parent=model
+ local made=0
+ local gateTrim:{BasePart}={}
+ local function add(anchor:BasePart,name:string,kind:string,size:Vector3,offset:CFrame,
+  color:Color3,material:Enum.Material):BasePart?
+  if made>=MAX_CASTLE_INTERIOR_ART_PARTS then return nil end
+  made+=1
+  return jewel(art,anchor,name,kind,size,offset,color,material)
+ end
+ for _,side in ipairs({-1,1}) do
+  local p=add(gate,"GateRune"..side,"Wedge",Vector3.new(.75,7.4,.22),
+   CFrame.new(side*3.3,0,-.65),gold,Enum.Material.Metal)
+  if p then table.insert(gateTrim,p) end
+ end
+ local function syncDoor()
+  local fade=math.clamp(gate.Transparency+.15,0,1)
+  for _,p in ipairs(gateTrim) do
+   if p.Parent then p.Transparency=fade end
+  end
+ end
+ syncDoor()
+ gate:GetPropertyChangedSignal("Transparency"):Connect(syncDoor)
+ add(vault,"VaultShield","Wedge",Vector3.new(4.8,2.8,.4),
+  CFrame.new(0,vault.Size.Y*.5+.9,-vault.Size.Z*.5-.28),
+  gold,Enum.Material.Metal)
+ add(vault,"VaultRelief","Cylinder",Vector3.new(.22,2.6,2.6),
+  CFrame.new(0,vault.Size.Y*.5+1.0,-vault.Size.Z*.5-.60)
+    *CFrame.Angles(0,0,math.rad(90)),ceramic,Enum.Material.Limestone)
+ add(core,"SiegeCoreSeal","Wedge",Vector3.new(3.6,1.3,.25),
+  CFrame.new(0,core.Size.Y*.5+1.0,-core.Size.Z*.5-.20),
+  core.Color,Enum.Material.Metal)
+end
+
 local function process(instance:Instance)
+ -- Independent #482 boss and physical castle are owned by their original authors;
+ -- observe their completed parts, never replace their scripts or objects.
+ if instance:IsA("Model") and instance.Name=="NEUTRAL_BOSS_STONE_GIANT" then
+  task.defer(function() if instance.Parent then decorateStoneGiant(instance) end end)
+  return
+ elseif instance:IsA("Model") and instance.Name=="EGGRUMBLE_EnterableCastle" then
+  task.defer(function() if instance.Parent then decorateStandaloneCastle(instance) end end)
+  return
+ elseif instance:IsA("BasePart") and instance.Name=="CoreWeakpoint"
+  and instance.Parent and instance.Parent.Name=="NEUTRAL_BOSS_STONE_GIANT" then
+  local m=instance.Parent
+  task.defer(function() if m:IsA("Model") then decorateStoneGiant(m) end end)
+  return
+ elseif instance:IsA("BasePart") and instance.Name=="SiegeCore"
+  and instance.Parent and instance.Parent.Name=="EGGRUMBLE_EnterableCastle" then
+  local m=instance.Parent
+  task.defer(function() if m:IsA("Model") then decorateStandaloneCastle(m) end end)
+  return
+ end
  -- The authored 9-pickup field-item preview runs independently from the V3 lobby.
  -- Both visual-only variants are supported with the SAME isolated script.
  if instance:IsA("BasePart") and instance.Name:match("^ITEM_%d+_%u+$") then
