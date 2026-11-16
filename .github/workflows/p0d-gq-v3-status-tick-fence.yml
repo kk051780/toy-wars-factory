@@ -1,0 +1,598 @@
+name: P0D GQ V3 delayed status tick safe source-only 22
+on:
+  push:
+    branches: [quality/p0d-gq-v3-status-tick-fence-20261116]
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_status_tick_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-status-tick-fence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 33
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact author blob, source delta and 22-source generated composition
+        run: python3 -B -m unittest discover -s quality_gameplay/v3_status_tick_fence_20261116/tests -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_status_native
+          persist-credentials: false
+      - name: Pinned native Luau 13 regressions and all private 22 scripts compile
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_status_native rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_status_native -B /tmp/gq_status_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_status_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          mkdir -p /tmp/gq_status
+          cp "$root/EGGRUMBLE_StatusTickFence.luau" /tmp/gq_status/StatusFence.luau
+          cp "$root/tests/StatusFenceNative.spec.luau" /tmp/gq_status/Spec.luau
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau ./Spec.luau | tee /tmp/gq_status_native.log
+          grep -q GQ_V3_STATUS_TICK_FENCE_NATIVE_13_CASES_PASS /tmp/gq_status_native.log
+          cd "$GITHUB_WORKSPACE"
+          python3 "$root/tools/compose_private22.py" --out artifacts/status22
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          root=Path('artifacts/status22')
+          tree=json.loads((root/'EGGRUMBLE_STATUS22.project.json').read_text())['tree']
+          def walk(n):
+              if isinstance(n,dict):
+                  if '$path' in n:yield (root/n['$path']).resolve(strict=True)
+                  else:
+                      for k,v in n.items():
+                          if not k.startswith('$'):yield from walk(v)
+          files=list(walk(tree))
+          assert len(files)==22 and len(set(files))==22
+          for f in files:subprocess.run(['/tmp/gq_status_luau/luau-compile','--text',str(f)],stdout=subprocess.DEVNULL,check=True)
+          print('GQ_STATUS_22_NATIVE_22_OF_22_PASS')
+          PY
+      - name: Execute actual amended server delayed status callbacks in Luau VM
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 "$root/tools/make_actual_status_callback_native.py" --out /tmp/gq_status/ActualServerStatus.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualServerStatus.spec.luau >/dev/null
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau ./ActualServerStatus.spec.luau | tee /tmp/gq_status_actual_server.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq_status_actual_server.log
+          cd "$GITHUB_WORKSPACE"
+      - name: Checksum pinned Rojo 7.7.1 and unpublished private 22-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_status_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_status_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_status_rojo.zip') as z:
+              items=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(items)==1
+              dst=Path('/tmp/gq_status_rojo')
+              dst.write_bytes(z.read(items[0]));dst.chmod(0o755)
+          PY
+          /tmp/gq_status_rojo build artifacts/status22/EGGRUMBLE_STATUS22.project.json -o artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
+      - name: Check embedded scripts/classes/byte-exact sources in Rojo Place
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,xml.etree.ElementTree as ET,os
+          root=Path('artifacts/status22')
+          place=Path('artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx')
+          tree=json.loads((root/'EGGRUMBLE_STATUS22.project.json').read_text())['tree']
+          want={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith('$') or not isinstance(v,dict):continue
+                  if '$path' in v:
+                      f=(root/v['$path']).resolve(strict=True)
+                      cls='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                      assert k not in want
+                      want[k]=(cls,f.read_text().replace('\r\n','\n'))
+                  else:walk(v)
+          walk(tree)
+          assert len(want)==22
+          got={}
+          for e in ET.fromstring(place.read_bytes()).iter('Item'):
+              cls=e.attrib.get('class')
+              if cls not in ('Script','LocalScript','ModuleScript'):continue
+              p=e.find('Properties')
+              if p is None:continue
+              name=p.findtext("string[@name='Name']")
+              value=p.findtext("ProtectedString[@name='Source']")
+              if value is None:value=p.findtext("string[@name='Source']")
+              assert name and value is not None and name not in got
+              got[name]=(cls,value.replace('\r\n','\n'))
+          assert want==got,{"missing":sorted(set(want)-set(got)),"extra":sorted(set(got)-set(want)),
+                            "changed":sorted(k for k in set(want)&set(got) if want[k]!=got[k])}
+          receipt=json.loads((root/'SOURCE_RECEIPT.json').read_text())
+          receipt.update({"candidate_sha":os.environ["GITHUB_SHA"],
+              "private_place_bytes":place.stat().st_size,
+              "private_place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+              "source_exact_rojo":"22/22",
+              "official_rc_integrated":False})
+          Path('artifacts/GQ_STATUS22_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('GQ_STATUS22_ROJO_EXACT_22_OF_22_PASS',place.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-STATUS-FENCE-22-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
+            artifacts/GQ_STATUS22_RECEIPT.json
+          retention-days: 3
+
+      - name: Reuse pinned #482 author, #484 source-composer, #485 art, #487 score
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_author
+          persist-credentials: false
+      - name: Checkout original #484 current26 composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout original #485 ART
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout original #487 SCORE
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Compose original 26 source, then status single-overlay to private current27
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py --target v3 --author-project _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json --out artifacts/GQ_STATUS_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py --author _v3_author --quality _v3_quality --art _v3_art --score _v3_score --art-project artifacts/GQ_STATUS_ART.project.json --out artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 "$root/tools/compose_on_current26.py" --base-project artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json --base-receipt artifacts/SOURCE_RECEIPT.json --original-combat _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau --overlay-combat "$root/EGGRUMBLE_SevenRoleCombat.patched.luau" --policy "$root/EGGRUMBLE_StatusTickFence.luau" --out artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27.project.json
+      - name: Compile and build source-exact private current27 game ART SCORE STATUS Place
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,xml.etree.ElementTree as ET,os
+          proj=Path("artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27.project.json")
+          obj=json.loads(proj.read_text())
+          expected={}
+          def walk(n):
+              for name,item in n.items():
+                  if name.startswith("$") or not isinstance(item,dict):continue
+                  if "$path" in item:
+                      f=(proj.parent/item["$path"]).resolve(strict=True)
+                      kind="Script" if f.name.endswith(".server.luau") else ("LocalScript" if f.name.endswith(".client.luau") else "ModuleScript")
+                      assert name not in expected
+                      expected[name]=(kind,f.read_text(encoding="utf8").replace("\r\n","\n"),f)
+                  else:walk(item)
+          walk(obj["tree"])
+          assert len(expected)==27
+          receipt=json.loads(Path("artifacts/SOURCE_STATUS27_RECEIPT.json").read_text())
+          for name,(kind,text,f) in expected.items():
+              assert hashlib.sha256(f.read_bytes()).hexdigest()==receipt["source_27_sha256"][name]
+              subprocess.run(["/tmp/gq_status_luau/luau-compile","--text",str(f)],stdout=subprocess.DEVNULL,check=True)
+          print("GQ_STATUS_CURRENT27_NATIVE_27_OF_27_PASS")
+          PY
+          /tmp/gq_status_rojo build artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27.project.json -o artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27_PRIVATE.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET,os
+          proj=Path("artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27.project.json")
+          place=Path("artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27_PRIVATE.rbxlx")
+          expected={}
+          def walk(n):
+              for name,item in n.items():
+                  if name.startswith("$") or not isinstance(item,dict):continue
+                  if "$path" in item:
+                      f=(proj.parent/item["$path"]).resolve(strict=True)
+                      kind="Script" if f.name.endswith(".server.luau") else ("LocalScript" if f.name.endswith(".client.luau") else "ModuleScript")
+                      assert name not in expected
+                      expected[name]=(kind,f.read_text(encoding="utf8").replace("\r\n","\n"))
+                  else:walk(item)
+          walk(json.loads(proj.read_text())["tree"])
+          assert len(expected)==27
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              assert name and src is not None and name not in actual
+              actual[name]=(kind,src.replace("\r\n","\n"))
+          assert expected==actual,{"missing":sorted(set(expected)-set(actual)),"extra":sorted(set(actual)-set(expected)),
+                                   "changed":sorted(k for k in set(expected)&set(actual) if expected[k]!=actual[k])}
+          receiptPath=Path("artifacts/SOURCE_STATUS27_RECEIPT.json")
+          receipt=json.loads(receiptPath.read_text())
+          receipt["candidate_sha"]=os.environ["GITHUB_SHA"]
+          receipt["private_place_bytes"]=place.stat().st_size
+          receipt["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt["source_exact_rojo"]="27/27"
+          receiptPath.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
+          print("GQ_STATUS_CURRENT27_ROJO_27_OF_27_PASS",place.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-STATUS-CURRENT27-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_STATUS_CURRENT27.project.json
+            artifacts/SOURCE_STATUS27_RECEIPT.json
+          retention-days: 3
+
+      - name: Checkout pinned #510 mage LOS author for source-selective joint intake
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cd64088b3f465f27cce8ddfc88109ddc25d92adf
+          path: _v3_mage
+          persist-credentials: false
+      - name: Build #510 MAGE + #516 status single Combat union on existing original 26
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_mage rev-parse HEAD)" = cd64088b3f465f27cce8ddfc88109ddc25d92adf
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 "$root/tools/compose_with_mage_author.py" --mage-builder _v3_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py --out artifacts/GQ_510_516_COMBAT_UNION.luau
+          python3 "$root/tools/compose_on_current26.py" \
+            --base-project artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --original-combat _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau \
+            --overlay-combat artifacts/GQ_510_516_COMBAT_UNION.luau \
+            --policy "$root/EGGRUMBLE_StatusTickFence.luau" \
+            --out artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json
+      - name: Run actual #510 healing LOS and #516 delayed damage from SAME combined Luau
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 "$root/tools/make_actual_status_callback_native.py" \
+            --source artifacts/GQ_510_516_COMBAT_UNION.luau \
+            --out /tmp/gq_status/ActualServerUnion.spec.luau
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau-compile --text ActualServerUnion.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau ./ActualServerUnion.spec.luau | tee /tmp/gq_510_516_real_callback.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq_510_516_real_callback.log
+          cd "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          src=Path("artifacts/GQ_510_516_COMBAT_UNION.luau").read_text(encoding="utf8")
+          p=Path("_v3_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py")
+          spec=importlib.util.spec_from_file_location("gq_510_mage_author",p)
+          assert spec and spec.loader
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          target=Path("/tmp/gq_status/ActualMageUnion.spec.luau")
+          target.write_text(m.harness(src,fixed=True),encoding="utf8")
+          print("GQ_510_AUTHOR_NATIVE_HARNESS_EXTRACTED_FROM_UNION")
+          PY
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau-compile --text ActualMageUnion.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau ./ActualMageUnion.spec.luau | tee /tmp/gq_510_516_real_mage.log
+          grep -q MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS /tmp/gq_510_516_real_mage.log
+          cd "$GITHUB_WORKSPACE"
+      - name: Compile same 27-source original GAME ART SCORE AI and both Combat repairs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess
+          project=Path("artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json")
+          receipt=json.loads(Path("artifacts/SOURCE_STATUS27_RECEIPT.json").read_text(encoding="utf8"))
+          files={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:
+                      assert k not in files
+                      files[k]=(project.parent/v["$path"]).resolve(strict=True)
+                  else:walk(v)
+          walk(json.loads(project.read_text())["tree"])
+          assert len(files)==27
+          assert set(files)==set(receipt["source_27_sha256"])
+          for name,f in files.items():
+              assert hashlib.sha256(f.read_bytes()).hexdigest()==receipt["source_27_sha256"][name]
+              subprocess.run(["/tmp/gq_status_luau/luau-compile","--text",str(f)],stdout=subprocess.DEVNULL,check=True)
+          text=files["EGGRUMBLE_SevenRoleCombat"].read_text()
+          assert "StatusTickFence.canTick(" in text and "sourceCharacter,char)) then" in text
+          assert "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)" in text
+          assert text.count("StatusTickFence.canTick(")==1
+          print("GQ_510_516_COMBINED_CURRENT27_NATIVE_27_OF_27_PASS")
+          PY
+      - name: Build and assert Rojo source/class byte-exact 27 combined 7-domain Place
+        run: |
+          set -euo pipefail
+          /tmp/gq_status_rojo build artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json -o artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json")
+          place=Path("artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27_PRIVATE.rbxlx")
+          receiptPath=Path("artifacts/SOURCE_STATUS27_RECEIPT.json")
+          receipt=json.loads(receiptPath.read_text())
+          expected={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:
+                      p=(project.parent/v["$path"]).resolve(strict=True)
+                      cls="Script" if p.name.endswith(".server.luau") else ("LocalScript" if p.name.endswith(".client.luau") else "ModuleScript")
+                      assert k not in expected
+                      expected[k]=(cls,p.read_text(encoding="utf8").replace("\r\n","\n"))
+                  else:walk(v)
+          walk(json.loads(project.read_text())["tree"])
+          assert len(expected)==27
+          got={}
+          for el in ET.fromstring(place.read_bytes()).iter("Item"):
+              cls=el.attrib.get("class")
+              if cls not in {"Script","LocalScript","ModuleScript"}:continue
+              props=el.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              assert name and src is not None and name not in got
+              got[name]=(cls,src.replace("\r\n","\n"))
+          assert got==expected,{"missing":sorted(set(expected)-set(got)),"extra":sorted(set(got)-set(expected)),
+                                "changed":sorted(k for k in set(got)&set(expected) if got[k]!=expected[k])}
+          receipt["candidate_sha"]=os.environ["GITHUB_SHA"]
+          receipt["mage_author_head"]="cd64088b3f465f27cce8ddfc88109ddc25d92adf"
+          receipt["status_fence_owner"]="GQ #516"
+          receipt["combined_exact_combat"]=True
+          receipt["private_place_bytes"]=place.stat().st_size
+          receipt["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt["source_exact_rojo"]="27/27"
+          Path("artifacts/SOURCE_MAGE_STATUS27_RECEIPT.json").write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+"\n")
+          print("GQ_510_516_COMBINED_27_ROJO_EXACT_PASS",place.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-510-516-COMBINED-CURRENT27-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json
+            artifacts/SOURCE_MAGE_STATUS27_RECEIPT.json
+          retention-days: 3
+
+      - name: Reuse existing ITEM fairness author #489 without modification
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item_owner
+          persist-credentials: false
+      - name: Reuse original no-waste HEAL author #517 read-only
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 961ea171c32d6f600b8f3b0de1bcdf283c6d3363
+          path: _v3_heal_owner
+          persist-credentials: false
+      - name: Reuse original terminal egg-rule fence #509 read-only
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 40509652a3c1f1574309ffc32de531679471747b
+          path: _v3_postwin
+          persist-credentials: false
+      - name: Source-lock original ITEM and EGG source into one existing 27-script intake
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_item_owner rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _v3_heal_owner rev-parse HEAD)" = 961ea171c32d6f600b8f3b0de1bcdf283c6d3363
+          test "$(git -C _v3_postwin rev-parse HEAD)" = 40509652a3c1f1574309ffc32de531679471747b
+          item=_v3_item_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+          rules=_v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          patched=_v3_postwin/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          python3 _v3_heal_owner/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --source "$item" --out artifacts/EGGRUMBLE_FieldItemPickups.luau
+          ln -s _v3_item_owner _item_original
+          python3 -B -m unittest discover -s _v3_heal_owner/quality_gameplay/v3_heal_no_waste_20261116/tests -p 'test_*.py' -v
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_four_author_intake.py prepare \
+            --base-project artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json \
+            --base-receipt artifacts/SOURCE_STATUS27_RECEIPT.json \
+            --item-author "$item" --item-overlay artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --rules-author "$rules" --rules-overlay "$patched" \
+            --out artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json \
+            --receipt artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json
+      - name: Run genuine #517 HEAL and #509 terminal egg native Luau with negative control
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 _v3_heal_owner/quality_gameplay/v3_heal_no_waste_20261116/make_native_test.py \
+            artifacts/EGGRUMBLE_FieldItemPickups.luau /tmp/gq_status/ActualItemHeal.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualItemHeal.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualItemHeal.spec.luau | tee /tmp/gq_517_heal_real.log
+          grep -q GQ_HEAL_NATIVE_REAL_POLICY_PASS /tmp/gq_517_heal_real.log
+          python3 _v3_postwin/handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/native_and_provenance.py \
+            --original _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out /tmp/gq_status/ActualPostwinEgg.spec.luau \
+            --mutant-out /tmp/gq_status/MutantPostwinEgg.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualPostwinEgg.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualPostwinEgg.spec.luau | tee /tmp/gq_509_egg_real.log
+          grep -q POSTWIN_EGG_DEATH_NATIVE_PASS /tmp/gq_509_egg_real.log
+          if /tmp/gq_status_luau/luau /tmp/gq_status/MutantPostwinEgg.spec.luau >/tmp/gq_509_egg_mutant.log 2>&1; then
+            echo "RED: mutation without #509 terminal fence unexpectedly passes"
+            exit 1
+          fi
+          echo GQ_509_NEGATIVE_MUTANT_FAILURE_CONFIRMED
+          /tmp/gq_status_luau/luau-compile --text artifacts/EGGRUMBLE_FieldItemPickups.luau >/dev/null
+          /tmp/gq_status_luau/luau-compile --text _v3_postwin/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau >/dev/null
+      - name: Compile source-exact original eight domains plus COMBAT ITEM EGG overlays 27 of 27
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json")
+          receipt=json.loads(Path("artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json").read_text())
+          files={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:
+                      assert k not in files
+                      files[k]=(project.parent/v["$path"]).resolve(strict=True)
+                  else:walk(v)
+          walk(json.loads(project.read_text())["tree"])
+          assert len(files)==27
+          assert set(files)==set(receipt["source_27_sha256"])
+          assert set(receipt["modified_existing_sources"])=={"EGGRUMBLE_SevenRoleCombat",
+                                                             "EGGRUMBLE_FieldItemPickups",
+                                                             "EGGRUMBLE_CastleMatchRules"}
+          for name,f in files.items():
+              assert hashlib.sha256(f.read_bytes()).hexdigest()==receipt["source_27_sha256"][name],name
+              subprocess.run(["/tmp/gq_status_luau/luau-compile","--text",str(f)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ_FOUR_AUTHOR_ALL8_LUAU_27_OF_27_PASS")
+          PY
+      - name: Rojo build one unchanged-game 27-source private Place and literal source/class receipt
+        run: |
+          set -euo pipefail
+          /tmp/gq_status_rojo build artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json \
+            -o artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_four_author_intake.py verify \
+            --project artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json \
+            --place artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27_PRIVATE.rbxlx \
+            --receipt artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-510-516-517-509-ALL8-CURRENT27-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json
+            artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json
+          retention-days: 3
+
+      - name: Original #494 neutral pacing owner immutable checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing_original
+          persist-credentials: false
+      - name: Original #501 neutral encounter fairness owner immutable checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_fair_original
+          persist-credentials: false
+      - name: Run original #501 source-contract tests on exact #494 original patch and 26 composer
+        env:
+          P0D_GQ494_COMPOSER: _v3_pacing_original/quality_gameplay/neutral_pacing/tools/compose_private_v3.py
+          P0D_GQ494_POLICY: _v3_pacing_original/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau
+          P0D_V3_ORIGINAL_SWARM: _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau
+          P0D_GQ_ORIGINAL26_PROJECT: artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_pacing_original rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_fair_original rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          python3 -B -m unittest discover -s _v3_fair_original/quality_gameplay/neutral_encounters/tests -p 'test_*.py' -v
+      - name: Reuse exact #501 dual-author composer without writing owner files
+        run: |
+          set -euo pipefail
+          python3 _v3_fair_original/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json \
+            --original-swarm _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing_original/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing_original/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_fair_original/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/GQ_ORIGINAL494_501_NEUTRAL28.project.json
+      - name: Reuse #494 and #501 ORIGINAL native policy tests with current 29-source game
+        run: |
+          set -euo pipefail
+          python3 _v3_pacing_original/quality_gameplay/neutral_pacing/tools/build_native_harness.py \
+            --out /tmp/gq_status/ActualOriginal494Pacing.spec.luau
+          python3 _v3_fair_original/quality_gameplay/neutral_encounters/tools/build_native_harness.py \
+            --out /tmp/gq_status/ActualOriginal501Fairness.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualOriginal494Pacing.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualOriginal501Fairness.spec.luau >/dev/null
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualOriginal494Pacing.spec.luau | tee /tmp/gq494_real_native.log
+          /tmp/gq_status_luau/luau /tmp/gq_status/ActualOriginal501Fairness.spec.luau | tee /tmp/gq501_real_native.log
+          grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' /tmp/gq494_real_native.log
+          grep -q 'NEUTRAL_ENCOUNTER_NATIVE: PASS' /tmp/gq501_real_native.log
+      - name: Source-lock #494+#501 neutral and existing four fixes into ONE 29-source Place
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_neutral_federated29.py prepare \
+            --base26 artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json \
+            --four27 artifacts/EGGRUMBLE_GQ_FOUR_AUTHOR_CURRENT27.project.json \
+            --dual28 artifacts/GQ_ORIGINAL494_501_NEUTRAL28.project.json \
+            --four-receipt artifacts/GQ_FOUR_AUTHOR_CURRENT27_RECEIPT.json \
+            --dual-receipt artifacts/DUAL28_SOURCE_RECEIPT.json \
+            --out artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            --receipt artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
+      - name: Native Luau all 29 mapped Game AI ART SCORE COMBAT ITEM EGG NEUTRAL
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess
+          project=Path("artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json")
+          receipt=json.loads(Path("artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json").read_text())
+          mapped={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:
+                      assert k not in mapped
+                      mapped[k]=(project.parent/v["$path"]).resolve(strict=True)
+                  else:walk(v)
+          walk(json.loads(project.read_text())["tree"])
+          assert len(mapped)==29 and set(mapped)==set(receipt["source29_sha256"])
+          for name,script in mapped.items():
+              assert hashlib.sha256(script.read_bytes()).hexdigest()==receipt["source29_sha256"][name],name
+              subprocess.run(["/tmp/gq_status_luau/luau-compile","--text",str(script)],
+                             check=True,stdout=subprocess.DEVNULL)
+          assert receipt["byte_identical_original26"]==22
+          assert len(receipt["original_unchanged_names"])==22
+          print("GQ_516_ALL8_SIX_AUTHOR_LUAU_29_OF_29_PASS")
+          PY
+      - name: Rojo actual combined 29-source private Place and source/class exact proof
+        run: |
+          set -euo pipefail
+          /tmp/gq_status_rojo build artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            -o artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_neutral_federated29.py verify \
+            --project artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json \
+            --place artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx \
+            --receipt artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
+          echo "PRIVATE_SOURCE_NOT_OFFICIAL_RC_OR_GAMEPLAY_QA"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-ALL8-CURRENT29-ORIGINAL-AUTHORS-PRIVATE-NO-RC
+          path: |
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_PRIVATE.rbxlx
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29.project.json
+            artifacts/GQ_ALL8_SIX_AUTHOR_CURRENT29_RECEIPT.json
+          retention-days: 3
