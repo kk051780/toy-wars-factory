@@ -149,6 +149,14 @@ FEATURE_EVIDENCE = {
    "local function shockwaveClear(character:Model?,root:BasePart):boolean",
    "params.RespectCanCollide=true",
    "and shockwaveClear(c,root) then")),
+ "BUILDER_WALL_SERVER_TOOL_522": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ522_ORIGINAL_BUILDER_WALL_ONLY_INLINE_RC31",
+  "BuilderConstruction.equip(session,p,true,false)",
+  "BuilderConstruction.clear(session)",
+  "Policy.LIFETIME=9",
+  "Policy.MAX_PER_HERO=2",
+  "Policy.MAX_PER_SESSION=12",
+  "tool.Activated:Connect(function()")),
  "GQ8_ROLE_SELECTION_ACK_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "-- GQ8_ROLE_SELECTION_ACK_BEGIN",
   'if chosenRole[p.UserId]==nil then',
@@ -293,7 +301,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_38_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_39_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
