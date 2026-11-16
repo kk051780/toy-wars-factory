@@ -46,7 +46,26 @@ game={GetService=function(_,kind)
  return players
 end}
 local created={}
+local createdTools={}
+local backpack={}
+function backpack:GetChildren()
+ local found={}
+ for _,tool in ipairs(createdTools) do
+  if tool.Parent==self then table.insert(found,tool) end
+ end
+ return found
+end
 Instance={new=function(kind)
+ if kind=="Tool" then
+  local signal={}
+  function signal:Connect(callback) self.callback=callback;return {} end
+  function signal:Fire() if self.callback then self.callback() end end
+  local tool={Parent=nil,Activated=signal,wasDestroyed=false}
+  function tool:IsA(class) return class=="Tool" end
+  function tool:Destroy() self.wasDestroyed=true;self.Parent=nil end
+  table.insert(createdTools,tool)
+  return tool
+ end
  check(kind=="Part","PART_ONLY")
  local p={Name="",Parent=nil,attributes={}}
  function p:SetAttribute(k,v) self.attributes[k]=v end
@@ -91,6 +110,13 @@ function folder:FindFirstChild(name)
  return if name=="TacticalBattlefield" then floor else nil
 end
 local avatar={}
+function avatar:GetChildren()
+ local found={}
+ for _,tool in ipairs(createdTools) do
+  if tool.Parent==self then table.insert(found,tool) end
+ end
+ return found
+end
 local torso={Position=Vector3.new(0,3,0),CFrame={LookVector=Vector3.new(0,0,1)},Parent=avatar}
 function torso:IsA(kind) return kind=="BasePart" end
 function avatar:FindFirstChildOfClass(kind)
@@ -102,6 +128,9 @@ end
 local attributes={EGGRUMBLE_Role="BUILDER",EGGRUMBLE_QueuedMode="TEAM"}
 local p={Parent=players,UserId=1337,Character=avatar}
 function p:GetAttribute(key) return attributes[key] end
+function p:FindFirstChildOfClass(class)
+ return if class=="Backpack" then backpack else nil
+end
 currentPlayer=p
 local owner={id="1337",isAI=false,alive=true,heldEggs=0}
 local session={
@@ -253,6 +282,46 @@ folder.Parent=nil
 pending[#pending].callback()
 check(created[#created].destroyed,"AUTO_DESTROYED_WORLD_CLEAR")
 folder.Parent=workspace
+Build.clear(session)
+
+-- Real additional Builder Tool input, preserving original A/B/C tools.
+session.mode="TEAM"
+attributes.EGGRUMBLE_QueuedMode="TEAM"
+local toolOff,toolReason=Build.equip(session,p,false)
+check(not toolOff and toolReason=="FEATURE_OFF","BUILDER_TOOL_OFF")
+check(#createdTools==0,"BUILDER_TOOL_OFF_NO_ITEMS")
+local toolOK,toolReady=Build.equip(session,p,true)
+check(toolOK and toolReady=="TOOLS_READY","BUILDER_TOOLS_SERVER_GRANTED")
+check(#createdTools==2,"BUILDER_TWO_TOOLS_NO_REMOTE")
+check(createdTools[1].Name=="EGGRUMBLE_SKILL_CONSTRUCT_WALL","BUILDER_WALL_TOOL_NAMED")
+check(createdTools[2].Name=="EGGRUMBLE_SKILL_CONSTRUCT_BRIDGE","BUILDER_BRIDGE_TOOL_NAMED")
+check(createdTools[1].Parent==backpack and createdTools[2].Parent==backpack,"BUILDER_TOOLS_IN_BACKPACK")
+local firstWall=createdTools[1]
+local n=#created
+firstWall.Activated:Fire()
+check(#created==n,"UNEQUIPPED_TOOL_DENIED")
+firstWall.Parent=avatar
+firstWall.Activated:Fire()
+check(#created==n+1,"EQUIPPED_SERVER_TOOL_CREATES_WALL")
+Build.clear(session)
+local old=firstWall
+toolOK,toolReady=Build.equip(session,p,true)
+check(toolOK and toolReady=="TOOLS_READY","BUILDER_RESYNC_OK")
+check(old.wasDestroyed and old.Parent==nil,"BUILDER_OLD_TOOL_REMOVED")
+check(#createdTools==4,"BUILDER_TOOLS_REGENERATED")
+local staleN=#created
+old.Activated:Fire()
+check(#created==staleN,"BUILDER_STALE_UNEQUIPPED_TOOL_NOOP")
+local currentTool=createdTools[3]
+currentTool.Parent=avatar
+session.isCurrentHuman=function(_) return false end
+currentTool.Activated:Fire()
+check(#created==staleN,"BUILDER_TOOL_LIVE_MATCH_GUARD")
+session.isCurrentHuman=function(candidate) return activeSession==session and candidate==p end
+session.rules.phase="FINISHED"
+currentTool.Activated:Fire()
+check(#created==staleN,"BUILDER_TOOL_TERMINAL_PHASE_GUARD")
+session.rules.phase="ACTIVE"
 Build.clear(session)
 
 print("GQ_BUILDER_RUNTIME_MOCK_PASS assertions="..tostring(assertions))
