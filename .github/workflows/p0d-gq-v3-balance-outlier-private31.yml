@@ -120,8 +120,8 @@ jobs:
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
           else
-            test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
-            echo "GQ_OFFICIAL_RC_BRANCH_VALIDATION"
+            test "$GITHUB_REF" = refs/heads/quality/gq-v3-balance-outlier-20261116
+            echo "GQ568_PRIVATE_BRANCH_ONLY_VALIDATION; OFFICIAL_RC_SOURCE_PINNED_IMMUTABLE"
           fi
           mkdir -p quality_gameplay handoffs
           test ! -e handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
