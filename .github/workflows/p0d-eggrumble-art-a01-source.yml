@@ -61,7 +61,8 @@ jobs:
       - name: NATIVE compile each art layer and every current author V3 source
         run: |
           set -euo pipefail
-          for source in handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.server.luau; do
+          for source in handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.server.luau \
+                       handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.client.luau; do
             echo "NATIVE ART PARSE $source"
             /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
           done
@@ -94,6 +95,12 @@ jobs:
             destination=".art-preview-generated/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
             /tmp/eggrumble-a01-rojo/rojo build "$project" --output "$destination"
             test -s "$destination"
+            # The A01 LOD is client-only, and MUST be in every private place.
+            grep -q "EGGRUMBLE_ArtDistanceLOD" "$destination"
+            if [[ "$mode" == v3 ]]; then
+              # Latest author's mobile combat camera and hit-feedback stay intact.
+              grep -q "EGGRUMBLE_CombatFeel" "$destination"
+            fi
             cp "$destination" "art-private-builds/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
             echo "ROJO_PRIVATE_BUILD_PASS=${mode}"
           done
@@ -107,4 +114,5 @@ jobs:
           if-no-files-found: error
       - name: Report boundaries
         run: |
-          echo "SOURCE REGRESSION ONLY — NOT Native Luau/Rojo/Studio/Android/FUN/OWNER acceptance."
+          echo "CI ACTUALLY ran Native Luau parsing + five private Rojo place builds + client script presence."
+          echo "Studio Play/Android frame performance/FUN/ART/OWNER acceptance and RC Publish remain NOT_RUN."
