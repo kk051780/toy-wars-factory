@@ -56,6 +56,13 @@ jobs:
           ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
           path: _item_original
           persist-credentials: false
+      - name: Reuse original quality writer #512 combo-only round exit source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          path: _combo_original
+          persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
         shell: bash
         run: |
@@ -161,6 +168,69 @@ jobs:
           assert r["item_overrides_only"]==["EGGRUMBLE_FieldItemPickups"]
           print("GQ_HEAL_REAL_ITEM_PLUS_8_DOMAINS_PRIVATE26_SOURCE_EXACT_PASS")
           PY
+      - name: Existing #512 pure combo module + exact ITEM private26 cross-composition
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _combo_original rev-parse HEAD)" = e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          python3 _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/tools/compose_private28.py \
+            --base26 artifacts/ITEM_GQ_HEAL26.project.json \
+            --root _combo_original/quality_gameplay/v3_round_attribute_fence_20261116 \
+            --out artifacts/ITEM_GQ_HEAL_COMBO28.project.json
+          python3 - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/ITEM_GQ_HEAL_COMBO28.project.json")
+          data=json.loads(project.read_text(encoding="utf-8"))
+          compiled=[]
+          def walk(node):
+              if not isinstance(node,dict): return
+              if "$path" in node:
+                  loc=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(loc)],
+                      check=True,stdout=subprocess.DEVNULL)
+                  compiled.append(loc)
+              else:
+                  for name,entry in node.items():
+                      if not name.startswith("$"): walk(entry)
+          walk(data["tree"])
+          assert len(compiled)==28 and len(set(compiled))==28, "not unique 28"
+          assert len([p for p in compiled if p.name=="EGGRUMBLE_FieldItemPickups.luau"])==1, "duplicate item"
+          item=next(p for p in compiled if p.name=="EGGRUMBLE_FieldItemPickups.luau")
+          assert hashlib.sha256(item.read_bytes()).hexdigest()=="55f7cce975c05a263047192043d20b8b6c1de869d5c44c8c5b76d7d70dfe582c"
+          author=Path("_combo_original/quality_gameplay/v3_round_attribute_fence_20261116")
+          for n in ["EGGRUMBLE_RoundAttributeFence.luau","EGGRUMBLE_RoundAttributeFence.server.luau"]:
+              assert len([p for p in compiled if p.name==n])==1 and next(p for p in compiled if p.name==n).read_bytes()==(author/n).read_bytes()
+          receipt=Path("artifacts/GQ_COMBO28_SOURCE_RECEIPT.json")
+          r=json.loads(receipt.read_text())
+          assert r["mapped_sources"]==28 and r["original_count"]==26 and r["added_count"]==2
+          r["cross_candidate_kind"]="SOURCE_EXACT_ONLY_GQ517_ITEM_PLUS_ORIGINAL_GQ512_COMBO"
+          r["gq517_fixed_sha"]="8b5b3567494e81ce95f1acef5fc66fb4be3ced63"
+          r["gq512_original_sha"]="e232b9a8411879c2c1a945c0a8ed09233ca73fff"
+          r["item_original_author_sha"]="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
+          r["official_rc_adopted"]=False
+          receipt.write_text(json.dumps(r,indent=2,ensure_ascii=False)+"\n")
+          print("GQ_HEAL_ITEM_COMBO28_NATIVE_PARSE_AND_UNIQUE_SOURCE_PASS",len(compiled))
+          PY
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_COMBO28.project.json -o artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+          python3 _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/tools/verify_private28.py \
+            artifacts/ITEM_GQ_HEAL_COMBO28.project.json artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          r=json.loads(Path("artifacts/GQ_COMBO28_SOURCE_RECEIPT.json").read_text())
+          assert r["mapped_sources"]==28 and r["changed_original_source_paths"]==0
+          assert r["official_rc_integrated"] is False
+          print("GQ_517_ITEM_PLUS_512_COMBO_PRIVATE28_EXACT_PASS",r["place_bytes"],r["place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-HEAL-ITEM-PLUS-ORIGINAL-COMBO-PRIVATE28-NOT-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL_COMBO28.project.json
+            artifacts/GQ_COMBO28_SOURCE_RECEIPT.json
+          retention-days: 2
       - uses: actions/upload-artifact@v4
         with:
           name: GQ-HEAL-NO-WASTE-PRIVATE26-SOURCE-ONLY-NOT-RC
