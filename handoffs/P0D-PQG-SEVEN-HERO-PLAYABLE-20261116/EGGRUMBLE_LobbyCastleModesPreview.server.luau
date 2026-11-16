@@ -312,7 +312,16 @@ end
 
 local function joinQueue(mode:string,p:Player)
  if sessions[mode] then return end
- if joined[p.UserId] then return end
+ local previous=joined[p.UserId]
+ if previous then
+  -- Joining the same gate cancels; choosing the other switches mode while waiting.
+  -- Never remove a player from a live match.
+  if sessions[previous] then return end
+  if not RoundReplay.leaveWaitingQueue(previous,p,queues,joined,queueEpoch,sessions) then return end
+  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
+  InteractionGuard.clear(p)
+  if previous==mode then return end
+ end
  joined[p.UserId]=mode
  table.insert(queues[mode],p)
  p:SetAttribute("EGGRUMBLE_QueuedMode",mode)
@@ -353,12 +362,13 @@ for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
 end
 Players.PlayerRemoving:Connect(function(p)
  InteractionGuard.clear(p)
- local mode=joined[p.UserId];joined[p.UserId]=nil
+ local mode=joined[p.UserId]
  if mode and not sessions[mode] then
-  local q=queues[mode]
-  local idx=table.find(q,p)
-  if idx then table.remove(q,idx) end
+  -- Cancel countdown if the last queued human disconnects; the next entrant
+  -- must receive a fresh full COUNTDOWN rather than inherit the stale timer.
+  RoundReplay.leaveWaitingQueue(mode,p,queues,joined,queueEpoch,sessions)
  end
+ joined[p.UserId]=nil
  chosenDefense[p.UserId]=nil
  chosenRole[p.UserId]=nil
  SevenRoleCombat.clear(p)
