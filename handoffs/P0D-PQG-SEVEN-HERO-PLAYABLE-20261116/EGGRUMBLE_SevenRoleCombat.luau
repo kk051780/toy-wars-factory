@@ -6,6 +6,7 @@ local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 local CombatBalance=require(script.Parent:WaitForChild("EGGRUMBLE_CombatBalance"))
 local SkillFX=require(script.Parent:WaitForChild("EGGRUMBLE_SkillFX"))
+local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local HeroCombat={}
 local ORDER={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
@@ -73,6 +74,7 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
    local duel=if player:GetAttribute("EGGRUMBLE_Role")=="WARRIOR" and loneEnemy then 1.25 else 1
    local mark=if (h:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
    h:TakeDamage(damage*duel*mark)
+   ImpactFeedback.hit(enemy,player:GetAttribute("EGGRUMBLE_Role") or "WARRIOR")
    count+=1
   end
  end
@@ -98,6 +100,7 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
     and (enemyRoot.Position-root.Position).Magnitude<=18 then 1.25 else 1
    local mark=if (enemyHum:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
    enemyHum:TakeDamage(damage*duel*mark)
+   ImpactFeedback.hit(enemyChar,p:GetAttribute("EGGRUMBLE_Role") or "WARRIOR")
    count+=1
   end
  end
@@ -240,6 +243,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
   local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color,spec.shape)
   secondaryEffect(session,p,root,char,center,area,spec.effect,spec.shape)
   SkillFX.emit(session.world,role,slot,root.Position,root.CFrame.LookVector,center,area)
+  ImpactFeedback.attacker(p,role,slot,hits)
   return hits
  end
  if role=="WARRIOR" then
@@ -370,6 +374,7 @@ function HeroCombat.equip(session:any,p:Player,role:string):()
 end
 function HeroCombat.clear(p:Player)
  lastByPlayer[p.UserId]=nil
+ ImpactFeedback.clear(p)
  for _,container in ipairs({p:FindFirstChildOfClass("Backpack"),p.Character}) do
   if container then
    for _,item in ipairs(container:GetChildren()) do
