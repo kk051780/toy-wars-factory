@@ -281,4 +281,60 @@ check(not pcall(function()
 end),"live Roblox server allowed Studio-only queue timer")
 studio=true
 
+-- Rejoining the SAME actual castle after dying: live avatar and castle only.
+local respawnHome={x=18,y=7,z=90}
+local respawnHero={UserId=711,Parent=playersService}
+local respawnCharacter={root={CFrame=nil},humanoid={Health=100}}
+function respawnCharacter:FindFirstChildOfClass(key:string):any
+ return if key=="Humanoid" then self.humanoid else nil
+end
+function respawnCharacter:FindFirstChild(key:string):any
+ return if key=="HumanoidRootPart" then self.root else nil
+end
+respawnHero.Character=respawnCharacter
+local respawnSession={rules={phase="ACTIVE",castles={["711"]={alive=true}}},
+ world={Parent={}},castleLocations={["711"]={x=0,y=0,z=0}}}
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==true,
+ "surviving hero could not re-enter their fortress")
+check(respawnCharacter.root.CFrame and respawnCharacter.root.CFrame.position==respawnHome,
+ "re-entry did not teleport actual new HumanoidRootPart")
+local lastFrame=respawnCharacter.root.CFrame
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,{root={}},respawnHome)==false,
+ "stale CharacterAdded re-entered or teleported a new avatar")
+check(respawnCharacter.root.CFrame==lastFrame,"stale avatar changed live player's position")
+
+respawnSession.rules.castles["711"].alive=false
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "destroyed personal castle respawned hero")
+respawnSession.rules.castles["711"].alive=true
+respawnSession.rules.phase="FINISHED"
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "finished round accepted re-entry")
+respawnSession.rules.phase="ACTIVE"
+respawnSession.world.Parent=nil
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "destroyed arena accepted re-entry")
+respawnSession.world.Parent={}
+respawnCharacter.humanoid.Health=0
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "dead new avatar could enter castle")
+respawnCharacter.humanoid.Health=100
+respawnSession.castleLocations["711"]=nil
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "owner lacking physical fortress respawned")
+respawnSession.castleLocations["711"]={}
+respawnHero.Parent=nil
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "player who left Roblox server could be teleported")
+respawnHero.Parent=playersService
+respawnCharacter.root=nil
+check(Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)==false,
+ "missing physical HumanoidRootPart accepted")
+respawnCharacter.root={CFrame=nil}
+studio=false
+check(not pcall(function()
+ Replay.returnToActiveCastle(respawnSession,respawnHero,respawnCharacter,respawnHome)
+end),"preview respawn helper callable on published server")
+studio=true
+
 print("[EGGRUMBLE ROUND REPLAY NATIVE] PASS",checks,"functional assertions; STUDIO/ANDROID NOT RUN")

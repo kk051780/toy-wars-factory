@@ -13,6 +13,9 @@ local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_Interaction
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
+-- Existing ITEM author remains the one and only effect/collection implementation.
+local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
+local RaidItemIntake=require(script.Parent:WaitForChild("EGGRUMBLE_RaidItemIntake"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -260,6 +263,9 @@ local function startSession(mode:string)
   end)
  end
  Rules.start(session.rules)
+ -- Connect existing HEAL/DASH/SHIELD world pickups to *both* actual match modes,
+ -- without spawning separate item preview worlds or inventing a second inventory.
+ session.fieldItemCount=RaidItemIntake.start(session,root,FieldItems)
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
@@ -299,9 +305,19 @@ local function startSession(mode:string)
    table.insert(session.lifeConnections,p.CharacterAdded:Connect(function(character)
     task.delay(.8,function()
      if p.Parent and joined[p.UserId]==mode and p.Character==character
-      and session.rules.phase=="ACTIVE" then
-      local castle=session.rules.castles[tostring(p.UserId)]
-      if castle and castle.alive then SevenRoleCombat.equip(session,p,role) end
+      and sessions[mode]==session and session.rules.phase=="ACTIVE" then
+      local id=tostring(p.UserId)
+      local castle=session.rules.castles[id]
+      local home=session.castleLocations[id]
+      if castle and castle.alive and home then
+       -- Wait for a physical live Avatar before entering the same castle match.
+       -- The helper rejects stale characters, dead Humanoids and destroyed castles.
+       local rootPart=character:FindFirstChild("HumanoidRootPart")
+        or character:WaitForChild("HumanoidRootPart",5)
+       if rootPart and RoundReplay.returnToActiveCastle(session,p,character,home+Vector3.new(0,7,-45)) then
+        SevenRoleCombat.equip(session,p,role)
+       end
+      end
      end
     end)
    end))

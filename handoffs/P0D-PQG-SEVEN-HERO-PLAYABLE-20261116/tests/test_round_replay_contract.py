@@ -91,6 +91,25 @@ class RoundReplayContract(unittest.TestCase):
         self.assertNotIn("ScreenGui",REPLAY)
         self.assertNotIn("RemoteEvent",REPLAY)
 
+    def test_live_avatar_returns_to_the_original_castle(self):
+        # One original server-owned reentry path, no duplicate weapon or castle.
+        self.assertIn("function Replay.returnToActiveCastle(",REPLAY)
+        self.assertIn("p.Character~=character",REPLAY)
+        self.assertIn('session.rules.phase~="ACTIVE"',REPLAY)
+        self.assertIn("not session.world.Parent",REPLAY)
+        self.assertIn("not castle.alive or not session.castleLocations[id]",REPLAY)
+        self.assertIn('character:FindFirstChildOfClass("Humanoid")',REPLAY)
+        self.assertIn('character:FindFirstChild("HumanoidRootPart")',REPLAY)
+        self.assertIn("root.CFrame=CFrame.new(arrival)",REPLAY)
+        self.assertIn("sessions[mode]==session and session.rules.phase==\"ACTIVE\"",LOBBY)
+        self.assertIn("local home=session.castleLocations[id]",LOBBY)
+        self.assertIn('character:WaitForChild("HumanoidRootPart",5)',LOBBY)
+        arrive="RoundReplay.returnToActiveCastle(session,p,character,home+Vector3.new(0,7,-45))"
+        self.assertIn(arrive,LOBBY)
+        n=LOBBY.index(arrive)
+        self.assertIn("SevenRoleCombat.equip(session,p,role)",LOBBY[n:n+130])
+        self.assertNotIn("RemoteEvent",REPLAY)
+
     def test_single_rojo_game_host_and_no_remote_or_stores(self):
         scripts=PROJECT["tree"]["ServerScriptService"]
         self.assertEqual(scripts["EGGRUMBLE_RoundReplay"]["$path"],"EGGRUMBLE_RoundReplay.luau")
