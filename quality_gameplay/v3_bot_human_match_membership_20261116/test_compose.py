@@ -12,7 +12,7 @@ from compose import (
     OWNER_BLOBS, compose, git_blob_sha, replace_exact, run
 )
 
-HOST_FIXTURE = "--!strict\nlocal session={}\n  sessions[mode]=session\n  -- Clean up only this finished match;\n"
+HOST_FIXTURE = "--!strict\nlocal session={}\n sessions[mode]=session\n -- Clean up only this finished match;\n"
 BOT_FIXTURE = "--!strict\nlocal BotActors={}\n" + BOT_BEFORE + "\n"
 
 
