@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/p0d-eggrumble-gq-current26-private.yml'
       - 'quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/**'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -110,6 +111,11 @@ jobs:
           cp "$score/tests/run_score_balance_native.luau" /tmp/gq_score_vm/Runner.luau
           (cd /tmp/gq_score_vm && /tmp/gq_native/luau Runner.luau) | tee artifacts/SCORE_NATIVE.log
           grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/SCORE_NATIVE.log
+      - name: Native Luau execute actual AI close-wall LOS and two mutant negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_native/luau
       - name: Acquire checksum-pinned Rojo and build unpublished candidate
         shell: bash
         run: |
