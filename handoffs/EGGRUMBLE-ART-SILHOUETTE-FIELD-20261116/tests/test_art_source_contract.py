@@ -208,11 +208,24 @@ class VisualLayersSourceContract(unittest.TestCase):
                     source = 'local G=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))\\n'
                 (author_dir / filename).write_text(source, encoding="utf-8")
                 nodes[name] = {"$path": filename}
-            original = json.dumps({"tree": {"ServerScriptService": nodes}})
+            client_source = author_dir / "EGGRUMBLE_CombatFeel.client.luau"
+            client_source.write_text("return {}\\n", encoding="utf-8")
+            original = json.dumps({"tree": {
+                "ServerScriptService": nodes,
+                "StarterPlayer": {
+                    "$className": "StarterPlayer",
+                    "StarterPlayerScripts": {
+                        "$className": "StarterPlayerScripts",
+                        "EGGRUMBLE_CombatFeel": {"$path": client_source.name},
+                    },
+                },
+            }})
             source_path = author_dir / "author.project.json"
             source_path.write_text(original, encoding="utf-8")
             output = base / "output" / "private_art.project.json"
             assembled = module.compose(source_path, output, ROOT)
+            client = assembled["tree"]["StarterPlayer"]["StarterPlayerScripts"]["EGGRUMBLE_CombatFeel"]
+            self.assertEqual((output.parent / client["$path"]).resolve(), client_source.resolve())
             art = assembled["tree"]["ServerScriptService"]
             self.assertEqual(set(art) - {"$className"}, set(module.MANDATORY_GAME_NAMES) | set(module.ART_NAMES))
             self.assertTrue(output.exists())
@@ -221,6 +234,62 @@ class VisualLayersSourceContract(unittest.TestCase):
                 if name == "$className":
                     continue
                 self.assertTrue((output.parent / node["$path"]).resolve().is_file(), name)
+
+    def test_new_author_require_is_salvaged_without_editing_author_manifest(self):
+        tool_path = ROOT / "tools" / "compose_current_v3_art.py"
+        spec = importlib.util.spec_from_file_location("a01_author_dependency_composer", tool_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            author_dir = base / "author"
+            author_dir.mkdir()
+            nodes = {"$className": "ServerScriptService"}
+            for name in module.MANDATORY_GAME_NAMES:
+                filename = name + ".luau"
+                source = "return {}\\n"
+                if name == "EGGRUMBLE_SevenRoleCombat":
+                    source = 'local W=require(script.Parent:WaitForChild("EGGRUMBLE_WeaponSilhouettes"))\\n'
+                (author_dir / filename).write_text(source, encoding="utf-8")
+                nodes[name] = {"$path": filename}
+            extra = author_dir / "EGGRUMBLE_WeaponSilhouettes.luau"
+            extra.write_text("return {}\\n", encoding="utf-8")
+            original = json.dumps({"tree": {"ServerScriptService": nodes}})
+            original_path = author_dir / "v3.project.json"
+            original_path.write_text(original, encoding="utf-8")
+            out = base / "generated" / "v3_art.project.json"
+            result = module.compose(original_path, out, ROOT)
+            assembled = result["tree"]["ServerScriptService"]
+            self.assertIn("EGGRUMBLE_WeaponSilhouettes", assembled)
+            self.assertEqual(
+                (out.parent / assembled["EGGRUMBLE_WeaponSilhouettes"]["$path"]).resolve(),
+                extra.resolve(),
+            )
+            self.assertEqual(original_path.read_text(encoding="utf-8"), original)
+            self.assertNotIn("EGGRUMBLE_WeaponSilhouettes", original)
+
+    def test_missing_real_author_dependency_rejects_instead_of_forging_source(self):
+        tool_path = ROOT / "tools" / "compose_current_v3_art.py"
+        spec = importlib.util.spec_from_file_location("a01_author_dependency_missing", tool_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            nodes = {"$className": "ServerScriptService"}
+            for name in module.MANDATORY_GAME_NAMES:
+                fn = base / (name + ".luau")
+                fn.write_text(
+                    'local W=require(script.Parent:WaitForChild("EGGRUMBLE_MissingAuthorModule"))\\n'
+                    if name == "EGGRUMBLE_SevenRoleCombat" else "return {}\\n",
+                    encoding="utf-8",
+                )
+                nodes[name] = {"$path": fn.name}
+            author = base / "current_author.project.json"
+            author.write_text(json.dumps({"tree": {"ServerScriptService": nodes}}), encoding="utf-8")
+            out = base / "preview" / "v3_art.project.json"
+            with self.assertRaisesRegex(ValueError, "Missing real author sibling module"):
+                module.compose(author, out, ROOT)
+            self.assertFalse(out.exists())
 
     def test_dynamic_composer_rejects_outdated_author_module_set(self):
         tool_path = ROOT / "tools" / "compose_current_v3_art.py"
