@@ -1,6 +1,6 @@
 --!strict
 -- EGGRUMBLE V3 / isolated Studio-only CHARACTER VISUAL LAYER (2026-11-16)
--- Seven distinctive role silhouettes for the original SevenHeroArena stands/players.
+-- Seven distinct role-BODY silhouettes for V3 and SevenHeroArena. The V3 original author owns weapons.
 -- Adds decorative 3D forms to existing moving BotActors without changing combat.
 -- No gameplay authority, physics collisions, RemoteEvents, GUI, store or RC writes.
 local Players = game:GetService("Players")
@@ -10,7 +10,6 @@ if not RunService:IsStudio() then return end
 local HERO_SOURCE = "P0D_SEVEN_HERO_STUDIO_ONLY"
 local PART_BUDGET_PER_SUBJECT = 13
 local MAX_LOBBY_ROLE_STAND_PARTS = 4
-local MAX_HANDHELD_WEAPON_PARTS = 3
 local HERO_ROLES = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local COLORS = {
  WARRIOR={base=Color3.fromRGB(62,63,76),accent=Color3.fromRGB(224,177,83),cloth=Color3.fromRGB(133,47,56)},
@@ -135,80 +134,6 @@ local function sculpt(parent:Instance,anchor:BasePart,role:string,static:boolean
  end
 end
 
-local function sculptHandheldWeapon(art:Instance,character:Model,role:string)
- local anchor=character:FindFirstChild("RightHand",true) or character:FindFirstChild("Right Arm",true)
- if not anchor or not anchor:IsA("BasePart") then return end
- local palette=COLORS[role]
- if not palette then return end
- -- Real V3 combat equips skill Tools without visible Handles; cosmetic props are
- -- welded to the actual hand and never register Tools, touches, damage or casts.
- local made=0
- local function add(name:string,kind:string,size:Vector3,offset:CFrame,color:Color3,material:Enum.Material)
-  if made>=MAX_HANDHELD_WEAPON_PARTS then return end
-  made+=1
-  piece(art,anchor,"Weapon_"..role.."_"..name,kind,size,offset,color,material,false)
- end
- local b=palette.base
- local a=palette.accent
- if role=="WARRIOR" then
-  -- War god: exceptional broadblade; visible from 20-30 studs.
-  add("Greatsword","Wedge",Vector3.new(.88,4.0,.37),
-   CFrame.new(0,2.1,-.3),a,Enum.Material.Metal)
-  add("Crossguard","Block",Vector3.new(2.0,.28,.55),
-   CFrame.new(0,.38,-.3),b,Enum.Material.Metal)
-  add("Hilt","Cylinder",Vector3.new(.35,1.25,.35),
-   CFrame.new(0,-.38,-.3),b,Enum.Material.Wood)
- elseif role=="MAGE" then
-  -- Mage: tall staff with a floating star lens.
-  add("Staff","Cylinder",Vector3.new(.30,4.8,.30),
-   CFrame.new(0,.6,-.1),b,Enum.Material.Wood)
-  add("Crystal","Ball",Vector3.new(1.35,1.35,1.35),
-   CFrame.new(0,3.12,-.1),a,Enum.Material.Glass)
-  add("Arc","Wedge",Vector3.new(1.5,.9,.42),
-   CFrame.new(0,3.52,-.1),palette.cloth,Enum.Material.Metal)
- elseif role=="NINJA" then
-  -- Assassin: paired slender reverse-grip daggers.
-  add("FangL","Wedge",Vector3.new(.32,2.25,.28),
-   CFrame.new(-.34,-1.0,-.3)*CFrame.Angles(0,0,math.rad(24)),a,Enum.Material.Metal)
-  add("FangR","Wedge",Vector3.new(.32,2.25,.28),
-   CFrame.new(.34,-1.0,-.3)*CFrame.Angles(0,0,math.rad(-24)),a,Enum.Material.Metal)
-  add("Knuckle","Block",Vector3.new(1.1,.33,.65),
-   CFrame.new(0,.18,-.3),b,Enum.Material.Metal)
- elseif role=="TRAPPER" then
-  -- Psychic: split hand resonator with a single glass core.
-  add("PsyFinL","Wedge",Vector3.new(.58,1.8,.85),
-   CFrame.new(-.65,.62,-.42),b,Enum.Material.Metal)
-  add("PsyFinR","Wedge",Vector3.new(.58,1.8,.85),
-   CFrame.new(.65,.62,-.42),b,Enum.Material.Metal)
-  add("PsySphere","Ball",Vector3.new(1.25,1.25,1.25),
-   CFrame.new(0,1.25,-.48),a,Enum.Material.Glass)
- elseif role=="BUILDER" then
-  -- Mad Scientist: short modular engineering launcher.
-  add("ToolBody","Block",Vector3.new(1.55,1.35,2.3),
-   CFrame.new(0,.3,-.55),b,Enum.Material.Metal)
-  add("ToolBarrel","Cylinder",Vector3.new(.83,1.7,.83),
-   CFrame.new(0,.27,-1.85)*CFrame.Angles(math.rad(90),0,0),palette.cloth,Enum.Material.Metal)
-  add("ReactorLens","Ball",Vector3.new(.92,.92,.42),
-   CFrame.new(0,1.12,-.55),a,Enum.Material.Glass)
- elseif role=="BEAST" then
-  -- Beast Master: horned claw scepter.
-  add("BoneStem","Cylinder",Vector3.new(.38,3.3,.38),
-   CFrame.new(0,1.15,-.2),b,Enum.Material.Wood)
-  add("HornL","Wedge",Vector3.new(.65,2.0,.73),
-   CFrame.new(-.5,2.6,-.2)*CFrame.Angles(0,0,math.rad(18)),a,Enum.Material.SmoothPlastic)
-  add("HornR","Wedge",Vector3.new(.65,2.0,.73),
-   CFrame.new(.5,2.6,-.2)*CFrame.Angles(0,0,math.rad(-18)),a,Enum.Material.SmoothPlastic)
- elseif role=="ZOMBIE" then
-  -- Shaman: ritual scythe with crooked crescent and charm.
-  add("GrimStaff","Cylinder",Vector3.new(.34,4.0,.34),
-   CFrame.new(0,.9,-.2),b,Enum.Material.Wood)
-  add("Crescent","Wedge",Vector3.new(1.85,1.7,.35),
-   CFrame.new(-.8,2.95,-.2)*CFrame.Angles(0,0,math.rad(-25)),a,Enum.Material.Metal)
-  add("Charm","Ball",Vector3.new(.58,.58,.58),
-   CFrame.new(-.18,2.1,-.2),palette.cloth,Enum.Material.Glass)
- end
-end
-
 local function decorateHeroCharacter(player:Player)
  local char=player.Character
  if not char then return end
@@ -226,7 +151,6 @@ local function decorateHeroCharacter(player:Player)
  art.Name="EGGRUMBLE_RoleVisuals"
  art.Parent=char
  sculpt(art,anchor,role,false)
- sculptHandheldWeapon(art,char,role)
 end
 
 local function decorateArenaStand(source:Instance,role:string)
