@@ -1,0 +1,102 @@
+name: EGGRUMBLE GQ V3 isolated round-attribute fence native and private23
+on:
+  push:
+    branches:
+      - quality/gq-v3-round-attribute-fence-20261116
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_round_attribute_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-round-attributes-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  round-fence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify immutable original author #482 is an ancestor
+        run: git merge-base --is-ancestor fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD
+      - name: Positive / negative source and 21 unchanged original scripts
+        run: python3 -B -m unittest discover -v -s quality_gameplay/v3_round_attribute_fence_20261116/tests
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Pinned native Luau source parse and real module VM regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq_round_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_round_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          base=Path("quality_gameplay/v3_round_attribute_fence_20261116")
+          project=json.loads((base/"EGGRUMBLE_V3_ROUND_FENCE.project.json").read_text())
+          def paths(node):
+              for k,v in node.items():
+                  if k.startswith("$") or not isinstance(v,dict):continue
+                  if "$path" in v:yield (base/v["$path"]).resolve(strict=True)
+                  else:yield from paths(v)
+          files=list(paths(project["tree"]))
+          assert len(files)==23 and len(set(files))==23
+          for path in files:
+              subprocess.run(["/tmp/gq_round_luau/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          source=(base/"EGGRUMBLE_RoundAttributeFence.luau").read_text()
+          testcase="""\nlocal F=(function()\n"""+source+"""\nend)()\n
+          assert(F.shouldClear("TEAM",nil))
+          assert(F.shouldClear("BATTLE_ROYALE",nil))
+          for _,v in ipairs({"TEAM","BATTLE_ROYALE","","ACTIVE","LOBBY",false,4}) do
+            assert(not F.shouldClear(v,"TEAM"))
+            assert(not F.shouldClear(v,"BATTLE_ROYALE"))
+          end
+          assert(not F.shouldClear(nil,nil))
+          assert(not F.shouldClear("TEAM","BATTLE_ROYALE"))
+          assert(not F.shouldClear("ACTIVE",nil))
+          local attrs={EGGRUMBLE_Combo=123,EGGRUMBLE_BestCombo=500,EGGRUMBLE_BossDefeats=5}
+          local p={SetAttribute=function(_,key,value) attrs[key]=value end}
+          assert(F.clear(p)==3)
+          assert(attrs.EGGRUMBLE_Combo==0 and attrs.EGGRUMBLE_BestCombo==0 and attrs.EGGRUMBLE_BossDefeats==0)
+          assert(F.clear(p)==3)
+          print("GQ_ROUND_STATE_REAL_NATIVE_VM_PASS")
+          """
+          Path("/tmp/gq_round_vm.luau").write_text(testcase)
+          PY
+          /tmp/gq_round_luau/luau-compile --text /tmp/gq_round_vm.luau >/dev/null
+          /tmp/gq_round_luau/luau /tmp/gq_round_vm.luau | tee /tmp/gq_round_vm.log
+          grep -q GQ_ROUND_STATE_REAL_NATIVE_VM_PASS /tmp/gq_round_vm.log
+      - name: Pin real Rojo 7.7.1 binary sha256
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_round_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_round_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_round_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/gq_round_rojo")
+              out.write_bytes(z.read(names[0]));out.chmod(0o755)
+          PY
+      - name: Build genuine private Place and source-exact audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          /tmp/gq_round_rojo build quality_gameplay/v3_round_attribute_fence_20261116/EGGRUMBLE_V3_ROUND_FENCE.project.json -o artifacts/EGGRUMBLE_ROUND_FENCE_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_round_attribute_fence_20261116/tools/verify_private23.py quality_gameplay/v3_round_attribute_fence_20261116/EGGRUMBLE_V3_ROUND_FENCE.project.json artifacts/EGGRUMBLE_ROUND_FENCE_PRIVATE_NOT_RC.rbxlx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-ROUND-ATTRIBUTES-PRIVATE23-NOT-RC
+          path: artifacts/
+          retention-days: 2
