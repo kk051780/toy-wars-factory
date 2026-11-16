@@ -45,7 +45,7 @@ class SiegeSourceTest(unittest.TestCase):
         self.assertEqual(patched.count("SiegePacing.allow(session,enemy.id,id,now)"), 1)
         self.assertEqual(patched.count("SiegePacing.cancelFailed(session,enemy.id,id,now)"), 1)
         self.assertEqual(patched.count("if not ok then SiegePacing.cancelFailed"), 1)
-        self.assertIn("if not ok then SiegePacing.cancelFailed(session,enemy.id,id,now) end\\n           if ok then", patched)
+        self.assertIn("if not ok then SiegePacing.cancelFailed(session,enemy.id,id,now) end\n           if ok then", patched)
         self.assertNotIn("SiegePacing.cancelFailed", original)
         self.assertEqual(patched.count('WaitForChild("EGGRUMBLE_SiegePacing")'), 1)
         self.assertNotIn("SiegePacing.allow", original)
