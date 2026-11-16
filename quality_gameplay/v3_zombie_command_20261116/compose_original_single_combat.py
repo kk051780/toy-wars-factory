@@ -43,6 +43,7 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
     local state=session.rules.castles[tostring(p.UserId)]
     local alive=state~=nil and state.alive and p.Character==char and h.Health>0
      and session.rules.phase=="ACTIVE" and p:GetAttribute("EGGRUMBLE_Role")=="ZOMBIE"
+     and (session.isCurrentHuman==nil or session.isCurrentHuman(p)==true)
     local targets={}
     if alive then
      for _,other in ipairs(game:GetService("Players"):GetPlayers()) do
@@ -73,7 +74,7 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
         local er=enemy.PrimaryPart
         local eh=enemy:FindFirstChildOfClass("Humanoid")
         if er and eh and eh.Health>0 then
-         table.insert(targets,{id="N:"..tostring(n),kind="NEUTRAL",
+         table.insert(targets,{id="N:"..tostring(enemy),kind="NEUTRAL",
           x=er.Position.X,z=er.Position.Z,active=true,
           matchToken=matchToken,friendly=false})
         end
@@ -104,9 +105,10 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
      end,
     }
    end
-   local function commanderHit(player:Player,targetId:string,damage:number,token:string):()
+   local function commanderHit(player:Player,targetId:string,damage:number,token:string,minionRoot:BasePart):()
     -- Never expose a new damage authority: one existing author Combat decides.
     if player~=p or token~=matchToken or p.Character~=char
+     or not minionRoot or not minionRoot:IsDescendantOf(session.world)
      or h.Health<=0 or session.rules.phase~="ACTIVE" or not owner.alive then return end
     if p:GetAttribute("EGGRUMBLE_Role")~="ZOMBIE" then return end
     local fresh=commanderSnapshot(p)
@@ -115,9 +117,11 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
      if candidate.id==targetId and candidate.active and not candidate.friendly then
       local at=Vector3.new(candidate.x,root.Position.Y,candidate.z)
       -- Keep servants inside the original author's player-attack maximum.
-      if (at-root.Position).Magnitude<=32
-       and lineClear(root.Position+Vector3.new(0,1.5,0),at,char,nil) then
-       neutralAndBotHit(session,p,root,char,at,3,math.min(damage,6),def.color,spec.shape)
+      if (at-minionRoot.Position).Magnitude<=6
+       and minionRoot.Parent and minionRoot.Parent:IsA("Model")
+       and fresh.visible(minionRoot.Position.X,minionRoot.Position.Z,candidate.x,candidate.z)==true then
+       -- Hit from the actual summoned body, never remotely from the caster.
+       neutralAndBotHit(session,p,minionRoot,minionRoot.Parent,at,3,math.min(damage,6),def.color,spec.shape)
       end
       return
      end
