@@ -56,12 +56,28 @@ function Alerts.siegeSignals(castles:{[string]:any},previousHP:{[string]:number}
  return out
 end
 
+-- A castle can be under siege while eggs are stolen or banked.
+-- Across refresh ticks, strategic objective alerts must beat routine HP chip damage.
+-- No permanent HUD and no new damage/score authority.
+local PRIORITY={SIEGE=1,DELIVER=2,RAID=3,FALL=4}
+function Alerts.priority(kind:string):number
+ return PRIORITY[kind] or 0
+end
+
 local function render(session:any,signal:Signal)
  local bits=session.castleModels and session.castleModels[signal.castleId]
  local castle=session.rules and session.rules.castles[signal.castleId]
  if not bits or not castle or not bits.banner or not bits.banner.Parent then return end
  if signal.kind~="FALL" and not castle.alive then return end
  local banner=bits.banner
+ local priority=Alerts.priority(signal.kind)
+ if priority==0 then return end
+ local activePriority=banner:GetAttribute("EGGRUMBLE_AlertPriority")
+ local expires=banner:GetAttribute("EGGRUMBLE_AlertUntil")
+ if type(activePriority)=="number" and type(expires)=="number"
+  and os.clock()<expires and priority<activePriority then
+  return
+ end
  local notice=banner:FindFirstChild("EGGRUMBLE_RaidNotice")
  if not notice then
   notice=Instance.new("BillboardGui")
@@ -98,6 +114,8 @@ local function render(session:any,signal:Signal)
  banner.Color=color
  local serial=(banner:GetAttribute("EGGRUMBLE_AlertSerial") or 0)+1
  banner:SetAttribute("EGGRUMBLE_AlertSerial",serial)
+ banner:SetAttribute("EGGRUMBLE_AlertPriority",priority)
+ banner:SetAttribute("EGGRUMBLE_AlertUntil",os.clock()+signal.duration)
  task.delay(signal.duration,function()
   if not banner.Parent or banner:GetAttribute("EGGRUMBLE_AlertSerial")~=serial then return end
   notice.Enabled=false
@@ -105,6 +123,8 @@ local function render(session:any,signal:Signal)
   -- A concurrent castle-decoration update must win over this cosmetic alert.
   if typeof(original)=="Color3" and banner.Color==color then banner.Color=original end
   banner:SetAttribute("EGGRUMBLE_AlertBaseColor",nil)
+  banner:SetAttribute("EGGRUMBLE_AlertPriority",nil)
+  banner:SetAttribute("EGGRUMBLE_AlertUntil",nil)
  end)
 end
 
