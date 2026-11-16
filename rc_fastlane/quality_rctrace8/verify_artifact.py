@@ -80,7 +80,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 35 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 36 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -156,6 +156,11 @@ FEATURE_EVIDENCE = {
   'type="TIME_LIMIT_DRAW"')),
 
 
+ "SAFE_LOBBY_GROUND_SPAWN_652": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ_SAFE_LOBBY_SPAWN_20261117_BEGIN",
+  "safeLobbyGround.CanCollide=true",
+  'safeLobbySpawn=Instance.new("SpawnLocation")',
+  "if player.Parent~=Players or player.Character~=character")),
  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509": ("EGGRUMBLE_CastleMatchRules",
   'if m.phase~="ACTIVE" or m.winner~=nil then return 0,{} end'),
  "BOT_SIEGE_TARGET_PACING_527": ("EGGRUMBLE_BotActors", (
