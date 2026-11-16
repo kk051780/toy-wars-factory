@@ -27,6 +27,7 @@ REQUIRED = {
     "EGGRUMBLE_BossSessionFence": "EGGRUMBLE_BossSessionFence.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
+    "EGGRUMBLE_ScoreBalance": "EGGRUMBLE_ScoreBalance.luau",
     "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
     "EGGRUMBLE_LobbyCastleModesPreview": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
 }
