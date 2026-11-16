@@ -32,6 +32,10 @@ jobs:
             /tmp/gq-zombie-native/luau-compile --text "$source" >/dev/null
           done
           /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_command_native.luau
+          /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_guard_native.luau \
+            | tee artifacts/gq582_guard_castle_leash_native.log
+          grep -q GQ_ZOMBIE_GUARD_CASTLE_LEASH_NATIVE_12_CASES_PASS \
+            artifacts/gq582_guard_castle_leash_native.log
           python3 -B quality_gameplay/v3_zombie_command_20261116/build_neutral_identity_native.py \
             --composer quality_gameplay/v3_zombie_command_20261116/compose_original_single_combat.py \
             --out artifacts/gq_zombie_neutral_unique_actual.luau
