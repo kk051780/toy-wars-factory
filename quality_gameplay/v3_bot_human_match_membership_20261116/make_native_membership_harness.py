@@ -55,7 +55,9 @@ check("stale session replaced by newer TEAM session",false)
 sessions.TEAM=session
 session.rules.castles["101"]=nil
 check("not rostered in this session",false)
-session.rules.castles["101"]={alive=true}
+session.rules.castles["101"]={alive=true,isAI=true}
+check("AI takeover not a human participant",false)
+session.rules.castles["101"].isAI=false
 check("returns to valid human only",true)
 print("GQ BOT HUMAN MEMBERSHIP real host callback native PASS "..tostring(checks).."/"..tostring(checks))
 '''
