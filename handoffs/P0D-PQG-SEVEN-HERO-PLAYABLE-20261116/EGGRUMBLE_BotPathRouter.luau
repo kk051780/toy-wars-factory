@@ -62,18 +62,28 @@ local function maybeCompute(id:string,model:Model,at:Vector3,goal:Vector3,state:
  inFlight+=1;state.inFlight=true;state.retryAt=now+RECOMPUTE_SECONDS
  local expectedTarget=goal
  task.spawn(function()
-  local path=PathfindingService:CreatePath({
-   AgentRadius=2,AgentHeight=5,AgentCanJump=false,
-   WaypointSpacing=8,Costs={Water=15},
-  })
+  -- CreatePath may throw before ComputeAsync starts. Both operations must
+  -- share the same failure cleanup or all two AI path slots can be leaked.
+  local path:any=nil
   local ok=pcall(function()
+   path=PathfindingService:CreatePath({
+    AgentRadius=2,AgentHeight=5,AgentCanJump=false,
+    WaypointSpacing=8,Costs={Water=15},
+   })
    path:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
   end)
   inFlight=math.max(0,inFlight-1)
   if states[id]~=state or not model.Parent then
-   path:Destroy();return
+   if path then path:Destroy() end
+   return
   end
   state.inFlight=false
+  if not path then
+   -- Never permanently strand this actor's navigator after CreatePath fails.
+   state.failed=(state.failed or 0)+1
+   state.retryAt=os.clock()+RECOMPUTE_SECONDS
+   return
+  end
   -- A bot can switch from raid to returning a stolen egg while ComputeAsync
   -- is still pending. Never install that earlier target's path or overwrite
   -- the current desired goal after the server state has changed.
