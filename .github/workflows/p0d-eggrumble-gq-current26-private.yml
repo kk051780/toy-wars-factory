@@ -116,6 +116,11 @@ jobs:
         run: |
           set -euo pipefail
           python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_native/luau
+      - name: Native Luau replay queued AI route versus stolen egg home retarget
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_native/luau
       - name: Acquire checksum-pinned Rojo and build unpublished candidate
         shell: bash
         run: |
