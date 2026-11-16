@@ -14,6 +14,8 @@ import importlib.util
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"quality_zombie582_rc31"))
 from select_original_zombie582 import scan, git_blob, digest
 
 ROUTE=("ServerScriptService","EGGRUMBLE_CastleMatchRules")
