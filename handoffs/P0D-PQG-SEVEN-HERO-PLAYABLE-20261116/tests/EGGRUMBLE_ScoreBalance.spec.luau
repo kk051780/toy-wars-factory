@@ -63,6 +63,29 @@ return function(Results:any):boolean
  assert(hero~=nil,"capped hero exists")
  equal(hero.ko,500000,"real KO raw total retained")
  equal(hero.score,1200+1190+960+1320+200+500,"every category bounded")
+ -- Actual 10k+ mass neutral-KO win condition must keep progressing after 200.
+ -- Category point cap stays 1200 so one KO grinder cannot dominate objective play.
+ local milestoneState=state("TEAM","RED","ACTIVE")
+ milestoneState.events={}
+ local function earnedKO(n:number):number
+  local result=Results.build(milestoneState,{war=n})
+  for _,row in ipairs(result.rows) do
+   if row.id=="war" then return row.score-200 end -- living-castle bonus excluded
+  end
+  error("KO scorer failed to return owner")
+ end
+ equal(earnedKO(0),0,"zero KO earns no combat points")
+ equal(earnedKO(50),300,"early KO pacing preserved")
+ equal(earnedKO(100),600,"first hundred worth six points each")
+ equal(earnedKO(200),630,"200 KOs no longer caps points")
+ equal(earnedKO(1000),870,"one thousand KOs remain rewarding")
+ equal(earnedKO(10000),1140,"ten thousand personal KOs still earn more")
+ equal(earnedKO(30000),1200,"thirty thousand KOs reach bounded maximum")
+ equal(earnedKO(30001),1200,"post milestone cap prevents total domination")
+ equal(earnedKO(500000),1200,"extreme grinding cannot dominate eggs and castles")
+ equal(Results.SCORE.KO_CAP,1200,"KO maximum unchanged")
+ equal(earnedKO(199)<earnedKO(201),true,"KO monotonic across former hard cap")
+
  local corrupted=Results.build(state("TEAM","RED","FINISHED"),{war=-1,mage=0/0,assassin=math.huge})
  for _,row in ipairs(corrupted.rows) do equal(row.ko,0,"bad kill values rejected") end
  local ties={mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,
