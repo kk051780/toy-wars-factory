@@ -1159,10 +1159,48 @@ jobs:
           python3 -B rc_fastlane/quality_geometry595_rc31/select_original_geometry.py verify \
             --base "$BASE" --out "$FINAL" --place "$PLACE"
           echo GQ595_ONE_GEOMETRY_CURRENT31_TRUE_ROJO_OTHER30_EXACT_PASS
+      - name: GQ586 current-session own-egg deposit select on single Host; 31 Native and true Rojo exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_deposit_membership_20261116 -p 'test_selection.py'
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/select_deposit.py prepare \
+            --base artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_SELECTED31.project.json \
+            --out artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("gq586_map","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          _,sources=m.flatten(Path("artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json"))
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ586_REAL_SELECTED31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/make_native_harness.py \
+            --host artifacts/gq515_official_select/GQ586_CURRENT_MATCH_HOST.server.luau \
+            --out artifacts/gq515_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau
+          /tmp/gq530_all31_native/luau-compile --text \
+            artifacts/gq515_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau >/dev/null
+          /tmp/gq530_all31_native/luau \
+            artifacts/gq515_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau \
+            | tee artifacts/gq515_official_select/GQ586_NATIVE8_RESULT.txt
+          grep -q GQ_DEPOSIT_CURRENT_SESSION_ACTUAL_HOST_NATIVE_8_CASES_PASS \
+            artifacts/gq515_official_select/GQ586_NATIVE8_RESULT.txt
+          /tmp/gq530-all31-rojo build \
+            artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json \
+            -o artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/select_deposit.py verify \
+            --base artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_SELECTED31.project.json \
+            --out artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json \
+            --place artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
+          echo "GQ586_SINGLE_DEPOSIT_GUARD_OTHER30_PRESERVED_REAL_ROJO31_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1178,7 +1216,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1252,9 +1290,16 @@ jobs:
           assert gq582["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           geom595=json.loads(Path("artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json").read_text())
           assert geom595["real_rojo_script_class_source_exact"]=="31/31"
+          gq586=json.loads(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
+          assert gq586["source_count"]==31 and gq586["other_30_byte_exact"] and gq586["rollback_host_exact"]
+          assert gq586["real_rojo_source_class_exact"]=="31/31"
+          assert gq586["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq586["source_flag"]=="GQ_DEPOSIT_CURRENT_MATCH_586"
+          assert m["source_heads"]["deposit_membership586"]=="417dfa87106b1eab9eaf45e6180273a9ce8ec8c2"
+          assert m["feature_flags"]["DEPOSIT_CURRENT_SESSION_586"] is True
           assert geom595["other_30_byte_identical"] and geom595["rollback_to_current_rc_byte_exact"]
           assert geom595["source_count"]==31 and geom595["formal_rc_adopted"] is False
-          assert geom595["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert geom595["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["vertical_hit595"]=="eb204b9962c0d10ec937b8886d0923e6e09fb47d"
           assert m["feature_flags"]["VERTICAL_HIT_FAIRNESS_595"] is True
           assert m["source_heads"]["zombie_command582"]=="497ff09e7d148e591691f5b1e3f5c543d6794ee8"
@@ -1297,6 +1342,9 @@ jobs:
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
             "source_author_heads":m["source_heads"],
+            "gq586_current_match_deposit_selected":True,
+            "gq586_other_30_original_scripts_preserved":True,
+            "gq586_single_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "script_count":31,
             "script_source_and_class_exact":"31/31",
             "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
@@ -1401,6 +1449,10 @@ jobs:
             artifacts/gq515_official_select/GQ515_ZOMBIE582_SELECTED31.project.json
             artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_SELECTED31.project.json
             artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ586_NATIVE8_RESULT.txt
             artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
