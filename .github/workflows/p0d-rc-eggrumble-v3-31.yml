@@ -1427,6 +1427,7 @@ jobs:
           BASE=$DIR/GQ618_BEAST_SELECTED31.project.json
           OUT=$DIR/GQ615_LOBBY_QUEUE_SELECTED31.project.json
           PLACE=$DIR/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx
+          ln -s _v3_original _original482
           python3 -m unittest discover -s "$SRC" -p 'test_feedback.py' -v
           python3 -B "$SRC/intake31.py" prepare --base "$BASE" --out "$OUT"
           python3 - "$SRC" "$OUT" <<'PY'
