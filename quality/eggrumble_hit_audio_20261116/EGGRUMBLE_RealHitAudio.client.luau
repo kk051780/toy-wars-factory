@@ -91,6 +91,32 @@ end)
 local onEliminated=player:GetAttributeChangedSignal("EGGRUMBLE_Eliminated"):Connect(function()
  if player:GetAttribute("EGGRUMBLE_Eliminated")==true then stopVoices() end
 end)
+-- Character death/respawn may precede the match-wide Eliminated attribute.
+-- Bind per-Humanoid and disconnect on replacement so old deaths cannot mute a new life.
+local onHealth:RBXScriptConnection?=nil
+local onDied:RBXScriptConnection?=nil
+local function clearHumanoidBindings()
+ if onHealth then onHealth:Disconnect();onHealth=nil end
+ if onDied then onDied:Disconnect();onDied=nil end
+end
+local function bindCharacter(character:Model)
+ clearHumanoidBindings()
+ stopVoices()
+ local humanoid=character:FindFirstChildOfClass("Humanoid")
+  or character:WaitForChild("Humanoid",5)
+ if closed or player.Character~=character or not humanoid then return end
+ onHealth=humanoid.HealthChanged:Connect(function(health)
+  if health<=0 then stopVoices() end
+ end)
+ onDied=humanoid.Died:Connect(stopVoices)
+ if humanoid.Health<=0 then stopVoices() end
+end
+local onCharacterAdded=player.CharacterAdded:Connect(bindCharacter)
+local onCharacterRemoving=player.CharacterRemoving:Connect(function()
+ stopVoices()
+ clearHumanoidBindings()
+end)
+if player.Character then bindCharacter(player.Character) end
 local onHit=player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)
 local onRemove:RBXScriptConnection?=nil
 onRemove=player.AncestryChanged:Connect(function(_,parent)
@@ -99,6 +125,9 @@ onRemove=player.AncestryChanged:Connect(function(_,parent)
  onHit:Disconnect()
  onMute:Disconnect()
  onEliminated:Disconnect()
+ onCharacterAdded:Disconnect()
+ onCharacterRemoving:Disconnect()
+ clearHumanoidBindings()
  if onRemove then onRemove:Disconnect() end
  stopVoices()
  if folder.Parent then folder:Destroy() end
