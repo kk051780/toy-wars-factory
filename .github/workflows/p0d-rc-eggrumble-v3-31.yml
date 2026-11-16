@@ -1156,7 +1156,7 @@ jobs:
           assert m["feature_flags"]["ROSTER16_HARDCAP_583"] is True
           gq515=json.loads(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_text())
           assert gq515["rojo_source_class_exact"]=="31/31" and gq515["other_30_scripts_byte_exact"]
-          assert gq515["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq515["canonical_private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert gq515["author_policy_git_blob"]=="3114c469169ad667978485d5b8d0b038a2dbd4f5"
           assert m["source_heads"]["field_egg_drop_bounds515"]=="fee49d82816e65448f1b0b5803bba6fe06b17229"
           assert m["feature_flags"]["FIELD_CARRIER_OFFARENA_DROP_515"] is True
