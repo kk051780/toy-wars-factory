@@ -32,6 +32,7 @@ jobs:
             /tmp/gq-zombie-native/luau-compile --text "$source" >/dev/null
           done
           /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_command_native.luau
+          mkdir -p artifacts
           /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_guard_native.luau \
             | tee artifacts/gq582_guard_castle_leash_native.log
           grep -q GQ_ZOMBIE_GUARD_CASTLE_LEASH_NATIVE_12_CASES_PASS \
