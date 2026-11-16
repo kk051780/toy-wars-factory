@@ -1,0 +1,46 @@
+name: GQ SAFE LOBBY original Host native preflight (NOT official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_safe_lobby_spawn_20261117/**'
+      - '.github/workflows/p0d-gq-safe-lobby-20261117.yml'
+  push:
+    branches: [quality/gq-v3-safe-lobby-ground-20261117]
+    paths:
+      - 'quality_gameplay/v3_safe_lobby_spawn_20261117/**'
+      - '.github/workflows/p0d-gq-safe-lobby-20261117.yml'
+permissions:
+  contents: read
+jobs:
+  source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original_v3
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Exact OFF inverse / fail-closed / 31-script selector unit tests
+        run: |
+          python3 -B -m unittest discover -s quality_gameplay/v3_safe_lobby_spawn_20261117 -p 'test_*.py' -v
+      - name: Produce original-host real Luau patch, compile native
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_safe_lobby_spawn_20261117/select_safe_lobby.py \
+            --source _original_v3/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out-source /tmp/GQ_SAFE_LOBBY_HOST.server.luau
+          cmake -S _native_luau -B /tmp/gq_safe_lobby_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_safe_lobby_native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq_safe_lobby_native/luau-compile --text /tmp/GQ_SAFE_LOBBY_HOST.server.luau >/dev/null
+          echo GQ_SAFE_LOBBY_ORIGINAL_AUTHOR_HOST_NATIVE_COMPILE_PASS
