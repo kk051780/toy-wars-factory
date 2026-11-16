@@ -14,8 +14,9 @@ Current private V3 host sets `EGGRUMBLE_Eliminated=true` and teleports a defeate
 Delete the single `EGGRUMBLE_EliminatedSpectate` mapping from the V3 project; no migrations. Discard this isolated draft. No official RC/main/Roblox publication change.
 
 ## Acceptance
-- Static/structural Python checks are separate from real client motion.
-- TODO: pinned native Luau compile and Rojo source-exact private Place of the **combined current parent head**.
+- Static/structural Python checks are separate from real client motion. 7 contracts now include **at least 44×44 px** phone touch targets, while active-game GUI stays absent.
+- Implemented two pinned CI workflows: (1) original 21 + spectator 1 = 22 actual native Luau and source-exact Rojo Place, (2) **reuse the unchanged original #484 26-source composer** (original #482 + #485 ART + #487 SCORE + #484 spatial fixes) and append only the spectator LocalScript for 27-source true Rojo verification. Do **not** claim the prior build's success for a later amended HEAD; verify latest same-HEAD runs before adoption.
+- Actual Roblox engine/client camera behavior is still NOT_TESTED; native parser and Rojo XML are not Studio tests.
 - TODO: Roblox Studio 1+15 and 2+14 clients: remove one human castle while another survives; cycle same-mode castles, verify other-mode non-leakage, respawn does not reset camera, and round end restores Player camera.
 - TODO: Android low-end touch target size/FPS & #420 ART/FUN + OWNER acceptance.
 - TODO: #220 genuinely authenticated source-selective CAS and same-HEAD official RC build/ACK.
