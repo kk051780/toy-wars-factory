@@ -13,6 +13,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   native-source-exact:
     runs-on: ubuntu-latest
@@ -131,4 +132,54 @@ jobs:
           path: |
             artifacts/EGGRUMBLE_GQ_BUILDER_PRIVATE_23.rbxlx
             artifacts/GQ_BUILDER_PRIVATE_RECEIPT.json
+          retention-days: 7
+
+      - name: Download pinned ACTUAL official RC31 built Place (no branch write)
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 43938077940
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          repository: kk051780/toy-wars-factory
+          github-token: ${{ github.token }}
+          path: artifacts/pinned_official31
+      - name: Verify original official31 unchanged and build independent Builder33
+        run: |
+          set -euo pipefail
+          mapfile -t places < <(find artifacts/pinned_official31 -type f -name 'EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx' | sort)
+          test "${#places[@]}" -eq 1
+          python3 quality_gameplay/v3_builder_construction_20261116/select_official31_builder33.py select \
+            --official-place "${places[0]}" --out artifacts/gq_builder33
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path('artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json')
+          nodes=json.loads(project.read_text())['tree']
+          files=[]
+          def walk(t):
+              for k,val in t.items():
+                  if k.startswith('$') or not isinstance(val,dict):continue
+                  if '$path' in val:files.append((project.parent/val['$path']).resolve(strict=True))
+                  else:walk(val)
+          walk(nodes)
+          assert len(files)==33,len(files)
+          for path in files:
+              subprocess.run(['/tmp/gq_builder_native/luau-compile','--text',str(path)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print('GQ522_ACTUAL_OFFICIAL31_PLUS_BUILDER33_NATIVE_33_OF_33_PASS')
+          PY
+          /tmp/gq_builder_rojo build artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json \
+            -o artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+          python3 quality_gameplay/v3_builder_construction_20261116/select_official31_builder33.py verify \
+            --project artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json \
+            --rojo artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+      - name: Upload PRIVATE official31-derived Builder33 (NEVER production RC)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ522-ORIGINAL-RC31-PLUS-BUILDER33-PRIVATE
+          path: |
+            artifacts/gq_builder33/GQ522_REAL31_TO33_RECEIPT.json
+            artifacts/gq_builder33/GQ522_REAL33_PRIVATE_STUDIO.rbxlx
+            artifacts/gq_builder33/GQ522_CURRENT_RC_PRIVATE33.project.json
+            artifacts/gq_builder33/source33/
           retention-days: 7
