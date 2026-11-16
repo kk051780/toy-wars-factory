@@ -16,6 +16,7 @@ local roles = {
  TRAPPER="超能力者", BUILDER="マッドサイエンティスト",
  BEAST="魔獣使い", ZOMBIE="呪術師",
 }
+if playerGui:FindFirstChild("EGGRUMBLE_GQ_ObjectiveCompass") then return end
 local gui = Instance.new("ScreenGui")
 gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"
 gui.ResetOnSpawn=false
@@ -179,7 +180,7 @@ local function refresh()
  local suffix=if roleText~="" then " / "..roleText else ""
  if target then
   local dist=math.floor((target.Position-root.Position).Magnitude+0.5)
-  bar.Text=directionTo(root.Position,target.Position).." "..objective.." "..tostring(dist).."m"..suffix
+  bar.Text=directionTo(root.Position,target.Position).." "..objective.." "..tostring(dist).."stud"..suffix
   marker.Adornee=target
   markText.Text=objective
  else
