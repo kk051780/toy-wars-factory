@@ -29,3 +29,9 @@ old carried eggs. **Source-derived risk only; not a Studio-reproduced exploit.**
 
 No main, arbitrary PR merge, Roblox publish, paid service or Windows operation.
 Previous source author's personal ACK is not a blocker; RC safety checks remain mandatory.
+
+## Source pin and concurrency
+Initial PR base 39ab645c230208f8e3306821695d04fe8fa107c1; later official HEAD may include
+#520 FIELD and #583 CastleRules. Never adopt this stale workflow wholesale.
+The sole #220 writer must compose just this one Host guard on the **latest** selected 31,
+run native/Rojo again, compare 30 other scripts, then authenticate expected-SHA CAS.
