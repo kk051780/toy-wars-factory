@@ -41,7 +41,7 @@ PULSE_ADD=''' hitToast.Text="HIT x"..tostring(math.floor(power))
  end)
 '''
 def gitblob(raw:bytes)->str:
-    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
 def sha256(raw:bytes)->str:
     return hashlib.sha256(raw).hexdigest()
 def flatten(path:Path):
