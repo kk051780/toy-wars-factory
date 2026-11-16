@@ -101,7 +101,12 @@ function Items.start(session:any,positions:{Vector3}):()
     -- Preserve the original speed-source contract for all existing ITEM tests.
     hum.WalkSpeed=math.max(previous,27)
     local boosted=hum.WalkSpeed
+    local buffCharacter=player.Character
     local function restoreSpeed()
+     -- The old round's delayed timer must never rewrite the speed of a new
+     -- round, even when both pickups happen to use the same 27 speed.
+     -- RoundReplay.resetHuman owns the reset once this session is retired.
+     if not matchActive() or player.Character~=buffCharacter then return end
      -- Never stomp a subsequent skill's newer speed decision.
      if hum.Parent and hum.Health>0 and hum.WalkSpeed==boosted then
       hum.WalkSpeed=previous
