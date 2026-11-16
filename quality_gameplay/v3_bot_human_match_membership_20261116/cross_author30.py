@@ -8,6 +8,7 @@ The other twenty-eight already-composed owners' sources are unchanged.
 """
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -18,9 +19,10 @@ from compose import compose as membership_patch, git_blob_sha, OWNER_HEAD, AI_AU
 HOST="EGGRUMBLE_LobbyCastleModesPreview"
 BOT="EGGRUMBLE_BotActors"
 EXPECTED_484_BLOBS = {
- HOST:"c1ff23cd2883401d44d6fc47311bebcfd53eb1c6",
  BOT:"832a26c9f713012b924234ce4cf8c1654a75654e",
 }
+ORIGINAL_482_HOST_BLOB="7162b209bf67b74a71553217f3f744e072a0365d"
+ORIGINAL_484_HOST_BLOB="c1ff23cd2883401d44d6fc47311bebcfd53eb1c6"
 EXPECTED_FIRST30_NAMES={HOST,BOT,"EGGRUMBLE_FieldItemPickups","EGGRUMBLE_SevenRoleCombat",
 "EGGRUMBLE_CastleMatchRules","EGGRUMBLE_NeutralStoneGiant",
 "EGGRUMBLE_RoundAttributeFence","EGGRUMBLE_BossCreditPolicy",
@@ -52,7 +54,22 @@ def mapped(project:Path):
  walk(doc["tree"])
  return doc,result,nodes
 
-def prepare(base:Path,out:Path,receipt:Path):
+
+def verify_host_lineage(base_host:Path, original_host:Path, ai_host:Path, ai_composer:Path):
+ original=original_host.read_bytes()
+ current=ai_host.read_bytes()
+ assert git_blob_sha(original)==ORIGINAL_482_HOST_BLOB,"RED: #482 pinned Host drift"
+ assert git_blob_sha(current)==ORIGINAL_484_HOST_BLOB,"RED: #484 pinned castle ramp source drift"
+ spec=importlib.util.spec_from_file_location("pinned_author_484_compose",ai_composer)
+ assert spec and spec.loader
+ module=importlib.util.module_from_spec(spec)
+ spec.loader.exec_module(module)
+ expected=module.apply_ramp(original.decode("utf-8"),current.decode("utf-8"))
+ assert base_host.read_text(encoding="utf-8")==expected, "RED: generated #482 Host + #484 castle ramp source drift"
+ assert expected.count("CastleAccessRamp")>=1 and expected.count("session.isCurrentHuman")==0
+ return sha(expected.encode("utf-8"))
+
+def prepare(base:Path,out:Path,receipt:Path,original_host:Path,ai_host:Path,ai_composer:Path):
  assert base.resolve()!=out.resolve(),"RED: may not overwrite author composite"
  assert base.parent.resolve()==out.parent.resolve(),"RED: project relocation would break exact source paths"
  doc,original,nodes=mapped(base)
@@ -61,6 +78,7 @@ def prepare(base:Path,out:Path,receipt:Path):
   observed=git_blob_sha(original[name]["source"].read_bytes())
   if observed!=blob:
    raise AssertionError(f"RED: #484 original {name} drift: {observed} != {blob}")
+ generated_host_sha=verify_host_lineage(original[HOST]["source"],original_host,ai_host,ai_composer)
  assert original[HOST]["class"]=="Script" and original[BOT]["class"]=="ModuleScript"
  assert [x for x in original.values() if x["route"][-1]==HOST][0]["route"]==("ServerScriptService",HOST)
  assert not any("isCurrentHuman" in original[name]["source"].read_text(encoding="utf-8") for name in [HOST,BOT])
@@ -105,7 +123,9 @@ def prepare(base:Path,out:Path,receipt:Path):
   "base_project_sha256":sha(base.read_bytes()),
   "selected_source_hashes":{n:selection[n]["sha256"] for n in sorted(selection)},
   "unchanged_owners":{n:original[n]["sha256"] for n in sorted(set(original)-changed)},
-  "prior_host_bot":{n:{"git_blob":EXPECTED_484_BLOBS[n],"sha256":original[n]["sha256"]} for n in [HOST,BOT]},
+  "prior_host_bot":{
+   HOST:{"source_lineage":"#482 original Host exact blob + #484 castle ramp exact author generator","sha256":generated_host_sha},
+   BOT:{"git_blob":EXPECTED_484_BLOBS[BOT],"sha256":original[BOT]["sha256"]}},
   "changed_source_names":sorted(changed),
   "source_total":30,"private_build":True,"official_rc_adopted":False,
   "real_studio":"NOT_TESTED","android":"NOT_TESTED","art_fun":"NO_GO","owner_accepted":False,
