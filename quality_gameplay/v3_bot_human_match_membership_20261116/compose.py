@@ -18,9 +18,9 @@ OWNER_BLOBS = {
     BOT: "fa38f24a26a619238e4c6a62b3ee582dc14cfe7a",
 }
 
-HOST_BEFORE = "  sessions[mode]=session\n  -- Clean up only this finished match;"
+HOST_BEFORE = "sessions[mode]=session\n -- Clean up only this finished match;"
 HOST_AFTER = (
-    "  sessions[mode]=session\n"
+    "sessions[mode]=session\n"
     "  -- Authoritative host-only membership fence for BotActors hero hits.\n"
     "  -- Never trust a stale castle ID or a client-side teleport as proof of participation.\n"
     "  session.isCurrentHuman=function(player:Player):boolean\n"
@@ -28,7 +28,7 @@ HOST_AFTER = (
     "    and joined[player.UserId]==mode and player.Parent==Players\n"
     "    and session.rules.castles[tostring(player.UserId)]~=nil\n"
     "  end\n"
-    "  -- Clean up only this finished match;"
+    " -- Clean up only this finished match;"
 )
 BOT_BEFORE = (
     '  if pc and pc.alive and pc.id~=my.id and (session.mode~="TEAM" or pc.team~=my.team) then'
