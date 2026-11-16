@@ -13,6 +13,7 @@ on:
       - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
+      - 'rc_fastlane/quality_role_ack_20261117/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -26,6 +27,7 @@ on:
       - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
+      - 'rc_fastlane/quality_role_ack_20261117/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -1787,10 +1789,35 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_safe_lobby.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ646_AFTER_DRAW_ONE_HOST_30_OTHER_SCRIPTS_EXACT_OFF_ROJO31_PASS
+      - name: GQ8 role ACK after original 651 safe lobby - current31 native Luau and real Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_role_ack_20261117
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ646_AFTER_DRAW_SELECTED31.project.json
+          OUT=$DIR/GQ8_ROLE_ACK_SELECTED31.project.json
+          PLACE=$DIR/GQ8_ROLE_ACK_REAL_ROJO31.rbxlx
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_role_ready.py'
+          python3 -B "$SRC/select_role_ready.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$SRC" "$OUT" <<'PY'
+          import importlib.util,sys,subprocess
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location("gq8role",Path(sys.argv[1])/"select_role_ready.py")
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          _,mapped,_=m.mapping(Path(sys.argv[2]))
+          assert len(mapped)==31
+          for path in mapped.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_ROLE_ACK_ORIGINAL31_LUAU_COMPILE_SUCCESS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_role_ready.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_ROLE_ACK_TEAM_BR_ONE_HOST_OTHER30_BYTE_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ646_AFTER_DRAW_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ8_ROLE_ACK_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1806,7 +1833,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ646_AFTER_DRAW_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_ROLE_ACK_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1925,7 +1952,14 @@ jobs:
           assert safe646["source_count"]==31 and safe646["existing_host_changed_only"]
           assert safe646["other_30_original_scripts_byte_exact"] and safe646["off_exact_rollback"]
           assert safe646["rojo_source_class_exact"]=="31/31"
-          assert safe646["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert safe646["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ646_AFTER_DRAW_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          role_ack=json.loads(Path("artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31_RECEIPT.json").read_text())
+          assert role_ack["feature_id"]=="GQ8_ROLE_SELECTION_ACK_20261117"
+          assert role_ack["source_count"]==31 and role_ack["other_30_byte_exact"]
+          assert role_ack["off_rollback_host_byte_exact"] and role_ack["original_safe_lobby_651_retained"]
+          assert role_ack["rojo_source_class_31"]=="31/31" and role_ack["native_luau_31"]=="31/31"
+          assert role_ack["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ8_ROLE_SELECTION_ACK_20261117"] is True
           assert m["source_heads"]["gq646_safe_lobby_original"]=="221be5bcaa6ffe7059271a726946dde46323b0cd"
           assert m["feature_flags"]["GQ646_LOBBY_SAFE_SPAWN_20261117"] is True
           assert m["feature_flags"]["RARE_FIELD_EGG_SCORE_20261117"] is True
@@ -2169,6 +2203,8 @@ jobs:
             artifacts/gq515_official_select/GQ_DRAW_RESULT_SELECTED31.project.json
             artifacts/gq515_official_select/GQ646_AFTER_DRAW_SELECTED31.project.json
             artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31_RECEIPT.json
             artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
