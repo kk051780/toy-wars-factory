@@ -67,6 +67,27 @@ jobs:
           python3 _gq_dot/quality_gameplay/v3_status_tick_fence_20261116/tools/make_actual_status_callback_native.py \
             --source artifacts/GQ_FOUR_AUTHOR_ONE_COMBAT.luau \
             --out artifacts/GQ_FOUR_DOT_NATIVE.luau
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          own=SourceFileLoader("own_dot_adapter","quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py").load_module()
+          p=Path("artifacts/GQ_FOUR_DOT_NATIVE.luau")
+          vm=p.read_text()
+          # #516 original isolated status harness predates #529 human stealth visibility.
+          # Reuse the EXACT production helper (no local reimplementation).
+          anchor="local function secondaryEffect("
+          assert vm.count(anchor)==1
+          vm=vm.replace(anchor,own.HELPER+anchor,1)
+          target='local target={UserId=2,Character=newChar(enemyH)}'
+          assert vm.count(target)==1
+          vm=vm.replace(target,target+'\n function target:GetAttribute(k) return nil end',1)
+          rule='["2"]={alive=true,team=targetTeam or "BLUE"}'
+          assert vm.count(rule)==1
+          vm=vm.replace(rule,'["2"]={alive=true,team=targetTeam or "BLUE",heldEggs=0}',1)
+          assert vm.count("humanCombatTargetable(")==2
+          p.write_text(vm)
+          print("GQ_FOUR_AUTHOR_DOT_HARNESS_REAL_HELPER_INJECTED")
+          PY
           cp _gq_dot/quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_StatusTickFence.luau artifacts/StatusFence.luau
       - name: Pinned native Luau compiler for EXACT 22 combined scripts
         uses: actions/checkout@v4
