@@ -80,7 +80,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 35 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 36 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -148,6 +148,12 @@ FEATURE_EVIDENCE = {
    "RARE_FIELD_EGG_CAP=2, RARE_FIELD_EGG_RATE=60",
    "local claimedRareFieldEggs={}",
    'id=="FIELD_4" or id=="FIELD_5"')),
+ "LOBBY_SAFE_GROUND_SPAWN_646": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "GQ646_LOBBY_SAFE_SPAWN_BEGIN",
+  "lobbyGround.CanCollide=true",
+  "lobbySpawn.Neutral=true",
+  'if mode and sessions[mode] then return end',
+  'hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))')),
  "MATCH_DEADLINE_DRAW_499": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local deadlineLease=Deadline.new(os.clock(),deadlineId)",
   "Deadline.expire(session.rules,deadlineLease,os.clock(),deadlineId)",
