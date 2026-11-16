@@ -64,7 +64,7 @@ def make_inline(result:bytes,author_python:Path,author_luau:Path)->bytes:
     body=original[len("--!strict\n"):]
     body=body[:body.rfind("return Retry")].rstrip()+"\n"
     body=body.replace("local Retry = {}","local ResultRetry = {}")
-    body=re.sub(r"(?<![A-Za-z0-9_])Retry\\.", "ResultRetry.", body)
+    body=re.sub(r"(?<![A-Za-z0-9_])Retry\.", "ResultRetry.", body)
     if body.count("local ResultRetry = {}")!=1 or body.count("function ResultRetry.deliver(")!=1:
         raise ValueError("RED_ORIGINAL538_POLICY_NOT_REUSABLE_INLINE")
     if "return Retry" in body or "local Retry = {}" in body:
