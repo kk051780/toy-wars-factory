@@ -120,5 +120,33 @@ class TestRCAdmissionReceipt(unittest.TestCase):
         self.assert_block("SOURCE_LINEAGE_NOT_GREEN")
 
 
+
+    def test_same_head_ci_running_is_yellow_not_false_red_or_rc_go(self):
+        self.c["decision"] = "SOURCE_RECONCILIATION_REQUIRED"
+        self.c["blockers"] = ["current26_samehead_CI_not_success"]
+        self.c["composite_ci"]["status"] = "in_progress"
+        self.c["composite_ci"]["conclusion"] = None
+        verdict = self.decision()
+        self.assertEqual(verdict["status"], "SOURCE_COMPOSED_AUTHOR_CI_PENDING", verdict["errors"])
+        self.assertEqual(verdict["source_admission"], "WAIT_FOR_484_SAMEHEAD_CI")
+        self.assertIn("WAIT_484_SAMEHEAD_SOURCE_CI", verdict["source_ci_pending"])
+        self.assertTrue(verdict["source_provenance_pass"])
+        self.assertFalse(verdict["owner_accepted"])
+
+    def test_running_ci_cannot_mask_unrelated_author_source_drift(self):
+        self.c["decision"] = "SOURCE_RECONCILIATION_REQUIRED"
+        self.c["blockers"] = ["original_source_identity_drift:EGGRUMBLE_SevenRoleCombat",
+                               "current26_samehead_CI_not_success"]
+        self.c["composite_ci"]["status"] = "queued"
+        self.c["composite_ci"]["conclusion"] = None
+        self.assert_block("LIVE_26_SOURCE_DRIFT_OR_CI_BLOCKED")
+
+    def test_finished_failed_ci_remains_red(self):
+        self.c["decision"] = "SOURCE_RECONCILIATION_REQUIRED"
+        self.c["blockers"] = ["current26_samehead_CI_not_success"]
+        self.c["composite_ci"]["status"] = "completed"
+        self.c["composite_ci"]["conclusion"] = "failure"
+        self.assert_block("LATEST_COMPOSITE_CI_NOT_GREEN")
+
 if __name__ == "__main__":
     unittest.main()
