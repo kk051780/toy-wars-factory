@@ -209,10 +209,7 @@ local function startSession(mode:string)
      local ch=player.Character
      local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
      if rootPart then rootPart.CFrame=CFrame.new(root+Vector3.new(0,12,-35)) end
-     local backpack=player:FindFirstChildOfClass("Backpack")
-     if backpack then
-      SevenRoleCombat.clear(player)
-     end
+     SevenRoleCombat.clear(player)
     end
    end
   end
