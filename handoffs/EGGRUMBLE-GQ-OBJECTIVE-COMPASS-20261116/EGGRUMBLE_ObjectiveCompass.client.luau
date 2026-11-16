@@ -36,6 +36,19 @@ toggle.Font=Enum.Font.GothamMedium
 toggle.Visible=false
 toggle.Parent=gui
 Instance.new("UICorner",toggle).CornerRadius=UDim.new(0,8)
+-- Manual home guidance only. Server-side carried-egg state is deliberately not inferred.
+local returnHome=Instance.new("TextButton")
+returnHome.Name="ManualReturnHome"
+returnHome.Size=UDim2.fromOffset(48,30)
+returnHome.BackgroundColor3=Color3.fromRGB(51,63,78)
+returnHome.BackgroundTransparency=.12
+returnHome.Text="帰城"
+returnHome.TextColor3=Color3.fromRGB(245,238,197)
+returnHome.TextSize=12
+returnHome.Font=Enum.Font.GothamMedium
+returnHome.Visible=false
+returnHome.Parent=gui
+Instance.new("UICorner",returnHome).CornerRadius=UDim.new(0,8)
 local bar=Instance.new("TextLabel")
 bar.Name="OneLineObjective"
 bar.AnchorPoint=Vector2.new(0.5,0)
@@ -72,6 +85,7 @@ Instance.new("UICorner",markText).CornerRadius=UDim.new(0,9)
 local expanded=true
 local visibleSince=os.clock()
 local lastMode=""
+local manuallyReturning=false
 local currentTarget:BasePart?=nil
 
 local function isEnemy(mode:string, own:Model, other:Model, arena:Instance):boolean
@@ -104,7 +118,12 @@ local function nearestActiveItem(arena:Instance, at:Vector3):(BasePart?,number)
  return nearest,best
 end
 
-local function pickObjective(mode:string,arena:Instance,own:Model,at:Vector3):(BasePart?,string)
+local function pickObjective(mode:string,arena:Instance,own:Model,at:Vector3,homeSelected:boolean):(BasePart?,string)
+ if homeSelected then
+  local home=own:FindFirstChild("OwnEggDeposit",true)
+  if home and home:IsA("BasePart") then return home,"自城へ帰還（手動）" end
+  return nil,"自城へ帰還（手動）"
+ end
  local item,itemDistance=nearestActiveItem(arena,at)
  if item and itemDistance<=32 then return item,"近くの物資を取る" end
  local boss=arena:FindFirstChild("NEUTRAL_BOSS_STONE_GIANT",true)
@@ -149,12 +168,14 @@ end
 local function layoutForViewport()
  local camera=workspace.CurrentCamera
  local width=if camera then camera.ViewportSize.X else 360
- local barWidth=math.min(294,math.max(90,width-80))
- local groupWidth=barWidth+60
+ -- Two short touch controls fit even a 320-pixel screen.
+ local barWidth=math.min(294,math.max(90,width-132))
+ local groupWidth=barWidth+116
  local left=math.max(4,(width-groupWidth)/2)
  bar.Size=UDim2.fromOffset(barWidth,30)
  bar.Position=UDim2.fromOffset(left+barWidth/2,10)
- toggle.Position=UDim2.fromOffset(left+barWidth+8,10)
+ returnHome.Position=UDim2.fromOffset(left+barWidth+6,10)
+ toggle.Position=UDim2.fromOffset(left+barWidth+60,10)
 end
 
 local function refresh()
@@ -175,18 +196,20 @@ local function refresh()
  end
  if not inArena or not own or not own:IsA("Model")
    or not h or h.Health<=0 or player:GetAttribute("EGGRUMBLE_Eliminated")==true then
-  toggle.Visible=false;bar.Visible=false;marker.Enabled=false;marker.Adornee=nil
-  currentTarget=nil;lastMode=""
+  toggle.Visible=false;bar.Visible=false;returnHome.Visible=false;marker.Enabled=false;marker.Adornee=nil
+  currentTarget=nil;lastMode="";manuallyReturning=false
   return
  end
  if mode~=lastMode then
-  lastMode=mode;expanded=true;visibleSince=os.clock()
+  lastMode=mode;expanded=true;visibleSince=os.clock();manuallyReturning=false
  end
- local target,objective=pickObjective(mode,arena,own,root.Position)
+ local target,objective=pickObjective(mode,arena,own,root.Position,manuallyReturning)
  currentTarget=target
  if expanded and os.clock()-visibleSince>INITIAL_SECONDS then expanded=false end
  toggle.Visible=true
  toggle.Text=if expanded then "閉じる" else "目標"
+ returnHome.Visible=expanded
+ returnHome.Text=if manuallyReturning then "攻略" else "帰城"
  bar.Visible=expanded
  local role=player:GetAttribute("EGGRUMBLE_SelectedRole")
  local roleText=if typeof(role)=="string" then (roles[role] or "") else ""
@@ -203,6 +226,13 @@ local function refresh()
  marker.Enabled=expanded and target~=nil
 end
 
+returnHome.Activated:Connect(function()
+ if not toggle.Visible then return end
+ manuallyReturning=not manuallyReturning
+ expanded=true
+ visibleSince=os.clock()
+ refresh()
+end)
 toggle.Activated:Connect(function()
  if not toggle.Visible then return end
  expanded=not expanded
@@ -210,8 +240,15 @@ toggle.Activated:Connect(function()
  refresh()
 end)
 UserInputService.InputBegan:Connect(function(input:InputObject,processed:boolean)
- if processed or input.KeyCode~=Enum.KeyCode.G or not toggle.Visible then return end
- expanded=not expanded
+ if processed or not toggle.Visible then return end
+ if input.KeyCode==Enum.KeyCode.H then
+  manuallyReturning=not manuallyReturning
+  expanded=true
+ elseif input.KeyCode==Enum.KeyCode.G then
+  expanded=not expanded
+ else
+  return
+ end
  visibleSince=os.clock()
  refresh()
 end)
