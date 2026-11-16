@@ -30,6 +30,20 @@ MANDATORY_GAME_NAMES = (
     "EGGRUMBLE_MatchResultService",
     "EGGRUMBLE_LobbyCastleModesPreview",
 )
+ART_BY_TARGET = {
+    "v3": ART_NAMES,
+    "boss": ("EGGRUMBLE_EncounterReadabilityArt",),
+    "castle": ("EGGRUMBLE_EncounterReadabilityArt",),
+    "lobby": ("EGGRUMBLE_HeroSilhouetteArt", "EGGRUMBLE_EncounterReadabilityArt"),
+    "item": ("EGGRUMBLE_EncounterReadabilityArt",),
+}
+MANDATORY_BY_TARGET = {
+    "v3": MANDATORY_GAME_NAMES,
+    "boss": ("EGGRUMBLE_NeutralStoneGiant", "EGGRUMBLE_NeutralBossPreview"),
+    "castle": ("EGGRUMBLE_EnterableCastleInterior", "EGGRUMBLE_CastleWalkthrough"),
+    "lobby": ("EGGRUMBLE_LobbyUXPreview", "EGGRUMBLE_LobbyUXStandalone"),
+    "item": ("EGGRUMBLE_FieldItemPickups", "EGGRUMBLE_FieldItemPreview"),
+}
 ART_DIR = Path(__file__).resolve().parents[1]
 
 
@@ -51,7 +65,9 @@ def rebase_tree_paths(node: dict, author_dir: Path, output_dir: Path) -> None:
             rebase_tree_paths(value, author_dir, output_dir)
 
 
-def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict:
+def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR, target: str = "v3") -> dict:
+    if target not in ART_BY_TARGET:
+        raise ValueError(f"Unknown isolated preview target: {target}")
     author_project = author_project.resolve(strict=True)
     output = output.resolve()
     if output == author_project or output.parent == art_dir.resolve() and output.name in (
@@ -63,7 +79,7 @@ def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict
     src = document["tree"]["ServerScriptService"]
     if src.get("$className") != "ServerScriptService":
         raise ValueError("Expected a current Rojo ServerScriptService mapping")
-    for name in MANDATORY_GAME_NAMES:
+    for name in MANDATORY_BY_TARGET[target]:
         if name not in src:
             raise ValueError(f"Missing latest author V3 module {name}")
     if any(name in src for name in ART_NAMES):
@@ -82,7 +98,7 @@ def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict
             raise ValueError(f"Not a file: {name}")
         reference_paths[name] = real
         combined[name] = {"$path": os.path.relpath(real, output.parent).replace(os.sep, "/")}
-    for name in ART_NAMES:
+    for name in ART_BY_TARGET[target]:
         real = (art_dir / (name + ".server.luau")).resolve(strict=True)
         if not real.is_file():
             raise ValueError(f"Not a script: {name}")
@@ -117,7 +133,7 @@ def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict
     # Preserve the entire original Rojo tree: especially StarterPlayerScripts,
     # mobile LocalScripts and any future authored nodes outside ServerScriptService.
     assembled = copy.deepcopy(document)
-    assembled["name"] = "EGGRUMBLE_V3_CURRENT_AUTHOR_ART_STUDIO_PRIVATE_SOURCE_ONLY"
+    assembled["name"] = "EGGRUMBLE_" + target.upper() + "_CURRENT_AUTHOR_ART_PRIVATE_SOURCE_ONLY"
     rebase_tree_paths(assembled["tree"], author_project.parent, output.parent)
     assembled["tree"]["ServerScriptService"] = combined
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -134,15 +150,17 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--author-project", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--target", choices=tuple(ART_BY_TARGET), default="v3")
     args = parser.parse_args()
     author_original = json.loads(args.author_project.read_text(encoding="utf-8"))
-    result = compose(args.author_project, args.out)
+    result = compose(args.author_project, args.out, target=args.target)
     print("ART_COMPOSITION_SOURCE_ONLY=PASS")
     original_nodes = author_original["tree"]["ServerScriptService"]
     composed_nodes = result["tree"]["ServerScriptService"]
-    missing = sorted(set(composed_nodes) - set(original_nodes) - set(ART_NAMES))
-    print(f"AUTHOR_MODULE_COUNT={len(composed_nodes) - 1 - len(ART_NAMES)}")
-    print(f"ART_SCRIPT_COUNT={len(ART_NAMES)}")
+    art_names = ART_BY_TARGET[args.target]
+    missing = sorted(set(composed_nodes) - set(original_nodes) - set(art_names))
+    print(f"AUTHOR_MODULE_COUNT={len(composed_nodes) - 1 - len(art_names)}")
+    print(f"ART_SCRIPT_COUNT={len(art_names)}")
     print(f"ADDITIONAL_AUTHOR_MODULES_FOUND_NOT_IN_ROJO={','.join(missing) if missing else 'NONE'}")
     if missing:
         print("AUTHOR_DIRECT_ROJO_MANIFEST=RED (ask source owner to register missing modules)")
