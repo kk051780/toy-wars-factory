@@ -413,6 +413,7 @@ jobs:
           patched=_v3_postwin/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
           python3 _v3_heal_owner/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
             --source "$item" --out artifacts/EGGRUMBLE_FieldItemPickups.luau
+          ln -s _v3_item_owner _item_original
           python3 -B -m unittest discover -s _v3_heal_owner/quality_gameplay/v3_heal_no_waste_20261116/tests -p 'test_*.py' -v
           python3 quality_gameplay/v3_status_tick_fence_20261116/tools/compose_four_author_intake.py prepare \
             --base-project artifacts/EGGRUMBLE_GQ_MAGE_STATUS_CURRENT27.project.json \
