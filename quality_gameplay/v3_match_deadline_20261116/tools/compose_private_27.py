@@ -14,6 +14,7 @@ from pathlib import Path
 SCRIPT = "EGGRUMBLE_DeadlinePolicy"
 HOST = "EGGRUMBLE_LobbyCastleModesPreview"
 RESULT = "EGGRUMBLE_MatchResultService"
+ITEM = "EGGRUMBLE_FieldItemPickups"
 
 HOST_REQUIRE_ANCHOR = 'local BossSessionFence=require(script.Parent:WaitForChild("EGGRUMBLE_BossSessionFence"))'
 HOST_START_ANCHOR = ' Rules.start(session.rules)\n'
@@ -79,7 +80,7 @@ def enumerate_scripts(node: dict, chain: tuple[str, ...] = ()):
         elif isinstance(item, dict):
             yield from enumerate_scripts(item, chain+(key,))
 
-def compose(base_project: Path, policy: Path, out: Path) -> dict:
+def compose(base_project: Path, policy: Path, out: Path, item: Path | None = None) -> dict:
     assert out.resolve() != base_project.resolve()
     assert out.parent.is_dir(), "output directory must exist"
     base = json.loads(base_project.read_text(encoding="utf-8"))
@@ -100,6 +101,21 @@ def compose(base_project: Path, policy: Path, out: Path) -> dict:
     result = old_paths[RESULT].read_text(encoding="utf-8")
     modified_host=patch_host(host)
     modified_result=patch_result(result)
+    # Source-select the dedicated #489 ITEM author's original bytes, never
+    # reimplement HEAL/DASH/SHIELD, guard, or 35-second respawn here.
+    item_bytes=None
+    item_original=old_paths[ITEM].read_bytes()
+    if item is not None:
+        item=item.resolve(strict=True)
+        assert item.name==ITEM+".luau", "wrong item author source"
+        item_bytes=item.read_bytes()
+        assert item_bytes!=item_original, "ITEM overlay not applied"
+        item_source=item_bytes.decode("utf-8")
+        assert 'carryingEnemyEggs(' in item_source and 'cancelBuffIfCarrier(' in item_source
+        assert 'interactionGuard.allow(player,part,"拾う",part.Name)' in item_source
+        assert 'local RESPAWN_SECONDS=35' in item_source
+        assert 'local DEFINITIONS=' in item_source
+        assert 'return Items' in item_source
     policy = policy.resolve(strict=True)
     assert "function Deadline.expire" in policy.read_text(encoding="utf-8")
     # Never overwrite the #484 composer\'s existing 26-source host in artifacts/.
@@ -111,14 +127,18 @@ def compose(base_project: Path, policy: Path, out: Path) -> dict:
     server[HOST]=manifest_path(out,h_path)
     server[RESULT]=manifest_path(out,r_path)
     server[SCRIPT]=manifest_path(out,policy)
+    if item is not None:
+        server[ITEM]=manifest_path(out,item)
     project["name"]="EGGRUMBLE_V3_27SOURCE_DEADLINE_PRIVATE_NOT_OFFICIAL"
     out.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     mapped = list(enumerate_scripts(tree))
     assert len(mapped)==27
     actual={nodes[-1]:(nodes,mapped_source(out,item)) for nodes,item in mapped}
     assert len(actual)==27, "Duplicate source names"
+    unchanged_excludes={HOST, RESULT}
+    if item is not None: unchanged_excludes.add(ITEM)
     for name,p in old_paths.items():
-        if name in (HOST, RESULT): continue
+        if name in unchanged_excludes: continue
         assert actual[name][1].read_bytes()==p.read_bytes(), f"Original game/ART/SCORE modified: {name}"
     for name,p in old_client.items():
         assert actual[name][1].read_bytes()==p.read_bytes(), f"Original client modified: {name}"
@@ -131,7 +151,11 @@ def compose(base_project: Path, policy: Path, out: Path) -> dict:
     receipt={
         "status":"PRIVATE_SOURCE_ONLY_NOT_OFFICIAL_RC",
         "source_count":27,"server_count":24,"client_count":3,
-        "unchanged_original_sources":24, "private_modified_original_sources":[HOST,RESULT],
+        "unchanged_original_sources":26-len(unchanged_excludes),
+        "private_modified_original_sources":sorted(unchanged_excludes),
+        "item_author_byte_exact":item_bytes is not None,
+        "item_author_sha256":hashlib.sha256(item_bytes).hexdigest() if item_bytes is not None else None,
+        "original_item_sha256":hashlib.sha256(item_original).hexdigest(),
         "new_pure_source":SCRIPT,
         "changes_only_in_generated_place":True,
         "studio":"NOT_TESTED","android":"NOT_TESTED","owner_accepted":False,
@@ -148,9 +172,10 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--base",required=True,type=Path)
     ap.add_argument("--policy",required=True,type=Path)
+    ap.add_argument("--item",type=Path,help="read-only fixed original #489 ITEM author source")
     ap.add_argument("--out",required=True,type=Path)
     a=ap.parse_args()
-    r=compose(a.base.resolve(strict=True),a.policy.resolve(strict=True),a.out.resolve())
+    r=compose(a.base.resolve(strict=True),a.policy.resolve(strict=True),a.out.resolve(),a.item)
     print("EGGRUMBLE_DEADLINE_ACTUAL_GAME_27_COMPOSE_PASS",r["source_count"])
 
 if __name__=="__main__":
