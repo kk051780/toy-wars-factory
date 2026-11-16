@@ -61,12 +61,13 @@ function Tell.start(session:any):boolean
  -- Author-owned V3 field part is the one physical arena identity. If missing,
  -- fail closed: never emit a guessed badge in the lobby or another mode.
  local field = session.world:FindFirstChild("TacticalBattlefield")
- if not field or not field:IsA("BasePart") then return false end
+ if not field or not field:IsA("BasePart")
+  or field.Parent ~= session.world then return false end
  session._carrierWorldTellStarted = true
  local records:{[string]:any} = {}
  task.spawn(function()
-  while session.world.Parent ~= nil and session.rules.phase == "ACTIVE"
-   and session.rules.winner == nil
+  while session.world.Parent ~= nil and field.Parent == session.world
+   and session.rules.phase == "ACTIVE" and session.rules.winner == nil
    and session.carrierWorldTellEnabled ~= false do
    for _,entry in ipairs(session.roster) do
     local id = tostring(entry.id)
@@ -119,6 +120,9 @@ function Tell.start(session:any):boolean
    end
    task.wait(Policy.POLL_SECONDS)
   end
+  -- The battlefield can be removed BEFORE the parent arena is removed.
+  -- A detached or reparented floor also ends the visual loop and scrubs all
+  -- character-root labels, without changing the actual match/egg economy.
   -- Human avatars survive the arena; never leak a label into lobby/another mode.
   for _,record in pairs(records) do destroyRecord(record) end
   session._carrierWorldTellStarted = nil
