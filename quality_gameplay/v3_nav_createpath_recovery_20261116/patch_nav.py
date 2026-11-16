@@ -17,7 +17,8 @@ BEFORE = '''  local path=PathfindingService:CreatePath({
    WaypointSpacing=8,Costs={Water=15},
   })
   local ok=pcall(function()
-   path:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
+   path=candidate
+   candidate:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
   end)
   inFlight=math.max(0,inFlight-1)
   if states[id]~=state or not model.Parent then
@@ -29,7 +30,7 @@ AFTER = '''  -- Creation and compute must share one error boundary: a CreatePath
   -- exception must NEVER leak either of the two global navigation permits.
   local path:Path?=nil
   local ok=pcall(function()
-   path=PathfindingService:CreatePath({
+   local candidate=PathfindingService:CreatePath({
     AgentRadius=2,AgentHeight=5,AgentCanJump=false,
     WaypointSpacing=8,Costs={Water=15},
    })
@@ -71,7 +72,7 @@ def overlay(raw: bytes, *, locked: bool = True) -> bytes:
         raise SourceDrift("navigation permit release count differs from exactly one")
     if result.count("MAX_COMPUTES_IN_FLIGHT=2") != 1 or result.count("function Router.navigate(") != 1:
         raise SourceDrift("existing navigation authority or concurrency constant drifted")
-    if "local ok=pcall(function()\n   path=PathfindingService:CreatePath" not in result:
+    if "local ok=pcall(function()\n   local candidate=PathfindingService:CreatePath" not in result:
         raise SourceDrift("creation is not protected by the same error boundary")
     return result.encode("utf-8")
 
