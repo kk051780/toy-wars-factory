@@ -66,7 +66,11 @@ function Tell.start(session:any):boolean
  session._carrierWorldTellStarted = true
  local records:{[string]:any} = {}
  task.spawn(function()
-  while session.world.Parent ~= nil and field.Parent == session.world
+  -- This is optional visual QA. A malformed/replaced actor Model must not
+  -- leave the session stuck "started" or leak labels into future rounds.
+  -- Catch faults INSIDE our own spawned observer, then always clean up.
+  local ok, observerError = pcall(function()
+   while session.world.Parent ~= nil and field.Parent == session.world
    and session.rules.phase == "ACTIVE" and session.rules.winner == nil
    and session.carrierWorldTellEnabled ~= false do
    for _,entry in ipairs(session.roster) do
@@ -119,13 +123,19 @@ function Tell.start(session:any):boolean
     end
    end
    task.wait(Policy.POLL_SECONDS)
-  end
+   end
+  end)
   -- The battlefield can be removed BEFORE the parent arena is removed.
   -- A detached or reparented floor also ends the visual loop and scrubs all
   -- character-root labels, without changing the actual match/egg economy.
   -- Human avatars survive the arena; never leak a label into lobby/another mode.
   for _,record in pairs(records) do destroyRecord(record) end
   session._carrierWorldTellStarted = nil
+  if not ok then
+   -- Distinct from original engine errors; never change game Rules or attempt
+   -- a silent restart of an optional UI when its dependencies are unhealthy.
+   warn("[GQ511] optional carrier label observer stopped safely: "..tostring(observerError))
+  end
  end)
  return true
 end
