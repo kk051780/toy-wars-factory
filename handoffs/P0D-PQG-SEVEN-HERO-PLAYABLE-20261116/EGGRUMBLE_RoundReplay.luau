@@ -66,6 +66,23 @@ function Replay.canStartCountdown(mode:string,expectedEpoch:number,
   and queueEpoch[mode]==expectedEpoch
 end
 
+-- Return a real respawned human to their own castle while their original
+-- TEAM/BR match is still active. Never revive a destroyed castle or accept
+-- an old CharacterAdded callback from a prior avatar/round.
+function Replay.returnToActiveCastle(session:any,p:Player,character:Model,arrival:Vector3):boolean
+ assert(RunService:IsStudio(),"Studio preview only")
+ if p.Parent~=Players or p.Character~=character then return false end
+ if session.rules.phase~="ACTIVE" or not session.world.Parent then return false end
+ local id=tostring(p.UserId)
+ local castle=session.rules.castles[id]
+ if not castle or not castle.alive or not session.castleLocations[id] then return false end
+ local h=character:FindFirstChildOfClass("Humanoid")
+ local root=character:FindFirstChild("HumanoidRootPart")::BasePart?
+ if not h or h.Health<=0 or not root then return false end
+ root.CFrame=CFrame.new(arrival)
+ return true
+end
+
 function Replay.resetHuman(p:Player,returnTo:Vector3):()
  if p.Parent~=Players then return end
  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
