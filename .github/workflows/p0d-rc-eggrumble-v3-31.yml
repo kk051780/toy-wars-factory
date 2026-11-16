@@ -10,6 +10,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_lobby_safe_spawn_20261117/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
@@ -22,6 +23,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_lobby_safe_spawn_20261117/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
@@ -1610,10 +1612,39 @@ jobs:
             --original-author "$SRC/tools/stage_private_v3.py" \
             --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
           echo GQ527_LATEST31_ORIGINAL_BOT_CASTLE_SIEGE_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS
+      - name: GQ lobby safe spawn existing Host only; native31, true Rojo31, OFF exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ527_SIEGE_SELECTED31.project.json
+          OUT=$DIR/GQ_LOBBY_SAFE_SPAWN_SELECTED31.project.json
+          PLACE=$DIR/GQ_LOBBY_SAFE_SPAWN_TRUE_ROJO31.rbxlx
+          SELECTOR=rc_fastlane/quality_lobby_safe_spawn_20261117/select_lobby_safe_spawn.py
+          python3 -m py_compile "$SELECTOR"
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_lobby_safe_spawn_20261117 -p 'test_*.py'
+          python3 -B "$SELECTOR" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys,importlib.util
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location("gq_lobby_safe","rc_fastlane/quality_lobby_safe_spawn_20261117/select_lobby_safe_spawn.py")
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          _,sources,host=module.mapping(Path(sys.argv[1]))
+          assert len(sources)==31 and host[-1]=="EGGRUMBLE_LobbyCastleModesPreview"
+          assert sources[host].read_text().count("GQ_LOBBY_SAFE_SPAWN_20261117")==1
+          for path in sources.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ_LOBBY_SAFE_SPAWN_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SELECTOR" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ_LOBBY_SAFE_SPAWN_ROJO31_OTHER30_OFF_ROLLBACK_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ_LOBBY_SAFE_SPAWN_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1629,7 +1660,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ_LOBBY_SAFE_SPAWN_TRUE_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1737,9 +1768,14 @@ jobs:
           assert bot527["one_changed_existing_script"]=="EGGRUMBLE_BotActors"
           assert bot527["other_30_scripts_byte_exact"] and bot527["off_original_bot_byte_exact"]
           assert bot527["rojo_source_class_exact"]=="31/31" and bot527["pure_author_policy_inlined_in_bot"]
-          assert bot527["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bot527["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
+          lobby_safe=json.loads(Path("artifacts/gq515_official_select/GQ_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json").read_text())
+          assert lobby_safe["feature_id"]=="GQ_LOBBY_SAFE_SPAWN_20261117"
+          assert lobby_safe["changed_existing_host_only"] and lobby_safe["other30_script_bytes_identical"]
+          assert lobby_safe["rollback_exact"] and lobby_safe["rojo_source_class_exact"]=="31/31"
+          assert lobby_safe["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
           assert m["source_heads"]["bot_siege527"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
@@ -1823,6 +1859,8 @@ jobs:
              "gq615_rojo31_source_class_path_exact":True,
              "gq499_original_timeout_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
              "gq527_bot_siege_target_pacing_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+              "gq_lobby_safe_spawn_host_only":True,
+              "gq_lobby_safe_spawn_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
             "gq586_current_match_deposit_selected":True,
