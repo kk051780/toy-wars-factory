@@ -56,6 +56,16 @@ function Replay.leaveWaitingQueue(mode:string,p:Player,queues:{[string]:{Player}
  return true
 end
 
+-- The timer from an emptied queue must never trigger a new entrant's round.
+-- This is called by the existing server countdown and executable in native Luau QA.
+function Replay.canStartCountdown(mode:string,expectedEpoch:number,
+ queues:{[string]:{Player}},queueEpoch:{[string]:number},sessions:{[string]:any}):boolean
+ assert(RunService:IsStudio(),"Studio preview only")
+ local waiting=queues[mode]
+ return sessions[mode]==nil and waiting~=nil and #waiting>0
+  and queueEpoch[mode]==expectedEpoch
+end
+
 function Replay.resetHuman(p:Player,returnTo:Vector3):()
  if p.Parent~=Players then return end
  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
