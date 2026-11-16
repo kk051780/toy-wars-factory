@@ -53,6 +53,9 @@ RULES = {
     'interactionGuard.allow(player,part,"拾う",part.Name)',
     "local function restoreSpeed()",
     "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end",
+  ),
+  "EGGRUMBLE_LobbyCastleModesPreview": (
+    "session.canCollectWorldItem=function(actor:Player):boolean",
   )},
  "lobby": {
   "EGGRUMBLE_LobbyCastleModesPreview": (
@@ -123,6 +126,9 @@ FEATURE_EVIDENCE = {
   'local neutralIds=setmetatable({}, {__mode="k"})',
   "local function neutralTargetId(enemy:Model):string",
   'id=neutralTargetId(enemy),kind="NEUTRAL"')),
+ "ITEM_CURRENT_SESSION_525": ("EGGRUMBLE_FieldItemPickups", (
+  "local authorize=session.canCollectWorldItem",
+  "local ok,allowed=pcall(authorize,player)")),
  "PROMPT_SERVER_REACH_611": ("EGGRUMBLE_InteractionGuard", (
   "local function configuredReach(part:BasePart,verb:string):number?",
   "if selected then return nil end",
