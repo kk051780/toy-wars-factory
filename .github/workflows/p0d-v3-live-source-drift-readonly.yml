@@ -30,8 +30,44 @@ jobs:
           print("AUDIT_STATUS:", r["decision"], "BLOCKERS:", len(r.get("blockers", [])))
           print("CI execution success is NOT official RC admission or gameplay approval.")
           PY
+      - name: Record separate static source / nonStudio / ART product-preflight statuses
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0, "rc_source_drift_gate")
+          from check_live_intake import static_release_preflight_issues
+          source=json.loads(Path("artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json").read_text(encoding="utf-8"))
+          issues=static_release_preflight_issues(source)
+          detail={
+              "schema":"P0D_GQ26_CI_NO_FALSE_PRODUCT_GO_V1",
+              "source_candidate":source.get("source_candidate","UNKNOWN"),
+              "source_intake":source.get("decision","UNKNOWN"),
+              "source_blockers":source.get("blockers",[]),
+              "static_nonstudio_art_gate":"KNOWN_BLOCKERS" if issues else "NO_KNOWN_STATIC_GUARDS_ONLY",
+              "static_gate_issues":issues,
+              "selected_script_count":source.get("full26_runtime_activation",{}).get("selected_script_count"),
+              "game_studio_guard_count":source.get("full26_runtime_activation",{}).get("game_guard_count"),
+              "art_studio_guard_count":source.get("full26_runtime_activation",{}).get("art_guard_count"),
+              "canonical_rc_adopted":False,
+              "studio_2client_run":"NOT_RUN",
+              "android_15min_run":"NOT_RUN",
+              "art_and_fun_owner_go":False,
+              "product_go":False,
+              "next_owner":"#482 game host; #485 ART runtime; #220 official authenticated CAS"
+          }
+          target=Path("artifacts/P0D_STATIC_PRODUCT_PREFLIGHT_NO_GO.json")
+          target.write_text(json.dumps(detail,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+          print("RC_PRIVATE_SOURCE_STATUS",detail["source_intake"])
+          print("NONSTUDIO_ART_PREFLIGHT",detail["static_nonstudio_art_gate"],
+                "ISSUES",len(issues))
+          print("PRODUCT_NO_GO: static source lint is not Roblox Studio / Android validation")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: EGGRUMBLE-LIVE-RC-INTEGRATION-BLOCKERS-NOT-ADOPTED
-          path: artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json
+          path: |
+            artifacts/P0D_LIVE_RC_SOURCE_DRIFT.json
+            artifacts/P0D_STATIC_PRODUCT_PREFLIGHT_NO_GO.json
           retention-days: 5
