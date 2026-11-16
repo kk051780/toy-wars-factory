@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: a5f2c36b53896643ee12aa62c67ba6c1fb18ef9a
+          ref: 7005fe0916ff157d770b638ac70efaef9396e0f5
           path: _v3_objective
           persist-credentials: false
       - name: Read immutable original V3 game author #482
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
           path: _v3_quality
           persist-credentials: false
       - name: Read original ART author #485
@@ -56,9 +56,9 @@ jobs:
       - name: Check all immutable cross-chat author versions
         run: |
           set -euo pipefail
-          test "$(git -C _v3_objective rev-parse HEAD)" = a5f2c36b53896643ee12aa62c67ba6c1fb18ef9a
+          test "$(git -C _v3_objective rev-parse HEAD)" = 7005fe0916ff157d770b638ac70efaef9396e0f5
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
-          test "$(git -C _v3_quality rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
       - name: Run 26-source preservation and local client safety negatives
@@ -135,6 +135,16 @@ jobs:
         run: |
           set -euo pipefail
           (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse latest #484 neutral-call fault tolerance in actual Luau VM
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse latest #496 real objective selection TEAM/BR native Luau VM
+        run: |
+          set -euo pipefail
+          python3 _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests/make_native_objective_harness.py --out /tmp/gq-objective-current-native.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq-objective-current-native.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq-objective-current-native.luau
       - name: Download checksum-locked Rojo 7.7.1 and create unpublished actual Place
         run: |
           set -euo pipefail
