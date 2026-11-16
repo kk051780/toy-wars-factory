@@ -68,7 +68,7 @@ class OriginalBuilderReuse(unittest.TestCase):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as temp:
             b=Path(temp)/"builder.luau"
-            b.write_bytes(BUILDER.read_bytes().replace(b"WalkSpeed",b"RunSpeed"))
+            b.write_bytes(BUILDER.read_bytes().replace(b"Build.DEFAULT_ENABLED=false",b"Build.DEFAULT_ENABLED=true"))
             with self.assertRaisesRegex(ValueError,"AUTHOR_BLOB_DRIFT"):
                 exact_author(b,POLICY)
 
