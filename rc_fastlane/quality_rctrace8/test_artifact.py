@@ -224,7 +224,15 @@ class Gate(unittest.TestCase):
                     self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],36)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
-                    with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
+                    # The independent eight-domain gate may reject a mutation
+                    # before the per-feature gate when they share the same anchor.
+                    # Both outcomes are RED; require the exact first rejecting owner.
+                    expected="FEATURE_FALSE_ON_"+flag
+                    if flag=="RARE_FIELD_EGG_SCORE_20261117" and anchor=="local claimedRareFieldEggs={}":
+                        expected="DOMAIN_balance_MISSING_EGGRUMBLE_ScoreBalance"
+                    elif flag=="RESULT_DRAW_LABEL_20261117" and anchor=="function ResultRetry.deliver(":
+                        expected="DOMAIN_balance_MISSING_EGGRUMBLE_MatchResultService"
+                    with self.assertRaisesRegex(gq8.RedGate,expected):
                         gq8.verify(b,r,m,a,HEAD)
 
     def test_late_flags_cannot_claim_certification_when_disabled(self):
