@@ -51,3 +51,54 @@ jobs:
           /tmp/gq_dash_luau/luau test_dash_lease.luau | tee /tmp/gq_dash_vm.log
           grep -q GQ_ITEM_DASH_EPOCH_NATIVE_PASS /tmp/gq_dash_vm.log
           echo "GQ_DASH_SOURCE_QA_PASS PRIVATE_ONLY CLAIM_NOT_GRANTED RC_NOT_CHANGED STUDIO_NOT_RUN"
+      - name: Compose full real original V3 private OFF21 and ON22 source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_item_dash_epoch_fence_20261116
+          python3 "$root/stage_private_v3.py" --out /tmp/GQ532_V3_OFF21_NOT_RC
+          python3 "$root/stage_private_v3.py" --enabled --out /tmp/GQ532_V3_ON22_NOT_RC
+          for mode in OFF21 ON22; do
+            folder=/tmp/GQ532_V3_"$mode"_NOT_RC
+            count=0
+            for file in "$folder"/src/*.luau; do
+              /tmp/gq_dash_luau/luau-compile --text "$file" >/dev/null
+              count=$((count+1))
+            done
+            if [ "$mode" = OFF21 ]; then test "$count" -eq 21; else test "$count" -eq 22; fi
+          done
+      - name: Pinned Rojo 7.7.1 unpublished private OFF21 and ON22 Source/Class exact Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_item_dash_epoch_fence_20261116
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq532_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq532_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq532_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq532_rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          for mode in OFF21 ON22; do
+            folder=/tmp/GQ532_V3_"$mode"_NOT_RC
+            place="$folder"/GQ532_V3_"$mode"_NOT_RC.rbxlx
+            /tmp/gq532_rojo build "$folder/private_v3.project.json" -o "$place"
+            python3 "$root/verify_private_place.py" --folder "$folder" --place "$place"
+            stat -c "$mode PRIVATE_PLACE_BYTES=%s" "$place"
+            sha256sum "$place"
+          done
+          cd /tmp
+          zip -q -r /tmp/GQ532_DASH_PRIVATE_OFF21_ON22_NOT_RC.zip GQ532_V3_OFF21_NOT_RC GQ532_V3_ON22_NOT_RC
+          stat -c 'GQ532_PRIVATE_ZIP_BYTES=%s' /tmp/GQ532_DASH_PRIVATE_OFF21_ON22_NOT_RC.zip
+          sha256sum /tmp/GQ532_DASH_PRIVATE_OFF21_ON22_NOT_RC.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ532_DASH_EPOCH_PRIVATE_OFF21_ON22_NOT_RC
+          path: /tmp/GQ532_DASH_PRIVATE_OFF21_ON22_NOT_RC.zip
+          if-no-files-found: error
+          retention-days: 7
