@@ -88,7 +88,7 @@ def apply(host:str,bot:str)->str:
     needles+=[old]
     pos=[block.find(x) for x in needles]
     if min(pos)<0 or pos!=sorted(pos):
-        raise ValueError("RED_NOT_CURRENT_AVATAR_ACTIVE_LIVE_CASTLE")
+        raise ValueError("RED_NOT_CURRENT_AVATAR_ACTIVE_LIVE_CASTLE "+repr(list(zip(needles,pos)))+" | "+repr(block[-650:]))
     result=host.replace(old,new,1)
     if result.replace(new,old,1)!=host:
         raise ValueError("RED_ROLLBACK_NOT_EXACT")
