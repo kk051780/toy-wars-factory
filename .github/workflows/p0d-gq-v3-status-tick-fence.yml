@@ -64,7 +64,7 @@ jobs:
           /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualServerStatus.spec.luau >/dev/null
           cd /tmp/gq_status
           /tmp/gq_status_luau/luau ./ActualServerStatus.spec.luau | tee /tmp/gq_status_actual_server.log
-          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_16_SCENARIOS_PASS /tmp/gq_status_actual_server.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq_status_actual_server.log
           cd "$GITHUB_WORKSPACE"
       - name: Checksum pinned Rojo 7.7.1 and unpublished private 22-source Place
         run: |
@@ -278,7 +278,7 @@ jobs:
           cd /tmp/gq_status
           /tmp/gq_status_luau/luau-compile --text ActualServerUnion.spec.luau >/dev/null
           /tmp/gq_status_luau/luau ./ActualServerUnion.spec.luau | tee /tmp/gq_510_516_real_callback.log
-          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_16_SCENARIOS_PASS /tmp/gq_510_516_real_callback.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq_510_516_real_callback.log
           cd "$GITHUB_WORKSPACE"
           python3 - <<'PY'
           import importlib.util
