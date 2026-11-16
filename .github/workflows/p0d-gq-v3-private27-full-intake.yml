@@ -1,0 +1,144 @@
+name: P0D GQ V3 FULL26 original + private gate 27 SOURCE-exact
+on:
+  push:
+    branches: [quality/p0d-v3-private-live-canary-20261116]
+    paths:
+      - quality_gameplay/v3_private_live_canary_20261116/**
+      - .github/workflows/p0d-gq-v3-private27-full-intake.yml
+  pull_request:
+    paths:
+      - quality_gameplay/v3_private_live_canary_20261116/**
+      - .github/workflows/p0d-gq-v3-private27-full-intake.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  full27-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - name: Checkout independent GQ source read-only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout pinned GAME original 21 source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Checkout pinned GQ spatial original 26-source composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout pinned original ART compositor
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout pinned original SCORE adapter
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify all four original authors' immutable HEADs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          echo "GAME_21_SPATIAL_ART4_SCORE_ORIGINAL_HEADS_PINNED"
+      - name: Native-negative source tests for original author immutability
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/v3_private_live_canary_20261116/tests -v
+      - name: Reuse original #485 ART and original #484 spatial + #487 score composers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gq-current26"
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out "$RUNNER_TEMP/gq-current26/ART26.project.json"
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project "$RUNNER_TEMP/gq-current26/ART26.project.json" \
+            --out "$RUNNER_TEMP/gq-current26/GQ26.project.json"
+      - name: Extend unchanged original26 to independently isolated private 27
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_private_live_canary_20261116/compose_private27.py \
+            --source-project "$RUNNER_TEMP/gq-current26/GQ26.project.json" \
+            --source-receipt "$RUNNER_TEMP/gq-current26/SOURCE_RECEIPT.json" \
+            --out "$RUNNER_TEMP/eggrumble-private27"
+      - name: Checkout checksum-pinned official Luau open-source compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_gate_pinned
+          persist-credentials: false
+      - name: Native compile 27 generated scripts and execute 11 private gate cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_gate_pinned rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_gate_pinned -B /tmp/gq_private27_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_private27_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for f in "$RUNNER_TEMP"/eggrumble-private27/sources/*.luau; do
+            /tmp/gq_private27_luau/luau-compile --text "$f" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" -eq 27
+          python3 quality_gameplay/v3_private_live_canary_20261116/native_gate_harness.py --out "$RUNNER_TEMP/private27_vm.luau"
+          /tmp/gq_private27_luau/luau "$RUNNER_TEMP/private27_vm.luau" | tee "$RUNNER_TEMP/PRIVATE27_VM.log"
+          grep -q PRIVATE_GATE_NATIVE_51_CASES_PASS "$RUNNER_TEMP/PRIVATE27_VM.log"
+          echo "GQ_V3_NATIVE_27_OF_27_PASS"
+      - name: Build unpublished Rojo27 Place with pinned 7.7.1 binary SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_27_rojo.zip') as z:
+            matches=[f for f in z.namelist() if f.split('/')[-1]=='rojo']
+            assert len(matches)==1
+            out=Path('/tmp/gq_27_rojo')
+            out.write_bytes(z.read(matches[0]))
+            out.chmod(0o755)
+          PY
+          /tmp/gq_27_rojo build "$RUNNER_TEMP/eggrumble-private27/EGGRUMBLE_V3_PRIVATE27.project.json" -o "$RUNNER_TEMP/eggrumble-private27/EGGRUMBLE_V3_PRIVATE27_UNPUBLISHED.rbxlx"
+      - name: Verify Rojo actual Place 27 / 27 exact Source and instance class
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_private_live_canary_20261116/verify_private27.py --out "$RUNNER_TEMP/eggrumble-private27"
+      - name: Archive private SOURCE-only evidence, no Game publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ_ORIGINAL26_PRIVATE27_NO_RC
+          path: |
+            ${{ runner.temp }}/eggrumble-private27/EGGRUMBLE_V3_PRIVATE27_UNPUBLISHED.rbxlx
+            ${{ runner.temp }}/eggrumble-private27/EGGRUMBLE_V3_PRIVATE27.project.json
+            ${{ runner.temp }}/eggrumble-private27/SOURCE_RECEIPT_27.json
+            ${{ runner.temp }}/eggrumble-private27/PLACE_RECEIPT_27.json
+            ${{ runner.temp }}/PRIVATE27_VM.log
+          retention-days: 3
