@@ -78,7 +78,7 @@ class CombatBalanceAndArtGate(unittest.TestCase):
                       'h:SetAttribute("EGGRUMBLE_BurnUntil"', 'h:TakeDamage(tick)',
                       'EGGRUMBLE_MarkedUntil','h:TakeDamage(damage*duel*mark)',
                       'EGGRUMBLE_GiantFeedUntil','EGGRUMBLE_KamiUntil',
-                      'if not owner.alive'):
+                      'or not owner.alive'):
             with self.subTest(token=token):
                 self.assertIn(token,HERO)
         self.assertIn('session.mode~="TEAM" or target.team~=state.team',HERO)
