@@ -11,7 +11,7 @@ from pathlib import Path
 import subprocess
 import xml.etree.ElementTree as ET
 
-from compose import BOT, HOST, OWNER_BLOBS, OWNER_HEAD, SOURCE_ROOT, git_blob_sha
+from compose import BOT, HOST, OWNER_BLOBS, OWNER_HEAD, SOURCE_ROOT, AI_AUTHOR_HEAD, AI_BOT_BLOB, git_blob_sha
 
 PROJECT_NAME = "EGGRUMBLE_V3_STUDIO.project.json"
 OVERLAY_NAMES = {HOST, BOT}
@@ -43,7 +43,7 @@ def mapped_sources(node: dict):
     return found
 
 
-def assemble(out: Path):
+def assemble(out: Path, require_ai: bool = False):
     if not all((out / x).exists() for x in OVERLAY_NAMES):
         raise RuntimeError("overlay two-file pair missing")
     project_bytes = original_blob(PROJECT_NAME)
@@ -65,6 +65,18 @@ def assemble(out: Path):
     lock = json.loads((out / "overlay_source_lock.json").read_text(encoding="utf-8"))
     assert lock["owner_head"] == OWNER_HEAD
     assert set(lock["source_files"]) == OVERLAY_NAMES
+    assert lock["source_files"][HOST]["owner_blob"] == OWNER_BLOBS[HOST]
+    if require_ai:
+        assert lock["selected_ai_author_head"] == AI_AUTHOR_HEAD
+        assert lock["source_files"][BOT]["owner_blob"] == AI_BOT_BLOB
+        assert lock["ai_duel_preserved"] is True
+        code = (out / BOT).read_text(encoding="utf-8")
+        assert code.count("for targetId,targetActor in pairs(bots)") == 1
+        assert code.count("targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)") == 1
+        print("GQ_ORIGINAL_484_BOT_DUEL_PRESERVED 1/1")
+    else:
+        assert lock["selected_ai_author_head"] is None
+        assert lock["source_files"][BOT]["owner_blob"] == OWNER_BLOBS[BOT]
     for name in OVERLAY_NAMES:
         assert git_blob_sha((out / name).read_bytes()) == lock["source_files"][name]["overlay_blob"]
     print("GQ_PRIVATE21_PREPARED exact original19+patched2", len(paths))
@@ -106,6 +118,7 @@ def verify(out: Path, place: Path):
     receipt = {
         "candidate_head_sha": os.environ.get("GITHUB_SHA", "LOCAL_ONLY"),
         "owner_head_sha": OWNER_HEAD,
+        "selected_ai_author_head": json.loads((out / "overlay_source_lock.json").read_text(encoding="utf-8")).get("selected_ai_author_head"),
         "rc_integrated": False,
         "original_author_scripts_unchanged": 19,
         "patched_author_scripts": [HOST, BOT],
@@ -129,9 +142,10 @@ if __name__ == "__main__":
     p.add_argument("operation", choices=["assemble", "verify"])
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--place", type=Path)
+    p.add_argument("--require-ai", action="store_true")
     a = p.parse_args()
     if a.operation == "assemble":
-        assemble(a.out)
+        assemble(a.out, a.require_ai)
     else:
         if not a.place:
             p.error("--place required for verify")
