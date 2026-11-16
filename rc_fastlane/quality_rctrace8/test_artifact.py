@@ -43,7 +43,8 @@ def fixture():
               "source_count":31,"enabled":True,"source_heads":heads,
               "feature_flags":flags}
     active={"active_profile":"rich51","source_profiles":{"eggrumble_v3_31":{"source_count":31}}}
-    receipt={"canonical_branch":"rc/p0d-s1-kids-rc01",
+    receipt={"status":"CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED",
+             "canonical_branch":"rc/p0d-s1-kids-rc01",
              "github_commit_sha":HEAD,"official_rc_commit_verified":True,
              "release_profile":"eggrumble_v3_31","script_count":31,
              "script_source_and_class_exact":"31/31",
@@ -131,6 +132,21 @@ class Gate(unittest.TestCase):
         r["official_rc_commit_verified"]=False
         with self.assertRaisesRegex(gq8.RedGate,"NOT_OFFICIAL_PUSH"):
             gq8.verify(b,r,m,a,HEAD)
+    def test_premerge_only_when_explicitly_allowed_and_properly_labeled(self):
+        b,r,m,a=fixture()
+        r["official_rc_commit_verified"]=False
+        r["status"]="RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
+        with self.assertRaisesRegex(gq8.RedGate,"NOT_OFFICIAL_PUSH"):
+            gq8.verify(b,r,m,a,HEAD)
+        v=gq8.verify(b,r,m,a,HEAD,allow_pr_premerge=True)
+        self.assertFalse(v["official_rc_push_verified"])
+        self.assertIn("NOT_OFFICIAL_RC",v["result"])
+    def test_pr_premerge_cannot_launder_undesignated_source_as_valid(self):
+        b,r,m,a=fixture()
+        r["official_rc_commit_verified"]=False
+        r["status"]="SOME_UNVERIFIED_BUILD"
+        with self.assertRaisesRegex(gq8.RedGate,"NOT_OFFICIAL_PUSH"):
+            gq8.verify(b,r,m,a,HEAD,allow_pr_premerge=True)
     def test_source_author_heads_must_match_manifest(self):
         b,r,m,a=fixture()
         r["source_author_heads"]["carrier_stale_avatar551"]="b"*40
