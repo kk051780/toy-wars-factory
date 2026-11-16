@@ -15,7 +15,7 @@ permissions:
 jobs:
   source-only:
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 13
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -35,6 +35,14 @@ jobs:
           set -euo pipefail
           test "$(git -C _gq_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _gq_pinned_luau -B /tmp/gq_observer_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq_observer_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq_observer_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           /tmp/gq_observer_luau/luau-compile gq_runtime_probe/EGGRUMBLE_StudioLiveObserver.server.luau >/dev/null
           echo "PINNED_NATIVE_LUAU_PARSE_PASS; STUDIO/ANDROID/RC_NOT_TESTED"
+      - name: Execute ORIGINAL observer lifecycle in native Luau VM with headless instance events
+        shell: bash
+        run: |
+          set -euo pipefail
+          python gq_runtime_probe/tools/make_native_observer_harness.py --out /tmp/gq_live_observer_native.luau
+          /tmp/gq_observer_luau/luau-compile /tmp/gq_live_observer_native.luau >/dev/null
+          /tmp/gq_observer_luau/luau /tmp/gq_live_observer_native.luau
+          echo "TRUE_SOURCE_NATIVE_EVENT_VM_PASS; STUDIO/ANDROID/RC_NOT_TESTED"
