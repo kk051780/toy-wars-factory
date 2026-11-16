@@ -70,6 +70,39 @@ A bounded inspection of at most **1,800 A01 cosmetic Parts**, with a camera-dist
 
 **Important performance limit:** the LOD reduces *rendered* distant A01 geometry only. It does **not** reduce server part creation, replication bytes, instance counts, RAM, pathfinding cost or AI activity; original mobile Device Emulator FPS/thermal and real Android testing remain REQUIRED. It is not a measured 30 FPS claim. This layer also does not make Studio-only source builds into Android-deployed experiences.
 
+## 2026-11-16: RC integration readiness checkpoint (strict, not a completion claim)
+
+The user wants an **RC integration progress update on every A01 iteration**. Distinguish an unpublished source candidate from an authenticated production RC adoption.
+
+| Milestone, non-overlapping responsibility | Verified status at this checkpoint |
+| --- | --- |
+| 1. A01 standalone reversible 7-domain cosmetics, no duplicate weapons/castle/AI | PASS, dedicated PR #485 |
+| 2. A01 regression checks and per-character role-change idempotence | PASS, 33/33 |
+| 3. Native Luau syntax across A01 original creator scripts | PASS, dedicated CI |
+| 4. Five separate original-author+A01 private Rojo Place source builds | PASS, 5/5 |
+| 5. Exact source-tree/Place SHA256 evidence, original author head and A01 head preserved | PASS, A01 RC_SOURCE_HANDOFF.json |
+| 6. GQ #484 + SCORE #487 + ART #485 and **latest** #482 author gameplay reconciled and tested together at one immutable source HEAD | NOT VERIFIED FOR CURRENT ALL-HEAD |
+| 7. Roblox Studio 1 human+15 AI, 2 humans+14 AI, true attack/egg/door/boss/ITEM and lifecycle | NOT RUN |
+| 8. Android 15 min FPS median>=30, p10>=25, thermal degradation<=20%, crash=0 | NOT RUN |
+| 9. Independent #420 art and #470 gameplay/FUN test accepted | NO_GO |
+| 10. Authenticated sole writer #220 adopted source through official RC CAS after RED gate checks | **NOT ADOPTED** |
+
+**RC readiness gate count = 5/10** by equal-weight checklist ONLY (not 50% product
+development time, feature completeness, owner acceptance or verified playability).
+**Official RC integration 0/1 = 0%**. The independently created source-only preview
+was *not* installed into the authoritative RC.
+
+Native and Rojo checks for this immutable checkpoint:
+- [A01 dedicated Actions run #43794495007](https://github.com/kk051780/toy-wars-factory/actions/runs/43794495007): 33/33 Python, genuine native Luau parser PASS, five Rojo generated private Places PASS, exact source+Place SHA manifest generated and uploaded. Fixed A01 HEAD `8c64246a6ab780e1801c832174edfe28db855977`, latest original author read-only checkout HEAD `261556346e67d7a8fde1b65534535150db81432c` **at that run**, 19 original server nodes+3 A01 server+original 2 clients+1 A01 client = 25 file source nodes in the private V3 Place.
+- Actions artifact `EGGRUMBLE-A01-PRIVATE-STUDIO-PLACES-NOT-RC` ID **14193453407** contains the five .rbxlx files **and** `EGGRUMBLE_A01_RC_SOURCE_HANDOFF.json`; short retention 3 days.
+- The exact original author may advance further after the recorded checkout. In that case all latest-head integration gates must be rerun, not inferred from this snapshot. #220 alone decides a later source-selective official RC CAS write; no wholesale PR merge.
+
+This run's two real performance/visual fixes: unchanged class role + anchor no
+longer rebuilds body art on duplicate player attributes, and the client
+camera-distance LOD has a 12% in/out hysteresis to avoid repeated culling
+at near-edge combat and routes. Client LOD still only controls A01-rendered
+visibility, not server replication, original game content or Android FPS.
+
 ## Quality / device acceptance contract
 
 Source-level guardrails: Studio-only, noncolliding/untouchable/unqueryable cosmetic Parts, no local material/shadow heavy loops, per-role and per-arena bounds, existing physical path preserved. Dedicated source CI: .github/workflows/p0d-eggrumble-art-a01-source.yml. Static tests are in tests/test_art_source_contract.py; running them is not the same as running Roblox.
