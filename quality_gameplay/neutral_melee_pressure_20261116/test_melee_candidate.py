@@ -25,6 +25,7 @@ class NeutralMeleeSourceTests(unittest.TestCase):
         assert "workspace:Raycast(from,delta,params)==nil" in candidate
         assert "for id,actor in pairs(session.botActors or {})" in candidate
         assert "Players:GetPlayers()" in candidate
+        assert 'p:GetAttribute("EGGRUMBLE_QueuedMode")==session.mode' in candidate
         assert "if castle and castle.alive" in candidate
 
     def test_original_body_untouched_before_on_the_fly_patch(self):
