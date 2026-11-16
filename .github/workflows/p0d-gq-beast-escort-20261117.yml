@@ -35,7 +35,9 @@ jobs:
           cmake -S _gq_luau -B /tmp/gq-beast-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/gq-beast-native --target Luau.Compile.CLI --parallel 4
           /tmp/gq-beast-native/luau-compile --text quality_gameplay/v3_beast_escort_20261117/EGGRUMBLE_BeastEscort.luau >/dev/null
+          python3 -m py_compile quality_gameplay/v3_beast_escort_20261117/compose_single_combat.py quality_gameplay/v3_beast_escort_20261117/select_current31.py
           python3 -B quality_gameplay/v3_beast_escort_20261117/test_compose.py
+          python3 -B quality_gameplay/v3_beast_escort_20261117/test_select_current31.py
       - name: Compose one real Combat and compile ALL original21 scripts
         shell: bash
         run: |
