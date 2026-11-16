@@ -1,26 +1,31 @@
 --!strict
--- Cosmetic-only client VFX admission policy. No damage, skills, HP, physics or remote.
+-- Pure, client-only cosmetic policy for #482 secondary skill decorations.
+-- Core FLASH/RING, ULTIMATE cues, confirmed KO and HIT are ALWAYS preserved.
+-- Does not touch gameplay cooldown, damage, NPC movement, egg or score state.
 local Budget = {}
-local TOUCH_LIMITS = {CORE=100, SECONDARY=70, ULTIMATE=200, KO=100}
-local DESKTOP_LIMITS = {CORE=165, SECONDARY=115, ULTIMATE=285, KO=165}
+local NEAR_PROTECTION = 40
+local HYSTERESIS = 9
+local TOUCH_FAR = 85
+local DESKTOP_FAR = 130
 
-function Budget.shouldHide(kind:string, distance:number, touch:boolean, reduced:boolean, active:number):boolean
-    local limits = if touch then TOUCH_LIMITS else DESKTOP_LIMITS
-    local limit = limits[kind]
-    if not limit then return false end
-    if distance ~= distance or distance < 0 then return false end
-    if reduced then
-        limit = if kind == "ULTIMATE" then 90 elseif kind == "KO" then 55 else 35
-    elseif active >= 72 and kind ~= "ULTIMATE" then
-        limit *= if touch then 0.66 else 0.82
-    elseif active >= 44 and kind == "SECONDARY" then
-        limit *= if touch then 0.78 else 0.9
+function Budget.shouldHide(kind:string, distance:number, touch:boolean, reduced:boolean, active:number, wasHidden:boolean?):boolean
+    -- Safety by default: all unknown/critical FX remain visible at any distance/load.
+    if kind ~= "SECONDARY" then return false end
+    if type(distance) ~= "number" or distance ~= distance or distance == math.huge or distance < 0 then
+        return false
     end
-    -- The close-range hit identity / ultimate remains visible even on busy touch devices.
-    if kind == "ULTIMATE" and distance <= 85 then return false end
-    if kind == "KO" and distance <= 40 then return false end
-    if kind == "CORE" and distance <= 40 then return false end
-    return distance > limit
+    if distance <= NEAR_PROTECTION then return false end
+    local far = if touch then TOUCH_FAR else DESKTOP_FAR
+    if reduced then
+        far = if touch then 48 else 70
+    elseif active >= 96 then
+        far *= if touch then 0.68 else 0.8
+    elseif active >= 60 then
+        far *= if touch then 0.84 else 0.9
+    end
+    -- Keep secondary VFX stable near a moving camera instead of flashing at one threshold.
+    local threshold = if wasHidden then far - HYSTERESIS else far + HYSTERESIS
+    return distance > math.max(NEAR_PROTECTION, threshold)
 end
 
 return Budget
