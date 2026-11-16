@@ -11,6 +11,8 @@ from pathlib import Path
 
 GAME_HOST = "EGGRUMBLE_LobbyCastleModesPreview"
 CLIENT_NAME = "EGGRUMBLE_GQ_ObjectiveCompass"
+ITEM_NAME = "EGGRUMBLE_FieldItemPickups"
+ITEM_PATH = ("ServerScriptService", ITEM_NAME)
 CLIENT_SET = {
     "EGGRUMBLE_CombatFeel", "EGGRUMBLE_ProceduralSkills",
     "EGGRUMBLE_ArtDistanceLOD",
@@ -23,7 +25,8 @@ SERVER_REQUIRED = {
     GAME_HOST, "EGGRUMBLE_BotActors", "EGGRUMBLE_BotPathRouter",
     "EGGRUMBLE_CastleMatchRules", "EGGRUMBLE_SevenRoleCombat",
     "EGGRUMBLE_NeutralStoneGiant", "EGGRUMBLE_BossSessionFence",
-    "EGGRUMBLE_RaidItemIntake", "EGGRUMBLE_FieldItemPickups",
+    "EGGRUMBLE_RaidItemIntake", ITEM_NAME,
+    "EGGRUMBLE_InteractionGuard",
     "EGGRUMBLE_MatchResultService", "EGGRUMBLE_ScoreBalance",
     *ART_SET,
 }
@@ -44,7 +47,7 @@ def flatten(tree, prefix=()):
     return result
 
 
-def compose(base_project, base_receipt, new_script, out):
+def compose(base_project, base_receipt, new_script, out, item_source=None, item_sha256=None):
     base_project = Path(base_project).resolve(strict=True)
     base_receipt = Path(base_receipt).resolve(strict=True)
     new_script = Path(new_script).resolve(strict=True)
@@ -89,7 +92,33 @@ def compose(base_project, base_receipt, new_script, out):
             or "EGGRUMBLE_GQ_ObjectiveCompass" not in script_text
             or "FireServer(" in script_text or "Instance.new(\"RemoteEvent\")" in script_text):
         raise ValueError("Unsafe/incorrect client overlay")
+    # Source-select the existing ITEM owner's actual file, not a reimplemented item authority.
+    # The underlying 26-source author+ART+SCORE receipt is checked *before* this override.
+    item_source_bytes = None
+    old_item_sha = receipt["source_sha256"][ITEM_NAME]
+    if item_source is not None:
+        item_source = Path(item_source).resolve(strict=True)
+        if (item_source.name != ITEM_NAME + ".luau" or not item_sha256
+                or len(item_sha256) != 64):
+            raise ValueError("Pinned original ITEM owner SHA256 and name required")
+        item_source_bytes = item_source.read_bytes()
+        if hashlib.sha256(item_source_bytes).hexdigest() != item_sha256.lower():
+            raise ValueError("Item original-owner SHA256 mismatch")
+        item_text = item_source_bytes.decode("utf-8")
+        if not all(token in item_text for token in (
+                "function Items.start(", "carryingEnemyEggs(",
+                'interactionGuard.allow(player,part,"拾う",part.Name)',
+                "cancelBuffIfCarrier(", "RESPAWN_SECONDS=35")):
+            raise ValueError("ITEM candidate violates existing owner fairness/LOS contract")
+        if item_sha256 == old_item_sha:
+            raise ValueError("Original ITEM author source was not updated")
+    elif item_sha256 is not None:
+        raise ValueError("SHA256 supplied without authored ITEM source")
     overlay = copy.deepcopy(data)
+    if item_source is not None:
+        overlay["tree"]["ServerScriptService"][ITEM_NAME] = {
+            "$path": os.path.relpath(item_source, out.parent).replace(os.sep, "/")
+        }
     overlay["name"] = "EGGRUMBLE_V3_AUTHOR_ART_SCORE_GQ_OBJECTIVE27_PRIVATE"
     overlay["tree"]["StarterPlayer"]["StarterPlayerScripts"][CLIENT_NAME] = {
         "$path": os.path.relpath(new_script, out.parent).replace(os.sep, "/")
@@ -99,14 +128,22 @@ def compose(base_project, base_receipt, new_script, out):
     if len(after) != 27 or set(after) - set(prior) != {add}:
         raise ValueError("Not exactly one new client script")
     for key, old in prior.items():
-        if after[key] != old:
+        if key == ITEM_PATH and item_source is not None:
+            if after[key] == old:
+                raise ValueError("Original ITEM owner patch not applied")
+        elif after[key] != old:
             raise ValueError(("Original mapping rewritten", key))
     out.write_text(json.dumps(overlay, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     new_receipt = {
         "status": "SOURCE_ONLY_NOT_OFFICIAL_RC", "base_26_receipt_sha256":
             hashlib.sha256(base_receipt.read_bytes()).hexdigest(),
         "base_26_project_sha256": hashlib.sha256(base_project.read_bytes()).hexdigest(),
-        "original_26_sources_preserved": True, "total_sources": 27,
+        "original_26_sources_preserved": item_source is None,
+        "original_25_source_paths_preserved": item_source is not None,
+        "item_source_selectively_replaced": item_source is not None,
+        "item_original_sha256": old_item_sha,
+        "item_author_sha256": item_sha256 if item_source is not None else old_item_sha,
+        "total_sources": 27,
         "server_scripts": 23, "original_client_scripts": 3,
         "new_client_scripts": 1, "overlay_name": CLIENT_NAME,
         "overlay_sha256": hashlib.sha256(script_bytes).hexdigest(),
@@ -125,8 +162,11 @@ def main():
     p.add_argument("--base-receipt", required=True)
     p.add_argument("--new-script", required=True)
     p.add_argument("--out", required=True)
+    p.add_argument("--item-source", default=None)
+    p.add_argument("--item-sha256", default=None)
     args = p.parse_args()
-    compose(args.base_project, args.base_receipt, args.new_script, args.out)
+    compose(args.base_project, args.base_receipt, args.new_script, args.out,
+            item_source=args.item_source, item_sha256=args.item_sha256)
 
 
 if __name__ == "__main__":
