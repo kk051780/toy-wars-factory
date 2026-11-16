@@ -299,9 +299,19 @@ local function startSession(mode:string)
    table.insert(session.lifeConnections,p.CharacterAdded:Connect(function(character)
     task.delay(.8,function()
      if p.Parent and joined[p.UserId]==mode and p.Character==character
-      and session.rules.phase=="ACTIVE" then
-      local castle=session.rules.castles[tostring(p.UserId)]
-      if castle and castle.alive then SevenRoleCombat.equip(session,p,role) end
+      and sessions[mode]==session and session.rules.phase=="ACTIVE" then
+      local id=tostring(p.UserId)
+      local castle=session.rules.castles[id]
+      local home=session.castleLocations[id]
+      if castle and castle.alive and home then
+       -- Wait for a physical live Avatar before entering the same castle match.
+       -- The helper rejects stale characters, dead Humanoids and destroyed castles.
+       local rootPart=character:FindFirstChild("HumanoidRootPart")
+        or character:WaitForChild("HumanoidRootPart",5)
+       if rootPart and RoundReplay.returnToActiveCastle(session,p,character,home+Vector3.new(0,7,-45)) then
+        SevenRoleCombat.equip(session,p,role)
+       end
+      end
      end
     end)
    end))
