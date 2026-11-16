@@ -9,7 +9,7 @@ HOST = """local joined={}
 local sessions={}
 local function startSession(mode:string)
  local session={rules={phase="ACTIVE"}}
-  sessions[mode]=session
+ sessions[mode]=session
   local actor=joined[p.UserId]
 end
 """
