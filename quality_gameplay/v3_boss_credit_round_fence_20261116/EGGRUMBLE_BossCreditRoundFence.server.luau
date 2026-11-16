@@ -1,9 +1,9 @@
 --!strict
--- Optional EGGRUMBLE V3 Studio-only boss-counter lifecycle fence.
+-- Optional EGGRUMBLE V3 server-owned boss-counter lifecycle fence.
+-- Runs in ServerScriptService in Studio AND in production ServerScriptService.
+-- The original GAME preview still owns its own Studio-only activation gate.
 -- No second Game, Remote, boss AI, reward or result implementation.
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-if not RunService:IsStudio() then return end
 local Policy = require(script.Parent:WaitForChild("EGGRUMBLE_BossCreditPolicy"))
 local MODE = "EGGRUMBLE_QueuedMode"
 local COUNTER = "EGGRUMBLE_BossDefeats"
