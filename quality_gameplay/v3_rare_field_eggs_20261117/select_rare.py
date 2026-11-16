@@ -35,7 +35,11 @@ SCORE_CHANGES=[
  ('  {name="卵運搬",value=math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE},\n',
   '  {name="卵運搬",value=math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE},\n'
   '  {name="希少卵",value=math.min(SCORE.RARE_FIELD_EGG_CAP,row.rareEggs)*SCORE.RARE_FIELD_EGG_RATE},\n'),
- ('  +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE\n',
+ (' return koPoints(row.ko)\n'
+  '  +math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE\n'
+  '  +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE\n',
+  ' return koPoints(row.ko)\n'
+  '  +math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE\n'
   '  +math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE\n'
   '  +math.min(SCORE.RARE_FIELD_EGG_CAP,row.rareEggs)*SCORE.RARE_FIELD_EGG_RATE\n'),
  ('    deposited=0,castlesDestroyed=0,teamCastleSupport=0,won=false,score=0}\n',
