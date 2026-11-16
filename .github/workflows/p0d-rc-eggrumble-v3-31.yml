@@ -1654,7 +1654,7 @@ jobs:
               --out "$DIR/GQ509_CURRENT31_$TAG.native.luau"
             /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ509_CURRENT31_$TAG.native.luau" >/dev/null
             /tmp/gq530_all31_native/luau "$DIR/GQ509_CURRENT31_$TAG.native.luau" \
-              | tee "$DIR/GQ509_CURRENT31_$TAG_NATIVE.log"
+              | tee "$DIR/GQ509_CURRENT31_${TAG}_NATIVE.log"
           done
           grep -q 'POSTWIN_EGG_DEATH_NATIVE_PASS' "$DIR/GQ509_CURRENT31_postwin_egg_fence_native_NATIVE.log"
           grep -q 'GQ509_16SLOT_FUZZ_CONSERVATION_PASS' "$DIR/GQ509_CURRENT31_terminal_conservation_16slot_NATIVE.log"
