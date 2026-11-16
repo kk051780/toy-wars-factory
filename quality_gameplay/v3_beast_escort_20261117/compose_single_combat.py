@@ -34,7 +34,7 @@ NEW_BEAST_B = '''  elseif slot=="B" then
 '''
 
 def git_blob(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 def compose(original: str, runtime: str) -> tuple[str, str]:
     if original.count(INSERT_ANCHOR) != 1 or original.count(OLD_BEAST_B) != 1:
