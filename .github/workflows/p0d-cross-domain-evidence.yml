@@ -1,0 +1,19 @@
+name: P0D cross-domain evidence contract (isolated)
+on:
+  pull_request:
+    paths:
+      - "cross_domain_gate/**"
+      - ".github/workflows/p0d-cross-domain-evidence.yml"
+  workflow_dispatch:
+jobs:
+  validator-unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate synthetic contract tests (NOT game QA)
+        run: python -m unittest discover -s cross_domain_gate -p "test_*.py" -v
