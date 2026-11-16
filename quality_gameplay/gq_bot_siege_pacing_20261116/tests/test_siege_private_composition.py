@@ -43,8 +43,20 @@ class SiegeSourceTest(unittest.TestCase):
         self.assertEqual(original.count("Rules.damageCastle(session.rules,enemy.id,id,26)"), 1)
         self.assertEqual(patched.count("Rules.damageCastle(session.rules,enemy.id,id,26)"), 1)
         self.assertEqual(patched.count("SiegePacing.allow(session,enemy.id,id,now)"), 1)
+        self.assertEqual(patched.count("SiegePacing.cancelFailed(session,enemy.id,id,now)"), 1)
+        self.assertEqual(patched.count("if not ok then SiegePacing.cancelFailed"), 1)
+        self.assertIn("if not ok then SiegePacing.cancelFailed(session,enemy.id,id,now) end\\n           if ok then", patched)
+        self.assertNotIn("SiegePacing.cancelFailed", original)
         self.assertEqual(patched.count('WaitForChild("EGGRUMBLE_SiegePacing")'), 1)
         self.assertNotIn("SiegePacing.allow", original)
+
+    def test_original_author_damage_call_is_not_duplicated_by_fault_guard(self):
+        patched = (self.out / "src/EGGRUMBLE_BotActors.luau").read_text()
+        self.assertEqual(patched.count("Rules.damageCastle(session.rules,enemy.id,id,26)"), 1)
+        self.assertEqual(patched.count("SiegePacing.allow"), 1)
+        self.assertEqual(patched.count("SiegePacing.cancelFailed"), 1)
+        self.assertIn("if ok then", patched)
+        self.assertIn("if result.fallen and session.releaseEggs then", patched)
 
     def test_rojo_map_remains_same_except_added_module(self):
         original = json.loads((UPSTREAM / "EGGRUMBLE_V3_STUDIO.project.json").read_text())
