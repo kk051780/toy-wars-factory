@@ -20,7 +20,7 @@ end'''
 def block(source, function_name):
     begin = source.index("local function " + function_name + "(")
     end = source.index("\nlocal function ", begin + 1)
-    return source[begin:end].strip()
+    return source[begin:end].split("\n-- GQ539 LOBBY ONLY:", 1)[0].strip()
 
 
 def nearby_is_safe(source):
