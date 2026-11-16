@@ -251,22 +251,22 @@ local function watchRole(player:Player)
  for _,attribute in ipairs({"P0DPreviewRole","EGGRUMBLE_SelectedRole","EGGRUMBLE_Role"}) do
   player:GetAttributeChangedSignal(attribute):Connect(function() decorateHeroCharacter(player) end)
  end
+ local function onCharacterAdded(character:Model)
+  -- Roblox CharacterAdded can run before UpperTorso/Torso is inserted.
+  -- One bounded delayed recheck prevents missing all V3 costumes after respawn.
+  task.defer(function()
+   if player.Character==character then decorateHeroCharacter(player) end
+  end)
+  task.delay(.35,function()
+   if player.Parent and player.Character==character then decorateHeroCharacter(player) end
+  end)
+ end
+ player.CharacterAdded:Connect(onCharacterAdded)
+ if player.Character then onCharacterAdded(player.Character) end
 end
 
-for _,player in ipairs(Players:GetPlayers()) do
- watchRole(player)
- player.CharacterAdded:Connect(function()
-  task.defer(function() decorateHeroCharacter(player) end)
- end)
- task.defer(function() decorateHeroCharacter(player) end)
- task.delay(.35,function() if player.Parent then decorateHeroCharacter(player) end end)
-end
-Players.PlayerAdded:Connect(function(player)
- watchRole(player)
- player.CharacterAdded:Connect(function()
-  task.defer(function() decorateHeroCharacter(player) end)
- end)
-end)
+for _,player in ipairs(Players:GetPlayers()) do watchRole(player) end
+Players.PlayerAdded:Connect(watchRole)
 for _,source in ipairs(workspace:GetChildren()) do connectStandSource(source) end
 workspace.ChildAdded:Connect(connectStandSource)
 for _,instance in ipairs(workspace:GetDescendants()) do
