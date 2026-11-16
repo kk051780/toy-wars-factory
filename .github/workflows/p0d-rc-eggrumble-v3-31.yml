@@ -7,6 +7,7 @@ on:
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
       - 'rc_fastlane/quality_egg515_rc31/**'
+      - 'rc_fastlane/quality_item525_rc31/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -14,6 +15,7 @@ on:
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
       - 'rc_fastlane/quality_egg515_rc31/**'
+      - 'rc_fastlane/quality_item525_rc31/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -1197,10 +1199,48 @@ jobs:
             --out artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json \
             --place artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
           echo "GQ586_SINGLE_DEPOSIT_GUARD_OTHER30_PRESERVED_REAL_ROJO31_PASS"
+      - name: Checkout immutable EXISTING GQ525 author (read-only; no new ITEM owner)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 253aa73530eea5c3954c07b546b67e49292c4639
+          path: _gq525_original_existing_author
+          persist-credentials: false
+      - name: Reuse existing GQ525 original TWO-HUNK current-item/host source on current RC31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq525_original_existing_author rev-parse HEAD)" = 253aa73530eea5c3954c07b546b67e49292c4639
+          PYTHONPATH=_gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116 \
+            python3 -B -m unittest discover -s _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116 -p 'test_patch_sources.py' -v
+          python3 -B rc_fastlane/quality_item525_rc31/select_existing_author525.py prepare \
+            --base artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json \
+            --out artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json \
+            --author _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116/patch_sources.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_deposit_membership_20261116")
+          from select_deposit import flatten
+          _,sources=flatten(Path("artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json"))
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ525_REUSED_REAL_CURRENT31_ALL_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build \
+            artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json \
+            -o artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_item525_rc31/select_existing_author525.py verify \
+            --base artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json \
+            --out artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json \
+            --author _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116/patch_sources.py \
+            --place artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
+          echo "GQ525_REUSED_AUTHOR_ONLY_TWO_EXISTING_SCRIPTS_OTHER29_EXACT_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1216,7 +1256,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1293,7 +1333,14 @@ jobs:
           gq586=json.loads(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
           assert gq586["source_count"]==31 and gq586["other_30_byte_exact"] and gq586["rollback_host_exact"]
           assert gq586["real_rojo_source_class_exact"]=="31/31"
-          assert gq586["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq586["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq525=json.loads(Path("artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json").read_text())
+          assert gq525["feature_id"]=="GQ_V3_ITEM_MODE_OWNERSHIP_20261116"
+          assert gq525["source_author_head"]=="253aa73530eea5c3954c07b546b67e49292c4639"
+          assert gq525["source_count"]==31 and len(gq525["only_changed"])==2
+          assert gq525["other_29_byte_identical"] and gq525["two_hunk_rollback_exact"]
+          assert gq525["source_class_exact"]=="31/31"
+          assert gq525["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert gq586["source_flag"]=="GQ_DEPOSIT_CURRENT_MATCH_586"
           assert m["source_heads"]["deposit_membership586"]=="417dfa87106b1eab9eaf45e6180273a9ce8ec8c2"
           assert m["feature_flags"]["DEPOSIT_CURRENT_SESSION_586"] is True
@@ -1453,6 +1500,9 @@ jobs:
             artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
             artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ586_NATIVE8_RESULT.txt
+            artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json
             artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
