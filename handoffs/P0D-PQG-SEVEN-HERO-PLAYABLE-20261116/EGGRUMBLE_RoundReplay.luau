@@ -83,7 +83,18 @@ function Replay.returnToActiveCastle(session:any,p:Player,character:Model,arriva
  return true
 end
 
-function Replay.resetHuman(p:Player,returnTo:Vector3):()
+-- Snapshot the actual unbuffed walk speed before any arena pickup / combat slow.
+-- Keep match-local; no client-provided remote or permanent player attribute.
+function Replay.captureWalkBaseline(p:Player):number
+ assert(RunService:IsStudio(),"Studio preview only")
+ local ch=p.Character
+ local hum=ch and ch:FindFirstChildOfClass("Humanoid")
+ local speed=hum and hum.WalkSpeed or 16
+ if type(speed)~="number" or speed~=speed or speed<8 or speed>32 then return 16 end
+ return speed
+end
+
+function Replay.resetHuman(p:Player,returnTo:Vector3,baseWalkSpeed:number?):()
  if p.Parent~=Players then return end
  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
  p:SetAttribute("EGGRUMBLE_Eliminated",nil)
@@ -99,6 +110,18 @@ function Replay.resetHuman(p:Player,returnTo:Vector3):()
  local ch=p.Character
  local hum=ch and ch:FindFirstChildOfClass("Humanoid")
  local root=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
+ -- The old ITEM shield and temporary DASH/combat slowdown belong to the
+ -- previous arena. Remove them before the same avatar enters another round.
+ local shield=ch and ch:FindFirstChild("EGGRUMBLE_ItemShield")
+ if shield and shield:IsA("ForceField") then shield:Destroy() end
+ if hum then
+  local original=if type(baseWalkSpeed)=="number" and baseWalkSpeed==baseWalkSpeed
+   and baseWalkSpeed>=8 and baseWalkSpeed<=32 then baseWalkSpeed else 16
+  hum.WalkSpeed=original
+  hum:SetAttribute("EGGRUMBLE_OriginalWalkSpeed",nil)
+  hum:SetAttribute("EGGRUMBLE_SlowExpiry",nil)
+  hum:SetAttribute("EGGRUMBLE_MarkedUntil",nil)
+ end
  if hum and hum.Health>0 and root then
   root.CFrame=CFrame.new(returnTo)
  else
