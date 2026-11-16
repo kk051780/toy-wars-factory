@@ -43,6 +43,8 @@ def compose(out: Path) -> dict:
         sources[label] = hashlib.sha256(source.read_bytes()).hexdigest()
         node["$path"] = __import__("os").path.relpath(source,out).replace("\\","/")
     for label,node in project["tree"]["StarterPlayer"]["StarterPlayerScripts"].items():
+        if not isinstance(node, dict) or "$path" not in node:
+            continue
         source = AUTHOR / node["$path"]
         assert source.is_file(), f"RED: missing {source}"
         sources[label] = hashlib.sha256(source.read_bytes()).hexdigest()
