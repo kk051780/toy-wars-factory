@@ -1,0 +1,66 @@
+name: P0D GQ isolated dual-mode neutral live cap Native VM
+on:
+  push:
+    branches:
+      - quality/gq-dual-mode-neutral-server-budget-20261116
+    paths:
+      - 'quality_gameplay/gq_dual_mode_neutral_budget_20261116/**'
+      - '.github/workflows/p0d-gq-dual-neutral-budget-private.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/gq_dual_mode_neutral_budget_20261116/**'
+      - '.github/workflows/p0d-gq-dual-neutral-budget-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  budget-native-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Confirm original V3 author source unchanged and source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          test "$(git hash-object "$root/EGGRUMBLE_SwarmCombat.luau")" = fea147ac51411e626b410d172aad5cd72615bd45
+          test "$(git hash-object "$root/EGGRUMBLE_LobbyCastleModesPreview.server.luau")" = 7162b209bf67b74a71553217f3f744e072a0365d
+          test "$(git hash-object "$root/EGGRUMBLE_SevenRoleCombat.luau")" = 66e666418b7c23d41f87faa5d61eb6e2770a463e
+          python3 -B -m unittest discover -v -s quality_gameplay/gq_dual_mode_neutral_budget_20261116/tests -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_native_luau
+          persist-credentials: false
+      - name: Source-true native Luau budget VM regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_native_luau -B /tmp/gq_dual_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_dual_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          mkdir -p /tmp/gq_dual_budget
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("quality_gameplay/gq_dual_mode_neutral_budget_20261116")
+          source=(p/"EGGRUMBLE_DualModeNeutralBudget.luau").read_text()
+          cases=(p/"tests/budget_native_cases.luau").read_text()
+          assert source.rstrip().endswith("return Budget")
+          Path("/tmp/gq_dual_budget/native_cases.luau").write_text(source.rsplit("return Budget",1)[0]+"\n"+cases)
+          PY
+          /tmp/gq_dual_luau/luau-compile --text quality_gameplay/gq_dual_mode_neutral_budget_20261116/EGGRUMBLE_DualModeNeutralBudget.luau >/dev/null
+          /tmp/gq_dual_luau/luau-compile --text /tmp/gq_dual_budget/native_cases.luau >/dev/null
+          /tmp/gq_dual_luau/luau /tmp/gq_dual_budget/native_cases.luau | tee /tmp/gq_dual_budget/native.log
+          grep -q GQ_DUAL_MODE_NEUTRAL_BUDGET_NATIVE_PASS /tmp/gq_dual_budget/native.log
+          git rev-parse HEAD > /tmp/gq_dual_budget/pinned_head.txt
+          sha256sum quality_gameplay/gq_dual_mode_neutral_budget_20261116/EGGRUMBLE_DualModeNeutralBudget.luau > /tmp/gq_dual_budget/policy_sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ_DUAL_MODE_NEUTRAL_BUDGET_NATIVE_ONLY_NOT_RC
+          path: /tmp/gq_dual_budget/
+          if-no-files-found: error
+          retention-days: 7
