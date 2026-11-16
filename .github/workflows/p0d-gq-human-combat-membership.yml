@@ -109,6 +109,42 @@ jobs:
           receipt.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n")
           print("GQ_HUMAN_COMBAT_PRIVATE21_3_OVERLAYS_18_ORIGINAL_SOURCE_EXACT_PASS")
           PY
+      - name: Build source-exact REAL existing #529 composite with #531 host/bot (no duplicate authority)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for author in \
+            0338bd13f9d3d199972bd4cd30e467443083dffa \
+            8f0275692c54874f823d66748d470fb849607df5 \
+            f90875e14446ba86b1c668ba43efa37fbc74be20 \
+            99ae00fbec2b5057c54e938d741ea99b0caad924; do
+            git fetch --no-tags --depth=1 origin "$author"
+          done
+          python3 "$QG/compose_five_author.py" build --out "$PRIVATE"
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/gq_human_luau/build/luau-compile "$file" > /dev/null
+            count=$((count+1))
+          done < <(find "$PRIVATE" -maxdepth 1 -name '*.luau' -type f -print0)
+          test "$count" -eq 22
+          python3 "$QG/make_native_harness.py" \
+            --combat "$PRIVATE/EGGRUMBLE_SevenRoleCombat.luau" \
+            --host "$PRIVATE/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --out /tmp/gq_human_five_author_native.luau
+          /tmp/gq_human_luau/build/luau-compile /tmp/gq_human_five_author_native.luau > /dev/null
+          /tmp/gq_human_luau/build/luau /tmp/gq_human_five_author_native.luau
+          echo "GQ_REAL_4_AUTHOR_COMBAT_PLUS_531_HOST_BOT_22_NATIVE_PASS"
+      - name: Build and byte-check exact original22 composite private Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq_human_rojo build \
+            "$PRIVATE/EGGRUMBLE_V3_STUDIO.project.json" \
+            -o "$PRIVATE/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx"
+          python3 "$QG/compose_five_author.py" verify \
+            --out "$PRIVATE" \
+            --place "$PRIVATE/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx"
+          echo "PRIVATE22_REMAINS_ENGINE_UNTESTED_NO_FORMAL_RC"
       - name: Preserve unpublished source and engine-untested proof only
         if: always()
         uses: actions/upload-artifact@v4
@@ -116,6 +152,8 @@ jobs:
           name: gq-human-combat-membership-private21-not-rc
           path: |
             /tmp/gq_human_private21/GQ_HUMAN_COMBAT_MEMBERSHIP_PRIVATE21.rbxlx
+            /tmp/gq_human_private21/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx
+            /tmp/gq_human_private21/GQ_FIVE_AUTHOR_PRIVATE22_RECEIPT.json
             /tmp/gq_human_private21/GQ_HUMAN_COMBAT_LOCK.json
             /tmp/gq_human_private21/overlay_source_lock.json
             /tmp/gq_human_private21/PRIVATE21_RECEIPT.json
