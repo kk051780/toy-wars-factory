@@ -9,6 +9,7 @@ if not RunService:IsStudio() then return end
 
 local HERO_SOURCE = "P0D_SEVEN_HERO_STUDIO_ONLY"
 local PART_BUDGET_PER_SUBJECT = 13
+local MAX_LOBBY_ROLE_STAND_PARTS = 4
 local HERO_ROLES = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local COLORS = {
  WARRIOR={base=Color3.fromRGB(62,63,76),accent=Color3.fromRGB(224,177,83),cloth=Color3.fromRGB(133,47,56)},
@@ -184,9 +185,12 @@ local function decorateLobbyRoleStand(stand:BasePart)
  local art=Instance.new("Folder")
  art.Name="EGGRUMBLE_LobbyRoleMiniatures_VisualOnly"
  art.Parent=stand
+ local standParts=0
  -- Compact, tactile heraldic miniatures on the existing 7 hero-selection stands.
  -- They never create/trigger new selection prompts; the original author owns jobs.
  local function shape(name:string,kind:string,sz:Vector3,cf:CFrame,c:Color3,mat:Enum.Material)
+  if standParts>=MAX_LOBBY_ROLE_STAND_PARTS then return end
+  standParts+=1
   piece(art,stand,name,kind,sz,cf,c,mat,true)
  end
  shape("BaseMedal","Cylinder",Vector3.new(.18,2.6,2.6),
