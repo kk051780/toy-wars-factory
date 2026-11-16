@@ -139,6 +139,46 @@ local function drawRouteMarker(arena:Instance,deco:Instance,position:Vector3,lan
  -- The markers show lane identity without a large text billboard or collision.
 end
 
+local function drawLaneIdentityVista(arena:Instance,art:Instance,ground:Vector3,lane:number)
+ -- Four nonblocking silhouettes per lane, placed outside its 23-stud road surface:
+ -- ridge-watch / river-ford / forest-altar. They are navigation REFERENCE art only,
+ -- never a substitute for the author's route, hill, bridge or actual cover.
+ local stone=if lane==1 then limestone elseif lane==2 then sandstone else darkStone
+ local motif=if lane==1 then foliageA elseif lane==2 then bronze else foliageB
+ local label="LaneIdentity_"..lane
+ if lane==1 then
+  createVisual(arena,art,label.."_SpireL","Wedge",Vector3.new(4,18,5),
+   CFrame.new(ground+Vector3.new(-5.5,9,0)),stone,Enum.Material.Limestone)
+  createVisual(arena,art,label.."_SpireR","Wedge",Vector3.new(4,13,5),
+   CFrame.new(ground+Vector3.new(5.5,6.5,0))*CFrame.Angles(0,math.pi,0),stone,Enum.Material.Limestone)
+  createVisual(arena,art,label.."_Brazier","Cylinder",Vector3.new(2.4,3.8,2.4),
+   CFrame.new(ground+Vector3.new(0,11.6,0)),bronze,Enum.Material.Metal)
+  createVisual(arena,art,label.."_Signal","Wedge",Vector3.new(2.8,4.0,2.7),
+   CFrame.new(ground+Vector3.new(0,15.2,0)),motif,Enum.Material.Fabric)
+ elseif lane==2 then
+  for _,side in ipairs({-1,1}) do
+   createVisual(arena,art,label.."_FordPier","Cylinder",Vector3.new(3.5,12,3.5),
+    CFrame.new(ground+Vector3.new(side*6,6,0)),stone,Enum.Material.Limestone)
+  end
+  createVisual(arena,art,label.."_StoneArc","Wedge",Vector3.new(15.5,3.4,4.7),
+   CFrame.new(ground+Vector3.new(0,13,0)),limestone,Enum.Material.Limestone)
+  createVisual(arena,art,label.."_CopperMedal","Cylinder",Vector3.new(.5,3,3),
+   CFrame.new(ground+Vector3.new(0,15,0))*CFrame.Angles(0,0,math.rad(90)),
+   motif,Enum.Material.Metal)
+ else
+  createVisual(arena,art,label.."_TimberPillar","Cylinder",Vector3.new(3.8,17,3.8),
+   CFrame.new(ground+Vector3.new(0,8.5,0)),timber,Enum.Material.Wood)
+  for _,side in ipairs({-1,1}) do
+   createVisual(arena,art,label.."_Branch","Wedge",Vector3.new(5.4,8.2,4.1),
+    CFrame.new(ground+Vector3.new(side*3.8,15,0))
+     *CFrame.Angles(0,0,math.rad(side*30)),motif,Enum.Material.Grass)
+  end
+  createVisual(arena,art,label.."_Shrine","Cylinder",Vector3.new(.48,3.7,3.7),
+   CFrame.new(ground+Vector3.new(0,14.8,-2.2))*CFrame.Angles(0,0,math.rad(90)),
+   bronze,Enum.Material.Metal)
+ end
+end
+
 local function paintArena(arena:Instance)
  if builtArenas[arena] then return end
  local floor=arena:FindFirstChild("TacticalBattlefield")
@@ -163,6 +203,13 @@ local function paintArena(arena:Instance)
    local side=if index%2==0 then -1 else 1
    drawRouteMarker(arena,art,onGround(x,z+side*24),lane,index)
   end
+ end
+ -- The three lanes have unique *distant silhouettes* as well as their color-coded waystones.
+ -- Stay to the side and never add a physical barrier across an assault route.
+ for lane=1,3 do
+  local z=(lane-2)*170+63
+  local x=if lane==1 then -96 elseif lane==2 then 0 else 96
+  drawLaneIdentityVista(arena,art,onGround(x,z),lane)
  end
  -- 20 sculpted tree clusters around forest edge and flanks. Avoid center
  -- corridor and castle foundations; existing block cover remains authoritative.
