@@ -44,7 +44,8 @@ class BeastSourceLockTests(unittest.TestCase):
     def test_05_single_combat_changed(self):
         changed, inline = compose(self.original, self.runtime)
         self.assertNotEqual(changed, self.original)
-        self.assertEqual(changed.count("BeastEscort.begin(session,p,char,root,h,owner,"), 1)\n        self.assertEqual(changed.count("function BeastEscort.begin("), 1)
+        self.assertEqual(changed.count("BeastEscort.begin(session,p,char,root,h,owner,"), 1)
+        self.assertEqual(changed.count("function BeastEscort.begin("), 1)
         self.assertNotIn('giant.Name="BeastFeedGiant"', changed)
         self.assertEqual(changed.count("return HeroCombat"), 1)
         self.assertEqual(changed.count("elseif role==\"ZOMBIE\""), 1)
