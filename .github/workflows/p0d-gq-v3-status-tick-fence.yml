@@ -56,6 +56,16 @@ jobs:
           for f in files:subprocess.run(['/tmp/gq_status_luau/luau-compile','--text',str(f)],stdout=subprocess.DEVNULL,check=True)
           print('GQ_STATUS_22_NATIVE_22_OF_22_PASS')
           PY
+      - name: Execute actual amended server delayed status callbacks in Luau VM
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_status_tick_fence_20261116
+          python3 "$root/tools/make_actual_status_callback_native.py" --out /tmp/gq_status/ActualServerStatus.spec.luau
+          /tmp/gq_status_luau/luau-compile --text /tmp/gq_status/ActualServerStatus.spec.luau >/dev/null
+          cd /tmp/gq_status
+          /tmp/gq_status_luau/luau ./ActualServerStatus.spec.luau | tee /tmp/gq_status_actual_server.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_16_SCENARIOS_PASS /tmp/gq_status_actual_server.log
+          cd "$GITHUB_WORKSPACE"
       - name: Checksum pinned Rojo 7.7.1 and unpublished private 22-source Place
         run: |
           set -euo pipefail
