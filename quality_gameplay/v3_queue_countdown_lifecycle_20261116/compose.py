@@ -25,7 +25,7 @@ AFTER = """  if mode and not sessions[mode] then
 MARKER = "if #q==0 then queueEpoch[mode]+=1 end"
 
 def blob_sha(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\x00" + data).hexdigest()
 
 def compose(original: bytes, enabled: bool = True, verify: bool = True) -> bytes:
     if verify and blob_sha(original) != OWNER_HOST_BLOB:
