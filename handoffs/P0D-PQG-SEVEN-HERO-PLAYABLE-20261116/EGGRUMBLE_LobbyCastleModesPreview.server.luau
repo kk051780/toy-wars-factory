@@ -319,7 +319,6 @@ local function joinQueue(mode:string,p:Player)
   if sessions[previous] then return end
   if not RoundReplay.leaveWaitingQueue(previous,p,queues,joined,queueEpoch,sessions) then return end
   p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
-  InteractionGuard.clear(p)
   if previous==mode then return end
  end
  joined[p.UserId]=mode
@@ -328,7 +327,9 @@ local function joinQueue(mode:string,p:Player)
  if #queues[mode]==1 then
   local expectedEpoch=queueEpoch[mode]
   task.delay(COUNTDOWN,function()
-   if queueEpoch[mode]==expectedEpoch then startSession(mode) end
+   if RoundReplay.canStartCountdown(mode,expectedEpoch,queues,queueEpoch,sessions) then
+    startSession(mode)
+   end
   end)
  end
  if #queues[mode]>=MODE_SEATS then startSession(mode) end
@@ -348,8 +349,8 @@ local gateTeam=block(folder,"TEAM_PORTAL",root+Vector3.new(-12,6,28),Vector3.new
 local gateBR=block(folder,"BATTLE_ROYALE_PORTAL",root+Vector3.new(12,6,28),Vector3.new(9,12,2),Color3.fromRGB(79,132,230))
 board(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北")
 board(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者")
-prompt(gateTeam,"参加する","チーム戦",function(p) joinQueue("TEAM",p) end)
-prompt(gateBR,"参加する","バトルロワイヤル",function(p) joinQueue("BATTLE_ROYALE",p) end)
+prompt(gateTeam,"参加する","チーム戦（再操作で解除）",function(p) joinQueue("TEAM",p) end)
+prompt(gateBR,"参加する","BR戦（再操作で解除）",function(p) joinQueue("BATTLE_ROYALE",p) end)
 for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
  local stand=block(folder,"DEFENSE_"..name,root+Vector3.new((i-3)*9,1,47),Vector3.new(5,3,5),Color3.fromRGB(149,164,121))
  board(stand,name.."\n出撃前の防衛選択")
