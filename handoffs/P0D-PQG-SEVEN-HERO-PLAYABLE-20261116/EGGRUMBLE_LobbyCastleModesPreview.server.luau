@@ -278,6 +278,9 @@ local function startSession(mode:string)
   end)
  end
  Rules.start(session.rules)
+ -- Seed the original castle-HP snapshot before any player or bot deals siege damage.
+ -- This also paints the initial scoreboard exactly once in the existing refresh path.
+ session.refresh()
  -- Connect existing HEAL/DASH/SHIELD world pickups to *both* actual match modes,
  -- without spawning separate item preview worlds or inventing a second inventory.
  local itemsOK,itemCountOrError=pcall(function()
