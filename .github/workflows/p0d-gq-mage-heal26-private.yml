@@ -19,6 +19,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Checkout independent original #482 exact author (shallow-safe proof)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_author
+          persist-credentials: false
       - name: Checkout current original #484 AI/composer (pinned SHA)
         uses: actions/checkout@v4
         with:
@@ -43,23 +50,24 @@ jobs:
       - name: Verify all author identities and 21 untouched game sources
         run: |
           set -euo pipefail
+          test "$(git -C _v3_author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
           test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
-          git diff --exit-code fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          diff -qr _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
           mkdir -p artifacts
       - name: Compose original author game and artist assets with #485 own tool
         run: |
           set -euo pipefail
           python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
             --target v3 \
-            --author-project handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --author-project _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
             --out artifacts/GQ_MAGE_ART.project.json
       - name: Reuse #484 original 26-source AI ART SCORE composer without edits
         run: |
           set -euo pipefail
           python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
-            --author . --quality _v3_quality --art _v3_art --score _v3_score \
+            --author _v3_author --quality _v3_quality --art _v3_art --score _v3_score \
             --art-project artifacts/GQ_MAGE_ART.project.json \
             --out artifacts/GQ_MAGE26.project.json
       - name: Generate original combat heal-only patch and exact 26-source overlay
@@ -73,7 +81,7 @@ jobs:
             --project artifacts/GQ_MAGE26.project.json \
             --candidate artifacts/EGGRUMBLE_SevenRoleCombat_MAGE_HEAL_LOS.luau \
             --receipt artifacts/SOURCE_RECEIPT.json
-          git diff --exit-code fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          diff -qr _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
       - name: Checkout fixed native Luau compiler at #484 toolchain revision
         uses: actions/checkout@v4
         with:
