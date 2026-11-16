@@ -15,6 +15,7 @@ on:
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
       - 'rc_fastlane/quality_role_ack_20261117/**'
+      - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -30,6 +31,7 @@ on:
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
       - 'rc_fastlane/quality_role_ack_20261117/**'
+      - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -1840,6 +1842,11 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_role_ready.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_ROLE_ACK_TEAM_BR_ONE_HOST_OTHER30_BYTE_EXACT_PASS
+      - name: GQ8 draw-to-lobby replay lifecycle (real selected31 source, 11 negative mutants, QA-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/quality_draw_replay_lifecycle_20261117/prove_lifecycle.py --project artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31.project.json
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
