@@ -10,6 +10,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
@@ -22,6 +23,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
@@ -1724,10 +1726,36 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_rare.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ_RARE_MIRRORED_TEAM_BR_2_EXISTING_29_OTHER_SOURCE_ROJO31_OFF_PASS
+      - name: GQ DRAW actual one-source result patch after GQ509+rare current31, Native31 Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQRARE_FIELD_SELECTED31.project.json
+          OUT=$DIR/GQ_DRAW_RESULT_SELECTED31.project.json
+          PLACE=$DIR/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx
+          SELECTOR=rc_fastlane/quality_draw_result_label_rc31/select_draw_label.py
+          python3 -m py_compile "$SELECTOR"
+          python3 -B "$SELECTOR" selftest
+          python3 -B "$SELECTOR" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import sys,subprocess,importlib.util
+          spec=importlib.util.spec_from_file_location("gq_draw_rc","rc_fastlane/quality_draw_result_label_rc31/select_draw_label.py")
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,sources,target=mod.mapped(Path(sys.argv[1]))
+          assert len(sources)==31 and target[-1]=="EGGRUMBLE_MatchResultService"
+          for f in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_DRAW_CURRENT_REAL_SOURCE_NATIVE31_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SELECTOR" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ_DRAW_LABEL_AFTER_RARE_ONE_RESULT_OTHER30_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1743,7 +1771,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1856,7 +1884,7 @@ jobs:
           assert rare["other29_byte_exact"] and rare["current_host_off_exact"] and rare["current_score_off_exact"]
           assert rare["actual_rojo_31_source_class"] and rare["rojo_count"]==31
           assert rare["rare_ids"]==["FIELD_4","FIELD_5"] and rare["max_player_rare_points"]==120
-          assert rare["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert rare["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["RARE_FIELD_EGG_SCORE_20261117"] is True
           assert m["source_heads"]["rare_field_eggs_20261117"]=="1985135a4cee9affe7acb7d5a921f3f4e3088271"
           assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
@@ -1869,6 +1897,12 @@ jobs:
           assert bot527["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
+          draw=json.loads(Path("artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert draw["feature_id"]=="GQ_DRAW_LABEL_20261117" and draw["changed_existing_script"]=="EGGRUMBLE_MatchResultService"
+          assert draw["runtime_source_count"]==31 and draw["new_scripts"]==0
+          assert draw["other_30_byte_exact"] and draw["off_previous_result_byte_exact"]
+          assert draw["rojo_class_source_exact"]=="31/31"
+          assert draw["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
           assert m["source_heads"]["bot_siege527"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
@@ -1954,6 +1988,7 @@ jobs:
              "gq615_rojo31_source_class_path_exact":True,
              "gq499_original_timeout_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
              "gq527_bot_siege_target_pacing_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq_draw_label_one_result_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
             "gq586_current_match_deposit_selected":True,
@@ -2087,6 +2122,9 @@ jobs:
             artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ_DRAW_RESULT_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json
