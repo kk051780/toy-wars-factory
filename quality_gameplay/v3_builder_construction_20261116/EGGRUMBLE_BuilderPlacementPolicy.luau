@@ -30,6 +30,14 @@ end
 function Policy.safeDistance(distance)
  return finite(distance) and distance>=51
 end
+-- Bridge is for crossing an actual gap or lowered crossing, never flat grass.
+-- Require both anchor banks via Policy.support; midpoint must be missing or
+-- at least 4 studs below the LOWER bank. NaN/inf fails closed.
+function Policy.bridgeGap(midY,lowerBankY)
+ if not finite(lowerBankY) then return false end
+ if midY==nil then return true end
+ return finite(midY) and lowerBankY-midY>=4
+end
 -- Global overlap must catch noncollidable Humanoids and foreign copied floors.
 -- Fail closed for unknown CanCollide state.
 function Policy.blocksPlacement(canCollide,ownGround,isHumanoid)
