@@ -1,21 +1,24 @@
 """Independent source-slice negative QA of existing author's #517 HEAL guard on latest #489."""
 from __future__ import annotations
 import json
+import os
 import unittest
 from pathlib import Path
 from select_original_heal517 import (
     AUTHOR489_ITEM_BLOB, ANCHOR, ITEM, blob, collect, get_author_patch,
 )
 
-ROOT=Path("artifacts/gq539_official_select")
+ROOT=Path(os.environ.get("GQ517_TEST_DIR","artifacts/gq539_official_select"))
+BASE_NAME=os.environ.get("GQ517_TEST_BASE","GQ539_ITEM489_SELECTED31.project.json")
+ON_NAME=os.environ.get("GQ517_TEST_ON","GQ539_ITEM489_HEAL517_SELECTED31.project.json")
 AUTHOR517=Path("_gq517_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py")
 
 class AuthorHeal517ExactIntake(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.author=get_author_patch(AUTHOR517)
-        cls.base=ROOT/"GQ539_ITEM489_SELECTED31.project.json"
-        cls.on=ROOT/"GQ539_ITEM489_HEAL517_SELECTED31.project.json"
+        cls.base=ROOT/BASE_NAME
+        cls.on=ROOT/ON_NAME
         cls.originalMap,cls.old=collect(cls.base)
         cls.selectedMap,cls.new=collect(cls.on)
         cls.oldSource=cls.old[ITEM].read_text(encoding="utf-8")
