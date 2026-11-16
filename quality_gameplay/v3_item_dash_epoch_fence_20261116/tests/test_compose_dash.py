@@ -26,7 +26,7 @@ class SourceExactDashTests(unittest.TestCase):
     def test_preserves_other_item_authority(self):
         orig = self.raw.decode()
         patch = compose(self.raw, True).decode()
-        for token in ('kind=="HEAL"', 'kind=="SHIELD"', 'consumed[id]=true',
+        for token in ('kind=="HEAL"', 'EGGRUMBLE_ItemShield', 'consumed[id]=true',
                       'session.itemStop=function()', 'prompt.Triggered:Connect'):
             self.assertIn(token, orig)
             self.assertIn(token, patch)
