@@ -79,7 +79,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 28 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 29 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -128,6 +128,10 @@ FEATURE_EVIDENCE = {
   "local reach=configuredReach(part,verb)",
   "if selected then return nil end",
   "reach+EXCESS_RADIUS")),
+ "BEAST_REAL_ESCORT_618": ("EGGRUMBLE_SevenRoleCombat", (
+  "function BeastEscort.begin(session:any, player:Player",
+  "hum:MoveTo(targetRoot.Position)",
+  "neutralAndBotHit(session,p,petRoot,pet,at,3.5,6,def.color,spec.shape)")),
 
 }
 
@@ -241,7 +245,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_28_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_29_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
