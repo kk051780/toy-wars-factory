@@ -11,6 +11,9 @@ from pathlib import Path
 
 OWNER_HEAD = "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
 SOURCE_ROOT = "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116"
+# Existing AI author #484, NOT a replacement AI implementation.
+AI_AUTHOR_HEAD = "6b52eaf1f2725496277998fe0c5532b7a8fcaab5"
+AI_BOT_BLOB = "832a26c9f713012b924234ce4cf8c1654a75654e"
 HOST = "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
 BOT = "EGGRUMBLE_BotActors.luau"
 OWNER_BLOBS = {
@@ -67,14 +70,25 @@ def compose(host: str, bot: str) -> tuple[str, str]:
     return patched_host, patched_bot
 
 
-def run(source_dir: Path, out_dir: Path) -> dict:
+def run(source_dir: Path, out_dir: Path, ai_bot_file: Path | None = None) -> dict:
     texts = {}
-    for name, expected in OWNER_BLOBS.items():
-        raw = (source_dir / name).read_bytes()
+    expected_blobs = dict(OWNER_BLOBS)
+    if ai_bot_file is not None:
+        expected_blobs[BOT] = AI_BOT_BLOB
+    for name, expected in expected_blobs.items():
+        raw = (ai_bot_file if name == BOT and ai_bot_file is not None else source_dir / name).read_bytes()
         observed = git_blob_sha(raw)
         if observed != expected:
-            raise ValueError(f"{name}: original blob drift {observed}, expected {expected}")
+            raise ValueError(f"{name}: pinned owner blob drift {observed}, expected {expected}")
         texts[name] = raw.decode("utf-8")
+    if ai_bot_file is not None:
+        # Never regress #484's real AI duel by selecting old #482 BotActors.
+        if texts[BOT].count("for targetId,targetActor in pairs(bots)") != 1:
+            raise ValueError("RED: current #484 bot-to-bot duel missing or ambiguous")
+        if texts[BOT].count("targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)") != 1:
+            raise ValueError("RED: #484 bot-to-bot actual damage missing")
+        if texts[BOT].count("tryHeroAttack(actor,me,session,lastHit,bots)") != 1:
+            raise ValueError("RED: #484 new function signature not correctly wired")
     host, bot = compose(texts[HOST], texts[BOT])
     out_dir.mkdir(parents=True, exist_ok=True)
     result = {}
@@ -82,7 +96,7 @@ def run(source_dir: Path, out_dir: Path) -> dict:
         data = updated.encode("utf-8")
         (out_dir / name).write_bytes(data)
         result[name] = {
-            "owner_blob": OWNER_BLOBS[name],
+            "owner_blob": expected_blobs[name],
             "overlay_blob": git_blob_sha(data),
             "sha256": hashlib.sha256(data).hexdigest(),
             "bytes": len(data),
@@ -90,6 +104,8 @@ def run(source_dir: Path, out_dir: Path) -> dict:
         }
     report = {
         "owner_head": OWNER_HEAD,
+        "selected_ai_author_head": AI_AUTHOR_HEAD if ai_bot_file is not None else None,
+        "ai_duel_preserved": ai_bot_file is not None,
         "official_rc_changed": False,
         "original_game_sources_changed": False,
         "new_runtime_authority": False,
@@ -106,5 +122,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--ai-bot-file", type=Path, default=None)
     args = parser.parse_args()
-    print(json.dumps(run(args.source_dir, args.out_dir), ensure_ascii=False))
+    print(json.dumps(run(args.source_dir, args.out_dir, args.ai_bot_file), ensure_ascii=False))
