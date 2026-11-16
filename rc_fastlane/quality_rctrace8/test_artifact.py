@@ -20,8 +20,8 @@ def fixture():
     for scope in gq8.RULES.values():
         for script,tokens in scope.items():
             sources.setdefault(script,set()).update(tokens)
-    for _,(script,token) in gq8.FEATURE_EVIDENCE.items():
-        sources.setdefault(script,set()).add(token)
+    for _,(script,tokens) in gq8.FEATURE_EVIDENCE.items():
+        sources.setdefault(script,set()).update((tokens,) if isinstance(tokens,str) else tokens)
     for name in gq8.ROLE_CLASSES:
         sources.setdefault(name,set())
     i=0
@@ -67,12 +67,26 @@ def rehash(data,receipt):
     receipt["place_size_bytes"]=len(data)
     receipt["place_sha256"]=hashlib.sha256(data).hexdigest()
 
+def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
+    root=ET.fromstring(raw)
+    for item in root.iter("Item"):
+        props=item.find("Properties")
+        if props is None or props.findtext("string[@name='Name']")!=name:
+            continue
+        source=props.find("ProtectedString[@name='Source']")
+        if source is None:raise AssertionError("missing source")
+        if source.text is None or source.text.count(anchor)!=1:
+            raise AssertionError("missing or duplicate anchor "+anchor)
+        source.text=source.text.replace(anchor,"-- selected source anchor removed",1)
+        return ET.tostring(root,encoding="utf-8")
+    raise AssertionError("missing script "+name)
+
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_eighteen_known_flags(self):
+    def test_valid_covers_eight_domains_and_twenty_current_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],18)
+        self.assertEqual(v["verified_flag_count"],20)
         self.assertEqual(v["unassessed_new_flags"],[])
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
@@ -158,7 +172,7 @@ class Gate(unittest.TestCase):
         anchor="and KoFence.mayCredit(session,id,m,all) then"
         self.assertTrue(m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"])
         result=gq8.verify(b,r,m,a,HEAD)
-        self.assertEqual(result["verified_flag_count"],18)
+        self.assertEqual(result["verified_flag_count"],20)
         self.assertEqual(result["unassessed_new_flags"],[])
         root=ET.fromstring(b)
         found=False
@@ -182,6 +196,34 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"]=False
         with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_NEUTRAL_DEATH_KO_CURRENT_OWNER_508"):
             gq8.verify(b,r,m,a,HEAD)
+
+    def test_580_terminal_ai_takeover_absent_fails_closed(self):
+        b,r,m,a=fixture()
+        self.assertEqual(gq8.verify(b,r,m,a,HEAD)["unassessed_new_flags"],[])
+        b=drop_anchor(b,"EGGRUMBLE_BotActors",
+            'if session.rules.phase~="ACTIVE" or not folder.Parent then return false end')
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_AI_TAKEOVER_TERMINAL_FENCE_580"):
+            gq8.verify(b,r,m,a,HEAD)
+
+    def test_520_ridge_and_forest_each_needed_for_one_enabled_flag(self):
+        ridge="CentralRidgeRight"
+        forest="local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)"
+        for missing in (ridge,forest):
+            with self.subTest(missing=missing):
+                b,r,m,a=fixture()
+                b=drop_anchor(b,"EGGRUMBLE_LobbyCastleModesPreview",missing)
+                rehash(b,r)
+                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"):
+                    gq8.verify(b,r,m,a,HEAD)
+
+    def test_580_and_520_disabled_flags_cannot_be_certified(self):
+        for flag in ("AI_TAKEOVER_TERMINAL_FENCE_580","TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"):
+            with self.subTest(flag=flag):
+                b,r,m,a=fixture()
+                m["feature_flags"][flag]=False
+                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
+                    gq8.verify(b,r,m,a,HEAD)
 
     def test_no_misrepresented_studio_or_publish(self):
         b,r,m,a=fixture()
