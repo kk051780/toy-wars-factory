@@ -208,7 +208,11 @@ local function decorateLobbyRoleStand(stand:BasePart)
  local function shape(name:string,kind:string,sz:Vector3,cf:CFrame,c:Color3,mat:Enum.Material)
   if standParts>=MAX_LOBBY_ROLE_STAND_PARTS then return end
   standParts+=1
-  piece(art,stand,name,kind,sz,cf,c,mat,true)
+  -- Standalone UX plaques float at the center 4 studs above the stand. Keep
+  -- the sculpted miniature toward the front, never overlapping the original
+  -- seven job readable titles or changing their existing GUI sizes.
+  local final=if root.Name=="EGGRUMBLE_LobbyUX" then CFrame.new(0,-.35,-2.25)*cf else cf
+  piece(art,stand,name,kind,sz,final,c,mat,true)
  end
  shape("BaseMedal","Cylinder",Vector3.new(.18,2.6,2.6),
   CFrame.new(0,2.31,0)*CFrame.Angles(0,0,math.rad(90)),palette.accent,Enum.Material.Metal)
