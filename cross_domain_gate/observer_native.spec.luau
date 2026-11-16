@@ -95,4 +95,22 @@ session.rules.castles["AI_1"]=nil
 assert(has(inspect().red,"ROSTER_CASTLE_MISSING"))
 session.rules.castles["AI_1"]={id="AI_1",hp=750,alive=true,heldEggs=0}
 assert(#inspect().red==0 and #inspect().yellow==0)
+-- A clean starting state must not flood logs; new failure once, then recovery.
+local clean={red={},yellow={}}
+local key,emit,recovered=Observer.warningDelta(nil,clean)
+assert(key=="" and not emit and not recovered)
+local errorReport={red={"CASTLE_HP_RANGE","EGG_CARRY_RANGE"},yellow={"OPTIONAL_BOSS_FAILED"}}
+local broken,firstAlert,alreadyRecovered=Observer.warningDelta(key,errorReport)
+assert(firstAlert and not alreadyRecovered)
+local again,repeatAlert=Observer.warningDelta(broken,errorReport)
+assert(again==broken and not repeatAlert, "unchanged error must not emit every 5 sec")
+local reordered={red={"EGG_CARRY_RANGE","CASTLE_HP_RANGE","CASTLE_HP_RANGE"},yellow={"OPTIONAL_BOSS_FAILED"}}
+assert(Observer.warningSignature(reordered)==broken, "warnings must be stable when table iteration order changes")
+local changed,changedAlert=Observer.warningDelta(broken,{red={"CASTLE_HP_RANGE"},yellow={}})
+assert(changedAlert and changed~=broken, "new diagnostics should emit on transition")
+local recoveredKey,recoveredEmit,isRecovered=Observer.warningDelta(changed,clean)
+assert(recoveredKey=="" and recoveredEmit and isRecovered,"one recovery notice required")
+local stable,stableEmit=Observer.warningDelta(recoveredKey,clean)
+assert(stable=="" and not stableEmit,"recovery must not print repeatedly")
+print("GQ_OBSERVER_WARNING_DEDUP_NATIVE_PASS")
 print("GQ_7DOMAIN_OBSERVER_REAL_LUAU_NATIVE_BEHAVIOR_12_CASES_PASS_SOURCE_ONLY")
