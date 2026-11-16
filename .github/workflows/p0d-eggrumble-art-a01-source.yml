@@ -34,6 +34,22 @@ jobs:
             --out .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json
           python3 -m json.tool .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json >/dev/null
           echo "Combined mapping is generated for source inspection; Native/Rojo/Studio still NOT_RUN"
+      - name: Compose four original independent gameplay previews with visual layers
+        run: |
+          set -euo pipefail
+          for spec in \
+            "boss EGGRUMBLE_NEUTRAL_BOSS_STUDIO.project.json" \
+            "castle EGGRUMBLE_CASTLE_INTERIOR_STUDIO.project.json" \
+            "lobby EGGRUMBLE_LOBBY_UX_STUDIO.project.json" \
+            "item EGGRUMBLE_ITEM_STUDIO.project.json"; do
+            read -r target source_name <<<"$spec"
+            python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+              --target "$target" \
+              --author-project "author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/$source_name" \
+              --out ".art-preview-generated/$target.project.json"
+            python3 -m json.tool ".art-preview-generated/$target.project.json" >/dev/null
+          done
+          echo "ALL_INDEPENDENT_PREVIEW_SOURCE_MAPS=PASS (no simultaneous preview scripts)"
       - name: Build authoritative open-source Luau compiler for actual art syntax
         run: |
           set -euo pipefail
