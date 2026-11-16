@@ -26,7 +26,7 @@ STATUS_NEW = '''  if targetPlayer~=p and target and target.alive and enemyChar a
    and (session.mode~="TEAM" or target.team~=state.team)'''
 
 def git_blob(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 def patch(original: str) -> str:
     start = "local function hitHumanHeroes("
