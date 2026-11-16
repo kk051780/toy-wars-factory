@@ -1485,6 +1485,10 @@ jobs:
           BASE=$DIR/GQ618_GUARD582_V4_SELECTED31.project.json
           OUT=$DIR/GQ615_QUEUE_SELECTED31.project.json
           PLACE=$DIR/GQ615_QUEUE_REAL_ROJO31.rbxlx
+          # Original author's 15 fixture tests require this exact pinned original checkout path.
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test ! -e _original482
+          ln -s _v3_original _original482
           python3 -B -m unittest discover -v -s "$SRC" -p 'test_feedback.py'
           python3 -m py_compile "$SRC/select_feedback.py" "$SRC/intake31.py" "$SRC/private31.py"
           python3 -B "$SRC/intake31.py" prepare --base "$BASE" --out "$OUT"
