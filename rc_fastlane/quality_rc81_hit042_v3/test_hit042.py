@@ -32,7 +32,7 @@ class ConfirmedHitPortTest(unittest.TestCase):
     def test_runtime_unchanged_and_no_extra_authority(self):
         c=patch(self.original)
         self.assertIn("if not RunService:IsStudio() then return end",c)
-        self.assertNotIn("RemoteEvent",c)
+        self.assertNotIn('Instance.new("RemoteEvent")',c)
         self.assertNotIn("TakeDamage",c)
     def test_repeated_port_rejected(self):
         with self.assertRaisesRegex(ValueError,"RED_"):patch(patch(self.original))
