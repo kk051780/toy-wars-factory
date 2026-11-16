@@ -96,5 +96,68 @@ return function(Rules:any,Alerts:any)
  assert(endSiege and endSiege.fallen,"real siege eventually destroys castle")
  eq(#Alerts.siegeSignals(siege.castles,priorHP,lastShown,120),0,"dead castle never raises siege warning")
  assert(Rules.auditEggConservation(siege).valid,"siege warnings never change egg ledger")
+
+ -- Native VM lightweight Roblox visual-state mock. Tests actual render function
+ -- without making claims about fonts, performance, Studio cameras or Android.
+ local instances={}
+ local pending={}
+ local function mockInstance(className:string):any
+  local node:any={ClassName=className,Name="",_attributes={}}
+  function node:FindFirstChild(name:string):any
+   for _,item in ipairs(instances) do
+    if item.Parent==self and item.Name==name then return item end
+   end
+   return nil
+  end
+  function node:GetAttribute(name:string):any return self._attributes[name] end
+  function node:SetAttribute(name:string,value:any) self._attributes[name]=value end
+  table.insert(instances,node)
+  return node
+ end
+ Instance={new=mockInstance}
+ Color3={fromRGB=function(r:number,g:number,b:number)
+  return {_type="Color3",r=r,g=g,b=b}
+ end}
+ UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end}
+ Vector3={new=function(x:number,y:number,z:number) return {x=x,y=y,z=z} end}
+ task={delay=function(_:number,callback:any) table.insert(pending,callback) end}
+ typeof=function(value:any)
+  if type(value)=="table" and value._type=="Color3" then return "Color3" end
+  return type(value)
+ end
+ local visuals=Rules.new(Rules.MODE_TEAM,{
+  {id="A",team="RED",isAI=false},{id="B",team="BLUE",isAI=true}
+ },1)
+ Rules.start(visuals)
+ local banner=mockInstance("Part")
+ banner.Name="OwnerFlag"
+ banner.Parent={Name="VisualScene"}
+ banner.Color=Color3.fromRGB(10,20,30)
+ local session:any={rules=visuals,castleModels={
+  B={banner=banner},
+ }}
+ Alerts.process(session) -- initial source event and HP baseline
+ eq(#pending,0,"initial castle spawn must not create visual warning")
+ Rules.damageCastle(visuals,"B","A",120)
+ Alerts.process(session)
+ local notice=banner:FindFirstChild("EGGRUMBLE_RaidNotice")
+ assert(notice and notice.Enabled,"actual castle damage creates visible BillboardGui")
+ local title=notice:FindFirstChild("Text")
+ eq(title.Text,"城が攻撃中！","visible native mock siege copy")
+ eq(#pending,1,"one pending expiration for initial siege alert")
+ -- Theft has higher priority than same-round siege, and must extend the timer.
+ Rules.takeEggs(visuals,"A",1,"B")
+ Alerts.process(session)
+ eq(title.Text,"卵強奪！防衛せよ","real egg theft supersedes siege warning")
+ eq(#pending,2,"second alert schedules one new timeout")
+ pending[1]()
+ assert(notice.Enabled,"stale timer cannot hide a more recent objective alert")
+ pending[2]()
+ assert(not notice.Enabled,"latest timer hides the alert")
+ eq(banner.Color.r,10,"timer restores original castle flag color")
+ Rules.depositEggs(visuals,"A",1)
+ Alerts.process(session)
+ eq(#instances,3,"repeated events reuse one banner and one label")
+ eq(title.Text,"卵強奪！防衛せよ","enemy flag never shows another player's delivery")
  return true
 end
