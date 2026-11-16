@@ -36,7 +36,18 @@ function Replay.resetHuman(p:Player,returnTo:Vector3):()
  if hum and hum.Health>0 and root then
   root.CFrame=CFrame.new(returnTo)
  else
-  pcall(function() p:LoadCharacter() end)
+  local loaded=pcall(function() p:LoadCharacter() end)
+  if not loaded then
+   -- A transient Studio respawn failure must not strand an eliminated player.
+   -- Bounded retry only when the player is still in the lobby, never in a new match.
+   task.delay(1,function()
+    if p.Parent~=Players or p:GetAttribute("EGGRUMBLE_QueuedMode")~=nil then return end
+    local current=p.Character
+    local alive=current and current:FindFirstChildOfClass("Humanoid")
+    if alive and alive.Health>0 then return end
+    pcall(function() p:LoadCharacter() end)
+   end)
+  end
  end
 end
 

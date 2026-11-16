@@ -19,6 +19,7 @@ REQUIRED = {
     "EGGRUMBLE_SkillFX": "EGGRUMBLE_SkillFX.luau",
     "EGGRUMBLE_AttackGeometry": "EGGRUMBLE_AttackGeometry.luau",
     "EGGRUMBLE_ImpactFeedback": "EGGRUMBLE_ImpactFeedback.luau",
+    "EGGRUMBLE_WeaponSilhouettes": "EGGRUMBLE_WeaponSilhouettes.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
     "EGGRUMBLE_ScoreBalance": "EGGRUMBLE_ScoreBalance.luau",
@@ -59,6 +60,11 @@ class TestStudioProjectWiring(unittest.TestCase):
             for name in required:
                 with self.subTest(script=filename, required=name):
                     self.assertIn(name, module_names)
+
+    def test_local_combat_feedback_is_in_starter_player(self):
+        local=self.project["tree"]["StarterPlayer"]["StarterPlayerScripts"]["EGGRUMBLE_CombatFeel"]
+        self.assertEqual(local["$path"],"EGGRUMBLE_CombatFeel.client.luau")
+        self.assertTrue((ROOT/local["$path"]).is_file())
 
     def test_private_studio_only(self):
         game = (ROOT / REQUIRED["EGGRUMBLE_LobbyCastleModesPreview"]).read_text(encoding="utf-8")
