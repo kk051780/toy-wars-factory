@@ -70,7 +70,8 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
     end
    end
    local duel=if player:GetAttribute("EGGRUMBLE_Role")=="WARRIOR" and loneEnemy then 1.25 else 1
-   h:TakeDamage(damage*duel)
+   local mark=if (h:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
+   h:TakeDamage(damage*duel*mark)
    count+=1
   end
  end
@@ -94,7 +95,8 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
    -- castle death and hero knockout remain separate match states.
    local duel=if p:GetAttribute("EGGRUMBLE_Role")=="WARRIOR"
     and (enemyRoot.Position-root.Position).Magnitude<=18 then 1.25 else 1
-   enemyHum:TakeDamage(damage*duel)
+   local mark=if (enemyHum:GetAttribute("EGGRUMBLE_MarkedUntil") or 0)>os.clock() then 1.15 else 1
+   enemyHum:TakeDamage(damage*duel*mark)
    count+=1
   end
  end
@@ -150,6 +152,74 @@ local function healAllies(session:any,player:Player,root:BasePart)
   end
  end
 end
+-- Status effects are real server damage / movement changes (not only colored VFX).
+-- Hard caps and team checks keep control roles useful without stun-locking a duel.
+local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
+ center:Vector3,radius:number,effect:string)
+ if effect~="CHILL_2S" and effect~="SLOW_3S" and effect~="BURN_3S"
+  and effect~="MARK" and effect~="PUSH" and effect~="PREDATOR" then return end
+ local state=session.rules.castles[tostring(p.UserId)]
+ if not state or not state.alive then return end
+ local now=os.clock()
+ local duration=if effect=="CHILL_2S" then 2 elseif effect=="PUSH" then 1.2 else 3
+ local affected=0
+ local function apply(h:Humanoid,bot:Model?)
+  if h.Health<=0 or affected>=5 then return end
+  affected+=1
+  if effect=="CHILL_2S" or effect=="SLOW_3S" or effect=="PUSH" then
+   if bot then
+    bot:SetAttribute("EGGRUMBLE_SlowUntil",math.max(bot:GetAttribute("EGGRUMBLE_SlowUntil") or 0,now+duration))
+   else
+    local base=h:GetAttribute("EGGRUMBLE_OriginalWalkSpeed") or h.WalkSpeed
+    if type(base)~="number" then return end
+    h:SetAttribute("EGGRUMBLE_OriginalWalkSpeed",base)
+    h:SetAttribute("EGGRUMBLE_SlowExpiry",now+duration)
+    h.WalkSpeed=math.max(8,base*(if effect=="PUSH" then .58 else .72))
+    task.delay(duration+.1,function()
+     if h.Parent and os.clock()>=(h:GetAttribute("EGGRUMBLE_SlowExpiry") or math.huge) then
+      h.WalkSpeed=base
+      h:SetAttribute("EGGRUMBLE_OriginalWalkSpeed",nil)
+     end
+    end)
+   end
+  elseif effect=="MARK" then
+   h:SetAttribute("EGGRUMBLE_MarkedUntil",now+4)
+  elseif effect=="BURN_3S" or effect=="PREDATOR" then
+   local untilTime=h:GetAttribute("EGGRUMBLE_BurnUntil") or 0
+   if now<untilTime then return end
+   h:SetAttribute("EGGRUMBLE_BurnUntil",now+3)
+   local tick=if effect=="PREDATOR" then 5 else 4
+   for i=1,3 do
+    task.delay(i,function()
+     if h.Parent and h.Health>0 and session.rules.phase=="ACTIVE" then h:TakeDamage(tick) end
+    end)
+   end
+  end
+ end
+ for id,actor in pairs(session.botActors or {}) do
+  local target=session.rules.castles[id]
+  local enemy=actor and actor.PrimaryPart
+  local hum=actor and actor:FindFirstChildOfClass("Humanoid")
+  if target and target.alive and enemy and hum
+   and (session.mode~="TEAM" or target.team~=state.team)
+   and (enemy.Position-center).Magnitude<=radius
+   and (enemy.Position-root.Position).Magnitude<=36
+   and lineClear(root.Position+Vector3.new(0,1,0),enemy.Position,char,actor) then
+   apply(hum,actor)
+  end
+ end
+ for _,targetPlayer in ipairs(game:GetService("Players"):GetPlayers()) do
+  local target=session.rules.castles[tostring(targetPlayer.UserId)]
+  local enemyChar,enemyRoot,hum=characterOf(targetPlayer)
+  if targetPlayer~=p and target and target.alive and enemyChar and enemyRoot and hum
+   and (session.mode~="TEAM" or target.team~=state.team)
+   and (enemyRoot.Position-center).Magnitude<=radius
+   and (enemyRoot.Position-root.Position).Magnitude<=36
+   and lineClear(root.Position+Vector3.new(0,1,0),enemyRoot.Position, char,enemyChar) then
+   apply(hum,nil)
+  end
+ end
+end
 local function execute(session:any,p:Player,role:string,slot:string)
  if session.rules.phase~="ACTIVE" then return end
  local owner=session.rules.castles[tostring(p.UserId)]
@@ -167,7 +237,8 @@ local function execute(session:any,p:Player,role:string,slot:string)
  if now-(perPlayer[key] or -10000)<cd then return end
  perPlayer[key]=now
  local def=JOBS[role]
- local boost=if role=="WARRIOR" and now<(p:GetAttribute("EGGRUMBLE_KamiUntil") or 0) then 1.65 else 1
+ local boost=if role=="WARRIOR" and now<(p:GetAttribute("EGGRUMBLE_KamiUntil") or 0) then 1.6
+  elseif role=="BEAST" and now<(p:GetAttribute("EGGRUMBLE_GiantFeedUntil") or 0) then 1.2 else 1
  local function blast(distance:number?,radius:number?,damage:number?):number
   -- Delayed bursts never hit after death, castle elimination or a new character spawn.
   if not p.Parent or p.Character~=char or h.Health<=0
@@ -177,6 +248,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
   local amount=damage or spec.damage
   local center=rootAdvance(root,forward)
   local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color)
+  secondaryEffect(session,p,root,char,center,area,spec.effect)
   SkillFX.emit(session.world,role,slot,root.Position,root.CFrame.LookVector,center,area)
   return hits
  end
@@ -241,7 +313,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
   if slot=="A" then blast()
   elseif slot=="B" then
    local giant=makeEffect(session.world,rootAdvance(root,11),Vector3.new(12,15,12),def.color,1.6)
-   giant.Name="BeastFeedGiant";blast()
+   giant.Name="BeastFeedGiant";p:SetAttribute("EGGRUMBLE_GiantFeedUntil",now+5);blast()
   else
    for i=1,3 do
     local angle=i*math.pi*2/3
