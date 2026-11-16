@@ -53,3 +53,8 @@ Rollback: flag OFF, remove the two mapped optional modules and original-author h
 - Preserves the 9-second individual timeout and owner-issued clear(session). Explicit author closeRound hook remains mandatory for formal integration; fallback is defense in depth.
 - Native source-exact mock covers terminal phase, winner, destroyed folder, duplicate/stale callback, plus existing two game modes/egg/NPC/hazard and 23-script Rojo audit.
 - No original-author #482 Lua scripts altered; official RC adoption still zero until #218 hard claim plus #220 original author authorized source selection and real Studio/Android tests.
+
+## 2026-11-17 newest official RC intake base
+- Rebased pinned actual official RC31 artifact from prior `63ff99ca...` to post-GQ525/GQ611 official `325472fd280e0b013380f687a87fdf9be4b5f905`, canonical V3 run `43945174711`, official Place `269896` B / SHA256 `8ae449893a1709127e96e7c061dda6926b6d8c0962627d265f8baad9b866f8cf`. Legacy S1 same-head `43945174579` SUCCESS; provider ZIP `461694` B. All 28 current feature flags remain original-source territory, no rewrite.
+- Direct official Place extraction reconstructs a private 33-source Rojo project; **one** existing Host changes only by Builder Tool wire + round cleanup, 30 original Scripts preserved; added original #522 Builder and Policy modules, default bridge UI OFF. Pin and inverse source rollback MUST pass before any RC intake. The generated project/Place is a private trial, not official RC publication or Studio gameplay proof.
+- Candidate must be re-pinned if any further official HEAD changes; sole #220 writer nonforce CAS, official dual same-head native/Rojo/ZIP/Place proofs. Source-only green does NOT override missing physical bridge or human engine/Android/FUN/OWNER gates.
