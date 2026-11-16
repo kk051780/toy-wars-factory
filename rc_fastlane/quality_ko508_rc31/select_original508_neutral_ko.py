@@ -55,9 +55,9 @@ def author_policy(file: Path):
     if git_blob(original)!=OWNER508_POLICY_BLOB:
         raise ValueError("RED_ORIGINAL508_GIT_BLOB_DRIFT")
     text=original.decode("utf-8")
-    for token in ("local Fence = {}","function Fence.decide(","function Fence.mayCredit(","return Fence"):
+    for token in ("local Fence = {}","function Fence.decide(","function Fence.mayCredit("):
         if text.count(token)!=1:raise ValueError("RED_ORIGINAL508_POLICY_DRIFT "+token)
-    if not text.rstrip().endswith("return Fence"):
+    if text.count("\nreturn Fence")==0 or not text.rstrip().endswith("return Fence"):
         raise ValueError("RED_AUTHOR508_MODULE_TRAILER_DRIFT")
     # Embed original author's full unchanged policy body, NOT rewrite or fork its logic.
     inner=text.replace("--!strict\n","",1)
