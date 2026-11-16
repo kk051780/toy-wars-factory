@@ -15,6 +15,10 @@ local __players = {}
 local __instances = {}
 local __threads = {}
 local __spawned = 0
+local __warnings = {}
+warn = function(message)
+ table.insert(__warnings, tostring(message))
+end
 
 local Players = {}
 function Players:GetPlayerByUserId(id)
@@ -464,6 +468,46 @@ killTeam.world.Parent=nil
 step()
 eq("TEAM world destroyed cleans final 16",countLiveAll(),0)
 eq("all optional worker loops stopped",#__threads,0)
+
+
+-- Fault containment: if another visual/plugin subsystem replaces a bot's
+-- FindFirstChild with a throwing implementation DURING a live match, our
+-- optional loop must clean up all TEAM badges and release its start lock.
+-- No game Rules, HP, AI, neutral or item logic is owned by this observer.
+local faultTeam=createFullMode("TEAM",905)
+local faultBR=createFullMode("BATTLE_ROYALE",906)
+eq("fault test TEAM starts",NativeTell.start(faultTeam),true)
+eq("fault test BR starts",NativeTell.start(faultBR),true)
+step()
+eq("fault test two full modes live first",countLiveAll(),32)
+local faultBot=faultTeam.botActors["TEAM_BOT_5"]
+local oldFindChild=faultBot.FindFirstChild
+local warningsBefore=#__warnings
+function faultBot:FindFirstChild(name)
+ error("SIMULATED_STALE_BOT_VISUAL_API")
+end
+step()
+eq("simulated per-avatar throw stops TEAM badge loop",faultTeam._carrierWorldTellStarted,nil)
+eq("all 16 TEAM badges removed by finally cleanup",countLiveAll(),16)
+eq("BR remains live after separate TEAM observer exception",faultBR._carrierWorldTellStarted,true)
+eq("TEAM server held eggs unaffected by visual exception",faultTeam.rules.castles["905"].heldEggs,1)
+eq("BR server held eggs unaffected by visual exception",faultBR.rules.castles["906"].heldEggs,1)
+eq("only one explicitly bounded optional observer warning emitted",#__warnings,warningsBefore+1)
+eq("warning identifies our optional GQ lane",
+ string.find(__warnings[#__warnings],"[GQ511]",1,true)~=nil,true)
+eq("warning retains original error text",
+ string.find(__warnings[#__warnings],"SIMULATED_STALE_BOT_VISUAL_API",1,true)~=nil,true)
+faultBot.FindFirstChild=oldFindChild
+eq("explicit restart after dependency recovery allowed",NativeTell.start(faultTeam),true)
+step()
+eq("recovered team returns its 16 badges once",countLiveAll(),32)
+faultTeam.world.Parent=nil
+step()
+eq("TEAM fault recovery teardown preserves healthy BR",countLiveAll(),16)
+faultBR.world.Parent=nil
+step()
+eq("fault simulation leaves no stale labels",countLiveAll(),0)
+eq("fault simulation leaves no runaway coroutines",#__threads,0)
 
 print("NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS checks="..tostring(checks))
 '''
