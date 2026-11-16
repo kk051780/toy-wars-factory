@@ -1,0 +1,20 @@
+name: P0D GQ isolated combat FX clarity SOURCE gate
+on:
+  push:
+    branches:
+      - feature/p0d-gq-combat-fx-clarity-20261116-01
+  pull_request:
+    paths:
+      - 'handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/**'
+      - '.github/workflows/p0d-gq-combat-fx-clarity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Isolated Python source and map tests (NOT Studio / Android)
+        run: python3 -B -m unittest discover -s handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/tests -p 'test_*.py' -v
