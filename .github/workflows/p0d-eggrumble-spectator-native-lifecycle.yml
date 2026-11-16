@@ -1,0 +1,65 @@
+name: P0D EGGRUMBLE original spectator CLIENT lifecycle native Luau
+on:
+  push:
+    branches:
+      - feature/p0d-quality-elimination-spectate-20261116-01
+    paths:
+      - "handoffs/P0D-PQG-SPECTATE-20261116-01/**"
+      - ".github/workflows/p0d-eggrumble-spectator-native-lifecycle.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  authentic-client-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Obtain immutable original Luau compiler/VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _spectator_fixed_luau
+          persist-credentials: false
+      - name: Build real pinned Luau VM and compiler, no Roblox publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _spectator_fixed_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _spectator_fixed_luau -B /tmp/spectator_lifecycle_native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/spectator_lifecycle_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Execute ORIGINAL spectator client against faithful isolated mock services
+        shell: bash
+        run: |
+          set -euo pipefail
+          harness=handoffs/P0D-PQG-SPECTATE-20261116-01/tools/make_native_spectator_harness.py
+          python3 "$harness" --out /tmp/spectator_REAL_native.luau
+          /tmp/spectator_lifecycle_native/luau-compile --text /tmp/spectator_REAL_native.luau >/dev/null
+          /tmp/spectator_lifecycle_native/luau /tmp/spectator_REAL_native.luau | tee /tmp/spectator_REAL_native.log
+          grep -q '^NATIVE_SPECTATOR_REAL_CLIENT_LIFECYCLE_PASS$' /tmp/spectator_REAL_native.log
+          grep -q '^NATIVE_SPECTATOR_CROSS_MODE_ISOLATION_PASS$' /tmp/spectator_REAL_native.log
+          grep -q '^NATIVE_SPECTATOR_RESET_FLAG_PASS$' /tmp/spectator_REAL_native.log
+          grep -q '^NATIVE_SPECTATOR_ARENA_REMOVAL_PASS$' /tmp/spectator_REAL_native.log
+      - name: Mutation negative controls must fail genuinely executed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          harness=handoffs/P0D-PQG-SPECTATE-20261116-01/tools/make_native_spectator_harness.py
+          for mutation in elimination mode recovery; do
+            python3 "$harness" --mutation "$mutation" --out "/tmp/spectator_MUTANT_$mutation.luau"
+            /tmp/spectator_lifecycle_native/luau-compile --text "/tmp/spectator_MUTANT_$mutation.luau" >/dev/null
+            if /tmp/spectator_lifecycle_native/luau "/tmp/spectator_MUTANT_$mutation.luau" >"/tmp/spectator_MUTANT_$mutation.log" 2>&1; then
+              echo "MUTANT_SURVIVED=$mutation : FAIL" >&2
+              exit 1
+            fi
+            echo "MUTANT_REJECTED_$mutation=PASS"
+          done
+          echo "REAL_SOURCE_NATIVE_LIFECYCLE_AND_3_MUTATIONS_PASS"
+      - name: Explicit product evidence boundary
+        run: |
+          echo "NATIVE VM tests actual original spectator Lua against service fakes."
+          echo "Roblox Studio 2-client physics/network, Android FPS, visual FUN, OWNER review and official RC adoption are NOT tested."

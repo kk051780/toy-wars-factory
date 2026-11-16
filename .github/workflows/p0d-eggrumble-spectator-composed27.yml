@@ -1,0 +1,228 @@
+name: P0D GQ existing composer 26 plus isolated spectator 1 (27 private source-exact)
+on:
+  push:
+    branches:
+      - feature/p0d-quality-elimination-spectate-20261116-01
+    paths:
+      - 'handoffs/P0D-PQG-SPECTATE-20261116-01/**'
+      - '.github/workflows/p0d-eggrumble-spectator-composed27.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reuse-existing-gq-composer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout spectator author only (no Game or RC writes)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout pinned original V3 source author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Checkout pinned original GQ 26-source composer (DO NOT REWRITE)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout pinned independent ART owner
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout pinned independent SCORE owner
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify pinned owners and original spectator source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 -B -m unittest discover -v -s handoffs/P0D-PQG-SPECTATE-20261116-01/tests -p 'test_spectator_contract.py'
+      - name: Reuse original ART owner composer on exact author V3 (no derivative ART system)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_GQ26_ART_OWNER.project.json
+      - name: Reuse exact original GQ 26-source composer, preserving ART SCORE and 8-domain Game
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/EGGRUMBLE_GQ26_ART_OWNER.project.json \
+            --out artifacts/EGGRUMBLE_GQ26_EXISTING_COMPOSER.project.json
+      - name: Add exactly one spectator LocalScript to existing GQ26 manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          old=Path("artifacts/EGGRUMBLE_GQ26_EXISTING_COMPOSER.project.json").resolve(strict=True)
+          dest=Path("artifacts/EGGRUMBLE_GQ27_SPECTATOR.project.json").resolve()
+          old_receipt=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text(encoding="utf-8"))
+          project=json.loads(old.read_text(encoding="utf-8"))
+          server=project["tree"]["ServerScriptService"]
+          scripts=project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+          assert len(server)-1==23 and len(scripts)-1==3
+          assert old_receipt["script_count"]==26 and len(old_receipt["source_sha256"])==26
+          assert set(scripts)=={"$className","EGGRUMBLE_CombatFeel","EGGRUMBLE_ProceduralSkills","EGGRUMBLE_ArtDistanceLOD"}
+          assert "EGGRUMBLE_EliminatedSpectate" not in scripts
+          spectator=Path("handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau").resolve(strict=True)
+          assert spectator.name.endswith(".client.luau")
+          scripts["EGGRUMBLE_EliminatedSpectate"]={"$path":os.path.relpath(spectator,dest.parent).replace(os.sep,"/")}
+          project["name"]="EGGRUMBLE_GQ27_SPECTATOR_PRIVATE_NO_RC"
+          dest.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          def entries(node):
+              for name,child in node.items():
+                  if name.startswith("$") or not isinstance(child,dict):continue
+                  if "$path" in child:
+                      yield name,(dest.parent/child["$path"]).resolve(strict=True)
+                  else:yield from entries(child)
+          mapped=dict(entries(project["tree"]))
+          assert len(mapped)==27 and set(mapped)==set(old_receipt["source_sha256"])|{"EGGRUMBLE_EliminatedSpectate"}
+          assert all(hashlib.sha256(mapped[n].read_bytes()).hexdigest()==h for n,h in old_receipt["source_sha256"].items()),"Original GQ26 source bytes drifted"
+          assert mapped["EGGRUMBLE_EliminatedSpectate"]==spectator
+          Path("artifacts/GQ27_SPECTATOR_HEADS.json").write_text(json.dumps({
+              "spectator_head":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+              "author_head":"fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
+              "gq26_composer_head":"2aeb4fd856657c9298a2763d9204d0c9d9b031cb",
+              "art_head":"e86702c906bdf9c71adcdf769ae48a206b26607b",
+              "score_head":"438a406ccfda5563053d783d7561797ccd364361",
+              "source_count":27,"official_rc_adopted":False,
+              "studio_tested":False,"android_tested":False,"owner_accepted":False
+          },ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("EXACT_ORIGINAL_26_UNMODIFIED_PLUS_SPECTATOR_1")
+          PY
+      - name: Checkout fixed original Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _v3_luau
+          persist-credentials: false
+      - name: Native-compile all composed 27 and run owner's SCORE VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _v3_luau -B /tmp/spectate27_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/spectate27_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/EGGRUMBLE_GQ27_SPECTATOR.project.json").resolve(strict=True)
+          def sources(node):
+              for name,child in node.items():
+                  if name.startswith("$") or not isinstance(child,dict):continue
+                  if "$path" in child:yield (p.parent/child["$path"]).resolve(strict=True)
+                  else:yield from sources(child)
+          paths=list(sources(json.loads(p.read_text(encoding="utf-8"))["tree"]))
+          assert len(paths)==27
+          for f in paths:
+              subprocess.run(["/tmp/spectate27_native/luau-compile","--text",str(f)],stdout=subprocess.DEVNULL,check=True)
+          print("SOURCE_EXACT_GQ27_ALL_NATIVE_LUAU_27_OF_27_PASS")
+          PY
+          mkdir -p /tmp/gq27_score_vm
+          score=_v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          cp "$score/EGGRUMBLE_ScoreBalance.luau" /tmp/gq27_score_vm/Results.luau
+          cp "$score/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/gq27_score_vm/Cases.luau
+          cp "$score/tests/run_score_balance_native.luau" /tmp/gq27_score_vm/Runner.luau
+          (cd /tmp/gq27_score_vm && /tmp/spectate27_native/luau Runner.luau) | tee artifacts/GQ27_SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/GQ27_SCORE_NATIVE.log
+      - name: Acquire pinned Rojo and assemble unpublished 27-source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq27_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/gq27_rojo")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq27_rojo build artifacts/EGGRUMBLE_GQ27_SPECTATOR.project.json -o artifacts/EGGRUMBLE_GQ27_SPECTATOR_PRIVATE.rbxlx
+      - name: Verify XML Source exact match, 27 distinct names, receipt and no extra authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path("artifacts/EGGRUMBLE_GQ27_SPECTATOR.project.json").resolve(strict=True)
+          f=Path("artifacts/EGGRUMBLE_GQ27_SPECTATOR_PRIVATE.rbxlx")
+          project=json.loads(p.read_text(encoding="utf-8"))
+          receipt=json.loads(Path("artifacts/GQ27_SPECTATOR_HEADS.json").read_text(encoding="utf-8"))
+          expected={};hashes={}
+          def collect(node):
+              for name,child in node.items():
+                  if name.startswith("$") or not isinstance(child,dict):continue
+                  if "$path" in child:
+                      assert name not in expected,name
+                      path=(p.parent/child["$path"]).resolve(strict=True)
+                      kind="Script" if path.name.endswith(".server.luau") else ("LocalScript" if path.name.endswith(".client.luau") else "ModuleScript")
+                      expected[name]=(kind,path.read_text(encoding="utf-8").replace("\r\n","\n"))
+                      hashes[name]=hashlib.sha256(path.read_bytes()).hexdigest()
+                  else:collect(child)
+          collect(project["tree"])
+          actual={}
+          for item in ET.fromstring(f.read_bytes()).iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name not in actual,("duplicate",name)
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,("source absent",name)
+              actual[name]=(kind,source.replace("\r\n","\n"))
+          assert len(expected)==27 and len(actual)==27
+          assert expected==actual,{"missing":sorted(set(expected)-set(actual)),"extra":sorted(set(actual)-set(expected)),
+                                   "diff":sorted(x for x in set(expected)&set(actual) if expected[x]!=actual[x])}
+          assert sum(k=="EGGRUMBLE_LobbyCastleModesPreview" for k in actual)==1
+          assert sum(k=="EGGRUMBLE_EliminatedSpectate" for k in actual)==1
+          assert actual["EGGRUMBLE_EliminatedSpectate"][0]=="LocalScript"
+          receipt.update({"source_sha256":hashes,"place_bytes":f.stat().st_size,
+                          "place_sha256":hashlib.sha256(f.read_bytes()).hexdigest(),
+                          "source_exact_27":True})
+          Path("artifacts/GQ27_SPECTATOR_SOURCE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("PRIVATE_GQ27_ROJO_SOURCE_EXACT_27_OF_27_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          print("GQ27_PRIVATE_NOT_OFFICIAL_RC; STUDIO_ANDROID_ART_FUN_OWNER_NOT_TESTED")
+          PY
+      - name: Archive only private nonproduction composed 27-source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3
+          name: EGGRUMBLE_GQ27_SPECTATOR_PRIVATE_NO_RC
+          path: |
+            artifacts/EGGRUMBLE_GQ27_SPECTATOR_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ27_SPECTATOR.project.json
+            artifacts/GQ27_SPECTATOR_SOURCE_RECEIPT.json
+            artifacts/GQ27_SCORE_NATIVE.log

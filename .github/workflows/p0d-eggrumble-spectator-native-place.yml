@@ -1,0 +1,153 @@
+name: P0D EGGRUMBLE V3 spectator exact-source native and Rojo private Place
+on:
+  push:
+    branches:
+      - feature/p0d-quality-elimination-spectate-20261116-01
+    paths:
+      - 'handoffs/P0D-PQG-SPECTATE-20261116-01/**'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
+      - '.github/workflows/p0d-eggrumble-spectator-native-place.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  spectator-private-source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout isolated branch with immutable author ancestry
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Parent snapshot and six client safety contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD
+          python3 -B -m unittest discover -s handoffs/P0D-PQG-SPECTATE-20261116-01/tests -p 'test_spectator_contract.py' -v
+      - name: Obtain pinned original open-source Luau VM/compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _spectator_luau
+          persist-credentials: false
+      - name: Native Luau parse every mapped actual V3 script including spectator
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _spectator_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _spectator_luau -B /tmp/spectator_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/spectator_native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          project=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json").resolve()
+          def paths(node):
+              if not isinstance(node,dict):
+                  return
+              if "$path" in node:
+                  yield (project.parent / node["$path"]).resolve(strict=True)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):
+                          yield from paths(v)
+          scripts=list(paths(json.loads(project.read_text(encoding="utf-8"))["tree"]))
+          assert len(scripts)==22, f"Expected 21 original role/game + 1 owned spectator, got {len(scripts)}"
+          assert sum(p.name=="EGGRUMBLE_Spectate.client.luau" for p in scripts)==1
+          for path in scripts:
+              subprocess.run(["/tmp/spectator_native/luau-compile","--text",str(path)],stdout=subprocess.DEVNULL,check=True)
+          print(f"NATIVE_LUAU_SOURCE_PARSE_{len(scripts)}_OF_{len(scripts)}_PASS")
+          PY
+      - name: Obtain checksum-pinned Rojo 7.7.1 binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/spectator_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/spectator_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/spectator_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/spectator_rojo")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(0o755)
+          PY
+      - name: Build actual unpublished private V3 22-source spectator Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          /tmp/spectator_rojo build handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_SPECTATOR_22_PRIVATE.rbxlx
+      - name: Independently verify all 22 real XML Script bodies exactly match mapped Luau source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,subprocess,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json").resolve()
+          place=Path("artifacts/EGGRUMBLE_V3_SPECTATOR_22_PRIVATE.rbxlx")
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          expected={};source_hashes={}
+          def flatten(node):
+              for name,child in node.items():
+                  if name.startswith("$") or not isinstance(child,dict):continue
+                  if "$path" in child:
+                      assert name not in expected, ("duplicate project name",name)
+                      path=(project.parent/child["$path"]).resolve(strict=True)
+                      kind=("Script" if path.name.endswith(".server.luau") else
+                            "LocalScript" if path.name.endswith(".client.luau") else "ModuleScript")
+                      expected[name]=(kind,path.read_text(encoding="utf-8").replace("\r\n","\n"))
+                      source_hashes[name]=hashlib.sha256(path.read_bytes()).hexdigest()
+                  else:flatten(child)
+          flatten(tree)
+          assert len(expected)==22,len(expected)
+          assert len([n for n in expected if n=="EGGRUMBLE_EliminatedSpectate"])==1
+          assert expected["EGGRUMBLE_EliminatedSpectate"][0]=="LocalScript"
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name not in actual,("duplicate binary script",name)
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,("missing source",name)
+              actual[name]=(kind,source.replace("\r\n","\n"))
+          assert actual==expected,{
+              "missing":sorted(set(expected)-set(actual)),
+              "extra":sorted(set(actual)-set(expected)),
+              "different":sorted(n for n in set(actual)&set(expected) if actual[n]!=expected[n])
+          }
+          receipt={
+              "candidate_head":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+              "base_author_head":"fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
+              "official_rc_adopted":False,
+              "real_roblox_studio_tested":False,
+              "android_tested":False,
+              "owner_accepted":False,
+              "script_count":len(expected),
+              "source_sha256":source_hashes,
+              "place_bytes":place.stat().st_size,
+              "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest()
+          }
+          Path("artifacts/SPECTATOR_SOURCE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("PRIVATE_ROJO_SOURCE_EXACT_22_OF_22_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          print("ACTUAL_ENGINE_STUDIO_ANDROID_OWNER_OFFICIAL_RC_NOT_TESTED_OR_ADOPTED")
+          PY
+      - name: Store private-only 22-source Place, SHA receipt and full project map
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_V3_SPECTATOR_22_PRIVATE_NO_RC
+          retention-days: 3
+          path: |
+            artifacts/EGGRUMBLE_V3_SPECTATOR_22_PRIVATE.rbxlx
+            artifacts/SPECTATOR_SOURCE_RECEIPT.json
+            handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json

@@ -1,0 +1,16 @@
+name: P0D EGGRUMBLE spectator contract (isolated)
+on:
+  push:
+    branches:
+      - feature/p0d-quality-elimination-spectate-20261116-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static client-only authority and original V3 wiring contract
+        run: python3 -m unittest discover -s handoffs/P0D-PQG-SPECTATE-20261116-01/tests -p 'test_spectator_contract.py' -v
