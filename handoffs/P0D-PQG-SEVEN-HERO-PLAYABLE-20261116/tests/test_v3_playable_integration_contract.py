@@ -74,7 +74,7 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
         for role in ('WARRIOR','MAGE','NINJA','TRAPPER','BUILDER','BEAST','ZOMBIE'):
             with self.subTest(role=role):
                 self.assertIn(role+'={name=',self.hero)
-        for text in ('EGGRUMBLE_SKILL_','Tool','ToolTip','COOLDOWNS',
+        for text in ('EGGRUMBLE_SKILL_','Tool','ToolTip','CombatBalance.skill(role,slot)',
                      'session.swarm.damageFromPlayer(', 'h:TakeDamage(damage*duel*mark)',
                      'owner.heldEggs==0','session.rules.phase~="ACTIVE"',
                      'if tool.Parent~=p.Character then return end',
