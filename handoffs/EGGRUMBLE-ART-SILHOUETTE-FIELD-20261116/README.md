@@ -62,6 +62,14 @@ Every standalone visual is completely reversible by removing the add-on A01 Scri
 - For a true end-to-end integration, the original #482 author must review and explicitly wire these layers into the private V3 project, validate conflict-free SourceExact build, then #220's authenticated writer may consider RC intake. **Do not directly edit existing Game/HUD/Rules/BotActors/SwarmCombat/map collisions, fork a second RC, or merge the stacked draft.**
 - **Rollback**: delete these three additive art Scripts and restart the test session. They add no persistence, network protocol, collision, Game/HP/egg/score/KO authority, terrain write, shop or paid feature.
 
+## Client-side adaptive art visibility (A01, not the gameplay author)
+
+New `EGGRUMBLE_ArtDistanceLOD.client.luau` is a **Studio-only LocalScript** inside the generated private preview's `StarterPlayerScripts`. The dynamic composer preserves the original game's `EGGRUMBLE_CombatFeel` and other original client code, then attaches **exactly one separate** A01 distance LOD script. The original author server remains untouched. Client script scopes its visibility modifications to exact A01 `ART_*` Parts inside known visual-only folders; original skills, seven authored hand weapons, critical combat feedback, original castle gates, actual eggs/items/prompts, real KO burst rings and HUD are *not culled*.
+
+A bounded inspection of at most **1,800 A01 cosmetic Parts**, with a camera-distance pass every **1.2 seconds**, makes remote decorative parts transparent through client-only `LocalTransparencyModifier` rather than deleting or moving them. The touch profile uses conservative **95–195 stud** distances by category, and desktop multiplies those ranges by **1.75**. Nearby heroes, readable castles, collectible objects and lobby gates have longer ranges than small distant neutrals. Its state is automatically reversed when moving nearer or when an art Part leaves the world; it introduces **no** RenderStepped/Heartbeat callback, Remote, game state, physics collision, author animation change or large HUD overlay.
+
+**Important performance limit:** the LOD reduces *rendered* distant A01 geometry only. It does **not** reduce server part creation, replication bytes, instance counts, RAM, pathfinding cost or AI activity; original mobile Device Emulator FPS/thermal and real Android testing remain REQUIRED. It is not a measured 30 FPS claim. This layer also does not make Studio-only source builds into Android-deployed experiences.
+
 ## Quality / device acceptance contract
 
 Source-level guardrails: Studio-only, noncolliding/untouchable/unqueryable cosmetic Parts, no local material/shadow heavy loops, per-role and per-arena bounds, existing physical path preserved. Dedicated source CI: .github/workflows/p0d-eggrumble-art-a01-source.yml. Static tests are in tests/test_art_source_contract.py; running them is not the same as running Roblox.
