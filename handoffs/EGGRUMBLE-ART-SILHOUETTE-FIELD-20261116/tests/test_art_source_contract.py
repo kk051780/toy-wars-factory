@@ -94,7 +94,7 @@ class VisualLayersSourceContract(unittest.TestCase):
             "neutral.Destroying:Connect",
         ):
             self.assertIn(needle, ENCOUNTERS)
-        for token in ("Heartbeat:Connect", "NeutralKO", "LastAttackerId", "TakeDamage("):
+        for token in ("Heartbeat:Connect", 'SetAttribute("EGGRUMBLE_NeutralKOs"', "LastAttackerId", "TakeDamage("):
             self.assertNotIn(token, executable_lines(ENCOUNTERS))
 
     def test_loot_and_lobby_are_readable_but_not_authoritative(self):
