@@ -143,8 +143,10 @@ eq("real human marker",nc,1)
 eq("actual real count",hgui and hgui.Adornee,hr)
 eq("actual server egg text",hgui and hgui.__class,"BillboardGui")
 eq("limited distance",hgui and hgui.MaxDistance,70)
+eq("human label near head",hgui and hgui.StudsOffsetWorldSpace.y,4)
 eq("not always-on-top over wall",hgui and hgui.AlwaysOnTop,false)
 eq("one marker on bot",liveOn(br),1)
+eq("AI carrier label avoids original BotObjective board",select(2,liveOn(br)).StudsOffsetWorldSpace.y,10.2)
 eq("two markers total",countLiveAll(),2)
 
 a.rules.castles["100"].heldEggs=3
@@ -179,6 +181,7 @@ a.botActors["AI_1"]=bot2
 step()
 eq("old AI marker removed after bot model replacement",liveOn(br),0)
 eq("new AI model marker created",liveOn(br2),1)
+eq("new AI board spacing preserved",select(2,liveOn(br2)).StudsOffsetWorldSpace.y,10.2)
 eq("old AI marker destroyed",oldBotGui.destroyed,true)
 
 -- Former human becomes server AI controlled after disconnect.
@@ -188,6 +191,7 @@ a.botActors["100"]=takeover
 step()
 eq("old human avatar marker cleared on takeover",liveOn(hr2),0)
 eq("takeover AI marker retained for real castle",liveOn(tkr),1)
+eq("human-to-bot takeover uses AI spacing",select(2,liveOn(tkr)).StudsOffsetWorldSpace.y,10.2)
 eq("original human ownership remains",a.rules.castles["100"].heldEggs,1)
 
 -- Independent BR arena runs concurrently; teardown must not remove another mode.
@@ -234,6 +238,48 @@ local inactive={world={Parent={}},roster={},rules={phase="LOBBY",winner=nil,cast
 eq("cannot start from lobby",NativeTell.start(inactive),false)
 local ended={world={Parent={}},roster={},rules={phase="ACTIVE",winner="BLUE",castles={}}}
 eq("cannot start after winner",NativeTell.start(ended),false)
+
+-- Exact author MODE_SEATS=16. Exercise full roster load in both live arenas:
+-- no fan-out above one billboard per actor; no event subscription or leak.
+local function createFullMode(mode,humanId)
+ local sess={
+  mode=mode,world={Parent={}},
+  roster={},botActors={},
+  rules={phase="ACTIVE",winner=nil,castles={}},
+ }
+ for i=1,16 do
+  local id=if i==1 then tostring(humanId) else mode.."_BOT_"..tostring(i)
+  local isAI=i~=1
+  local model,rt,hum=makeAvatar("max_"..mode.."_"..id)
+  table.insert(sess.roster,{id=id,isAI=isAI})
+  sess.rules.castles[id]={alive=true,heldEggs=1,team=if mode=="TEAM" then "RED" else nil}
+  if isAI then sess.botActors[id]=model
+  else __players[humanId]={Character=model} end
+ end
+ return sess
+end
+local fullTeam=createFullMode("TEAM",901)
+local fullBR=createFullMode("BATTLE_ROYALE",902)
+eq("16-seat TEAM starts",NativeTell.start(fullTeam),true)
+eq("16-seat BR starts",NativeTell.start(fullBR),true)
+step()
+eq("no GUI leak at full two arenas (32 max)",countLiveAll(),32)
+eq("one task per arena not per player",__spawned,4)
+local aId="TEAM_BOT_7"
+fullTeam.rules.castles[aId].heldEggs=0
+step()
+eq("individual egg drop removes exactly one GUI",countLiveAll(),31)
+fullTeam.rules.castles[aId].heldEggs=2
+step()
+eq("egg replacement restores exactly one GUI",countLiveAll(),32)
+fullTeam.rules.phase="FINISHED"
+step()
+eq("TEAM shutdown preserves 16 BR carriers",countLiveAll(),16)
+fullBR.world.Parent=nil
+step()
+eq("full BR arena destroy removes all labels",countLiveAll(),0)
+eq("no tasks left in full roster scenario",#__threads,0)
+
 print("NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS checks="..tostring(checks))
 '''
 
