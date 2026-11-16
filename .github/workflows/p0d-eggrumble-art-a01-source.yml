@@ -21,6 +21,19 @@ jobs:
         run: |
           python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_V3_ART_STUDIO.project.json >/dev/null
           python3 -m json.tool handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/EGGRUMBLE_SEVEN_HERO_ART_STUDIO.project.json >/dev/null
+      - name: Read-only checkout of latest original V3 writer source (PR #482)
+        uses: actions/checkout@v4
+        with:
+          ref: feature/p0d-pqg-seven-hero-playable-20261116-01
+          path: author-current
+          persist-credentials: false
+      - name: Dynamically compose latest V3 author source plus three art-only Scripts
+        run: |
+          python3 handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --author-project author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json
+          python3 -m json.tool .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json >/dev/null
+          echo "Combined mapping is generated for source inspection; Native/Rojo/Studio still NOT_RUN"
       - name: Report boundaries
         run: |
           echo "SOURCE REGRESSION ONLY — NOT Native Luau/Rojo/Studio/Android/FUN/OWNER acceptance."
