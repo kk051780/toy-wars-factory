@@ -1,0 +1,124 @@
+name: P0D EGGRUMBLE GQ Optional Objective Compass Private Place
+on:
+  push:
+    branches:
+      - 'quality/p0d-eggrumble-objective-compass-20261116'
+  pull_request:
+    paths:
+      - 'handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/**'
+      - '.github/workflows/p0d-eggrumble-gq-objective-compass.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-exact-compass-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run objective contract and 21-source ownership tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests -p 'test_*.py'
+      - name: Checkout pinned Luau native parser
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau_fixed
+          persist-credentials: false
+      - name: Compile all original sources plus independent client at current HEAD
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau_fixed -B /tmp/gq-obj-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-obj-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          p=Path("handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_GQ_OBJECTIVE_STUDIO.project.json")
+          tree=json.loads(p.read_text(encoding="utf-8"))["tree"]
+          def walk(v):
+              if isinstance(v,dict):
+                  if "$path" in v: yield (p.parent/v["$path"]).resolve(strict=True)
+                  else:
+                      for key,child in v.items():
+                          if not key.startswith("$"): yield from walk(child)
+          sources=list(walk(tree))
+          assert len(sources)==22
+          for source in sources:
+              subprocess.run(["/tmp/gq-obj-native/luau-compile","--text",str(source)],check=True,stdout=subprocess.DEVNULL)
+          print("NATIVE_LUAU_PARSE_22_OF_22_PASS")
+          PY
+      - name: Rojo 7.7.1 checksum-locked source-only private Place build
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_obj_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_obj_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_obj_rojo.zip') as z:
+              paths=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(paths)==1
+              p=Path('/tmp/gq_obj_rojo');p.write_bytes(z.read(paths[0]));p.chmod(0o755)
+          PY
+          mkdir -p artifacts
+          /tmp/gq_obj_rojo build handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_GQ_OBJECTIVE_STUDIO.project.json -o artifacts/EGGRUMBLE_GQ_OBJECTIVE_PRIVATE.rbxlx
+      - name: Verify embedded script classes and all original plus new source bytes
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path("handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_GQ_OBJECTIVE_STUDIO.project.json")
+          place=Path("artifacts/EGGRUMBLE_GQ_OBJECTIVE_PRIVATE.rbxlx")
+          def paths(node):
+              out={}
+              for name,val in node.items():
+                  if name.startswith("$") or not isinstance(val,dict):continue
+                  if "$path" in val:
+                      path=(project.parent/val["$path"]).resolve(strict=True)
+                      cls="Script" if path.name.endswith(".server.luau") else ("LocalScript" if path.name.endswith(".client.luau") else "ModuleScript")
+                      assert name not in out
+                      out[name]=(path,cls)
+                  else:out.update(paths(val))
+              return out
+          expected=paths(json.loads(project.read_text(encoding="utf-8"))["tree"])
+          assert len(expected)==22
+          actual={}
+          xml=ET.fromstring(place.read_bytes())
+          for item in xml.iter("Item"):
+              cls=item.attrib.get("class")
+              if cls not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert name is not None and source is not None
+              assert name not in actual,("duplicate",name)
+              actual[name]=(cls,source.replace("\r\n","\n"))
+          assert len(actual)==22,(len(actual),set(expected)-set(actual))
+          for name,(path,cls) in expected.items():
+              assert name in actual and actual[name][0]==cls,("class",name)
+              assert actual[name][1]==path.read_text(encoding="utf-8").replace("\r\n","\n"),("not source exact",name)
+          sha=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={"candidate_head":os.environ["GITHUB_SHA"],"base_author":"#482","existing_source_count":21,
+                   "new_optional_client_count":1,"built_source_count":22,"private_place_bytes":place.stat().st_size,
+                   "private_place_sha256":sha,"official_rc_integrated":False,"studio_play":"NOT_RUN",
+                   "android":"NOT_RUN","game_quality":"NO_GO","owner_accepted":False}
+          Path("artifacts/EGGRUMBLE_GQ_OBJECTIVE_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8")
+          print("SOURCE_EXACT_22_OF_22_PASS",sha,place.stat().st_size)
+          PY
+      - name: Upload unpublished preview and immutable source receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-V3-GQ-OBJECTIVE-22-SOURCE-NOPUBLISH
+          path: |
+            artifacts/EGGRUMBLE_GQ_OBJECTIVE_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_OBJECTIVE_RECEIPT.json
+          retention-days: 7
