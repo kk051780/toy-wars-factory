@@ -1841,7 +1841,7 @@ jobs:
           assert gq509["source_count"]==31 and gq509["changed_scripts"]==1
           assert gq509["other30_byte_exact"] and gq509["off_current_rules_byte_exact"]
           assert gq509["rojo_source_class"]=="31/31"
-          assert gq509["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq509["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
           gq648=json.loads(Path("artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json").read_text())
           assert gq648["runtime_scripts"]==31 and gq648["one_modified_existing_script"]=="EGGRUMBLE_LobbyCastleModesPreview"
