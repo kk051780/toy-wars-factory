@@ -1,0 +1,44 @@
+{
+  "schema": "P0D_GQ525_RC31_SOURCE_LOCK_V1",
+  "feature_id": "GQ_V3_ITEM_MODE_OWNERSHIP_20261116",
+  "release_profile": "eggrumble_v3_31",
+  "reference_official_base_sha": "63ff99ca8656a85b7aa479cd623c4658dd96c3c4",
+  "original_existing_author": {
+    "pr": 525,
+    "head_sha": "253aa73530eea5c3954c07b546b67e49292c4639",
+    "patch_path": "quality_gameplay/v3_item_mode_ownership_20261116/patch_sources.py",
+    "original_host_blob": "7162b209bf67b74a71553217f3f744e072a0365d",
+    "original_item_blob": "107046cb0bf81fed9e3cba1699ada31571e44a22"
+  },
+  "admission_adapter": "rc_fastlane/quality_item525_rc31/select_existing_author525.py",
+  "source_select_target": [
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+    "ServerScriptService/EGGRUMBLE_FieldItemPickups"
+  ],
+  "expected_runtime_script_count": 31,
+  "expected_unchanged_runtime_scripts": 29,
+  "preserved_source_owners": {
+    "combat_zombie_v3": "aeb7cbed6e154849804d7d28bd53966410e50364",
+    "castle_deposit_586": "417dfa87106b1eab9eaf45e6180273a9ce8ec8c2",
+    "item_author_489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
+    "item_heal_517": "c8a324ad7bb40648d82a5828cbf54e217585fefd",
+    "vertical_hit_595": "eb204b9962c0d10ec937b8886d0923e6e09fb47d"
+  },
+  "original_author_guard_mark": "GQ_V3_ITEM_MODE_OWNERSHIP_20261116",
+  "acceptance": {
+    "original_author_tests": "8/8",
+    "native_real_membership_cases": "13/13",
+    "native_all_scripts": "31/31",
+    "true_rojo_source_class": "31/31",
+    "inverse_hunks_byte_exact": true,
+    "pre_lock_candidate_head": "f5a1dd8126791888d6b9e709b38da72103e3a3d8",
+    "pre_lock_v3_run_id": 43938698594,
+    "pre_lock_s1_run_id": 43938698526,
+    "condition": "Recheck exact NEW PR HEAD CI after this lockfile commit. Prior run is not evidence for newer HEAD."
+  },
+  "rollback": "Exclude ONLY original #525 HOST_INSERT and ITEM_INSERT. Restore previous #586 Host and #517 Item byte-for-byte, keep other29 unchanged.",
+  "production_release_authorized": false,
+  "official_rc_adopted": false,
+  "studio_android_fun": "NOT_TESTED",
+  "candidate_head_policy": "Use PR head_sha from GitHub after all edits, not an old value in this file."
+}
