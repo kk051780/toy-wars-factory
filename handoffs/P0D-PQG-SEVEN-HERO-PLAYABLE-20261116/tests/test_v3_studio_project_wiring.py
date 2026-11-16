@@ -21,6 +21,8 @@ REQUIRED = {
     "EGGRUMBLE_ImpactFeedback": "EGGRUMBLE_ImpactFeedback.luau",
     "EGGRUMBLE_WeaponSilhouettes": "EGGRUMBLE_WeaponSilhouettes.luau",
     "EGGRUMBLE_DivineMantle": "EGGRUMBLE_DivineMantle.luau",
+    "EGGRUMBLE_FieldItemPickups": "EGGRUMBLE_FieldItemPickups.luau",
+    "EGGRUMBLE_RaidItemIntake": "EGGRUMBLE_RaidItemIntake.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
     "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
