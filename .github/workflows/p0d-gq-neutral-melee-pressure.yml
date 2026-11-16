@@ -1,0 +1,73 @@
+name: P0D GQ V3 neutral melee source-only
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_melee_pressure_20261116/**'
+      - '.github/workflows/p0d-gq-neutral-melee-pressure.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-place-source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Negative owner source lock and overlay QA
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/neutral_melee_pressure_20261116 -p 'test_*.py' -v
+          python3 quality_gameplay/neutral_melee_pressure_20261116/compose_melee_candidate.py --out /tmp/gq-melee
+      - name: Native Luau compiler and actual pure policy VM
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-luau
+          cmake -S /tmp/gq-luau -B /tmp/gq-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          /tmp/gq-luau/build/luau-compile /tmp/gq-melee/EGGRUMBLE_SwarmCombat.luau >/dev/null
+          /tmp/gq-luau/build/luau-compile /tmp/gq-melee/EGGRUMBLE_NeutralMeleePolicy.luau >/dev/null
+          python3 quality_gameplay/neutral_melee_pressure_20261116/make_native_policy_harness.py --out /tmp/gq-melee/policy.spec.luau
+          /tmp/gq-luau/build/luau-compile /tmp/gq-melee/policy.spec.luau >/dev/null
+          /tmp/gq-luau/build/luau /tmp/gq-melee/policy.spec.luau
+      - name: Compose private 22-script Rojo Place (NEVER official RC)
+        run: |
+          set -euo pipefail
+          curl -fLsS https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq-rojo.zip
+          mkdir -p /tmp/gq-rojo
+          unzip -q /tmp/gq-rojo.zip -d /tmp/gq-rojo
+          chmod +x /tmp/gq-rojo/rojo
+          /tmp/gq-rojo/rojo build /tmp/gq-melee/EGGRUMBLE_GQ_NEUTRAL_MELEE.project.json -o /tmp/gq-melee/PRIVATE_NEUTRAL_MELEE_NO_RC.rbxlx
+          test -s /tmp/gq-melee/PRIVATE_NEUTRAL_MELEE_NO_RC.rbxlx
+          python3 - <<'PY'
+          import json, pathlib, xml.etree.ElementTree as ET
+          folder=pathlib.Path('/tmp/gq-melee')
+          tree=json.loads((folder/'EGGRUMBLE_GQ_NEUTRAL_MELEE.project.json').read_text())['tree']
+          expected={}
+          def collect(o):
+              for k,v in o.items():
+                  if isinstance(v,dict):
+                      if '$path' in v:
+                          expected[k]=(folder/v['$path']).read_text(encoding='utf-8')
+                      else: collect(v)
+          collect(tree)
+          assert len(expected)==22, ('bad source map',len(expected))
+          root=ET.parse(folder/'PRIVATE_NEUTRAL_MELEE_NO_RC.rbxlx').getroot()
+          actual={}
+          for item in root.iter('Item'):
+              if item.get('class') not in {'Script','ModuleScript','LocalScript'}: continue
+              p=item.find('Properties')
+              if p is None: continue
+              byname={c.get('name'):c.text or '' for c in p}
+              name=byname.get('Name')
+              if name: actual[name]=byname.get('Source','')
+          assert len(actual)==22, ('actual place class count',len(actual),sorted(actual))
+          assert set(actual)==set(expected), ('missing script',set(expected)^set(actual))
+          for name,source in expected.items():
+              assert actual[name]==source, ('source byte drift',name)
+          receipt=json.loads((folder/'SOURCE_LOCK.json').read_text())
+          assert not receipt['official_RC_integrated'] and not receipt['studio_tested']
+          print('PRIVATE_ROJO_SOURCE_EXACT_22/22_PASS', (folder/'PRIVATE_NEUTRAL_MELEE_NO_RC.rbxlx').stat().st_size)
+          PY
+      - name: Honest end gate
+        run: |
+          echo "Source/native/private Place only. Original Swarm author #482 + neutral #494/#501 approval, #218 CLAIM_GRANTED, #220 official writer CAS, real Studio/Android/OWNER acceptance all still pending."
