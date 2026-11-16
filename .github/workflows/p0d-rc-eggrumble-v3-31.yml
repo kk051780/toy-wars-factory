@@ -1724,10 +1724,57 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_rare.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ_RARE_MIRRORED_TEAM_BR_2_EXISTING_29_OTHER_SOURCE_ROJO31_OFF_PASS
+      - name: Checkout immutable GQ522 ORIGINAL Builder authored server wall and Tool (read only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fd7e23feced51ea1d22559f0b6adb42bc5921217
+          path: _gq522_builder_original
+          persist-credentials: false
+      - name: GQ522 original author WALL-only in existing current31 Host — native policy/runtime, Rojo31, OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq522_builder_original rev-parse HEAD)" = fd7e23feced51ea1d22559f0b6adb42bc5921217
+          AUTHOR=_gq522_builder_original/quality_gameplay/v3_builder_construction_20261116
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQRARE_FIELD_SELECTED31.project.json
+          OUT=$DIR/GQ522_WALL_SELECTED31.project.json
+          PLACE=$DIR/GQ522_WALL_REAL_ROJO31.rbxlx
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_builder522_inline31 -p 'test_inline.py'
+          python3 "$AUTHOR/make_native_runtime_spec.py"
+          /tmp/gq530_all31_native/luau-compile --text "$AUTHOR/EGGRUMBLE_BuilderConstruction.runtime.generated.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$AUTHOR/EGGRUMBLE_BuilderConstruction.runtime.generated.luau" \
+            | tee "$DIR/GQ522_ORIGINAL_AUTHOR_NATIVE_RUNTIME.log"
+          grep -q "GQ_BUILDER_RUNTIME_MOCK_PASS assertions=" "$DIR/GQ522_ORIGINAL_AUTHOR_NATIVE_RUNTIME.log"
+          /tmp/gq530_all31_native/luau-compile --text "$AUTHOR/EGGRUMBLE_BuilderPlacementPolicy.luau" >/dev/null
+          python3 -B rc_fastlane/quality_builder522_inline31/select_inline.py prepare \
+            --base "$BASE" --out "$OUT" \
+            --builder "$AUTHOR/EGGRUMBLE_BuilderConstruction.luau" \
+            --policy "$AUTHOR/EGGRUMBLE_BuilderPlacementPolicy.luau"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan
+          _,files=scan(Path(sys.argv[1]))
+          assert len(files)==31
+          for script in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(script)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ522_ACTUAL_CURRENT31_NATIVE_ALL_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B rc_fastlane/quality_builder522_inline31/select_inline.py verify \
+            --base "$BASE" --out "$OUT" --place "$PLACE" \
+            --builder "$AUTHOR/EGGRUMBLE_BuilderConstruction.luau" \
+            --policy "$AUTHOR/EGGRUMBLE_BuilderPlacementPolicy.luau"
+          echo "GQ522_ONE_ORIGINAL_HOST_WALL_TOOL_OTHER30_BYTE_EXACT_NATIVE31_ROJO31_OFF_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ522_WALL_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1743,7 +1790,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ522_WALL_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1856,7 +1903,15 @@ jobs:
           assert rare["other29_byte_exact"] and rare["current_host_off_exact"] and rare["current_score_off_exact"]
           assert rare["actual_rojo_31_source_class"] and rare["rojo_count"]==31
           assert rare["rare_ids"]==["FIELD_4","FIELD_5"] and rare["max_player_rare_points"]==120
-          assert rare["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert rare["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          builder522=json.loads(Path("artifacts/gq515_official_select/GQ522_WALL_RC31_RECEIPT.json").read_text())
+          assert builder522["source_count"]==31 and builder522["only_changed_existing_script"]=="EGGRUMBLE_LobbyCastleModesPreview"
+          assert builder522["other30_byte_exact"] and builder522["one_host_inverse_off_exact"]
+          assert builder522["real_rojo_source_class_exact"]=="31/31"
+          assert builder522["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert builder522["wall_enabled"] and not builder522["bridge_enabled"] and builder522["no_new_runtime_script"]
+          assert m["source_heads"]["builder_wall_original522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
+          assert m["feature_flags"]["BUILDER_WALL_SERVER_TOOL_522"] is True
           assert m["feature_flags"]["RARE_FIELD_EGG_SCORE_20261117"] is True
           assert m["source_heads"]["rare_field_eggs_20261117"]=="1985135a4cee9affe7acb7d5a921f3f4e3088271"
           assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
@@ -2019,6 +2074,9 @@ jobs:
              "rare_original29_other_scripts_exact":True,
              "rare_host_and_score_inverse_rollback_exact":True,
              "rare_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_RARE_FIELD_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq522_original_builder_wall_only_selected":True,
+             "gq522_bridge_stays_disabled":True,
+             "gq522_original_builder_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ522_WALL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "place_name":place.name,
             "place_size_bytes":place.stat().st_size,
             "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
@@ -2092,6 +2150,10 @@ jobs:
             artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json
             artifacts/gq515_official_select/GQ509_LATE_DEATH_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQRARE_FIELD_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ522_WALL_REAL_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ522_WALL_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ522_ORIGINAL_AUTHOR_NATIVE_RUNTIME.log
             artifacts/gq515_official_select/GQ_RARE_FIELD_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQRARE_SCORE_NATIVE13_RESULT.log
             artifacts/gq515_official_select/GQ509_CURRENT31_postwin_egg_fence_native_NATIVE.log
