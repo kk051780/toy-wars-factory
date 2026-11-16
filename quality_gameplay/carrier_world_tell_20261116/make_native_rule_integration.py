@@ -180,6 +180,51 @@ br.world.Parent=nil
 step()
 eq("real two mode teardown complete",countLiveAll(),0)
 eq("native actual original real-rules loops cleaned",#__threads,0)
+
+-- Fault containment with the EXACT original castle/egg authority in one VM,
+-- not a proxy/fake item ledger. A bad optional display dependency must neither
+-- strand UI nor erase genuine tokens/HP/castle/neutral or end the match.
+local crashRoster=RealRules.makeRoster("TEAM",{"501","502"},16)
+local crashRules=RealRules.new("TEAM",crashRoster,24)
+RealRules.start(crashRules)
+local crashBots={}
+local crashRoots={}
+for _,entry in ipairs(crashRoster) do
+ local actor,rt,hum=makeAvatar("orig_eggs_fault_"..entry.id)
+ crashRoots[entry.id]=rt
+ if entry.isAI then crashBots[entry.id]=actor
+ else __players[tonumber(entry.id)]={Character=actor} end
+end
+local crashSession={mode="TEAM",world=makeWorld("TEAM"),rules=crashRules,roster=crashRoster,botActors=crashBots}
+eq("real rule session starts for fault case",NativeTell.start(crashSession),true)
+eq("original rules real human egg issued",RealRules.takeFieldEgg(crashRules,"501","FIELD_1"),1)
+eq("original rules real bot egg issued",RealRules.takeFieldEgg(crashRules,"AI_1","FIELD_2"),1)
+step()
+eq("real rule carrier 501 initially visible",captionOn(crashRoots["501"]),"🥚×1")
+eq("real rule carrier AI_1 initially visible",captionOn(crashRoots["AI_1"]),"🥚×1")
+local malformedBot=crashBots["AI_1"]
+local realFind=malformedBot.FindFirstChild
+function malformedBot:FindFirstChild(key)
+ error("STALE_AUTHOR_BOT_ACTOR_VISUAL_OBSERVER")
+end
+step()
+eq("fault in real Rules session releases optional loop",crashSession._carrierWorldTellStarted,nil)
+eq("fault in real Rules session removes human marker",liveOn(crashRoots["501"]),0)
+eq("fault in real Rules session removes bot marker",liveOn(crashRoots["AI_1"]),0)
+eq("original match still active after cosmetic fault",crashRules.phase,"ACTIVE")
+eq("original human held egg preserved",crashRules.castles["501"].heldEggs,1)
+eq("original bot held egg preserved",crashRules.castles["AI_1"].heldEggs,1)
+eq("original egg conservation after visual exception",RealRules.auditEggConservation(crashRules).valid,true)
+malformedBot.FindFirstChild=realFind
+eq("healthy dependency allows one explicit restart",NativeTell.start(crashSession),true)
+step()
+eq("human actual egg marker restored after restart",captionOn(crashRoots["501"]),"🥚×1")
+eq("bot actual egg marker restored after restart",captionOn(crashRoots["AI_1"]),"🥚×1")
+crashSession.world.Parent=nil
+step()
+eq("original real-rule fault test leaks zero labels",countLiveAll(),0)
+eq("original real-rule fault test leaks zero tasks",#__threads,0)
+
 print("NATIVE_ORIGINAL_RULES_TO_WORLD_TELL_INTEGRATION_PASS checks="..tostring(checks))
 '''
 
