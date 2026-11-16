@@ -136,6 +136,11 @@ do
 end
 do
  local s,a,t,h,b,r=schedule("TEAM","human")
+ r.castles["2"]={alive=true,team="BLUE"}
+ fire();expect("new castle at old id cannot inherit DOT",h.damage,0)
+end
+do
+ local s,a,t,h,b,r=schedule("TEAM","human")
  r.phase="FINISHED"
  fire();expect("terminal round blocks DOT",h.damage,0)
 end
@@ -190,10 +195,15 @@ do
 end
 do
  local s,a,t,h,b,r=schedule("TEAM","bot")
+ r.castles["AI_1"]={alive=true,team="BLUE"}
+ fire();expect("new bot castle at old id cannot inherit DOT",h.damage,0)
+end
+do
+ local s,a,t,h,b,r=schedule("TEAM","bot")
  r.phase="FINISHED"
  fire();expect("bot terminal round blocks DOT",h.damage,0)
 end
-print("GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_16_SCENARIOS_PASS",numCases)
+print("GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS",numCases)
 '''
 def main():
     parser=argparse.ArgumentParser()
@@ -208,6 +218,7 @@ def main():
     assert "StatusTickFence.canTick(session.rules,originalRules," in original
     assert original.count("h:TakeDamage(tick)")==1
     assert original.count("task.delay(i,function()")==1
+    assert 'castleAtApplication=originalRules.castles and originalRules.castles[targetId]' in original
     assert 'sameTarget=(session.botActors or {})[targetId]==bot' in original
     assert 'player.Character:FindFirstChildOfClass("Humanoid")==h' in original
     out=args.out.resolve()
