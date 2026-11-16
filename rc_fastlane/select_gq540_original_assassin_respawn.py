@@ -5,6 +5,8 @@ No new Host, Game, Combat or Remote authority: exactly one Host Source changes.
 """
 from __future__ import annotations
 import argparse
+import contextlib
+import io
 import copy
 import hashlib
 import importlib.machinery
@@ -99,7 +101,8 @@ def select(original_project: Path, selected541_project: Path, author_path: Path,
 
 def verify(original_selected: Path, selected: Path, receipt: Path, place: Path, author_path: Path):
     author = load_author(author_path)
-    author.verify_place(selected, receipt, place)
+    with contextlib.redirect_stdout(io.StringIO()):
+        author.verify_place(selected, receipt, place)
     _, old = author.scan(original_selected)
     _, new = author.scan(selected)
     if len(old) != len(new) or len(new) != 31 or set(old) != set(new):
