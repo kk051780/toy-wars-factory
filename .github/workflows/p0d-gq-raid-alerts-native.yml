@@ -1,0 +1,59 @@
+name: P0D GQ raid-alerts native Luau source and V3 wiring
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidAlerts.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_RaidAlerts.spec.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_v3_studio_project_wiring.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_harness.py'
+      - '.github/workflows/p0d-gq-raid-alerts-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-exact-vm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate existing single-author V3 Rojo project wiring
+        run: |
+          python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_v3_studio_project_wiring.py -v
+      - name: Validate optional runtime alert hook (does not change game authority)
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          game=(root/'EGGRUMBLE_LobbyCastleModesPreview.server.luau').read_text(encoding='utf8')
+          assert 'RaidAlerts=require(script.Parent:WaitForChild("EGGRUMBLE_RaidAlerts"))' in game
+          assert 'pcall(RaidAlerts.process,session)' in game
+          assert 'YELLOW_RAID_ALERTS_OPTIONAL' in game
+          assert 'session.raidAlertsDisabled=true' in game
+          module=(root/'EGGRUMBLE_RaidAlerts.luau').read_text(encoding='utf8')
+          assert 'session.rules.events' in module
+          assert 'session.alertCursor=nextCursor' in module
+          assert 'EGGRUMBLE_RaidNotice' in module
+          print('RAID_ALERTS_SOURCE_WIRING_PASS')
+          PY
+      - name: Build official open-source Luau CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-raid-luau
+          cmake -S /tmp/p0d-raid-luau -B /tmp/p0d-raid-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-raid-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Execute actual module in native Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_harness.py --out /tmp/p0d-raid-alerts.spec.luau
+          /tmp/p0d-raid-luau/build/luau-compile handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidAlerts.luau >/dev/null
+          /tmp/p0d-raid-luau/build/luau-compile handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_RaidAlerts.spec.luau >/dev/null
+          /tmp/p0d-raid-luau/build/luau-compile /tmp/p0d-raid-alerts.spec.luau >/dev/null
+          /tmp/p0d-raid-luau/build/luau /tmp/p0d-raid-alerts.spec.luau
+      - name: State scope
+        run: |
+          echo "Game rules unaffected. Native VM tests pass if above step passed."
+          echo "Roblox Studio/Android and official #220 RC integration still require separate evidence."
