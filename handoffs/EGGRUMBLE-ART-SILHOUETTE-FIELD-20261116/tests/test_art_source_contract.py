@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HERO = (ROOT / "EGGRUMBLE_HeroSilhouetteArt.server.luau").read_text(encoding="utf-8")
 FIELD = (ROOT / "EGGRUMBLE_FlagshipFieldArt.server.luau").read_text(encoding="utf-8")
 ENCOUNTERS = (ROOT / "EGGRUMBLE_EncounterReadabilityArt.server.luau").read_text(encoding="utf-8")
+CLIENT = (ROOT / "EGGRUMBLE_ArtDistanceLOD.client.luau").read_text(encoding="utf-8")
 ROLES = {"WARRIOR", "MAGE", "NINJA", "TRAPPER", "BUILDER", "BEAST", "ZOMBIE"}
 
 
@@ -22,6 +23,78 @@ def executable_lines(src: str) -> str:
 
 
 class VisualLayersSourceContract(unittest.TestCase):
+    def test_per_client_mobile_distance_lod_non_authoritative(self):
+        body = executable_lines(CLIENT)
+        for token in (
+            'if not RunService:IsStudio() then return end',
+            'local MAX_TRACKED_PARTS=1800',
+            'local UPDATE_INTERVAL_SECONDS=1.2',
+            'local MOBILE=UserInputService.TouchEnabled',
+            'local DISPLAY_DISTANCES:',
+            'if part.Name:sub(1,4)~="ART_" then return nil end',
+            'local dist=DISPLAY_DISTANCES[ancestor.Name]',
+            'part.LocalTransparencyModifier=transparency',
+            'workspace.DescendantAdded:Connect(register)',
+            'workspace.DescendantRemoving:Connect(remove)',
+            'local delta=part.Position-viewpoint',
+            'delta:Dot(delta)>maxDist*maxDist',
+        ):
+            self.assertIn(token, body)
+        for folder in (
+            "EGGRUMBLE_RoleVisuals", "EGGRUMBLE_BotVisuals",
+            "EGGRUMBLE_FlagshipLandscape_VisualOnly", "EGGRUMBLE_CastleArt_VisualOnly",
+            "EGGRUMBLE_NeutralArt_VisualOnly", "EGGRUMBLE_EggVisual_VisualOnly",
+            "EGGRUMBLE_FieldItemVisual_VisualOnly", "EGGRUMBLE_ModeGateFrame_VisualOnly",
+            "EGGRUMBLE_StoneGiantVisual_VisualOnly", "EGGRUMBLE_InteriorHeraldry_VisualOnly",
+        ):
+            self.assertIn(folder, body)
+        for forbidden in (
+            "RenderStepped", "Heartbeat", ".CanCollide=", ".CanTouch=", ".CanQuery=",
+            "Humanoid", "Tool", "TakeDamage", "GetAttributeChangedSignal",
+            "RemoteEvent", "ProximityPrompt", "DataStore", "UserOwnsGamePass",
+        ):
+            self.assertNotIn(forbidden, body)
+        self.assertNotIn('ART_TrueNeutralKOCue', CLIENT)
+
+    def test_exact_client_lod_rojo_node_and_author_combat_feel_preserved(self):
+        tool_path=ROOT / "tools" / "compose_current_v3_art.py"
+        spec=importlib.util.spec_from_file_location("a01_lod_composer",tool_path)
+        module=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertEqual(module.ART_CLIENT_NAME,"EGGRUMBLE_ArtDistanceLOD")
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            original=root / "author"
+            original.mkdir()
+            server={"$className":"ServerScriptService"}
+            for name in module.MANDATORY_GAME_NAMES:
+                file=original / (name+".luau")
+                file.write_text("return {}\\n",encoding="utf-8")
+                server[name]={"$path":file.name}
+            combat=original/"EGGRUMBLE_CombatFeel.client.luau"
+            combat.write_text("return {}\\n",encoding="utf-8")
+            tree={"ServerScriptService":server,"StarterPlayer":{"$className":"StarterPlayer",
+                  "StarterPlayerScripts":{"$className":"StarterPlayerScripts",
+                  "EGGRUMBLE_CombatFeel":{"$path":combat.name}}}}
+            author=original/"v3.project.json"
+            before=json.dumps({"tree":tree})
+            author.write_text(before,encoding="utf-8")
+            out=root/"generated"/"v3-art.project.json"
+            composed=module.compose(author,out,ROOT)
+            node=composed["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+            self.assertEqual(
+                set(node),{"$className","EGGRUMBLE_CombatFeel","EGGRUMBLE_ArtDistanceLOD"}
+            )
+            self.assertEqual((out.parent/node["EGGRUMBLE_ArtDistanceLOD"]["$path"]).resolve(),
+                             (ROOT/"EGGRUMBLE_ArtDistanceLOD.client.luau").resolve())
+            self.assertEqual((out.parent/node["EGGRUMBLE_CombatFeel"]["$path"]).resolve(),
+                             combat.resolve())
+            self.assertEqual(author.read_text(encoding="utf-8"),before)
+            # Repeated composition of already augmented output must never
+            # silently install a second camera-distance LocalScript.
+            with self.assertRaisesRegex(ValueError,"already includes A01 client LOD"):
+                module.compose(out,root/"twice.project.json",ROOT)
+
     def test_studio_private_only(self):
         for src in (HERO, FIELD, ENCOUNTERS):
             self.assertIn('game:GetService("RunService")', src)
