@@ -53,8 +53,6 @@ def main() -> None:
     (fixed / GAME).mkdir(parents=True, exist_ok=True)
     for f in (BOT, NAV, HOST):
         source = (qdir / f).read_text(encoding="utf-8")
-        if f == BOT:
-            source = patch_original_quality_bot(source)
         (fixed / GAME / f).write_text(source, encoding="utf-8")
     policy = carrier_file.read_text(encoding="utf-8")
     assert "function Targeting.canStrike" in policy
@@ -68,6 +66,12 @@ def main() -> None:
         "--art", str(a.art), "--score", str(a.score),
         "--art-project", str(a.art_project), "--out", str(out),
     ], check=True)
+    # Preserve original #484 26-source sibling contract first. Only AFTER its
+    # composer verifies its own 26 originals do we extend exactly one bot and
+    # add one extra policy module to the private 27-source project.
+    bot_path = fixed / GAME / BOT
+    bot_path.write_text(patch_original_quality_bot(bot_path.read_text(encoding="utf-8")),
+                        encoding="utf-8")
     project = json.loads(out.read_text(encoding="utf-8"))
     server = project["tree"]["ServerScriptService"]
     clients = project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
@@ -84,6 +88,7 @@ def main() -> None:
     assert receipt["script_count"] == 26 and receipt["server_count"] == 23
     receipt["script_count"] = 27
     receipt["server_count"] = 24
+    receipt["source_sha256"]["EGGRUMBLE_BotActors"] = hashlib.sha256(bot_path.read_bytes()).hexdigest()
     receipt["source_sha256"][POLICY.removesuffix(".luau")] = hashlib.sha256(carrier_file.read_bytes()).hexdigest()
     receipt["quality_overrides"].extend(["EGGRUMBLE_CarrierBotTargeting", "EGGRUMBLE_BotActors.carrier_stealth_predicate_ONLY"])
     receipt["carrier_patch"] = {"original_quality_AI_preserved": True,
