@@ -158,6 +158,24 @@ step()
 eq("OFF removes real-rule carrier badge again",liveOn(brRoots["401"]),0)
 eq("OFF does not consume real-rule carried egg",brRules.castles["401"].heldEggs,1)
 eq("OFF keeps total real eggs valid",RealRules.auditEggConservation(brRules).valid,true)
+
+-- The actual #482 Rules remain ACTIVE even when the physical battlefield
+-- part disappears. Optional WorldTell must clean up without mutating any
+-- original reward/egg/castle source or stopping the other mode's game state.
+br.carrierWorldTellEnabled=true
+eq("real original BR cosmetic loop can restart",NativeTell.start(br),true)
+step()
+eq("real rule egg marker returned before floor teardown",captionOn(brRoots["401"]),"🥚×1")
+local exactFloor=br.world:FindFirstChild("TacticalBattlefield")
+exactFloor.Parent=nil
+step()
+eq("real BR marker gone after floor-only destruction",liveOn(brRoots["401"]),0)
+eq("real BR worker released with detached floor",br._carrierWorldTellStarted,nil)
+eq("BR original match remains ACTIVE after cosmetic exit",brRules.phase,"ACTIVE")
+eq("BR original field egg ledger still valid after floor-only exit",RealRules.auditEggConservation(brRules).valid,true)
+eq("BR actual 1 egg remains carried in Rules",brRules.castles["401"].heldEggs,1)
+eq("reattach is not required for game flow",br.world.Parent~=nil,true)
+eq("optional cannot restart without source field",NativeTell.start(br),false)
 br.world.Parent=nil
 step()
 eq("real two mode teardown complete",countLiveAll(),0)
