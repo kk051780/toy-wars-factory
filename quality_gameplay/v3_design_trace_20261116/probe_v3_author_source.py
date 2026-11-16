@@ -105,6 +105,7 @@ def run_probe(source: dict[str, str], matrix: dict) -> dict:
     require_all(zombie, ('"CurseUndead_"', 'makeEffect(session.world', 'blast('), "ZOMBIE_EFFECTS")
     require('Instance.new(' not in zombie, "ZOMBIE: actor generation code changed; re-audit")
     observations["P0D-015"] = "SHORT_LIVED_VFX_NO_COMMANDABLE_AI"
+    observations["P0D-008"] = "SEVEN_TOOLS_PRESENT_BUT_CORE_ROLE_ABILITIES_REMAIN_UNVERIFIED_OR_STUBBED"
     # Block assumption that label changes imply role IDs may be mutated.
     require_all(combat, ('NINJA={name="暗殺者"', 'TRAPPER={name="超能力者"', 'ZOMBIE={name="呪術師"'), "EXTERNAL_ROLE_NAMES")
     require(matrix.get("verified_v3_new_official_adopted") == 0, "source-only probe cannot certify official adoption")
