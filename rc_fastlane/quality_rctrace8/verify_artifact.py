@@ -97,6 +97,7 @@ FEATURE_EVIDENCE = {
  "FIELD_EGGS_CASTLE_FOUNDATION_CLEARANCE_523": (
    "EGGRUMBLE_LobbyCastleModesPreview",
    'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}'),
+ "ROSTER16_HARDCAP_583": ("EGGRUMBLE_CastleMatchRules","#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "HEAL_NO_WASTE_517": ("EGGRUMBLE_FieldItemPickups",
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
  "NEUTRAL_DEATH_KO_CURRENT_OWNER_508": (
