@@ -1,0 +1,38 @@
+name: P0D EGGRUMBLE solo neutral encounter fairness native
+on:
+  push:
+    branches:
+      - quality/p0d-gq-neutral-encounters-solo-20261116-s15
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-encounter-fairness.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-encounter-fairness.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  neutral-encounter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source-only and no-conflicting-writer ownership
+        run: python3 -B -m unittest discover -s quality_gameplay/neutral_encounters/tests -p 'test_*.py' -v
+      - name: Build native Luau compiler and VM
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-fair-luau
+          cmake -S /tmp/p0d-fair-luau -B /tmp/p0d-fair-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-fair-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Exact policy compile and native 100-selection fairness regressions
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_encounters/tools/build_native_harness.py --out /tmp/eggrumble-neutral-fairness-native.luau
+          /tmp/p0d-fair-luau/build/luau-compile quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau >/dev/null
+          /tmp/p0d-fair-luau/build/luau-compile /tmp/eggrumble-neutral-fairness-native.luau >/dev/null
+          /tmp/p0d-fair-luau/build/luau /tmp/eggrumble-neutral-fairness-native.luau
+      - name: Explicitly not official RC or Roblox device evidence
+        run: echo 'SOURCE_CANDIDATE_ONLY / NOT_WIRED / OFFICIAL_RC_NOT_ADOPTED / STUDIO_ANDROID_OWNER_NOT_TESTED'
