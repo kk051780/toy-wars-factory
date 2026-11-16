@@ -1,0 +1,149 @@
+name: P0D EGGRUMBLE 27-source private encounter composite non-RC
+on:
+  push:
+    branches:
+      - 'quality/p0d-gq-neutral-encounters-solo-20261116-s15'
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-encounter-27-private.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-encounter-27-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  27-source-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin untouched original V3 game
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Pin ORIGINAL GQ AI and 26-source composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          path: _v3_quality
+          persist-credentials: false
+      - name: Pin original ART author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Pin original SCORE author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Author identity and independent scope checks
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 -B -m unittest discover -s quality_gameplay/neutral_encounters/tests -p 'test_*.py' -v
+      - name: Artist original V3 25-source project
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_LATEST_ART.project.json
+      - name: Reuse original #484 26-source AI ART SCORE composer
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality \
+            --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_LATEST_ART.project.json \
+            --out artifacts/GQ_V3_SOURCE26.project.json
+      - name: Generate only one private Swarm overlay + one reusable encounter module
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_encounters/tools/compose_private27.py \
+            --base-project artifacts/GQ_V3_SOURCE26.project.json \
+            --author-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --policy quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/GQ_V3_ENCOUNTERS27.project.json
+      - name: Pin native Luau toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native compile 27 real mapped sources and execute 100-selection regressions
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq_fair_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_fair_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ_V3_ENCOUNTERS27.project.json").resolve()
+          def walk(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (project.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for key,val in node.items():
+                          if not key.startswith("$"):yield from walk(val)
+          files=list(walk(json.loads(project.read_text(encoding="utf-8"))["tree"]))
+          assert len(files)==27,len(files)
+          for p in files:
+              subprocess.run(["/tmp/gq_fair_luau/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          print("PRIVATE_COMPOSITE_NATIVE_LUAU_27_OF_27_PASS")
+          PY
+          python3 quality_gameplay/neutral_encounters/tools/build_native_harness.py --out artifacts/encounter_native_cases.luau
+          /tmp/gq_fair_luau/luau-compile --text artifacts/encounter_native_cases.luau >/dev/null
+          /tmp/gq_fair_luau/luau artifacts/encounter_native_cases.luau
+      - name: Checksum-locked original Rojo 7.7.1 no publish
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_fair_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_fair_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq_fair_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/gq_fair_rojo")
+              out.write_bytes(z.read(names[0]));out.chmod(0o755)
+          PY
+          /tmp/gq_fair_rojo build artifacts/GQ_V3_ENCOUNTERS27.project.json -o artifacts/EGGRUMBLE_V3_GQ_ENCOUNTERS27_PRIVATE.rbxlx
+      - name: Inspect actual Place and all 27 exact Lua script bodies
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_encounters/tools/verify_place27.py \
+            --project artifacts/GQ_V3_ENCOUNTERS27.project.json \
+            --place artifacts/EGGRUMBLE_V3_GQ_ENCOUNTERS27_PRIVATE.rbxlx
+          echo "NOT OFFICIAL RC / NOT REAL STUDIO / NOT ANDROID"
+      - name: Private candidate receipts and offline Studio Place only
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-ENCOUNTERS27-SOURCE-ONLY-NOT-RC
+          path: |
+            artifacts/GQ_V3_ENCOUNTERS27.project.json
+            artifacts/ENCOUNTER_SOURCE_RECEIPT.json
+            artifacts/PLACE_27_RECEIPT.json
+            artifacts/EGGRUMBLE_V3_GQ_ENCOUNTERS27_PRIVATE.rbxlx
+          if-no-files-found: error
+          retention-days: 3
