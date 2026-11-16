@@ -56,7 +56,7 @@ end
 local function confirmedHit()
  local sequence=player:GetAttribute("EGGRUMBLE_ImpactSequence")
  if type(sequence)~="number" or sequence~=sequence or sequence<=0
-  or sequence==lastSequence then return end
+  or (type(lastSequence)=="number" and sequence<=lastSequence) then return end
  lastSequence=sequence
  if not isEligible() then return end
  local now=os.clock()
@@ -81,13 +81,25 @@ local function confirmedHit()
  windowCount+=1
  voice:Play()
 end
+local function stopVoices()
+ for _,voice in ipairs(voices) do voice:Stop() end
+end
+-- A settings change must silence already-playing audio, not only future hits.
+local onMute=player:GetAttributeChangedSignal("EGGRUMBLE_SFXMuted"):Connect(function()
+ if player:GetAttribute("EGGRUMBLE_SFXMuted")==true then stopVoices() end
+end)
+local onEliminated=player:GetAttributeChangedSignal("EGGRUMBLE_Eliminated"):Connect(function()
+ if player:GetAttribute("EGGRUMBLE_Eliminated")==true then stopVoices() end
+end)
 local onHit=player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)
 local onRemove:RBXScriptConnection?=nil
 onRemove=player.AncestryChanged:Connect(function(_,parent)
  if parent then return end
  closed=true
  onHit:Disconnect()
+ onMute:Disconnect()
+ onEliminated:Disconnect()
  if onRemove then onRemove:Disconnect() end
- for _,voice in ipairs(voices) do voice:Stop() end
+ stopVoices()
  if folder.Parent then folder:Destroy() end
 end)
