@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import unittest
 import xml.etree.ElementTree as ET
@@ -187,6 +188,18 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
+    def test_all_current_official_manifest_flags_are_actually_attested(self):
+        # Do not allow an enabled official flag to silently pass as unassessed.
+        path=Path(__file__).resolve().parents[1]/"EGGRUMBLE_V3_ACTIVE.json"
+        manifest=json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["source_count"],31)
+        enabled={k for k,flag in manifest["feature_flags"].items() if flag is True}
+        self.assertEqual(len(enabled),31)
+        self.assertEqual(set(manifest["feature_flags"]),enabled)
+        self.assertEqual(enabled,set(gq8.FEATURE_EVIDENCE) | set(gq8.CROSS_SCRIPT_FEATURE_EVIDENCE))
+        self.assertEqual(manifest["source_heads"]["zombie_guard582"],
+                         "5769b80ed21f5592adcca1936d2d3d04934f0089")
+
     def test_current31_manifest_anchors_enforce_new_guard_and_lobby(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
