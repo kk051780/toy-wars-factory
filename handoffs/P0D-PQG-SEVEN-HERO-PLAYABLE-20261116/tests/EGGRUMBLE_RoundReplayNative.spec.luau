@@ -204,4 +204,81 @@ local gone={Parent=nil,UserId=126,attributes={}}
 function gone:SetAttribute(key:string,v:any) self.attributes[key]=v end
 Replay.resetHuman(gone,ret)
 check(next(gone.attributes)==nil,"left player mutated after leaving")
+-- Waiting-room modes can be switched, cancelled, and requeued without stale timers.
+local waitAlice={UserId=601}
+local waitBob={UserId=602}
+local waitCarol={UserId=603}
+local waitEpoch={TEAM=0,BATTLE_ROYALE=0}
+local waitQ={TEAM={waitAlice},BATTLE_ROYALE={}}
+local waitJoined={[601]="TEAM"}
+local waitSessions={}
+check(Replay.canStartCountdown("TEAM",0,waitQ,waitEpoch,waitSessions)==true,
+ "new TEAM queue should start after its own countdown")
+check(Replay.canStartCountdown("BATTLE_ROYALE",0,waitQ,waitEpoch,waitSessions)==false,
+ "empty BR queue should not start")
+check(Replay.leaveWaitingQueue("TEAM",waitBob,waitQ,waitJoined,waitEpoch,waitSessions)==false,
+ "unregistered person removed a queue")
+check(#waitQ.TEAM==1 and waitJoined[601]=="TEAM","invalid cancellation mutated queue")
+check(Replay.leaveWaitingQueue("TEAM",waitAlice,waitQ,waitJoined,waitEpoch,waitSessions)==true,
+ "tapping same gate did not cancel")
+check(#waitQ.TEAM==0 and waitJoined[601]==nil,"cancel did not release waiting seat")
+check(waitEpoch.TEAM==1 and waitEpoch.BATTLE_ROYALE==0,
+ "last waiter must advance only TEAM epoch")
+check(Replay.canStartCountdown("TEAM",0,waitQ,waitEpoch,waitSessions)==false,
+ "stale TEAM timer may not start on an emptied queue")
+table.insert(waitQ.TEAM,waitBob)
+waitJoined[602]="TEAM"
+check(Replay.canStartCountdown("TEAM",0,waitQ,waitEpoch,waitSessions)==false,
+ "stale old TEAM timer started new human's match early")
+check(Replay.canStartCountdown("TEAM",1,waitQ,waitEpoch,waitSessions)==true,
+ "fresh TEAM queue must get a full new countdown")
+
+-- If another waiting teammate remains, their original timer stays valid.
+table.insert(waitQ.TEAM,waitCarol)
+waitJoined[603]="TEAM"
+check(Replay.leaveWaitingQueue("TEAM",waitBob,waitQ,waitJoined,waitEpoch,waitSessions)==true,
+ "first of two humans could not withdraw")
+check(#waitQ.TEAM==1 and waitQ.TEAM[1]==waitCarol,"wrong player removed")
+check(waitEpoch.TEAM==1,"withdrawal with another waiter reset timer")
+check(Replay.canStartCountdown("TEAM",1,waitQ,waitEpoch,waitSessions)==true,
+ "remaining teammate lost their legitimate timer")
+
+-- The other gate can be selected before a mode starts, without editing its session.
+check(Replay.leaveWaitingQueue("TEAM",waitCarol,waitQ,waitJoined,waitEpoch,waitSessions)==true,
+ "cannot switch out of TEAM waiting")
+table.insert(waitQ.BATTLE_ROYALE,waitCarol)
+waitJoined[603]="BATTLE_ROYALE"
+check(waitEpoch.TEAM==2 and waitEpoch.BATTLE_ROYALE==0,
+ "switch corrupted BR timer or failed to invalidate empty TEAM")
+check(Replay.canStartCountdown("TEAM",1,waitQ,waitEpoch,waitSessions)==false,
+ "old TEAM mode timer survived switch")
+check(Replay.canStartCountdown("BATTLE_ROYALE",0,waitQ,waitEpoch,waitSessions)==true,
+ "BR mode cannot accept switched player")
+check(Replay.leaveWaitingQueue("TEAM",waitCarol,waitQ,waitJoined,waitEpoch,waitSessions)==false,
+ "wrong mode removed switched player")
+check(#waitQ.BATTLE_ROYALE==1 and waitJoined[603]=="BATTLE_ROYALE",
+ "wrong-mode cancellation changed active BR waiting seat")
+
+-- Players in an existing match cannot cancel or switch via a lobby gate.
+waitSessions.BATTLE_ROYALE={rules={phase="ACTIVE"}}
+check(Replay.leaveWaitingQueue("BATTLE_ROYALE",waitCarol,waitQ,waitJoined,waitEpoch,waitSessions)==false,
+ "live round participant escaped via queue cancellation")
+check(Replay.canStartCountdown("BATTLE_ROYALE",0,waitQ,waitEpoch,waitSessions)==false,
+ "existing match received another start timer")
+waitSessions.BATTLE_ROYALE=nil
+check(Replay.leaveWaitingQueue("BATTLE_ROYALE",waitCarol,waitQ,waitJoined,waitEpoch,waitSessions)==true,
+ "pre-match BR candidate cannot cancel")
+check(waitEpoch.BATTLE_ROYALE==1 and #waitQ.BATTLE_ROYALE==0,
+ "BR timer was not cancelled when last waiter left")
+
+-- Hidden production runtime should reject even these helper entry points.
+studio=false
+check(not pcall(function()
+ Replay.leaveWaitingQueue("TEAM",waitAlice,waitQ,waitJoined,waitEpoch,waitSessions)
+end),"live Roblox server allowed Studio-only queue mutation")
+check(not pcall(function()
+ Replay.canStartCountdown("TEAM",2,waitQ,waitEpoch,waitSessions)
+end),"live Roblox server allowed Studio-only queue timer")
+studio=true
+
 print("[EGGRUMBLE ROUND REPLAY NATIVE] PASS",checks,"functional assertions; STUDIO/ANDROID NOT RUN")
