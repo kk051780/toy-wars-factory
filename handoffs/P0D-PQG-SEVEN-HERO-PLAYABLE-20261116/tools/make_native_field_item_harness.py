@@ -197,6 +197,29 @@ FieldItems.start(isolated,{Vector3.new(0,0,0)})
 check(created[#created].Name=="ITEM_1_HEAL",
  "original independent item-only preview still runs without shared guard")
 isolated.itemStop()
+-- Regression: a DASH callback scheduled in a retired arena must NOT undo
+-- another round's equally fast DASH, even if humanoid/avatar are reused.
+script.Parent.hasGuard=true
+local retired=makeSession("TEAM")
+FieldItems.start(retired,{
+ Vector3.new(0,0,0),Vector3.new(4,0,0),Vector3.new(8,0,0)})
+local retiredDash=created[#created-1]
+getPrompt(retiredDash).trigger(human)
+check(humanoid.WalkSpeed==27,"old round DASH activated")
+runTo(now+2)
+retired.itemStop()
+-- This assignment represents ORIGINAL RoundReplay.resetHuman's speed baseline.
+humanoid.WalkSpeed=16
+local fresh=makeSession("TEAM")
+FieldItems.start(fresh,{
+ Vector3.new(0,0,0),Vector3.new(4,0,0),Vector3.new(8,0,0)})
+local freshDash=created[#created-1]
+getPrompt(freshDash).trigger(human)
+check(humanoid.WalkSpeed==27,"new round DASH activated")
+runTo(now+3.25)
+check(humanoid.WalkSpeed==27,
+ "retired round timer must not overwrite new round active DASH")
+fresh.itemStop()
 print("[EGGRUMBLE ORIGINAL ITEM + ORIGINAL GUARD VM] PASS",assertions,
  "server-authoritative cargo, wall LOS, HEAL/DASH/SHIELD, respawn, 2 modes, cleanup")
 '''
