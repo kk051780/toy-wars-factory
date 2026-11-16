@@ -53,6 +53,7 @@ mt.__index=function(v,k)
  return rawget(v,k)
 end
 mt.__sub=function(a,b) return setmetatable({X=a.X-b.X,Y=a.Y-b.Y,Z=a.Z-b.Z},mt) end
+mt.__add=function(a,b) return setmetatable({X=a.X+b.X,Y=a.Y+b.Y,Z=a.Z+b.Z},mt) end
 local function v(x,y,z) return setmetatable({X=x,Y=y,Z=z},mt) end
 local Vector3={new=v}
 local pList={}
