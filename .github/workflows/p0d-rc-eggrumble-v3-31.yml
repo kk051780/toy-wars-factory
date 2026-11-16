@@ -10,6 +10,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_lobby_safe_spawn_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
@@ -22,6 +23,7 @@ on:
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
+      - 'rc_fastlane/quality_lobby_safe_spawn_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
@@ -1610,10 +1612,37 @@ jobs:
             --original-author "$SRC/tools/stage_private_v3.py" \
             --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
           echo GQ527_LATEST31_ORIGINAL_BOT_CASTLE_SIEGE_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS
+      - name: GQ648 grounded lobby and safe neutral spawn on CURRENT31 Host only; Luau31 + Rojo31 + exact OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq515_official_select
+          SRC=rc_fastlane/quality_lobby_safe_spawn_rc31
+          BASE=$DIR/GQ527_SIEGE_SELECTED31.project.json
+          OUT=$DIR/GQ648_LOBBY_SAFE_SPAWN_SELECTED31.project.json
+          PLACE=$DIR/GQ648_LOBBY_SAFE_SPAWN_REAL_ROJO31.rbxlx
+          python3 -m unittest discover -v -s "$SRC" -p 'test_selector.py'
+          python3 -B "$SRC/select_lobby_safe_spawn.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$SRC" "$OUT" <<'PY'
+          from pathlib import Path
+          import importlib.util,subprocess,sys
+          spec=importlib.util.spec_from_file_location("gq648",Path(sys.argv[1])/"select_lobby_safe_spawn.py")
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,sources,host=mod.mapping(Path(sys.argv[2]))
+          assert len(sources)==31 and host[-1]=="EGGRUMBLE_LobbyCastleModesPreview"
+          for file in sources.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ648_LATEST31_REAL_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_lobby_safe_spawn.py" verify \
+            --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ648_LOBBY_PHYSICS_GROUND_SOURCE_NATIVE31_ROJO31_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1629,7 +1658,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1737,9 +1766,14 @@ jobs:
           assert bot527["one_changed_existing_script"]=="EGGRUMBLE_BotActors"
           assert bot527["other_30_scripts_byte_exact"] and bot527["off_original_bot_byte_exact"]
           assert bot527["rojo_source_class_exact"]=="31/31" and bot527["pure_author_policy_inlined_in_bot"]
-          assert bot527["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bot527["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
+          gq648=json.loads(Path("artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json").read_text())
+          assert gq648["runtime_scripts"]==31 and gq648["one_modified_existing_script"]=="EGGRUMBLE_LobbyCastleModesPreview"
+          assert gq648["other_30_byte_exact"] and gq648["off_inverse_host_byte_exact"]
+          assert gq648["rojo_source_class"]=="31/31"
+          assert gq648["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
           assert m["source_heads"]["bot_siege527"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
@@ -1951,6 +1985,8 @@ jobs:
             artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ648_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ527_REAL_RULES_NATIVE41.log
             artifacts/gq515_official_select/GQ527_REAL_BOT_NATIVE16.log
