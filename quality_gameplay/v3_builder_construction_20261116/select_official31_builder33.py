@@ -12,8 +12,8 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
-HEAD = "63ff99ca8656a85b7aa479cd623c4658dd96c3c4"
-SOURCE_PLACE_SHA256 = "e2a4d22562e0b8e9fb90d085657fa6f127bbd448c43d89994f777dd3dc32d3dc"
+HEAD = "325472fd280e0b013380f687a87fdf9be4b5f905"
+SOURCE_PLACE_SHA256 = "8ae449893a1709127e96e7c061dda6926b6d8c0962627d265f8baad9b866f8cf"
 SCRIPT_CLASSES = {"Script", "ModuleScript", "LocalScript"}
 HOST = "EGGRUMBLE_LobbyCastleModesPreview"
 BUILDER = "EGGRUMBLE_BuilderConstruction"
