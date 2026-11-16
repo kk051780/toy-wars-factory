@@ -17,9 +17,10 @@ REQUIRED = {
     "EGGRUMBLE_SevenRoleCombat": "EGGRUMBLE_SevenRoleCombat.luau",
     "EGGRUMBLE_CombatBalance": "EGGRUMBLE_CombatBalance.luau",
     "EGGRUMBLE_SkillFX": "EGGRUMBLE_SkillFX.luau",
-    "EGGRUMBLE_FieldItemPickups": "EGGRUMBLE_FieldItemPickups.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
+    "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
+    "EGGRUMBLE_FieldItemPickups": "EGGRUMBLE_FieldItemPickups.luau",
     "EGGRUMBLE_LobbyCastleModesPreview": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
 }
 
