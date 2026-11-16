@@ -50,6 +50,20 @@ function UDim2.fromOffset(x,y) return {x=x,y=y} end
 function UDim2.fromScale(x,y) return {sx=x,sy=y} end
 Vector3 = {}
 function Vector3.new(x,y,z) return {x=x,y=y,z=z} end
+local function makeWorld(mode)
+ local x=if mode=="TEAM" then -620 else 620
+ local field={
+  Position=Vector3.new(x,0,465),
+  Size=Vector3.new(890,2,1050),
+ }
+ function field:IsA(kind) return kind=="BasePart" end
+ local world={Parent={}}
+ function world:FindFirstChild(name)
+  if name=="TacticalBattlefield" then return field end
+  return nil
+ end
+ return world
+end
 Color3 = {}
 function Color3.fromRGB(r,g,b) return {r=r,g=g,b=b} end
 Enum = {Font={GothamBold="GothamBold"}}
@@ -77,7 +91,7 @@ local function step()
  end
 end
 local function makeAvatar(name)
- local root={Name="HumanoidRootPart",avatarName=name}
+ local root={Name="HumanoidRootPart",avatarName=name,Position=Vector3.new(-620,5,465)}
  function root:IsA(kind) return kind=="BasePart" end
  local hum={Health=100}
  local char={Name=name}
@@ -122,7 +136,7 @@ local human,hr,hh=makeAvatar("human100")
 local bot,br,bh=makeAvatar("AI_1")
 __players[100]={Character=human}
 local a={
- mode="TEAM", world={Parent={}},
+ mode="TEAM", world=makeWorld("TEAM"),
  roster={{id="100",isAI=false},{id="AI_1",isAI=true}},
  botActors={AI_1=bot},
  rules={phase="ACTIVE",winner=nil,castles={
@@ -174,6 +188,19 @@ step()
 eq("new avatar has a marker",liveOn(hr2),1)
 eq("old avatar marker remains absent",liveOn(hr),0)
 
+-- A human's Character persists while joining the other arena or returning
+-- to lobby. The same prior TEAM match must not leak its old egg count onto it.
+hr2.Position=Vector3.new(620,5,465)
+step()
+eq("TEAM marker hidden when avatar crosses to BR",liveOn(hr2),0)
+hr2.Position=Vector3.new(0,5,0)
+step()
+eq("TEAM marker hidden when avatar is lobby",liveOn(hr2),0)
+hr2.Position=Vector3.new(-620,5,465)
+step()
+eq("TEAM marker restored on original battlefield",liveOn(hr2),1)
+
+
 -- The existing original bot system may replace an AI model after a death.
 local oldBotGui=select(2,liveOn(br))
 local bot2,br2,bh2=makeAvatar("AI_1_reborn")
@@ -182,6 +209,14 @@ step()
 eq("old AI marker removed after bot model replacement",liveOn(br),0)
 eq("new AI model marker created",liveOn(br2),1)
 eq("new AI board spacing preserved",select(2,liveOn(br2)).StudsOffsetWorldSpace.y,10.2)
+
+br2.Position=Vector3.new(620,5,465)
+step()
+eq("AI TEAM marker excluded after leaving world bounds",liveOn(br2),0)
+br2.Position=Vector3.new(-620,5,465)
+step()
+eq("AI TEAM marker restored inside real field",liveOn(br2),1)
+
 eq("old AI marker destroyed",oldBotGui.destroyed,true)
 
 -- Former human becomes server AI controlled after disconnect.
@@ -196,9 +231,10 @@ eq("original human ownership remains",a.rules.castles["100"].heldEggs,1)
 
 -- Independent BR arena runs concurrently; teardown must not remove another mode.
 local solo,sr,sh=makeAvatar("human201")
+sr.Position=Vector3.new(620,5,465)
 __players[201]={Character=solo}
 local b={
- mode="BATTLE_ROYALE",world={Parent={}},
+ mode="BATTLE_ROYALE",world=makeWorld("BATTLE_ROYALE"),
  roster={{id="201",isAI=false}},
  botActors={},
  rules={phase="ACTIVE",winner=nil,castles={["201"]={alive=true,heldEggs=2,team=nil}}},
@@ -208,6 +244,15 @@ step()
 eq("new BR world marker",liveOn(sr),1)
 eq("TEAM takeover retained during BR",liveOn(tkr),1)
 eq("two modes isolated (3 total carriers)",countLiveAll(),3)
+
+sr.Position=Vector3.new(-620,5,465)
+step()
+eq("BR marker excluded after avatar moves to TEAM field",liveOn(sr),0)
+eq("TEAM unaffected by BR cross-over",liveOn(tkr),1)
+sr.Position=Vector3.new(620,5,465)
+step()
+eq("BR marker restored in BR field",liveOn(sr),1)
+
 a.rules.phase="FINISHED"
 a.rules.winner="BLUE"
 step()
@@ -239,11 +284,17 @@ eq("cannot start from lobby",NativeTell.start(inactive),false)
 local ended={world={Parent={}},roster={},rules={phase="ACTIVE",winner="BLUE",castles={}}}
 eq("cannot start after winner",NativeTell.start(ended),false)
 
+local noArena={world={Parent={},FindFirstChild=function() return nil end},
+ roster={},rules={phase="ACTIVE",winner=nil,castles={}}}
+eq("missing real battlefield fails closed",NativeTell.start(noArena),false)
+eq("no marker loop spawned for malformed arena",#__threads,0)
+
+
 -- Exact author MODE_SEATS=16. Exercise full roster load in both live arenas:
 -- no fan-out above one billboard per actor; no event subscription or leak.
 local function createFullMode(mode,humanId)
  local sess={
-  mode=mode,world={Parent={}},
+  mode=mode,world=makeWorld(mode),
   roster={},botActors={},
   rules={phase="ACTIVE",winner=nil,castles={}},
  }
@@ -251,6 +302,7 @@ local function createFullMode(mode,humanId)
   local id=if i==1 then tostring(humanId) else mode.."_BOT_"..tostring(i)
   local isAI=i~=1
   local model,rt,hum=makeAvatar("max_"..mode.."_"..id)
+  if mode=="BATTLE_ROYALE" then rt.Position=Vector3.new(620,5,465) end
   table.insert(sess.roster,{id=id,isAI=isAI})
   sess.rules.castles[id]={alive=true,heldEggs=1,team=if mode=="TEAM" then "RED" else nil}
   if isAI then sess.botActors[id]=model
