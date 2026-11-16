@@ -26,12 +26,15 @@ class Private27ContractTests(unittest.TestCase):
         source="--!strict\nlocal RunService=game:GetService('RunService')\nif not RunService:IsStudio() then return end\n"
         server,changed=M.overlay(source,"EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_HeroSilhouetteArt.server.luau")
         client,n=M.overlay(source,"EGGRUMBLE_ArtDistanceLOD","EGGRUMBLE_ArtDistanceLOD.client.luau")
-        host,_=M.overlay(source,"EGGRUMBLE_LobbyCastleModesPreview","EGGRUMBLE_LobbyCastleModesPreview.server.luau")
+        host_source=source+M.compose.WORLD_MARKER+"\n"
+        host,_=M.overlay(host_source,"EGGRUMBLE_LobbyCastleModesPreview","EGGRUMBLE_LobbyCastleModesPreview.server.luau")
         self.assertEqual(changed,1)
         self.assertEqual(n,1)
         self.assertIn("PrivateGate.allowed()",server)
         self.assertIn("PrivateGate.waitAllowed(8)",client)
         self.assertIn("PrivateGate.advertiseServerReady()",host)
+        self.assertEqual(host.count(M.compose.WORLD_WATCH),1)
+        self.assertIn("PrivateGate.watchWorld(folder)",host)
         for out in (server,client,host):
             self.assertNotIn("RunService:IsStudio()",out)
             self.assertIn("EGGRUMBLE_PrivateLiveGate",out)
@@ -43,6 +46,12 @@ class Private27ContractTests(unittest.TestCase):
             M.overlay("--!strict\nif RunService:IsStudio() then return end\n","EGGRUMBLE_CastleMatchRules","EGGRUMBLE_CastleMatchRules.luau")
         with self.assertRaises(ValueError):
             M.overlay("local x=RunService:IsStudio()\n","EGGRUMBLE_BotActors","EGGRUMBLE_BotActors.luau")
+
+    def test_host_lease_watch_fails_closed_on_moved_anchor(self):
+        source="--!strict\\nif not RunService:IsStudio() then return end\\n"
+        with self.assertRaises(ValueError):
+            M.overlay(source,"EGGRUMBLE_LobbyCastleModesPreview",
+                      "EGGRUMBLE_LobbyCastleModesPreview.server.luau")
 
     def test_unprotected_author_script_is_byte_identical(self):
         raw="--!strict\nreturn {someOriginalGameAuthority=true}\n"
