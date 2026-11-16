@@ -9,6 +9,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_gqdraw_native_truth_20261117/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
       - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
@@ -23,6 +24,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_gqdraw_native_truth_20261117/**'
       - 'rc_fastlane/quality_bot_siege527_rc31/**'
       - 'rc_fastlane/quality_draw_result_label_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
@@ -1789,6 +1791,30 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_safe_lobby.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ646_AFTER_DRAW_ONE_HOST_30_OTHER_SCRIPTS_EXACT_OFF_ROJO31_PASS
+      - name: GQ DRAW independent actual ResultService TEAM BR native11 and wrong-label mutant QA only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq515_official_select
+          QA=rc_fastlane/quality_gqdraw_native_truth_20261117/prove_actual_result.py
+          PROJ=$DIR/GQ_DRAW_RESULT_SELECTED31.project.json
+          python3 -m py_compile "$QA"
+          python3 -B "$QA" --project "$PROJ" \
+            --out "$DIR/GQ_DRAW_ORIGINAL_RESULT_NATIVE11.luau" \
+            --receipt "$DIR/GQ_DRAW_INDEPENDENT_NATIVE_TRUTH_RECEIPT.json"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ_DRAW_ORIGINAL_RESULT_NATIVE11.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ_DRAW_ORIGINAL_RESULT_NATIVE11.luau" \
+            | tee "$DIR/GQ_DRAW_ORIGINAL_NATIVE11.log"
+          grep -q 'GQ_DRAW_ORIGINAL_RESULTTEXT_NATIVE_PASS 11' "$DIR/GQ_DRAW_ORIGINAL_NATIVE11.log"
+          python3 -B "$QA" --project "$PROJ" --mutant \
+            --out "$DIR/GQ_DRAW_BAD_LABEL_MUTANT_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ_DRAW_BAD_LABEL_MUTANT_NATIVE.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ_DRAW_BAD_LABEL_MUTANT_NATIVE.luau" > "$DIR/GQ_DRAW_BAD_LABEL_MUTANT_REJECTED.log" 2>&1; then
+            echo RED_GQ_DRAW_BAD_LABEL_MUTANT_WAS_NOT_CAUGHT
+            exit 1
+          fi
+          grep -q 'TEST_' "$DIR/GQ_DRAW_BAD_LABEL_MUTANT_REJECTED.log"
+          echo GQ_DRAW_INDEPENDENT_REAL_SCORE_RETRY_LABEL_TEAM_BR_NATIVE11_MUTANT_PASS
       - name: GQ8 role ACK after original 651 safe lobby - current31 native Luau and real Rojo
         shell: bash
         run: |
@@ -1978,6 +2004,10 @@ jobs:
           assert draw["feature_id"]=="GQ_DRAW_LABEL_20261117" and draw["changed_existing_script"]=="EGGRUMBLE_MatchResultService"
           assert draw["runtime_source_count"]==31 and draw["new_scripts"]==0
           assert draw["other_30_byte_exact"] and draw["off_previous_result_byte_exact"]
+          qdraw=json.loads(Path("artifacts/gq515_official_select/GQ_DRAW_INDEPENDENT_NATIVE_TRUTH_RECEIPT.json").read_text())
+          assert qdraw["existing_runtime_script_count"]==31 and qdraw["native_real_outcome_cases"]==11
+          assert qdraw["selected_existing_result_sha256"]==draw["selected_sha256"]
+          assert qdraw["mutant"] is False
           assert draw["rojo_class_source_exact"]=="31/31"
           assert draw["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
@@ -2065,6 +2095,7 @@ jobs:
              "gq615_rojo31_source_class_path_exact":True,
              "gq499_original_timeout_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
              "gq527_bot_siege_target_pacing_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq_draw_independent_native11_truth_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_DRAW_INDEPENDENT_NATIVE_TRUTH_RECEIPT.json").read_bytes()).hexdigest(),
              "gq_draw_label_one_result_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
@@ -2201,6 +2232,9 @@ jobs:
             artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ_DRAW_RESULT_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ_DRAW_INDEPENDENT_NATIVE_TRUTH_RECEIPT.json
+            artifacts/gq515_official_select/GQ_DRAW_ORIGINAL_NATIVE11.log
+            artifacts/gq515_official_select/GQ_DRAW_BAD_LABEL_MUTANT_REJECTED.log
             artifacts/gq515_official_select/GQ646_AFTER_DRAW_SELECTED31.project.json
             artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31.project.json
