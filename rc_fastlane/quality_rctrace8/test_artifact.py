@@ -91,6 +91,15 @@ class Gate(unittest.TestCase):
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
+    def test_actual_draw_result_must_be_source_true_and_not_generic_end(self):
+        b,r,m,a=fixture()
+        b=drop_anchor(b,"EGGRUMBLE_MatchResultService",
+            'local status=if session.rules.winner=="DRAW" then "引き分け"')
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,
+            "DOMAIN_balance_MISSING_EGGRUMBLE_MatchResultService"):
+            gq8.verify(b,r,m,a,HEAD)
+
     def test_roster16_actual_place_with_old_32_guards_is_red(self):
         b,r,m,a=fixture()
         b=change_source(b,"EGGRUMBLE_CastleMatchRules",
