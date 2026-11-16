@@ -24,6 +24,11 @@ local function getActor(session:any,p:Player):(Model?,BasePart?)
   if tostring(entry.id)==tostring(p.UserId) and entry.isAI==false then present=true;break end
  end
  if not present then return nil,nil end
+ -- Reuse the original #531 Host live-match identity fence. An old roster/castle
+ -- can survive a same-mode rejoin; queued mode and role alone are insufficient.
+ if typeof(session.isCurrentHuman)~="function" then return nil,nil end
+ local membershipOK,currentHuman=pcall(session.isCurrentHuman,p)
+ if not membershipOK or currentHuman~=true then return nil,nil end
  local char=p.Character
  local humanoid=char and char:FindFirstChildOfClass("Humanoid")
  local root=char and char:FindFirstChild("HumanoidRootPart")
