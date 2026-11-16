@@ -17,8 +17,8 @@ return function(Results:any):boolean
    },
    events={
     {type="EGG_TAKEN",thief="war",quantity=2,source="mage"},
-    {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_1"},
     {type="EGG_DEPOSIT",owner="war",quantity=2},
+    {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_1"},
     {type="CASTLE_FALL",owner="mage",attacker="war",releasedEggs=1},
     {type="EGG_DROP",owner="war",quantity=1},
     {type="WIN",winner=winner}
@@ -111,6 +111,75 @@ return function(Results:any):boolean
  equal(castles.rows[1].id,"KO","raw point advantage still beats objective tie breaker")
  equal(castles.rows[2].id,"GOAL","no unconditional castle priority over actual score")
 
+ -- Attack the actual egg-raid exploit: a thief who dies before returning
+ -- must keep the raw theft counter, but earns NO completed-raid bonus.
+ local function isolated(events:{any}):any
+  local m=state("TEAM",nil,"ACTIVE")
+  m.events=events
+  return m
+ end
+ local function ownerRow(snapshot:any):any
+  for _,row in ipairs(snapshot.rows) do if row.id=="war" then return row end end
+  error("war missing from score")
+ end
+ local raw=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+ }),{}))
+ equal(raw.stolen,2,"raw enemy theft count retained for match history")
+ equal(raw.securedSteals,0,"steal without return grants no completed raid")
+ equal(raw.score,200,"steal-only cannot earn 340 bonus points")
+ local death=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+  {type="EGG_DROP",owner="war",quantity=2},
+  {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_9"},
+  {type="EGG_DEPOSIT",owner="war",quantity=1},
+ }),{}))
+ equal(death.securedSteals,0,"death discards pending raid credit")
+ equal(death.deposited,1,"new field egg home deposit still counts")
+ equal(death.score,320,"only actual home deposit points after death")
+ local mixed=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+  {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_8"},
+  {type="EGG_DEPOSIT",owner="war",quantity=3},
+ }),{}))
+ equal(mixed.securedSteals,2,"return three eggs proves two enemy raids")
+ equal(mixed.score,200+3*120+2*170,"field-first attribution with full home return")
+ local partial=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+  {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_6"},
+  {type="EGG_DEPOSIT",owner="war",quantity=1},
+ }),{}))
+ equal(partial.securedSteals,0,"field egg conservatively consumes first deposit")
+ equal(partial.pendingSteals,2,"unfinished enemy raid stays unsettled")
+ local followup=ownerRow(Results.build(isolated({
+  {type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_4"},
+  {type="EGG_DEPOSIT",owner="war",quantity=1},
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=1},
+  {type="EGG_DEPOSIT",owner="war",quantity=1},
+ }),{}))
+ equal(followup.securedSteals,1,"later genuine raid deposit is credited")
+ equal(followup.deposited,2,"both home deposits remain counted")
+ local fallen=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+  {type="CASTLE_FALL",owner="war",attacker="mage"},
+  {type="EGG_DEPOSIT",owner="war",quantity=2},
+ }),{}))
+ equal(fallen.securedSteals,0,"collapsed home cannot credit pending raid")
+ local legacy=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="FIELD",quantity=3},
+  {type="EGG_DEPOSIT",owner="war",quantity=3},
+ }),{}))
+ equal(legacy.stolen,0,"legacy field event cannot impersonate enemy vault")
+ equal(legacy.securedSteals,0,"field-source events cannot earn raid bonus")
+ local redo=ownerRow(Results.build(isolated({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=1},
+  {type="EGG_DROP",owner="war",quantity=1},
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=1},
+  {type="EGG_DEPOSIT",owner="war",quantity=1},
+ }),{}))
+ equal(redo.stolen,2,"raw theft tracks both actual attempts")
+ equal(redo.securedSteals,1,"only successfully returned second theft scores")
+ equal(redo.score,200+170+120,"lost and returned raid scored once")
  local ties={mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,
    ids={"Z","A"},castles={Z={alive=false,isAI=true},A={alive=false,isAI=true}},events={}}
  local sorted=Results.build(ties,{})
