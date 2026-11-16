@@ -33,6 +33,7 @@ local function flush()
  fn()
 end
 local made={}
+local Enum={PathStatus={Success="Success"}}
 local PathfindingService={}
 function PathfindingService:CreatePath(_options)
  local p={Status="Success",destroyed=false}
