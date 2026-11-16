@@ -67,7 +67,7 @@ def add_private_world_watch(source: str) -> str:
     # duplicate Game or subscribe globally to all of Workspace.
     if source.count(WORLD_MARKER) != 1 or WORLD_WATCH in source:
         raise ValueError("private host anchor moved or already watched")
-    return source.replace(WORLD_MARKER, WORLD_MARKER+"\\n"+WORLD_WATCH, 1)
+    return source.replace(WORLD_MARKER, WORLD_MARKER+"\n"+WORLD_WATCH, 1)
 assert len(ORIGINAL_SERVER) == 19 and len(ORIGINAL_CLIENT) == 2
 assert sum(GUARDS.values()) == 17
 
