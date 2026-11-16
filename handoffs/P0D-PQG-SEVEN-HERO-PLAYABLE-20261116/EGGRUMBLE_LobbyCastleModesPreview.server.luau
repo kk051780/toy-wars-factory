@@ -16,6 +16,7 @@ local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCom
 -- Existing ITEM author remains the one and only effect/collection implementation.
 local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
 local RaidItemIntake=require(script.Parent:WaitForChild("EGGRUMBLE_RaidItemIntake"))
+local NeutralStoneGiant=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralStoneGiant"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -275,6 +276,38 @@ local function startSession(mode:string)
   session.fieldItemCount=0
   session.itemIntakeStatus="YELLOW_ITEM_OPTIONAL"
   warn("[EGGRUMBLE ITEM INTAKE] optional field-item failure; core egg/castle match continues:",itemCountOrError)
+ end
+ -- ORIGINAL author StoneGiant per real session; never cross-hit the other mode.
+ -- Optional source fail = YELLOW; castle/eggs and neutral horde are still playable.
+ local bossX=if mode=="TEAM" then -620 else 620
+ local bossOK,bossOrError=pcall(function()
+  return NeutralStoneGiant.spawn(session.world,
+   root+Vector3.new(bossX+100,-1,590),{
+    isMatchActive=function()
+     return sessions[mode]==session and session.rules.phase=="ACTIVE"
+    end,
+    canEngage=function(player:Player)
+     local owner=session.rules.castles[tostring(player.UserId)]
+     return sessions[mode]==session and session.rules.phase=="ACTIVE"
+      and joined[player.UserId]==mode and owner~=nil and owner.alive
+      and player:GetAttribute("EGGRUMBLE_Eliminated")~=true
+    end,
+    onDefeat=function(player:Player)
+     -- Dedicated boss credit, NOT falsely counted as regular Humanoid.Died KO.
+     session.bossDefeats=(session.bossDefeats or 0)+1
+     local total=player:GetAttribute("EGGRUMBLE_BossDefeats") or 0
+     player:SetAttribute("EGGRUMBLE_BossDefeats",total+1)
+    end,
+   })
+ end)
+ if bossOK then
+  session.boss=bossOrError
+  session.bossStatus="READY"
+ else
+  local orphan=session.world:FindFirstChild("NEUTRAL_BOSS_STONE_GIANT")
+  if orphan then orphan:Destroy() end
+  session.bossStatus="YELLOW_BOSS_OPTIONAL"
+  warn("[EGGRUMBLE BOSS] optional boss source failed; core match continues:",bossOrError)
  end
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
