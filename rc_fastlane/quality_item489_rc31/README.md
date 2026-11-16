@@ -7,11 +7,11 @@ This is **not a new Item gameplay implementation**. The old-round DASH expiry fi
 - Its **old** Item Git blob: `24a35a2e6004c635456cc6f2288cf13f8365ba27`
 - **Existing #489 author:** `03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd`
 - Its **new** Item Git blob: `107046cb0bf81fed9e3cba1699ada31571e44a22`
-- Canonical V3 31-source base: original #530 composer on [RC e2b6f533c5741a43455c8b0ddb483470457479f7](https://github.com/kk051780/toy-wars-factory/commit/e2b6f533c5741a43455c8b0ddb483470457479f7)
+- Canonical V3 31-source base: **official #541-selected neutral Swarm (original #530 composer plus #541 original source-selection) on [RC e2b6f533c5741a43455c8b0ddb483470457479f7](https://github.com/kk051780/toy-wars-factory/commit/e2b6f533c5741a43455c8b0ddb483470457479f7)
 - Pre-existing candidate #517 further adds **HEAL no-waste** using original Item source; this candidate selects the exact #489 base only. #517's separate improvement is not adopted or claimed by this candidate.
 
 ## Eight-domain source parity
-Character7, field terrain, battle/HP, castle/egg, neutral swarm/AI, lobby/TEAM/BR, ART/score/balance = identical 30/31 source/class. **Items** = original #489 replaces original #482. No new module, second Game/Remote/Store/score/KO, new gameplay design or new round rule. The original #489 restores DASH only when the original session is ACTIVE and the same Player.Character is still attached, handles egg-carrier DASH/SHIELD and checks server LOS via original InteractionGuard.
+Character7, field terrain, battle/HP, castle/egg, **the officially selected #541 original neutral Swarm and AI**, lobby/TEAM/BR, ART/score/balance = identical 30/31 source/class. Stage uses `artifacts/gq541_official_select/GQ31_SELECTED.project.json`, not outdated pre-#541 `artifacts/gq530_all31/GQ31_ON.project.json`; thus no rollback of the newly adopted neutral repair. **Items** = original #489 replaces original #482. No new module, second Game/Remote/Store/score/KO, new gameplay design or new round rule. The original #489 restores DASH only when the original session is ACTIVE and the same Player.Character is still attached, handles egg-carrier DASH/SHIELD and checks server LOS via original InteractionGuard.
 
 ## Acceptance chain
 1. Official V3 31-source composer produces original base ON31 and OFF31; both native+Rojo pass on same PR HEAD.
