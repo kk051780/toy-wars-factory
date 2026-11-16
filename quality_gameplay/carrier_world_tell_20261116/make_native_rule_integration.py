@@ -137,6 +137,27 @@ RealRules.depositEggs(brRules,"401",1)
 step()
 eq("real BR egg deposited -> badge hidden",liveOn(brRoots["401"]),0)
 eq("real BR eggs conserved",RealRules.auditEggConservation(brRules).valid,true)
+
+-- True V3 rule engine continues to issue eggs, but optional tell can be
+-- disabled/re-enabled safely by server control without new token authority.
+br.carrierWorldTellEnabled=false
+step()
+eq("real BR kill switch finishes only cosmetic worker",br._carrierWorldTellStarted,nil)
+eq("real BR kill switch keeps all markers hidden",countLiveAll(),0)
+eq("real BR second field egg minted by original rules",RealRules.takeFieldEgg(brRules,"401","FIELD_2"),1)
+step()
+eq("real egg cannot bypass disabled carrier tell",liveOn(brRoots["401"]),0)
+eq("disabled UI does not corrupt egg conservation",RealRules.auditEggConservation(brRules).valid,true)
+eq("BR refuses to restart during OFF",NativeTell.start(br),false)
+br.carrierWorldTellEnabled=true
+eq("real BR explicit ON restarts once",NativeTell.start(br),true)
+step()
+eq("real egg shows after turning optional display ON",captionOn(brRoots["401"]),"🥚×1")
+br.carrierWorldTellEnabled=false
+step()
+eq("OFF removes real-rule carrier badge again",liveOn(brRoots["401"]),0)
+eq("OFF does not consume real-rule carried egg",brRules.castles["401"].heldEggs,1)
+eq("OFF keeps total real eggs valid",RealRules.auditEggConservation(brRules).valid,true)
 br.world.Parent=nil
 step()
 eq("real two mode teardown complete",countLiveAll(),0)
