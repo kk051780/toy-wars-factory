@@ -81,6 +81,14 @@ jobs:
           python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_live_server_observer.luau live-server
           /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_live_server_observer.luau >/dev/null
           /tmp/gq-v3-luau/build/luau /tmp/boss_credit_live_server_observer.luau
+          # Exact #482 original onDefeat credit + original RoundReplay.resetHuman
+          # is executed with our real observer in both VM server contexts.
+          python3 "$ROOT/make_native_author_replay_harness.py" /tmp/boss_credit_author_replay_studio.luau studio
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_author_replay_studio.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_author_replay_studio.luau
+          python3 "$ROOT/make_native_author_replay_harness.py" /tmp/boss_credit_author_replay_live.luau live-server
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_author_replay_live.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_author_replay_live.luau
       - name: Compose existing author GAME+AI+ART+SCORE current26, then append only our 2 server scripts
         run: |
           set -euo pipefail
@@ -157,5 +165,5 @@ jobs:
           retention-days: 3
       - name: Evidence boundary
         run: |
-          echo 'PINNED_LUAU_POLICY_13+ACTUAL_SERVER_OBSERVER_18_STUDIO+18_LIVE_SIM+SOURCE_CONTRACT: evaluated'
+          echo 'PINNED_LUAU_POLICY_13+SERVER_OBSERVER_18_STUDIO+18_LIVE_SIM+ORIGINAL_REPLAY_16_STUDIO+16_LIVE_SIM+SOURCE_CONTRACT: evaluated'
           echo 'ACTUAL_ROBLOX_STUDIO+ANDROID+OFFICIAL_RC+OWNER: NOT_TESTED'
