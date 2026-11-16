@@ -70,7 +70,7 @@ def compose(base_project, base_receipt, new_script, out):
         raise ValueError("Wrong service mapping")
     if len(server) != 24 or len(clients) != 4:
         raise ValueError("Expected 23 original server and 3 original client sources")
-    if set(server) - {"$className"} < SERVER_REQUIRED:
+    if not SERVER_REQUIRED.issubset(set(server) - {"$className"}):
         raise ValueError("Original combat, field, castle, boss, item, score or ART missing")
     if set(clients) - {"$className"} != CLIENT_SET:
         raise ValueError("Original playable skills / art client no longer match")
