@@ -69,6 +69,13 @@ class DefenseSourceContract(unittest.TestCase):
         self.assertIn("snare(session,closest.model,closest.hum", RUNTIME)
         self.assertIn('if session.rules.phase=="ACTIVE" and session.world.Parent', RUNTIME)
 
+    def test_assassin_stealth_requires_sensor_counterplay(self):
+        self.assertIn("Policy.canAcquire(kind,now,stealthUntil)", RUNTIME)
+        self.assertIn('if kind=="SENSOR" then return invisible end', POLICY)
+        self.assertIn("return not invisible", POLICY)
+        self.assertIn("cloaked assassin evades turret", NATIVE)
+        self.assertIn("sensor reveals invisible enemy", NATIVE)
+
     def test_author_host_supports_one_safe_defense_hook(self):
         author = ROOT.parent / "P0D-PQG-SEVEN-HERO-PLAYABLE-20261116"
         rules = (author / "EGGRUMBLE_CastleMatchRules.luau").read_text(encoding="utf-8")
