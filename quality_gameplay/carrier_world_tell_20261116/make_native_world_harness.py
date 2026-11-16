@@ -470,10 +470,9 @@ eq("TEAM world destroyed cleans final 16",countLiveAll(),0)
 eq("all optional worker loops stopped",#__threads,0)
 
 
--- Fault containment: if another visual/plugin subsystem replaces a bot's
--- FindFirstChild with a throwing implementation DURING a live match, our
--- optional loop must clean up all TEAM badges and release its start lock.
--- No game Rules, HP, AI, neutral or item logic is owned by this observer.
+-- Fault isolation: a single malformed visual model must NOT erase the other
+-- 15 TEAM carriers or any BR marker. Rate limit per-seat diagnostic warnings,
+-- and auto-restore only its own GUI when the visual dependency is repaired.
 local faultTeam=createFullMode("TEAM",905)
 local faultBR=createFullMode("BATTLE_ROYALE",906)
 eq("fault test TEAM starts",NativeTell.start(faultTeam),true)
@@ -482,32 +481,50 @@ step()
 eq("fault test two full modes live first",countLiveAll(),32)
 local faultBot=faultTeam.botActors["TEAM_BOT_5"]
 local oldFindChild=faultBot.FindFirstChild
+local faultRoot=oldFindChild(faultBot,"HumanoidRootPart")
+local neighbor=faultTeam.botActors["TEAM_BOT_6"]
+local neighborRoot=neighbor:FindFirstChild("HumanoidRootPart")
 local warningsBefore=#__warnings
 function faultBot:FindFirstChild(name)
  error("SIMULATED_STALE_BOT_VISUAL_API")
 end
 step()
-eq("simulated per-avatar throw stops TEAM badge loop",faultTeam._carrierWorldTellStarted,nil)
-eq("all 16 TEAM badges removed by finally cleanup",countLiveAll(),16)
-eq("BR remains live after separate TEAM observer exception",faultBR._carrierWorldTellStarted,true)
-eq("TEAM server held eggs unaffected by visual exception",faultTeam.rules.castles["905"].heldEggs,1)
-eq("BR server held eggs unaffected by visual exception",faultBR.rules.castles["906"].heldEggs,1)
-eq("only one explicitly bounded optional observer warning emitted",#__warnings,warningsBefore+1)
-eq("warning identifies our optional GQ lane",
+eq("one malformed bot keeps TEAM observer alive",faultTeam._carrierWorldTellStarted,true)
+eq("only one faulty carrier marker is removed",countLiveAll(),31)
+eq("faulted carrier GUI removed",liveOn(faultRoot),0)
+eq("neighbor still has its true egg marker",liveOn(neighborRoot),1)
+eq("BR remains live after isolated TEAM avatar exception",faultBR._carrierWorldTellStarted,true)
+eq("TEAM real carrier inventory unchanged",faultTeam.rules.castles["905"].heldEggs,1)
+eq("BR real carrier inventory unchanged",faultBR.rules.castles["906"].heldEggs,1)
+eq("one optional actor diagnostic emitted",#__warnings,warningsBefore+1)
+eq("warning scoped to our optional GQ lane",
  string.find(__warnings[#__warnings],"[GQ511]",1,true)~=nil,true)
-eq("warning retains original error text",
+eq("warning describes the actual failed dependency",
  string.find(__warnings[#__warnings],"SIMULATED_STALE_BOT_VISUAL_API",1,true)~=nil,true)
-faultBot.FindFirstChild=oldFindChild
-eq("explicit restart after dependency recovery allowed",NativeTell.start(faultTeam),true)
 step()
-eq("recovered team returns its 16 badges once",countLiveAll(),32)
+eq("repeated broken actor does not flood warnings",#__warnings,warningsBefore+1)
+eq("repeated broken actor cannot duplicate markers",countLiveAll(),31)
+faultBot.FindFirstChild=oldFindChild
+step()
+eq("healthy bot automatically restores its own marker",liveOn(faultRoot),1)
+eq("healthy bot restoration returns full roster markers",countLiveAll(),32)
+eq("recovery does not restart/duplicate observer",faultTeam._carrierWorldTellStarted,true)
+function faultBot:FindFirstChild(name)
+ error("SIMULATED_STALE_BOT_VISUAL_API")
+end
+step()
+eq("new separate failure after recovery produces one warning",#__warnings,warningsBefore+2)
+eq("second failure still preserves 31 healthy labels",countLiveAll(),31)
+faultBot.FindFirstChild=oldFindChild
+step()
+eq("second recovery auto-restores all 32",countLiveAll(),32)
 faultTeam.world.Parent=nil
 step()
-eq("TEAM fault recovery teardown preserves healthy BR",countLiveAll(),16)
+eq("TEAM teardown preserves healthy BR",countLiveAll(),16)
 faultBR.world.Parent=nil
 step()
-eq("fault simulation leaves no stale labels",countLiveAll(),0)
-eq("fault simulation leaves no runaway coroutines",#__threads,0)
+eq("fault isolation simulation leaves no stale labels",countLiveAll(),0)
+eq("fault isolation simulation leaves no runaway coroutines",#__threads,0)
 
 print("NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS checks="..tostring(checks))
 '''
