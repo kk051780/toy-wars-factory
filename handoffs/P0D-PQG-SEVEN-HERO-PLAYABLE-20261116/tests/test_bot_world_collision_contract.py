@@ -26,7 +26,8 @@ class TestBotWorldCollisionContract(unittest.TestCase):
         self.assertIn('params.FilterDescendantsInstances={actors}', pathing)
         self.assertIn('params.RespectCanCollide=true', pathing)
         self.assertIn('routeClear(here,here+direction*step,actors)', pathing)
-        self.assertIn('Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)', bot)
+        self.assertIn('Router.navigate(mode..":"..id,actor,goal,AI_TICK*slow,actors)', bot)
+        self.assertIn('local slow=if (actor:GetAttribute("EGGRUMBLE_SlowUntil") or 0)>now then .45 else 1',bot)
         self.assertNotIn('FilterDescendantsInstances={folder,model}', bot + pathing)
 
     def test_ai_actions_require_proximity_and_clear_path(self):

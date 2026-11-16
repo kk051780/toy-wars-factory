@@ -16,7 +16,7 @@ SWARM=(ROOT/"EGGRUMBLE_SwarmCombat.luau").read_text(encoding="utf-8")
 BOT=(ROOT/"EGGRUMBLE_BotActors.luau").read_text(encoding="utf-8")
 LOBBY=(ROOT/"EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text(encoding="utf-8")
 
-def problems(project=PROJECT,role=ROLE,swarm=SWARM,bot=BOT,lobby=LOBB):
+def problems(project=PROJECT,role=ROLE,swarm=SWARM,bot=BOT,lobby=LOBBY):
     root=json.loads(project)["tree"]
     server=root["ServerScriptService"]
     mapped={k:v["$path"] for k,v in server.items() if k!="$className"}
