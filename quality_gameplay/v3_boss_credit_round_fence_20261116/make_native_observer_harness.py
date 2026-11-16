@@ -1,6 +1,8 @@
 """Build native Luau executable for the ACTUAL optional server observer, not just its policy."""
 from pathlib import Path
 import sys
+assert len(sys.argv)==3 and sys.argv[2] in {"studio", "live-server"}, "pick explicit server runtime"
+SIMULATED_STUDIO = sys.argv[2] == "studio"
 HERE = Path(__file__).resolve().parent
 policy = (HERE / "EGGRUMBLE_BossCreditPolicy.luau").read_text(encoding="utf-8")
 observer = (HERE / "EGGRUMBLE_BossCreditRoundFence.server.luau").read_text(encoding="utf-8")
@@ -47,6 +49,9 @@ function Players:GetPlayers()
 end
 local RunService = {}
 function RunService:IsStudio()
+    return SIMULATED_STUDIO
+end
+function RunService:IsServer()
     return true
 end
 local game = {}
@@ -122,8 +127,9 @@ check(other:GetAttribute(COUNTER)==14, "no stale listener after departing")
 check(active:GetAttribute(COUNTER)==12, "other mode owner remains unchanged")
 check(idle:GetAttribute(COUNTER)==0, "separate player unaffected by leaving")
 assert(checked==18, "unexpected coverage drift: " .. tostring(checked))
-print("BOSS_CREDIT_ACTUAL_OBSERVER_NATIVE: 18/18 PASS")
+print("BOSS_CREDIT_ACTUAL_OBSERVER_" .. (SIMULATED_STUDIO and "STUDIO" or "LIVE_SERVER") .. ": 18/18 PASS")
 '''
+mock = "local SIMULATED_STUDIO = " + ("true" if SIMULATED_STUDIO else "false") + "\n" + mock
 output = mock + "\nlocal observerBoot = (function()\n" + observer + "\nend)()\n" + cases
 out = Path(sys.argv[1])
 out.write_text(output,encoding="utf-8")
