@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import json
 import unittest
+import importlib.util
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 HERO = (ROOT / "EGGRUMBLE_HeroSilhouetteArt.server.luau").read_text(encoding="utf-8")
@@ -147,6 +149,56 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,false)", HERO)
         self.assertIn("weld.Part0=anchor", HERO)
         self.assertIn("weld.Part1=p", HERO)
+
+    def test_dynamic_latest_author_studio_manifest_is_non_mutating(self):
+        tool_path = ROOT / "tools" / "compose_current_v3_art.py"
+        self.assertTrue(tool_path.exists())
+        spec = importlib.util.spec_from_file_location("a01_composer", tool_path)
+        self.assertIsNotNone(spec)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            author_dir = base / "author"
+            author_dir.mkdir()
+            nodes = {"$className": "ServerScriptService"}
+            for name in module.MANDATORY_GAME_NAMES:
+                suffix = ".server.luau" if name.endswith("Preview") else ".luau"
+                filename = name + suffix
+                source = 'return {}\\n'
+                if name == "EGGRUMBLE_LobbyCastleModesPreview":
+                    source = 'local G=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))\\n'
+                (author_dir / filename).write_text(source, encoding="utf-8")
+                nodes[name] = {"$path": filename}
+            original = json.dumps({"tree": {"ServerScriptService": nodes}})
+            source_path = author_dir / "author.project.json"
+            source_path.write_text(original, encoding="utf-8")
+            output = base / "output" / "private_art.project.json"
+            assembled = module.compose(source_path, output, ROOT)
+            art = assembled["tree"]["ServerScriptService"]
+            self.assertEqual(set(art) - {"$className"}, set(module.MANDATORY_GAME_NAMES) | set(module.ART_NAMES))
+            self.assertTrue(output.exists())
+            self.assertEqual(source_path.read_text(encoding="utf-8"), original)
+            for name, node in art.items():
+                if name == "$className":
+                    continue
+                self.assertTrue((output.parent / node["$path"]).resolve().is_file(), name)
+
+    def test_dynamic_composer_rejects_outdated_author_module_set(self):
+        tool_path = ROOT / "tools" / "compose_current_v3_art.py"
+        spec = importlib.util.spec_from_file_location("a01_composer_negative", tool_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            author = base / "stale.project.json"
+            author.write_text(json.dumps({"tree": {"ServerScriptService": {
+                "$className": "ServerScriptService",
+                "EGGRUMBLE_LobbyCastleModesPreview": {"$path": "missing.server.luau"}
+            }}}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Missing latest author V3 module"):
+                module.compose(author, base / "composed.project.json", ROOT)
+            self.assertFalse((base / "composed.project.json").exists())
 
     def test_reversible_visual_only_namespaces(self):
         self.assertIn('"EGGRUMBLE_RoleVisuals"', HERO)
