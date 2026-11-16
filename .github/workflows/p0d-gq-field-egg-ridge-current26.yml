@@ -1,0 +1,166 @@
+name: P0D GQ 26-author original AI ART SCORE + #520 ridge + FIELD eggs no overlap
+on:
+  push:
+    branches:
+      - quality/gq-v3-field-egg-castle-clearance-20261116
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-egg-ridge-current26.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-egg-ridge-current26.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  author26-original-and-ridge-no-overlap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _game_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          path: _ridge_original
+          persist-credentials: false
+      - name: Assert frozen authors, repeat original geometry and fail-closed contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _game_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality_original rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _art_original rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score_original rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _ridge_original rev-parse HEAD)" = f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          test "$(git -C _game_original hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau)" = 7162b209bf67b74a71553217f3f744e072a0365d
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_field_egg_clearance_20261116/tests
+          python3 -B -m unittest discover -q -s _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          mkdir -p artifacts
+      - name: Reuse original #485 ART composer and original #484 26-source GAME AI ART SCORE composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          python3 _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 --author-project "_game_original/$base/EGGRUMBLE_V3_STUDIO.project.json" \
+            --out artifacts/GQ523_ART_ORIGINAL.project.json
+          python3 _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _game_original --quality _quality_original \
+            --art _art_original --score _score_original \
+            --art-project artifacts/GQ523_ART_ORIGINAL.project.json \
+            --out artifacts/GQ523_BASE_ORIGINAL26.project.json
+      - name: Reuse original #520 ridge collision patch ON TOP of #484 26 exactly
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          python3 _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/augment_current26.py prepare \
+            --base artifacts/GQ523_BASE_ORIGINAL26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --author-host "_game_original/$base/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --quality-host "_quality_original/$base/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --item "_game_original/$base/EGGRUMBLE_RaidItemIntake.luau" \
+            --quality-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --outdir artifacts/RIDGE26
+      - name: Own independent field-egg row overlay ONLY, retaining 25/26 original modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/combine_original26.py prepare \
+            --ridge-project artifacts/RIDGE26/GQ520_RIDGE_AUTHOR26.project.json \
+            --outdir artifacts/EGGS_RIDGE26
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Actual original 26 Luau compile and FIELD egg native TEAM/BR regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/gq523_native26 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq523_native26 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          project=pathlib.Path("artifacts/EGGS_RIDGE26/GQ523_FIELD_EGGS_RIDGE_AUTHOR26.project.json")
+          obj=json.loads(project.read_text())
+          compiled=[]
+          def walk(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  path=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq523_native26/luau-compile","--text",str(path)],
+                                 check=True,stdout=subprocess.DEVNULL)
+                  compiled.append(path)
+              else:
+                  for name,child in node.items():
+                      if not name.startswith("$"):walk(child)
+          walk(obj["tree"])
+          assert len(compiled)==26 and len(set(compiled))==26
+          print("GQ523_AUTHOR26_ALL_REAL_LUAU_COMPILED",len(compiled))
+          PY
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/EGGS_RIDGE26/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/GQ523_26_FIELD_EGG.native.luau
+          /tmp/gq523_native26/luau artifacts/GQ523_26_FIELD_EGG.native.luau | tee artifacts/GQ523_26_FIELD_EGG_NATIVE.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/GQ523_26_FIELD_EGG_NATIVE.log
+      - name: Pin real Rojo and create 26-source unpublished single Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq523_rojo26.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq523_rojo26.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq523_rojo26.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq523_rojo26")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq523_rojo26 build artifacts/EGGS_RIDGE26/GQ523_FIELD_EGGS_RIDGE_AUTHOR26.project.json -o artifacts/GQ523_FIELD_EGGS_RIDGE26_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/combine_original26.py verify \
+            --project artifacts/EGGS_RIDGE26/GQ523_FIELD_EGGS_RIDGE_AUTHOR26.project.json \
+            --place artifacts/GQ523_FIELD_EGGS_RIDGE26_PRIVATE_NOT_RC.rbxlx
+      - name: Private exact-source evidence only (not formal RC)
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ523_ORIGINAL26_RIDGE520_FIELD_EGGS_PRIVATE_NOT_RC
+          path: |
+            artifacts/GQ523_FIELD_EGGS_RIDGE26_PRIVATE_NOT_RC.rbxlx
+            artifacts/EGGS_RIDGE26/GQ523_PRIVATE26_RECEIPT.json
+            artifacts/GQ523_26_FIELD_EGG_NATIVE.log
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,131 @@
+name: P0D GQ #523 egg grid plus #520 ridge in existing canonical #521 private30
+on:
+  push:
+    branches:
+      - quality/gq-v3-field-egg-castle-clearance-20261116
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-ridge-in-original30.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-field-ridge-in-original30.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original30-handoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download ONLY the already-verified original #521 canonical30 unpublished Place and source receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: GQ518-ORIGINAL-LOS-IN-GQ517-30-SOURCE-PRIVATE-NOT-RC
+          repository: kk051780/toy-wars-factory
+          run-id: 43818309651
+          github-token: ${{ github.token }}
+          path: artifacts/ORIGINAL30
+      - name: Read ONLY original #520 ridge author code
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          path: _ridge_original
+          persist-credentials: false
+      - name: Read ONLY original #521 canonical #518 boss QA helper
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 272964b0ad11fccf1cda49e7da70fbcd091d4315
+          path: _boss_qa_original
+          persist-credentials: false
+      - name: Verify immutable parent 30 source receipt and 12 negative geometry tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _ridge_original rev-parse HEAD)" = f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          test "$(git -C _boss_qa_original rev-parse HEAD)" = 272964b0ad11fccf1cda49e7da70fbcd091d4315
+          test "$(find artifacts/ORIGINAL30 -type f -name '*.rbxlx' | wc -l)" -eq 1
+          test "$(find artifacts/ORIGINAL30 -type f -name '*RECEIPT*.json' | wc -l)" -eq 1
+          test "$(find artifacts/ORIGINAL30 -type f -name '*.project.json' | wc -l)" -eq 1
+          echo '583d4c2c266f0f12f52d47789310598ad51315e060238668a431b4cdf889116b  '$(find artifacts/ORIGINAL30 -type f -name '*.rbxlx') | sha256sum -c
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_field_egg_clearance_20261116/tests
+          python3 -B -m unittest discover -q -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -m py_compile quality_gameplay/v3_field_egg_clearance_20261116/select_original30.py
+      - name: Select ONLY #520 source-authored ridge and #523 field egg rows on actual original #521 host
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/select_original30.py prepare \
+            --parent-place "$(find artifacts/ORIGINAL30 -type f -name '*.rbxlx')" \
+            --parent-project "$(find artifacts/ORIGINAL30 -type f -name '*.project.json')" \
+            --parent-receipt "$(find artifacts/ORIGINAL30 -type f -name '*RECEIPT*.json')" \
+            --ridge-tool _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/patch_ridge.py \
+            --outdir artifacts/NEW_PRIVATE30
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Native compile all 30 exact code sources and execute ACTUAL host source geometry VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/gq523_30_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq523_30_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for f in artifacts/NEW_PRIVATE30/scripts/*.luau; do
+            /tmp/gq523_30_luau/luau-compile --text "$f" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" -eq 30
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/NEW_PRIVATE30/scripts/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/GQ523_REAL30_GEOMETRY.native.luau
+          /tmp/gq523_30_luau/luau artifacts/GQ523_REAL30_GEOMETRY.native.luau | tee artifacts/GQ523_REAL30_GEOMETRY.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/GQ523_REAL30_GEOMETRY.log
+          python3 _boss_qa_original/quality_gameplay/boss_los_30source_intake_20261116/make_native_518.py \
+            --patched artifacts/NEW_PRIVATE30/scripts/EGGRUMBLE_NeutralStoneGiant.luau \
+            --out artifacts/GQ518_ORIGINAL_BOSS_NATIVE.spec.luau
+          /tmp/gq523_30_luau/luau artifacts/GQ518_ORIGINAL_BOSS_NATIVE.spec.luau | tee artifacts/GQ518_ORIGINAL_BOSS_NATIVE.log
+          grep -q GQ518_ACTUAL_AUTHORED_LUAU_BOSS_OCCLUSION_5_CASES_PASS artifacts/GQ518_ORIGINAL_BOSS_NATIVE.log
+          echo GQ523_ORIGINAL30_ALL_30_NATIVE_AND_BOTH_REAL_GQ520_GQ523_BOSS_HELPER_PASS
+      - name: Real Rojo 7.7.1 source/class exact single unpublished PRIVATE30 place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq523_rojo30.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq523_rojo30.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq523_rojo30.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/gq523_rojo30")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq523_rojo30 build artifacts/NEW_PRIVATE30/GQ523_ORIGINAL30_RIDGE_FIELD.project.json \
+            -o artifacts/GQ523_ORIGINAL_518_517_520_523_PRIVATE30_NOT_OFFICIAL_RC.rbxlx
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/select_original30.py verify \
+            --project artifacts/NEW_PRIVATE30/GQ523_ORIGINAL30_RIDGE_FIELD.project.json \
+            --place artifacts/GQ523_ORIGINAL_518_517_520_523_PRIVATE30_NOT_OFFICIAL_RC.rbxlx
+      - name: Upload PRIVATE ONLY original30 receipt and real unpublished Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ523_PLUS_ORIGINAL_521_520_30SOURCE_PRIVATE_NOT_RC
+          path: |
+            artifacts/GQ523_ORIGINAL_518_517_520_523_PRIVATE30_NOT_OFFICIAL_RC.rbxlx
+            artifacts/NEW_PRIVATE30/GQ523_ORIGINAL30_RECEIPT.json
+            artifacts/GQ523_REAL30_GEOMETRY.log
+            artifacts/GQ518_ORIGINAL_BOSS_NATIVE.log
+          if-no-files-found: error
+          retention-days: 3

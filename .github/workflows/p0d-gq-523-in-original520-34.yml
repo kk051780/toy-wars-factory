@@ -1,0 +1,108 @@
+name: P0D GQ #523 eggs in ORIGINAL #520 34-script castle neutral audio art field
+on:
+  push:
+    branches:
+      - quality/gq-v3-field-egg-castle-clearance-20261116
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-523-in-original520-34.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_field_egg_clearance_20261116/**'
+      - '.github/workflows/p0d-gq-523-in-original520-34.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-34-original-520-and-523-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download exact already-successful #520 original34 real private Place, not reimplement its game
+        uses: actions/download-artifact@v4
+        with:
+          name: GQ520-ORIGINAL34-RIDGE-SHIELD-CLEARANCE-NOT-OFFICIAL-RC
+          run-id: 43819894573
+          repository: kk051780/toy-wars-factory
+          github-token: ${{ github.token }}
+          path: artifacts/PARENT34
+      - name: Strict parent original author's real 34 source and hash, plus own geometry negative QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f artifacts/PARENT34/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx
+          test -f artifacts/PARENT34/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json
+          test -f artifacts/PARENT34/GQ520_PRIVATE34_RECEIPT.json
+          echo '2005312ed2185758848bf07c770c821275ca2bcc565c5f2b681184ee3f57bc42  artifacts/PARENT34/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx' | sha256sum -c
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_field_egg_clearance_20261116/tests
+          python3 -B -m unittest discover -q -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -m py_compile quality_gameplay/v3_field_egg_clearance_20261116/select_original34.py
+      - name: Source select ONLY own egg row on existing #520 ridge+ #500 defense + #494/#501 neutral 34
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/select_original34.py prepare \
+            --original-place artifacts/PARENT34/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx \
+            --original-project artifacts/PARENT34/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json \
+            --original-receipt artifacts/PARENT34/GQ520_PRIVATE34_RECEIPT.json \
+            --out artifacts/GQ523_ORIGINAL34
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Real 34 native Luau compile and original patched field Z geometry test
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq523_native34 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq523_native34 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          count=0
+          for file in artifacts/GQ523_ORIGINAL34/scripts/*.luau; do
+            /tmp/gq523_native34/luau-compile --text "$file" >/dev/null
+            count=$((count+1))
+          done
+          test "$count" -eq 34
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/GQ523_ORIGINAL34/scripts/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/GQ523_FIELD_GEOMETRY_ACTUAL34.native.luau
+          /tmp/gq523_native34/luau artifacts/GQ523_FIELD_GEOMETRY_ACTUAL34.native.luau | tee artifacts/GQ523_FIELD_GEOMETRY34_NATIVE.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/GQ523_FIELD_GEOMETRY34_NATIVE.log
+          echo GQ523_ACTUAL_34_SOURCE_LUAU_COMPILE_AND_FIELD_NATIVE_PASS
+      - name: Build original34 + one #523 egg row source-selective genuine unpublished Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq523_rojo34.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq523_rojo34.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq523_rojo34.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              exe=Path("/tmp/gq523_rojo34")
+              exe.write_bytes(z.read(names[0]))
+              exe.chmod(0o755)
+          PY
+          /tmp/gq523_rojo34 build artifacts/GQ523_ORIGINAL34/GQ523_FIELD_EGGS_ORIGINAL34.project.json \
+            -o artifacts/GQ523_ORIGINAL_520_34_FIELD_EGGS_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_field_egg_clearance_20261116/select_original34.py verify \
+            --project artifacts/GQ523_ORIGINAL34/GQ523_FIELD_EGGS_ORIGINAL34.project.json \
+            --place artifacts/GQ523_ORIGINAL_520_34_FIELD_EGGS_PRIVATE_NOT_RC.rbxlx
+      - name: Upload original34 source/class exact unpublished QA evidence, not official RC
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ523_ON_ORIGINAL520_34SOURCE_PRIVATE_NOT_OFFICIAL_RC
+          path: |
+            artifacts/GQ523_ORIGINAL_520_34_FIELD_EGGS_PRIVATE_NOT_RC.rbxlx
+            artifacts/GQ523_ORIGINAL34/GQ523_FIELD_EGGS_ORIGINAL34_RECEIPT.json
+            artifacts/GQ523_FIELD_GEOMETRY34_NATIVE.log
+          if-no-files-found: error
+          retention-days: 3
