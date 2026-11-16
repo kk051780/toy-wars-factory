@@ -1,0 +1,25 @@
+name: P0D GQ Studio live observer source-only
+on:
+  push:
+    branches:
+      - quality/gq-studio-live-observer-20261116-a
+    paths:
+      - 'gq_runtime_probe/**'
+      - '.github/workflows/p0d-gq-studio-live-observer.yml'
+  pull_request:
+    paths:
+      - 'gq_runtime_probe/**'
+      - '.github/workflows/p0d-gq-studio-live-observer.yml'
+permissions:
+  contents: read
+jobs:
+  source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify isolated observer contract (NOT Studio engine)
+        run: python -m unittest discover -s gq_runtime_probe/tests -v
