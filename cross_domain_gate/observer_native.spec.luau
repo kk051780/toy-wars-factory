@@ -113,4 +113,44 @@ assert(recoveredKey=="" and recoveredEmit and isRecovered,"one recovery notice r
 local stable,stableEmit=Observer.warningDelta(recoveredKey,clean)
 assert(stable=="" and not stableEmit,"recovery must not print repeatedly")
 print("GQ_OBSERVER_WARNING_DEDUP_NATIVE_PASS")
+-- Read-only cross-cycle regressions in the SAME server-owned match.
+session.rules.events={{type="START"},{type="EGG_TAKEN"}}
+local good,baseline=Observer.inspectAndTrack(session,rules,nil,players)
+assert(#good.red==0 and baseline~=nil)
+assert(baseline.mode=="TEAM" and baseline.neutralKOs["101"]==4)
+session.swarm.kills["101"]=2
+local rewind=Observer.inspectAndTrack(session,rules,baseline,players)
+assert(has(rewind.red,"NEUTRAL_KO_COUNTER_REWOUND"))
+session.swarm.kills["101"]=4
+session.rules.events={{type="START"}}
+assert(has(Observer.inspectAndTrack(session,rules,baseline,players).red,"MATCH_EVENTS_REWOUND"))
+session.rules.events={{type="START"},{type="EGG_TAKEN"}}
+local ai=session.rules.castles["AI_1"]
+ai.alive=false;ai.hp=0
+local fallenReport,fallenState=Observer.inspectAndTrack(session,rules,baseline,players)
+assert(#fallenReport.red==0,"castle falls legally during active match")
+ai.alive=true;ai.hp=750
+assert(has(Observer.inspectAndTrack(session,rules,fallenState,players).red,"FALLEN_CASTLE_REVIVED"))
+user.role="MAGE"
+assert(has(Observer.inspectAndTrack(session,rules,baseline,players).red,"ACTIVE_ROLE_CHANGED"))
+user.role="NINJA"
+session.mode="BATTLE_ROYALE"
+assert(has(Observer.inspectAndTrack(session,rules,baseline,players).red,"MATCH_MODE_CHANGED"))
+session.mode="TEAM"
+session.world={Parent={},FindFirstChild=world.FindFirstChild}
+assert(has(Observer.inspectAndTrack(session,rules,baseline,players).red,"MATCH_WORLD_REPLACED"))
+session.world=world
+table.remove(session.roster)
+assert(has(Observer.inspectAndTrack(session,rules,baseline,players).red,"MATCH_ROSTER_LOST_MEMBER"))
+table.insert(session.roster,{id="AI_1",isAI=true})
+session.rules.phase="FINISHED"
+local finished,finishedSnapshot=Observer.inspectAndTrack(session,rules,baseline,players)
+assert(#finished.red==0,"normal finished state must not regress")
+session.rules.phase="ACTIVE"
+assert(has(Observer.inspectAndTrack(session,rules,finishedSnapshot,players).red,"FINISHED_MATCH_RESTARTED"))
+local stableReport,stableSnapshot=Observer.inspectAndTrack(session,rules,baseline,players)
+assert(#stableReport.red==0 and stableSnapshot~=nil)
+assert(#Observer.inspectAndTrack(session,rules,stableSnapshot,players).red==0)
+print("GQ_CROSS_DOMAIN_MATCH_TRANSITION_NATIVE_PASS cases=8")
+
 print("GQ_7DOMAIN_OBSERVER_REAL_LUAU_NATIVE_BEHAVIOR_12_CASES_PASS_SOURCE_ONLY")
