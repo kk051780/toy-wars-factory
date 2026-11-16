@@ -1066,10 +1066,51 @@ jobs:
             --out artifacts/gq515_official_select/GQ515_SELECTED31.project.json \
             --place artifacts/gq515_official_select/GQ515_SELECTED31_TRUE_ROJO.rbxlx
           echo GQ515_ORIGINAL_SOURCE_REAL_ROJO31_ONE_HOST_30_UNCHANGED_PASS
+      - name: Checkout exact original GQ595 one-Geometry author source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb204b9962c0d10ec937b8886d0923e6e09fb47d
+          path: _gq595_original
+          persist-credentials: false
+      - name: Select one original #595 vertical reach fairness Geometry after #583, native31 true Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq595_original rev-parse HEAD)" = eb204b9962c0d10ec937b8886d0923e6e09fb47d
+          ROOT=_gq595_original/quality_gameplay/v3_vertical_hit_fairness_20261116
+          BASE=artifacts/gq515_official_select/GQ515_SELECTED31.project.json
+          FINAL=artifacts/gq515_official_select/GQ515_VERTICAL595_SELECTED31.project.json
+          PLACE=artifacts/gq515_official_select/GQ515_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx
+          python3 -B -m unittest discover -s "$ROOT" -p 'test_*.py' -v
+          python3 -B "$ROOT/select_vertical.py" \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_AttackGeometry.luau \
+            --out-dir artifacts/gq515_official_select/gq595_author
+          for t in artifacts/gq515_official_select/gq595_author/*.native.spec.luau; do
+            /tmp/gq530_all31_native/luau-compile --text "$t" >/dev/null
+            /tmp/gq530_all31_native/luau "$t"
+          done
+          python3 -B rc_fastlane/quality_geometry595_rc31/select_original_geometry.py prepare --base "$BASE" --out "$FINAL"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("gq595map","rc_fastlane/quality_ko508_rc31/select_original508_neutral_ko.py").load_module()
+          _,scripts=m.mapping(Path("artifacts/gq515_official_select/GQ515_VERTICAL595_SELECTED31.project.json"))
+          assert len(scripts)==31
+          for script in scripts.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(script)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ595_CURRENT31_ALL_SELECTED_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$FINAL" -o "$PLACE"
+          python3 -B rc_fastlane/quality_geometry595_rc31/select_original_geometry.py verify \
+            --base "$BASE" --out "$FINAL" --place "$PLACE"
+          echo GQ595_ONE_GEOMETRY_CURRENT31_TRUE_ROJO_OTHER30_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ515_SELECTED31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ515_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1085,7 +1126,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ515_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1156,7 +1197,14 @@ jobs:
           assert m["feature_flags"]["ROSTER16_HARDCAP_583"] is True
           gq515=json.loads(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_text())
           assert gq515["rojo_source_class_exact"]=="31/31" and gq515["other_30_scripts_byte_exact"]
-          assert gq515["canonical_private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq515["canonical_private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          geom595=json.loads(Path("artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json").read_text())
+          assert geom595["real_rojo_script_class_source_exact"]=="31/31"
+          assert geom595["other_30_byte_identical"] and geom595["rollback_to_current_rc_byte_exact"]
+          assert geom595["source_count"]==31 and geom595["formal_rc_adopted"] is False
+          assert geom595["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["vertical_hit595"]=="eb204b9962c0d10ec937b8886d0923e6e09fb47d"
+          assert m["feature_flags"]["VERTICAL_HIT_FAIRNESS_595"] is True
           assert gq515["author_policy_git_blob"]=="3114c469169ad667978485d5b8d0b038a2dbd4f5"
           assert m["source_heads"]["field_egg_drop_bounds515"]=="fee49d82816e65448f1b0b5803bba6fe06b17229"
           assert m["feature_flags"]["FIELD_CARRIER_OFFARENA_DROP_515"] is True
@@ -1212,6 +1260,8 @@ jobs:
             "gq580_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_520_team_SHIELD_ridge_DASH_tree_clearance_selected":True,
             "original_author_583_roster16_two_guards_one_existing_Rules":True,
+            "original_author_595_single_geometry_vertical_reach_selected":True,
+            "gq595_original_one_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq583_other_30_existing_scripts_byte_exact":True,
             "gq583_rollback_to_prior_520_Rules_exact":True,
             "gq583_receipt_sha256":hashlib.sha256(Path("artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
@@ -1289,6 +1339,9 @@ jobs:
             artifacts/gq583_official_select/GQ583_SELECTED_SOURCE_RECEIPT.json
             artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json
             artifacts/gq515_official_select/GQ515_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ515_VERTICAL595_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json
+            artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ515_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json
             artifacts/gq515_official_select/GQ515_NATIVE18_RESULT.log
