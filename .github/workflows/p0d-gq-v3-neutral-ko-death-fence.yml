@@ -1,0 +1,15 @@
+name: P0D GQ V3 neutral KO death fence source QA
+on:
+  push:
+    branches:
+      - quality/gq-neutral-ko-fence-20261116
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source and semantic mirror negative contracts
+        run: python3 -m unittest discover -s quality_gameplay/v3_neutral_ko_death_fence_20261116 -p 'test_*.py' -v
