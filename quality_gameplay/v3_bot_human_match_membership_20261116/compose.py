@@ -30,6 +30,7 @@ HOST_AFTER = (
     "   return sessions[mode]==session and session.rules.phase==\"ACTIVE\"\n"
     "    and joined[player.UserId]==mode and player.Parent==Players\n"
     "    and session.rules.castles[tostring(player.UserId)]~=nil\n"
+    "    and session.rules.castles[tostring(player.UserId)].isAI~=true\n"
     "  end\n"
     " -- Clean up only this finished match;"
 )
@@ -100,7 +101,7 @@ def run(source_dir: Path, out_dir: Path, ai_bot_file: Path | None = None) -> dic
             "overlay_blob": git_blob_sha(data),
             "sha256": hashlib.sha256(data).hexdigest(),
             "bytes": len(data),
-            "changed_lines": 7 if name == HOST else 3,
+            "changed_lines": 8 if name == HOST else 3,
         }
     report = {
         "owner_head": OWNER_HEAD,
