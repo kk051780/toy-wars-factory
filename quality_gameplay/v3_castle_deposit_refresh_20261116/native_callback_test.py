@@ -5,8 +5,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-START = '  prompt(deposit,"卵を納入","自分の城",function(p)'
-END = "  local vault=block("
+START = ' prompt(deposit,"卵を納入","自分の城",function(p)'
+END = " local vault=block("
 
 def extract(source: str) -> str:
     if source.count(START) != 1:
