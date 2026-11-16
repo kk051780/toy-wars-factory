@@ -49,7 +49,7 @@ UDim2 = {}
 function UDim2.fromOffset(x,y) return {x=x,y=y} end
 function UDim2.fromScale(x,y) return {sx=x,sy=y} end
 Vector3 = {}
-function Vector3.new(x,y,z) return {x=x,y=y,z=z} end
+function Vector3.new(x,y,z) return {x=x,y=y,z=z,X=x,Y=y,Z=z} end
 local function makeWorld(mode)
  local x=if mode=="TEAM" then -620 else 620
  local field={
