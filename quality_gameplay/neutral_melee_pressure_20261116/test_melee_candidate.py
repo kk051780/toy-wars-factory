@@ -16,7 +16,7 @@ class NeutralMeleeSourceTests(unittest.TestCase):
     def test_one_owner_one_damage_path_and_no_new_game(self):
         candidate=patch(self.original)
         assert candidate.count("function Swarm.start(session:any)")==1
-        assert candidate.count("nearest.humanoid:TakeDamage(Melee.DAMAGE)")==1
+        assert candidate.count("candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)")==1
         assert candidate.count("local Melee=require(")==1
         assert "lastMeleeSwing" in candidate and "lastVictimHit" in candidate
         # Lifetime contract: no strong-key references to destroyed soldiers or old avatars.

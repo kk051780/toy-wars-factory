@@ -67,7 +67,7 @@ def compose(base28: Path, original_swarm: Path, out: Path, melee_policy: Path) -
                      "EncounterFair.clear(", "h.Died:Connect(",
                      "ImpactFeedback.ko(", "local function credit(",
                      "local function addEnemy(", "local function liveMeleeVictims(",
-                     "nearest.humanoid:TakeDamage(Melee.DAMAGE)"):
+                     "candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)"):
         assert combined.count(required)==1,("RED duplicate authority",required)
     assert 'p:GetAttribute("EGGRUMBLE_QueuedMode")==session.mode' in combined
     assert 'local SPAWN_BATCH=5' not in combined

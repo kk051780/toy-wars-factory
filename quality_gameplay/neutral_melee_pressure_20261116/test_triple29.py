@@ -35,7 +35,7 @@ class Triple29Contract(unittest.TestCase):
             self.assertEqual(set(new)-set(paths),{POLICY})
             self.assertEqual(new[ORIGINAL].read_text().count("SpawnPacing.step("),1)
             self.assertEqual(new[ORIGINAL].read_text().count("EncounterFair.chooseIndex("),1)
-            self.assertEqual(new[ORIGINAL].read_text().count("nearest.humanoid:TakeDamage(Melee.DAMAGE)"),1)
+            self.assertEqual(new[ORIGINAL].read_text().count("candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)"),1)
             self.assertIn('p:GetAttribute("EGGRUMBLE_QueuedMode")==session.mode',new[ORIGINAL].read_text())
             self.assertFalse(receipt["official_rc_adopted"])
             self.assertFalse(receipt["owner_accepted"])

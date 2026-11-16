@@ -37,7 +37,7 @@ class Admission30SourceTests(unittest.TestCase):
             self.assertEqual(swarm.count("session.isCurrentHuman(p)"),2)
             self.assertEqual(swarm.count("EncounterFair.chooseIndex("),1)
             self.assertEqual(swarm.count("SpawnPacing.step("),1)
-            self.assertEqual(swarm.count("nearest.humanoid:TakeDamage(Melee.DAMAGE)"),1)
+            self.assertEqual(swarm.count("candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)"),1)
             self.assertEqual(swarm.count("session.neutralBudget:acquire("),1)
             self.assertIn('lastMeleeSwing[m]=nil',swarm)
             self.assertIn('setmetatable({}, {__mode="k"}) :: any',swarm)
