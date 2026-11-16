@@ -85,6 +85,13 @@ jobs:
           ref: e003d73d516e65e1817dd281eb1743fa866f3770
           path: _gq539_lobby
           persist-credentials: false
+      - name: Load original immutable GQ555 nearest-human BotActors author (not duplicate AI)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
+          path: _gq555_original_bot
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -96,6 +103,7 @@ jobs:
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
           test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
           test "$(git -C _gq539_lobby rev-parse HEAD)" = e003d73d516e65e1817dd281eb1743fa866f3770
+          test "$(git -C _gq555_original_bot rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -116,6 +124,8 @@ jobs:
           assert m["schema"]=="P0D_EGGRUMBLE_V3_CANONICAL_RC_COMPANION_V1"
           assert m["enabled"] and m["source_count"]==31
           assert m["canonical_branch"]=="rc/p0d-s1-kids-rc01"
+          assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+          assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["source_heads"]["fused_gameplay_quality530"]=="f5594979f7ad1852442ea917fbd5f3bdad1698ec"
           assert m["source_heads"]["neutral_melee533"]=="d3d231612f0da24616514b37dc465c4883e2f304"
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -562,10 +572,48 @@ jobs:
           test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
+      - name: Integrate immutable original #555 into existing single BotActors after #489; native 31 and true Rojo
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq555_official_select
+          AUTHOR555=_gq555_original_bot/quality_gameplay/v3_bot_nearest_human_20261116
+          BASE489=artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
+          FINAL555=artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+          test "$(git -C _gq555_original_bot rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
+          python3 rc_fastlane/select_gq555_original_bot_nearest.py prepare \
+            --base "$BASE489" \
+            --author "$AUTHOR555/patch_nearest.py" \
+            --out "$FINAL555"
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from importlib.machinery import SourceFileLoader
+          module=SourceFileLoader("gq555select","rc_fastlane/select_gq555_original_bot_nearest.py").load_module()
+          _,mapping=module.flatten(Path("artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json"))
+          assert len(mapping)==31
+          for src in mapping.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(src)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ555_LATEST_31_REAL_LUAU_COMPILE_PASS")
+          PY
+          python3 "$AUTHOR555/make_native_harness.py" \
+            --bot artifacts/gq555_official_select/EGGRUMBLE_BotActors_555.luau \
+            --out artifacts/gq555_official_select/ORIGINAL_GQ555_BOT_NATIVE6.luau
+          /tmp/gq530_all31_native/luau artifacts/gq555_official_select/ORIGINAL_GQ555_BOT_NATIVE6.luau \
+            | tee artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
+          grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS \
+            artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
+          /tmp/gq530-all31-rojo build "$FINAL555" \
+            -o artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
+          python3 rc_fastlane/select_gq555_original_bot_nearest.py verify \
+            --base "$BASE489" \
+            --author "$AUTHOR555/patch_nearest.py" \
+            --out "$FINAL555" \
+            --place artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -581,7 +629,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -603,7 +651,12 @@ jobs:
           item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
           assert item489["unchanged_source_count"]==30
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
+          assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
+          assert gq555["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+          assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -624,6 +677,9 @@ jobs:
             "original_author_540_added_in_same_537_host":True,
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
+            "original_author_555_nearest_bot_source_selected":True,
+            "original_author_555_bot_only_30_preserved":True,
+            "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
             "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
@@ -675,6 +731,10 @@ jobs:
             artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
             artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
             artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ555_SOURCE_SELECTION_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
