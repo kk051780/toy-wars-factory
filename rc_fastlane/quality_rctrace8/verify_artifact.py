@@ -136,10 +136,14 @@ FEATURE_EVIDENCE = {
   "hum:MoveTo(targetRoot.Position)",
   "neutralAndBotHit(session,p,petRoot,pet,at,3.5,6,def.color,spec.shape)")),
 
+ "ZOMBIE_GUARD_CASTLE_LEASH_582": ("EGGRUMBLE_SevenRoleCombat", (
+  "local GUARD_LEASH = 12",
+  "distance(candidate, guardAnchor) <= GUARD_LEASH",
+  "distance(unit, guardAnchor) > GUARD_LEASH",
+  "Policy.GUARD_LEASH_STUDS = GUARD_LEASH")),
 }
 
-# Item ownership is a paired Host + Item authority, not one declaration.
-# The 29th current RC source set is preserved; no new gameplay controller.
+# Item pickup security is distributed across TWO server-authority scripts.
 CROSS_SCRIPT_FEATURE_EVIDENCE = {
  "ITEM_CURRENT_SESSION_525": {
   "EGGRUMBLE_LobbyCastleModesPreview": (
@@ -235,8 +239,7 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         for script,anchors in owners.items():
             require(script in scripts,"FEATURE_FALSE_ON_"+flag+"_"+script)
             for anchor in anchors:
-                require(anchor in scripts[script][1],
-                        "FEATURE_FALSE_ON_"+flag+"_"+script)
+                require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag+"_"+script)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
@@ -270,7 +273,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_29_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_30_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],

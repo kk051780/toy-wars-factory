@@ -86,11 +86,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_29_known_flags(self):
+    def test_valid_covers_eight_domains_and_30_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],29)
+        self.assertEqual(v["verified_flag_count"],30)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -187,7 +187,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
-    def test_current29_manifest_anchors_enforce_nonshared_flags(self):
+    def test_current30_manifest_anchors_enforce_latest_role_and_guards(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
@@ -197,6 +197,8 @@ class Gate(unittest.TestCase):
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
             "SERVER_PROMPT_CONFIG_REACH_611",
+            "BEAST_REAL_ESCORT_618",
+            "ZOMBIE_GUARD_CASTLE_LEASH_582",
         )
         for flag in late:
             script,anchors=gq8.FEATURE_EVIDENCE[flag]
@@ -204,7 +206,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],29)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],30)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
@@ -220,6 +222,8 @@ class Gate(unittest.TestCase):
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
             "SERVER_PROMPT_CONFIG_REACH_611",
+            "BEAST_REAL_ESCORT_618",
+            "ZOMBIE_GUARD_CASTLE_LEASH_582",
         ):
             with self.subTest(flag=flag):
                 b,r,m,a=fixture()
@@ -227,32 +231,33 @@ class Gate(unittest.TestCase):
                 with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
                     gq8.verify(b,r,m,a,HEAD)
 
-    def test_item525_host_and_item_are_both_required(self):
+    def test_item525_must_have_both_live_authorization_sides(self):
         flag="ITEM_CURRENT_SESSION_525"
         for script,anchors in gq8.CROSS_SCRIPT_FEATURE_EVIDENCE[flag].items():
             for anchor in anchors:
                 with self.subTest(script=script,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],29)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],30)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
                         gq8.verify(b,r,m,a,HEAD)
 
-    def test_item525_disabled_flag_not_proven(self):
+    def test_item525_disabled_cross_owner_flag_fails(self):
         b,r,m,a=fixture()
         m["feature_flags"]["ITEM_CURRENT_SESSION_525"]=False
         with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_ITEM_CURRENT_SESSION_525"):
             gq8.verify(b,r,m,a,HEAD)
 
-    def test_critical_skill_and_deposit_live_paths_not_just_markers(self):
-        for flag,script,anchor in (
+    def test_active_paths_not_certified_by_stale_comments(self):
+        critical=(
           ("FIELD_CARRIER_OFFARENA_DROP_515","EGGRUMBLE_LobbyCastleModesPreview","function Drop.recover("),
           ("ZOMBIE_COMMAND_SQUAD_582","EGGRUMBLE_SevenRoleCombat","ZombieCommander.begin(p,"),
           ("DEPOSIT_CURRENT_SESSION_586","EGGRUMBLE_LobbyCastleModesPreview","joined[p.UserId]~=session.mode"),
           ("DEPOSIT_CURRENT_SESSION_586","EGGRUMBLE_LobbyCastleModesPreview","sessions[session.mode]~=session"),
           ("BEAST_REAL_ESCORT_618","EGGRUMBLE_SevenRoleCombat","if BeastEscort.begin(session,p,char,root,h,owner,function("),
-        ):
+        )
+        for flag,script,anchor in critical:
             with self.subTest(flag=flag,anchor=anchor):
                 b,r,m,a=fixture()
                 b=drop_anchor(b,script,anchor)
@@ -260,7 +265,6 @@ class Gate(unittest.TestCase):
                 self.assertTrue(m["feature_flags"][flag])
                 with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
                     gq8.verify(b,r,m,a,HEAD)
-
     def test_s1_default_must_remain_unchanged_for_this_profile(self):
         b,r,m,a=fixture()
         a["active_profile"]="eggrumble_v3_31"
