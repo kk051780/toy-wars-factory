@@ -11,7 +11,6 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-import shutil
 from xml.etree import ElementTree as ET
 
 from patch_dash import ORIGINAL_BLOB, ORIGINAL_PATH, git_blob_sha, patch_source
@@ -96,6 +95,8 @@ def verify(author_root: Path, out: Path, place: Path) -> None:
             continue
         name = props.find("string[@name='Name']")
         source = props.find("ProtectedString[@name='Source']")
+        if source is None:
+            source = props.find("string[@name='Source']")
         if name is None or name.text not in sources:
             continue
         if name.text in embedded:
