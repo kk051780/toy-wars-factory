@@ -99,6 +99,8 @@ FEATURE_EVIDENCE = {
    'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}'),
  "HEAL_NO_WASTE_517": ("EGGRUMBLE_FieldItemPickups",
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
+ "NEUTRAL_DEATH_KO_CURRENT_OWNER_508": (
+  "EGGRUMBLE_SwarmCombat", "and KoFence.mayCredit(session,id,m,all) then"),
 
 }
 
