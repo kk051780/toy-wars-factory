@@ -768,10 +768,53 @@ jobs:
           /tmp/gq530-all31-rojo build "$FINAL538" -o artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx
           python3 -B rc_fastlane/select_gq538_original_result_inline.py verify --base "$BASE551" --author-python "$ROOT538/compose_result.py" --author-luau "$ROOT538/EGGRUMBLE_ResultRetry.luau" --out "$FINAL538" --place artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx
           echo GQ538_ONE_ORIGINAL_RESULT_30_OTHER_SOURCES_EXACT_ROJO_NATIVE_PASS
+      - name: Read original GQ523 immutable Field egg foundation clearance author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 54ea74aa15e387d83512566715f44216ba8587a2
+          path: _gq523_original_field
+          persist-credentials: false
+      - name: Apply original #523 two egg-grid row hunks to existing single #551 Host, Native31 and true Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq523_original_field rev-parse HEAD)" = 54ea74aa15e387d83512566715f44216ba8587a2
+          test "$(git -C _gq523_original_field hash-object quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py)" = "$(git -C _gq523_original_field rev-parse HEAD:quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py)"
+          python3 -B -m unittest discover -v -s _gq523_original_field/quality_gameplay/v3_field_egg_clearance_20261116/tests -p 'test_*.py'
+          python3 -B rc_fastlane/quality_field523_rc31/select_original_field523.py compose \
+            --base artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ523_SELECTED31.project.json \
+            --author _gq523_original_field/quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          import subprocess
+          mod=SourceFileLoader("map541","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          _,sources=mod.flatten(Path("artifacts/gq538_official_select/GQ523_SELECTED31.project.json"))
+          assert len(sources)==31
+          for file in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print("GQ523_ORIGINAL_FIELD_EGG_FULL_31_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          python3 _gq523_original_field/quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/gq538_official_select/GQ523_ORIGINAL_FIELD_EGGS_HOST.server.luau \
+            --out artifacts/gq538_official_select/GQ523_NATIVE_REAL_ROWS_4.luau
+          /tmp/gq530_all31_native/luau artifacts/gq538_official_select/GQ523_NATIVE_REAL_ROWS_4.luau | tee /tmp/gq523-real-native.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS /tmp/gq523-real-native.log
+          /tmp/gq530-all31-rojo build artifacts/gq538_official_select/GQ523_SELECTED31.project.json \
+            -o artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_field523_rc31/select_original_field523.py verify \
+            --base artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ523_SELECTED31.project.json \
+            --author _gq523_original_field/quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py \
+            --place artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx
+          echo "GQ523_ORIGINAL_FIELD_ONLY_ONE_HOST_30_UNCHANGED_REVERSE_EXACT"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -787,7 +830,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -828,7 +871,12 @@ jobs:
           assert m["feature_flags"]["CARRIER_STALE_AVATAR_DIED_FENCE_551"] is True
           gq538=json.loads(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_text())
           assert gq538["rojo_source_class_exact"]=="31/31" and gq538["other_30_sources_byte_exact"]
-          assert gq538["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq538["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq523=json.loads(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_text())
+          assert gq523["rojo31_source_class_exact"]=="31/31" and gq523["other30_scripts_byte_exact"] and gq523["rollback_to_previous_host_exact"]
+          assert gq523["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["field_egg523"]=="54ea74aa15e387d83512566715f44216ba8587a2"
+          assert m["feature_flags"]["FIELD_EGGS_CASTLE_FOUNDATION_CLEARANCE_523"] is True
           assert m["source_heads"]["result_retry538"]=="d56262dbe8309cf606877fe39a44cde7dda0d9b5"
           assert m["feature_flags"]["RESULT_GUI_BOUNDED_RETRY_538"] is True
           gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
@@ -862,6 +910,8 @@ jobs:
             "original_author_538_single_result_retry_selected":True,
             "original_538_other_30_sources_byte_identical":True,
             "original_538_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
+             "original_author_523_field_egg_castle_clearance_selected":True,
+             "gq523_field_egg_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq547_other_30_current_original_scripts_byte_exact":True,
             "gq547_off_restores_previous_536_host_exact":True,
             "gq547_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
@@ -910,6 +960,8 @@ jobs:
             artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json
             artifacts/gq538_official_select/GQ538_SELECTED31_RECEIPT.json
             artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
