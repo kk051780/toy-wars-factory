@@ -78,6 +78,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_CastleMatchRules": "ModuleScript",
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
+ "EGGRUMBLE_InteractionGuard": "ModuleScript",
 }
 # These 26 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
@@ -122,6 +123,11 @@ FEATURE_EVIDENCE = {
   'local neutralIds=setmetatable({}, {__mode="k"})',
   "local function neutralTargetId(enemy:Model):string",
   'id=neutralTargetId(enemy),kind="NEUTRAL"')),
+ "PROMPT_SERVER_REACH_611": ("EGGRUMBLE_InteractionGuard", (
+  "local function configuredReach(part:BasePart,verb:string):number?",
+  "if selected then return nil end",
+  "if (near-root.Position).Magnitude>reach+EXCESS_RADIUS then return false end")),
+
 
 }
 
