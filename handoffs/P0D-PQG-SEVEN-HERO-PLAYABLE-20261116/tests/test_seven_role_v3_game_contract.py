@@ -49,7 +49,7 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
   self.assertIn('EGGRUMBLE_KamiUntil',HERO)
   self.assertIn('EGGRUMBLE_StealthUntil',HERO)
   self.assertIn('EGGRUMBLE_SlowUntil',HERO)
-  self.assertIn('p:GetAttribute("EGGRUMBLE_StealthUntil")',BOTS)
+  self.assertIn('player:GetAttribute("EGGRUMBLE_StealthUntil")',BOTS)
   self.assertIn('AI_TICK*slow',BOTS)
  def test_lobby_binds_role_selection_and_respawn_and_death(self):
   for token in ('for i,role in ipairs(SevenRoleCombat.roleOrder())',
@@ -67,7 +67,8 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
   self.assertIn('EGGRUMBLE_SevenRoleCombat',tree)
   self.assertEqual(tree['EGGRUMBLE_SevenRoleCombat']['$path'],
                    'EGGRUMBLE_SevenRoleCombat.luau')
-  self.assertEqual(len(tree)-1,7) # 6 modules + 1 server Script
+  self.assertGreaterEqual(len(tree)-1,7) # independent other writers may add sibling modules
+  self.assertEqual(sum(k.endswith('Preview') for k in tree if k!='$className'),1)
   self.assertIn('if not RunService:IsStudio() then return end',V3)
   for source in (V3,HERO):
    for banned in ('MarketplaceService','DataStoreService','RemoteEvent','TeleportService'):
