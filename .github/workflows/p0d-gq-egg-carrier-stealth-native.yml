@@ -97,7 +97,7 @@ jobs:
               assert content is not None,('missing source',name)
               cls,source=expected[name]
               assert item.attrib['class']==cls,(name,cls,item.attrib['class'])
-              assert content.replace('\\r\\n','\\n')==(base/source).read_text(encoding='utf-8').replace('\\r\\n','\\n'),('byte text mismatch',name)
+              assert content.replace('\r\n','\n')==(base/source).read_text(encoding='utf-8').replace('\\r\\n','\\n'),('byte text mismatch',name)
               matched[name]=True
           assert set(matched)==set(expected),('missing/extra original sources',set(expected)-set(matched))
           digest=hashlib.sha256(built.read_bytes()).hexdigest()
