@@ -55,3 +55,20 @@ Only authenticated official writer [#220](https://github.com/kk051780/toy-wars-f
 **Progress (R13 feature-only, not product completion):** isolated Luau source 1/1, Rojo manifest 1/1, source-test code 1/1, pinned CI pipeline 1/1, GitHub CI status pending, official RC integrated **0/1**, Studio 0/1, Android 0/1, OWNER accepted 0/1. Product ART/FUN remains **NO_GO**.
 
 No main change, PR merge, production publish, paid usage or Windows/Studio remote operation.
+
+
+## R13 V2 (2026-11-16): actual-death-only correction and current27 composite
+
+**Source logic improvement**: The first R13 build was not strict enough: a `CharacterAdded` in a live arena could receive protection with no prior genuine death. R13 V2 requires an actual **server observed Humanoid.Died** while in the same original `TEAM` or `BATTLE_ROYALE` arena with a living own castle. A single-use **12s death ticket** is bound to the original Arena Instance (not only its name), mode and Player identity. The next character must be the current avatar, returned within 85 studs of the same home castle; only then can the short 2.25s ForceField start. A new lobby character, old avatar, mode switch, reused arena name, expired ticket, fallen castle and abandoned round cannot redeem the ticket.
+
+**Execution evidence**, not just source text: the dedicated original22 CI runs `tests/make_native_respawn_harness.py`, which embeds the actual Script body into a deterministic native Luau VM with fake Roblox service events and exercises 18 real state/event assertions. It covers no-death initial spawn, legitimate death, tool/prompt cancel, 2.25s expiry, repeated death, mode switch, far spawn, fallen castle, same-name new arena, 12s expiry, external shield preservation, abandoned arena and cleanup. The harness is **not Roblox Studio simulation**; native Luau runs genuine script code with mocked services.
+
+**Further integration**: The optional `compose_current27.py` accepts the original existing **#484 private26 composer output**, asserts the 26 original Game+ART+SCORE mappings have not changed and their SHA-256 equals the original author receipt, and appends only this one new ServerScript. Dedicated workflow `.github/workflows/p0d-gq-r13-current27-private.yml` executes #482 original game21, #484 original GQ AI, #485 original ART4, #487 original SCORE1 + R13 1, with fixed heads:
+- #482 `fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9`
+- #484 `6b52eaf1f2725496277998fe0c5532b7a8fcaab5`
+- #485 `e86702c906bdf9c71adcdf769ae48a206b26607b`
+- #487 `438a406ccfda5563053d783d7561797ccd364361`
+
+No #489 independent item-fairness overlay or #494 neutral pacing, #492 spectator, #496 compass, #500 real defense, #503 FX, #504 audio is claimed included unless its exact source is present in the 26 base mapping. These are **separate additional optional authors**, not silently merged. Current27 is an UNPUBLISHED candidate and neither source27 nor source22 may be misrepresented as #220 official RC. Studio / Android / human FUN still **NOT_TESTED**.
+
+**#220 writer acceptance**: re-read all latest owner HEADs and claims before source selective intake; manually test that 2.25s protection triggers only following a real death, does not grant on initial spawn or arena replacement, and any native Roblox auto-SpawnLocation ForceField does not violate game balance. Core 7 professions, three field routes, player castle/eggs, neutral soldiers and boss, HEAL/DASH/SHIELD, two lobby modes, TEAM/BR score are original source owners' responsibility and remain preserved. Exclusive official-RC non-force CAS and rollback approval belong only to #220.
