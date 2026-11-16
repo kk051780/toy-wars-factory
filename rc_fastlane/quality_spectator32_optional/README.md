@@ -4,7 +4,7 @@ Unique scope: **register a reversible optional32 profile in the canonical RC sou
 
 - Existing original author: PR #492, HEAD eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20, original spectator LocalScript blob c39b2d3cc481052940b9d11a6fc695261a9b1e40.
 - Existing PRIVATE selector and tests reused from PR #634 at immutable HEAD fed9cbb5680d40c68a2e1395e9b84276d7868fb9. Never reauthor its gameplay script.
-- Canonical starting parent 2291154fd07c8d8af086f76199bf585ff2c725c4. Existing 31 selected scripts already contain official #525 item, #611 prompts, #618 BEAST, #582 V4 zombies, #615 lobby wait and #499 match deadline.
+- Canonical starting parent ad2a1d885510966c5d946fdf97e0f44f07c15fb7. Existing 31 selected scripts already contain official #525 item, #611 prompts, #618 BEAST, #582 V4 zombies, #615 lobby wait and #499 match deadline.
 - We register exactly one additional LocalScript in an **optional** profile. Existing current31 source bytes, Roblox Script classes, single Host/Game/Combat/AI/Item/Score authority and rich51 legacy S1 profile stay unchanged.
 - The workflow builds the real Rojo32 Place and attests 32/32 Script Source/Class exact via original #634 selector; its independent GQ470 witness requires GQ8 existing 8 domains, all 32 enabled old-source flags, four original spectator native lifecycle proofs and 3 mutation negatives.
 - Once the sole authenticated #220 writer incorporates this branch into canonical RC using nonforce expected-SHA CAS, the official push may certify an **optional Studio-only RC source profile**. A green PR before CAS is **PREP_ONLY, not formal adoption**.
@@ -14,7 +14,7 @@ Unique scope: **register a reversible optional32 profile in the canonical RC sou
 
 ### Integration trace
 
-BASE_RC=2291154fd07c8d8af086f76199bf585ff2c725c4
+BASE_RC=ad2a1d885510966c5d946fdf97e0f44f07c15fb7
 FEATURE_IDS=GQ470_CASTLE_ELIMINATION_SPECTATE_492
 ORIGINAL_SOURCE_BLOB=c39b2d3cc481052940b9d11a6fc695261a9b1e40
 EXISTING_SELECTOR_PR=634

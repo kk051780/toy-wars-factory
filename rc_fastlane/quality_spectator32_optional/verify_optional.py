@@ -43,7 +43,7 @@ def contract(meta,active,base):
           "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
           "PINNED_EXISTING_PREP_634")
     check(meta.get("current_selected31")==
-          "artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json",
+          "artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json",
           "LATEST_31_INPUT_NOT_SELECTED")
     check(active.get("active_profile")=="rich51","LIVE_S1_PROFILE_CHANGED")
     profiles=active.get("source_profiles",{})
@@ -61,7 +61,8 @@ def contract(meta,active,base):
     check(len(flags)>=32 and all(v is True for v in flags.values()),
           "PREVIOUS_FEATURE_FLAG_DISABLED")
     for flag in ("LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499","BEAST_REAL_ESCORT_618",
-                 "ZOMBIE_GUARD_CASTLE_LEASH_582","ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527"):
+                 "ZOMBIE_GUARD_CASTLE_LEASH_582","ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
+                 "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"):
         check(flags.get(flag) is True,"NEWEST_AUTHOR_LOST_"+flag)
     return len(flags)
 
@@ -70,7 +71,7 @@ def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
     check(len(head)==40 and all(c in "0123456789abcdef" for c in head),
           "HEAD_NOT_40_SHA")
     check(meta.get("base_official_head")==
-          "2291154fd07c8d8af086f76199bf585ff2c725c4","BASE_HEAD_DRIFT")
+          "ad2a1d885510966c5d946fdf97e0f44f07c15fb7","BASE_HEAD_DRIFT")
     check(receipt.get("source_count")==32
           and receipt.get("rojo_source_class_exact")=="32/32"
           and receipt.get("existing_gameplay_sources_unchanged")==31

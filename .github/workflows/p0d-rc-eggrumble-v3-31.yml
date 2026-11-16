@@ -1614,10 +1614,86 @@ jobs:
             --original-author "$SRC/tools/stage_private_v3.py" \
             --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
           echo GQ527_LATEST31_ORIGINAL_BOT_CASTLE_SIEGE_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS
+      - name: Checkout immutable original GQ509 post-win egg author (one CastleRules function)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: a259e2d7a962f52061541276de3f2b1afbc9a7a4
+          path: _gq509_original_author
+          persist-credentials: false
+      - name: Select exact original #509 finished-round death fence in current Rules after #499; native31/TEAM-BR stress
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq509_original_author rev-parse HEAD)" = a259e2d7a962f52061541276de3f2b1afbc9a7a4
+          ROOT509=_gq509_original_author/handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116
+          ORIGINAL=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          PATCHED=_gq509_original_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          SEL=rc_fastlane/quality_postwin509_rc31/select_original509_postwin.py
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ527_SIEGE_SELECTED31.project.json
+          OUT=$DIR/GQ509_POSTWIN_SELECTED31.project.json
+          python3 -m py_compile "$SEL"
+          python3 -B "$SEL" prepare \
+            --base "$BASE" --out "$OUT" \
+            --checker "$ROOT509/native_and_provenance.py" \
+            --original "$ORIGINAL" --patched "$PATCHED"
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan
+          _,files=scan(Path("artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json"))
+          assert len(files)==31
+          for script in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(script)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ509_CURRENT31_SELECTED_ALL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          for SPEC in postwin_egg_fence_native.spec.luau terminal_conservation_16slot.spec.luau; do
+            TAG=$(echo "$SPEC" | sed 's/\.spec\.luau$//')
+            python3 -B "$SEL" harness \
+              --source "$DIR/GQ509_CURRENT31_TERMINAL_EGG_RULES.luau" \
+              --test "$ROOT509/$SPEC" \
+              --out "$DIR/GQ509_CURRENT31_$TAG.native.luau"
+            /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ509_CURRENT31_$TAG.native.luau" >/dev/null
+            /tmp/gq530_all31_native/luau "$DIR/GQ509_CURRENT31_$TAG.native.luau" \
+              | tee "$DIR/GQ509_CURRENT31_${TAG}_NATIVE.log"
+          done
+          grep -q 'POSTWIN_EGG_DEATH_NATIVE_PASS' "$DIR/GQ509_CURRENT31_postwin_egg_fence_native_NATIVE.log"
+          grep -q 'GQ509_16SLOT_FUZZ_CONSERVATION_PASS' "$DIR/GQ509_CURRENT31_terminal_conservation_16slot_NATIVE.log"
+          python3 -B "$SEL" harness \
+            --source "$DIR/GQ509_CURRENT31_TERMINAL_EGG_RULES.luau" \
+            --test "$ROOT509/postwin_egg_fence_native.spec.luau" \
+            --out "$DIR/GQ509_CURRENT31_POSTWIN_MUTANT.native.luau" --mutant
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ509_CURRENT31_POSTWIN_MUTANT.native.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ509_CURRENT31_POSTWIN_MUTANT.native.luau" > "$DIR/GQ509_CURRENT31_MUTANT_REJECTED.log" 2>&1; then
+            echo RED_GQ509_MUTANT_NOT_REJECTED
+            exit 1
+          fi
+          grep -q 'late death produces zero eggs/tokens' "$DIR/GQ509_CURRENT31_MUTANT_REJECTED.log"
+          echo GQ509_CURRENT31_ACTUAL_RULES_TEAM_BR_STRESS_AND_MUTANT_PASS
+      - name: Real pinned Rojo31 Source Class and exact one current Rules after original #509
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT509=_gq509_original_author/handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116
+          ORIGINAL=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          PATCHED=_gq509_original_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          DIR=artifacts/gq515_official_select
+          /tmp/gq530-all31-rojo build "$DIR/GQ509_POSTWIN_SELECTED31.project.json" \
+            -o "$DIR/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx"
+          python3 -B rc_fastlane/quality_postwin509_rc31/select_original509_postwin.py verify \
+            --base "$DIR/GQ527_SIEGE_SELECTED31.project.json" \
+            --out "$DIR/GQ509_POSTWIN_SELECTED31.project.json" \
+            --checker "$ROOT509/native_and_provenance.py" \
+            --original "$ORIGINAL" --patched "$PATCHED" \
+            --place "$DIR/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx"
+          echo GQ509_SINGLE_CURRENT_RULES_TRUE_ROJO31_OTHER30_EXACT_ROLLBACK_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1633,7 +1709,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1736,12 +1812,19 @@ jobs:
           gq499=json.loads(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_text())
           assert gq499["real_rojo_exact"]=="31/31" and gq499["other30_bytes_exact"] and gq499["off_inverse_byte_exact"]
           assert gq499["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          gq509=json.loads(Path("artifacts/gq515_official_select/GQ509_LATE_DEATH_RC31_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq509["source_count"]==31 and gq509["changed_scripts"]==1
+          assert gq509["other30_byte_exact"] and gq509["off_current_rules_byte_exact"]
+          assert gq509["rojo_source_class"]=="31/31"
+          assert gq509["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
+          assert m["source_heads"]["gq509_postwin_egg"]=="a259e2d7a962f52061541276de3f2b1afbc9a7a4"
           bot527=json.loads(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_text())
           assert bot527["runtime_source_count"]==31 and bot527["new_runtime_scripts"]==0
           assert bot527["one_changed_existing_script"]=="EGGRUMBLE_BotActors"
           assert bot527["other_30_scripts_byte_exact"] and bot527["off_original_bot_byte_exact"]
           assert bot527["rojo_source_class_exact"]=="31/31" and bot527["pure_author_policy_inlined_in_bot"]
-          assert bot527["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bot527["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
@@ -1814,6 +1897,8 @@ jobs:
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
             "source_author_heads":m["source_heads"],
+            "gq509_postwin_egg_source_exact_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ509_LATE_DEATH_RC31_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq509_actual_current_rules_native_16slot_and_mutant":True,
             "gq582_castle_guard12_one_combat_exact_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V4_GUARD_RC31_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_guard_castle_radius_studs":12,
             "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
@@ -1942,14 +2027,14 @@ jobs:
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
-            test "$current_base" = 2291154fd07c8d8af086f76199bf585ff2c725c4 \
+            test "$current_base" = ad2a1d885510966c5d946fdf97e0f44f07c15fb7 \
               || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
           fi
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
           SRC=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
           SELECT=_gq634_intake/rc_fastlane/quality_spectate492_rc32/admit_spectator.py
-          BASE=artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
+          BASE=artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json
           DIR=artifacts/gq470_optional32
           OUT="$DIR/GQ470_SPECTATE32_OPTIONAL.project.json"
           PLACE="$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx"
@@ -2075,6 +2160,11 @@ jobs:
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ509_LATE_DEATH_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ509_CURRENT31_postwin_egg_fence_native_NATIVE.log
+            artifacts/gq515_official_select/GQ509_CURRENT31_terminal_conservation_16slot_NATIVE.log
+            artifacts/gq515_official_select/GQ509_CURRENT31_MUTANT_REJECTED.log
             artifacts/gq515_official_select/GQ527_REAL_RULES_NATIVE41.log
             artifacts/gq515_official_select/GQ527_REAL_BOT_NATIVE16.log
             artifacts/gq515_official_select/GQ527_PURE_PACING_NATIVE37.log
