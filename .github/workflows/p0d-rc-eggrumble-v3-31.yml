@@ -501,7 +501,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq555_official_select/GQ555_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -517,7 +517,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq555_official_select/GQ555_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -529,7 +529,13 @@ jobs:
           gq540=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
           assert gq540["source_exact"]=="31/31" and gq540["unchanged_scripts"]==30
           assert gq540["original_gq541_swarm_preserved"] and gq540["only_host_changed"]
-          assert gq540["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          gq555=json.loads(Path("artifacts/gq555_official_select/VERIFY_GQ555.json").read_text())
+          assert gq555["on_source_class_exact"]==gq555["off_source_class_exact"]==31
+          assert gq555["unchanged_original_author_sources"]==30 and gq555["original_off_recovered"]
+          assert gq555["on_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["BOT_NEAREST_ELIGIBLE_HUMAN_555"]
+          assert m["source_heads"]["bot_nearest_555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+          assert gq540["place_sha256"]==hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -548,8 +554,12 @@ jobs:
             "original_author_541_selected_into_one_swarm":True,
             "original_author_537_selected_into_one_host":True,
             "original_author_540_added_in_same_537_host":True,
+            "original_author_555_selected_into_one_original_botactors":True,
+            "gq555_other_source_scripts_unchanged":30,
+            "gq555_real_native6_pass":True,
             "same_537_host_previous_vs_540_final_unchanged_others":30,
             "gq540_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq555_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_RC31_SOURCE_SELECTION_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_537_place_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
@@ -591,4 +601,9 @@ jobs:
             artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
             artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json
             artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
+            artifacts/gq555_official_select/GQ555_RC31_SOURCE_SELECTION_RECEIPT.json
+            artifacts/gq555_official_select/VERIFY_GQ555.json
+            artifacts/gq555_official_select/GQ555_ON.project.json
+            artifacts/gq555_official_select/GQ555_OFF.project.json
+            artifacts/gq555_official_select/GQ555_OFF_31_TRUE_ROJO.rbxlx
           retention-days: 3
