@@ -75,11 +75,36 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
  end
  return count
 end
+local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number):number
+ local state=session.rules.castles[tostring(p.UserId)]
+ if not state or not state.alive then return 0 end
+ local count=0
+ for _,enemyPlayer in ipairs(game:GetService("Players"):GetPlayers()) do
+  local enemyState=session.rules.castles[tostring(enemyPlayer.UserId)]
+  local enemyChar,enemyRoot,enemyHum=characterOf(enemyPlayer)
+  if enemyPlayer~=p and enemyState and enemyState.alive
+   and (session.mode~="TEAM" or enemyState.team~=state.team)
+   and enemyChar and enemyRoot and enemyHum and enemyHum.Health>0
+   and (enemyRoot.Position-center).Magnitude<=range
+   and (enemyRoot.Position-root.Position).Magnitude<=36
+   and count<4 and lineClear(root.Position+Vector3.new(0,1.5,0),
+    enemyRoot.Position+Vector3.new(0,1,0),char,enemyChar) then
+   -- In real PvP, attacking the living opposing hero inflicts actual Humanoid damage;
+   -- castle death and hero knockout remain separate match states.
+   local duel=if p:GetAttribute("EGGRUMBLE_Role")=="WARRIOR"
+    and (enemyRoot.Position-root.Position).Magnitude<=18 then 1.25 else 1
+   enemyHum:TakeDamage(damage*duel)
+   count+=1
+  end
+ end
+ return count
+end
 local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at:Vector3,range:number,damage:number,c:Color3):number
  -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.
  local count=0
  if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage) end
  count+=hitBotHeroes(session,p,root,char,at,range,damage)
+ count+=hitHumanHeroes(session,p,root,char,at,range,damage)
  makeEffect(session.world,at,Vector3.new(range*1.3,2,range*1.3),c,.35)
  return count
 end
