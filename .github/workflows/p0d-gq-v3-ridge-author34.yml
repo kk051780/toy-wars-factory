@@ -362,6 +362,50 @@ jobs:
             --project artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json \
             --place artifacts/GQ520_ORIGINAL34_RIDGE_PRIVATE_NOT_RC.rbxlx
           echo "OFFICIAL_RC=UNCHANGED / 34-SOURCE PRIVATE NO CAS / STUDIO ANDROID=NOT_TESTED"
+      - name: Apply ONLY original forest-1 DASH clearance to verified ridge34 candidate (new SOFT claim)
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/forest_dash_overlay.py prepare \
+            --base artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json \
+            --base-receipt artifacts/GQ520_PRIVATE34_RECEIPT.json \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --items _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau \
+            --out artifacts/GQ520_RIDGE_FOREST34.project.json
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/v3_central_ridge_clearance_20261116")
+          from augment_current26 import scripts
+          project=Path("artifacts/GQ520_RIDGE_FOREST34.project.json")
+          _,mapped=scripts(project,34)
+          assert len(mapped)==34
+          for name,(_,source,_,_) in sorted(mapped.items()):
+              subprocess.run(["/tmp/gq27_native/luau-compile","--text",str(source)],
+                  check=True,stdout=subprocess.DEVNULL)
+          print("GQ520_RIDGE_FOREST34_NATIVE_LUAU_34_OF_34_PASS")
+          PY
+      - name: Native VM execute original seven FOREST trees and original nine TEAM/BR ITEM sites
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/forest_dash_native.py \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --ridge artifacts/GQ520_RIDGE34_OnlyHost.server.luau \
+            --forest artifacts/GQ520_RIDGE_FOREST34.server.luau \
+            --item _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau \
+            --out /tmp/GQ520_RIDGE_FOREST_ORIGINAL_NATIVE.luau
+          /tmp/gq27_native/luau-compile --text /tmp/GQ520_RIDGE_FOREST_ORIGINAL_NATIVE.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/GQ520_RIDGE_FOREST_ORIGINAL_NATIVE.luau | tee artifacts/GQ520_RIDGE_FOREST_NATIVE_VM.log
+          grep -q GQ520_REAL_LUAU_ORIGINAL_FOREST_ITEM_VM_PASS artifacts/GQ520_RIDGE_FOREST_NATIVE_VM.log
+          grep -q GQ520_FOREST_DASH_COLLISION_NEGATIVE_PASS artifacts/GQ520_RIDGE_FOREST_NATIVE_VM.log
+      - name: Build source-exact original34 ridge plus forest DREAM private Place, never official RC
+        run: |
+          set -euo pipefail
+          /tmp/gq27_rojo build artifacts/GQ520_RIDGE_FOREST34.project.json \
+            -o artifacts/GQ520_ORIGINAL34_RIDGE_FOREST_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/forest_dash_overlay.py verify \
+            --project artifacts/GQ520_RIDGE_FOREST34.project.json \
+            --place artifacts/GQ520_ORIGINAL34_RIDGE_FOREST_NOT_RC.rbxlx
+          echo "OFFICIAL_RC=UNCHANGED; NEW_FOREST=SOFT_CLAIM; STUDIO_ANDROID_NOT_RUN"
       - name: Upload unpublished original34 + GQ520 source-only one-hunk private34 proofs
         if: success()
         uses: actions/upload-artifact@v4
@@ -376,4 +420,9 @@ jobs:
             artifacts/GQ520_RIDGE34_OnlyHost.server.luau
             artifacts/GQ520_PRIVATE34_RECEIPT.json
             artifacts/GQ520_NATIVE_CORRIDOR_VM.log
+            artifacts/GQ520_ORIGINAL34_RIDGE_FOREST_NOT_RC.rbxlx
+            artifacts/GQ520_RIDGE_FOREST34.project.json
+            artifacts/GQ520_RIDGE_FOREST34.server.luau
+            artifacts/GQ520_RIDGE_FOREST34_RECEIPT.json
+            artifacts/GQ520_RIDGE_FOREST_NATIVE_VM.log
           retention-days: 3
