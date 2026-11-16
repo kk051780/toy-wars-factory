@@ -106,6 +106,13 @@ jobs:
           ref: d56262dbe8309cf606877fe39a44cde7dda0d9b5
           path: _gq538_original_result
           persist-credentials: false
+      - name: Checkout exact original #583 CastleRules 16-slot source at immutable successful SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 60b67c8dade80ff7ccd1d97e03480ba333977084
+          path: _gq583_original
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -118,6 +125,7 @@ jobs:
           test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
           test "$(git -C _gq539_lobby rev-parse HEAD)" = e003d73d516e65e1817dd281eb1743fa866f3770
           test "$(git -C _gq547_original rev-parse HEAD)" = b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125
+          test "$(git -C _gq583_original rev-parse HEAD)" = 60b67c8dade80ff7ccd1d97e03480ba333977084
           test "$(git -C _gq555_original_bot rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
@@ -950,10 +958,16 @@ jobs:
             --out artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
             --place artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
           echo GQ580_OFFICIAL_CANDIDATE_SINGLE_BOT_30_PRESERVED_SOURCE_CLASS_31_NATIVE_PASS
+      - name: Source-select original #583 16-slot Rules guards AFTER current #580 BotActors, full 31 native/Rojo
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/quality_roster583_rc31/build_31.py \
+            --base artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
+            --out artifacts/gq583_official_select
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq583_official_select/GQ583_CURRENT_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -969,7 +983,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq583_official_select/GQ583_CURRENT_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1026,9 +1040,17 @@ jobs:
           assert gq580["source_count"]==31 and gq580["others_byte_exact"]==30
           assert gq580["rollback_bot_exact"] and gq580["real_rojo_exact"]=="31/31"
           assert gq580["formal_rc_adopted"] is False
-          assert gq580["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq580["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["ai_takeover580"]=="6dfd892063a95d61997dbd5b59d5daa7053e9df7"
           assert m["feature_flags"]["AI_TAKEOVER_TERMINAL_FENCE_580"] is True
+          assert m["source_heads"]["original_roster583"]=="60b67c8dade80ff7ccd1d97e03480ba333977084"
+          assert m["feature_flags"]["ROSTER16_HARDCAP_583"] is True
+          roster583=json.loads(Path("artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json").read_text())
+          orig583=json.loads(Path("artifacts/gq583_official_select/GQ583_SELECTED_SOURCE_RECEIPT.json").read_text())
+          assert roster583["source_exact"]=="31/31" and roster583["other_30_scripts_byte_exact"]
+          assert roster583["off_rollback_byte_exact"] and roster583["existing_only_one_rules_changed"]
+          assert orig583["changed_guards"]==2 and orig583["TEAM_BR_MAX_HERO_SLOTS"]==16
+          assert roster583["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
           assert m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"] is True
           assert m["source_heads"]["heal_no_waste517"]=="c8a324ad7bb40648d82a5828cbf54e217585fefd"
@@ -1070,6 +1092,10 @@ jobs:
             "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_580_ai_takeover_terminal_fence_in_one_bot":True,
             "gq580_other_30_existing_source_bytes_exact":True,
+            "original_583_existing_Rules_hardcap16_two_guards_selected":True,
+            "gq583_other_30_scripts_byte_exact":True,
+            "gq583_off_rollback_rules_exact":True,
+            "gq583_receipt_sha256":hashlib.sha256(Path("artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
             "gq580_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_508_neutral_ko_death_credit_selected_inline":True,
             "original_508_other_30_sources_exact":True,
@@ -1136,6 +1162,11 @@ jobs:
           name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
           path: |
             artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+            artifacts/gq583_official_select/GQ583_SELECTED31.project.json
+            artifacts/gq583_official_select/GQ583_SELECTED_SOURCE_RECEIPT.json
+            artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json
+            artifacts/gq583_official_select/GQ583_ORIGINAL_NATIVE.spec.luau
+            artifacts/gq583_official_select/GQ583_FIXED_NATIVE.spec.luau
             artifacts/gq547_official_select/GQ547_SELECTED31.project.json
             artifacts/gq547_official_select/GQ547_SOURCE_RECEIPT.json
             artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json
