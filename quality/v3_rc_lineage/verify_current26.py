@@ -164,6 +164,7 @@ def verify(args) -> dict:
     report["candidate_project_sha256"] = sha(candidate_project.read_bytes())
     report["full_26_owner_byte_identity"] = report["status"] == "SOURCE_GATE_PASS"
     report["overlays"] = overlays
+    report["candidate_source_sha256"] = {n: d["sha256"] for n, d in sorted(combined.items())}
     return report
 
 
