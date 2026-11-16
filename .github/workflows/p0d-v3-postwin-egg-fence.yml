@@ -1,0 +1,74 @@
+name: P0D V3 post-win egg drop source-native regression
+on:
+  push:
+    branches:
+      - 'quality/p0d-v3-postwin-egg-drop-fence-20261116-r01'
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau'
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-v3-postwin-egg-fence.yml'
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau'
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-v3-postwin-egg-fence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-pure-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated one-function patch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch fixed unchanged ORIGINAL #482 author source for exact diff
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _p0d_author_exact
+          persist-credentials: false
+      - name: Verify source-lock and prepare ACTUAL RULES native replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_author_exact rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          mkdir -p artifacts
+          python3 -B handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/native_and_provenance.py \
+            --original _p0d_author_exact/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/postwin_egg_native.luau \
+            --mutant-out artifacts/postwin_egg_mutant.luau
+      - name: Obtain pinned native Luau compiler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Build native Luau and run functional + negative mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/p0d_postwin_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_postwin_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/p0d_postwin_luau/luau-compile --text artifacts/postwin_egg_native.luau >/dev/null
+          /tmp/p0d_postwin_luau/luau artifacts/postwin_egg_native.luau | tee artifacts/native_result.log
+          grep -q POSTWIN_EGG_DEATH_NATIVE_PASS artifacts/native_result.log
+          if /tmp/p0d_postwin_luau/luau artifacts/postwin_egg_mutant.luau >artifacts/mutant_result.log 2>&1; then
+            echo "RED: unfenced original mutates final egg count yet passed" >&2
+            exit 1
+          fi
+          grep -q 'late death produces zero eggs/tokens' artifacts/mutant_result.log
+          echo 'NATIVE_MUTANT_REJECTED_PASS'
+      - name: Publish source-only proof, not official RC or Studio result
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_V3_POSTWIN_EGG_FENCE_NATIVE_ONLY
+          path: |
+            artifacts/native_result.log
+            artifacts/mutant_result.log
+          retention-days: 7
