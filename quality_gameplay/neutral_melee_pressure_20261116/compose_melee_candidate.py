@@ -120,7 +120,7 @@ def patch(original: str) -> str:
 '''
     source = once(source, a, b, "existing_movement_tick")
     source = once(source, "   live[m]=nil\n", "   live[m]=nil\n   lastMeleeSwing[m]=nil\n", "neutral_ko_memory_cleanup")
-    if source.count('nearest.humanoid:TakeDamage(Melee.DAMAGE)') != 1:
+    if source.count('candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)') != 1:
         raise ValueError("RED authority: expected one real melee damage call")
     return source
 
