@@ -54,7 +54,7 @@ def prove(s):
     require(replay,"task.delay(Replay.RESULT_HOLD_SECONDS,function()","DELAYED_CLOSE")
     require(replay,'if session.rules.phase=="FINISHED" then closeRound() end',"LATE_CLOSE_FENCE")
     require(result,'session.rules.winner=="DRAW"',"DRAW_LABEL_SOURCE")
-    require(result,"ResultService.showIfFinished(session,queue,mode)","RESULT_SERVICE")
+    require(result,"function ResultService.showIfFinished(session:any,queue:{Player},mode:string):boolean","RESULT_SERVICE")
     if not (host.index("ResultService.showIfFinished(session,queue,mode)") <
             host.index("RoundReplay.schedule(session,session.closeRound)")):
         raise ValueError("RED_RESULT_MUST_PRECEDE_REPLAY")
