@@ -9,6 +9,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
@@ -30,6 +31,24 @@ MANDATORY_GAME_NAMES = (
     "EGGRUMBLE_LobbyCastleModesPreview",
 )
 ART_DIR = Path(__file__).resolve().parents[1]
+
+
+def rebase_tree_paths(node: dict, author_dir: Path, output_dir: Path) -> None:
+    """Rebase ALL original Rojo source paths, including client StarterPlayerScripts.
+
+    Keeping the original author tree is mandatory. The latest author includes
+    mobile combat feedback LocalScripts that must not vanish from the art preview.
+    """
+    for key, value in node.items():
+        if key == "$path":
+            if not isinstance(value, str):
+                raise ValueError("Expected a literal Rojo source $path string")
+            real = (author_dir / value).resolve(strict=True)
+            if not real.is_file():
+                raise ValueError(f"Author source path is not a file: {value}")
+            node[key] = os.path.relpath(real, output_dir).replace(os.sep, "/")
+        elif isinstance(value, dict):
+            rebase_tree_paths(value, author_dir, output_dir)
 
 
 def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict:
@@ -69,23 +88,38 @@ def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR) -> dict
             raise ValueError(f"Not a script: {name}")
         combined[name] = {"$path": os.path.relpath(real, output.parent).replace(os.sep, "/")}
 
-    # Source-level interface guard: each sibling script.Parent:WaitForChild module
-    # must exist in the composed manifest. Full Luau runtime still requires Studio.
-    for name, real in reference_paths.items():
-        if real.suffix != ".luau":
+    # Author may add a require before registering its new module in the original
+    # Rojo manifest. Only in this NEW isolated art manifest, include an actual
+    # existing same-directory EGGRUMBLE_*.luau from the original author's checkout.
+    # Never create/copy/edit the author's module, never mask the author gap in logs.
+    pending = list(reference_paths.items())
+    visited: set[str] = set()
+    while pending:
+        name, real = pending.pop()
+        if name in visited or real.suffix != ".luau":
             continue
+        visited.add(name)
         source = real.read_text(encoding="utf-8")
         for sibling in re.findall(r'require\s*\(\s*script\.Parent:WaitForChild\("([^"]+)"\)\s*\)', source):
-            if sibling not in combined:
-                raise ValueError(f"Broken author sibling module import {name} -> {sibling}")
+            if sibling in combined:
+                continue
+            if not re.fullmatch(r"EGGRUMBLE_[A-Za-z0-9_]+", sibling):
+                raise ValueError(f"Unexpected author sibling module import {name} -> {sibling}")
+            fallback = (author_project.parent / f"{sibling}.luau").resolve()
+            if fallback.parent != author_project.parent or not fallback.is_file():
+                raise ValueError(f"Missing real author sibling module {name} -> {sibling}")
+            reference_paths[sibling] = fallback
+            combined[sibling] = {
+                "$path": os.path.relpath(fallback, output.parent).replace(os.sep, "/")
+            }
+            pending.append((sibling, fallback))
 
-    assembled = {
-        "name": "EGGRUMBLE_V3_CURRENT_AUTHOR_ART_STUDIO_PRIVATE_SOURCE_ONLY",
-        "tree": {
-            "$className": "DataModel",
-            "ServerScriptService": combined,
-        },
-    }
+    # Preserve the entire original Rojo tree: especially StarterPlayerScripts,
+    # mobile LocalScripts and any future authored nodes outside ServerScriptService.
+    assembled = copy.deepcopy(document)
+    assembled["name"] = "EGGRUMBLE_V3_CURRENT_AUTHOR_ART_STUDIO_PRIVATE_SOURCE_ONLY"
+    rebase_tree_paths(assembled["tree"], author_project.parent, output.parent)
+    assembled["tree"]["ServerScriptService"] = combined
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(assembled, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     for name, spec in combined.items():
@@ -101,10 +135,19 @@ def main() -> None:
     parser.add_argument("--author-project", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    author_original = json.loads(args.author_project.read_text(encoding="utf-8"))
     result = compose(args.author_project, args.out)
     print("ART_COMPOSITION_SOURCE_ONLY=PASS")
-    print(f"AUTHOR_MODULE_COUNT={len(result['tree']['ServerScriptService']) - 1 - len(ART_NAMES)}")
+    original_nodes = author_original["tree"]["ServerScriptService"]
+    composed_nodes = result["tree"]["ServerScriptService"]
+    missing = sorted(set(composed_nodes) - set(original_nodes) - set(ART_NAMES))
+    print(f"AUTHOR_MODULE_COUNT={len(composed_nodes) - 1 - len(ART_NAMES)}")
     print(f"ART_SCRIPT_COUNT={len(ART_NAMES)}")
+    print(f"ADDITIONAL_AUTHOR_MODULES_FOUND_NOT_IN_ROJO={','.join(missing) if missing else 'NONE'}")
+    if missing:
+        print("AUTHOR_DIRECT_ROJO_MANIFEST=RED (ask source owner to register missing modules)")
+    else:
+        print("AUTHOR_DIRECT_ROJO_MANIFEST_IMPORTS=PASS")
     print(f"OUTPUT={args.out}")
     print("NATIVE_LUAU_ROJO_STUDIO_ANDROID=NOT_RUN")
 
