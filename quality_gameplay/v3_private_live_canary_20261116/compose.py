@@ -59,6 +59,15 @@ ORIGINAL_CLIENT = {
 GATE_NAME = "EGGRUMBLE_PrivateLiveGate"
 CALL = "RunService:IsStudio()"
 INJECT = 'local PrivateGate=require(game:GetService("ReplicatedStorage"):WaitForChild("EGGRUMBLE_PrivateLiveGate"))'
+WORLD_MARKER='folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace'
+WORLD_WATCH='if not PrivateGate.watchWorld(folder) then return end'
+
+def add_private_world_watch(source: str) -> str:
+    # The original host is the ONLY owner of this arena root. Never hook a
+    # duplicate Game or subscribe globally to all of Workspace.
+    if source.count(WORLD_MARKER) != 1 or WORLD_WATCH in source:
+        raise ValueError("private host anchor moved or already watched")
+    return source.replace(WORLD_MARKER, WORLD_MARKER+"\\n"+WORLD_WATCH, 1)
 assert len(ORIGINAL_SERVER) == 19 and len(ORIGINAL_CLIENT) == 2
 assert sum(GUARDS.values()) == 17
 
@@ -88,6 +97,8 @@ def transform(source: str, name: str) -> tuple[str, int]:
         replacement = "PrivateGate.allowed()"
     patched = source.replace(CALL, replacement)
     patched = patched.replace("--!strict\n", "--!strict\n" + INJECT + "\n", 1)
+    if name == "EGGRUMBLE_LobbyCastleModesPreview.server.luau":
+        patched = add_private_world_watch(patched)
     if CALL in patched or patched.count(replacement) != expected:
         raise ValueError(f"incomplete guard change: {name}")
     return patched, actual
