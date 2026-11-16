@@ -2087,7 +2087,7 @@ jobs:
           assert role_ack["source_count"]==31 and role_ack["other_30_byte_exact"]
           assert role_ack["off_rollback_host_byte_exact"] and role_ack["original_safe_lobby_651_retained"]
           assert role_ack["rojo_source_class_31"]=="31/31" and role_ack["native_luau_31"]=="31/31"
-          assert role_ack["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert role_ack["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_ROLE_ACK_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ8_ROLE_SELECTION_ACK_20261117"] is True
           assert m["source_heads"]["gq646_safe_lobby_original"]=="221be5bcaa6ffe7059271a726946dde46323b0cd"
           assert m["feature_flags"]["GQ646_LOBBY_SAFE_SPAWN_20261117"] is True
