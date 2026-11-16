@@ -32,7 +32,7 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
                       'routeClear(', 'if not routeClear(', 'Router.clear('):
             with self.subTest(token=token):
                 self.assertIn(token, self.router)
-        self.assertIn('Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)', self.bot)
+        self.assertIn('Router.navigate(mode..":"..id,actor,goal,AI_TICK*slow,actors)', self.bot)
         self.assertNotIn('local function steeringStep(', self.bot)
 
     def test_world_egg_tokens_are_not_duplicable(self):
@@ -75,7 +75,7 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
             with self.subTest(role=role):
                 self.assertIn(role+'={name=',self.hero)
         for text in ('EGGRUMBLE_SKILL_','Tool','ToolTip','COOLDOWNS',
-                     'session.swarm.damageFromPlayer(', 'h:TakeDamage(damage)',
+                     'session.swarm.damageFromPlayer(', 'h:TakeDamage(damage*duel)',
                      'owner.heldEggs==0','session.rules.phase~="ACTIVE"',
                      'if tool.Parent~=p.Character then return end',
                      'lineClear(', 'RaycastParams.new()'):
