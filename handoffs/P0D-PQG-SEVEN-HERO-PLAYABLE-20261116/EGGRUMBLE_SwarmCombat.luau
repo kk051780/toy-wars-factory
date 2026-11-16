@@ -3,6 +3,7 @@
 -- Studio-only, server-attributed real Humanoid deaths; NOT production optimized nor tested.
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local Debris=game:GetService("Debris")
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local Swarm={}
 local LIMIT=110
@@ -51,15 +52,41 @@ function Swarm.start(session:any)
  local kills:{[string]:number}={}
  local lastBotHit:{[string]:number}={}
  local total=0
+ local comboById:{[string]:number}={}
+ local lastKillAt:{[string]:number}={}
+ local bestCombo:{[string]:number}={}
  local ended=false
  local function credit(id:string)
   kills[id]=(kills[id] or 0)+1
   total+=1
   local n=kills[id]
+  local now=os.clock()
+  local combo=if now-(lastKillAt[id] or -100)<4 then (comboById[id] or 0)+1 else 1
+  comboById[id]=combo
+  lastKillAt[id]=now
+  bestCombo[id]=math.max(bestCombo[id] or 0,combo)
   local p=Players:GetPlayerByUserId(tonumber(id) or -1)
   if p then
    labelKo(p,n)
    p:SetAttribute("EGGRUMBLE_BattleLevel",math.min(50,1+math.floor(n/25)))
+   p:SetAttribute("EGGRUMBLE_Combo",combo)
+   p:SetAttribute("EGGRUMBLE_BestCombo",bestCombo[id])
+   if combo%25==0 then
+    local character=p.Character
+    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+    if root then
+     -- Light diegetic KO celebration, never a giant permanently blocking mobile HUD.
+     local gui=Instance.new("BillboardGui")
+     gui.Name="EGGRUMBLE_ComboBurst";gui.Size=UDim2.fromOffset(150,45)
+     gui.StudsOffset=Vector3.new(0,4,0);gui.AlwaysOnTop=false;gui.Parent=root
+     local txt=Instance.new("TextLabel")
+     txt.Size=UDim2.fromScale(1,1);txt.BackgroundTransparency=1
+     txt.TextColor3=Color3.fromRGB(255,216,78)
+     txt.TextStrokeTransparency=.15;txt.Font=Enum.Font.GothamBlack
+     txt.TextScaled=true;txt.Text=tostring(combo).." COMBO!"
+     txt.Parent=gui;Debris:AddItem(gui,.95)
+    end
+   end
    p:SetAttribute("EGGRUMBLE_SlashEvolution",if n>=100 then "TEMPEST" elseif n>=40 then "WAVE" else "BASE")
   end
   session.neutralTotal=total
@@ -143,7 +170,12 @@ function Swarm.start(session:any)
    if not character or not root or not humanoid or humanoid.Health<=0 then return 0 end
    -- Splash center is server-generated and stays in reach of the living attacker.
    if (at-root.Position).Magnitude>36 then return 0 end
-   return strike(tostring(player.UserId),at,radius,damage,root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE")
+   -- Survival-like neutral-only momentum: max +12%, NEVER affects human PvP/castle HP.
+   local currentCombo=if os.clock()-(lastKillAt[tostring(player.UserId)] or -100)<4
+    then (comboById[tostring(player.UserId)] or 0) else 0
+   local bonus=if currentCombo>=60 then 1.12 elseif currentCombo>=20 then 1.06 else 1
+   return strike(tostring(player.UserId),at,radius,damage*bonus,
+    root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE")
   end,
   damageFromBot=function(botId:string,at:Vector3):number
    local actor=session.botActors and session.botActors[botId]
