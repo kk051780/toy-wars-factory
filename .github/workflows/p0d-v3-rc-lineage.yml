@@ -1,0 +1,193 @@
+name: P0D EGGRUMBLE V3 source-lineage admission (quality-only)
+
+on:
+  push:
+    branches:
+      - quality/v3-rc-lineage-20261116
+  pull_request:
+    branches:
+      - feature/p0d-pqg-seven-hero-playable-20261116-01
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  author-source-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify independent negative and positive tests
+        run: python -m unittest discover -s quality/v3_rc_lineage -p "test_*.py" -v
+      - name: Fail old author or RC HEAD, altered 21-source inventory
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"quality/v3_rc_lineage")
+          from validate import SCHEMA, check
+          AUTHOR_PIN="fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          RC_PIN="d2f3ed1a47558fdaf07be0181c83c698bdb2ce34"
+          AUTHOR_BRANCH="refs/heads/feature/p0d-pqg-seven-hero-playable-20261116-01"
+          RC_BRANCH="refs/heads/rc/p0d-s1-kids-rc01"
+          def head(ref):
+              result=subprocess.check_output(["git","ls-remote","origin",ref],text=True).strip()
+              if not result or not result.split()[0]:
+                  raise RuntimeError("no current remote HEAD for "+ref)
+              return result.split()[0]
+          path=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116")
+          project=path/"EGGRUMBLE_V3_STUDIO.project.json"
+          changed=subprocess.check_output(
+              ["git","diff","--name-only",AUTHOR_PIN,"HEAD","--",str(path)],text=True
+          ).strip()
+          if changed:
+              print("SOURCE_NO_GO: quality branch must not rewrite canonical author paths",changed)
+              sys.exit(2)
+          provenance={
+              "schema":SCHEMA,"author_sha":AUTHOR_PIN,
+              "candidate_sha":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+              "rc_sha":RC_PIN,"overlays":{}
+          }
+          outcome=check(path,path,project,project,provenance,head(AUTHOR_BRANCH),head(RC_BRANCH))
+          print(json.dumps(outcome,ensure_ascii=False,indent=2))
+          sys.exit(0 if outcome["status"]=="SOURCE_GATE_PASS" else 2)
+          PY
+
+  current26-owner-identity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Read only this independent quality gate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read fixed original #482 all 21 game sources
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Reuse EXISTING quality #484 composer and original spatial fixes
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: quality/eggrumble-v3-spatial-bot-intake-20261116
+          path: _v3_quality
+          persist-credentials: false
+      - name: Reuse original #485 ART and client LOD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Reuse original #487 SCORE and existing MatchResult
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Build latest original 26-source manifest with pre-existing composers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          echo "QUALITY_SOURCE_PIN=$(git -C _v3_quality rev-parse HEAD)"
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_LATEST_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_LATEST_ART.project.json \
+            --out artifacts/EGGRUMBLE_V3_GQ_26.project.json
+      - name: Verify REAL 26-source composite against each owner's exact original bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          head_of () {
+            git ls-remote origin "$1" | awk '{print $1}' | head -n1
+          }
+          AUTHOR="$(head_of refs/heads/feature/p0d-pqg-seven-hero-playable-20261116-01)"
+          QUALITY="$(head_of refs/heads/quality/eggrumble-v3-spatial-bot-intake-20261116)"
+          ART="$(head_of refs/heads/feature/eggrumble-art-silhouette-field-20261116-a01)"
+          SCORE="$(head_of refs/heads/quality/eggrumble-v3-score-only-20261116)"
+          RC="$(head_of refs/heads/rc/p0d-s1-kids-rc01)"
+          test -n "$AUTHOR" && test -n "$QUALITY" && test -n "$ART" && test -n "$SCORE" && test -n "$RC"
+          # Read-only fetch: prove the pinned quality source and newest quality
+          # source are identical even if parallel QA-only commits advanced HEAD.
+          git -C _v3_quality fetch --quiet --no-tags --depth=1 origin "$QUALITY"
+          python3 quality/v3_rc_lineage/verify_current26.py \
+            --workspace . --author _v3_original --quality _v3_quality \
+            --art _v3_art --score _v3_score \
+            --candidate-project artifacts/EGGRUMBLE_V3_GQ_26.project.json \
+            --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 \
+            --quality-head "$(git -C _v3_quality rev-parse HEAD)" \
+            --art-head e86702c906bdf9c71adcdf769ae48a206b26607b \
+            --score-head 438a406ccfda5563053d783d7561797ccd364361 \
+            --rc-head d2f3ed1a47558fdaf07be0181c83c698bdb2ce34 \
+            --live-author "$AUTHOR" --live-quality "$QUALITY" \
+            --live-art "$ART" --live-score "$SCORE" --live-rc "$RC" \
+            --out artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json
+      - name: Reuse existing #490 independent live activation and current26 drift source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a91f5550a5ebe86abc62e0f06a7e43fbc706c
+          path: _gq490_existing
+          persist-credentials: false
+      - name: Compose real owner byte provenance with reused #490 eight-domain production gate
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 _gq490_existing/rc_source_drift_gate/check_live_intake.py \
+            --out artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json
+          python3 quality/v3_rc_lineage/admission_receipt.py \
+            --source artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json \
+            --composer artifacts/SOURCE_RECEIPT.json \
+            --live artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json \
+            --out artifacts/GQ_RC_INTAKE_RECEIPT.json
+          # A production Studio-only blocker must remain visible, but it is
+          # NOT a reason to discard a verified private SOURCE-only candidate.
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("artifacts/GQ_RC_INTAKE_RECEIPT.json")
+          receipt=json.loads(p.read_text())
+          assert receipt["status"] in (
+              "SOURCE_READY_PRODUCTION_BLOCKED",
+              "SOURCE_READY_PRODUCTION_NOT_VERIFIED",
+              "SOURCE_COMPOSED_AUTHOR_CI_PENDING",
+          ), receipt
+          assert not receipt["owner_accepted"]
+          assert receipt["official_rc_integration"] == "NOT_INTEGRATED_OR_UNVERIFIED"
+          print("P0D_GQ_RC_26_SOURCE_REVIEW_GATE_PASS_PRODUCT_NOT_APPROVED",
+                receipt["status"])
+          PY
+      - name: Upload SOURCE ONLY receipt even when current heads move
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-26-OWNER-LINEAGE-NO-OFFICIAL-RC
+          path: |
+            artifacts/GQ_CURRENT26_OWNER_BYTE_LINEAGE.json
+            artifacts/SOURCE_RECEIPT.json
+            artifacts/GQ_EXISTING_490_LIVE_RUNTIME.json
+            artifacts/GQ_RC_INTAKE_RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 3
