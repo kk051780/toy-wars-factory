@@ -1,0 +1,60 @@
+name: P0D GQ V3 lobby TEAM/BR queue ETA one-Host source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_lobby_queue_visibility_20261117/**'
+      - '.github/workflows/p0d-gq-v3-lobby-queue-eta.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-lobby-host-queue-eta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Original #482 Host authority (immutable, do not modify)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original482
+          persist-credentials: false
+      - name: Pinned native Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Original Host nonoverlap, cancel, live board and exact rollback tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/v3_lobby_queue_visibility_20261117 -p 'test_*.py' -v
+      - name: Select one existing Host without new script or GUI
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_lobby_queue_visibility_20261117/select_feedback.py \
+            --source _original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out-dir artifacts/gq_lobby_queue_eta
+      - name: Compile original and selected existing server Host in actual native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq_lobby_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_lobby_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq_lobby_luau/luau-compile --text \
+            _original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau >/dev/null
+          /tmp/gq_lobby_luau/luau-compile --text \
+            artifacts/gq_lobby_queue_eta/EGGRUMBLE_Host_QUEUE_ETA.server.luau >/dev/null
+      - name: Upload host overlay and exact receipt (source-only; no formal RC adoption)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-V3-LOBBY-QUEUE-ETA-SOURCE-ONLY
+          path: |
+            artifacts/gq_lobby_queue_eta/EGGRUMBLE_Host_QUEUE_ETA.server.luau
+            artifacts/gq_lobby_queue_eta/QUEUE_ETA_RECEIPT.json
+          if-no-files-found: error
