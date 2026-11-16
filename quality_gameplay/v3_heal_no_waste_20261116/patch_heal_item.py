@@ -18,11 +18,11 @@ HELPER = (
     + HELPER_END
 )
 CALL = (
-    "    -- Full-HP HEAL has no effect: preserve the 35-second shared pickup and cooldown.\n"
-    "    if not healUseful(kind,hum.Health,hum.MaxHealth) then return end\n"
+    "   -- Full-HP HEAL has no effect: preserve the 35-second shared pickup and cooldown.\n"
+    "   if not healUseful(kind,hum.Health,hum.MaxHealth) then return end\n"
 )
 HELPER_ANCHOR = "function Items.start(session:any,positions:{Vector3}):()\n"
-CALL_ANCHOR = "    if (root.Position-part.Position).Magnitude>10 then return end\n"
+CALL_ANCHOR = "   if (root.Position-part.Position).Magnitude>10 then return end\n"
 
 def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
@@ -31,7 +31,7 @@ def patch(original: str) -> str:
     assert original.count(HELPER_ANCHOR)==1, "source author changed Items.start"
     assert original.count(CALL_ANCHOR)==1, "item claim point moved; stop and rebase"
     assert "healUseful(" not in original, "feature already exists; avoid duplicate"
-    assert original.count("    consumed[id]=true;lastUse[key]=now") == 1
+    assert original.count("   consumed[id]=true;lastUse[key]=now") == 1
     assert 'if kind~="HEAL" and carryingEnemyEggs(player,session) then return end' in original
     assert 'interactionGuard.allow(player,part,"拾う",part.Name)' in original
     assert "if not matchActive() or player.Character~=buffCharacter then return end" in original
