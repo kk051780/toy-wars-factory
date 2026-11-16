@@ -60,9 +60,7 @@ def compose(base_project, base_receipt, neutral_project, neutral_receipt, out):
        {"EGGRUMBLE_CastleDefenseLive","EGGRUMBLE_CastleDefensePolicy",
         "EGGRUMBLE_GQ_ObjectiveCompass","EGGRUMBLE_RealHitAudio",
         "EGGRUMBLE_CombatFXBudget","EGGRUMBLE_CombatFXClarity"}}:
-        # The 26 original manifest has one host, different private castle hook.
-        # Validate the actual shared 26 labels independently below instead.
-        pass
+        raise ValueError("neutral author manifest must cover exactly the shared original 26 scripts")
     if sha(originals[SWARM])!=nrec.get("original_swarm_sha256"):
         raise ValueError("baseline Swarm drift from source-authored #501")
     if sha(dual[SWARM])!=nrec.get("dual_swarm_sha256"):
