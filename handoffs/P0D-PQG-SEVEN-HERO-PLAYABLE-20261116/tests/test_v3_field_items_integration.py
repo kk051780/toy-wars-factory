@@ -16,7 +16,7 @@ def missing(lobby=LOBBY,items=ITEMS,project=PROJECT):
     checks={
         "one V3 module require":lobby.count('WaitForChild("EGGRUMBLE_FieldItemPickups")')==1,
         "one item game start":lobby.count("FieldItems.start(session,itemPositions)")==1,
-        "rules active before pickup":lobby.index("Rules.start(session.rules)") < lobby.index("FieldItems.start(session,itemPositions)"),
+        "rules active before pickup":lobby.find("Rules.start(session.rules)")>=0 and lobby.find("Rules.start(session.rules)") < lobby.find("FieldItems.start(session,itemPositions)"),
         "no second lobby host":'EGGRUMBLE_FieldItemPreview.server.luau' not in project,
         "Rojo source exact":tree.get(req,{}).get("$path")=="EGGRUMBLE_FieldItemPickups.luau",
         "twelve item orbs":'for lane=1,3 do' in lobby and 'for slot=1,4 do' in lobby,
@@ -52,7 +52,9 @@ class TestRealV3ItemIntegration(unittest.TestCase):
         p["tree"]["ServerScriptService"].pop("EGGRUMBLE_FieldItemPickups")
         self.assertIn("Rojo source exact",missing(project=json.dumps(p)))
     def test_extra_item_preview_host(self):
-        self.assertIn("no second lobby host",missing(project=PROJECT+'EGGRUMBLE_FieldItemPreview.server.luau'))
+        p=json.loads(PROJECT)
+        p["tree"]["ServerScriptService"]["EGGRUMBLE_FieldItemPreview"]={"$path":"EGGRUMBLE_FieldItemPreview.server.luau"}
+        self.assertIn("no second lobby host",missing(project=json.dumps(p)))
     def test_dual_pickup(self):
         self.assertIn("single consumed token",missing(items=ITEMS.replace("consumed[id]=true;lastUse[key]=now","-- no token")))
     def test_unauthorized_potion(self):
