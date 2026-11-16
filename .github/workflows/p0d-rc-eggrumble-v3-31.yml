@@ -576,7 +576,8 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C _gq555_original rev-parse HEAD)" = cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d
-          python3 -B -m unittest discover -s _gq555_original/quality_gameplay/v3_bot_nearest_human_20261116 -p 'test_patch.py' -v
+          GQ_ORIGINAL_AI=_v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau \
+            python3 -B -m unittest discover -s _gq555_original/quality_gameplay/v3_bot_nearest_human_20261116 -p 'test_patch.py' -v
           python3 -B rc_fastlane/quality_gq555_rc31/select_original_bot_nearest.py prepare \
             --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
             --out artifacts/gq539_official_select/GQ555_FINAL_SELECTED31.project.json \
