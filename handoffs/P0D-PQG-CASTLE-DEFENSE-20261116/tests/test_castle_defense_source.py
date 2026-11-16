@@ -12,7 +12,7 @@ NATIVE = (ROOT / "tests" / "EGGRUMBLE_CastleDefensePolicy.spec.luau").read_text(
 
 class DefenseSourceContract(unittest.TestCase):
     def test_three_real_server_mechanics(self):
-        for term in ('kind=="TURRET"', 'kind=="TRAP"', 'kind=="SENSOR"'):
+        for term in ('for _,kind in ipairs(Policy.ORDER)', 'kind=="TRAP"', 'kind=="SENSOR"'):
             self.assertIn(term, RUNTIME)
         self.assertIn("closest.hum:TakeDamage", RUNTIME)
         self.assertIn('p:SetAttribute("EGGRUMBLE_StealthUntil",now)', RUNTIME)
