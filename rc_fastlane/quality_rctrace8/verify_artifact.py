@@ -101,6 +101,13 @@ FEATURE_EVIDENCE = {
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
  "NEUTRAL_DEATH_KO_CURRENT_OWNER_508": (
   "EGGRUMBLE_SwarmCombat", "and KoFence.mayCredit(session,id,m,all) then"),
+ "AI_TAKEOVER_TERMINAL_FENCE_580": (
+  "EGGRUMBLE_BotActors",
+  'if session.rules.phase~="ACTIVE" or not folder.Parent then return false end'),
+ "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520": (
+  "EGGRUMBLE_LobbyCastleModesPreview", (
+   "CentralRidgeRight",
+   "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)")),
 
 }
 
@@ -174,9 +181,10 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
                 require(anchor in scripts[name][1],"DOMAIN_"+domain+"_MISSING_"+name+"_"+anchor[:24])
         by_domain[domain]="SOURCE_ANCHOR_PRESENT_NOT_STUDIO_VERIFIED"
     flags=manifest.get("feature_flags",{})
-    for flag,(script,anchor) in FEATURE_EVIDENCE.items():
+    for flag,(script,anchors) in FEATURE_EVIDENCE.items():
         require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
-        require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+        for anchor in ((anchors,) if isinstance(anchors,str) else anchors):
+            require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
