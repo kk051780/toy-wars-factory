@@ -1275,6 +1275,24 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C _gq525_original_existing_author rev-parse HEAD)" = 253aa73530eea5c3954c07b546b67e49292c4639
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          lock=json.loads(Path("rc_fastlane/quality_item525_rc31/SOURCE_LOCK.json").read_text(encoding="utf-8"))
+          assert lock["schema"]=="P0D_GQ525_RC31_SOURCE_LOCK_V1"
+          assert lock["feature_id"]=="GQ_V3_ITEM_MODE_OWNERSHIP_20261116"
+          assert lock["original_existing_author"]["head_sha"]=="253aa73530eea5c3954c07b546b67e49292c4639"
+          assert lock["expected_runtime_script_count"]==31
+          assert lock["expected_unchanged_runtime_scripts"]==29
+          assert set(lock["source_select_target"])=={
+           "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+           "ServerScriptService/EGGRUMBLE_FieldItemPickups",
+          }
+          assert lock["rollback"].startswith("Exclude ONLY original #525")
+          assert lock["production_release_authorized"] is False
+          assert lock["official_rc_adopted"] is False
+          print("GQ525_RC31_MACHINE_SOURCE_LOCK_2_TARGETS_31_PRESERVED_PASS")
+          PY
           PYTHONPATH=_gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116 \
             python3 -B -m unittest discover -s _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116 -p 'test_patch_sources.py' -v
           python3 -B rc_fastlane/quality_item525_rc31/select_existing_author525.py prepare \
