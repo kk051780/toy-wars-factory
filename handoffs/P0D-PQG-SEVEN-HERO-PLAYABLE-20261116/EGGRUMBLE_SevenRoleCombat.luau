@@ -56,7 +56,20 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
    and (er.Position-center).Magnitude<=range
    and (er.Position-root.Position).Magnitude<=36
    and count<5 and lineClear(root.Position+Vector3.new(0,1.5,0),er.Position,char,enemy) then
-   h:TakeDamage(damage)
+   -- War God has a deliberate single-target duelist edge against a lone opponent.
+   local loneEnemy=true
+   for otherId,other in pairs(session.botActors or {}) do
+    if otherId~=id and other.PrimaryPart then
+     local otherState=session.rules.castles[otherId]
+     if otherState and otherState.alive
+      and (session.mode~="TEAM" or otherState.team~=state.team)
+      and (other.PrimaryPart.Position-root.Position).Magnitude<22 then
+      loneEnemy=false;break
+     end
+    end
+   end
+   local duel=if player:GetAttribute("EGGRUMBLE_Role")=="WARRIOR" and loneEnemy then 1.25 else 1
+   h:TakeDamage(damage*duel)
    count+=1
   end
  end
@@ -136,7 +149,7 @@ local function execute(session:any,p:Player,role:string,slot:string)
   elseif slot=="B" then
    for i=1,3 do
     task.delay((i-1)*.1,function()
-     if session.rules.phase=="ACTIVE" and owner.alive and root.Parent then
+     if session.rules.phase=="ACTIVE" and owner.alive and p.Character==char and h.Health>0 and root.Parent then
       blast(14+i*6,8,23)
      end
     end)
