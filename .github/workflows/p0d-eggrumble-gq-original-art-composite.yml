@@ -1,0 +1,189 @@
+name: P0D GQ V3 Current Combat and Existing ART Composite Place
+on:
+  push:
+    branches:
+      - 'quality/eggrumble-v3-spatial-bot-intake-20261116'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  private-gq-art-full-source-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Read existing isolated quality game source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read immutable existing ART author source without merging
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: ca7f75d8ac1fb321c5414cf8f73129062428bfa0
+          path: _p0d_art_author_fixed
+          persist-credentials: false
+
+      - name: Check ART provenance and original artist's own regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_art_author_fixed rev-parse HEAD)" = ca7f75d8ac1fb321c5414cf8f73129062428bfa0
+          python3 -m unittest discover -v \
+            -s _p0d_art_author_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests \
+            -p "test_*.py"
+
+      - name: Reuse art author's existing composer on quality branch without copying game or art sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _p0d_art_author_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART.project.json
+
+      - name: Build pinned native Luau parser for all original 19 game and art sources
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_gq_luau_fixed
+          persist-credentials: false
+
+      - name: Native-compile every exact mapped game, client and art source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_gq_luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_gq_luau_fixed -B /tmp/p0d-gq-art-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-gq-art-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART.project.json")
+          manifest=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          def paths(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (project.parent/node["$path"]).resolve()
+                  else:
+                      for key,v in node.items():
+                          if not key.startswith("$"): yield from paths(v)
+          sources=list(paths(manifest))
+          assert len(sources)==19,("expected 16 game + 3 existing art",len(sources))
+          for source in sources:
+              subprocess.run(["/tmp/p0d-gq-art-native/luau-compile","--text",str(source)],
+                  check=True,stdout=subprocess.DEVNULL)
+          print("GQ_AND_ORIGINAL_ART_NATIVE_LUAU_19_OF_19_PASS",len(sources))
+          PY
+
+      - name: Download checksum-locked Rojo 7.7.1 and build unpublished 19-source private Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_gq_art_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_gq_art_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_gq_art_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1,names
+              p=Path("/tmp/p0d_gq_art_rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/p0d_gq_art_rojo build artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART.project.json \
+            -o artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART_PRIVATE.rbxlx
+
+      - name: Independently verify all 19 in-place original source bytes and classes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          original=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json")
+          generated=Path("artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART.project.json")
+          art=Path("_p0d_art_author_fixed/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116").resolve()
+          place=Path("artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART_PRIVATE.rbxlx")
+          base=json.loads(original.read_text(encoding="utf-8"))["tree"]
+          joined=json.loads(generated.read_text(encoding="utf-8"))["tree"]
+          art_names={"EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_FlagshipFieldArt","EGGRUMBLE_EncounterReadabilityArt"}
+          def sources(node,project_dir,prefix=()):
+              out={}
+              for name,child in node.items():
+                  if name.startswith("$"): continue
+                  if not isinstance(child,dict): continue
+                  key=prefix+(name,)
+                  if "$path" in child:
+                      p=(project_dir/child["$path"]).resolve(strict=True)
+                      cls=("Script" if p.name.endswith(".server.luau") else
+                           "LocalScript" if p.name.endswith(".client.luau") else "ModuleScript")
+                      out[key]=(p,cls)
+                  else: out.update(sources(child,project_dir,key))
+              return out
+          before=sources(base,original.parent)
+          after=sources(joined,generated.parent)
+          assert len(before)==16,("GQ source changed since previous 16-script gate",len(before))
+          assert len(after)==19,("missing game source or original art",len(after))
+          assert set(before).issubset(after)
+          for name,src in before.items():
+              assert after[name]==src,("game source or service changed",name,src,after.get(name))
+          added=set(after)-set(before)
+          assert {x[-1] for x in added}==art_names,("unexpected overlay",added)
+          assert all(len(x)==2 and x[0]=="ServerScriptService" for x in added)
+          for key in added:
+              expected=art/(key[-1]+".server.luau")
+              assert after[key]==(expected,"Script"),("art author source not original",key)
+          assert before[("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_CombatFeel")][1]=="LocalScript"
+          assert sum(1 for key,(p,cls) in before.items() if cls=="Script")==1,("extra gameplay host",before)
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              cls=item.attrib.get("class")
+              if cls not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              if name in actual:raise AssertionError(("duplicated embedded Script",name))
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,("missing source",name)
+              actual[name]=(cls,source.replace("\r\n","\n"))
+          assert len(actual)==19,("unexpected active scripts",set(actual))
+          for key,(path,cls) in after.items():
+              name=key[-1]
+              assert name in actual,("Script missing in built Place",name)
+              gotCls,code=actual[name]
+              assert gotCls==cls,("wrong Roblox script class",name,gotCls,cls)
+              assert code==path.read_text(encoding="utf-8").replace("\r\n","\n"),("source mismatch",name)
+          digest=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={
+              "quality_head":"$GITHUB_SHA",
+              "original_art_author_head":"ca7f75d8ac1fb321c5414cf8f73129062428bfa0",
+              "art_source_names":sorted(art_names),
+              "original_game_script_count":16,"art_scripts":3,
+              "composed_scripts":len(actual),
+              "place_bytes":place.stat().st_size,"place_sha256":digest,
+              "studio_play":"NOT_RUN","android":"NOT_RUN","owner_acceptance":False,
+              "official_rc_integrated":False,"published":False
+          }
+          receipt["quality_head"]=__import__("os").environ["GITHUB_SHA"]
+          Path("artifacts/QUALITY_AND_ART_SOURCE_ONLY_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8")
+          print("EGGRUMBLE_GQ_WITH_ORIGINAL_ART_SOURCE_EXACT_PASS",len(actual))
+          print("PRIVATE_COMBINED_ART_PLACE_BYTES",place.stat().st_size,"SHA256",digest)
+          print("SOURCE_QA_ONLY=PASS STUDIO_ANDROID_ART_FUN_OWNER_PRODUCT=NO_GO")
+          PY
+
+      - name: Upload exact private combined game and art Place plus receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-V3-GQ-WITH-ORIGINAL-ART-19-SOURCE-NOPUBLISH
+          path: |
+            artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_V3_GQ_PLUS_ORIGINAL_ART.project.json
+            artifacts/QUALITY_AND_ART_SOURCE_ONLY_RECEIPT.json
+          retention-days: 7
