@@ -90,10 +90,18 @@ class VisualLayersSourceContract(unittest.TestCase):
             self.assertEqual((out.parent/node["EGGRUMBLE_CombatFeel"]["$path"]).resolve(),
                              combat.resolve())
             self.assertEqual(author.read_text(encoding="utf-8"),before)
-            # Repeated composition of already augmented output must never
-            # silently install a second camera-distance LocalScript.
+            # Author's original manifest might independently install our LOD.
+            # A01 refuses any duplicated client node; it never double-registers.
+            duplicate=original/"v3_duplicate_client.project.json"
+            duplicate_tree=json.loads(before)
+            local_source=original/"EGGRUMBLE_ArtDistanceLOD.client.luau"
+            local_source.write_text("return {}\\n",encoding="utf-8")
+            duplicate_tree["tree"]["StarterPlayer"]["StarterPlayerScripts"][
+                "EGGRUMBLE_ArtDistanceLOD"
+            ]={"$path":local_source.name}
+            duplicate.write_text(json.dumps(duplicate_tree),encoding="utf-8")
             with self.assertRaisesRegex(ValueError,"already includes A01 client LOD"):
-                module.compose(out,root/"twice.project.json",ROOT)
+                module.compose(duplicate,root/"twice.project.json",ROOT)
 
     def test_studio_private_only(self):
         for src in (HERO, FIELD, ENCOUNTERS):
