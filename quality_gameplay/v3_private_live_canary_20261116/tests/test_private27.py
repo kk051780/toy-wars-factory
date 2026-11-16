@@ -26,13 +26,15 @@ class Private27ContractTests(unittest.TestCase):
         source="--!strict\nlocal RunService=game:GetService('RunService')\nif not RunService:IsStudio() then return end\n"
         server,changed=M.overlay(source,"EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_HeroSilhouetteArt.server.luau")
         client,n=M.overlay(source,"EGGRUMBLE_ArtDistanceLOD","EGGRUMBLE_ArtDistanceLOD.client.luau")
-        host_source=source+M.compose.WORLD_MARKER+"\n"
+        host_source=source+M.compose.WORLD_MARKER+"\n"+M.compose.BOOT_DONE_MARKER+"\n"
         host,_=M.overlay(host_source,"EGGRUMBLE_LobbyCastleModesPreview","EGGRUMBLE_LobbyCastleModesPreview.server.luau")
         self.assertEqual(changed,1)
         self.assertEqual(n,1)
         self.assertIn("PrivateGate.allowed()",server)
         self.assertIn("PrivateGate.waitAllowed(8)",client)
-        self.assertIn("PrivateGate.advertiseServerReady()",host)
+        self.assertIn(M.compose.BOOT_READY,host)
+        self.assertIn("if not PrivateGate.allowed() then return end",host)
+        self.assertLess(host.index(M.compose.WORLD_WATCH),host.index(M.compose.BOOT_READY))
         self.assertEqual(host.count(M.compose.WORLD_WATCH),1)
         self.assertIn("PrivateGate.watchWorld(folder)",host)
         for out in (server,client,host):
