@@ -1,0 +1,45 @@
+name: EGGRUMBLE GQ V3 seven-role client FX budget SOURCE gate
+on:
+  push:
+    branches:
+      - quality/gq-v3-fx-budget-20261116
+  pull_request:
+    paths:
+      - 'handoffs/EGGRUMBLE-GQ-FX-BUDGET-20261116/**'
+      - '.github/workflows/p0d-gq-v3-fx-budget.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python structural and provenance tests
+        run: python3 -B -m unittest discover -s handoffs/EGGRUMBLE-GQ-FX-BUDGET-20261116/tests -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_pinned_luau
+          persist-credentials: false
+      - name: Compile pinned native Luau and exercise policy
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_pinned_luau -B /tmp/luau-gq-fx -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/luau-gq-fx --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=handoffs/EGGRUMBLE-GQ-FX-BUDGET-20261116
+          /tmp/luau-gq-fx/luau-compile "$root/client/EGGRUMBLE_FXBudgetRules.luau" >/dev/null
+          /tmp/luau-gq-fx/luau-compile "$root/client/EGGRUMBLE_ClientFXBudget.client.luau" >/dev/null
+          /tmp/luau-gq-fx/luau-compile "$root/tests/EGGRUMBLE_FXBudgetRules.spec.luau" >/dev/null
+          mkdir -p /tmp/gqfx/tests
+          cp "$root/client/EGGRUMBLE_FXBudgetRules.luau" /tmp/gqfx/
+          cp "$root/tests/EGGRUMBLE_FXBudgetRules.spec.luau" /tmp/gqfx/tests/
+          cd /tmp/gqfx/tests
+          /tmp/luau-gq-fx/luau EGGRUMBLE_FXBudgetRules.spec.luau | tee /tmp/luau-gq-fx-tests.log
+          grep -q EGGRUMBLE_FX_BUDGET_NATIVE_PASS /tmp/luau-gq-fx-tests.log
+          echo SOURCE_NATIVE_ONLY_NOT_RC_NOT_STUDIO_NOT_ANDROID
