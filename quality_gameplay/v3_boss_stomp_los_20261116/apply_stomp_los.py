@@ -39,9 +39,9 @@ def blob_sha(raw:bytes)->str:
 
 
 def patch(raw:str)->str:
+    assert "stompVisible" not in raw, "already patched: do not duplicate"
     assert raw.count(HELPER_ANCHOR)==1, "original boss spawn moved; source drift"
     assert raw.count(HIT_ANCHOR)==1, "stomp attack moved; source drift"
-    assert "stompVisible" not in raw, "already patched: do not duplicate"
     assert raw.count("h:TakeDamage(28)")==1, "multiple boss stomp authorities"
     assert 'if not active or not sessionActive() or cooldown then continue end' in raw
     result=raw.replace(HELPER_ANCHOR,HELPER+HELPER_ANCHOR,1)
