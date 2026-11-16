@@ -368,6 +368,42 @@ step()
 eq("full BR arena destroy removes all labels",countLiveAll(),0)
 eq("no tasks left in full roster scenario",#__threads,0)
 
+
+-- Independent server-only optional safety switch. Use the original V3 16-seat
+-- arenas, not a client Remote, and never modify heldEggs or role/damage state.
+local killTeam=createFullMode("TEAM",903)
+local killBR=createFullMode("BATTLE_ROYALE",904)
+killTeam.carrierWorldTellEnabled=false
+eq("flag off before start prevents TEAM module",NativeTell.start(killTeam),false)
+eq("no team spawned marker job while disabled",killTeam._carrierWorldTellStarted,nil)
+eq("BR unaffected by TEAM disabled state",NativeTell.start(killBR),true)
+step()
+eq("BR all 16 badges while TEAM off",countLiveAll(),16)
+killTeam.carrierWorldTellEnabled=true
+eq("explicit team re-enable starts one isolated loop",NativeTell.start(killTeam),true)
+step()
+eq("BR+TEAM full 32 badges restored",countLiveAll(),32)
+killTeam.carrierWorldTellEnabled=false
+step()
+eq("TEAM flag off cleans its own 16 badges",countLiveAll(),16)
+eq("TEAM flag off frees loop",killTeam._carrierWorldTellStarted,nil)
+eq("TEAM flag off does not modify real held eggs",killTeam.rules.castles["903"].heldEggs,1)
+eq("BR still fully active after TEAM kill",killBR._carrierWorldTellStarted,true)
+eq("false flag rejects restart",NativeTell.start(killTeam),false)
+killTeam.carrierWorldTellEnabled=true
+eq("true flag permits explicit new start",NativeTell.start(killTeam),true)
+step()
+eq("re-enabled TEAM returns to 32 visible carriers",countLiveAll(),32)
+killBR.carrierWorldTellEnabled=false
+step()
+eq("BR flag off leaves TEAM 16 only",countLiveAll(),16)
+eq("BR stopped frees only BR task",killBR._carrierWorldTellStarted,nil)
+eq("BR flag off did not drain carried egg",killBR.rules.castles["904"].heldEggs,1)
+killTeam.world.Parent=nil
+step()
+eq("TEAM world destroyed cleans final 16",countLiveAll(),0)
+eq("all optional worker loops stopped",#__threads,0)
+
 print("NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS checks="..tostring(checks))
 '''
 
