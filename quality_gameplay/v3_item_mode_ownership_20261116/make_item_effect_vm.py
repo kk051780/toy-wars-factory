@@ -98,6 +98,9 @@ getPrompt(throwingHeal).trigger(human)
 check(throwingHeal.CanQuery and humanoid.Health==20,
  "throwing server MODE auth fails closed without consuming ITEM")
 throwing.itemStop()
+-- Preserve original #489 per-player item cooldown across TEAM and BR.
+-- A valid cross-mode pickup must wait for that ORIGINAL cooldown, not bypass it.
+runTo(now+40)
 -- Verify BR is actually viable: same actor and world interaction after TEAM.
 local brLive=makeSession("BATTLE_ROYALE")
 FieldItems.start(brLive,{Vector3.new(0,0,0)})
