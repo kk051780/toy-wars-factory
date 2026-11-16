@@ -16,6 +16,7 @@ import re
 import urllib.request
 from pathlib import Path
 from runtime_activation import REQUIRED_RUNTIME_SOURCES, evaluate_runtime_activation
+from full26_runtime import select_all26_runtime_sources, inspect_full26_runtime
 from urllib.parse import quote
 
 REPO = "kk051780/toy-wars-factory"
@@ -366,6 +367,10 @@ def live_audit() -> dict:
     report["runtime_activation"]["effective_26_source_selection"] = selected
     report["runtime_activation"]["composed_host_byte_identity"] = (
         "NOT_ATTESTED_HERE_EXISTING_491_OWNS_SOURCE_PROVENANCE")
+    all_sources, origins = select_all26_runtime_sources(
+        prs, author_project, composer, project_nodes,
+        select_current26_runtime_sources, github_file)
+    report["full26_runtime_activation"] = inspect_full26_runtime(all_sources, origins)
     report["product_go"] = False
     return report
 
