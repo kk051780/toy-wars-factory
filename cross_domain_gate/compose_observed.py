@@ -18,16 +18,18 @@ START_INJECT='''  -- Optional GQ observer: report first fault, changed fault set
   -- Never alter the session. Deduplicate recurrent warnings for low-end devices.
   task.spawn(function()
    local lastSignature:string?=nil
+   local lastSnapshot:any?=nil
    while sessions[mode]==session and session.rules.phase=="ACTIVE" do
     task.wait(5)
     if sessions[mode]==session and session.rules.phase=="ACTIVE" then
-     local ok,result=pcall(IntegrityObserver.inspect,session,Rules)
+     local ok,result,nextSnapshot=pcall(IntegrityObserver.inspectAndTrack,session,Rules,lastSnapshot)
      if not ok then
       if lastSignature~="OBSERVER_SCRIPT_ERROR" then
        warn("[EGGRUMBLE GQ OBSERVER] SCRIPT_ERROR")
       end
       lastSignature="OBSERVER_SCRIPT_ERROR"
      else
+      lastSnapshot=nextSnapshot
       local current,emit,recovered=IntegrityObserver.warningDelta(lastSignature,result)
       lastSignature=current
       if emit then
