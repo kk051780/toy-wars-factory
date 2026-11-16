@@ -1775,7 +1775,7 @@ jobs:
           assert bot527["one_changed_existing_script"]=="EGGRUMBLE_BotActors"
           assert bot527["other_30_scripts_byte_exact"] and bot527["off_original_bot_byte_exact"]
           assert bot527["rojo_source_class_exact"]=="31/31" and bot527["pure_author_policy_inlined_in_bot"]
-          assert bot527["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bot527["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
           assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
