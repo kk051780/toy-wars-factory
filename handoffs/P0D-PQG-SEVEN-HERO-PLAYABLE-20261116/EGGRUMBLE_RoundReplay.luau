@@ -36,6 +36,26 @@ function Replay.abandonIfEmpty(session:any,joined:{[number]:string},closeRound:(
  return true
 end
 
+-- The same small lobby gate cancels its own waiting queue; the opposite gate
+-- switches to another mode. No new HUD, remote or secondary lobby.
+-- Epoch increments only if the last waiting human leaves; stale countdowns
+-- may never auto-start a completely new queue ahead of its own 12s delay.
+function Replay.leaveWaitingQueue(mode:string,p:Player,queues:{[string]:{Player}},
+ joined:{[number]:string},queueEpoch:{[string]:number},sessions:{[string]:any}):boolean
+ assert(RunService:IsStudio(),"Studio preview only")
+ if sessions[mode] or joined[p.UserId]~=mode then return false end
+ local q=queues[mode]
+ if not q then return false end
+ local idx=table.find(q,p)
+ if not idx then return false end
+ table.remove(q,idx)
+ joined[p.UserId]=nil
+ if #q==0 then
+  queueEpoch[mode]=(queueEpoch[mode] or 0)+1
+ end
+ return true
+end
+
 function Replay.resetHuman(p:Player,returnTo:Vector3):()
  if p.Parent~=Players then return end
  p:SetAttribute("EGGRUMBLE_QueuedMode",nil)
