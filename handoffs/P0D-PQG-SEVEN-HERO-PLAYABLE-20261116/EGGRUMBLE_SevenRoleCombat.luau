@@ -7,6 +7,7 @@ local Debris=game:GetService("Debris")
 local CombatBalance=require(script.Parent:WaitForChild("EGGRUMBLE_CombatBalance"))
 local SkillFX=require(script.Parent:WaitForChild("EGGRUMBLE_SkillFX"))
 local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
+local WeaponSilhouettes=require(script.Parent:WaitForChild("EGGRUMBLE_WeaponSilhouettes"))
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local HeroCombat={}
 local ORDER={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
@@ -352,6 +353,7 @@ function HeroCombat.equip(session:any,p:Player,role:string):()
  local current=p.Character
  if not current then return end
  p:SetAttribute("EGGRUMBLE_Role",role)
+ WeaponSilhouettes.attach(p,role)
  for _,container in ipairs({backpack,current}) do
   for _,instance in ipairs(container:GetChildren()) do
    if instance:IsA("Tool") and string.sub(instance.Name,1,16)=="EGGRUMBLE_SKILL_" then instance:Destroy() end
@@ -375,6 +377,7 @@ end
 function HeroCombat.clear(p:Player)
  lastByPlayer[p.UserId]=nil
  ImpactFeedback.clear(p)
+ WeaponSilhouettes.clear(p)
  for _,container in ipairs({p:FindFirstChildOfClass("Backpack"),p.Character}) do
   if container then
    for _,item in ipairs(container:GetChildren()) do
