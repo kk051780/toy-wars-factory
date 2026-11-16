@@ -1,4 +1,4 @@
-name: P0D GQ #516 status #524 warp #518 boss #520 #523 field in one31
+name: P0D GQ 5 original fixes 31-source + 32 rollback combinations
 on:
   push:
     branches:
@@ -536,6 +536,68 @@ jobs:
           python3 -B quality_gameplay/boss_los_30source_intake_20261116/combine_status_warp.py verify \
             --project artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json \
             --place artifacts/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31_NOT_RC.rbxlx
+      - name: All 32 original-author five-feature ON OFF rollback states (no new game Lua)
+        shell: bash
+        run: |
+          set -euo pipefail
+          original_status=_status_original/quality_gameplay/v3_status_tick_fence_20261116
+          original_warp=_warp_original/quality_gameplay/v3_safe_warp_landing_20261116
+          original_ridge=_ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116
+          original_egg=_egg_original/quality_gameplay/v3_field_egg_clearance_20261116
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/rollback_matrix.py prepare \
+            --original-project artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --current-project artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json \
+            --current-receipt artifacts/GQ521_STATUS_WARP31/GQ521_516_524_COMBINED31_RECEIPT.json \
+            --owner-status "$original_status/EGGRUMBLE_SevenRoleCombat.patched.luau" \
+            --owner-helper "$original_status/EGGRUMBLE_StatusTickFence.luau" \
+            --ridge-patch "$original_ridge/patch_ridge.py" \
+            --egg-patch "$original_egg/patch_field_eggs.py" \
+            --warp-patch "$original_warp/patch_safe_warp.py" \
+            --outdir artifacts/GQ521_ROLLBACK_MATRIX
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          path=Path("artifacts/GQ521_ROLLBACK_MATRIX/MATRIX_RECEIPT.json")
+          receipt=json.loads(path.read_text(encoding="utf-8"))
+          assert receipt["total"]==32
+          all_luau=0
+          for entry in receipt["private_cases"]:
+              project=Path(entry["project"])
+              tree=json.loads(project.read_text())["tree"]
+              names=set()
+              def walk(node):
+                  if not isinstance(node,dict):return
+                  if "$path" in node:
+                      p=(project.parent/node["$path"]).resolve(strict=True)
+                      subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+                      assert p.name not in names
+                      names.add(p.name)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith("$"):walk(v)
+              walk(tree)
+              assert len(names)==entry["source_count"]
+              subprocess.run(["/tmp/gq_heal_rojo","build",str(project),"-o",
+                  str(project.parent/("ROLLBACK_"+entry["code"]+".rbxlx"))],check=True,stdout=subprocess.DEVNULL)
+              all_luau+=len(names)
+          assert all_luau==32*30+16
+          print("GQ521_ORIGINAL_OWNER_32_ROLLBACK_NATIVE_SOURCE_COMPILE_PASS",all_luau)
+          PY
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/rollback_matrix.py verify \
+            --outdir artifacts/GQ521_ROLLBACK_MATRIX
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-FIVE-ORIGINAL-FIXES-ALL-32-ROLLBACK-ROJO-NATIVE-PRIVATE-QA
+          path: |
+            artifacts/GQ521_ROLLBACK_MATRIX/MATRIX_RECEIPT.json
+            artifacts/GQ521_ROLLBACK_MATRIX/00000/ROLLBACK_00000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/11111/ROLLBACK_11111.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/10000/ROLLBACK_10000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/01000/ROLLBACK_01000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00100/ROLLBACK_00100.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00010/ROLLBACK_00010.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00001/ROLLBACK_00001.rbxlx
+          retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
           name: GQ521-ORIGINAL-516-524-COMBAT-PLUS-518-520-523-SINGLE-GAME31-PRIVATE-NOT-RC
