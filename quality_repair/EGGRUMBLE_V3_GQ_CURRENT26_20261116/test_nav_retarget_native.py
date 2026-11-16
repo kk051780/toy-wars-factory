@@ -34,10 +34,16 @@ local function flush()
 end
 local made={}
 local Enum={PathStatus={Success="Success"}}
+local failCreate=false
+local failCompute=false
 local PathfindingService={}
 function PathfindingService:CreatePath(_options)
+ if failCreate then failCreate=false;error("injected CreatePath failure") end
  local p={Status="Success",destroyed=false}
- function p:ComputeAsync(_at,goal)self.destination=goal end
+ function p:ComputeAsync(_at,goal)
+  if failCompute then failCompute=false;error("injected ComputeAsync failure") end
+  self.destination=goal
+ end
  function p:GetWaypoints()return {{Position=self.destination}} end
  function p:Destroy()self.destroyed=true end
  p.Blocked={Connect=function(_,callback)
@@ -93,7 +99,28 @@ states["bot3"]=s3
 maybeCompute("bot3",model,initial,a,s3,actors)
 flush()
 assert(s3.path==made[4] and s3.goal==a)
-print("GQ_NAV_RETARGET_NATIVE_PASS cases=4")
+-- Broken path allocation must not strand the two global flight slots.
+local s4={retryAt=0,inFlight=false,index=1,goal=a,latestRequestedGoal=a}
+states["bot4"]=s4
+failCreate=true
+maybeCompute("bot4",model,initial,a,s4,actors)
+flush()
+assert(inFlight==0 and not s4.inFlight,"CreatePath failure leaked a compute slot")
+assert(s4.failed==1 and s4.retryAt>os.clock(),"CreatePath failure lacked retry")
+-- Recovery: next legitimate attempt still reaches the new target.
+s4.retryAt=0
+maybeCompute("bot4",model,initial,a,s4,actors)
+flush()
+assert(s4.path==made[5] and inFlight==0,"CreatePath failure prevented recovery")
+-- ComputeAsync itself may fail; destroy that allocated path and release slot.
+local s5={retryAt=0,inFlight=false,index=1,goal=a,latestRequestedGoal=a}
+states["bot5"]=s5
+failCompute=true
+maybeCompute("bot5",model,initial,a,s5,actors)
+flush()
+assert(made[6].destroyed and inFlight==0 and not s5.inFlight)
+assert(s5.failed==1 and s5.retryAt>os.clock())
+print("GQ_NAV_RETARGET_NATIVE_PASS cases=7")
 '''
 
 def source_function(content: str) -> str:
@@ -117,15 +144,23 @@ def main():
     code=source_function(ROUTER.read_text(encoding="utf-8"))
     success=run(args.luau,code)
     assert success.returncode==0,(success.stdout,success.stderr)
-    assert "GQ_NAV_RETARGET_NATIVE_PASS cases=4" in success.stdout
+    assert "GQ_NAV_RETARGET_NATIVE_PASS cases=7" in success.stdout
     # Removing stale-goal rejection must fail the queued-then-retargeted assertion.
     mutation=code.replace("or planar(state.latestRequestedGoal,expectedTarget).Magnitude>GOAL_CHANGE_DISTANCE",
                           "or false")
     assert mutation!=code
     fail=run(args.luau,mutation)
     assert fail.returncode!=0,(fail.stdout,fail.stderr)
+    # A deliberately unguarded allocation now fails when CreatePath raises.
+    bad_alloc=code.replace("local ok=pcall(function()","local ok=true\n  do",1)
+    bad_alloc=bad_alloc.replace("  end)\n  inFlight=math.max(0,inFlight-1)",
+                                "  end\n  inFlight=math.max(0,inFlight-1)",1)
+    assert bad_alloc!=code
+    fail=run(args.luau,bad_alloc)
+    assert fail.returncode!=0,(fail.stdout,fail.stderr)
     print(success.stdout.strip())
     print("GQ_NAV_STALE_GOAL_NEGATIVE_PASS")
+    print("GQ_CREATEPATH_EXCEPTION_MUTANT_NEGATIVE_PASS")
 
 if __name__=="__main__":
     main()
