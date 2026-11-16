@@ -11,11 +11,13 @@ if not RunService:IsStudio() then return end
 
 local ROOT_NAME="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
 local MAX_DECORATED_NEUTRALS_PER_ARENA=24
-local MAX_DECORATED_EGGS_PER_ARENA=40
+local MAX_DECORATED_EGGS_PER_ARENA=28
+local MAX_DECORATED_ITEMS_PER_WORLD=12
 local MAX_SIMULTANEOUS_KO_BURSTS=8
 local MAX_GATE_PIECES=7
 local activeNeutrals:{[Instance]:number}={}
 local activeEggs:{[Instance]:number}={}
+local activeItems:{[Instance]:number}={}
 local activeBurst=0
 local marked:{[Instance]:boolean}={}
 local ceramic=Color3.fromRGB(205,193,160)
@@ -41,6 +43,15 @@ local function arenaFor(instance:Instance):Instance?
    if ptr.Parent and ptr.Parent.Name==ROOT_NAME then return ptr end
    return nil
   end
+  ptr=ptr.Parent
+ end
+ return nil
+end
+
+local function itemPreviewFor(instance:Instance):Instance?
+ local ptr:Instance?=instance
+ while ptr do
+  if ptr.Name=="EGGRUMBLE_ItemPreviewWorld" then return ptr end
   ptr=ptr.Parent
  end
  return nil
@@ -168,6 +179,39 @@ local function decorateEgg(egg:BasePart)
  end)
 end
 
+local function decorateFieldItem(item:BasePart)
+ if marked[item] then return end
+ local kind=item.Name:match("^ITEM_%d+_(%u+)$")
+ if kind~="HEAL" and kind~="DASH" and kind~="SHIELD" then return end
+ local world=arenaFor(item) or itemPreviewFor(item)
+ if not world then return end
+ if (activeItems[world] or 0)>=MAX_DECORATED_ITEMS_PER_WORLD then return end
+ marked[item]=true
+ activeItems[world]=(activeItems[world] or 0)+1
+ local trim=Instance.new("Folder")
+ trim.Name="EGGRUMBLE_FieldItemVisual_VisualOnly"
+ trim.Parent=item
+ -- Three SHAPES and colors, not three unreadable identical neon balls:
+ -- healing = cross, dash = swept wing, shield = guarded crest.
+ local roleColor=if kind=="HEAL" then jade elseif kind=="DASH" then steel else maroon
+ jewel(trim,item,"GroundHalo","Cylinder",Vector3.new(.14,3.6,3.6),
+  CFrame.new(0,-1.3,0)*CFrame.Angles(0,0,math.rad(90)),roleColor,Enum.Material.Metal)
+ if kind=="HEAL" then
+  jewel(trim,item,"RemedyCross","Block",Vector3.new(.55,1.8,.4),
+   CFrame.new(0,1.3,0),ceramic,Enum.Material.SmoothPlastic)
+ elseif kind=="DASH" then
+  jewel(trim,item,"WingTip","Wedge",Vector3.new(1.65,1.4,.42),
+   CFrame.new(0,1.3,0)*CFrame.Angles(0,0,math.rad(24)),gold,Enum.Material.Metal)
+ else
+  jewel(trim,item,"GuardDiamond","Wedge",Vector3.new(1.45,1.45,.38),
+   CFrame.new(0,1.3,0)*CFrame.Angles(0,0,math.rad(45)),ceramic,Enum.Material.Slate)
+ end
+ item.Destroying:Connect(function()
+  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)
+  marked[item]=nil
+ end)
+end
+
 local function decorateVault(part:BasePart)
  if marked[part] then return end
  if part.Name~="EggVault" and part.Name~="OwnEggDeposit" then return end
@@ -240,6 +284,12 @@ local function decorateDefense(stand:BasePart)
 end
 
 local function process(instance:Instance)
+ -- The authored 9-pickup field-item preview runs independently from the V3 lobby.
+ -- Both visual-only variants are supported with the SAME isolated script.
+ if instance:IsA("BasePart") and instance.Name:match("^ITEM_%d+_%u+$") then
+  decorateFieldItem(instance)
+  return
+ end
  if not previewFor(instance) then return end
  if instance:IsA("Model") and instance.Name=="HordeSoldier" then
   task.defer(function() if instance.Parent then decorateNeutral(instance) end end)
