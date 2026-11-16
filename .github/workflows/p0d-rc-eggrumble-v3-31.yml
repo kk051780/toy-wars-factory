@@ -1688,7 +1688,7 @@ jobs:
             --original "$ORIGINAL" --patched "$PATCHED" \
             --place "$DIR/GQ509_POSTWIN_CURRENT31_REAL_ROJO.rbxlx"
           echo GQ509_SINGLE_CURRENT_RULES_TRUE_ROJO31_OTHER30_EXACT_ROLLBACK_PASS
-      - name: GQ lobby safe spawn: original Host only after GQ509, native31 Rojo31 OFF exact
+      - name: GQ lobby safe spawn original Host only after GQ509 - native31 Rojo31 OFF exact
         shell: bash
         run: |
           set -euo pipefail
