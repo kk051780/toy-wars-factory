@@ -103,7 +103,7 @@ def prepare(base:Path,author_path:Path,out:Path):
     if patched.count(replacement)!=1:
         raise ValueError("RED_GQ551_SELECTED_CARRIER_GUARD_DUPLICATED")
     # Ensure original 30 source files are the *existing latest official selected* sources.
-    if "SpawnPacing.step(" not in oldfiles[SWARM].read_text(encoding="utf-8") or "nearest.humanoid:TakeDamage(Melee.DAMAGE)" not in oldfiles[SWARM].read_text(encoding="utf-8"):
+    if "SpawnPacing.step(" not in oldfiles[SWARM].read_text(encoding="utf-8") or "candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)" not in oldfiles[SWARM].read_text(encoding="utf-8"):
         raise ValueError("RED_GQ541_SWARM_LOST")
     item=oldfiles[ITEM].read_text(encoding="utf-8")
     if 'interactionGuard.allow(player,part,"拾う",part.Name)' not in item:
