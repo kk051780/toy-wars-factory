@@ -38,6 +38,10 @@ jobs:
         run: |
           set -euo pipefail
           cmake -S _gq8_luau -B /tmp/gq8_guard_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq8_guard_native --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq8_guard_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           /tmp/gq8_guard_native/luau-compile --text quality_gameplay/gq8_prompt_reach_20261117/EGGRUMBLE_InteractionGuard.luau > /dev/null
-          echo "GQ8_REAL_LUAU_NATIVE_GUARD_PASS"
+          python3 quality_gameplay/gq8_prompt_reach_20261117/native_reach_test.py \
+            --selected quality_gameplay/gq8_prompt_reach_20261117/EGGRUMBLE_InteractionGuard.luau \
+            --out /tmp/gq8_prompt_reach_real_module_native.luau
+          /tmp/gq8_guard_native/luau /tmp/gq8_prompt_reach_real_module_native.luau
+          echo "GQ8_REAL_LUAU_NATIVE_GUARD_AND_RUNTIME_PASS"
