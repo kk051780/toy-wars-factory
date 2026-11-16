@@ -121,12 +121,12 @@ do
  fire();expect("human BURN valid 3 ticks",h.damage,12)
 end
 do
- local s,a,t,h,b,r=schedule("BATTLE_ROYALE","human","RED")
+ local s,a,t,h,b,r=schedule("BATTLE_ROYALE","human","BURN_3S","RED")
  expect("BR enemies no team restriction",#pending,3)
  fire();expect("BR BURN valid",h.damage,12)
 end
 do
- local s,a,t,h,b,r=schedule("TEAM","human","RED")
+ local s,a,t,h,b,r=schedule("TEAM","human","BURN_3S","RED")
  expect("TEAM friendly zero callbacks",#pending,0)
 end
 do
