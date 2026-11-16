@@ -22,7 +22,7 @@ DASH_PATCH = '''   elseif kind=="DASH" then
 
 
 def git_blob_sha(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 
 def compose(data: bytes, enabled: bool) -> bytes:
