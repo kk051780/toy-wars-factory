@@ -30,7 +30,7 @@ def iter_paths(tree,folder):
         else:
             yield from iter_paths(child,folder)
 
-def compose(base26:Path,out:Path):
+def compose(base26:Path,out:Path,expect_count:int=26):
     base26=base26.resolve(strict=True)
     out=out.resolve()
     assert out!=base26 and out!=base26.parent, "must use separate new output folder"
@@ -38,7 +38,8 @@ def compose(base26:Path,out:Path):
     tree=project["tree"]
     server=tree["ServerScriptService"]
     original=dict(iter_paths(tree,base26.parent))
-    assert len(original)==26 and len(server)-1==23
+    assert expect_count in (26,28)
+    assert len(original)==expect_count and len(server)-1==expect_count-3
     assert HOST in original and "EGGRUMBLE_FieldEggDropBounds" not in original
     assert original[HOST].name=="EGGRUMBLE_LobbyCastleModesPreview.server.luau"
     before={n:h(p) for n,p in original.items()}
@@ -47,6 +48,12 @@ def compose(base26:Path,out:Path):
     assert text.count("CastleAccessRamp")>0, "must preserve original #484 castle ramp"
     assert "EGGRUMBLE_BotActors" in original and "EGGRUMBLE_FlagshipFieldArt" in original
     assert "EGGRUMBLE_ScoreBalance" in original and "EGGRUMBLE_ArtDistanceLOD" in original
+    if expect_count==28:
+        # Federated 28 belongs to ORIGINAL #509 egg terminal fence, #489 ITEM,
+        #494/#501 neutral policies. Reject a misidentified generic 28 project.
+        for required in ("EGGRUMBLE_NeutralEncounterFairness","EGGRUMBLE_NeutralSpawnPacing"):
+            assert required in original, ("missing owner policy",required)
+        assert 'if m.phase~="ACTIVE" or m.winner~=nil then return 0,{} end' in original["EGGRUMBLE_CastleMatchRules"].read_text(), "NOT the authenticated #509 late-death original author Rules"
     updated=text.replace(REQUIRE,REQUIRE+INSERT,1).replace(ORIGINAL,REPLACEMENT,1)
     assert updated!=text
     out.mkdir(parents=True,exist_ok=True)
@@ -65,11 +72,11 @@ def compose(base26:Path,out:Path):
     host_path.write_text(updated,encoding="utf-8")
     server[HOST]={"$path":os.path.relpath(host_path,out).replace(os.sep,"/")}
     server["EGGRUMBLE_FieldEggDropBounds"]={"$path":os.path.relpath(POLICY,out).replace(os.sep,"/")}
-    project["name"]="EGGRUMBLE_GQ_FIELD_EGG_RECOVERY_AUTHOR27_PRIVATE_SOURCE_NO_RC"
-    dest=out/"EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json"
+    project["name"]=f"EGGRUMBLE_GQ_FIELD_EGG_RECOVERY_FEDERATED{expect_count+1}_PRIVATE_SOURCE_NO_RC"
+    dest=out/f"EGGRUMBLE_GQ_FIELD_EGG_SAFE{expect_count+1}.project.json"
     dest.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     after=dict(iter_paths(project["tree"],out))
-    assert len(after)==27 and len(set(after))==27
+    assert len(after)==expect_count+1 and len(set(after))==expect_count+1
     assert set(after)==set(original)|{"EGGRUMBLE_FieldEggDropBounds"}
     for name,source in original.items():
         assert h(source)==before[name],f"mutated original composer output: {name}"
@@ -77,20 +84,21 @@ def compose(base26:Path,out:Path):
             assert after[name]==source and h(after[name])==before[name],f"original drift: {name}"
     assert after[HOST]==host_path and after["EGGRUMBLE_FieldEggDropBounds"]==POLICY
     receipt={
-        "status":"PRIVATE27_SOURCE_ONLY_NOT_OFFICIAL_RC",
-        "original_count":26,"candidate_count":27,
+        "status":f"PRIVATE{expect_count+1}_SOURCE_ONLY_NOT_OFFICIAL_RC",
+        "original_count":expect_count,"candidate_count":expect_count+1,
         "base_26_project":str(base26),"original_sha256":before,
         "candidate_sha256":{name:h(path) for name,path in sorted(after.items())},
-        "preserved_original_26":25,"host_overlay_only":HOST,
+        "preserved_base_sources":expect_count-1,"host_overlay_only":HOST,
         "new_policy_only":"EGGRUMBLE_FieldEggDropBounds",
         "studio":"NOT_RUN","android":"NOT_RUN","owner_accepted":False}
-    (out/"SOURCE27_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf-8")
-    print("GQ_FIELD_EGG_ORIGINAL26_TO_PRIVATE27_PASS kept=25/26 one-host-overlay one-pure-policy")
+    (out/f"SOURCE{expect_count+1}_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    print(f"GQ_FIELD_EGG_ORIGINAL{expect_count}_TO_PRIVATE{expect_count+1}_PASS kept={expect_count-1}/{expect_count} one-host-overlay one-pure-policy")
     return dest
 
 if __name__=="__main__":
     ap=argparse.ArgumentParser()
     ap.add_argument("--base26",type=Path,required=True)
     ap.add_argument("--out",type=Path,required=True)
+    ap.add_argument("--expect-count",type=int,choices=(26,28),default=26)
     args=ap.parse_args()
-    compose(args.base26,args.out)
+    compose(args.base26,args.out,args.expect_count)
