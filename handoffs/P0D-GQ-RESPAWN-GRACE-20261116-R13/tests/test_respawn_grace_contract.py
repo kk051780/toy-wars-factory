@@ -110,5 +110,33 @@ class RespawnGraceContracts(unittest.TestCase):
         self.assertIn('live[player] = nil', SOURCE)
 
 
+    def test_genuine_server_died_required(self):
+        self.assertIn('humanoid.Died:Connect(function()', SOURCE)
+        self.assertIn('tickets[player] = {', SOURCE)
+        self.assertIn('local function currentArena(player: Player, character: Model)', SOURCE)
+        self.assertIn('if not ticket or os.clock() > ticket.expiresAt then return end', SOURCE)
+
+    def test_death_ticket_single_use(self):
+        self.assertIn('tickets[player] = nil\n            if not ticket', SOURCE)
+        self.assertIn('RESPAWN_TICKET_SECONDS = 12', SOURCE)
+        self.assertIn('expiresAt = os.clock() + RESPAWN_TICKET_SECONDS', SOURCE)
+
+    def test_rejects_new_round_same_mode(self):
+        self.assertIn('currentArena(player, character) ~= ticket.arena', SOURCE)
+        self.assertIn('player:GetAttribute("EGGRUMBLE_QueuedMode") ~= ticket.mode', SOURCE)
+
+    def test_original_character_death_not_stubbed_by_initial_spawn(self):
+        self.assertIn('if player.Character then bindCharacter(player.Character) end', SOURCE)
+        self.assertIn('if player.Character ~= character then return end', SOURCE)
+        self.assertIn('local ticket = tickets[player]', SOURCE)
+        self.assertIn('if not ticket or os.clock() > ticket.expiresAt then return end', SOURCE)
+
+    def test_all_tickets_cleared_on_player_departure(self):
+        self.assertIn('Players.PlayerRemoving:Connect(function(player: Player)', SOURCE)
+        self.assertIn('tickets[player] = nil\n    clear(player)', SOURCE)
+        self.assertIn('player.CharacterRemoving:Connect(function()', SOURCE)
+        self.assertIn('local ticket = tickets[player]', SOURCE)
+
+
 if __name__ == "__main__":
     unittest.main()
