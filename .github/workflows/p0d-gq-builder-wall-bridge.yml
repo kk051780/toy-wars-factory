@@ -58,7 +58,8 @@ jobs:
           print('BUILDER_NATIVE_23_OF_23_PASS')
           PY
           /tmp/gq_builder_native/luau quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BuilderPlacementPolicy.spec.luau
-          /tmp/gq_builder_native/luau quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BuilderConstruction.runtime.spec.luau
+          python3 quality_gameplay/v3_builder_construction_20261116/make_native_runtime_spec.py
+          /tmp/gq_builder_native/luau quality_gameplay/v3_builder_construction_20261116/EGGRUMBLE_BuilderConstruction.runtime.generated.luau
       - name: Install Rojo 7.7.1 with frozen release zip digest
         run: |
           set -euo pipefail
