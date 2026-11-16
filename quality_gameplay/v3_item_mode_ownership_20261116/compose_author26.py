@@ -97,8 +97,10 @@ def compose(base_project: Path, base_receipt: Path, item_author: Path,
     if output_project.exists() or output_receipt.exists():
         raise ValueError("refuse to replace existing private composite")
     output_project.parent.mkdir(parents=True, exist_ok=True)
-    host_file=output_project.parent/own.HOST_NAME
-    item_file=output_project.parent/own.ITEM_NAME
+    overlay_dir=output_project.parent/"gq525_source_selected_only"
+    overlay_dir.mkdir(exist_ok=True)
+    host_file=overlay_dir/own.HOST_NAME
+    item_file=overlay_dir/own.ITEM_NAME
     for path in (host_file,item_file):
         if path.exists():
             raise ValueError("refuse to overwrite scratch originals")
