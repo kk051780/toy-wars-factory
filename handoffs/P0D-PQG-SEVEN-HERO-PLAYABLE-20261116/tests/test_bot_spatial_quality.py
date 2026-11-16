@@ -27,6 +27,9 @@ def defects(bot,router,lobby):
       "only exact target part can end LOS": "targetPart:BasePart?" in bot and "hit.Instance==targetPart" in bot,
       "no ghost action on absent world target": "if not targetPart or not targetPart.Parent then return false end" in bot,
       "all server action targets resolved": all(x in bot for x in ('"OwnEggDeposit"','"EggVault"',"actionTarget=fieldPart","actionTarget=enemyCastle and enemyCastle.door")),
+      "neutral service errors are isolated from castle egg AI": "hitNeutralSafely(session,id,actor:GetPivot().Position)" in bot and "pcall(function()" in bot and "return swarm.damageFromBot(id,at)" in bot,
+      "neutral error is recorded and bounded": 'session.botNeutralStatus="YELLOW_NEUTRAL_HIT"' in bot and "session.botNeutralFaults=faults" in bot and "if faults<=3 then" in bot,
+      "no fatal raw optional neutral call": "if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end" not in bot,
       "bot-v-bot current-roster source": "for targetId,targetActor in pairs(bots) do" in bot and "local enemyCastle=session.rules.castles[targetId]" in bot,
       "bot-v-bot actual humanoid damage": "targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)" in bot and "targetHumanoid.Health>0" in bot,
       "bot-v-bot no friendly fire": 'session.mode~="TEAM" or enemyCastle.team~=my.team' in bot,
@@ -88,6 +91,15 @@ class TestCastleGroundedMovement(unittest.TestCase):
     def test_absent_physical_interactable_denied(self):
         self.assertIn("no ghost action on absent world target",
                       self.broken(bot=self.bot.replace("if not targetPart or not targetPart.Parent then return false end","-- removed world target guard")))
+    def test_bot_neutral_failure_cannot_abort_main_ai(self):
+        self.assertIn("neutral service errors are isolated from castle egg AI",
+                      self.broken(bot=self.bot.replace("hitNeutralSafely(session,id,actor:GetPivot().Position)","session.swarm.damageFromBot(id,actor:GetPivot().Position)")))
+    def test_bot_neutral_error_yellow_evidence_is_kept(self):
+        self.assertIn("neutral error is recorded and bounded",
+                      self.broken(bot=self.bot.replace('session.botNeutralStatus="YELLOW_NEUTRAL_HIT"',"-- no failure status")))
+    def test_no_raw_neutral_call_in_ai_loop(self):
+        self.assertIn("no fatal raw optional neutral call",
+                      self.broken(bot=self.bot+"\nif session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end"))
     def test_bot_duel_disabled(self):
         self.assertIn("bot-v-bot current-roster source",self.broken(bot=self.bot.replace("for targetId,targetActor in pairs(bots) do","if false then")))
     def test_bot_duel_fake_damage(self):
