@@ -1,0 +1,162 @@
+name: EGGRUMBLE GQ no-waste HEAL actual item source and private26 ART SCORE
+on:
+  push:
+    branches:
+      - quality/gq-v3-heal-no-waste-20261116
+    paths:
+      - 'quality_gameplay/v3_heal_no_waste_20261116/**'
+      - '.github/workflows/p0d-gq-v3-heal-no-waste-private26.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_heal_no_waste_20261116/**'
+      - '.github/workflows/p0d-gq-v3-heal-no-waste-private26.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-item26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original 7-domain Game 21 source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _game_original
+          persist-credentials: false
+      - name: Reuse existing #484 AI + 26-source composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality_original
+          persist-credentials: false
+      - name: Original ART author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art_original
+          persist-credentials: false
+      - name: Original SCORE author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score_original
+          persist-credentials: false
+      - name: Item author #489 with cargo/LOS/speed-epoch fixes
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _item_original
+          persist-credentials: false
+      - name: Pin original writer HEADs and only make a local ITEM copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _game_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality_original rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _art_original rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score_original rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _item_original rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          mkdir -p artifacts
+          python3 quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --source _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/EGGRUMBLE_FieldItemPickups.luau
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_heal_no_waste_20261116/tests
+      - name: Art author original selective project, then #484 original 26 compositor
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/ITEM_GQ_ART.project.json
+          python3 _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _game_original --quality _quality_original --art _art_original --score _score_original \
+            --art-project artifacts/ITEM_GQ_ART.project.json \
+            --out artifacts/ITEM_GQ_BASE26.project.json
+      - name: Reuse ITEM author's exact one-source overlay and receipt verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool=_item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py
+          python3 "$tool" prepare \
+            --project artifacts/ITEM_GQ_BASE26.project.json \
+            --out artifacts/ITEM_GQ_HEAL26.project.json \
+            --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --receipt artifacts/SOURCE_RECEIPT.json \
+            --item-head "$(git rev-parse HEAD)" \
+            --quality-head 6b52eaf1f2725496277998fe0c5532b7a8fcaab5 \
+            --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text())
+          assert r["script_count"]==26 and r["item_overrides_only"]==["EGGRUMBLE_FieldItemPickups"]
+          assert r["other_twenty_five_byte_unchanged"]
+          print("GQ_ONLY_ITEM_DIFF_ON_FULL_26_SOURCE_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Pin native Luau and run real helper / compile all 26 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq_heal_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_heal_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 quality_gameplay/v3_heal_no_waste_20261116/make_native_test.py \
+            artifacts/EGGRUMBLE_FieldItemPickups.luau artifacts/HEAL_REAL_POLICY.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/HEAL_REAL_POLICY.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/HEAL_REAL_POLICY.native.luau | tee artifacts/HEAL_NATIVE.log
+          grep -q GQ_HEAL_NATIVE_REAL_POLICY_PASS artifacts/HEAL_NATIVE.log
+          python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py compile \
+            --project artifacts/ITEM_GQ_HEAL26.project.json \
+            --compiler /tmp/gq_heal_native/luau-compile
+      - name: Pin Rojo 7.7.1 binary and build actual unpublished 26-source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_heal_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_heal_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_heal_rojo.zip") as z:
+            names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(names)==1
+            out=Path("/tmp/gq_heal_rojo");out.write_bytes(z.read(names[0]));out.chmod(0o755)
+          PY
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL26.project.json -o artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx
+          python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py verify \
+            --project artifacts/ITEM_GQ_HEAL26.project.json \
+            --place artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text())
+          assert r["source_exact"]=="26/26"
+          assert r["item_overrides_only"]==["EGGRUMBLE_FieldItemPickups"]
+          print("GQ_HEAL_REAL_ITEM_PLUS_8_DOMAINS_PRIVATE26_SOURCE_EXACT_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-HEAL-NO-WASTE-PRIVATE26-SOURCE-ONLY-NOT-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL26.project.json
+            artifacts/SOURCE_RECEIPT.json
+            artifacts/HEAL_NATIVE.log
+          retention-days: 2
