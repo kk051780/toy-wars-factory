@@ -19,6 +19,12 @@ class NeutralMeleeSourceTests(unittest.TestCase):
         assert candidate.count("nearest.humanoid:TakeDamage(Melee.DAMAGE)")==1
         assert candidate.count("local Melee=require(")==1
         assert "lastMeleeSwing" in candidate and "lastVictimHit" in candidate
+        # Lifetime contract: no strong-key references to destroyed soldiers or old avatars.
+        assert candidate.count('setmetatable({}, {__mode="k"}) :: any')==2
+        assert "   live[m]=nil\n   lastMeleeSwing[m]=nil\n" in candidate
+        assert candidate.count("lastMeleeSwing[m]=nil")==1
+        assert "local lastMeleeSwing:{[Model]:number}={}" not in candidate
+        assert "local lastVictimHit:{[Humanoid]:number}={}" not in candidate
         assert "Melee.MAX_RAYS_PER_TICK" in candidate
         assert "session.rules.phase==\"ACTIVE\"" in candidate
         assert "RespectCanCollide=true" in candidate
