@@ -78,6 +78,21 @@ class SiegeSourceTest(unittest.TestCase):
                        "TeleportService", "Players:GetPlayers"]:
             self.assertNotIn(banned, source)
 
+    def test_real_author_rules_native_harness_uses_unchanged_rules(self):
+        from generate_native_author_rules_harness import main, EXPECTED_RULES_BLOB, git_blob
+        rule = UPSTREAM / "EGGRUMBLE_CastleMatchRules.luau"
+        self.assertEqual(git_blob(rule.read_bytes()), EXPECTED_RULES_BLOB)
+        out = self.out / "AUTHOR_RULES_BOT.native.luau"
+        main(self.out / "src/EGGRUMBLE_BotActors.luau", rule, out)
+        source = out.read_text()
+        self.assertEqual(source.count("function M.damageCastle("), 1)
+        self.assertEqual(source.count("function M.auditEggConservation("), 1)
+        self.assertEqual(source.count("Rules.damageCastle(session.rules,enemy.id,id,26)"), 1)
+        self.assertEqual(source.count("SiegePacing.cancelFailed(session,enemy.id,id,now)"), 1)
+        self.assertIn("GQ_ORIGINAL_RULES_PLUS_REAL_BOT_BRANCH_NATIVE_PASS", source)
+        self.assertNotIn("--EXACT_CASTLE_RULES--", source)
+        self.assertNotIn("--EXACT_BOT_SIEGE_BRANCH--", source)
+
     def test_private_receipt_never_calls_it_official(self):
         self.assertEqual(self.manifest["status"], "PRIVATE_SOURCE_CANDIDATE_NOT_RC")
         self.assertEqual(self.manifest["official_rc"], "NOT_INTEGRATED")
