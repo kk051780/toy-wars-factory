@@ -13,7 +13,7 @@ SPEC=ROOT/"tests/spec_real_rules_cross_domain.luau"
 def digest(blob:bytes)->str:
     return hashlib.sha256(blob).hexdigest()
 
-def build(original:Path,output:Path):
+def build(original:Path,output:Path,spec:Path=SPEC):
     raw=original.resolve(strict=True).read_bytes()
     policy=POLICY.read_bytes()
     assert raw.rstrip().endswith(b"return M"),"original castle rules changed"
@@ -25,7 +25,7 @@ def build(original:Path,output:Path):
     script=(
         b"local function loadOriginalRules()\n"+raw+b"\nend\n"
         +b"local function loadCandidateBounds()\n"+policy+b"\nend\n"
-        +SPEC.read_bytes()
+        +spec.resolve(strict=True).read_bytes()
     )
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_bytes(script)
@@ -43,5 +43,6 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--rules",type=Path,required=True)
     parser.add_argument("--out",type=Path,required=True)
+    parser.add_argument("--spec",type=Path,default=SPEC)
     args=parser.parse_args()
-    build(args.rules,args.out)
+    build(args.rules,args.out,args.spec)
