@@ -85,6 +85,13 @@ jobs:
           ref: e003d73d516e65e1817dd281eb1743fa866f3770
           path: _gq539_lobby
           persist-credentials: false
+      - name: Checkout exact original #547 castle/vault boards author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125
+          path: _gq547_original
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -96,6 +103,7 @@ jobs:
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
           test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
           test "$(git -C _gq539_lobby rev-parse HEAD)" = e003d73d516e65e1817dd281eb1743fa866f3770
+          test "$(git -C _gq547_original rev-parse HEAD)" = b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -562,6 +570,12 @@ jobs:
           test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
+      - name: Select original #547 two pre-existing castle and vault GUI corrections after #489
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/quality_castle547_rc31/build_31.py \
+            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --out artifacts/gq547_official_select
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
