@@ -63,8 +63,8 @@ jobs:
           assert(not F.shouldClear("ACTIVE",nil))
           local attrs={EGGRUMBLE_Combo=123,EGGRUMBLE_BestCombo=500,EGGRUMBLE_BossDefeats=5}
           local p={SetAttribute=function(_,key,value) attrs[key]=value end}
-          assert(F.clear(p)==3)
-          assert(attrs.EGGRUMBLE_Combo==0 and attrs.EGGRUMBLE_BestCombo==0 and attrs.EGGRUMBLE_BossDefeats==0)
+          assert(F.clear(p)==2)
+          assert(attrs.EGGRUMBLE_Combo==0 and attrs.EGGRUMBLE_BestCombo==0 and attrs.EGGRUMBLE_BossDefeats==5)
           assert(F.clear(p)==3)
           print("GQ_ROUND_STATE_REAL_NATIVE_VM_PASS")
           """

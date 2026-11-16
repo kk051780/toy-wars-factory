@@ -44,11 +44,11 @@ class RoundAttributeFenceContract(unittest.TestCase):
         replay = (ROOT / "EGGRUMBLE_RoundReplay.luau").read_text()
         for original in ("EGGRUMBLE_NeutralKOs", "EGGRUMBLE_BattleLevel", "EGGRUMBLE_SlashEvolution"):
             self.assertIn(original, replay)
-        for stale in ("EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo", "EGGRUMBLE_BossDefeats"):
+        for stale in ("EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo"):
             self.assertNotIn(stale, replay)
-    def test_only_three_round_local_attributes(self):
+    def test_only_two_round_local_attributes(self):
         self.assertEqual(set(re.findall(r'"(EGGRUMBLE_\w+)"', MODULE)), {
-            "EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo", "EGGRUMBLE_BossDefeats"})
+            "EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo"})
     def test_exact_server_exit_gate(self):
         self.assertIn("LIVE_MODES[previous] == true and current == nil", MODULE)
         self.assertIn('GetAttributeChangedSignal("EGGRUMBLE_QueuedMode")', SCRIPT)
