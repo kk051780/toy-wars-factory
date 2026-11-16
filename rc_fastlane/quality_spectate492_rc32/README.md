@@ -12,3 +12,5 @@
 
 ## 2026-11-17 rebase onto next canonical RC
 - Parent official now `36400324858cd9f2cdecc72776193c9c8e621f0d`, including sole-writer GQ586 deposit-member check from PR #607. This proposal retains GQ586/previous 31 mapped bytes exactly and adds only #492 spectator LocalScript. New selected base project is `artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json`; original isolated preview's earlier parent `946631...` is historical only.
+
+- 2026-11-17 additional latest official parent `63ff99ca8656a85b7aa479cd623c4658dd96c3c4`; three official QA-only commits (#GQ8 scripts and workflow trigger) retained, V3 playable Source 31 unchanged, candidate 31+1 original #492 exact.

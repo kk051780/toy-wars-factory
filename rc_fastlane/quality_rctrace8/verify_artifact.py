@@ -79,7 +79,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 18 are now source-selected in this proposed RC31 including original #583.
+# These 26 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -105,6 +105,23 @@ FEATURE_EVIDENCE = {
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
  "VERTICAL_HIT_FAIRNESS_595": ("EGGRUMBLE_AttackGeometry",
   "if dy~=dy or math.abs(dy)>math.min(radius,14) then return false end"),
+ "NEUTRAL_DEATH_KO_CURRENT_OWNER_508": ("EGGRUMBLE_SwarmCombat",
+  "and KoFence.mayCredit(session,id,m,all) then"),
+ "AI_TAKEOVER_TERMINAL_FENCE_580": ("EGGRUMBLE_BotActors",
+  'if session.rules.phase~="ACTIVE" or not folder.Parent then return false end'),
+ "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "CentralRidgeRight",
+  "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)")),
+ "FIELD_CARRIER_OFFARENA_DROP_515": ("EGGRUMBLE_LobbyCastleModesPreview",
+  "DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,"),
+ "ZOMBIE_COMMAND_SQUAD_582": ("EGGRUMBLE_SevenRoleCombat",
+  "local ZombieCommander="),
+ "DEPOSIT_CURRENT_SESSION_586": ("EGGRUMBLE_LobbyCastleModesPreview",
+  "GQ_DEPOSIT_CURRENT_MATCH_586"),
+ "ZOMBIE_NEUTRAL_STABLE_ID_V3": ("EGGRUMBLE_SevenRoleCombat", (
+  'local neutralIds=setmetatable({}, {__mode="k"})',
+  "local function neutralTargetId(enemy:Model):string",
+  'id=neutralTargetId(enemy),kind="NEUTRAL"')),
 
 }
 
@@ -178,9 +195,13 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
                 require(anchor in scripts[name][1],"DOMAIN_"+domain+"_MISSING_"+name+"_"+anchor[:24])
         by_domain[domain]="SOURCE_ANCHOR_PRESENT_NOT_STUDIO_VERIFIED"
     flags=manifest.get("feature_flags",{})
-    for flag,(script,anchor) in FEATURE_EVIDENCE.items():
+    for flag,(script,anchors) in FEATURE_EVIDENCE.items():
         require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
-        require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+        require(script in scripts,"FEATURE_SOURCE_MISSING_"+flag)
+        required=(anchors,) if isinstance(anchors,str) else anchors
+        require(bool(required),"FEATURE_SOURCE_EMPTY_"+flag)
+        for anchor in required:
+            require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
@@ -214,7 +235,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_17_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_26_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],

@@ -20,8 +20,8 @@ def fixture():
     for scope in gq8.RULES.values():
         for script,tokens in scope.items():
             sources.setdefault(script,set()).update(tokens)
-    for _,(script,token) in gq8.FEATURE_EVIDENCE.items():
-        sources.setdefault(script,set()).add(token)
+    for _,(script,tokens) in gq8.FEATURE_EVIDENCE.items():
+        sources.setdefault(script,set()).update((tokens,) if isinstance(tokens,str) else tokens)
     for name in gq8.ROLE_CLASSES:
         sources.setdefault(name,set())
     i=0
@@ -67,12 +67,26 @@ def rehash(data,receipt):
     receipt["place_size_bytes"]=len(data)
     receipt["place_sha256"]=hashlib.sha256(data).hexdigest()
 
+def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
+    root=ET.fromstring(raw)
+    for item in root.iter("Item"):
+        props=item.find("Properties")
+        if props is None or props.findtext("string[@name='Name']")!=name:
+            continue
+        source=props.find("ProtectedString[@name='Source']")
+        if source is None or source.text is None or source.text.count(anchor)!=1:
+            raise AssertionError("Missing or duplicate fixture anchor "+anchor)
+        source.text=source.text.replace(anchor,"-- GQ8 source mutation removed",1)
+        return ET.tostring(root,encoding="utf-8")
+    raise AssertionError("Missing script "+name)
+
+
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_eighteen_known_flags(self):
+    def test_valid_covers_eight_domains_and_26_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],19)
+        self.assertEqual(v["verified_flag_count"],26)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -169,6 +183,44 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
+    def test_current26_manifest_anchors_enforce_all_seven_late_flags(self):
+        late=(
+            "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
+            "AI_TAKEOVER_TERMINAL_FENCE_580",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "FIELD_CARRIER_OFFARENA_DROP_515",
+            "ZOMBIE_COMMAND_SQUAD_582",
+            "DEPOSIT_CURRENT_SESSION_586",
+            "ZOMBIE_NEUTRAL_STABLE_ID_V3",
+        )
+        for flag in late:
+            script,anchors=gq8.FEATURE_EVIDENCE[flag]
+            anchors=(anchors,) if isinstance(anchors,str) else anchors
+            for anchor in anchors:
+                with self.subTest(flag=flag,anchor=anchor):
+                    b,r,m,a=fixture()
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],26)
+                    b=drop_anchor(b,script,anchor)
+                    rehash(b,r)
+                    with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
+                        gq8.verify(b,r,m,a,HEAD)
+
+    def test_late_flags_cannot_claim_certification_when_disabled(self):
+        for flag in (
+            "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
+            "AI_TAKEOVER_TERMINAL_FENCE_580",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "FIELD_CARRIER_OFFARENA_DROP_515",
+            "ZOMBIE_COMMAND_SQUAD_582",
+            "DEPOSIT_CURRENT_SESSION_586",
+            "ZOMBIE_NEUTRAL_STABLE_ID_V3",
+        ):
+            with self.subTest(flag=flag):
+                b,r,m,a=fixture()
+                m["feature_flags"][flag]=False
+                with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
+                    gq8.verify(b,r,m,a,HEAD)
+
     def test_s1_default_must_remain_unchanged_for_this_profile(self):
         b,r,m,a=fixture()
         a["active_profile"]="eggrumble_v3_31"
