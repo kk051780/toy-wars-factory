@@ -359,7 +359,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -375,11 +375,16 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
+          assert m["source_heads"]["lobby_world_539"]=="e003d73d516e65e1817dd281eb1743fa866f3770"
+          assert m["feature_flags"]["LOBBY_NEARBY_BOARDS_539"]
+          gq539=json.loads(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_text())
+          assert gq539["rojo_exact_scripts"]==31 and gq539["other_sources_byte_exact"]==30
+          assert gq539["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           details={
             "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
                       if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
@@ -390,9 +395,12 @@ jobs:
             "source_author_heads":m["source_heads"],
             "script_count":31,
             "script_source_and_class_exact":"31/31",
-            "original_31_untouched_except_selected_neutral_swarm":30,
+            "original_31_untouched_except_selected_neutral_swarm_and_lobby_host":29,
             "base_owner30_untouched_except_combat_before_541":29,
             "original_author_541_selected_into_one_swarm":True,
+            "original_source_539_selected_into_single_lobby_host":True,
+            "gq539_rollback_byte_exact":True,
+            "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
             "rollback_on_off_combat_bytes":160,
@@ -427,4 +435,7 @@ jobs:
             artifacts/gq541_official_select/GQ31_SELECTED.project.json
             artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json
             artifacts/gq541_official_select/GQ541_SELECTED_SOURCE_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ539_SELECTED31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
           retention-days: 3
