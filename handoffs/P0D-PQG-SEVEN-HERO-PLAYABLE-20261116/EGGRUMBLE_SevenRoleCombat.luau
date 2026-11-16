@@ -109,7 +109,7 @@ local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at
  if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage,shape) end
  count+=hitBotHeroes(session,p,root,char,at,range,damage,shape)
  count+=hitHumanHeroes(session,p,root,char,at,range,damage,shape)
- makeEffect(session.world,at,Vector3.new(range*1.3,2,range*1.3),c,.35)
+ -- Unique visual feedback is produced by SkillFX.emit, not a repeated generic orb.
  return count
 end
 local function safeMove(char:Model,root:BasePart,amount:number):boolean
@@ -128,17 +128,6 @@ local function safeMove(char:Model,root:BasePart,amount:number):boolean
  if math.abs(landing.Y-downward.Position.Y)>8 then return false end
  char:PivotTo(CFrame.new(Vector3.new(landing.X,downward.Position.Y+3,landing.Z),landing+v))
  return true
-end
-local function slowEnemies(session:any,player:Player,center:Vector3,radius:number)
- local state=session.rules.castles[tostring(player.UserId)]
- if not state then return end
- for id,actor in pairs(session.botActors or {}) do
-  local c=session.rules.castles[id]
-  if c and c.alive and (session.mode~="TEAM" or c.team~=state.team)
-   and actor.PrimaryPart and (actor.PrimaryPart.Position-center).Magnitude<radius then
-   actor:SetAttribute("EGGRUMBLE_SlowUntil",os.clock()+3)
-  end
- end
 end
 local function healAllies(session:any,player:Player,root:BasePart)
  local state=session.rules.castles[tostring(player.UserId)]
@@ -287,7 +276,6 @@ local function execute(session:any,p:Player,role:string,slot:string)
  elseif role=="TRAPPER" then
   if slot=="A" then blast()
   elseif slot=="B" then
-   slowEnemies(session,p,rootAdvance(root,15),20)
    blast()
   else
    if owner.heldEggs==0 then safeMove(char,root,20) end
@@ -331,7 +319,6 @@ local function execute(session:any,p:Player,role:string,slot:string)
  elseif role=="ZOMBIE" then
   if slot=="A" then blast()
   elseif slot=="B" then
-   slowEnemies(session,p,rootAdvance(root,12),18)
    blast()
   else
    for i=1,3 do
