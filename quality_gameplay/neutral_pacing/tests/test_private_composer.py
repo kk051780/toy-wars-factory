@@ -39,7 +39,7 @@ class TestPrivateComposer(unittest.TestCase):
         self.assertEqual(after.count("h.Died:Connect("),1)
         self.assertEqual(after.count("\n    credit(id)"),1)
         self.assertEqual(after.count("ImpactFeedback.ko("),1)
-        self.assertLess(after.index(guard),after.index("credit(id)"))
+        self.assertLess(after.index(guard),after.index("\n    credit(id)"))
         # This new condition must be impossible in FINISHED/ABANDONED and
         # for an eliminated castle, while remaining reachable for living
         # participants in ACTIVE state. Do not conflate with Studio proof.
