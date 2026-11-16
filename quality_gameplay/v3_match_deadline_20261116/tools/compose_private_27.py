@@ -56,6 +56,7 @@ def manifest_path(out: Path, src: Path) -> dict[str, str]:
 def patch_host(source: str) -> str:
     assert source.count('local function startSession(mode:string)') == 1
     assert source.count('session.refresh=function()') == 1
+    assert source.count(HOST_START_ANCHOR)==1, 'start() source drift'
     assert source.index('session.refresh=function()') < source.index(HOST_START_ANCHOR)
     assert source.count('session.closeRound=function(') == 1
     assert 'RoundReplay.schedule(session,session.closeRound)' in source
