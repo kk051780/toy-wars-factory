@@ -136,7 +136,11 @@ end
 local function decorateHeroCharacter(player:Player)
  local char=player.Character
  if not char then return end
- local role=player:GetAttribute("P0DPreviewRole")
+ -- Full V3 uses SelectedRole in lobby and Role when its real three skills equip.
+ -- Legacy SevenHeroArena only uses P0DPreviewRole; keep all three read-only.
+ local role=player:GetAttribute("EGGRUMBLE_Role")
+  or player:GetAttribute("EGGRUMBLE_SelectedRole")
+  or player:GetAttribute("P0DPreviewRole")
  local existing=char:FindFirstChild("EGGRUMBLE_RoleVisuals")
  if existing then existing:Destroy() end
  if type(role)~="string" or not roleSet[role] then return end
@@ -170,6 +174,54 @@ local function connectStandSource(source:Instance)
  end)
 end
 
+local function decorateLobbyRoleStand(stand:BasePart)
+ local root=stand.Parent
+ if not root or root.Name~="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW" then return end
+ local role=stand.Name:match("^ROLE_([A-Z]+)$")
+ if not role or not roleSet[role] or marked[stand] then return end
+ marked[stand]=true
+ local palette=COLORS[role]
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_LobbyRoleMiniatures_VisualOnly"
+ art.Parent=stand
+ -- Compact, tactile heraldic miniatures on the existing 7 hero-selection stands.
+ -- They never create/trigger new selection prompts; the original author owns jobs.
+ local function shape(name:string,kind:string,sz:Vector3,cf:CFrame,c:Color3,mat:Enum.Material)
+  piece(art,stand,name,kind,sz,cf,c,mat,true)
+ end
+ shape("BaseMedal","Cylinder",Vector3.new(.18,2.6,2.6),
+  CFrame.new(0,2.31,0)*CFrame.Angles(0,0,math.rad(90)),palette.accent,Enum.Material.Metal)
+ if role=="WARRIOR" then
+  shape("WarCrest","Wedge",Vector3.new(1.5,3,.65),CFrame.new(0,4.6,0),palette.base,Enum.Material.Metal)
+  shape("WarWingL","Wedge",Vector3.new(1.3,1.6,1.2),CFrame.new(-1.35,3.5,0),palette.cloth,Enum.Material.Metal)
+  shape("WarWingR","Wedge",Vector3.new(1.3,1.6,1.2),CFrame.new(1.35,3.5,0),palette.cloth,Enum.Material.Metal)
+ elseif role=="MAGE" then
+  shape("ArcaneSpire","Wedge",Vector3.new(1.2,3.8,1.2),CFrame.new(0,4.9,0),palette.base,Enum.Material.SmoothPlastic)
+  shape("OrbL","Ball",Vector3.new(.85,.85,.85),CFrame.new(-1.5,3.55,0),palette.accent,Enum.Material.Glass)
+  shape("OrbR","Ball",Vector3.new(.85,.85,.85),CFrame.new(1.5,3.55,0),palette.accent,Enum.Material.Glass)
+ elseif role=="NINJA" then
+  shape("HoodPeak","Wedge",Vector3.new(2.5,1.8,1.4),CFrame.new(0,4.0,-.2),palette.base,Enum.Material.Fabric)
+  shape("CrossBladeL","Wedge",Vector3.new(.33,3.1,.45),CFrame.new(-.85,4.2,.5)*CFrame.Angles(0,0,math.rad(-30)),palette.accent,Enum.Material.Metal)
+  shape("CrossBladeR","Wedge",Vector3.new(.33,3.1,.45),CFrame.new(.85,4.2,.5)*CFrame.Angles(0,0,math.rad(30)),palette.accent,Enum.Material.Metal)
+ elseif role=="TRAPPER" then
+  shape("MindCore","Ball",Vector3.new(1.8,1.8,1.8),CFrame.new(0,4.25,0),palette.accent,Enum.Material.Glass)
+  shape("PsiWingL","Wedge",Vector3.new(.75,2.6,1.5),CFrame.new(-1.4,4.35,.2),palette.base,Enum.Material.Metal)
+  shape("PsiWingR","Wedge",Vector3.new(.75,2.6,1.5),CFrame.new(1.4,4.35,.2),palette.base,Enum.Material.Metal)
+ elseif role=="BUILDER" then
+  shape("MachinePack","Block",Vector3.new(2.25,2.1,1.3),CFrame.new(0,4.1,.1),palette.base,Enum.Material.Metal)
+  shape("ReactorLens","Ball",Vector3.new(1.0,1.0,.35),CFrame.new(0,4.15,-.67),palette.accent,Enum.Material.Glass)
+  shape("Antenna","Cylinder",Vector3.new(.2,2.1,.2),CFrame.new(.85,5.55,0),palette.cloth,Enum.Material.Metal)
+ elseif role=="BEAST" then
+  shape("BeastTotem","Wedge",Vector3.new(2,2.2,1.4),CFrame.new(0,3.8,0),palette.base,Enum.Material.Fabric)
+  shape("HornL","Wedge",Vector3.new(.5,2.8,.7),CFrame.new(-1.05,5.0,0),palette.accent,Enum.Material.SmoothPlastic)
+  shape("HornR","Wedge",Vector3.new(.5,2.8,.7),CFrame.new(1.05,5.0,0),palette.accent,Enum.Material.SmoothPlastic)
+ elseif role=="ZOMBIE" then
+  shape("RitualCrown","Cylinder",Vector3.new(.36,2.4,2.4),CFrame.new(0,4.9,0)*CFrame.Angles(0,0,math.rad(90)),palette.accent,Enum.Material.Metal)
+  shape("CharmL","Wedge",Vector3.new(.62,2.7,.35),CFrame.new(-1.1,3.7,0),palette.cloth,Enum.Material.Fabric)
+  shape("CharmR","Wedge",Vector3.new(.62,2.7,.35),CFrame.new(1.1,3.7,0),palette.cloth,Enum.Material.Fabric)
+ end
+end
+
 local function decorateAI(model:Model)
  if marked[model] or model:GetAttribute("EGGRUMBLE_BotId")==nil then return end
  local torso=model:FindFirstChild("HumanoidRootPart")
@@ -195,15 +247,22 @@ local function decorateAI(model:Model)
  g("BackPlate","Block",CFrame.new(0,.25,.9),Vector3.new(1.7,1.2,.29),primary)
 end
 
+local function watchRole(player:Player)
+ for _,attribute in ipairs({"P0DPreviewRole","EGGRUMBLE_SelectedRole","EGGRUMBLE_Role"}) do
+  player:GetAttributeChangedSignal(attribute):Connect(function() decorateHeroCharacter(player) end)
+ end
+end
+
 for _,player in ipairs(Players:GetPlayers()) do
- player:GetAttributeChangedSignal("P0DPreviewRole"):Connect(function() decorateHeroCharacter(player) end)
+ watchRole(player)
  player.CharacterAdded:Connect(function()
   task.defer(function() decorateHeroCharacter(player) end)
  end)
  task.defer(function() decorateHeroCharacter(player) end)
+ task.delay(.35,function() if player.Parent then decorateHeroCharacter(player) end end)
 end
 Players.PlayerAdded:Connect(function(player)
- player:GetAttributeChangedSignal("P0DPreviewRole"):Connect(function() decorateHeroCharacter(player) end)
+ watchRole(player)
  player.CharacterAdded:Connect(function()
   task.defer(function() decorateHeroCharacter(player) end)
  end)
@@ -212,10 +271,13 @@ for _,source in ipairs(workspace:GetChildren()) do connectStandSource(source) en
 workspace.ChildAdded:Connect(connectStandSource)
 for _,instance in ipairs(workspace:GetDescendants()) do
  if instance:IsA("Model") and instance:GetAttribute("EGGRUMBLE_BotId")~=nil then decorateAI(instance) end
+ if instance:IsA("BasePart") and instance.Name:match("^ROLE_[A-Z]+$") then decorateLobbyRoleStand(instance) end
 end
 workspace.DescendantAdded:Connect(function(instance)
  if instance:IsA("Model") and instance.Name:sub(1,9)=="AI_Actor_" then
   task.defer(function() if instance.Parent then decorateAI(instance) end end)
+ elseif instance:IsA("BasePart") and instance.Name:match("^ROLE_[A-Z]+$") then
+  task.defer(function() if instance.Parent then decorateLobbyRoleStand(instance) end end)
  elseif instance:IsA("BasePart") and instance.Name=="HumanoidRootPart" then
   local ancestor=instance.Parent
   if ancestor and ancestor:IsA("Model") and ancestor:GetAttribute("EGGRUMBLE_BotId")~=nil then
