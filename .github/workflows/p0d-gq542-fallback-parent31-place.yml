@@ -1,0 +1,71 @@
+name: P0D GQ542 use actual existing author31 Place fallback (not RC)
+on:
+  push:
+    branches: ['quality/gq-v3-neutral-target-fallback-20261116-01']
+    paths:
+      - 'quality_gameplay/v3_neutral_target_fallback_20261116/**'
+      - '.github/workflows/p0d-gq542-fallback-parent31-place.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_neutral_target_fallback_20261116/**'
+      - '.github/workflows/p0d-gq542-fallback-parent31-place.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-31-verified-parent-one-source-delta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with:
+          name: GQ530-EIGHT-DOMAIN-ORIGINAL31-ON-OFF-PRIVATE-NOT-RC
+          run-id: 43847278518
+          github-token: ${{ github.token }}
+          repository: kk051780/toy-wars-factory
+          path: parent31
+      - name: Check exact original 31-source Rojo parent and one-source mutation
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          places=list(Path('parent31').rglob('GQ31_ON_PRIVATE.rbxlx'))
+          receipts=list(Path('parent31').rglob('GQ31_ON_RECEIPT.json'))
+          assert len(places)==len(receipts)==1,(places,receipts)
+          assert places[0].stat().st_size==240416
+          print('ORIGINAL_GQ530_ON31_PARENT_EXACT_NAME_AND_BYTES',places[0],receipts[0])
+          PY
+          SRC=$(find parent31 -name 'GQ31_ON_PRIVATE.rbxlx' -print -quit)
+          RECEIPT=$(find parent31 -name 'GQ31_ON_RECEIPT.json' -print -quit)
+          PYTHONPATH=quality_gameplay/v3_neutral_target_fallback_20261116 \
+            python3 quality_gameplay/v3_neutral_target_fallback_20261116/patch_private31_place.py \
+              --parent "$SRC" --receipt "$RECEIPT" \
+              --out artifacts/GQ542_NEUTRAL_FALLBACK_AUTHOR31_PRIVATE.rbxlx \
+              --swarm-out artifacts/EGGRUMBLE_SwarmCombat_GQ542.luau
+          test -s artifacts/GQ542_NEUTRAL_FALLBACK_AUTHOR31_PRIVATE.rbxlx
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Native Luau compile actual changed Swarm in original 31-source Place
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq542-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq542-native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq542-native/luau-compile --text artifacts/EGGRUMBLE_SwarmCombat_GQ542.luau >/dev/null
+          echo GQ542_AUTHOR31_ONE_SWARM_NATIVE_COMPILE_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ542-EIGHT-DOMAIN-ORIGINAL31-ONE-SWARM-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ542_NEUTRAL_FALLBACK_AUTHOR31_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_SwarmCombat_GQ542.luau
+          retention-days: 3
+      - name: Honest gate
+        run: echo "Original #530 31 script real Rojo + exact private source delta; this derivative is NOT a fresh Rojo rebuild, formal RC, Studio/Android or OWNER acceptance"
