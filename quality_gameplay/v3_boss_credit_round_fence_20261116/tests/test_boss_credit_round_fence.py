@@ -12,7 +12,7 @@ PINNED_BLOBS = {
     "EGGRUMBLE_RoundReplay.luau": "a97e7aeffc988fe9ccde5bf7544b01deb5f243ff",
 }
 def git_blob_sha(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + bytes([0]) + raw).hexdigest()
 
 class BossCreditFenceContract(unittest.TestCase):
     def test_author_sources_are_pinned_and_still_have_this_gap(self):
