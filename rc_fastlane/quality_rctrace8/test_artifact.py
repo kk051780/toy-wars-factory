@@ -196,7 +196,7 @@ class Gate(unittest.TestCase):
         self.assertEqual(manifest["source_heads"]["zombie_guard582"],
                          "5769b80ed21f5592adcca1936d2d3d04934f0089")
 
-    def test_current34_manifest_anchors_enforce_bot_siege_and_egg_freeze(self):
+    def test_current36_manifest_anchors_enforce_bot_siege_and_egg_freeze(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
@@ -219,7 +219,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],35)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],36)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
