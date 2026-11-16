@@ -25,7 +25,7 @@ REQUIRED_8={
  "EGGRUMBLE_CastleMatchRules",                             # eggs and castle
  "EGGRUMBLE_SwarmCombat","EGGRUMBLE_NeutralStoneGiant",      # neutral
  "EGGRUMBLE_FieldItemPickups",                             # items
- "EGGRUMBLE_LobbyUXPreview","EGGRUMBLE_ScoreBalance",        # lobby/balance
+ "EGGRUMBLE_RoundReplay","EGGRUMBLE_ScoreBalance",         # lobby/balance
  "EGGRUMBLE_HeroSilhouetteArt","EGGRUMBLE_FlagshipFieldArt",  # art
 }
 
