@@ -46,10 +46,6 @@ local function runTo(target)
 end
 local os={clock=function() return now end}
 local vec={}
-vec.__index=function(_,key)
- if key=="Magnitude" then return nil end
- return vec[key]
-end
 function vec.new(x,y,z) return setmetatable({X=x,Y=y,Z=z},vec) end
 vec.__add=function(a,b) return vec.new(a.X+b.X,a.Y+b.Y,a.Z+b.Z) end
 vec.__sub=function(a,b) return vec.new(a.X-b.X,a.Y-b.Y,a.Z-b.Z) end
@@ -141,10 +137,8 @@ check(heal.Name=="ITEM_1_HEAL" and dash.Name=="ITEM_2_DASH"
  and shield.Name=="ITEM_3_SHIELD","source's REAL HEAL/DASH/SHIELD mapping")
 -- Server-owned cargo rejects both movement and invulnerability, but HEAL remains.
 session.rules.castles["101"].heldEggs=1
-dash.TriggeredDummy=nil
-dashPrompt=nil
--- Prompt is parented to the original part, exposed through mock assignment.
-check(dash.prompt~=nil or true,"mock will discover prompt instances")
+-- Every original pickup gets exactly one server-owned ProximityPrompt.
+check(#createdPrompts==3,"each original item spawns one real prompt")
 local function getPrompt(part)
  for _,item in ipairs(createdPrompts) do
   if item.Parent==part then return item end
