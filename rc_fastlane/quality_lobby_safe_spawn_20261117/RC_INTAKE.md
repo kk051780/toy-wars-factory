@@ -1,0 +1,8 @@
+# GQ646 — physical neutral lobby / single Host (RC candidate)
+
+- Original nonduplicate source: [PR #651](https://github.com/kk051780/toy-wars-factory/pull/651), pinned source SHA `221be5bcaa6ffe7059271a726946dde46323b0cd`. Isolated 31 native+Rojo and 5 negative source tests GREEN, exact CI #43955099214.
+- This formal workflow candidate [PR #661](https://github.com/kk051780/toy-wars-factory/pull/661) was composed on official base `ad2a1d885510966c5d946fdf97e0f44f07c15fb7`, after GQ509 original postwin death freeze and GQ527 original siege AI. Adds selected GQ646 Host to canonical Place in candidate branch, all other30 unchanged; 35 total flags.
+- **IMPORTANT LIVE BRANCH DRIFT:** While composing this candidate, official RC updated to `0aa30990a205e67400d31728e39d87e48c6b886d` with independent P0D-006 rare eggs feature. It now has 35 flags *without* GQ646. Formal adoption must recompose a distinct single Host GQ646 after that rare-egg Host+Score baseline, preserve prior35, emit new36th feature, rerun Native31/Rojo31, strict GQ8, ZIP/Place receipt on same HEAD. **This PR is not directly CAS-adoptable to current official HEAD**, even if its own CI is green.
+- Do not erase the rare-egg source, reset official branch, or force write. #220 is sole authenticated writer, non-force expected HEAD CAS only. No original author personal ACK requirement.
+- Source-level defect: original V3 lobby gates/stands have no safe floor/neutral SpawnLocation. The fixed location is a hypothesis for owner-reported initial death; engine test is pending. Never claim Studio/Android/FUN GO from source compile.
+- Rollback: unselect only Host safe-spawn block, restores exact previous Host, other30 unchanged. Default S1 rich51 untouched; no main/merge/publish/paid.
