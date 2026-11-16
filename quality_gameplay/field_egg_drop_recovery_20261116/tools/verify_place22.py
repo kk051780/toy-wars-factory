@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 def sha(s):
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
-def expected_scripts(project):
+def expected_scripts(project,expected_count=22):
     p=project.parent
     tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
     found={}
@@ -23,11 +23,11 @@ def expected_scripts(project):
             else:
                 walk(node)
     walk(tree)
-    assert len(found)==22, f"expected 22 source files, got {len(found)}"
+    assert len(found)==expected_count, f"expected {expected_count} source files, got {len(found)}"
     return found
 
-def verify(project,place):
-    expected=expected_scripts(project)
+def verify(project,place,expected_count=22):
+    expected=expected_scripts(project,expected_count)
     root=ET.parse(place).getroot()
     actual={}
     for node in root.iter("Item"):
@@ -47,11 +47,12 @@ def verify(project,place):
         otherKind,otherSrc=actual[name]
         assert kind==otherKind, f"{name} source CLASS mismatch {kind} vs {otherKind}"
         assert sha(src)==sha(otherSrc), f"{name} source text SHA mismatch"
-    print("GQ_FIELD_EGG_PRIVATE22_ROJO_EXACT_PASS 22/22 classes+embedded text")
+    print(f"GQ_FIELD_EGG_PRIVATE{expected_count}_ROJO_EXACT_PASS {expected_count}/{expected_count} classes+embedded text")
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--project",required=True,type=Path)
     parser.add_argument("--place",required=True,type=Path)
+    parser.add_argument("--expected-count",type=int,choices=(22,27),default=22)
     a=parser.parse_args()
-    verify(a.project,a.place)
+    verify(a.project,a.place,a.expected_count)
