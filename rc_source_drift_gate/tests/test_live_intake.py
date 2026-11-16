@@ -88,3 +88,88 @@ class SourceDriftGateTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# The active 26-script composer differs deliberately from the old 16-script
+# game-core Rojo map. Test the actual 26-Place intake independently of legacy.
+from check_live_intake import (evaluate_active26, CURRENT26_COMPOSER, CURRENT26_WORKFLOW,
+                               CURRENT26_RUN_NAME, current26_pins)
+
+
+def current26_fixture():
+    prs, author, _old_quality, oldworkflow, blobs, _, rc = fixture()
+    # One additional old-author source not explicitly in the compact domain core.
+    author["tree"]["ServerScriptService"]["EGGRUMBLE_SkillFX"] = {
+        "$path": "EGGRUMBLE_SkillFX.luau"}
+    prefix = str(Path(PROJECT).parent).replace("\\", "/")
+    blobs[prefix + "/EGGRUMBLE_SkillFX.luau"] = "f" * 40
+    quality_blobs = {CURRENT26_COMPOSER: "0" * 40, CURRENT26_WORKFLOW: "1" * 40}
+    workflow = ("Read fixed latest game SOURCE from original author PR482\n"
+                + "  ref: " + prs["author"]["head"]["sha"] + "\n"
+                + "Read fixed original ART source from PR485\n"
+                + "  ref: " + prs["art"]["head"]["sha"] + "\n"
+                + "Read fixed original SCORE source from PR487\n"
+                + "  ref: " + prs["score"]["head"]["sha"] + "\n"
+                + "Build fixed Luau native compiler and test runner\n")
+    composer = "\n".join((
+        "def apply_ramp(", "EGGRUMBLE_BotActors", "EGGRUMBLE_BotPathRouter",
+        "EGGRUMBLE_LobbyCastleModesPreview", "EGGRUMBLE_ProceduralSkills",
+        "EGGRUMBLE_RaidItemIntake", "EGGRUMBLE_NeutralStoneGiant",
+        "EGGRUMBLE_BossSessionFence", "EGGRUMBLE_ScoreBalance",
+        "EGGRUMBLE_ArtDistanceLOD", "assert len(server)-1==23 and len(client)-1==3",
+        "assert len(mapped)==26", '"source_sha256"'
+    ))
+    ci = [{"name": CURRENT26_RUN_NAME, "head_sha": prs["quality"]["head"]["sha"],
+           "id": 987654321, "status": "completed", "conclusion": "success",
+           "html_url": "https://github.com/example/workflows/987654321"}]
+    return [prs, author, blobs, quality_blobs, workflow, composer, ci, rc]
+
+
+class Current26IntakeTest(unittest.TestCase):
+    def test_current26_pass_never_claims_rc_or_studio(self):
+        result = evaluate_active26(*current26_fixture())
+        self.assertEqual(result["decision"], "SOURCE_REVIEW_READY_ONLY")
+        self.assertEqual(result["target_candidate_script_count"], 26)
+        self.assertEqual(result["composite_ci"]["run_id"], 987654321)
+        self.assertEqual(result["official_rc_adopted"], "NOT_VERIFIED_REQUIRES_220_CAS_RECEIPT")
+        self.assertEqual(result["studio_android_art_fun_owner"], "NOT_VERIFIED")
+
+    def test_current26_ignores_old21_composite_without_giving_forged_pass(self):
+        args = current26_fixture()
+        self.assertEqual(len(current26_pins(args[4])), 3)
+        self.assertTrue(evaluate_active26(*args)["obsolete_21_source_workflow_not_used_as_latest_proof"])
+
+    def test_current26_missing_new_boss_blocks(self):
+        args = current26_fixture()
+        del args[1]["tree"]["ServerScriptService"]["EGGRUMBLE_BossSessionFence"]
+        result = evaluate_active26(*args)
+        self.assertEqual(result["decision"], "SOURCE_RECONCILIATION_REQUIRED")
+        self.assertTrue(any("author_contract_missing:neutral" in x for x in result["blockers"]))
+
+    def test_current26_detects_stale_score_pin(self):
+        args = current26_fixture()
+        args[4] = args[4].replace("  ref: " + "d"*40, "  ref: " + "e"*40)
+        self.assertIn("current26_score_pin_stale", evaluate_active26(*args)["blockers"])
+
+    def test_current26_success_on_old_head_is_not_same_head_success(self):
+        args = current26_fixture()
+        args[6][0]["head_sha"] = "9" * 40
+        self.assertIn("current26_samehead_CI_not_success", evaluate_active26(*args)["blockers"])
+
+    def test_current26_pending_ci_is_not_pass(self):
+        args = current26_fixture()
+        args[6][0]["conclusion"] = None
+        args[6][0]["status"] = "in_progress"
+        self.assertIn("current26_samehead_CI_not_success", evaluate_active26(*args)["blockers"])
+
+    def test_current26_missing_composer_contract_is_red(self):
+        args = current26_fixture()
+        args[5] = args[5].replace("EGGRUMBLE_RaidItemIntake", "UNRELATED")
+        self.assertTrue(any("current26_composer_contract_missing" in x
+                            for x in evaluate_active26(*args)["blockers"]))
+
+    def test_current26_mapped_source_blob_absence_is_red(self):
+        args = current26_fixture()
+        args[2].clear()
+        self.assertTrue(any("author_blob_unknown" in x
+                            for x in evaluate_active26(*args)["blockers"]))
