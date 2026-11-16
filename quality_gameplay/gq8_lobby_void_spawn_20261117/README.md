@@ -1,9 +1,9 @@
 # GQ8 — EGGRUMBLE official RC31: lobby void / missing spawn
 
 ## Reproduced source evidence
-Official RC HEAD: 2291154fd07c8d8af086f76199bf585ff2c725c4. Same-HEAD official Actions run: 43953617782 SUCCESS. Artifact 14271160613.
+Official RC HEAD: ad2a1d885510966c5d946fdf97e0f44f07c15fb7. Same-HEAD official Actions run: 43955472445 SUCCESS. Artifact 14271996855.
 
-Actual 31-source Place SHA256: 87ca0135a1b3ec6fcc8b35f55856f58a200ca9cd9b89050da6e30ed2524eb082. Parsed official .rbxlx contains zero Part/SpawnLocation Instances under Workspace. Single server Host EGGRUMBLE_LobbyCastleModesPreview SHA256: 9fd1f9211ff8f99cecc1dff1c09ff66e61ea4575a19e6c7f440b6932f00ddc37. It uses an existing SpawnLocation or (0,4,0) and creates class/gate stands but no solid lobby floor or fallback SpawnLocation. This is a source-confirmed void-spawn risk consistent with OWNER "no lobby; dies immediately"; Studio causality is NOT TESTED.
+Actual 31-source Place SHA256: d8ffd1bb2957056f7a0dc69b9d4cb8a6b52c0a4140c5a7971bf89dce86cddeca. Parsed official .rbxlx contains zero Part/SpawnLocation Instances under Workspace. Single server Host EGGRUMBLE_LobbyCastleModesPreview SHA256: 9fd1f9211ff8f99cecc1dff1c09ff66e61ea4575a19e6c7f440b6932f00ddc37. It uses an existing SpawnLocation or (0,4,0) and creates class/gate stands but no solid lobby floor or fallback SpawnLocation. This is a source-confirmed void-spawn risk consistent with OWNER "no lobby; dies immediately"; Studio causality is NOT TESTED.
 
 ## Distinct source modification
 - One preexisting Host source only, all other 30 original scripts unchanged, 31/31 class/identity exact, no new Game/Remote/Store/Combat/SCORE/AI authority.
