@@ -65,6 +65,22 @@ class DefenseSourceContract(unittest.TestCase):
                      "post-round turret blocked", "nan distance denied"):
             self.assertIn(case, NATIVE)
 
+    def test_delayed_trap_cannot_overwrite_new_round_speed(self):
+        self.assertIn("snare(session,closest.model,closest.hum", RUNTIME)
+        self.assertIn('if session.rules.phase=="ACTIVE" and session.world.Parent', RUNTIME)
+
+    def test_author_host_supports_one_safe_defense_hook(self):
+        author = ROOT.parent / "P0D-PQG-SEVEN-HERO-PLAYABLE-20261116"
+        rules = (author / "EGGRUMBLE_CastleMatchRules.luau").read_text(encoding="utf-8")
+        host = (author / "EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text(encoding="utf-8")
+        project = (author / "EGGRUMBLE_V3_STUDIO.project.json").read_text(encoding="utf-8")
+        for equipped in ("TURRET=4", "TRAP=3", "SENSOR=2"):
+            self.assertIn(equipped, rules)
+        self.assertEqual(host.count("BotActors.start(session,Rules)"), 1)
+        self.assertEqual(host.count('if session.world.Parent then session.world:Destroy() end'), 1)
+        self.assertIn("EGGRUMBLE_LobbyCastleModesPreview", project)
+        self.assertIn("EGGRUMBLE_CastleMatchRules", project)
+
     def test_spec_has_no_ownership_overlap_files(self):
         paths = sorted(p.name for p in ROOT.glob("*.luau"))
         self.assertEqual(paths, ["EGGRUMBLE_CastleDefenseLive.luau",
