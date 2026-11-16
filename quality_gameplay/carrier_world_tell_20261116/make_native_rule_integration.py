@@ -223,6 +223,27 @@ step()
 eq("real original-rule bot egg marker recovers automatically",captionOn(crashRoots["AI_1"]),"🥚×1")
 eq("human actual egg marker retained during recovery",captionOn(crashRoots["501"]),"🥚×1")
 eq("no duplicate optional match worker after recovery",crashSession._carrierWorldTellStarted,true)
+-- Some hosting systems replace the observer's roster snapshot when a
+-- participant moves between rounds. Keep the ACTUAL original Rules roster
+-- immutable, and prove this cosmetic projection cannot leak a former badge.
+local rosterView={}
+for _,entry in ipairs(crashRoster) do
+ table.insert(rosterView,entry)
+end
+crashSession.roster=rosterView
+local departedHuman=table.remove(rosterView,1)
+eq("the removed roster view seat is the human",departedHuman.id,"501")
+step()
+eq("removed UI roster human has no stale carrier marker",liveOn(crashRoots["501"]),0)
+eq("remaining real-source AI still shows true carried egg",captionOn(crashRoots["AI_1"]),"🥚×1")
+eq("original unchanged Rules keep departed human egg",crashRules.castles["501"].heldEggs,1)
+eq("original Rules egg conservation after cosmetic roster exit",RealRules.auditEggConservation(crashRules).valid,true)
+eq("original match remains ACTIVE after observer roster exit",crashRules.phase,"ACTIVE")
+table.insert(rosterView,1,departedHuman)
+step()
+eq("rejoined human receives original author-rule egg marker",captionOn(crashRoots["501"]),"🥚×1")
+eq("real-source bot unaffected by rejoining human",captionOn(crashRoots["AI_1"]),"🥚×1")
+eq("original source tokens still conserved after rejoin",RealRules.auditEggConservation(crashRules).valid,true)
 crashSession.world.Parent=nil
 step()
 eq("original real-rule fault test leaks zero labels",countLiveAll(),0)
