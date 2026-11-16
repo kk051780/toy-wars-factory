@@ -1,0 +1,188 @@
+name: P0D GQ author 26 + original 494 pace + 501 encounters 28 PRIVATE
+on:
+  push:
+    branches:
+      - 'quality/p0d-gq-neutral-encounters-solo-20261116-s15'
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-dual28-private.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_encounters/**'
+      - '.github/workflows/p0d-neutral-dual28-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  private-dual28-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout ONLY 501 writer branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read untouched #482 V3 full-game source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Read #484 existing AI quality composer source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          path: _v3_quality
+          persist-credentials: false
+      - name: Read #485 artist original source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Read #487 result and score original
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Read and reuse #494 original pacing and KO patch
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing
+          persist-credentials: false
+      - name: Verify immutable original reference sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          echo "FIVE_AUTHOR_BRANCHES_READ_ONLY_SHA_PINNED"
+      - name: Exercise original author's domain tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_*quality.py' -v
+      - name: Use original artist and original quality 26-source composers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_DUAL28_BASE_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality \
+            --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_DUAL28_BASE_ART.project.json \
+            --out artifacts/GQ_V3_DUAL28_BASE26.project.json
+      - name: Original #494 pacing and sole #501 target policy source regression
+        env:
+          P0D_GQ494_COMPOSER: _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py
+          P0D_GQ494_POLICY: _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau
+          P0D_V3_ORIGINAL_SWARM: _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau
+          P0D_GQ_ORIGINAL26_PROJECT: artifacts/GQ_V3_DUAL28_BASE26.project.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/neutral_encounters/tests -p 'test_*.py' -v
+      - name: Compose original #494 patch and original #501 into one nonowner private28
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/GQ_V3_DUAL28_BASE26.project.json \
+            --original-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json
+      - name: Build fixed native Luau compiler and test runner
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile exact all 28 mapped Luau and execute BOTH authors native VM tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq28_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq28_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json").resolve()
+          def visit(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (p.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith("$"):yield from visit(v)
+          files=list(visit(json.loads(p.read_text(encoding="utf-8"))["tree"]))
+          assert len(files)==28,len(files)
+          for f in files:
+              subprocess.run(["/tmp/gq28_luau/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("ONE_SWARM_TWO_NEUTRAL_POLICIES_NATIVE_LUAU_28_OF_28_PASS")
+          PY
+          python3 quality_gameplay/neutral_encounters/tools/build_native_harness.py --out artifacts/fair_native28.luau
+          python3 _v3_pacing/quality_gameplay/neutral_pacing/tools/build_native_harness.py --out artifacts/pace_native28.luau
+          /tmp/gq28_luau/luau-compile --text artifacts/fair_native28.luau >/dev/null
+          /tmp/gq28_luau/luau-compile --text artifacts/pace_native28.luau >/dev/null
+          /tmp/gq28_luau/luau artifacts/fair_native28.luau | tee artifacts/FAIR_NATIVE28.log
+          /tmp/gq28_luau/luau artifacts/pace_native28.luau | tee artifacts/PACE_NATIVE28.log
+          grep -q NEUTRAL_ENCOUNTER_NATIVE artifacts/FAIR_NATIVE28.log
+          grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' artifacts/PACE_NATIVE28.log
+      - name: Download SHA-pinned Rojo 7.7.1 and build the actual private28 XML Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq28_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq28_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq28_rojo.zip") as z:
+              found=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(found)==1
+              p=Path("/tmp/gq28_rojo");p.write_bytes(z.read(found[0]));p.chmod(0o755)
+          PY
+          /tmp/gq28_rojo build artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json -o artifacts/EGGRUMBLE_GQ_DUAL28_PRIVATE.rbxlx
+      - name: Independently audit actual Place XML source exact 28 of 28 and original 25 unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_encounters/tools/verify_dual28.py \
+            --original artifacts/GQ_V3_DUAL28_BASE26.project.json \
+            --dual artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json \
+            --place artifacts/EGGRUMBLE_GQ_DUAL28_PRIVATE.rbxlx
+          echo "NOT OFFICIAL RC / NOT PC STUDIO / NOT ANDROID / NOT OWNER FUN"
+      - name: Upload ONLY private proof pack, not an official RC Place or published game
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-NEUTRAL-28-SOURCE-EXACT-NONRC
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            artifacts/EGGRUMBLE_GQ_DUAL28_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_PACING_FAIRNESS28.project.json
+            artifacts/DUAL28_SOURCE_RECEIPT.json
+            artifacts/DUAL28_PLACE_RECEIPT.json
+            artifacts/FAIR_NATIVE28.log
+            artifacts/PACE_NATIVE28.log
