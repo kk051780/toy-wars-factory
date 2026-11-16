@@ -22,10 +22,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Confirm no existing original-author game files changed
         run: |
           set -euo pipefail
-          git diff --name-only "$(git rev-parse HEAD^)" HEAD | while read -r name; do
+          git diff --name-only fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD | while read -r name; do
             case "$name" in
               handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/*|.github/workflows/p0d-eggrumble-castle-defense-native.yml) ;;
               *) echo "CROSS_LANE_SOURCE_MODIFIED: $name"; exit 1 ;;
