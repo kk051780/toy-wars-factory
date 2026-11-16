@@ -98,26 +98,26 @@ end
 
 TESTS = r'''
 do -- nearest victim on cooldown; second gets exactly one real 4 HP hit
-    local n=newVictim("near",1,false), f=newVictim("far",2,false)
+    local n,f=newVictim("near",1,false),newVictim("far",2,false)
     local cd={[n.humanoid]=9.5}
     local used=actualSourceTick(newSoldier(),{n,f},10,0,{},cd)
     check(used==1 and n.humanoid.damage==0 and f.humanoid.damage==4,"cooldown_fallback")
     check(cd[n.humanoid]==9.5 and cd[f.humanoid]==10,"cd_commit_only_selected")
 end
 do -- wall in front, legal target behind; wall does not spend victim CD
-    local a=newVictim("wall",1,true), b=newVictim("visible",2,false)
+    local a,b=newVictim("wall",1,true),newVictim("visible",2,false)
     local cd={}
     local used=actualSourceTick(newSoldier(),{a,b},10,0,{},cd)
     check(used==2 and a.humanoid.damage==0 and b.humanoid.damage==4,"wall_fallback")
     check(cd[a.humanoid]==nil and cd[b.humanoid]==10,"wall_no_cd_commit")
 end
 do -- stable equal-distance victim order
-    local a=newVictim("first",2,false), b=newVictim("second",2,false)
+    local a,b=newVictim("first",2,false),newVictim("second",2,false)
     local used=actualSourceTick(newSoldier(),{a,b},10,0,{},{})
     check(used==1 and a.humanoid.damage==4 and b.humanoid.damage==0,"stable_tie_single_hit")
 end
 do -- dead closest ignored; soldier attack has no duplicate hit
-    local a=newVictim("dead",1,false), b=newVictim("live",2,false)
+    local a,b=newVictim("dead",1,false),newVictim("live",2,false)
     a.humanoid.Health=0
     local used=actualSourceTick(newSoldier(),{a,b},10,0,{},{})
     check(used==1 and a.humanoid.damage==0 and b.humanoid.damage==4,"dead_target_ignored")
