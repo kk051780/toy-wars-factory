@@ -44,9 +44,13 @@ def strip_module(text: str, final: str) -> str:
     if not text.startswith("--!strict\n") or not text.rstrip().endswith(final):
         raise ValueError("RED_AUTHOR_MODULE_RETURN_ANCHOR")
     body = text[len("--!strict\n"):].rstrip()
-    if body.count(final) != 1:
+    lines = body.splitlines()
+    # "return Policy..." inside original helper functions is normal; only
+    # the exact final module-level return statement is removed.
+    if not lines or lines[-1].strip() != final or sum(
+        line.strip() == final for line in lines) != 1:
         raise ValueError("RED_AUTHOR_MODULE_RETURN_COUNT")
-    return body[:-len(final)].rstrip() + "\n"
+    return "\n".join(lines[:-1]).rstrip() + "\n"
 
 def inline_source(builder: str, policy: str) -> str:
     pp = strip_module(policy, "return Policy")
