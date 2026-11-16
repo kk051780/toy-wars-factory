@@ -81,6 +81,12 @@ jobs:
             --receipt "$RECEIPT_PATH" \
             --out-dir artifacts/gq615_current31 \
             --rc-head "$RC_SHA" --run-id "$V3_RUN" --zip-bytes "$RC_ZIP_BYTES"
+      - name: Validate direct official-current 31 source intake selector, not a second Host
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_lobby_queue_visibility_20261117/intake31.py prepare \
+            --base artifacts/gq615_current31/official_source31/GQ615_CURRENT_SOURCE31.project.json \
+            --out artifacts/gq615_current31/GQ615_DIRECT31_SELECTED.project.json
       - name: Compile native current 31 scripts and run real display behavior cases
         run: |
           set -euo pipefail
@@ -118,8 +124,12 @@ jobs:
               exe.write_bytes(z.read(found[0]))
               exe.chmod(0o755)
           PY
-          /tmp/gq615-rojo build artifacts/gq615_current31/GQ615_CURRENT_SOURCE31.project.json \
+          /tmp/gq615-rojo build artifacts/gq615_current31/GQ615_DIRECT31_SELECTED.project.json \
             -o artifacts/gq615_current31/GQ615_ROJO_SOURCE31_REPLAY.rbxlx
+          python3 quality_gameplay/v3_lobby_queue_visibility_20261117/intake31.py verify \
+            --base artifacts/gq615_current31/official_source31/GQ615_CURRENT_SOURCE31.project.json \
+            --out artifacts/gq615_current31/GQ615_DIRECT31_SELECTED.project.json \
+            --place artifacts/gq615_current31/GQ615_ROJO_SOURCE31_REPLAY.rbxlx
           python3 quality_gameplay/v3_lobby_queue_visibility_20261117/private31.py verify \
             --out-dir artifacts/gq615_current31 \
             --rojo-place artifacts/gq615_current31/GQ615_ROJO_SOURCE31_REPLAY.rbxlx
@@ -144,6 +154,8 @@ jobs:
             artifacts/gq615_current31/GQ615_ROJO_SOURCE31_REPLAY.rbxlx
             artifacts/gq615_current31/GQ615_CURRENT_SOURCE31.project.json
             artifacts/gq615_current31/GQ615_PRIVATE31_RECEIPT.json
+            artifacts/gq615_current31/GQ615_DIRECT31_SOURCE_RECEIPT.json
+            artifacts/gq615_current31/GQ615_DIRECT31_SELECTED.project.json
             artifacts/gq615_current31/GQ615_QUEUE_ACTUAL_NATIVE.log
           if-no-files-found: error
           retention-days: 3
