@@ -5,6 +5,7 @@ local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
+local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
 local Swarm={}
 local LIMIT=110
 local SPAWN_TICK=.18
@@ -98,7 +99,11 @@ function Swarm.start(session:any)
   h.Died:Connect(function()
    live[m]=nil
    local id=h:GetAttribute("LastAttackerId")
-   if type(id)=="string" and session.rules.castles[id] then credit(id) end
+   if type(id)=="string" and session.rules.castles[id] then
+    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)
+    ImpactFeedback.ko(all,m,attacker and (attacker:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR")
+    credit(id)
+   end
    task.delay(.25,function() if m.Parent then m:Destroy() end end)
   end)
  end
@@ -156,6 +161,8 @@ function Swarm.start(session:any)
    if model and model:IsA("Model") and lineOfSightToNeutral(origin,attacker,model) then
     h:SetAttribute("LastAttackerId",id)
     h:TakeDamage(damage)
+    local user=Players:GetPlayerByUserId(tonumber(id) or -1)
+    ImpactFeedback.hit(model,user and (user:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR")
     hits+=1
    end
   end
