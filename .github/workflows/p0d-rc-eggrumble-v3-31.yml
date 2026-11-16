@@ -1032,7 +1032,7 @@ jobs:
           ko508=json.loads(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_text())
           assert ko508["real_rojo_source_class_exact"]=="31/31" and ko508["other_30_byte_identical"]
           assert ko508["off_rollback_byte_exact"] and ko508["no_extra_script_or_score_authority"]
-          assert ko508["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert ko508["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert ko508["original_author508_policy_git_blob"]=="00eed6aa306656eded1e3c9fc62acdf1a86ce248"
           assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
           assert m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"] is True
