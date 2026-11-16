@@ -1,0 +1,60 @@
+name: P0D EGGRUMBLE V3 isolated castle-defense native contract
+
+on:
+  push:
+    branches:
+      - quality/p0d-castle-defense-live-20261116
+    paths:
+      - 'handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-castle-defense-native.yml'
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-castle-defense-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-castle-defense:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm no existing original-author game files changed
+        run: |
+          set -euo pipefail
+          git diff --name-only "$(git rev-parse HEAD^)" HEAD | while read -r name; do
+            case "$name" in
+              handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/*|.github/workflows/p0d-eggrumble-castle-defense-native.yml) ;;
+              *) echo "CROSS_LANE_SOURCE_MODIFIED: $name"; exit 1 ;;
+            esac
+          done
+      - name: Run safety and owner-scope Python regressions
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/tests -p 'test_*.py' -v
+      - name: Build real Luau compiler and native VM (independent SOURCE evidence)
+        run: |
+          set -euo pipefail
+          git clone --depth=1 https://github.com/luau-lang/luau.git /tmp/gq-def-luau
+          git -C /tmp/gq-def-luau rev-parse HEAD | tee /tmp/luau-source-sha.txt
+          cmake -S /tmp/gq-def-luau -B /tmp/gq-def-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-def-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          test -x /tmp/gq-def-luau/build/luau
+          test -x /tmp/gq-def-luau/build/luau-compile
+      - name: Compile both actual game Luau modules and regression in native compiler
+        run: |
+          set -euo pipefail
+          find handoffs/P0D-PQG-CASTLE-DEFENSE-20261116 -type f -name '*.luau' -print0 |
+            while IFS= read -r -d '' source; do
+              echo "NATIVE_COMPILE: $source"
+              /tmp/gq-def-luau/build/luau-compile "$source" >/dev/null
+            done
+      - name: Execute policy TEAM/BR and exploit negatives in real Luau VM
+        working-directory: handoffs/P0D-PQG-CASTLE-DEFENSE-20261116
+        run: |
+          set -euo pipefail
+          /tmp/gq-def-luau/build/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau
+          echo "CASTLE_DEFENSE_NATIVE_SOURCE_PASS; STUDIO_ANDROID_RC_NOT_TESTED"
