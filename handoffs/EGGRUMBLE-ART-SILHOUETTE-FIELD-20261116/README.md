@@ -38,6 +38,21 @@ The dedicated workflow additionally retrieves the parent author branch **read-on
 
 The standalone item preview is also author-owned. In a **separate private Studio copy**, run its `EGGRUMBLE_FieldItemPreview` with `EGGRUMBLE_FieldItemPickups` and add `EGGRUMBLE_EncounterReadabilityArt` as a cosmetic sibling Script for the nine-item test. **Do not run the item preview together with a V3 game host.**
 
+## 2026-11-16: original standalone author previews now share this unique art lane
+
+Apart from the current 16-combatant TEAM/BR art experiment, four **separate** original #482 author previews are supported by the same A01-only scripts. These are *source-level compositions*, not four independently authored games:
+
+| Original author-only test Place | Existing original module/preview pair | A01 art additions | Original gameplay authority left alone |
+| --- | --- | --- | --- |
+| Neutral boss | `EGGRUMBLE_NeutralStoneGiant` + `EGGRUMBLE_NeutralBossPreview` | Five-part shoulder/crown/core housing on the **existing** giant, with weak-point bezel **reading** core color as its actual health changes | Original 900HP boss, server weakpoint, 2s warning and radial attack |
+| Enterable castle | `EGGRUMBLE_EnterableCastleInterior` + `EGGRUMBLE_CastleWalkthrough` | Five-part gate runes, vault/siege-core symbols. Gate ornaments fade only when the *real* gate becomes transparent | Original 10-stud entrance, actual gate collision and vault room |
+| Seven-role lobby | `EGGRUMBLE_LobbyUXPreview` + `EGGRUMBLE_LobbyUXStandalone` | Seven existing `JOB_1..JOB_7` pedestals get their corresponding four-part miniature totems, moved slightly forward to protect title plaques; Japanese preview selection can optionally show the matching character body sculpture. Two original mode portals acquire different nonblocking architectural silhouettes | Original selection prompts, localized job labels, mode state only |
+| Field items | `EGGRUMBLE_FieldItemPickups` + `EGGRUMBLE_FieldItemPreview` | Existing HEAL/DASH/SHIELD pickups each get a noncolliding role-specific 2-part insignia | Original effect, cooldown, prompt, consumable state |
+
+To construct a **distinct private** project for any preview, check out #482 separately, choose its own original `.project.json`, and run the same `compose_current_v3_art.py --target boss|castle|lobby|item --author-project <AUTHOR_PROJECT> --out <NEW_PRIVATE_PROJECT>` command. The A01 composer selects only relevant existing art scripts, preserves all unrelated author `tree` nodes and validates source paths/imports. It never runs independent preview game Scripts together. The dedicated CI checks four independent source mappings plus current V3, and uses native open-source Luau compiler to catch syntactic RED errors.
+
+Every standalone visual is completely reversible by removing the add-on A01 Script(s). They add **no** boss damage, castle collision, gameplay skills, extra items, ProximityPrompts, queue selection, permanent HUD or production assets. Boss adornments are capped at five noncolliding parts, interior castle at five; standalone modes are never stacked atop a full V3 match for performance claims.
+
 ## Manual private Studio preview, NOT production integration
 
 - Use a **separate private Studio copy**, not the published experience.
