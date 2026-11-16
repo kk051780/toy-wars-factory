@@ -163,6 +163,8 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
  local affected=0
  local function apply(h:Humanoid,bot:Model?,targetId:string)
   if h.Health<=0 or affected>=5 then return end
+  -- Capture the castle identity at application time, not at deferred callback.
+  local castleAtApplication=originalRules.castles and originalRules.castles[targetId]
   affected+=1
   if effect=="CHILL_2S" or effect=="SLOW_3S" or effect=="PUSH" then
    if bot then
@@ -192,7 +194,6 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
      -- The original round and the original target identity must still own this tick.
      -- A fallen castle, disconnected player, replaced bot/avatar or finished round
      -- is never damaged by a callback scheduled in an older combat state.
-     local targetCastle=originalRules.castles and originalRules.castles[targetId]
      local sameTarget=false
      if bot then
       sameTarget=(session.botActors or {})[targetId]==bot
@@ -203,7 +204,7 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
        and player.Character:FindFirstChildOfClass("Humanoid")==h
      end
      if h.Parent and StatusTickFence.canTick(session.rules,originalRules,
-      targetId,targetCastle,sameTarget,h.Health>0) then
+      targetId,castleAtApplication,sameTarget,h.Health>0) then
       h:TakeDamage(tick)
      end
     end)
