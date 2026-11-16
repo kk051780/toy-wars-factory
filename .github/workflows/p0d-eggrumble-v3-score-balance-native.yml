@@ -37,6 +37,10 @@ jobs:
           assert 'ScoreBalance=require(script.Parent:WaitForChild("EGGRUMBLE_ScoreBalance"))' in script
           assert 'session.resultsDelivered=true' in script
           assert 'local ranking=ScoreBalance.build(session.rules,session.swarm and session.swarm.kills or {})' in script
+          assert 'teamSiege=row.teamCastleSupport' in script
+          assert 'if mode=="TEAM" then' in script
+          assert ' 城%d 団%d' in script and ' 城%d"' in script
+          assert script.count('return status,string.format(')==2
           print("SCORE_STUDIO_WIRING_SOURCE_CONTRACT_PASS")
           PY
       - uses: actions/checkout@v4
