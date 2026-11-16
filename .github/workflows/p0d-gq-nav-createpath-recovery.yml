@@ -43,4 +43,27 @@ jobs:
             -s quality_gameplay/v3_nav_createpath_recovery_20261116 \
             -p 'test_*.py' -v
           test -s /tmp/gq-v3-nav/patched.luau
-          echo 'SOURCE_ONLY: no native Luau, Rojo, Studio or official RC PASS claimed.'
+          echo 'SOURCE_ONLY: Python and pinned author source PASS; no official RC admission.'
+      - name: Build official open-source Luau CLI for isolated native fault injection
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-v3-luau
+          cmake -S /tmp/gq-v3-luau -B /tmp/gq-v3-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-v3-luau/build \
+            --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          test -x /tmp/gq-v3-luau/build/luau
+          test -x /tmp/gq-v3-luau/build/luau-compile
+      - name: Execute actual original Router function with TEAM BR and injected errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_nav_createpath_recovery_20261116/make_native_nav_harness.py \
+            --patched /tmp/gq-v3-nav/patched.luau \
+            --output /tmp/gq-v3-nav/nav-recovery-native.luau
+          /tmp/gq-v3-luau/build/luau-compile /tmp/gq-v3-nav/patched.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau-compile /tmp/gq-v3-nav/nav-recovery-native.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/gq-v3-nav/nav-recovery-native.luau
+          echo 'NATIVE_LUAU_REAL_FUNCTION_QA_ONLY; Rojo/Studio/Android/official RC/OWNER not tested.'
+
