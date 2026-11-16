@@ -10,11 +10,12 @@ function Lease.apply(humanoid: any, session: any, schedule: any, stillOwner: any
  if not session or not session.rules or session.rules.phase ~= "ACTIVE" then return false end
  if not session.world or not session.world.Parent then return false end
  if type(schedule) ~= "function" or type(stillOwner) ~= "function" or not stillOwner() then return false end
- local previous = humanoid.WalkSpeed
+ local oldLease = active[humanoid]
+ local previous = if oldLease and oldLease.session == session then oldLease.previous else humanoid.WalkSpeed
  if type(previous) ~= "number" or previous ~= previous or previous < 0 or previous > 200 then return false end
  local boosted = math.max(previous, 27)
  -- Unique per-Humanoid identity, not a timestamp that may collide across matches.
- local ticket = {}
+ local ticket = {session = session, previous = previous}
  active[humanoid] = ticket
  humanoid.WalkSpeed = boosted
  schedule(5, function()
