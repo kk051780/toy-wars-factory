@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - quality/gq-field-egg-drop-recovery-20261116-q01
+  pull_request:
+    branches:
+      - feature/p0d-pqg-seven-hero-playable-20261116-01
   workflow_dispatch:
 permissions:
   contents: read
