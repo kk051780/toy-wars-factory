@@ -75,6 +75,8 @@ class CompassContract(unittest.TestCase):
             "marker.Enabled=false", "marker.MaxDistance=380",
             "os.clock()-visibleSince>INITIAL_SECONDS",
             "if processed or input.KeyCode", "marker.Adornee=nil",
+            "layoutForViewport()", "camera.ViewportSize.X",
+            "math.min(294,math.max(90,width-80))",
         ):
             self.assertIn(required, self.src)
         self.assertEqual(len(re.findall(r"Heartbeat:Connect", self.src)), 1)
