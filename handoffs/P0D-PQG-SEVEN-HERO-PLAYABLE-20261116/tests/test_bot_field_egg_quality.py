@@ -18,7 +18,7 @@ def breaches(bot=BOT,lobby=LOBBY,rules=RULES):
       "no extra item ownership":'EGGRUMBLE_FieldItemPickups' not in bot,
       "real field goal":'fieldPart.Position' in bot and '"FIELD_EGG"' in bot,
       "real proximity":'actualDist<=ACTION_DISTANCE' in bot,
-      "real sight":'clearActionPath(actor,actors,actualTarget)' in bot,
+      "real sight":'clearActionPath(actor,actors,actualTarget,actionTarget)' in bot,
       "no stolen model destruction":'if ok then fieldPart:Destroy() end' in bot,
       "atomic server pickup":'Rules.takeFieldEgg(session.rules,id,fieldId)' in bot,
       "token fresh on action":'session.rules.fieldEggTokens[fieldId]==true' in bot,
@@ -45,7 +45,7 @@ class TestFieldEggBotWorldIntegration(unittest.TestCase):
     def test_virtual_pickup(self):
         self.assertIn("real proximity",breaches(bot=BOT.replace("actualDist<=ACTION_DISTANCE","true")))
     def test_ghost_through_wall(self):
-        self.assertIn("real sight",breaches(bot=BOT.replace("clearActionPath(actor,actors,actualTarget)","true")))
+        self.assertIn("real sight",breaches(bot=BOT.replace("clearActionPath(actor,actors,actualTarget,actionTarget)","true")))
     def test_destroy_before_result(self):
         self.assertIn("no stolen model destruction",breaches(bot=BOT.replace("if ok then fieldPart:Destroy() end","fieldPart:Destroy()")))
     def test_wrong_egg_id(self):
