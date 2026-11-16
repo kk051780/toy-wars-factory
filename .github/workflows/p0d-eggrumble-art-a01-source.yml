@@ -84,6 +84,7 @@ jobs:
       - name: Produce five private Rojo Studio source-only places without publishing
         run: |
           set -euo pipefail
+          mkdir -p art-private-builds
           for mode in v3 boss castle lobby item; do
             if [[ "$mode" == v3 ]]; then
               project=".art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json"
@@ -93,6 +94,7 @@ jobs:
             destination=".art-preview-generated/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
             /tmp/eggrumble-a01-rojo/rojo build "$project" --output "$destination"
             test -s "$destination"
+            cp "$destination" "art-private-builds/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
             echo "ROJO_PRIVATE_BUILD_PASS=${mode}"
           done
           echo "ROJO_SOURCE_BUILDS=5/5 (Studio Play/Android/official RC still NOT_RUN)"
@@ -100,7 +102,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: EGGRUMBLE-A01-PRIVATE-STUDIO-PLACES-NOT-RC
-          path: .art-preview-generated/EGGRUMBLE_A01_PRIVATE_*.rbxlx
+          path: art-private-builds/EGGRUMBLE_A01_PRIVATE_*.rbxlx
           retention-days: 3
           if-no-files-found: error
       - name: Report boundaries
