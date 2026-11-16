@@ -1410,6 +1410,64 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --runtime "$SRC/EGGRUMBLE_BeastEscort.luau" --expected-sha256 "$LOCK" --place "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           echo GQ618_REAL_BEAST_31_SOURCE_CLASS_OTHER30_BYTE_EXACT_OFF_PASS
+      - name: Checkout exact original #582 v4 guard-order castle leash author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5769b80ed21f5592adcca1936d2d3d04934f0089
+          path: _gq582_guard_v4_author
+          persist-credentials: false
+      - name: Source-select original GUARD castle perimeter into one current Combat (other30 unchanged)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq582_guard_v4_author rev-parse HEAD)" = 5769b80ed21f5592adcca1936d2d3d04934f0089
+          V3=_gq582_zombie_v3/quality_gameplay/v3_zombie_command_20261116
+          V4=_gq582_guard_v4_author/quality_gameplay/v3_zombie_command_20261116
+          BASE=artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
+          OUT=artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json
+          python3 -m py_compile rc_fastlane/quality_zombie582_rc31/select_guard_leash_policy_v4.py
+          python3 -B rc_fastlane/quality_zombie582_rc31/select_guard_leash_policy_v4.py prepare \
+            --base "$BASE" --out "$OUT" \
+            --composer "$V4/compose_original_single_combat.py" \
+            --old-policy "$V3/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --new-policy "$V4/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --runtime "$V4/EGGRUMBLE_ZombieSquadRuntime.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$V4/test_zombie_guard_native.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$V4/test_zombie_guard_native.luau" \
+            | tee artifacts/gq515_official_select/GQ582_V4_GUARD_NATIVE12.log
+          grep -q 'GQ_ZOMBIE_GUARD_CASTLE_LEASH_NATIVE_12_CASES_PASS' \
+            artifacts/gq515_official_select/GQ582_V4_GUARD_NATIVE12.log
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_zombie582_rc31")
+          from select_original_zombie582 import scan
+          _,src=scan(Path("artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json"))
+          assert len(src)==31
+          for script in src.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(script)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ582_V4_GUARD_SELECTED31_ALL_NATIVE_COMPILE_PASS")
+          PY
+      - name: True pinned Rojo31 Script Class and Source exact after only GUARD author policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          V3=_gq582_zombie_v3/quality_gameplay/v3_zombie_command_20261116
+          V4=_gq582_guard_v4_author/quality_gameplay/v3_zombie_command_20261116
+          DIR=artifacts/gq515_official_select
+          /tmp/gq530-all31-rojo build "$DIR/GQ618_GUARD582_V4_SELECTED31.project.json" \
+            -o "$DIR/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx"
+          python3 -B rc_fastlane/quality_zombie582_rc31/select_guard_leash_policy_v4.py verify \
+            --base "$DIR/GQ618_BEAST_SELECTED31.project.json" \
+            --out "$DIR/GQ618_GUARD582_V4_SELECTED31.project.json" \
+            --composer "$V4/compose_original_single_combat.py" \
+            --old-policy "$V3/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --new-policy "$V4/EGGRUMBLE_ZombieOrderPolicy.luau" \
+            --runtime "$V4/EGGRUMBLE_ZombieSquadRuntime.luau" \
+            --place "$DIR/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx"
+          echo GQ582_V4_GUARD_RC31_SOURCE_CLASS_OTHER30_OFF_BYTE_EXACT_PASS
       - name: Pin immutable GQ615 already proven source-only Host queue ETA author (same exact PR, no rewrite)
         uses: actions/checkout@v4
         with:
@@ -1424,7 +1482,7 @@ jobs:
           test "$(git -C _gq615_queue_author rev-parse HEAD)" = 849d82e399f342e5212b5dc16cba76b04c1d2c7a
           SRC=_gq615_queue_author/quality_gameplay/v3_lobby_queue_visibility_20261117
           DIR=artifacts/gq515_official_select
-          BASE=$DIR/GQ618_BEAST_SELECTED31.project.json
+          BASE=$DIR/GQ618_GUARD582_V4_SELECTED31.project.json
           OUT=$DIR/GQ615_LOBBY_QUEUE_SELECTED31.project.json
           PLACE=$DIR/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx
           ln -s _v3_original _original482
@@ -1565,6 +1623,12 @@ jobs:
           assert guard611["other_30_byte_exact"] and guard611["guard_off_rollback_byte_exact"]
           assert guard611["rojo_source_class_exact"]=="31/31" and guard611["source_provenance_valid"]
           assert guard611["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_PROMPT_REACH_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          gq582_guard=json.loads(Path("artifacts/gq515_official_select/GQ582_V4_GUARD_RC31_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq582_guard["true_rojo_source_class_exact"]=="31/31" and gq582_guard["other_30_original_scripts_byte_exact"]
+          assert gq582_guard["off_reselect_old_combat_byte_exact"] and gq582_guard["new_source_count"]==31
+          assert gq582_guard["real_rojo_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["zombie_guard582"]=="5769b80ed21f5592adcca1936d2d3d04934f0089"
+          assert m["feature_flags"]["ZOMBIE_GUARD_CASTLE_LEASH_582"] is True
           beast618=json.loads(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_text())
           assert beast618["source_count"]==31 and beast618["original_30_scripts_byte_identical"]
           assert beast618["off_previous_combat_exact"] and beast618["actual_rojo31_source_class"]=="31/31"
@@ -1629,6 +1693,8 @@ jobs:
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
             "source_author_heads":m["source_heads"],
+            "gq582_castle_guard12_one_combat_exact_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V4_GUARD_RC31_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq582_guard_castle_radius_studs":12,
             "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq611_prompt_reach_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json").read_bytes()).hexdigest(),
              "gq618_beast_real_server_humanoid_selected":True,
@@ -1765,6 +1831,9 @@ jobs:
             artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ615_NATIVE10_RESULT.log
+            artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ582_V4_GUARD_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ582_V4_GUARD_NATIVE12.log
             artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ611_NATIVE13_RESULT.log
             artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
