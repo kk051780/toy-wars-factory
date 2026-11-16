@@ -9,13 +9,13 @@ class SourceContract(unittest.TestCase):
     def make_author(self,base):
         author=base/"author"
         author.mkdir()
-        server={}
+        server={"$className":"ServerScriptService"}
         for i in range(19):
             name=HOST if i==0 else f"Mock{i}.luau"
             server[f"Script{i}"]={"$path":name}
             src=REQUIRE+ "local function startSession(mode:string)\nend\n" +ORIGINAL if i==0 else "return {}\n"
             (author/name).write_text(src)
-        client={}
+        client={"$className":"StarterPlayerScripts"}
         for i in range(2):
             name=f"Client{i}.client.luau"
             client[f"Client{i}"]={"$path":name}
