@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: d20fa69a59da6499796a76929533cf0f1d3563d0
+          ref: 0d1be13be6d895bea460ba54aaa91ef346684d7f
           path: _boss_original
           persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
@@ -234,7 +234,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _boss_original rev-parse HEAD)" = d20fa69a59da6499796a76929533cf0f1d3563d0
+          test "$(git -C _boss_original rev-parse HEAD)" = 0d1be13be6d895bea460ba54aaa91ef346684d7f
           python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/compose_current28.py \
             --original artifacts/ITEM_GQ_HEAL26.project.json --out artifacts/ITEM_GQ_HEAL_BOSS28.project.json
           /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_BOSS28.project.json -o artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx
@@ -243,6 +243,16 @@ jobs:
             --project artifacts/ITEM_GQ_HEAL_BOSS28.project.json \
             --place artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx \
             --receipt artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
+          # Reuse the #514 owner's newest native source-exact original GAME replay harness
+          # for both simulated Studio and simulated live-server, not Roblox engine.
+          for simulated in studio live-server; do
+            python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/make_native_author_replay_harness.py \
+              "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" "$simulated"
+            /tmp/gq_heal_native/luau-compile --text "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" >/dev/null
+            /tmp/gq_heal_native/luau "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" | tee "artifacts/BOSS_REPLAY_${simulated}.log"
+          done
+          grep -q 'BOSS_CREDIT_ORIGINAL_AUTHOR_REPLAY_STUDIO: 16/16 PASS' artifacts/BOSS_REPLAY_studio.log
+          grep -q 'BOSS_CREDIT_ORIGINAL_AUTHOR_REPLAY_LIVE_SERVER_LIKE: 16/16 PASS' artifacts/BOSS_REPLAY_live-server.log
           python3 quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py policy \
             --combo _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/EGGRUMBLE_RoundAttributeFence.luau \
             --boss _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/EGGRUMBLE_BossCreditPolicy.luau \
@@ -275,6 +285,8 @@ jobs:
             artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json
             artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
             artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+            artifacts/BOSS_REPLAY_studio.log
+            artifacts/BOSS_REPLAY_live-server.log
           retention-days: 2
       - uses: actions/upload-artifact@v4
         with:
