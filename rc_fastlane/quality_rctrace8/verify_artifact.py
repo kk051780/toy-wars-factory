@@ -139,6 +139,11 @@ FEATURE_EVIDENCE = {
   "label.Text=prefix..",
   "refreshQueueBoard(previous)",
   "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
+ "ZOMBIE_GUARD_CASTLE_LEASH_582": ("EGGRUMBLE_SevenRoleCombat", (
+  "local GUARD_LEASH = 12",
+  "distance(unit, guardAnchor) > GUARD_LEASH",
+  "distance(candidate, guardAnchor) <= GUARD_LEASH")),
+
 
 }
 
@@ -252,7 +257,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_29_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_31_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
