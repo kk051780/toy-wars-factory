@@ -32,7 +32,11 @@ class TestNeutralSwarmLineOfSight(unittest.TestCase):
         self.assertLess(line, credit)
         self.assertLess(credit, hit)
         self.assertNotIn("local hits=math.min(MAX_HITS,#nearest)", s)
-        self.assertIn("hits+=1", s[hit:hit+160])
+        # VFX/hit reaction may be inserted after real damage; count must be inside
+        # the same LOS-guarded hit branch, not within an arbitrary char window.
+        guard_end = s.index("\\n   end\\n  end\\n  return hits", hit)
+        self.assertIn("hits+=1", s[hit:guard_end])
+        self.assertLess(hit, s.index("hits+=1", hit))
         self.assertIn("MAX_LOS_RAYS_PER_ATTACK=48", s)
         self.assertIn("if hits>=MAX_HITS or rays>=MAX_LOS_RAYS_PER_ATTACK then break end", s)
 
