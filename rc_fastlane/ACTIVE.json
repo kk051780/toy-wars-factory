@@ -39,7 +39,7 @@
       "kind": "parallel_canonical_rc_companion_source_profile",
       "source_manifest": "rc_fastlane/EGGRUMBLE_V3_ACTIVE.json",
       "build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-31.yml",
-      "status": "RC_SOURCE_REGISTERED_WAIT_SAME_HEAD_BUILD",
+      "status": "RC31_OFFICIAL_COMPANION_SAME_HEAD_CI_VERIFIED_AT_LAST_HEAD",
       "main_s1_profile_unmodified": true,
       "game_authority_isolated_from_s1": true,
       "expected_script_count": 31,
@@ -49,7 +49,32 @@
       "rollback": "Switch off companion profile; S1 active_profile remains rich51. Gate-only OFF retains all other 30-source repair work.",
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "publish_authorized": false
+      "publish_authorized": false,
+      "last_verified_rc_run": {
+        "rc_head_sha": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",
+        "run_id": 43852865328,
+        "job_id": 133249622417,
+        "conclusion": "success",
+        "artifact_id": 14218746773,
+        "artifact_name": "P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO",
+        "artifact_zip_bytes": 147803,
+        "place_bytes": 240416,
+        "place_sha256": "3046052d9930d0d5285b86ec588f835cd57f780ac3990560dca2624dd5c45f6d",
+        "on_source_exact": "31/31",
+        "off_source_exact": "31/31",
+        "off_place_bytes": 240256,
+        "seven_role_native_cases": "84/84",
+        "membership_native_cases": 14,
+        "neutral_melee_native": "PASS",
+        "neutral_budget_native": "PASS",
+        "roll_back_combat_bytes": 160,
+        "source_count": 31,
+        "original_owner30_sources_preserved": 29,
+        "studio_2client": "NOT_TESTED",
+        "android_15min": "NOT_TESTED",
+        "owner_fun": "NOT_TESTED",
+        "source": "https://github.com/kk051780/toy-wars-factory/actions/runs/43852865328"
+      }
     }
   },
   "required_fast_gates": [
@@ -171,11 +196,14 @@
   },
   "eggrumble_v3_companion": {
     "registered_jst": "2026-11-16",
-    "status": "SOURCE_ON_RC_BRANCH_CI_PENDING",
+    "status": "RC31_OFFICIAL_SOURCE_ADOPTED_BUILT_ENGINE_NOT_TESTED",
     "authoritative_build_ref": "rc/p0d-s1-kids-rc01",
     "proof": "same-HEAD workflow success, Rojo 31/31 source and class exact, place SHA/size, rollback",
     "source_selection": "immutable refs in rc_fastlane/EGGRUMBLE_V3_ACTIVE.json",
     "last_quality_source_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/43847278518",
-    "studio_android_owner": "NOT_TESTED"
+    "studio_android_owner": "NOT_TESTED",
+    "last_verified_rc_head": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",
+    "last_verified_rc_workflow_run": 43852865328,
+    "note": "This receipt verifies previous RC HEAD only; a new HEAD requires fresh same-head CI. The old S1 active_profile stays rich51."
   }
 }
