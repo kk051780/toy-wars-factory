@@ -28,7 +28,7 @@ class RoundReplayContract(unittest.TestCase):
         self.assertIn("if session.rules.phase==\"FINISHED\" then closeRound() end",REPLAY)
 
     def test_requeue_modes_are_independent_and_old_round_cannot_wipe_new(self):
-        for line in ("if sessions[mode]~=session or session.rules.phase~=\"FINISHED\" then return end",
+        for line in ("if sessions[mode]~=session or (not abandoned and session.rules.phase~=\"FINISHED\") then return end",
                      "sessions[mode]=nil","queues[mode]={}","queueEpoch[mode]+=1",
                      "local expectedEpoch=queueEpoch[mode]",
                      "if queueEpoch[mode]==expectedEpoch then startSession(mode) end"):
@@ -60,6 +60,18 @@ class RoundReplayContract(unittest.TestCase):
         self.assertIn('p:SetAttribute("EGGRUMBLE_SlashEvolution","BASE")',REPLAY)
         self.assertIn('ko.Value=0',REPLAY)
         self.assertNotIn('p:SetAttribute("EGGRUMBLE_SelectedRole",nil)',REPLAY)
+
+    def test_last_human_disconnect_abandons_only_orphaned_ai_session(self):
+        self.assertIn("function Replay.abandonIfEmpty(", REPLAY)
+        self.assertIn('if session.rules.phase~="ACTIVE" or session.roundReplayScheduled then return false end', REPLAY)
+        self.assertIn("Players:GetPlayerByUserId(userId)", REPLAY)
+        self.assertIn("joined[userId]==session.mode", REPLAY)
+        self.assertIn('if abandoned then session.rules.phase="ABANDONED" end', LOBBY)
+        self.assertIn("RoundReplay.abandonIfEmpty(scene,joined,function()", LOBBY)
+        self.assertIn("scene.closeRound(true)", LOBBY)
+        self.assertIn("if not abandoned and scene.takeover then", LOBBY)
+        self.assertIn("if session.world.Parent then session.world:Destroy() end", LOBBY)
+        self.assertNotIn("session.rules.winner=\"AI_1\"", LOBBY)
 
     def test_single_rojo_game_host_and_no_remote_or_stores(self):
         scripts=PROJECT["tree"]["ServerScriptService"]
