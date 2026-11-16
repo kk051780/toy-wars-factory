@@ -12,6 +12,7 @@ local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
+local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -240,7 +241,18 @@ local function startSession(mode:string)
    if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
   end)
  end
+ -- Reuse the item author's genuine HEAL/DASH/SHIELD pickup/consume kernel.
+ -- Equal 12 non-respawning pickups in TEAM and BR: four per type over three lanes.
+ -- Lane upper surface is root.Y-2.4; the anchored orb center is 1.45 studs above.
+ local itemPositions:{Vector3}={}
+ for lane=1,3 do
+  for slot=1,4 do
+   table.insert(itemPositions,root+Vector3.new(
+    worldX+(slot-2.5)*150,-.95,295+(lane-1)*170))
+  end
+ end
  Rules.start(session.rules)
+ FieldItems.start(session,itemPositions)
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
