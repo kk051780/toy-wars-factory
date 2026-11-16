@@ -71,6 +71,13 @@ jobs:
           ref: 9e77a7f78147b68ce7d347131effb7475e6b74e2
           path: _gq537_original
           persist-credentials: false
+      - name: Read exact original #540 Assassin respawn author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 40a79702a3ca949e2bf65f9108126a34d44c88b4
+          path: _gq540_original_respawn
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -80,6 +87,7 @@ jobs:
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
           test "$(git -C _gq541_original_fallback rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
+          test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -106,6 +114,8 @@ jobs:
           assert m["feature_flags"]["NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541"] is True
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] is True
           assert m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
+          assert m["feature_flags"]["ASSASSIN_RESPAWN_STEALTH_FENCE_540"] is True
           assert m["source_heads"]["membership_host531"]=="e78bff41e70564d0b26578e3c3a85f4698e6110e"
           assert m["feature_flags"]["DEAD_CASTER_FENCE_530"]
           assert not m["publication_authorized"]
@@ -398,10 +408,48 @@ jobs:
           (root/"GQ537_ROJO_EXACT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
           print("GQ537_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
           PY
+      - name: Select original #540 within the same #537 Host after #541 Swarm, native31 Rojo31
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq540_official_select
+          python3 rc_fastlane/select_gq540_original_assassin_respawn.py \
+            --original31 artifacts/gq530_all31/GQ31_ON.project.json \
+            --selected537 artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
+            --author _gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --out artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          mod=SourceFileLoader("gq540source","rc_fastlane/select_gq540_original_assassin_respawn.py").load_module()
+          author=mod.load_author(Path("_gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py"))
+          _,mapped=author.scan(Path("artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json"))
+          assert len(mapped)==31
+          for path in mapped.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ540_AFTER_GQ537_ALL_31_NATIVE_LUAU_PASS")
+          PY
+          /tmp/gq530-all31-rojo build artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            -o artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/select_gq540_original_assassin_respawn.py \
+            --original31 artifacts/gq530_all31/GQ31_ON.project.json \
+            --selected537 artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
+            --author _gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --out artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --verify-place artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
+          assert r["source_exact"]=="31/31" and r["unchanged_scripts"]==30
+          assert r["only_host_changed"] and r["original_gq541_swarm_preserved"]
+          print("GQ540_ORIGINAL_HOST_AFTER_537_NATIVE_ROJO_PASS",r["place_bytes"],r["place_sha256"])
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -417,13 +465,20 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
-          assert gq537["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          gq537_place=Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx")
+          assert gq537["place_sha256"]==hashlib.sha256(gq537_place.read_bytes()).hexdigest()
+          assert gq537_place.read_bytes()!=place.read_bytes()
           assert gq537["other_sources_byte_exact"]==30 and gq537["source_class_exact"]==31
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] and m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          gq540=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
+          assert gq540["source_exact"]=="31/31" and gq540["unchanged_scripts"]==30
+          assert gq540["original_gq541_swarm_preserved"] and gq540["only_host_changed"]
+          assert gq540["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           details={
@@ -440,6 +495,9 @@ jobs:
             "base_owner30_untouched_except_combat_before_541":29,
             "original_author_541_selected_into_one_swarm":True,
             "original_author_537_selected_into_one_host":True,
+            "original_author_540_added_in_same_537_host":True,
+            "same_537_host_previous_vs_540_final_unchanged_others":30,
+            "gq540_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_537_place_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
@@ -478,4 +536,7 @@ jobs:
             artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
             artifacts/gq541_official_select/GQ537_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json
+            artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
+            artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json
+            artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
           retention-days: 3
