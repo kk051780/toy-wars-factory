@@ -74,6 +74,15 @@ local function maybeCompute(id:string,model:Model,at:Vector3,goal:Vector3,state:
    path:Destroy();return
   end
   state.inFlight=false
+  -- A bot can switch from raid to returning a stolen egg while ComputeAsync
+  -- is still pending. Never install that earlier target's path or overwrite
+  -- the current desired goal after the server state has changed.
+  if state.latestRequestedGoal==nil
+   or planar(state.latestRequestedGoal,expectedTarget).Magnitude>GOAL_CHANGE_DISTANCE then
+   path:Destroy()
+   state.retryAt=os.clock()
+   return
+  end
   if ok and path.Status==Enum.PathStatus.Success then
    resetPath(state)
    state.path=path
@@ -116,10 +125,17 @@ function Router.navigate(id:string,model:Model,goal:Vector3,dt:number,actors:Ins
   state={retryAt=0,index=1,inFlight=false,blocked=false,goal=nil,lastPos=here,lastProgressAt=os.clock()}
   states[id]=state
  end
+ -- The latest game objective wins over a previously queued ComputeAsync.
+ state.latestRequestedGoal=goal
  advanceState(state,here)
  local changed=state.goal==nil or planar(state.goal,goal).Magnitude>GOAL_CHANGE_DISTANCE
+ if changed then
+  -- Discard old route immediately, even when another path request is pending.
+  -- The in-flight request is rejected on completion if its target is stale.
+  resetPath(state)
+  state.goal=goal
+ end
  if changed or state.blocked or not state.waypoints then
-  if changed and not state.inFlight then resetPath(state);state.goal=goal end
   maybeCompute(id,model,here,goal,state,actors)
  end
  local destination=goal
