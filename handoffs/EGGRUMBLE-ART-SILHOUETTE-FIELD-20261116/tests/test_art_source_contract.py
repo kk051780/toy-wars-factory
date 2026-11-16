@@ -32,6 +32,34 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("GetAttributeChangedSignal", HERO)
         self.assertIn('"P0DPreviewRole"', HERO)
 
+    def test_v3_real_class_state_and_seven_lobby_minis(self):
+        # Latest V3 gameplay equips EGGRUMBLE_Role, preview only P0DPreviewRole.
+        self.assertIn('player:GetAttribute("EGGRUMBLE_Role")', HERO)
+        self.assertIn('player:GetAttribute("EGGRUMBLE_SelectedRole")', HERO)
+        self.assertIn('player:GetAttribute("P0DPreviewRole")', HERO)
+        for role in ROLES:
+            self.assertIn('role=="' + role + '"', HERO)
+        self.assertIn('stand.Name:match("^ROLE_([A-Z]+)$")', HERO)
+        self.assertIn("EGGRUMBLE_LobbyRoleMiniatures_VisualOnly", HERO)
+        self.assertIn("MAX_LOBBY_ROLE_STAND_PARTS = 4", HERO)
+        self.assertIn("standParts>=MAX_LOBBY_ROLE_STAND_PARTS", HERO)
+        self.assertIn("player.CharacterAdded:Connect(onCharacterAdded)", HERO)
+        self.assertIn("task.delay(.35", HERO)
+
+    def test_real_author_item_art_is_capped_and_no_pickup_side_effect(self):
+        for snippet in (
+            'item.Name:match("^ITEM_%d+_(%u+)$")',
+            'MAX_DECORATED_ITEMS_PER_WORLD=12',
+            'activeItems[world]=(activeItems[world] or 0)+1',
+            '"EGGRUMBLE_ItemPreviewWorld"',
+            '"EGGRUMBLE_FieldItemVisual_VisualOnly"',
+            'item.Destroying:Connect',
+            'kind=="HEAL"', 'kind=="DASH"',
+        ):
+            self.assertIn(snippet, ENCOUNTERS)
+        for forbidden in ("prompt.Triggered", "Humanoid.WalkSpeed=", "ForceField", "ProximityPrompt.new"):
+            self.assertNotIn(forbidden, executable_lines(ENCOUNTERS))
+
     def test_no_dynamic_gameplay_authority(self):
         forbidden = (
             "DataStoreService", "RemoteEvent", "RemoteFunction", "TeleportService",
@@ -100,7 +128,7 @@ class VisualLayersSourceContract(unittest.TestCase):
 
     def test_loot_and_lobby_are_readable_but_not_authoritative(self):
         for needle in (
-            "MAX_DECORATED_EGGS_PER_ARENA=40",
+            "MAX_DECORATED_EGGS_PER_ARENA=28",
             "FieldEgg_", "ReleasedEgg_", "OwnEggDeposit", "EggVault",
             "TEAM_PORTAL", "BATTLE_ROYALE_PORTAL", "DEFENSE_",
             "MAX_GATE_PIECES=7", "EGGRUMBLE_EggVisual_VisualOnly",
@@ -111,9 +139,9 @@ class VisualLayersSourceContract(unittest.TestCase):
             self.assertNotIn(token, executable_lines(ENCOUNTERS))
 
     def test_art_instance_budget_under_500_per_arena(self):
-        # Field cap + 24*2 minion + 40*2 egg + 16 castles*2 stations
-        # + 2 lobby gates*6 + 5 defense stands = 497 estimated art parts.
-        self.assertLessEqual(320 + 24 * 2 + 40 * 2 + 16 * 2 + 2 * 6 + 5, 500)
+        # Field cap + 24*2 neutral + 28*2 egg + 12*2 pickups + 16 castles*2 stations
+        # + 2 lobby gates*6 + 5 defense stands = 497 conservative visual cap.
+        self.assertLessEqual(320 + 24 * 2 + 28 * 2 + 12 * 2 + 16 * 2 + 2 * 6 + 5, 500)
 
     def test_moving_bot_armor_is_welded_and_not_frozen(self):
         self.assertIn("piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,false)", HERO)
