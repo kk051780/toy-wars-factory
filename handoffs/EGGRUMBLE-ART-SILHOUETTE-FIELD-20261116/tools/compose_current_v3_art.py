@@ -45,6 +45,7 @@ MANDATORY_BY_TARGET = {
     "item": ("EGGRUMBLE_FieldItemPickups", "EGGRUMBLE_FieldItemPreview"),
 }
 ART_DIR = Path(__file__).resolve().parents[1]
+ART_CLIENT_NAME = "EGGRUMBLE_ArtDistanceLOD"
 
 
 def rebase_tree_paths(node: dict, author_dir: Path, output_dir: Path) -> None:
@@ -136,6 +137,20 @@ def compose(author_project: Path, output: Path, art_dir: Path = ART_DIR, target:
     assembled["name"] = "EGGRUMBLE_" + target.upper() + "_CURRENT_AUTHOR_ART_PRIVATE_SOURCE_ONLY"
     rebase_tree_paths(assembled["tree"], author_project.parent, output.parent)
     assembled["tree"]["ServerScriptService"] = combined
+    # Exactly one separate CLIENT LocalScript for all A01 visual-only stages.
+    # Keep original CombatFeel and all other author StarterPlayerScripts verbatim.
+    starter=assembled["tree"].setdefault("StarterPlayer",{"$className":"StarterPlayer"})
+    if starter.get("$className")!="StarterPlayer":
+        raise ValueError("Author StarterPlayer class mismatch")
+    localscripts=starter.setdefault("StarterPlayerScripts",{"$className":"StarterPlayerScripts"})
+    if localscripts.get("$className")!="StarterPlayerScripts":
+        raise ValueError("Author StarterPlayerScripts class mismatch")
+    if ART_CLIENT_NAME in localscripts:
+        raise ValueError("Author project already includes A01 client LOD; refusing duplicate script")
+    client_path=(art_dir / (ART_CLIENT_NAME + ".client.luau")).resolve(strict=True)
+    localscripts[ART_CLIENT_NAME]={
+        "$path": os.path.relpath(client_path,output.parent).replace(os.sep,"/")
+    }
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(assembled, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     for name, spec in combined.items():
@@ -161,6 +176,7 @@ def main() -> None:
     missing = sorted(set(composed_nodes) - set(original_nodes) - set(art_names))
     print(f"AUTHOR_MODULE_COUNT={len(composed_nodes) - 1 - len(art_names)}")
     print(f"ART_SCRIPT_COUNT={len(art_names)}")
+    print("ART_CLIENT_SCRIPT_COUNT=1")
     print(f"ADDITIONAL_AUTHOR_MODULES_FOUND_NOT_IN_ROJO={','.join(missing) if missing else 'NONE'}")
     if missing:
         print("AUTHOR_DIRECT_ROJO_MANIFEST=RED (ask source owner to register missing modules)")
