@@ -26,21 +26,21 @@ local function resultText(session:any,player:Player,mode:string,ranking:any):(st
  if session.swarm and session.swarm.kills then kos=session.swarm.kills[id] or 0 end
  local eggs=castle.depositedEggs or 0
  local fallen=castleEliminations(session.rules.events or {},id)
- local place=0;local points=0;local stolen=0;local secured=0;local teamSiege=0
+ local place=0;local points=0;local stolen=0;local secured=0;local teamSiege=0;local specialty="参加"
  for index,row in ipairs(ranking.rows) do
   if row.id==id then
    place=index;points=row.score;stolen=row.stolen;secured=row.securedSteals
-   teamSiege=row.teamCastleSupport
+   teamSiege=row.teamCastleSupport;specialty=row.specialty
    break
   end
  end
  -- Never occupy the active-game HUD. Keep the author's compact eight-second
  -- result only; BR has no teammate, so never show a meaningless "team 0".
  if mode=="TEAM" then
-  return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 団%d",
+  return status.."・"..specialty,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 団%d",
    place,points,kos,stolen,secured,eggs,fallen,teamSiege)
  end
- return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",
+ return status.."・"..specialty,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",
   place,points,kos,stolen,secured,eggs,fallen)
 end
 
