@@ -32,6 +32,7 @@ RULES = {
   "EGGRUMBLE_LobbyCastleModesPreview": (
     "CastleAccessRamp",
     'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}',
+    "local rareFieldEgg=i==4 or i==5",
   ),
  },
  "battle": {
@@ -65,7 +66,7 @@ RULES = {
    "#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "EGGRUMBLE_CombatBalance": ("return Balance",),
   "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",),
-  "EGGRUMBLE_ScoreBalance": (),
+  "EGGRUMBLE_ScoreBalance": ("local claimedRareFieldEggs={}",),
  },
 }
 ROLE_CLASSES = {
@@ -79,7 +80,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 34 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 35 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -143,6 +144,10 @@ FEATURE_EVIDENCE = {
   "label.Text=prefix..",
   "refreshQueueBoard(previous)",
   "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
+ "RARE_FIELD_EGG_SCORE_20261117": ("EGGRUMBLE_ScoreBalance", (
+   "RARE_FIELD_EGG_CAP=2, RARE_FIELD_EGG_RATE=60",
+   "local claimedRareFieldEggs={}",
+   'id=="FIELD_4" or id=="FIELD_5"')),
  "MATCH_DEADLINE_DRAW_499": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local deadlineLease=Deadline.new(os.clock(),deadlineId)",
   "Deadline.expire(session.rules,deadlineLease,os.clock(),deadlineId)",
