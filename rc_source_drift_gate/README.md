@@ -80,3 +80,19 @@ Even a zero result would mean only *known static guards absent*, never Studio
 cases completed SUCCESS, actual author code guard inspection confirmed
 `BLOCKED_STUDIO_ONLY_GAME_HOST` and all eight-domain impact. Not an
 engine execution or official RC adoption.
+
+
+## V4: all 26 effective source runtime guard inspection, without competing for author code
+
+The earlier V3 five-file guard scan revealed an actual normal-server blocker, but it read some raw #482 files that are replaced by the #484 and #487 original owners during composition. V4 makes this scope precise and complete:
+
+- Walk #482's 21 author Rojo modules.
+- Use #484's actual quality-selected `BotActors` and `BotPathRouter`, not old original bots.
+- Use #487's original result adapter and `ScoreBalance`, not original #482 result text.
+- Use all four real #485 ART Luau source files, including client LOD. No new art or composer is authored here.
+- Inspect the original host's preserved **pre-castle-ramp** guard. The generated host's full bytes are not claimed by this gate (actual source lineage/byte verification belongs to #491).
+- The live `full26_runtime_activation` summary reports all executable `RunService:IsStudio()`-based restrictions per gameplay domain, tagged `game_guard_count` versus `art_guard_count`, with immutable author commit and original source hash; no Studio/Android run is claimed. Missing or unknown source selection causes fail-closed.
+
+New test file `test_effective_runtime_selection.py` validates 7 overlay/guard-negative cases. New `test_full26_runtime.py` validates 8 more selection and art-vs-game guard scenarios. All tests run with no network; the live CI read-only job then checks immutable GitHub heads and all 26 actual owner source files.
+
+**Important:** a newer #484 current26 Native/Rojo SUCCESS and a successful source scan are *private development source readiness*, not product GO. The true canonical #220 writer must select actual production Game/Remote/Store authority before nonStudio mobile play can be accepted. Never remove guards as a blanket replacement or duplicate the already live Game. No main/official RC writer change, PR merge, Roblox publishing or payment from this quality tool.
