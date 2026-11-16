@@ -114,7 +114,11 @@ local function createWorldCastle(session:any,entry:any,index:number)
  prompt(deposit,"卵を納入","自分の城",function(p)
   if tostring(p.UserId)~=entry.id or not session.rules then return end
   local c=session.rules.castles[entry.id]
-  if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end
+  if c.alive and c.heldEggs>0 then
+   local deposited=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
+   -- Players must see a completed deposit immediately, without waiting for a bot tick.
+   if deposited then session.refresh() end
+  end
  end)
  local vault=block(model,"EggVault",at+Vector3.new(0,3,6),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
  board(vault,"卵倉庫")
