@@ -96,9 +96,8 @@ def prepare(base:Path,receipt:Path,author_tool:Path,outdir:Path):
     assert diffs==[COMBAT],("unexpected shadow author source",diffs)
     assert all(sha(selected[n][1].read_bytes())==sha(baseline[n][1].read_bytes())
                for n in baseline if n!=COMBAT)
-    assert sum(z[2]=="Script" for z in selected.values())==1
-    assert sum(z[2]=="LocalScript" for z in selected.values())==3
-    assert sum(z[2]=="ModuleScript" for z in selected.values())==26
+    for klass in ("Script","LocalScript","ModuleScript"):
+        assert sum(z[2]==klass for z in selected.values())==sum(z[2]==klass for z in baseline.values()),"class count changed"
     evidence={
         "status":"PRIVATE_GQ521_OWNER518_520_523_PLUS_ORIGINAL524_SOURCE_SELECT_ONLY_NOT_RC",
         "owner_524_original_head":AUTHOR_524_HEAD,
