@@ -129,3 +129,114 @@ jobs:
             artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_22_PRIVATE.rbxlx
             artifacts/EGGRUMBLE_GQ_MODE_FX_FAIR_RECEIPT.json
           retention-days: 3
+
+      - name: Pinned #482 original author for latest 26 plus FAIR overlay
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_author
+          persist-credentials: false
+      - name: Pinned #484 original 26-source composer, no duplicate implementation
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          path: _v3_quality
+          persist-credentials: false
+      - name: Pinned original #485 visual ART
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Pinned original #487 score
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Real original artist and #484 COMPOSERS then only ONE server SkillFX overlay
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py --target v3 --author-project _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json --out artifacts/GQ_LATEST_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py --author _v3_author --quality _v3_quality --art _v3_art --score _v3_score --art-project artifacts/GQ_LATEST_ART.project.json --out artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json
+          python3 quality_gameplay/fx_mode_fairness/compose_mode_fair_on_current26.py --base-project artifacts/EGGRUMBLE_GQ_CURRENT26_BASE.project.json --base-receipt artifacts/SOURCE_RECEIPT.json --original-skillfx _v3_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SkillFX.luau --overlay-skillfx quality_gameplay/fx_mode_fairness/EGGRUMBLE_SkillFX_ModeFair_Overlay.luau --policy quality_gameplay/fx_mode_fairness/EGGRUMBLE_FXModeFairQuota.luau --out artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27.project.json
+      - name: Native parse all real 27 current game ART score and FAIR scripts
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          project=Path("artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27.project.json")
+          def walk(n):
+              if isinstance(n,dict):
+                  if "$path" in n:yield (project.parent/n["$path"]).resolve(strict=True)
+                  else:
+                      for key,v in n.items():
+                          if not key.startswith("$"):yield from walk(v)
+          paths=list(walk(json.loads(project.read_text(encoding="utf8"))["tree"]))
+          assert len(paths)==27 and len(set(paths))==27
+          for f in paths:subprocess.run(["/tmp/gq_fxmode_luau/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_FX_MODE_CURRENT27_NATIVE_27_OF_27_PASS")
+          PY
+      - name: Build and assert source-exact 27-author-composite private Place
+        run: |
+          set -euo pipefail
+          /tmp/gq_fxmode_rojo build artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27.project.json -o artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27_PRIVATE.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          p=Path("artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27.project.json")
+          place=Path("artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27_PRIVATE.rbxlx")
+          receiptPath=Path("artifacts/SOURCE_FAIR_27_RECEIPT.json")
+          receipt=json.loads(receiptPath.read_text(encoding="utf8"))
+          expected={}
+          def walk(n):
+              for name,item in n.items():
+                  if name.startswith("$") or not isinstance(item,dict):continue
+                  if "$path" in item:
+                      src=(p.parent/item["$path"]).resolve(strict=True)
+                      kind="Script" if src.name.endswith(".server.luau") else ("LocalScript" if src.name.endswith(".client.luau") else "ModuleScript")
+                      assert name not in expected
+                      expected[name]=(kind,src.read_text(encoding="utf8").replace("\r\n","\n"))
+                      assert receipt["source_27_sha256"][name]==hashlib.sha256(src.read_bytes()).hexdigest()
+                  else:walk(item)
+          walk(json.loads(p.read_text())["tree"])
+          assert len(expected)==27
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert name and source is not None and name not in actual
+              actual[name]=(kind,source.replace("\r\n","\n"))
+          assert expected==actual,{"missing":sorted(set(expected)-set(actual)), "extra":sorted(set(actual)-set(expected)),
+              "changed":sorted(k for k in set(expected)&set(actual) if expected[k]!=actual[k])}
+          receipt["candidate_commit_sha"]=os.environ["GITHUB_SHA"]
+          receipt["private_place_bytes"]=place.stat().st_size
+          receipt["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receiptPath.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          print("GQ_MODE_FAIR_CURRENT27_PRIVATE_SOURCE_EXACT_27_OF_27_PASS",receipt["private_place_bytes"],receipt["private_place_sha256"])
+          PY
+      - name: Keep unpublished 27 current composite, receipts and policy evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-MODE-FAIR-CURRENT27-PRIVATE-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_GQ_MODE_FAIR_CURRENT27.project.json
+            artifacts/SOURCE_FAIR_27_RECEIPT.json
+            artifacts/SOURCE_RECEIPT.json
+          retention-days: 3
