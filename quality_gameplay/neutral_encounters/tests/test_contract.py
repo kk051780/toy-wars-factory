@@ -15,7 +15,7 @@ class NonOverlapContract(unittest.TestCase):
    self.assertNotIn(forbidden,s)
  def test_scope_is_unique(self):
   names=sorted(str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc")
-  self.assertEqual(names,["EGGRUMBLE_NeutralEncounterFairness.luau","README.md","tests/native_cases.luau","tests/test_contract.py","tests/test_overlay_contract.py","tools/build_native_harness.py","tools/compose_private27.py","tools/verify_place27.py"])
+  self.assertEqual(names,["EGGRUMBLE_NeutralEncounterFairness.luau","README.md","tests/native_cases.luau","tests/test_contract.py","tests/test_dual_overlay.py","tests/test_overlay_contract.py","tools/build_native_harness.py","tools/compose_dual28.py","tools/compose_private27.py","tools/verify_dual28.py","tools/verify_place27.py"])
  def test_native_cases_cover_real_targets_and_epoch(self):
   s=(ROOT/"tests/native_cases.luau").read_text(encoding="utf-8")
   for evidence in ["sample(1,15,100)","sample(8,8,100)","sample(16,0,100)","ROUND_2","Fair.clear(s)"]:
