@@ -398,10 +398,56 @@ jobs:
           (root/"GQ537_ROJO_EXACT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
           print("GQ537_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
           PY
+      - name: Fetch immutable existing #489 Item author (no new gameplay authority)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _gq_original_item489
+          persist-credentials: false
+      - name: Source-select existing original #489 onto current #541 + #537 canonical 31 and compile all
+        env:
+          GQ_AUTHOR489_ITEM: _gq_original_item489/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+          GQ_AUTHOR482_ITEM: _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+          GQ_BASE31_PROJECT: artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_original_item489 rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          python3 -B -m unittest discover -s rc_fastlane/quality_item489_rc31 -p 'test_selection.py' -v
+          python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py prepare \
+            --base "$GQ_BASE31_PROJECT" \
+            --item "$GQ_AUTHOR489_ITEM" \
+            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_item489_rc31")
+          from select_original_item489 import flatten
+          _,source=flatten(Path("artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json"))
+          assert len(source)==31
+          for _,f in source.items():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
+                           stdout=subprocess.DEVNULL,check=True)
+          print("GQ_ITEM489_ALL_31_ORIGINAL_AND_SINGLE_ITEM_NATIVE_PASS")
+          PY
+      - name: Build real selected canonical 31-script Rojo Place retaining original #541 Swarm and #537 Host
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
+            -o artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py verify \
+            --base artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
+            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
+            --place artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
+          test -s artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
+          test -s artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx
+          echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -417,13 +463,18 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
           assert gq537["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert gq537["other_sources_byte_exact"]==30 and gq537["source_class_exact"]==31
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] and m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          item489=json.loads(Path("artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
+          assert item489["real_rojo_source_and_class_exact"]=="31/31"
+          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert item489["unchanged_source_count"]==30
+          assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           details={
@@ -436,10 +487,12 @@ jobs:
             "source_author_heads":m["source_heads"],
             "script_count":31,
             "script_source_and_class_exact":"31/31",
-            "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
+            "original_31_untouched_except_selected_neutral_swarm_castle_host_and_item":28,
             "base_owner30_untouched_except_combat_before_541":29,
             "original_author_541_selected_into_one_swarm":True,
             "original_author_537_selected_into_one_host":True,
+            "original_author_489_selected_into_one_item":True,
+            "selected_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_537_place_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
@@ -478,63 +531,16 @@ jobs:
             artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
             artifacts/gq541_official_select/GQ537_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json
+            artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
+            artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           retention-days: 3
-      - name: SOURCE-ONLY candidate admission of genuine existing #489 Item (PR preview only)
-        if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
-        with:
-          repository: kk051780/toy-wars-factory
-          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
-          path: _gq_original_item489
-          persist-credentials: false
-      - name: Run original author #489 exact source selection, 31 native Luau, and 7 source-lock regressions
-        if: github.event_name == 'pull_request'
-        env:
-          GQ_AUTHOR489_ITEM: _gq_original_item489/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
-          GQ_AUTHOR482_ITEM: _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
-          GQ_BASE31_PROJECT: artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git -C _gq_original_item489 rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
-          python3 -B -m unittest discover -s rc_fastlane/quality_item489_rc31 -p 'test_selection.py' -v
-          python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py prepare \
-            --base "$GQ_BASE31_PROJECT" \
-            --item "$GQ_AUTHOR489_ITEM" \
-            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
-          python3 - <<'PY'
-          from pathlib import Path
-          import subprocess,sys
-          sys.path.insert(0,"rc_fastlane/quality_item489_rc31")
-          from select_original_item489 import flatten
-          _,source=flatten(Path("artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json"))
-          assert len(source)==31
-          for _,f in source.items():
-            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
-                           stdout=subprocess.DEVNULL,check=True)
-          print("GQ_ITEM489_ALL_31_ORIGINAL_AND_SINGLE_ITEM_NATIVE_PASS")
-          PY
-      - name: Build real private 31-script Rojo Place selecting only the existing #489 Item
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          set -euo pipefail
-          /tmp/gq530-all31-rojo build artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
-            -o artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-          python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py verify \
-            --base artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
-            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
-            --place artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-          test -s artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-          test -s artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx
-          echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_ADOPTION=0"
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: GQ-ORIGINAL489-ITEM-SELECTED-PRIVATE31-ONLY-NOT-RC
           path: |
-            artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
+            artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
             artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
             artifacts/gq541_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
             artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
