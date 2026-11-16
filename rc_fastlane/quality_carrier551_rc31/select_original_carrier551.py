@@ -93,7 +93,8 @@ def patch(current: str,author) -> tuple[str,str,str]:
 def prepare(base:Path,author_path:Path,out:Path):
     base=base.resolve(strict=True)
     out=out.resolve()
-    if out.exists() or out.parent!=base.parent: raise ValueError("RED_NO_OVERWRITE_OR_UNRELATED_OUTPUT")
+    if out.exists(): raise ValueError("RED_OUTPUT_PROJECT_ALREADY_EXISTS")
+    # Rewrite all 30 untouched paths relative to the isolated output folder.
     author=load_author(author_path)
     project,old=flatten(base)
     existing=old[HOST].read_text(encoding="utf-8")
