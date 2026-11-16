@@ -11,7 +11,10 @@ SOURCE = ROOT / "EGGRUMBLE_RoundReplay.luau"
 TESTS = ROOT / "tests" / "EGGRUMBLE_RoundReplayNative.spec.luau"
 
 PRELUDE = r'''-- Minimal headless substitute for the exact Roblox services the replay module uses.
-local playersService={}
+local playersService={active={}}
+function playersService:GetPlayerByUserId(userId:number):any
+ return self.active[userId]
+end
 local studio=true
 local runService={}
 function runService:IsStudio() return studio end
