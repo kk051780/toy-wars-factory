@@ -1,0 +1,54 @@
+name: P0D GQ unique old-round DASH source exact
+on:
+  push:
+    branches: [quality/p0d-gq-item-dash-round-fence-20261116]
+    paths:
+      - 'quality_gameplay/v3_item_dash_round_fence_20261116/**'
+      - '.github/workflows/p0d-gq-item-dash-round-fence.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_item_dash_round_fence_20261116/**'
+      - '.github/workflows/p0d-gq-item-dash-round-fence.yml'
+permissions:
+  contents: read
+jobs:
+  source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch pinned original #482 ITEM as evidence (not current RC)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_owner
+          git fetch --no-tags --depth=1 origin fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          git show fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9:handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau > /tmp/p0d_owner/EGGRUMBLE_FieldItemPickups.luau
+          test -s /tmp/p0d_owner/EGGRUMBLE_FieldItemPickups.luau
+      - name: Run strict source-lock, negative mutation and no-overwrite tests
+        env:
+          P0D_OWNER_ITEM_SRC: /tmp/p0d_owner/EGGRUMBLE_FieldItemPickups.luau
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/v3_item_dash_round_fence_20261116 -p test_patch_dash.py -v
+          python3 -B quality_gameplay/v3_item_dash_round_fence_20261116/patch_dash.py --source "$P0D_OWNER_ITEM_SRC" --out /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau
+          test -s /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+      - name: Native compiler verifies generated real Luau source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_dash_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_dash_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0d_dash_luau/luau-compile /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau >/dev/null
+          sha256sum /tmp/p0d_private/EGGRUMBLE_FieldItemPickups.luau
+          echo "SOURCE_ONLY_NOGAMEAUTH; FORMAL_RC_ADOPTED=0; STUDIO_ANDROID_NOT_TESTED"
