@@ -51,6 +51,13 @@ class SpectateContract(unittest.TestCase):
         self.assertEqual(self.src.count('RunService.Heartbeat:Connect'), 1)
         self.assertIn("if elapsed < .5 then return end", self.src)
 
+    def test_touch_targets_are_at_least_44_px(self):
+        self.assertIn("UserInputService.TouchEnabled", self.src)
+        self.assertIn("if touchLayout then 44 else 34", self.src)
+        self.assertIn("if touchLayout then 44 else 30", self.src)
+        self.assertIn('control("▶", if touchLayout then 204 else 166)', self.src)
+        self.assertIn("gui.Enabled = false", self.src)
+
     def test_preserves_original_runtime_scripts(self):
         scripts = self.project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
         self.assertIn("EGGRUMBLE_CombatFeel", scripts)
