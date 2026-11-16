@@ -1,0 +1,13 @@
+# EGGRUMBLE V3 — GQ combat FX clarity / client-only opt-in
+
+**Non-overlap claim:** #218 issuecomment-6906575803. Parent source is the existing #482 author at immutable commit `fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9`. No original 21 game sources modified. Existing #485 ART_* distance-LOD handles decorative scenery; **this addition handles only transient SkillFX/KO Parts**, and never changes source SkillFX limits, damage, movement, castle, AI, items, lobby or score.
+
+**Implementation:** `EGGRUMBLE_CombatFXBudget.luau` is a pure local policy with touch/desktop distance thresholds, reduced-effects support and bounded load-adaptive shedding. `EGGRUMBLE_CombatFXClarity.client.luau` monitors only known original seven-role short-lived effect names, KO bursts and signatures, writes *only local* `BasePart.LocalTransparencyModifier`, restores previous local value, and never enumerates all workspace parts per frame. No Remote, new GUI, data save, object instance creation or duplicate Game.
+
+**Source-only integration:** Alternate `EGGRUMBLE_V3_FX_CLARITY.project.json` maps the exact original #482 21 source paths unchanged and two new StarterPlayerScripts entries (=23 source). Builds as its own PRIVATE trial. It is not the #484 compositor or the #220 official RC. The optional component is Studio-gated until the original author and integration owner authorize a genuinely playable version. If FX source names change, nothing else is altered: unrecognized names are not hidden.
+
+**Coverage across eight domains:** seven job attacks retain nearby hit/ultimate emphasis; three-route battlefield avoids distant luminous clutter; castle/egg strategy is never hidden; 110-neutral army's distant KO flashes can be culled; field ITEM and pickups are never touched; lobby UI and prompts are never touched; balance/HP, cooldown and scoring are server-authoritative and unchanged. This is **visual load mitigation**, not a measured FPS improvement or an art quality pass.
+
+**ROLLBACK:** drop the two `EGGRUMBLE_CombatFXBudget` / `EGGRUMBLE_CombatFXClarity` StarterPlayerScripts mappings from the trial project (or exclude this isolated overlay). No original source, remote, save data or server migration needs restoring.
+
+**Gates:** source contract tests + same-HEAD CI → native Luau parser and 23/23 source-exact Rojo Place under #220 independent intake → auth/non-force-CAS official RC source-selective adoption with ZIP/Place byte → 2-client Studio and 15-minute low-end Android, verify melee/ultimate/KO visual quality and FPS p10 → OWNER acceptance. `STUDIO_NOT_TESTED`, `ANDROID_NOT_TESTED`, `ART_NO_GO`, `FUN_NO_GO`, `OFFICIAL_RC_NOT_INTEGRATED`. A green Python CI by itself is only source-level evidence.
