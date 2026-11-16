@@ -18,7 +18,7 @@ jobs:
       - name: Checkout original GQ 26 composer (pinned)
         uses: actions/checkout@v4
         with:
-          ref: 81088f99b2ea60bbffc0eaa860c46338203f0808
+          ref: 2e398765578d827c24e173126136c572b297533b
           path: _gq_original
           persist-credentials: false
       - name: Checkout owner original game 7 domains (pinned)
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _gq_original rev-parse HEAD)" = 81088f99b2ea60bbffc0eaa860c46338203f0808
+          test "$(git -C _gq_original rev-parse HEAD)" = 2e398765578d827c24e173126136c572b297533b
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
