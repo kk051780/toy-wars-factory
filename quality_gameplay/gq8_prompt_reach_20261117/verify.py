@@ -26,7 +26,7 @@ def select(original: str) -> str:
     return result
 
 def blob_sha(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 def check(original_path: Path, selected_path: Path) -> None:
     data = original_path.read_bytes()
