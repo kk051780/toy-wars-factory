@@ -188,6 +188,80 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("hum.Died:Connect", ENCOUNTERS)
         self.assertNotIn("Humanoid.Health=", executable_lines(ENCOUNTERS))
 
+    def test_standalone_original_stone_giant_cosmetics_track_real_core(self):
+        for token in (
+            'MAX_BOSS_ORNAMENT_PARTS=5', '"NEUTRAL_BOSS_STONE_GIANT"',
+            '"CoreWeakpoint"', '"MonolithShoulder"', '"BrokenCrown"',
+            '"WeakpointBezel"', '"HeartRunicRidge"',
+            'core:GetPropertyChangedSignal("Color")',
+            'if core.Parent and bezel.Parent then bezel.Color=core.Color end',
+        ):
+            self.assertIn(token, ENCOUNTERS)
+        self.assertNotIn("core.Color=", executable_lines(ENCOUNTERS))
+        self.assertNotIn('Instance.new("ProximityPrompt")', executable_lines(ENCOUNTERS))
+        self.assertNotIn("health=", executable_lines(ENCOUNTERS))
+
+    def test_standalone_physical_castle_art_fades_with_original_gate(self):
+        for token in (
+            'MAX_CASTLE_INTERIOR_ART_PARTS=5', '"EGGRUMBLE_EnterableCastle"',
+            '"CastleGate"', '"EggVault"', '"SiegeCore"',
+            '"GateRune"', '"VaultShield"', '"VaultRelief"', '"SiegeCoreSeal"',
+            'gate:GetPropertyChangedSignal("Transparency"):Connect(syncDoor)',
+            'p.Transparency=fade',
+        ):
+            self.assertIn(token, ENCOUNTERS)
+        self.assertNotIn("gate.CanCollide=", executable_lines(ENCOUNTERS))
+        self.assertNotIn("gate.Transparency=", executable_lines(ENCOUNTERS))
+
+    def test_independent_author_lobby_preview_has_seven_visible_jobs_and_two_modes(self):
+        self.assertIn('"EGGRUMBLE_LobbyUX"', HERO)
+        self.assertIn('stand.Name:match("^JOB_(%d+)$")', HERO)
+        self.assertIn('player:GetAttribute("EGGRUMBLE_LobbyPreviewRole")', HERO)
+        self.assertIn('"EGGRUMBLE_LobbyPreviewRole"', HERO)
+        self.assertIn('CFrame.new(0,-.35,-2.25)*cf', HERO)
+        for label in ("武神", "魔法使い", "暗殺者", "超能力者",
+                      "マッドサイエンティスト", "魔獣使い", "呪術師"):
+            self.assertIn('["' + label + '"]=', HERO)
+        self.assertIn('parent.Name=="EGGRUMBLE_LobbyUX"', ENCOUNTERS)
+        self.assertIn("MAX_GATE_PIECES=7", ENCOUNTERS)
+        self.assertNotIn('Instance.new("BillboardGui")', executable_lines(HERO + ENCOUNTERS))
+
+    def test_all_four_author_standalone_previews_can_use_only_their_own_art(self):
+        path = ROOT / "tools" / "compose_current_v3_art.py"
+        spec = importlib.util.spec_from_file_location("a01_standalone_composer", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        mapping = {
+            "boss": ("EGGRUMBLE_NeutralStoneGiant", "EGGRUMBLE_NeutralBossPreview"),
+            "castle": ("EGGRUMBLE_EnterableCastleInterior", "EGGRUMBLE_CastleWalkthrough"),
+            "lobby": ("EGGRUMBLE_LobbyUXPreview", "EGGRUMBLE_LobbyUXStandalone"),
+            "item": ("EGGRUMBLE_FieldItemPickups", "EGGRUMBLE_FieldItemPreview"),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            for target, source_names in mapping.items():
+                directory = base / target
+                directory.mkdir()
+                src = {"$className": "ServerScriptService"}
+                for name in source_names:
+                    p = directory / (name + ".luau")
+                    p.write_text("return {}\\n", encoding="utf-8")
+                    src[name] = {"$path": p.name}
+                author = directory / "author.project.json"
+                raw = json.dumps({"tree": {"ServerScriptService": src}})
+                author.write_text(raw, encoding="utf-8")
+                output = directory / "out" / "art.project.json"
+                composed = module.compose(author, output, ROOT, target=target)
+                result = composed["tree"]["ServerScriptService"]
+                self.assertEqual(
+                    set(result) - {"$className"},
+                    set(source_names) | set(module.ART_BY_TARGET[target]),
+                )
+                self.assertEqual(author.read_text(encoding="utf-8"), raw)
+                for name, node in result.items():
+                    if name != "$className":
+                        self.assertTrue((output.parent / node["$path"]).resolve().is_file())
+
     def test_dynamic_latest_author_studio_manifest_is_non_mutating(self):
         tool_path = ROOT / "tools" / "compose_current_v3_art.py"
         self.assertTrue(tool_path.exists())
