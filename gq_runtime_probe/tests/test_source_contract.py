@@ -30,6 +30,22 @@ class StudioObserverSourceContract(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, SCRIPT)
 
+    def test_round_isolation_and_replay_no_carryover(self):
+        self.assertIn("local activeArena: {[string]: Instance} = {}", SCRIPT)
+        self.assertIn("roundSerial[mode] += 1", SCRIPT)
+        self.assertIn("counters[mode] = newCounters()", SCRIPT)
+        self.assertIn("return activeArena[mode] == arena and arena.Parent ~= nil", SCRIPT)
+        self.assertIn('state = "NOT_STARTED", counts = counts, observedEvents = newCounters()', SCRIPT)
+        self.assertIn("roundSequence = roundSerial[mode]", SCRIPT)
+        # Every async event callback must reject stale round identity before credit.
+        self.assertEqual(SCRIPT.count("if not fromCurrentRound(mode, arena) then return end"), 3)
+
+    def test_replay_does_not_change_game_sources(self):
+        self.assertNotIn("game:GetService(\"ReplicatedStorage\")", SCRIPT)
+        self.assertNotIn("Humanoid:TakeDamage(", SCRIPT)
+        self.assertNotIn("SetAttribute(", SCRIPT)
+        self.assertNotIn("LoadCharacter(", SCRIPT)
+
     def test_no_game_authority_mutations(self):
         for token in ('TakeDamage(', 'Humanoid.Health =', 'WalkSpeed =',
                       'Rules.damageCastle(', 'Rules.takeFieldEgg(', 'Rules.depositEggs(',
