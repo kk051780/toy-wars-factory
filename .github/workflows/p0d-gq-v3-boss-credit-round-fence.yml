@@ -34,6 +34,32 @@ jobs:
           python3 "$ROOT/make_native_harness.py" /tmp/boss_credit_fence_native.luau
           /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_fence_native.luau >/dev/null
           /tmp/gq-v3-luau/build/luau /tmp/boss_credit_fence_native.luau
+      - name: Acquire checksum-pinned Rojo 7.7.1 and build real unpublished 23-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_boss_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_boss_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          z=ZipFile("/tmp/gq_boss_rojo.zip")
+          files=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+          assert len(files)==1, files
+          out=Path("/tmp/gq_boss_rojo")
+          out.write_bytes(z.read(files[0]))
+          out.chmod(0o755)
+          PY
+          mkdir -p artifacts
+          /tmp/gq_boss_rojo build quality_gameplay/v3_boss_credit_round_fence_20261116/EGGRUMBLE_BOSS_CREDIT_STUDIO.project.json -o artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_boss_credit_round_fence_20261116/verify_place.py artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx artifacts/BOSS_CREDIT_SOURCE_EXACT_RECEIPT.json
+      - name: Upload exact candidate Place and SHA/bytes receipt for sole RC writer
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-BOSS-CREDIT-23-SOURCE-PRIVATE
+          path: |
+            artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx
+            artifacts/BOSS_CREDIT_SOURCE_EXACT_RECEIPT.json
+          retention-days: 3
       - name: Evidence boundary
         run: |
           echo 'NATIVE_LUAU_POLICY+SOURCE_CONTRACT: evaluated'
