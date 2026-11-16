@@ -14,18 +14,31 @@ from pathlib import Path
 REQUIRE_ANCHOR='local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))\n'
 REQUIRE_INJECT='local IntegrityObserver=require(script.Parent:WaitForChild("EGGRUMBLE_IntegrityObserver"))\n'
 START_ANCHOR=' SwarmCombat.start(session)\n'
-START_INJECT='''  -- Optional GQ shadow observer. Never alter match or suppress combat.
+START_INJECT='''  -- Optional GQ observer: report first fault, changed fault set and recovery.
+  -- Never alter the session. Deduplicate recurrent warnings for low-end devices.
   task.spawn(function()
+   local lastSignature:string?=nil
    while sessions[mode]==session and session.rules.phase=="ACTIVE" do
     task.wait(5)
     if sessions[mode]==session and session.rules.phase=="ACTIVE" then
      local ok,result=pcall(IntegrityObserver.inspect,session,Rules)
      if not ok then
-      warn("[EGGRUMBLE GQ OBSERVER] SCRIPT_ERROR",result)
-     elseif #result.red>0 or #result.yellow>0 then
-      warn("[EGGRUMBLE GQ OBSERVER]",mode,
-       "RED",table.concat(result.red,","),
-       "YELLOW",table.concat(result.yellow,","))
+      if lastSignature~="OBSERVER_SCRIPT_ERROR" then
+       warn("[EGGRUMBLE GQ OBSERVER] SCRIPT_ERROR")
+      end
+      lastSignature="OBSERVER_SCRIPT_ERROR"
+     else
+      local current,emit,recovered=IntegrityObserver.warningDelta(lastSignature,result)
+      lastSignature=current
+      if emit then
+       if recovered then
+        print("[EGGRUMBLE GQ OBSERVER]",mode,"RECOVERED")
+       else
+        warn("[EGGRUMBLE GQ OBSERVER]",mode,
+         "RED",table.concat(result.red,","),
+         "YELLOW",table.concat(result.yellow,","))
+       end
+      end
      end
     end
    end
