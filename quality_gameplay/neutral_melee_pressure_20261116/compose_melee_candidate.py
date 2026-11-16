@@ -25,7 +25,7 @@ def patch(original: str) -> str:
     a = 'local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))\n'
     source = once(source, a, a + 'local Melee=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralMeleePolicy"))\n', "require")
     a = ' local lastBotHit:{[string]:number}={}\n'
-    source = once(source, a, a + ' local lastMeleeSwing:{[Model]:number}={}\n local lastVictimHit:{[Humanoid]:number}={}\n', "state")
+    source = once(source, a, a + ' local lastMeleeSwing:{[Model]:number}=setmetatable({}, {__mode="k"}) :: any\n local lastVictimHit:{[Humanoid]:number}=setmetatable({}, {__mode="k"}) :: any\n', "state")
     a = ' -- Area skills have a visible area, not the ability to hit through solid castle walls.\n'
     add = """ local function liveMeleeVictims():{any}
   local victims={}
@@ -110,6 +110,7 @@ def patch(original: str) -> str:
      end
 '''
     source = once(source, a, b, "existing_movement_tick")
+    source = once(source, "   live[m]=nil\n", "   live[m]=nil\n   lastMeleeSwing[m]=nil\n", "neutral_ko_memory_cleanup")
     if source.count('nearest.humanoid:TakeDamage(Melee.DAMAGE)') != 1:
         raise ValueError("RED authority: expected one real melee damage call")
     return source
