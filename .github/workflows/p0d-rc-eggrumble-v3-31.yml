@@ -1767,6 +1767,20 @@ jobs:
           receipt=artifacts/gq492_latest32/GQ492_RC32_PREP_RECEIPT.json
           private_place=artifacts/gq492_latest32/GQ492_SPECTATE32_PRIVATE.rbxlx
           test -s artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path("rc_fastlane/quality_spectate492_rc32/SOURCE_LOCK.json").read_text())
+          assert o["schema"]=="GQ492_CURRENT31_TO_PRIVATE32_SOURCE_LOCK_V1"
+          assert o["start_official_rc"]=="89cbeb03d74ddbe3408ef805fed6683ff6abc508"
+          assert o["original_author"]["commit"]=="eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20"
+          assert o["original_author"]["git_blob"]=="c39b2d3cc481052940b9d11a6fc695261a9b1e40"
+          assert o["existing_current_project"]=="artifacts/gq515_official_select/GQ618_GUARD582_V4_SELECTED31.project.json"
+          assert (o["expected_before_scripts"],o["expected_after_scripts"],o["expected_other_sources_byte_identical"])==(31,32,31)
+          assert o["new_client_script_name"]=="EGGRUMBLE_EliminatedSpectate"
+          assert o["studio_only_original_source"] and o["formal_rc_adopted"] is False
+          print("GQ492_MACHINE_SOURCE_LOCK_31_UNCHANGED_PLUS_ONE_STUDIO_PREVIEW_PASS")
+          PY
           python3 -B rc_fastlane/quality_spectate492_rc32/admit_spectator.py prepare \
             --base "$base" --source "$original" --out "$selected" --receipt "$receipt"
           python3 - "$selected" <<'PY'
