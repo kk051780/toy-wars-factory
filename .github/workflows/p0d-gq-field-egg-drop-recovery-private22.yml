@@ -1,0 +1,117 @@
+name: P0D GQ field egg-drop recovery native and private22 source-exact
+on:
+  push:
+    branches:
+      - quality/gq-field-egg-drop-recovery-20261116-q01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private22-source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Candidate only; no main/RC writes
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin original #482 seven-role 21 game scripts
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Pin Luau engine compiler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Python policy parity and negative hook tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/field_egg_drop_recovery_20261116 -p 'test_source_contract.py' -v
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+      - name: Build native Luau tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _luau_fixed -B /tmp/gqegg_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gqegg_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Execute actual authored policy in native VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("quality_gameplay/field_egg_drop_recovery_20261116")
+          body=(root/"EGGRUMBLE_FieldEggDropBounds.luau").read_text()
+          assert body.rstrip().endswith("return Drop")
+          spec=(root/"tests/spec_native.luau").read_text()
+          Path("artifacts/real_drop_policy_native.luau").write_text(body.rsplit("return Drop",1)[0]+"\n"+spec)
+          PY
+          /tmp/gqegg_luau/luau-compile --text artifacts/real_drop_policy_native.luau > /dev/null
+          /tmp/gqegg_luau/luau artifacts/real_drop_policy_native.luau | tee artifacts/NATIVE_POLICY.log
+          grep -q 'EGGRUMBLE_FIELD_EGG_RECOVERY_NATIVE_PASS checks=18' artifacts/NATIVE_POLICY.log
+      - name: Strictly compose 21 original + 1 field drop policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/compose_private22.py \
+            --author _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --out artifacts/private22
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          manifest=Path("artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22.project.json")
+          tree=json.loads(manifest.read_text())["tree"]
+          paths=[]
+          def walk(node):
+              for name,part in node.items():
+                  if name.startswith("$"): continue
+                  if "$path" in part:
+                      paths.append((manifest.parent/part["$path"]).resolve(strict=True))
+                  else: walk(part)
+          walk(tree)
+          assert len(paths)==22 and len(set(paths))==22
+          for path in paths:
+              subprocess.run(["/tmp/gqegg_luau/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_FIELD_EGG_LUAU_PARSE_ALL22_PASS")
+          PY
+      - name: Pinned Rojo build of unpublished private22 Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gqegg_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gqegg_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gqegg_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gqegg_rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gqegg_rojo build artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22.project.json \
+            -o artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22_PRIVATE.rbxlx
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/verify_place22.py \
+            --project artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22.project.json \
+            --place artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22_PRIVATE.rbxlx
+      - name: Archive source-only private Place, not official RC
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ-EGG-DROP-RECOVERY-PRIVATE22-NOT-RC
+          retention-days: 3
+          path: |
+            artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22_PRIVATE.rbxlx
+            artifacts/private22/EGGRUMBLE_FIELD_EGG_SAFE22.project.json
+            artifacts/private22/SOURCE22_RECEIPT.json
+            artifacts/NATIVE_POLICY.log
+      - run: echo 'SOURCE_ONLY; AUTHOR_APPROVAL_PENDING; OFFICIAL_RC_NOT_CHANGED; STUDIO_ANDROID_OWNER_NOT_TESTED'
