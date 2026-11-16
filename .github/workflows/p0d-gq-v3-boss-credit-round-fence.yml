@@ -1,0 +1,169 @@
+name: P0D GQ V3 boss counter round-boundary Native QA
+on:
+  push:
+    branches:
+      - quality/gq-v3-boss-credit-round-fence-20261116
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_boss_credit_round_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-boss-credit-round-fence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boss-credit-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reuse original GAME #482 21 source at immutable HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _gq_author
+          persist-credentials: false
+      - name: Reuse original GQ AI/26 composer #484 at immutable HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _gq_spatial
+          persist-credentials: false
+      - name: Reuse original ART #485 at immutable HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _gq_art
+          persist-credentials: false
+      - name: Reuse original SCORE #487 at immutable HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _gq_score
+          persist-credentials: false
+      - name: Verify immutable source heads, no branch-drift
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _gq_spatial rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _gq_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _gq_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+      - name: Confirm exact original author + 23-source wiring + source safety
+        run: python3 -m unittest discover -s quality_gameplay/v3_boss_credit_round_fence_20261116/tests -p 'test_*.py' -v
+      - name: Checkout immutable original-author-compatible Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau_fixed
+          persist-credentials: false
+      - name: Build immutable Luau CLI for real VM and compile
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau_fixed -B /tmp/gq-v3-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-v3-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Native Luau syntax and 13 real VM boundary cases
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/v3_boss_credit_round_fence_20261116
+          /tmp/gq-v3-luau/build/luau-compile "$ROOT/EGGRUMBLE_BossCreditPolicy.luau" >/dev/null
+          /tmp/gq-v3-luau/build/luau-compile "$ROOT/EGGRUMBLE_BossCreditRoundFence.server.luau" >/dev/null
+          python3 "$ROOT/make_native_harness.py" /tmp/boss_credit_fence_native.luau
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_fence_native.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_fence_native.luau
+          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_studio_observer.luau studio
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_studio_observer.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_studio_observer.luau
+          python3 "$ROOT/make_native_observer_harness.py" /tmp/boss_credit_live_server_observer.luau live-server
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_live_server_observer.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_live_server_observer.luau
+          # Exact #482 original onDefeat credit + original RoundReplay.resetHuman
+          # is executed with our real observer in both VM server contexts.
+          python3 "$ROOT/make_native_author_replay_harness.py" /tmp/boss_credit_author_replay_studio.luau studio
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_author_replay_studio.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_author_replay_studio.luau
+          python3 "$ROOT/make_native_author_replay_harness.py" /tmp/boss_credit_author_replay_live.luau live-server
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_author_replay_live.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_author_replay_live.luau
+      - name: Compose existing author GAME+AI+ART+SCORE current26, then append only our 2 server scripts
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _gq_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _gq_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_BOSS_ORIGINAL_ART.project.json
+          python3 _gq_spatial/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _gq_author --quality _gq_spatial --art _gq_art --score _gq_score \
+            --art-project artifacts/GQ_BOSS_ORIGINAL_ART.project.json \
+            --out artifacts/GQ_BOSS_ORIGINAL_26.project.json
+          python3 quality_gameplay/v3_boss_credit_round_fence_20261116/compose_current28.py \
+            --original artifacts/GQ_BOSS_ORIGINAL_26.project.json \
+            --out artifacts/GQ_BOSS_CURRENT_28.project.json
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ_BOSS_CURRENT_28.project.json").resolve()
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          sources=[]
+          def visit(obj):
+              if not isinstance(obj,dict):return
+              if "$path" in obj:sources.append((project.parent/obj["$path"]).resolve(strict=True))
+              else:
+                  for k,v in obj.items():
+                      if not k.startswith("$"):visit(v)
+          visit(tree)
+          assert len(sources)==28,len(sources)
+          for source in sources:
+              subprocess.run(["/tmp/gq-v3-luau/build/luau-compile",str(source)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_BOSS_28_28_PINNED_LUAU_COMPILE_PASS")
+          PY
+      - name: Acquire checksum-pinned Rojo 7.7.1 and build real unpublished 23-source Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_boss_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_boss_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          z=ZipFile("/tmp/gq_boss_rojo.zip")
+          files=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+          assert len(files)==1, files
+          out=Path("/tmp/gq_boss_rojo")
+          out.write_bytes(z.read(files[0]))
+          out.chmod(0o755)
+          PY
+          mkdir -p artifacts
+          /tmp/gq_boss_rojo build quality_gameplay/v3_boss_credit_round_fence_20261116/EGGRUMBLE_BOSS_CREDIT_STUDIO.project.json -o artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_boss_credit_round_fence_20261116/verify_place.py artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx artifacts/BOSS_CREDIT_SOURCE_EXACT_RECEIPT.json
+          /tmp/gq_boss_rojo build artifacts/GQ_BOSS_CURRENT_28.project.json -o artifacts/GQ_BOSS_CURRENT_28_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_boss_credit_round_fence_20261116/verify_current28.py \
+            --original artifacts/GQ_BOSS_ORIGINAL_26.project.json \
+            --project artifacts/GQ_BOSS_CURRENT_28.project.json \
+            --place artifacts/GQ_BOSS_CURRENT_28_PRIVATE.rbxlx \
+            --receipt artifacts/GQ_BOSS_CURRENT28_SOURCE_RECEIPT.json
+      - name: Upload original 21 plus our 2 scripts single-scope 23-source Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-BOSS-CREDIT-23-SOURCE-PRIVATE
+          path: |
+            artifacts/EGGRUMBLE_BOSS_CREDIT_23_PRIVATE.rbxlx
+            artifacts/BOSS_CREDIT_SOURCE_EXACT_RECEIPT.json
+          retention-days: 3
+      - name: Upload original author GAME AI ART SCORE26 plus our 2 source composite
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-BOSS-CREDIT-CURRENT28-SOURCE-PRIVATE
+          path: |
+            artifacts/GQ_BOSS_CURRENT_28_PRIVATE.rbxlx
+            artifacts/GQ_BOSS_CURRENT28_SOURCE_RECEIPT.json
+            artifacts/GQ_BOSS_CURRENT_28.project.json
+          retention-days: 3
+      - name: Evidence boundary
+        run: |
+          echo 'PINNED_LUAU_POLICY_13+SERVER_OBSERVER_18_STUDIO+18_LIVE_SIM+ORIGINAL_REPLAY_16_STUDIO+16_LIVE_SIM+SOURCE_CONTRACT: evaluated'
+          echo 'ACTUAL_ROBLOX_STUDIO+ANDROID+OFFICIAL_RC+OWNER: NOT_TESTED'
