@@ -53,6 +53,10 @@ function Tell.start(session:any):boolean
  assert(session and session.world and session.rules and session.roster, "server match session required")
  if session._carrierWorldTellStarted then return false end
  if session.rules.phase ~= "ACTIVE" or session.rules.winner ~= nil then return false end
+ -- Author-owned V3 field part is the one physical arena identity. If missing,
+ -- fail closed: never emit a guessed badge in the lobby or another mode.
+ local field = session.world:FindFirstChild("TacticalBattlefield")
+ if not field or not field:IsA("BasePart") then return false end
  session._carrierWorldTellStarted = true
  local records:{[string]:any} = {}
  task.spawn(function()
@@ -66,7 +70,11 @@ function Tell.start(session:any):boolean
     local humanoid = actor and actor:FindFirstChildOfClass("Humanoid")
     local rootPart = if root and root:IsA("BasePart") then root else nil
     local alive = humanoid ~= nil and humanoid.Health > 0 and rootPart ~= nil
-    local visible = Policy.shouldShow(session.rules.phase,session.rules.winner,castle,alive)
+    local withinThisArena = rootPart ~= nil and Policy.inArenaXZ(
+     rootPart.Position.X, rootPart.Position.Z,
+     field.Position.X, field.Position.Z, field.Size.X, field.Size.Z)
+    local visible = Policy.shouldShow(
+     session.rules.phase,session.rules.winner,castle,alive and withinThisArena)
     local old = records[id]
     if not visible or not rootPart then
      if old then destroyRecord(old);records[id]=nil end
