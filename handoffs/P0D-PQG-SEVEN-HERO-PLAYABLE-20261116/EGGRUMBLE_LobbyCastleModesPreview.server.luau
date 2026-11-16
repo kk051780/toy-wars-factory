@@ -265,7 +265,17 @@ local function startSession(mode:string)
  Rules.start(session.rules)
  -- Connect existing HEAL/DASH/SHIELD world pickups to *both* actual match modes,
  -- without spawning separate item preview worlds or inventing a second inventory.
- session.fieldItemCount=RaidItemIntake.start(session,root,FieldItems)
+ local itemsOK,itemCountOrError=pcall(function()
+  return RaidItemIntake.start(session,root,FieldItems)
+ end)
+ if itemsOK then
+  session.fieldItemCount=itemCountOrError
+  session.itemIntakeStatus="READY"
+ else
+  session.fieldItemCount=0
+  session.itemIntakeStatus="YELLOW_ITEM_OPTIONAL"
+  warn("[EGGRUMBLE ITEM INTAKE] optional field-item failure; core egg/castle match continues:",itemCountOrError)
+ end
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
