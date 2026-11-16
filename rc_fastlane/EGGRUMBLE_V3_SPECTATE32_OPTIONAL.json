@@ -1,7 +1,7 @@
 {
   "schema": "P0D_GQ470_OPTIONAL32_SOURCE_PROFILE_V1",
   "canonical_branch": "rc/p0d-s1-kids-rc01",
-  "base_official_head": "b6f80874ecb9320f483bcb87892bc32af387aca3",
+  "base_official_head": "2291154fd07c8d8af086f76199bf585ff2c725c4",
   "profile": "eggrumble_v3_spectate32_studio",
   "base_profile": "eggrumble_v3_31",
   "source_count": 32,
@@ -22,7 +22,7 @@
     "commit": "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
     "selector": "rc_fastlane/quality_spectate492_rc32/admit_spectator.py"
   },
-  "current_selected31": "artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json",
+  "current_selected31": "artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json",
   "selected32": "artifacts/gq470_optional32/GQ470_SPECTATE32_OPTIONAL.project.json",
   "place32": "artifacts/gq470_optional32/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx",
   "source_count_preserved": 31,
@@ -34,5 +34,10 @@
   "publish_authorized": false,
   "rollback": "Unregister optional spectator profile only; preserve original31 Script Source/Class and legacy rich51",
   "authorized_writer": "#220 authenticated sole nonforce CAS; no individual author ACK required",
-  "acceptance": "Optional32 source profile and actual Rojo evidence, not engine/public gameplay acceptance"
+  "acceptance": "Optional32 source profile and actual Rojo evidence, not engine/public gameplay acceptance",
+  "current_official_extra_flags": [
+    "LOBBY_QUEUE_ETA_615",
+    "MATCH_DEADLINE_DRAW_499",
+    "BOT_SIEGE_TARGET_PACING_527"
+  ]
 }

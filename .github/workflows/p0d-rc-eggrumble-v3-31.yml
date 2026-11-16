@@ -11,6 +11,7 @@ on:
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
+      - 'rc_fastlane/quality_bot_siege527_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
@@ -24,6 +25,7 @@ on:
       - 'rc_fastlane/quality_rctrace8/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
+      - 'rc_fastlane/quality_bot_siege527_rc31/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
@@ -1557,10 +1559,65 @@ jobs:
             --base "$BASE" --out "$OUT" --policy "$ORIGINAL/EGGRUMBLE_DeadlinePolicy.luau" \
             --place "$PLACE"
           echo "GQ499_ORIGINAL_900S_ONE_HOST_ALL31_TRUE_ROJO_OFF_BYTES_EXACT_PASS"
+      - name: Checkout immutable original #527 AI castle siege fairness author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 57c38d393aee43badd575db3ee44eacf3bd3306e
+          path: _gq527_siege_original
+          persist-credentials: false
+      - name: GQ527 original bot siege fairness in existing BotActors only, Native31 + 3 real VM + Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq527_siege_original rev-parse HEAD)" = 57c38d393aee43badd575db3ee44eacf3bd3306e
+          SRC=_gq527_siege_original/quality_gameplay/gq_bot_siege_pacing_20261116
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ499_DEADLINE_SELECTED31.project.json
+          OUT=$DIR/GQ527_SIEGE_SELECTED31.project.json
+          PLACE=$DIR/GQ527_SIEGE_REAL_ROJO31.rbxlx
+          SELECTOR=rc_fastlane/quality_bot_siege527_rc31/select_original_siege_inline.py
+          python3 -m py_compile "$SELECTOR"
+          python3 -B "$SELECTOR" prepare --base "$BASE" --out "$OUT" \
+            --original-author "$SRC/tools/stage_private_v3.py" \
+            --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import sys,subprocess,importlib.util
+          spec=importlib.util.spec_from_file_location("gq527_rc","rc_fastlane/quality_bot_siege527_rc31/select_original_siege_inline.py")
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,sources,bot=mod.mapping(Path(sys.argv[1]))
+          assert len(sources)==31 and bot[-1]=="EGGRUMBLE_BotActors"
+          for f in sources.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
+                            check=True,stdout=subprocess.DEVNULL)
+          print("GQ527_REAL_CURRENT31_NATIVE31_COMPILE_PASS")
+          PY
+          python3 "$SRC/tools/generate_native_harness.py" \
+            --out "$DIR/GQ527_PURE_PACING_NATIVE37.luau"
+          python3 "$SRC/tools/generate_native_bot_action_harness.py" \
+            --source "$DIR/GQ527_CURRENT_SINGLE_BOT_ACTORS.luau" \
+            --out "$DIR/GQ527_REAL_BOT_NATIVE16.luau"
+          python3 "$SRC/tools/generate_native_author_rules_harness.py" \
+            --actor "$DIR/GQ527_CURRENT_SINGLE_BOT_ACTORS.luau" \
+            --rules _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out "$DIR/GQ527_REAL_RULES_NATIVE41.luau"
+          for name in GQ527_PURE_PACING_NATIVE37 GQ527_REAL_BOT_NATIVE16 GQ527_REAL_RULES_NATIVE41; do
+            /tmp/gq530_all31_native/luau-compile --text "$DIR/$name.luau" > /dev/null
+            /tmp/gq530_all31_native/luau "$DIR/$name.luau" | tee "$DIR/$name.log"
+          done
+          grep -q 'GQ_BOT_SIEGE_PACING_NATIVE_PASS' "$DIR/GQ527_PURE_PACING_NATIVE37.log"
+          grep -q 'GQ_BOT_SIEGE_ACTUAL_AUTHOR_BRANCH_NATIVE_PASS' "$DIR/GQ527_REAL_BOT_NATIVE16.log"
+          grep -q 'GQ_ORIGINAL_RULES_PLUS_REAL_BOT_BRANCH_NATIVE_PASS' "$DIR/GQ527_REAL_RULES_NATIVE41.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SELECTOR" verify --base "$BASE" --out "$OUT" --place "$PLACE" \
+            --original-author "$SRC/tools/stage_private_v3.py" \
+            --policy "$SRC/EGGRUMBLE_BotSiegePacing.luau"
+          echo GQ527_LATEST31_ORIGINAL_BOT_CASTLE_SIEGE_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1576,7 +1633,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ527_SIEGE_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1678,7 +1735,17 @@ jobs:
           assert gq582_guard["real_rojo_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_GUARD582_V4_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
           gq499=json.loads(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_text())
           assert gq499["real_rojo_exact"]=="31/31" and gq499["other30_bytes_exact"] and gq499["off_inverse_byte_exact"]
-          assert gq499["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq499["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          bot527=json.loads(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert bot527["runtime_source_count"]==31 and bot527["new_runtime_scripts"]==0
+          assert bot527["one_changed_existing_script"]=="EGGRUMBLE_BotActors"
+          assert bot527["other_30_scripts_byte_exact"] and bot527["off_original_bot_byte_exact"]
+          assert bot527["rojo_source_class_exact"]=="31/31" and bot527["pure_author_policy_inlined_in_bot"]
+          assert bot527["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bot527["original_author_head"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
+          assert bot527["original_pure_policy_git_blob"]=="976f1eb047a275db0dedc42c394c09be4143a4e2"
+          assert m["feature_flags"]["BOT_SIEGE_TARGET_PACING_527"] is True
+          assert m["source_heads"]["bot_siege527"]=="57c38d393aee43badd575db3ee44eacf3bd3306e"
           assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
           assert m["source_heads"]["match_deadline499"]=="da14aca5460ebb04c692ebbf90b76378dd3dfe6b"
           assert m["source_heads"]["zombie_guard582"]=="5769b80ed21f5592adcca1936d2d3d04934f0089"
@@ -1759,6 +1826,7 @@ jobs:
              "gq615_rollback_current_host_exact":True,
              "gq615_rojo31_source_class_path_exact":True,
              "gq499_original_timeout_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq527_bot_siege_target_pacing_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "gq615_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
             "gq586_current_match_deposit_selected":True,
@@ -1874,14 +1942,14 @@ jobs:
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
-            test "$current_base" = b6f80874ecb9320f483bcb87892bc32af387aca3 \
+            test "$current_base" = 2291154fd07c8d8af086f76199bf585ff2c725c4 \
               || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
           fi
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
           SRC=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
           SELECT=_gq634_intake/rc_fastlane/quality_spectate492_rc32/admit_spectator.py
-          BASE=artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
+          BASE=artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
           DIR=artifacts/gq470_optional32
           OUT="$DIR/GQ470_SPECTATE32_OPTIONAL.project.json"
           PLACE="$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx"
@@ -2005,6 +2073,11 @@ jobs:
             artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ499_DEADLINE_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ527_REAL_RULES_NATIVE41.log
+            artifacts/gq515_official_select/GQ527_REAL_BOT_NATIVE16.log
+            artifacts/gq515_official_select/GQ527_PURE_PACING_NATIVE37.log
             artifacts/gq515_official_select/GQ499_ORIGINAL_POLICY_NATIVE.log
             artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ615_NATIVE10_RESULT.log

@@ -18,8 +18,8 @@ def fixture():
           "commit":"eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
           "script_name":"EGGRUMBLE_EliminatedSpectate","class":"LocalScript"},
         "existing_prep_reuse":{"commit":"fed9cbb5680d40c68a2e1395e9b84276d7868fb9"},
-        "current_selected31":"artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json",
-        "base_official_head":"b6f80874ecb9320f483bcb87892bc32af387aca3"}
+        "current_selected31":"artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json",
+        "base_official_head":"2291154fd07c8d8af086f76199bf585ff2c725c4"}
     active={"active_profile":"rich51","source_profiles":{
         "eggrumble_v3_31":{"source_count":31},
         opt.PROFILE:{"source_count":32,"default_selected":False,
@@ -28,13 +28,13 @@ def fixture():
     flags={"FLAG_"+str(i):True for i in range(32)}
     flags.update(dict.fromkeys(["LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                 "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
-                "ITEM_CURRENT_SESSION_525"],True))
+                "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527"],True))
     base={"profile":"eggrumble_v3_31","source_count":31,"feature_flags":flags}
     return meta,active,base
 
 class Optional32ContractTests(unittest.TestCase):
     def test_current_studio_only_optional_is_valid(self):
-        self.assertEqual(opt.contract(*fixture()),37)
+        self.assertEqual(opt.contract(*fixture()),38)
 
     def test_never_auto_enable_or_publish(self):
         for field in ("default_selected","production_enabled","publish_authorized"):
@@ -56,7 +56,7 @@ class Optional32ContractTests(unittest.TestCase):
         with self.assertRaises(ValueError): opt.contract(m,a,b)
         for f in ("LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                   "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
-                  "ITEM_CURRENT_SESSION_525"):
+                  "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527"):
             m,a,b=fixture();b["feature_flags"][f]=False
             with self.assertRaises(ValueError): opt.contract(m,a,b)
 
