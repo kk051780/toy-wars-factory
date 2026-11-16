@@ -33,7 +33,8 @@
     "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
     "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4",
     "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770",
-    "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
+    "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
+    "carrier_respawn551": "93d774bf3aaecd0e7714d64a7f970003698d69ef"
   },
   "feature_flags": {
     "DEAD_CASTER_FENCE_530": true,
@@ -45,7 +46,8 @@
     "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
     "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true,
     "LOBBY_NEARBY_BOARDS_539": true,
-    "ORIGINAL_ITEM_AUTHOR_489": true
+    "ORIGINAL_ITEM_AUTHOR_489": true,
+    "CARRIER_STALE_AVATAR_DIED_551": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native",
   "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539",
@@ -100,6 +102,17 @@
     "rollback": "Revert only lobby-helper/four calls to original #540 Host, keep #540/#537/#541",
     "studio": "NOT_TESTED",
     "android": "NOT_TESTED",
+    "owner_fun": "NO_GO"
+  },
+  "gq551": {
+    "defect": "Humanoid.Died callback from stale previous avatar could remove eggs carried by current respawn during active match",
+    "scope": "only current original Host source-select after #541 neutral/#537 castle deposit/#540 assassin respawn/#539 lobby/#489 item; all 30 other scripts source-identical",
+    "author": "existing #551",
+    "pinned_head": "93d774bf3aaecd0e7714d64a7f970003698d69ef",
+    "rollback": "select original #489 canonical31 project instead of GQ551 project; all previous features stay ON",
+    "status": "PR_SOURCE_CANDIDATE_NEEDS_SAME_HEAD_CI_THEN_EXCLUSIVE_RC_CAS",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
     "owner_fun": "NO_GO"
   }
 }
