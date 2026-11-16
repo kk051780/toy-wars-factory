@@ -861,12 +861,17 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_rctrace8 -p 'test_*.py'
+          gq8mode=()
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            gq8mode+=(--pr-premerge)
+          fi
           python3 -B rc_fastlane/quality_rctrace8/verify_artifact.py \
             --artifact-dir artifacts/gq530_all31 \
             --manifest rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
             --active rc_fastlane/ACTIVE.json \
             --rc-head "$GITHUB_SHA" \
-            --out artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
+            --out artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json \
+            "${gq8mode[@]}"
           test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
           echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
