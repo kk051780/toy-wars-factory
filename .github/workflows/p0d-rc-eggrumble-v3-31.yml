@@ -734,7 +734,7 @@ jobs:
             --base artifacts/gq547_official_select/GQ547_SELECTED31.project.json \
             --out artifacts/gq547_official_select/GQ547_HEAL517_SELECTED31.project.json \
             --place artifacts/gq547_official_select/GQ547_HEAL517_RC31_TRUE_ROJO.rbxlx
-          GQ517_TEST_DIR=artifacts/gq555_official_select GQ517_TEST_BASE=GQ547_SELECTED31.project.json GQ517_TEST_ON=GQ547_HEAL517_SELECTED31.project.json python3 -B -m unittest discover -s rc_fastlane/quality_heal517_rc31 -p 'test_selection.py' -v
+          GQ517_TEST_DIR=artifacts/gq547_official_select GQ517_TEST_BASE=GQ547_SELECTED31.project.json GQ517_TEST_ON=GQ547_HEAL517_SELECTED31.project.json python3 -B -m unittest discover -s rc_fastlane/quality_heal517_rc31 -p 'test_selection.py' -v
           echo "GQ517_RC31_SINGLE_ITEM_ALL_31_NATIVE_TRUE_ROJO_VERIFIED"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
