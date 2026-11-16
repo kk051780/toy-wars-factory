@@ -119,7 +119,8 @@ def source_scripts(place:bytes):
         require(name in found and found[name][0]==klass,"ROLE_CLASS_"+name)
     return found
 
-def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:str):
+def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:str,
+           allow_pr_premerge:bool=False):
     require(len(expected_head)==40 and all(c in "0123456789abcdef" for c in expected_head),
             "EXPECTED_COMMIT_SHA_INVALID")
     require(manifest["canonical_branch"]=="rc/p0d-s1-kids-rc01","CANONICAL_BRANCH")
@@ -132,7 +133,14 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
     require(receipt.get("canonical_branch")=="rc/p0d-s1-kids-rc01",
             "ARTIFACT_NOT_CANONICAL")
     require(receipt.get("github_commit_sha")==expected_head,"ARTIFACT_STALE_WRONG_HEAD")
-    require(receipt.get("official_rc_commit_verified") is True,"NOT_OFFICIAL_PUSH")
+    official=receipt.get("official_rc_commit_verified") is True
+    if not official:
+        require(allow_pr_premerge and
+                receipt.get("status")=="RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED",
+                "NOT_OFFICIAL_PUSH")
+    else:
+        require(receipt.get("status")=="CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED",
+                "OFFICIAL_PUSH_CLAIM_MISMATCH")
     require(receipt.get("release_profile")=="eggrumble_v3_31","ARTIFACT_NOT_V3")
     require(receipt.get("script_count")==N and receipt.get("script_source_and_class_exact")=="31/31",
             "ARTIFACT_SOURCE_RECEIPT_NOT_PASS")
@@ -157,7 +165,9 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
         require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
     return {
-        "result":"SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE",
+        "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
+                  if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
+        "official_rc_push_verified":official,
         "official_rc_head":expected_head,"studio_place_bytes":len(place),
         "studio_place_sha256":placehash,"script_count":len(scripts),
         "domains":by_domain,
@@ -176,17 +186,20 @@ def main():
     cli.add_argument("--active",required=True,type=Path)
     cli.add_argument("--rc-head",required=True)
     cli.add_argument("--out",required=True,type=Path)
+    cli.add_argument("--pr-premerge",action="store_true")
     a=cli.parse_args()
     data=a.artifact_dir.resolve(strict=True)
     place=(data/PLACE).read_bytes()
     receipt=json.loads((data/RECEIPT).read_text(encoding="utf-8"))
     manifest=json.loads(a.manifest.read_text(encoding="utf-8"))
     active=json.loads(a.active.read_text(encoding="utf-8"))
-    result=verify(place,receipt,manifest,active,a.rc_head)
+    result=verify(place,receipt,manifest,active,a.rc_head,allow_pr_premerge=a.pr_premerge)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_14_FEATURE_FLAGS_PASS")
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_14_FEATURE_FLAGS_PASS"
+          if result["official_rc_push_verified"]
+          else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
           result["studio_place_bytes"],result["studio_place_sha256"])
 
