@@ -44,7 +44,7 @@ jobs:
           from pathlib import Path
           import json,subprocess
           root=Path('artifacts/status22')
-          tree=json.loads((root/'project.json').read_text())['tree']
+          tree=json.loads((root/'EGGRUMBLE_STATUS22.project.json').read_text())['tree']
           def walk(n):
               if isinstance(n,dict):
                   if '$path' in n:yield (root/n['$path']).resolve(strict=True)
@@ -70,7 +70,7 @@ jobs:
               dst=Path('/tmp/gq_status_rojo')
               dst.write_bytes(z.read(items[0]));dst.chmod(0o755)
           PY
-          /tmp/gq_status_rojo build artifacts/status22/project.json -o artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
+          /tmp/gq_status_rojo build artifacts/status22/EGGRUMBLE_STATUS22.project.json -o artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx
       - name: Check embedded scripts/classes/byte-exact sources in Rojo Place
         run: |
           set -euo pipefail
@@ -79,7 +79,7 @@ jobs:
           import json,hashlib,xml.etree.ElementTree as ET,os
           root=Path('artifacts/status22')
           place=Path('artifacts/EGGRUMBLE_GQ_STATUS22_PRIVATE.rbxlx')
-          tree=json.loads((root/'project.json').read_text())['tree']
+          tree=json.loads((root/'EGGRUMBLE_STATUS22.project.json').read_text())['tree']
           want={}
           def walk(n):
               for k,v in n.items():
