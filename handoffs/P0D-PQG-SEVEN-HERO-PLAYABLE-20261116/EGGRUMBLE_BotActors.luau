@@ -163,6 +163,24 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
  end
  return false
 end
+-- Neutral combat is optional to the castle/egg loop. A transient neutral
+-- controller failure must not terminate every AI raid and home-return actor.
+-- Keep a server-owned, bounded diagnostic rather than silently hiding faults.
+local function hitNeutralSafely(session:any,id:string,at:Vector3):()
+ local swarm=session.swarm
+ if not swarm then return end
+ local ok,reason=pcall(function()
+  return swarm.damageFromBot(id,at)
+ end)
+ if not ok then
+  local faults=(session.botNeutralFaults or 0)+1
+  session.botNeutralFaults=faults
+  session.botNeutralStatus="YELLOW_NEUTRAL_HIT"
+  if faults<=3 then
+   warn("[EGGRUMBLE AI] neutral hit failed; castle/egg AI continues",reason)
+  end
+ end
+end
 -- Actor pathfinding is in the reusable, budgeted EGGRUMBLE_BotPathRouter module.
 function BotActors.start(session:any,Rules:any):()
  assert(RunService:IsStudio(),"preview bot actors are Studio-only")
@@ -206,7 +224,7 @@ function BotActors.start(session:any,Rules:any):()
        end
       else
        tryHeroAttack(actor,me,session,lastHit,bots)
-       if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end
+       hitNeutralSafely(session,id,actor:GetPivot().Position)
        local enemy=desiredTarget(session,mode,me)
        if enemy then
         local own=session.castleLocations[id]
