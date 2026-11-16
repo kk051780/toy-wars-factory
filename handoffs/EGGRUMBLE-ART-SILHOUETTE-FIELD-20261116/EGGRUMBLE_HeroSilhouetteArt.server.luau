@@ -151,12 +151,25 @@ local function decorateHeroCharacter(player:Player)
   or player:GetAttribute("P0DPreviewRole")
   or fallbackRole
  local existing=char:FindFirstChild("EGGRUMBLE_RoleVisuals")
- if existing then existing:Destroy() end
- if type(role)~="string" or not roleSet[role] then return end
+ if type(role)~="string" or not roleSet[role] then
+  if existing then existing:Destroy() end
+  return
+ end
  local anchor=char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
  if not anchor or not anchor:IsA("BasePart") then return end
+ -- Role selection/equip/respawn can trigger several attribute signals for the
+ -- SAME character and job. Do not destroy/rebuild 13 cosmetic Parts each time.
+ -- This folder is A01-only, so no author scripts or combat state are modified.
+ if existing and existing:IsA("Folder")
+  and existing:GetAttribute("EGGRUMBLE_VisualRole")==role
+  and existing:GetAttribute("EGGRUMBLE_VisualAnchor")==anchor.Name then
+  return
+ end
+ if existing then existing:Destroy() end
  local art=Instance.new("Folder")
  art.Name="EGGRUMBLE_RoleVisuals"
+ art:SetAttribute("EGGRUMBLE_VisualRole",role)
+ art:SetAttribute("EGGRUMBLE_VisualAnchor",anchor.Name)
  art.Parent=char
  sculpt(art,anchor,role,false)
 end
