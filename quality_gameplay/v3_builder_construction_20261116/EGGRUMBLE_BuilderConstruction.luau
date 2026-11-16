@@ -201,7 +201,7 @@ end
 -- Add server-owned Tool input to the ORIGINAL role system. This is not a
 -- second Game or Remote: the original Host calls this after HeroCombat.equip.
 -- Preserves original BUILDER A/B/C skills, including its turret.
-function Build.equip(session:any,p:Player,serverEnabled:boolean?):(boolean,string)
+function Build.equip(session:any,p:Player,serverEnabled:boolean?,bridgeEnabled:boolean?):(boolean,string)
  if serverEnabled~=true then return false,"FEATURE_OFF" end
  local character=getActor(session,p)
  if not character then return false,"NOT_AUTHORIZED" end
@@ -216,7 +216,10 @@ function Build.equip(session:any,p:Player,serverEnabled:boolean?):(boolean,strin
    end
   end
  end
- for _,kind in ipairs({"WALL","BRIDGE"}) do
+ -- A bridge Tool is hidden until a real authored crossing is present.
+ -- WALL-only is the safe private-RC default; no misleading unusable bridge button.
+ local kinds=if bridgeEnabled==true then {"WALL","BRIDGE"} else {"WALL"}
+ for _,kind in ipairs(kinds) do
   local tool=Instance.new("Tool")
   tool.Name=prefix..kind
   tool.ToolTip=if kind=="WALL" then "建築士｜防壁（9秒・再使用13秒）"
