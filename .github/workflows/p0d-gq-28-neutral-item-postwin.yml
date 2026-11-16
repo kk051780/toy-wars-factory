@@ -1,0 +1,213 @@
+name: P0D GQ 8 areas original 28 Luau neutral item egg PRIVATE intake
+on:
+  push:
+    branches: ['quality/p0d-v3-postwin-egg-drop-fence-20261116-r01']
+    paths:
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-gq-28-neutral-item-postwin.yml'
+  pull_request:
+    paths:
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-gq-28-neutral-item-postwin.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-28-all-areas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout GQ509 ONE-function patch and evidence
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout original #482 game 21 scripts
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Checkout original #484 bot AI and composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout original #485 ART
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout original #487 SCORE
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Checkout original #494 neutral pacing and postKO
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing
+          persist-credentials: false
+      - name: Checkout original #501 encounter fairness and dual28 composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_fair
+          persist-credentials: false
+      - name: Checkout original #489 item fairness
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item
+          persist-credentials: false
+      - name: Exact original HEAD leases (no latest-head guessing)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_fair rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          test "$(git -C _v3_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          echo "GQ_ALL_SEVEN_ORIGINAL_AUTHOR_HEADS_PINNED"
+      - name: Original game and ART Python contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _v3_fair/quality_gameplay/neutral_encounters/tests -p 'test_*.py' -q
+      - name: Reuse EXACT original ART, game quality and neutral dual28 composers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/V3_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/V3_ART.project.json --out artifacts/ORIGINAL26.project.json
+          python3 _v3_fair/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/ORIGINAL26.project.json \
+            --original-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_fair/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/NEUTRAL28.project.json
+      - name: Apply ONLY #489 unchanged original ITEM and #509 single-rule egg patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/compose_federated28.py compose \
+            --base26 artifacts/ORIGINAL26.project.json \
+            --dual28 artifacts/NEUTRAL28.project.json \
+            --patched-rules handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --original-item _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/ALL_8_AREAS_FEDERATED28.project.json
+      - name: Compile original Luau native VM exact fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native compile 28 selected ACTUAL mapped scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/p0d_native28 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_native28 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/ALL_8_AREAS_FEDERATED28.project.json").resolve()
+          sources=[]
+          def visit(node):
+              if isinstance(node,dict):
+                  if "$path" in node: sources.append((p.parent/node["$path"]).resolve(strict=True))
+                  else:
+                      for key,val in node.items():
+                          if not key.startswith("$"): visit(val)
+          visit(json.loads(p.read_text())["tree"])
+          assert len(sources)==28,len(sources)
+          for f in sources:
+              subprocess.run(["/tmp/p0d_native28/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("EIGHT_DOMAIN_28_ACTUAL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+      - name: Execute actual Rules TEAM/BR native plus rejected unfenced mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/native_and_provenance.py \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/POSTWIN_NATIVE.luau --mutant-out artifacts/POSTWIN_UNFENCED_MUTANT.luau
+          /tmp/p0d_native28/luau artifacts/POSTWIN_NATIVE.luau | tee artifacts/POSTWIN_NATIVE.log
+          grep -q POSTWIN_EGG_DEATH_NATIVE_PASS artifacts/POSTWIN_NATIVE.log
+          if /tmp/p0d_native28/luau artifacts/POSTWIN_UNFENCED_MUTANT.luau >artifacts/POSTWIN_MUTANT.log 2>&1; then exit 1; fi
+          grep -q 'late death produces zero eggs/tokens' artifacts/POSTWIN_MUTANT.log
+          echo NEGATIVE_UNFENCED_MUTANT_REJECTED
+      - name: Execute ORIGINAL item/guard, neutral fairness, neutral pacing native VMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py --out artifacts/ITEM_ORIGINAL_NATIVE.luau
+          python3 _v3_fair/quality_gameplay/neutral_encounters/tools/build_native_harness.py --out artifacts/NEUTRAL_FAIR_NATIVE.luau
+          python3 _v3_pacing/quality_gameplay/neutral_pacing/tools/build_native_harness.py --out artifacts/NEUTRAL_PACE_NATIVE.luau
+          for file in artifacts/ITEM_ORIGINAL_NATIVE.luau artifacts/NEUTRAL_FAIR_NATIVE.luau artifacts/NEUTRAL_PACE_NATIVE.luau; do
+            /tmp/p0d_native28/luau-compile --text "$file" >/dev/null
+            /tmp/p0d_native28/luau "$file" | tee "artifacts/$(basename "$file" .luau).log"
+          done
+          grep -q 'ORIGINAL ITEM + ORIGINAL GUARD VM' artifacts/ITEM_ORIGINAL_NATIVE.log
+          grep -q NEUTRAL_ENCOUNTER_NATIVE artifacts/NEUTRAL_FAIR_NATIVE.log
+          grep -q NEUTRAL_PACING_NATIVE_PASS artifacts/NEUTRAL_PACE_NATIVE.log
+          echo ALL_3_ORIGINAL_AUTHOR_LUAU_VM_PASS
+      - name: Download fixed digest Rojo v7.7.1 and build actual private Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo28.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo28.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/p0d_rojo28.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/p0d_rojo28");p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_rojo28 build artifacts/ALL_8_AREAS_FEDERATED28.project.json -o artifacts/ALL_8_AREAS_PRIVATE28.rbxlx
+      - name: Compare ALL Rojo Place actual 28 script body bytes and class
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/compose_federated28.py verify \
+            --project artifacts/ALL_8_AREAS_FEDERATED28.project.json --place artifacts/ALL_8_AREAS_PRIVATE28.rbxlx
+      - name: Upload unreleased private receipt and Place only
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_V3_8_AREAS_NEUTRAL_ITEM_POSTWIN28_NO_RC
+          retention-days: 4
+          if-no-files-found: error
+          path: |
+            artifacts/ALL_8_AREAS_PRIVATE28.rbxlx
+            artifacts/ALL_8_AREAS_FEDERATED28.project.json
+            artifacts/FEDERATED28_RECEIPT.json
+            artifacts/POSTWIN_NATIVE.log
+            artifacts/ITEM_ORIGINAL_NATIVE.log
+            artifacts/NEUTRAL_FAIR_NATIVE.log
+            artifacts/NEUTRAL_PACE_NATIVE.log
