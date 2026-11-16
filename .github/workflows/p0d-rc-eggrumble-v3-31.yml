@@ -1724,10 +1724,72 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_rare.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ_RARE_MIRRORED_TEAM_BR_2_EXISTING_29_OTHER_SOURCE_ROJO31_OFF_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 740fcb83f9ba70684b446d466ab78e8b4e9420d5
+          path: _gq652_original
+          persist-credentials: false
+      - name: Original GQ652 safe lobby current31 Host only native Rojo true 31 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq652_original rev-parse HEAD)" = 740fcb83f9ba70684b446d466ab78e8b4e9420d5
+          ORIG=_gq652_original/quality_gameplay/v3_safe_lobby_spawn_20261117
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQRARE_FIELD_SELECTED31.project.json
+          OUT=$DIR/GQ652_SAFE_LOBBY_SELECTED31.project.json
+          PLACE=$DIR/GQ652_SAFE_LOBBY_REAL_ROJO31.rbxlx
+          python3 -B -m unittest discover -s "$ORIG" -p 'test_*.py' -v
+          python3 -B "$ORIG/select_safe_lobby.py" --base "$BASE" --out "$OUT"
+          python3 - "$ORIG/select_safe_lobby.py" "$BASE" "$OUT" <<'PY'
+          from pathlib import Path
+          import importlib.util,sys,subprocess
+          spec=importlib.util.spec_from_file_location("gq652",sys.argv[1])
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,old,host=mod.mapping(Path(sys.argv[2]))
+          _,new,host2=mod.mapping(Path(sys.argv[3]))
+          assert len(new)==31 and set(new)==set(old) and host==host2
+          assert [key for key in old if old[key].read_bytes()!=new[key].read_bytes()]==[host]
+          assert mod.rollback(new[host].read_text(encoding="utf-8"))==old[host].read_text(encoding="utf-8")
+          for script in new.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(script)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ652_REAL_CURRENT31_LUAU_NATIVE_AND_EXACT_ROLLBACK_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 - "$ORIG/select_safe_lobby.py" "$OUT" "$PLACE" <<'PY'
+          from pathlib import Path
+          import sys,importlib.util,xml.etree.ElementTree as ET,hashlib,json
+          spec=importlib.util.spec_from_file_location("gq652",sys.argv[1])
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          _,files,_=mod.mapping(Path(sys.argv[2]))
+          place=Path(sys.argv[3])
+          found={}
+          for item in ET.parse(place).getroot().iter("Item"):
+              typ=item.attrib.get("class")
+              if typ not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:raise ValueError("RED_MISSING_PROPERTIES")
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              if not name or src is None or name in found:raise ValueError("RED_BAD_EMBEDDED_SOURCE")
+              found[name]=(typ,src.replace("\r\n","\n"))
+          assert len(found)==31 and set(found)=={p[-1] for p in files}
+          for key,f in files.items():
+              typ=("Script" if f.name.endswith(".server.luau") else
+                   "LocalScript" if f.name.endswith(".client.luau") else "ModuleScript")
+              assert found[key[-1]]==(typ,f.read_text(encoding="utf-8").replace("\r\n","\n")),("RED_GQ652_SOURCE_CLASS",key[-1])
+          receipt=place.parent/"GQ_SAFE_LOBBY_RECEIPT.json"
+          info=json.loads(receipt.read_text())
+          info.update({"rojo_source_class_exact":"31/31","place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),"place_bytes":place.stat().st_size})
+          receipt.write_text(json.dumps(info,sort_keys=True,indent=2)+"\n")
+          print("GQ652_REAL_SELECTED31_ROJO_SOURCE_CLASS_31_OF_31_PASS")
+          PY
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ652_SAFE_LOBBY_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1743,7 +1805,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ652_SAFE_LOBBY_REAL_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1856,7 +1918,13 @@ jobs:
           assert rare["other29_byte_exact"] and rare["current_host_off_exact"] and rare["current_score_off_exact"]
           assert rare["actual_rojo_31_source_class"] and rare["rojo_count"]==31
           assert rare["rare_ids"]==["FIELD_4","FIELD_5"] and rare["max_player_rare_points"]==120
-          assert rare["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert rare["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQRARE_FIELD_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          gq652=json.loads(Path("artifacts/gq515_official_select/GQ_SAFE_LOBBY_RECEIPT.json").read_text())
+          assert gq652["source_count"]==31 and gq652["changed_existing_source"]=="EGGRUMBLE_LobbyCastleModesPreview"
+          assert gq652["other_30_source_exact"] and gq652["rollback_host_exact"] and gq652["rojo_source_class_exact"]=="31/31"
+          assert gq652["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["SAFE_LOBBY_GROUND_SPAWN_652"] is True
+          assert m["source_heads"]["original_safe_lobby652"]=="740fcb83f9ba70684b446d466ab78e8b4e9420d5"
           assert m["feature_flags"]["RARE_FIELD_EGG_SCORE_20261117"] is True
           assert m["source_heads"]["rare_field_eggs_20261117"]=="1985135a4cee9affe7acb7d5a921f3f4e3088271"
           assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
@@ -2091,6 +2159,9 @@ jobs:
             artifacts/gq515_official_select/GQ527_CURRENT31_SIEGE_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json
             artifacts/gq515_official_select/GQ509_LATE_DEATH_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ652_SAFE_LOBBY_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ652_SAFE_LOBBY_REAL_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ_SAFE_LOBBY_RECEIPT.json
             artifacts/gq515_official_select/GQRARE_FIELD_SELECTED31.project.json
             artifacts/gq515_official_select/GQ_RARE_FIELD_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQRARE_SCORE_NATIVE13_RESULT.log
