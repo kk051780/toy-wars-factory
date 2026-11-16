@@ -123,6 +123,12 @@ jobs:
             git fetch --no-tags --depth=1 origin "$author"
           done
           python3 "$QG/compose_five_author.py" build --out "$PRIVATE"
+          # Execute the REAL #484 author's castle/grounded navigation source
+          # regression suite against the combined #531/#535 private Place inputs.
+          mkdir -p "$PRIVATE/tests"
+          git show 6b52eaf1f2725496277998fe0c5532b7a8fcaab5:"$ROOT/tests/test_bot_spatial_quality.py" > "$PRIVATE/tests/test_bot_spatial_quality.py"
+          python3 -m unittest discover -s "$PRIVATE/tests" -p 'test_bot_spatial_quality.py' -v
+          echo "GQ_ORIGINAL_484_CASTLE_FIELD_NAV_SOURCE_TESTS_PASS"
           count=0
           while IFS= read -r -d '' file; do
             /tmp/gq_human_luau/build/luau-compile "$file" > /dev/null
@@ -173,6 +179,8 @@ jobs:
             /tmp/gq_human_private21/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx
             /tmp/gq_human_private21/GQ_FIVE_AUTHOR_PRIVATE22_RECEIPT.json
             /tmp/gq_human_private21/EGGRUMBLE_BotActors.luau
+            /tmp/gq_human_private21/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+            /tmp/gq_human_private21/EGGRUMBLE_BotPathRouter.luau
             /tmp/gq_human_private21/GQ_HUMAN_COMBAT_LOCK.json
             /tmp/gq_human_private21/overlay_source_lock.json
             /tmp/gq_human_private21/PRIVATE21_RECEIPT.json
