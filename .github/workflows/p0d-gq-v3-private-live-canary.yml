@@ -49,7 +49,7 @@ jobs:
           python3 quality_gameplay/v3_private_live_canary_20261116/native_gate_harness.py --out "$RUNNER_TEMP/private_gate_native.luau"
           /tmp/p0d_private_gate_luau/luau-compile --text "$RUNNER_TEMP/private_gate_native.luau" >/dev/null
           /tmp/p0d_private_gate_luau/luau "$RUNNER_TEMP/private_gate_native.luau" | tee "$RUNNER_TEMP/PRIVATE_GATE_VM.log"
-          grep -q PRIVATE_GATE_NATIVE_11_CASES_PASS "$RUNNER_TEMP/PRIVATE_GATE_VM.log"
+          grep -q PRIVATE_GATE_NATIVE_28_CASES_PASS "$RUNNER_TEMP/PRIVATE_GATE_VM.log"
           echo "NATIVE_COMPILE_22_OF_22_PASS"
       - name: Download checksum-pinned Rojo 7.7.1 and build unpublished 22-source Place
         run: |
