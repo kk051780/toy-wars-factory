@@ -41,4 +41,14 @@ check(not P.blocksPlacement(true,true,false)) -- own floor
 check(P.blocksPlacement(nil,false,false)) -- fail closed on invalid CanCollide
 check(P.blocksPlacement(nil,false,true))
 check(not P.blocksPlacement(false,true,false))
+check(not P.bridgeGap(0,0)) -- intact floor
+check(not P.bridgeGap(-3.99,0)) -- only shallow dip
+check(P.bridgeGap(-4,0)) -- lowered watercourse bank-to-bank
+check(P.bridgeGap(nil,0)) -- true midspan gap
+check(not P.bridgeGap(nil,0/0)) -- invalid bank
+check(not P.bridgeGap(0/0,0)) -- invalid midpoint
+check(not P.bridgeGap(math.huge,0))
+check(not P.bridgeGap(-math.huge,0))
+check(not P.bridgeGap(0,math.huge))
+check(P.bridgeGap(-6,0))
 print("GQ_BUILDER_NATIVE_POLICY_PASS assertions="..tostring(n))

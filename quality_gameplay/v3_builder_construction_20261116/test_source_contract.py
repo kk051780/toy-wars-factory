@@ -42,6 +42,16 @@ class BuilderSourceTests(unittest.TestCase):
   self.assertIn('other.Name=="TacticalBattlefield"',SRC)
   self.assertIn('other.Name:match("^TacticalRoute_")~=nil',SRC)
   self.assertIn("canCollide~=false and ownGround~=true",POL)
+ def test_bridge_requires_midspan_void_or_depth(self):
+  self.assertIn('if kind=="BRIDGE" then',SRC)
+  self.assertIn('local middle=groundAt(session,root.Position+direction*15.5)',SRC)
+  self.assertIn('Policy.bridgeGap(',SRC)
+  self.assertIn('return false,"NO_GAP"',SRC)
+  self.assertIn('lowerBankY-midY>=4',POL)
+ def test_bridge_mock_has_two_positive_and_flat_negative(self):
+  text=(HERE/"EGGRUMBLE_BuilderConstruction.runtime.spec.luau").read_text()
+  for case in ["SOLID_GRASS_IS_NOT_BRIDGE","TRUE_MIDSPAN_GAP_BRIDGE","LOWERED_RIVERBED_BRIDGE"]:
+   self.assertIn(case,text)
  def test_runtime_limits(self):
   for k in ["MAX_PER_HERO=2","MAX_PER_SESSION=12","LIFETIME=9","WALL=13","BRIDGE=17"]:
    self.assertIn(k,POL)

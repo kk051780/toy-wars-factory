@@ -57,6 +57,8 @@ end}
 local hitRadius={}
 local hitBox={}
 local missingFloor=false
+local actualBridgeGap=false
+local loweredRiverbed=false
 local floor={
  Name="TacticalBattlefield",CanCollide=true,Parent=nil,
  Size=Vector3.new(500,2,500),
@@ -69,6 +71,11 @@ workspace={}
 function workspace:Raycast(at,delta,params)
  if missingFloor then return nil end
  check(params.FilterType=="INCLUDE","GROUND_INCLUDE")
+ local midSpan=at.Z>14 and at.Z<18
+ if actualBridgeGap and midSpan then return nil end
+ if loweredRiverbed and midSpan then
+  return {Instance=floor,Position=Vector3.new(at.X,-6,at.Z)}
+ end
  return {Instance=floor,Position=Vector3.new(at.X,0,at.Z)}
 end
 function workspace:GetPartBoundsInRadius(center,radius,params)
@@ -176,10 +183,20 @@ check(not ok and reason=="NOT_AUTHORIZED","FINISHED_MATCH")
 session.rules.phase="ACTIVE"
 
 ok,reason=Build.place(session,p,"BRIDGE",true)
-check(ok and reason=="BRIDGE","PHYSICAL_BRIDGE")
-check(created[#created].Size.Z==20 and created[#created].CanCollide,"BRIDGE_PHYSICS")
+check(not ok and reason=="NO_GAP","SOLID_GRASS_IS_NOT_BRIDGE")
+actualBridgeGap=true
+ok,reason=Build.place(session,p,"BRIDGE",true)
+check(ok and reason=="BRIDGE","TRUE_MIDSPAN_GAP_BRIDGE")
+check(created[#created].Size.Z==20 and created[#created].CanCollide,"GAP_BRIDGE_PHYSICS")
 Build.clear(session)
-check(created[#created].destroyed,"BRIDGE_CLEAR")
+check(created[#created].destroyed,"GAP_BRIDGE_CLEAR")
+actualBridgeGap=false
+loweredRiverbed=true
+ok,reason=Build.place(session,p,"BRIDGE",true)
+check(ok and reason=="BRIDGE","LOWERED_RIVERBED_BRIDGE")
+Build.clear(session)
+check(created[#created].destroyed,"RIVER_BRIDGE_CLEAR")
+loweredRiverbed=false
 
 -- Different mode: ownership attribute must not leak across TEAM/BR.
 session.mode="BATTLE_ROYALE"

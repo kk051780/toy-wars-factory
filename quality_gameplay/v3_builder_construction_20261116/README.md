@@ -29,3 +29,9 @@ CHARACTER=BUILDER construction, FIELD=valid placement, BATTLE=no new damage, CAS
 4. Studio 1+15 AI/2 clients TEAM+BR real bridge gap and wall occlusion, low Android 15min and #420 ART/FUN, #470 product/OWNER acceptance. Absent proof means PRODUCT_NO_GO.
 
 Rollback: flag OFF, remove the two mapped optional modules and original-author hook, preserve original BUILDER turret, run clear(session); no persistent schema changes. No main write, PR merge, Publish, payment or Windows operations.
+
+## 2026-11-16 independent follow-up — actual bridge gap safety
+- Flat continuous TacticalBattlefield is now rejected as `NO_GAP`; a temporary BRIDGE needs existing real support at 7 and 24 studs and a central gap or a riverbed at least 4 studs below the lower bank. This is a player-visible behavior fix, not additional author-owned map creation.
+- Real TEAM/BR generated demo has an unbroken grass slab, so this honest gate will reject bridges across that slab until original field author supplies a physically real watercourse or canyon. A blue visual river marking alone is not evidence. Do NOT claim working field traversal on the existing flat demo. No Game/MapBuilder changes in this PR.
+- Native runtime mock tests: intact floor rejected, missing midspan accepted, lowered riverbed accepted; other real-CI source/field/egg/castle/neutral/role/round invariants unchanged.
+- #482 author needs to ACK skill-input mapping and a real crossing site in existing authored battlefield. #220 sole writer needs signed source-lock/CAS and official exact-byte receipt. Without them the formal integration gate stays NO_GO.
