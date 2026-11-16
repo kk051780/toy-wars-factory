@@ -26,14 +26,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: df0ed205b4d4f2326ee1ce1d3490b6db3be57610
+          ref: 71f2728844883328bec21f2aef65eeac4573a660
           path: _gq568_candidate
           persist-credentials: false
       - name: Assert immutable official and candidate inputs
         shell: bash
         run: |
           test "$(git rev-parse HEAD)" = 98a199a4ace7b350e4e909681ef0a7b904a7f942
-          test "$(git -C _gq568_candidate rev-parse HEAD)" = df0ed205b4d4f2326ee1ce1d3490b6db3be57610
+          test "$(git -C _gq568_candidate rev-parse HEAD)" = 71f2728844883328bec21f2aef65eeac4573a660
       - name: Read exact successful GQ530 all-domain source-select composer (immutable)
         uses: actions/checkout@v4
         with:
@@ -647,7 +647,8 @@ jobs:
           print("GQ568_SELECTED_31_NATIVE_COMPILE_PASS")
           PY
           mkdir -p /tmp/gq568_native/tests
-          cp artifacts/gq568_private31/EGGRUMBLE_BalanceMetrics_GQ568.luau /tmp/gq568_native/EGGRUMBLE_BalanceMetrics.luau
+          python3 -B "$ROOT/select_balance.py" --input "$P0D_ORIGINAL_BALANCE" --output /tmp/gq568_native/EGGRUMBLE_BalanceMetrics.luau --off-output /tmp/gq568_native_off/EGGRUMBLE_BalanceMetrics.luau
+          cmp -s "$P0D_ORIGINAL_BALANCE" /tmp/gq568_native_off/EGGRUMBLE_BalanceMetrics.luau
           cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_BalanceMetrics.spec.luau /tmp/gq568_native/tests/
           cp "$ROOT/RoundTailNative.spec.luau" /tmp/gq568_native/
           (cd /tmp/gq568_native/tests && /tmp/gq530_all31_native/luau EGGRUMBLE_BalanceMetrics.spec.luau)             | tee artifacts/gq568_private31/GQ568_ORIGINAL_BALANCE_NATIVE.log
@@ -657,7 +658,7 @@ jobs:
           /tmp/gq530-all31-rojo build "$FINAL" -o artifacts/gq568_private31/GQ568_PRIVATE_31_REAL_ROJO.rbxlx
           python3 -B "$ROOT/select_balance_rc31.py" verify --base "$BASE" --out "$FINAL"             --place artifacts/gq568_private31/GQ568_PRIVATE_31_REAL_ROJO.rbxlx
           test -s artifacts/gq568_private31/GQ568_PRIVATE_31_REAL_ROJO.rbxlx
-          echo 'GQ568_PRIVATE_31_NATIVE_ROJO_SOURCE_EXACT_PASS RC_NOT_WRITTEN STUDIO_NOT_TESTED'
+          echo 'GQ568_PRIVATE_31_NATIVE_ROJO_EXACT_31_UNCHANGED QA_BALANCE_ONLY_OUTSIDE_RUNTIME'
       - name: Upload source-exact private 31-source Place and rollback receipt only
         if: success()
         uses: actions/upload-artifact@v4
@@ -666,7 +667,7 @@ jobs:
           path: |
             artifacts/gq568_private31/GQ568_PRIVATE_31_REAL_ROJO.rbxlx
             artifacts/gq568_private31/GQ568_BALANCE_SELECTED31.project.json
-            artifacts/gq568_private31/EGGRUMBLE_BalanceMetrics_GQ568.luau
+            artifacts/gq568_private31/GQ568_PARITY_RECEIPT.json
             artifacts/gq568_private31/GQ568_SELECTION_RECEIPT.json
             artifacts/gq568_private31/GQ568_ROJO_RECEIPT.json
             artifacts/gq568_private31/GQ568_ORIGINAL_BALANCE_NATIVE.log
