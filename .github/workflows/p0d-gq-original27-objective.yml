@@ -131,6 +131,13 @@ jobs:
             --out /tmp/gq27_original_item_vm.luau
           /tmp/gq27_native/luau-compile --text /tmp/gq27_original_item_vm.luau >/dev/null
           /tmp/gq27_native/luau /tmp/gq27_original_item_vm.luau
+      - name: Run original compass objective selection in native Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests/make_native_objective_harness.py \
+            --out /tmp/gq_original_objective.spec.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq_original_objective.spec.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq_original_objective.spec.luau
       - name: Download checksum-locked Rojo 7.7.1 and create unpublished actual Place
         run: |
           set -euo pipefail
