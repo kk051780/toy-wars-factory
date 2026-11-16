@@ -523,6 +523,13 @@ jobs:
           ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
           path: _gq_original_item489
           persist-credentials: false
+      - name: Read original existing #517 HEAL zero-waste author (reuse, never copy gameplay source)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
+          path: _gq517_original
+          persist-credentials: false
       - name: Source-select existing original #489 onto current #541 + #537 canonical 31 and compile all
         env:
           GQ_AUTHOR489_ITEM: _gq_original_item489/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
@@ -562,10 +569,44 @@ jobs:
           test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
+      - name: Select original #517 heal-no-waste into existing ONE #489 ITEM; Native31 and true Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq517_original rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
+          python3 -m py_compile rc_fastlane/quality_heal517_rc31/select_original_heal517.py
+          python3 -B rc_fastlane/quality_heal517_rc31/select_original_heal517.py prepare \
+            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --author517 _gq517_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --out artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_heal517_rc31")
+          from select_original_heal517 import collect
+          _,files=collect(Path("artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json"))
+          assert len(files)==31
+          for source in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ517_HEAL_AUTHOR31_ALL_NATIVE_COMPILE_PASS")
+          PY
+          python3 _gq517_original/quality_gameplay/v3_heal_no_waste_20261116/make_native_test.py \
+            artifacts/gq539_official_select/GQ_ITEM489_HEAL517_SINGLE.luau \
+            artifacts/gq539_official_select/GQ517_REAL_HEAL_POLICY_NATIVE.luau
+          /tmp/gq530_all31_native/luau artifacts/gq539_official_select/GQ517_REAL_HEAL_POLICY_NATIVE.luau
+          /tmp/gq530-all31-rojo build artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json \
+            -o artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_RC31_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_heal517_rc31/select_original_heal517.py verify \
+            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --out artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json \
+            --place artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_RC31_TRUE_ROJO.rbxlx
+          python3 -B -m unittest discover -s rc_fastlane/quality_heal517_rc31 -p 'test_selection.py' -v
+          echo "GQ517_RC31_SINGLE_ITEM_ALL_31_NATIVE_TRUE_ROJO_VERIFIED"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -581,7 +622,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_RC31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -603,7 +644,12 @@ jobs:
           item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
           assert item489["unchanged_source_count"]==30
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          heal517=json.loads(Path("artifacts/gq539_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_text())
+          assert heal517["source_class_exact"]==31 and heal517["original_other_source_bytes_exact"]==30
+          assert heal517["actual_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["heal_no_waste517"]=="c8a324ad7bb40648d82a5828cbf54e217585fefd"
+          assert m["feature_flags"]["HEAL_NO_WASTE_517"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -624,6 +670,8 @@ jobs:
             "original_author_540_added_in_same_537_host":True,
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
+            "original_author_517_heal_guard_inside_single_item":True,
+            "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
             "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
@@ -675,6 +723,9 @@ jobs:
             artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
             artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
             artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ517_HEAL_RC31_RECEIPT.json
+            artifacts/gq539_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
@@ -687,4 +738,14 @@ jobs:
             artifacts/gq539_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
             artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           if-no-files-found: error
+          retention-days: 3
+      - name: Preserve private original #517 HEAL companion premerge Place (not canonical RC)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ517-HEAL-PRIVATE31-SOURCE-EXACT-NOT-FORMAL-RC
+          path: |
+            artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_RC31_TRUE_ROJO.rbxlx
+            artifacts/gq539_official_select/GQ517_HEAL_RC31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ITEM489_HEAL517_SELECTED31.project.json
           retention-days: 3
