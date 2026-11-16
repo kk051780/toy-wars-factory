@@ -23,7 +23,7 @@ COMPOSER = ".github/workflows/p0d-eggrumble-gq-art-score-composite.yml"
 OFFICIAL = "rc/p0d-s1-kids-rc01"
 PRS = {"author": 482, "quality": 484, "art": 485, "score": 487}
 DOMAINS = {
-    "character": ("SevenRoleCombat", "WeaponSilhouettes", "ProceduralSkills"),
+    "character": ("SevenRoleCombat", "WeaponSilhouettes", "ProceduralSkills", "DivineMantle"),
     "field": ("BotPathRouter", "BotActors", "LobbyCastleModesPreview"),
     "battle": ("SevenRoleCombat", "AttackGeometry", "CombatFeel", "ImpactFeedback"),
     "castle_egg": ("CastleMatchRules", "InteractionGuard", "LobbyCastleModesPreview"),
