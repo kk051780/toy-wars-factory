@@ -30,4 +30,9 @@ end
 function Policy.safeDistance(distance)
  return finite(distance) and distance>=51
 end
+-- Global overlap must catch noncollidable Humanoids and foreign copied floors.
+-- Fail closed for unknown CanCollide state.
+function Policy.blocksPlacement(canCollide,ownGround,isHumanoid)
+ return isHumanoid==true or (canCollide~=false and ownGround~=true)
+end
 return Policy
