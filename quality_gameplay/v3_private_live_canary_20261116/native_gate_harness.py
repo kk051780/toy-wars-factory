@@ -24,7 +24,11 @@ function game:GetService(name)
  if name == "ReplicatedStorage" then return ReplicatedStorage end
  error("unavailable service " .. tostring(name))
 end
-task = {wait = function(_n) return end}
+local deferred = {}
+task = {
+ wait = function(_n) return end,
+ spawn = function(fn) table.insert(deferred, fn) end
+}
 '''
 SUFFIX = r'''
 local n = 0
@@ -53,6 +57,47 @@ check(Gate.allowed(), false, "Client cannot self-authorize")
 ready = true
 check(Gate.waitAllowed(0), true, "Client sees only server readiness")
 check(Gate.serverAllowed(), false, "Client cannot call server privileged gate")
+-- PRIVATE arena lifecycle: opt-in revocation destroys only its owned world and
+-- unpublishes READY; never opens public-server access or changes score authority.
+local function world()
+ local w = {Parent=true, destroyed=false}
+ function w:Destroy() self.Parent=nil; self.destroyed=true end
+ return w
+end
+local fakeClientWorld = world()
+check(Gate.watchWorld(fakeClientWorld), false, "client cannot register server watcher")
+check(fakeClientWorld.destroyed, false, "client cannot destroy via server watcher")
+isServer = true
+studio = true
+local studioWorld = world()
+check(Gate.watchWorld(studioWorld), true, "Studio source still playable")
+check(#deferred, 0, "Studio source does not poll private permission")
+studio = false
+game.PrivateServerId = ""
+explicit = true
+ready = true
+local publicWorld = world()
+check(Gate.watchWorld(publicWorld), false, "public server cannot start despite opt-in")
+check(publicWorld.destroyed, true, "public server test arena is dismantled")
+check(ready, false, "public server cannot hold READY lease")
+game.PrivateServerId = "private-abc"
+explicit = false
+ready = true
+local noOptInWorld = world()
+check(Gate.watchWorld(noOptInWorld), false, "private default OFF cannot start")
+check(noOptInWorld.destroyed, true, "unapproved private arena dismantled")
+check(ready, false, "private default OFF clears stale READY")
+explicit = true
+ready = true
+local approvedWorld = world()
+check(Gate.watchWorld(approvedWorld), true, "approved private canary starts")
+check(#deferred, 1, "exactly one host-scoped revocation watcher")
+check(approvedWorld.destroyed, false, "authorized world remains before revocation")
+explicit = false
+deferred[1]()
+check(approvedWorld.destroyed, true, "revoked world destroyed")
+check(ready, false, "revoked READY withdrawn")
+check(Gate.serverAllowed(), false, "authorization revoked")
 print("PRIVATE_GATE_NATIVE_" .. tostring(n) .. "_CASES_PASS")
 '''
 if __name__ == "__main__":
