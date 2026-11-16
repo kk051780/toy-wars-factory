@@ -1,0 +1,149 @@
+name: EGGRUMBLE GQ R13 real 22-source respawn grace private Rojo
+on:
+  push:
+    branches:
+      - 'quality/p0d-gq-respawn-grace-r13-20261116'
+    paths:
+      - '.github/workflows/p0d-gq-respawn-grace-r13.yml'
+      - 'handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/**'
+  pull_request:
+    paths:
+      - '.github/workflows/p0d-gq-respawn-grace-r13.yml'
+      - 'handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Ensure pinned original #482 source is ancestor (not a sibling overwrite)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD
+      - name: Execute twelve actual source and dependency contracts
+        shell: bash
+        run: |
+          python3 -B -m unittest discover -v -s handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/tests -p 'test_*.py'
+      - name: Checkout immutable native Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native Luau syntax parse on all 22 actual mapped Scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq_r13_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_r13_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/EGGRUMBLE_V3_RESPAWN_GRACE.project.json').resolve()
+          def files(v):
+              if isinstance(v,dict):
+                  if '$path' in v:yield (p.parent/v['$path']).resolve(strict=True)
+                  else:
+                      for k,x in v.items():
+                          if not k.startswith('$'):yield from files(x)
+          sources=list(files(json.loads(p.read_text())['tree']))
+          assert len(sources)==22,len(sources)
+          assert len(set(sources))==22
+          assert sum(f.name.endswith('.server.luau') for f in sources)==2
+          assert sum(f.name.endswith('.client.luau') for f in sources)==2
+          for f in sources:
+              subprocess.run(['/tmp/gq_r13_luau/luau-compile','--text',str(f)],
+                             stdout=subprocess.DEVNULL,check=True)
+          print('GQ_R13_ALL_22_NATIVE_LUAU_SYNTAX_PASS')
+          PY
+      - name: Execute genuine original R13 Luau against adversarial session and death ticket VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/tests/make_native_respawn_harness.py --out /tmp/gq_r13_real_vm.luau
+          /tmp/gq_r13_luau/luau-compile --text /tmp/gq_r13_real_vm.luau >/dev/null
+          /tmp/gq_r13_luau/luau /tmp/gq_r13_real_vm.luau | tee /tmp/gq_r13_native_vm.log
+          grep -q GQ_R13_GENUINE_DEATH_TICKET_NATIVE_VM_PASS /tmp/gq_r13_native_vm.log
+      - name: Fetch official Rojo v7.7.1 exact ZIP SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_r13_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_r13_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_r13_rojo.zip') as z:
+              binaries=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(binaries)==1
+              out=Path('/tmp/gq_r13_rojo')
+              out.write_bytes(z.read(binaries[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq_r13_rojo --version
+      - name: Build real private unpublished Rojo Place (original21 + grace1)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          /tmp/gq_r13_rojo build handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/EGGRUMBLE_V3_RESPAWN_GRACE.project.json -o artifacts/EGGRUMBLE_GQ_R13_PRIVATE_NOT_RC.rbxlx
+      - name: Verify 22 XML embedded scripts byte-source-exact and receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path('handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/EGGRUMBLE_V3_RESPAWN_GRACE.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_GQ_R13_PRIVATE_NOT_RC.rbxlx')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          expected={}
+          def walk(n):
+              for k,v in n.items():
+                  if k.startswith('$') or not isinstance(v,dict):continue
+                  if '$path' in v:
+                      f=(p.parent/v['$path']).resolve(strict=True)
+                      assert k not in expected,k
+                      expected[k]=f.read_text(encoding='utf-8').replace('\r\n','\n')
+                  else:walk(v)
+          walk(data['tree'])
+          assert len(expected)==22,len(expected)
+          embedded={}
+          for node in ET.fromstring(place.read_bytes()).iter('Item'):
+              if node.attrib.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              props=node.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              if name:
+                  assert name not in embedded,name
+                  embedded[name]=(source or '').replace('\r\n','\n')
+          assert expected.keys()==embedded.keys(),(expected.keys()-embedded.keys(),embedded.keys()-expected.keys())
+          for name,src in expected.items():
+              assert embedded[name]==src,('SOURCE_MISMATCH',name)
+          receipt={'evidence':'NATIVE_AND_ROJO_SOURCE_ONLY_NOT_STUDIO_PLAY',
+                   'source_count':22,'original_source_count':21,'added_script_count':1,
+                   'place_bytes':place.stat().st_size,
+                   'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+                   'source_sha256':{k:hashlib.sha256(v.encode('utf-8')).hexdigest() for k,v in expected.items()},
+                   'official_rc_integrated':False,'studio_play':'NOT_TESTED',
+                   'android':'NOT_TESTED','owner_fun':'NO_GO'}
+          Path('artifacts/SOURCE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2))
+          print('GQ_R13_SOURCE_EXACT_22_OF_22_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-R13-RESPAWN-PRIVATE22-NOT-OFFICIAL-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_R13_PRIVATE_NOT_RC.rbxlx
+            artifacts/SOURCE_RECEIPT.json
+          retention-days: 2

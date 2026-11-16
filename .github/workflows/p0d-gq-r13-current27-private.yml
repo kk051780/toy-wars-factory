@@ -1,0 +1,225 @@
+name: P0D GQ R13 current 26 game-art-score plus 1 respawn true private27
+on:
+  push:
+    branches:
+      - 'quality/p0d-gq-respawn-grace-r13-20261116'
+    paths:
+      - 'handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/**'
+      - '.github/workflows/p0d-gq-r13-current27-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private27-current-author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - name: Checkout own isolated R13 source (no persistent credentials)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Read exactly original GAME author PR482
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _author
+          persist-credentials: false
+      - name: Read exactly original quality/composer PR484 (no edits)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality
+          persist-credentials: false
+      - name: Read exactly original ART PR485
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art
+          persist-credentials: false
+      - name: Read exactly original SCORE PR487
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score
+          persist-credentials: false
+      - name: Verify all four original-author immutable SHAs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          git merge-base --is-ancestor fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD
+          echo "FOUR_ORIGINAL_AUTHORS_FIXED_READ_ONLY"
+      - name: Run original 8-domain and GQ source regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -q -s handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/tests -p 'test_*.py'
+          python3 -B -m unittest discover -q -s _author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -q -s _art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+      - name: Produce ART only with original artist composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/R13_AUTHOR_ART.project.json
+      - name: Produce true 26-source game-plus-ART-plus-SCORE from original quality composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _author --quality _quality --art _art --score _score \
+            --art-project artifacts/R13_AUTHOR_ART.project.json \
+            --out artifacts/R13_ORIGINAL26.project.json
+      - name: Add ONLY original-independent R13 one Script to 26-source project
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/compose_current27.py \
+            --author26 artifacts/R13_ORIGINAL26.project.json \
+            --receipt26 artifacts/SOURCE_RECEIPT.json \
+            --out artifacts/R13_CURRENT27.project.json
+      - name: Checkout fixed native Luau compiler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native Luau parse original Game ART SCORE R13 27-of-27
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq_r13_current27_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_r13_current27_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path('artifacts/R13_CURRENT27.project.json').resolve()
+          def scripts(x):
+              if isinstance(x,dict):
+                  if '$path' in x:yield (project.parent/x['$path']).resolve(strict=True)
+                  else:
+                      for k,v in x.items():
+                          if not k.startswith('$'):yield from scripts(v)
+          paths=list(scripts(json.loads(project.read_text())['tree']))
+          assert len(paths)==27 and len(set(paths))==27
+          assert sum(p.name.endswith('.server.luau') for p in paths)==5  # lobby1 + ART3 + grace1
+          assert sum(p.name.endswith('.client.luau') for p in paths)==3
+          for path in paths:
+              subprocess.run(['/tmp/gq_r13_current27_luau/luau-compile','--text',str(path)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print('GQ_R13_AUTHOR27_NATIVE_LUAU_27_OF_27_PASS')
+          PY
+      - name: Native VM execute authentic death-token R13 and original score/math
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/tests/make_native_respawn_harness.py \
+            --out /tmp/gq_r13_27_actual.luau
+          /tmp/gq_r13_current27_luau/luau-compile --text /tmp/gq_r13_27_actual.luau >/dev/null
+          /tmp/gq_r13_current27_luau/luau /tmp/gq_r13_27_actual.luau | tee artifacts/R13_NATIVE.log
+          grep -q GQ_R13_GENUINE_DEATH_TICKET_NATIVE_VM_PASS artifacts/R13_NATIVE.log
+          mkdir -p /tmp/gq_r13_score_vm
+          score=_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          cp "$score/EGGRUMBLE_ScoreBalance.luau" /tmp/gq_r13_score_vm/Results.luau
+          cp "$score/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/gq_r13_score_vm/Cases.luau
+          cp "$score/tests/run_score_balance_native.luau" /tmp/gq_r13_score_vm/Runner.luau
+          (cd /tmp/gq_r13_score_vm && /tmp/gq_r13_current27_luau/luau Runner.luau) | tee artifacts/SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/SCORE_NATIVE.log
+      - name: Native execute original GQ AI wall/egg route and neutral fault regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq_r13_current27_luau/luau)
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_r13_current27_luau/luau)
+          (cd _quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq_r13_current27_luau/luau)
+      - name: Download SHA-pinned Rojo v7.7.1 build tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_r13_27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_r13_27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_r13_27_rojo.zip') as z:
+              members=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(members)==1
+              out=Path('/tmp/gq_r13_27_rojo')
+              out.write_bytes(z.read(members[0]))
+              out.chmod(0o755)
+          PY
+      - name: Create real unpublished private27 Studio Place from original all-domain source
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq_r13_27_rojo build artifacts/R13_CURRENT27.project.json -o artifacts/EGGRUMBLE_R13_CURRENT27_PRIVATE_NOT_RC.rbxlx
+      - name: Assert embedded 27 mapped sources and exact Script class match
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('artifacts/R13_CURRENT27.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_R13_CURRENT27_PRIVATE_NOT_RC.rbxlx')
+          receipt_path=Path('artifacts/SOURCE_RECEIPT_R13_CURRENT27.json')
+          receipt=json.loads(receipt_path.read_text(encoding='utf-8'))
+          expected={}
+          def walk(v):
+              for name,spec in v.items():
+                  if name.startswith('$') or not isinstance(spec,dict):continue
+                  if '$path' in spec:
+                      path=(project.parent/spec['$path']).resolve(strict=True)
+                      klass='Script' if path.name.endswith('.server.luau') else (
+                          'LocalScript' if path.name.endswith('.client.luau') else 'ModuleScript')
+                      assert name not in expected,name
+                      expected[name]=(klass,path.read_text(encoding='utf-8').replace('\r\n','\n'))
+                      assert receipt['source_sha256'][name] == hashlib.sha256(path.read_bytes()).hexdigest(),name
+                  else:walk(spec)
+          walk(json.loads(project.read_text(encoding='utf-8'))['tree'])
+          assert len(expected)==27
+          actual={}
+          for node in ET.fromstring(place.read_bytes()).iter('Item'):
+              klass=node.attrib.get('class')
+              if klass not in {'Script','LocalScript','ModuleScript'}:continue
+              props=node.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              if name:
+                  assert name not in actual
+                  actual[name]=(klass,(source or '').replace('\r\n','\n'))
+          assert actual==expected,{'missing':set(expected)-set(actual),'extra':set(actual)-set(expected),
+                                   'difference':{k for k in set(actual)&set(expected) if actual[k]!=expected[k]}}
+          assert receipt['unchanged_original_game_art_score']==26
+          assert receipt['added_server_script']=='EGGRUMBLE_RespawnGrace'
+          receipt['place_bytes']=place.stat().st_size
+          receipt['place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('GQ_R13_27_SOURCE_CLASS_EXACT_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - name: Archive candidate only; never publish or write official RC
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-R13-ORIGINAL-26PLUS1-PRIVATE27-NOT-OFFICIAL-RC
+          path: |
+            artifacts/EGGRUMBLE_R13_CURRENT27_PRIVATE_NOT_RC.rbxlx
+            artifacts/R13_CURRENT27.project.json
+            artifacts/SOURCE_RECEIPT_R13_CURRENT27.json
+            artifacts/R13_NATIVE.log
+            artifacts/SCORE_NATIVE.log
+          retention-days: 2
