@@ -624,7 +624,7 @@ jobs:
           python3 -m unittest discover -v -s rc_fastlane/quality_carrier551_rc31 -p 'test_*.py'
           mkdir -p artifacts/gq551_official_select
           python3 rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py prepare \
-            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
             --author _gq551_original_carrier/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
             --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json
           python3 - <<'PY'
@@ -648,7 +648,7 @@ jobs:
           /tmp/gq530-all31-rojo build artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
             -o artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx
           python3 rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py verify \
-            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --base artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json \
             --author _gq551_original_carrier/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
             --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
             --place artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx
