@@ -100,8 +100,19 @@ function Tell.start(session:any):boolean
       old = {root=rootPart,gui=gui,label=label,count=0}
       records[id] = old
      end
-     if old.count ~= castle.heldEggs then
-      old.label.Text = Policy.caption(castle.heldEggs)
+     -- Restore only cosmetic invariants if another server-side visual
+     -- system modified them. A count cache alone would leave a misleading
+     -- label after text edits; AlwaysOnTop/MaxDistance drift can reveal an
+     -- objective through walls or from across the map.
+     if old.gui.AlwaysOnTop ~= false then old.gui.AlwaysOnTop = false end
+     if old.gui.MaxDistance ~= Policy.MAX_WORLD_VIEW_DISTANCE then
+      old.gui.MaxDistance = Policy.MAX_WORLD_VIEW_DISTANCE
+     end
+     if old.gui.Enabled == false then old.gui.Enabled = true end
+     if old.label.Visible == false then old.label.Visible = true end
+     local caption = Policy.caption(castle.heldEggs)
+     if old.count ~= castle.heldEggs or old.label.Text ~= caption then
+      old.label.Text = caption
       old.count = castle.heldEggs
      end
     end
