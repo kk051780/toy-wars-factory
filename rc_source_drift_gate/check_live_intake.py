@@ -374,6 +374,34 @@ def live_audit() -> dict:
     report["product_go"] = False
     return report
 
+
+
+def static_release_preflight_issues(report: dict) -> list[str]:
+    """Source-only preflight; a clean result is never device or OWNER product GO.
+
+    No more false pass from 5 original guards when the actual ART4 / 26 selected
+    sources still contain IsStudio() activation gates. Also refuse a missing or
+    stale same-head composite even if a mock's guard count is zero.
+    """
+    problems: list[str] = []
+    if not isinstance(report, dict) or report.get("decision") != "SOURCE_REVIEW_READY_ONLY":
+        problems.append("latest26_source_or_samehead_ci_not_ready")
+    basic=report.get("runtime_activation", {}) if isinstance(report,dict) else {}
+    full=report.get("full26_runtime_activation", {}) if isinstance(report,dict) else {}
+    if basic.get("source_guard_inspection")!="COMPLETE":
+        problems.append("five_authority_sources_not_completely_scanned")
+    if basic.get("guard_count") != 0:
+        problems.append("five_authority_sources_have_studio_guards")
+    if full.get("static_source_read")!="PASS" or full.get("selected_script_count")!=26:
+        problems.append("actual_26_source_runtime_scan_missing")
+    if full.get("guard_count")!=0:
+        problems.append("selected_26_source_studio_guards_present_or_unknown")
+    if full.get("gameplay_server_activation")!="NOT_VERIFIED_REQUIRES_REAL_NONSTUDIO_2CLIENT":
+        problems.append("nonstudio_gameplay_activation_blocked_or_unknown")
+    if full.get("art_nonstudio_visual_activation")!="NOT_VERIFIED_REQUIRES_ANDROID_VISUAL_QA":
+        problems.append("nonstudio_art_activation_blocked_or_unknown")
+    return problems
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("P0D_LIVE_RC_SOURCE_DRIFT.json"))
@@ -397,9 +425,9 @@ def main() -> None:
     if args.strict and report["decision"] != "SOURCE_REVIEW_READY_ONLY":
         raise SystemExit(2)
     if args.require_no_studio_only_guards:
-        activation = report.get("runtime_activation", {})
-        if activation.get("production_runtime") != "NOT_VERIFIED_FAIL_CLOSED" or \
-           activation.get("source_guard_inspection") != "COMPLETE":
+        # This only proves absence of already-known static guards; never a GO
+        # for Studio engine, Android, product/FUN, or RC CAS.
+        if static_release_preflight_issues(report):
             raise SystemExit(3)
 
 
