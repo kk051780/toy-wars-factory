@@ -82,11 +82,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_29_known_flags(self):
+    def test_valid_covers_eight_domains_and_31_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],29)
+        self.assertEqual(v["verified_flag_count"],31)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -183,7 +183,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
-    def test_current28_manifest_anchors_enforce_all_nine_late_flags(self):
+    def test_current31_manifest_anchors_enforce_all_eleven_late_flags(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
@@ -194,6 +194,8 @@ class Gate(unittest.TestCase):
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
             "ITEM_CURRENT_SESSION_525",
             "SERVER_PROMPT_CONFIG_REACH_611",
+            "ZOMBIE_GUARD_CASTLE_LEASH_582",
+            "GQ_V3_LOBBY_QUEUE_ETA_20261117",
         )
         for flag in late:
             script,anchors=gq8.FEATURE_EVIDENCE[flag]
@@ -201,7 +203,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],29)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],31)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
@@ -218,6 +220,8 @@ class Gate(unittest.TestCase):
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
             "ITEM_CURRENT_SESSION_525",
             "SERVER_PROMPT_CONFIG_REACH_611",
+            "ZOMBIE_GUARD_CASTLE_LEASH_582",
+            "GQ_V3_LOBBY_QUEUE_ETA_20261117",
         ):
             with self.subTest(flag=flag):
                 b,r,m,a=fixture()
