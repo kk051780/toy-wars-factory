@@ -52,12 +52,13 @@ Vector3 = {}
 function Vector3.new(x,y,z) return {x=x,y=y,z=z,X=x,Y=y,Z=z} end
 local function makeWorld(mode)
  local x=if mode=="TEAM" then -620 else 620
+ local world={Parent={}}
  local field={
   Position=Vector3.new(x,0,465),
   Size=Vector3.new(890,2,1050),
+  Parent=world,
  }
  function field:IsA(kind) return kind=="BasePart" end
- local world={Parent={}}
  function world:FindFirstChild(name)
   if name=="TacticalBattlefield" then return field end
   return nil
@@ -334,6 +335,16 @@ eq("fallen castle marker removed",liveOn(sr),0)
 b.rules.castles["201"].alive=true
 step()
 eq("marker restored to living player",liveOn(sr),1)
+-- The battlefield part is removed first while the enclosing arena and
+-- original match remain live. The optional GUI must NOT outlive the floor.
+b.world:FindFirstChild("TacticalBattlefield").Parent=nil
+step()
+eq("BR marker removed if only battlefield detached",liveOn(sr),0)
+eq("BR cosmetic worker released on detached battlefield",b._carrierWorldTellStarted,nil)
+eq("BR parent arena still alive after floor removal",b.world.Parent~=nil,true)
+eq("BR real castle retains held eggs",b.rules.castles["201"].heldEggs,2)
+eq("BR original match rules still ACTIVE",b.rules.phase,"ACTIVE")
+eq("BR cannot restart using detached floor",NativeTell.start(b),false)
 -- Removing the arena while still active must clean surviving avatar labels.
 b.world.Parent=nil
 step()
@@ -354,6 +365,16 @@ local noArena={world={Parent={},FindFirstChild=function() return nil end},
  roster={},rules={phase="ACTIVE",winner=nil,castles={}}}
 eq("missing real battlefield fails closed",NativeTell.start(noArena),false)
 eq("no marker loop spawned for malformed arena",#__threads,0)
+local orphanWorld=makeWorld("TEAM")
+orphanWorld:FindFirstChild("TacticalBattlefield").Parent=nil
+local orphanStart={world=orphanWorld,roster={},rules={phase="ACTIVE",winner=nil,castles={}}}
+eq("detached original floor fails closed before start",NativeTell.start(orphanStart),false)
+eq("detached floor does not spawn worker",#__threads,0)
+local reparentedWorld=makeWorld("BATTLE_ROYALE")
+reparentedWorld:FindFirstChild("TacticalBattlefield").Parent={Name="OutsideArena"}
+local reparented={world=reparentedWorld,roster={},rules={phase="ACTIVE",winner=nil,castles={}}}
+eq("reparented floor fails closed before start",NativeTell.start(reparented),false)
+eq("reparented floor does not spawn worker",#__threads,0)
 
 
 -- Exact author MODE_SEATS=16. Exercise full roster load in both live arenas:
@@ -390,6 +411,16 @@ eq("individual egg drop removes exactly one GUI",countLiveAll(),31)
 fullTeam.rules.castles[aId].heldEggs=2
 step()
 eq("egg replacement restores exactly one GUI",countLiveAll(),32)
+-- TEAM floor disappears earlier than the TEAM world: the BR arena must still
+-- render 16 correct carriers, no stale TEAM badge, no game-loop shutdown.
+fullTeam.world:FindFirstChild("TacticalBattlefield").Parent=nil
+step()
+eq("TEAM floor-only removal clears its 16 UI",countLiveAll(),16)
+eq("TEAM floor-only removal releases worker",fullTeam._carrierWorldTellStarted,nil)
+eq("TEAM arena remains parented",fullTeam.world.Parent~=nil,true)
+eq("TEAM real match rules remain active",fullTeam.rules.phase,"ACTIVE")
+eq("BR 16 carriers continue after TEAM floor removed",fullBR._carrierWorldTellStarted,true)
+eq("TEAM floor-only removal prohibits restarting UI",NativeTell.start(fullTeam),false)
 fullTeam.rules.phase="FINISHED"
 step()
 eq("TEAM shutdown preserves 16 BR carriers",countLiveAll(),16)
