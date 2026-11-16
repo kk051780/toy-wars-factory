@@ -72,10 +72,44 @@ class Gate(unittest.TestCase):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],19)
+        self.assertEqual(v["verified_flag_count"],26)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
+
+    def test_newly_adopted_seven_flags_are_source_tied_not_manifest_only(self):
+        additional = (
+            "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
+            "AI_TAKEOVER_TERMINAL_FENCE_580",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "FIELD_CARRIER_OFFARENA_DROP_515",
+            "ZOMBIE_COMMAND_SQUAD_582",
+            "DEPOSIT_CURRENT_SESSION_586",
+            "ZOMBIE_NEUTRAL_STABLE_ID_V3",
+        )
+        self.assertEqual(len(gq8.FEATURE_EVIDENCE), 26)
+        for flag in additional:
+            with self.subTest(flag=flag):
+                b, r, m, a = fixture()
+                script, anchor = gq8.FEATURE_EVIDENCE[flag]
+                current = gq8.source_scripts(b)[script][1]
+                self.assertIn(anchor, current)
+                b = change_source(b, script, current.replace(anchor, "", 1))
+                rehash(b, r)
+                with self.assertRaisesRegex(gq8.RedGate, "DOMAIN_|FEATURE_FALSE_ON"):
+                    gq8.verify(b, r, m, a, HEAD)
+
+    def test_ridge_and_forest_are_both_required_for_field_source_truth(self):
+        b, r, m, a = fixture()
+        script = "EGGRUMBLE_LobbyCastleModesPreview"
+        source = gq8.source_scripts(b)[script][1]
+        forest = "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)"
+        self.assertIn(forest, source)
+        b = change_source(b, script, source.replace(forest, "", 1))
+        rehash(b, r)
+        with self.assertRaisesRegex(gq8.RedGate, "DOMAIN_field"):
+            gq8.verify(b, r, m, a, HEAD)
+
     def test_roster16_actual_place_with_old_32_guards_is_red(self):
         b,r,m,a=fixture()
         b=change_source(b,"EGGRUMBLE_CastleMatchRules",
