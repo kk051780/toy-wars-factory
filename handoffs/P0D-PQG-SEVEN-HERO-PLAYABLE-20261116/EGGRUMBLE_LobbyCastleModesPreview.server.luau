@@ -223,8 +223,14 @@ local function startSession(mode:string)
   return dropped
  end
  session.refresh=function()
-  -- Authoritative event-only objective feedback, no extra HUD or score authority.
-  RaidAlerts.process(session)
+  -- Optional cosmetic lane: a failed alert must never stop egg/castle/AI gameplay.
+  if session.raidAlertsDisabled~=true then
+   local alertOk,alertErr=pcall(RaidAlerts.process,session)
+   if not alertOk then
+    session.raidAlertsDisabled=true
+    warn("[EGGRUMBLE GQ] YELLOW_RAID_ALERTS_OPTIONAL:",alertErr)
+   end
+  end
   for id,bits in pairs(session.castleModels) do
    local c=session.rules.castles[id]
    if c then
