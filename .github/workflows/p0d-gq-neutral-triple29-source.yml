@@ -60,6 +60,12 @@ jobs:
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
           test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
           test "$(git -C _v3_fair rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+      - name: All-eight-domain original author regressions (no duplicate tests)
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_*quality.py' -v
       - name: Compose original author 21 + ART/AI/SCORE26 (no duplicate)
         run: |
           set -euo pipefail
