@@ -66,7 +66,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
  local side=if session.mode=="TEAM" then entry.team else (if index%2==1 then "RED" else "BLUE")
  local tint=if side=="RED" then Color3.fromRGB(207,92,86) else Color3.fromRGB(87,146,218)
  local ground=block(model,"StandardFoundation",at+Vector3.new(0,-2,0),Vector3.new(72,3,72),tint)
- -- Physical castle access shared by every owner.
+ -- Equal walkable entrance approach to every personal castle; not a strength upgrade.
  local ramp=block(model,"CastleAccessRamp",at+Vector3.new(0,-3.15,-45),
   Vector3.new(11,.8,20),Color3.fromRGB(153,145,128))
  ramp.CFrame=CFrame.new(at+Vector3.new(0,-3.15,-45))
@@ -178,6 +178,7 @@ local function startSession(mode:string)
     if player and joined[player.UserId]==mode then
      joined[player.UserId]=nil
      SevenRoleCombat.clear(player)
+     InteractionGuard.clear(player) -- avoid prompt cooldown state leaking across rounds
      RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))
     end
    end
@@ -264,7 +265,8 @@ local function startSession(mode:string)
    if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
   end)
  end
- -- Twelve fair HEAL/DASH/SHIELD pickups, four per type on existing three lanes.
+
+ -- Original author HEAL/DASH/SHIELD pickups on existing three tactical lanes.
  local itemPositions:{Vector3}={}
  for lane=1,3 do
   for slot=1,4 do

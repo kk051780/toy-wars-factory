@@ -37,10 +37,13 @@ def problems(project=PROJECT,role=ROLE,swarm=SWARM,bot=BOT,lobby=LOBBY):
             if req not in mapped:
                 missing.append(f"unwired:{module}:{req}")
     checks={
-       "14 real server scripts":len(mapped)==14,
+       "15 real server scripts":len(mapped)==15,
        "genuine attack shape source":mapped.get("EGGRUMBLE_AttackGeometry")=="EGGRUMBLE_AttackGeometry.luau",
        "genuine attacker/KO source":mapped.get("EGGRUMBLE_ImpactFeedback")=="EGGRUMBLE_ImpactFeedback.luau",
        "original item author intact":mapped.get("EGGRUMBLE_FieldItemPickups")=="EGGRUMBLE_FieldItemPickups.luau",
+       "author distinct weapons intact":mapped.get("EGGRUMBLE_WeaponSilhouettes")=="EGGRUMBLE_WeaponSilhouettes.luau",
+       "mobile local hit feel actual script":root.get("StarterPlayer",{}).get("StarterPlayerScripts",{}).get("EGGRUMBLE_CombatFeel",{}).get("$path")=="EGGRUMBLE_CombatFeel.client.luau",
+       "client source physically present":(ROOT/"EGGRUMBLE_CombatFeel.client.luau").is_file(),
        "replay and score owner code intact":"EGGRUMBLE_RoundReplay" in mapped and "EGGRUMBLE_MatchResultService" in mapped,
        "original neutral geometry require":'WaitForChild("EGGRUMBLE_AttackGeometry")' in swarm,
        "original seven-role geometry require":'WaitForChild("EGGRUMBLE_AttackGeometry")' in role,
@@ -92,6 +95,14 @@ class TestCrossLaneDependencies(unittest.TestCase):
         self.assertIn("original neutral real KO feedback",problems(swarm=SWARM.replace("ImpactFeedback.ko(","-- FakeKo(")))
     def test_author_impact_not_shadowed(self):
         self.assertIn("original server actual hit feedback",problems(role=ROLE.replace("ImpactFeedback.attacker(","-- silent(")))
+    def test_client_must_remain_in_starter_player(self):
+        p=json.loads(PROJECT)
+        p["tree"].pop("StarterPlayer")
+        self.assertIn("mobile local hit feel actual script",problems(project=json.dumps(p)))
+    def test_weapon_author_source_required(self):
+        p=json.loads(PROJECT)
+        p["tree"]["ServerScriptService"].pop("EGGRUMBLE_WeaponSilhouettes")
+        self.assertIn("author distinct weapons intact",problems(project=json.dumps(p)))
     def test_no_separate_item_host(self):
         p=json.loads(PROJECT)
         p["tree"]["ServerScriptService"]["EGGRUMBLE_FieldItemPreview"]={"$path":"EGGRUMBLE_FieldItemPreview.server.luau"}

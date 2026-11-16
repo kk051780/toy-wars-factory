@@ -52,6 +52,8 @@ jobs:
           /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_RoundReplay.luau" >/dev/null
           /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_AttackGeometry.luau" >/dev/null
           /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_ImpactFeedback.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_WeaponSilhouettes.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_CombatFeel.client.luau" >/dev/null
       - name: Pinned Rojo source-exact Studio preview Place build
         shell: bash
         run: |
@@ -85,6 +87,8 @@ jobs:
               'EGGRUMBLE_RoundReplay':('ModuleScript','EGGRUMBLE_RoundReplay.luau'),
               'EGGRUMBLE_AttackGeometry':('ModuleScript','EGGRUMBLE_AttackGeometry.luau'),
               'EGGRUMBLE_ImpactFeedback':('ModuleScript','EGGRUMBLE_ImpactFeedback.luau'),
+              'EGGRUMBLE_WeaponSilhouettes':('ModuleScript','EGGRUMBLE_WeaponSilhouettes.luau'),
+              'EGGRUMBLE_CombatFeel':('LocalScript','EGGRUMBLE_CombatFeel.client.luau'),
               'EGGRUMBLE_CombatBalance':('ModuleScript','EGGRUMBLE_CombatBalance.luau'),
               'EGGRUMBLE_SkillFX':('ModuleScript','EGGRUMBLE_SkillFX.luau'),
               'EGGRUMBLE_SwarmCombat':('ModuleScript','EGGRUMBLE_SwarmCombat.luau'),
@@ -108,15 +112,15 @@ jobs:
               got[name]=True
           assert set(got)==set(expected),(set(got),set(expected))
           digest=hashlib.sha256(built.read_bytes()).hexdigest()
-          print('EGGRUMBLE_V3_FOURTEEN_REAL_STUDIO_SOURCE_IDENTITIES_PASS',len(got))
+          print('EGGRUMBLE_V3_SIXTEEN_REAL_STUDIO_SOURCE_IDENTITIES_PASS',len(got))
           print('PRIVATE_SOURCE_ONLY_PLACE_BYTES',built.stat().st_size,'SHA256',digest)
           Path('artifacts/SOURCE_ONLY_STATUS.txt').write_text(
-              'Rojo 14/14 source identities PASS\nStudio real play NOT_RUN\nAndroid NOT_RUN\nOfficial RC NOT_INTEGRATED\nOWNER_ACCEPTED=0\n',encoding='utf-8')
+              'Rojo 16/16 source identities PASS\nStudio real play NOT_RUN\nAndroid NOT_RUN\nOfficial RC NOT_INTEGRATED\nOWNER_ACCEPTED=0\n',encoding='utf-8')
           PY
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: EGGRUMBLE-V3-FOURTEEN-SCRIPT-ROJO-SOURCE-ONLY
+          name: EGGRUMBLE-V3-SIXTEEN-SCRIPT-ROJO-SOURCE-ONLY
           path: artifacts/
           retention-days: 7
 

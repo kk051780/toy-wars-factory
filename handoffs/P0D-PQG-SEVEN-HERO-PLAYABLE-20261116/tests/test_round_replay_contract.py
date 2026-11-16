@@ -47,6 +47,12 @@ class RoundReplayContract(unittest.TestCase):
 
     def test_saved_role_options_remain_but_match_attributes_reset(self):
         self.assertIn("SevenRoleCombat.clear(player)",LOBBY)
+        self.assertIn("InteractionGuard.clear(player)",LOBBY)
+        self.assertIn("local loaded=pcall(function() p:LoadCharacter() end)",REPLAY)
+        self.assertIn("if not loaded then",REPLAY)
+        self.assertIn("task.delay(1,function()",REPLAY)
+        self.assertIn('p:GetAttribute("EGGRUMBLE_QueuedMode")~=nil',REPLAY)
+        self.assertIn("if alive and alive.Health>0 then return end",REPLAY)
         self.assertIn("RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))",LOBBY)
         self.assertIn('p:SetAttribute("EGGRUMBLE_QueuedMode",nil)',REPLAY)
         self.assertIn('p:SetAttribute("EGGRUMBLE_Eliminated",nil)',REPLAY)

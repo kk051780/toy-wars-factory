@@ -139,6 +139,48 @@ function SkillFX.emit(parent:Instance,role:string,slot:string,origin:Vector3,for
     animate(p,Vector3.new(.4,7,.4),life,CFrame.new(at+Vector3.new(0,6,0))) end
   end
  end
+ -- Each ultimate gets exactly ONE additional signature monument; total <=6 Parts/pulse.
+ -- C is legible even among mobs and still bounded by the shared 72-part budget.
+ if slot=="C" then
+  local signatureNames={
+   WARRIOR="ULTIMATE_WarGod_DivineHalo",
+   MAGE="ULTIMATE_Mage_StormPillar",
+   NINJA="ULTIMATE_Assassin_ShadowCross",
+   TRAPPER="ULTIMATE_Esper_GravitySingularity",
+   BUILDER="ULTIMATE_Scientist_OverdriveCore",
+   BEAST="ULTIMATE_Beast_TitanShadow",
+   ZOMBIE="ULTIMATE_Curse_SoulGate",
+  }
+  local tower=effectPart(parent,signatureNames[role] or "ULTIMATE_Unknown",
+   center+Vector3.new(0,4,0),Vector3.new(2,4,2),secondary,.66)
+  if tower then
+   local final=Vector3.new(5,10,5)
+   if role=="WARRIOR" then
+    tower.Shape=Enum.PartType.Cylinder
+    final=Vector3.new(1,16,16)
+    tower.CFrame=CFrame.new(tower.Position)*CFrame.Angles(0,0,math.pi/2)
+   elseif role=="MAGE" then
+    final=Vector3.new(3,21,3)
+   elseif role=="NINJA" then
+    final=Vector3.new(16,.2,3)
+    tower.CFrame=CFrame.lookAt(tower.Position,tower.Position+f)*CFrame.Angles(0,0,math.pi/4)
+   elseif role=="TRAPPER" then
+    tower.Shape=Enum.PartType.Ball
+    final=Vector3.new(.4,.4,.4)
+    tower.Size=Vector3.new(10,10,10)
+   elseif role=="BUILDER" then
+    final=Vector3.new(4,4,16)
+    tower.CFrame=CFrame.lookAt(tower.Position,tower.Position+f)
+   elseif role=="BEAST" then
+    final=Vector3.new(12,18,6)
+   elseif role=="ZOMBIE" then
+    tower.Shape=Enum.PartType.Cylinder
+    final=Vector3.new(.6,14,14)
+    tower.CFrame=CFrame.new(tower.Position)*CFrame.Angles(0,0,math.pi/2)
+   end
+   animate(tower,final,.66)
+  end
+ end
 end
 function SkillFX.active():number return active end
 return SkillFX
