@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+"""SOURCE-EXACT private composition: #482 + #510/#516/#524/#529 Combat + #531 Host/Bot + #535 gate.
+
+No source owner, official RC, main, Studio, publish or paid resources are changed.
+Run only in throwaway CI workspace after git-fetch of all fixed author commits.
+"""
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import xml.etree.ElementTree as ET
+
+from compose import AUTHOR_HEAD, AUTHOR_BLOB, COMBAT_NAME, git_blob, patch, undo
+
+ROOT = Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116")
+PROJECT = "EGGRUMBLE_V3_STUDIO.project.json"
+AUTHORS = {
+    "gq_mage": "0338bd13f9d3d199972bd4cd30e467443083dffa",
+    "gq_dot": "8f0275692c54874f823d66748d470fb849607df5",
+    "gq_warp": "f90875e14446ba86b1c668ba43efa37fbc74be20",
+    "gq_stealth": "99ae00fbec2b5057c54e938d741ea99b0caad924",
+    "gq_bot_member": "bb650bc33831d20090deb9aa3a874f35e3843c71",
+}
+SELECT = {
+    "_gq_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py":
+        ("gq_mage", "quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py"),
+    "_gq_dot/quality_gameplay/v3_status_tick_fence_20261116/tools/compose_with_mage_author.py":
+        ("gq_dot", "quality_gameplay/v3_status_tick_fence_20261116/tools/compose_with_mage_author.py"),
+    "_gq_dot/quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_SevenRoleCombat.patched.luau":
+        ("gq_dot", "quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_SevenRoleCombat.patched.luau"),
+    "_gq_dot/quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_StatusTickFence.luau":
+        ("gq_dot", "quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_StatusTickFence.luau"),
+    "_gq_warp/quality_gameplay/v3_safe_warp_landing_20261116/patch_safe_warp.py":
+        ("gq_warp", "quality_gameplay/v3_safe_warp_landing_20261116/patch_safe_warp.py"),
+    "quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py":
+        ("gq_stealth", "quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py"),
+    "quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py":
+        ("gq_stealth", "quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py"),
+}
+STATUS_NAME = "EGGRUMBLE_StatusTickFence"
+HOST_NAME = "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+BOT_NAME = "EGGRUMBLE_BotActors.luau"
+PINNED_BOT_HOST_OVERLAYS = {
+    HOST_NAME: "1d482d05325c5ca97166961c05b404b3370f01f8",
+    BOT_NAME: "88f997608834469a79ca4042d05c15c9ba833191",
+}
+
+def git_show(sha: str, path: str) -> bytes:
+    return subprocess.check_output(["git", "show", f"{sha}:{path}"])
+
+def materialize(path: Path, data: bytes):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+def script_paths(project: dict) -> dict:
+    mapping = {}
+    def walk(node: dict):
+        for name, child in node.items():
+            if name.startswith("$") or not isinstance(child, dict):
+                continue
+            if "$path" in child:
+                rel = child["$path"]
+                if "/" in rel or "\\" in rel or not rel.endswith(".luau"):
+                    raise RuntimeError("RED unexpected original project script path")
+                if name in mapping:
+                    raise RuntimeError("RED duplicate original script name")
+                mapping[name] = rel
+            else:
+                walk(child)
+    walk(project["tree"])
+    return mapping
+
+def build(out: Path) -> dict:
+    project_bytes = git_show(AUTHOR_HEAD, str(ROOT / PROJECT))
+    project = json.loads(project_bytes)
+    original_files=script_paths(project)
+    if len(original_files)!=21 or COMBAT_NAME not in original_files.values():
+        raise RuntimeError("RED not original 21 source project")
+    for rel in original_files.values():
+        raw=git_show(AUTHOR_HEAD,str(ROOT / rel))
+        materialize(ROOT / rel,raw)
+        if rel == COMBAT_NAME and git_blob(raw)!=AUTHOR_BLOB:
+            raise RuntimeError("RED original Combat SHA drift")
+    materialize(ROOT / PROJECT,project_bytes)
+    for pref in ("_gq_mage","_gq_dot","_gq_warp"):
+        materialize(Path(pref) / ROOT / COMBAT_NAME,(ROOT / COMBAT_NAME).read_bytes())
+    for dest,(owner,src) in SELECT.items():
+        materialize(Path(dest),git_show(AUTHORS[owner],src))
+    # This is the ACTUAL #529 multi-author composer. We do not duplicate its patch logic.
+    four_path=Path("quality_gameplay/v3_human_stealth_pvp_20261116/compose_four_author.py")
+    spec=importlib.util.spec_from_file_location("gq_real_529",four_path.resolve())
+    if not spec or not spec.loader:
+        raise RuntimeError("RED #529 composer not importable")
+    four_module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(four_module)
+    four, heads=four_module.build_union()
+    # Our own unique delta is applied LAST; its OFF restores exact existing four-author Combat.
+    five=patch(four)
+    if undo(five)!=four:
+        raise RuntimeError("RED regression to existing #529 multi-author source")
+    out.mkdir(parents=True,exist_ok=True)
+    if git_blob((out / HOST_NAME).read_bytes())!=PINNED_BOT_HOST_OVERLAYS[HOST_NAME]:
+        raise RuntimeError("RED #531 original host callback drift")
+    if git_blob((out / BOT_NAME).read_bytes())!=PINNED_BOT_HOST_OVERLAYS[BOT_NAME]:
+        raise RuntimeError("RED #531 original bot author drift")
+    if five.count("currentHumanMember(session,")!=4 or five.count("humanCombatTargetable(")!=3:
+        raise RuntimeError("RED human stealth or current-member gates lost")
+    if five.count("StatusTickFence.canTick(")!=1:
+        raise RuntimeError("RED #516 DOT fence lost")
+    if five.count("safeMove(session,char,root,")!=2:
+        raise RuntimeError("RED #524 warp fence lost")
+    if five.count("botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)")!=1:
+        raise RuntimeError("RED #510 MAGE teammate heal lost")
+    (out / COMBAT_NAME).write_bytes(five.encode("utf-8"))
+    (out / (STATUS_NAME+".luau")).write_bytes(
+        Path("_gq_dot/quality_gameplay/v3_status_tick_fence_20261116/EGGRUMBLE_StatusTickFence.luau").read_bytes())
+    output_project=json.loads((out / PROJECT).read_text())
+    server=output_project["tree"]["ServerScriptService"]
+    if STATUS_NAME in server:
+        raise RuntimeError("RED duplicate status module")
+    server[STATUS_NAME]={"$path":STATUS_NAME+".luau"}
+    output_project["name"]="EGGRUMBLE_GQ_5_AUTHOR_COMBAT_AND_BOT_MEMBER_PRIVATE22_NOT_RC"
+    (out / PROJECT).write_text(json.dumps(output_project,ensure_ascii=False,indent=2)+"\n")
+    result={
+        "state":"PRIVATE22_NOT_FORMAL_RC",
+        "owner_original_sha":AUTHOR_HEAD,
+        "author_head_locks":AUTHORS,
+        "four_combat_529_sha256":hashlib.sha256(four.encode()).hexdigest(),
+        "five_combat_535_sha256":hashlib.sha256(five.encode()).hexdigest(),
+        "sources_expected":22,
+        "original_script_sources_unmodified":18,
+        "updated_existing_host_bot_combat":3,
+        "added_existing_status_module":1,
+        "original_host_bot_owner":AUTHORS["gq_bot_member"],
+        "no_duplicate_game_or_combat":True,
+        "rollback_535": "undo Combat patch restores #529 composed Combat exactly",
+        "official_rc_adopted":False,
+        "source_sha256":{p:hashlib.sha256((out/p).read_bytes()).hexdigest()
+                         for p in script_paths(output_project).values()},
+    }
+    (out / "GQ_FIVE_AUTHOR_PRIVATE22_RECEIPT.json").write_text(
+        json.dumps(result,indent=2,ensure_ascii=False)+"\n")
+    print("GQ_535_FOUR_COMBAT_529_PLUS_531_HOST_BOT_SOURCE_COMPOSE_PASS",len(five))
+    return result
+
+def verify(out:Path,place:Path):
+    project=json.loads((out/PROJECT).read_text())
+    source=script_paths(project)
+    if len(source)!=22:
+        raise RuntimeError("RED source count not 22")
+    expected={}
+    for name,rel in source.items():
+        kind = "LocalScript" if rel.endswith(".client.luau") else "Script" if rel.endswith(".server.luau") else "ModuleScript"
+        expected[name]=(kind,(out/rel).read_text().replace("\r\n","\n"))
+    real={}
+    for item in ET.fromstring(place.read_bytes()).iter("Item"):
+        kind=item.attrib.get("class")
+        if kind not in {"Script","ModuleScript","LocalScript"}: continue
+        prop=item.find("Properties")
+        if prop is None:continue
+        name=prop.findtext("string[@name='Name']")
+        data=prop.findtext("ProtectedString[@name='Source']")
+        if data is None:data=prop.findtext("string[@name='Source']")
+        if name in real or data is None:
+            raise RuntimeError(f"RED duplicate/empty script source {name}")
+        real[name]=(kind,data.replace("\r\n","\n"))
+    if expected!=real:
+        raise RuntimeError("RED actual Rojo Place Script Source/Class mismatches original22")
+    receiptfile=out/"GQ_FIVE_AUTHOR_PRIVATE22_RECEIPT.json"
+    receipt=json.loads(receiptfile.read_text())
+    receipt["rojo_source_class_exact_22"]=True
+    receipt["private_place_bytes"]=place.stat().st_size
+    receipt["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+    receiptfile.write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+"\n")
+    print("GQ_FIVE_AUTHOR_PRIVATE22_ACTUAL_PLACE_SOURCE_CLASS_EXACT_PASS",place.stat().st_size)
+
+if __name__=="__main__":
+    cli=argparse.ArgumentParser()
+    cli.add_argument("mode",choices=["build","verify"])
+    cli.add_argument("--out",type=Path,required=True)
+    cli.add_argument("--place",type=Path)
+    options=cli.parse_args()
+    if options.mode=="build":build(options.out)
+    else:
+        if not options.place:cli.error("--place required")
+        verify(options.out,options.place)
