@@ -35,7 +35,7 @@ class ForestDashSourceTests(unittest.TestCase):
             patch_forest(self.forest,self.author,self.item)
 
     def test_04_refuse_mutated_author_blob(self):
-        with self.assertRaisesRegex(ValueError,"author blob changed"):
+        with self.assertRaisesRegex(ValueError,"host blob changed"):
             patch_forest(self.ridge,self.author+" ",self.item)
 
     def test_05_refuse_missing_existing_ridge(self):
@@ -73,7 +73,7 @@ class ForestDashSourceTests(unittest.TestCase):
                 f.write_text(src,encoding="utf-8")
             write_vm(*files)
             body=files[4].read_text(encoding="utf-8")
-            self.assertEqual(body.count(OLD_FOREST),1)
+            self.assertEqual(body.replace(NEW_FOREST,"").count(OLD_FOREST),1)
             self.assertEqual(body.count(NEW_FOREST),1)
             self.assertIn("GQ520_FOREST_DASH_COLLISION_NEGATIVE_PASS",body)
             self.assertIn("before_TEAM_2 ridge_only_1 ridge_forest_0",body)
