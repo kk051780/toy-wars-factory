@@ -30,6 +30,15 @@ local function characterState(player:Player):(Humanoid?,BasePart?)
 end
 function Items.start(session:any,positions:{Vector3}):()
  assert(RunService:IsStudio(),"Field item preview is Studio-only")
+ -- Reuse the original lobby/castle LOS + anti-spam authority in actual TEAM/BR.
+ -- The item-only isolated preview has no mode and can keep running alone.
+ local isV3Match=session and (session.mode=="TEAM" or session.mode=="BATTLE_ROYALE")
+ local guardSource=script.Parent:FindFirstChild("EGGRUMBLE_InteractionGuard")
+ local interactionGuard:any=if guardSource then require(guardSource) else nil
+ if isV3Match then
+  assert(interactionGuard and type(interactionGuard.allow)=="function",
+   "V3 items require the original InteractionGuard server authority")
+ end
  local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_FieldItems";folder.Parent=session.world
  local lastUse:{[string]:number}={}
  local consumed:{[string]:boolean}={}
@@ -79,6 +88,9 @@ function Items.start(session:any,positions:{Vector3}):()
    local key=tostring(player.UserId)..":"..kind
    local now=os.clock()
    if now-(lastUse[key] or -100000)<def.cooldown then return end
+   -- Client ProximityPrompt LOS is presentation, not server authorization:
+   -- reuse the same wall/vertical/humanoid/rate gate as castle egg prompts.
+   if isV3Match and not interactionGuard.allow(player,part,"拾う",part.Name) then return end
    -- Server-authoritative single-use claim before applying any effect.
    consumed[id]=true;lastUse[key]=now
    prompt.Enabled=false
