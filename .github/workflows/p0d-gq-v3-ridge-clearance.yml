@@ -1,0 +1,25 @@
+name: P0D GQ V3 center ridge clearance (private read-only)
+on:
+  pull_request:
+    paths:
+      - "quality_gameplay/v3_central_ridge_clearance_20261116/**"
+      - ".github/workflows/p0d-gq-v3-ridge-clearance.yml"
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-source-clearance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run pinned-source geometry + negative mutation tests
+        run: python3 -m unittest discover -s quality_gameplay/v3_central_ridge_clearance_20261116 -p test_patch_ridge.py -v
+      - name: Build source-only generated patched host outside author tree
+        run: |
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/patch_ridge.py \
+            --output "${RUNNER_TEMP}/EGGRUMBLE_LobbyCastleModesPreview.private.server.luau"
+          test -s "${RUNNER_TEMP}/EGGRUMBLE_LobbyCastleModesPreview.private.server.luau"
+          echo "SOURCE_STATIC_QA_ONLY: Native Luau/Rojo, Studio, Android, OWNER are NOT_RUN"
