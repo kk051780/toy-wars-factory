@@ -6,6 +6,7 @@ on:
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**/*.luau'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_rules_harness.py'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_round_replay_harness.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_item_harness.py'
       - '.github/workflows/p0d-eggrumble-v3-native-luau.yml'
   workflow_dispatch:
 
@@ -55,6 +56,13 @@ jobs:
             --out /tmp/eggrumble-v3-native-round-replay.luau
           /tmp/eggrumble-luau/build/luau-compile /tmp/eggrumble-v3-native-round-replay.luau >/dev/null
           /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-round-replay.luau
+      - name: Validate balanced real item intake across both modes in Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_item_harness.py \
+            --out /tmp/eggrumble-v3-native-raid-item.luau
+          /tmp/eggrumble-luau/build/luau-compile /tmp/eggrumble-v3-native-raid-item.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-raid-item.luau
       - name: State precise QA limit
         run: |
           echo "NATIVE_LUAU_SOURCE_AND_PURE_GAME_RULES_QA: code executed in Luau VM."
