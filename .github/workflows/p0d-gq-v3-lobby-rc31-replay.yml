@@ -64,15 +64,21 @@ jobs:
           gh run download "$V3_RUN" --repo "$GITHUB_REPOSITORY" \
             --name "P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO" \
             --dir artifacts/gq615_rc_official
-          test -s artifacts/gq615_rc_official/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
-          test -s artifacts/gq615_rc_official/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+          mapfile -t PLACES < <(find artifacts/gq615_rc_official -type f -name 'EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx')
+          mapfile -t RECEIPTS < <(find artifacts/gq615_rc_official -type f -name 'EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json')
+          test "${#PLACES[@]}" -eq 1 && test "${#RECEIPTS[@]}" -eq 1
+          test -s "${PLACES[0]}" && test -s "${RECEIPTS[0]}"
+          {
+            echo "PLACE_PATH=${PLACES[0]}"
+            echo "RECEIPT_PATH=${RECEIPTS[0]}"
+          } >> "$GITHUB_ENV"
           echo "GQ615_OFFICIAL_REAL_PLACE_AND_RECEIPT_PRESENT"
       - name: Source-select single existing latest Host and preserve other 30 + all world instances
         run: |
           set -euo pipefail
           python3 quality_gameplay/v3_lobby_queue_visibility_20261117/private31.py prepare \
-            --official-place artifacts/gq615_rc_official/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
-            --receipt artifacts/gq615_rc_official/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --official-place "$PLACE_PATH" \
+            --receipt "$RECEIPT_PATH" \
             --out-dir artifacts/gq615_current31 \
             --rc-head "$RC_SHA" --run-id "$V3_RUN" --zip-bytes "$RC_ZIP_BYTES"
       - name: Compile native current 31 scripts and run real display behavior cases
