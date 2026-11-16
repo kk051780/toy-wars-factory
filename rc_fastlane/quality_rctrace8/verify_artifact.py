@@ -79,7 +79,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 29 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 30 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -132,6 +132,13 @@ FEATURE_EVIDENCE = {
   "function BeastEscort.begin(session:any, player:Player",
   "hum:MoveTo(targetRoot.Position)",
   "neutralAndBotHit(session,p,petRoot,pet,at,3.5,6,def.color,spec.shape)")),
+
+ "LOBBY_QUEUE_ETA_615": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "local queueStartedAt:{[string]:number}={}",
+  "local function refreshQueueBoard(mode:string)",
+  "label.Text=prefix..",
+  "refreshQueueBoard(previous)",
+  "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
 
 }
 
