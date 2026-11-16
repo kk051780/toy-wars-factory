@@ -96,5 +96,51 @@ class Reuse27NegativeTests(unittest.TestCase):
             self.make()
 
 
+    def authored_item(self):
+        owner = self.root / "item_owner"
+        owner.mkdir(exist_ok=True)
+        item = owner / "EGGRUMBLE_FieldItemPickups.luau"
+        item.write_text('--!strict\\n-- canary source contract only\\n'
+            'local function carryingEnemyEggs() end\\n'
+            'local function cancelBuffIfCarrier() end\\n'
+            'local RESPAWN_SECONDS=35\\n'
+            'local interactionGuard = {}\\n'
+            'function Items.start() interactionGuard.allow(player,part,"拾う",part.Name) end\\n',
+            encoding="utf-8")
+        return item, hashlib.sha256(item.read_bytes()).hexdigest()
+
+    def test_reuse_exact_item_author_single_file_and_keep_other_25(self):
+        before = overlay.flatten(json.loads(self.base.read_text())["tree"])
+        item, sha = self.authored_item()
+        report = overlay.compose(self.base, self.receipt, self.script, self.dest,
+                                 item_source=item, item_sha256=sha)
+        after = overlay.flatten(json.loads(self.dest.read_text())["tree"])
+        self.assertEqual(len(after), 27)
+        for k, path in before.items():
+            if k != overlay.ITEM_PATH:
+                self.assertEqual(after[k], path, k)
+        self.assertNotEqual(after[overlay.ITEM_PATH], before[overlay.ITEM_PATH])
+        self.assertTrue(report["item_source_selectively_replaced"])
+        self.assertTrue(report["original_25_source_paths_preserved"])
+        self.assertFalse(report["original_26_sources_preserved"])
+        self.assertEqual(report["item_author_sha256"], sha)
+
+    def test_wrong_item_author_sha_fails_closed_without_output(self):
+        item, sha = self.authored_item()
+        with self.assertRaisesRegex(ValueError, "SHA256 mismatch"):
+            overlay.compose(self.base, self.receipt, self.script, self.dest,
+                            item_source=item, item_sha256="0"*64)
+        self.assertFalse(self.dest.exists())
+
+    def test_missing_original_item_guard_and_carrier_safety_fails(self):
+        item, sha = self.authored_item()
+        item.write_text("function Items.start() end\\n", encoding="utf-8")
+        new_sha = hashlib.sha256(item.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "fairness/LOS"):
+            overlay.compose(self.base, self.receipt, self.script, self.dest,
+                            item_source=item, item_sha256=new_sha)
+        self.assertFalse(self.dest.exists())
+
+
 if __name__ == "__main__":
     unittest.main()
