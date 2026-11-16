@@ -1,0 +1,53 @@
+name: P0D GQ unique V3 bot takeover terminal fence (private, NOT official RC)
+on:
+  push:
+    branches: [quality/gq-v3-ai-takeover-terminal-fence-20261116]
+    paths:
+      - 'quality_gameplay/v3_ai_takeover_terminal_20261116/**'
+      - '.github/workflows/p0d-gq-v3-ai-takeover-terminal.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_ai_takeover_terminal_20261116/**'
+      - '.github/workflows/p0d-gq-v3-ai-takeover-terminal.yml'
+permissions:
+  contents: read
+jobs:
+  original-singleton-bot-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _gq_original_ai484
+          persist-credentials: false
+      - name: Pin original author BotActors blob
+        run: |
+          set -euo pipefail
+          SOURCE=_gq_original_ai484/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau
+          test "$(git hash-object "$SOURCE")" = 832a26c9f713012b924234ce4cf8c1654a75654e
+      - name: Source-exact one-hunk selection and negative tests
+        env:
+          GQ_AUTHOR_BOT: _gq_original_ai484/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v quality_gameplay/v3_ai_takeover_terminal_20261116 -p 'test_patch.py'
+          python3 quality_gameplay/v3_ai_takeover_terminal_20261116/patch_takeover.py --source "$GQ_AUTHOR_BOT" --out /tmp/GQ_BotActors_Selected.luau
+          python3 quality_gameplay/v3_ai_takeover_terminal_20261116/make_native_harness.py --selected /tmp/GQ_BotActors_Selected.luau --out /tmp/gq_bot_takeover_harness.luau
+      - name: Native compile original and one-hunk selection; run real closure in Luau VM
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-luau
+          cmake -S /tmp/gq-luau -B /tmp/gq-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          /tmp/gq-luau/build/luau-compile /tmp/GQ_BotActors_Selected.luau >/dev/null
+          /tmp/gq-luau/build/luau-compile /tmp/gq_bot_takeover_harness.luau >/dev/null
+          /tmp/gq-luau/build/luau /tmp/gq_bot_takeover_harness.luau
+      - name: Explicit RC proof boundary
+        run: |
+          echo 'PRIVATE SINGLE-BOT SOURCE PATCH AND NATIVE CALLBACK ONLY'
+          echo 'CANONICAL RC 31/Rojo/Place, Studio, Android and OWNER: NOT_TESTED'
+          echo 'Formal adoption requires sole #220 writer, latest expected-SHA CAS and official same-HEAD QA.'
