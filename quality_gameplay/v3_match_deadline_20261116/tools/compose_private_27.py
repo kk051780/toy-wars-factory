@@ -102,8 +102,9 @@ def compose(base_project: Path, policy: Path, out: Path) -> dict:
     modified_result=patch_result(result)
     policy = policy.resolve(strict=True)
     assert "function Deadline.expire" in policy.read_text(encoding="utf-8")
-    h_path=out.parent/(HOST+".server.luau")
-    r_path=out.parent/(RESULT+".luau")
+    # Never overwrite the #484 composer\'s existing 26-source host in artifacts/.
+    h_path=out.parent/(HOST+"_Deadline27.server.luau")
+    r_path=out.parent/(RESULT+"_Deadline27.luau")
     assert h_path != old_paths[HOST] and r_path != old_paths[RESULT]
     h_path.write_text(modified_host,encoding="utf-8")
     r_path.write_text(modified_result,encoding="utf-8")
