@@ -53,7 +53,9 @@ def compose(author:Path,out:Path):
     module_data=MODULE.read_bytes()
     (dest/MODULE.name).write_bytes(module_data)
     server["EGGRUMBLE_FieldEggDropBounds"]={"$path":"src/"+MODULE.name}
-    for node in items: node["$path"]="src/"+node["$path"]
+    for node in items:
+        if isinstance(node,dict) and "$path" in node:
+            node["$path"]="src/"+node["$path"]
     receipt["candidate"][MODULE.name]=sha(module_data)
     assert set(receipt["candidate"])==set(receipt["author_original"])|{MODULE.name}
     manifest=out/"EGGRUMBLE_FIELD_EGG_SAFE22.project.json"
