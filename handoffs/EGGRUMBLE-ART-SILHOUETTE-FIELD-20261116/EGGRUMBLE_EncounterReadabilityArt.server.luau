@@ -88,7 +88,7 @@ local function jewel(parent:Instance,anchor:BasePart,name:string,shape:string,
  return p
 end
 
-local function deathCue(neutral:Model)
+local function deathCue(neutral:Model,cueColor:Color3)
  -- The neutral Humanoid's real death is the only trigger, never a fake 10,000-KO counter.
  if activeBurst>=MAX_SIMULTANEOUS_KO_BURSTS then return end
  local root=neutral.PrimaryPart
@@ -109,7 +109,7 @@ local function deathCue(neutral:Model)
  ring.Size=Vector3.new(.17,2.4,2.4)
  ring.CFrame=CFrame.new(root.Position-Vector3.new(0,1.1,0))*CFrame.Angles(0,0,math.rad(90))
  ring.Material=Enum.Material.Glass
- ring.Color=jade
+ ring.Color=cueColor
  ring.Transparency=.2
  ring.Anchored=true
  ring.CanCollide=false
@@ -139,17 +139,31 @@ local function decorateNeutral(neutral:Model)
  local art=Instance.new("Folder")
  art.Name="EGGRUMBLE_NeutralArt_VisualOnly"
  art.Parent=neutral
- -- Each small low-rank neutral gets two distinctive LOW-POLY armor masses,
- -- not a full-size boss or twenty separate particle emitters.
- jewel(art,root,"TornMantle","Wedge",Vector3.new(1.85,.75,1.15),
-  CFrame.new(0,.7,.45)*CFrame.Angles(0,math.pi,0),dark,Enum.Material.Fabric)
- jewel(art,head,"BoneCrest","Wedge",Vector3.new(.68,.78,1.0),
-  CFrame.new(0,.61,0),ceramic,Enum.Material.SmoothPlastic)
+ -- Three muted distinct mini-enemy silhouettes, each EXACTLY two pieces;
+ -- style is determined by world position, not HP/KO/gameplay class or random replication.
+ local variant=math.floor(math.abs(root.Position.X*.17+root.Position.Z*.31))%3
+ local cueColor=if variant==0 then jade elseif variant==1 then gold else steel
+ if variant==0 then
+  jewel(art,root,"ScoutMantle","Wedge",Vector3.new(1.85,.75,1.15),
+   CFrame.new(0,.7,.45)*CFrame.Angles(0,math.pi,0),dark,Enum.Material.Fabric)
+  jewel(art,head,"ScoutBoneCrest","Wedge",Vector3.new(.68,.78,1.0),
+   CFrame.new(0,.61,0),ceramic,Enum.Material.SmoothPlastic)
+ elseif variant==1 then
+  jewel(art,root,"VanguardPauldron","Wedge",Vector3.new(2.35,.86,1.7),
+   CFrame.new(0,.9,-.12)*CFrame.Angles(0,math.pi,0),maroon,Enum.Material.Metal)
+  jewel(art,head,"VanguardHorn","Wedge",Vector3.new(.72,1.03,.85),
+   CFrame.new(-.28,.78,0),gold,Enum.Material.Metal)
+ else
+  jewel(art,root,"CursedMantle","Wedge",Vector3.new(1.7,1.15,1.65),
+   CFrame.new(0,.55,.39)*CFrame.Angles(0,math.pi,0),steel,Enum.Material.Fabric)
+  jewel(art,head,"CursedHalo","Cylinder",Vector3.new(.17,1.67,1.67),
+   CFrame.new(0,.8,0)*CFrame.Angles(0,0,math.rad(90)),ceramic,Enum.Material.Slate)
+ end
  local fired=false
  hum.Died:Connect(function()
   if fired then return end
   fired=true
-  deathCue(neutral)
+  deathCue(neutral,cueColor)
  end)
  neutral.Destroying:Connect(function()
   activeNeutrals[arena]=math.max(0,(activeNeutrals[arena] or 1)-1)
