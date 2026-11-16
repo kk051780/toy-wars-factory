@@ -155,7 +155,7 @@ function BeastEscort.begin(session:any, player:Player, character:Model,
      elseif os.clock() - lastHit >= ATTACK_COOLDOWN then
       lastHit = os.clock()
       -- The same Combat authority rechecks real targets, team, world and LOS.
-      -- Do not use Humanoid:TakeDamage, a new Remote or a second KO counter here.
+      -- No secondary damage/Remote/KO authority: only the original Combat callback.
       hit(root, pet, targetRoot.Position)
      end
     else
