@@ -104,7 +104,7 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("MAX_CASTLE_PARTS = 11", FIELD)
         self.assertIn("used>=MAX_CASTLE_PARTS", FIELD)
         self.assertIn("(budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA", FIELD)
-        self.assertLessEqual(16 * 11 + 3 * 4 * 2 + 20 * 4 + 10 * 2 + 2 * 2, 320)
+        self.assertLessEqual(16 * 11 + 3 * 4 * 2 + 20 * 4 + 10 * 2 + 2 * 2 + 3 * 4, 320)
 
     def test_only_existing_v3_arena_decorated(self):
         for token in ("TEAM_Arena", "BATTLE_ROYALE_Arena", "TacticalBattlefield", "StandardCore"):
@@ -166,6 +166,33 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("piece(parent,torso,name,shape,size,offset,color,Enum.Material.Metal,false)", HERO)
         self.assertIn("weld.Part0=anchor", HERO)
         self.assertIn("weld.Part1=p", HERO)
+
+    def test_field_has_three_real_outside_route_skyline_signatures(self):
+        self.assertIn("local function drawLaneIdentityVista", FIELD)
+        self.assertIn("drawLaneIdentityVista(arena,art,onGround(x,z),lane)", FIELD)
+        self.assertIn('"LaneIdentity_"..lane', FIELD)
+        for token in ('"_SpireL"', '"_SpireR"', '"_FordPier"', '"_StoneArc"', '"_TimberPillar"', '"_Shrine"'):
+            self.assertIn(token, FIELD)
+        self.assertIn("MAX_VISUAL_PARTS_PER_ARENA = 320", FIELD)
+
+    def test_real_castle_flag_visual_echo_preserves_team_authority(self):
+        # Original owner decoration is a flag Color change; ornament follows it
+        # without altering the authoritative OwnerFlag or red/blue castle crest.
+        self.assertIn('castle:FindFirstChild("OwnerFlag")', FIELD)
+        self.assertIn('GetPropertyChangedSignal("Color")', FIELD)
+        self.assertIn("if finial.Parent and flag.Parent then finial.Color=flag.Color end", FIELD)
+        self.assertIn('add("HeraldicCrest"', FIELD)
+        self.assertNotIn("flag.Color=", executable_lines(FIELD))
+        self.assertNotIn('SetAttribute("EGGRUMBLE', executable_lines(FIELD))
+        self.assertIn("castle.ChildAdded:Connect", FIELD)
+
+    def test_neutral_3_silhouette_variants_have_only_real_humanoid_death_cues(self):
+        self.assertIn('math.floor(math.abs(root.Position.X*.17+root.Position.Z*.31))%3', ENCOUNTERS)
+        for tag in ("ScoutMantle", "ScoutBoneCrest", "VanguardPauldron", "VanguardHorn", "CursedMantle", "CursedHalo"):
+            self.assertIn('"'+tag+'"', ENCOUNTERS)
+        self.assertIn("deathCue(neutral,cueColor)", ENCOUNTERS)
+        self.assertIn("hum.Died:Connect", ENCOUNTERS)
+        self.assertNotIn("Humanoid.Health=", executable_lines(ENCOUNTERS))
 
     def test_dynamic_latest_author_studio_manifest_is_non_mutating(self):
         tool_path = ROOT / "tools" / "compose_current_v3_art.py"
