@@ -280,7 +280,7 @@ local function decorateModeGate(gate:BasePart)
   end
  end
  g("PortalMedallion","Cylinder",Vector3.new(.16,2.4,2.4),
-  CFrame.new(0,6.9,-1.28)*CFrame.Angles(0,0,math.rad(90)),gold)
+  CFrame.new(0,6.9,-1.28)*CFrame.Angles(0,math.rad(90),0),gold)
 end
 
 local DEFENSE_COLORS:{[string]:Color3}={
@@ -332,7 +332,7 @@ local function decorateStoneGiant(model:Model)
  add(head,"BrokenCrown","Wedge",Vector3.new(5.7,3.0,4.1),
   CFrame.new(0,3.35,.15),ceramic,Enum.Material.Limestone)
  local bezel=add(core,"WeakpointBezel","Cylinder",Vector3.new(.22,3.8,3.8),
-  CFrame.new(0,0,.5)*CFrame.Angles(0,0,math.rad(90)),core.Color,Enum.Material.Metal)
+  CFrame.new(0,0,-.42)*CFrame.Angles(0,math.rad(90),0),core.Color,Enum.Material.Metal)
  add(torso,"HeartRunicRidge","Wedge",Vector3.new(2.7,2.6,.7),
   CFrame.new(0,-2.7,-3.0),steel,Enum.Material.Slate)
  if bezel then
@@ -385,7 +385,7 @@ local function decorateStandaloneCastle(model:Model)
   gold,Enum.Material.Metal)
  add(vault,"VaultRelief","Cylinder",Vector3.new(.22,2.6,2.6),
   CFrame.new(0,vault.Size.Y*.5+1.0,-vault.Size.Z*.5-.60)
-    *CFrame.Angles(0,0,math.rad(90)),ceramic,Enum.Material.Limestone)
+    *CFrame.Angles(0,math.rad(90),0),ceramic,Enum.Material.Limestone)
  add(core,"SiegeCoreSeal","Wedge",Vector3.new(3.6,1.3,.25),
   CFrame.new(0,core.Size.Y*.5+1.0,-core.Size.Z*.5-.20),
   core.Color,Enum.Material.Metal)
