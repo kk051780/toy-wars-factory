@@ -10,6 +10,7 @@ local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
+local MatchResults=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResults"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -215,8 +216,11 @@ local function startSession(mode:string)
     end
    end
   end
-  if session.rules.winner~=nil then
-   print("[EGGRUMBLE "..mode.."] Castle elimination winner:",session.rules.winner)
+  if session.rules.phase=="FINISHED" and not session.resultsDisplayed then
+   -- Exactly once, never an intrusive scoreboard during active combat.
+   session.resultsDisplayed=true
+   MatchResults.show(session.rules,session.swarm and session.swarm.kills or {},queue)
+   print("[EGGRUMBLE "..mode.."] Results shown after match:",session.rules.winner)
   end
  end
  for idx,entry in ipairs(roster) do createWorldCastle(session,entry,idx) end
