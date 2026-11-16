@@ -39,6 +39,24 @@ class TestCarrierWorldTell(unittest.TestCase):
         self.assertIn("session.rules.winner",src)
         self.assertIn("task.wait(Policy.POLL_SECONDS)",src)
         self.assertIn("destroyRecord(record)",src)
+    def test_authored_arena_bounds_and_original_seven_area_ownership(self):
+        # Read exactly the pinned #482 author Game/BotActors, not a QA fantasy map.
+        host=mod.HOST.read_text(encoding="utf-8")
+        bots=(mod.AUTHOR/"EGGRUMBLE_BotActors.luau").read_text(encoding="utf-8")
+        world=(HERE/"EGGRUMBLE_CarrierWorldTell.luau").read_text(encoding="utf-8")
+        policy=(HERE/"EGGRUMBLE_CarrierTellPolicy.luau").read_text(encoding="utf-8")
+        self.assertIn('worldX=mode=="TEAM" and -620 or 620',host)
+        self.assertIn('Vector3.new(890,2,1050)',host)
+        self.assertIn('floor=block(session.world,"TacticalBattlefield"',host)
+        self.assertIn('label.StudsOffset=Vector3.new(0,3.3,0)',bots)
+        self.assertIn('head=makePart(model,"Head",base.Position+Vector3.new(0,2.25,0)',bots)
+        self.assertIn('session.world:FindFirstChild("TacticalBattlefield")',world)
+        self.assertIn('Policy.inArenaXZ(',world)
+        self.assertIn('if aiActor then 10.2 else 4',world)
+        self.assertIn('Policy.ARENA_HALO_STUDS = 10',policy)
+        self.assertNotIn('RemoteEvent',world)
+        self.assertNotIn('TakeDamage',world)
+
     def test_policy_phase_egg_death_guards(self):
         src=(HERE/"EGGRUMBLE_CarrierTellPolicy.luau").read_text()
         for critical in ('phase ~= "ACTIVE"','winner ~= nil','avatarAlive ~= true','castle.alive ~= true','eggs >= 1','eggs <= Policy.MAX_CARRIED_EGGS','eggs%1 == 0'):
