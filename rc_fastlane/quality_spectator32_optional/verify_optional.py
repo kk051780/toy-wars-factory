@@ -43,7 +43,7 @@ def contract(meta,active,base):
           "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
           "PINNED_EXISTING_PREP_634")
     check(meta.get("current_selected31")==
-          "artifacts/gq515_official_select/GQ509_POSTWIN_SELECTED31.project.json",
+          "artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json",
           "LATEST_31_INPUT_NOT_SELECTED")
     check(active.get("active_profile")=="rich51","LIVE_S1_PROFILE_CHANGED")
     profiles=active.get("source_profiles",{})
@@ -71,7 +71,7 @@ def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
     check(len(head)==40 and all(c in "0123456789abcdef" for c in head),
           "HEAD_NOT_40_SHA")
     check(meta.get("base_official_head")==
-          "ad2a1d885510966c5d946fdf97e0f44f07c15fb7","BASE_HEAD_DRIFT")
+          "7b3e055bae93ea71a89f981c4e78e8ab72996ae9","BASE_HEAD_DRIFT")
     check(receipt.get("source_count")==32
           and receipt.get("rojo_source_class_exact")=="32/32"
           and receipt.get("existing_gameplay_sources_unchanged")==31

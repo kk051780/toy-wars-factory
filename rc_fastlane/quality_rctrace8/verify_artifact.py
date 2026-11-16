@@ -32,6 +32,7 @@ RULES = {
   "EGGRUMBLE_LobbyCastleModesPreview": (
     "CastleAccessRamp",
     'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}',
+    "local rareFieldEgg=i==4 or i==5",
   ),
  },
  "battle": {
@@ -64,8 +65,9 @@ RULES = {
    "limit>=2 and limit<=M.MAX_HERO_SLOTS",
    "#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "EGGRUMBLE_CombatBalance": ("return Balance",),
-  "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",),
-  "EGGRUMBLE_ScoreBalance": (),
+  "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",
+   'local status=if session.rules.winner=="DRAW" then "引き分け"',),
+  "EGGRUMBLE_ScoreBalance": ("local claimedRareFieldEggs={}",),
  },
 }
 ROLE_CLASSES = {
@@ -79,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 34 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 35 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -143,6 +145,34 @@ FEATURE_EVIDENCE = {
   "label.Text=prefix..",
   "refreshQueueBoard(previous)",
   "if #queues[mode]==0 then queueStartedAt[mode]=nil end")),
+ "BOSS_SHOCKWAVE_WALL_OCCLUSION_518": ("EGGRUMBLE_NeutralStoneGiant", (
+   "local function shockwaveClear(character:Model?,root:BasePart):boolean",
+   "params.RespectCanCollide=true",
+   "and shockwaveClear(c,root) then")),
+ "BUILDER_WALL_SERVER_TOOL_522": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ522_ORIGINAL_BUILDER_WALL_ONLY_INLINE_RC31",
+  "BuilderConstruction.equip(session,p,true,false)",
+  "BuilderConstruction.clear(session)",
+  "Policy.LIFETIME=9",
+  "Policy.MAX_PER_HERO=2",
+  "Policy.MAX_PER_SESSION=12",
+  "tool.Activated:Connect(function()")),
+ "GQ8_ROLE_SELECTION_ACK_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "-- GQ8_ROLE_SELECTION_ACK_BEGIN",
+  'if chosenRole[p.UserId]==nil then',
+  'p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",true)',
+  'p:SetAttribute("EGGRUMBLE_RoleSelectionRequired",nil)',
+  "職業選択後｜チーム戦（再操作で解除）",
+  "職業選択後｜BR戦（再操作で解除）")),
+ "GQ646_LOBBY_SAFE_SPAWN_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+   "-- GQ646_LOBBY_SAFE_SPAWN_BEGIN",
+   "lobbyGround.CanCollide=true",
+   "lobbySpawn.Neutral=true",
+   "if mode and sessions[mode] then return end")),
+ "RARE_FIELD_EGG_SCORE_20261117": ("EGGRUMBLE_ScoreBalance", (
+   "RARE_FIELD_EGG_CAP=2, RARE_FIELD_EGG_RATE=60",
+   "local claimedRareFieldEggs={}",
+   'id=="FIELD_4" or id=="FIELD_5"')),
  "MATCH_DEADLINE_DRAW_499": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local deadlineLease=Deadline.new(os.clock(),deadlineId)",
   "Deadline.expire(session.rules,deadlineLease,os.clock(),deadlineId)",
@@ -271,7 +301,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_33_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_39_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
