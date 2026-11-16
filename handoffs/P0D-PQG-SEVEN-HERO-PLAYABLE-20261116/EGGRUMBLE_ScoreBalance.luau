@@ -5,7 +5,8 @@
 -- Scores are deliberately capped PER category to prevent one grind from erasing the egg/castle objectives.
 -- A stolen egg earns *raid* points only on a subsequent home deposit without a drop.
 -- Field eggs are conservatively spent first; no invented per-egg provenance.
--- TEAM castle-support points are server-event-derived, not imaginary siege hits.
+-- TEAM castle-support points need a verified match contribution, not idle presence.
+-- Actual KO timing is not in source events; no per-siege KO assist is claimed.
 local Results={} -- no Roblox Services: native-Luau executable as real math
 
 local SCORE={
@@ -14,6 +15,7 @@ local SCORE={
  EGG_DEPOSIT_CAP=8, EGG_DEPOSIT_RATE=120,
  CASTLE_CAP=3, CASTLE_RATE=440,
  TEAM_CASTLE_SUPPORT_CAP=3, TEAM_CASTLE_SUPPORT_RATE=90,
+ TEAM_SUPPORT_KO_MIN=5,
  SURVIVE=200, WIN=500,
 }
 Results.SCORE=SCORE
@@ -115,12 +117,16 @@ function Results.build(state:any,kills:any):any
    local row=byId[tostring(event.attacker)]
    if row then
     row.castlesDestroyed+=1
-    -- TEAM only: teammates whose personal castle still stood at this siege
-    -- earn small cooperative credit. Final-blow owner already earns 440.
-    -- This is NOT an invented direct hit, heal, or assist event.
+    -- TEAM cooperative credit requires a real match contribution, not AFK.
+    -- KO is server-verified for the match (timing is not recorded); egg
+    -- deposits and final blows have precise ordered server event evidence.
+    -- No fabricated direct siege hits, heals or per-castle assists.
     if state.mode=="TEAM" and row.team~=nil then
      for _,ally in ipairs(rows) do
-      if ally.id~=row.id and ally.team==row.team and not fallenSoFar[ally.id] then
+      local participated=ally.ko>=SCORE.TEAM_SUPPORT_KO_MIN or
+       ally.deposited>0 or ally.securedSteals>0 or ally.castlesDestroyed>0
+      if ally.id~=row.id and ally.team==row.team and
+       not fallenSoFar[ally.id] and participated then
        ally.teamCastleSupport+=1
       end
      end
