@@ -1,0 +1,89 @@
+name: P0D GQ V3 center ridge clearance private21
+on:
+  pull_request:
+    paths:
+      - "quality_gameplay/v3_central_ridge_clearance_20261116/**"
+      - ".github/workflows/p0d-gq-v3-ridge-clearance.yml"
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+      - "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-source-clearance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run pinned geometry + mutation tests
+        run: python3 -B -m unittest discover -s quality_gameplay/v3_central_ridge_clearance_20261116 -p test_patch_ridge.py -v
+      - name: Compose real private 21-source Rojo project with one generated terrain source
+        run: |
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/private21.py compose --outdir artifacts/gq_ridge
+          test -s artifacts/gq_ridge/EGGRUMBLE_LobbyCastleModesPreview.private.server.luau
+          test -s artifacts/gq_ridge/GQ_V3_RIDGE_PRIVATE21.project.json
+      - name: Pin original open-source Luau compiler source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Compile all actual 21 script bodies in native Luau, preserve 7-area contracts
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq_ridge_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_ridge_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/v3_central_ridge_clearance_20261116")
+          from private21 import sources
+          project=Path("artifacts/gq_ridge/GQ_V3_RIDGE_PRIVATE21.project.json")
+          m=sources(project)
+          assert len(m)==21 and len(set(m))==21
+          assert len([n for n in m if n=="EGGRUMBLE_LobbyCastleModesPreview"])==1
+          for name,(_,file,_) in sorted(m.items()):
+              subprocess.run(["/tmp/gq_ridge_native/luau-compile","--text",str(file)],stdout=subprocess.DEVNULL,check=True)
+          print("GQ_RIDGE_REAL_V3_PRIVATE21_NATIVE_LUAU_COMPILE_PASS",len(m))
+          PY
+          for gen in make_native_rules_harness.py make_native_combat_harness.py make_native_round_replay_harness.py make_native_raid_item_harness.py make_native_boss_session_harness.py; do
+            label="${gen%.py}"
+            python3 "handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/$gen" --out "/tmp/${label}.luau"
+            /tmp/gq_ridge_native/luau-compile --text "/tmp/${label}.luau" >/dev/null
+            /tmp/gq_ridge_native/luau "/tmp/${label}.luau"
+          done
+      - name: Download hash-pinned official Rojo binary (no installation or Publish)
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_ridge_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_ridge_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_ridge_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1,names
+              out=Path("/tmp/gq_ridge_rojo")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(0o755)
+          PY
+      - name: Build genuine unpublished Place and read back source/class exact
+        run: |
+          set -euo pipefail
+          /tmp/gq_ridge_rojo build artifacts/gq_ridge/GQ_V3_RIDGE_PRIVATE21.project.json -o artifacts/gq_ridge/EGGRUMBLE_GQ_RIDGE_PRIVATE21_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/private21.py verify \
+            --project artifacts/gq_ridge/GQ_V3_RIDGE_PRIVATE21.project.json \
+            --place artifacts/gq_ridge/EGGRUMBLE_GQ_RIDGE_PRIVATE21_NOT_RC.rbxlx
+          echo "PRIVATE_SOURCE_EXACT_ONLY: Official RC write=0 / Studio=NOT_TESTED / Android=NOT_TESTED / OWNER=NOT_ACCEPTED"
+      - name: Retain unpublished fixed-head receipt for sole authenticated RC writer
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq-v3-ridge-private21-not-rc
+          path: |
+            artifacts/gq_ridge/GQ_V3_RIDGE_PRIVATE21.project.json
+            artifacts/gq_ridge/EGGRUMBLE_LobbyCastleModesPreview.private.server.luau
+            artifacts/gq_ridge/EGGRUMBLE_GQ_RIDGE_PRIVATE21_NOT_RC.rbxlx
+            artifacts/gq_ridge/GQ_RIDGE_SOURCE_RECEIPT.json
+          retention-days: 3

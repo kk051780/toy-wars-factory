@@ -1,0 +1,155 @@
+name: P0D GQ520 existing26 author overlay Ridge (private no RC)
+on:
+  pull_request:
+    paths:
+      - "quality_gameplay/v3_central_ridge_clearance_20261116/**"
+      - ".github/workflows/p0d-gq-v3-ridge-current26.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-author26-ridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read EXACT frozen original 7-domain GAME source #482
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Reuse #484 original AI/ramp+composer with NO new AI author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality_original
+          persist-credentials: false
+      - name: Reuse #485 original ART4 and artist composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Reuse #487 original SCORE & result display
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify author inputs and exact same original #482 host
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality_original rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          cmp -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+                 _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          echo "FOUR_AUTHOR_HEADS_AND_ORIGINAL_HOST_LOCK_PASS"
+      - name: Independently test patch geometry and original composer overlay negatives
+        run: |
+          python3 -B -m unittest discover -s quality_gameplay/v3_central_ridge_clearance_20261116 -p 'test_*.py' -v
+          python3 -B -m unittest discover -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -q
+      - name: Reuse original #485 artist tool and #484 existing26 composer unchanged
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ520_ORIGINAL_ART.project.json
+          python3 _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _quality_original --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ520_ORIGINAL_ART.project.json \
+            --out artifacts/GQ520_ORIGINAL26.project.json
+          test -s artifacts/SOURCE_RECEIPT.json
+      - name: Overlay exactly ONE ridge source on exact original author26 map
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/augment_current26.py prepare \
+            --base artifacts/GQ520_ORIGINAL26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --author-host _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --quality-host _quality_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --item _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau \
+            --quality-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --outdir artifacts/gq520_private26
+          test -s artifacts/gq520_private26/GQ520_RIDGE_AUTHOR26.project.json
+      - name: Pin native Luau toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile all 26 actual Luau and run original seven-area+score VM harnesses
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq520_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq520_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/v3_central_ridge_clearance_20261116")
+          from augment_current26 import scripts
+          manifest=Path("artifacts/gq520_private26/GQ520_RIDGE_AUTHOR26.project.json")
+          _,mapped=scripts(manifest)
+          assert len(mapped)==26
+          for name,(_,path,_,_) in sorted(mapped.items()):
+              subprocess.run(["/tmp/gq520_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ520_AUTHOR26_ALL_NATIVE_LUAU_COMPILE_PASS",len(mapped))
+          PY
+          for gen in make_native_rules_harness.py make_native_combat_harness.py make_native_round_replay_harness.py make_native_raid_item_harness.py make_native_boss_session_harness.py; do
+            label="${gen%.py}"
+            python3 "_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/$gen" --out "/tmp/${label}.luau"
+            /tmp/gq520_native/luau-compile --text "/tmp/${label}.luau" >/dev/null
+            /tmp/gq520_native/luau "/tmp/${label}.luau"
+          done
+          mkdir -p /tmp/gq520_score
+          score=_v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          cp "$score/EGGRUMBLE_ScoreBalance.luau" /tmp/gq520_score/Results.luau
+          cp "$score/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/gq520_score/Cases.luau
+          cp "$score/tests/run_score_balance_native.luau" /tmp/gq520_score/Runner.luau
+          (cd /tmp/gq520_score && /tmp/gq520_native/luau Runner.luau) | tee artifacts/GQ520_SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/GQ520_SCORE_NATIVE.log
+      - name: Pin Rojo 7.7.1, generate real PRIVATE26 Place and verify 26/26
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq520_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq520_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq520_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              b=Path("/tmp/gq520_rojo")
+              b.write_bytes(z.read(names[0]))
+              b.chmod(0o755)
+          PY
+          /tmp/gq520_rojo build artifacts/gq520_private26/GQ520_RIDGE_AUTHOR26.project.json \
+            -o artifacts/gq520_private26/EGGRUMBLE_GQ520_PRIVATE26_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/augment_current26.py verify \
+            --project artifacts/gq520_private26/GQ520_RIDGE_AUTHOR26.project.json \
+            --place artifacts/gq520_private26/EGGRUMBLE_GQ520_PRIVATE26_NOT_RC.rbxlx
+          echo "OFFICIAL_RC=UNCHANGED / CLAIM=SOFT / ENGINE_STUDIO=NOT_TESTED"
+      - name: Save evidence only (never auto-integrate or Publish)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq520-ridge-author26-not-rc
+          path: |
+            artifacts/gq520_private26/GQ520_RIDGE_AUTHOR26.project.json
+            artifacts/gq520_private26/EGGRUMBLE_LobbyCastleModesPreview.private.server.luau
+            artifacts/gq520_private26/EGGRUMBLE_GQ520_PRIVATE26_NOT_RC.rbxlx
+            artifacts/gq520_private26/GQ520_PRIVATE26_RECEIPT.json
+            artifacts/GQ520_SCORE_NATIVE.log
+          retention-days: 3
