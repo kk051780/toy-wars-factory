@@ -32,6 +32,8 @@ RULES = {
   "EGGRUMBLE_LobbyCastleModesPreview": (
     "CastleAccessRamp",
     'local rowZ=if mode=="TEAM" then {338,506,610} else {338,448,676}',
+    "local centerPassage=24",
+    "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)",
   ),
  },
  "battle": {
@@ -40,7 +42,7 @@ RULES = {
   )},
  "castle": {
   "EGGRUMBLE_LobbyCastleModesPreview": (
-    "Rules.depositEggs(", "coreBoard.MaxDistance=65",
+    "Rules.depositEggs(", "sessions[session.mode]~=session", "coreBoard.MaxDistance=65",
     "vaultBoard.MaxDistance=40",
   )},
  "neutral": {
@@ -105,6 +107,13 @@ FEATURE_EVIDENCE = {
   "if not healUseful(kind,hum.Health,hum.MaxHealth) then return end"),
  "VERTICAL_HIT_FAIRNESS_595": ("EGGRUMBLE_AttackGeometry",
   "if dy~=dy or math.abs(dy)>math.min(radius,14) then return false end"),
+ "NEUTRAL_DEATH_KO_CURRENT_OWNER_508": ("EGGRUMBLE_SwarmCombat","and KoFence.mayCredit(session,id,m,all) then"),
+ "AI_TAKEOVER_TERMINAL_FENCE_580": ("EGGRUMBLE_BotActors","if session.rules.phase~=\"ACTIVE\" or not folder.Parent then return false end"),
+ "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520": ("EGGRUMBLE_LobbyCastleModesPreview","local centerPassage=24"),
+ "FIELD_CARRIER_OFFARENA_DROP_515": ("EGGRUMBLE_LobbyCastleModesPreview","DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,"),
+ "ZOMBIE_COMMAND_SQUAD_582": ("EGGRUMBLE_SevenRoleCombat","local ZombieCommander="),
+ "DEPOSIT_CURRENT_SESSION_586": ("EGGRUMBLE_LobbyCastleModesPreview","GQ_DEPOSIT_CURRENT_MATCH_586: old-mode/retired-session deposit is forbidden."),
+ "ZOMBIE_NEUTRAL_STABLE_ID_V3": ("EGGRUMBLE_SevenRoleCombat","local neutralIds=setmetatable({}, {__mode=\"k\"})"),
 
 }
 
