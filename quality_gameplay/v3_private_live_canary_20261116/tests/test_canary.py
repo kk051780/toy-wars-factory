@@ -41,7 +41,10 @@ class PrivateLiveCanaryTests(unittest.TestCase):
 
     def test_studio_preview_host_is_explicitly_private_gated(self):
         host = (self.out / "sources" / "EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text()
-        self.assertIn("if not PrivateGate.advertiseServerReady() then return end", host)
+        self.assertIn("if not PrivateGate.allowed() then return end", host)
+        self.assertIn(compose.BOOT_READY, host)
+        self.assertLess(host.index(compose.WORLD_WATCH), host.index(compose.BOOT_READY))
+        self.assertLess(host.index(compose.BOOT_READY), host.index(compose.BOOT_DONE_MARKER))
         self.assertNotIn("if not RunService:IsStudio() then return end", host)
         self.assertEqual(host.count(compose.WORLD_WATCH),1)
         self.assertIn('PrivateGate.watchWorld(folder)',host)
