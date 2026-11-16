@@ -68,4 +68,5 @@ jobs:
             artifacts/EGGRUMBLE_SwarmCombat_GQ542.luau
           retention-days: 3
       - name: Honest gate
-        run: echo "Original #530 31 script real Rojo + exact private source delta; this derivative is NOT a fresh Rojo rebuild, formal RC, Studio/Android or OWNER acceptance"
+        run: |
+          echo "Private original-source 31 + one Swarm delta. No official RC or Studio/Android/OWNER acceptance."
