@@ -23,6 +23,15 @@ def defects(bot,router,lobby):
       "visible world walls": "params.FilterDescendantsInstances={actors}" in router and "params.RespectCanCollide=true" in router,
       "no instant wall phase": "if not routeClear(here,here+direction*step,actors) then" in router,
       "server egg/siege LOS": "clearActionPath(actor,actors,actualTarget)" in bot and "actualDist<=ACTION_DISTANCE" in bot,
+      "bot-v-bot current-roster source": "for targetId,targetActor in pairs(bots) do" in bot and "local enemyCastle=session.rules.castles[targetId]" in bot,
+      "bot-v-bot actual humanoid damage": "targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)" in bot and "targetHumanoid.Health>0" in bot,
+      "bot-v-bot no friendly fire": 'session.mode~="TEAM" or enemyCastle.team~=my.team' in bot,
+      "bot-v-bot no own character": "enemyCastle.id~=my.id" in bot and "targetActor~=actor" in bot,
+      "bot-v-bot must be near": "(targetRoot.Position-at).Magnitude<11" in bot,
+      "bot-v-bot wall must be clear": "clearHeroStrike(actor,targetActor,at+Vector3.new(0,1.5,0)" in bot,
+      "bot-v-bot shares cooldown": "tryHeroAttack(actor,me,session,lastHit,bots)" in bot and "now-(lastHit[my.id] or 0)<BOT_ATTACK_INTERVAL" in bot,
+      "bot-v-bot server actor death flow": "if hum.Health<=0 then" in bot and "session.dropCarrierEggs(id,actor:GetPivot().Position)" in bot,
+
       "same mode isolation": 'Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)' in bot,
       "Studio-only": 'assert(RunService:IsStudio()' in router and "if not RunService:IsStudio() then return end" in lobby,
     }
@@ -66,6 +75,21 @@ class TestCastleGroundedMovement(unittest.TestCase):
         self.assertIn("visible world walls",self.broken(router=self.router.replace("params.FilterDescendantsInstances={actors}","params.FilterDescendantsInstances={session.world}")))
     def test_disable_attack_los(self):
         self.assertIn("server egg/siege LOS",self.broken(bot=self.bot.replace("clearActionPath(actor,actors,actualTarget)","true")))
+    def test_bot_duel_disabled(self):
+        self.assertIn("bot-v-bot current-roster source",self.broken(bot=self.bot.replace("for targetId,targetActor in pairs(bots) do","if false then")))
+    def test_bot_duel_fake_damage(self):
+        self.assertIn("bot-v-bot actual humanoid damage",self.broken(bot=self.bot.replace("targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)","-- fake damage")))
+    def test_bot_duel_friendly_fire(self):
+        self.assertIn("bot-v-bot no friendly fire",self.broken(bot=self.bot.replace('session.mode~="TEAM" or enemyCastle.team~=my.team','true')))
+    def test_bot_duel_self_hit(self):
+        self.assertIn("bot-v-bot no own character",self.broken(bot=self.bot.replace("enemyCastle.id~=my.id","true")))
+    def test_bot_duel_teleport_melee(self):
+        self.assertIn("bot-v-bot must be near",self.broken(bot=self.bot.replace("(targetRoot.Position-at).Magnitude<11","true")))
+    def test_bot_duel_wall_hit(self):
+        self.assertIn("bot-v-bot wall must be clear",self.broken(bot=self.bot.replace("clearHeroStrike(actor,targetActor,at+Vector3.new(0,1.5,0)","true -- stripped LOS")))
+    def test_bot_duel_call_bypass(self):
+        self.assertIn("bot-v-bot shares cooldown",self.broken(bot=self.bot.replace("tryHeroAttack(actor,me,session,lastHit,bots)","-- disconnected bot duel")))
+
 
 if __name__=="__main__":
     unittest.main()

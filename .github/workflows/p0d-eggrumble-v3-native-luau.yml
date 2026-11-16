@@ -24,7 +24,8 @@ jobs:
           cmake -S /tmp/eggrumble-luau -B /tmp/eggrumble-luau/build \
             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
           cmake --build /tmp/eggrumble-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
-          /tmp/eggrumble-luau/build/luau -v || true
+          test -x /tmp/eggrumble-luau/build/luau
+          test -x /tmp/eggrumble-luau/build/luau-compile
       - name: Parse all isolated Luau game source with a native compiler
         run: |
           set -euo pipefail

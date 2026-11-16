@@ -91,7 +91,7 @@ local function clearHeroStrike(actor:Model,target:Model,origin:Vector3,destinati
  -- A solid castle core, wall, or gate must prevent a bot hero strike.
  return workspace:Raycast(origin,delta,params)==nil
 end
-local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:number}):boolean
+local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:number},bots:{[string]:Model}):boolean
  local at=actor:GetPivot().Position
  local now=os.clock()
  if now-(lastHit[my.id] or 0)<BOT_ATTACK_INTERVAL then return false end
@@ -106,6 +106,26 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
     and clearHeroStrike(actor,character,at+Vector3.new(0,1.5,0),root.Position+Vector3.new(0,1,0)) then
     lastHit[my.id]=now
     h:TakeDamage(BOT_HERO_DAMAGE)
+    return true
+   end
+  end
+ end
+ -- AI heroes must actually fight one another in 1-human + 15-AI matches.
+ -- Same cooldown and real humanoid damage as the human-target branch above;
+ -- no fabricated KO, remote hit, same-team strike, or wall-penetrating blow.
+ for targetId,targetActor in pairs(bots) do
+  local enemyCastle=session.rules.castles[targetId]
+  if enemyCastle and enemyCastle.alive and enemyCastle.id~=my.id
+   and (session.mode~="TEAM" or enemyCastle.team~=my.team)
+   and targetActor~=actor and targetActor.Parent then
+   local targetRoot=targetActor.PrimaryPart
+   local targetHumanoid=targetActor:FindFirstChildOfClass("Humanoid")
+   if targetRoot and targetHumanoid and targetHumanoid.Health>0
+    and (targetRoot.Position-at).Magnitude<11
+    and clearHeroStrike(actor,targetActor,at+Vector3.new(0,1.5,0),
+     targetRoot.Position+Vector3.new(0,1,0)) then
+    lastHit[my.id]=now
+    targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)
     return true
    end
   end
@@ -154,7 +174,7 @@ function BotActors.start(session:any,Rules:any):()
         if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-1.5,-34),me.team) end
        end
       else
-       tryHeroAttack(actor,me,session,lastHit)
+       tryHeroAttack(actor,me,session,lastHit,bots)
        if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end
        local enemy=desiredTarget(session,mode,me)
        if enemy then
