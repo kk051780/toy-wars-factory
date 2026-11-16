@@ -11,6 +11,7 @@ local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
+local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
@@ -20,6 +21,7 @@ local sessions:{[string]:any}={}
 local joined:{[number]:string}={}
 local chosenDefense:{[number]:string}={}
 local chosenRole:{[number]:string}={}
+local queueEpoch:{[string]:number}={TEAM=0,BATTLE_ROYALE=0}
 local MODE_SEATS=16 -- humans + AI combined; change only after measured server/client QA
 local COUNTDOWN=12 -- seconds for private preview only
 
@@ -130,6 +132,7 @@ local function startSession(mode:string)
  local session={
   mode=mode,roster=roster,rules=Rules.new(mode,roster,24),
   castleLocations={},castleModels={},world=Instance.new("Folder"),groundY=root.Y-3,
+  lifeConnections={},
  }
  session.world.Name=mode.."_Arena";session.world.Parent=folder
  local worldX=mode=="TEAM" and -620 or 620
@@ -158,6 +161,25 @@ local function startSession(mode:string)
   end
  end
  sessions[mode]=session
+ -- Clean up only this finished match; queues and matches for the other mode survive.
+ session.closeRound=function()
+  if sessions[mode]~=session or session.rules.phase~="FINISHED" then return end
+  for _,connection in ipairs(session.lifeConnections) do connection:Disconnect() end
+  for _,entry in ipairs(session.roster) do
+   if not entry.isAI then
+    local player=Players:GetPlayerByUserId(tonumber(entry.id) or -1)
+    if player and joined[player.UserId]==mode then
+     joined[player.UserId]=nil
+     SevenRoleCombat.clear(player)
+     RoundReplay.resetHuman(player,root+Vector3.new(0,8,-5))
+    end
+   end
+  end
+  if session.world.Parent then session.world:Destroy() end
+  sessions[mode]=nil
+  queues[mode]={}
+  queueEpoch[mode]+=1
+ end
  for _,entry in ipairs(roster) do
   if not entry.isAI then
    local p=Players:GetPlayerByUserId(tonumber(entry.id) or -1)
@@ -217,6 +239,7 @@ local function startSession(mode:string)
   if session.rules.winner~=nil then
    -- Short factual result shown exactly once, never a permanent play-blocking HUD.
    ResultService.showIfFinished(session,queue,mode)
+   RoundReplay.schedule(session,session.closeRound)
    print("[EGGRUMBLE "..mode.."] Castle elimination winner:",session.rules.winner)
   end
  end
@@ -249,15 +272,15 @@ local function startSession(mode:string)
    local function bindCarrierLife(character:Model)
     local humanoid=character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid",5)
     if humanoid and humanoid:IsA("Humanoid") then
-     humanoid.Died:Connect(function()
+     table.insert(session.lifeConnections,humanoid.Died:Connect(function()
       if joined[player.UserId]~=mode then return end
       local rootPart=character:FindFirstChild("HumanoidRootPart")::BasePart?
       local fallback=session.castleLocations[tostring(player.UserId)] or root
       session.dropCarrierEggs(tostring(player.UserId),rootPart and rootPart.Position or fallback)
-     end)
+     end))
     end
    end
-   player.CharacterAdded:Connect(bindCarrierLife)
+   table.insert(session.lifeConnections,player.CharacterAdded:Connect(bindCarrierLife))
    if player.Character then task.spawn(bindCarrierLife,player.Character) end
   end
  end
@@ -271,7 +294,7 @@ local function startSession(mode:string)
   if p.Parent and joined[p.UserId]==mode then
    local role=chosenRole[p.UserId] or "WARRIOR"
    SevenRoleCombat.equip(session,p,role)
-   p.CharacterAdded:Connect(function(character)
+   table.insert(session.lifeConnections,p.CharacterAdded:Connect(function(character)
     task.delay(.8,function()
      if p.Parent and joined[p.UserId]==mode and p.Character==character
       and session.rules.phase=="ACTIVE" then
@@ -279,7 +302,7 @@ local function startSession(mode:string)
       if castle and castle.alive then SevenRoleCombat.equip(session,p,role) end
      end
     end)
-   end)
+   end))
   end
  end
 
@@ -291,7 +314,12 @@ local function joinQueue(mode:string,p:Player)
  joined[p.UserId]=mode
  table.insert(queues[mode],p)
  p:SetAttribute("EGGRUMBLE_QueuedMode",mode)
- if #queues[mode]==1 then task.delay(COUNTDOWN,function() startSession(mode) end) end
+ if #queues[mode]==1 then
+  local expectedEpoch=queueEpoch[mode]
+  task.delay(COUNTDOWN,function()
+   if queueEpoch[mode]==expectedEpoch then startSession(mode) end
+  end)
+ end
  if #queues[mode]>=MODE_SEATS then startSession(mode) end
 end
 -- Seven job-selection stands: small world prompts, no permanent large HUD.

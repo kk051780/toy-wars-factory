@@ -29,7 +29,7 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
   self.assertIn('WARRIOR={name="武神"',HERO)
   self.assertIn('NINJA={name="暗殺者"',HERO)
  def test_3_actions_are_real_tools_not_inert_labels(self):
-  for token in ('COOLDOWNS={A=.52,B=5.5,C=13}',
+  for token in ('CombatBalance.skill(role,slot)',
                 'for index,slot in ipairs({"A","B","C"})',
                 'Instance.new("Tool")','tool.Activated:Connect(function()',
                 'execute(session,p,role,slot)','if tool.Parent~=p.Character then return end',
@@ -40,7 +40,7 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
    with self.subTest(token=token): self.assertIn(token,HERO)
  def test_same_horde_and_ai_damage_pipeline(self):
   for token in ('session.swarm.damageFromPlayer(',
-                'hitBotHeroes(','h:TakeDamage(damage*duel)',
+                'hitBotHeroes(','h:TakeDamage(damage*duel*mark)',
                 'lineClear(', 'ray.RespectCanCollide=true',
                 'session.mode~="TEAM" or target.team~=state.team',
                 'if owner.heldEggs==0','session.rules.phase=="ACTIVE"',
@@ -49,7 +49,7 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
   self.assertIn('EGGRUMBLE_KamiUntil',HERO)
   self.assertIn('EGGRUMBLE_StealthUntil',HERO)
   self.assertIn('EGGRUMBLE_SlowUntil',HERO)
-  self.assertIn('p:GetAttribute("EGGRUMBLE_StealthUntil")',BOTS)
+  self.assertIn('player:GetAttribute("EGGRUMBLE_StealthUntil")',BOTS)
   self.assertIn('AI_TICK*slow',BOTS)
  def test_lobby_binds_role_selection_and_respawn_and_death(self):
   for token in ('for i,role in ipairs(SevenRoleCombat.roleOrder())',
@@ -67,7 +67,8 @@ class TestSevenRolesSameV3Match(unittest.TestCase):
   self.assertIn('EGGRUMBLE_SevenRoleCombat',tree)
   self.assertEqual(tree['EGGRUMBLE_SevenRoleCombat']['$path'],
                    'EGGRUMBLE_SevenRoleCombat.luau')
-  self.assertEqual(len(tree)-1,7) # 6 modules + 1 server Script
+  self.assertGreaterEqual(len(tree)-1,7) # independent other writers may add sibling modules
+  self.assertEqual(sum(k.endswith('Preview') for k in tree if k!='$className'),1)
   self.assertIn('if not RunService:IsStudio() then return end',V3)
   for source in (V3,HERO):
    for banned in ('MarketplaceService','DataStoreService','RemoteEvent','TeleportService'):

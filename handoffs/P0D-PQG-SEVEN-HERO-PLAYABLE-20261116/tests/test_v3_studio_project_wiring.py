@@ -15,8 +15,11 @@ REQUIRED = {
     "EGGRUMBLE_BotActors": "EGGRUMBLE_BotActors.luau",
     "EGGRUMBLE_InteractionGuard": "EGGRUMBLE_InteractionGuard.luau",
     "EGGRUMBLE_SevenRoleCombat": "EGGRUMBLE_SevenRoleCombat.luau",
+    "EGGRUMBLE_CombatBalance": "EGGRUMBLE_CombatBalance.luau",
+    "EGGRUMBLE_SkillFX": "EGGRUMBLE_SkillFX.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
+    "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
     "EGGRUMBLE_LobbyCastleModesPreview": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
 }
 
@@ -43,6 +46,7 @@ class TestStudioProjectWiring(unittest.TestCase):
         source_files = [
             "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
             "EGGRUMBLE_BotActors.luau",
+            "EGGRUMBLE_SevenRoleCombat.luau",
         ]
         module_names = set(REQUIRED) - {"EGGRUMBLE_LobbyCastleModesPreview"}
         for filename in source_files:
