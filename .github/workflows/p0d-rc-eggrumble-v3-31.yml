@@ -1300,6 +1300,21 @@ jobs:
             --out artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json \
             --author _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116/patch_sources.py \
             --place artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
+          # Execute the exact current selected original #525 Luau callbacks in a real native VM.
+          # Copy (do not rewrite) the two selected sources to the original #525 harness filenames.
+          mkdir -p artifacts/gq515_official_select/gq525_native_current31
+          cp artifacts/gq515_official_select/GQ525_RC31_LIVE_HOST.server.luau \
+            artifacts/gq515_official_select/gq525_native_current31/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          cp artifacts/gq515_official_select/GQ525_RC31_LIVE_ITEM.luau \
+            artifacts/gq515_official_select/gq525_native_current31/EGGRUMBLE_FieldItemPickups.luau
+          python3 _gq525_original_existing_author/quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate artifacts/gq515_official_select/gq525_native_current31 \
+            --out artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
+          /tmp/gq530_all31_native/luau-compile --text artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau >/dev/null
+          /tmp/gq530_all31_native/luau artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau \
+            | tee artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
+          grep -q "NATIVE_LUAU_ITEM_MODE_GUARD.*13.*assertions PASS" \
+            artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
           echo "GQ525_REUSED_AUTHOR_ONLY_TWO_EXISTING_SCRIPTS_OTHER29_EXACT_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
@@ -1579,6 +1594,8 @@ jobs:
             artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json
             artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
             artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json
+            artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
+            artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
             artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
