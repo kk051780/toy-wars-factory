@@ -15,7 +15,7 @@ permissions:
 jobs:
   source-only:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 9
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,3 +23,18 @@ jobs:
           python-version: '3.12'
       - name: Verify isolated observer contract (NOT Studio engine)
         run: python -m unittest discover -s gq_runtime_probe/tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_pinned_luau
+          persist-credentials: false
+      - name: Compile original observer with pinned native Luau (NOT Studio engine)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_pinned_luau -B /tmp/gq_observer_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_observer_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq_observer_luau/luau-compile gq_runtime_probe/EGGRUMBLE_StudioLiveObserver.server.luau >/dev/null
+          echo "PINNED_NATIVE_LUAU_PARSE_PASS; STUDIO/ANDROID/RC_NOT_TESTED"
