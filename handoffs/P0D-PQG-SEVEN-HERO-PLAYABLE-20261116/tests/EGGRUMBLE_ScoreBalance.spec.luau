@@ -219,6 +219,51 @@ return function(Results:any):boolean
  equal(share.teamCastleSupport,12,"raw team siege captures retained for diagnostics")
  equal(share.score,90*3,"team siege bonus capped to limit passive farm")
  equal(share.objectiveScore,90*3,"team objective cap also applies to tie-break")
+ -- 6 verified post-game specialties make different roles/rewards feel distinct,
+ -- but do NOT alter match score, fake a server event, or imply global MVP.
+ local function medal(events:{any},kos:number,mode:string?):any
+  local m=state(mode or "TEAM",nil,"ACTIVE")
+  m.events=events
+  return byId(Results.build(m,{war=kos}),"war")
+ end
+ local nonContributor=medal({},0)
+ equal(nonContributor.specialty,"参加","zero actions never earn fabricated specialist award")
+ local trueCastle=medal({
+  {type="CASTLE_FALL",owner="mage",attacker="war"}
+ },0)
+ equal(trueCastle.specialty,"攻城","real castle-final-blow specialty")
+ local thiefMedal=medal({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=3},
+  {type="EGG_DEPOSIT",owner="war",quantity=3},
+ },0)
+ equal(thiefMedal.specialty,"卵奪取","returned stolen eggs beat credited deposits")
+ local lostEggMedal=medal({
+  {type="EGG_TAKEN",thief="war",source="mage",quantity=2},
+  {type="EGG_DROP",owner="war",quantity=2},
+ },0)
+ equal(lostEggMedal.specialty,"参加","unreturned theft cannot earn raid medal")
+ local fieldEvents={}
+ for i=1,3 do
+  table.insert(fieldEvents,{type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_"..i})
+  table.insert(fieldEvents,{type="EGG_DEPOSIT",owner="war",quantity=1})
+ end
+ equal(medal(fieldEvents,0).specialty,"卵運搬","real field egg returns earn deliverer")
+ equal(medal({},100).specialty,"無双","actual neutral KO score earns horde specialist")
+ local allyMedal=medal({
+  {type="CASTLE_FALL",owner="mage",attacker="assassin"}
+ },0)
+ equal(allyMedal.specialty,"共闘","real teammate castle capture earns team specialist")
+ equal(medal({
+  {type="CASTLE_FALL",owner="mage",attacker="assassin"}
+ },0,"BATTLE_ROYALE").specialty,"参加","solo royale cannot earn fake teammate medal")
+ local tieMedalEvents={}
+ for i=1,5 do
+  table.insert(tieMedalEvents,{type="FIELD_EGG_TAKEN",owner="war",eggId="FIELD_"..i})
+  table.insert(tieMedalEvents,{type="EGG_DEPOSIT",owner="war",quantity=1})
+ end
+ local tieMedal=medal(tieMedalEvents,100)
+ equal(tieMedal.specialty,"卵運搬","equal score KO and eggs uses objective-first specialty")
+ equal(tieMedal.score,600+600+200,"specialty never adds a hidden game score")
  local ties={mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,
    ids={"Z","A"},castles={Z={alive=false,isAI=true},A={alive=false,isAI=true}},events={}}
  local sorted=Results.build(ties,{})
