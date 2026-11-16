@@ -10,7 +10,11 @@ import hashlib
 from pathlib import Path
 
 SOURCE = Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau")
+RULES = SOURCE.with_name("EGGRUMBLE_CastleMatchRules.luau")
+ACTORS = SOURCE.with_name("EGGRUMBLE_BotActors.luau")
 SOURCE_BLOB = "66e666418b7c23d41f87faa5d61eb6e2770a463e"
+RULES_BLOB = "27da5ca1e9e6d9a7afe0674030e387f094ee7492"
+ACTORS_BLOB = "fa38f24a26a619238e4c6a62b3ee582dc14cfe7a"
 ORIGINAL_HEAD = "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
 
 OLD_GUARD = '''local function healAllies(session:any,player:Player,root:BasePart)
@@ -78,7 +82,10 @@ def patch(source: str) -> str:
     assert changed.count("function HeroCombat.equip") == source.count("function HeroCombat.equip")
     return changed
 
-def harness(src: str, *, fixed: bool) -> str:
+def harness(src: str, *, fixed: bool, rules: str) -> str:
+    # Execute the immutable original #482 roster authority, not fabricated AI/team IDs.
+    assert_id = source_function(rules, "local function assertId(", "\nend\nlocal function castleOf")
+    make_roster = source_function(rules, "function M.makeRoster(", "\nend\nfunction M.new")
     los = source_function(src, "local function lineClear(", "\nend\nlocal function hitBotHeroes")
     heal = source_function(src, "local function healAllies(", "\nend\n-- Status effects")
     test = r'''
@@ -112,12 +119,22 @@ local function characterOf(p)
  if not p.Character or p.h.Health<=0 then return nil,nil,nil end
  return p.Character,p.root,p.h
 end
-local session={mode="TEAM",rules={castles={
- ["1"]={team="RED",alive=true},["2"]={team="RED",alive=true},
- ["3"]={team="BLUE",alive=true},["4"]={team="RED",alive=true},
- ["AI_1"]={team="RED",alive=true},["AI_2"]={team="BLUE",alive=true},
- ["AI_3"]={team="RED",alive=true},["AI_4"]={team="RED",alive=true}
-}}}
+local peopleIds={"1","3","2","4"} -- four real humans ordered RED,BLUE,RED,BLUE
+local roster=M.makeRoster("TEAM",peopleIds,10)
+local castles={}
+for _,entry in ipairs(roster) do
+ castles[entry.id]={team=entry.team,alive=true}
+end
+local session={mode="TEAM",rules={castles=castles}}
+assert(#roster==10 and castles["1"].team=="RED" and castles["2"].team=="RED"
+ and castles["3"].team=="BLUE" and castles["4"].team=="BLUE")
+assert(castles["AI_1"].team=="RED" and castles["AI_2"].team=="BLUE"
+ and castles["AI_3"].team=="RED" and castles["AI_5"].team=="RED")
+-- Preserve the 1-human + 15-AI original producer contract as a separate solo check.
+local solo=M.makeRoster("TEAM",{"1"},16)
+assert(#solo==16 and solo[2].id=="AI_1" and solo[2].team=="BLUE"
+ and solo[3].id=="AI_2" and solo[3].team=="RED",
+ "first solo AI is hostile: never assume AI_1 is friendly")
 local function mkbot(x,hp)
  local bot={Parent=true,PrimaryPart={Position=v(x,0,0)},hum={Health=hp,MaxHealth=100}}
  function bot:FindFirstChildOfClass(name)
@@ -130,7 +147,7 @@ local goodBot=mkbot(8,50)
 local enemyBot=mkbot(6,50)
 local farBot=mkbot(28,50)
 local deadBot=mkbot(7,0)
-session.botActors={AI_1=goodBot,AI_2=enemyBot,AI_3=farBot,AI_4=deadBot}
+session.botActors={AI_1=goodBot,AI_2=enemyBot,AI_3=farBot,AI_5=deadBot}
 '''
     cases = r'''
 -- 1. Source heal and ally: a solid wall cannot be bypassed.
@@ -213,7 +230,14 @@ end
 print("MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS",FIXED and "FIXED" or "ORIGINAL_BUG_REPRODUCED")
 '''
     header = f"local FIXED={'true' if fixed else 'false'}\nlocal EXPECTED_WALL_HEALTH={60 if fixed else 85}\n"
-    return header + test + "\n" + los + "\n" + heal + "\n" + cases
+    original_roster = (
+        'local M={MODE_TEAM="TEAM",MODE_ROYALE="BATTLE_ROYALE",MAX_HERO_SLOTS=16}\n'
+        + assert_id + "\n" + make_roster + "\n"
+    )
+    return header + test.replace(
+        'local peopleIds={"1","3","2","4"}',
+        original_roster + 'local peopleIds={"1","3","2","4"}',
+    ) + "\n" + los + "\n" + heal + "\n" + cases
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -222,7 +246,22 @@ def main() -> None:
     ap.add_argument("--original-harness", type=Path, required=True)
     args = ap.parse_args()
     raw = SOURCE.read_bytes()
+    rule_bytes = RULES.read_bytes()
+    actor_bytes = ACTORS.read_bytes()
     assert git_blob(raw) == SOURCE_BLOB, "original #482 Luau blob drift: fail-closed"
+    assert git_blob(rule_bytes) == RULES_BLOB, "original #482 team roster drift: fail-closed"
+    assert git_blob(actor_bytes) == ACTORS_BLOB, "original #482 AI actor producer drift: fail-closed"
+    actor_source = actor_bytes.decode("utf-8")
+    producer_contract = (
+        'session.botActors=bots',
+        'bots[entry.id]=spawnActor(',
+        'hum.MaxHealth=100;hum.Health=100',
+        'model.PrimaryPart=base',
+        'model:SetAttribute("EGGRUMBLE_BotId",id)',
+    )
+    for exact in producer_contract:
+        assert exact in actor_source, f"original 3D AI producer contract changed: {exact}"
+    rules = rule_bytes.decode("utf-8")
     before = raw.decode("utf-8")
     after = patch(before)
     diff = list(difflib.unified_diff(before.splitlines(), after.splitlines(), lineterm=""))
@@ -230,11 +269,12 @@ def main() -> None:
     removed = sum(line.startswith("-") and not line.startswith("---") for line in diff)
     assert added == 21 and removed == 2, (added, removed, diff)
     for path, text in ((args.patched, after),
-                       (args.harness, harness(after, fixed=True)),
-                       (args.original_harness, harness(before, fixed=False))):
+                       (args.harness, harness(after, fixed=True, rules=rules)),
+                       (args.original_harness, harness(before, fixed=False, rules=rules))):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
     print("OWNER_BLOB_PIN", SOURCE_BLOB)
+    print("ORIGINAL_ROSTER_AND_3D_AI_ACTOR_CONTRACT_PINNED", RULES_BLOB, ACTORS_BLOB)
     print("MAGE_HEAL_MINIMAL_PATCH_PASS", f"added={added}", f"deleted={removed}")
     print("ORIGINAL_AUTHOR_SCRIPT_UNMODIFIED", SOURCE)
 
