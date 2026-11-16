@@ -126,8 +126,8 @@ jobs:
         working-directory: handoffs/P0D-PQG-CASTLE-DEFENSE-20261116
         run: |
           set -euo pipefail
-          /tmp/gq28_native/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau | tee ../../../artifacts/CASTLE_DEFENSE_VM.log
-          grep -q 'EGGRUMBLE_CASTLE_DEFENSE_NATIVE_POLICY_PASS 46' ../../../artifacts/CASTLE_DEFENSE_VM.log
+          /tmp/gq28_native/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau | tee ../../artifacts/CASTLE_DEFENSE_VM.log
+          grep -q 'EGGRUMBLE_CASTLE_DEFENSE_NATIVE_POLICY_PASS 46' ../../artifacts/CASTLE_DEFENSE_VM.log
       - name: Acquire checksum-verified Rojo 7.7.1 binary for private build
         run: |
           set -euo pipefail
