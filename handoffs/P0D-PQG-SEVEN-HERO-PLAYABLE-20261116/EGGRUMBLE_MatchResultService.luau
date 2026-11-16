@@ -34,10 +34,14 @@ local function resultText(session:any,player:Player,mode:string,ranking:any):(st
    break
   end
  end
- -- No persistent in-game HUD. Compact team-siege contribution is visible only
- -- in the original eight-second match result; BR shows no team share.
- return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 援%d",
-  place,points,kos,stolen,secured,eggs,fallen,teamSiege)
+ -- Never occupy the active-game HUD. Keep the author's compact eight-second
+ -- result only; BR has no teammate, so never show a meaningless "team 0".
+ if mode=="TEAM" then
+  return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 団%d",
+   place,points,kos,stolen,secured,eggs,fallen,teamSiege)
+ end
+ return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",
+  place,points,kos,stolen,secured,eggs,fallen)
 end
 
 local function makeResultGui(player:Player,title:string,stats:string,won:boolean)
