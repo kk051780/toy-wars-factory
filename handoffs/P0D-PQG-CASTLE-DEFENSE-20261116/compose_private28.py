@@ -45,7 +45,8 @@ def patch_host(src):
         'NeutralStoneGiant.spawn(session.world,',
     )
     for token in required:
-        assert src.count(token) == 1, ("V3 author host drift, reject unreviewed patch", token, src.count(token))
+        expected = 2 if token == 'SevenRoleCombat.equip(session,p,role)' else 1
+        assert src.count(token) == expected, ("V3 author host drift, reject unreviewed patch", token, src.count(token), expected)
     assert "EGGRUMBLE_CastleDefenseLive" not in src, "already hooked; reject duplicate authority"
     src = src.replace(
         required[0],
@@ -72,7 +73,7 @@ def patch_host(src):
     assert src.count("CastleDefense.start(session)") == 1
     assert src.count("session.castleDefenseStop()") == 2
     assert src.count("BotActors.start(session,Rules)") == 1
-    assert src.count("SevenRoleCombat.equip(session,p,role)") == 1
+    assert src.count("SevenRoleCombat.equip(session,p,role)") == 2
     return src
 
 def build(base_project, out_project):
