@@ -1,0 +1,71 @@
+name: P0D GQ V3 own egg deposit current session native proof
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_deposit_session_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-deposit-current-session.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-host-single-callback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original482
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: 12 negative source tests
+        run: python3 -B -m unittest discover -s quality_gameplay/v3_deposit_session_fence_20261116 -p 'test_*.py' -v
+      - name: Exact original Host Git blob lock and reversible one-callback fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _original482 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          ORIGINAL=_original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          OUT=artifacts/gq_deposit_session
+          python3 -B quality_gameplay/v3_deposit_session_fence_20261116/select_deposit.py \
+            --original "$ORIGINAL" --out "$OUT/EGGRUMBLE_LobbyCastleModesPreview_GUARDED.server.luau"
+          python3 -B quality_gameplay/v3_deposit_session_fence_20261116/select_deposit.py \
+            --original "$OUT/EGGRUMBLE_LobbyCastleModesPreview_GUARDED.server.luau" \
+            --out "$OUT/EGGRUMBLE_LobbyCastleModesPreview_ROLLBACK.server.luau" --inverse
+          cmp "$ORIGINAL" "$OUT/EGGRUMBLE_LobbyCastleModesPreview_ROLLBACK.server.luau"
+          python3 -B quality_gameplay/v3_deposit_session_fence_20261116/generate_native_cases.py \
+            --selected "$OUT/EGGRUMBLE_LobbyCastleModesPreview_GUARDED.server.luau" \
+            --out "$OUT/DEPOSIT_CURRENT_SESSION.spec.luau"
+      - name: Native Luau compile actual selected Host and run seven behavior cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq_deposit_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_deposit_luau \
+            --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq_deposit_luau/luau-compile --text artifacts/gq_deposit_session/EGGRUMBLE_LobbyCastleModesPreview_GUARDED.server.luau >/dev/null
+          /tmp/gq_deposit_luau/luau-compile --text artifacts/gq_deposit_session/DEPOSIT_CURRENT_SESSION.spec.luau >/dev/null
+          /tmp/gq_deposit_luau/luau artifacts/gq_deposit_session/DEPOSIT_CURRENT_SESSION.spec.luau | tee artifacts/gq_deposit_session/NATIVE7.log
+          grep -q GQ_DEPOSIT_CURRENT_SESSION_NATIVE_7_CASES_PASS artifacts/gq_deposit_session/NATIVE7.log
+      - name: Preserve patched original Host and exact rollback; not an official RC
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-V3-OWN-DEPOSIT-SESSION-SOURCE-ONLY
+          path: |
+            artifacts/gq_deposit_session/EGGRUMBLE_LobbyCastleModesPreview_GUARDED.server.luau
+            artifacts/gq_deposit_session/EGGRUMBLE_LobbyCastleModesPreview_ROLLBACK.server.luau
+            artifacts/gq_deposit_session/DEPOSIT_CURRENT_SESSION.spec.luau
+            artifacts/gq_deposit_session/NATIVE7.log
+          if-no-files-found: error
