@@ -2079,7 +2079,8 @@ jobs:
           assert shield_cleanup["source_count"]==31 and shield_cleanup["other30_exact"]
           assert shield_cleanup["one_source_off_rollback_exact"] and shield_cleanup["native"]=="31/31" and shield_cleanup["rojo"]=="31/31"
           assert shield_cleanup["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
-          assert m["feature_flags"]["GQ8_MULTI_SHIELD_REPLAY_CLEANUP_20261117"] is True
+          assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
+          assert len([v for v in m["feature_flags"].values() if v is True])==39
           assert m["source_heads"]["builder_wall522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
           assert m["feature_flags"]["BUILDER_WALL_SERVER_TOOL_522"] is True
           
