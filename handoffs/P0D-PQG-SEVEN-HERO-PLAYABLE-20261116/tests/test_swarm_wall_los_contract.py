@@ -69,7 +69,7 @@ class TestNeutralSwarmLineOfSight(unittest.TestCase):
         self.assertIn('h:GetAttribute("LastAttackerId")', s)
         self.assertIn("credit(id)", s)
         self.assertIn("session.swarm=api", s)
-        self.assertIn("session.swarm.damageFromPlayer(", self.preview)
+        self.assertIn("session.swarm.damageFromPlayer(", (ROOT / "EGGRUMBLE_SevenRoleCombat.luau").read_text(encoding="utf-8"))
         for forbidden in ("RemoteEvent", "MarketplaceService", "DataStoreService", "TeleportService"):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, s)
