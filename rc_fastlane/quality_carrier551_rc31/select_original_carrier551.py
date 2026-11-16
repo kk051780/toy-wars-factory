@@ -100,8 +100,8 @@ def prepare(base:Path,author_path:Path,out:Path):
     patched=previous.replace(OLD,replacement,1)
     if patched.replace(replacement,OLD,1)!=previous:
         raise ValueError("RED_GQ551_OFF_ROLLBACK_NOT_EXACT")
-    if patched.count('player.Character~=character')!=1:
-        raise ValueError("RED_GQ551_CURRENT_AVATAR_FENCE_DUPLICATED")
+    if patched.count(replacement)!=1:
+        raise ValueError("RED_GQ551_SELECTED_CARRIER_GUARD_DUPLICATED")
     # Ensure original 30 source files are the *existing latest official selected* sources.
     if "SpawnPacing.step(" not in oldfiles[SWARM].read_text(encoding="utf-8") or "nearest.humanoid:TakeDamage(Melee.DAMAGE)" not in oldfiles[SWARM].read_text(encoding="utf-8"):
         raise ValueError("RED_GQ541_SWARM_LOST")
