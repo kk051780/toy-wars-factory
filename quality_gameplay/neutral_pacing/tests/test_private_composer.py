@@ -33,16 +33,17 @@ class TestPrivateComposer(unittest.TestCase):
 
     def test_neutral_death_credit_excludes_finished_round_or_fallen_owner(self):
         after=COMPOSE.patch_swarm(self.swarm)
-        guard=('if type(id)=="string" and session.rules.phase=="ACTIVE"\\n'
-               '    and session.rules.castles[id] and session.rules.castles[id].alive then')
-        self.assertIn(guard,after)
+        lines=after.splitlines()
+        guarded='   if type(id)=="string" and session.rules.phase=="ACTIVE"'
+        owner='    and session.rules.castles[id] and session.rules.castles[id].alive then'
+        self.assertEqual(lines.count(guarded),1)
+        self.assertEqual(lines.count(owner),1)
+        self.assertEqual(lines[lines.index(guarded)+1],owner)
         self.assertEqual(after.count("h.Died:Connect("),1)
-        self.assertEqual(after.count("\n    credit(id)"),1)
         self.assertEqual(after.count("ImpactFeedback.ko("),1)
-        self.assertLess(after.index(guard),after.index("\n    credit(id)"))
-        # This new condition must be impossible in FINISHED/ABANDONED and
-        # for an eliminated castle, while remaining reachable for living
-        # participants in ACTIVE state. Do not conflate with Studio proof.
+        self.assertEqual(lines.count("    credit(id)"),1)
+        self.assertLess(lines.index(owner),lines.index("    credit(id)"))
+        # Source-only negative eligibility matrix; real Studio is separate.
         for phase,alive,expected in (
             ("ACTIVE",True,True),("ACTIVE",False,False),
             ("FINISHED",True,False),("ABANDONED",True,False)):
