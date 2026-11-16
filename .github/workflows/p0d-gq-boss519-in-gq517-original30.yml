@@ -1,4 +1,4 @@
-name: P0D GQ #518 boss and #520+#523 field in existing original 30 source
+name: P0D GQ #518 boss #520 ridge #523 field #524 warp in original30
 on:
   push:
     branches:
@@ -97,6 +97,13 @@ jobs:
           repository: kk051780/toy-wars-factory
           ref: 7447761aee570f54d57d125e79d21c9cb05bc889
           path: _egg_original
+          persist-credentials: false
+      - name: Original #524 sole Combat movement safety author (reuse exactly)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f90875e14446ba86b1c668ba43efa37fbc74be20
+          path: _warp_original
           persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
         shell: bash
@@ -416,6 +423,62 @@ jobs:
           python3 -B quality_gameplay/boss_los_30source_intake_20261116/compose_8domain.py verify \
             --project artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
             --place artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+      - name: Source-select original #524 safeMove into existing #518+#520+#523 30 source, no additional script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _warp_original rev-parse HEAD)" = f90875e14446ba86b1c668ba43efa37fbc74be20
+          test "$(git -C _game_original hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau)" = 66e666418b7c23d41f87faa5d61eb6e2770a463e
+          python3 -B -m unittest discover -q -s _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/tests
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/extend_warp.py prepare \
+            --base artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            --receipt artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL8DOMAIN30_RECEIPT.json \
+            --author-tool _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/patch_safe_warp.py \
+            --outdir artifacts/GQ521_BOSS_FIELD_WARP30
+          python3 _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/make_native_warp_harness.py \
+            --patched artifacts/GQ521_BOSS_FIELD_WARP30/EGGRUMBLE_SevenRoleCombat.luau \
+            --out artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau | tee artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+          grep -q GQ_SAFE_WARP_ORIGINAL_PATCHED_LUAU_11_SCENARIOS_PASS artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json")
+          tree=json.loads(project.read_text())["tree"]
+          names=set()
+          def visit(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(p)],
+                                check=True,stdout=subprocess.DEVNULL)
+                  name=p.name
+                  assert name not in names,("duplicate source filename",name)
+                  names.add(name)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):visit(v)
+          visit(tree)
+          assert len(names)==30
+          print("GQ521_518_520_523_524_ORIGINAL_30_LUAU_ALL_COMPILE_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json \
+            -o artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/extend_warp.py verify \
+            --project artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json \
+            --place artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-ORIGINAL-518-520-523-524-SINGLE-GAME30-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+            artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json
+            artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_4_AUTHORS30_RECEIPT.json
+            artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+            artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
           name: GQ521-ORIGINAL-518-520-523-SINGLE-GAME30-PRIVATE-NOT-RC
