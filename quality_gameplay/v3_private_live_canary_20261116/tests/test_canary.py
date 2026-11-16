@@ -60,7 +60,7 @@ class PrivateLiveCanaryTests(unittest.TestCase):
         self.assertIn("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,true)", gate)
         self.assertIn("ReplicatedStorage:SetAttribute(Gate.READY_ATTRIBUTE,false)", gate)
         self.assertIn("if world.Parent then world:Destroy() end",gate)
-        self.assertIn("while world.Parent and Gate.serverAllowed()",gate)
+        self.assertIn("while activeWorld==world and world.Parent and Gate.serverAllowed()",gate)
 
     def test_only_isolated_original_21_plus_gate_are_mapped(self):
         maps = compose.mapped_files(json.loads(compose.PROJECT.read_text()))
