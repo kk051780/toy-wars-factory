@@ -13,6 +13,7 @@ local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_Interaction
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
+local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -65,6 +66,12 @@ local function createWorldCastle(session:any,entry:any,index:number)
  local side=if session.mode=="TEAM" then entry.team else (if index%2==1 then "RED" else "BLUE")
  local tint=if side=="RED" then Color3.fromRGB(207,92,86) else Color3.fromRGB(87,146,218)
  local ground=block(model,"StandardFoundation",at+Vector3.new(0,-2,0),Vector3.new(72,3,72),tint)
+ -- Physical castle access shared by every owner.
+ local ramp=block(model,"CastleAccessRamp",at+Vector3.new(0,-3.15,-45),
+  Vector3.new(11,.8,20),Color3.fromRGB(153,145,128))
+ ramp.CFrame=CFrame.new(at+Vector3.new(0,-3.15,-45))
+  *CFrame.Angles(-math.atan(4.5/20),0,0)
+ ramp.Material=Enum.Material.Slate
  -- Hollow, traversable standard castle shell: every owner gets the same entrance and geometry.
  local core=block(model,"StandardCore",at+Vector3.new(0,14,0),Vector3.new(30,2,27),Color3.fromRGB(172,166,147))
  core.Material=Enum.Material.Brick
@@ -248,7 +255,7 @@ local function startSession(mode:string)
  for i=1,24 do
   local col=(i-1)%8;local row=math.floor((i-1)/8)
   local worldX=mode=="TEAM" and -620 or 620
-  local at=root+Vector3.new(worldX+(col-3.5)*93,3,290+row*200)
+  local at=root+Vector3.new(worldX+(col-3.5)*93,-1.35,290+row*200)
   local eggId="FIELD_"..i
   local egg=block(session.world,"FieldEgg_"..i,at,Vector3.new(2.6,3.3,2.6),Color3.fromRGB(238,214,108))
   egg.Shape=Enum.PartType.Ball
@@ -257,7 +264,16 @@ local function startSession(mode:string)
    if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
   end)
  end
+ -- Twelve fair HEAL/DASH/SHIELD pickups, four per type on existing three lanes.
+ local itemPositions:{Vector3}={}
+ for lane=1,3 do
+  for slot=1,4 do
+   table.insert(itemPositions,root+Vector3.new(
+    worldX+(slot-2.5)*150,-.95,295+(lane-1)*170))
+  end
+ end
  Rules.start(session.rules)
+ FieldItems.start(session,itemPositions)
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?

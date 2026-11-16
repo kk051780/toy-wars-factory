@@ -13,6 +13,7 @@ local SIEGE_INTERVAL=1.6
 local BOT_ATTACK_INTERVAL=1.15
 local BOT_HERO_DAMAGE=13
 local BOT_REBIRTH=6.0
+local FIELD_EGG_SEARCH_RADIUS=145
 
 local function makePart(m:Model,name:string,at:Vector3,size:Vector3,color:Color3,collide:boolean):Part
  local p=Instance.new("Part")
@@ -66,6 +67,27 @@ local function desiredTarget(session:any,mode:string,my:any):any
  end
  return target
 end
+-- Server-owned world egg parts are physically present in this private preview.
+-- Identify only the exact single-use Rules token associated with each part.
+-- This is separate from the original author's special FieldItem pickups.
+local function nearestWorldEgg(session:any,at:Vector3):(string?,BasePart?,number)
+ local chosenId:string?=nil
+ local chosenPart:BasePart?=nil
+ local best=FIELD_EGG_SEARCH_RADIUS
+ for _,part in ipairs(session.world:GetChildren()) do
+  if part:IsA("BasePart") then
+   local serial=part.Name:match("^FieldEgg_(%d+)$")
+   local released=part.Name:match("^ReleasedEgg_(RELEASE_%d+)$")
+    or part.Name:match("^ReleasedEgg_(CARRIER_DROP_%d+)$")
+   local eggId=if serial then "FIELD_"..serial else released
+   if eggId and session.rules.fieldEggTokens[eggId]==true then
+    local dist=(Vector3.new(at.X,0,at.Z)-Vector3.new(part.Position.X,0,part.Position.Z)).Magnitude
+    if dist<best then chosenId=eggId;chosenPart=part;best=dist end
+   end
+  end
+ end
+ return chosenId,chosenPart,best
+end
 -- A short action radius is not enough: side-wall adjacency must not let AI
 -- steal vault eggs, deposit or damage castles through collidable geometry.
 -- Stop the cast just before its interactable (vault/door/deposit) target part.
@@ -91,7 +113,7 @@ local function clearHeroStrike(actor:Model,target:Model,origin:Vector3,destinati
  -- A solid castle core, wall, or gate must prevent a bot hero strike.
  return workspace:Raycast(origin,delta,params)==nil
 end
-local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:number}):boolean
+local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:number},bots:{[string]:Model}):boolean
  local at=actor:GetPivot().Position
  local now=os.clock()
  if now-(lastHit[my.id] or 0)<BOT_ATTACK_INTERVAL then return false end
@@ -107,6 +129,25 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
     and clearHeroStrike(actor,character,at+Vector3.new(0,1.5,0),root.Position+Vector3.new(0,1,0)) then
     lastHit[my.id]=now
     h:TakeDamage(BOT_HERO_DAMAGE)
+    return true
+   end
+  end
+ end
+ -- Enemy moving AI heroes must fight one another in bot-filled matches, too.
+ -- Shares the real melee cooldown, actor humanoid HP and collision LOS.
+ for targetId,targetActor in pairs(bots) do
+  local enemyCastle=session.rules.castles[targetId]
+  if enemyCastle and enemyCastle.alive and enemyCastle.id~=my.id
+   and (session.mode~="TEAM" or enemyCastle.team~=my.team)
+   and targetActor~=actor and targetActor.Parent then
+   local targetRoot=targetActor.PrimaryPart
+   local targetHumanoid=targetActor:FindFirstChildOfClass("Humanoid")
+   if targetRoot and targetHumanoid and targetHumanoid.Health>0
+    and (targetRoot.Position-at).Magnitude<11
+    and clearHeroStrike(actor,targetActor,at+Vector3.new(0,1.5,0),
+     targetRoot.Position+Vector3.new(0,1,0)) then
+    lastHit[my.id]=now
+    targetHumanoid:TakeDamage(BOT_HERO_DAMAGE)
     return true
    end
   end
@@ -129,7 +170,7 @@ function BotActors.start(session:any,Rules:any):()
   if entry.isAI then
    local pos=session.castleLocations[entry.id]
    if pos then
-    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,5,-34),entry.team)
+    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,-1.5,-34),entry.team)
    end
   end
  end
@@ -152,10 +193,10 @@ function BotActors.start(session:any,Rules:any):()
         local home=session.castleLocations[id]
         Router.clear(mode..":"..id)
         actor:Destroy()
-        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,5,-34),me.team) end
+        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-1.5,-34),me.team) end
        end
       else
-       tryHeroAttack(actor,me,session,lastHit)
+       tryHeroAttack(actor,me,session,lastHit,bots)
        if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end
        local enemy=desiredTarget(session,mode,me)
        if enemy then
@@ -166,26 +207,44 @@ function BotActors.start(session:any,Rules:any):()
          local hasEgg=enemy.vaultEggs>0
          local front=enemyLoc+Vector3.new(0,3,-26)
          local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
+         local fieldId:string?=nil
+         local fieldPart:BasePart?=nil
+         local fieldDist=math.huge
+         if not goHome then
+          fieldId,fieldPart,fieldDist=nearestWorldEgg(session,actor:GetPivot().Position)
+         end
+         -- Field eggs are actual objectives, not unused props. While right at
+         -- an enemy vault, finish that raid; otherwise pick nearby field eggs.
+         local collectField=fieldId~=nil and fieldPart~=nil
+          and (not hasEgg or (not nearFront and fieldDist<115))
          local goal=if goHome then own+Vector3.new(-16,3,-18)
+          elseif collectField and fieldPart then fieldPart.Position
           elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)
           else enemyLoc+Vector3.new(0,3,-12)
-         goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
+         goals[id]=if goHome then "RETURN" elseif collectField then "FIELD_EGG" elseif hasEgg then "STEAL" else "SIEGE"
          local slow=if (actor:GetAttribute("EGGRUMBLE_SlowUntil") or 0)>now then .45 else 1
          local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK*slow,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
-          ui.Text=id.."\n"..(if goHome then "🥚 卵を帰還" elseif hasEgg then "🥚 敵城に潜入" else "⚔ 城攻め")
+          ui.Text=id.."\n"..(if goHome then "🥚 卵を帰還" elseif collectField then "🥚 野外卵を回収" elseif hasEgg then "🥚 敵城に潜入" else "⚔ 城攻め")
          end
          -- A bot cannot steal eggs, deposit them or attack from across the map.
          local at=actor:GetPivot().Position
          local actualTarget=if goHome then own+Vector3.new(-16,3,-18)
+          elseif collectField and fieldPart then fieldPart.Position
           elseif hasEgg then enemyLoc+Vector3.new(0,3,6)
           else enemyLoc+Vector3.new(0,3,-12)
          local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
          if actualDist<=ACTION_DISTANCE and clearActionPath(actor,actors,actualTarget) then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
+          elseif collectField and fieldId and fieldPart and fieldPart.Parent==session.world
+           and session.rules.fieldEggTokens[fieldId]==true then
+           -- Atomic server-issued token spend; world visual disappears only
+           -- after successful pickup. Concurrent human prompt attempts fail safe.
+           local ok=pcall(function() Rules.takeFieldEgg(session.rules,id,fieldId) end)
+           if ok then fieldPart:Destroy() end
           elseif hasEgg then
            pcall(function() Rules.takeEggs(session.rules,id,1,enemy.id) end)
           elseif now-(lastSiege[id] or 0)>=SIEGE_INTERVAL then
@@ -221,7 +280,7 @@ function BotActors.start(session:any,Rules:any):()
   if not home then return false end
   -- Keep the disconnected player's castle in the match under equal-budget AI defense.
   state.isAI=true
-  bots[id]=spawnActor(actors,id,home+Vector3.new(0,5,-34),state.team)
+  bots[id]=spawnActor(actors,id,home+Vector3.new(0,-1.5,-34),state.team)
   return true
  end
 end

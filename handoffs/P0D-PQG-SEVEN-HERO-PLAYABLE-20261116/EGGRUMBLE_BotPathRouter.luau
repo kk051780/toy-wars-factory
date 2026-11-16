@@ -25,12 +25,15 @@ local function raycastParams(actors:Instance):RaycastParams
  params.RespectCanCollide=true
  return params
 end
+local function walkableSurface(pos:Vector3,actors:Instance):Vector3?
+ -- A ceiling/leaf, steep cliff or empty gap cannot be used as a walkable floor.
+ -- Ray from near the moving bot's feet; never snap to a high distant roof.
+ local result=workspace:Raycast(pos+Vector3.new(0,2,0),Vector3.new(0,-16,0),raycastParams(actors))
+ if not result or not result.Instance.CanCollide or result.Normal.Y<.65 then return nil end
+ return Vector3.new(pos.X,result.Position.Y+2.0,pos.Z)
+end
 local function surfaceAt(pos:Vector3,actors:Instance):Vector3
- -- Use the collidable mesh to estimate the foot position of the anchored preview model.
- -- Start near the actor foot, not above a roof: castle ceilings are not walking ground.
- local result=workspace:Raycast(pos+Vector3.new(0,1,0),Vector3.new(0,-70,0),raycastParams(actors))
- if result then return Vector3.new(pos.X,result.Position.Y+2.0,pos.Z) end
- return pos
+ return walkableSurface(pos,actors) or pos
 end
 local function routeClear(from:Vector3,to:Vector3,actors:Instance):boolean
  local diff=planar(from,to)
@@ -134,9 +137,21 @@ function Router.navigate(id:string,model:Model,goal:Vector3,dt:number,actors:Ins
   return remain
  end
  local next=here+direction*step
- local grounded=surfaceAt(next,actors)
- -- Preview skeleton parts are anchored. Follow the navmesh path but avoid fake flight.
- local smoothed=Vector3.new(next.X,math.clamp(grounded.Y,here.Y-2,here.Y+2),next.Z)
+ local grounded=walkableSurface(next,actors)
+ if grounded==nil then
+  -- A failed/stale navmesh route may point across an unsupported ledge.
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  return remain
+ end
+ local rise=grounded.Y-here.Y
+ if rise>2.25 or rise< -5.5 then
+  -- Never climb a 4.5-stud castle foundation by teleporting upward.
+  -- The standard castle now provides the physical entrance ramp.
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  return remain
+ end
+ -- Anchored preview rig; server still verifies actual ground before every PivotTo.
+ local smoothed=Vector3.new(next.X,grounded.Y,next.Z)
  model:PivotTo(CFrame.lookAt(smoothed,smoothed+direction))
  if planar(state.lastPos,smoothed).Magnitude>=2.5 then
   state.lastPos=smoothed;state.lastProgressAt=os.clock()

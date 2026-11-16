@@ -1,0 +1,123 @@
+name: P0D GQ V3 Spatial Bot Source QA
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-gq-spatial-bot-20261116.yml'
+  push:
+    branches:
+      - 'quality/eggrumble-v3-spatial-bot-intake-20261116'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  spatial-source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python negative/positive source checks (not Roblox runtime)
+        run: python -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_bot_spatial_quality.py -v
+      - name: Field egg AI mutation and actual source guards
+        run: python -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_bot_field_egg_quality.py -v
+      - name: Real V3 item lane source integration mutation tests
+        run: python -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_v3_field_items_integration.py -v
+      - name: Verify all V3 sibling ModuleScripts are mapped and present
+        run: python -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_v3_studio_project_wiring.py -v
+      - name: Detect missing cross-lane battle modules and client/server mixups
+        run: python -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_v3_cross_lane_runtime_closure.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Pinned Luau native compiler (targeted source only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d-gq-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-gq-native --target Luau.Compile.CLI --parallel 4
+          base='handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116'
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_BotActors.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_BotPathRouter.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_LobbyCastleModesPreview.server.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_InteractionGuard.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_SevenRoleCombat.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_MatchResultService.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_FieldItemPickups.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_CombatBalance.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_SkillFX.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_RoundReplay.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_AttackGeometry.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_ImpactFeedback.luau" >/dev/null
+      - name: Pinned Rojo source-exact Studio preview Place build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo_v3.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo_v3.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_rojo_v3.zip') as z:
+              names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              binary=Path('/tmp/p0d_rojo_v3')
+              binary.write_bytes(z.read(names[0]))
+              binary.chmod(0o755)
+          PY
+          /tmp/p0d_rojo_v3 build handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_STUDIO_SOURCE_ONLY.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,xml.etree.ElementTree as ET
+          base=Path('handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          expected={
+              'EGGRUMBLE_CastleMatchRules':('ModuleScript','EGGRUMBLE_CastleMatchRules.luau'),
+              'EGGRUMBLE_BotPathRouter':('ModuleScript','EGGRUMBLE_BotPathRouter.luau'),
+              'EGGRUMBLE_BotActors':('ModuleScript','EGGRUMBLE_BotActors.luau'),
+              'EGGRUMBLE_InteractionGuard':('ModuleScript','EGGRUMBLE_InteractionGuard.luau'),
+              'EGGRUMBLE_SevenRoleCombat':('ModuleScript','EGGRUMBLE_SevenRoleCombat.luau'),
+              'EGGRUMBLE_MatchResultService':('ModuleScript','EGGRUMBLE_MatchResultService.luau'),
+              'EGGRUMBLE_FieldItemPickups':('ModuleScript','EGGRUMBLE_FieldItemPickups.luau'),
+              'EGGRUMBLE_RoundReplay':('ModuleScript','EGGRUMBLE_RoundReplay.luau'),
+              'EGGRUMBLE_AttackGeometry':('ModuleScript','EGGRUMBLE_AttackGeometry.luau'),
+              'EGGRUMBLE_ImpactFeedback':('ModuleScript','EGGRUMBLE_ImpactFeedback.luau'),
+              'EGGRUMBLE_CombatBalance':('ModuleScript','EGGRUMBLE_CombatBalance.luau'),
+              'EGGRUMBLE_SkillFX':('ModuleScript','EGGRUMBLE_SkillFX.luau'),
+              'EGGRUMBLE_SwarmCombat':('ModuleScript','EGGRUMBLE_SwarmCombat.luau'),
+              'EGGRUMBLE_LobbyCastleModesPreview':('Script','EGGRUMBLE_LobbyCastleModesPreview.server.luau')
+          }
+          built=Path('artifacts/EGGRUMBLE_V3_STUDIO_SOURCE_ONLY.rbxlx')
+          tree=ET.fromstring(built.read_bytes())
+          got={}
+          for item in tree.iter('Item'):
+              prop=item.find('Properties')
+              if prop is None:continue
+              name=prop.findtext("string[@name='Name']")
+              if name not in expected:continue
+              assert name not in got,('duplicate Script',name)
+              code=prop.findtext("string[@name='Source']")
+              if code is None:code=prop.findtext("ProtectedString[@name='Source']")
+              assert code is not None,('no SOURCE',name)
+              cls,source=expected[name]
+              assert item.attrib['class']==cls,(name,item.attrib['class'],cls)
+              assert code.replace('\r\n','\n')==(base/source).read_text(encoding='utf-8').replace('\r\n','\n'),('source mismatch',name)
+              got[name]=True
+          assert set(got)==set(expected),(set(got),set(expected))
+          digest=hashlib.sha256(built.read_bytes()).hexdigest()
+          print('EGGRUMBLE_V3_FOURTEEN_REAL_STUDIO_SOURCE_IDENTITIES_PASS',len(got))
+          print('PRIVATE_SOURCE_ONLY_PLACE_BYTES',built.stat().st_size,'SHA256',digest)
+          Path('artifacts/SOURCE_ONLY_STATUS.txt').write_text(
+              'Rojo 14/14 source identities PASS\nStudio real play NOT_RUN\nAndroid NOT_RUN\nOfficial RC NOT_INTEGRATED\nOWNER_ACCEPTED=0\n',encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-V3-FOURTEEN-SCRIPT-ROJO-SOURCE-ONLY
+          path: artifacts/
+          retention-days: 7
+
+
