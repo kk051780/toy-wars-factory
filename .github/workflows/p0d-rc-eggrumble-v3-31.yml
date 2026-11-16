@@ -315,7 +315,7 @@ jobs:
         env:
           GQ_AUTHOR489_ITEM: _gq_original_item489/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
           GQ_AUTHOR482_ITEM: _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
-          GQ_BASE31_PROJECT: artifacts/gq530_all31/GQ31_ON.project.json
+          GQ_BASE31_PROJECT: artifacts/gq541_official_select/GQ31_SELECTED.project.json
         shell: bash
         run: |
           set -euo pipefail
@@ -324,13 +324,13 @@ jobs:
           python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py prepare \
             --base "$GQ_BASE31_PROJECT" \
             --item "$GQ_AUTHOR489_ITEM" \
-            --out artifacts/gq530_all31/GQ31_ITEM489_ON.project.json
+            --out artifacts/gq541_official_select/GQ31_GQ541_ITEM489_ON.project.json
           python3 - <<'PY'
           from pathlib import Path
           import subprocess,sys
           sys.path.insert(0,"rc_fastlane/quality_item489_rc31")
           from select_original_item489 import flatten
-          _,source=flatten(Path("artifacts/gq530_all31/GQ31_ITEM489_ON.project.json"))
+          _,source=flatten(Path("artifacts/gq541_official_select/GQ31_GQ541_ITEM489_ON.project.json"))
           assert len(source)==31
           for _,f in source.items():
             subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
@@ -342,24 +342,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          /tmp/gq530-all31-rojo build artifacts/gq530_all31/GQ31_ITEM489_ON.project.json \
-            -o artifacts/gq530_all31/GQ31_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
+          /tmp/gq530-all31-rojo build artifacts/gq541_official_select/GQ31_GQ541_ITEM489_ON.project.json \
+            -o artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
           python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py verify \
-            --base artifacts/gq530_all31/GQ31_ON.project.json \
-            --out artifacts/gq530_all31/GQ31_ITEM489_ON.project.json \
-            --place artifacts/gq530_all31/GQ31_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-          test -s artifacts/gq530_all31/GQ31_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-          test -s artifacts/gq530_all31/GQ31_ON_PRIVATE.rbxlx
-          echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ31_ON_PRIVATE; FORMAL_RC_ADOPTION=0"
+            --base artifacts/gq541_official_select/GQ31_SELECTED.project.json \
+            --out artifacts/gq541_official_select/GQ31_GQ541_ITEM489_ON.project.json \
+            --place artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
+          test -s artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
+          test -s artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx
+          echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ541_SELECTED_31_TRUE_ROJO; FORMAL_RC_ADOPTION=0"
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: GQ-ORIGINAL489-ITEM-SELECTED-PRIVATE31-ONLY-NOT-RC
           path: |
-            artifacts/gq530_all31/GQ31_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
-            artifacts/gq530_all31/GQ31_ITEM489_ON.project.json
-            artifacts/gq530_all31/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
-            artifacts/gq530_all31/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq541_official_select/GQ541_ITEM489_ON_PRIVATE_NOT_OFFICIAL.rbxlx
+            artifacts/gq541_official_select/GQ31_GQ541_ITEM489_ON.project.json
+            artifacts/gq541_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
+            artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           if-no-files-found: error
           retention-days: 3
