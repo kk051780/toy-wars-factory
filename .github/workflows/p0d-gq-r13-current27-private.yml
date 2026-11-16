@@ -115,7 +115,7 @@ jobs:
                           if not k.startswith('$'):yield from scripts(v)
           paths=list(scripts(json.loads(project.read_text())['tree']))
           assert len(paths)==27 and len(set(paths))==27
-          assert sum(p.name.endswith('.server.luau') for p in paths)==2
+          assert sum(p.name.endswith('.server.luau') for p in paths)==5  # lobby1 + ART3 + grace1
           assert sum(p.name.endswith('.client.luau') for p in paths)==3
           for path in paths:
               subprocess.run(['/tmp/gq_r13_current27_luau/luau-compile','--text',str(path)],
