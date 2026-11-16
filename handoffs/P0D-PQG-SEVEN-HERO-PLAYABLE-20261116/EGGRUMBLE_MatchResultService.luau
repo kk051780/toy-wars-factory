@@ -26,11 +26,17 @@ local function resultText(session:any,player:Player,mode:string,ranking:any):(st
  if session.swarm and session.swarm.kills then kos=session.swarm.kills[id] or 0 end
  local eggs=castle.depositedEggs or 0
  local fallen=castleEliminations(session.rules.events or {},id)
- local place=0;local points=0;local stolen=0
+ local place=0;local points=0;local stolen=0;local secured=0
  for index,row in ipairs(ranking.rows) do
-  if row.id==id then place=index;points=row.score;stolen=row.stolen;break end
+  if row.id==id then
+   place=index;points=row.score;stolen=row.stolen;secured=row.securedSteals
+   break
+  end
  end
- return status,string.format("%d位 %d点｜KO%d 卵%d/%d 城%d",place,points,kos,stolen,eggs,fallen)
+ -- Show attempts AND completed returns so dying with stolen eggs never looks
+ -- like a successful raid. Keep the original compact eight-second GUI.
+ return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",
+  place,points,kos,stolen,secured,eggs,fallen)
 end
 
 local function makeResultGui(player:Player,title:string,stats:string,won:boolean)
