@@ -108,6 +108,10 @@ local session={
  mode="TEAM",rules={phase="ACTIVE",winner=nil,castles={["1337"]=owner}},
  world=folder,roster={{id="1337",isAI=false}},castleLocations={}
 }
+local activeSession=session
+session.isCurrentHuman=function(candidate)
+ return activeSession==session and candidate==p
+end
 script={Parent={WaitForChild=function(_,name)
  check(name=="EGGRUMBLE_BuilderPlacementPolicy","POLICY_DEPENDENCY")
  return "./EGGRUMBLE_BuilderPlacementPolicy"
@@ -132,6 +136,22 @@ pending[1].callback()
 check(created[1].Parent==nil,"EXPIRED_CALLBACK_IDEMPOTENT")
 pending[2].callback()
 check(created[1].Parent==nil,"STALE_WATCHDOG_NO_RECREATE")
+
+-- Same mode is not proof of the current session: original #531 Host owns
+-- session.isCurrentHuman and rejects an old arena even if role and roster match.
+activeSession=nil
+ok,reason=Build.place(session,p,"WALL",true)
+check(not ok and reason=="NOT_AUTHORIZED","STALE_SAME_MODE_SESSION")
+activeSession=session
+session.isCurrentHuman=nil
+ok,reason=Build.place(session,p,"WALL",true)
+check(not ok and reason=="NOT_AUTHORIZED","MISSING_LIVE_MEMBERSHIP_CALLBACK")
+session.isCurrentHuman=function(_) error("retired session") end
+ok,reason=Build.place(session,p,"WALL",true)
+check(not ok and reason=="NOT_AUTHORIZED","MEMBERSHIP_CALLBACK_ERROR_FAIL_CLOSED")
+session.isCurrentHuman=function(candidate)
+ return activeSession==session and candidate==p
+end
 
 -- Non-collidable body parts MUST still block an actual new wall.
 local humModel={FindFirstChildOfClass=function(_,kind)
