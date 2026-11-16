@@ -1,0 +1,186 @@
+name: P0D GQ V3 original 7-domain ART SCORE plus raid-alert 27 source PRIVATE
+on:
+  pull_request:
+    paths:
+      - 'quality_repair/EGGRUMBLE_V3_GQ_RAID_ALERT27_20261116/**'
+      - '.github/workflows/p0d-gq-raid-alerts-27-source-composite.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-selective-27:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch immutable original game owner PR482
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Fetch immutable existing GQ 26-source composer and AI owned fixes PR484
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          path: _v3_quality
+          persist-credentials: false
+      - name: Fetch original ART author PR485
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Fetch original SCORE author PR487
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Confirm all locked author heads and own source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 2aeb4fd856657c9298a2763d9204d0c9d9b031cb
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+      - name: Compose original author's ART and unmodified #484 26-source game/ART/SCORE
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_LATEST_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_LATEST_ART.project.json \
+            --out artifacts/EGGRUMBLE_V3_GQ_26.project.json
+      - name: Add ONLY #495 original alert source and minimal host hooks to composite
+        run: |
+          set -euo pipefail
+          python3 quality_repair/EGGRUMBLE_V3_GQ_RAID_ALERT27_20261116/compose_alert_intake.py \
+            --baseline-project artifacts/EGGRUMBLE_V3_GQ_26.project.json \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_V3_GQ_RAID_ALERT27.project.json
+      - name: Checkout pinned Luau CLI for exact 27 source compile and original SCORE VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile all 27 and run original source-exact gameplay alert harness
+        run: |
+          set -euo pipefail
+          cmake -S _luau_fixed -B /tmp/raid27_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/raid27_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_V3_GQ_RAID_ALERT27.project.json").resolve()
+          def walk(node):
+              if isinstance(node,dict):
+                  if "$path" in node:yield (project.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for key,child in node.items():
+                          if not key.startswith("$"):yield from walk(child)
+          source=list(walk(json.loads(project.read_text(encoding="utf-8"))["tree"]))
+          assert len(source)==27,len(source)
+          for file in source:
+              subprocess.run(["/tmp/raid27_luau/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_ORIGINAL_GAME_ART_SCORE_ALERT_NATIVE_27_OF_27_PASS")
+          PY
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_gameplay_harness.py --out /tmp/raid27-native-gameplay.luau
+          /tmp/raid27_luau/luau /tmp/raid27-native-gameplay.luau
+          mkdir -p /tmp/raid27_score
+          score=_v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          cp "$score/EGGRUMBLE_ScoreBalance.luau" /tmp/raid27_score/Results.luau
+          cp "$score/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/raid27_score/Cases.luau
+          cp "$score/tests/run_score_balance_native.luau" /tmp/raid27_score/Runner.luau
+          (cd /tmp/raid27_score && /tmp/raid27_luau/luau Runner.luau) | tee artifacts/ORIGINAL_SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/ORIGINAL_SCORE_NATIVE.log
+      - name: Fetch SHA256 pinned Rojo 7.7.1 and build private Place, NO publish
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/raid27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/raid27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/raid27_rojo.zip') as archive:
+              names=[n for n in archive.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              out=Path('/tmp/raid27_rojo')
+              out.write_bytes(archive.read(names[0]));out.chmod(0o755)
+          PY
+          /tmp/raid27_rojo build artifacts/EGGRUMBLE_V3_GQ_RAID_ALERT27.project.json -o artifacts/EGGRUMBLE_GQ_RAID_ALERT27_PRIVATE.rbxlx
+      - name: Exact original source identity and all 27 embedded script byte + class proof
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('artifacts/EGGRUMBLE_V3_GQ_RAID_ALERT27.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_GQ_RAID_ALERT27_PRIVATE.rbxlx')
+          receipt_file=Path('artifacts/RAID_ALERT27_SOURCE_RECEIPT.json')
+          receipt=json.loads(receipt_file.read_text(encoding='utf-8'))
+          tree=json.loads(project.read_text(encoding='utf-8'))['tree']
+          expected={}
+          def walk(node,trail=()):
+              for name,val in node.items():
+                  if name.startswith('$') or not isinstance(val,dict):continue
+                  next_key=trail+(name,)
+                  if '$path' in val:
+                      p=(project.parent/val['$path']).resolve(strict=True)
+                      cls='Script' if p.name.endswith('.server.luau') else ('LocalScript' if p.name.endswith('.client.luau') else 'ModuleScript')
+                      assert name not in expected
+                      code=p.read_text(encoding='utf-8').replace('\r\n','\n')
+                      expected[name]=(cls,code)
+                      assert receipt['source_sha256']['/'.join(next_key)]==hashlib.sha256(p.read_bytes()).hexdigest()
+                  else:walk(val,next_key)
+          walk(tree)
+          assert len(expected)==27
+          assert sum(cls=='Script' for cls,_ in expected.values())==4
+          assert sum(cls=='LocalScript' for cls,_ in expected.values())==3
+          assert sum(cls=='ModuleScript' for cls,_ in expected.values())==20
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              cls=item.attrib.get('class')
+              if cls not in ('Script','LocalScript','ModuleScript'):continue
+              props=item.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name not in actual,('duplicate embedded script',name)
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,('missing source',name)
+              actual[name]=(cls,source.replace('\r\n','\n'))
+          assert expected==actual,('script source/class drift',set(expected)^set(actual),
+                                    [n for n in set(expected)&set(actual) if expected[n]!=actual[n]])
+          receipt['private_place_bytes']=place.stat().st_size
+          receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt['candidate_head']=os.environ['GITHUB_SHA']
+          receipt_file.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('GQ_RAID_ALERT_ORIGINAL_7_DOMAIN_ART_SCORE_EXACT_27_OF_27_PASS',
+                receipt['private_place_bytes'],receipt['private_place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-27-ORIGINAL-ART-SCORE-RAID-ALERT-NO-RC
+          path: |
+            artifacts/EGGRUMBLE_GQ_RAID_ALERT27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_V3_GQ_RAID_ALERT27.project.json
+            artifacts/RAID_ALERT27_SOURCE_RECEIPT.json
+            artifacts/ORIGINAL_SCORE_NATIVE.log
+          retention-days: 3
