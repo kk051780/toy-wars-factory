@@ -7,7 +7,7 @@ BOT=(ROOT/"EGGRUMBLE_BotActors.luau").read_text(encoding="utf-8")
 LOBBY=(ROOT/"EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text(encoding="utf-8")
 RULES=(ROOT/"EGGRUMBLE_CastleMatchRules.luau").read_text(encoding="utf-8")
 
-def breaches(bot=BOT,lobby=LOBB,rules=RULES):
+def breaches(bot=BOT,lobby=LOBBY,rules=RULES):
     c={
       "real server token only":'session.rules.fieldEggTokens[eggId]==true' in bot,
       "initial physical eggs":'part.Name:match("^FieldEgg_(%d+)$")' in bot,
