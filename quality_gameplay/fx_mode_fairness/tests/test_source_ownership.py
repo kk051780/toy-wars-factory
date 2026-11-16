@@ -5,17 +5,17 @@ import unittest
 HERE=Path(__file__).resolve().parents[1]
 PARENT=HERE.parent.parent/"handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116"
 PROJECT=HERE/"EGGRUMBLE_V3_FX_FAIR_22_STUDIO.project.json"
-def entries(node):
+def entries(node, root):
     for name, child in node.items():
         if name.startswith("$") or not isinstance(child, dict): continue
         if "$path" in child:
-            yield name,(HERE/child["$path"]).resolve(strict=True)
-        else:yield from entries(child)
+            yield name,(root/child["$path"]).resolve(strict=True)
+        else:yield from entries(child,root)
 class TestNonOverlap(unittest.TestCase):
     def test_22_exact_project(self):
-        values=dict(entries(json.loads(PROJECT.read_text())["tree"]))
+        values=dict(entries(json.loads(PROJECT.read_text())["tree"],HERE))
         self.assertEqual(len(values),22)
-        orig=dict(entries(json.loads((PARENT/"EGGRUMBLE_V3_STUDIO.project.json").read_text())["tree"]))
+        orig=dict(entries(json.loads((PARENT/"EGGRUMBLE_V3_STUDIO.project.json").read_text())["tree"],PARENT))
         self.assertEqual(len(orig),21)
         self.assertEqual(set(values),set(orig)|{"EGGRUMBLE_FXModeFairQuota"})
         for name,path in orig.items():
