@@ -71,6 +71,38 @@ jobs:
               /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
             done
           echo "NATIVE_LUAU_ART_AND_AUTHOR_SYNTAX=PASS (not Roblox Studio runtime)"
+      - name: Install official pinned Rojo 7.7.0 CLI (private build only)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/eggrumble-a01-rojo
+          curl --fail --location --retry 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip \
+            --output /tmp/eggrumble-a01-rojo.zip
+          unzip -q /tmp/eggrumble-a01-rojo.zip -d /tmp/eggrumble-a01-rojo
+          chmod +x /tmp/eggrumble-a01-rojo/rojo
+          /tmp/eggrumble-a01-rojo/rojo --version
+      - name: Produce five private Rojo Studio source-only places without publishing
+        run: |
+          set -euo pipefail
+          for mode in v3 boss castle lobby item; do
+            if [[ "$mode" == v3 ]]; then
+              project=".art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json"
+            else
+              project=".art-preview-generated/$mode.project.json"
+            fi
+            destination=".art-preview-generated/EGGRUMBLE_A01_PRIVATE_${mode}.rbxlx"
+            /tmp/eggrumble-a01-rojo/rojo build "$project" --output "$destination"
+            test -s "$destination"
+            echo "ROJO_PRIVATE_BUILD_PASS=${mode}"
+          done
+          echo "ROJO_SOURCE_BUILDS=5/5 (Studio Play/Android/official RC still NOT_RUN)"
+      - name: Save isolated private Studio source-only places as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-A01-PRIVATE-STUDIO-PLACES-NOT-RC
+          path: .art-preview-generated/EGGRUMBLE_A01_PRIVATE_*.rbxlx
+          retention-days: 3
+          if-no-files-found: error
       - name: Report boundaries
         run: |
           echo "SOURCE REGRESSION ONLY — NOT Native Luau/Rojo/Studio/Android/FUN/OWNER acceptance."
