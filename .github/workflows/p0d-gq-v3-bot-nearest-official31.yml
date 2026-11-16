@@ -1,0 +1,101 @@
+name: P0D GQ555 original official RC31 source-selected nearest AI
+on:
+  push:
+    branches: [quality/p0d-v3-bot-nearest-human-20261116]
+    paths:
+      - 'quality_gameplay/v3_bot_nearest_human_20261116/**'
+      - '.github/workflows/p0d-gq-v3-bot-nearest-official31.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  official31-source-slice-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Download real same-HEAD official #537+#541 complete 31-source Place/receipt
+        uses: actions/download-artifact@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          run-id: 43857293831
+          github-token: ${{ github.token }}
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          path: artifacts/official_source_only
+      - name: Source-select ONE exact #531 BotActors from genuine official RC31, preserve other 30
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/select_rc31.py assemble \
+            --official-artifact artifacts/official_source_only \
+            --out artifacts/gq555_31
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          meta=json.loads(Path("artifacts/gq555_31/GQ555_RC31_SOURCE_RECEIPT.json").read_text())
+          assert meta["parent_official_head"]=="cfe156734b708dc0b15abfadc217dbd15c02e200"
+          assert meta["parent_official_run"]==43857293831
+          assert meta["original_sources_preserved"]=="30/31"
+          assert meta["changed_script"]=="EGGRUMBLE_BotActors"
+          print("GQ555_OFFICIAL_537_541_30_ORIGINAL_AUTHOR_SOURCE_LOCK_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Native Luau compile 31 real selected scripts ON and OFF; execute actual bot target 6 cases
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq555-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq555-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          for mode in ("ON","OFF"):
+              paths=list((Path("artifacts/gq555_31")/mode/"src").glob("*.luau"))
+              assert len(paths)==31, (mode,len(paths))
+              for path in paths:
+                  subprocess.run(["/tmp/gq555-native/luau-compile","--text",str(path)],
+                                 stdout=subprocess.DEVNULL,check=True)
+              print("GQ555_OFFICIAL_31_NATIVE_COMPILE_PASS",mode,len(paths))
+          PY
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/make_native_harness.py \
+            --bot artifacts/gq555_31/ON/src/EGGRUMBLE_BotActors.luau \
+            --out artifacts/gq555_31/GQ555_REAL_NATIVE_6.luau
+          /tmp/gq555-native/luau artifacts/gq555_31/GQ555_REAL_NATIVE_6.luau | tee /tmp/gq555-native.log
+          grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS /tmp/gq555-native.log
+      - name: Pinned real Rojo7.7.1 builds both 31-script ON and OFF private Places
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq555-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq555-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq555-rojo.zip") as z:
+              files=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(files)==1
+              exe=Path("/tmp/gq555-rojo")
+              exe.write_bytes(z.read(files[0]))
+              exe.chmod(0o755)
+          PY
+          /tmp/gq555-rojo build artifacts/gq555_31/ON/GQ_RC31.project.json -o artifacts/gq555_31/GQ555_ON_PRIVATE31.rbxlx
+          /tmp/gq555-rojo build artifacts/gq555_31/OFF/GQ_RC31.project.json -o artifacts/gq555_31/GQ555_OFF_PRIVATE31.rbxlx
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/select_rc31.py verify \
+            --official-artifact artifacts/official_source_only \
+            --out artifacts/gq555_31 \
+            --on-place artifacts/gq555_31/GQ555_ON_PRIVATE31.rbxlx \
+            --off-place artifacts/gq555_31/GQ555_OFF_PRIVATE31.rbxlx
+      - name: Upload immutable private31 source-exact receipt, not official RC adoption
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ555-REAL-OFFICIAL31-SOURCE-SELECTED-PRIVATE-NOT-RC
+          path: |
+            artifacts/gq555_31/GQ555_ON_PRIVATE31.rbxlx
+            artifacts/gq555_31/GQ555_OFF_PRIVATE31.rbxlx
+            artifacts/gq555_31/GQ555_RC31_SOURCE_RECEIPT.json
+            artifacts/gq555_31/GQ555_REAL_NATIVE_6.luau
+          retention-days: 3
