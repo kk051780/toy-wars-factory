@@ -42,6 +42,23 @@ local function board(at:BasePart,label:string)
  t.BackgroundColor3=Color3.fromRGB(24,27,43);t.BackgroundTransparency=.12
  t.TextColor3=Color3.new(1,1,1);t.Font=Enum.Font.GothamBold;t.Text=label;t.Parent=b
 end
+-- GQ539 LOBBY ONLY: preserve original world board authority and #547 castle/vault fix.
+-- Reuse the existing BillboardGui; no duplicate labels, Game, Remote, or core HP logic.
+local function nearbyBoard(at:BasePart,label:string,maxDistance:number):()
+ board(at,label)
+ local gui=at:FindFirstChildOfClass("BillboardGui")
+ if not gui then return end
+ gui.AlwaysOnTop=false
+ gui.MaxDistance=math.clamp(maxDistance,16,52)
+ gui.Size=UDim2.fromOffset(174,56)
+ gui.StudsOffsetWorldSpace=Vector3.new(0,3.2,0)
+ local title=gui:FindFirstChildOfClass("TextLabel")
+ if title then
+  title.TextScaled=false
+  title.TextSize=14
+  title.BackgroundTransparency=.54
+ end
+end
 local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())
  local p=Instance.new("ProximityPrompt");p.ActionText=action;p.ObjectText=subject
  p.HoldDuration=.2;p.MaxActivationDistance=14;p.RequiresLineOfSight=false;p.Parent=at
@@ -398,7 +415,7 @@ end
 for i,role in ipairs(SevenRoleCombat.roleOrder()) do
  local data=SevenRoleCombat.info(role)
  local stand=block(folder,"ROLE_"..role,root+Vector3.new((i-4)*9,1,69),Vector3.new(5,4,5),data.color)
- board(stand,data.name.."\n"..data.weapon)
+ nearbyBoard(stand,data.name.."\n"..data.weapon,24)
  prompt(stand,"職業選択",data.name,function(p)
   if joined[p.UserId] and sessions[joined[p.UserId]] then return end
   chosenRole[p.UserId]=role
@@ -407,13 +424,13 @@ for i,role in ipairs(SevenRoleCombat.roleOrder()) do
 end
 local gateTeam=block(folder,"TEAM_PORTAL",root+Vector3.new(-12,6,28),Vector3.new(9,12,2),Color3.fromRGB(206,74,67))
 local gateBR=block(folder,"BATTLE_ROYALE_PORTAL",root+Vector3.new(12,6,28),Vector3.new(9,12,2),Color3.fromRGB(79,132,230))
-board(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北")
-board(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者")
+nearbyBoard(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北",44)
+nearbyBoard(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者",44)
 prompt(gateTeam,"参加する","チーム戦（再操作で解除）",function(p) joinQueue("TEAM",p) end)
 prompt(gateBR,"参加する","BR戦（再操作で解除）",function(p) joinQueue("BATTLE_ROYALE",p) end)
 for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
  local stand=block(folder,"DEFENSE_"..name,root+Vector3.new((i-3)*9,1,47),Vector3.new(5,3,5),Color3.fromRGB(149,164,121))
- board(stand,name.."\n出撃前の防衛選択")
+ nearbyBoard(stand,name.."\n出撃前の防衛選択",25)
  prompt(stand,"装備する","全員同一防衛予算",function(p)
   if joined[p.UserId]==nil or sessions[joined[p.UserId]]==nil then
    chosenDefense[p.UserId]=name

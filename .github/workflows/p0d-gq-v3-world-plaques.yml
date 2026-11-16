@@ -1,0 +1,32 @@
+name: P0D GQ V3 world plaque occlusion source gate
+
+on:
+  push:
+    branches:
+      - quality/gq-v3-world-plaque-visibility-20261116-01
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_v3_world_plaque_ux.py'
+      - '.github/workflows/p0d-gq-v3-world-plaques.yml'
+      - 'quality_gameplay/v3_lobby_nearby_20261116/**'
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_v3_world_plaque_ux.py'
+      - '.github/workflows/p0d-gq-v3-world-plaques.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  world-plaque-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove live HP/egg labels remain readable without far-distance occlusion
+        run: python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_v3_world_plaque_ux.py' -v
+      - name: Test source-selective 31-script original-Host intake, #547 non-overlap and rollback
+        run: python3 -m unittest discover -s quality_gameplay/v3_lobby_nearby_20261116/tests -p 'test_*.py' -v
+      - name: Explicit evidence boundary
+        run: echo 'SOURCE_ONLY; independent native Luau and real Roblox Studio/Android/OWNER gates remain separate.'
