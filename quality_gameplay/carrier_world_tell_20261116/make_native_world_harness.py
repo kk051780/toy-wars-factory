@@ -163,6 +163,42 @@ eq("one marker on bot",liveOn(br),1)
 eq("AI carrier label avoids original BotObjective board",select(2,liveOn(br)).StudsOffsetWorldSpace.y,10.2)
 eq("two markers total",countLiveAll(),2)
 
+-- The original match may outlive a client cosmetic cleanup / character visual
+-- replacement. Losing a single billboard must not hide held eggs indefinitely.
+hgui:Destroy()
+step()
+eq("externally deleted human marker recreated",liveOn(hr),1)
+local _,newGui=liveOn(hr)
+eq("recreated GUI identity differs",newGui~=hgui,true)
+eq("recreated GUI still server count 2",a.rules.castles["100"].heldEggs,2)
+eq("no duplicate marker after repair",countLiveAll(),2)
+hgui=newGui
+
+-- Bad UI parent/Adornee must not create a wallhack or a leaked third marker.
+local foreign={Name="WrongDisplayParent"}
+hgui.Parent=foreign
+step()
+eq("externally reparented marker repaired",liveOn(hr),1)
+eq("externally moved GUI explicitly destroyed",hgui.destroyed,true)
+eq("reparent repair leaves two live world markers",countLiveAll(),2)
+hgui=select(2,liveOn(hr))
+hgui.Adornee=br
+step()
+eq("wrong Adornee repaired",liveOn(hr),1)
+eq("wrong Adornee GUI destroyed",hgui.destroyed,true)
+hgui=select(2,liveOn(hr))
+local countLabel=nil
+for _,item in ipairs(__instances) do
+ if item.__class=="TextLabel" and item.Parent==hgui then countLabel=item end
+end
+eq("current marker owns count TextLabel",countLabel~=nil,true)
+countLabel.Parent=nil
+step()
+eq("lost TextLabel repaired",liveOn(hr),1)
+eq("damaged parent marker destroyed",hgui.destroyed,true)
+hgui=select(2,liveOn(hr))
+eq("all UI repairs leave one human and one AI badge",countLiveAll(),2)
+
 a.rules.castles["100"].heldEggs=3
 step()
 local n,updated=liveOn(hr)
