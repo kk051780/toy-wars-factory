@@ -228,7 +228,7 @@ def main() -> None:
     diff = list(difflib.unified_diff(before.splitlines(), after.splitlines(), lineterm=""))
     added = sum(line.startswith("+") and not line.startswith("+++") for line in diff)
     removed = sum(line.startswith("-") and not line.startswith("---") for line in diff)
-    assert added == 23 and removed == 2, (added, removed, diff)
+    assert added == 21 and removed == 2, (added, removed, diff)
     for path, text in ((args.patched, after),
                        (args.harness, harness(after, fixed=True)),
                        (args.original_harness, harness(before, fixed=False))):
