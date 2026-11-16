@@ -1410,6 +1410,435 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --runtime "$SRC/EGGRUMBLE_BeastEscort.luau" --expected-sha256 "$LOCK" --place "$DIR/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx"
           echo GQ618_REAL_BEAST_31_SOURCE_CLASS_OTHER30_BYTE_EXACT_OFF_PASS
+      - name: Original GQ615 queue author checkout, pinned no runtime duplicate
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 849d82e399f342e5212b5dc16cba76b04c1d2c7a
+          path: _gq615_queue_author
+          persist-credentials: false
+      - name: Source-select one CURRENT31 Host GQ615 queue, native31, native10, Rojo31, byte-exact inverse
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq615_queue_author rev-parse HEAD)" = 849d82e399f342e5212b5dc16cba76b04c1d2c7a
+          SRC=_gq615_queue_author/quality_gameplay/v3_lobby_queue_visibility_20261117
+          DIR=artifacts/gq515_official_select
+          BASE=$DIR/GQ618_BEAST_SELECTED31.project.json
+          OUT=$DIR/GQ615_QUEUE_CURRENT31.project.json
+          PLACE=$DIR/GQ615_QUEUE_TRUE_ROJO31.rbxlx
+          test -f "$BASE"
+          test -e _original482 || ln -s _v3_original _original482
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_feedback.py'
+          python3 -B "$SRC/intake31.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"_gq615_queue_author/quality_gameplay/v3_lobby_queue_visibility_20261117")
+          from intake31 import mapping
+          _,sources,host=mapping(Path(sys.argv[1]))
+          assert len(sources)==31 and host[-1]=="EGGRUMBLE_LobbyCastleModesPreview"
+          for source in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ615_31_ACTUAL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC/private31.py" harness \
+            --source "$DIR/GQ615_CANONICAL_CURRENT_HOST_ONLY.server.luau" \
+            --out "$DIR/GQ615_CURRENT_QUEUE_NATIVE10.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ615_CURRENT_QUEUE_NATIVE10.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ615_CURRENT_QUEUE_NATIVE10.luau" \
+            | tee "$DIR/GQ615_CURRENT_QUEUE_NATIVE10.log"
+          grep -q '^GQ615_REAL_QUEUE_TEXT_NATIVE_10_CASES_PASS        run: |
+          set -euo pipefail
+          cp artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          base=Path("artifacts/gq530_all31")
+          m=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_ACTIVE.json").read_text())
+          src=json.loads((base/"GQ31_ON_RECEIPT.json").read_text())
+          off=json.loads((base/"GQ31_OFF_RECEIPT.json").read_text())
+          place=base/"EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx"
+          assert (os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"
+                  or (os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
+                      and os.environ.get("GITHUB_BASE_REF")=="rc/p0d-s1-kids-rc01"))
+          assert m["source_count"]==src["source_count"]==off["source_count"]==31
+          assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
+          assert src["previous_owner30_unchanged_sources"]==29
+          assert src["combat_sha256"]!=off["combat_sha256"]
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx").read_bytes()
+          gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
+          gq537_place=Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx")
+          assert gq537["place_sha256"]==hashlib.sha256(gq537_place.read_bytes()).hexdigest()
+          assert gq537_place.read_bytes()!=place.read_bytes()
+          assert gq537["other_sources_byte_exact"]==30 and gq537["source_class_exact"]==31
+          assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] and m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          gq540=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
+          assert gq540["source_exact"]=="31/31" and gq540["unchanged_scripts"]==30
+          assert gq540["original_gq541_swarm_preserved"] and gq540["only_host_changed"]
+          assert gq540["place_sha256"]==hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
+          assert m["source_heads"]["lobby_world_539"]=="e003d73d516e65e1817dd281eb1743fa866f3770"
+          assert m["feature_flags"]["LOBBY_NEARBY_BOARDS_539"] is True
+          gq539=json.loads(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_text())
+          assert gq539["rojo_exact_scripts"]==31 and gq539["other_sources_byte_exact"]==30
+          assert gq539["place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
+          assert item489["real_rojo_source_and_class_exact"]=="31/31"
+          assert item489["unchanged_source_count"]==30
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq555=json.loads(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_text())
+          assert gq555["rojo_source_class_exact"]=="31/31" and gq555["other_30_sources_byte_identical"]
+          assert gq555["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_FINAL_31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          route536=json.loads(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_text())
+          assert route536["real_rojo_exact_31"] and route536["others_byte_exact"]==30
+          assert route536["place_sha256"]==hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROUTE536_FINAL31.rbxlx").read_bytes()).hexdigest()
+          assert route536["selected_author_patch_git_blob"]=="651d4c6e92bfe8595eeadb438b594797bd473e77"
+          assert m["feature_flags"]["BOT_ROUTE_FULLSTEP_536"] and m["source_heads"]["original_route536"]=="cdf4fe5f231c998532963c5c16d9525d20a69e7e"
+          assert m["source_heads"]["castle_board547"]=="b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125"
+          assert m["feature_flags"]["CASTLE_EGG_BOARD_DISTANCE_547"] is True
+          gq551=json.loads(Path("artifacts/gq551_official_select/GQ551_RC31_VERIFIED_PLACE_RECEIPT.json").read_text())
+          assert gq551["rojo_real_source_class_exact"]=="31/31"
+          assert gq551["unchanged_existing_sources"]==30 and gq551["exact_host_rollback"]
+          assert gq551["place_sha256"]==hashlib.sha256(Path("artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["carrier_stale_avatar551"]=="93d774bf3aaecd0e7714d64a7f970003698d69ef"
+          assert m["feature_flags"]["CARRIER_STALE_AVATAR_DIED_FENCE_551"] is True
+          gq538=json.loads(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_text())
+          assert gq538["rojo_source_class_exact"]=="31/31" and gq538["other_30_sources_byte_exact"]
+          assert gq538["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ORIGINAL31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq523=json.loads(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_text())
+          assert gq523["rojo31_source_class_exact"]=="31/31" and gq523["other30_scripts_byte_exact"] and gq523["rollback_to_previous_host_exact"]
+          assert gq523["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_SELECTED31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          heal517=json.loads(Path("artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_text())
+          assert heal517["source_class_exact"]==31 and heal517["original_other_source_bytes_exact"]==30
+          assert heal517["actual_place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_HEAL517_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          ko508=json.loads(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_text())
+          assert ko508["real_rojo_source_class_exact"]=="31/31" and ko508["other_30_byte_identical"]
+          assert ko508["off_rollback_byte_exact"] and ko508["no_extra_script_or_score_authority"]
+          assert ko508["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert ko508["original_author508_policy_git_blob"]=="00eed6aa306656eded1e3c9fc62acdf1a86ce248"
+          gq580=json.loads(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_text())
+          assert gq580["source_count"]==31 and gq580["others_byte_exact"]==30
+          assert gq580["rollback_bot_exact"] and gq580["real_rojo_exact"]=="31/31"
+          assert gq580["formal_rc_adopted"] is False
+          assert gq580["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          ridgeforest520=json.loads(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json").read_text())
+          assert ridgeforest520["real_rojo_script_class_source_exact"]=="31/31"
+          assert ridgeforest520["other_30_sources_byte_exact"] and ridgeforest520["two_original_520_hunks_reverse_exact"]
+          assert ridgeforest520["original_523_field_egg_rows_preserved"] and ridgeforest520["place_sha256"]==hashlib.sha256(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert ridgeforest520["terrain_geo_source_only"]["ridge_passage_studs"]==24
+          assert ridgeforest520["terrain_geo_source_only"]["dash_tree_before"]==[1]
+          assert ridgeforest520["terrain_geo_source_only"]["dash_tree_after"]==[]
+          assert m["source_heads"]["ridge_forest520"]=="b2b89d7eaed2bdeeee163eb16d05d541d002e800"
+          assert m["feature_flags"]["TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520"] is True
+          assert m["source_heads"]["original_roster583"]=="60b67c8dade80ff7ccd1d97e03480ba333977084"
+          assert m["feature_flags"]["ROSTER16_HARDCAP_583"] is True
+          gq582=json.loads(Path("artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json").read_text())
+          assert gq582["real_rojo_source_class_exact"]=="31/31" and gq582["unchanged_previous_scripts"]==30
+          assert gq582["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          geom595=json.loads(Path("artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json").read_text())
+          assert geom595["real_rojo_script_class_source_exact"]=="31/31"
+          gq582_v3=json.loads(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_text())
+          assert gq582_v3["source_rojo_exact"]=="31/31" and gq582_v3["other30_script_bytes_identical"]
+          assert gq582_v3["off_rollback_old_combat_byte_exact"] and gq582_v3["source_count"]==31
+          assert gq582_v3["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["zombie_command582"]=="aeb7cbed6e154849804d7d28bd53966410e50364"
+          assert m["feature_flags"]["ZOMBIE_NEUTRAL_STABLE_ID_V3"] is True
+          gq586=json.loads(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
+          assert gq586["source_count"]==31 and gq586["other_30_byte_exact"] and gq586["rollback_host_exact"]
+          assert gq586["real_rojo_source_class_exact"]=="31/31"
+          assert gq586["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq525=json.loads(Path("artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json").read_text())
+          assert gq525["feature_id"]=="GQ_V3_ITEM_MODE_OWNERSHIP_20261116"
+          assert gq525["source_author_head"]=="253aa73530eea5c3954c07b546b67e49292c4639"
+          assert gq525["source_count"]==31 and len(gq525["only_changed"])==2
+          assert gq525["other_29_byte_identical"] and gq525["two_hunk_rollback_exact"]
+          assert gq525["source_class_exact"]=="31/31"
+          assert gq525["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          guard611=json.loads(Path("artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json").read_text())
+          assert guard611["source_count"]==31 and guard611["only_changed_existing_script"]=="EGGRUMBLE_InteractionGuard"
+          assert guard611["other_30_byte_exact"] and guard611["guard_off_rollback_byte_exact"]
+          assert guard611["rojo_source_class_exact"]=="31/31" and guard611["source_provenance_valid"]
+          assert guard611["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_PROMPT_REACH_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          beast618=json.loads(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_text())
+          assert beast618["source_count"]==31 and beast618["original_30_scripts_byte_identical"]
+          assert beast618["off_previous_combat_exact"] and beast618["actual_rojo31_source_class"]=="31/31"
+          assert beast618["exact_original_combat_sha256"]==gq582_v3["upgraded_combat_sha256"]
+          assert beast618["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
+          assert m["source_heads"]["gq618_beast_escort"]=="131313d645d2a5a67abd117c2c3d0459ee46d210"
+          assert guard611["original_blob"]=="ac51ce2077814c7509b8eaf6dafbd05b04a9a1fe"
+          assert m["source_heads"]["prompt_reach611"]=="f41246191d35f64fe6c1c097999562f37ccaa1fc"
+          assert m["feature_flags"]["SERVER_PROMPT_CONFIG_REACH_611"] is True
+          assert gq586["source_flag"]=="GQ_DEPOSIT_CURRENT_MATCH_586"
+          assert m["source_heads"]["deposit_membership586"]=="417dfa87106b1eab9eaf45e6180273a9ce8ec8c2"
+          assert m["feature_flags"]["DEPOSIT_CURRENT_SESSION_586"] is True
+          assert geom595["other_30_byte_identical"] and geom595["rollback_to_current_rc_byte_exact"]
+          assert geom595["source_count"]==31 and geom595["formal_rc_adopted"] is False
+          assert geom595["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_CURRENT31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["vertical_hit595"]=="eb204b9962c0d10ec937b8886d0923e6e09fb47d"
+          assert m["feature_flags"]["VERTICAL_HIT_FAIRNESS_595"] is True
+          assert m["source_heads"]["zombie_command582_v2_origin"]=="497ff09e7d148e591691f5b1e3f5c543d6794ee8"
+          assert m["feature_flags"]["ZOMBIE_COMMAND_SQUAD_582"] is True
+          gq515=json.loads(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_text())
+          assert gq515["rojo_source_class_exact"]=="31/31" and gq515["other_30_scripts_byte_exact"]
+          assert gq515["canonical_private_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert gq515["author_policy_git_blob"]=="3114c469169ad667978485d5b8d0b038a2dbd4f5"
+          assert m["source_heads"]["field_egg_drop_bounds515"]=="fee49d82816e65448f1b0b5803bba6fe06b17229"
+          assert m["feature_flags"]["FIELD_CARRIER_OFFARENA_DROP_515"] is True
+          roster583=json.loads(Path("artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json").read_text())
+          input583=json.loads(Path("artifacts/gq583_official_select/GQ583_SELECTED_SOURCE_RECEIPT.json").read_text())
+          assert roster583["source_exact"]=="31/31" and roster583["other_30_scripts_byte_exact"]
+          assert roster583["off_rollback_byte_exact"] and roster583["existing_only_one_rules_changed"]
+          assert input583["changed_guards"]==2 and input583["TEAM_BR_MAX_HERO_SLOTS"]==16
+          assert roster583["place_sha256"]==hashlib.sha256(Path("artifacts/gq583_official_select/GQ583_CURRENT_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["ai_takeover580"]=="6dfd892063a95d61997dbd5b59d5daa7053e9df7"
+          assert m["feature_flags"]["AI_TAKEOVER_TERMINAL_FENCE_580"] is True
+          assert m["source_heads"]["neutral_ko508"]=="101a77b2f7dd041fe4f17d31f67cf7232ba4cda1"
+          assert m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"] is True
+          assert m["source_heads"]["heal_no_waste517"]=="c8a324ad7bb40648d82a5828cbf54e217585fefd"
+          assert m["feature_flags"]["HEAL_NO_WASTE_517"] is True
+          assert m["source_heads"]["field_egg523"]=="54ea74aa15e387d83512566715f44216ba8587a2"
+          assert m["feature_flags"]["FIELD_EGGS_CASTLE_FOUNDATION_CLEARANCE_523"] is True
+          assert m["source_heads"]["result_retry538"]=="d56262dbe8309cf606877fe39a44cde7dda0d9b5"
+          assert m["feature_flags"]["RESULT_GUI_BOUNDED_RETRY_538"] is True
+          gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
+          assert gq547["rojo_exact"]=="31/31" and gq547["unchanged_other_scripts"]==30
+          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
+          assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
+          assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
+          assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
+          assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
+          details={
+            "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
+                      if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
+                      else "CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
+            "release_profile":"eggrumble_v3_31",
+            "canonical_branch":"rc/p0d-s1-kids-rc01",
+            "github_commit_sha":os.environ["GITHUB_SHA"],
+            "source_author_heads":m["source_heads"],
+            "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq611_prompt_reach_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq618_beast_real_server_humanoid_selected":True,
+             "gq618_existing_combat_other30_exact":True,
+             "gq618_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq582_v3_unique_neutral_instances_current_human_filter":True,
+            "gq586_current_match_deposit_selected":True,
+            "gq586_other_30_original_scripts_preserved":True,
+            "gq586_single_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "script_count":31,
+            "script_source_and_class_exact":"31/31",
+            "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
+            "base_owner30_untouched_except_combat_before_541":29,
+            "original_author_541_selected_into_one_swarm":True,
+            "original_author_537_selected_into_one_host":True,
+            "original_author_540_added_in_same_537_host":True,
+            "original_source_539_added_in_same_540_host":True,
+            "original_author_489_item_source_selected":True,
+            "original_author_555_nearest_bot_source_selected":True,
+            "original_author_547_castle_vault_gui_2_existing_only":True,
+            "original_author_551_stale_carrier_host_guard_selected":True,
+            "original_author_538_single_result_retry_selected":True,
+            "original_author_517_single_item_heal_guard_selected":True,
+            "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_580_ai_takeover_terminal_fence_in_one_bot":True,
+            "gq580_other_30_existing_source_bytes_exact":True,
+            "gq580_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_520_team_SHIELD_ridge_DASH_tree_clearance_selected":True,
+            "original_author_583_roster16_two_guards_one_existing_Rules":True,
+            "gq583_other_30_existing_scripts_byte_exact":True,
+            "gq583_rollback_to_prior_520_Rules_exact":True,
+            "gq583_receipt_sha256":hashlib.sha256(Path("artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_515_offarena_egg_drop_single_host":True,
+            "original_author_595_single_attack_geometry_height_guard_selected":True,
+            "gq595_original_geometry_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_515_other30_scripts_byte_exact":True,
+            "original_author_515_real_native18":18,
+            "original_author_515_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_520_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_508_neutral_ko_death_credit_selected_inline":True,
+            "original_508_other_30_sources_exact":True,
+            "original_508_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_538_other_30_sources_byte_identical":True,
+            "original_538_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json").read_bytes()).hexdigest(),
+             "original_author_523_field_egg_castle_clearance_selected":True,
+             "gq523_field_egg_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq547_other_30_current_original_scripts_byte_exact":True,
+            "gq547_off_restores_previous_536_host_exact":True,
+            "gq547_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_555_bot_only_30_preserved":True,
+            "original_author_536_single_botpathrouter_source_selected":True,
+            "other_30_current_original_author_source_exact_after_536":True,
+            "selected_536_router_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_gq555_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq539_one_host_rollback_byte_exact":True,
+            "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "same_537_host_previous_vs_540_final_unchanged_others":30,
+            "gq540_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json").read_bytes()).hexdigest(),
+            "selected_537_place_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
+            "single_game_and_combat":True,
+            "rollback_on_off_combat_bytes":160,
+            "place_name":place.name,
+            "place_size_bytes":place.stat().st_size,
+            "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+            "private_qa_receipt_sha256":hashlib.sha256((base/"GQ31_ON_RECEIPT.json").read_bytes()).hexdigest(),
+            "s1_active_profile_unchanged":True,
+            "official_rc_commit_verified":os.environ.get("GITHUB_EVENT_NAME")=="push",
+            "real_studio_2client":"NOT_TESTED",
+            "android_15min":"NOT_TESTED",
+            "owner_acceptance":"NOT_TESTED",
+            "roblox_publish":False,
+            "official_rc_zip_size_bytes":"PROVIDER_ARTIFACT_METADATA_CHECK_AFTER_UPLOAD"
+          }
+          (base/"EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json").write_text(json.dumps(details,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("EGGRUMBLE_V3_OFFICIAL_RC31_STUDIO_PLACE_SOURCE_EXACT_READY",place.stat().st_size,details["place_sha256"])
+          PY
+      - name: GQ8 independent artifact truth gate — actual built Place, eight domains and all official enabled flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_rctrace8 -p 'test_*.py'
+          gq8mode=()
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            gq8mode+=(--pr-premerge)
+          fi
+          python3 -B rc_fastlane/quality_rctrace8/verify_artifact.py \
+            --artifact-dir artifacts/gq530_all31 \
+            --manifest rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
+            --active rc_fastlane/ACTIVE.json \
+            --rc-head "$GITHUB_SHA" \
+            --out artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json \
+            "${gq8mode[@]}"
+          test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
+          echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
+      - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          path: |
+            artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+            artifacts/gq583_official_select/GQ583_SELECTED31.project.json
+            artifacts/gq583_official_select/GQ583_SELECTED_SOURCE_RECEIPT.json
+            artifacts/gq583_official_select/GQ583_REAL_ROJO_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ515_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_ROJO_RECEIPT.json
+            artifacts/gq515_official_select/GQ515_ZOMBIE582_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ515_ZOMBIE582_VERTICAL595_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ595_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ595_DEPOSIT586_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ595_DEPOSIT586_TRUE_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ586_ZOMBIE582_V3_STABLE_NEUTRAL31.project.json
+            artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.luau
+            artifacts/gq515_official_select/GQ582_ACTUAL_NEUTRAL_ID_NATIVE.log
+            artifacts/gq515_official_select/GQ586_NATIVE8_RESULT.txt
+            artifacts/gq515_official_select/GQ586_ITEM525_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json
+            artifacts/gq515_official_select/GQ611_PROMPT_REACH_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
+            artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ611_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ611_NATIVE13_RESULT.log
+            artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
+            artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
+            artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
+            artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
+            artifacts/gq515_official_select/GQ515_NATIVE18_RESULT.log
+            artifacts/gq583_official_select/GQ583_ORIGINAL_NATIVE.spec.luau
+            artifacts/gq583_official_select/GQ583_FIXED_NATIVE.spec.luau
+            artifacts/gq547_official_select/GQ547_SELECTED31.project.json
+            artifacts/gq547_official_select/GQ547_SOURCE_RECEIPT.json
+            artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json
+            artifacts/gq551_official_select/GQ551_SELECTED31.project.json
+            artifacts/gq551_official_select/GQ551_RC31_SOURCE_RECEIPT.json
+            artifacts/gq551_official_select/GQ551_RC31_VERIFIED_PLACE_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_FINAL_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ538_SELECTED31_RECEIPT.json
+            artifacts/gq538_official_select/GQ538_ROJO31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ523_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_HEAL517_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
+            artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json
+            artifacts/gq538_official_select/GQ580_NATIVE7_RESULT.txt
+            artifacts/gq538_official_select/GQ520_RIDGE_FOREST_FINAL31.project.json
+            artifacts/gq538_official_select/GQ520_RIDGE_FOREST_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ520_RIDGE_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ520_FOREST_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
+            artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
+            artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
+            artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+            artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
+            artifacts/gq530_all31/GQ31_ON_RECEIPT.json
+            artifacts/gq530_all31/GQ31_OFF_RECEIPT.json
+            artifacts/gq530_all31/GQ31_ON.project.json
+            artifacts/gq530_all31/GQ31_OFF.project.json
+            artifacts/gq541_official_select/GQ31_SELECTED.project.json
+            artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json
+            artifacts/gq541_official_select/GQ541_SELECTED_SOURCE_RECEIPT.json
+            artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
+            artifacts/gq541_official_select/GQ537_SOURCE_SELECTION_RECEIPT.json
+            artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json
+            artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
+            artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json
+            artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
+            artifacts/gq539_official_select/GQ539_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ539_SELECTED31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_FINAL_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ555_SOURCE_SELECTION_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_ROJO_EXACT_RECEIPT.json
+            artifacts/gq555_official_select/GQ555_NATIVE6_RESULT.log
+            artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json
+            artifacts/gq555_official_select/GQ536_ROUTE_RC31_RECEIPT.json
+          retention-days: 3
+      - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-ORIGINAL489-ITEM-SELECTED-PRIVATE31-ONLY-NOT-RC
+          path: |
+            artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
+            artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
+            artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 3
+      - name: Preserve GQ517 original author new Item guard private Place (NOT official RC pre-CAS)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ517-HEAL-PRIVATE31-SOURCE-EXACT-NOT-FORMAL-RC
+          path: |
+            artifacts/gq538_official_select/GQ523_HEAL517_RC31_TRUE_ROJO.rbxlx
+            artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ523_HEAL517_SELECTED31.project.json
+          retention-days: 3
+ "$DIR/GQ615_CURRENT_QUEUE_NATIVE10.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/intake31.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ615_CURRENT31_SINGLE_HOST_REAL_ROJO_OFF_OTHER30_BYTE_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
