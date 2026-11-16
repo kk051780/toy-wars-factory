@@ -127,6 +127,8 @@ local function frameTarget()
     local eye = focus + Vector3.new(62, 67, 93)
     camera.CameraType = Enum.CameraType.Scriptable
     camera.CFrame = CFrame.lookAt(eye, focus)
+    -- Scriptable cameras do not update Focus automatically; keep 3D LOD centered.
+    camera.Focus = CFrame.new(focus)
     label.Text = string.format("観戦 %d/%d", viewIndex, #targets)
 end
 
