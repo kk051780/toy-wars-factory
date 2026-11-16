@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Read-only #519 boss patch integration into existing #517 single-authority original30.
+"""Read-only #518 canonical boss patch integration into existing #517 single-authority original30.
 
-No new gameplay scripts: reuse #519 exact patch, #517 composer, #482/#484/#485/#487
+No new gameplay scripts: reuse #518 exact patch, #517 composer, #482/#484/#485/#487
 and original #489/#512/#514. Generated project and private Place only.
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ FIXED_REFS = {
     "combo": "e232b9a8411879c2c1a945c0a8ed09233ca73fff",
     "boss_credit": "0d1be13be6d895bea460ba54aaa91ef346684d7f",
     "heal": "c8a324ad7bb40648d82a5828cbf54e217585fefd",
-    "boss_los": "9622fe2990fecb556444ae2973a1ca9f4d11b67b",
+    "boss_los": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d",
 }
 
 def sha(raw: bytes) -> str:
@@ -74,10 +74,10 @@ def prepare(base: Path, output: Path, receipt: Path, boss: Path, author_tool: Pa
     original = manifest[BOSS_NAME][1]
     original_raw = original.read_bytes()
     assert git_blob(original_raw)==BOSS_BLOB,"original author boss drift, abort"
-    assert author_tool.is_file() and author_tool.name == "apply_stomp_los.py"
+    assert author_tool.is_file() and author_tool.name == "compose_patch.py"
     assert original.resolve()!=boss.resolve()
     boss.parent.mkdir(parents=True,exist_ok=True)
-    subprocess.run([sys.executable,str(author_tool),"--source",str(original),"--out",str(boss)],check=True)
+    subprocess.run([sys.executable,str(author_tool),"--source",str(original),"--output",str(boss)],check=True)
     assert original.read_bytes()==original_raw,"original author content changed"
     chosen = boss.read_bytes()
     assert chosen != original_raw and chosen.count(b"h:TakeDamage(28)")==1
@@ -104,7 +104,7 @@ def prepare(base: Path, output: Path, receipt: Path, boss: Path, author_tool: Pa
     assert sum(x[2]=="LocalScript" for x in selected.values()) == sum(x[2]=="LocalScript" for x in manifest.values())
     assert selected["EGGRUMBLE_LobbyCastleModesPreview"][1]==manifest["EGGRUMBLE_LobbyCastleModesPreview"][1]
     evidence={
-        "feature":"GQ519_IN_EXISTING_GQ517_30_SOURCE_INTK_ONLY",
+        "feature":"GQ518_IN_EXISTING_GQ517_30_SOURCE_INTK_ONLY",
         "fixed_original_author_refs":FIXED_REFS,
         "baseline_source_count":30,
         "selected_source_count":30,
@@ -119,7 +119,7 @@ def prepare(base: Path, output: Path, receipt: Path, boss: Path, author_tool: Pa
         "known_live_red":"#512 combo observer Studio-only; #482 original V3 host Studio-only; production live guard unresolved",
     }
     receipt.write_text(json.dumps(evidence,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print("GQ519_PLUS_GQ517_PRIVATE30_SINGLE_BOSS_SOURCE_SELECT_PASS 29/30 unchanged")
+    print("GQ518_PLUS_GQ517_PRIVATE30_SINGLE_BOSS_SOURCE_SELECT_PASS 29/30 unchanged")
 
 def verify(project: Path, place: Path, receipt: Path):
     _, selected=mapped(project)
@@ -150,7 +150,7 @@ def verify(project: Path, place: Path, receipt: Path):
     record["rojo_exact_source_class"]="30/30"
     record["formal_rc_source_count_delta"]=0
     receipt.write_text(json.dumps(record,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print("GQ519_PLUS_517_REAL_PRIVATE30_SOURCE_CLASS_EXACT_PASS 30/30",record["place_bytes"],record["place_sha256"])
+    print("GQ518_PLUS_517_REAL_PRIVATE30_SOURCE_CLASS_EXACT_PASS 30/30",record["place_bytes"],record["place_sha256"])
 
 def main():
     parser=argparse.ArgumentParser()
