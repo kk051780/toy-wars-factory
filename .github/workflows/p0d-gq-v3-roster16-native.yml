@@ -1,0 +1,60 @@
+name: P0D GQ V3 16-hero roster real Luau differential (source only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_roster_hardcap16_20261116/**'
+      - '.github/workflows/p0d-gq-v3-roster16-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  roster16-original-module:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original482
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Seven source-selector mutation and inverse rollback tests
+        run: python3 -m unittest discover -s quality_gameplay/v3_roster_hardcap16_20261116 -p 'test_*.py' -v
+      - name: Select exact original gameplay source with Git blob lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_roster_hardcap16_20261116/select_roster16.py \
+            --original _original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out-dir artifacts/gq_roster16
+      - name: Compile and execute actual original and repaired Luau (16 valid, 17/32 differential)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq_roster16_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_roster16_build \
+            --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for f in artifacts/gq_roster16/native_*.spec.luau; do
+            /tmp/gq_roster16_build/luau-compile --text "$f" >/dev/null
+            /tmp/gq_roster16_build/luau "$f"
+          done
+      - name: Upload original-author single-source patch and rollback receipt (no Place)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-V3-ORIGINAL-ROSTER16-NATIVE
+          path: |
+            artifacts/gq_roster16/EGGRUMBLE_CastleMatchRules_ROSTER16.luau
+            artifacts/gq_roster16/ROSTER16_SOURCE_RECEIPT.json
+          if-no-files-found: error
