@@ -75,6 +75,23 @@
         "owner_fun": "NOT_TESTED",
         "source": "https://github.com/kk051780/toy-wars-factory/actions/runs/43852865328"
       }
+    },
+    "eggrumble_v3_spectate32_studio": {
+      "source_commit": "eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
+      "source_count": 32,
+      "core": "Existing current31 after Builder WALL and StoneGiant wall occlusion, plus single original #492 LocalScript",
+      "kind": "optional_studio_only_companion",
+      "source_manifest": "rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json",
+      "build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-31.yml",
+      "status": "OPTIONAL32_SOURCE_NOT_STUDIO_ACCEPTED",
+      "default_selected": false,
+      "production_enabled": false,
+      "main_s1_profile_unmodified": true,
+      "rollback": "Unregister optional Studio32, all 31 primary V3 Source/Class exact and rich51 unchanged",
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NO_GO",
+      "publish_authorized": false
     }
   },
   "required_fast_gates": [
