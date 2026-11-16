@@ -203,6 +203,136 @@ jobs:
             artifacts/PACING_NATIVE29.log
             artifacts/FAIR_NATIVE29.log
             artifacts/MELEE_NATIVE29.log
+      # GQ30_SOURCE_ADMISSION: reuse two other existing authors, no competing game code.
+      - name: Read unchanged original #528 dual-mode shared neutral budget
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b29c50b6cc0b25192a121b2957497ede8b07f37
+          path: _v3_budget
+          persist-credentials: false
+      - name: Read unchanged original #531 authoritative bot-human membership
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e78bff41e70564d0b26578e3c3a85f4698e6110e
+          path: _v3_member
+          persist-credentials: false
+      - name: Source-exact original 29 plus #528/#531 as 30, no cloned authors
+        env:
+          GQ_BASE29_PROJECT: artifacts/GQ_V3_TRIPLE29_PRIVATE.project.json
+          GQ_AUTHOR528_COMPOSER: _v3_budget/quality_gameplay/gq_dual_mode_neutral_budget_20261116/tools/compose_private_v3.py
+          GQ_AUTHOR531_COMPOSER: _v3_member/quality_gameplay/v3_bot_human_match_membership_20261116/compose.py
+          GQ_AUTHOR528_POLICY: _v3_budget/quality_gameplay/gq_dual_mode_neutral_budget_20261116/EGGRUMBLE_DualModeNeutralBudget.luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_budget rev-parse HEAD)" = 6b29c50b6cc0b25192a121b2957497ede8b07f37
+          test "$(git -C _v3_member rev-parse HEAD)" = e78bff41e70564d0b26578e3c3a85f4698e6110e
+          python3 -B -m unittest discover \
+            -s quality_gameplay/neutral_melee_pressure_20261116 -p test_author_admission30.py -v
+          python3 quality_gameplay/neutral_melee_pressure_20261116/compose_author_admission30.py \
+            --base29 "$GQ_BASE29_PROJECT" \
+            --author528 "$GQ_AUTHOR528_COMPOSER" --author531 "$GQ_AUTHOR531_COMPOSER" \
+            --policy528 "$GQ_AUTHOR528_POLICY" \
+            --out artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.project.json
+      - name: Real native Luau 30 source + original #528 budget and #531 host/bot mutation
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.project.json").resolve()
+          receipt=json.loads((project.parent/"GQ_ADMISSION30_SOURCE_RECEIPT.json").read_text())
+          def walk(node,prefix=()):
+              for name,child in node.items():
+                  if name.startswith("$"):continue
+                  key=prefix+(name,)
+                  if "$path" in child:
+                      yield key,(project.parent/child["$path"]).resolve(strict=True)
+                  else:yield from walk(child,key)
+          scripts=list(walk(json.loads(project.read_text())["tree"]))
+          assert len(scripts)==30
+          for key,path in scripts:
+              assert receipt["mapped_sha256"]["/".join(key)]==__import__('hashlib').sha256(path.read_bytes()).hexdigest(),key
+              subprocess.run(["/tmp/luau29/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ30_NATIVE_ALL_30_OF_30_PASS")
+          budget=Path("_v3_budget/quality_gameplay/gq_dual_mode_neutral_budget_20261116/EGGRUMBLE_DualModeNeutralBudget.luau").read_text()
+          cases=Path("_v3_budget/quality_gameplay/gq_dual_mode_neutral_budget_20261116/tests/budget_native_cases.luau").read_text()
+          assert budget.rstrip().endswith("return Budget")
+          Path("artifacts/GQ30_BUDGET_NATIVE.luau").write_text(budget[:budget.rfind("return Budget")]+cases)
+          PY
+          /tmp/luau29/luau artifacts/GQ30_BUDGET_NATIVE.luau | tee artifacts/GQ30_BUDGET_NATIVE.log
+          grep -q GQ_DUAL_MODE_NEUTRAL_BUDGET_NATIVE_PASS artifacts/GQ30_BUDGET_NATIVE.log
+          python3 _v3_member/quality_gameplay/v3_bot_human_match_membership_20261116/make_native_membership_harness.py \
+            --patched-host artifacts/ADMISSION30_EGGRUMBLE_LobbyCastleModesPreview.server.luau --out artifacts/GQ30_HOST_NATIVE.luau
+          /tmp/luau29/luau artifacts/GQ30_HOST_NATIVE.luau | tee artifacts/GQ30_HOST_NATIVE.log
+          python3 _v3_member/quality_gameplay/v3_bot_human_match_membership_20261116/make_native_bot_hit_harness.py \
+            --patched-host artifacts/ADMISSION30_EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --patched-bot artifacts/ADMISSION30_EGGRUMBLE_BotActors.luau --out artifacts/GQ30_BOT_NATIVE.luau
+          /tmp/luau29/luau artifacts/GQ30_BOT_NATIVE.luau | tee artifacts/GQ30_BOT_NATIVE.log
+          python3 _v3_member/quality_gameplay/v3_bot_human_match_membership_20261116/make_native_bot_hit_harness.py \
+            --patched-host artifacts/ADMISSION30_EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --patched-bot artifacts/ADMISSION30_EGGRUMBLE_BotActors.luau --mutant \
+            --out artifacts/GQ30_BOT_BROKEN_MUTANT.luau
+          if /tmp/luau29/luau artifacts/GQ30_BOT_BROKEN_MUTANT.luau >/tmp/gq30_mutant.log 2>&1; then
+            echo "RED MUTANT incorrectly passed"; exit 1
+          fi
+          echo "GQ30_STALE_HUMAN_HIT_MUTANT_REJECTED"
+      - name: Original 30-source private Rojo class and source SHA exact
+        run: |
+          set -euo pipefail
+          /tmp/rojo29 build artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.project.json \
+            -o artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path("artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.project.json").resolve()
+          receipt=json.loads((p.parent/"GQ_ADMISSION30_SOURCE_RECEIPT.json").read_text())
+          expected={}
+          def visit(node,prefix=()):
+              for name,entry in node.items():
+                  if name.startswith("$"):continue
+                  key=prefix+(name,)
+                  if "$path" in entry:
+                      path=(p.parent/entry["$path"]).resolve(strict=True)
+                      cl="Script" if path.name.endswith(".server.luau") else "LocalScript" if path.name.endswith(".client.luau") else "ModuleScript"
+                      assert key not in expected
+                      expected[key]=(cl,path.read_text(encoding="utf-8").replace("\r\n","\n"))
+                      assert receipt["mapped_sha256"]["/".join(key)]==hashlib.sha256(path.read_bytes()).hexdigest()
+                  else:visit(entry,key)
+          visit(json.loads(p.read_text())["tree"])
+          actual={}
+          place=Path("artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.rbxlx")
+          for it in ET.fromstring(place.read_bytes()).iter("Item"):
+              cl=it.attrib.get("class")
+              if cl not in ("Script","ModuleScript","LocalScript"):continue
+              props=it.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name and name not in actual
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None
+              actual[name]=(cl,source.replace("\r\n","\n"))
+          assert len(expected)==len(actual)==30
+          assert {k[-1] for k in expected}==set(actual)
+          for k,v in expected.items():assert actual[k[-1]]==v,k
+          assert not receipt["rc_adopted"] and not receipt["studio_tested"]
+          print("GQ30_PRIVATE_SOURCE_AND_CLASS_EXACT_PASS 30/30",place.stat().st_size,hashlib.sha256(place.read_bytes()).hexdigest())
+          PY
+      - name: Store only nonRC 30-source evidence (official branch unchanged)
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-30-AUTHOR-SOURCE-INTAKE-NO-RC
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.project.json
+            artifacts/GQ_V3_ORIGINAL_AUTHOR30_PRIVATE.rbxlx
+            artifacts/GQ_ADMISSION30_SOURCE_RECEIPT.json
+            artifacts/GQ30_BUDGET_NATIVE.log
+            artifacts/GQ30_HOST_NATIVE.log
+            artifacts/GQ30_BOT_NATIVE.log
       - name: Release gates NOT asserted
         run: |
           echo 'Only source/native private Place. Original authors #482 #494 #501/#484, #218 CLAIM_GRANTED and authenticated #220 RC writer + actual Studio/Android/OWNER gates remain NOT_DONE.'
