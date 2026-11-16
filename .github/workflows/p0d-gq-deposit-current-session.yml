@@ -1,0 +1,52 @@
+name: P0D GQ586 standalone current-session deposit source QA (NOT RC admission)
+on:
+  push:
+    branches: [quality/gq-deposit-current-session-20261116-02]
+    paths:
+      - 'rc_fastlane/quality_deposit_membership_20261116/**'
+      - '.github/workflows/p0d-gq-deposit-current-session.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/quality_deposit_membership_20261116/**'
+      - '.github/workflows/p0d-gq-deposit-current-session.yml'
+permissions:
+  contents: read
+jobs:
+  current-match-deposit-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python fail-closed selectors and mutation tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_deposit_membership_20261116 \
+            -p test_selection.py
+      - name: Generate fixture callback exercise; NOT final RC script
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from rc_fastlane.quality_deposit_membership_20261116.test_selection import HOST_SOURCE
+          from rc_fastlane.quality_deposit_membership_20261116.select_deposit import overlay
+          Path("/tmp/gq586_fixture_host.server.luau").write_text(overlay(HOST_SOURCE))
+          PY
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/make_native_harness.py \
+            --host /tmp/gq586_fixture_host.server.luau \
+            --out /tmp/gq586_fixture_native8.luau
+      - name: Compile and run eight scenarios with real native Luau VM
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq586-luau
+          cmake -S /tmp/gq586-luau -B /tmp/gq586-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq586-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          /tmp/gq586-luau/build/luau-compile --text /tmp/gq586_fixture_native8.luau >/dev/null
+          /tmp/gq586-luau/build/luau /tmp/gq586_fixture_native8.luau
+      - name: Formal proof boundary
+        run: |
+          echo "GQ586 isolated source proof only; full-current31 real Rojo and official RC still pending"
+          echo "Never claim Studio, Android, OWNER, main or Roblox publication."
