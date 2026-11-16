@@ -42,7 +42,7 @@ def patch_host(source: str) -> str:
     )
     source = swap_once(
         source,
-        '   lifeConnections={},walkBaseline={},\n  }\n',
+        '  lifeConnections={},walkBaseline={},\n }\n',
         '   lifeConnections={},walkBaseline={},\n  }\n'
         '  session.neutralBudget=gqDualBudget\n'
         '  session.neutralBudgetEpoch=gqDualBudget:begin(mode)\n',
@@ -50,7 +50,7 @@ def patch_host(source: str) -> str:
     )
     source = swap_once(
         source,
-        '   if abandoned then session.rules.phase="ABANDONED" end\n',
+        '  if abandoned then session.rules.phase="ABANDONED" end\n',
         '   if abandoned then session.rules.phase="ABANDONED" end\n'
         '   -- Idempotent even if the horde folder was destroyed first.\n'
         '   if session.neutralBudgetEpoch then\n'
@@ -65,7 +65,7 @@ def patch_host(source: str) -> str:
 def patch_swarm(source: str) -> str:
     source = swap_once(
         source,
-        '  local all=Instance.new("Folder");all.Name="NeutralHorde";all.Parent=session.world\n',
+        ' local all=Instance.new("Folder");all.Name="NeutralHorde";all.Parent=session.world\n',
         '  local all=Instance.new("Folder");all.Name="NeutralHorde";all.Parent=session.world\n'
         '  if session.neutralBudget and session.neutralBudgetEpoch then\n'
         '   -- Manual folder destruction must not leak tickets before closeRound.\n'
@@ -108,7 +108,7 @@ def patch_swarm(source: str) -> str:
     )
     source = swap_once(
         source,
-        '   h.Died:Connect(function()\n    live[m]=nil\n',
+        '  h.Died:Connect(function()\n   live[m]=nil\n',
         '   h.Died:Connect(function()\n'
         '    if ticket then session.neutralBudget:release(ticket) end\n'
         '    live[m]=nil\n',
