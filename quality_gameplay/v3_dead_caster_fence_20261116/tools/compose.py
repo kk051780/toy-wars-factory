@@ -25,7 +25,7 @@ PATCH = (
 )
 
 def git_blob_sha(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\x00" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\x00" + data).hexdigest()
 
 def compose(source: bytes, enabled: bool = True) -> bytes:
     if git_blob_sha(source) != AUTHOR_BLOB:
