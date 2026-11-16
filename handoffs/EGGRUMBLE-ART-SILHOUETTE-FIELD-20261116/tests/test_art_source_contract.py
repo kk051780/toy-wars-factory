@@ -48,6 +48,23 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("player.CharacterAdded:Connect(onCharacterAdded)", HERO)
         self.assertIn("task.delay(.35", HERO)
 
+    def test_all_seven_hero_weapon_props_follow_real_hands(self):
+        # Not a synthetic weapon tool: the original combat module owns A/B/C.
+        self.assertIn("MAX_HANDHELD_WEAPON_PARTS = 3", HERO)
+        self.assertIn("made>=MAX_HANDHELD_WEAPON_PARTS", HERO)
+        self.assertIn('FindFirstChild("RightHand",true)', HERO)
+        self.assertIn('FindFirstChild("Right Arm",true)', HERO)
+        self.assertIn('sculptHandheldWeapon(art,char,role)', HERO)
+        self.assertIn('"Weapon_"..role', HERO)
+        for token in (
+            '"Greatsword"', '"Crystal"', '"FangL"', '"FangR"',
+            '"PsySphere"', '"ToolBarrel"', '"HornL"', '"HornR"', '"Crescent"',
+        ):
+            self.assertIn(token, HERO)
+        for forbidden in ("Instance.new(\"Tool\")", "tool.Activated", "Humanoid:TakeDamage"):
+            self.assertNotIn(forbidden, executable_lines(HERO))
+        self.assertLessEqual(13 + 3, 16)
+
     def test_real_author_item_art_is_capped_and_no_pickup_side_effect(self):
         for snippet in (
             'item.Name:match("^ITEM_%d+_(%u+)$")',
