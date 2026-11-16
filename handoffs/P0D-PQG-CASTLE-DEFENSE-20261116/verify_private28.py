@@ -32,7 +32,7 @@ def exact(project, place, receipt_path):
         assert receipt["source_sha256"][name] == hashlib.sha256(p.read_bytes()).hexdigest(), name
     assert len(expected) == 28
     assert {"EGGRUMBLE_CastleDefenseLive","EGGRUMBLE_CastleDefensePolicy"}.issubset(expected)
-    assert sum(1 for kind, _ in expected.values() if kind == "Script") == 1, "second server GAME detected"
+    assert expected["EGGRUMBLE_LobbyCastleModesPreview"][0] == "Script", "authoritative host missing"\n    assert sum(1 for name, (kind, _) in expected.items()\n               if name == "EGGRUMBLE_LobbyCastleModesPreview" and kind == "Script") == 1, "duplicate V3 host"
     assert sum(1 for kind, _ in expected.values() if kind == "LocalScript") == 3
     actual = {}
     for node in ET.fromstring(place.read_bytes()).iter("Item"):
