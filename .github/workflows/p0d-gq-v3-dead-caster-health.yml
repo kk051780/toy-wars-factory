@@ -1,0 +1,35 @@
+name: P0D GQ V3 dead-caster health fence source exact
+
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_dead_caster_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-dead-caster-health.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact original blob, mutation cases, and OFF rollback
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/v3_dead_caster_fence_20261116/tests -v
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose.py --output /tmp/EGGRUMBLE_SevenRoleCombat_ON.luau
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose.py --off --output /tmp/EGGRUMBLE_SevenRoleCombat_OFF.luau
+          cmp handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau /tmp/EGGRUMBLE_SevenRoleCombat_OFF.luau
+      - name: Native syntax-parse the actual composed Luau
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-luau
+          cmake -S /tmp/gq-luau -B /tmp/gq-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-luau/build --target Luau.Compile.CLI -j 4
+          /tmp/gq-luau/build/luau-compile /tmp/EGGRUMBLE_SevenRoleCombat_ON.luau >/dev/null
+          /tmp/gq-luau/build/luau-compile /tmp/EGGRUMBLE_SevenRoleCombat_OFF.luau >/dev/null
+          echo "SOURCE_LOCK / ROLLBACK / NATIVE_PARSE = PASS"
+          echo "ENGINE_STUDIO / FULL_7_JOB_INTERACTION / PRIVATE_ROJO / OFFICIAL_RC / ANDROID / OWNER = NOT_TESTED"
