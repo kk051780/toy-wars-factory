@@ -57,7 +57,7 @@ class CompassContract(unittest.TestCase):
 
     def test_modes_real_world_names_and_no_ally_guidance(self):
         for required in (
-            "EGGRUMBLE_QueuedMode", "BATTLE_ROYALE", 'mode=="TEAM"',
+            "EGGRUMBLE_QueuedMode", "BATTLE_ROYALE", 'mode~="TEAM"',
             "TacticalBattlefield", "Castle_", "EggVault",
             "OwnEggDeposit", "EGGRUMBLE_FieldItems", "NEUTRAL_BOSS_STONE_GIANT",
             "EGGRUMBLE_SelectedRole", "EGGRUMBLE_Eliminated",
