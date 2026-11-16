@@ -35,7 +35,7 @@ HIT_PATCH = HIT_ANCHOR.replace(
 
 
 def blob_sha(raw:bytes)->str:
-    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+    return hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
 
 
 def patch(raw:str)->str:
