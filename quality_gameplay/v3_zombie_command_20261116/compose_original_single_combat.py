@@ -39,6 +39,18 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
    blast()
   else
    local matchToken=tostring(session)
+   -- Weak per-instance keys, monotonic IDs: two NeutralHorde models can share Name.
+   -- The same model keeps its ID even if a different neutral dies or reorders.
+   local neutralIds=setmetatable({}, {__mode="k"})
+   local nextNeutralId=0
+   local function neutralTargetId(enemy:Model):string
+    local id=neutralIds[enemy]
+    if id then return id end
+    nextNeutralId+=1
+    id="N:"..tostring(p.UserId)..":"..tostring(nextNeutralId)
+    neutralIds[enemy]=id
+    return id
+   end
    local function commanderSnapshot(_player:Player):any
     local state=session.rules.castles[tostring(p.UserId)]
     local alive=state~=nil and state.alive and p.Character==char and h.Health>0
@@ -50,6 +62,8 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
       local c=session.rules.castles[tostring(other.UserId)]
       local theirChar,theirRoot,theirHum=characterOf(other)
       if other~=p and c and c.alive and theirRoot and theirHum
+       and theirHum.Health>0
+       and (session.isCurrentHuman==nil or session.isCurrentHuman(other)==true)
        and (session.mode~="TEAM" or c.team~=state.team) then
        table.insert(targets,{id="H:"..tostring(other.UserId),kind="ENEMY_PLAYER",
         x=theirRoot.Position.X,z=theirRoot.Position.Z,active=true,
@@ -69,12 +83,12 @@ NEW_ZOMBIE = ''' elseif role=="ZOMBIE" then
      end
      local horde=session.world:FindFirstChild("NeutralHorde")
      if horde then
-      for n,enemy in ipairs(horde:GetChildren()) do
+      for _,enemy in ipairs(horde:GetChildren()) do
        if enemy:IsA("Model") then
         local er=enemy.PrimaryPart
         local eh=enemy:FindFirstChildOfClass("Humanoid")
         if er and eh and eh.Health>0 then
-         table.insert(targets,{id="N:"..tostring(enemy),kind="NEUTRAL",
+         table.insert(targets,{id=neutralTargetId(enemy),kind="NEUTRAL",
           x=er.Position.X,z=er.Position.Z,active=true,
           matchToken=matchToken,friendly=false})
         end
