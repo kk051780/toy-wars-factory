@@ -1601,7 +1601,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ518_BOSS_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1617,7 +1617,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ518_BOSS_TRUE_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1727,7 +1727,14 @@ jobs:
           queue615=json.loads(Path("artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json").read_text())
           assert queue615["source_count"]==31 and queue615["all_other30_byte_exact"] and queue615["rollback_current_host_byte_exact"]
           assert queue615["real_rojo_source_class_path"]=="31/31" and queue615["source_exact_rojo_verified"]
-          assert queue615["private_rojo_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert queue615["private_rojo_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_REAL_ROJO31.rbxlx").read_bytes()).hexdigest()
+          boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
+          assert boss518["source_count"]==31 and boss518["other30_original_sources_byte_identical"]
+          assert boss518["inverse_off_rollback_byte_exact"] and boss518["rojo_source_class_exact"]=="31/31"
+          assert boss518["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert boss518["author_head"]=="f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
+          assert m["feature_flags"]["BOSS_SHOCKWAVE_WALL_OCCLUSION_518"] is True
+          assert m["source_heads"]["boss_wave518"]=="f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
           assert m["feature_flags"]["LOBBY_QUEUE_ETA_615"] is True
           assert m["source_heads"]["lobby_queue_eta615"]=="849d82e399f342e5212b5dc16cba76b04c1d2c7a"
           assert m["feature_flags"]["BEAST_REAL_ESCORT_618"] is True
@@ -1790,6 +1797,8 @@ jobs:
              "gq618_beast_real_server_humanoid_selected":True,
              "gq618_existing_combat_other30_exact":True,
              "gq618_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json").read_bytes()).hexdigest(),
+             "gq518_one_original_boss_wave_wall_occlusion_selected":True,
+             "gq518_boss_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_bytes()).hexdigest(),
              "gq615_existing_lobby_host_overlay":True,
              "gq615_30_other_current_sources_exact":True,
              "gq615_rollback_current_host_exact":True,
@@ -1918,6 +1927,9 @@ jobs:
             artifacts/gq515_official_select/GQ618_BEAST_SELECTED31.project.json
             artifacts/gq515_official_select/GQ618_BEAST_CURRENT31_REAL_ROJO.rbxlx
             artifacts/gq515_official_select/GQ618_CURRENT31_RECEIPT.json
+            artifacts/gq515_official_select/GQ518_BOSS_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ518_BOSS_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ615_LOBBY_QUEUE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ615_DIRECT31_SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ615_NATIVE10_RESULT.log
