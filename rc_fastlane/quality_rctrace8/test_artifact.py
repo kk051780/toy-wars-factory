@@ -190,7 +190,7 @@ class Gate(unittest.TestCase):
         manifest=json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(manifest["source_count"],31)
         enabled={k for k,flag in manifest["feature_flags"].items() if flag is True}
-        self.assertEqual(len(enabled),33)
+        self.assertEqual(len(enabled),34)
         self.assertEqual(set(manifest["feature_flags"]),enabled)
         self.assertEqual(enabled,set(gq8.FEATURE_EVIDENCE))
         self.assertEqual(manifest["source_heads"]["zombie_guard582"],
