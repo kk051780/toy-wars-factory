@@ -1891,6 +1891,8 @@ jobs:
           assert gq648["other_30_byte_exact"] and gq648["off_inverse_host_byte_exact"]
           assert gq648["rojo_source_class"]=="31/31"
           assert gq648["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["LOBBY_SAFE_SPAWN_648"] is True
+          assert m["source_heads"]["lobby_safe_spawn_648"]=="26a3061ee30de613d5f0dd80037526e279ce8c9e"
           assert m["feature_flags"]["RARE_FIELD_EGG_SCORE_20261117"] is True
           assert m["source_heads"]["rare_field_eggs_20261117"]=="1985135a4cee9affe7acb7d5a921f3f4e3088271"
           assert m["feature_flags"]["POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"] is True
