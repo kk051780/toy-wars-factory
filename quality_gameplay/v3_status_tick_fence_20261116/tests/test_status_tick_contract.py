@@ -38,6 +38,7 @@ class StatusFenceSource(unittest.TestCase):
             'local function apply(h:Humanoid,bot:Model?,targetId:string)',
             'apply(hum,actor,id)',
             'apply(hum,nil,tostring(targetPlayer.UserId))',
+            'castleAtApplication=originalRules.castles and originalRules.castles[targetId]',
             'sameTarget=(session.botActors or {})[targetId]==bot',
             'player.Character:FindFirstChildOfClass("Humanoid")==h',
         ):
