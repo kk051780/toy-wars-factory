@@ -20,6 +20,9 @@ jobs:
       GQ_PATCHED_DIR: /tmp/p0d-v3-gq-bot-patched
       GQ_DIR: quality_gameplay/v3_bot_human_match_membership_20261116
       SOURCE_ROOT: handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+      AI_AUTHOR_SHA: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+      GQ_AI_AUTHOR_BOT: /tmp/p0d-v3-original-ai/EGGRUMBLE_BotActors.luau
+      GQ_AI_PATCHED_DIR: /tmp/p0d-v3-gq-ai-preserved
     steps:
       - uses: actions/checkout@v4
       - name: Fetch source-exact original #482 only (never modify author or RC)
@@ -100,6 +103,74 @@ jobs:
             --out "$GQ_PATCHED_DIR" \
             --place "$GQ_PATCHED_DIR/GQ_BOT_HUMAN_MATCH_PRIVATE21.rbxlx"
           echo "PRIVATE21=SOURCE_EXACT. FORMAL_RC/ENGINE/ANDROID/OWNER=NOT_TESTED"
+      - name: Fetch immutable #484 current AI BotActor and reject source drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$AI_AUTHOR_SHA"
+          mkdir -p "$(dirname "$GQ_AI_AUTHOR_BOT")"
+          git show "$AI_AUTHOR_SHA:$SOURCE_ROOT/EGGRUMBLE_BotActors.luau" > "$GQ_AI_AUTHOR_BOT"
+          echo "GQ_484_ORIGINAL_BOT_AI_DUEL_FROZEN_SHA=$AI_AUTHOR_SHA"
+      - name: Compose current #484 bot duel + original #482 host (source selective, no new AI)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/compose.py" \
+            --source-dir "$GQ_OWNER_SOURCE_DIR" \
+            --out-dir "$GQ_AI_PATCHED_DIR" \
+            --ai-bot-file "$GQ_AI_AUTHOR_BOT"
+          python3 "$GQ_DIR/private21.py" assemble --out "$GQ_AI_PATCHED_DIR" --require-ai
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d-native-luau/build/luau-compile "$file" > /dev/null
+            count=$((count+1))
+          done < <(find "$GQ_AI_PATCHED_DIR" -name '*.luau' -type f -print0)
+          test "$count" -eq 21
+          echo "GQ_482_CURRENT_HOST_PLUS_484_AI_21_NATIVE_PASS $count"
+      - name: Native run actual #484 BotActors against actual #482 host callback (14 cases + mutant)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/make_native_membership_harness.py" \
+            --patched-host "$GQ_AI_PATCHED_DIR/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --out /tmp/p0d-gq-ai-native-membership.luau
+          /tmp/p0d-native-luau/build/luau /tmp/p0d-gq-ai-native-membership.luau
+          python3 "$GQ_DIR/make_native_bot_hit_harness.py" \
+            --patched-host "$GQ_AI_PATCHED_DIR/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --patched-bot "$GQ_AI_PATCHED_DIR/EGGRUMBLE_BotActors.luau" \
+            --out /tmp/p0d-gq-ai-native-realhit.luau
+          /tmp/p0d-native-luau/build/luau-compile /tmp/p0d-gq-ai-native-realhit.luau > /dev/null
+          /tmp/p0d-native-luau/build/luau /tmp/p0d-gq-ai-native-realhit.luau
+          python3 "$GQ_DIR/make_native_bot_hit_harness.py" \
+            --patched-host "$GQ_AI_PATCHED_DIR/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --patched-bot "$GQ_AI_PATCHED_DIR/EGGRUMBLE_BotActors.luau" \
+            --out /tmp/p0d-gq-ai-mutant.luau --mutant
+          if /tmp/p0d-native-luau/build/luau /tmp/p0d-gq-ai-mutant.luau; then
+            echo "RED: original unguarded mutant incorrectly passed"
+            exit 1
+          fi
+          echo "GQ_MUTANT_BASELINE_REPRODUCED_EXPECTED_FAIL"
+      - name: Build true #482 host + latest #484 AI duel PRIVATE21 with same pinned Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_gq_rojo_771 build \
+            "$GQ_AI_PATCHED_DIR/EGGRUMBLE_V3_STUDIO.project.json" \
+            -o "$GQ_AI_PATCHED_DIR/GQ_BOT_HUMAN_AI484_PRIVATE21.rbxlx"
+          python3 "$GQ_DIR/private21.py" verify \
+            --out "$GQ_AI_PATCHED_DIR" \
+            --place "$GQ_AI_PATCHED_DIR/GQ_BOT_HUMAN_AI484_PRIVATE21.rbxlx"
+          echo "GQ_482_484_SOURCE_SELECT_PRIVATE_PLACE=SOURCE_EXACT; OFFICIAL_RC=0"
+      - name: Upload private cross-author receipt only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq-v3-bot-human-ai484-cross-author-private21
+          path: |
+            /tmp/p0d-v3-gq-ai-preserved/*.luau
+            /tmp/p0d-v3-gq-ai-preserved/*.json
+            /tmp/p0d-v3-gq-ai-preserved/*.rbxlx
+          if-no-files-found: error
       - name: Preserve exact candidate evidence (not official Place)
         if: always()
         uses: actions/upload-artifact@v4
