@@ -1,0 +1,32 @@
+name: P0D EGGRUMBLE neutral throughput native gameplay quality
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_pacing/**'
+      - '.github/workflows/p0d-pqg-neutral-throughput.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  neutral-throughput:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source contract and no shared Game/Swarm overwrite
+        run: python3 -m unittest discover -s quality_gameplay/neutral_pacing/tests -p 'test_contract.py' -v
+      - name: Native Luau CLI build
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-neutral-luau
+          cmake -S /tmp/p0d-neutral-luau -B /tmp/p0d-neutral-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-neutral-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Native source exact compile and VM gameplay pace regression
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_pacing/tools/build_native_harness.py --out /tmp/eggrumble-neutral-pacing-native.luau
+          /tmp/p0d-neutral-luau/build/luau-compile quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau >/dev/null
+          /tmp/p0d-neutral-luau/build/luau-compile /tmp/eggrumble-neutral-pacing-native.luau >/dev/null
+          /tmp/p0d-neutral-luau/build/luau /tmp/eggrumble-neutral-pacing-native.luau
+      - name: RC and Studio distinction
+        run: echo 'SOURCE_NATIVE_ONLY / OFFICIAL_RC_NOT_ADOPTED / STUDIO_ANDROID_OWNER_NOT_TESTED'
