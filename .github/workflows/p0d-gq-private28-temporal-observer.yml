@@ -1,0 +1,187 @@
+name: P0D GQ existing 27 plus temporal event probe private28
+on:
+  push:
+    branches: [quality/gq-studio-live-observer-20261116-a]
+    paths:
+      - 'gq_runtime_probe/**'
+      - '.github/workflows/p0d-gq-private28-temporal-observer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composed-private-28:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read exact ORIGINAL GQ composer 26
+        uses: actions/checkout@v4
+        with:
+          ref: 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          path: _quality26
+          persist-credentials: false
+      - name: Read exact ORIGINAL domain integrity observer 27
+        uses: actions/checkout@v4
+        with:
+          ref: b6e32b6776c81ae845ede94bbaae02408cedbc70
+          path: _quality27
+          persist-credentials: false
+      - name: Read exact ORIGINAL seven-domain game
+        uses: actions/checkout@v4
+        with:
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _game_original
+          persist-credentials: false
+      - name: Read exact ORIGINAL artist
+        uses: actions/checkout@v4
+        with:
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art_original
+          persist-credentials: false
+      - name: Read exact ORIGINAL score
+        uses: actions/checkout@v4
+        with:
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score_original
+          persist-credentials: false
+      - name: Verify all immutable owners and local probe safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _quality26 rev-parse HEAD)" = 5506d5eb4eec6ed0c03bd12cb12ea2eb83bbb846
+          test "$(git -C _quality27 rev-parse HEAD)" = b6e32b6776c81ae845ede94bbaae02408cedbc70
+          test "$(git -C _game_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _art_original rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score_original rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 -m unittest discover -s gq_runtime_probe/tests -v
+      - name: Reuse original ART26 compiler and #488 27 observer, then append ONLY our Script
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_ORIGINAL_ART.project.json
+          python3 _quality26/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _game_original --quality _quality26 --art _art_original --score _score_original \
+            --art-project artifacts/GQ_ORIGINAL_ART.project.json \
+            --out artifacts/EGGRUMBLE_V3_28.project.json
+          python3 _quality27/cross_domain_gate/compose_observed.py \
+            --project artifacts/EGGRUMBLE_V3_28.project.json \
+            --receipt artifacts/SOURCE_RECEIPT.json \
+            --observer _quality27/cross_domain_gate/EGGRUMBLE_IntegrityObserver.luau
+          python3 gq_runtime_probe/tools/attach_event_probe_to_27.py \
+            --project artifacts/EGGRUMBLE_V3_28.project.json \
+            --receipt artifacts/SOURCE_RECEIPT.json \
+            --observer gq_runtime_probe/EGGRUMBLE_StudioLiveObserver.server.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile all 28 actual Source and run 30 temporal event VM assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq28_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq28_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path('artifacts/EGGRUMBLE_V3_28.project.json').resolve()
+          tree=json.loads(project.read_text())['tree']
+          def walk(item):
+              if isinstance(item,dict):
+                  if '$path' in item: yield (project.parent/item['$path']).resolve(strict=True)
+                  else:
+                      for k,v in item.items():
+                          if not k.startswith('$'):yield from walk(v)
+          all_sources=list(walk(tree))
+          assert len(all_sources)==28,len(all_sources)
+          for path in all_sources:
+              subprocess.run(['/tmp/gq28_luau/luau-compile',str(path)],check=True,stdout=subprocess.DEVNULL)
+          print('PINNED_NATIVE_LUAU_28_OF_28_PASS')
+          PY
+          python3 gq_runtime_probe/tools/make_native_observer_harness.py --out /tmp/gq28_events_native.luau
+          /tmp/gq28_luau/luau-compile /tmp/gq28_events_native.luau >/dev/null
+          /tmp/gq28_luau/luau /tmp/gq28_events_native.luau | tee artifacts/TEMPORAL_EVENTS_NATIVE.log
+          grep -q GQ_OBSERVER_NATIVE_SOURCE_EXECUTION_PASS artifacts/TEMPORAL_EVENTS_NATIVE.log
+      - name: Checksum-verified Rojo 7.7.1 and private28 Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq28_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq28_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq28_rojo.zip') as z:
+              binaries=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(binaries)==1
+              dest=Path('/tmp/gq28_rojo')
+              dest.write_bytes(z.read(binaries[0]))
+              dest.chmod(0o755)
+          PY
+          /tmp/gq28_rojo build artifacts/EGGRUMBLE_V3_28.project.json -o artifacts/EGGRUMBLE_GQ28_PRIVATE_NO_RC.rbxlx
+      - name: Verify source-exact 28 scripts and record original owner hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('artifacts/EGGRUMBLE_V3_28.project.json').resolve()
+          receipt_path=Path('artifacts/SOURCE_RECEIPT.json')
+          receipt=json.loads(receipt_path.read_text(encoding='utf-8'))
+          place=Path('artifacts/EGGRUMBLE_GQ28_PRIVATE_NO_RC.rbxlx')
+          expected={}
+          def walk(item):
+              for name,child in item.items():
+                  if name.startswith('$') or not isinstance(child,dict):continue
+                  if '$path' in child:
+                      path=(project.parent/child['$path']).resolve(strict=True)
+                      kind='Script' if path.name.endswith('.server.luau') else ('LocalScript' if path.name.endswith('.client.luau') else 'ModuleScript')
+                      assert name not in expected,name
+                      expected[name]=(kind,path.read_text(encoding='utf-8').replace('\r\n','\n'))
+                      assert receipt['source_sha256'][name]==hashlib.sha256(path.read_bytes()).hexdigest(),name
+                  else: walk(child)
+          walk(json.loads(project.read_text(encoding='utf-8'))['tree'])
+          assert len(expected)==28,len(expected)
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              kind=item.attrib.get('class')
+              if kind not in ('Script','LocalScript','ModuleScript'):continue
+              props=item.find('Properties')
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              assert name not in actual,name
+              source=props.findtext("ProtectedString[@name='Source']")
+              if source is None:source=props.findtext("string[@name='Source']")
+              assert source is not None,name
+              actual[name]=(kind,source.replace('\r\n','\n'))
+          assert expected==actual,{'missing':list(set(expected)-set(actual)),'extra':list(set(actual)-set(expected)),
+                                   'wrong':[n for n in set(expected)&set(actual) if expected[n]!=actual[n]]}
+          assert 'EGGRUMBLE_IntegrityObserver' in expected
+          assert 'EGGRUMBLE_StudioLiveObserver' in expected
+          assert receipt['script_count']==28 and receipt['server_count']==25
+          receipt['place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt['place_bytes']=place.stat().st_size
+          receipt['official_rc']='NOT_ADOPTED'
+          receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('PRIVATE_PLACE_SOURCE_EXACT_28_OF_28_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - name: Upload proof for private Studio trial ONLY
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ28_TEMPORAL_INTEGRITY_PRIVATE_NO_RC
+          path: |
+            artifacts/EGGRUMBLE_GQ28_PRIVATE_NO_RC.rbxlx
+            artifacts/SOURCE_RECEIPT.json
+            artifacts/TEMPORAL_EVENTS_NATIVE.log
+          retention-days: 3
+          if-no-files-found: error
