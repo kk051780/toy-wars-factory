@@ -92,6 +92,8 @@ jobs:
           import json
           from pathlib import Path
           from importlib.machinery import SourceFileLoader
+          import sys
+          sys.path.insert(0,str(Path("quality_gameplay/v3_dead_caster_fence_20261116/tools").resolve()))
           m=SourceFileLoader("six","quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_six_author.py").load_module()
           p=Path("artifacts/gq530_six")
           on=(p/"COMBAT_ON.luau").read_text()
