@@ -69,10 +69,12 @@ local function castleAt(arena:Instance,castle:Model)
  deco.Name="EGGRUMBLE_CastleArt_VisualOnly"
  deco.Parent=castle
  local used=0
- local function add(name:string,kind:string,size:Vector3,offset:Vector3,color:Color3,material:Enum.Material,rotY:number?)
-  if used>=MAX_CASTLE_PARTS then return end
+ local function add(name:string,kind:string,size:Vector3,offset:Vector3,color:Color3,material:Enum.Material,rotY:number?):BasePart?
+  if used>=MAX_CASTLE_PARTS then return nil end
   local cf=CFrame.new(at+offset)*CFrame.Angles(0,math.rad(rotY or 0),0)
-  if createVisual(arena,deco,name,kind,size,cf,color,material) then used+=1 end
+  local p=createVisual(arena,deco,name,kind,size,cf,color,material)
+  if p then used+=1 end
+  return p
  end
  -- Four layered tower roofs: readable from long-range but door remains uncovered.
  for _,x in ipairs({-26,26}) do
@@ -95,8 +97,31 @@ local function castleAt(arena:Instance,castle:Model)
  end
  add("HeraldicCrest","Cylinder",Vector3.new(.4,3,3),
   Vector3.new(0,12,-14.15),teamTrim,Enum.Material.Metal,90)
- add("TowerFinial","Wedge",Vector3.new(2.8,2.6,2.8),
+ local finial=add("TowerFinial","Wedge",Vector3.new(2.8,2.6,2.8),
   Vector3.new(26,23.1,-26),bronze,Enum.Material.Metal)
+ -- Personal home ornament echoes an existing, owner-authorized flag change.
+ -- Fixed red/blue HeraldicCrest remains intact for TEAM friend/foe clarity.
+ -- NEVER change OwnerFlag, decorate rules, castle HP or defense budget here.
+ local bannerBound=false
+ local function watchOwnerFlag(flag:Instance)
+  if bannerBound or not finial or not flag:IsA("BasePart") then return end
+  bannerBound=true
+  finial.Color=flag.Color
+  flag:GetPropertyChangedSignal("Color"):Connect(function()
+   if finial.Parent and flag.Parent then finial.Color=flag.Color end
+  end)
+ end
+ local existingFlag=castle:FindFirstChild("OwnerFlag")
+ if existingFlag then watchOwnerFlag(existingFlag) end
+ if not bannerBound then
+  local later
+  later=castle.ChildAdded:Connect(function(child)
+   if child.Name=="OwnerFlag" then
+    watchOwnerFlag(child)
+    if bannerBound and later then later:Disconnect() end
+   end
+  end)
+ end
 end
 
 local function drawTree(arena:Instance,deco:Instance,base:Vector3,variant:number,index:number)
