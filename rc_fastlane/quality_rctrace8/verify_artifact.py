@@ -49,6 +49,7 @@ RULES = {
     "session.neutralBudget:acquire(",
   )},
  "items": {
+  "EGGRUMBLE_LobbyCastleModesPreview": ("joined[actor.UserId]==mode",),
   "EGGRUMBLE_FieldItemPickups": (
     'interactionGuard.allow(player,part,"拾う",part.Name)',
     "local function restoreSpeed()",
