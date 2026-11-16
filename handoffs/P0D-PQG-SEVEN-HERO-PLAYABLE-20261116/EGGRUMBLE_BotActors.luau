@@ -92,6 +92,10 @@ end
 -- steal vault eggs, deposit or damage castles through collidable geometry.
 -- Stop the cast just before its interactable (vault/door/deposit) target part.
 local function clearActionPath(actor:Model,actors:Instance,target:Vector3,targetPart:BasePart?):boolean
+ -- Resolve an actual live, parented server-world interactable before the
+ -- geometric LOS check. If the vault, deposit, gate or field egg vanished,
+ -- do not perform an invisible egg transfer or phantom castle siege.
+ if not targetPart or not targetPart.Parent then return false end
  local origin=actor:GetPivot().Position
  if math.abs(origin.Y-target.Y)>4.0 then return false end
  local start=origin+Vector3.new(0,0.4,0)
