@@ -5,6 +5,10 @@ on:
     paths:
       - quality_gameplay/v3_private_live_canary_20261116/**
       - .github/workflows/p0d-gq-v3-private27-full-intake.yml
+  pull_request:
+    paths:
+      - quality_gameplay/v3_private_live_canary_20261116/**
+      - .github/workflows/p0d-gq-v3-private27-full-intake.yml
   workflow_dispatch:
 permissions:
   contents: read
