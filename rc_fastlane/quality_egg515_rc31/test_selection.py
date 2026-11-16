@@ -8,7 +8,7 @@ from importlib.machinery import SourceFileLoader
 SCRIPT=Path("rc_fastlane/quality_egg515_rc31/select_original_egg_bounds.py")
 mod=SourceFileLoader("gq515_current_selector",str(SCRIPT)).load_module()
 ROOT=Path("artifacts/gq515_official_select")
-BASE=Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json")
+BASE=Path("artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json")
 AUTHOR=Path("_gq515_original/quality_gameplay/field_egg_drop_recovery_20261116/EGGRUMBLE_FieldEggDropBounds.luau")
 
 class OriginalEggBoundsOnCurrentRC(unittest.TestCase):
