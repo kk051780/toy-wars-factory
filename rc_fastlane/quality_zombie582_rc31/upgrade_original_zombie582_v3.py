@@ -51,8 +51,10 @@ def locked_source(v2:Path,v3:Path,policy:Path,runtime:Path):
             raise ValueError("RED_ORIGINAL_AUTHOR_INLINE_SHAPE_DRIFT")
         return generated[len(mod.HERO_ANCHOR):-len(suffix)]
     first,second=get_inline(a),get_inline(b)
-    if first==second or a.NEW_ZOMBIE==b.NEW_ZOMBIE:
+    if a.NEW_ZOMBIE==b.NEW_ZOMBIE:
         raise ValueError("RED_NO_NEW_AUTHOR_DELTA")
+    # The policy/runtime inline is deliberately identical across this tiny v3
+    # author revision. Only the ZOMBIE branch hunk may change.
     if "local neutralIds=setmetatable" in first:
         raise ValueError("RED_OLD_ALREADY_HAS_NEUTRAL_ID")
     for must in ("local neutralIds=setmetatable({}, {__mode=\"k\"})",
@@ -67,7 +69,8 @@ def locked_source(v2:Path,v3:Path,policy:Path,runtime:Path):
 
 def source_upgrade(current:str,a,b,old_inline:str,new_inline:str) -> str:
     if (current.count(old_inline)!=1 or current.count(a.NEW_ZOMBIE)!=1
-        or current.count(b.NEW_ZOMBIE)!=0 or current.count(new_inline)!=0):
+        or current.count(b.NEW_ZOMBIE)!=0
+        or (old_inline!=new_inline and current.count(new_inline)!=0)):
         raise ValueError("RED_CURRENT_RC_COMBAT_NOT_SOURCE_LOCKED_V2")
     selected=current.replace(old_inline,new_inline,1).replace(a.NEW_ZOMBIE,b.NEW_ZOMBIE,1)
     if selected.count(new_inline)!=1 or selected.count(b.NEW_ZOMBIE)!=1:
