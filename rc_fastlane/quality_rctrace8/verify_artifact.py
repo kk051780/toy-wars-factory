@@ -65,7 +65,8 @@ RULES = {
    "limit>=2 and limit<=M.MAX_HERO_SLOTS",
    "#roster>=2 and #roster<=M.MAX_HERO_SLOTS"),
  "EGGRUMBLE_CombatBalance": ("return Balance",),
-  "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",),
+  "EGGRUMBLE_MatchResultService": ("function ResultRetry.deliver(",
+   'local status=if session.rules.winner=="DRAW" then "引き分け"',),
   "EGGRUMBLE_ScoreBalance": ("local claimedRareFieldEggs={}",),
  },
 }
