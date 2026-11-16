@@ -1,0 +1,233 @@
+name: P0D GQ515 federated original eight areas 28 plus field egg 29 private
+on:
+  push:
+    branches:
+      - quality/gq-field-egg-drop-recovery-20261116-q01
+    paths:
+      - 'quality_gameplay/field_egg_drop_recovery_20261116/**'
+      - '.github/workflows/p0d-gq515-federated29-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-28-to-29-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout own #515 isolated quality adapter
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout pinned original #482 Game 7 domains
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Checkout pinned #484 original AI and current26 composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Checkout pinned #485 original ART composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Checkout pinned #487 original SCORE
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Checkout pinned #494 original neutral pacing
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing
+          persist-credentials: false
+      - name: Checkout pinned #501 original neutral fairness and dual composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_fair
+          persist-credentials: false
+      - name: Checkout pinned #489 original item fairness
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item
+          persist-credentials: false
+      - name: Checkout pinned #509 original post-win Rules
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 1087848a1b2f669c71adaefaeb1ca59c93590244
+          path: _v3_postwin
+          persist-credentials: false
+      - name: Verify 8 external author HEADs and own source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_fair rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          test "$(git -C _v3_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _v3_postwin rev-parse HEAD)" = 1087848a1b2f669c71adaefaeb1ca59c93590244
+          python3 -m unittest discover -s quality_gameplay/field_egg_drop_recovery_20261116 -p test_source_contract.py -v
+          echo ORIGINAL_EIGHT_AUTHOR_HEADS_SOURCE_LOCK_PASS
+      - name: Compose original author ART then original AI and SCORE 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/V3_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/V3_ART.project.json \
+            --out artifacts/ORIGINAL26.project.json
+      - name: Compose original #494 and #501 neutral policy 28 with its real composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_fair/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/ORIGINAL26.project.json \
+            --original-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_fair/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/NEUTRAL28.project.json
+      - name: Compose original #489 ITEM and original #509 Rules into 28 without any rewrite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_postwin/handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/compose_federated28.py compose \
+            --base26 artifacts/ORIGINAL26.project.json \
+            --dual28 artifacts/NEUTRAL28.project.json \
+            --patched-rules _v3_postwin/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --original-item _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/ALL_EIGHT_ORIGINAL28.project.json
+      - name: Add ONLY #515 egg-field bounded drop to ORIGINAL 28 for private29
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/compose_on_current26.py \
+            --base26 artifacts/ALL_EIGHT_ORIGINAL28.project.json \
+            --out artifacts/field29 --expect-count 28
+          test -f artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29.project.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("artifacts/field29/SOURCE29_RECEIPT.json")
+          d=json.loads(p.read_text())
+          assert d["original_count"]==28 and d["candidate_count"]==29
+          assert d["preserved_base_sources"]==27
+          assert d["studio"]=="NOT_RUN" and d["android"]=="NOT_RUN"
+          print("GQ515_ORIGINAL28_PRIVATE29_PRESERVE_27_PLUS_HOST_ONE_PASS")
+          PY
+      - name: Build fixed native Luau runtime
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Execute ACTUAL #509 Rules plus #515 bounded eggs native, reject an unfenced mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq515_native29 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq515_native29 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/build_real_rules_native.py \
+            --rules _v3_postwin/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --spec quality_gameplay/field_egg_drop_recovery_20261116/tests/spec_postwin_original29.luau \
+            --out artifacts/field29/ACTUAL_509_515_NATIVE.luau
+          /tmp/gq515_native29/luau-compile --text artifacts/field29/ACTUAL_509_515_NATIVE.luau >/dev/null
+          /tmp/gq515_native29/luau artifacts/field29/ACTUAL_509_515_NATIVE.luau | tee artifacts/field29/REAL_509_515_NATIVE.log
+          grep -q 'EGGRUMBLE_GQ509_515_FEDERATED_REAL_RULES_NATIVE_PASS checks=' artifacts/field29/REAL_509_515_NATIVE.log
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("artifacts/field29/ACTUAL_509_515_NATIVE.luau")
+          t=p.read_text()
+          needle=' if m.phase~="ACTIVE" or m.winner~=nil then return 0,{} end\n'
+          assert t.count(needle)==1
+          Path("artifacts/field29/BROKEN_POSTWIN_MUTANT.luau").write_text(t.replace(needle,"",1))
+          PY
+          if /tmp/gq515_native29/luau artifacts/field29/BROKEN_POSTWIN_MUTANT.luau \
+            > artifacts/field29/MUTANT_FAIL.log 2>&1; then
+            echo 'POSTWIN_BROKEN_MUTANT_FALSE_PASS'; exit 1
+          fi
+          grep -q '#509 real terminal Rules forbids token mint' artifacts/field29/MUTANT_FAIL.log
+          echo ACTUAL_POSTWIN_UNFENCED_MUTANT_REJECTED
+      - name: Native compile every one of 29 exact mapped game source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import subprocess,json
+          from pathlib import Path
+          p=Path("artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29.project.json").resolve()
+          def walk(node):
+              for k,v in node.items():
+                  if k.startswith("$"):continue
+                  if "$path" in v:yield (p.parent/v["$path"]).resolve(strict=True)
+                  else:yield from walk(v)
+          sources=list(walk(json.loads(p.read_text())["tree"]))
+          assert len(sources)==29 and len(set(sources))==29
+          for src in sources:
+              subprocess.run(["/tmp/gq515_native29/luau-compile","--text",str(src)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ515_ORIGINAL_EIGHT_AREAS_LUAU_29_OF_29_PARSE_PASS")
+          PY
+      - name: Checksum pin real Rojo and build unpublished 29 source private Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq515_rojo29.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq515_rojo29.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq515_rojo29.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq515_rojo29")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq515_rojo29 build artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29.project.json \
+            -o artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29_PRIVATE.rbxlx
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/verify_place22.py \
+            --expected-count 29 \
+            --project artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29.project.json \
+            --place artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29_PRIVATE.rbxlx
+      - name: Archive SOURCE candidate only; never publish or write formal RC
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ515-EIGHT-AREAS-ORIGINAL28-PLUS-FIELD-EGG29-NO-RC
+          retention-days: 4
+          if-no-files-found: error
+          path: |
+            artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29_PRIVATE.rbxlx
+            artifacts/field29/EGGRUMBLE_GQ_FIELD_EGG_SAFE29.project.json
+            artifacts/field29/SOURCE29_RECEIPT.json
+            artifacts/field29/REAL_509_515_NATIVE.log
+            artifacts/field29/ACTUAL_509_515_NATIVE.receipt.txt
+            artifacts/field29/MUTANT_FAIL.log
+      - run: echo "GQ515 PRIVATE29 SOURCE_ONLY. CLAIM_ACK_RC_WRITER_220_STUDIO_ANDROID_OWNER_REQUIRED"
