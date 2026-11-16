@@ -905,10 +905,55 @@ jobs:
             --out artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
             --place artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx
           echo GQ508_EXACT_ORIGINAL_AUTHOR_INLINE_KO_FENCE_31_SCRIPTS_OTHER30_EXACT
+      - name: Read immutable successful original #583 author source once
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 60b67c8dade80ff7ccd1d97e03480ba333977084
+          path: _gq583_original_roster
+          persist-credentials: false
+      - name: Select original GQ583 TWO roster guards into current ONE CastleRules, full Native31 Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq583_original_roster rev-parse HEAD)" = 60b67c8dade80ff7ccd1d97e03480ba333977084
+          test "$(git -C _gq583_original_roster hash-object quality_gameplay/v3_roster_hardcap16_20261116/select_roster16.py)" = "$(git -C _gq583_original_roster rev-parse HEAD:quality_gameplay/v3_roster_hardcap16_20261116/select_roster16.py)"
+          python3 -B -m unittest discover -s _gq583_original_roster/quality_gameplay/v3_roster_hardcap16_20261116 -p 'test_selector.py' -v
+          python3 -B -m unittest discover -s rc_fastlane/quality_roster583_rc31 -p 'test_selection.py' -v
+          python3 -B rc_fastlane/quality_roster583_rc31/select_original_roster583.py prepare \
+            --base artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
+            --author _gq583_original_roster/quality_gameplay/v3_roster_hardcap16_20261116/select_roster16.py \
+            --original-luau _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_SELECTED31.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          import subprocess
+          mapping=SourceFileLoader("gq508_map","rc_fastlane/quality_ko508_rc31/select_original508_neutral_ko.py").load_module().mapping
+          _,files=mapping(Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_SELECTED31.project.json"))
+          assert len(files)==31
+          for path in files.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ583_FINAL31_NATIVE_COMPILE_PASS")
+          PY
+          for f in artifacts/gq538_official_select/GQ583_*_NATIVE.spec.luau; do
+            /tmp/gq530_all31_native/luau-compile --text "$f" >/dev/null
+            /tmp/gq530_all31_native/luau "$f"
+          done
+          /tmp/gq530-all31-rojo build artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_SELECTED31.project.json \
+            -o artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_roster583_rc31/select_original_roster583.py verify \
+            --base artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json \
+            --author _gq583_original_roster/quality_gameplay/v3_roster_hardcap16_20261116/select_roster16.py \
+            --original-luau _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_SELECTED31.project.json \
+            --place artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_TRUE_ROJO.rbxlx
+          echo GQ583_SINGLE_AUTHOR_CASTLERULES_30_OTHERS_EXACT_TRUE31_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -921,10 +966,15 @@ jobs:
                   or (os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
                       and os.environ.get("GITHUB_BASE_REF")=="rc/p0d-s1-kids-rc01"))
           assert m["source_count"]==src["source_count"]==off["source_count"]==31
+          assert m["source_heads"]["original_roster583"]=="60b67c8dade80ff7ccd1d97e03480ba333977084"
+          assert m["feature_flags"]["ROSTER_HARDCAP16_583"] is True
+          roster=json.loads(Path("artifacts/gq538_official_select/GQ583_ROSTER16_RC31_RECEIPT.json").read_text())
+          assert roster["true_rojo_source_class_exact"]=="31/31" and roster["other_30_byte_exact"] and roster["off_rollback_byte_exact"]
+          assert roster["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1002,6 +1052,8 @@ jobs:
             "github_commit_sha":os.environ["GITHUB_SHA"],
             "source_author_heads":m["source_heads"],
             "script_count":31,
+            "original_author_583_roster16_source_selected":True,
+            "roster583_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ583_ROSTER16_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "script_source_and_class_exact":"31/31",
             "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
             "base_owner30_untouched_except_combat_before_541":29,
@@ -1097,6 +1149,9 @@ jobs:
             artifacts/gq538_official_select/GQ523_HEAL517_KO508_SELECTED31.project.json
             artifacts/gq538_official_select/GQ508_NEUTRAL_KO_RC31_RECEIPT.json
             artifacts/gq538_official_select/GQ508_AUTHOR_NATIVE_LOG.txt
+            artifacts/gq538_official_select/GQ523_HEAL517_KO508_ROSTER583_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ583_ROSTER16_RC31_RECEIPT.json
+            artifacts/gq538_official_select/GQ583_ORIGINAL_CASTLE_RULES_16.luau
             artifacts/gq538_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
