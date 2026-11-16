@@ -26,17 +26,18 @@ local function resultText(session:any,player:Player,mode:string,ranking:any):(st
  if session.swarm and session.swarm.kills then kos=session.swarm.kills[id] or 0 end
  local eggs=castle.depositedEggs or 0
  local fallen=castleEliminations(session.rules.events or {},id)
- local place=0;local points=0;local stolen=0;local secured=0
+ local place=0;local points=0;local stolen=0;local secured=0;local teamSiege=0
  for index,row in ipairs(ranking.rows) do
   if row.id==id then
    place=index;points=row.score;stolen=row.stolen;secured=row.securedSteals
+   teamSiege=row.teamCastleSupport
    break
   end
  end
- -- Show attempts AND completed returns so dying with stolen eggs never looks
- -- like a successful raid. Keep the original compact eight-second GUI.
- return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",
-  place,points,kos,stolen,secured,eggs,fallen)
+ -- No persistent in-game HUD. Compact team-siege contribution is visible only
+ -- in the original eight-second match result; BR shows no team share.
+ return status,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 援%d",
+  place,points,kos,stolen,secured,eggs,fallen,teamSiege)
 end
 
 local function makeResultGui(player:Player,title:string,stats:string,won:boolean)
