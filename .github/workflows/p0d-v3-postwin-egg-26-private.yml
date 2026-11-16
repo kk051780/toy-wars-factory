@@ -1,0 +1,143 @@
+name: P0D V3 post-win egg fix ORIGINAL ART SCORE 26-source private Place
+on:
+  push:
+    branches: ['quality/p0d-v3-postwin-egg-drop-fence-20261116-r01']
+    paths:
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-v3-postwin-egg-26-private.yml'
+  pull_request:
+    paths:
+      - 'handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/**'
+      - '.github/workflows/p0d-v3-postwin-egg-26-private.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  current26-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact original V3 #482 7-domain game
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Exact original #484 AI and 26-source compositor
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Exact original ART #485
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Exact original SCORE #487
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Pin source heads before ANY composition
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+      - name: Reuse ART author's original composer without rewriting ART
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_LATEST_ART.project.json
+      - name: Reuse #484 original 26-source selective Game+AI+ART+SCORE compositor
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_LATEST_ART.project.json \
+            --out artifacts/EGGRUMBLE_BASE_26.project.json
+      - name: Apply EXACT ONE native-tested castle rules source replacement
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/apply_to_26.py overlay \
+            --input artifacts/EGGRUMBLE_BASE_26.project.json \
+            --patched handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/EGGRUMBLE_POSTWIN_26.project.json
+      - name: Obtain pinned native Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native Luau compile ALL 26 selected script sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/p0d_postwin26_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_postwin26_native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/EGGRUMBLE_POSTWIN_26.project.json").resolve()
+          tree=json.loads(p.read_text())["tree"]
+          paths=[]
+          def visit(node):
+              if isinstance(node,dict):
+                  if "$path" in node: paths.append((p.parent/node["$path"]).resolve(strict=True))
+                  else:
+                      for key,value in node.items():
+                          if not key.startswith("$"): visit(value)
+          visit(tree)
+          assert len(paths)==26
+          for f in paths:
+              subprocess.run(["/tmp/p0d_postwin26_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("NATIVE_26_OF_26_PARSE_PASS")
+          PY
+      - name: Acquire SHA256 pinned Rojo v7.7.1 and produce private unpublished Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_rojo.zip") as z:
+              binaries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(binaries)==1
+              f=Path("/tmp/p0d_rojo");f.write_bytes(z.read(binaries[0]));f.chmod(0o755)
+          PY
+          /tmp/p0d_rojo build artifacts/EGGRUMBLE_POSTWIN_26.project.json -o artifacts/EGGRUMBLE_POSTWIN_26_PRIVATE.rbxlx
+      - name: Verify literal source bytes/class for all 26 scripts inside actual Place
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-POSTWIN-EGG-FENCE-20261116/apply_to_26.py verify \
+            --project artifacts/EGGRUMBLE_POSTWIN_26.project.json \
+            --place artifacts/EGGRUMBLE_POSTWIN_26_PRIVATE.rbxlx
+      - name: Upload private 26-source intake proof only
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_V3_POSTWIN_EGG_26_PRIVATE_NO_RC
+          path: |
+            artifacts/EGGRUMBLE_POSTWIN_26_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_POSTWIN_26.project.json
+            artifacts/POSTWIN_SOURCE_RECEIPT.json
+          retention-days: 4
