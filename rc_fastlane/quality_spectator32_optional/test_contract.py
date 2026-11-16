@@ -25,11 +25,13 @@ def fixture():
         opt.PROFILE:{"source_count":32,"default_selected":False,
                      "production_enabled":False,
                      "source_manifest":"rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json"}}}
-    flags={"FLAG_"+str(i):True for i in range(32)}
+    flags={"FLAG_"+str(i):True for i in range(28)}
     flags.update(dict.fromkeys(["LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                 "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
                 "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
-                "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"],True))
+                "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509","BOSS_SHOCKWAVE_WALL_OCCLUSION_518",
+                "BUILDER_WALL_SERVER_TOOL_522","GQ8_ROLE_SELECTION_ACK_20261117",
+                "GQ646_LOBBY_SAFE_SPAWN_20261117"],True))
     base={"profile":"eggrumble_v3_31","source_count":31,"feature_flags":flags}
     return meta,active,base
 
@@ -58,7 +60,9 @@ class Optional32ContractTests(unittest.TestCase):
         for f in ("LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                   "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
                   "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
-                  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"):
+                  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509","BOSS_SHOCKWAVE_WALL_OCCLUSION_518",
+                "BUILDER_WALL_SERVER_TOOL_522","GQ8_ROLE_SELECTION_ACK_20261117",
+                "GQ646_LOBBY_SAFE_SPAWN_20261117"):
             m,a,b=fixture();b["feature_flags"][f]=False
             with self.assertRaises(ValueError): opt.contract(m,a,b)
 
