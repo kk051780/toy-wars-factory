@@ -18,6 +18,7 @@ REQUIRED = {
     "EGGRUMBLE_CombatBalance": "EGGRUMBLE_CombatBalance.luau",
     "EGGRUMBLE_SkillFX": "EGGRUMBLE_SkillFX.luau",
     "EGGRUMBLE_AttackGeometry": "EGGRUMBLE_AttackGeometry.luau",
+    "EGGRUMBLE_ImpactFeedback": "EGGRUMBLE_ImpactFeedback.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
     "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
     "EGGRUMBLE_RoundReplay": "EGGRUMBLE_RoundReplay.luau",
