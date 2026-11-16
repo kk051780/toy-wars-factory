@@ -9,6 +9,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -84,7 +85,7 @@ def prepare(base: Path, output: Path, receipt: Path, boss: Path, author_tool: Pa
     new = copy.deepcopy(data)
     bp = manifest[BOSS_NAME][0]
     assert bp == ("ServerScriptService",BOSS_NAME)
-    slot(new,bp)["$path"] = str(boss.resolve())
+    slot(new,bp)["$path"] = os.path.relpath(boss.resolve(),output.parent.resolve()).replace(os.sep,"/")
     new["name"] = "EGGRUMBLE_GQ519_SELECTED_IN_GQ517_30_PRIVATE_NOT_RC"
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(json.dumps(new,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
