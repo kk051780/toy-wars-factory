@@ -14,7 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 COMBINED_SHA256 = "4b7b69664a572f57ed327c4b7cb23ea4209ce8022e4aa86cd2e4110f049b5293"
-STATUS_OWNER_SHA = "dfafbd8ca92eff3017a49fb010e696f6afc07455"
+STATUS_OWNER_SHA = "8f0275692c54874f823d66748d470fb849607df5"
 
 def import_patch():
     name = "_own_original_author_mage_patch"
