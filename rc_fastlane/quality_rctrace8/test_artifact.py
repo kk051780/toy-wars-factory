@@ -248,6 +248,25 @@ class Gate(unittest.TestCase):
                 with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
                     gq8.verify(b,r,m,a,HEAD)
 
+    def test_current_rc_each_secondary_source_anchor_missing_is_red(self):
+        for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
+            for anchor in anchors[1:]:
+                with self.subTest(flag=flag,anchor=anchor):
+                    raw,receipt,manifest,active=fixture_with_current_26_flags()
+                    raw=drop_anchor(raw,script,anchor)
+                    rehash(raw,receipt)
+                    with self.assertRaisesRegex(gq8.RedGate,
+                        "FEATURE_FALSE_ON_"+flag):
+                        gq8.verify(raw,receipt,manifest,active,HEAD)
+
+    def test_current_rc_rejects_false_new_zombie_flag_without_command_source(self):
+        b,r,m,a=fixture_with_current_26_flags()
+        b=drop_anchor(b,"EGGRUMBLE_SevenRoleCombat",
+            "ZombieCommander.begin(p,")
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_ZOMBIE_COMMAND_SQUAD_582"):
+            gq8.verify(b,r,m,a,HEAD)
+
     def test_no_misrepresented_studio_or_publish(self):
         b,r,m,a=fixture()
         r["roblox_publish"]=True
@@ -264,7 +283,7 @@ class Gate(unittest.TestCase):
         with self.assertRaisesRegex(gq8.RedGate,"S1_LEGACY_CHANGED_WITHOUT_OWNER"):
             gq8.verify(b,r,m,a,HEAD)
 
-    def test_current_rc25_flags_are_individually_source_proved(self):
+    def test_current_rc26_flags_are_individually_source_proved(self):
         b,r,m,a=fixture_with_current_26_flags()
         result=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(result["verified_flag_count"],26)
