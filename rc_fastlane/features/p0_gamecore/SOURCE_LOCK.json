@@ -1,0 +1,44 @@
+{
+  "schema": "P0D_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0_GAMECORE_READY_15M_HUD_V1",
+  "official_base_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "source_count_before": 66,
+  "source_count_after": 66,
+  "locked_script": {
+    "path": "rc_fastlane/apply_p0_ready_15min.py",
+    "git_blob": "52f0fa1dbdc09de3ca9bebbec1c8768d4eba4c92",
+    "stage": "after exact RC66 feature overlay, before native Luau and Rojo",
+    "run_command": "python3 -B rc_fastlane/apply_p0_ready_15min.py --dist \"$DIST\" --enabled true"
+  },
+  "modified_assembled_sources": [
+    "server/Game.server.luau",
+    "shared/Config.luau",
+    "client/HUD.client.luau"
+  ],
+  "unchanged_scripts": 63,
+  "lock_recomputed_by_patch": [
+    "dist/SOURCE_LOCK.json",
+    "dist/RC_FEATURE_LOCK.json"
+  ],
+  "security_constraints": [
+    "one original Game/Remote/Store",
+    "server-owned READY validation",
+    "no client damage, scores or egg writes",
+    "StudioSolo opt-in only",
+    "no paid or publish"
+  ],
+  "rollback": "omit the P0 emergency #361 step in .github/workflows/p0d-rc-fastlane.yml and rebuild exact existing 66-source canonical RC",
+  "evidence": {
+    "exact_ci_head": "7012c1c610f958beea86989241d63164c77c1b69",
+    "run_id": 43556055429,
+    "conclusion": "success",
+    "studio": "NOT_RUN",
+    "owner_fun": "FUN_NO_GO",
+    "not_in_scope": [
+      "real ally/opponent bots",
+      "3D castle and expanded terrain",
+      "physical dojo relocation",
+      "world billboard HUD consolidation"
+    ]
+  }
+}
