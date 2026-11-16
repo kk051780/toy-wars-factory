@@ -16,6 +16,7 @@ REQUIRED = {
     "EGGRUMBLE_InteractionGuard": "EGGRUMBLE_InteractionGuard.luau",
     "EGGRUMBLE_SevenRoleCombat": "EGGRUMBLE_SevenRoleCombat.luau",
     "EGGRUMBLE_SwarmCombat": "EGGRUMBLE_SwarmCombat.luau",
+    "EGGRUMBLE_MatchResultService": "EGGRUMBLE_MatchResultService.luau",
     "EGGRUMBLE_LobbyCastleModesPreview": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
 }
 
