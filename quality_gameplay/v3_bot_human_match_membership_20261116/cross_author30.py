@@ -85,7 +85,7 @@ def prepare(base:Path,out:Path,receipt:Path,original_host:Path,ai_host:Path,ai_c
  host_raw=original[HOST]["source"].read_text(encoding="utf-8")
  bot_raw=original[BOT]["source"].read_text(encoding="utf-8")
  host,bot=membership_patch(host_raw,bot_raw)
- assert host.replace("  -- Authoritative host-only membership fence for BotActors hero hits.\n"
+ if host.replace("  -- Authoritative host-only membership fence for BotActors hero hits.\n"
      "  -- Never trust a stale castle ID or a client-side teleport as proof of participation.\n"
      '  session.isCurrentHuman=function(player:Player):boolean\n'
      '   return sessions[mode]==session and session.rules.phase=="ACTIVE"\n'
