@@ -93,6 +93,7 @@ local approvedWorld = world()
 check(Gate.watchWorld(approvedWorld), true, "approved private canary starts")
 check(#deferred, 1, "exactly one host-scoped revocation watcher")
 check(approvedWorld.destroyed, false, "authorized world remains before revocation")
+check(ready, true, "valid lease remains advertised until revoked")
 explicit = false
 deferred[1]()
 check(approvedWorld.destroyed, true, "revoked world destroyed")
