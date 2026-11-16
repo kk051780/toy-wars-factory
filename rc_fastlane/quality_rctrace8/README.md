@@ -4,7 +4,7 @@
 
 この検証はゲーム機能をもう一度実装せず、既存の正式RCワークフローが生成した `EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx` の **Roblox XML 内の31個の本物の Script Source** と、同一HEADのActions receipt、`rc_fastlane/EGGRUMBLE_V3_ACTIVE.json`、旧S1 `ACTIVE.json` を独立突合する。原作者ソースと他班の Host/Combat/Swarm/Bot/Item/ART/Score/Lobby 変更はゼロ。
 
-対象8領域：キャラ7職、フィールドのAI遮蔽、戦闘の死者ガード、城/卵表示、雑兵の本物の攻撃と共有予算、アイテム取得、TEAM/BR入口、スコア/結果。現在判明した14個の公式ONフラグに実コードのアンカーを対応付ける。#551「旧アバター死亡で新しい卵が失われる」ガードも成果物上で確認する。別の新規フラグは `unassessed_new_flags` に列挙し、既検証と偽装しない。
+対象8領域：キャラ7職、フィールドのAI遮蔽、戦闘の死者ガード、城/卵表示、雑兵の本物の攻撃と共有予算、アイテム取得、TEAM/BR入口、スコア/結果。現在判明した16個の公式ONフラグに実コードのアンカーを対応付ける。#551旧アバターの卵誤落下、正式RC採用済み#538結果表示の再送と#523フィールド卵の城土台回避も実成果物から確認する。別の新規フラグは `unassessed_new_flags` に列挙し、既検証と偽装しない。
 
 RED：SHAが違うPlace、現在と異なるRC HEAD、欠けたSource、31本より少ない/重複したScript、異なるScript class、記載だけONで実コードにない修正、既存S1が無承認で切り替わる、Publish済みを示すreceipt。
 
