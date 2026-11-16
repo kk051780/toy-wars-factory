@@ -123,7 +123,34 @@ jobs:
           grep -q GQ_HUMAN_STEALTH_PVP_REAL_SOURCE_12_CASES_PASS /tmp/gq530pvp.log
           /tmp/gq530_native/luau artifacts/gq530_five/REAL_MAGE.luau | tee /tmp/gq530mage.log
           grep -q MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS /tmp/gq530mage.log
-      - name: Source-pinned Rojo 7.7.1 builds ONE private22 .rbxlx
+      - name: Retest pinned #516 original delayed DOT actual callback in five-author Combat
+        run: |
+          set -euo pipefail
+          python3 _gq_dot/quality_gameplay/v3_status_tick_fence_20261116/tools/make_actual_status_callback_native.py \
+            --source artifacts/gq530_five/ONE_COMBAT_FIVE_AUTHOR.luau \
+            --out artifacts/gq530_five/REAL_DOT.luau
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          p=Path("artifacts/gq530_five/REAL_DOT.luau")
+          src=p.read_text(encoding="utf-8")
+          own=SourceFileLoader("pvp","quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py").load_module()
+          anchor="local function secondaryEffect("
+          assert src.count(anchor)==1
+          src=src.replace(anchor,own.HELPER+anchor,1)
+          target='local target={UserId=2,Character=newChar(enemyH)}'
+          assert src.count(target)==1
+          src=src.replace(target,target+'\n function target:GetAttribute(k) return nil end',1)
+          rule='["2"]={alive=true,team=targetTeam or "BLUE"}'
+          assert src.count(rule)==1
+          src=src.replace(rule,'["2"]={alive=true,team=targetTeam or "BLUE",heldEggs=0}',1)
+          assert src.count("humanCombatTargetable(")==2
+          p.write_text(src,encoding="utf-8")
+          PY
+          /tmp/gq530_native/luau-compile --text artifacts/gq530_five/REAL_DOT.luau >/dev/null
+          (cd artifacts/gq530_five && /tmp/gq530_native/luau REAL_DOT.luau) | tee /tmp/gq530dot.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS /tmp/gq530dot.log
+      - name: Source-pinned Rojo 7.7.1 builds ON22 and rollback OFF22 private Places
         run: |
           set -euo pipefail
           curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq530_rojo.zip
@@ -146,6 +173,29 @@ jobs:
             --receipt artifacts/gq530_five/FIVE_AUTHOR_RECEIPT.json \
             --verify-place artifacts/gq530_five/FIVE_AUTHOR_PRIVATE22_NOT_RC.rbxlx
           echo 'GQ530_5_AUTHOR_FUSED_22_SOURCE_EXACT_PRIVATE_ONLY'
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_five_author.py --off \
+            --combat artifacts/gq530_five/OFF_COMBAT_FOUR_AUTHOR.luau \
+            --project artifacts/gq530_five/OFF22.project.json \
+            --receipt artifacts/gq530_five/OFF22_RECEIPT.json
+          /tmp/gq530_native/luau-compile --text artifacts/gq530_five/OFF_COMBAT_FOUR_AUTHOR.luau >/dev/null
+          /tmp/gq530_rojo build artifacts/gq530_five/OFF22.project.json \
+            -o artifacts/gq530_five/OFF22_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_five_author.py --off \
+            --combat artifacts/gq530_five/OFF_COMBAT_FOUR_AUTHOR.luau \
+            --project artifacts/gq530_five/OFF22.project.json \
+            --receipt artifacts/gq530_five/OFF22_RECEIPT.json \
+            --verify-place artifacts/gq530_five/OFF22_PRIVATE_NOT_RC.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          p=SourceFileLoader("five","quality_gameplay/v3_dead_caster_fence_20261116/tools/compose_five_author.py").load_module()
+          on=Path("artifacts/gq530_five/ONE_COMBAT_FIVE_AUTHOR.luau").read_text()
+          off=Path("artifacts/gq530_five/OFF_COMBAT_FOUR_AUTHOR.luau").read_text()
+          assert p.sha256(off)==p.ORIGINAL_529_FOUR_SHA256
+          assert on.replace(p.REPLACEMENT,p.ENTRY,1)==off
+          assert on.count(p.REPLACEMENT)==1
+          print("GQ530_ROLLBACK_PRESERVES_ALL_529_AUTHORS_EXACT")
+          PY
       - name: Upload no-publish, no-authority private proof; not official RC
         if: success()
         uses: actions/upload-artifact@v4
@@ -155,4 +205,7 @@ jobs:
             artifacts/gq530_five/FIVE_AUTHOR_RECEIPT.json
             artifacts/gq530_five/PRIVATE22.project.json
             artifacts/gq530_five/FIVE_AUTHOR_PRIVATE22_NOT_RC.rbxlx
+            artifacts/gq530_five/OFF22_RECEIPT.json
+            artifacts/gq530_five/OFF22.project.json
+            artifacts/gq530_five/OFF22_PRIVATE_NOT_RC.rbxlx
           retention-days: 3
