@@ -13,6 +13,7 @@ REQUIRED = {
     "EGGRUMBLE_CastleMatchRules": "EGGRUMBLE_CastleMatchRules.luau",
     "EGGRUMBLE_BotPathRouter": "EGGRUMBLE_BotPathRouter.luau",
     "EGGRUMBLE_BotActors": "EGGRUMBLE_BotActors.luau",
+    "EGGRUMBLE_CarrierBotTargeting": "EGGRUMBLE_CarrierBotTargeting.luau",
     "EGGRUMBLE_InteractionGuard": "EGGRUMBLE_InteractionGuard.luau",
     "EGGRUMBLE_SevenRoleCombat": "EGGRUMBLE_SevenRoleCombat.luau",
     "EGGRUMBLE_CombatBalance": "EGGRUMBLE_CombatBalance.luau",
