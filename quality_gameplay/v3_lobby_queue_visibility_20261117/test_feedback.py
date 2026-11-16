@@ -66,7 +66,7 @@ class LobbyQueueFeedbackTests(unittest.TestCase):
     def test_started_mode_sets_status(self):
         v=apply(self.source)
         self.assertIn('if sessions[mode] then\n  label.Text=prefix..',v)
-        self.assertIn('session.world.Name=mode.."_Arena";session.world.Parent=folder\n  refreshQueueBoard(mode)',v)
+        self.assertIn(' sessions[mode]=session\n refreshQueueBoard(mode)',v)
 
     def test_no_empty_queue_countdown(self):
         v=apply(self.source)
