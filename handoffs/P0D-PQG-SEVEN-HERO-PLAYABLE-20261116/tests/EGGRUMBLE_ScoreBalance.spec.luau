@@ -88,6 +88,29 @@ return function(Results:any):boolean
 
  local corrupted=Results.build(state("TEAM","RED","FINISHED"),{war=-1,mage=0/0,assassin=math.huge})
  for _,row in ipairs(corrupted.rows) do equal(row.ko,0,"bad kill values rejected") end
+ -- A neutral mob farming tie must not outrank identical real castle/egg objective points.
+ local contest={
+  mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,ids={"KO","OBJECTIVE"},
+  castles={KO={alive=false,isAI=false},OBJECTIVE={alive=false,isAI=false}},
+  events={{type="EGG_DEPOSIT",owner="OBJECTIVE",quantity=5}}
+ }
+ local ranked=Results.build(contest,{KO=100,OBJECTIVE=0})
+ equal(ranked.rows[1].id,"OBJECTIVE","equal points: egg objective outranks mob farming")
+ equal(ranked.rows[1].score,600,"deposited five eggs worth six hundred")
+ equal(ranked.rows[2].score,600,"one hundred actual KOs worth six hundred")
+ equal(ranked.rows[1].objectiveScore,600,"objective-only tie breaker grounded in events")
+ equal(ranked.rows[2].objectiveScore,0,"mob farming is not an objective")
+ local originalEvent=contest.events[1]
+ equal(originalEvent.owner,"OBJECTIVE","score never changes original authoritative event")
+ local withCastle={
+  mode="TEAM",phase="ACTIVE",winner=nil,ids={"GOAL","KO"},
+  castles={GOAL={alive=false,team="RED"},KO={alive=false,team="BLUE"}},
+  events={{type="CASTLE_FALL",attacker="GOAL",owner="other"}}
+ }
+ local castles=Results.build(withCastle,{KO=74}) -- 74*6=444, castle=440
+ equal(castles.rows[1].id,"KO","raw point advantage still beats objective tie breaker")
+ equal(castles.rows[2].id,"GOAL","no unconditional castle priority over actual score")
+
  local ties={mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,
    ids={"Z","A"},castles={Z={alive=false,isAI=true},A={alive=false,isAI=true}},events={}}
  local sorted=Results.build(ties,{})
