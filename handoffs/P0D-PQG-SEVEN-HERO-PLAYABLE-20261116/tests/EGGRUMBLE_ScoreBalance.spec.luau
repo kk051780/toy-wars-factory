@@ -52,8 +52,9 @@ return function(Results:any):boolean
  for _,row in ipairs(inactive.rows) do equal(row.won,false,"no victory reward before finish") end
  local farm=state("TEAM","RED","FINISHED")
  farm.events={}
+ -- Actual Rules.takeEggs always emits a non-FIELD enemy source.
  for _=1,100 do
-  table.insert(farm.events,{type="EGG_TAKEN",thief="war",quantity=3})
+  table.insert(farm.events,{type="EGG_TAKEN",thief="war",source="mage",quantity=3})
   table.insert(farm.events,{type="EGG_DEPOSIT",owner="war",quantity=3})
   table.insert(farm.events,{type="CASTLE_FALL",owner="mage",attacker="war"})
  end
