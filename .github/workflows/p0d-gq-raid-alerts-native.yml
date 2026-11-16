@@ -6,8 +6,10 @@ on:
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_RaidAlerts.spec.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_RaidAlertsGameplay.spec.luau'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_v3_studio_project_wiring.py'
       - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_harness.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_gameplay_harness.py'
       - '.github/workflows/p0d-gq-raid-alerts-native.yml'
   workflow_dispatch:
 
@@ -33,6 +35,7 @@ jobs:
           assert 'pcall(RaidAlerts.process,session)' in game
           assert 'YELLOW_RAID_ALERTS_OPTIONAL' in game
           assert 'session.raidAlertsDisabled=true' in game
+          assert 'if deposited then session.refresh() end' in game, 'deposit must trigger same-tick alert'
           module=(root/'EGGRUMBLE_RaidAlerts.luau').read_text(encoding='utf8')
           assert 'session.rules.events' in module
           assert 'session.alertCursor=nextCursor' in module
@@ -53,6 +56,12 @@ jobs:
           /tmp/p0d-raid-luau/build/luau-compile handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_RaidAlerts.spec.luau >/dev/null
           /tmp/p0d-raid-luau/build/luau-compile /tmp/p0d-raid-alerts.spec.luau >/dev/null
           /tmp/p0d-raid-luau/build/luau /tmp/p0d-raid-alerts.spec.luau
+      - name: Execute raid alerts against original castle and egg game rules
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_alerts_gameplay_harness.py --out /tmp/p0d-raid-alerts-gameplay.spec.luau
+          /tmp/p0d-raid-luau/build/luau-compile /tmp/p0d-raid-alerts-gameplay.spec.luau >/dev/null
+          /tmp/p0d-raid-luau/build/luau /tmp/p0d-raid-alerts-gameplay.spec.luau
       - name: State scope
         run: |
           echo "Game rules unaffected. Native VM tests pass if above step passed."
