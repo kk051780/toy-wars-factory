@@ -1,0 +1,62 @@
+name: P0D EGGRUMBLE V3 source-lineage admission (quality-only)
+
+on:
+  push:
+    branches:
+      - quality/v3-rc-lineage-20261116
+  pull_request:
+    branches:
+      - feature/p0d-pqg-seven-hero-playable-20261116-01
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  author-source-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify independent negative and positive tests
+        run: python -m unittest discover -s quality/v3_rc_lineage -p "test_*.py" -v
+      - name: Fail old author or RC HEAD, altered 21-source inventory
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"quality/v3_rc_lineage")
+          from validate import SCHEMA, check
+          AUTHOR_PIN="fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          RC_PIN="d2f3ed1a47558fdaf07be0181c83c698bdb2ce34"
+          AUTHOR_BRANCH="refs/heads/feature/p0d-pqg-seven-hero-playable-20261116-01"
+          RC_BRANCH="refs/heads/rc/p0d-s1-kids-rc01"
+          def head(ref):
+              result=subprocess.check_output(["git","ls-remote","origin",ref],text=True).strip()
+              if not result or not result.split()[0]:
+                  raise RuntimeError("no current remote HEAD for "+ref)
+              return result.split()[0]
+          path=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116")
+          project=path/"EGGRUMBLE_V3_STUDIO.project.json"
+          changed=subprocess.check_output(
+              ["git","diff","--name-only",AUTHOR_PIN,"HEAD","--",str(path)],text=True
+          ).strip()
+          if changed:
+              print("SOURCE_NO_GO: quality branch must not rewrite canonical author paths",changed)
+              sys.exit(2)
+          provenance={
+              "schema":SCHEMA,"author_sha":AUTHOR_PIN,
+              "candidate_sha":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+              "rc_sha":RC_PIN,"overlays":{}
+          }
+          outcome=check(path,path,project,project,provenance,head(AUTHOR_BRANCH),head(RC_BRANCH))
+          print(json.dumps(outcome,ensure_ascii=False,indent=2))
+          sys.exit(0 if outcome["status"]=="SOURCE_GATE_PASS" else 2)
+          PY
