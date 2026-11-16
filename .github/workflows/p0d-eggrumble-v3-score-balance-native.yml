@@ -1,0 +1,71 @@
+name: EGGRUMBLE V3 competitive score balance native Luau
+on:
+  push:
+    branches: [quality/eggrumble-v3-score-only-20261116]
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_MatchResultService.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_ScoreBalance.spec.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/run_score_balance_native.luau'
+      - '.github/workflows/p0d-eggrumble-v3-score-balance-native.yml'
+  pull_request:
+    branches: [feature/p0d-pqg-seven-hero-playable-20261116-01]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  score-results-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-only Rojo dependency and match-end gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116")
+          script=(root/"EGGRUMBLE_MatchResultService.luau").read_text()
+          project=json.loads((root/"EGGRUMBLE_V3_STUDIO.project.json").read_text())
+          host=project["tree"]["ServerScriptService"]
+          assert host["EGGRUMBLE_ScoreBalance"]["$path"]=="EGGRUMBLE_ScoreBalance.luau"
+          assert 'ScoreBalance=require(script.Parent:WaitForChild("EGGRUMBLE_ScoreBalance"))' in script
+          assert 'session.resultsDelivered=true' in script
+          assert 'local ranking=ScoreBalance.build(session.rules,session.swarm and session.swarm.kills or {})' in script
+          print("SCORE_STUDIO_WIRING_SOURCE_CONTRACT_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_results_pinned_luau
+          persist-credentials: false
+      - name: Build immutable native Luau interpreter and compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_results_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_results_pinned_luau -B /tmp/p0d_results_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_results_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Real pure Luau score execution + parse actual Studio host
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          mkdir -p /tmp/p0d_results_test
+          cp "$root/EGGRUMBLE_ScoreBalance.luau" /tmp/p0d_results_test/Results.luau
+          cp "$root/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/p0d_results_test/Cases.luau
+          cp "$root/tests/run_score_balance_native.luau" /tmp/p0d_results_test/Runner.luau
+          sha256sum /tmp/p0d_results_test/*.luau "$root/EGGRUMBLE_MatchResultService.luau"
+          for src in /tmp/p0d_results_test/*.luau "$root/EGGRUMBLE_MatchResultService.luau"; do
+            /tmp/p0d_results_luau/luau-compile "$src" >/dev/null
+          done
+          cd /tmp/p0d_results_test
+          /tmp/p0d_results_luau/luau Runner.luau | tee source_test.log
+          grep -q EGGRUMBLE_V3_MATCH_RESULTS_NATIVE_PASS source_test.log
+          echo "STUDIO_NOT_TESTED ANDROID_NOT_TESTED OFFICIAL_RC_NOT_INTEGRATED OWNER_ACCEPTED=0"
