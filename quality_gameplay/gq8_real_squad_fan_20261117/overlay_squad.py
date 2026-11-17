@@ -58,7 +58,15 @@ NEW = """    -- Existing shared enemy cap and batch size; group bearing improves
 
 def patch(source: str) -> str:
     if source.count(HELPER_ANCHOR) != 1 or source.count(OLD) != 1:
-        raise ValueError("RED_CURRENT_SWARM_FORMATION_ANCHOR_DRIFT")
+        ix=source.find("SPAWN_BATCH")
+        it=source.find("for _=1,math.min(SPAWN_BATCH")
+        mid=source.find("session.swarm=api")
+        snippet=source[max(0,it-180):it+750] if it>=0 else source[max(0,ix-150):ix+650]
+        raise ValueError("RED_CURRENT_SWARM_FORMATION_ANCHOR_DRIFT"
+           +" helper="+str(source.count(HELPER_ANCHOR))
+           +" old="+str(source.count(OLD))
+           +" mid="+repr(source[max(0,mid-40):mid+145])
+           +" spawn="+repr(snippet))
     if "GQ8_ACTUAL_SWARM_SQUAD_FAN_BEGIN" in source:
         raise ValueError("RED_ALREADY_SELECTED")
     if "neutralSpawnClear(point)" not in source or "GetPartBoundsInBox" not in source:
