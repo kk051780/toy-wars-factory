@@ -37,7 +37,8 @@ jobs:
           assert side["source_count"]==32
           assert side["status"] in (
             "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
-            "CURRENT_RC57_PREMERGE_OPTIONAL_PROFILE_PENDING_SAMEHEAD_QA")
+            "CURRENT_RC57_PREMERGE_OPTIONAL_PROFILE_PENDING_SAMEHEAD_QA",
+            "OPTIONAL32_SOURCE_UPGRADE_PENDING_CURRENT_HEAD_QA")
           assert side["robot_release_authorized"] is False
           assert side["optional_source_update"]["candidate_only"] is True
           assert 'if not RunService:IsStudio() then return end' in f.read_text()
