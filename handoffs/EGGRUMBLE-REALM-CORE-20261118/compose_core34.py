@@ -81,8 +81,9 @@ def compose(source31: Path, output: Path, off: bool = False):
         starter=model["tree"].setdefault("StarterPlayer",{}).setdefault("StarterPlayerScripts",{})
         if "EGGRUMBLE_RealmBattleControls" in starter:
             raise ValueError("RED_DUPLICATE_CLIENT")
+        # .client.luau already supplies LocalScript class; Rojo rejects
+        # specifying $className twice (project + filesystem).
         starter["EGGRUMBLE_RealmBattleControls"]={
-            "$className":"LocalScript",
             "$path":os.path.relpath(CLIENT,output.parent).replace(os.sep,"/")}
     output.write_text(json.dumps(model,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     _, selected = get_files(output)
