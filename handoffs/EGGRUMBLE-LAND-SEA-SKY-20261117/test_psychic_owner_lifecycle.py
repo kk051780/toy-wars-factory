@@ -54,7 +54,7 @@ class PsychicOwnerGuard(unittest.TestCase):
             self.assertIn('matchHuman(owner,mode,world,"TRAPPER")',a.read_text())
             self.assertNotIn('matchHuman(owner,mode,world,"TRAPPER")',b.read_text())
             self.assertIn('LSS_ACTUAL_PSYCHIC_OWNER_LUAU_7_CASES_PASS',a.read_text())
-            self.assertEqual(a.read_text().count("safeMove(guest,"),2)
+            self.assertEqual(a.read_text().count("safeMove(guest,"),1)
 
 
 if __name__=="__main__":unittest.main()
