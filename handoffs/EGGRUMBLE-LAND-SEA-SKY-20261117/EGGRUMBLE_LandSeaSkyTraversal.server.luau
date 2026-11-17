@@ -8,6 +8,7 @@ if not RunService:IsStudio() then return end
 
 local Players = game:GetService("Players")
 local Debris = game:GetService("Debris")
+local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local LOBBY = "EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
@@ -27,6 +28,12 @@ local FLIGHT_MAX_Y_ABOVE_GROUND = 148
 local SEA_OUTER_LENGTH = 260
 local SEA_ROUTE_HALF_WIDTH = 275
 local SEA_OUTER_MARGIN = 32
+-- Only confirmed neutral-KO combo milestones produce a short cosmetic surge.
+-- Existing Swarm retains all actual spawn, damage, KO credit, and combo authority.
+local MUSOU_COMBO_STEP = 12
+local MUSOU_MAX_BURSTS_PER_SEC = 2
+local MUSOU_EFFECT_TTL = 0.46
+local MUSOU_BEACON_RADIUS = 155
 local UP = Vector3.new(0,1,0)
 local scenes = {}
 
@@ -328,12 +335,112 @@ local function install(world)
   Color3.fromRGB(232,101,84),Enum.Material.Neon,false,.28)
  comboArena.CanTouch=false
 
+ -- Source of truth: count only actual alive Humanoids created by the one Swarm.
+ -- No local fake soldiers, score setters, new damage callbacks or spawn controls.
+ local frontlineBillboard=Instance.new("BillboardGui")
+ frontlineBillboard.Name="RealHordeFrontlineCounter"
+ frontlineBillboard.AlwaysOnTop=false
+ frontlineBillboard.Size=UDim2.fromOffset(250,58)
+ frontlineBillboard.StudsOffset=Vector3.new(0,5,0)
+ frontlineBillboard.MaxDistance=150
+ frontlineBillboard.Parent=comboArena
+ local frontlineText=Instance.new("TextLabel")
+ frontlineText.BackgroundColor3=Color3.fromRGB(35,40,44)
+ frontlineText.BackgroundTransparency=0.20
+ frontlineText.TextColor3=Color3.fromRGB(248,233,157)
+ frontlineText.Font=Enum.Font.GothamBold
+ frontlineText.TextScaled=true
+ frontlineText.Text="海岸の中立兵を探索中"
+ frontlineText.Size=UDim2.fromScale(1,1)
+ frontlineText.Parent=frontlineBillboard
+
+ local lastNeutralCount={}
+ local lastSurgeAt={}
+ local combatConnections={}
+ local burstSecond=-1
+ local burstsThisSecond=0
+ local function onCombatCombo(player)
+  if not active or not matchHuman(player,mode,world,nil) then return end
+  local ko=player:GetAttribute("EGGRUMBLE_NeutralKOs")
+  local combo=player:GetAttribute("EGGRUMBLE_Combo")
+  if typeof(ko)~="number" or typeof(combo)~="number" then return end
+  if ko<0 or combo<1 or combo>ko then return end
+  local last=lastNeutralCount[player.UserId] or 0
+  if ko<last then last=0 end -- Existing Swarm can restart its round counter.
+  if ko<=last then return end
+  lastNeutralCount[player.UserId]=ko
+  if combo<MUSOU_COMBO_STEP or combo%MUSOU_COMBO_STEP~=0 then return end
+  local ch=player.Character
+  local root=ch and ch:FindFirstChild("HumanoidRootPart")
+  local hum=ch and ch:FindFirstChildOfClass("Humanoid")
+  if not root or not hum or hum.Health<=0 then return end
+  if (root.Position-comboArena.Position).Magnitude>MUSOU_BEACON_RADIUS then return end
+  local now=os.clock()
+  local second=math.floor(now)
+  if burstSecond~=second then burstSecond=second;burstsThisSecond=0 end
+  if burstsThisSecond>=MUSOU_MAX_BURSTS_PER_SEC then return end
+  if now-(lastSurgeAt[player.UserId] or -100)<0.8 then return end
+  burstsThisSecond+=1
+  lastSurgeAt[player.UserId]=now
+  local wave=Instance.new("Part")
+  wave.Name="EGGRUMBLE_REAL_KO_MUSOU_WAVE"
+  wave.Shape=Enum.PartType.Ball
+  wave.Size=Vector3.new(1,.18,1)
+  wave.CFrame=CFrame.new(root.Position-Vector3.new(0,2.4,0))
+  wave.Anchored=true
+  wave.CanCollide=false;wave.CanTouch=false;wave.CanQuery=false
+  wave.CastShadow=false;wave.Material=Enum.Material.Neon
+  wave.Color=Color3.fromRGB(255,188,73)
+  wave.Transparency=.34
+  wave.Parent=scene
+  TweenService:Create(wave,
+   TweenInfo.new(.34,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
+   {Size=Vector3.new(14,.26,14),Transparency=1}):Play()
+  Debris:AddItem(wave,MUSOU_EFFECT_TTL)
+ end
+ local function watchCombo(player)
+  if combatConnections[player] then return end
+  lastNeutralCount[player.UserId]=player:GetAttribute("EGGRUMBLE_NeutralKOs") or 0
+  combatConnections[player]=player:GetAttributeChangedSignal("EGGRUMBLE_Combo"):Connect(
+   function() onCombatCombo(player) end)
+ end
+ local entered=Players.PlayerAdded:Connect(watchCombo)
+ local exited=Players.PlayerRemoving:Connect(function(player)
+  if combatConnections[player] then
+   combatConnections[player]:Disconnect()
+   combatConnections[player]=nil
+  end
+  lastNeutralCount[player.UserId]=nil
+  lastSurgeAt[player.UserId]=nil
+ end)
+ for _,player in ipairs(Players:GetPlayers()) do watchCombo(player) end
+
+ local hordeSampleElapsed=0
  local elapsed=0
  local heartbeat
  heartbeat=RunService.Heartbeat:Connect(function(dt)
   if not active or not world.Parent or not scene.Parent then
    if heartbeat then heartbeat:Disconnect() end
    return
+  end
+  hordeSampleElapsed+=dt
+  if hordeSampleElapsed>=1 then
+   hordeSampleElapsed=0
+   local soldiers=world:FindFirstChild("NeutralHorde")
+   local count=0
+   if soldiers then
+    for _,model in ipairs(soldiers:GetChildren()) do
+     if model:IsA("Model") and model:GetAttribute("EGGRUMBLE_Neutral")==true
+      and model.PrimaryPart then
+      local h=model:FindFirstChildOfClass("Humanoid")
+      if h and h.Health>0
+       and (model.PrimaryPart.Position-comboArena.Position).Magnitude<=MUSOU_BEACON_RADIUS then
+       count+=1
+      end
+     end
+    end
+   end
+   frontlineText.Text="海岸の中立兵 "..tostring(count).." 体 | 12連撃で波動！"
   end
   elapsed+=dt
   if elapsed<MOVE_INTERVAL then return end
@@ -417,6 +524,12 @@ local function install(world)
  world.Destroying:Connect(function()
   active=false
   if heartbeat then heartbeat:Disconnect() end
+  entered:Disconnect()
+  exited:Disconnect()
+  for _,conn in pairs(combatConnections) do conn:Disconnect() end
+  table.clear(combatConnections)
+  table.clear(lastNeutralCount)
+  table.clear(lastSurgeAt)
   for _,v in pairs(vessels) do v.alive=false end
   scenes[world]=nil
  end)
