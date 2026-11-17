@@ -83,11 +83,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_52_known_flags(self):
+    def test_valid_covers_eight_domains_and_53_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],52)
+        self.assertEqual(v["verified_flag_count"],53)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -206,7 +206,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_DISABLED_PREP_999"]=False
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_DISABLED_PREP_999"])
-        self.assertEqual(v["verified_flag_count"],52)
+        self.assertEqual(v["verified_flag_count"],53)
 
     def test_known_feature_flag_must_be_a_json_boolean(self):
         for nonboolean in (1,"true",None,0):
@@ -223,7 +223,7 @@ class Gate(unittest.TestCase):
         manifest=json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(manifest["source_count"],31)
         enabled={k for k,flag in manifest["feature_flags"].items() if flag is True}
-        self.assertEqual(len(enabled),52)
+        self.assertEqual(len(enabled),53)
         self.assertEqual(set(manifest["feature_flags"]),enabled)
         self.assertEqual(enabled,set(gq8.FEATURE_EVIDENCE))
         self.assertEqual(manifest["source_heads"]["zombie_guard582"],
@@ -233,26 +233,27 @@ class Gate(unittest.TestCase):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
-            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_530",
             "FIELD_CARRIER_OFFARENA_DROP_515",
             "ZOMBIE_COMMAND_SQUAD_582",
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
-            "ITEM_CURRENT_SESSION_525",
+            "ITEM_CURRENT_SESSION_535",
             "SERVER_PROMPT_CONFIG_REACH_611",
             "ZOMBIE_GUARD_CASTLE_LEASH_582",
             "LOBBY_QUEUE_ETA_615",
             "MATCH_DEADLINE_DRAW_499",
-            "BOT_SIEGE_TARGET_PACING_527",
+            "BOT_SIEGE_TARGET_PACING_537",
             "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509",
             "GQ512_ROUND_COMBO_REPLAY_RESET_20261117",
             "GQ514_BOSS_KO_ROUND_RESET_20261117",
             "GQ505_SERVER_MODE_FX_FAIR_INLINE31",
-            "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
+            "GQ534_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
             "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117",
             "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
             "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117",
             "GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
+            "GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117",
         )
         for flag in late:
             script,anchors=gq8.FEATURE_EVIDENCE[flag]
@@ -260,36 +261,45 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],52)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],53)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
                         gq8.verify(b,r,m,a,HEAD)
 
+    def test_gq732_original_duplicate_is_red_in_actual_selected_place(self):
+        b,r,m,a=fixture()
+        b=drop_anchor(b,"EGGRUMBLE_CastleMatchRules","duplicate decoration in this plot")
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,
+                                    "DOMAIN_castle_MISSING_EGGRUMBLE_CastleMatchRules|FEATURE_FALSE_ON_GQ732"):
+            gq8.verify(b,r,m,a,HEAD)
+
     def test_late_flags_cannot_claim_certification_when_disabled(self):
         for flag in (
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
-            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520",
+            "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_530",
             "FIELD_CARRIER_OFFARENA_DROP_515",
             "ZOMBIE_COMMAND_SQUAD_582",
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
-            "ITEM_CURRENT_SESSION_525",
+            "ITEM_CURRENT_SESSION_535",
             "SERVER_PROMPT_CONFIG_REACH_611",
             "ZOMBIE_GUARD_CASTLE_LEASH_582",
             "LOBBY_QUEUE_ETA_615",
             "MATCH_DEADLINE_DRAW_499",
-            "BOT_SIEGE_TARGET_PACING_527",
+            "BOT_SIEGE_TARGET_PACING_537",
             "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509",
             "GQ512_ROUND_COMBO_REPLAY_RESET_20261117",
             "GQ514_BOSS_KO_ROUND_RESET_20261117",
             "GQ505_SERVER_MODE_FX_FAIR_INLINE31",
-            "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
+            "GQ534_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
             "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117",
             "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
             "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117",
             "GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
+            "GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117",
         ):
             with self.subTest(flag=flag):
                 b,r,m,a=fixture()
