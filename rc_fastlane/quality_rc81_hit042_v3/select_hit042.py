@@ -22,7 +22,7 @@ PULSE_ANCHOR=" mark.Visible=true;mark.Size=UDim2.fromOffset(12,12)\n"
 LABEL_ADD='''local hitToast=Instance.new("TextLabel")
 hitToast.Name="ConfirmedHit042"
 hitToast.AnchorPoint=Vector2.new(.5,.5)
-hitToast.Position=UDim2.fromOffset(6,34)
+hitToast.Position=UDim2.new(.5,6,.49,34)
 hitToast.Size=UDim2.fromOffset(62,20)
 hitToast.BackgroundColor3=Color3.fromRGB(12,20,29)
 hitToast.BackgroundTransparency=.28
@@ -32,7 +32,7 @@ hitToast.TextStrokeTransparency=.65
 hitToast.TextScaled=true
 hitToast.Font=Enum.Font.GothamBold
 hitToast.Text="";hitToast.Visible=false
-hitToast.Parent=mark
+hitToast.Parent=gui
 '''
 PULSE_ADD=''' hitToast.Text="HIT x"..tostring(math.floor(power))
  hitToast.Visible=true
