@@ -42,7 +42,7 @@ class Real32Composer(unittest.TestCase):
             host=model["tree"]["ServerScriptService"]["EGGRUMBLE_LobbyCastleModesPreview"]
             patched=(on.parent/host["$path"]).read_text()
             self.assertIn("BATTLE_HP_REGEN",patched)
-            self.assertIn("Humanoid.HealthChanged",patched)
+            self.assertIn("humanoid.HealthChanged",patched)
             self.assertIn("lastDamageAt",patched)
             self.assertIn("session.rules.phase",patched)
             with self.assertRaisesRegex(ValueError,"RED_OVERWRITE"):
