@@ -1,0 +1,50 @@
+name: P0D GQ8 LSS sea craft expiry rescue source gate
+on:
+  push:
+    branches:
+      - 'feature/gq8-lss-expiring-boat-offshore-rescue-20261118'
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-expiring-offshore-rescue.yml'
+  pull_request:
+    branches:
+      - 'feature/eggrumble-land-sea-sky-traversal-20261117-01'
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-expiring-offshore-rescue.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-boat-expiry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Existing optional32 source contracts + expiry six-mutant negative proof
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 \
+            -p 'test_optional32.py'
+          python3 -B -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 \
+            -p 'test_craft_expiry.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile of the changed existing optional32 script
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_pinned_luau -B /tmp/gq8-lss-expiry-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-lss-expiry-native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-lss-expiry-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            >/dev/null
+          echo GQ8_LSS_EXPIRY_1_OPTIONAL_SCRIPT_NATIVE_AND_GUARDS_PASS
