@@ -1,0 +1,112 @@
+name: P0D GQ8 BATTLE HP regen real31 to Host32 source class gate
+on:
+  push:
+    branches: [feature/gq8-battle-hp-regen-20261118-0811]
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-battle-hp-real32.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-battle-hp-real32.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real31-host32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Synthetic exact scope, mutation and no overwrite
+        run: |
+          python3 -m unittest discover -v -s handoffs/EGGRUMBLE-HP-REGEN-20261118 -p 'test_*.py'
+      - name: Resolve latest official 31 exact samehead successful run
+        id: official
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test ${#H} -eq 40
+          echo "sha=$H" >> "$GITHUB_OUTPUT"
+          RUN=""
+          for attempt in $(seq 1 40); do
+            gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 60 --json databaseId,headSha,status,conclusion >/tmp/official31.json
+            RUN="$(jq -r --arg h "$H" '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official31.json)"
+            if [ -n "$RUN" ]; then break; fi
+            sleep 15
+          done
+          test -n "$RUN"
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Download genuine current31 selected Studio source and receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Exact source rehydrate and current Host authority ON32 / inverse OFF31
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json --out artifacts/regen31 --head "${{ steps.official.outputs.sha }}"
+          python3 handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_real32.py --current31 artifacts/regen31/CURRENT31_REAL_SOURCE.project.json --out artifacts/regen32/ON32.project.json
+          python3 handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_real32.py --current31 artifacts/regen31/CURRENT31_REAL_SOURCE.project.json --out artifacts/regen32/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all real ON32 and OFF31 native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/regen-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/regen-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for file,n in [('artifacts/regen32/ON32.project.json',32),('artifacts/regen32/OFF31.project.json',31)]:
+              p=Path(file);files=flat_project(json.loads(p.read_text()))
+              assert len(files)==n
+              for node in files.values():
+                  src=(p.parent/node['$path']).resolve(strict=True)
+                  subprocess.run(['/tmp/regen-native/luau-compile','--text',str(src)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_REGEN_NATIVE_CURRENT',n)
+          PY
+      - name: Pinned Rojo 7.7.1 download and byte gate
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/regen-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/regen-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/regen-rojo.zip') as z:
+              f=[v for v in z.namelist() if v.split('/')[-1]=='rojo']
+              assert len(f)==1
+              p=Path('/tmp/regen-rojo');p.write_bytes(z.read(f[0]));p.chmod(0o755)
+          PY
+      - name: Native-source/class exact Rojo ON32 OFF31 and unchanged official head
+        run: |
+          set -euo pipefail
+          /tmp/regen-rojo build artifacts/regen32/ON32.project.json -o artifacts/regen32/REGEN_REAL32_STUDIO.rbxlx
+          /tmp/regen-rojo build artifacts/regen32/OFF31.project.json -o artifacts/regen32/REGEN_OFF31_STUDIO.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/regen32/ON32.project.json --place artifacts/regen32/REGEN_REAL32_STUDIO.rbxlx --count 32
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/regen32/OFF31.project.json --place artifacts/regen32/REGEN_OFF31_STUDIO.rbxlx --count 31
+          H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H" = "${{ steps.official.outputs.sha }}"
+          echo GQ8_HP_REGEN_CURRENT31_HOST32_NATIVE_ROJO_OFF_EXACT_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REGEN-HOST32-STUDIO-CANDIDATE-NOT-OFFICIAL-RC
+          path: |
+            artifacts/regen32/
+            artifacts/regen31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 3
