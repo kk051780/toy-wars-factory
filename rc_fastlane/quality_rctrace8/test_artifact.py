@@ -83,11 +83,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_54_known_flags(self):
+    def test_valid_covers_eight_domains_and_55_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],54)
+        self.assertEqual(v["verified_flag_count"],55)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
