@@ -88,7 +88,12 @@ local function damageRealm(model,damage,element,underwater)
  local dealt=math.max(0,math.floor(damage*damageMultiplier(element,underwater)+.5))
  hp=math.max(0,hp-dealt)
  model:SetAttribute("RealmHP",hp)
- if hp==0 then model:Destroy() end
+ if hp==0 then
+  if model:GetAttribute("RealmKind")=="FIGHTER" then
+   model:SetAttribute("RealmCrash",true)
+  end
+  model:Destroy()
+ end
  return dealt>0
 end
 local function install(world)
@@ -203,6 +208,11 @@ local function install(world)
   m:SetAttribute("RealmBombs",AIRCRAFT_BOMBS)
   state.planes[m]=p
   m.Destroying:Connect(function()
+   if m:GetAttribute("RealmCrash")==true and eligible(p,mode,world) then
+    local pilotHumanoid=p.Character:FindFirstChildOfClass("Humanoid")
+    safeReturn(p,flightPad.Position,mode,world)
+    if pilotHumanoid then pilotHumanoid:TakeDamage(18) end
+   end
    state.planes[m]=nil;state.controls[p]=nil
   end)
   p.Character:PivotTo(cf*CFrame.new(0,4,0))
@@ -269,7 +279,16 @@ local function install(world)
      if d<bestDistance then best,bestDistance=m,d end
     end
    end
-   if best then damageRealm(best,14,"WATER",true) end
+   if best then
+    local params=RaycastParams.new()
+    params.FilterType=Enum.RaycastFilterType.Exclude
+    params.FilterDescendantsInstances={player.Character}
+    local delta=best:GetPivot().Position-root.Position
+    local first=Workspace:Raycast(root.Position,delta,params)
+    if not first or first.Instance:IsDescendantOf(best) then
+     damageRealm(best,14,"WATER",true)
+    end
+   end
    return
   end
   local model,kind=findCurrentMount(player)
@@ -303,6 +322,17 @@ local function install(world)
     for other in pairs(state.planes) do
      if other~=model and other.Parent and (other:GetPivot().Position-impact).Magnitude<=27 then
       damageRealm(other,46,"BLAST",false)
+     end
+    end
+    local lss=world:FindFirstChild(LSS_NAME)
+    if lss then
+     for _,other in ipairs(lss:GetChildren()) do
+      if other:IsA("Model") and other~=model and other:FindFirstChild("PilotSeat")
+       and other.Name:match("_(%d+)$")
+       and (other:GetPivot().Position-impact).Magnitude<=27 then
+       if other:GetAttribute("RealmHP")==nil then other:SetAttribute("RealmHP",100) end
+       damageRealm(other,46,"BLAST",false)
+      end
      end
     end
    end
