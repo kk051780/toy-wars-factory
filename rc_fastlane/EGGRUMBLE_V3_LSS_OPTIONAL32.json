@@ -7,7 +7,7 @@
   "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
   "integrator_parent_rc_sha": "e2414c413046cbb68a9a654689a2c7181d3ce040",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+  "added_source_git_blob": "92ab83835cc95372ae308f6a222035dbd29e6626",
   "source_author_prs": [
     714,
     737,
@@ -19,7 +19,8 @@
     "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117",
     "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
     "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
-    "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118"
+    "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
+    "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
@@ -49,7 +50,7 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+    "source_git_blob": "92ab83835cc95372ae308f6a222035dbd29e6626",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
@@ -61,7 +62,7 @@
   },
   "gq8_orphan_craft_owner": {
     "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
-    "source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+    "source_git_blob": "92ab83835cc95372ae308f6a222035dbd29e6626",
     "source_scope": "one existing optional32 Studio-only LSS script",
     "native_cases": 8,
     "mutants": 4,
@@ -73,7 +74,7 @@
   "optional_source_update": {
     "feature_id": "GQ8_LSS_REAL_KO_COMBO_ORDER_SYNC_20261118",
     "previous_source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
-    "proposed_source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+    "proposed_source_git_blob": "92ab83835cc95372ae308f6a222035dbd29e6626",
     "purpose": "Observe actual server-owned NeutralKOs and Combo in either order, display one bounded 12x FX per streak only with two recent counter advances; no real Combat/Swarm/KO/score writers.",
     "candidate_only": true,
     "source_lock": "SAME_HEAD_NATIVE_ROJO_OFF31_REQUIRED",
@@ -82,5 +83,15 @@
     "preserves_existing_rc_trap_owner_fairness_and_offshore_rescue": true,
     "lifecycle_cleanup": "World.Destroying unwatchCombo all pairs and clear state",
     "preserves_existing_rc_orphan_owner": true
+  },
+  "gq8_prompt_server_sight": {
+    "feature_id": "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118",
+    "scope": "one existing optional32 Script, shared prompt() entry only",
+    "max_activation_distance": "q.MaxActivationDistance + 1 stud tolerance",
+    "visibility": "Server Workspace:Raycast from live head/root through solid blockers; cockpit self-craft exception",
+    "source_git_blob": "92ab83835cc95372ae308f6a222035dbd29e6626",
+    "original31_byte_exact": true,
+    "studio_android_fun": "NOT_TESTED",
+    "status": "PENDING_NATIVE_ROJO_SAME_HEAD"
   }
 }
