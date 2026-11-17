@@ -32,7 +32,7 @@ def validate_current_before(before:str)->None:
       'hitToast.Name="ConfirmedHit042"',
       'GQ8_CONFIRMED_HIT_CHAIN_BEGIN',
       'GQ8_CONFIRMED_HIT_CHAIN_END',
-      'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
+      'GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117',
       'local function reduced():boolean',
       'mark.Parent=gui',
     ):

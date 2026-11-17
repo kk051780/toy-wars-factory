@@ -67,18 +67,24 @@ def patch(source: str) -> str:
         raise ValueError("RED_ALREADY_SELECTED")
     if source.count(ANCHOR)!=1:
         raise ValueError("RED_ANCHOR_DRIFT")
+    # GQ504 appends its own confirmed-hit audio listener at the end.
+    # Only the original preceding client section is our insertion authority.
+    AUDIO_MARKER="\\n-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117"
+    if source.count(AUDIO_MARKER)>1: raise ValueError("RED_DUPLICATE_AUDIO_OWNER")
+    original=source.split(AUDIO_MARKER,1)[0]
     for required in (
         'local player=Players.LocalPlayer',
         'local TweenService=game:GetService("TweenService")',
         'local function reduced():boolean',
         'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
     ):
-        if source.count(required)!=1: raise ValueError("RED_SOURCE_CONTRACT_"+required)
+        if original.count(required)!=1: raise ValueError("RED_SOURCE_CONTRACT_"+required)
     # Original reduced() is declared below mark.Parent=gui, so move the cue
     # to AFTER its declaration by using an independent post-function anchor.
     post='player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(function()\n'
-    if source.count(post)!=1: raise ValueError("RED_POST_ANCHOR_DRIFT")
-    selected=source.replace(post,INSERT+post,1)
+    if original.count(post)!=1: raise ValueError("RED_POST_ANCHOR_DRIFT")
+    # Replace the first (original HIT) listener, not GQ504 appended audio.
+    selected=original.replace(post,INSERT+post,1)+source[len(original):]
     if undo(selected)!=source: raise ValueError("RED_INVERSE")
     return selected
 
@@ -107,7 +113,7 @@ def safety_checks(source: str) -> None:
         'reduced()', 'BackgroundTransparency=1',
     ):
         if required not in INSERT: raise ValueError("RED_SAFETY_GUARD_"+required)
-    if source.count('player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")')!=1 or undo(source).count("EGGRUMBLE_ImpactSequence")!=source.count("EGGRUMBLE_ImpactSequence"):
+    if source.split("\\n-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117",1)[0].count('player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")')!=1 or undo(source).count("EGGRUMBLE_ImpactSequence")!=source.count("EGGRUMBLE_ImpactSequence"):
         raise ValueError("RED_EXISTING_HIT_FEEDBACK_DRIFT")
     if source.count(START)!=1 or source.count(END)!=1:
         raise ValueError("RED_SELECTED_SCOPE")
