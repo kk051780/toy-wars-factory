@@ -143,6 +143,23 @@ jobs:
           fi
           grep -q RED_SECOND_OWNER_MUST_HAVE_DISTINCT_SLOT /tmp/GQ8_TRAP_SLOTS_MUTANT_EXPECTED_RED.log
           echo GQ8_LSS_TRAP_SPATIAL_VM_AND_MUTANT_RED_PASS
+      - name: GQ8 public shuttle/cloud travel actual Luau and cooldown mutant RED
+        run: |
+          set -euo pipefail
+          SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 -B "$SOURCE/make_public_travel_native.py" \
+            --out /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau \
+            --mutant /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau >/dev/null
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau >/dev/null
+          /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau | tee /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
+          grep -qx GQ8_LSS_PUBLIC_TRAVEL_LUAU_8_CASES_PASS /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
+          if /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau \
+            >/tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log 2>&1; then
+            echo RED_PUBLIC_TRAVEL_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q RED_GQ8_PUBLIC_TRAVEL_DOUBLE_HOP /tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log
+          echo GQ8_PUBLIC_TRAVEL_NATIVE_8_AND_MUTANT_EXPECTED_RED_PASS
       - name: Fetch pinned Rojo 7.7.1
         run: |
           set -euo pipefail
