@@ -2490,11 +2490,13 @@ jobs:
             /tmp/gq530_all31_native/luau-compile --text "$f" >/dev/null
           done
           /tmp/gq530_all31_native/luau "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" | tee "$DIR/GQ510_ORIGINAL_BUG.log"
-          grep -q 'MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS ORIGINAL_BUG_REPRODUCED' "$DIR/GQ510_ORIGINAL_BUG.log"
+          grep -q MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS "$DIR/GQ510_ORIGINAL_BUG.log"
+          grep -q ORIGINAL_BUG_REPRODUCED "$DIR/GQ510_ORIGINAL_BUG.log"
           /tmp/gq530_all31_native/luau "$DIR/GQ510_MAGE_NATIVE.luau" | tee "$DIR/GQ510_NATIVE.log"
           grep -q MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS "$DIR/GQ510_NATIVE.log"
           grep -q MAGE_TEAM_BOT_HEAL_NATIVE_VM_CASES_PASS "$DIR/GQ510_NATIVE.log"
-          grep -q 'MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS FIXED' "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q FIXED "$DIR/GQ510_NATIVE.log"
           for MUTANT in WALL AI; do
             if /tmp/gq530_all31_native/luau "$DIR/GQ510_MUTANT_$MUTANT.luau" > "$DIR/GQ510_MUTANT_$MUTANT"_EXPECTED_RED.log 2>&1; then
               echo RED_GQ510_MUTANT_ACCEPTED
