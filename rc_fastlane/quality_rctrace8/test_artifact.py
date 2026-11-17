@@ -87,7 +87,7 @@ class Gate(unittest.TestCase):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],52
+        self.assertEqual(v["verified_flag_count"],52)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -206,7 +206,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_DISABLED_PREP_999"]=False
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_DISABLED_PREP_999"])
-        self.assertEqual(v["verified_flag_count"],52
+        self.assertEqual(v["verified_flag_count"],52)
 
     def test_known_feature_flag_must_be_a_json_boolean(self):
         for nonboolean in (1,"true",None,0):
