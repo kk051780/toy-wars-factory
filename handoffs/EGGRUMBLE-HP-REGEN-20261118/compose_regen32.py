@@ -17,7 +17,6 @@ HOST="EGGRUMBLE_LobbyCastleModesPreview"
 NEW="EGGRUMBLE_NaturalRegen"
 REQUIRE='local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))'
 CALL=r"(?m)^([ \t]*)SevenRoleCombat\.equip\(session,p,role\)[ \t]*$"
-CLEAR='  SevenRoleCombat.clear(p)'
 
 def files(project:Path):
  model=json.loads(project.read_text(encoding="utf-8"))
@@ -62,8 +61,6 @@ def compose(current31:Path,dest:Path,off:bool=False):
   host=host.replace(REQUIRE,REQUIRE+'\nlocal NaturalRegen=require(script.Parent:WaitForChild("EGGRUMBLE_NaturalRegen"))')
   host,n=re.subn(CALL,lambda m:m.group(0)+'\n'+m.group(1)+'NaturalRegen.attach(session,p,role)',host)
   if n!=2:raise ValueError("RED_EXPECTED_TWO_EQUIP_HOOKS")
-  if host.count(CLEAR)!=1:raise ValueError("RED_EXPECTED_ONE_PLAYER_LEAVE_CLEANUP")
-  host=host.replace(CLEAR,'  NaturalRegen.clear(p)\n'+CLEAR)
   outHost=dest.parent/"EGGRUMBLE_LobbyCastleModesPreview.Regen.server.luau"
   outHost.write_text(host,encoding="utf-8")
   # Original exact script route (name/class) retained; only content changed.
