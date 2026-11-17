@@ -1,0 +1,46 @@
+name: P0D GQ8 V3 server cast cue original native source QA
+on:
+  push:
+    branches: ['quality/gq8-v3-cast-ack-cue-20261117-2314']
+  pull_request:
+    paths:
+      - 'rc_fastlane/quality_server_cast_cue_20261117/**'
+      - '.github/workflows/p0d-gq8-v3-cast-cue.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-source-luau:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original482
+          persist-credentials: false
+      - name: Python fail-closed negative QA and byte-exact OFF
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s rc_fastlane/quality_server_cast_cue_20261117 -p 'test_*.py' -v
+          SOURCE=_original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CombatFeel.client.luau
+          python3 rc_fastlane/quality_server_cast_cue_20261117/select_cast_cue.py --source "$SOURCE" --out /tmp/GQ8_COMBATFEEL_CUE_ON.client.luau
+          python3 rc_fastlane/quality_server_cast_cue_20261117/select_cast_cue.py --source "$SOURCE" --out /tmp/GQ8_COMBATFEEL_CUE_OFF.client.luau --off
+          cmp "$SOURCE" /tmp/GQ8_COMBATFEEL_CUE_OFF.client.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Pinned native Luau compile ON and OFF
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq8-cast-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-cast-native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-cast-native/luau-compile --text /tmp/GQ8_COMBATFEEL_CUE_ON.client.luau >/dev/null
+          /tmp/gq8-cast-native/luau-compile --text /tmp/GQ8_COMBATFEEL_CUE_OFF.client.luau >/dev/null
+          echo GQ8_V3_CAST_CUE_NATIVE_ON_OFF_PASS

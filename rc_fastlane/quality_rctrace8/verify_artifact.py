@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 54 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 55 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -296,6 +296,12 @@ FEATURE_EVIDENCE = {
   'p:SetAttribute("EGGRUMBLE_Combo",0)',
   'p:SetAttribute("EGGRUMBLE_BestCombo",0)',
   'p:SetAttribute("EGGRUMBLE_NeutralKOs",0)')),
+ "GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117": ("EGGRUMBLE_CombatFeel", (
+   "-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 BEGIN",
+   'player:GetAttributeChangedSignal("EGGRUMBLE_SkillCastSignature")',
+   'if not tones[role] then return end',
+   'if player:GetAttribute("EGGRUMBLE_Eliminated")==true or reduced() then return end',
+   "-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 END")),
  "GQ81_CONFIRMED_HIT_042_V3_PORT_20261117": ("EGGRUMBLE_CombatFeel", (
   "hitToast.Name=\"ConfirmedHit042\"",
   "task.delay(.42,function()",
