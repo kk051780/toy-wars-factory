@@ -53,7 +53,7 @@ def generate(out:Path,mutant:Path)->None:
     body=extract(SOURCE.read_text())
     out.write_text(PRELUDE+body+TAIL)
     mutant.write_text(PRELUDE+
-       body.replace("table.insert(ignore,pilotCharacter)","-- mutational removal of real-pilot exclusion",1)
+       body.replace("table.insert(ignore,pilotCharacter)","local dropped=pilotCharacter",1)
        +TAIL)
     print("GQ8_LSS_NATIVE_REAL_HELPER_AND_MUTANT_GENERATED")
 
