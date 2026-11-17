@@ -18,22 +18,35 @@ FEATURE="GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"
 TARGET=("ServerScriptService","EGGRUMBLE_MatchResultService")
 SELECTED_NAME="GQ8_BOSS_RESULT_SELECTED_SOURCE.luau"
 RECEIPT="GQ8_BOSS_RESULT_RC31_RECEIPT.json"
-ANCHOR=(' return status,"中立撃破 "..tostring(kos).."   卵納入 "..tostring(eggs)'
-        '.."   城攻略 "..tostring(fallen)\n')
+ANCHOR=(
+ ' if mode=="TEAM" then\n'
+ '  return status.."・"..specialty,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d 団%d",\n'
+ '   place,points,kos,stolen,secured,eggs,fallen,teamSiege)\n'
+ ' end\n'
+ ' return status.."・"..specialty,string.format("%d位 %d点｜KO%d 奪%d(帰%d) 納%d 城%d",\n'
+ '  place,points,kos,stolen,secured,eggs,fallen)\n'
+)
 MARKER="-- GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"
-REPLACEMENT=(MARKER+"\n"
+BOSS_BLOCK=(
+ MARKER+"\n"
  ' local rawBoss=player:GetAttribute("EGGRUMBLE_BossDefeats")\n'
  ' local boss=if type(rawBoss)=="number" and rawBoss==rawBoss\n'
  '  and rawBoss>=1 and rawBoss<math.huge then math.min(99,math.floor(rawBoss)) else 0\n'
- ' local koLabel=if boss>0 then "中立 "..tostring(kos).." / 巨人 "..tostring(boss)\n'
- '  else "中立撃破 "..tostring(kos)\n'
- ' return status,koLabel.."   卵納入 "..tostring(eggs).."   城攻略 "..tostring(fallen)\n')
+ ' local bossSuffix=if boss>0 then " 巨"..tostring(boss) else ""\n'
+)
+REPLACEMENT=BOSS_BLOCK + ANCHOR.replace(
+ '   place,points,kos,stolen,secured,eggs,fallen,teamSiege)\n',
+ '   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix\n'
+).replace(
+ '  place,points,kos,stolen,secured,eggs,fallen)\n',
+ '  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix\n'
+)
 
 def digest(b:bytes)->str:
     return hashlib.sha256(b).hexdigest()
 
 def patch(s:str)->str:
-    if s.count(ANCHOR)!=1 or MARKER in s or s.count("GQ_DRAW_LABEL_RESULT")!=1:
+    if s.count(ANCHOR)!=1 or MARKER in s or s.count("GQ_DRAW_LABEL_RESULT")!=1 or "ScoreBalance.build(" not in s:
         raise ValueError("RED_GQ8_BOSS_RESULT_ORIGINAL_DRIFT_OR_REAPPLY")
     if s.count("local function resultText(")!=1 or s.count("function ResultService.showIfFinished(")!=1:
         raise ValueError("RED_GQ8_BOSS_RESULT_AUTHORITY")
@@ -98,29 +111,35 @@ local p={UserId=101,attributes={EGGRUMBLE_BossDefeats=2}}
 function p:GetAttribute(name) return self.attributes[name] end
 local session={rules={winner="RED",castles={["101"]={team="RED",alive=true,depositedEggs=3}},
  events={{type="CASTLE_FALL",attacker="101"}}},swarm={kills={["101"]=44}}}
-local title,stats=resultText(session,p,"TEAM")
-assert(title=="勝利!" or title=="勝利！","RED_GQ8_BOSS_RESULT_WIN_LOST")
-assert(stats=="中立 44 / 巨人 2   卵納入 3   城攻略 1","RED_GQ8_BOSS_RESULT_TRUE_CREDIT_MISSING")
+local ranking={rows={{id="101",score=500,stolen=2,securedSteals=1,
+ teamCastleSupport=4,specialty="攻城"}}}
+local title,stats=resultText(session,p,"TEAM",ranking)
+assert(title=="勝利！・攻城","RED_GQ8_BOSS_RESULT_WIN_LOST")
+assert(stats=="1位 500点｜KO44 奪2(帰1) 納3 城1 団4 巨2",
+ "RED_GQ8_BOSS_RESULT_TRUE_CREDIT_MISSING")
 p.attributes.EGGRUMBLE_BossDefeats=0
-local _,zero=resultText(session,p,"TEAM")
-assert(zero=="中立撃破 44   卵納入 3   城攻略 1","RED_GQ8_BOSS_RESULT_ZERO_CHANGED")
+local _,zero=resultText(session,p,"TEAM",ranking)
+assert(zero=="1位 500点｜KO44 奪2(帰1) 納3 城1 団4","RED_GQ8_BOSS_RESULT_ZERO_CHANGED")
 p.attributes.EGGRUMBLE_BossDefeats=-1
-local _,neg=resultText(session,p,"TEAM")
+local _,neg=resultText(session,p,"TEAM",ranking)
 assert(neg==zero,"RED_GQ8_BOSS_RESULT_NEGATIVE")
 p.attributes.EGGRUMBLE_BossDefeats=0/0
-local _,nan=resultText(session,p,"TEAM")
+local _,nan=resultText(session,p,"TEAM",ranking)
 assert(nan==zero,"RED_GQ8_BOSS_RESULT_NAN")
 p.attributes.EGGRUMBLE_BossDefeats=math.huge
-local _,infinity=resultText(session,p,"TEAM")
+local _,infinity=resultText(session,p,"TEAM",ranking)
 assert(infinity==zero,"RED_GQ8_BOSS_RESULT_INFINITY")
 p.attributes.EGGRUMBLE_BossDefeats=1
 session.rules.winner="DRAW"
-local draw,_=resultText(session,p,"TEAM")
-assert(draw=="引き分け","RED_GQ8_BOSS_RESULT_DRAW")
+local draw,_=resultText(session,p,"TEAM",ranking)
+assert(draw=="引き分け・攻城","RED_GQ8_BOSS_RESULT_DRAW")
+session.rules.winner="101"
+local _,br=resultText(session,p,"BATTLE_ROYALE",ranking)
+assert(br=="1位 500点｜KO44 奪2(帰1) 納3 城1 巨1","RED_GQ8_BOSS_RESULT_BR")
 session.rules.castles["101"]=nil
-local spectator,detail=resultText(session,p,"TEAM")
+local spectator,detail=resultText(session,p,"TEAM",ranking)
 assert(spectator=="試合終了" and detail=="観戦をありがとう","RED_GQ8_BOSS_RESULT_SPECTATOR")
-print("GQ8_BOSS_RESULT_REAL_RESULT_NATIVE_8_CASE_PASS")
+print("GQ8_BOSS_RESULT_REAL_RESULT_NATIVE_9_CASE_PASS")
 '''
     out.write_text(prefix+fixture,encoding="utf-8")
     mutant.write_text(prefix.replace(' local rawBoss=player:GetAttribute("EGGRUMBLE_BossDefeats")',
@@ -157,13 +176,13 @@ def verify(base:Path,out:Path,place:Path):
     print("GQ8_BOSS_RESULT_REAL_ROJO31_SOURCE_CLASS_OFF_EXACT_PASS")
 
 def selftest():
-    a=('local function resultText(session:any,player:Player,mode:string):(string,string)\n'
-       ' local status="試合終了"\n local kos=1\n local eggs=1\n local fallen=0\n'
-       ' -- GQ_DRAW_LABEL_RESULT\n'+ANCHOR+'end\n'
+    a=('local function resultText(session:any,player:Player,mode:string,ranking:any):(string,string)\n'
+       ' -- GQ_DRAW_LABEL_RESULT\n -- ScoreBalance.build(\n'
+       +ANCHOR+'end\n'
        'function ResultService.showIfFinished() end\n')
     b=patch(a)
     assert unpatch(b)==a
-    assert b.count("EGGRUMBLE_BossDefeats")==1
+    assert b.count("EGGRUMBLE_BossDefeats")==1 and "巨" in b
     for invalid in (a.replace(ANCHOR,""),a.replace(ANCHOR,ANCHOR+ANCHOR),
                     a.replace("GQ_DRAW_LABEL_RESULT","MISSING"),b):
         try:patch(invalid)
