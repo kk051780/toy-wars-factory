@@ -109,7 +109,7 @@ jobs:
             if src is None:
               src=props.find("ProtectedString[@name='Source']")
             if name is not None and name.text=='EGGRUMBLE_ElementAffinityPolicy':
-              actual.append(src.text.replace('\\r\\n', '\\n') if src is not None and src.text is not None else None)
+              actual.append(src.text.replace('\r\n', '\n') if src is not None and src.text is not None else None)
           assert actual==[expected], 'RED_ROJO_MODULE_SOURCE_OR_CLASS_MISMATCH: '+str([(x is None, len(x or '')) for x in actual])
           print('BATTLE_ELEMENT_RULES_ROJO_ISOLATED_MODULE_EXACT_PASS',len(expected))
           PY
