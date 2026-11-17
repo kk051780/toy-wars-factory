@@ -17,6 +17,19 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from select_cast_cue import FEATURE,ORIGINAL_GIT_BLOB,patch,undo,validate_original,git_blob
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"quality_castle_prompt_session_20261117"))
 from select_castle import mapping
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"quality_rc81_hit042_v3"))
+from select_hit042 import LABEL_ADD as GQ81_LABEL_ADD,PULSE_ADD as GQ81_PULSE_ADD,patch as gq81_patch
+
+def validate_current_before(before:str)->None:
+    # GQ81 confirmed-hit cue is already adopted; preserve BOTH original inserts.
+    # Reconstruct immutable author482 exactly and replay GQ81 on it, fail closed.
+    if before.count(GQ81_LABEL_ADD)!=1 or before.count(GQ81_PULSE_ADD)!=1:
+        raise ValueError("RED_GQ8_LOST_GQ81_EXISTING_HIT042")
+    original=before.replace(GQ81_PULSE_ADD,"",1).replace(GQ81_LABEL_ADD,"",1)
+    validate_original(original)
+    if gq81_patch(original)!=before:
+        raise ValueError("RED_GQ8_GQ81_SELECTED_SOURCE_DRIFT")
+
 
 CLIENT=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_CombatFeel")
 FILE="GQ8_EXISTING_COMBATFEEL_CAST_CUE.client.luau"
@@ -32,7 +45,7 @@ def checked(base:Path,out:Path):
     if changed!=[CLIENT]:raise ValueError("RED_GQ8_ONLY_ONE_CLIENT_MAY_CHANGE_"+str(changed))
     before=old[CLIENT].read_text(encoding="utf8")
     after=new[CLIENT].read_text(encoding="utf8")
-    validate_original(before)
+    validate_current_before(before)
     if patch(before)!=after or undo(after)!=before:
         raise ValueError("RED_GQ8_INVERSE_AND_SELECTED_SOURCE")
     if not new[CLIENT].name.endswith(".client.luau"):
@@ -45,7 +58,7 @@ def prepare(base:Path,out:Path):
         raise ValueError("RED_GQ8_OUTPUT_COLLISION")
     proj,old=mapping(base)
     before=old[CLIENT].read_text(encoding="utf8")
-    validate_original(before)
+    validate_current_before(before)
     after=patch(before)
     (out.parent/FILE).write_text(after,encoding="utf8")
     copy_proj=copy.deepcopy(proj)
@@ -55,6 +68,7 @@ def prepare(base:Path,out:Path):
     rec={
       "feature_id":FEATURE,"original_author_commit":"fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
       "original_client_blob":ORIGINAL_GIT_BLOB,"source_count":31,
+      "gq81_confirmed_hit042_preserved":True,
       "only_changed_existing_client":CLIENT[-1],"other30_byte_exact":True,"off_exact":True,
       "new_game_remote_score_store_scripts":0,"added_scripts":0,
       "no_replacement_combat_game_host_swarm":True,
