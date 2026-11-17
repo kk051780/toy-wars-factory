@@ -64,8 +64,14 @@ jobs:
             --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
             --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
             --out artifacts/real31 --head "${{ steps.rc.outputs.sha }}"
+          # Pull the exact current canonical LSS source, not the stale branch copy.
+          LSS_API="repos/${GITHUB_REPOSITORY}/contents/handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau?ref=${{ steps.rc.outputs.sha }}"
+          gh api "$LSS_API" --jq .content | base64 -d > artifacts/real31/CURRENT_OFFICIAL_LSS.luau
+          BLOB="$(gh api "$LSS_API" --jq .sha)"
+          test "$(git hash-object artifacts/real31/CURRENT_OFFICIAL_LSS.luau)" = "$BLOB"
           python3 handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
             --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source artifacts/real31/CURRENT_OFFICIAL_LSS.luau \
             --out artifacts/realm34/CORE34.project.json
           python3 handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
             --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
