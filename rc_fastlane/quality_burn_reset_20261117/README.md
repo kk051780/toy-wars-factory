@@ -5,7 +5,7 @@
 - Exact input: **official RC parent** `cd4d41a2a8ad4c856604120281d89dd5bd60ca84` with full `GQ8_MULTI_SHIELD_SELECTED31` from formally adopted #686.
 - Unique owner slice: `GQ8_BURN_REPLAY_RESET_20261117`, #218 claim [6946146896](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6946146896).
 - The overlay inserts one `hum:SetAttribute("EGGRUMBLE_BurnUntil",nil)` after existing MarkedUntil cleanup; does NOT replace shield cleanup.
-- 31 selected scripts, 30 unchanged source bytes, exact inverse to shield-selected RoundReplay. No new Game/Remote/Store, no authority addition, no additional runtime script; original 40 source-backed feature flags preserved.
+- 31 selected scripts, 30 unchanged source bytes, exact inverse to shield-selected RoundReplay. No new Game/Remote/Store, no authority addition, no additional runtime script; original 41 inherited source-backed feature flags preserved.
 - Build-time: real 31 Luau compile; extracted true selected RoundReplay native 6 cases; negative mutant expected RED; Rojo source/class exact 31; latest canonical Place now burn-selected; optional32 spectator auto-follows via existing #692 resolver.
 - Off rollback: remove this workflow step and choose original `GQ8_MULTI_SHIELD_SELECTED31` Place, leaving #686 shields, #684 HIT, seven roles, Boss LOS, Builder WALL, eggs, lobby, AI etc intact.
 - Studio2client, Android15m, art/fun, OWNER acceptance: NOT TESTED.

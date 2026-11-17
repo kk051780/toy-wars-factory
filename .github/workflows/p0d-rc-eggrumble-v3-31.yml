@@ -20,6 +20,7 @@ on:
       - 'rc_fastlane/quality_rc81_hit042_v3/**'
       - 'rc_fastlane/quality_shield_cleanup_20261117/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
+      - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
@@ -44,6 +45,7 @@ on:
       - 'rc_fastlane/quality_rc81_hit042_v3/**'
       - 'rc_fastlane/quality_shield_cleanup_20261117/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
+      - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
@@ -2127,13 +2129,46 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_hit_chain.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_REAL_CONFIRMED_IMPACT_CHAIN_NATIVE_ROJO31_ONLY_ONE_CLIENT_EXACT_PASS
+      - name: GQ512 original combo fence port one Replay (31 source Native Rojo + mutant)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_combo512_rc31/select_combo.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_HIT_CHAIN_SELECTED31.project.json"
+          OUT="$DIR/GQ512_COMBO_SELECTED31.project.json"
+          PLACE="$DIR/GQ512_COMBO_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_combo512_rc31")
+          from select_combo import mapping
+          _,sources,_=mapping(Path(sys.argv[1]))
+          assert len(sources)==31
+          for f in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ512_CURRENT31_ALL_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --project "$OUT" --out "$DIR/GQ512_NATIVE.luau" --mutant "$DIR/GQ512_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ512_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ512_NATIVE.luau" | tee "$DIR/GQ512_NATIVE.log"
+          grep -q GQ512_REAL_REPLAY_NATIVE_ROUND_LOCAL_5_CASE_PASS "$DIR/GQ512_NATIVE.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ512_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ512_MUTANT.luau" > "$DIR/GQ512_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ512_MUTANT_ACCEPTED
+            exit 1
+          fi
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
       - name: GQ8 new-round burn state reset on latest selected RoundReplay; Native6 mutant Rojo31
         shell: bash
         run: |
           set -euo pipefail
           SRC=rc_fastlane/quality_burn_reset_20261117
           DIR=artifacts/gq515_official_select
-          BASE="$DIR/GQ8_HIT_CHAIN_SELECTED31.project.json"
+          BASE="$DIR/GQ512_COMBO_SELECTED31.project.json"
           OUT="$DIR/GQ8_BURN_RESET_SELECTED31.project.json"
           PLACE="$DIR/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx"
           python3 -B -m unittest discover -v -s "$SRC" -p 'test_burn_reset.py'
@@ -2211,15 +2246,22 @@ jobs:
           assert chain["one_client_rollback_exact"] and chain["rojo"]=="31/31"
           assert chain["hit_chain_reset_seconds"]==1.6 and chain["chain_cap"]==30
           assert chain["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_HIT_CHAIN_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          combo=json.loads(Path("artifacts/gq515_official_select/GQ512_COMBO_RC31_RECEIPT.json").read_text())
+          assert combo["feature_id"]=="GQ512_ROUND_COMBO_REPLAY_RESET_20261117"
+          assert combo["source_count"]==31 and combo["other30_exact"] and combo["off_rollback_exact"]
+          assert combo["native"]=="31/31" and combo["rojo"]=="31/31"
+          assert combo["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ512_COMBO_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           burn=json.loads(Path("artifacts/gq515_official_select/GQ8_BURN_RESET_RECEIPT.json").read_text())
           assert burn["feature_id"]=="GQ8_BURN_REPLAY_RESET_20261117" and burn["source_count"]==31
           assert burn["changed_existing_script_count"]==1 and burn["other30_exact"] and burn["rollback_source_exact"]
           assert burn["native"]=="31/31" and burn["rojo"]=="31/31" and burn["new_game_remote_store"]==0
           assert burn["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
+          assert m["gq512_round_local_combo_reset"]["original_pr"]==512
+          assert m["feature_flags"]["GQ512_ROUND_COMBO_REPLAY_RESET_20261117"] is True
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==40
+          assert len([v for v in m["feature_flags"].values() if v is True])==41
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
           assert m["source_heads"]["builder_wall522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
           assert m["feature_flags"]["BUILDER_WALL_SERVER_TOOL_522"] is True
@@ -2766,6 +2808,16 @@ jobs:
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_HIT_CHAIN_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_HIT_CHAIN_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_HIT_CHAIN_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_HIT_CHAIN_NATIVE.log
+            artifacts/gq515_official_select/GQ8_HIT_CHAIN_MUTANT_RED.log
+            artifacts/gq515_official_select/GQ512_COMBO_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ512_COMBO_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ512_COMBO_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ512_NATIVE.log
+            artifacts/gq515_official_select/GQ512_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_NATIVE6.log
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_EXPECTED_MUTANT_RED.log
             artifacts/gq515_official_select/GQ8_BURN_RESET_SELECTED31.project.json
