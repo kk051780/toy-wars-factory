@@ -22,6 +22,7 @@ on:
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
+      - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
@@ -47,6 +48,7 @@ on:
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
+      - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
@@ -2196,10 +2198,55 @@ jobs:
           fi
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+      - uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: 3ea5f4e87df7e3bb20a63026f892dd9c94f981e9, path: _gq505_original_fx, persist-credentials: false}
+      - name: GQ505 original server FX quota in existing 31-source SkillFX (native and true Rojo)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq505_original_fx rev-parse HEAD)" = 3ea5f4e87df7e3bb20a63026f892dd9c94f981e9
+          SRC=rc_fastlane/quality_fx505_inline31/select_fx.py
+          AUTHOR=_gq505_original_fx/quality_gameplay/fx_mode_fairness
+          ORIG=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SkillFX.luau
+          OVR="$AUTHOR/EGGRUMBLE_SkillFX_ModeFair_Overlay.luau"
+          POL="$AUTHOR/EGGRUMBLE_FXModeFairQuota.luau"
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ514_BOSS_SELECTED31.project.json"
+          OUT="$DIR/GQ505_FX_FAIR_SELECTED31.project.json"
+          PLACE="$DIR/GQ505_FX_FAIR_TRUE_ROJO31.rbxlx"
+          test "$(git hash-object "$ORIG")" = 5c05738a81397cf33c9900ac088f0787c242c720
+          test "$(git hash-object "$OVR")" = fca25ea2c3a53911cb5da93024db9fb2f06384e5
+          test "$(git hash-object "$POL")" = 804618367df9527f7c9df84e7019b1f5d996dc51
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT" --original "$ORIG" --overlay "$OVR" --policy "$POL"
+          mkdir -p "$DIR/gq505_native/tests"
+          cp "$POL" "$DIR/gq505_native/EGGRUMBLE_FXModeFairQuota.luau"
+          cp "$AUTHOR/tests/EGGRUMBLE_FXModeFairQuota.spec.luau" "$DIR/gq505_native/tests/"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/gq505_native/EGGRUMBLE_FXModeFairQuota.luau" >/dev/null
+          (cd "$DIR/gq505_native/tests" && /tmp/gq530_all31_native/luau EGGRUMBLE_FXModeFairQuota.spec.luau) \
+            | tee "$DIR/GQ505_ORIGINAL_AUTHOR_NATIVE.log"
+          grep -q EGGRUMBLE_FX_MODE_FAIRNESS_NATIVE_PASS "$DIR/GQ505_ORIGINAL_AUTHOR_NATIVE.log"
+          python3 - "$OUT" <<'PY'
+          import json,subprocess,sys
+          from pathlib import Path
+          p=Path(sys.argv[1])
+          def files(tree):
+              for k,v in tree.items():
+                  if k.startswith("$"):continue
+                  if "$path" in v:yield (p.parent/v["$path"]).resolve(strict=True)
+                  else:yield from files(v)
+          mapped=list(files(json.loads(p.read_text())["tree"]))
+          if len(mapped)!=31:raise ValueError("RED_NOT31")
+          for f in mapped:subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ505_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" \
+            --original "$ORIG" --overlay "$OVR" --policy "$POL"
+          echo GQ505_ONE_FX_OTHER30_EXACT_NATIVE_ROJO31_OFF_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ514_BOSS_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ505_FX_FAIR_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2215,7 +2262,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ514_BOSS_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ505_FX_FAIR_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2254,12 +2301,19 @@ jobs:
           assert boss514["feature_id"]=="GQ514_BOSS_KO_ROUND_RESET_20261117"
           assert boss514["source_count"]==31 and boss514["other30_exact"] and boss514["off_rollback_exact"]
           assert boss514["native"]==boss514["rojo"]=="31/31"
-          assert boss514["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert boss514["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ514_BOSS_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ514_BOSS_KO_ROUND_RESET_20261117"] is True
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==42
+          assert len([v for v in m["feature_flags"].values() if v is True])==43
+          assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
+          assert m["source_heads"]["gq505_original_fx_author"]=="3ea5f4e87df7e3bb20a63026f892dd9c94f981e9"
+          fair=json.loads(Path("artifacts/gq515_official_select/GQ505_FX_FAIR_RECEIPT.json").read_text())
+          assert fair["feature_id"]=="GQ505_SERVER_MODE_FX_FAIR_INLINE31"
+          assert fair["source_count"]==31 and fair["other_30_script_bytes_exact"] and fair["new_modules"]==0
+          assert fair["native"]=="31/31" and fair["rojo"]=="31/31"
+          assert fair["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
           assert m["source_heads"]["builder_wall522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
           assert m["feature_flags"]["BUILDER_WALL_SERVER_TOOL_522"] is True
@@ -2819,6 +2873,10 @@ jobs:
             artifacts/gq515_official_select/GQ514_BOSS_SELECTED31.project.json
             artifacts/gq515_official_select/GQ514_BOSS_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ514_BOSS_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ505_FX_FAIR_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ505_FX_FAIR_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ505_FX_FAIR_RECEIPT.json
+            artifacts/gq515_official_select/GQ505_ORIGINAL_AUTHOR_NATIVE.log
             artifacts/gq515_official_select/GQ514_NATIVE.log
             artifacts/gq515_official_select/GQ514_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_MULTI_SHIELD_NATIVE6.log
