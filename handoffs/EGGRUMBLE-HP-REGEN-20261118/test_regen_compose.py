@@ -3,7 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from compose_regen32 import compose,files,HOST,NEW
+from compose_regen32 import compose,files,HOST,NEW,POLICY_NAME
 
 HERE=Path(__file__).resolve().parent
 SAMPLE='''--!strict
@@ -43,8 +43,8 @@ class Admission(unittest.TestCase):
    _,before=files(base)
    _,after=files(on)
    _,rollback=files(off)
-   self.assertEqual((len(before),len(after),len(rollback)),(31,32,31))
-   self.assertEqual([key[-1] for key in after if key not in before],[NEW])
+   self.assertEqual((len(before),len(after),len(rollback)),(31,33,31))
+   self.assertEqual(sorted(key[-1] for key in after if key not in before),sorted([NEW,POLICY_NAME]))
    for k,v in before.items():
     self.assertEqual(v.read_bytes(),rollback[k].read_bytes())
     if k[-1]!=HOST:self.assertEqual(v.read_bytes(),after[k].read_bytes())
@@ -54,6 +54,7 @@ class Admission(unittest.TestCase):
    self.assertEqual(altered.count("local NaturalRegen=require"),1)
    receipt=json.loads(on.with_suffix(".receipt.json").read_text())
    self.assertEqual(receipt["changed_existing_sources"],[HOST])
+   self.assertEqual(sorted(receipt["added_sources"]),sorted([NEW,POLICY_NAME]))
    self.assertTrue(receipt["other30_original_byte_exact"])
    self.assertTrue(json.loads(off.with_suffix(".receipt.json").read_text())["off31_byte_exact"])
  def test_reject_bad_host_signature(self):
@@ -70,7 +71,7 @@ class Admission(unittest.TestCase):
               "EGGRUMBLE_Combo","EGGRUMBLE_NeutralKOs"):
    self.assertNotIn(key,src)
   for key in ("HealthChanged:Connect","h.Died:Connect","world.Destroying:Connect",
-              "REGEN_PER_SECOND=.007","DAMAGE_FREE_SECONDS=7","EGGRUMBLE_BurnUntil"):
+              "Policy.observeHealth","Policy.regenDelta","EGGRUMBLE_BurnUntil"):
    self.assertIn(key,src)
 
 if __name__=="__main__": unittest.main()
