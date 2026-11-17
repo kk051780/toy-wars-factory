@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 51 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 52 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -224,6 +224,18 @@ FEATURE_EVIDENCE = {
   'ProximityPromptService.PromptTriggered:Connect',
   'if state.shield.Parent then state.shield:Destroy() end',
   'task.delay(GRACE_SECONDS, revoke)')),
+ "GQ504_ORIGINAL_CONFIRMED_HIT_AUDIO_INLINE_20261117": ("EGGRUMBLE_CombatFeel", (
+  "GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117",
+  'local GROUP="EGGRUMBLE_GQ_ConfirmedHitAudio"',
+  "local MAX_VOICES=4",
+  "local MAX_PER_WINDOW=6",
+  "local MAX_VOLUME=.30",
+  'GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
+  'GetAttributeChangedSignal("EGGRUMBLE_SFXMuted")',
+  'GetAttributeChangedSignal("EGGRUMBLE_Eliminated")',
+  "local function confirmedHit()",
+  "onCharacterRemoving=player.CharacterRemoving:Connect",
+  "GQ504_CONFIRMED_HIT_AUDIO_INLINE_END_20261117")),
  "GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local CastleDefense=(function()",
   "Policy.TICK_SECONDS=0.35",
