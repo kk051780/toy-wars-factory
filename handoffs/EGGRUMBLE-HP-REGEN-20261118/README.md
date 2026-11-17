@@ -3,7 +3,7 @@
 ## 課金なしの初期戦闘基盤
 Issue #765 lane7。新しいパッシブ回復は無料基本機能。7職の初期HP案：戦士250、魔法使い195、暗殺者185、超能力者205、マッドサイエンティスト225、魔獣使い220、呪術師230（既存Role ID WARRIOR/MAGE/NINJA/TRAPPER/BUILDER/BEAST/ZOMBIEは絶対変更しない）。
 
-本物の試合Hostに1回のrequireと既存の2か所の SevenRoleCombat.equip の直後フック、PlayerRemoving清掃1か所のみを追加。既存30源byte same、31番目の元Host1本だけ差し替え＋新しいRegen Module1本の32 source。新Game/Combat/HP/Score/Store/Remoteを作らない。既存魔法使いの即時回復スキル／蘇生候補は触らない。既存Role HUDも上書きしない。
+本物の試合Hostに1回のrequireと既存の2か所の SevenRoleCombat.equip の直後フック、既存の終了処理を一切変更せず、Module側の死亡・離脱・world廃棄で接続を解除する方式を追加。既存30源byte same、31番目の元Host1本だけ差し替え＋新しいRegen Module1本の32 source。新Game/Combat/HP/Score/Store/Remoteを作らない。既存魔法使いの即時回復スキル／蘇生候補は触らない。既存Role HUDも上書きしない。
 
 ## 自然回復
 最後にサーバーが観測したHumanoid.Healthの減少から7秒は回復しない。7秒経過後、毎秒MaxHPの0.7%が徐々に戻り、最大HPで停止。出血/燃焼(元属性 EGGRUMBLE_BurnUntil / DoTUntil)中は再生しない。ダメージ後の再生待機はPvP・AI・雷などのヒット元を区別しない。HP0・城陥落/脱落・旧アバター・旧試合・不正役職・別モードでは回復しない。
