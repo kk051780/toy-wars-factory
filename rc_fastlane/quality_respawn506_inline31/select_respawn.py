@@ -62,7 +62,7 @@ def patch(before:str,auth:str)->str:
  for guard in (
   'local Players=game:GetService("Players")',
   'EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW',
-  'GQ8_HUMAN_SIEGE_PER_ATTACKER_COOLDOWN_20261117',
+  '-- GQ8_HUMAN_SIEGE_PACING_BEGIN',
   'GQ8_CASTLE_PROMPT_CURRENT_MATCH_20261117',
   'session.isCurrentHuman'
  ):
