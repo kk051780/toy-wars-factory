@@ -27,6 +27,7 @@ on:
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
       - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
+      - 'rc_fastlane/quality_human_siege_pace_20261117/**'
       - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -61,6 +62,7 @@ on:
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
       - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
+      - 'rc_fastlane/quality_human_siege_pace_20261117/**'
       - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -2553,6 +2555,42 @@ jobs:
           python3 -B "$SRC/select_tell.py" verify --base "$BASE" --out "$OUT" \
             --policy "$POLICY" --world "$WORLD" --place "$PLACE"
           echo GQ511_AUTHOR_ORIGINAL_TWO_MODULES_IN_ONE_HOST_ROJO31_SOURCE_CLASS_OFF_EXACT_PASS
+      - name: GQ8 human siege prompt 1-second successful-hit pacing per attacker and target castle (Native31 and Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_human_siege_pace_20261117/select_siege.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ511_CARRIER_TELL_SELECTED31.project.json"
+          OUT="$DIR/GQ8_HUMAN_SIEGE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_rc81_hit042_v3")
+          from select_hit042 import flatten
+          _,files=flatten(Path(sys.argv[1]))
+          assert len(files)==31
+          for file in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_HUMAN_SIEGE_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --base "$OUT" \
+            --out "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" \
+            --mutant "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" | tee "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.log"
+          grep -q GQ8_HUMAN_SIEGE_SELECTED_SOURCE_NATIVE_17_CASES_PASS "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau" >"$DIR/GQ8_HUMAN_SIEGE_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_HUMAN_SIEGE_RATE_BYPASS_MUTANT_ACCEPTED
+            exit 1
+          fi
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_HUMAN_SIEGE_SAME_SESSION_ONE_HOST_NATIVE31_ROJO31_MUTANT_RED_OFF_EXACT_PASS
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
@@ -2567,7 +2605,7 @@ jobs:
           SRC=rc_fastlane/quality_compass496_inline31
           AUTHOR=_gq496_original/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116
           DIR=artifacts/gq515_official_select
-          BASE="$DIR/GQ511_CARRIER_TELL_SELECTED31.project.json"
+          BASE="$DIR/GQ8_HUMAN_SIEGE_SELECTED31.project.json"
           OUT="$DIR/GQ496_COMPASS_SELECTED31.project.json"
           PLACE="$DIR/GQ496_COMPASS_TRUE_ROJO31.rbxlx"
           test "$(git hash-object "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau")" = 43feb1c3c55b727c0d5a8fad5195a32d54da18e2
@@ -2715,6 +2753,16 @@ jobs:
           assert tell["native"]==tell["rojo"]=="31/31" and tell["new_runtime_script_count"]==0
           assert tell["one_host_script_class"]=="Script" and tell["new_game_remote_store_score_authority"]==0
           assert tell["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          siege=json.loads(Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_RC31_RECEIPT.json").read_text())
+          assert siege["feature_id"]=="GQ8_HUMAN_SIEGE_PER_ATTACKER_COOLDOWN_20261117"
+          assert siege["source_count"]==31 and siege["one_existing_host_changed"]
+          assert siege["other30_byte_exact"] and siege["off_exact"]
+          assert siege["cooldown_seconds"]==1.0 and siege["per_target_castle_per_human"]
+          assert siege["no_cooldown_before_server_success"]
+          assert siege["new_game_remote_store_score_authority"]==0 and siege["rojo"]=="31/31"
+          assert siege["canonical_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert siege["canonical_place_bytes"]==place.stat().st_size
+          assert m["gq8_human_siege_pacing"]["source_selected_by_workflow"] is True
           assert m["feature_flags"]["GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"] is True
           assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
           assert m["gq510_mage_heal_20261117"]["original_pr"]==510
@@ -3323,11 +3371,16 @@ jobs:
             artifacts/gq515_official_select/GQ511_CARRIER_TELL_SELECTED31.project.json
             artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ511_CARRIER_WORLD_TELL_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ496_COMPASS_SELECTED31.project.json
             artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ496_REAL_PICKER_NATIVE.log
             artifacts/gq515_official_select/GQ496_ENEMY_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_NATIVE17.log
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ511_AUTHOR_POLICY_NATIVE.log
             artifacts/gq515_official_select/GQ511_AUTHOR_WORLD_NATIVE.log
             artifacts/gq515_official_select/GQ510_ORIGINAL_BUG.log
