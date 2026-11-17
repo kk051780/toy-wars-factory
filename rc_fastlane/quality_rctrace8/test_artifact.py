@@ -188,11 +188,35 @@ class Gate(unittest.TestCase):
         r["roblox_publish"]=True
         with self.assertRaisesRegex(gq8.RedGate,"UNAUTHORIZED_PUBLISH"):
             gq8.verify(b,r,m,a,HEAD)
-    def test_future_flags_are_visible_but_not_falsely_certified(self):
+    def test_future_enabled_flag_without_real_source_evidence_is_red(self):
         b,r,m,a=fixture()
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
+        with self.assertRaisesRegex(
+                gq8.RedGate,"ENABLED_FLAG_WITHOUT_SOURCE_EVIDENCE_FUTURE_AUTHOR_UNKNOWN_999"):
+            gq8.verify(b,r,m,a,HEAD)
+        # The same RED gate also applies to a premerge PR receipt.
+        r["official_rc_commit_verified"]=False
+        r["status"]="RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
+        with self.assertRaisesRegex(
+                gq8.RedGate,"ENABLED_FLAG_WITHOUT_SOURCE_EVIDENCE_FUTURE_AUTHOR_UNKNOWN_999"):
+            gq8.verify(b,r,m,a,HEAD,allow_pr_premerge=True)
+
+    def test_future_disabled_flag_can_remain_prep_without_claiming_enabled(self):
+        b,r,m,a=fixture()
+        m["feature_flags"]["FUTURE_AUTHOR_DISABLED_PREP_999"]=False
         v=gq8.verify(b,r,m,a,HEAD)
-        self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
+        self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_DISABLED_PREP_999"])
+        self.assertEqual(v["verified_flag_count"],50)
+
+    def test_known_feature_flag_must_be_a_json_boolean(self):
+        for nonboolean in (1,"true",None,0):
+            with self.subTest(nonboolean=nonboolean):
+                b,r,m,a=fixture()
+                m["feature_flags"]["GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"]=nonboolean
+                with self.assertRaisesRegex(
+                        gq8.RedGate,
+                        "FEATURE_FLAG_NOT_BOOLEAN_GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"):
+                    gq8.verify(b,r,m,a,HEAD)
     def test_all_current_official_manifest_flags_are_actually_attested(self):
         # Do not allow an enabled official flag to silently pass as unassessed.
         path=Path(__file__).resolve().parents[1]/"EGGRUMBLE_V3_ACTIVE.json"
