@@ -114,13 +114,21 @@ class LandSeaSkySourceTests(unittest.TestCase):
             "if not safeMove(guest,seaRaft.Position", "fired=false",
             "t:Destroy()",
         ]
+        owner_gate, victim_gate = trap.split(
+            '    local ch=other:FindFirstAncestorOfClass("Model")', 1)
+        # A caster-invalid trap now has its own early Destroy(); isolate the
+        # *victim success* Destroy() so both guards remain independently strict.
+        self.assertIn('matchHuman(owner,mode,world,"TRAPPER")', owner_gate)
+        self.assertEqual(owner_gate.count("t:Destroy()"), 1)
+        self.assertEqual(victim_gate.count("t:Destroy()"), 1)
         for check in checks:
             with self.subTest(check=check):
                 self.assertIn(check, trap)
-                self.assertNotIn(check, trap.replace(check, "", 1))
+                scoped = victim_gate if check == "t:Destroy()" else trap
+                self.assertNotIn(check, scoped.replace(check, "", 1))
         self.assertLess(trap.index("fired=true"), trap.index("if not safeMove("))
         self.assertLess(trap.index("if not safeMove("), trap.index("fired=false"))
-        self.assertLess(trap.index("fired=false"), trap.index("t:Destroy()"))
+        self.assertLess(trap.index("fired=false"), trap.rindex("t:Destroy()"))
 
     def test_authorization_limits_and_reversibility(self):
         for value in ["MAX_CRAFT = 4", "MAX_PARTS_PER_WORLD = 95",
