@@ -4,17 +4,21 @@ on:
     branches:
       - feature/eggrumble-land-sea-sky-traversal-20261117-01
       - feature/gq8-true31-32-currenthead-autogate-20261117-01
+      - quality/gq8-lss-rc-intake-20261118-0312
+      - rc/p0d-s1-kids-rc01
     paths:
       - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
       - 'quality_gameplay/gq8_real_squad_fan_20261117/**'
       - 'quality_gameplay/gq8_lss_real31_20261117/**'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
   pull_request:
-    branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
+    branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq8_lss_real31_20261117/**'
       - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
   workflow_dispatch:
 permissions:
   contents: read
@@ -43,9 +47,18 @@ jobs:
           gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
             --branch rc/p0d-s1-kids-rc01 --limit 20 \
             --json databaseId,headSha,status,conclusion > /tmp/current-runs.json
-          RUN="$(jq -er --arg h "$H" \
-            '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId' \
-            /tmp/current-runs.json)"
+          RUN=""
+          for attempt in $(seq 1 30); do
+            gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+              --branch rc/p0d-s1-kids-rc01 --limit 50 \
+              --json databaseId,headSha,status,conclusion > /tmp/current-runs.json
+            RUN="$(jq -r --arg h "$H" \
+              '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' \
+              /tmp/current-runs.json)"
+            if [ -n "$RUN" ]; then break; fi
+            sleep 15
+          done
+          test -n "$RUN"
           echo "run=$RUN" >> "$GITHUB_OUTPUT"
           echo "GQ8_SAMEHEAD_OFFICIAL=$H RUN=$RUN"
       - name: Download exact 31 source Place and receipt

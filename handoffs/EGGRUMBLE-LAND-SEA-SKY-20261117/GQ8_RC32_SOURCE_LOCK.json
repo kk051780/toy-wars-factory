@@ -1,0 +1,58 @@
+{
+  "schema": "GQ8_LSS_CURRENT_RC54_SOURCE_LOCK_V1",
+  "canonical_base": {
+    "repo": "kk051780/toy-wars-factory",
+    "branch": "rc/p0d-s1-kids-rc01",
+    "sha": "43bb3023b3e58d895d6cd2cd8ad001ce540f8806",
+    "source_count": 31,
+    "enabled_flags": 54,
+    "original_samehead_v3_run": 44147304716,
+    "original_samehead_source31_success": true
+  },
+  "optional_profile": {
+    "id": "eggrumble_v3_32_lss_optional",
+    "added_class": "Script",
+    "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+    "source_blob_sha": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+    "total_source_count": 32
+  },
+  "samehead_native_rojo_off": {
+    "run": 44147304702,
+    "conclusion": "SUCCESS",
+    "artifact_id": 14357192527,
+    "artifact_name": "EGGRUMBLE-LSS-REAL31-TO32-STUDIO-CANDIDATE-NOT-RC",
+    "zip_size_bytes": 227283,
+    "source_selected31": 31,
+    "optional32": 32,
+    "off31": 31
+  },
+  "profile_gate": {
+    "official_default_is_original31": true,
+    "studio_only": true,
+    "optional32_sidecar_path": "rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json",
+    "sidecar_status": "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
+    "optional_swarm_fan_selected": false,
+    "original_host_game_combat_swarm_bot_item_scores_unchanged": true
+  },
+  "feature_scope": {
+    "character": "BUILDER/BEAST/BR-TRAPPER opt-in vehicle/trap",
+    "field": "coast/offshore/sky visual topology; water visual only",
+    "battle": "confirmed neutral KO cosmetic surge; existing Combat authoritative",
+    "castle": "existing castle/egg rules unchanged",
+    "neutral": "single existing Swarm untouched by default; fan selector tooling only",
+    "items": "original egg/drop/item ownership retained",
+    "lobby": "original Host and mode scene retained",
+    "balance": "max 4 craft, 2 traps, 95 live parts; server identity/distance checks"
+  },
+  "rollback": "Do not select EGGRUMBLE_LandSeaSkyTraversal as optional32 to return to the original exact 31-source V3. Fan selector OFF returns original singleton Swarm without touching the other30 sources.",
+  "adoption": "SOURCE_FILES_PRESENT_IN_OFFICIAL_RC; OPTIONAL_PROFILE_SOURCE_CANDIDATE; NOT_DEFAULT_PLAYABLE_RC_PROFILE",
+  "runtime": {
+    "studio_solo_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "art_fun_owner": "NO_GO"
+  },
+  "writer": "Issue #220 sole authenticated official RC writer, nonforce expected-SHA CAS, independent readback",
+  "no_main_publish_payment": true,
+  "not_a_head_lock_note": "The source content is locked by Git blob SHA. The enclosing feature PR commit HEAD is separately pinned in the PR body after this file is committed; no self-referential SHA stored."
+}
