@@ -2760,8 +2760,8 @@ jobs:
           assert siege["cooldown_seconds"]==1.0 and siege["per_target_castle_per_human"]
           assert siege["no_cooldown_before_server_success"]
           assert siege["new_game_remote_store_score_authority"]==0 and siege["rojo"]=="31/31"
-          assert siege["canonical_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
-          assert siege["canonical_place_bytes"]==place.stat().st_size
+          assert siege["canonical_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert siege["canonical_place_bytes"]==Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx").stat().st_size
           assert m["gq8_human_siege_pacing"]["source_selected_by_workflow"] is True
           assert m["feature_flags"]["GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"] is True
           assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
