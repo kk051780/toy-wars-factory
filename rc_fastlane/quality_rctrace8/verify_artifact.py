@@ -81,10 +81,11 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 57 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 58 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "GQ8_BOSS_RESULT_TRUE_CREDIT_20261118": ("EGGRUMBLE_MatchResultService","-- GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"),
+ "GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118": ("EGGRUMBLE_RoundReplay","-- GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"),
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
  "HUMAN_MATCH_MEMBERSHIP_535": ("EGGRUMBLE_SevenRoleCombat","currentHumanMember(session,"),
  "HUMAN_BOT_MATCH_MEMBERSHIP_531": ("EGGRUMBLE_LobbyCastleModesPreview","session.isCurrentHuman=function"),
