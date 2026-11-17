@@ -4,13 +4,13 @@
 
 ## Difference from existing work
 
-- #494 controls spawning throughput; **this does not change the .18-second spawn tick, requested batch cardinality or 110-actor single-world cap**.
-- #501 controls humans/bots encounter target distribution; **this keeps the original per-soldier target draw** in the existing swarm.
+- #494 controls spawning throughput; **this does not change the existing SpawnPacing policy, requested batch cardinality or server-budgeted live cap**.
+- #501 controls humans/bots encounter target distribution; **this keeps the current server-owned per-soldier EncounterFair.chooseIndex choice and epoch** in the existing swarm.
 - #528 owns cross-mode server budget; **no added actors**.
 - #710 owns spawn physical clearance and arena footprint; this overlay **requires its already-selected collision gate** and leaves it intact.
 - #723 already added real-KO-driven coast visual feedback in optional #714; this patch creates **no FX/KO/score**, only changes where the existing real HordeSoldiers are deployed.
 
-In each original spawn batch, the existing *up to five* real neutral soldiers use a shared randomized bearing and a narrow fan of 0.12 radian between adjacent slots at 38–48 studs from their own original target. This produces locally denser enemy formations when a human is the chosen target (especially solo matches), improving the chance that existing server-validated AoE attacks can hit multiple physical soldiers. The new code changes one and only one source selector; other 30 canonical files remain **byte-identical** and inverse OFF is exact.
+In each original spawn batch, the existing server-paced batch of real neutral soldiers uses a shared randomized bearing and a narrow fan of 0.12 radian between adjacent slots (wraps safely after five) at 38–48 studs from their own original target. This produces locally denser enemy formations when a human is the chosen target (especially solo matches), improving the chance that existing server-validated AoE attacks can hit multiple physical soldiers. The new code modifies only a 1-source candidate overlay on the exact official SpawnPacing + EncounterFair selected Swarm; other 30 canonical files remain **byte-identical** and inverse OFF is exact.
 
 **Important:** this is a formation/source implementation, **not a larger 110-enemy cap or proof of actual FUN**. In TEAM/BR multi-target rounds, each original soldier still chooses its own candidate, so a complete 5-person group at one human is not guaranteed. The existing physical spawn guard may reject some placements. A successful source CI alone is not gameplay evidence.
 
