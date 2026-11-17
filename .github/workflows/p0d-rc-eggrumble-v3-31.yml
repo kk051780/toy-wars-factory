@@ -2258,7 +2258,7 @@ jobs:
           assert combo["feature_id"]=="GQ512_ROUND_COMBO_REPLAY_RESET_20261117"
           assert combo["source_count"]==31 and combo["other30_exact"] and combo["off_rollback_exact"]
           assert combo["native"]=="31/31" and combo["rojo"]=="31/31"
-          assert combo["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert combo["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ512_COMBO_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["gq512_round_local_combo_reset"]["original_pr"]==512
           assert m["feature_flags"]["GQ512_ROUND_COMBO_REPLAY_RESET_20261117"] is True
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
