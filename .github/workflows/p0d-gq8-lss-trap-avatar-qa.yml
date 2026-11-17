@@ -1,0 +1,37 @@
+name: P0D GQ8 LSS current-avatar tide-trap native QA
+on:
+  pull_request:
+    branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-trap-avatar-qa.yml'
+permissions:
+  contents: read
+jobs:
+  current-avatar-trap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Full optional32 source regressions (includes current-avatar trap)
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_optional32.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _lss_pinned_luau
+          persist-credentials: false
+      - name: Actual Luau native syntax gate
+        run: |
+          set -euo pipefail
+          cmake -S _lss_pinned_luau -B /tmp/lss-trap-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-trap-native --target Luau.Compile.CLI --parallel 4
+          /tmp/lss-trap-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau >/dev/null
+          echo GQ8_LSS_CURRENT_AVATAR_NATIVE_PASS

@@ -1,0 +1,162 @@
+name: GQ8 real Swarm squad fan native Rojo real31-32
+on:
+  push:
+    branches:
+      - feature/gq8-real-horde-squad-fan-20261117-01
+    paths:
+      - 'quality_gameplay/gq8_real_squad_fan_20261117/**'
+      - '.github/workflows/p0d-gq8-real-horde-squad-fan.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real31-squad-fan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reversible one-source overlay and duplicate/mutant rejection
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_real_squad_fan_20261117/overlay_squad.py selftest
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_real_squad_fan_20261117 -p 'test_*.py'
+      - name: Existing #721 real31 extraction logic pinned read-only
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: dd4a69261e9b78aca9b77cc2d0ae627ed4e60cff
+          path: _original_real31_bridge
+          persist-credentials: false
+      - name: Locate successful current official RC31 same HEAD
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$H" =~ ^[a-f0-9]{40}$ ]]
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 20 \
+            --json databaseId,headSha,status,conclusion > /tmp/gq8-runs.json
+          RUN="$(jq -er --arg h "$H" \
+            '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId' \
+            /tmp/gq8-runs.json)"
+          echo "OFFICIAL_SHA=$H" >> "$GITHUB_ENV"
+          echo "OFFICIAL_RUN=$RUN" >> "$GITHUB_ENV"
+          echo "GQ8_FAN_OFFICIAL_HEAD=$H"
+      - name: Download exact official 31-source Place and receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "$OFFICIAL_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Extract actual31, select existing single Swarm fan31 and optional LSS32
+        run: |
+          set -euo pipefail
+          python3 _original_real31_bridge/quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/real31 --head "$OFFICIAL_SHA"
+          python3 -B quality_gameplay/gq8_real_squad_fan_20261117/overlay_squad.py compose \
+            --base artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/fan31/ON31.project.json
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/fan31/ON31.project.json \
+            --out artifacts/fan32/ON32.project.json
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/fan31/ON31.project.json \
+            --out artifacts/fan32/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile real31, selected fan31, LSS32, rollback31 and test mutation RED
+        run: |
+          set -euo pipefail
+          test "$(git -C _pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _pinned_luau -B /tmp/gq8-fan-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-fan-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import importlib.util,subprocess
+          from pathlib import Path
+          p=Path("handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py")
+          s=importlib.util.spec_from_file_location("gq8_comp",p)
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          for name,n in [
+            ("artifacts/real31/CURRENT31_REAL_SOURCE.project.json",31),
+            ("artifacts/fan31/ON31.project.json",31),
+            ("artifacts/fan32/ON32.project.json",32),
+            ("artifacts/fan32/OFF31.project.json",31)]:
+           f=Path(name);_,files=m.flat(f);assert len(files)==n
+           for src in files.values():
+            subprocess.run(["/tmp/gq8-fan-luau/luau-compile","--text",str(src)],
+                           check=True,stdout=subprocess.DEVNULL)
+           print("GQ8_FAN_REAL_CURRENT_SOURCE_NATIVE_PASS",n,name)
+          PY
+          python3 -B quality_gameplay/gq8_real_squad_fan_20261117/overlay_squad.py native \
+            --base artifacts/fan31/EGGRUMBLE_GQ8_REAL_SQUAD_FAN.luau \
+            --out artifacts/fan31/squad_native.luau \
+            --mutant artifacts/fan31/squad_mutant.luau
+          /tmp/gq8-fan-luau/luau-compile --text artifacts/fan31/squad_native.luau >/dev/null
+          /tmp/gq8-fan-luau/luau artifacts/fan31/squad_native.luau | tee artifacts/fan31/squad_native.log
+          grep -q GQ8_REAL_SWARM_SQUAD_FAN_LUAU_NATIVE_5_BATCH_CASES_PASS artifacts/fan31/squad_native.log
+          if /tmp/gq8-fan-luau/luau artifacts/fan31/squad_mutant.luau \
+             >artifacts/fan31/mutant_expected_red.log 2>&1; then
+            echo RED_BAD_FAN_MUTANT_ACCEPTED
+            exit 1
+          fi
+      - name: Rojo7.7.1 actual31/fan31/LSS32 and OFF31 exact source + class proof
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq8-fan-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-fan-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq8-fan-rojo.zip") as z:
+           names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+           assert len(names)==1
+           exe=Path("/tmp/gq8-fan-rojo")
+           exe.write_bytes(z.read(names[0]));exe.chmod(0o755)
+          PY
+          /tmp/gq8-fan-rojo build artifacts/real31/CURRENT31_REAL_SOURCE.project.json -o artifacts/real31/OFF31.rbxlx
+          /tmp/gq8-fan-rojo build artifacts/fan31/ON31.project.json -o artifacts/fan31/ON31.rbxlx
+          /tmp/gq8-fan-rojo build artifacts/fan32/ON32.project.json -o artifacts/fan32/ON32.rbxlx
+          /tmp/gq8-fan-rojo build artifacts/fan32/OFF31.project.json -o artifacts/fan32/OFF31.rbxlx
+          for spec in \
+            'artifacts/real31/CURRENT31_REAL_SOURCE.project.json artifacts/real31/OFF31.rbxlx 31' \
+            'artifacts/fan31/ON31.project.json artifacts/fan31/ON31.rbxlx 31' \
+            'artifacts/fan32/ON32.project.json artifacts/fan32/ON32.rbxlx 32' \
+            'artifacts/fan32/OFF31.project.json artifacts/fan32/OFF31.rbxlx 31'
+          do
+           read -r p f n <<< "$spec"
+           python3 _original_real31_bridge/quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+             --project "$p" --place "$f" --count "$n"
+          done
+          H="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H" = "$OFFICIAL_SHA"
+          echo GQ8_FAN_LIVE_CURRENT_SWARM_REAL31_32_ROJO_INVERSE_SAMEHEAD_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-SQUAD-FAN-REAL31-LSS32-STUDIO-NOT-FORMAL-RC
+          path: |
+            artifacts/fan31/ON31.receipt.json
+            artifacts/fan31/squad_native.log
+            artifacts/fan31/mutant_expected_red.log
+            artifacts/fan32/ON32.rbxlx
+            artifacts/fan32/ON32.receipt.json
+            artifacts/real31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 3
