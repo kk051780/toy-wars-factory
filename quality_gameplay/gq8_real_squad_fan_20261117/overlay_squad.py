@@ -23,7 +23,7 @@ s.loader.exec_module(m)
 
 NAME = "EGGRUMBLE_SwarmCombat"
 FEATURE = "GQ8_ACTUAL_SWARM_SQUAD_FAN_20261117"
-HELPER_ANCHOR = " session.swarm=api\n task.spawn(function()\n"
+HELPER_ANCHOR = " session.swarm=api\n local lastSpawnAt=os.clock()\n task.spawn(function()\n"
 HELPER = """ -- GQ8_ACTUAL_SWARM_SQUAD_FAN_BEGIN
  -- Pure bounded formation math; never writes KO, budget, score or target choice.
  local function gq8SquadFanAngle(bearing:number,index:number,total:number):number
@@ -31,8 +31,10 @@ HELPER = """ -- GQ8_ACTUAL_SWARM_SQUAD_FAN_BEGIN
  end
  -- GQ8_ACTUAL_SWARM_SQUAD_FAN_END
 """
-OLD = """    for _=1,math.min(SPAWN_BATCH,LIMIT-n) do
-     local target=candidates[math.random(1,#candidates)]
+OLD = """    for _=1,batch do
+     local selected=EncounterFair.chooseIndex(encounterFairState,session,kinds)
+      if selected==nil then break end
+      local target=candidates[selected]
      local a=math.random()*math.pi*2
      local d=math.random(21,58)
      local at=target+Vector3.new(math.cos(a)*d,0,math.sin(a)*d)
@@ -40,17 +42,19 @@ OLD = """    for _=1,math.min(SPAWN_BATCH,LIMIT-n) do
      addEnemy(Vector3.new(at.X,session.groundY or target.Y-4,at.Z))
     end
 """
-NEW = """    -- Existing shared enemy cap and batch size; group bearing improves local
-    -- AOE hit opportunity without generating a single extra enemy.
-    local squadCount=math.min(SPAWN_BATCH,LIMIT-n)
+NEW = """    -- Keep original SpawnPacing.batch, per-soldier EncounterFair target draw,
+    -- same total neutral budget and physical collision clearance.
     local squadBearing=math.random()*math.pi*2
-    for squadIndex=1,squadCount do
-     -- IMPORTANT: original unbiased human/bot target draw stays per soldier.
-     local target=candidates[math.random(1,#candidates)]
-     local a=gq8SquadFanAngle(squadBearing,squadIndex,squadCount)
+    local fanGroup=math.min(batch,5)
+    for squadIndex=1,batch do
+     local selected=EncounterFair.chooseIndex(encounterFairState,session,kinds)
+     if selected==nil then break end
+     local target=candidates[selected]
+     local fanSlot=(squadIndex-1)%fanGroup+1
+     local a=gq8SquadFanAngle(squadBearing,fanSlot,fanGroup)
      local d=math.random(38,48)
      local at=target+Vector3.new(math.cos(a)*d,0,math.sin(a)*d)
-     -- Same battle district; previous 3-attempt physical collision gate owns spawn.
+     -- Same battle district; existing 3-attempt collision gate owns spawn.
      addEnemy(Vector3.new(at.X,session.groundY or target.Y-4,at.Z))
     end
 """
@@ -138,7 +142,7 @@ def compose(base: Path, out: Path) -> dict:
       "other30_byte_exact":True,
       "off_original31_byte_exact":True,
       "same_original_target_selection":True,
-      "same_MAX_LIMIT_SPAWN_BATCH_TICK":True,
+      "same_shared_spawn_pacing_and_fair_target_choice":True,
       "actual_added_soldiers":0,
       "spawn_clearance_owner_untouched":True,
       "old_swarm_sha256":hashlib.sha256(old).hexdigest(),
@@ -187,8 +191,8 @@ def selftest():
     before=HELPER_ANCHOR+OLD+" -- neutralSpawnClear(point)\n -- GetPartBoundsInBox\n"
     selected=patch(before)
     assert unpatch(selected)==before
-    assert selected.count("math.min(SPAWN_BATCH,LIMIT-n)")==1
-    assert selected.count("candidates[math.random(1,#candidates)]")==1
+    assert selected.count("EncounterFair.chooseIndex(encounterFairState,session,kinds)")==1
+    assert selected.count("for squadIndex=1,batch do")==1
     assert selected.count("addEnemy(Vector3.new(at.X,session.groundY or target.Y-4,at.Z))")==1
     for invalid in [selected,before.replace(OLD,""),before.replace(OLD,OLD*2),
                     before.replace("GetPartBoundsInBox","")]:
