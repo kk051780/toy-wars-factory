@@ -48,7 +48,7 @@ jobs:
           /tmp/gq8-psychic-native/luau-compile --text /tmp/GQ8_PSYCHIC_ACTUAL.luau >/dev/null
           /tmp/gq8-psychic-native/luau-compile --text /tmp/GQ8_PSYCHIC_NO_CASTER_GUARD_MUTANT.luau >/dev/null
           /tmp/gq8-psychic-native/luau /tmp/GQ8_PSYCHIC_ACTUAL.luau | tee /tmp/gq8-psy-valid.txt
-          grep -q LSS_ACTUAL_PSYCHIC_OWNER_LUAU_7_CASES_PASS /tmp/gq8-psy-valid.txt
+          grep -q LSS_ACTUAL_PSYCHIC_OWNER_LUAU_10_CASES_PASS /tmp/gq8-psy-valid.txt
           if /tmp/gq8-psychic-native/luau /tmp/GQ8_PSYCHIC_NO_CASTER_GUARD_MUTANT.luau; then
             echo 'RED: old trap without caster safety was not caught'
             exit 1
