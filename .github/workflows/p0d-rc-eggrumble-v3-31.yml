@@ -18,6 +18,7 @@ on:
       - 'rc_fastlane/quality_builder522_inline31/**'
       - 'rc_fastlane/quality_rc81_hit042_v3/**'
       - 'rc_fastlane/quality_shield_cleanup_20261117/**'
+      - 'rc_fastlane/quality_swarm_live_avatar_20261117/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
@@ -39,6 +40,7 @@ on:
       - 'rc_fastlane/quality_builder522_inline31/**'
       - 'rc_fastlane/quality_rc81_hit042_v3/**'
       - 'rc_fastlane/quality_shield_cleanup_20261117/**'
+      - 'rc_fastlane/quality_swarm_live_avatar_20261117/**'
       - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
       - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_draw_replay_lifecycle_20261117/**'
@@ -2086,6 +2088,56 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_shield.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_MULTI_SHIELD_31_NATIVE_ROJO_ONE_ROUNDREPLAY_30_EXACT_OFF_PASS
+      - name: GQ8 candidate dead-human Swarm target exclusion, one-source OFF, native and true Rojo31 (PR only)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_swarm_live_avatar_20261117
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_MULTI_SHIELD_SELECTED31.project.json"
+          OUT="$DIR/GQ8_SWARM_ALIVE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_SWARM_ALIVE_REAL_ROJO31.rbxlx"
+          GQ8_LIVE_BASE31="$BASE" python3 -B -m unittest discover -v -s "$SRC" -p 'test_alive.py'
+          python3 -B "$SRC/select_alive.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_swarm_live_avatar_20261117")
+          from select_alive import scan
+          _,paths=scan(Path(sys.argv[1]))
+          assert len(paths)==31
+          for path in paths.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_SWARM_ALIVE_REAL_SELECTED31_NATIVE31_ALL_PASS")
+          PY
+          python3 -B "$SRC/make_native.py" --project "$OUT" --out "$DIR/GQ8_SWARM_ALIVE_NATIVE.luau" --mutant "$DIR/GQ8_SWARM_DEAD_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_SWARM_ALIVE_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_SWARM_ALIVE_NATIVE.luau" | tee "$DIR/GQ8_SWARM_ALIVE_NATIVE.log"
+          grep -q GQ8_LIVING_AVATAR_TRUE_SOURCE_NATIVE_6_CASES_PASS "$DIR/GQ8_SWARM_ALIVE_NATIVE.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_SWARM_DEAD_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_SWARM_DEAD_MUTANT.luau" > "$DIR/GQ8_SWARM_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ8_SWARM_DEAD_MUTANT_WAS_NOT_CAUGHT
+            exit 1
+          fi
+          grep -q GQ8_SWARM_LIVING_AVATAR_MUTANT_RED "$DIR/GQ8_SWARM_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_alive.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_SWARM_ALIVE_PR_ONLY_ALL31_NATIVE_ROJO_AND_ROLLBACK_PASS
+      - name: Upload GQ8 dead-avatar Swarm single-source private candidate (NOT official)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-SWARM-LIVING-AVATAR-PRIVATE31-NOT-OFFICIAL
+          path: |
+            artifacts/gq515_official_select/GQ8_SWARM_ALIVE_REAL_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_SWARM_ALIVE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_SWARM_LIVING_AVATAR_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_SWARM_ALIVE_NATIVE.log
+            artifacts/gq515_official_select/GQ8_SWARM_MUTANT_EXPECTED_RED.log
+          if-no-files-found: error
+          retention-days: 3
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
