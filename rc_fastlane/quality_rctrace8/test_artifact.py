@@ -85,9 +85,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 class Gate(unittest.TestCase):
     def test_replay_retry_fence_source_must_exist(self):
         b,r,m,a=fixture()
+        mutant=drop_anchor(b,"EGGRUMBLE_RoundReplay",
+                           "-- GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118")
+        rehash(mutant,r)
         with self.assertRaisesRegex(Exception, "GQ8_REPLAY_RESET_RETRY_SESSION_FENCE"):
-            gq8.verify(drop_anchor(b,"EGGRUMBLE_RoundReplay",
-                         "-- GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"),r,m,a,HEAD)
+            gq8.verify(mutant,r,m,a,HEAD)
 
     def test_valid_covers_eight_domains_and_58_known_flags(self):
         b,r,m,a=fixture()
