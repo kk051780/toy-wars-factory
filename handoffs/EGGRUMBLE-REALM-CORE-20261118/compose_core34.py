@@ -38,7 +38,7 @@ def get_files(project: Path):
     return model, result
 
 
-def compose(source31: Path, output: Path, off: bool = False):
+def compose(source31: Path, output: Path, off: bool = False, lss_source: Path | None = None):
     source31 = source31.resolve(strict=True)
     output = output.resolve()
     if source31 == output or output.exists():
@@ -65,9 +65,10 @@ def compose(source31: Path, output: Path, off: bool = False):
             else: rebase(child,here)
     rebase(model["tree"])
     if not off:
-        for path in (LSS,SERVER,CLIENT):
+        current_lss = (lss_source or LSS).resolve(strict=True)
+        for path in (current_lss,SERVER,CLIENT):
             if not path.is_file(): raise ValueError("RED_MISSING_CORE_SOURCE_"+path.name)
-        body=LSS.read_text(encoding="utf-8")
+        body=current_lss.read_text(encoding="utf-8")
         if body.count(STUDIO_GATE)!=1: raise ValueError("RED_STUDIO_GATE_CHANGED")
         body=body.replace(STUDIO_GATE,
             "-- Promoted REALM34 core: same V3 session guards on all servers; no Studio gate.")
@@ -116,5 +117,7 @@ if __name__=="__main__":
     parser.add_argument("--current31",type=Path,required=True)
     parser.add_argument("--out",type=Path,required=True)
     parser.add_argument("--off",action="store_true")
+    parser.add_argument("--lss-source",type=Path,
+        help="Exact LSS file from current official RC SHA; do not use stale PR checkout")
     a=parser.parse_args()
-    compose(a.current31,a.out,a.off)
+    compose(a.current31,a.out,a.off,a.lss_source)
