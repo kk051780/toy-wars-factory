@@ -2517,8 +2517,13 @@ jobs:
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
           SRC=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
           SELECT=_gq634_intake/rc_fastlane/quality_spectate492_rc32/admit_spectator.py
-          BASE=artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json
           DIR=artifacts/gq470_optional32
+          mkdir -p "$DIR"
+          # Match the CURRENT actual canonical Place; no hardcoded generation path.
+          BASE=$(python3 -B rc_fastlane/quality_spectator32_optional/resolve_current31.py \
+            --place artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --directory artifacts --selector "$SELECT" \
+            --receipt "$DIR/GQ470_CANONICAL31_MATCH_RECEIPT.json")
           OUT="$DIR/GQ470_SPECTATE32_OPTIONAL.project.json"
           PLACE="$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx"
           RECEIPT="$DIR/GQ492_ORIGINAL_SELECTOR_RECEIPT.json"
@@ -2591,6 +2596,7 @@ jobs:
             --base-manifest rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
             --intake-receipt "$DIR/GQ492_ORIGINAL_SELECTOR_RECEIPT.json" \
             --gq8-receipt artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json \
+            --match-receipt "$DIR/GQ470_CANONICAL31_MATCH_RECEIPT.json" \
             --native-log "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.log" \
             --mutation-log "$DIR/MUTATION_NEGATIVES.log" \
             --place "$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx" \
@@ -2608,6 +2614,7 @@ jobs:
             artifacts/gq470_optional32/GQ492_ORIGINAL_SELECTOR_RECEIPT.json
             artifacts/gq470_optional32/GQ470_OPTIONAL32_PROFILE_RC_RECEIPT.json
             artifacts/gq470_optional32/GQ470_HIT042_INHERITANCE_PROOF.json
+            artifacts/gq470_optional32/GQ470_CANONICAL31_MATCH_RECEIPT.json
             artifacts/gq470_optional32/ORIGINAL_REAL_CLIENT_NATIVE.log
             artifacts/gq470_optional32/MUTATION_NEGATIVES.log
           if-no-files-found: error

@@ -43,8 +43,10 @@ def contract(meta,active,base):
           "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
           "PINNED_EXISTING_PREP_634")
     check(meta.get("current_selected31")==
-          "artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json",
-          "LATEST_31_INPUT_NOT_SELECTED")
+          "AUTO_SOURCE_EXACT_CURRENT_CANONICAL31_PLACE" and
+          meta.get("current_selected31_resolver")==
+          "rc_fastlane/quality_spectator32_optional/resolve_current31.py",
+          "LATEST_31_AUTO_MATCH_NOT_SELECTED")
     check(active.get("active_profile")=="rich51","LIVE_S1_PROFILE_CHANGED")
     profiles=active.get("source_profiles",{})
     check(profiles.get("eggrumble_v3_31",{}).get("source_count")==31,
@@ -66,7 +68,7 @@ def contract(meta,active,base):
         check(flags.get(flag) is True,"NEWEST_AUTHOR_LOST_"+flag)
     return len(flags)
 
-def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
+def verify(meta,active,base,receipt,gq8,match,native,mutants,place,head,event):
     flags=contract(meta,active,base)
     check(len(head)==40 and all(c in "0123456789abcdef" for c in head),
           "HEAD_NOT_40_SHA")
@@ -85,6 +87,16 @@ def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
           and set(gq8.get("domains",{}))==DOMAIN_NAMES
           and gq8.get("official_rc_head")==head,
           "GQ8_8_DOMAIN_32_FLAGS_31_ORIGINAL_PROOF")
+    check(match.get("schema")=="GQ470_CANONICAL31_ACTUAL_PLACE_MATCH_V1" and
+          match.get("actual_script_source_class_exact")==31 and
+          match.get("current_project_source_count")==31 and
+          match.get("matching_project_count",0)>=1 and
+          match.get("original_selector_reused") is True and
+          match.get("publish_authorized") is False,
+          "CANONICAL_PLACE_SOURCE_MATCH_RECEIPT")
+    check(match.get("current_canonical_place_sha256")==gq8.get("studio_place_sha256")
+          and match.get("current_canonical_place_bytes")==gq8.get("studio_place_bytes"),
+          "CURRENT31_NOT_ACTUAL_BUILT_GQ8_PLACE")
     for marker in MARKERS:
         check(marker in native,"ORIGINAL_REAL_LUAU_LIFECYCLE_"+marker)
     for mutant in ("elimination","mode","recovery"):
@@ -99,6 +111,8 @@ def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
        "default_selected":False,"production_enabled":False,
        "existing31_source_class_byte_exact":31,
        "source_count":32,"rojo_source_class_exact":"32/32",
+       "canonical31_source_proof":match["current_canonical_place_sha256"],
+       "canonical31_source_path":match["selected_project"],
        "place_bytes":len(place),"place_sha256":hashlib.sha256(place).hexdigest(),
        "gq8_eight_domains":"PASS","gq8_existing_enabled_flags":flags,
        "original_author_blob":AUTHOR,
@@ -112,7 +126,7 @@ def verify(meta,active,base,receipt,gq8,native,mutants,place,head,event):
 def main():
     p=argparse.ArgumentParser()
     for key in ("manifest","active","base-manifest","intake-receipt","gq8-receipt",
-                "native-log","mutation-log","place","out"):
+                "match-receipt","native-log","mutation-log","place","out"):
         p.add_argument("--"+key,required=True,type=Path)
     p.add_argument("--head",required=True)
     p.add_argument("--event",required=True,choices=("push","pull_request"))
@@ -120,7 +134,7 @@ def main():
     def read(path):
         return json.loads(path.read_text(encoding="utf-8"))
     result=verify(read(a.manifest),read(a.active),read(a.base_manifest),
-                  read(a.intake_receipt),read(a.gq8_receipt),
+                  read(a.intake_receipt),read(a.gq8_receipt),read(a.match_receipt),
                   a.native_log.read_text(encoding="utf-8"),
                   a.mutation_log.read_text(encoding="utf-8"),
                   a.place.read_bytes(),a.head,a.event)

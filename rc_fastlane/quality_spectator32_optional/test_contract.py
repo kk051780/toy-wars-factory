@@ -18,7 +18,8 @@ def fixture():
           "commit":"eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
           "script_name":"EGGRUMBLE_EliminatedSpectate","class":"LocalScript"},
         "existing_prep_reuse":{"commit":"fed9cbb5680d40c68a2e1395e9b84276d7868fb9"},
-        "current_selected31":"artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json",
+        "current_selected31":"AUTO_SOURCE_EXACT_CURRENT_CANONICAL31_PLACE",
+        "current_selected31_resolver":"rc_fastlane/quality_spectator32_optional/resolve_current31.py",
         "base_official_head":"7b3e055bae93ea71a89f981c4e78e8ab72996ae9"}
     active={"active_profile":"rich51","source_profiles":{
         "eggrumble_v3_31":{"source_count":31},
