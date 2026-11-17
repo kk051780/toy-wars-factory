@@ -7,7 +7,8 @@ import argparse
 
 HERE=Path(__file__).resolve().parent
 MODULE=HERE/"EGGRUMBLE_NaturalRegen.luau"
-POLICY="local REGEN_PER_SECOND=.007"
+POLICY_SOURCE=HERE/"EGGRUMBLE_PassiveRegenPolicy.luau"
+UPSTREAM_RATE="M.REGEN_FRACTION_PER_SECOND = 0.007"
 HARNESS=r'''
 local clock=100
 local os={clock=function() return clock end}
@@ -32,6 +33,17 @@ local game={GetService=function(self,name)
  if name=="RunService" then return {Heartbeat=heartbeat} end
  error("UNKNOWN_SERVICE")
 end}
+local Policy=(function()
+__POLICY_SOURCE__
+end)()
+local script={Parent={WaitForChild=function(self,name)
+ assert(name=="EGGRUMBLE_PassiveRegenPolicy","RED_UNKNOWN_POLICY")
+ return name
+end}}
+local require=function(name)
+ assert(name=="EGGRUMBLE_PassiveRegenPolicy","RED_BAD_REQUIRE")
+ return Policy
+end
 __ACTUAL_SOURCE__
 assert(Regen.maxHP("WARRIOR")==250,"RED_WARRIOR_HP")
 assert(Regen.maxHP("MAGE")==195,"RED_MAGE_HP")
@@ -40,13 +52,14 @@ assert(Regen.maxHP("TRAPPER")==205,"RED_TRAPPER_HP")
 assert(Regen.maxHP("BUILDER")==225,"RED_BUILDER_HP")
 assert(Regen.maxHP("BEAST")==220,"RED_BEAST_HP")
 assert(Regen.maxHP("ZOMBIE")==230,"RED_ZOMBIE_HP")
-assert(Regen.maxHP("UNKNOWN")==250,"RED_UNKNOWN_HP_FALLBACK")
-assert(Regen.shouldHeal(6.99,60,250,false)==false,"RED_EARLY_REGEN")
-assert(Regen.shouldHeal(7,60,250,false)==true,"RED_SEVEN_SECOND_REGEN")
-assert(Regen.shouldHeal(40,60,250,true)==false,"RED_BURNING_REGEN")
-assert(Regen.shouldHeal(20,0,250,false)==false,"RED_DEATH_REGEN")
-assert(Regen.shouldHeal(20,250,250,false)==false,"RED_OVERHEAL")
-assert(math.abs(Regen.amount(250,1)-1.75)<.0001,"RED_REGEN_AMOUNT")
+assert(Regen.maxHP("UNKNOWN")==nil,"RED_UNKNOWN_HP_FALLBACK")
+assert(Policy.regenDelta(60,250,106.99,100,.25,true,true,false,false)==0,"RED_EARLY_REGEN")
+assert(Policy.regenDelta(60,250,107,100,.25,true,true,false,false)>0,"RED_SEVEN_SECOND_REGEN")
+assert(Policy.regenDelta(60,250,140,100,.25,true,true,true,false)==0,"RED_BURNING_REGEN")
+assert(Policy.regenDelta(0,250,140,100,.25,true,true,false,false)==0,"RED_DEATH_REGEN")
+assert(Policy.regenDelta(250,250,140,100,.25,true,true,false,false)==0,"RED_OVERHEAL")
+assert(math.abs(Policy.regenDelta(60,250,108,100,.25,true,true,false,false)-.4375)<.0001,
+ "RED_REGEN_AMOUNT")
 local h={Health=100,MaxHealth=100,HealthChanged=makeSignal(),Died=makeSignal(),attrs={}}
 function h:GetAttribute(n) return self.attrs[n] end
 local ch={FindFirstChildOfClass=function(self,c) return h end}
@@ -95,13 +108,15 @@ print("GQ8_REGEN_ACTUAL_VM_7ROLE_LIFECYCLE_HIT_BURN_ROUND_PASS")
 
 def generate(path:Path):
  src=MODULE.read_text(encoding="utf-8")
- if src.count(POLICY)!=1 or not src.rstrip().endswith("return Regen"):
+ pure=POLICY_SOURCE.read_text(encoding="utf-8")
+ if not src.rstrip().endswith("return Regen") or pure.count(UPSTREAM_RATE)!=1:
   raise ValueError("RED_REGEN_SOURCE_SIGNATURE")
  head=src.rstrip()[:-len("return Regen")]
  path.mkdir(parents=True,exist_ok=True)
- (path/"good.luau").write_text(HARNESS.replace("__ACTUAL_SOURCE__",head))
- mutant=head.replace(POLICY,"local REGEN_PER_SECOND=.07")
- (path/"mutant.luau").write_text(HARNESS.replace("__ACTUAL_SOURCE__",mutant))
+ def emit(upstream):
+  return HARNESS.replace("__ACTUAL_SOURCE__",head).replace("__POLICY_SOURCE__",upstream)
+ (path/"good.luau").write_text(emit(pure))
+ (path/"mutant.luau").write_text(emit(pure.replace(UPSTREAM_RATE,"M.REGEN_FRACTION_PER_SECOND = 0.07")))
  print("GQ8_REGEN_REAL_SOURCE_NATIVE_HARNESS_GENERATED")
 
 if __name__=="__main__":
