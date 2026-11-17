@@ -14,6 +14,18 @@ FEATURE="GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117"
 AUTHOR_HEAD="abc4bd0edad4a07b159ee08d867dbdd6977f37ee"
 POLICY_BLOB="fcf7612a9874c17170b7d00bdbad40b23a616f1c"
 LIVE_BLOB="94c2edd8809f37ec186cb3f59226941366b62156"
+GUARD_FEATURE="GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117"
+def guard_live_source(text:str)->str:
+    """Fence castle effects to the current match using existing #531 authority."""
+    anchor=('  player=userId and Players:GetPlayerByUserId(userId) or nil\n'
+            '  model=player and player.Character or nil\n')
+    if text.count(anchor)!=1:raise ValueError("RED_GQ8_CASTLE_CURRENT_HUMAN_ANCHOR_DRIFT")
+    guarded=('  player=userId and Players:GetPlayerByUserId(userId) or nil\n'
+       '  -- GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117: no other mode/old match\n'
+       '  if not player or type(session.isCurrentHuman)~="function"\n'
+       '   or session.isCurrentHuman(player)~=true then return nil,nil,nil,nil end\n'
+       '  model=player and player.Character or nil\n')
+    return text.replace(anchor,guarded,1)
 HOST_REQUIRE='local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))'
 BOT_START=' BotActors.start(session,Rules)'
 CLOSE_ANCHOR='if session.world.Parent then session.world:Destroy() end'
@@ -35,7 +47,7 @@ def sha(raw:bytes):return hashlib.sha256(raw).hexdigest()
 def inline(policy:bytes,live:bytes)->str:
     if blob(policy)!=POLICY_BLOB:raise ValueError("RED_GQ500_ORIGINAL_POLICY_BLOB_CHANGED")
     if blob(live)!=LIVE_BLOB:raise ValueError("RED_GQ500_ORIGINAL_LIVE_BLOB_CHANGED")
-    a,b=policy.decode("utf8"),live.decode("utf8")
+    a,b=policy.decode("utf8"),guard_live_source(live.decode("utf8"))
     if not a.startswith("--!strict\n") or not b.startswith("--!strict\n"):
         raise ValueError("RED_GQ500_STRICT_SOURCE_DRIFT")
     req='local Policy=require(script.Parent:WaitForChild("EGGRUMBLE_CastleDefensePolicy"))\n'
@@ -103,7 +115,7 @@ def prepare(base:Path,out:Path,policy:Path,live:Path):
     inspect(base,out,body)
     record={"feature_id":FEATURE,"source_author_pr":500,"author_commit":AUTHOR_HEAD,
       "policy_git_blob":POLICY_BLOB,"live_git_blob":LIVE_BLOB,
-      "source_count":31,"only_changed_existing":HOST[-1],"other30_byte_exact":True,
+      "source_count":31,"membership_guard_feature":GUARD_FEATURE,"only_changed_existing":HOST[-1],"other30_byte_exact":True,
       "off_exact":True,"host_source_class":"Script","new_script_count":0,
       "new_game_remote_store_score":0,"towers_traps_sensors":"original author #500, Studio only",
       "owner_max_castles":16,"tick_seconds":.35,

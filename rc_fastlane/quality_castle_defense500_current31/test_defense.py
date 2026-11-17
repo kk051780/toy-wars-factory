@@ -1,6 +1,6 @@
 """Source rollback and original castle defense no duplicate server authority."""
 import unittest
-from select_defense import patch,undo,inline,HOST_REQUIRE,BOT_START,CLOSE_ANCHOR,FEATURE
+from select_defense import patch,undo,inline,guard_live_source,HOST_REQUIRE,BOT_START,CLOSE_ANCHOR,FEATURE
 SAMPLE='''--!strict
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local obj = "session.castleLocations / session.castleModels / Rules.loadDefense("
@@ -30,4 +30,13 @@ class TestAuthorDefense(unittest.TestCase):
  def test_no_host_replacement(self):
   self.assertIn(BOT_START,undo(patch(SAMPLE,BODY),BODY))
   self.assertIn(CLOSE_ANCHOR,undo(patch(SAMPLE,BODY),BODY))
+ def test_other_match_fence_is_single_and_fail_closed(self):
+  source=('  player=userId and Players:GetPlayerByUserId(userId) or nil\n'
+          '  model=player and player.Character or nil\n')
+  selected=guard_live_source(source)
+  self.assertIn('session.isCurrentHuman(player)~=true',selected)
+  self.assertIn('type(session.isCurrentHuman)~="function"',selected)
+  self.assertEqual(selected.count('GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117'),1)
+  with self.assertRaisesRegex(ValueError,"CURRENT_HUMAN_ANCHOR_DRIFT"):
+   guard_live_source(selected)
 if __name__=="__main__":unittest.main()

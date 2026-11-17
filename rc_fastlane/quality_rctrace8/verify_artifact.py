@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 51 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 52 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -234,6 +234,10 @@ FEATURE_EVIDENCE = {
   "closest.hum:TakeDamage(Policy.CONFIG[kind].damage)",
   "session.castleDefenseStop=stop",
   "CastleDefense.start(session)")),
+ "GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
+  'session.isCurrentHuman(player)~=true',
+  'type(session.isCurrentHuman)~="function"')),
  "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117": ("EGGRUMBLE_CombatFeel", (
   "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
   'gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"',

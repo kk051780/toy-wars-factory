@@ -5,7 +5,7 @@ server simulation. This is Native Luau VM evidence, NOT Roblox Studio/Android.
 from __future__ import annotations
 import argparse
 from pathlib import Path
-from select_defense import blob,POLICY_BLOB,LIVE_BLOB
+from select_defense import blob,POLICY_BLOB,LIVE_BLOB,guard_live_source
 
 SIMULATOR=r'''
 -- Native fake-service harness, created ONLY around exact original author source.
@@ -94,6 +94,9 @@ local function scenario(modules,enemyPosition,friendPosition,stealth)
  makeHuman("1",Vector3.new(-100,0,0))
  local enemyHum,enemyPlayer=makeHuman("2",enemyPosition)
  local friendHum=makeHuman("3",friendPosition)
+ session.isCurrentHuman=function(player)
+  return player:GetAttribute("GQForeignMode")~=true
+ end
  enemyPlayer:SetAttribute("EGGRUMBLE_StealthUntil",stealth or 0)
  return session,enemyHum,friendHum,enemyPlayer
 end
@@ -142,12 +145,26 @@ closed.rules.phase="FINISHED"
 Defense.start(closed);step()
 eq(ee.Health,100,"REAL_POSTMATCH_NO_DAMAGE")
 closed.castleDefenseStop()
+-- GQ8: opposite-mode and retired-session human IDs must never be attacked.
+local foreign,foreignHum,foreignFriend,foreignPlayer=scenario({"TURRET"},Vector3.new(25,6,-18),Vector3.new(25,6,-18),0)
+foreignPlayer:SetAttribute("GQForeignMode",true)
+Defense.start(foreign);step()
+eq(foreignHum.Health,100,"GQ8_OTHER_MATCH_HUMAN_MUST_BE_SAFE")
+eq(foreignFriend.Health,100,"GQ8_FRIEND_SAFE_RETAINS")
+foreign.castleDefenseStop()
+
+local retired,retiredHum=scenario({"TURRET"},Vector3.new(25,6,-18),Vector3.new(25,6,-18),0)
+retired.isCurrentHuman=nil
+Defense.start(retired);step()
+eq(retiredHum.Health,100,"GQ8_MISSING_CURRENT_MEMBERSHIP_MUST_FAIL_CLOSED")
+retired.castleDefenseStop()
+
 print("GQ500_ORIGINAL_LIVE_SERVER_NATIVE_VM_PASS checks="..tostring(n))
 '''
 def make(policy:Path,live:Path,spec:Path,outpolicy:Path,outmutant:Path,outlive:Path):
     a=policy.read_bytes();b=live.read_bytes()
     if blob(a)!=POLICY_BLOB or blob(b)!=LIVE_BLOB:raise ValueError("RED_GQ500_ORIGINAL_SOURCE_DRIFT")
-    p=a.decode("utf8");l=b.decode("utf8")
+    p=a.decode("utf8");l=guard_live_source(b.decode("utf8"))
     tests=spec.read_text(encoding="utf8")
     needle='local P=require("../EGGRUMBLE_CastleDefensePolicy")'
     if tests.count(needle)!=1 or p.count("return Policy\n")!=1:
