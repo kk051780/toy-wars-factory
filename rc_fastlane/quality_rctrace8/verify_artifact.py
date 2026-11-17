@@ -83,12 +83,19 @@ ROLE_CLASSES = {
  "EGGRUMBLE_CombatFeel": "LocalScript",
  "EGGRUMBLE_NeutralStoneGiant": "ModuleScript",
 }
-# These 59 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 60 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
+ "GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118": ("EGGRUMBLE_RoundReplay","-- GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"),
  "GQ8_STONE_GIANT_NEARBY_TRUE_HP_20261118": ("EGGRUMBLE_NeutralStoneGiant", ("-- GQ8_STONE_GIANT_TRUE_HP_LABEL_20261118", "hpGui.MaxDistance=55", 'model:SetAttribute("EGGRUMBLE_BossHealth",health)', 'hpText.Text="石巨人 "..tostring(math.floor(health)).." / 900"')),
  "GQ8_BOSS_RESULT_TRUE_CREDIT_20261118": ("EGGRUMBLE_MatchResultService","-- GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"),
- "GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118": ("EGGRUMBLE_RoundReplay","-- GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"),
+ "GQ8_RESULT_MOBILE_READABILITY_20261118": ("EGGRUMBLE_MatchResultService", (
+   "-- GQ8_RESULT_MOBILE_READABILITY_20261118",
+   "statsLabel.TextScaled=false",
+   "statsLabel.TextSize=15",
+   "statsLabel.TextWrapped=true",
+   'statsLabel.Text=stats:gsub(" 納","\\n納",1)',
+ )),
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
  "HUMAN_MATCH_MEMBERSHIP_535": ("EGGRUMBLE_SevenRoleCombat","currentHumanMember(session,"),
  "HUMAN_BOT_MATCH_MEMBERSHIP_531": ("EGGRUMBLE_LobbyCastleModesPreview","session.isCurrentHuman=function"),

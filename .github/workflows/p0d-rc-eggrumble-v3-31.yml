@@ -42,6 +42,7 @@ on:
       - 'quality_gameplay/gq732_duplicate_house/**'
       - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_stonegiant_hp_20261118/**'
+      - 'rc_fastlane/quality_result_mobile_20261118/**'
       - 'rc_fastlane/quality_replay_retry_fence_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -91,6 +92,7 @@ on:
       - 'quality_gameplay/gq732_duplicate_house/**'
       - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_stonegiant_hp_20261118/**'
+      - 'rc_fastlane/quality_result_mobile_20261118/**'
       - 'rc_fastlane/quality_replay_retry_fence_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -3056,13 +3058,39 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_STONE_GIANT_HP_58FLAG_CURRENT31_REAL_NATIVE_ROJO_OFF_EXACT_PASS
+      - name: GQ8 mobile result readability after accepted Boss credit - actual31 native and Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_result_mobile_20261118/select_mobile.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_STONE_GIANT_HP_SELECTED31.project.json"
+          OUT="$DIR/GQ8_RESULT_MOBILE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_RESULT_MOBILE_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_decor732_rc31")
+          from select_current import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for source in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_MOBILE_RESULT_ALL31_NATIVE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_MOBILE_RESULT_TRUE31_ROJO_SOURCE_CLASS_OFF_PASS
       - name: GQ8 new round replay retry fence — existing Replay only, Native7 + mutant RED + real31 Rojo
         shell: bash
         run: |
           set -euo pipefail
           SRC=rc_fastlane/quality_replay_retry_fence_20261118/select_retry.py
           DIR=artifacts/gq515_official_select
-          BASE="$DIR/GQ8_STONE_GIANT_HP_SELECTED31.project.json"
+          BASE="$DIR/GQ8_RESULT_MOBILE_SELECTED31.project.json"
           OUT="$DIR/GQ8_REPLAY_RETRY_SELECTED31.project.json"
           PLACE="$DIR/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx"
           REAL="$DIR/GQ8_REPLAY_RETRY_REAL_NATIVE.luau"
@@ -3162,7 +3190,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==59
+          assert len([v for v in m["feature_flags"].values() if v is True])==60
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
@@ -3230,6 +3258,13 @@ jobs:
           assert hp["world_billboard_per_giant"]==1 and hp["billboard_range_studs"]==55
           assert hp["numeric_hp_server_authority_only"] and hp["always_on_top"] is False
           assert hp["new_game_script_remote_store_score"]==0
+          assert hp["native"]==hp["rojo"]=="31/31"
+          assert hp["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          mobile=json.loads(Path("artifacts/gq515_official_select/GQ8_MOBILE_RESULT_RECEIPT.json").read_text())
+          assert mobile["feature_id"]=="GQ8_RESULT_MOBILE_READABILITY_20261118"
+          assert mobile["source_count"]==31 and mobile["other30_byte_exact"] and mobile["off_previous_source_byte_exact"]
+          assert mobile["changes_score_or_gameplay"] is False and mobile["adds_gui"] is False
+          assert mobile["native"]==mobile["rojo"]=="31/31"
           replay=json.loads(Path("artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json").read_text())
           assert replay["feature_id"]=="GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"
           assert replay["source_count"]==31 and replay["changed_script"]=="EGGRUMBLE_RoundReplay"
@@ -3239,8 +3274,8 @@ jobs:
           assert replay["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"] is True
           assert m["gq8_replay_retry_fence"]["source_selected_by_candidate_workflow"] is True
-          assert hp["native"]==hp["rojo"]=="31/31"
-          assert hp["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert mobile["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_RESULT_MOBILE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ8_RESULT_MOBILE_READABILITY_20261118"] is True
           assert m["feature_flags"]["GQ8_STONE_GIANT_NEARBY_TRUE_HP_20261118"] is True
           assert m["gq8_stone_giant_nearby_true_hp"]["source_selected_by_workflow"] is True
           assert m["gq8_boss_result_true_credit"]["source_selected_by_candidate_workflow"] is True
@@ -3634,7 +3669,6 @@ jobs:
             "gq8_boss_result_true_credit_selected":True,
             "gq8_stone_giant_hp_900_world":True,
             "gq8_stone_giant_hp_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_RC31_RECEIPT.json").read_bytes()).hexdigest(),
-            "gq8_replay_retry_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq8_boss_result_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "place_name":place.name,
             "place_size_bytes":place.stat().st_size,
