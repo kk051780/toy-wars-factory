@@ -133,7 +133,7 @@ assert(not attempt("S1",3,false))
 assert(attempt("S1",3.1,true))
 assert(not attempt("S1",3.2,true))
 assert(attempt("S2",3.2,true))
-assert(attempt("S1",4.1,true))
+assert(attempt("S1",4.11,true))
 assert(not attempt("S1",4.2,true))
 local newRound={}
 assert(siegeAttackReady(newRound,"S1",4.2))
@@ -192,7 +192,7 @@ def selftest():
  -- session.isCurrentHuman=function(player:Player):boolean
  local x="sessions[session.mode]~=session"
  local y="or session.isCurrentHuman(p)~=true then return end"
- local z="if state.phase~=\\"ACTIVE\\" then return end"
+ local z=if state.phase~="ACTIVE" then return end
  local f="local from=tostring(p.UserId)"
  prompt(door,"攻城攻撃","敵城を攻める",function(p)
   local ok,res=pcall(function() return Rules.damageCastle(state,entry.id,from,120) end)
