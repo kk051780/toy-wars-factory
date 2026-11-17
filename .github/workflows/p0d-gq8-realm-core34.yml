@@ -31,20 +31,17 @@ jobs:
         id: rc
         run: |
           set -euo pipefail
-          HEAD_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          # PIN a completed original31 source artifact (must match its own SHA).
+          # If live RC has moved, this candidate remains SOURCE_PREP only,
+          # and the sole RC writer must rerun exact-current gates before CAS.
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 60 \
+            --json databaseId,headSha,status,conclusion > /tmp/v3-runs.json
+          RUN="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/v3-runs.json)"
+          HEAD_SHA="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].headSha // empty' /tmp/v3-runs.json)"
+          test -n "$RUN"
           [[ "$HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]
           echo "sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
-          RUN=""
-          for i in $(seq 1 12); do
-            gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
-              --branch rc/p0d-s1-kids-rc01 --limit 60 \
-              --json databaseId,headSha,status,conclusion > /tmp/v3-runs.json
-            RUN="$(jq -r --arg h "$HEAD_SHA" \
-              '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/v3-runs.json)"
-            if [ -n "$RUN" ]; then break; fi
-            sleep 5
-          done
-          test -n "$RUN"
           echo "run=$RUN" >> "$GITHUB_OUTPUT"
       - name: Download official original31 script source
         run: |
@@ -130,8 +127,12 @@ jobs:
             --project artifacts/realm34/OFF31.project.json \
             --place artifacts/realm34/EGGRUMBLE_REALM_OFF31.rbxlx --count 31
           NOW="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$NOW" = "${{ steps.rc.outputs.sha }}"
-          echo GQ8_REALM_CORE34_NATIVE_ROJO_EXACT_OFF31_SUCCESS
+          if [ "$NOW" = "${{ steps.rc.outputs.sha }}" ]; then
+            echo CURRENT_RC_HEAD_MATCHES_EXACT_VERIFIED_CORE34
+          else
+            echo YELLOW_RC_MOVED_AFTER_PIN_CORE34_PREP_ONLY_NO_FORMAL_ADOPTION
+          fi
+          echo GQ8_REALM_CORE34_PINNED_NATIVE_ROJO_EXACT_OFF31_SUCCESS
       - uses: actions/upload-artifact@v4
         with:
           name: EGGRUMBLE-REALM-CORE34-STUDIO-CANDIDATE-NOT-PUBLISHED
