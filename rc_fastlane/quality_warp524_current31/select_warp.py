@@ -45,25 +45,20 @@ def author(path):
     return P
 
 def patch(src,P):
-    changes=((P.OLD,P.NEW),(P.OLD_NINJA,P.NEW_NINJA),(P.OLD_ESPER,P.NEW_ESPER))
-    for index,(a,b) in enumerate(changes):
-        count=src.count(a)
-        if count!=1 or b in src:
-            p=src.find("local function safeMove(")
-            block=src[p:p+520] if p>=0 else "MISSING_SAFE_MOVE"
-            raise ValueError(f"RED_CURRENT_COMBAT_SAFE_MOVE_CONFLICT index={index} old_count={count} new_count={src.count(b)} head={block!r}")
-    result=src
-    for a,b in changes:result=result.replace(a,b,1)
-    if unpatch(result,P)!=src or result.count("local function safeMove(")!=1:
-        raise ValueError("RED_WARP_ROLLBACK")
-    return result
+    """Recognize an ALREADY integrated original #524 source and attest exact code.
 
-def unpatch(src,P):
-    result=src
-    for a,b in ((P.OLD,P.NEW),(P.OLD_NINJA,P.NEW_NINJA),(P.OLD_ESPER,P.NEW_ESPER)):
-        if result.count(b)!=1:raise ValueError("RED_WARP_OFF_CONFLICT")
-        result=result.replace(b,a,1)
-    return result
+    The original authored safeMove plus NINJA/TRAPPER callsites predate this
+    candidate. Never repeat an already-present source change.
+    """
+    changes=((P.OLD,P.NEW),(P.OLD_NINJA,P.NEW_NINJA),(P.OLD_ESPER,P.NEW_ESPER))
+    for i,(old,new) in enumerate(changes):
+        if src.count(old)!=0 or src.count(new)!=1:
+            raise ValueError(f"RED_GQ524_PARTIAL_OR_MISSING_AUTHORIGINAL_WARP idx={i} old={src.count(old)} new={src.count(new)}")
+    if src.count("local function safeMove(")!=1:
+        raise ValueError("RED_GQ524_DUPLICATE_MOVE_OWNER")
+    if "GetPartBoundsInBox" not in src or "TacticalBattlefield" not in src:
+        raise ValueError("RED_GQ524_AUTHOR_COLLISION_OR_ARENA_MISSING")
+    return src
 
 def pair(base,out,P):
     _,before,k=mapping(base)
@@ -71,9 +66,9 @@ def pair(base,out,P):
     if k!=k2 or set(before)!=set(after):raise ValueError("RED_WARP_OWNER_MAP")
     old=before[k].read_text(encoding="utf-8")
     new=after[k].read_text(encoding="utf-8")
-    if patch(old,P)!=new or unpatch(new,P)!=old:raise ValueError("RED_WARP_INVERSE")
+    if patch(old,P)!=old or new!=old:raise ValueError("RED_GQ524_EXISTING_AUTHOR_SOURCE_NOOP")
     changed=[name for name in before if before[name].read_bytes()!=after[name].read_bytes()]
-    if changed!=[k]:raise ValueError("RED_OTHER30_CHANGED")
+    if changed!=[]:raise ValueError("RED_EXISTING31_SCRIPT_WAS_CHANGED")
     return after,old,new
 
 def prepare(base,out,author_file):
@@ -95,8 +90,8 @@ def prepare(base,out,author_file):
     receipt.write_text(json.dumps({
         "feature_id":FEATURE,"original_pr":524,"author_head":AUTHOR_HEAD,"author_original_combat_blob":ORIGINAL_BLOB,
         "base_project":base.name,"selected_project":out.name,
-        "script_count":31,"changed_script_count":1,"other30_byte_exact":True,
-        "inverse_off_exact":True,"new_runtime_scripts":0,
+        "script_count":31,"changed_script_count":0,"all31_byte_exact":True,
+        "existing_author_code_already_present":True,"inverse_off_exact":True,"new_runtime_scripts":0,
         "old_sha256":hashlib.sha256(old.encode()).hexdigest(),
         "selected_sha256":hashlib.sha256(new.encode()).hexdigest(),
         "native":"PENDING","rojo":"PENDING","studio_android_owner":"NOT_TESTED"
