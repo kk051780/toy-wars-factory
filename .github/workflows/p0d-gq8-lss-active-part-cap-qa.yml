@@ -50,7 +50,7 @@ jobs:
             echo 'RED: old monotonic-budget mutant survived'; exit 1
           fi
           echo LSS_MUTANT_NO_RELEASE_EXPECTED_RED_PASS
-      - name: Independent scope check: 1 optional Script and no original 31 mutations
+      - name: Scope check for 1 optional Script and no original 31 mutations
         run: |
           set -euo pipefail
           test -f handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py
