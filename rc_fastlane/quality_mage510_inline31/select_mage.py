@@ -52,10 +52,24 @@ def native(p,author,rules,orig,out,original,wall,ai):
  if blob(rules.read_bytes())!=RULES_BLOB or blob(orig.read_bytes())!=ORIGINAL_BLOB:
   raise ValueError("RED_GQ510_ORIGINAL_RULES_OR_COMBAT_DRIFT")
  rules_text=rules.read_text(encoding="utf-8")
- out.write_text(author.harness(current,fixed=True,rules=rules_text),encoding="utf-8")
+ # Reuse the exact #535/current-match helper already present in current Combat.
+ # Original author #510 native harness predates the official later membership overlay.
+ prefix="local function currentHumanMember(session:any,player:Player):boolean"
+ if current.count(prefix)!=1:raise ValueError("RED_GQ510_MEMBERSHIP_HELPER_NOT_UNIQUE")
+ helper=prefix+current.split(prefix,1)[1].split("\\nend\\n",1)[0]+"\\nend\\n"
+ if "currentHumanMember(session,other)" not in current:raise ValueError("RED_GQ510_REAL_SELECTED_MEMBERSHIP_MISSING")
+ def with_selected_guard(text):
+  marker="local function healAllies("
+  if text.count(marker)!=1:raise ValueError("RED_GQ510_NATIVE_HEAL_SCOPE")
+  text=text.replace(marker,helper+marker,1)
+  anchor='local session={mode="TEAM",rules={castles=castles}}'
+  if text.count(anchor)!=1:raise ValueError("RED_GQ510_NATIVE_CURRENT_SESSION_FIXTURE")
+  text=text.replace(anchor,anchor+'\\nsession.isCurrentHuman=function(player)\\n return player==source or player==ally or player==enemy or player==far\\nend',1)
+  return text
+ out.write_text(with_selected_guard(author.harness(current,fixed=True,rules=rules_text)),encoding="utf-8")
  original.write_text(author.harness(orig.read_text(encoding="utf-8"),fixed=False,rules=rules_text),encoding="utf-8")
- wall.write_text(author.harness(current.replace(author.NEW_RANGE,author.OLD_RANGE,1),fixed=True,rules=rules_text),encoding="utf-8")
- ai.write_text(author.harness(current.replace(author.BOT_HEAL,author.BOT_TAIL,1),fixed=True,rules=rules_text),encoding="utf-8")
+ wall.write_text(with_selected_guard(author.harness(current.replace(author.NEW_RANGE,author.OLD_RANGE,1),fixed=True,rules=rules_text)),encoding="utf-8")
+ ai.write_text(with_selected_guard(author.harness(current.replace(author.BOT_HEAL,author.BOT_TAIL,1),fixed=True,rules=rules_text)),encoding="utf-8")
  print("GQ510_ACTUAL_SELECTED_EXISTING_COMBAT_NATIVE_PLUS_2_MUTANTS_GENERATED")
 def scripts_xml(place):
  found={}
