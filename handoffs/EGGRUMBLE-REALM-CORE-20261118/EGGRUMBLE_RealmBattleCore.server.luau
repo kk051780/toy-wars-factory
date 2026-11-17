@@ -291,6 +291,8 @@ local function install(world)
    end
    return
   end
+  -- HYDRO is diver-only. Reject it before the mounted cooldown lookup.
+  if weapon=="HYDRO" then return end
   local model,kind=findCurrentMount(player)
   if not model then return end
   if (weapon=="GUN" and kind~="FIGHTER" and kind~="AIRSHIP")
