@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 44 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 51 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -183,6 +183,17 @@ FEATURE_EVIDENCE = {
 
  "GQ514_BOSS_KO_ROUND_RESET_20261117": ("EGGRUMBLE_RoundReplay",
   'p:SetAttribute("EGGRUMBLE_BossDefeats",0)'),
+ "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117": ("EGGRUMBLE_SevenRoleCombat", (
+  "local function safeMove(session:any,char:Model,root:BasePart,amount:number):boolean",
+  'session.world:FindFirstChild("TacticalBattlefield")',
+  "for _,height in ipairs({-1.1,2,4.6}) do",
+  "for _,side in ipairs({-1.3,0,1.3}) do",
+  "if distance<3 then return false end",
+  "workspace:GetPartBoundsInBox(",
+  "Vector3.new(3.2,4.5,3.2)",
+  "if part.CanCollide then return false end",
+  "safeMove(session,char,root,25)",
+  "safeMove(session,char,root,20)")),
  "GQ505_SERVER_MODE_FX_FAIR_INLINE31": ("EGGRUMBLE_SkillFX", (
   "local ModeFairQuota=(function()",
   "function Quota.new(totalCap:number,reserve:number)",
@@ -191,6 +202,68 @@ FEATURE_EVIDENCE = {
   "fairQuota:release(lease)",
   "fairQuota:canStart(parent.Name,MAX_NEW_PER_PULSE)",
   "self.usage[mode]-=1")),
+ "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117": ("EGGRUMBLE_SevenRoleCombat", (
+  "local sourceCharacter=player.Character",
+  "and (other==player or lineClear(root.Position+Vector3.new(0,1.5,0),",
+  "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)",
+  'if session.mode=="TEAM" then')),
+ "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117",
+  'local GRACE_SECONDS = 2.25',
+  'local RESPAWN_TICKET_SECONDS = 12',
+  'local MAX_HOME_DISTANCE = 85',
+  'local function currentArena(player: Player, character: Model)',
+  'local function originArena(player: Player, character: Model)',
+  'if not ticket or os.clock() > ticket.expiresAt then return end',
+  'currentArena(player, character) ~= ticket.arena',
+  'if player:GetAttribute("EGGRUMBLE_QueuedMode") ~= ticket.mode then return end',
+  'tickets[player] = nil',
+  'humanoid.Died:Connect(function()',
+  'Instance.new("ForceField")',
+  'if instance:IsA("Tool") then revoke() end',
+  'ProximityPromptService.PromptTriggered:Connect',
+  'if state.shield.Parent then state.shield:Destroy() end',
+  'task.delay(GRACE_SECONDS, revoke)')),
+ "GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "local CastleDefense=(function()",
+  "Policy.TICK_SECONDS=0.35",
+  "Policy.MAX_CASTLES=16",
+  "Policy.canTarget(",
+  "Policy.mayActivate(",
+  "Policy.canAcquire(",
+  "closest.hum:TakeDamage(Policy.CONFIG[kind].damage)",
+  "session.castleDefenseStop=stop",
+  "CastleDefense.start(session)")),
+ "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117": ("EGGRUMBLE_CombatFeel", (
+  "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
+  'gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"',
+  'local function isEnemy(mode:string, own:Model, other:Model, arena:Instance):boolean',
+  'if mode~="TEAM" then return false end',
+  'if homeSelected then',
+  'local function pickObjective(',
+  'local function nearestActiveItem(',
+  'EGGRUMBLE_FieldItems',
+  'NEUTRAL_BOSS_STONE_GIANT',
+  'return home,"自城へ帰還（手動）"',
+  'UPDATE_SECONDS = 0.8',
+  'INITIAL_SECONDS = 18',
+  'marker.AlwaysOnTop=false',
+  'RunService.Heartbeat:Connect(function(dt:number)')),
+ "GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117": ("EGGRUMBLE_CombatFeel", (
+  "GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117",
+  "WarGod_FlyingSlash=true, Mage_CrystalStorm=true, Assassin_ShadowAfterimage=true",
+  "local function fxShouldHide(kind:string,distance:number,touch:boolean",
+  "if distance<=40 then return false end",
+  "if fxElapsed<.22 then return end",
+  "part.LocalTransparencyModifier=if hidden then 1 else record.original")),
+ "GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  'local CarrierWorldTell=(function()',
+  'Policy.MAX_WORLD_VIEW_DISTANCE = 70',
+  'gui.AlwaysOnTop = false',
+  'gui.MaxDistance = Policy.MAX_WORLD_VIEW_DISTANCE',
+  'session.world:FindFirstChild("TacticalBattlefield")',
+  'session.carrierWorldTellEnabled == false',
+  'CarrierWorldTell.start(session)')),
  "GQ8_CASTLE_PROMPT_CURRENT_MATCH_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "if joined[p.UserId]~=session.mode or sessions[session.mode]~=session",
   "if not session.rules or tostring(p.UserId)~=entry.id",
@@ -286,6 +359,14 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
                 require(anchor in scripts[name][1],"DOMAIN_"+domain+"_MISSING_"+name+"_"+anchor[:24])
         by_domain[domain]="SOURCE_ANCHOR_PRESENT_NOT_STUDIO_VERIFIED"
     flags=manifest.get("feature_flags",{})
+    require(isinstance(flags,dict),"FEATURE_FLAGS_NOT_MAPPING")
+    # A new enabled flag without explicit actual-Place source evidence is RED,
+    # not a merely visible YELLOW field in an otherwise successful RC receipt.
+    # A disabled unknown flag may remain as PREP without claiming its activation.
+    for flag,state in flags.items():
+        require(type(state) is bool,"FEATURE_FLAG_NOT_BOOLEAN_"+flag)
+        if state:
+            require(flag in FEATURE_EVIDENCE,"ENABLED_FLAG_WITHOUT_SOURCE_EVIDENCE_"+flag)
     for flag,(script,anchors) in FEATURE_EVIDENCE.items():
         require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
         require(script in scripts,"FEATURE_SOURCE_MISSING_"+flag)
@@ -326,7 +407,8 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_39_FEATURE_FLAGS_PASS"
+    print(("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_"
+           +str(result["verified_flag_count"])+"_FEATURE_FLAGS_PASS")
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],

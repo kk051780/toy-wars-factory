@@ -23,6 +23,14 @@ on:
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
+      - 'rc_fastlane/quality_warp524_current31/**'
+      - 'rc_fastlane/quality_fx_lod503_rc31/**'
+      - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
+      - 'rc_fastlane/quality_human_siege_pace_20261117/**'
+      - 'rc_fastlane/quality_compass496_inline31/**'
+      - 'rc_fastlane/quality_respawn506_inline31/**'
+      - 'rc_fastlane/quality_castle_defense500_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -52,6 +60,14 @@ on:
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
+      - 'rc_fastlane/quality_warp524_current31/**'
+      - 'rc_fastlane/quality_fx_lod503_rc31/**'
+      - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
+      - 'rc_fastlane/quality_human_siege_pace_20261117/**'
+      - 'rc_fastlane/quality_compass496_inline31/**'
+      - 'rc_fastlane/quality_respawn506_inline31/**'
+      - 'rc_fastlane/quality_castle_defense500_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2368,10 +2384,386 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_NEUTRAL_SPAWN_BOUND_AND_COLLIDABLE_OVERLAP_ONE_SWARM_NATIVE31_ROJO31_INVERSE_OFF_PASS
+      - uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: f90875e14446ba86b1c668ba43efa37fbc74be20, path: _gq524_original, persist-credentials: false}
+      - name: GQ524 regression — original safeMove already present, all31 byte-exact, 11 native cases, true Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq524_original rev-parse HEAD)" = f90875e14446ba86b1c668ba43efa37fbc74be20
+          AUTHOR=_gq524_original/quality_gameplay/v3_safe_warp_landing_20261116
+          SCRIPT=rc_fastlane/quality_warp524_current31/select_warp.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_NEUTRAL_SAFE_SELECTED31.project.json"
+          OUT="$DIR/GQ524_SAFE_WARP_SELECTED31.project.json"
+          PLACE="$DIR/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx"
+          python3 -B -m unittest discover -v -s "$AUTHOR/tests" -p test_safe_warp.py
+          python3 -B "$SCRIPT" prepare --base "$BASE" --out "$OUT" --author "$AUTHOR/patch_safe_warp.py"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_warp524_current31")
+          from select_warp import mapping
+          _,files,_=mapping(__import__("pathlib").Path(sys.argv[1]))
+          if len(files)!=31:raise ValueError("RED_GQ524_SOURCE_COUNT")
+          for file in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ524_CURRENT31_NATIVE_COMPILE_ALL31_PASS")
+          PY
+          python3 -B "$AUTHOR/make_native_warp_harness.py" \
+            --patched "$DIR/GQ524_AUTHOR_SAFE_WARP_COMBAT.luau" --out "$DIR/GQ524_WARP_NATIVE11.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ524_WARP_NATIVE11.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ524_WARP_NATIVE11.luau" | tee "$DIR/GQ524_WARP_NATIVE11.log"
+          grep -q GQ_SAFE_WARP_ORIGINAL_PATCHED_LUAU_11_SCENARIOS_PASS "$DIR/GQ524_WARP_NATIVE11.log"
+          python3 -B "$SCRIPT" mutant --source "$DIR/GQ524_AUTHOR_SAFE_WARP_COMBAT.luau" \
+            --out "$DIR/GQ524_WARP_MUTANT_COMBAT.luau"
+          python3 -B "$AUTHOR/make_native_warp_harness.py" \
+            --patched "$DIR/GQ524_WARP_MUTANT_COMBAT.luau" --out "$DIR/GQ524_WARP_MUTANT_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ524_WARP_MUTANT_NATIVE.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ524_WARP_MUTANT_NATIVE.luau" \
+            > "$DIR/GQ524_WARP_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ524_SOLID_DESTINATION_MUTANT_UNDETECTED; exit 1
+          fi
+          grep -q solid_landing "$DIR/GQ524_WARP_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SCRIPT" verify --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/patch_safe_warp.py" --place "$PLACE"
+          echo GQ524_PREEXISTING_ORIGINAL_SAFE_WARP_ALL31_UNCHANGED_NATIVE11_ROJO31_MUTANT_RED_PASS
+      - name: GQ503 original seven-role secondary VFX mobile LOD inline on original CombatFeel (native31 + Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_fx_lod503_rc31
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ524_SAFE_WARP_SELECTED31.project.json"
+          OUT="$DIR/GQ503_CLIENT_FX_LOD_SELECTED31.project.json"
+          PLACE="$DIR/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx"
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_fx.py'
+          python3 -B "$SRC/patch_fx.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ503_ALL_31_ACTUAL_SOURCE_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC/native_fx.py" --project "$OUT" \
+            --out "$DIR/GQ503_LOD_NATIVE12.luau" \
+            --mutant "$DIR/GQ503_CRITICAL_FX_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_LOD_NATIVE12.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ503_LOD_NATIVE12.luau" | tee "$DIR/GQ503_LOD_NATIVE12.log"
+          grep -q GQ503_ORIGINAL_FX_LOD_NATIVE12_CASES_PASS "$DIR/GQ503_LOD_NATIVE12.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_CRITICAL_FX_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ503_CRITICAL_FX_MUTANT.luau" > "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log" 2>&1; then
+           echo RED_GQ503_CORE_PROTECTION_MUTANT_SURVIVED; exit 1
+          fi
+          grep -q GQ503_CORE_PROTECTED "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/patch_fx.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ503_CLIENT_VISUAL_LOD_TRUE_NATIVE_ROJO31_OFF_EXACT_PASS
+      - name: "GQ510 truth gate: original MAGE healing already in existing single Combat (native and Rojo31)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_mage510_inline31/select_mage.py
+          AUTHOR=_gq_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py
+          RULES=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ503_CLIENT_FX_LOD_SELECTED31.project.json"
+          OUT="$DIR/GQ510_MAGE_SELECTED31.project.json"
+          PLACE="$DIR/GQ510_MAGE_TRUE_ROJO31.rbxlx"
+          test "$(git -C _gq_mage rev-parse HEAD)" = 0338bd13f9d3d199972bd4cd30e467443083dffa
+          test "$(git hash-object "$AUTHOR")" = 86d757b83057bc370ce8b51c459420af462e86eb
+          python3 -B "$SRC" selftest --author "$AUTHOR"
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT" --author "$AUTHOR"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_mage510_inline31")
+          from select_mage import project
+          _,files,_=project(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ510_MAGE_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --project "$OUT" --author "$AUTHOR" --rules "$RULES" \
+            --out "$DIR/GQ510_MAGE_NATIVE.luau" \
+            --orig "_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau" \
+            --original "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" \
+            --wall "$DIR/GQ510_MUTANT_WALL.luau" \
+            --ai "$DIR/GQ510_MUTANT_AI.luau"
+          for f in "$DIR/GQ510_MAGE_NATIVE.luau" "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" "$DIR/GQ510_MUTANT_WALL.luau" "$DIR/GQ510_MUTANT_AI.luau"; do
+            /tmp/gq530_all31_native/luau-compile --text "$f" >/dev/null
+          done
+          /tmp/gq530_all31_native/luau "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" | tee "$DIR/GQ510_ORIGINAL_BUG.log"
+          grep -q MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS "$DIR/GQ510_ORIGINAL_BUG.log"
+          grep -q ORIGINAL_BUG_REPRODUCED "$DIR/GQ510_ORIGINAL_BUG.log"
+          /tmp/gq530_all31_native/luau "$DIR/GQ510_MAGE_NATIVE.luau" | tee "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_TEAM_BOT_HEAL_NATIVE_VM_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q FIXED "$DIR/GQ510_NATIVE.log"
+          for MUTANT in WALL AI; do
+            if /tmp/gq530_all31_native/luau "$DIR/GQ510_MUTANT_$MUTANT.luau" > "$DIR/GQ510_MUTANT_$MUTANT"_EXPECTED_RED.log 2>&1; then
+              echo RED_GQ510_MUTANT_ACCEPTED
+              exit 1
+            fi
+          done
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx"
+          echo GQ510_EXISTING_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_AND_ZERO_SOURCE_DELTA_PASS
+      - name: Checkout immutable original GQ511 carrier 3D egg tell author
+        uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: 554d5a179897c2a84016e7049296c317063b126b, path: _gq511_original, persist-credentials: false}
+      - name: GQ511 original carrier world labels inline after current Mage (native31, original VM, Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_carrier_world_tell511_current31
+          AUTH=_gq511_original/quality_gameplay/carrier_world_tell_20261116
+          DIR=artifacts/gq515_official_select
+          POLICY="$AUTH/EGGRUMBLE_CarrierTellPolicy.luau"
+          WORLD="$AUTH/EGGRUMBLE_CarrierWorldTell.luau"
+          BASE="$DIR/GQ510_MAGE_SELECTED31.project.json"
+          OUT="$DIR/GQ511_CARRIER_TELL_SELECTED31.project.json"
+          PLACE="$DIR/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx"
+          test "$(git -C _gq511_original rev-parse HEAD)" = 554d5a179897c2a84016e7049296c317063b126b
+          test "$(git hash-object "$POLICY")" = 3c426af0af6f34649eaffbf057f8ac91cbecbaf0
+          test "$(git hash-object "$WORLD")" = dab4e5bb7b4f33f0fad7eed4c2333bab34d49a2b
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_tell.py'
+          python3 -B "$SRC/select_tell.py" prepare --base "$BASE" --out "$OUT" --policy "$POLICY" --world "$WORLD"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for file in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ511_ORIGINAL_CARRIER_WORLD_TELL_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$AUTH/make_native_harness.py" --out "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau"
+          python3 -B "$AUTH/make_native_world_harness.py" --out "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau" | tee "$DIR/GQ511_AUTHOR_POLICY_NATIVE.log"
+          /tmp/gq530_all31_native/luau "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau" | tee "$DIR/GQ511_AUTHOR_WORLD_NATIVE.log"
+          grep -q NATIVE_CARRIER_WORLD_TELL_POLICY_PASS "$DIR/GQ511_AUTHOR_POLICY_NATIVE.log"
+          grep -q NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS "$DIR/GQ511_AUTHOR_WORLD_NATIVE.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_tell.py" verify --base "$BASE" --out "$OUT" \
+            --policy "$POLICY" --world "$WORLD" --place "$PLACE"
+          echo GQ511_AUTHOR_ORIGINAL_TWO_MODULES_IN_ONE_HOST_ROJO31_SOURCE_CLASS_OFF_EXACT_PASS
+      - name: GQ8 human siege prompt 1-second successful-hit pacing per attacker and target castle (Native31 and Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_human_siege_pace_20261117/select_siege.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ511_CARRIER_TELL_SELECTED31.project.json"
+          OUT="$DIR/GQ8_HUMAN_SIEGE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_rc81_hit042_v3")
+          from select_hit042 import flatten
+          _,files=flatten(Path(sys.argv[1]))
+          assert len(files)==31
+          for file in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_HUMAN_SIEGE_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --base "$OUT" \
+            --out "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" \
+            --mutant "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.luau" | tee "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.log"
+          grep -q GQ8_HUMAN_SIEGE_SELECTED_SOURCE_NATIVE_17_CASES_PASS "$DIR/GQ8_HUMAN_SIEGE_NATIVE17.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_HUMAN_SIEGE_RATE_BYPASS_MUTANT.luau" >"$DIR/GQ8_HUMAN_SIEGE_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_HUMAN_SIEGE_RATE_BYPASS_MUTANT_ACCEPTED
+            exit 1
+          fi
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_HUMAN_SIEGE_SAME_SESSION_ONE_HOST_NATIVE31_ROJO31_MUTANT_RED_OFF_EXACT_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8434485c4bbe65f03dc310f4b85157fdd6012465
+          path: _gq496_original
+          persist-credentials: false
+      - name: GQ496 original objective compass in one existing CombatFeel (Native13 and Rojo31, OFF)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq496_original rev-parse HEAD)" = 8434485c4bbe65f03dc310f4b85157fdd6012465
+          SRC=rc_fastlane/quality_compass496_inline31
+          AUTHOR=_gq496_original/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_HUMAN_SIEGE_SELECTED31.project.json"
+          OUT="$DIR/GQ496_COMPASS_SELECTED31.project.json"
+          PLACE="$DIR/GQ496_COMPASS_TRUE_ROJO31.rbxlx"
+          test "$(git hash-object "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau")" = 43feb1c3c55b727c0d5a8fad5195a32d54da18e2
+          python3 -B -m unittest discover -v -s "$AUTHOR/tests" -p 'test_objective_compass_contract.py'
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_compass.py'
+          python3 -B "$SRC/select_compass.py" prepare --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ496_SELECTED_COMPASS_ALL31_LUAU_COMPILE_PASS")
+          PY
+          python3 -B "$AUTHOR/tests/make_native_objective_harness.py" --out "$DIR/GQ496_REAL_PICKER_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ496_REAL_PICKER_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ496_REAL_PICKER_NATIVE.luau" | tee "$DIR/GQ496_REAL_PICKER_NATIVE.log"
+          grep -q 'GQ_REAL_OBJECTIVE_PICKER_NATIVE_PASS cases=14' "$DIR/GQ496_REAL_PICKER_NATIVE.log"
+          python3 - "$DIR/GQ496_REAL_PICKER_NATIVE.luau" "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" <<'PY'
+          from pathlib import Path
+          import sys
+          src=Path(sys.argv[1]).read_text(encoding="utf-8")
+          a="*(otherVault.Position.X-battlefield.Position.X)<0"
+          assert src.count(a)==1,"RED_GQ496_MUTANT_SOURCE_ANCHOR"
+          Path(sys.argv[2]).write_text(src.replace(a,"*(otherVault.Position.X-battlefield.Position.X)>0",1),encoding="utf-8")
+          print("GQ496_TEAM_ENEMY_MISCLASSIFICATION_MUTANT_READY")
+          PY
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" \
+            > "$DIR/GQ496_ENEMY_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ496_ALLY_TARGET_FALSE_POSITIVE_WAS_ACCEPTED; exit 1
+          fi
+          grep -q 'TEAM incorrectly marks ally' "$DIR/GQ496_ENEMY_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_compass.py" verify --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau" --place "$PLACE"
+          echo GQ496_ORIGINAL_CLIENT_OBJECTIVES_NATIVE13_MUTANT_RED_ROJO31_OTHER30_BYTE_EXACT_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: cab48cb5db058442fb4135084b81a57b0bac78c4
+          path: _gq506_original
+          persist-credentials: false
+      - name: GQ506 genuine-death R13 spawn shield on existing Host — original Native VM and true Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq506_original rev-parse HEAD)" = cab48cb5db058442fb4135084b81a57b0bac78c4
+          SRC=rc_fastlane/quality_respawn506_inline31
+          AUTHOR=_gq506_original/handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ496_COMPASS_SELECTED31.project.json"
+          OUT="$DIR/GQ506_RESPAWN_SELECTED31.project.json"
+          PLACE="$DIR/GQ506_RESPAWN_TRUE_ROJO31.rbxlx"
+          test "$(git hash-object "$AUTHOR/EGGRUMBLE_RespawnGrace.server.luau")" = 862d5e8811e744e74eda5893128ea4a88267c3a4
+          python3 -B -m unittest discover -v -s "$AUTHOR/tests" -p 'test_respawn_grace_contract.py'
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_respawn.py'
+          python3 -B "$SRC/select_respawn.py" prepare --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_RespawnGrace.server.luau"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for file in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ506_SINGLE_HOST_REAL31_ALL_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$AUTHOR/tests/make_native_respawn_harness.py" --out "$DIR/GQ506_REAL_R13_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ506_REAL_R13_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ506_REAL_R13_NATIVE.luau" | tee "$DIR/GQ506_REAL_R13_NATIVE.log"
+          grep -q 'GQ_R13_GENUINE_DEATH_TICKET_NATIVE_VM_PASS' "$DIR/GQ506_REAL_R13_NATIVE.log"
+          python3 - "$DIR/GQ506_REAL_R13_NATIVE.luau" "$DIR/GQ506_R13_EXPIRED_TICKET_MUTANT.luau" <<'PY'
+          from pathlib import Path
+          import sys
+          p=Path(sys.argv[1]);out=Path(sys.argv[2])
+          s=p.read_text(encoding="utf-8")
+          target="if not ticket or os.clock() > ticket.expiresAt then return end"
+          assert s.count(target)==1,"RED_GQ506_MUTANT_ORIGINAL_SOURCE"
+          out.write_text(s.replace(target,"if not ticket then return end",1),encoding="utf-8")
+          print("GQ506_R13_EXPIRED_DEATH_TICKET_MUTANT_READY")
+          PY
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ506_R13_EXPIRED_TICKET_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ506_R13_EXPIRED_TICKET_MUTANT.luau" \
+            > "$DIR/GQ506_R13_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ506_EXPIRED_DEATH_TICKET_MUTANT_PASSED; exit 1
+          fi
+          grep -q 'expired 12s death ticket' "$DIR/GQ506_R13_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_respawn.py" verify --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_RespawnGrace.server.luau" --place "$PLACE"
+          echo GQ506_AUTHORED_R13_DEATH_TICKET_NATIVE18_MUTANT_RED_ROJO31_OTHER30_EXACT_OFF_PASS
+      - name: Checkout GQ500 original castle defense authored pure policy and true server Live (immutable)
+        uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: abc4bd0edad4a07b159ee08d867dbdd6977f37ee, path: _gq500_original, persist-credentials: false}
+      - name: GQ500 Studio castle TURRET/TRAP/SENSOR original author on ONE existing Host after compass (Native31 Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_castle_defense500_current31
+          AUTH=_gq500_original/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116
+          DIR=artifacts/gq515_official_select
+          POLICY="$AUTH/EGGRUMBLE_CastleDefensePolicy.luau"
+          LIVE="$AUTH/EGGRUMBLE_CastleDefenseLive.luau"
+          SPEC="$AUTH/tests/EGGRUMBLE_CastleDefensePolicy.spec.luau"
+          BASE="$DIR/GQ506_RESPAWN_SELECTED31.project.json"
+          OUT="$DIR/GQ500_CASTLE_DEFENSE_SELECTED31.project.json"
+          PLACE="$DIR/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx"
+          test "$(git -C _gq500_original rev-parse HEAD)" = abc4bd0edad4a07b159ee08d867dbdd6977f37ee
+          test "$(git hash-object "$POLICY")" = fcf7612a9874c17170b7d00bdbad40b23a616f1c
+          test "$(git hash-object "$LIVE")" = 94c2edd8809f37ec186cb3f59226941366b62156
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_defense.py'
+          python3 -B "$SRC/select_defense.py" prepare --base "$BASE" --out "$OUT" --policy "$POLICY" --live "$LIVE"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ500_CASTLE_DEFENSE_REAL_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC/native_defense.py" --policy "$POLICY" --live "$LIVE" --spec "$SPEC" \
+            --outpolicy "$DIR/GQ500_AUTHOR_POLICY_NATIVE.luau" \
+            --outmutant "$DIR/GQ500_FRIENDLY_FIRE_MUTANT.luau" \
+            --outlive "$DIR/GQ500_AUTHOR_REAL_LIVE_NATIVE.luau"
+          for f in "$DIR/GQ500_AUTHOR_POLICY_NATIVE.luau" "$DIR/GQ500_FRIENDLY_FIRE_MUTANT.luau" "$DIR/GQ500_AUTHOR_REAL_LIVE_NATIVE.luau"; do
+           /tmp/gq530_all31_native/luau-compile --text "$f" >/dev/null
+          done
+          /tmp/gq530_all31_native/luau "$DIR/GQ500_AUTHOR_POLICY_NATIVE.luau" | tee "$DIR/GQ500_AUTHOR_POLICY_NATIVE.log"
+          grep -q EGGRUMBLE_CASTLE_DEFENSE_NATIVE_POLICY_PASS "$DIR/GQ500_AUTHOR_POLICY_NATIVE.log"
+          if /tmp/gq530_all31_native/luau "$DIR/GQ500_FRIENDLY_FIRE_MUTANT.luau" > "$DIR/GQ500_FRIENDLY_FIRE_EXPECTED_RED.log" 2>&1; then
+           echo RED_GQ500_TEAM_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q 'allies must be safe' "$DIR/GQ500_FRIENDLY_FIRE_EXPECTED_RED.log"
+          /tmp/gq530_all31_native/luau "$DIR/GQ500_AUTHOR_REAL_LIVE_NATIVE.luau" | tee "$DIR/GQ500_AUTHOR_REAL_LIVE_NATIVE.log"
+          grep -q GQ500_ORIGINAL_LIVE_SERVER_NATIVE_VM_PASS "$DIR/GQ500_AUTHOR_REAL_LIVE_NATIVE.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_defense.py" verify --base "$BASE" --out "$OUT" \
+            --policy "$POLICY" --live "$LIVE" --place "$PLACE"
+          echo GQ500_CASTLE_REAL_TURRET_TRAP_SENSOR_ORIGINAL_HOST_NATIVE_ROJO31_INVERSE_OFF_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2387,7 +2779,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2437,7 +2829,74 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==44
+          assert len([v for v in m["feature_flags"].values() if v is True])==51
+          assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
+          assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
+          respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
+          assert respawn["feature_id"]=="GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"
+          assert respawn["source_count"]==31 and respawn["unchanged_other30_bytes"] and respawn["off_exact"]
+          assert respawn["new_script_count"]==0 and respawn["new_remote_game_datastore"]==0
+          assert respawn["requires_genuine_death_ticket"] and respawn["single_use_ticket_seconds"]==12
+          assert respawn["max_grace_seconds"]==2.25 and respawn["home_distance_studs"]==85
+          assert respawn["native"]==respawn["rojo"]=="31/31"
+          assert respawn["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ506_RESPAWN_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          defense=json.loads(Path("artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_RECEIPT.json").read_text())
+          assert defense["feature_id"]=="GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117"
+          assert defense["source_count"]==31 and defense["other30_byte_exact"] and defense["off_exact"]
+          assert defense["native"]==defense["rojo"]=="31/31" and defense["new_script_count"]==0
+          assert defense["host_source_class"]=="Script" and defense["new_game_remote_store_score"]==0
+          assert defense["tick_seconds"]==0.35 and defense["owner_max_castles"]==16
+          assert defense["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117"] is True
+          assert m["feature_flags"]["GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"] is True
+          assert m["source_heads"]["gq496_original_objective_compass"]=="8434485c4bbe65f03dc310f4b85157fdd6012465"
+          compass=json.loads(Path("artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json").read_text())
+          assert compass["feature_id"]=="GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"
+          assert compass["game_sources"]==31 and compass["other30_byte_exact"] and compass["off_exact"]
+          assert compass["client_only"] and compass["gated_studio_only"] and compass["added_runtime_scripts"]==0
+          assert compass["native"]==compass["rojo"]=="31/31"
+          assert compass["refresh_cadence_sec"]==0.8 and compass["auto_collapse_sec"]==18
+          assert compass["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117"] is True
+          assert m["source_heads"]["gq524_original_warp"]=="f90875e14446ba86b1c668ba43efa37fbc74be20"
+          warp=json.loads(Path("artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json").read_text())
+          assert warp["feature_id"]=="GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117"
+          assert warp["script_count"]==31 and warp["all31_byte_exact"] and warp["inverse_off_exact"]
+          assert warp["changed_script_count"]==0 and warp["existing_author_code_already_present"] is True
+          assert warp["native"]==warp["rojo"]=="31/31" and warp["new_runtime_scripts"]==0
+          assert warp["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          fx503=json.loads(Path("artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_RECEIPT.json").read_text())
+          assert fx503["feature_id"]=="GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117"
+          assert fx503["gameplay_sources"]==31 and fx503["other30_byte_exact"] and fx503["off_rollback_exact"]
+          assert fx503["native"]==fx503["rojo"]=="31/31" and fx503["added_runtime_scripts"]==0
+          assert fx503["script_class"]=="LocalScript" and fx503["near_radius_studs"]==40
+          assert fx503["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117"] is True
+          mage=json.loads(Path("artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json").read_text())
+          assert mage["feature_id"]=="GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"
+          assert mage["source_count"]==31 and mage["other30_exact"] and mage["off_rollback_exact"]
+          assert mage["all31_byte_exact"] and mage["new_game_script_source_count"]==0
+          assert mage["native"]==mage["rojo"]=="31/31" and mage["new_game_remote_store"]==0
+          assert mage["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          tell=json.loads(Path("artifacts/gq515_official_select/GQ511_CARRIER_WORLD_TELL_RECEIPT.json").read_text())
+          assert tell["feature_id"]=="GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"
+          assert tell["source_count"]==31 and tell["other30_byte_exact"] and tell["off_rollback_byte_exact"]
+          assert tell["native"]==tell["rojo"]=="31/31" and tell["new_runtime_script_count"]==0
+          assert tell["one_host_script_class"]=="Script" and tell["new_game_remote_store_score_authority"]==0
+          assert tell["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          siege=json.loads(Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_RC31_RECEIPT.json").read_text())
+          assert siege["feature_id"]=="GQ8_HUMAN_SIEGE_PER_ATTACKER_COOLDOWN_20261117"
+          assert siege["source_count"]==31 and siege["one_existing_host_changed"]
+          assert siege["other30_byte_exact"] and siege["off_exact"]
+          assert siege["cooldown_seconds"]==1.0 and siege["per_target_castle_per_human"]
+          assert siege["no_cooldown_before_server_success"]
+          assert siege["new_game_remote_store_score_authority"]==0 and siege["rojo"]=="31/31"
+          assert siege["canonical_place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert siege["canonical_place_bytes"]==Path("artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx").stat().st_size
+          assert m["gq8_human_siege_pacing"]["source_selected_by_workflow"] is True
+          assert m["feature_flags"]["GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"] is True
+          assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
+          assert m["gq510_mage_heal_20261117"]["original_pr"]==510
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
           assert m["source_heads"]["gq505_original_fx_author"]=="3ea5f4e87df7e3bb20a63026f892dd9c94f981e9"
           fair=json.loads(Path("artifacts/gq515_official_select/GQ505_FX_FAIR_RECEIPT.json").read_text())
@@ -2456,7 +2915,7 @@ jobs:
           assert neutral["off_returns_previous_swarm_exact"] and neutral["real_rojo_source_class_exact"]=="31/31"
           assert neutral["spawn_attempts_max_per_requested_soldier"]==3
           assert neutral["no_additional_score_remote_game_or_spawn_controller"] is True
-          assert neutral["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert neutral["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["gq8_neutral_safe_spawn"]["source_selected_by_workflow"] is True
           assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
@@ -3031,6 +3490,49 @@ jobs:
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SPAWN_RECEIPT.json
+            artifacts/gq515_official_select/GQ524_SAFE_WARP_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_RECEIPT.json
+            artifacts/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ511_CARRIER_TELL_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ511_CARRIER_WORLD_TELL_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ496_COMPASS_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ506_RESPAWN_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ506_RESPAWN_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_RECEIPT.json
+            artifacts/gq515_official_select/GQ500_AUTHOR_POLICY_NATIVE.log
+            artifacts/gq515_official_select/GQ500_AUTHOR_REAL_LIVE_NATIVE.log
+            artifacts/gq515_official_select/GQ500_FRIENDLY_FIRE_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ506_REAL_R13_NATIVE.log
+            artifacts/gq515_official_select/GQ506_R13_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ496_REAL_PICKER_NATIVE.log
+            artifacts/gq515_official_select/GQ496_ENEMY_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_NATIVE17.log
+            artifacts/gq515_official_select/GQ8_HUMAN_SIEGE_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ511_AUTHOR_POLICY_NATIVE.log
+            artifacts/gq515_official_select/GQ511_AUTHOR_WORLD_NATIVE.log
+            artifacts/gq515_official_select/GQ510_ORIGINAL_BUG.log
+            artifacts/gq515_official_select/GQ510_NATIVE.log
+            artifacts/gq515_official_select/GQ510_MUTANT_WALL_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ510_MUTANT_AI_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ503_LOD_NATIVE12.log
+            artifacts/gq515_official_select/GQ503_LOD_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ524_WARP_NATIVE11.log
+            artifacts/gq515_official_select/GQ524_WARP_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_NATIVE.log
             artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_BURN_NATIVE6.log
