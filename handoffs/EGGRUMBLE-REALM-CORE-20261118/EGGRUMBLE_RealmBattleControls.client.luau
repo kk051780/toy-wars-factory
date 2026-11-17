@@ -127,6 +127,18 @@ RunService.RenderStepped:Connect(function(dt)
  breath.Visible=isBeast
  hydro.Visible=isDiver
  notice.Visible=isFlight
+ if isFlight then
+  local character=player.Character
+  local hum=character and character:FindFirstChildOfClass("Humanoid")
+  local seat=hum and hum.SeatPart
+  local core=seat and seat.Parent and seat.Parent.Parent
+  local weather=core and core:GetAttribute("RealmWeather") or "CLEAR"
+  local warning=core and core:GetAttribute("LightningWarning")==true
+  notice.Text=warning and "雷接近！高度を下げよう"
+   or weather=="THUNDER" and "雷雨：高度注意"
+   or weather=="WIND" and "強風：速度低下"
+   or "操縦：R/F/Q/E"
+ end
  heading.Text=currentKind=="FIGHTER" and "戦闘機・空中戦"
   or currentKind=="SHIP" and "軍艦・海上戦"
   or currentKind=="SUBSEA" and "海中戦・水中波"
