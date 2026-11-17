@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 49 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 50 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -207,6 +207,23 @@ FEATURE_EVIDENCE = {
   "and (other==player or lineClear(root.Position+Vector3.new(0,1.5,0),",
   "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)",
   'if session.mode=="TEAM" then')),
+ "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117",
+  'local GRACE_SECONDS = 2.25',
+  'local RESPAWN_TICKET_SECONDS = 12',
+  'local MAX_HOME_DISTANCE = 85',
+  'local function currentArena(player: Player, character: Model)',
+  'local function originArena(player: Player, character: Model)',
+  'if not ticket or os.clock() > ticket.expiresAt then return end',
+  'currentArena(player, character) ~= ticket.arena',
+  'if player:GetAttribute("EGGRUMBLE_QueuedMode") ~= ticket.mode then return end',
+  'tickets[player] = nil',
+  'humanoid.Died:Connect(function()',
+  'Instance.new("ForceField")',
+  'if instance:IsA("Tool") then revoke() end',
+  'ProximityPromptService.PromptTriggered:Connect',
+  'if state.shield.Parent then state.shield:Destroy() end',
+  'task.delay(GRACE_SECONDS, revoke)')),
  "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117": ("EGGRUMBLE_CombatFeel", (
   "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
   'gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"',
