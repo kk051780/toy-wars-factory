@@ -194,6 +194,8 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
+          elif [ "$GITHUB_REF" = "refs/heads/quality/gq8-v3-cast-ack-cue-20261117-2314" ]; then
+            echo "GQ8_NONOFFICIAL_ISOLATED_PREMERGE_FULL31_TEST"
           else
             test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
             echo "GQ_OFFICIAL_RC_BRANCH_VALIDATION"
@@ -2798,7 +2800,7 @@ jobs:
           src=json.loads((base/"GQ31_ON_RECEIPT.json").read_text())
           off=json.loads((base/"GQ31_OFF_RECEIPT.json").read_text())
           place=base/"EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx"
-          assert (os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"
+          assert (os.environ["GITHUB_REF"] in ("refs/heads/rc/p0d-s1-kids-rc01","refs/heads/quality/gq8-v3-cast-ack-cue-20261117-2314")
                   or (os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
                       and os.environ.get("GITHUB_BASE_REF")=="rc/p0d-s1-kids-rc01"))
           assert m["source_count"]==src["source_count"]==off["source_count"]==31
@@ -3169,9 +3171,9 @@ jobs:
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           details={
-            "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
-                      if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
-                      else "CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
+            "status":("CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
+                      if os.environ.get("GITHUB_REF")=="refs/heads/rc/p0d-s1-kids-rc01"
+                      else "RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
             "release_profile":"eggrumble_v3_31",
             "canonical_branch":"rc/p0d-s1-kids-rc01",
             "github_commit_sha":os.environ["GITHUB_SHA"],
@@ -3267,7 +3269,7 @@ jobs:
             "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
             "private_qa_receipt_sha256":hashlib.sha256((base/"GQ31_ON_RECEIPT.json").read_bytes()).hexdigest(),
             "s1_active_profile_unchanged":True,
-            "official_rc_commit_verified":os.environ.get("GITHUB_EVENT_NAME")=="push",
+            "official_rc_commit_verified":os.environ.get("GITHUB_REF")=="refs/heads/rc/p0d-s1-kids-rc01",
             "real_studio_2client":"NOT_TESTED",
             "android_15min":"NOT_TESTED",
             "owner_acceptance":"NOT_TESTED",
@@ -3284,7 +3286,7 @@ jobs:
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_rctrace8 -p 'test_*.py'
           gq8mode=()
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ] || [ "$GITHUB_REF" = "refs/heads/quality/gq8-v3-cast-ack-cue-20261117-2314" ]; then
             gq8mode+=(--pr-premerge)
           fi
           python3 -B rc_fastlane/quality_rctrace8/verify_artifact.py \
