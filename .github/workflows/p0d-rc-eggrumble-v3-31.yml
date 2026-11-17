@@ -2829,7 +2829,8 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==51
+          assert len([v for v in m["feature_flags"].values() if v is True])==52
+          assert m["feature_flags"]["GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117"] is True
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
