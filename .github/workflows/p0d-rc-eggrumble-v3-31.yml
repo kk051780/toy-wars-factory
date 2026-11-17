@@ -2935,7 +2935,7 @@ jobs:
           /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_BOSS_RESULT_MUTANT_NATIVE.luau" >/dev/null
           /tmp/gq530_all31_native/luau "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.luau" \
             | tee "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.log"
-          grep -qx GQ8_BOSS_RESULT_REAL_RESULT_NATIVE_8_CASE_PASS "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.log"
+          grep -qx GQ8_BOSS_RESULT_REAL_RESULT_NATIVE_9_CASE_PASS "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.log"
           if /tmp/gq530_all31_native/luau "$DIR/GQ8_BOSS_RESULT_MUTANT_NATIVE.luau" \
             >"$DIR/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log" 2>&1; then
             echo RED_GQ8_BOSS_RESULT_MUTANT_NOT_REJECTED; exit 1
