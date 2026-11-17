@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 41 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 44 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -181,6 +181,22 @@ FEATURE_EVIDENCE = {
   'type="TIME_LIMIT_DRAW"')),
 
 
+ "GQ514_BOSS_KO_ROUND_RESET_20261117": ("EGGRUMBLE_RoundReplay",
+  'p:SetAttribute("EGGRUMBLE_BossDefeats",0)'),
+ "GQ505_SERVER_MODE_FX_FAIR_INLINE31": ("EGGRUMBLE_SkillFX", (
+  "local ModeFairQuota=(function()",
+  "function Quota.new(totalCap:number,reserve:number)",
+  "local fairQuota=ModeFairQuota.new(72,12)",
+  "fairQuota:acquire(parent.Name)",
+  "fairQuota:release(lease)",
+  "fairQuota:canStart(parent.Name,MAX_NEW_PER_PULSE)",
+  "self.usage[mode]-=1")),
+ "GQ8_CASTLE_PROMPT_CURRENT_MATCH_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "if joined[p.UserId]~=session.mode or sessions[session.mode]~=session",
+  "if not session.rules or tostring(p.UserId)~=entry.id",
+  "if not session.rules or joined[p.UserId]~=session.mode",
+  "or sessions[session.mode]~=session or type(session.isCurrentHuman)",
+  "or session.isCurrentHuman(p)~=true then return end")),
  "GQ512_ROUND_COMBO_REPLAY_RESET_20261117": ("EGGRUMBLE_RoundReplay", (
   'p:SetAttribute("EGGRUMBLE_Combo",0)',
   'p:SetAttribute("EGGRUMBLE_BestCombo",0)',

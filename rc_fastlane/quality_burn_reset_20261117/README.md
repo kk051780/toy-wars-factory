@@ -1,17 +1,6 @@
-# GQ8 BURN REPLAY RESET — Current31 source-only RC candidate
-
-**Scope:** Existing `EGGRUMBLE_RoundReplay.resetHuman` ONLY. Original V3 Combat `secondaryEffect` stores `EGGRUMBLE_BurnUntil` to prevent repeated BURN/PREDATOR; the existing replay reset cleared `EGGRUMBLE_OriginalWalkSpeed`, `EGGRUMBLE_SlowExpiry`, `EGGRUMBLE_MarkedUntil` but left `EGGRUMBLE_BurnUntil`. This potentially prevents valid opening burns in the next round when the same avatar is reused. Source-derived risk; NOT Studio-reproduced or confirmed exploit.
-
-- Exact input: **official RC parent** `cd4d41a2a8ad4c856604120281d89dd5bd60ca84` with full `GQ8_MULTI_SHIELD_SELECTED31` from formally adopted #686.
-- Unique owner slice: `GQ8_BURN_REPLAY_RESET_20261117`, #218 claim [6946146896](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6946146896).
-- The overlay inserts one `hum:SetAttribute("EGGRUMBLE_BurnUntil",nil)` after existing MarkedUntil cleanup; does NOT replace shield cleanup.
-- 31 selected scripts, 30 unchanged source bytes, exact inverse to shield-selected RoundReplay. No new Game/Remote/Store, no authority addition, no additional runtime script; original 41 inherited source-backed feature flags preserved.
-- Build-time: real 31 Luau compile; extracted true selected RoundReplay native 6 cases; negative mutant expected RED; Rojo source/class exact 31; latest canonical Place now burn-selected; optional32 spectator auto-follows via existing #692 resolver.
-- Off rollback: remove this workflow step and choose original `GQ8_MULTI_SHIELD_SELECTED31` Place, leaving #686 shields, #684 HIT, seven roles, Boss LOS, Builder WALL, eggs, lobby, AI etc intact.
-- Studio2client, Android15m, art/fun, OWNER acceptance: NOT TESTED.
-- **Formal RC adoption is pending**, only #220 authenticated single writer uses nonforce expected-SHA CAS after candidate V3+S1 green, then verifies two official postpush same-HEAD workflows and actual canonical Place bytes; no stale branch merge, main/publish/paid.
-
-## Run
-`python3 -B -m unittest discover -v -s rc_fastlane/quality_burn_reset_20261117 -p test_burn_reset.py`
-
-Only the GitHub CI has native Luau compiler + Rojo tools. Full source receipt is produced into `artifacts/gq515_official_select/GQ8_BURN_RESET_RECEIPT.json` during same-head CI.
+# GQ8 BurnUntil replay reset — 44-flag selected canonical31 candidate
+Owner: PR #699; original V3 author #482 source reused. Unique issue #218 CLAIM 6946146896.
+Current formal base at PREP: 1624d86bb31cce06dd686e8cd29fe2c1b5e90e41. One existing RoundReplay.resetHuman line adds hum:SetAttribute("EGGRUMBLE_BurnUntil",nil) after MarkedUntil cleanup. The source-level bug is that BURN/PREDATOR spells remember old round BurnUntil even after respawn/replay; no Studio reproduction asserted.
+Input is generated GQ505_FX_FAIR_SELECTED31.project.json, retaining all original GQ505 FX, GQ8 castle prompt, GQ514 BossDefeats, GQ512 Combo/BestCombo, GQ8 HIT chain, all shield cleanup, seven roles, field, castle, neutral, item, lobby, balance. Original 44 feature flags preserved; does NOT count as new flag. Exactly 31 runtime scripts; one RoundReplay source changed, other30 bytes identical. No new Game, Remote, Store or gameplay actor.
+Tests: 10 Python source/anchor/inverse negatives; Native Luau 6 source-derived cases + intentionally bad mutant RED; 31 native compilations; actual Rojo31 embedded Source/Class exact and Place SHA. Optional spectator32 inherits latest canonical Place via existing #692 auto-resolution. Revert by removing final candidate GQ8 burn overlay and copying exact GQ505_FX_FAIR_TRUE_ROJO31.rbxlx; this preserves all current 44 flags.
+Official RC write and postpush dual CI must be performed by authenticated #220-only CAS writer after PR V3+S1 exact head success and live ref readback. If new concurrent official HEAD is detected, rebase again. Main/Publish/payment/PC untouched; Studio/Android/ART/FUN/OWNER NOT_TESTED.
