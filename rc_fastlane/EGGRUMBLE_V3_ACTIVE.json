@@ -463,16 +463,34 @@
     "studio_android_owner_fun": "NOT_TESTED",
     "new_game_remote_store": 0
   },
+  "gq8_neutral_safe_spawn": {
+    "feature_id": "GQ8_NEUTRAL_SPAWN_CLEARANCE_20261117",
+    "source_selected_by_workflow": true,
+    "source_script": "EGGRUMBLE_SwarmCombat",
+    "changed_existing_sources": 1,
+    "previous30_source_bytes_exact": true,
+    "source_type": "RC31 optional private Studio companion",
+    "max_attempts_per_soldier": 3,
+    "arena_margin_studs": 6,
+    "pre_spawn_collision_gate": "GetPartBoundsInBox RespectCanCollide",
+    "rollback": "unselect neutral overlay and use exact GQ8_BURN_RESET selected31",
+    "native": "REQUIRES_SAME_HEAD",
+    "rojo": "REQUIRES_SAME_HEAD",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "owner_fun": "NO_GO",
+    "game_release": "NOT_PUBLISHED"
+  },
   "gq524_safe_warp": {
     "feature_id": "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
     "original_pr": 524,
     "original_author_head": "f90875e14446ba86b1c668ba43efa37fbc74be20",
     "original_combat_blob": "66e666418b7c23d41f87faa5d61eb6e2770a463e",
-    "selected_after": "GQ8_BURN_RESET_SELECTED31",
+    "selected_after": "GQ8_NEUTRAL_SAFE_SELECTED31",
     "existing_script": "EGGRUMBLE_SevenRoleCombat",
     "source_count": 31,
     "unchanged_other30": true,
-    "off_rollback": "Select GQ8_BURN_RESET_SELECTED31 and original current Combat, retaining all other 30 sources",
+    "off_rollback": "Select GQ8_NEUTRAL_SAFE_SELECTED31 and current Combat; preserve other30 scripts",
     "studio_android_owner": "NOT_TESTED",
     "publish_authorized": false
   }

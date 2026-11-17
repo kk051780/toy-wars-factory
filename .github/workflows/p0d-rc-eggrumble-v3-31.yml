@@ -22,6 +22,7 @@ on:
       - 'rc_fastlane/quality_castle_prompt_session_20261117/**'
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
+      - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -51,6 +52,7 @@ on:
       - 'rc_fastlane/quality_castle_prompt_session_20261117/**'
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
+      - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -2334,6 +2336,40 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/patch_burn_reset.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_BURN_CURRENT44_FLAGS_REAL_NATIVE_ROJO_OFF_EXACT_PASS
+      - name: GQ8 physical neutral safe spawn - existing Swarm addEnemy one-source Native31 Rojo31
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_neutral_safe_spawn_20261117/select_spawn.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_BURN_RESET_SELECTED31.project.json"
+          OUT="$DIR/GQ8_NEUTRAL_SAFE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_rc81_hit042_v3")
+          from select_hit042 import flatten
+          _,files=flatten(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_NEUTRAL_SAFE_SPAWN_ALL_REAL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --base "$OUT" --out "$DIR/GQ8_NEUTRAL_ARENA_NATIVE.luau" \
+            --mutant "$DIR/GQ8_NEUTRAL_ARENA_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_NEUTRAL_ARENA_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_NEUTRAL_ARENA_NATIVE.luau" | tee "$DIR/GQ8_NEUTRAL_ARENA_NATIVE.log"
+          grep -q GQ8_ACTUAL_SWARM_ARENA_FOOTPRINT_LUAU_NATIVE_8_PASS "$DIR/GQ8_NEUTRAL_ARENA_NATIVE.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_NEUTRAL_ARENA_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_NEUTRAL_ARENA_MUTANT.luau" >"$DIR/GQ8_NEUTRAL_ARENA_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_NEUTRAL_SPAWN_UNSAFE_MARGIN_MUTANT_ACCEPTED; exit 1
+          fi
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_NEUTRAL_SPAWN_BOUND_AND_COLLIDABLE_OVERLAP_ONE_SWARM_NATIVE31_ROJO31_INVERSE_OFF_PASS
       - uses: actions/checkout@v4
         with: {repository: kk051780/toy-wars-factory, ref: f90875e14446ba86b1c668ba43efa37fbc74be20, path: _gq524_original, persist-credentials: false}
       - name: GQ524 original safeMove author 9-ray + 3.2x4.5 body collision safety on final current31 Combat
@@ -2344,7 +2380,7 @@ jobs:
           AUTHOR=_gq524_original/quality_gameplay/v3_safe_warp_landing_20261116
           SCRIPT=rc_fastlane/quality_warp524_current31/select_warp.py
           DIR=artifacts/gq515_official_select
-          BASE="$DIR/GQ8_BURN_RESET_SELECTED31.project.json"
+          BASE="$DIR/GQ8_NEUTRAL_SAFE_SELECTED31.project.json"
           OUT="$DIR/GQ524_SAFE_WARP_SELECTED31.project.json"
           PLACE="$DIR/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx"
           python3 -B -m unittest discover -v -s "$AUTHOR/tests" -p test_safe_warp.py
@@ -2467,6 +2503,14 @@ jobs:
           assert burn["changed_existing_script_count"]==1 and burn["other30_exact"] and burn["rollback_source_exact"]
           assert burn["native"]==burn["rojo"]=="31/31" and burn["new_game_remote_store"]==0
           assert burn["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          neutral=json.loads(Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SPAWN_RECEIPT.json").read_text())
+          assert neutral["feature_id"]=="GQ8_NEUTRAL_SPAWN_CLEARANCE_20261117"
+          assert neutral["source_count"]==31 and neutral["other30_byte_exact"]
+          assert neutral["off_returns_previous_swarm_exact"] and neutral["real_rojo_source_class_exact"]=="31/31"
+          assert neutral["spawn_attempts_max_per_requested_soldier"]==3
+          assert neutral["no_additional_score_remote_game_or_spawn_controller"] is True
+          assert neutral["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          assert m["gq8_neutral_safe_spawn"]["source_selected_by_workflow"] is True
           assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
           assert m["source_heads"]["builder_wall522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
@@ -3037,11 +3081,16 @@ jobs:
             artifacts/gq515_official_select/GQ8_BURN_RESET_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_BURN_RESET_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SPAWN_RECEIPT.json
             artifacts/gq515_official_select/GQ524_SAFE_WARP_SELECTED31.project.json
             artifacts/gq515_official_select/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ524_WARP_NATIVE11.log
             artifacts/gq515_official_select/GQ524_WARP_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_NATIVE.log
+            artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_BURN_NATIVE6.log
             artifacts/gq515_official_select/GQ8_BURN_EXPECTED_MUTANT_RED.log
             artifacts/gq515_official_select/GQ8_CASTLE_PROMPT_NATIVE.log
