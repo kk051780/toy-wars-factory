@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 56 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 57 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "GQ8_BOSS_RESULT_TRUE_CREDIT_20261118": ("EGGRUMBLE_MatchResultService","-- GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"),
@@ -241,6 +241,14 @@ FEATURE_EVIDENCE = {
   "-- GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
   "session.isCurrentHuman(player)~=true then",
   "session.isCurrentHuman(closest.player)~=true) then return end")),
+ "GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117": ("EGGRUMBLE_CombatFeel", (
+  "-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 BEGIN",
+  'player:GetAttributeChangedSignal("EGGRUMBLE_SkillCastSignature")',
+  "ServerAcceptedCastCue",
+  "if not tones[role] then return end",
+  "if not hum or hum.Health<=0 then return end",
+  "CAST_CUE_MIN_GAP=.12",
+  "-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 END")),
  "GQ8_FIELD_EGG_CREATION_LIMIT_20261118": ("EGGRUMBLE_CastleMatchRules", (
   "M.MAX_FIELD_EGGS=512",
   "and m.fieldEggs<=M.MAX_FIELD_EGGS",
