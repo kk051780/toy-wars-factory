@@ -57,7 +57,7 @@ class LandSeaSkySourceTests(unittest.TestCase):
             "OffshoreSafeDock_",
             "PublicOffshoreShuttle",
             "offshorePads[side]",
-            "safeMove(p,landDock.Position",
+            "publicTravel(p,landDock.Position",
             "v.lastPilot=hum",
             "not hum and v.lastPilot",
             "local dismountOnDock=false",
@@ -75,6 +75,24 @@ class LandSeaSkySourceTests(unittest.TestCase):
         self.assertIn('world.Parent:FindFirstChild(world.Name)==world', SOURCE)
         self.assertNotIn('FillBlock(', SOURCE)
         self.assertNotIn('FillRegion(', SOURCE)
+
+    def test_public_shortcut_cooldown_does_not_block_rescue(self):
+        # Voluntary public shortcuts are per-human; emergency rescues are not.
+        self.assertIn("PUBLIC_TRAVEL_COOLDOWN = 2.5", SOURCE)
+        self.assertIn("GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_BEGIN", SOURCE)
+        self.assertIn("if prev and now-prev<PUBLIC_TRAVEL_COOLDOWN then return false end", SOURCE)
+        self.assertIn("if not safeMove(player,at,mode,world) then return false end", SOURCE)
+        self.assertIn("publicTravelAt[player.UserId]=now", SOURCE)
+        for path in [
+            "publicTravel(p,offshorePads[-1].Position",
+            "publicTravel(p,landDock.Position",
+            "publicTravel(p,Vector3.new(sx,cloudY+5,skyZ))",
+            "publicTravel(p,groundLift.Position",
+            "safeMove(v.owner,landDock.Position",
+            "table.clear(publicTravelAt)",
+        ]:
+            with self.subTest(route=path):
+                self.assertIn(path, SOURCE)
 
     def test_real_horde_musou_feedback_no_second_kill_writer(self):
         # Source policy: read-only confirmed Swarm neutral-KOs; no fake soldiers.
