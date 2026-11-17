@@ -334,5 +334,35 @@
     "android_15min": "NOT_TESTED",
     "owner_acceptance": "NOT_TESTED",
     "rc_status": "PREP_CANDIDATE_UNTIL_AUTHENTICATED_B_WRITER_CAS"
+  },
+  "gq8_multi_shield_replay": {
+    "feature_id": "GQ8_MULTI_SHIELD_REPLAY_CLEANUP_20261117",
+    "scope": "existing RoundReplay.resetHuman one code site",
+    "author_original_pr": 482,
+    "original_blob": "a97e7aeffc988fe9ccde5bf7544b01deb5f243ff",
+    "why": "FindFirstChild previously removed only first same-name item ForceField; multi-item shield acquisitions can leave another during next round",
+    "affects": [
+      "item",
+      "lobby",
+      "battle",
+      "character",
+      "castle"
+    ],
+    "others": [
+      "field",
+      "neutral",
+      "balance"
+    ],
+    "script_count": 31,
+    "other30_byte_exact": true,
+    "off_rollback": "GQ81_HIT042_SELECTED31 retains .42s HIT; disable only replay cleanup",
+    "native": "PENDING_SAMEHEAD",
+    "rojo": "PENDING_SAMEHEAD",
+    "formal_rc": "PREP_CANDIDATE_NOT_YET_ADOPTED",
+    "studio_android_owner_fun": "NOT_TESTED",
+    "candidate_enabled": true,
+    "note": "Candidate source-selected in PR-only workflow; official 39 gameplay flags remain unchanged; no feature registry count increment",
+    "port_base": "GQ81_HIT042_SELECTED31.project.json",
+    "original_author_pr": 682
   }
 }
