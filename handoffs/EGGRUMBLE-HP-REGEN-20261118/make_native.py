@@ -24,7 +24,7 @@ local function close(actual, expected, message)
 end
 local wanted = {
     WARRIOR=250, MAGE=195, NINJA=185, TRAPPER=205,
-    BUILDER=225, BEAST_TAMER=220, ZOMBIE_MASTER=230,
+    BUILDER=225, BEAST=220, ZOMBIE=230,
 }
 local count=0
 for role, hp in pairs(wanted) do

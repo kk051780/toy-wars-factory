@@ -13,8 +13,8 @@ local ROLE_MAX_HP = {
     NINJA = 185, -- player-facing name: Assassin; preserve internal ID
     TRAPPER = 205,
     BUILDER = 225,
-    BEAST_TAMER = 220,
-    ZOMBIE_MASTER = 230,
+    BEAST = 220,
+    ZOMBIE = 230,
 }
 
 local function finite(n)

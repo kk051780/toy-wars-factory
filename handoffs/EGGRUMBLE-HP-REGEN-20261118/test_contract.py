@@ -15,7 +15,7 @@ class Contract(unittest.TestCase):
         src=(ROOT/"PassiveRegenPolicy.luau").read_text()
         for value in ('QUIET_SECONDS = 7','RATE_PER_SECOND = 0.007','MAX_ELAPSED_STEP = 0.5',
                       'WARRIOR = 250','MAGE = 195','NINJA = 185','TRAPPER = 205',
-                      'BUILDER = 225','BEAST_TAMER = 220','ZOMBIE_MASTER = 230'):
+                      'BUILDER = 225','BEAST = 220','ZOMBIE = 230'):
             self.assertIn(value,src)
     def test_generator_mutant(self):
         with tempfile.TemporaryDirectory() as d:
