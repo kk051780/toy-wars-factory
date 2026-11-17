@@ -1,0 +1,92 @@
+name: P0D GQ8 LSS real-horde musou source and rollback QA
+on:
+  push:
+    branches:
+      - feature/gq8-lss-confirmed-horde-surge-20261117-01
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-horde-surge-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-horde-surge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Actual neutral KO guard / bounded FX source contracts and exact OFF rollback
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 \
+            -p 'test_optional32.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _lss_flight_luau
+          persist-credentials: false
+      - name: Compile actual confirmed-horde surge traversal server script using pinned native Luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _lss_flight_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _lss_flight_luau -B /tmp/lss-flight-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-flight-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/lss-flight-luau/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau >/dev/null
+          echo LSS_REAL_HORDE_SURGE_NEW_SCRIPT_NATIVE_COMPILE_PASS
+      - name: Rojo 7.7.1 mock31 opt-in32 and exact rollback off31
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/lss-flight-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/lss-flight-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/lss-flight-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              exe=Path('/tmp/lss-flight-rojo')
+              exe.write_bytes(z.read(names[0]))
+              exe.chmod(0o755)
+          PY
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          root=Path('handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117')
+          p=root/'test_optional32.py'
+          s=importlib.util.spec_from_file_location('lss_flight_test',p)
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          out=Path('artifacts/lss_flight_mock31')
+          out.mkdir(parents=True,exist_ok=True)
+          m.LandSeaSkySourceTests.fixture(out)
+          PY
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/lss_flight_mock31/base31.project.json \
+            --out artifacts/lss_flight_mock32/on.project.json
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/lss_flight_mock31/base31.project.json \
+            --out artifacts/lss_flight_mock32/off.project.json --off
+          /tmp/lss-flight-rojo build artifacts/lss_flight_mock32/on.project.json \
+            -o artifacts/lss_flight_mock32/on.rbxlx
+          /tmp/lss-flight-rojo build artifacts/lss_flight_mock32/off.project.json \
+            -o artifacts/lss_flight_mock32/off.rbxlx
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py')
+          s=importlib.util.spec_from_file_location('lss_flight_composer',p)
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          for state in ['on','off']:
+              root=Path('artifacts/lss_flight_mock32')
+              m.verify_place(root/(state+'.project.json'),root/(state+'.rbxlx'))
+          print('LSS_FLIGHT_MOCK32_ROJO_ON_OFF31_SOURCE_EXACT_PASS')
+          PY
