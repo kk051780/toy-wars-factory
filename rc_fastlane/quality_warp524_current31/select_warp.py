@@ -46,8 +46,12 @@ def author(path):
 
 def patch(src,P):
     changes=((P.OLD,P.NEW),(P.OLD_NINJA,P.NEW_NINJA),(P.OLD_ESPER,P.NEW_ESPER))
-    for a,b in changes:
-        if src.count(a)!=1 or b in src:raise ValueError("RED_CURRENT_COMBAT_SAFE_MOVE_CONFLICT")
+    for index,(a,b) in enumerate(changes):
+        count=src.count(a)
+        if count!=1 or b in src:
+            p=src.find("local function safeMove(")
+            block=src[p:p+520] if p>=0 else "MISSING_SAFE_MOVE"
+            raise ValueError(f"RED_CURRENT_COMBAT_SAFE_MOVE_CONFLICT index={index} old_count={count} new_count={src.count(b)} head={block!r}")
     result=src
     for a,b in changes:result=result.replace(a,b,1)
     if unpatch(result,P)!=src or result.count("local function safeMove(")!=1:
