@@ -77,6 +77,16 @@ local function matchHuman(player,mode,world,role)
   and (not role or player:GetAttribute("EGGRUMBLE_Role")==role)
 end
 
+-- GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118
+-- Retire idle craft when its server-owned player is no longer alive/current.
+-- An empty but otherwise valid craft stays available for a normal dismount.
+local function currentCraftOwner(owner,mode,world,role)
+ if not matchHuman(owner,mode,world,role) then return false end
+ local ch=owner.Character
+ local hum=ch and ch:FindFirstChildOfClass("Humanoid")
+ return hum~=nil and hum.Health>0
+end
+
 local function safeMove(player,at,mode,world)
  if not matchHuman(player,mode,world,nil) then return false end
  local ch=player.Character
@@ -551,6 +561,11 @@ local function install(world)
   for craft,v in pairs(vessels) do
    if not craft.Parent or not v.alive then
     vessels[craft]=nil
+   elseif not currentCraftOwner(v.owner,mode,world,v.role) then
+    -- Clear the previously-seated rider before Destroying: an eliminated or
+    -- disconnected owner must not trigger the healthy offshore rescue.
+    v.lastPilot=nil
+    craft:Destroy()
    else
     local hum=v.seat.Occupant
     local driver=hum and Players:GetPlayerFromCharacter(hum.Parent)
