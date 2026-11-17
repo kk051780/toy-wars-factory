@@ -2172,6 +2172,7 @@ jobs:
           assert burn["changed_existing_script_count"]==1 and burn["other30_exact"] and burn["rollback_source_exact"]
           assert burn["native"]=="31/31" and burn["rojo"]=="31/31" and burn["new_game_remote_store"]==0
           assert burn["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
           assert len([v for v in m["feature_flags"].values() if v is True])==40
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
