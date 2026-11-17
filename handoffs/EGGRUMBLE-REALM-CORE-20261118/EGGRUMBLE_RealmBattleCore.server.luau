@@ -340,7 +340,8 @@ local function install(world)
   elseif weapon=="CANNON" then attackLine(model,185,30,"KINETIC")
   else attackLine(model,125,20,"FIRE") end
  end
- remote.OnServerEvent:Connect(function(p,command,payload)
+ local controlConnection
+ controlConnection=remote.OnServerEvent:Connect(function(p,command,payload)
   if not state.active or not world.Parent or not eligible(p,mode,world) then return end
   if command=="FIRE" and typeof(payload)=="string" then
    if payload=="GUN" or payload=="BOMB" or payload=="CANNON"
@@ -473,6 +474,7 @@ local function install(world)
  world.Destroying:Connect(function()
   state.active=false
   if heartbeat then heartbeat:Disconnect() end
+  if controlConnection then controlConnection:Disconnect() end
   for p in pairs(state.divers) do clearDive(p) end
   for p in pairs(state.controls) do state.controls[p]=nil end
   scenes[world]=nil
