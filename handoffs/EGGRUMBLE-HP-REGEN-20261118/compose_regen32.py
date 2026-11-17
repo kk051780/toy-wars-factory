@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical31 -> 32 (one Host source injection + one original-owner-bound Module).
+"""Canonical31 -> 33 (one Host injection + one runtime adapter + original #773 pure policy).
 No extra HP owner, no duplicate Game or Combat script. Inverse OFF31 byte exact.
 """
 from __future__ import annotations
@@ -13,6 +13,9 @@ import re
 
 HERE=Path(__file__).resolve().parent
 MODULE=HERE/"EGGRUMBLE_NaturalRegen.luau"
+POLICY=HERE/"EGGRUMBLE_PassiveRegenPolicy.luau"
+PINNED_POLICY_BLOB="23ccf84f88b2cb2901af33a563ff535e82d7a78f"
+POLICY_NAME="EGGRUMBLE_PassiveRegenPolicy"
 HOST="EGGRUMBLE_LobbyCastleModesPreview"
 NEW="EGGRUMBLE_NaturalRegen"
 REQUIRE='local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))'
@@ -41,12 +44,12 @@ def compose(current31:Path,dest:Path,off:bool=False):
  hostroutes=[k for k in before if k[-1]==HOST]
  if len(hostroutes)!=1:raise ValueError("RED_HOST_MISSING_OR_DUP")
  hostpath=hostroutes[0]
- if any(k[-1]==NEW for k in before):raise ValueError("RED_ALREADY_REGEN")
+ if any(k[-1] in (NEW,POLICY_NAME) for k in before):raise ValueError("RED_ALREADY_REGEN")
  if not any(k[-1]=="EGGRUMBLE_SevenRoleCombat" for k in before):
   raise ValueError("RED_MISSING_COMBAT")
  dest.parent.mkdir(parents=True,exist_ok=True)
  model=copy.deepcopy(model)
- model["name"]="EGGRUMBLE_REAL31_PLUS_HP_REGEN32" if not off else "EGGRUMBLE_REAL31_OFF"
+ model["name"]="EGGRUMBLE_REAL31_PLUS_HP_REGEN33" if not off else "EGGRUMBLE_REAL31_OFF"
  def rebase(node,route=()):
   for k,v in node.items():
    if k.startswith("$"):continue
@@ -69,10 +72,14 @@ def compose(current31:Path,dest:Path,off:bool=False):
   node["$path"]=os.path.relpath(outHost,dest.parent).replace(os.sep,"/")
   server=model["tree"].get("ServerScriptService")
   if not isinstance(server,dict):raise ValueError("RED_NO_SERVER_CONTAINER")
+  policyData=POLICY.read_bytes()
+  if hashlib.sha1(b"blob "+str(len(policyData)).encode()+b"\\0"+policyData).hexdigest()!=PINNED_POLICY_BLOB:
+   raise ValueError("RED_UPSTREAM_773_POLICY_SOURCE_BLOB_CHANGED")
   server[NEW]={"$path":os.path.relpath(MODULE,dest.parent).replace(os.sep,"/")}
+  server[POLICY_NAME]={"$path":os.path.relpath(POLICY,dest.parent).replace(os.sep,"/")}
  dest.write_text(json.dumps(model,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  _,after=files(dest)
- expected=31 if off else 32
+ expected=31 if off else 33
  if len(after)!=expected:raise ValueError("RED_WRONG_SOURCE_COUNT")
  for path,source in before.items():
   if path not in after:raise ValueError("RED_ORIGINAL_SOURCE_MISSING")
@@ -83,7 +90,7 @@ def compose(current31:Path,dest:Path,off:bool=False):
   "feature_id":"BATTLE_HP_REGEN_20261118",
   "source_count":expected,
   "changed_existing_sources":[] if off else [HOST],
-  "added_sources":[] if off else [NEW],
+  "added_sources":[] if off else [NEW,POLICY_NAME],
   "other30_original_byte_exact":True,
   "off31_byte_exact":off,
   "original31_sha256":{"/".join(k):hashlib.sha256(p.read_bytes()).hexdigest() for k,p in before.items()},
@@ -92,7 +99,7 @@ def compose(current31:Path,dest:Path,off:bool=False):
   "formal_rc_adopted":False,
  }
  dest.with_suffix(".receipt.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
- print("GQ8_REGEN_OFF31_ORIGINAL_SOURCE_EXACT" if off else "GQ8_REGEN_REAL32_HOST_ONLY_SOURCE_EXACT")
+ print("GQ8_REGEN_OFF31_ORIGINAL_SOURCE_EXACT" if off else "GQ8_REGEN_REAL33_HOST_ONLY_SOURCE_EXACT")
 
 if __name__=="__main__":
  p=argparse.ArgumentParser()
