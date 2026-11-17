@@ -26,6 +26,7 @@ on:
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -58,6 +59,7 @@ on:
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_carrier_world_tell511_current31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2506,10 +2508,53 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx"
           echo GQ510_EXISTING_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_AND_ZERO_SOURCE_DELTA_PASS
+      - name: Checkout immutable original GQ511 carrier 3D egg tell author
+        uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: 554d5a179897c2a84016e7049296c317063b126b, path: _gq511_original, persist-credentials: false}
+      - name: GQ511 original carrier world labels inline after current Mage (native31, original VM, Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_carrier_world_tell511_current31
+          AUTH=_gq511_original/quality_gameplay/carrier_world_tell_20261116
+          DIR=artifacts/gq515_official_select
+          POLICY="$AUTH/EGGRUMBLE_CarrierTellPolicy.luau"
+          WORLD="$AUTH/EGGRUMBLE_CarrierWorldTell.luau"
+          BASE="$DIR/GQ510_MAGE_SELECTED31.project.json"
+          OUT="$DIR/GQ511_CARRIER_TELL_SELECTED31.project.json"
+          PLACE="$DIR/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx"
+          test "$(git -C _gq511_original rev-parse HEAD)" = 554d5a179897c2a84016e7049296c317063b126b
+          test "$(git hash-object "$POLICY")" = 3c426af0af6f34649eaffbf057f8ac91cbecbaf0
+          test "$(git hash-object "$WORLD")" = dab4e5bb7b4f33f0fad7eed4c2333bab34d49a2b
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_tell.py'
+          python3 -B "$SRC/select_tell.py" prepare --base "$BASE" --out "$OUT" --policy "$POLICY" --world "$WORLD"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for file in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ511_ORIGINAL_CARRIER_WORLD_TELL_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$AUTH/make_native_harness.py" --out "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau"
+          python3 -B "$AUTH/make_native_world_harness.py" --out "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ511_AUTHOR_POLICY_NATIVE.luau" | tee "$DIR/GQ511_AUTHOR_POLICY_NATIVE.log"
+          /tmp/gq530_all31_native/luau "$DIR/GQ511_AUTHOR_WORLD_NATIVE.luau" | tee "$DIR/GQ511_AUTHOR_WORLD_NATIVE.log"
+          grep -q NATIVE_CARRIER_WORLD_TELL_POLICY_PASS "$DIR/GQ511_AUTHOR_POLICY_NATIVE.log"
+          grep -q NATIVE_CARRIER_WORLD_ACTUAL_MODULE_PASS "$DIR/GQ511_AUTHOR_WORLD_NATIVE.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_tell.py" verify --base "$BASE" --out "$OUT" \
+            --policy "$POLICY" --world "$WORLD" --place "$PLACE"
+          echo GQ511_AUTHOR_ORIGINAL_TWO_MODULES_IN_ONE_HOST_ROJO31_SOURCE_CLASS_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2525,7 +2570,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2575,7 +2620,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==47
+          assert len([v for v in m["feature_flags"].values() if v is True])==48
           assert m["feature_flags"]["GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117"] is True
           assert m["source_heads"]["gq524_original_warp"]=="f90875e14446ba86b1c668ba43efa37fbc74be20"
           warp=json.loads(Path("artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json").read_text())
@@ -2596,7 +2641,14 @@ jobs:
           assert mage["source_count"]==31 and mage["other30_exact"] and mage["off_rollback_exact"]
           assert mage["all31_byte_exact"] and mage["new_game_script_source_count"]==0
           assert mage["native"]==mage["rojo"]=="31/31" and mage["new_game_remote_store"]==0
-          assert mage["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert mage["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          tell=json.loads(Path("artifacts/gq515_official_select/GQ511_CARRIER_WORLD_TELL_RECEIPT.json").read_text())
+          assert tell["feature_id"]=="GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"
+          assert tell["source_count"]==31 and tell["other30_byte_exact"] and tell["off_rollback_byte_exact"]
+          assert tell["native"]==tell["rojo"]=="31/31" and tell["new_runtime_script_count"]==0
+          assert tell["one_host_script_class"]=="Script" and tell["new_game_remote_store_score_authority"]==0
+          assert tell["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117"] is True
           assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
           assert m["gq510_mage_heal_20261117"]["original_pr"]==510
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
@@ -3201,6 +3253,11 @@ jobs:
             artifacts/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ511_CARRIER_TELL_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ511_CARRIER_TELL_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ511_CARRIER_WORLD_TELL_RECEIPT.json
+            artifacts/gq515_official_select/GQ511_AUTHOR_POLICY_NATIVE.log
+            artifacts/gq515_official_select/GQ511_AUTHOR_WORLD_NATIVE.log
             artifacts/gq515_official_select/GQ510_ORIGINAL_BUG.log
             artifacts/gq515_official_select/GQ510_NATIVE.log
             artifacts/gq515_official_select/GQ510_MUTANT_WALL_EXPECTED_RED.log

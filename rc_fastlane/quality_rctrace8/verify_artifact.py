@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 47 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 48 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -214,6 +214,14 @@ FEATURE_EVIDENCE = {
   "if distance<=40 then return false end",
   "if fxElapsed<.22 then return end",
   "part.LocalTransparencyModifier=if hidden then 1 else record.original")),
+ "GQ511_ORIGINAL_CARRIER_WORLD_TELL_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  'local CarrierWorldTell=(function()',
+  'Policy.MAX_WORLD_VIEW_DISTANCE = 70',
+  'gui.AlwaysOnTop = false',
+  'gui.MaxDistance = Policy.MAX_WORLD_VIEW_DISTANCE',
+  'session.world:FindFirstChild("TacticalBattlefield")',
+  'session.carrierWorldTellEnabled == false',
+  'CarrierWorldTell.start(session)')),
  "GQ8_CASTLE_PROMPT_CURRENT_MATCH_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "if joined[p.UserId]~=session.mode or sessions[session.mode]~=session",
   "if not session.rules or tostring(p.UserId)~=entry.id",
