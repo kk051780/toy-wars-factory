@@ -20,8 +20,8 @@ class RealNeutralSquadFanTest(unittest.TestCase):
     def test_exact_inverse_swarm_only(self):
         old=self.source();new=fan.patch(old)
         self.assertEqual(fan.unpatch(new),old)
-        self.assertEqual(new.count("candidates[math.random(1,#candidates)]"),1)
-        self.assertEqual(new.count("math.min(SPAWN_BATCH,LIMIT-n)"),1)
+        self.assertEqual(new.count("EncounterFair.chooseIndex(encounterFairState,session,kinds)"),1)
+        self.assertEqual(new.count("local fanGroup=math.min(batch,5)"),1)
         self.assertEqual(new.count("addEnemy(Vector3.new(at.X,session.groundY or target.Y-4,at.Z))"),1)
         self.assertIn("local d=math.random(38,48)",new)
         self.assertIn("local squadBearing=math.random()*math.pi*2",new)
