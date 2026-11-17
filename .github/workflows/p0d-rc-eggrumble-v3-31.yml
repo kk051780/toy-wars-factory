@@ -22,6 +22,7 @@ on:
       - 'rc_fastlane/quality_castle_prompt_session_20261117/**'
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
+      - 'rc_fastlane/quality_mage510_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -50,6 +51,7 @@ on:
       - 'rc_fastlane/quality_castle_prompt_session_20261117/**'
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
+      - 'rc_fastlane/quality_mage510_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2332,10 +2334,65 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/patch_burn_reset.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_BURN_CURRENT44_FLAGS_REAL_NATIVE_ROJO_OFF_EXACT_PASS
+      - name: Checkout immutable original GQ510 Mage author (read-only)
+        uses: actions/checkout@v4
+        with:
+          ref: 0338bd13f9d3d199972bd4cd30e467443083dffa
+          path: _gq510_author
+          persist-credentials: false
+      - name: GQ510 original MAGE teammate AI healing and wall LOS in one existing Combat (31 Native Rojo)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_mage510_inline31/select_mage.py
+          AUTHOR=_gq510_author/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py
+          RULES=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_BURN_RESET_SELECTED31.project.json"
+          OUT="$DIR/GQ510_MAGE_SELECTED31.project.json"
+          PLACE="$DIR/GQ510_MAGE_TRUE_ROJO31.rbxlx"
+          test "$(git -C _gq510_author rev-parse HEAD)" = 0338bd13f9d3d199972bd4cd30e467443083dffa
+          test "$(git hash-object "$AUTHOR")" = 86d757b83057bc370ce8b51c459420af462e86eb
+          python3 -B "$SRC" selftest --author "$AUTHOR"
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT" --author "$AUTHOR"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_mage510_inline31")
+          from select_mage import project
+          _,files,_=project(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ510_MAGE_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --project "$OUT" --author "$AUTHOR" --rules "$RULES" \
+            --out "$DIR/GQ510_MAGE_NATIVE.luau" \
+            --original "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" \
+            --wall "$DIR/GQ510_MUTANT_WALL.luau" \
+            --ai "$DIR/GQ510_MUTANT_AI.luau"
+          for f in "$DIR/GQ510_MAGE_NATIVE.luau" "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" "$DIR/GQ510_MUTANT_WALL.luau" "$DIR/GQ510_MUTANT_AI.luau"; do
+            /tmp/gq530_all31_native/luau-compile --text "$f" >/dev/null
+          done
+          /tmp/gq530_all31_native/luau "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" | tee "$DIR/GQ510_ORIGINAL_BUG.log"
+          grep -q 'MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS ORIGINAL_BUG_REPRODUCED' "$DIR/GQ510_ORIGINAL_BUG.log"
+          /tmp/gq530_all31_native/luau "$DIR/GQ510_MAGE_NATIVE.luau" | tee "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_ORIGINAL_1H15AI_TEAM_BR_GAMEPLAY_NATIVE_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q MAGE_TEAM_BOT_HEAL_NATIVE_VM_CASES_PASS "$DIR/GQ510_NATIVE.log"
+          grep -q 'MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS FIXED' "$DIR/GQ510_NATIVE.log"
+          for MUTANT in WALL AI; do
+            if /tmp/gq530_all31_native/luau "$DIR/GQ510_MUTANT_$MUTANT.luau" > "$DIR/GQ510_MUTANT_$MUTANT"_EXPECTED_RED.log 2>&1; then
+              echo RED_GQ510_MUTANT_ACCEPTED
+              exit 1
+            fi
+          done
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR"
+          echo GQ510_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2351,7 +2408,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2401,7 +2458,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==44
+          assert len([v for v in m["feature_flags"].values() if v is True])==45
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
           assert m["source_heads"]["gq505_original_fx_author"]=="3ea5f4e87df7e3bb20a63026f892dd9c94f981e9"
           fair=json.loads(Path("artifacts/gq515_official_select/GQ505_FX_FAIR_RECEIPT.json").read_text())
@@ -2413,8 +2470,15 @@ jobs:
           assert burn["feature_id"]=="GQ8_BURN_REPLAY_RESET_20261117" and burn["source_count"]==31
           assert burn["changed_existing_script_count"]==1 and burn["other30_exact"] and burn["rollback_source_exact"]
           assert burn["native"]==burn["rojo"]=="31/31" and burn["new_game_remote_store"]==0
-          assert burn["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert burn["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
+          mage=json.loads(Path("artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json").read_text())
+          assert mage["feature_id"]=="GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"
+          assert mage["source_count"]==31 and mage["other30_exact"] and mage["off_rollback_exact"]
+          assert mage["native"]==mage["rojo"]=="31/31" and mage["new_game_remote_store"]==0
+          assert mage["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
+          assert m["gq510_mage_heal_20261117"]["original_pr"]==510
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
           assert m["source_heads"]["builder_wall522"]=="fd7e23feced51ea1d22559f0b6adb42bc5921217"
           assert m["feature_flags"]["BUILDER_WALL_SERVER_TOOL_522"] is True
@@ -2984,6 +3048,13 @@ jobs:
             artifacts/gq515_official_select/GQ8_BURN_RESET_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_BURN_RESET_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_BURN_RESET_RECEIPT.json
+            artifacts/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ510_ORIGINAL_BUG.log
+            artifacts/gq515_official_select/GQ510_NATIVE.log
+            artifacts/gq515_official_select/GQ510_MUTANT_WALL_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ510_MUTANT_AI_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_BURN_NATIVE6.log
             artifacts/gq515_official_select/GQ8_BURN_EXPECTED_MUTANT_RED.log
             artifacts/gq515_official_select/GQ8_CASTLE_PROMPT_NATIVE.log

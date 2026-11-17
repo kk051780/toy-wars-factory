@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 44 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 45 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -183,6 +183,11 @@ FEATURE_EVIDENCE = {
 
  "GQ514_BOSS_KO_ROUND_RESET_20261117": ("EGGRUMBLE_RoundReplay",
   'p:SetAttribute("EGGRUMBLE_BossDefeats",0)'),
+ "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117": ("EGGRUMBLE_SevenRoleCombat", (
+  "local sourceCharacter=player.Character",
+  "and (other==player or lineClear(root.Position+Vector3.new(0,1.5,0),",
+  "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)",
+  'if session.mode=="TEAM" then')),
  "GQ505_SERVER_MODE_FX_FAIR_INLINE31": ("EGGRUMBLE_SkillFX", (
   "local ModeFairQuota=(function()",
   "function Quota.new(totalCap:number,reserve:number)",
