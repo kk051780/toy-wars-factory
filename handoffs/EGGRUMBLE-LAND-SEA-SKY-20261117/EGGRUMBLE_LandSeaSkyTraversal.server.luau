@@ -118,13 +118,19 @@ local function install(world)
  local traps={}
  local perUser={}
  local lastConstruct={}
- local totalParts=0
+ local liveParts=0
  local active=true
 
+ -- Live Instance budget, not a lifetime counter: destroyed crafts/traps return
+ -- capacity for later rounds of building without a false budget crash.
  local function put(parent,name,cf,size,color,material,collide,alpha)
-  totalParts+=1
-  assert(totalParts<=MAX_PARTS_PER_WORLD,"EGGRUMBLE_LSS_PART_BUDGET")
-  return block(parent,name,cf,size,color,material,collide,alpha)
+  assert(liveParts<MAX_PARTS_PER_WORLD,"EGGRUMBLE_LSS_PART_BUDGET")
+  local part=block(parent,name,cf,size,color,material,collide,alpha)
+  liveParts+=1
+  part.Destroying:Connect(function()
+   liveParts=math.max(0,liveParts-1)
+  end)
+  return part
  end
  local function station(name,at,color,verb,description,cb)
   local p=put(scene,name,CFrame.new(at),Vector3.new(9,2,9),color,
@@ -210,8 +216,11 @@ local function install(world)
   if count>=MAX_CRAFT then return end
   local now=os.clock()
   if now-(lastConstruct[player.UserId] or -100)<12 then return end
-  lastConstruct[player.UserId]=now
   local flying=(kind=="AIRSHIP" or kind=="SKY_BEAST")
+  -- Prevent partial craft construction when the bounded world is full.
+  local craftPartCost=if flying then 6 else 4
+  if liveParts+craftPartCost>MAX_PARTS_PER_WORLD then return end
+  lastConstruct[player.UserId]=now
   local speed=if role=="BUILDER" then (if flying then 43 else 35)
    else (if flying then 48 else 39)
   local craft=Instance.new("Model")
@@ -306,13 +315,14 @@ local function install(world)
    if mode~="BATTLE_ROYALE" or not matchHuman(owner,mode,world,"TRAPPER") then return end
    local number=0
    for part in pairs(traps) do if part.Parent then number+=1 end end
-   if number>=MAX_LIVE_TRAPS then return end
+   if number>=MAX_LIVE_TRAPS or liveParts>=MAX_PARTS_PER_WORLD then return end
    local anchor=Vector3.new(x+48,y+3,shoreZ-57)
    local t=put(scene,"VISIBLE_PSYCHIC_SEA_TRAP",
     CFrame.new(anchor),Vector3.new(15,.8,15),
     Color3.fromRGB(187,93,241),Enum.Material.Neon,false,.22)
    t.CanTouch=true
    traps[t]=true
+   t.Destroying:Connect(function() traps[t]=nil end)
    local fired=false
    t.Touched:Connect(function(other)
     if fired or not active or not t.Parent then return end
@@ -533,7 +543,7 @@ local function install(world)
   for _,v in pairs(vessels) do v.alive=false end
   scenes[world]=nil
  end)
- print("[EGGRUMBLE-LSS] Studio-only world slice ready",mode,"parts",totalParts,
+ print("[EGGRUMBLE-LSS] Studio-only world slice ready",mode,"live parts",liveParts,
   "ground/sea/sky; original Swarm preserved")
 end
 
