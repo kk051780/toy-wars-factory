@@ -31,6 +31,7 @@ on:
       - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_respawn506_inline31/**'
       - 'rc_fastlane/quality_castle_defense500_current31/**'
+      - 'rc_fastlane/quality_server_cast_cue_20261117/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -68,6 +69,7 @@ on:
       - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_respawn506_inline31/**'
       - 'rc_fastlane/quality_castle_defense500_current31/**'
+      - 'rc_fastlane/quality_server_cast_cue_20261117/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2760,10 +2762,34 @@ jobs:
           python3 -B "$SRC/select_defense.py" verify --base "$BASE" --out "$OUT" \
             --policy "$POLICY" --live "$LIVE" --place "$PLACE"
           echo GQ500_CASTLE_REAL_TURRET_TRAP_SENSOR_ORIGINAL_HOST_NATIVE_ROJO31_INVERSE_OFF_PASS
+      - name: GQ8 final actual31 server-accepted cast cue native/Rojo SourceClass exact
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_server_cast_cue_20261117
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ500_CASTLE_DEFENSE_SELECTED31.project.json"
+          OUT="$DIR/GQ8_CAST_CUE_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx"
+          python3 -B -m unittest discover -s "$SRC" -p 'test_cast_cue.py' -v
+          python3 -B "$SRC/select_current31.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_SERVER_CAST_CUE_ACTUAL_31_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_SERVER_ACCEPTED_CAST_CUE_31_NATIVE_ROJO_CLASS_SOURCE_EXACT_30_UNCHANGED_OFF_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2779,7 +2805,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2846,7 +2872,15 @@ jobs:
           assert defense["native"]==defense["rojo"]=="31/31" and defense["new_script_count"]==0
           assert defense["host_source_class"]=="Script" and defense["new_game_remote_store_score"]==0
           assert defense["tick_seconds"]==0.35 and defense["owner_max_castles"]==16
-          assert defense["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert defense["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          cast_cue=json.loads(Path("artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json").read_text())
+          assert cast_cue["feature_id"]=="GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117"
+          assert cast_cue["source_count"]==31 and cast_cue["other30_byte_exact"] and cast_cue["off_exact"]
+          assert cast_cue["added_scripts"]==0 and cast_cue["new_game_remote_score_store_scripts"]==0
+          assert cast_cue["native"]==cast_cue["rojo"]=="31/31"
+          assert cast_cue["selected_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["gq8_cast_cue_original482"]=="fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          assert m["feature_flags"]["GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117"] is True
           assert m["feature_flags"]["GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117"] is True
           assert m["feature_flags"]["GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"] is True
           assert m["source_heads"]["gq496_original_objective_compass"]=="8434485c4bbe65f03dc310f4b85157fdd6012465"
@@ -3514,6 +3548,9 @@ jobs:
             artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ500_CASTLE_DEFENSE_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json
             artifacts/gq515_official_select/GQ500_AUTHOR_POLICY_NATIVE.log
             artifacts/gq515_official_select/GQ500_AUTHOR_REAL_LIVE_NATIVE.log
             artifacts/gq515_official_select/GQ500_FRIENDLY_FIRE_EXPECTED_RED.log
