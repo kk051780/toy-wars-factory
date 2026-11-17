@@ -2947,7 +2947,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2963,7 +2963,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -3013,7 +3013,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==54
+          assert len([v for v in m["feature_flags"].values() if v is True])==55
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
@@ -3053,7 +3053,17 @@ jobs:
           assert decor["feature_id"]=="GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117"
           assert decor["source_count"]==31 and decor["other30_byte_exact"] and decor["off_returns_previous_rc_exact"]
           assert decor["source_class"]=="ModuleScript" and decor["native"]==decor["rojo"]=="31/31"
-          assert decor["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert decor["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          bossres=json.loads(Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json").read_text())
+          assert bossres["feature_id"]=="GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"
+          assert bossres["source_count"]==31 and bossres["one_existing_result_module"]
+          assert bossres["other30_byte_exact"] and bossres["off_previous_rc_byte_exact"]
+          assert bossres["zero_boss_retains_old_result_string"] and bossres["same_gui_dimensions"]
+          assert bossres["native"]==bossres["rojo"]=="31/31"
+          assert bossres["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert bossres["new_game_hud_remote_store"]==0
+          assert m["feature_flags"]["GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"] is True
+          assert m["gq8_boss_result_true_credit"]["source_selected_by_candidate_workflow"] is True
           assert m["feature_flags"]["GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117"] is True
           assert m["feature_flags"]["GQ504_ORIGINAL_CONFIRMED_HIT_AUDIO_INLINE_20261117"] is True
           assert m["source_heads"]["gq504_original_hit_audio"]=="385d3242cbc8d0a3008ee818d8dc30040170fce6"
@@ -3438,6 +3448,8 @@ jobs:
              "rare_host_and_score_inverse_rollback_exact":True,
              "gq646_original_author_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json").read_bytes()).hexdigest(),
               "rare_source_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ_RARE_FIELD_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq8_boss_result_true_credit_selected":True,
+            "gq8_boss_result_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "place_name":place.name,
             "place_size_bytes":place.stat().st_size,
             "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
@@ -3733,6 +3745,11 @@ jobs:
             artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_SELECTED31.project.json
             artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ732_DECOR_DUPLICATE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_REAL_NATIVE.log
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ732_CURRENT31_NATIVE.log
             artifacts/gq515_official_select/GQ732_ORIGINAL_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ504_REAL_AUDIO_NATIVE.log
