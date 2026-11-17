@@ -1,0 +1,11 @@
+# BATTLE-HP-REGEN / #765 lane 7 (source candidate)
+- Feature: GQ8_BATTLE_HP_REGEN_POLICY_20261118
+- Claim: seven-role initial MaxHP, out-of-combat passive regeneration only. Distinct from #766 elemental rules, #764 realm combat, #768 battle QA and lane 8 mage revive.
+- Original RC base pinned: 261b75d0a7093db5c13db3b95dad9a2911f78689 (re-observe latest at intake).
+- Source: HealthRegenPolicy.luau, pure Luau. Non-authoritative until the **existing** Combat/Host applies it; no new Game, Combat, Humanoid, Remote, UI, Store, or paid controller.
+- Candidate numbers (#765): WARRIOR 250; MAGE 195; NINJA 185; TRAPPER 205; BUILDER 225; BEAST 220; ZOMBIE 230. Last actual HP decrease + 7 seconds, then 0.7% MaxHP/s. 1s maximum integration step. Natural recovery never revives.
+- Required integration contract: on **each** server-confirmed HP decrease from PvP, bot, boss, DOT, and hazard call recordRealDamage; do not trust client damage timestamps. On server heartbeat pass current active match/character ownership, alive, downed, eliminated, combat/DOT status. Reset/scope lastDamageAt to current avatar and session. Only existing Health/Combat owner performs Humanoid.MaxHealth/Health mutations; preserve team protections and mage heal separately.
+- Security: absent current session or avatar is fail-closed. A missing damage timestamp yields INVALID rather than uncontrolled healing. Client RemoteEvent must never call policy as authority.
+- QA: source-derived Luau native positive and mutant negative cases in workflow. No claim of engine integration or Studio/Android FUN. Policy-source addition leaves original31 **byte-exact**, OFF=omit policy, no Roblox placement changes.
+- Rollback: remove this standalone policy from candidate; the 31 existing live source bytes and data remain unchanged. No main, merges, publication, billing.
+- Intake by #220: create a single-authority adapter without duplicating Combat/Host, wire LastDamage for every actual damage cause, use exact original31 build->+1 ModuleScript, native/Rojo 32 and OFF31 same HEAD, independent session/respawn/TEAM/BR/DoT tests, then expected-SHA nonforce CAS and official CI. Studio 2-client, Android 15min, first 3min FUN remain separate NO_GO until evidenced.
