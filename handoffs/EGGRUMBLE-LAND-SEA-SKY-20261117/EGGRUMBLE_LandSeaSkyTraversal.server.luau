@@ -323,9 +323,45 @@ local function install(world)
    t.CanTouch=true
    traps[t]=true
    t.Destroying:Connect(function() traps[t]=nil end)
+   -- GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_BEGIN
+   -- A defeated/disconnected caster cannot leave a live ocean warp behind.
+   local casterCharacter=owner.Character
+   local casterHumanoid=casterCharacter
+    and casterCharacter:FindFirstChildOfClass("Humanoid")
+   if not casterHumanoid or casterHumanoid.Health<=0 then
+    t:Destroy()
+    return
+   end
+   local diedConnection=casterHumanoid.Died:Connect(function()
+    if t.Parent then t:Destroy() end
+   end)
+   local respawnConnection=owner.CharacterRemoving:Connect(function()
+    if t.Parent then t:Destroy() end
+   end)
+   local eliminatedConnection=owner:GetAttributeChangedSignal(
+    "EGGRUMBLE_Eliminated"):Connect(function()
+    if owner:GetAttribute("EGGRUMBLE_Eliminated")==true and t.Parent then
+     t:Destroy()
+    end
+   end)
+   local ancestryConnection=owner.AncestryChanged:Connect(function()
+    if not owner.Parent and t.Parent then t:Destroy() end
+   end)
+   t.Destroying:Connect(function()
+    diedConnection:Disconnect()
+    respawnConnection:Disconnect()
+    eliminatedConnection:Disconnect()
+    ancestryConnection:Disconnect()
+   end)
+   -- GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_END
    local fired=false
    t.Touched:Connect(function(other)
     if fired or not active or not t.Parent then return end
+    if not matchHuman(owner,mode,world,"TRAPPER")
+     or casterHumanoid.Health<=0 or owner.Character~=casterCharacter then
+     t:Destroy()
+     return
+    end
     local ch=other:FindFirstAncestorOfClass("Model")
     local guest=ch and Players:GetPlayerFromCharacter(ch)
     if not guest or guest==owner or not matchHuman(guest,mode,world,nil) then return end
