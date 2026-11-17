@@ -3,7 +3,7 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "e2414c413046cbb68a9a654689a2c7181d3ce040",
+    "sha": "d7bb51aaec90d701d8625ef8ecd16b143ea28d10",
     "source_count": 31,
     "enabled_flags": 61,
     "original_samehead_v3_run": "RECHECK_NEW_HEAD",
@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "2d8f5db63c1ef0960fa5ef53513a491bdc419512",
+    "source_blob_sha": "3b106a1a31177e654c973c7b5129006617b58c79",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -35,29 +35,29 @@
     "production_enabled": false
   },
   "regression_gate": {
-    "native31_native32_off31": "PENDING_RC61_SAMEHEAD",
-    "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "native31_native32_off31": "PENDING_AIR_EXPIRY_REBASED_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_AIR_EXPIRY_REBASED_SAMEHEAD",
+    "source_class_exact": "PENDING_AIR_EXPIRY_REBASED_SAMEHEAD",
+    "original31_byte_exact": "PENDING_AIR_EXPIRY_REBASED_SAMEHEAD",
     "false_positive_or_stale_head": "RED",
     "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA",
-    "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI"
+    "spatial_trap_slots_native_and_mutant": "PENDING_AIR_EXPIRY_REBASED_SAMEHEAD"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation",
+    "field": "existing LSS land/sea/sky, airborne 180s seat-expiry safe return, existing 2 distinct psychic trap slots",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "four craft global: retire stale owner/death/role/mode; distinct two-owner trap slots, 95 Part budget preserved"
+    "balance": "4 global live craft, 95 Part budget, spatial 2-owner traps, reaper and both sea+air 180s rescues; original31 unchanged"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "SOURCE_CANDIDATE_RC60_COMBINED_PENDING_CI",
+  "adoption": "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118_REBASED_ON_SPATIAL_SLOTS_PENDING_CI",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
+  "caveat": "Latest official GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118 retained byte-for-byte in new optional32 composite; original31/rich51 untouched; Studio/Android/FUN not tested."
 }
