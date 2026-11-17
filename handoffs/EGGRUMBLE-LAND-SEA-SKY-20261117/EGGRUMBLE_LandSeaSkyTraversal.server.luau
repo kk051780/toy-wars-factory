@@ -113,6 +113,13 @@ local function vehicleSweepExclusions(craft,water,offshoreWater,pilotCharacter)
  return ignore
 end
 
+-- GQ8_LSS_FULL_CRAFT_SWEEP_20261118: account for *all* physical
+-- boat pontoons and aircraft wings, not just the 8x2x11 hull. A shared
+-- envelope keeps up to four craft affordable on low-end devices.
+local function craftSweepSize(flying)
+ return flying and Vector3.new(24,8,19) or Vector3.new(18,8,19)
+end
+
 local function install(world)
  if scenes[world] or not world:IsA("Folder") then return end
  local mode=if world.Name=="TEAM_Arena" then "TEAM"
@@ -660,19 +667,31 @@ local function install(world)
        y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND) or y+5,
       math.clamp(point.Z,minTravelZ,maxTravelZ))
      local delta=point-cf.Position
+     local targetCF=CFrame.new(point)*cf.Rotation
+     local sweepSize=craftSweepSize(v.flying)
+     local exclude=vehicleSweepExclusions(
+      craft,water,offshoreWater,hum.Parent)
      local allowed=true
      if delta.Magnitude>.1 then
       local params=RaycastParams.new()
       params.FilterType=Enum.RaycastFilterType.Exclude
-      params.FilterDescendantsInstances=vehicleSweepExclusions(
-       craft,water,offshoreWater,hum.Parent)
+      params.FilterDescendantsInstances=exclude
       params.RespectCanCollide=true
-      -- Server wall check; flying craft cannot ghost through solid sky islands.
-      allowed=Workspace:Blockcast(v.model.PrimaryPart.CFrame,
-       Vector3.new(8,2,11),delta,params)==nil
+      -- Sweep the full boat/wing footprint along the requested path.
+      allowed=Workspace:Blockcast(cf,sweepSize,delta,params)==nil
      end
      if allowed then
-      craft:PivotTo(CFrame.new(point)*cf.Rotation)
+      -- Rotation-only turns have zero translation, so Blockcast alone
+      -- cannot catch wings clipping a nearby wall at the final yaw.
+      local overlap=OverlapParams.new()
+      overlap.FilterType=Enum.RaycastFilterType.Exclude
+      overlap.FilterDescendantsInstances=exclude
+      overlap.RespectCanCollide=true
+      overlap.MaxParts=1
+      allowed=#Workspace:GetPartBoundsInBox(targetCF,sweepSize,overlap)==0
+     end
+     if allowed then
+      craft:PivotTo(targetCF)
      elseif v.flying then
       -- An obstructed climb must stop requesting an unsafe destination.
       v.targetY=cf.Position.Y
