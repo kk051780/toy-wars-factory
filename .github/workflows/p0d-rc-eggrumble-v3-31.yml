@@ -43,6 +43,7 @@ on:
       - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_stonegiant_hp_20261118/**'
       - 'rc_fastlane/quality_result_mobile_20261118/**'
+      - 'rc_fastlane/quality_replay_retry_fence_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -92,6 +93,7 @@ on:
       - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_stonegiant_hp_20261118/**'
       - 'rc_fastlane/quality_result_mobile_20261118/**'
+      - 'rc_fastlane/quality_replay_retry_fence_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -3082,10 +3084,47 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_MOBILE_RESULT_TRUE31_ROJO_SOURCE_CLASS_OFF_PASS
+      - name: GQ8 new round replay retry fence — existing Replay only, Native7 + mutant RED + real31 Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_replay_retry_fence_20261118/select_retry.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_RESULT_MOBILE_SELECTED31.project.json"
+          OUT="$DIR/GQ8_REPLAY_RETRY_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx"
+          REAL="$DIR/GQ8_REPLAY_RETRY_REAL_NATIVE.luau"
+          MUTANT="$DIR/GQ8_REPLAY_RETRY_MUTANT_NATIVE.luau"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_decor732_rc31")
+          from select_current import mapping
+          _,sources=mapping(Path(sys.argv[1]))
+          assert len(sources)==31
+          for source in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_REPLAY_RETRY_REAL31_ALL_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --base "$BASE" --out "$OUT" --real "$REAL" --mutant "$MUTANT"
+          /tmp/gq530_all31_native/luau-compile --text "$REAL" >/dev/null
+          /tmp/gq530_all31_native/luau-compile --text "$MUTANT" >/dev/null
+          /tmp/gq530_all31_native/luau "$REAL" | tee "$DIR/GQ8_REPLAY_RETRY_REAL_NATIVE.log"
+          grep -qx GQ8_REPLAY_RETRY_REAL_LUAU_7_CASE_PASS "$DIR/GQ8_REPLAY_RETRY_REAL_NATIVE.log"
+          if /tmp/gq530_all31_native/luau "$MUTANT" >"$DIR/GQ8_REPLAY_RETRY_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ8_REPLAY_RETRY_MUTANT_NOT_REJECTED; exit 1
+          fi
+          grep -q RED_GQ8_REPLAY_RETRY_NEW_ROUND_AVATAR_new_match_role "$DIR/GQ8_REPLAY_RETRY_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_REPLAY_RETRY_REAL31_NATIVE7_MUTANT_RED_ROJO31_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ8_RESULT_MOBILE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -3101,7 +3140,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_RESULT_MOBILE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -3151,7 +3190,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==59
+          assert len([v for v in m["feature_flags"].values() if v is True])==60
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
@@ -3226,8 +3265,17 @@ jobs:
           assert mobile["source_count"]==31 and mobile["other30_byte_exact"] and mobile["off_previous_source_byte_exact"]
           assert mobile["changes_score_or_gameplay"] is False and mobile["adds_gui"] is False
           assert mobile["native"]==mobile["rojo"]=="31/31"
-          assert mobile["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert mobile["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_RESULT_MOBILE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ8_RESULT_MOBILE_READABILITY_20261118"] is True
+          replay=json.loads(Path("artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json").read_text())
+          assert replay["feature_id"]=="GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"
+          assert replay["source_count"]==31 and replay["changed_script"]=="EGGRUMBLE_RoundReplay"
+          assert replay["other30_byte_exact"] and replay["off_previous_rc_byte_exact"]
+          assert replay["new_runtime_scripts"]==replay["new_remote_store"]==0
+          assert replay["native"]==replay["rojo"]=="31/31"
+          assert replay["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ8_REPLAY_RESET_RETRY_SESSION_FENCE_20261118"] is True
+          assert m["gq8_replay_retry_fence"]["source_selected_by_candidate_workflow"] is True
           assert m["feature_flags"]["GQ8_STONE_GIANT_NEARBY_TRUE_HP_20261118"] is True
           assert m["gq8_stone_giant_nearby_true_hp"]["source_selected_by_workflow"] is True
           assert m["gq8_boss_result_true_credit"]["source_selected_by_candidate_workflow"] is True
@@ -3621,6 +3669,7 @@ jobs:
             "gq8_boss_result_true_credit_selected":True,
             "gq8_stone_giant_hp_900_world":True,
             "gq8_stone_giant_hp_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq8_replay_retry_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq8_boss_result_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "place_name":place.name,
             "place_size_bytes":place.stat().st_size,
@@ -3932,6 +3981,11 @@ jobs:
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_REAL_NATIVE.log
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_NATIVE.log
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json
@@ -4094,6 +4148,11 @@ jobs:
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_REAL_NATIVE.log
+            artifacts/gq515_official_select/GQ8_REPLAY_RETRY_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_NATIVE.log
             artifacts/gq515_official_select/GQ8_STONE_GIANT_HP_MUTANT_EXPECTED_RED.log
           if-no-files-found: error
