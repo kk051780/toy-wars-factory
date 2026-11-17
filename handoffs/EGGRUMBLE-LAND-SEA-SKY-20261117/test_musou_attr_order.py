@@ -51,6 +51,22 @@ class RealKOMilestoneOrdering(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker,SOURCE)
 
+    def test_pulse_confirmation_follows_runtime_guards(self):
+        block=SOURCE.split(" local function onCombatCombo(player)",1)[1].split(
+            " local function unwatchCombo(player)",1)[0]
+        # No milestone is marked spent until it has passed a live current
+        # session, actual alive character, locality and rate-limit checks.
+        for earlier in ("matchHuman(player,mode,world,nil)",
+                        "MUSOU_BEACON_RADIUS",
+                        "MUSOU_MAX_BURSTS_PER_SEC",
+                        "lastSurgeAt[player.UserId]"):
+            with self.subTest(earlier=earlier):
+                self.assertLess(block.index(earlier),
+                                block.index("lastShownCombo[userId]=combo"))
+        self.assertLess(block.index("lastShownCombo[userId]=combo"),
+                        block.index('Instance.new("Part")'))
+        self.assertIn("Debris:AddItem(wave,MUSOU_EFFECT_TTL)",block)
+
     def test_source_derived_native_harness_and_mutant(self):
         with TemporaryDirectory() as tmp:
             folder=Path(tmp)
