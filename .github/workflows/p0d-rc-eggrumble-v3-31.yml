@@ -35,6 +35,7 @@ on:
       - 'rc_fastlane/quality_audio504_inline31/**'
       - 'rc_fastlane/quality_decor732_rc31/**'
       - 'quality_gameplay/gq732_duplicate_house/**'
+      - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -76,6 +77,7 @@ on:
       - 'rc_fastlane/quality_audio504_inline31/**'
       - 'rc_fastlane/quality_decor732_rc31/**'
       - 'quality_gameplay/gq732_duplicate_house/**'
+      - 'rc_fastlane/quality_boss_result_20261118/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2903,6 +2905,45 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ732_AFTER_GQ504_CURRENT31_NATIVE_ROJO_INVERSE_OFF_EXACT_PASS
+      - name: GQ8 candidate ONLY - native verified boss credit result from the existing 31-source ResultService
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_boss_result_20261118/select_boss_result.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ732_DUPLICATE_DECOR_SELECTED31.project.json"
+          OUT="$DIR/GQ8_BOSS_RESULT_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" selftest
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_decor732_rc31")
+          from select_current import mapping
+          _,all_sources=mapping(Path(sys.argv[1]))
+          assert len(all_sources)==31
+          for source in all_sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_BOSS_RESULT_CANDIDATE_ALL31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC" native --base "$OUT" \
+            --out "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.luau" \
+            --mutant "$DIR/GQ8_BOSS_RESULT_MUTANT_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_BOSS_RESULT_MUTANT_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.luau" \
+            | tee "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.log"
+          grep -qx GQ8_BOSS_RESULT_REAL_RESULT_NATIVE_8_CASE_PASS "$DIR/GQ8_BOSS_RESULT_REAL_NATIVE.log"
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_BOSS_RESULT_MUTANT_NATIVE.luau" \
+            >"$DIR/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ8_BOSS_RESULT_MUTANT_NOT_REJECTED; exit 1
+          fi
+          grep -q RED_GQ8_BOSS_RESULT_TRUE_CREDIT_MISSING "$DIR/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_BOSS_RESULT_PREP_ONLY_31_NATIVE_ROJO_REAL8_MUTANT_RED_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
@@ -3836,4 +3877,17 @@ jobs:
             artifacts/gq538_official_select/GQ523_HEAL517_RC31_TRUE_ROJO.rbxlx
             artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json
             artifacts/gq538_official_select/GQ523_HEAL517_SELECTED31.project.json
+          retention-days: 3
+      - name: Preserve isolated GQ8 boss result candidate Place (NOT official RC)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-BOSS-RESULT-PREP31-NOT-OFFICIAL-RC
+          path: |
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_REAL_NATIVE.log
+            artifacts/gq515_official_select/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log
+          if-no-files-found: error
           retention-days: 3
