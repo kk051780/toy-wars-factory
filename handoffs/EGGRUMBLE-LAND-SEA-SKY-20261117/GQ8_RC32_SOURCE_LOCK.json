@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "8262066463911101780036af57fcc2f181bebcf4",
+    "source_blob_sha": "024c824175dcac157d52cf91f681a382835ddde1",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -38,17 +38,18 @@
     "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "false_positive_or_stale_head": "RED"
+    "false_positive_or_stale_head": "RED",
+    "orphan_craft_native": "PENDING_SAME_HEAD_CI"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "land/sea/sky additional path, visual water",
+    "field": "land/sea/sky additional path, visual water, orphan craft slot recovery",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "optional four craft; two BR traps global, one live trap per owner; 95 world Parts"
+    "balance": "optional four craft; reclaim abandoned owner slots on death/exit; two BR traps, 95 Parts"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
   "adoption": "SOURCE_CANDIDATE_PENDING_SAMEHEAD_CI_AND_NONFORCE_CAS",
@@ -56,5 +57,5 @@
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
+  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob. Orphan craft lifecycle is a candidate on a separate branch until same-head revalidated and nonforce parent branch adoption; never rewrite original31."
 }
