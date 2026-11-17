@@ -1,0 +1,120 @@
+name: P0D Battle Element Rules Native 64 and Rojo Exact
+on:
+  push:
+    branches: [feature/p0d-gq8-element-policy-20261118-claim1]
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118/**'
+      - '.github/workflows/p0d-battle-element-rules-native.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118/**'
+      - '.github/workflows/p0d-battle-element-rules-native.yml'
+permissions:
+  contents: read
+jobs:
+  policy-native-and-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Full isolated ownership, exact blob and original31 inverse gate
+        run: |
+          set -euo pipefail
+          SRC=handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118
+          BASE=30673c9db684f8b084e51b01e739937910cbe5ba
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          git cat-file -e "$BASE^{commit}"
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_*.py'
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          d=Path('handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118')
+          lock=json.loads((d/'BATTLE_ELEMENT_SOURCE_LOCK.json').read_text())
+          p=Path(lock['added_policy_source_path'])
+          blob=subprocess.check_output(['git','hash-object',str(p)],text=True).strip()
+          assert blob==lock['added_policy_git_blob'], 'RED_POLICY_SOURCE_LOCK_STALE'
+          assert lock['official_v3_game_script_count_unmodified']==31
+          assert lock['existing_author_sources_modified']==0
+          assert lock['primary_s1_profile_unchanged'] is True
+          base=lock['base_official_rc_sha']
+          changed=subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines()
+          assert changed and all(
+            x.startswith('handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118/')
+            or x == '.github/workflows/p0d-battle-element-rules-native.yml'
+            for x in changed
+          ), 'RED_UNAUTHORIZED_EXISTING_GAME_SOURCE_DIFF: '+str(changed)
+          print('BATTLE_ELEMENT_RULES_OFF31_EXACT_SCOPE_PASS',len(changed),blob)
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _battle_native_luau
+          persist-credentials: false
+      - name: Native compile actual policy, exhaustive 64 and explicit failing mutant
+        run: |
+          set -euo pipefail
+          test "$(git -C _battle_native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _battle_native_luau -B /tmp/battle-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/battle-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          SRC=handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118
+          python3 -B "$SRC/make_native_cases.py" --out /tmp/battle-policy-good.luau --mutant /tmp/battle-policy-mutant.luau
+          /tmp/battle-luau/luau-compile --text "$SRC/EGGRUMBLE_ElementAffinityPolicy.module.luau" >/dev/null
+          /tmp/battle-luau/luau-compile --text /tmp/battle-policy-good.luau >/dev/null
+          /tmp/battle-luau/luau-compile --text /tmp/battle-policy-mutant.luau >/dev/null
+          /tmp/battle-luau/luau /tmp/battle-policy-good.luau | tee /tmp/battle-policy-good.log
+          grep -qx 'BATTLE_ELEMENT_RULES_NATIVE_64_MATCHUPS_PLUS_NEGATIVE_PASS' /tmp/battle-policy-good.log
+          if /tmp/battle-luau/luau /tmp/battle-policy-mutant.luau >/tmp/battle-policy-mutant.log 2>&1; then
+            echo RED_ELEMENT_CYCLE_MUTANT_INCORRECTLY_ACCEPTED
+            exit 1
+          fi
+          grep -q 'MATCHUP_FAIL_FIRE_ICE' /tmp/battle-policy-mutant.log
+          echo BATTLE_ELEMENT_RULES_REAL_NATIVE_AND_MUTANT_RED_PASS
+      - name: Install integrity-pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/battle-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/battle-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/battle-rojo.zip') as z:
+            names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+            assert len(names)==1
+            f=Path('/tmp/battle-rojo');f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+      - name: Actual isolated ModuleScript Rojo Class and Source exact build
+        run: |
+          set -euo pipefail
+          SRC=handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118
+          /tmp/battle-rojo build "$SRC/element-policy.project.json" -o /tmp/battle-element-policy-isolated.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          d=Path('handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118')
+          expected=(d/'EGGRUMBLE_ElementAffinityPolicy.module.luau').read_text()
+          root=ET.parse('/tmp/battle-element-policy-isolated.rbxlx').getroot()
+          actual=[]
+          for item in root.iter('Item'):
+            if item.get('class')!='ModuleScript': continue
+            props=item.find('Properties')
+            if props is None: continue
+            name=props.find("string[@name='Name']")
+            src=props.find("ProtectedString[@name='Source']")
+            if name is not None and name.text=='EGGRUMBLE_ElementAffinityPolicy':
+              actual.append(src.text if src is not None else None)
+          assert actual==[expected], 'RED_ROJO_MODULE_SOURCE_OR_CLASS_MISMATCH: '+str([(x is None, len(x or '')) for x in actual])
+          print('BATTLE_ELEMENT_RULES_ROJO_ISOLATED_MODULE_EXACT_PASS',len(expected))
+          PY
+          test -s /tmp/battle-element-policy-isolated.rbxlx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-BATTLE-ELEMENT-POLICY-ISOLATED-QA-NOT-GAME-RC
+          path: /tmp/battle-element-policy-isolated.rbxlx
+          if-no-files-found: error
+          retention-days: 3
