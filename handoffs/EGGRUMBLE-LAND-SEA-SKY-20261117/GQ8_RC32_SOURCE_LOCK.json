@@ -3,9 +3,9 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "949ab39eac82424f5724775d07ce38403280c326",
+    "sha": "e2414c413046cbb68a9a654689a2c7181d3ce040",
     "source_count": 31,
-    "enabled_flags": 60,
+    "enabled_flags": 61,
     "original_samehead_v3_run": "RECHECK_NEW_HEAD",
     "original_samehead_rc78_run": "RECHECK_NEW_HEAD",
     "original_samehead_balance_run": "RECHECK_NEW_HEAD",
@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "024c824175dcac157d52cf91f681a382835ddde1",
+    "source_blob_sha": "23b3650b6bdce621c14439226ef03990696b4cea",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -35,12 +35,12 @@
     "production_enabled": false
   },
   "regression_gate": {
-    "native31_native32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "native31_native32_off31": "PENDING_RC61_SAMEHEAD",
     "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "false_positive_or_stale_head": "RED",
-    "orphan_craft_native": "RECHECK_CURRENT_CANDIDATE"
+    "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
@@ -53,7 +53,7 @@
     "balance": "four craft global: retire stale owner/death/role/mode; existing traps, 95 Part budget preserved"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "P0D_PREP_CURRENT_RC60_NOT_CAS",
+  "adoption": "SOURCE_CANDIDATE_RC60_COMBINED_PENDING_CI",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
