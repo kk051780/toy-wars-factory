@@ -6,12 +6,9 @@
 local RunService=game:GetService("RunService")
 local Players=game:GetService("Players")
 local Regen={}
-local HP:{[string]:number}={
- WARRIOR=250,MAGE=195,NINJA=185,TRAPPER=205,
- BUILDER=225,BEAST=220,ZOMBIE=230
-}
-local DAMAGE_FREE_SECONDS=7
-local REGEN_PER_SECOND=.007
+-- Immutable upstream #773 policy, verified source blob 23ccf84f88b2cb2901af33a563ff535e82d7a78f.
+-- No duplicate numeric policy is maintained in this runtime bridge.
+local Policy=require(script.Parent:WaitForChild("EGGRUMBLE_PassiveRegenPolicy"))
 local STEP_SECONDS=.25
 type Entry={
  humanoid:Humanoid,
@@ -26,15 +23,8 @@ type Entry={
 }
 local active:{[Player]:Entry}={}
 
-function Regen.maxHP(role:string):number
- return HP[role] or HP.WARRIOR
-end
-function Regen.amount(maxHP:number,dt:number):number
- return math.max(0,maxHP)*REGEN_PER_SECOND*math.max(0,dt)
-end
-function Regen.shouldHeal(elapsed:number,health:number,maxHP:number,burning:boolean):boolean
- return elapsed>=DAMAGE_FREE_SECONDS
-  and health>0 and health<maxHP and not burning
+function Regen.maxHP(role:string):number?
+ return Policy.initialMaxHP(role)
 end
 local function current(e:Entry):boolean
  local p=e.player
@@ -57,7 +47,7 @@ local function stop(p:Player)
  -- No max HP reset when someone dies: existing original Host handles the round.
 end
 function Regen.attach(session:any,p:Player,role:string)
- if not HP[role] or not p.Parent or not session or not session.world then return end
+ if not Policy.initialMaxHP(role) or not p.Parent or not session or not session.world then return end
  local ch=p.Character
  local h=ch and ch:FindFirstChildOfClass("Humanoid")
  if not ch or not h or h.Health<=0 then return end
@@ -71,7 +61,8 @@ function Regen.attach(session:any,p:Player,role:string)
  if not castle or not castle.alive then return end
  -- One baseline write on first equip of this avatar in this exact round.
  -- Later ticks are ONLY the bounded passive heal, never new damage/KO.
- local max=HP[role]
+ local max=Policy.initialMaxHP(role)
+ if type(max)~="number" then return end
  h.MaxHealth=max
  h.Health=max
  local now=os.clock()
@@ -82,7 +73,7 @@ function Regen.attach(session:any,p:Player,role:string)
   if active[p]~=e then return end
   -- Any server-authoritative damage, including PvP, boss, traps and DoT,
   -- interrupts regen without requiring a duplicate DamageOwner.
-  if newHP<e.lastHealth-.01 then e.lastDamage=os.clock() end
+  e.lastDamage=Policy.observeHealth(e.lastHealth,newHP,os.clock(),e.lastDamage)
   e.lastHealth=newHP
  end))
  table.insert(e.connections,h.Died:Connect(function() stop(p) end))
@@ -102,8 +93,12 @@ function Regen.attach(session:any,p:Player,role:string)
   local clock=os.clock()
   local burning=(h:GetAttribute("EGGRUMBLE_BurnUntil") or 0)>clock
    or (h:GetAttribute("EGGRUMBLE_DoTUntil") or 0)>clock
-  if Regen.shouldHeal(clock-e.lastDamage,health,actualMax,burning) then
-   h.Health=math.min(actualMax,health+Regen.amount(actualMax,elapsed))
+  local downed=(p:GetAttribute("EGGRUMBLE_Downed")==true)
+   or (h:GetAttribute("EGGRUMBLE_Downed")==true)
+  local delta=Policy.regenDelta(health,actualMax,clock,e.lastDamage,
+   elapsed,true,true,burning,downed)
+  if delta>0 then
+   h.Health=math.min(actualMax,health+delta)
    e.lastHealth=h.Health
   end
  end))
