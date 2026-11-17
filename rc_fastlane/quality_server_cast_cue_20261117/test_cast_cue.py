@@ -34,7 +34,7 @@ class TestServerAcceptedCastCue(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,"RED_SOURCE_CONTRACT"):mod.patch(SAMPLE.replace('GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',"GetAttributeChangedSignal(\"Different\")"))
  def test_mutant_visible_always(self):
   mutant=mod.patch(SAMPLE).replace("castCue.Visible=false","castCue.Visible=true")
-  self.assertNotEqual(mod.undo(mutant),SAMPLE)
+  with self.assertRaisesRegex(ValueError,"RED_OFF_SOURCE_DRIFT"):\n   mod.undo(mutant)
  def test_git_blob_known_content(self):
   self.assertEqual(mod.git_blob(b"hello"),"b6fc4c620b67d95f953a5c1c1230aaab5db5a1b0")
 if __name__=="__main__":unittest.main()
