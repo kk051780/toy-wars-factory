@@ -75,6 +75,31 @@ class LandSeaSkySourceTests(unittest.TestCase):
         self.assertNotIn('FillBlock(', SOURCE)
         self.assertNotIn('FillRegion(', SOURCE)
 
+    def test_real_horde_musou_feedback_no_second_kill_writer(self):
+        # Source policy: read-only confirmed Swarm neutral-KOs; no fake soldiers.
+        for marker in [
+            "RealHordeFrontlineCounter",
+            'world:FindFirstChild("NeutralHorde")',
+            'model:GetAttribute("EGGRUMBLE_Neutral")==true',
+            "h and h.Health>0",
+            'player:GetAttributeChangedSignal("EGGRUMBLE_Combo")',
+            'player:GetAttribute("EGGRUMBLE_NeutralKOs")',
+            'player:GetAttribute("EGGRUMBLE_Combo")',
+            "if ko<=last then return end",
+            "if combo<MUSOU_COMBO_STEP or combo%MUSOU_COMBO_STEP~=0 then return end",
+            'not matchHuman(player,mode,world,nil)',
+            "MUSOU_MAX_BURSTS_PER_SEC = 2",
+            "MUSOU_EFFECT_TTL = 0.46",
+            "EGGRUMBLE_REAL_KO_MUSOU_WAVE",
+            "Debris:AddItem(wave,MUSOU_EFFECT_TTL)",
+            "for _,conn in pairs(combatConnections) do conn:Disconnect() end",
+        ]:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, SOURCE)
+        self.assertNotIn("Instance.new(\"Humanoid\")", SOURCE)
+        self.assertNotIn('SetAttribute("EGGRUMBLE_NeutralKOs"', SOURCE)
+        self.assertNotIn('SetAttribute("EGGRUMBLE_Combo"', SOURCE)
+
     def test_authorization_limits_and_reversibility(self):
         for value in ["MAX_CRAFT = 4", "MAX_PARTS_PER_WORLD = 95",
                       "TRAP_LIFETIME = 24", "VEHICLE_LIFETIME = 180",
