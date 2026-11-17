@@ -32,7 +32,7 @@ class EggBudgetSelectionTests(unittest.TestCase):
 
     def test_source_anchor_drift_is_red(self):
         with self.assertRaises(ValueError):
-            patch(self.original.replace(BEFORE,BEFORE+" "))
+            patch(self.original.replace('"invalid egg count"','"drifted egg count"'))
         with self.assertRaises(ValueError):
             patch(self.original.replace(CONST,"M.DEFAULT_FIELD_EGGS=23\n"))
 
