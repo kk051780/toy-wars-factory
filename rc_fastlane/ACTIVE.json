@@ -91,6 +91,23 @@
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "publish_authorized": false
+    },
+    "eggrumble_v3_lss32_studio": {
+      "source_commit": "09de449127d739658a3b9d344ac996430bf7a7b6",
+      "source_count": 32,
+      "core": "One Studio-only land/sea/sky additive Script. Exact current V3 31 plus original LSS32 source; existing 7 roles, Combat, Castle, neutral Swarm, pickups, lobby and scoring unchanged",
+      "kind": "optional_studio_only_companion_rc_source_profile",
+      "source_manifest": "rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json",
+      "source_lock": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/GQ8_RC32_SOURCE_LOCK.json",
+      "build_workflow": ".github/workflows/p0d-gq8-lss-real31-bridge.yml",
+      "status": "PREMERGE_SOURCE_CANDIDATE_PENDING_SAMEHEAD_NATIVE_ROJO",
+      "default_selected": false,
+      "production_enabled": false,
+      "main_s1_profile_unmodified": true,
+      "rollback": "Exclude EGGRUMBLE_LandSeaSkyTraversal and keep all original V3 31 Script/Source/Class exact; rich51 remains default",
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "publish_authorized": false
     }
   },
   "required_fast_gates": [

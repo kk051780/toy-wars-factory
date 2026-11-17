@@ -136,7 +136,8 @@ def harness(text: str) -> str:
     if not text.rstrip().endswith("return Replay"):
         raise ValueError("RED_GQ8_REPLAY_RETRY_SOURCE_TRAILER")
     prefix = text[:text.rfind("return Replay")]
-    return prefix + "\n" + HARNESS
+    prelude, fixture = HARNESS.split("local function avatar(health)", 1)
+    return prelude + "\n" + prefix + "\nlocal function avatar(health)" + fixture
 
 def native(base: Path, selected: Path, real: Path, mutant: Path):
     _, _, old, new = compare(base.resolve(strict=True), selected.resolve(strict=True))
