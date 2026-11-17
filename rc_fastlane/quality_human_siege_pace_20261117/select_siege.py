@@ -159,7 +159,7 @@ def scripts(place:Path):
 
 def verify(base:Path,out:Path,place:Path)->None:
  _,old,oldroute=mapped(base);_,new,newroute=mapped(out)
- if len(old)!=len(new)!=31 or set(old)!=set(new) or oldroute!=newroute:
+ if len(old)!=31 or len(new)!=31 or set(old)!=set(new) or oldroute!=newroute:
   raise ValueError("RED_SCRIPT_SET_OR_ROUTE")
  for route in old:
   previous=old[route].read_bytes();current=new[route].read_bytes()
