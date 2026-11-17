@@ -7,7 +7,7 @@
   "source_branch_sha": "09de449127d739658a3b9d344ac996430bf7a7b6",
   "integrator_parent_rc_sha": "d5f912a7cdf5e7882ed703abee96e4ba03ba356b",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+  "added_source_git_blob": "fa734ee5f9aaabf2cf8333fbd308e1bebb04e583",
   "source_author_prs": [
     714,
     737
@@ -22,8 +22,18 @@
   "new_game_combat_host_swarm_remote_store_authorities": 0,
   "robot_release_authorized": false,
   "status": "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
-  "same_head_rc_31_and_32_ci": "PENDING",
+  "same_head_rc_31_and_32_ci": "PENDING_NEW_CANDIDATE_HEAD",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
-  "art_fun_owner": "NO_GO"
+  "art_fun_owner": "NO_GO",
+  "optional_source_update": {
+    "feature_id": "GQ8_LSS_REAL_KO_COMBO_ORDER_SYNC_20261118",
+    "previous_source_git_blob": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+    "proposed_source_git_blob": "fa734ee5f9aaabf2cf8333fbd308e1bebb04e583",
+    "purpose": "Observe actual server-owned NeutralKOs and Combo in either order, display one bounded 12x FX per streak only with two recent counter advances; no real Combat/Swarm/KO/score writers.",
+    "candidate_only": true,
+    "source_lock": "SAME_HEAD_NATIVE_ROJO_OFF31_REQUIRED",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED"
+  }
 }
