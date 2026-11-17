@@ -2370,24 +2370,18 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_NEUTRAL_SPAWN_BOUND_AND_COLLIDABLE_OVERLAP_ONE_SWARM_NATIVE31_ROJO31_INVERSE_OFF_PASS
-      - name: Checkout immutable original GQ510 Mage author (read-only)
-        uses: actions/checkout@v4
-        with:
-          ref: 0338bd13f9d3d199972bd4cd30e467443083dffa
-          path: _gq510_author
-          persist-credentials: false
-      - name: GQ510 original MAGE teammate AI healing and wall LOS in one existing Combat (31 Native Rojo)
+      - name: GQ510 truth gate: original MAGE healing already in existing single Combat (native and Rojo31)
         shell: bash
         run: |
           set -euo pipefail
           SRC=rc_fastlane/quality_mage510_inline31/select_mage.py
-          AUTHOR=_gq510_author/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py
+          AUTHOR=_gq_mage/quality_gameplay/v3_mage_heal_los_20261116/build_candidate.py
           RULES=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
           DIR=artifacts/gq515_official_select
           BASE="$DIR/GQ8_NEUTRAL_SAFE_SELECTED31.project.json"
           OUT="$DIR/GQ510_MAGE_SELECTED31.project.json"
           PLACE="$DIR/GQ510_MAGE_TRUE_ROJO31.rbxlx"
-          test "$(git -C _gq510_author rev-parse HEAD)" = 0338bd13f9d3d199972bd4cd30e467443083dffa
+          test "$(git -C _gq_mage rev-parse HEAD)" = 0338bd13f9d3d199972bd4cd30e467443083dffa
           test "$(git hash-object "$AUTHOR")" = 86d757b83057bc370ce8b51c459420af462e86eb
           python3 -B "$SRC" selftest --author "$AUTHOR"
           python3 -B "$SRC" prepare --base "$BASE" --out "$OUT" --author "$AUTHOR"
@@ -2404,6 +2398,7 @@ jobs:
           PY
           python3 -B "$SRC" native --project "$OUT" --author "$AUTHOR" --rules "$RULES" \
             --out "$DIR/GQ510_MAGE_NATIVE.luau" \
+            --orig "_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau" \
             --original "$DIR/GQ510_ORIGINAL_BUG_REPRODUCED.luau" \
             --wall "$DIR/GQ510_MUTANT_WALL.luau" \
             --ai "$DIR/GQ510_MUTANT_AI.luau"
@@ -2423,8 +2418,8 @@ jobs:
             fi
           done
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
-          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR"
-          echo GQ510_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_PASS
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx"
+          echo GQ510_EXISTING_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_AND_ZERO_SOURCE_DELTA_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
@@ -2519,6 +2514,7 @@ jobs:
           assert mage["feature_id"]=="GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"
           assert mage["source_count"]==31 and mage["other30_exact"] and mage["off_rollback_exact"]
           assert mage["native"]==mage["rojo"]=="31/31" and mage["new_game_remote_store"]==0
+          assert mage["all31_byte_exact"] and mage["new_game_script_source_count"]==0
           assert mage["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
           assert m["gq510_mage_heal_20261117"]["original_pr"]==510
