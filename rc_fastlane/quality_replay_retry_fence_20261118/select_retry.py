@@ -178,7 +178,7 @@ def verify(base: Path, selected: Path, place: Path):
     print("GQ8_REPLAY_RETRY_SELECTED31_REAL_ROJO31_OFF_EXACT_PASS")
 
 def selftest():
-    sample = 'function Replay.resetHuman()\n task.delay(1,function()\n  ' + OLD + '\n end)\nend'
+    sample = 'function NotTheRealReplay()\n  ' + OLD + '\nend'
     # Only patch a realistic function, not an arbitrary line outside the original module.
     try:
         patch(sample)
