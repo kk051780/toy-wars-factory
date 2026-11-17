@@ -349,7 +349,19 @@ local function install(world)
      v.lastPilot=nil
      local ch=v.owner.Character
      local root=ch and ch:FindFirstChild("HumanoidRootPart")
+     local dismountOnDock=false
+     if root then
+      for _,dock in pairs(offshorePads) do
+       -- A real landing on a collision pad is not a void dismount.
+       if math.abs(root.Position.X-dock.Position.X)<=dock.Size.X/2-2
+        and math.abs(root.Position.Z-dock.Position.Z)<=dock.Size.Z/2-2 then
+        dismountOnDock=true
+        break
+       end
+      end
+     end
      if not v.flying and ch and departed.Parent==ch and root
+      and not dismountOnDock
       and craft:GetPivot().Position.Z>z+halfZ+10
       and (root.Position-craft:GetPivot().Position).Magnitude<28
       and matchHuman(v.owner,mode,world,v.role) then
