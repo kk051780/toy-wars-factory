@@ -48,7 +48,7 @@ def prepare(base:Path,out:Path):
     (out.parent/"GQ732_MUTANT_NATIVE.luau").write_text(native(a),encoding="utf-8")
     rec={"feature_id":FEATURE,"source_count":31,"original_source_count":31,
        "new_runtime_scripts":0,"changed_script":RULE[-1],"other30_byte_exact":True,
-       "off_returns_gq500_exact":True,"old_rules_sha256":sha(a.encode()),
+       "off_returns_previous_rc_exact":True,"old_rules_sha256":sha(a.encode()),
        "new_rules_sha256":sha(b.encode()),"source_class":"ModuleScript",
        "native":"PENDING","rojo":"PENDING","studio_android_fun":"NOT_TESTED"}
     (out.parent/RECEIPT).write_text(json.dumps(rec,sort_keys=True,indent=2)+"\n")

@@ -8,8 +8,11 @@ from pathlib import Path
 
 EXTRA="EGGRUMBLE_EliminatedSpectate"
 TARGET="EGGRUMBLE_CombatFeel"
-MARKERS=('hitToast.Name="ConfirmedHit042"','task.delay(.42,function()',
-         'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")')
+MARKERS=('hitToast.Name="ConfirmedHit042"','task.delay(.42,function()')
+IMPACT_LISTENER='player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")'
+AUDIO_BEGIN="GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117"
+AUDIO_END="GQ504_CONFIRMED_HIT_AUDIO_INLINE_END_20261117"
+AUDIO_LISTENER='local onHit=player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)'
 def require(ok,msg):
     if not ok:raise ValueError("RED_GQ470_HIT042_INHERIT_"+msg)
 def certify(base,optional):
@@ -24,6 +27,16 @@ def certify(base,optional):
     content=source.decode("utf-8")
     for marker in MARKERS:
         require(content.count(marker)==1,"MISSING_CURRENT_HIT042_"+marker[:18])
+    # Existing HIT042 already listens for confirmed impact. Original #504 audio
+    # intentionally adds one *additional* client listener, not a second writer.
+    audio=AUDIO_BEGIN in content or AUDIO_END in content
+    require(content.count(IMPACT_LISTENER)==(2 if audio else 1),"HIT_AND_AUDIO_LISTENER_COUNT")
+    if audio:
+        require(content.count(AUDIO_BEGIN)==1 and content.count(AUDIO_END)==1,
+                "AUDIO_AUTHOR_BLOCK_BRACKETS")
+        require(content.count(AUDIO_LISTENER)==1,"AUDIO_EXACT_CONFIRMED_LISTENER")
+        require(content.count('local GROUP="EGGRUMBLE_GQ_ConfirmedHitAudio"')==1,
+                "AUDIO_DUPLICATE_SOUND_GROUP")
     require('task.delay(.17,function()' in content,"OLD_RETICLE_LOST")
     require(optional[EXTRA][1]=="LocalScript","SPECTATE_CLASS")
     return {"existing_source_and_class_byte_exact":"31/31",
