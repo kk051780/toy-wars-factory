@@ -1,0 +1,73 @@
+name: P0D GQ730 finite castle decoration coordinates (source-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq730_finite_house/**'
+      - '.github/workflows/p0d-gq730-finite-house.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-castle-rules-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9, path: _v3_original, persist-credentials: false}
+      - uses: actions/checkout@v4
+        with: {repository: luau-lang/luau, ref: f46d879e28302a430029304f7f6a162aed66f103, path: _luau, persist-credentials: false}
+      - name: Original author lock and strict selector test
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          SOURCE=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          python3 -B -m unittest discover -s quality_gameplay/gq730_finite_house -p 'test_*.py' -v
+          python3 -B quality_gameplay/gq730_finite_house/select_finite_house.py \
+            --original "$SOURCE" --on artifacts/gq730/CastleRules_ON.luau \
+            --off artifacts/gq730/CastleRules_OFF.luau \
+            --native artifacts/gq730/CastleRules_NATIVE.spec.luau \
+            --mutant artifacts/gq730/CastleRules_MUTANT.spec.luau
+          cmp -s "$SOURCE" artifacts/gq730/CastleRules_OFF.luau
+          test "$(git hash-object "$SOURCE")" = "$(git hash-object artifacts/gq730/CastleRules_OFF.luau)"
+          echo GQ730_ORIGINAL_SOURCE_EXACT_OFF_PASS
+      - name: Native real author module regression, reject old guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq730_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq730_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for file in artifacts/gq730/CastleRules_ON.luau artifacts/gq730/CastleRules_OFF.luau artifacts/gq730/CastleRules_NATIVE.spec.luau artifacts/gq730/CastleRules_MUTANT.spec.luau; do
+            /tmp/gq730_native/luau-compile "$file" >/dev/null
+          done
+          /tmp/gq730_native/luau artifacts/gq730/CastleRules_NATIVE.spec.luau | tee artifacts/gq730/native.log
+          grep -q '^GQ730_FINITE_DECOR_NATIVE_PASS$' artifacts/gq730/native.log
+          if /tmp/gq730_native/luau artifacts/gq730/CastleRules_MUTANT.spec.luau >artifacts/gq730/mutant.log 2>&1; then
+            echo 'RED: original nonfinite bug survived mutation test'; exit 1
+          fi
+          grep -q 'GQ730_NOT_FINITE_REJECTED_' artifacts/gq730/mutant.log
+          echo GQ730_ORIGINAL_MUTANT_EXPECTED_RED_PASS
+      - name: Receipt (not formal RC Source adoption)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          a=Path("artifacts/gq730/CastleRules_ON.luau").read_bytes()
+          b=Path("artifacts/gq730/CastleRules_OFF.luau").read_bytes()
+          x={"head":os.environ["GITHUB_SHA"],"original_author":"#482","original_source":"EGGRUMBLE_CastleMatchRules.luau","selected_sha256":hashlib.sha256(a).hexdigest(),
+             "off_sha256":hashlib.sha256(b).hexdigest(),"changed_existing_source_count":1,"additional_game_sources":0,
+             "off_original_exact":True,"native":"PASS","mutation":"EXPECTED_RED","formal_rc_adopted":False,
+             "studio_android_fun":"NOT_TESTED","publish":False}
+          Path("artifacts/gq730/receipt.json").write_text(json.dumps(x,indent=2)+"\n")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ730-FINITE-HOUSE-CURRENT-AUTHOR-SOURCE-ONLY
+          path: artifacts/gq730/
+          retention-days: 3
