@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 49 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 50 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -207,6 +207,16 @@ FEATURE_EVIDENCE = {
   "and (other==player or lineClear(root.Position+Vector3.new(0,1.5,0),",
   "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)",
   'if session.mode=="TEAM" then')),
+ "GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "local CastleDefense=(function()",
+  "Policy.TICK_SECONDS=0.35",
+  "Policy.MAX_CASTLES=16",
+  "Policy.canTarget(",
+  "Policy.mayActivate(",
+  "Policy.canAcquire(",
+  "closest.hum:TakeDamage(Policy.CONFIG[kind].damage)",
+  "session.castleDefenseStop=stop",
+  "CastleDefense.start(session)")),
  "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117": ("EGGRUMBLE_CombatFeel", (
   "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
   'gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"',
