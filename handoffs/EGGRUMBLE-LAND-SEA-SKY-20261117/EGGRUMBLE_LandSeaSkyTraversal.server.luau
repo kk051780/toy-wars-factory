@@ -63,7 +63,24 @@ local function prompt(part,verb,object,callback)
   local hum=ch and ch:FindFirstChildOfClass("Humanoid")
   -- Client activation range is NOT authoritative; check it server-side.
   if not root or not hum or hum.Health<=0 then return end
-  if (root.Position-part.Position).Magnitude>17 then return end
+  -- GQ8_LSS_PROMPT_SERVER_SIGHT_20261118: forged Triggered events must
+  -- obey the same reach and solid-wall visibility as an ordinary prompt.
+  -- RequiresLineOfSight only controls client presentation, not server trust.
+  if (root.Position-part.Position).Magnitude>q.MaxActivationDistance+1 then return end
+  local head=ch:FindFirstChild("Head")
+  local origin=(head and head:IsA("BasePart")) and head.Position or root.Position
+  local direction=part.Position-origin
+  if direction.Magnitude>0.1 then
+   local params=RaycastParams.new()
+   params.FilterType=Enum.RaycastFilterType.Exclude
+   params.FilterDescendantsInstances={ch}
+   params.RespectCanCollide=true
+   local hit=Workspace:Raycast(origin,direction,params)
+   -- A cockpit lever may be behind its own hull; only a confirmed pilot
+   -- can activate it because the flight callback also checks seat.Occupant.
+   if hit and hit.Instance~=part
+    and not (part.Parent:IsA("Model") and hit.Instance:IsDescendantOf(part.Parent)) then return end
+  end
   callback(player,hum,root)
  end)
  return q
