@@ -18,7 +18,7 @@ def fixture():
           "commit":"eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
           "script_name":"EGGRUMBLE_EliminatedSpectate","class":"LocalScript"},
         "existing_prep_reuse":{"commit":"fed9cbb5680d40c68a2e1395e9b84276d7868fb9"},
-        "current_selected31":"artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json",
+        "current_selected31":"artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json",
         "base_official_head":"7b3e055bae93ea71a89f981c4e78e8ab72996ae9"}
     active={"active_profile":"rich51","source_profiles":{
         "eggrumble_v3_31":{"source_count":31},
@@ -29,13 +29,14 @@ def fixture():
     flags.update(dict.fromkeys(["LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                 "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
                 "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
-                "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"],True))
+                "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509",
+                "GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"],True))
     base={"profile":"eggrumble_v3_31","source_count":31,"feature_flags":flags}
     return meta,active,base
 
 class Optional32ContractTests(unittest.TestCase):
     def test_current_studio_only_optional_is_valid(self):
-        self.assertEqual(opt.contract(*fixture()),39)
+        self.assertEqual(opt.contract(*fixture()),40)
 
     def test_never_auto_enable_or_publish(self):
         for field in ("default_selected","production_enabled","publish_authorized"):
@@ -58,9 +59,17 @@ class Optional32ContractTests(unittest.TestCase):
         for f in ("LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499",
                   "BEAST_REAL_ESCORT_618","ZOMBIE_GUARD_CASTLE_LEASH_582",
                   "ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
-                  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"):
+                  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509","GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"):
             m,a,b=fixture();b["feature_flags"][f]=False
             with self.assertRaises(ValueError): opt.contract(m,a,b)
+
+    def test_cannot_select_previous_wall_only_31_or_drop_hit_port(self):
+        m,a,b=fixture()
+        m["current_selected31"]="artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json"
+        with self.assertRaisesRegex(ValueError,"RED_GQ470"):opt.contract(m,a,b)
+        m,a,b=fixture()
+        b["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"]=False
+        with self.assertRaisesRegex(ValueError,"RED_GQ470"):opt.contract(m,a,b)
 
     def test_no_false_32_if_script_count_drifted(self):
         m,a,b=fixture();m["source_count"]=31

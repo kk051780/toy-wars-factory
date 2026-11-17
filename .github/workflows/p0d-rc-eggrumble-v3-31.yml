@@ -2440,15 +2440,36 @@ jobs:
           test "$(git -C _gq634_intake rev-parse HEAD)" = fed9cbb5680d40c68a2e1395e9b84276d7868fb9
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
-            test "$current_base" = db88cf5a9eaac827f25457be566d383cb78b8cef \
-              || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
+            python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text())
+          pr=event["pull_request"]
+          if pr["base"]["ref"]!="rc/p0d-s1-kids-rc01":
+              raise SystemExit("RED_GQ470_PR_NOT_CANONICAL_RC")
+          m=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json").read_text())
+          a=json.loads(Path("rc_fastlane/ACTIVE.json").read_text())
+          if (m.get("base_official_head")!="7b3e055bae93ea71a89f981c4e78e8ab72996ae9" or
+              m.get("feature_id")!="GQ470_CASTLE_ELIMINATION_SPECTATE_492" or
+              m.get("original_author",{}).get("commit")!="eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20"):
+              raise SystemExit("RED_GQ470_HISTORICAL_SOURCE_PIN_DRIFT")
+          optional=a.get("source_profiles",{}).get("eggrumble_v3_spectate32_studio",{})
+          regular=a.get("source_profiles",{}).get("eggrumble_v3_31",{})
+          if not (a.get("active_profile")=="rich51" and
+                  regular.get("source_count")==31 and
+                  optional.get("source_count")==32 and
+                  optional.get("default_selected") is False and
+                  optional.get("production_enabled") is False and
+                  optional.get("source_manifest")=="rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json"):
+              raise SystemExit("RED_GQ470_OPTIONAL32_PROFILE_NOT_AUTHENTICALLY_REGISTERED")
+          print("GQ470_POST_ADOPTION_PR_BASE_REGISTERED_SOURCE_PIN_PASS",pr["base"]["sha"])
+          PY
           fi
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
           SRC=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
           SELECT=_gq634_intake/rc_fastlane/quality_spectate492_rc32/admit_spectator.py
-          BASE=artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json
+          BASE=artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json
           DIR=artifacts/gq470_optional32
           OUT="$DIR/GQ470_SPECTATE32_OPTIONAL.project.json"
           PLACE="$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx"
@@ -2480,6 +2501,10 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SELECT" verify --base "$BASE" --source "$SRC" \
             --out "$OUT" --receipt "$RECEIPT" --place "$PLACE"
+          python3 -B rc_fastlane/quality_spectator32_optional/prove_hit_inheritance.py \
+            --base "$BASE" --optional "$OUT" --place "$PLACE" --selector "$SELECT" \
+            --out "$DIR/GQ470_HIT042_INHERITANCE_PROOF.json"
+          echo GQ470_OPTIONAL32_CURRENT_HIT042_SINGLE_PLACE_SOURCE_PROOF_PASS
           echo GQ470_OPTIONAL32_SINGLE_ORIGINAL_CLIENT_REAL_ROJO32_SOURCE_EXACT_PASS
       - name: GQ470 run original client real Luau lifecycle and 3 mutation negatives
         shell: bash
@@ -2534,6 +2559,7 @@ jobs:
             artifacts/gq470_optional32/GQ470_SPECTATE32_OPTIONAL.project.json
             artifacts/gq470_optional32/GQ492_ORIGINAL_SELECTOR_RECEIPT.json
             artifacts/gq470_optional32/GQ470_OPTIONAL32_PROFILE_RC_RECEIPT.json
+            artifacts/gq470_optional32/GQ470_HIT042_INHERITANCE_PROOF.json
             artifacts/gq470_optional32/ORIGINAL_REAL_CLIENT_NATIVE.log
             artifacts/gq470_optional32/MUTATION_NEGATIVES.log
           if-no-files-found: error

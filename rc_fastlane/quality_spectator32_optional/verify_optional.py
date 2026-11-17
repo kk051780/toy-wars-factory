@@ -43,7 +43,7 @@ def contract(meta,active,base):
           "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
           "PINNED_EXISTING_PREP_634")
     check(meta.get("current_selected31")==
-          "artifacts/gq515_official_select/GQ522_WALL_SELECTED31.project.json",
+          "artifacts/gq515_official_select/GQ81_HIT042_SELECTED31.project.json",
           "LATEST_31_INPUT_NOT_SELECTED")
     check(active.get("active_profile")=="rich51","LIVE_S1_PROFILE_CHANGED")
     profiles=active.get("source_profiles",{})
@@ -58,11 +58,11 @@ def contract(meta,active,base):
     check(base.get("profile")=="eggrumble_v3_31" and base.get("source_count")==31,
           "CANONICAL_31_MANIFEST_CHANGED")
     flags=base.get("feature_flags",{})
-    check(len(flags)>=32 and all(v is True for v in flags.values()),
+    check(len(flags)>=40 and all(v is True for v in flags.values()),
           "PREVIOUS_FEATURE_FLAG_DISABLED")
     for flag in ("LOBBY_QUEUE_ETA_615","MATCH_DEADLINE_DRAW_499","BEAST_REAL_ESCORT_618",
                  "ZOMBIE_GUARD_CASTLE_LEASH_582","ITEM_CURRENT_SESSION_525","BOT_SIEGE_TARGET_PACING_527",
-                 "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509"):
+                 "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509","GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"):
         check(flags.get(flag) is True,"NEWEST_AUTHOR_LOST_"+flag)
     return len(flags)
 
