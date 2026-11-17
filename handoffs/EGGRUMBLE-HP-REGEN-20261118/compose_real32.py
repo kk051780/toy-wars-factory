@@ -11,6 +11,8 @@ import json
 import os
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
 
 HERE=Path(__file__).resolve().parent

@@ -11,7 +11,7 @@ SPEC.loader.exec_module(MOD)
 
 class Real32Composer(unittest.TestCase):
     def fixture(self,base):
-        root=Path(base); sources=root/"sources";sources.mkdir()
+        root=Path(base); sources=root/"sources";sources.mkdir(parents=True)
         nodes={}
         names=["EGGRUMBLE_LobbyCastleModesPreview","EGGRUMBLE_SwarmCombat"]+["CANON_%02d"%i for i in range(29)]
         assert len(names)==31
