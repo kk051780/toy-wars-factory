@@ -3013,10 +3013,41 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_BOSS_RESULT_PREP_ONLY_31_NATIVE_ROJO_REAL8_MUTANT_RED_OFF_EXACT_PASS
+      - name: GQ8 actual boss spawn HP on previous GQ518 wall-occluded Boss (real31 Native + Rojo + rollback)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_boss_health_initial_20261118/select_current31.py
+          ORIGINAL=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_NeutralStoneGiant.luau
+          AUTHOR=_gq518_original_boss/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_BOSS_RESULT_SELECTED31.project.json"
+          OUT="$DIR/GQ8_BOSS_HEALTH_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_BOSS_HEALTH_TRUE_ROJO31.rbxlx"
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _gq518_original_boss rev-parse HEAD)" = f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
+          GQ8_ORIGINAL_BOSS="$ORIGINAL" GQ8_GQ518_PATCH="$AUTHOR" \
+            python3 -B -m unittest discover -v -s rc_fastlane/quality_boss_health_initial_20261118 -p test_health.py
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT" --original "$ORIGINAL" --gq518-author "$AUTHOR"
+          python3 - "$OUT" <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_decor732_rc31")
+          from select_current import mapping
+          _,sources=mapping(Path(sys.argv[1]))
+          assert len(sources)==31
+          for path in sources.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                          check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_BOSS_HEALTH_ALL31_ACTUAL_LUAU_NATIVE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --original "$ORIGINAL" --gq518-author "$AUTHOR" --place "$PLACE"
+          echo GQ8_BOSS_HEALTH_GQ518_INHERITANCE_REAL31_ROJO_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ8_BOSS_HEALTH_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -3032,7 +3063,14 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_BOSS_HEALTH_TRUE_ROJO31.rbxlx").read_bytes()
+          assert m["feature_flags"]["GQ8_BOSS_INITIAL_HEALTH_20261118"] is True
+          initial=json.loads(Path("artifacts/gq515_official_select/GQ8_BOSS_INITIAL_HEALTH_RC31_RECEIPT.json").read_text())
+          assert initial["feature_id"]=="GQ8_BOSS_INITIAL_HEALTH_20261118"
+          assert initial["source_count"]==31 and initial["other30_byte_exact"]
+          assert initial["inverse_off_restores_gq518"] and initial["new_game_or_remote_or_store"]==0
+          assert initial["native"]=="31/31" and initial["rojo"]=="31/31"
+          assert initial["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -3082,7 +3120,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==57
+          assert len([v for v in m["feature_flags"].values() if v is True])==58
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
@@ -3839,6 +3877,9 @@ jobs:
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_BOSS_HEALTH_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_BOSS_HEALTH_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_BOSS_INITIAL_HEALTH_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_REAL_NATIVE.log
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json
@@ -3996,6 +4037,9 @@ jobs:
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_PREP_ONLY_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_BOSS_HEALTH_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_BOSS_HEALTH_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_BOSS_INITIAL_HEALTH_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_REAL_NATIVE.log
             artifacts/gq515_official_select/GQ8_BOSS_RESULT_MUTANT_EXPECTED_RED.log
           if-no-files-found: error
