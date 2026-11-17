@@ -81,7 +81,7 @@ class OffshoreExpiryRescue(unittest.TestCase):
         self.assertEqual(manifest["added_source_git_blob"],blob)
         self.assertEqual(manifest["gq8_craft_expiry_offshore_rescue"]["source_git_blob"],blob)
         self.assertIn(MARKER, data.decode("utf-8"))
-        self.assertIn(MARKER, manifest["feature_ids"][-1])
+        self.assertIn(MARKER, manifest["feature_ids"])
 
     def test_dismount_guard_and_single_authority_preserved(self):
         self.assertIn("not hum and v.lastPilot", SOURCE)

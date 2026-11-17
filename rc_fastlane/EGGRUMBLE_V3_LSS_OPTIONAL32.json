@@ -7,7 +7,7 @@
   "source_branch_sha": "09de449127d739658a3b9d344ac996430bf7a7b6",
   "integrator_parent_rc_sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
+  "added_source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
   "source_author_prs": [
     714,
     737,
@@ -17,7 +17,8 @@
     "GQ8_LSS_LAND_SEA_SKY_OPTIONAL32_20261117",
     "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117",
     "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
-    "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118"
+    "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
+    "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
@@ -47,13 +48,27 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
+    "source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
     "canonical31_changed": false,
     "off_to_formal31_byte_exact": true,
     "actual_studio_android_fun": "NOT_TESTED",
-    "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE"
+    "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE",
+    "historical_accepted_blob": "8262066463911101780036af57fcc2f181bebcf4"
+  },
+  "gq8_orphan_craft_owner": {
+    "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
+    "source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
+    "scope": "one previously optional32 LSS traversal Script; no changes to original31 gameplay sources",
+    "behavior": "retire dead/removed/out-of-match owner craft in existing heartbeat so global craft slots recover",
+    "retains": "existing true offshore rescue, 180-second craft maximum lifetime, pilot-only steering, all seven role server checks",
+    "max_craft_per_world": 4,
+    "new_script_count": 0,
+    "canonical31_changed": false,
+    "off_restore_previous31_byte_exact": true,
+    "studio_android_fun": "NOT_TESTED",
+    "status": "SOURCE_CANDIDATE_NATIVE_GATE_PENDING"
   }
 }
