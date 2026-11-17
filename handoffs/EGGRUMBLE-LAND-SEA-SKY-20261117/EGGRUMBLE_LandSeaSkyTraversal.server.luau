@@ -18,6 +18,11 @@ local MAX_LIVE_TRAPS = 2
 local MOVE_INTERVAL = 0.10
 local TRAP_LIFETIME = 24
 local VEHICLE_LIFETIME = 180
+-- Studio-only stepped altitude controls: server-owned, no free client CFrame.
+local FLIGHT_STEP = 18
+local FLIGHT_VERTICAL_SPEED = 22
+local FLIGHT_MIN_Y_ABOVE_GROUND = 28
+local FLIGHT_MAX_Y_ABOVE_GROUND = 148
 local UP = Vector3.new(0,1,0)
 local scenes = {}
 
@@ -195,8 +200,30 @@ local function install(world)
    end
   end
   local data={model=craft,seat=seat,owner=player,role=role,
-   flying=flying,speed=speed,at=at,alive=true,acc=0}
+   flying=flying,speed=speed,at=at,alive=true,acc=0,
+   targetY=math.clamp(start.Position.Y,
+    y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND)}
   vessels[craft]=data;perUser[player.UserId]=data
+  if flying then
+   -- Two visible on-board proximity prompts work on desktop and touch clients.
+   -- Only the actual current seat pilot can command a climb or descent.
+   for _,ctrl in ipairs({
+    {name="FlyAscendControl",sign=1,offset=-3,verb="上昇"},
+    {name="FlyDescendControl",sign=-1,offset=3,verb="下降"},
+   }) do
+    local lever=put(craft,ctrl.name,start*CFrame.new(ctrl.offset,3,2),
+     Vector3.new(1.5,1.5,1.5),goldColor,Enum.Material.Neon,false,0)
+    prompt(lever,ctrl.verb,"飛行操縦",function(requester,h)
+     if requester~=player or not matchHuman(requester,mode,world,role)
+      or seat.Occupant~=h or not data.alive or not craft.Parent then return end
+     data.targetY=math.clamp(data.targetY+ctrl.sign*FLIGHT_STEP,
+      y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND)
+     craft:SetAttribute("FlightTargetAltitude",
+      math.floor(data.targetY-y+0.5))
+    end)
+   end
+   craft:SetAttribute("FlightTargetAltitude",math.floor(data.targetY-y+0.5))
+  end
   local character=player.Character
   local hum=character and character:FindFirstChildOfClass("Humanoid")
   if hum and hum.Health>0 then
@@ -288,10 +315,14 @@ local function install(world)
      local steer=math.clamp(v.seat.SteerFloat,-1,1)
      local cf=craft:GetPivot()*CFrame.Angles(0,-steer*step*1.25,0)
      local displacement=cf.LookVector*throttle*v.speed*step
-     local point=cf.Position+displacement
+     local rise=if v.flying then math.clamp(
+       v.targetY-cf.Position.Y,-FLIGHT_VERTICAL_SPEED*step,
+       FLIGHT_VERTICAL_SPEED*step) else 0
+     local point=cf.Position+displacement+Vector3.new(0,rise,0)
      point=Vector3.new(
       math.clamp(point.X,x-halfX+25,x+halfX-25),
-      v.flying and cloudY+8 or y+5,
+      v.flying and math.clamp(point.Y,
+       y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND) or y+5,
       math.clamp(point.Z,z-halfZ+25,z+halfZ-25))
      local delta=point-cf.Position
      local allowed=true
@@ -306,6 +337,9 @@ local function install(world)
      end
      if allowed then
       craft:PivotTo(CFrame.new(point)*cf.Rotation)
+     elseif v.flying then
+      -- An obstructed climb must stop requesting an unsafe destination.
+      v.targetY=cf.Position.Y
      end
     end
    end

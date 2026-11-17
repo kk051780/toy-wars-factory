@@ -27,9 +27,25 @@ class LandSeaSkySourceTests(unittest.TestCase):
                       "SkyIsland_", "PublicCloudLift_", "PublicSeaDock",
                       "SEA_BOAT", "AIRSHIP", "SEA_BEAST", "SKY_BEAST",
                       "VehicleSeat", "ThrottleFloat", "SteerFloat",
-                      "Workspace:Blockcast", "NeutralHordeCoastBeacon"]:
+                      "Workspace:Blockcast", "NeutralHordeCoastBeacon",
+                      "FlyAscendControl", "FlyDescendControl",
+                      "FlightTargetAltitude", "FLIGHT_VERTICAL_SPEED"]:
             with self.subTest(value=value):
                 self.assertIn(value, SOURCE)
+
+    def test_authorized_variable_altitude_flight(self):
+        # Only the actual seated owner may change altitude, independently
+        # of client-controlled throttle/steering, and travel is server-clamped.
+        for marker in [
+            'requester~=player', 'seat.Occupant~=h',
+            'data.targetY=math.clamp(data.targetY+ctrl.sign*FLIGHT_STEP',
+            'v.targetY-cf.Position.Y,-FLIGHT_VERTICAL_SPEED*step',
+            'y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND',
+            'Workspace:Blockcast', 'v.targetY=cf.Position.Y',
+        ]:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, SOURCE)
+        self.assertNotIn('v.flying and cloudY+8 or y+5', SOURCE)
 
     def test_authorization_limits_and_reversibility(self):
         for value in ["MAX_CRAFT = 4", "MAX_PARTS_PER_WORLD = 95",
