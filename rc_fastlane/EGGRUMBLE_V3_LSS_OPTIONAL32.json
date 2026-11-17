@@ -5,25 +5,55 @@
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
   "source_branch_sha": "09de449127d739658a3b9d344ac996430bf7a7b6",
-  "integrator_parent_rc_sha": "d5f912a7cdf5e7882ed703abee96e4ba03ba356b",
+  "integrator_parent_rc_sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+  "added_source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
   "source_author_prs": [
     714,
-    737
+    737,
+    749
   ],
   "feature_ids": [
     "GQ8_LSS_LAND_SEA_SKY_OPTIONAL32_20261117",
-    "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117"
+    "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117",
+    "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
+    "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
   "original31_must_remain_byte_exact": true,
   "new_game_combat_host_swarm_remote_store_authorities": 0,
   "robot_release_authorized": false,
-  "status": "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
-  "same_head_rc_31_and_32_ci": "PENDING",
+  "status": "OPTIONAL32_SOURCE_UPGRADE_PENDING_CURRENT_HEAD_QA",
+  "same_head_rc_31_and_32_ci": "PENDING_CURRENT_HEAD",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
-  "art_fun_owner": "NO_GO"
+  "art_fun_owner": "NO_GO",
+  "source_lock": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/GQ8_RC32_SOURCE_LOCK.json",
+  "registration": "optional profile only; original31 and rich51 unchanged; no Studio, Android, FUN acceptance",
+  "gq8_trap_owner_fairness": {
+    "feature_id": "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
+    "base_formal_head": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
+    "selected_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "max_live_traps_global": 2,
+    "max_live_traps_per_owner": 1,
+    "only_optional32_script": true,
+    "canonical31_changed": false,
+    "mutation_negative_required": true,
+    "off_to_current31_byte_exact": true,
+    "studio_android_fun": "NOT_TESTED",
+    "status": "CANDIDATE_PENDING_SAME_HEAD_CI"
+  },
+  "gq8_craft_expiry_offshore_rescue": {
+    "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
+    "source_scope": "one_existing_optional_32nd_LSS_Script",
+    "source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
+    "only_offshore_living_current_seated_pilot": true,
+    "current_match_and_avatar_gate": true,
+    "dock_collision_exclusion": true,
+    "canonical31_changed": false,
+    "off_to_formal31_byte_exact": true,
+    "actual_studio_android_fun": "NOT_TESTED",
+    "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE"
+  }
 }

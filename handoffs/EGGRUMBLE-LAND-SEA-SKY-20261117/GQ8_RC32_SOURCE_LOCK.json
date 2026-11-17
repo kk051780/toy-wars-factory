@@ -1,0 +1,60 @@
+{
+  "schema": "GQ8_LSS_CURRENT_RC57_SOURCE_LOCK_V3",
+  "canonical_base": {
+    "repo": "kk051780/toy-wars-factory",
+    "branch": "rc/p0d-s1-kids-rc01",
+    "sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
+    "source_count": 31,
+    "enabled_flags": 58,
+    "original_samehead_v3_run": "RECHECK_CURRENT_SAMEHEAD",
+    "original_samehead_rc78_run": 44150472728,
+    "original_samehead_balance_run": 44150472839,
+    "all_conclusion": "RECHECK_CURRENT_SAMEHEAD"
+  },
+  "optional_profile": {
+    "id": "eggrumble_v3_lss32_studio",
+    "added_class": "Script",
+    "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+    "source_blob_sha": "8262066463911101780036af57fcc2f181bebcf4",
+    "original31_script_count": 31,
+    "optional_count": 32,
+    "original_author_prs": [
+      714,
+      737,
+      749
+    ]
+  },
+  "authority": {
+    "official_default": "rich51",
+    "canonical_v3_31_profile_untouched": true,
+    "no_game_combat_host_swarm_remote_store_replacement": true,
+    "optional_script_only": true,
+    "studio_only": true,
+    "production_enabled": false
+  },
+  "regression_gate": {
+    "native31_native32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "false_positive_or_stale_head": "RED"
+  },
+  "eight_domains": {
+    "characters": "7 original professions, optional Builder/Beast ride",
+    "field": "land/sea/sky additional path, visual water",
+    "battle": "existing Combat and KO ownership only",
+    "castle": "original castle/egg untouched",
+    "neutral": "original single Swarm and budget preserved",
+    "items": "original pickups and egg rules preserved",
+    "lobby": "original current Host and two modes unchanged",
+    "balance": "optional four craft; two BR traps global, one live trap per owner; 95 world Parts"
+  },
+  "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
+  "adoption": "SOURCE_CANDIDATE_PENDING_SAMEHEAD_CI_AND_NONFORCE_CAS",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "art_fun_owner": "NO_GO",
+  "no_main_publish_pay": true,
+  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
+}
