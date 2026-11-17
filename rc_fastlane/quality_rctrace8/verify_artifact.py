@@ -40,6 +40,7 @@ RULES = {
     "GQ_DEAD_CASTER_FENCE:", "currentHumanMember(session,",
   )},
  "castle": {
+  "EGGRUMBLE_CastleMatchRules": ("duplicate decoration in this plot", "existing.kind==piece.kind"),
   "EGGRUMBLE_LobbyCastleModesPreview": (
     "Rules.depositEggs(", "joined[actor.UserId]==mode", "coreBoard.MaxDistance=65",
     "vaultBoard.MaxDistance=40",
@@ -81,7 +82,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 52 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 53 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -228,6 +229,12 @@ FEATURE_EVIDENCE = {
   "-- GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
   "session.isCurrentHuman(player)~=true then",
   "session.isCurrentHuman(closest.player)~=true) then return end")),
+ "GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117": ("EGGRUMBLE_CastleMatchRules", (
+  "duplicate decoration in this plot",
+  "existing.kind==piece.kind",
+  "existing.x==piece.x",
+  "existing.y==piece.y",
+  "existing.z==piece.z")),
  "GQ500_ORIGINAL_LIVE_CASTLE_DEFENSE_INLINE_20261117": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "local CastleDefense=(function()",
   "Policy.TICK_SECONDS=0.35",
