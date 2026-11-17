@@ -56,7 +56,7 @@ def native(p,author,rules,orig,out,original,wall,ai):
  # Original author #510 native harness predates the official later membership overlay.
  prefix="local function currentHumanMember(session:any,player:Player):boolean"
  if current.count(prefix)!=1:raise ValueError("RED_GQ510_MEMBERSHIP_HELPER_NOT_UNIQUE")
- helper=prefix+current.split(prefix,1)[1].split("\\nend\\n",1)[0]+"\\nend\\n"
+ helper=prefix+current.split(prefix,1)[1].split("\nend\n",1)[0]+"\nend\n"
  if "currentHumanMember(session,other)" not in current:raise ValueError("RED_GQ510_REAL_SELECTED_MEMBERSHIP_MISSING")
  def with_selected_guard(text):
   marker="local function healAllies("
@@ -64,7 +64,7 @@ def native(p,author,rules,orig,out,original,wall,ai):
   text=text.replace(marker,helper+marker,1)
   anchor='local session={mode="TEAM",rules={castles=castles}}'
   if text.count(anchor)!=1:raise ValueError("RED_GQ510_NATIVE_CURRENT_SESSION_FIXTURE")
-  text=text.replace(anchor,anchor+'\\nsession.isCurrentHuman=function(player)\\n return player==source or player==ally or player==enemy or player==far\\nend',1)
+  text=text.replace(anchor,anchor+'\nsession.isCurrentHuman=function(player)\n return player==source or player==ally or player==enemy or player==far\nend',1)
   return text
  out.write_text(with_selected_guard(author.harness(current,fixed=True,rules=rules_text)),encoding="utf-8")
  original.write_text(author.harness(orig.read_text(encoding="utf-8"),fixed=False,rules=rules_text),encoding="utf-8")
