@@ -89,7 +89,7 @@ class FlightExpirySafety(unittest.TestCase):
 
     def test_exact_git_blob_locked_in_both_optional32_manifests(self):
         data = SCRIPT.read_bytes()
-        blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+        blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
         manifest = json.loads((ROOT.parents[1] / "rc_fastlane" /
                                "EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
         lock = json.loads((ROOT / "GQ8_RC32_SOURCE_LOCK.json").read_text())
