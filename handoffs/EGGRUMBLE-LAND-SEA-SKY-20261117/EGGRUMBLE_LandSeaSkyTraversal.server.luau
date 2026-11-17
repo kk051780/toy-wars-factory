@@ -34,6 +34,9 @@ local MUSOU_COMBO_STEP = 12
 local MUSOU_MAX_BURSTS_PER_SEC = 2
 local MUSOU_EFFECT_TTL = 0.46
 local MUSOU_BEACON_RADIUS = 155
+-- Server Swarm may set Combo and NeutralKOs in either order.
+-- A pulse requires a fresh increase of BOTH within the same short KO event.
+local MUSOU_ATTRIBUTE_SYNC_SECONDS = 0.75
 local UP = Vector3.new(0,1,0)
 local scenes = {}
 
@@ -420,7 +423,23 @@ local function install(world)
  frontlineText.Size=UDim2.fromScale(1,1)
  frontlineText.Parent=frontlineBillboard
 
+ -- Attribute ordering is not authoritative, but both original server
+ -- counters are. Requiring observed increases of both prevents fake rings
+ -- from unrelated Combo changes or stale KO after a round reset.
+ local function musouConfirmedMilestone(ko,combo,koAt,comboAt,shown,now)
+  if typeof(ko)~="number" or typeof(combo)~="number" then return false end
+  if ko<0 or combo<MUSOU_COMBO_STEP or combo>ko
+   or combo%MUSOU_COMBO_STEP~=0 or shown==combo then return false end
+  if typeof(koAt)~="number" or typeof(comboAt)~="number" then return false end
+  if math.abs(koAt-comboAt)>MUSOU_ATTRIBUTE_SYNC_SECONDS then return false end
+  if now-math.max(koAt,comboAt)>MUSOU_ATTRIBUTE_SYNC_SECONDS then return false end
+  return true
+ end
  local lastNeutralCount={}
+ local lastComboCount={}
+ local lastKOAdvanceAt={}
+ local lastComboAdvanceAt={}
+ local lastShownCombo={}
  local lastSurgeAt={}
  local combatConnections={}
  local burstSecond=-1
@@ -430,24 +449,33 @@ local function install(world)
   local ko=player:GetAttribute("EGGRUMBLE_NeutralKOs")
   local combo=player:GetAttribute("EGGRUMBLE_Combo")
   if typeof(ko)~="number" or typeof(combo)~="number" then return end
-  if ko<0 or combo<1 or combo>ko then return end
-  local last=lastNeutralCount[player.UserId] or 0
-  if ko<last then last=0 end -- Existing Swarm can restart its round counter.
-  if ko<=last then return end
-  lastNeutralCount[player.UserId]=ko
-  if combo<MUSOU_COMBO_STEP or combo%MUSOU_COMBO_STEP~=0 then return end
+  local userId=player.UserId
+  local oldKO=lastNeutralCount[userId] or 0
+  local oldCombo=lastComboCount[userId] or 0
+  local now=os.clock()
+  if ko<oldKO or combo<oldCombo then
+   lastKOAdvanceAt[userId]=nil
+   lastComboAdvanceAt[userId]=nil
+   lastShownCombo[userId]=nil
+  end
+  if ko>oldKO then lastKOAdvanceAt[userId]=now end
+  if combo>oldCombo then lastComboAdvanceAt[userId]=now end
+  lastNeutralCount[userId]=ko
+  lastComboCount[userId]=combo
+  if not musouConfirmedMilestone(ko,combo,lastKOAdvanceAt[userId],
+   lastComboAdvanceAt[userId],lastShownCombo[userId],now) then return end
   local ch=player.Character
   local root=ch and ch:FindFirstChild("HumanoidRootPart")
   local hum=ch and ch:FindFirstChildOfClass("Humanoid")
   if not root or not hum or hum.Health<=0 then return end
   if (root.Position-comboArena.Position).Magnitude>MUSOU_BEACON_RADIUS then return end
-  local now=os.clock()
   local second=math.floor(now)
   if burstSecond~=second then burstSecond=second;burstsThisSecond=0 end
   if burstsThisSecond>=MUSOU_MAX_BURSTS_PER_SEC then return end
   if now-(lastSurgeAt[player.UserId] or -100)<0.8 then return end
   burstsThisSecond+=1
-  lastSurgeAt[player.UserId]=now
+  lastSurgeAt[userId]=now
+  lastShownCombo[userId]=combo
   local wave=Instance.new("Part")
   wave.Name="EGGRUMBLE_REAL_KO_MUSOU_WAVE"
   wave.Shape=Enum.PartType.Ball
@@ -464,21 +492,34 @@ local function install(world)
    {Size=Vector3.new(14,.26,14),Transparency=1}):Play()
   Debris:AddItem(wave,MUSOU_EFFECT_TTL)
  end
- local function watchCombo(player)
-  if combatConnections[player] then return end
-  lastNeutralCount[player.UserId]=player:GetAttribute("EGGRUMBLE_NeutralKOs") or 0
-  combatConnections[player]=player:GetAttributeChangedSignal("EGGRUMBLE_Combo"):Connect(
-   function() onCombatCombo(player) end)
- end
- local entered=Players.PlayerAdded:Connect(watchCombo)
- local exited=Players.PlayerRemoving:Connect(function(player)
-  if combatConnections[player] then
-   combatConnections[player]:Disconnect()
+ local function unwatchCombo(player)
+  local pair=combatConnections[player]
+  if pair then
+   for _,conn in ipairs(pair) do conn:Disconnect() end
    combatConnections[player]=nil
   end
-  lastNeutralCount[player.UserId]=nil
-  lastSurgeAt[player.UserId]=nil
- end)
+  local userId=player.UserId
+  lastNeutralCount[userId]=nil
+  lastComboCount[userId]=nil
+  lastKOAdvanceAt[userId]=nil
+  lastComboAdvanceAt[userId]=nil
+  lastShownCombo[userId]=nil
+  lastSurgeAt[userId]=nil
+ end
+ local function watchCombo(player)
+  if combatConnections[player] then return end
+  local userId=player.UserId
+  lastNeutralCount[userId]=player:GetAttribute("EGGRUMBLE_NeutralKOs") or 0
+  lastComboCount[userId]=player:GetAttribute("EGGRUMBLE_Combo") or 0
+  combatConnections[player]={
+   player:GetAttributeChangedSignal("EGGRUMBLE_Combo"):Connect(
+    function() onCombatCombo(player) end),
+   player:GetAttributeChangedSignal("EGGRUMBLE_NeutralKOs"):Connect(
+    function() onCombatCombo(player) end),
+  }
+ end
+ local entered=Players.PlayerAdded:Connect(watchCombo)
+ local exited=Players.PlayerRemoving:Connect(unwatchCombo)
  for _,player in ipairs(Players:GetPlayers()) do watchCombo(player) end
 
  local hordeSampleElapsed=0
@@ -593,9 +634,13 @@ local function install(world)
   if heartbeat then heartbeat:Disconnect() end
   entered:Disconnect()
   exited:Disconnect()
-  for _,conn in pairs(combatConnections) do conn:Disconnect() end
+  for player in pairs(combatConnections) do unwatchCombo(player) end
   table.clear(combatConnections)
   table.clear(lastNeutralCount)
+  table.clear(lastComboCount)
+  table.clear(lastKOAdvanceAt)
+  table.clear(lastComboAdvanceAt)
+  table.clear(lastShownCombo)
   table.clear(lastSurgeAt)
   for _,v in pairs(vessels) do v.alive=false end
   scenes[world]=nil
