@@ -1,0 +1,59 @@
+name: P0D GQ8 V3 mobile result original-source native QA
+on:
+  push:
+    branches: ['quality/gq8-v3-result-mobile-20261118-0545']
+    paths:
+      - 'rc_fastlane/quality_result_mobile_20261118/**'
+      - '.github/workflows/p0d-gq8-mobile-result.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'rc_fastlane/quality_result_mobile_20261118/**'
+      - '.github/workflows/p0d-gq8-mobile-result.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inverse-original-luau:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Native source selector selftest and fail-closed mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 rc_fastlane/quality_result_mobile_20261118/select_mobile.py selftest
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score487
+          persist-credentials: false
+      - name: Original score result byte-exact OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=_score487/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_MatchResultService.luau
+          SEL=rc_fastlane/quality_result_mobile_20261118/select_mobile.py
+          python3 "$SEL" patch-file --source "$SRC" --out /tmp/GQ8_MOBILE_ON.luau
+          python3 "$SEL" patch-file --source /tmp/GQ8_MOBILE_ON.luau --out /tmp/GQ8_MOBILE_OFF.luau --off
+          cmp "$SRC" /tmp/GQ8_MOBILE_OFF.luau
+          grep -Fq 'stats:gsub(" 納","\n納",1)' /tmp/GQ8_MOBILE_ON.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Pinned Luau compile of genuine source ON and OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq8-mobile-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-mobile-native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-mobile-native/luau-compile /tmp/GQ8_MOBILE_ON.luau >/dev/null
+          /tmp/gq8-mobile-native/luau-compile /tmp/GQ8_MOBILE_OFF.luau >/dev/null
+          echo GQ8_MOBILE_RESULT_ORIGINAL_NATIVE_ON_OFF_EXACT_PASS
