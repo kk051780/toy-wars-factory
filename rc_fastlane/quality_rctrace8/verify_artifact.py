@@ -45,6 +45,7 @@ RULES = {
     "vaultBoard.MaxDistance=40",
   )},
  "neutral": {
+  "EGGRUMBLE_NeutralStoneGiant": ("hpGui.MaxDistance=55", "hpGui.AlwaysOnTop=false"),
   "EGGRUMBLE_SwarmCombat": (
     "candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)",
     "session.neutralBudget:acquire(",
@@ -80,10 +81,12 @@ ROLE_CLASSES = {
  "EGGRUMBLE_CastleMatchRules": "ModuleScript",
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
+ "EGGRUMBLE_NeutralStoneGiant": "ModuleScript",
 }
-# These 57 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 58 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
+ "GQ8_STONE_GIANT_NEARBY_TRUE_HP_20261118": ("EGGRUMBLE_NeutralStoneGiant", ("-- GQ8_STONE_GIANT_TRUE_HP_LABEL_20261118", "hpGui.MaxDistance=55", 'model:SetAttribute("EGGRUMBLE_BossHealth",health)', 'hpText.Text="石巨人 "..tostring(math.floor(health)).." / 900"')),
  "GQ8_BOSS_RESULT_TRUE_CREDIT_20261118": ("EGGRUMBLE_MatchResultService","-- GQ8_BOSS_RESULT_TRUE_CREDIT_20261118"),
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
  "HUMAN_MATCH_MEMBERSHIP_535": ("EGGRUMBLE_SevenRoleCombat","currentHumanMember(session,"),
