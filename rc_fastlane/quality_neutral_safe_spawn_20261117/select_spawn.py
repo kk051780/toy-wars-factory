@@ -18,26 +18,7 @@ from select_hit042 import flatten, class_for
 FEATURE="GQ8_NEUTRAL_SPAWN_CLEARANCE_20261117"
 MODULE="EGGRUMBLE_SwarmCombat"
 MARK="-- GQ8_NEUTRAL_SPAWN_CLEARANCE_BEGIN"
-BLOCK_ANCHOR=" session.swarm=api\n"
-OLD_SPAWN='''     local target=candidates[math.random(1,#candidates)]
-     local a=math.random()*math.pi*2
-     local d=math.random(21,58)
-     local at=target+Vector3.new(math.cos(a)*d,0,math.sin(a)*d)
-     -- Always in the same wide battle district as its current moving hero.
-     addEnemy(Vector3.new(at.X,session.groundY or target.Y-4,at.Z))'''
-NEW_SPAWN='''     local target=candidates[math.random(1,#candidates)]
-     -- Three bounded probes; no soldier inside castle, ridge, tree or void.
-     -- Skipping an unsafe candidate does not award a phantom KO.
-     for _attempt=1,SPAWN_ATTEMPTS do
-      local a=math.random()*math.pi*2
-      local d=math.random(21,58)
-      local at=target+Vector3.new(math.cos(a)*d,0,math.sin(a)*d)
-      local point=Vector3.new(at.X,session.groundY or target.Y-4,at.Z)
-      if neutralSpawnClear(point) then
-       addEnemy(point)
-       break
-      end
-     end'''
+BLOCK_ANCHOR=" local function addEnemy(at:Vector3)\n"
 INSERT=''' -- GQ8_NEUTRAL_SPAWN_CLEARANCE_BEGIN
  -- Bound spawn checks: no new AI owner, loop, player state or remote.
  local SPAWN_ATTEMPTS=3
@@ -65,7 +46,20 @@ INSERT=''' -- GQ8_NEUTRAL_SPAWN_CLEARANCE_BEGIN
  end
  -- GQ8_NEUTRAL_SPAWN_CLEARANCE_END
 '''
-NEW_BLOCK=BLOCK_ANCHOR+INSERT
+GUARD='''  -- Validate BEFORE reserving neutral budget or creating a Humanoid.
+  local usable:Vector3?=nil
+  for _attempt=1,SPAWN_ATTEMPTS do
+   local point=if _attempt==1 then at else
+    at+Vector3.new(math.random(-12,12),0,math.random(-12,12))
+   if neutralSpawnClear(point) then
+    usable=point
+    break
+   end
+  end
+  if not usable then return end
+  at=usable
+'''
+NEW_BLOCK=INSERT+BLOCK_ANCHOR+GUARD
 SELECT_NAME="EGGRUMBLE_GQ8_NeutralSafeSpawn.luau"
 RECEIPT="GQ8_NEUTRAL_SAFE_SPAWN_RECEIPT.json"
 
@@ -76,18 +70,18 @@ def lookup(paths:dict)->tuple:
  return target[0]
 
 def patch(text:str)->str:
- if text.count(BLOCK_ANCHOR)!=1 or text.count(OLD_SPAWN)!=1:
+ if text.count(BLOCK_ANCHOR)!=1:
   raise ValueError("RED_SPAWN_OR_SWARM_DRIFT")
  if MARK in text or "neutralSpawnClear(point)" in text:
   raise ValueError("RED_DUPLICATE_SPAWN_PATCH")
- revised=text.replace(BLOCK_ANCHOR,NEW_BLOCK,1).replace(OLD_SPAWN,NEW_SPAWN,1)
+ revised=text.replace(BLOCK_ANCHOR,NEW_BLOCK,1)
  if unpatch(revised)!=text:raise ValueError("RED_NONEXACT_ROLLBACK")
  return revised
 
 def unpatch(text:str)->str:
- if text.count(NEW_BLOCK)!=1 or text.count(NEW_SPAWN)!=1:
+ if text.count(NEW_BLOCK)!=1:
   raise ValueError("RED_REVERSE_DRIFT")
- return text.replace(NEW_BLOCK,BLOCK_ANCHOR,1).replace(NEW_SPAWN,OLD_SPAWN,1)
+ return text.replace(NEW_BLOCK,BLOCK_ANCHOR,1)
 
 def prepare(base:Path,out:Path)->None:
  if out.exists():raise ValueError("RED_PROJECT_ALREADY_EXISTS")
@@ -189,13 +183,13 @@ print("GQ8_ACTUAL_SWARM_ARENA_FOOTPRINT_LUAU_NATIVE_8_PASS")
  print("GQ8_ACTUAL_SELECTED_SWARM_POLICY_NATIVE_FIXTURE_CREATED")
 
 def selftest()->None:
- original='local ignore=7\n'+BLOCK_ANCHOR+" local timer=true\n"+OLD_SPAWN+"\nreturn ok\n"
+ original='local ignore=7\n'+BLOCK_ANCHOR+" local timer=true\nreturn ok\n"
  updated=patch(original)
  assert unpatch(updated)==original
  assert updated.count("GetPartBoundsInBox")==1
  assert updated.count("SPAWN_ATTEMPTS=3")==1
  assert updated.count("neutralWithinArena(point,spawnFloor)")==1
- for bad in (updated,original.replace(OLD_SPAWN,""),original.replace(BLOCK_ANCHOR,"")):
+ for bad in (updated,original.replace(BLOCK_ANCHOR,""),original.replace(BLOCK_ANCHOR,BLOCK_ANCHOR*2)):
   try:patch(bad)
   except ValueError:pass
   else:raise AssertionError("RED_DRIFT_ACCEPTED")
