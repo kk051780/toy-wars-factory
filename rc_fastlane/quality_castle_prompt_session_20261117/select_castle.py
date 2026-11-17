@@ -25,7 +25,7 @@ PAIR=(
   '   or sessions[session.mode]~=session or type(session.isCurrentHuman)~="function"\n'
   '   or session.isCurrentHuman(p)~=true then return end')
 )
-FILE="GQ8_CASTLE_PROMPT_SESSION_HOST.luau"
+FILE="GQ8_CASTLE_PROMPT_SESSION_HOST.server.luau"
 RECEIPT="GQ8_CASTLE_PROMPT_SESSION_RECEIPT.json"
 
 def sha(data): return hashlib.sha256(data).hexdigest()

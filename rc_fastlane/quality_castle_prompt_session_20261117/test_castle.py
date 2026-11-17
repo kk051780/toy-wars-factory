@@ -23,6 +23,11 @@ SAMPLE = """--!strict
 """
 
 class CastleSessionSource(unittest.TestCase):
+    def test_selected_host_keeps_original_server_script_class(self):
+        from select_castle import FILE
+        self.assertTrue(FILE.endswith('.server.luau'))
+        self.assertNotEqual(FILE.endswith('.client.luau'),True)
+
     def test_one_host_three_reversible_guards(self):
         changed=patch(SAMPLE)
         self.assertEqual(unpatch(changed),SAMPLE)
