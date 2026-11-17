@@ -103,6 +103,7 @@ task = {delay=function(_,fn) table.insert(callbacks,fn) end}
 local function avatar(health)
  return {
   FindFirstChild=function() return nil end,
+  GetChildren=function() return {} end,
   FindFirstChildOfClass=function(_,name)
    if name=="Humanoid" and health then return {Health=health,WalkSpeed=16} end
    return nil
