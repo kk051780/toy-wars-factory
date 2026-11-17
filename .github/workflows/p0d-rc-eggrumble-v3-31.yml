@@ -2544,7 +2544,7 @@ jobs:
           python3 -B "$AUTHOR/tests/make_native_objective_harness.py" --out "$DIR/GQ496_REAL_PICKER_NATIVE.luau"
           /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ496_REAL_PICKER_NATIVE.luau" >/dev/null
           /tmp/gq530_all31_native/luau "$DIR/GQ496_REAL_PICKER_NATIVE.luau" | tee "$DIR/GQ496_REAL_PICKER_NATIVE.log"
-          grep -q 'GQ_REAL_OBJECTIVE_PICKER_NATIVE_PASS cases=13' "$DIR/GQ496_REAL_PICKER_NATIVE.log"
+          grep -q 'GQ_REAL_OBJECTIVE_PICKER_NATIVE_PASS cases=14' "$DIR/GQ496_REAL_PICKER_NATIVE.log"
           python3 - "$DIR/GQ496_REAL_PICKER_NATIVE.luau" "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" <<'PY'
           from pathlib import Path
           import sys
