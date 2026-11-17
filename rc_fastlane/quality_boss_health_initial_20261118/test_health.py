@@ -24,7 +24,8 @@ class BossInitialHealth(unittest.TestCase):
         self.assertEqual(s.blob_sha(self.original),s.ORIGINAL_BLOB)
 
     def test_initial_hp_exists_before_first_hit(self):
-        self.assertEqual(self.on.count(b' model:SetAttribute("EGGRUMBLE_BossHealth",health)'),1)
+        self.assertEqual(self.on.count(b'\n model:SetAttribute("EGGRUMBLE_BossHealth",health)'),1)
+        self.assertEqual(self.on.count(b'model:SetAttribute("EGGRUMBLE_BossHealth",health)'),2)
         self.assertLess(
             self.on.index(b' model:SetAttribute("EGGRUMBLE_BossHealth",health)'),
             self.on.index(b' local function damageFrom('))
