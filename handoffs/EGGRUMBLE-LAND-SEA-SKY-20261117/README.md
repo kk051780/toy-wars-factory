@@ -9,12 +9,12 @@
 - A **single additional Studio-only server script** waits for existing V3 `TEAM_Arena` / `BATTLE_ROYALE_Arena`, checks actual `TacticalBattlefield` and installs a disposable child folder. If the original Host is absent, it creates nothing. This protects the already accepted V3 31-script Game, Combat, Swarm, Castle, AI, Item, Lobby and Score sources, and the older rich51 S1 profile.
 - LAND: existing arena, three routes, fortresses, eggs, AI, neutral Horde, original combo source are **unchanged**, with a visually marked coast and public dock.
 - SEA: visible semi-transparent coastal surface and a recovery raft. This is **not real swimming Terrain water** yet: original solid tactical floor stays intact to avoid cross-session Terrain damage or falling. A role-locked controllable boat and sea-beast mount are added.
-- SKY: 2 collision platforms 90 studs above the ground; **two public lifts and returns** allow all seven roles access; sky-flight craft and flying-beast mounts have server-controlled horizontal movement within current V3 field bounds.
+- SKY: 2 collision platforms 90 studs above the ground; **two public lifts and returns** allow all seven roles access. Flying craft now also have pilot-only step altitude controls (18 studs per command, server movement at <=22 studs/s, absolute altitude 28..148 studs above ground) with bounded 3D Blockcast. Both climb and descent require actual owner plus seated pilot, not a trusted client CFrame.
 - MAD SCIENTIST (`BUILDER`): builds a role-locked boat or airship at a physical launch pad.
 - BEAST TAMER (`BEAST`): summons a role-locked sea beast or flying beast at a physical nest.
 - PSYCHIC (`TRAPPER`): places a highly visible short-lived tidal portal trap; in this first slice it is **BR-only** because authoritative TEAM ally IDs are private to Host. An opponent touching the portal is moved to a safe sea raft. Team trap requires a server-authoritative team/round hook, not guessed from cosmetics.
 - Others: can walk the coast and access both sky islands via public lifts; no paywall or class-exclusive mandatory objectives.
-- Mobile/desktop: uses native VehicleSeat throttle/steer inputs rather than a newly trusted client Remote. Flight has a **fixed safe altitude** for now; free vertical climb/dive, true ocean navigation and physical swim are **not complete**.
+- Mobile/desktop: uses native VehicleSeat throttle/steer inputs rather than a newly trusted client Remote. Flight supports discrete climb/descent via two on-board ProximityPrompts; **continuous analog climb/dive is still not implemented**. VehicleSeat prompt/seat replication and Android touch behavior require actual Roblox Studio evidence. True ocean navigation and physical swim are **not complete**.
 - No extra Combat or Swarm controller, no fake hit/KO or leaderboard authority; coast horde marker only. More simultaneous on-screen enemies is not claimed until existing neutral-budget/Android and actual Studio gates prove it.
 
 ## Limits, containment and rollback
@@ -32,8 +32,8 @@
 5. Android 15min median FPS>=30, 3-min child FUN and artwork/owner review. Only afterward consider activating this optional scene or using it as an S2 feature.
 
 ## Remaining real upgrades
-- Full 3,000×3,000 streamed battlefield with navigation and Android budget (currently **890×1,050/arena**).
-- Terrain Water/ocean currents, boats crossing true water, altitude climb/dive controls, mount animation, sky island air bridges, underwater fortresses and multiple castle entrances.
+- Full 3,000×3,000 streamed battlefield with navigation and Android budget (currently **890×1,050/arena**). Pilot-only variable-altitude flight is a first playable candidate, **not** a complete freely flying open world.
+- Terrain Water/ocean currents, boats crossing true water, smooth analog altitude controls (current up/down step prompts are discrete), mount animation, sky island air bridges, underwater fortresses and multiple castle entrances.
 - TEAM trap needs authoritative Host team lookup and no friendly fire; area attacks/neutral armies need direct #220 Swarm-budget integration, never a duplicate spawn manager.
 - This prototype uses basic shapes deliberately to test movement topology: **ART_NO_GO / MOBILE_NO_GO / FUN_NO_GO / RC_NOT_ADOPTED**.
 
