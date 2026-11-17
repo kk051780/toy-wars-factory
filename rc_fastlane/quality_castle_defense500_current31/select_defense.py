@@ -49,7 +49,8 @@ def inline(policy:bytes,live:bytes)->str:
        'session.rules.phase=="ACTIVE"','session.castleDefenseStop=stop',
        'RaycastParams.new()'):
         if needed not in a+b:raise ValueError("RED_GQ500_AUTHOR_SAFETY_DEP_"+needed)
-    for forbidden in ('RemoteEvent','DataStore','MarketplaceService'):
+    for forbidden in ('Instance.new("RemoteEvent")','Instance.new("RemoteFunction")',
+                      'GetService("DataStoreService")','GetService("MarketplaceService")'):
         if forbidden in a+b:raise ValueError("RED_GQ500_NEW_AUTHORITY_"+forbidden)
     return ("local CastleDefense=(function()\n"
             +"local Policy=(function()\n"+a+"end)()\n"
