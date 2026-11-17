@@ -89,6 +89,17 @@ local function safeMove(player,at,mode,world)
  return true
 end
 
+-- Seat welds the live pilot to the assembly, but the Character is NOT
+-- parented under the craft Model. Without this exception, Blockcast can
+-- collide with the pilot's own body and prevent every boat/flight step.
+-- Ignore only the server-confirmed seated pilot; other players and castle
+-- solids remain eligible collision targets.
+local function vehicleSweepExclusions(craft,water,offshoreWater,pilotCharacter)
+ local ignore={craft,water,offshoreWater}
+ if pilotCharacter then table.insert(ignore,pilotCharacter) end
+ return ignore
+end
+
 local function install(world)
  if scenes[world] or not world:IsA("Folder") then return end
  local mode=if world.Name=="TEAM_Arena" then "TEAM"
@@ -524,7 +535,8 @@ local function install(world)
      if delta.Magnitude>.1 then
       local params=RaycastParams.new()
       params.FilterType=Enum.RaycastFilterType.Exclude
-      params.FilterDescendantsInstances={craft,water,offshoreWater}
+      params.FilterDescendantsInstances=vehicleSweepExclusions(
+       craft,water,offshoreWater,hum.Parent)
       params.RespectCanCollide=true
       -- Server wall check; flying craft cannot ghost through solid sky islands.
       allowed=Workspace:Blockcast(v.model.PrimaryPart.CFrame,
