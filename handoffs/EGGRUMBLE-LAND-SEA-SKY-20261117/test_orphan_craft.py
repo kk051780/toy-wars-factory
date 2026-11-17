@@ -24,10 +24,10 @@ def actual_function(source=SRC):
 
 def native_program(source=SRC):
     return (
-      'local function matchHuman(owner,mode,world,role)\\n'
-      ' return owner.current==true and owner.mode==mode and owner.role==role\\n'
-      '  and owner.world==world and world.Parent~=nil\\n'
-      'end\\n'
+      'local function matchHuman(owner,mode,world,role)\n'
+      ' return owner.current==true and owner.mode==mode and owner.role==role\n'
+      '  and owner.world==world and world.Parent~=nil\n'
+      'end\n'
       + START + actual_function(source)
       + '''
 local world={Parent={Name="GQ8_LSS_ARENAS"}}
@@ -96,7 +96,7 @@ class TestOrphanCraft(unittest.TestCase):
 
     def test_optional_profile_git_sha_and_off31(self):
         data=(ROOT/"EGGRUMBLE_LandSeaSkyTraversal.server.luau").read_bytes()
-        blob=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+        blob=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
         manifest=json.loads((ROOT.parents[1]/"rc_fastlane"/
             "EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
         lock=json.loads((ROOT/"GQ8_RC32_SOURCE_LOCK.json").read_text())
