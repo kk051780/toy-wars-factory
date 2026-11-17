@@ -83,11 +83,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_46_known_flags(self):
+    def test_valid_covers_eight_domains_and_47_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],46)
+        self.assertEqual(v["verified_flag_count"],47)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -199,7 +199,7 @@ class Gate(unittest.TestCase):
         manifest=json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(manifest["source_count"],31)
         enabled={k for k,flag in manifest["feature_flags"].items() if flag is True}
-        self.assertEqual(len(enabled),46)
+        self.assertEqual(len(enabled),47)
         self.assertEqual(set(manifest["feature_flags"]),enabled)
         self.assertEqual(enabled,set(gq8.FEATURE_EVIDENCE))
         self.assertEqual(manifest["source_heads"]["zombie_guard582"],
@@ -225,6 +225,7 @@ class Gate(unittest.TestCase):
             "GQ514_BOSS_KO_ROUND_RESET_20261117",
             "GQ505_SERVER_MODE_FX_FAIR_INLINE31",
             "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
+            "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117",
         )
         for flag in late:
             script,anchors=gq8.FEATURE_EVIDENCE[flag]
@@ -232,7 +233,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],46)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],47)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
@@ -258,6 +259,7 @@ class Gate(unittest.TestCase):
             "GQ514_BOSS_KO_ROUND_RESET_20261117",
             "GQ505_SERVER_MODE_FX_FAIR_INLINE31",
             "GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117",
+            "GQ510_MAGE_TEAM_AI_WALL_LOS_20261117",
         ):
             with self.subTest(flag=flag):
                 b,r,m,a=fixture()
