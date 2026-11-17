@@ -3,12 +3,12 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "e2414c413046cbb68a9a654689a2c7181d3ce040",
+    "sha": "7560b3a3bbe83cdf2820bd24150e09e7b792e3a9",
     "source_count": 31,
     "enabled_flags": 61,
-    "original_samehead_v3_run": "RECHECK_NEW_HEAD",
-    "original_samehead_rc78_run": "RECHECK_NEW_HEAD",
-    "original_samehead_balance_run": "RECHECK_NEW_HEAD",
+    "original_samehead_v3_run": "RECHECK_CANDIDATE_HEAD",
+    "original_samehead_rc78_run": "RECHECK_CANDIDATE_HEAD",
+    "original_samehead_balance_run": "RECHECK_CANDIDATE_HEAD",
     "all_conclusion": "PREP_PENDING_NEW_HEAD"
   },
   "optional_profile": {
@@ -16,14 +16,15 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "23b3650b6bdce621c14439226ef03990696b4cea",
+    "source_blob_sha": "9efbed7b6077f79fd98b34c5b8cdf92345c9e29c",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
       714,
       737,
       749,
-      753
+      753,
+      758
     ]
   },
   "authority": {
@@ -35,28 +36,28 @@
     "production_enabled": false
   },
   "regression_gate": {
-    "native31_native32_off31": "PENDING_RC61_SAMEHEAD",
-    "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "native31_native32_off31": "PENDING_AIR_EXPIRY_CANDIDATE_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_AIR_EXPIRY_CANDIDATE_SAMEHEAD",
+    "source_class_exact": "PENDING_AIR_EXPIRY_CANDIDATE_SAMEHEAD",
+    "original31_byte_exact": "PENDING_AIR_EXPIRY_CANDIDATE_SAMEHEAD",
     "false_positive_or_stale_head": "RED",
     "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation",
+    "field": "existing LSS land/sea/sky plus occupied airborne vehicle expiry safe landing; sea rescue preserved",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "four craft global: retire stale owner/death/role/mode; existing traps, 95 Part budget preserved"
+    "balance": "four craft global, 95 live-part cap; retire orphan owners; no airborne expiry drop for current seated player"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "SOURCE_CANDIDATE_RC60_COMBINED_PENDING_CI",
+  "adoption": "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118_CANDIDATE_PENDING_NATIVE_ROJO",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
+  "caveat": "Studio-only 32nd source adds airborne expiry safe return; sea expiry, pilot sweep, orphan craft, trap fairness, true-KO combo, original31 are preserved. Static/native/true Rojo and engine evidence must remain separate."
 }
