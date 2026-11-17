@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 47 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 48 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -207,6 +207,21 @@ FEATURE_EVIDENCE = {
   "and (other==player or lineClear(root.Position+Vector3.new(0,1.5,0),",
   "botHum.Health=math.min(botHum.MaxHealth,botHum.Health+25)",
   'if session.mode=="TEAM" then')),
+ "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117": ("EGGRUMBLE_CombatFeel", (
+  "GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117",
+  'gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"',
+  'local function isEnemy(mode:string, own:Model, other:Model, arena:Instance):boolean',
+  'if mode~="TEAM" then return false end',
+  'if homeSelected then',
+  'local function pickObjective(',
+  'local function nearestActiveItem(',
+  'EGGRUMBLE_FieldItems',
+  'NEUTRAL_BOSS_STONE_GIANT',
+  'return home,"自城へ帰還（手動）"',
+  'UPDATE_SECONDS = 0.8',
+  'INITIAL_SECONDS = 18',
+  'marker.AlwaysOnTop=false',
+  'RunService.Heartbeat:Connect(function(dt:number)')),
  "GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117": ("EGGRUMBLE_CombatFeel", (
   "GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117",
   "WarGod_FlyingSlash=true, Mage_CrystalStorm=true, Assassin_ShadowAfterimage=true",
