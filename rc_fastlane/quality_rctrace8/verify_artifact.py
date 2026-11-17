@@ -230,7 +230,7 @@ FEATURE_EVIDENCE = {
   "local MAX_VOICES=4",
   "local MAX_PER_WINDOW=6",
   "local MAX_VOLUME=.30",
-  'GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
+  'local onHit=player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)',
   'GetAttributeChangedSignal("EGGRUMBLE_SFXMuted")',
   'GetAttributeChangedSignal("EGGRUMBLE_Eliminated")',
   "local function confirmedHit()",
