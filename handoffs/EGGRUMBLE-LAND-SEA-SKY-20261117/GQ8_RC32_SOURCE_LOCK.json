@@ -1,12 +1,12 @@
 {
-  "schema": "GQ8_LSS_CURRENT_RC54_SOURCE_LOCK_V1",
+  "schema": "GQ8_LSS_CURRENT_RC55_SOURCE_LOCK_V2",
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "43bb3023b3e58d895d6cd2cd8ad001ce540f8806",
+    "sha": "efe45cf2dccb7bd6595a52b5c637a13e5b2081c3",
     "source_count": 31,
-    "enabled_flags": 54,
-    "original_samehead_v3_run": 44147304716,
+    "enabled_flags": 55,
+    "original_samehead_v3_run": 44148530426,
     "original_samehead_source31_success": true
   },
   "optional_profile": {
@@ -18,14 +18,17 @@
     "total_source_count": 32
   },
   "samehead_native_rojo_off": {
-    "run": 44147304702,
-    "conclusion": "SUCCESS",
-    "artifact_id": 14357192527,
-    "artifact_name": "EGGRUMBLE-LSS-REAL31-TO32-STUDIO-CANDIDATE-NOT-RC",
-    "zip_size_bytes": 227283,
-    "source_selected31": 31,
-    "optional32": 32,
-    "off31": 31
+    "current_head_status": "PENDING_TRUE31_32_GITHUB_ACTIONS_ON_NEW_CANDIDATE_SHA",
+    "last_verified_official_rc54": {
+      "head": "43bb3023b3e58d895d6cd2cd8ad001ce540f8806",
+      "run": 44147304702,
+      "conclusion": "SUCCESS",
+      "artifact_id": 14357192527,
+      "zip_size_bytes": 227283
+    },
+    "required_original31": 31,
+    "required_optional32": 32,
+    "required_off31": 31
   },
   "profile_gate": {
     "official_default_is_original31": true,
@@ -46,7 +49,7 @@
     "balance": "max 4 craft, 2 traps, 95 live parts; server identity/distance checks"
   },
   "rollback": "Do not select EGGRUMBLE_LandSeaSkyTraversal as optional32 to return to the original exact 31-source V3. Fan selector OFF returns original singleton Swarm without touching the other30 sources.",
-  "adoption": "SOURCE_FILES_PRESENT_IN_OFFICIAL_RC; OPTIONAL_PROFILE_SOURCE_CANDIDATE; NOT_DEFAULT_PLAYABLE_RC_PROFILE",
+  "adoption": "OFFICIAL_RC55_HAS_SOURCE_FILES_AND_OPTIONAL_PROFILE_SIDECAR; CURRENT_DEFAULT_STILL_ORIGINAL31; NOT_OWNER_ACCEPTED",
   "runtime": {
     "studio_solo_2client": "NOT_TESTED",
     "android_15min": "NOT_TESTED",
