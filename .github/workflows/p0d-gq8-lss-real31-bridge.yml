@@ -147,15 +147,12 @@ jobs:
         run: |
           set -euo pipefail
           SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
-          python3 -B "$SOURCE/make_public_travel_native.py" \
-            --out /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau \
-            --mutant /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau
+          python3 -B "$SOURCE/make_public_travel_native.py" --out /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau --mutant /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau
           /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau >/dev/null
           /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau >/dev/null
           /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau | tee /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
           grep -qx GQ8_LSS_PUBLIC_TRAVEL_LUAU_8_CASES_PASS /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
-          if /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau \
-            >/tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log 2>&1; then
+          if /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau >/tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log 2>&1; then
             echo RED_PUBLIC_TRAVEL_MUTANT_WAS_ACCEPTED; exit 1
           fi
           grep -q RED_GQ8_PUBLIC_TRAVEL_DOUBLE_HOP /tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log

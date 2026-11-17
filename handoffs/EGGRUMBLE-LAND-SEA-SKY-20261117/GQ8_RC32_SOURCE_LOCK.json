@@ -3,7 +3,7 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "b52ef710159d339ad1f13fd1742efb57fc57fa31",
+    "sha": "30673c9db684f8b084e51b01e739937910cbe5ba",
     "source_count": 31,
     "enabled_flags": 61,
     "original_samehead_v3_run": "RECHECK_NEW_HEAD",
@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_blob_sha": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -43,23 +43,24 @@
     "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA",
     "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI",
     "prompt_sight_negative": "PENDING_MERGED_CANDIDATE_SAMEHEAD_SOURCE_AND_MUTANTS",
-    "public_travel_native_8_cases_mutant": "REQUIRE_SAME_HEAD_GREEN"
+    "full_footprint_native": "PENDING_THIS_SHA",
+    "public_travel_native8_mutant_red": "PENDING_THIS_HEAD"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "current land/sea/sky, latest authoritative prompt sight, distinct spatial psychic traps, airborne expiry safe return; public shuttle/cloud lift per-player travel pacing 2.5s",
+    "field": "current land/sea/sky, latest authoritative prompt sight, distinct spatial psychic traps, airborne expiry safe return; whole-craft full-span collision and yaw guard",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; emergency rescue unchanged"
+    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "PREP_PENDING_NEW_HEAD_NATIVE_ROJO_CAS",
+  "adoption": "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_PENDING_SAME_HEAD_CI",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Preserves latest official source including server-side prompt sight and two spatial trap slots; our only gameplay delta is guarded air expiry safe landing. Studio/Android/FUN not tested."
+  "caveat": "PR #763 public travel uniquely rebased onto current full-craft sweep and prompt sight; no Studio/Android/FUN test"
 }

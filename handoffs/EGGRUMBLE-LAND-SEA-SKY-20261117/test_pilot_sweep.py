@@ -16,8 +16,9 @@ SPEC.loader.exec_module(native)
 class PilotSweepSourceGate(unittest.TestCase):
     def test_actual_server_owner_pilot_excluded_but_not_other_players(self):
         self.assertIn('elseif hum and driver==v.owner then',SRC)
-        self.assertIn("params.FilterDescendantsInstances=vehicleSweepExclusions(\n       craft,water,offshoreWater,hum.Parent)",SRC)
+        self.assertIn("local exclude=vehicleSweepExclusions(\n      craft,water,offshoreWater,hum.Parent)",SRC)
         self.assertIn("params.RespectCanCollide=true",SRC)
+        self.assertIn("params.FilterDescendantsInstances=exclude",SRC)
         self.assertIn("allowed=Workspace:Blockcast(",SRC)
         self.assertEqual(SRC.count("local function vehicleSweepExclusions("),1)
         self.assertNotIn("params.FilterDescendantsInstances={craft,water,offshoreWater}",SRC)

@@ -76,7 +76,7 @@ class TestOrphanCraft(unittest.TestCase):
         self.assertLess(body.index("v.lastPilot=nil"),body.index("craft:Destroy()"))
         self.assertIn("Debris:AddItem(craft,VEHICLE_LIFETIME)",SRC)
         self.assertIn("GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",SRC)
-        self.assertIn('params.FilterDescendantsInstances=vehicleSweepExclusions(',SRC)
+        self.assertIn('local exclude=vehicleSweepExclusions(',SRC)
 
     def test_mutants_rejected_by_exact_real_native(self):
         original=native_program()

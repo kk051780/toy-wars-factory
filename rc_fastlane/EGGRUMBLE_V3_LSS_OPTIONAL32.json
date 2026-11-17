@@ -4,10 +4,10 @@
   "official_branch": "rc/p0d-s1-kids-rc01",
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
-  "source_branch_sha": "b52ef710159d339ad1f13fd1742efb57fc57fa31",
-  "integrator_parent_rc_sha": "b52ef710159d339ad1f13fd1742efb57fc57fa31",
+  "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
+  "integrator_parent_rc_sha": "30673c9db684f8b084e51b01e739937910cbe5ba",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+  "added_source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
   "source_author_prs": [
     714,
     737,
@@ -30,8 +30,8 @@
   "original31_must_remain_byte_exact": true,
   "new_game_combat_host_swarm_remote_store_authorities": 0,
   "robot_release_authorized": false,
-  "status": "OPTIONAL32_SOURCE_UPGRADE_PENDING_CURRENT_HEAD_QA",
-  "same_head_rc_31_and_32_ci": "RECHECK_THIS_SHA",
+  "status": "OPTIONAL32_GQ8_PUBLIC_TRAVEL_RC_SOURCE_PENDING_CI",
+  "same_head_rc_31_and_32_ci": "PENDING_CANDIDATE",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
@@ -53,7 +53,7 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
@@ -62,11 +62,11 @@
     "actual_studio_android_fun": "NOT_TESTED",
     "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE",
     "historical_accepted_blob": "8262066463911101780036af57fcc2f181bebcf4",
-    "previous_pinned_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_orphan_craft_owner": {
     "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "source_scope": "one existing optional32 Studio-only LSS script",
     "native_cases": 8,
     "mutants": 4,
@@ -74,12 +74,12 @@
     "release_authorized": false,
     "status": "PREP_PENDING_EXACT_SHA_CI",
     "rollback": "omit optional script and source lock selection",
-    "previous_pinned_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "optional_source_update": {
     "feature_id": "GQ8_LSS_REAL_KO_COMBO_ORDER_SYNC_20261118",
     "previous_source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
-    "proposed_source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "proposed_source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "purpose": "Observe actual server-owned NeutralKOs and Combo in either order, display one bounded 12x FX per streak only with two recent counter advances; no real Combat/Swarm/KO/score writers.",
     "candidate_only": true,
     "source_lock": "SAME_HEAD_NATIVE_ROJO_OFF31_REQUIRED",
@@ -91,7 +91,7 @@
   },
   "gq8_trap_spatial_slots": {
     "feature_id": "GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "max_live_traps": 2,
     "separate_centers_studs": 30,
     "trap_width_studs": 15,
@@ -100,23 +100,23 @@
     "studio_android_fun": "NOT_TESTED",
     "rollback": "OFF32 selects byte-exact original31",
     "status": "PREP_PENDING_SAME_HEAD_NATIVE_ROJO",
-    "previous_pinned_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_prompt_server_sight": {
     "feature_id": "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118",
     "scope": "one existing optional32 Script's shared prompt() server guard",
     "max_activation_distance": "q.MaxActivationDistance + 1 stud tolerance",
     "visibility": "Server Workspace:Raycast from current avatar Head or Root against collidable solids; cockpit self-craft exception with existing seat.Occupant rule",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "spatial_trap_slot_feature_retained": true,
     "original31_byte_exact": true,
     "studio_android_fun": "NOT_TESTED",
     "status": "PENDING_REAL31_32_NATIVE_ROJO_SAME_HEAD",
-    "previous_pinned_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_air_expiry_safe_landing": {
     "feature_id": "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
     "base_formal_head": "6868a9bbf634f569f901c6e682ee77a4abb3fecd",
     "source_scope": "one existing optional Studio32 Script; no alteration to canonical31",
     "conditions": "active same-world living original seated owner, not stale avatar, within 28 studs, high altitude",
@@ -128,21 +128,43 @@
     "android_15min": "NOT_TESTED",
     "art_fun": "NO_GO",
     "status": "SOURCE_CANDIDATE_PENDING_CI",
-    "previous_pinned_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+  },
+  "gq8_craft_full_footprint": {
+    "feature_id": "GQ8_LSS_FULL_CRAFT_SWEEP_20261118",
+    "prior_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a",
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_scope": "only existing Studio-only optional 32nd LSS script",
+    "boat_sweep_xyz": [
+      18,
+      8,
+      19
+    ],
+    "air_sweep_xyz": [
+      24,
+      8,
+      19
+    ],
+    "full_footprint_blockcast": true,
+    "rotation_only_destination_overlap": true,
+    "max_craft_unchanged": 4,
+    "canonical31_changed": false,
+    "preserves_spatial_traps": true,
+    "preserves_prompt_server_sight": true,
+    "preserves_air_expiry": true,
+    "status": "CANDIDATE_PENDING_SAME_HEAD_NATIVE_ROJO",
+    "rollback": "restore preceding optional32 blob or omit 32nd Script for original31",
+    "studio_android_fun": "NOT_TESTED"
   },
   "gq8_public_travel_pacing": {
     "feature_id": "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118",
-    "source_scope": "existing optional Studio32 script only",
-    "source_git_blob": "3e1a5cf5ddfb7ddd1a57262d3c4e28a13ac41d8b",
-    "public_travel_cooldown_seconds": 2.5,
-    "per_player_per_world": true,
-    "failed_move_does_not_consume": true,
-    "emergency_offshore_rescue_unchanged": true,
-    "source_native_cases": 8,
-    "mutant_expected_red": true,
-    "canonical31_changed": false,
-    "rollback": "omit optional32 Script; byte-identical canonical31",
-    "status": "PREP_SAME_HEAD_CI_REQUIRED",
-    "studio_android_fun": "NOT_TESTED"
+    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "scope": "1 optional32 script; original31 byte exact",
+    "cooldown_seconds": 2.5,
+    "emergency_rescue_cooldown": 0,
+    "real_luau_cases": 8,
+    "mutation": "cooldown disabled must fail",
+    "rollback": "omit optional32 script",
+    "status": "PENDING_SAME_HEAD_CI"
   }
 }
