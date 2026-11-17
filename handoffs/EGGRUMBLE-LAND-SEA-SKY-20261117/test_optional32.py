@@ -100,6 +100,27 @@ class LandSeaSkySourceTests(unittest.TestCase):
         self.assertNotIn('SetAttribute("EGGRUMBLE_NeutralKOs"', SOURCE)
         self.assertNotIn('SetAttribute("EGGRUMBLE_Combo"', SOURCE)
 
+    def test_tide_trap_current_living_character_and_successful_move(self):
+        # Existing one-shot protection stays intact. A stale/dead avatar
+        # cannot spend the trap; failed server move must reset the claim.
+        trap = SOURCE.split("t.Touched:Connect(function(other)", 1)[1].split(
+            "Debris:AddItem(t,TRAP_LIFETIME)", 1)[0]
+        checks = [
+            "if fired or not active or not t.Parent then return end",
+            "if guest.Character~=ch then return end",
+            'local hum=ch:FindFirstChildOfClass("Humanoid")',
+            "hum.Health<=0", "fired=true",
+            "if not safeMove(guest,seaRaft.Position", "fired=false",
+            "t:Destroy()",
+        ]
+        for check in checks:
+            with self.subTest(check=check):
+                self.assertIn(check, trap)
+                self.assertNotIn(check, trap.replace(check, "", 1))
+        self.assertLess(trap.index("fired=true"), trap.index("if not safeMove("))
+        self.assertLess(trap.index("if not safeMove("), trap.index("fired=false"))
+        self.assertLess(trap.index("fired=false"), trap.index("t:Destroy()"))
+
     def test_authorization_limits_and_reversibility(self):
         for value in ["MAX_CRAFT = 4", "MAX_PARTS_PER_WORLD = 95",
                       "TRAP_LIFETIME = 24", "VEHICLE_LIFETIME = 180",
