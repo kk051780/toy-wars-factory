@@ -12,6 +12,7 @@ on:
       - '.github/workflows/p0d-battle-element-rules-native.yml'
 permissions:
   contents: read
+  actions: read
 jobs:
   policy-native-and-rojo:
     runs-on: ubuntu-latest
@@ -114,9 +115,48 @@ jobs:
           print('BATTLE_ELEMENT_RULES_ROJO_ISOLATED_MODULE_EXACT_PASS',len(expected))
           PY
           test -s /tmp/battle-element-policy-isolated.rbxlx
+      - name: Real official V3 31 to policy32 and OFF31 Native+Rojo exact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$H" =~ ^[0-9a-f]{40}$ ]]
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 75 --json databaseId,headSha,status,conclusion > /tmp/battle-v3-runs.json
+          RUN="$(jq -r --arg h "$H" '[.[] | select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/battle-v3-runs.json)"
+          if [ -z "$RUN" ]; then echo RED_NO_OFFICIAL_SAMEHEAD_V3_ARTIFACT "$H"; exit 1; fi
+          mkdir -p artifacts/element-official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/element-official
+          test -s artifacts/element-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract --place artifacts/element-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx --template artifacts/element-official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json --receipt artifacts/element-official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json --out artifacts/element-real31 --head "$H"
+          SRC=handoffs/EGGRUMBLE-BATTLE-ELEMENT-20261118
+          python3 "$SRC/compose_element32.py" --current31 artifacts/element-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/element-32/ON32.project.json
+          python3 "$SRC/compose_element32.py" --current31 artifacts/element-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/element-32/OFF31.project.json --off
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for label,n in (('ON32',32),('OFF31',31)):
+            project=Path('artifacts/element-32')/(label+'.project.json')
+            paths=flat_project(json.loads(project.read_text()))
+            assert len(paths)==n, 'RED_WRONG_POLICY_COMPOSER_SOURCE_COUNT'
+            for info in paths.values():
+              src=(project.parent/info['$path']).resolve(strict=True)
+              subprocess.run(['/tmp/battle-luau/luau-compile','--text',str(src)],check=True,stdout=subprocess.DEVNULL)
+            print('BATTLE_ELEMENT_GENUINE_V3_ALL_NATIVE',label,n)
+          PY
+          /tmp/battle-rojo build artifacts/element-32/ON32.project.json -o artifacts/element-32/ON32.rbxlx
+          /tmp/battle-rojo build artifacts/element-32/OFF31.project.json -o artifacts/element-32/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/element-32/ON32.project.json --place artifacts/element-32/ON32.rbxlx --count 32
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/element-32/OFF31.project.json --place artifacts/element-32/OFF31.rbxlx --count 31
+          H_NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H_NOW" = "$H" || { echo RED_OFFICIAL_MOVED_DURING_REBUILD; exit 1; }
+          echo BATTLE_ELEMENT_REAL_OFFICIAL31_ON32_OFF31_SAMEHEAD_NATIVE_ROJO_PASS "$H" "$RUN"
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-BATTLE-ELEMENT-POLICY-ISOLATED-QA-NOT-GAME-RC
-          path: /tmp/battle-element-policy-isolated.rbxlx
+          path: |
+            /tmp/battle-element-policy-isolated.rbxlx
+            artifacts/element-32/
           if-no-files-found: error
           retention-days: 3
