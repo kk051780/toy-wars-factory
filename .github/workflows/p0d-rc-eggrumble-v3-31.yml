@@ -2372,7 +2372,7 @@ jobs:
           echo GQ8_NEUTRAL_SPAWN_BOUND_AND_COLLIDABLE_OVERLAP_ONE_SWARM_NATIVE31_ROJO31_INVERSE_OFF_PASS
       - uses: actions/checkout@v4
         with: {repository: kk051780/toy-wars-factory, ref: f90875e14446ba86b1c668ba43efa37fbc74be20, path: _gq524_original, persist-credentials: false}
-      - name: GQ524 original safeMove author 9-ray + 3.2x4.5 body collision safety on final current31 Combat
+      - name: GQ524 regression — original safeMove already present, all31 byte-exact, 11 native cases, true Rojo31
         shell: bash
         run: |
           set -euo pipefail
@@ -2413,7 +2413,7 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SCRIPT" verify --base "$BASE" --out "$OUT" \
             --author "$AUTHOR/patch_safe_warp.py" --place "$PLACE"
-          echo GQ524_NINJA_WIND_TRAPPER_WARP_ORIGINAL_AUTHOR_NATIVE11_ROJO31_OFF_EXACT_PASS
+          echo GQ524_PREEXISTING_ORIGINAL_SAFE_WARP_ALL31_UNCHANGED_NATIVE11_ROJO31_MUTANT_RED_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
@@ -2488,7 +2488,8 @@ jobs:
           assert m["source_heads"]["gq524_original_warp"]=="f90875e14446ba86b1c668ba43efa37fbc74be20"
           warp=json.loads(Path("artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json").read_text())
           assert warp["feature_id"]=="GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117"
-          assert warp["script_count"]==31 and warp["other30_byte_exact"] and warp["inverse_off_exact"]
+          assert warp["script_count"]==31 and warp["all31_byte_exact"] and warp["inverse_off_exact"]
+          assert warp["changed_script_count"]==0 and warp["existing_author_code_already_present"] is True
           assert warp["native"]==warp["rojo"]=="31/31" and warp["new_runtime_scripts"]==0
           assert warp["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
