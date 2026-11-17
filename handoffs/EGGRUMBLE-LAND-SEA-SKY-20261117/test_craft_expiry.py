@@ -75,7 +75,7 @@ class OffshoreExpiryRescue(unittest.TestCase):
     def test_optional_profile_source_lock_is_real_git_blob(self):
         src=Path(__file__).resolve().parent / "EGGRUMBLE_LandSeaSkyTraversal.server.luau"
         data=src.read_bytes()
-        blob=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+        blob=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
         manifest=json.loads((src.parents[2] / "rc_fastlane" /
                              "EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
         self.assertEqual(manifest["added_source_git_blob"],blob)
