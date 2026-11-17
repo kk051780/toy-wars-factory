@@ -1,0 +1,114 @@
+name: P0D GQ8 Existing Element Policy Real31 to32 and OFF31
+on:
+  push:
+    branches: [quality/gq8-element-rules-real31-bridge-20261118]
+    paths:
+      - 'quality_gameplay/gq8_element_real31_bridge_20261118/**'
+      - '.github/workflows/p0d-gq8-element-rules-real31-bridge.yml'
+  pull_request:
+    branches: [feature/gq8-element-affinity-20261118]
+    paths:
+      - 'quality_gameplay/gq8_element_real31_bridge_20261118/**'
+      - '.github/workflows/p0d-gq8-element-rules-real31-bridge.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-v3-31-to-policy32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Check #766 exact source unchanged, scope and synthetic ON/OFF
+        run: |
+          set -euo pipefail
+          BASE=7bf077efc16f37177a2986b5e54264072f481890
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          git cat-file -e "$BASE^{commit}"
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_element_real31_bridge_20261118 -p 'test_*.py'
+          python3 - <<'PY'
+          import subprocess
+          p='handoffs/EGGRUMBLE-ELEMENTAL-20261118/ElementalAffinityPolicy.luau'
+          sha=subprocess.check_output(['git','hash-object',p],text=True).strip()
+          assert sha=='0775f1fdb3b9c8c3436edc4aac3034cf2b6a0e75', 'RED_AUTHOR766_POLICY_SOURCE_CHANGED'
+          changed=subprocess.check_output(['git','diff','--name-only','7bf077efc16f37177a2986b5e54264072f481890','HEAD'],text=True).splitlines()
+          assert changed and all(
+            x.startswith('quality_gameplay/gq8_element_real31_bridge_20261118/')
+            or x == '.github/workflows/p0d-gq8-element-rules-real31-bridge.yml'
+            for x in changed
+          ),'RED_OVERLAPPING_AUTHOR_SOURCES_'+str(changed)
+          print('GQ8_ELEMENT_AUTHOR766_EXACT_NO_DUPLICATE_POLICY_PASS',sha)
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _battle_bridge_luau
+          persist-credentials: false
+      - name: Compile pinned native Luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _battle_bridge_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _battle_bridge_luau -B /tmp/battle-bridge-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/battle-bridge-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/battle-bridge-luau/luau-compile --text handoffs/EGGRUMBLE-ELEMENTAL-20261118/ElementalAffinityPolicy.luau >/dev/null
+      - name: Install checksum-pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/battle-bridge-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/battle-bridge-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/battle-bridge-rojo.zip') as z:
+            names=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+            assert len(names)==1
+            path=Path('/tmp/battle-bridge-rojo');path.write_bytes(z.read(names[0]));path.chmod(0o755)
+          PY
+      - name: Extract current real official V3 31 then ON32/OFF31 Native+Rojo
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$H" =~ ^[a-f0-9]{40}$ ]]
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 100 --json databaseId,headSha,status,conclusion > /tmp/battle-bridge-official-runs.json
+          RUN="$(jq -r --arg sha "$H" '[.[] | select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/battle-bridge-official-runs.json)"
+          test -n "$RUN" || { echo RED_NO_CURRENT_OFFICIAL_V3_SAMEHEAD_SUCCESS "$H"; exit 1; }
+          mkdir -p artifacts/battle-official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/battle-official
+          test -s artifacts/battle-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract --place artifacts/battle-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx --template artifacts/battle-official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json --receipt artifacts/battle-official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json --out artifacts/battle-real31 --head "$H"
+          SCRIPT=quality_gameplay/gq8_element_real31_bridge_20261118/compose_real32_policy.py
+          python3 "$SCRIPT" --current31 artifacts/battle-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/battle-real32/ON32.project.json
+          python3 "$SCRIPT" --current31 artifacts/battle-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/battle-real32/OFF31.project.json --off
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for profile,n in (('ON32',32),('OFF31',31)):
+            p=Path('artifacts/battle-real32')/(profile+'.project.json')
+            scripts=flat_project(json.loads(p.read_text()))
+            assert len(scripts)==n,'RED_NOT_EXPECTED_SCRIPT_COUNT'
+            for src in scripts.values():
+              f=(p.parent/src['$path']).resolve(strict=True)
+              subprocess.run(['/tmp/battle-bridge-luau/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+            print('BATTLE_EXISTING_POLICY_TRUE_NATIVE_EXACT',profile,n)
+          PY
+          /tmp/battle-bridge-rojo build artifacts/battle-real32/ON32.project.json -o artifacts/battle-real32/ON32.rbxlx
+          /tmp/battle-bridge-rojo build artifacts/battle-real32/OFF31.project.json -o artifacts/battle-real32/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/battle-real32/ON32.project.json --place artifacts/battle-real32/ON32.rbxlx --count 32
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/battle-real32/OFF31.project.json --place artifacts/battle-real32/OFF31.rbxlx --count 31
+          H_AFTER="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H_AFTER" = "$H" || { echo RED_OFFICIAL_HEAD_MOVED_DURING_BRIDGE; exit 1; }
+          echo GQ8_AUTHOR766_TRUE_OFFICIAL31_TO32_AND_INVERSE_OFF31_NATIVE_ROJO_PASS "$H" "$RUN"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ8-AUTHOR766-TRUE31-POLICY32-CANDIDATE-NOT-RC
+          path: artifacts/battle-real32/
+          if-no-files-found: error
+          retention-days: 3
