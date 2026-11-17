@@ -1,0 +1,46 @@
+name: P0D GQ8 battle passive HP regen Luau native
+on:
+  push:
+    branches:
+      - feature/gq8-battle-hp-regen-20261118-0811
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-battle-hp-regen-native.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-battle-hp-regen-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pure-regen-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - run: python3 -m unittest discover -v -s handoffs/EGGRUMBLE-HP-REGEN-20261118 -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/regen-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/regen-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          ROOT=handoffs/EGGRUMBLE-HP-REGEN-20261118
+          python3 "$ROOT/make_native.py" --out /tmp/regen_good.luau
+          python3 "$ROOT/make_native.py" --out /tmp/regen_mutant.luau --mutant
+          /tmp/regen-native/luau-compile --text /tmp/regen_good.luau >/dev/null
+          /tmp/regen-native/luau-compile --text /tmp/regen_mutant.luau >/dev/null
+          /tmp/regen-native/luau /tmp/regen_good.luau | tee /tmp/regen_ok.log
+          grep -qx GQ8_HP_REGEN_NATIVE_19_PLUS_7_ROLES_PASS /tmp/regen_ok.log
+          if /tmp/regen-native/luau /tmp/regen_mutant.luau >/tmp/regen_expected_red.log 2>&1; then
+            echo RED_MUTANT_REGEN_BYPASS_ACCEPTED; exit 1
+          fi
+          grep -q 'no regeneration at 1 second' /tmp/regen_expected_red.log
+          echo GQ8_REGEN_NATIVE_MUTANT_RED_CONFIRMED
