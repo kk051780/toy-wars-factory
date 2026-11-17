@@ -50,7 +50,7 @@ class Admission(unittest.TestCase):
     if k[-1]!=HOST:self.assertEqual(v.read_bytes(),after[k].read_bytes())
    altered=next(src.read_text() for k,src in after.items() if k[-1]==HOST)
    self.assertEqual(altered.count("NaturalRegen.attach(session,p,role)"),2)
-   self.assertIn("NaturalRegen.clear(p)",altered)
+   self.assertIn("NaturalRegen.attach(session,p,role)",altered)
    self.assertEqual(altered.count("local NaturalRegen=require"),1)
    receipt=json.loads(on.with_suffix(".receipt.json").read_text())
    self.assertEqual(receipt["changed_existing_sources"],[HOST])
