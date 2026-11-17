@@ -30,6 +30,21 @@ class RealmCoreContract(unittest.TestCase):
   self.assertIn('local GUN_INTERVAL = .20',source)
   self.assertIn('local BOMB_INTERVAL = 8',source)
   self.assertIn('original_31_byte_exact', (ROOT/"compose_core34.py").read_text())
+ def test_hydro_mount_remote_is_rejected_before_cooldown(self):
+  source=SERVER.read_text(encoding="utf-8")
+  fire=source.split("local function fire(player,weapon)",1)[1].split("local controlConnection",1)[0]
+  diver=fire.index("if state.divers[player] then")
+  mounted=fire.index("local model,kind=findCurrentMount(player)")
+  delays=fire.index("local delays={")
+  guard='if weapon=="HYDRO" then return end'
+  self.assertEqual(fire.count(guard),1)
+  self.assertLess(diver,fire.index(guard))
+  self.assertLess(fire.index(guard),mounted)
+  self.assertLess(mounted,delays)
+  # Removing this guard lets non-divers reach nil delays[weapon].
+  mutated=fire.replace(guard,"-- HYDRO guard removed",1)
+  self.assertNotIn(guard,mutated)
+  self.assertIn("now-(last[weapon] or -100)<delays[weapon]",mutated)
  def make31(self,path):
   path.mkdir(parents=True,exist_ok=True)
   tree={'ServerScriptService':{}}
