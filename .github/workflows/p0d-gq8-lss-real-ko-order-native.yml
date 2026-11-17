@@ -35,7 +35,10 @@ jobs:
           side=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
           assert blob==side["added_source_git_blob"],"RED_OPTIONAL32_SOURCE_BLOB_STALE"
           assert side["source_count"]==32
-          assert side["status"]=="SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS"
+          assert side["status"] in (
+            "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
+            "CURRENT_RC57_PREMERGE_OPTIONAL_PROFILE_PENDING_SAMEHEAD_QA")
+          assert side["robot_release_authorized"] is False
           assert side["optional_source_update"]["candidate_only"] is True
           assert 'if not RunService:IsStudio() then return end' in f.read_text()
           assert 'Instance.new("RemoteEvent")' not in f.read_text()
