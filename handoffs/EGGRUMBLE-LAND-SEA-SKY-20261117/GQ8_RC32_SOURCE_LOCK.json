@@ -3,7 +3,7 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "6868a9bbf634f569f901c6e682ee77a4abb3fecd",
+    "sha": "b52ef710159d339ad1f13fd1742efb57fc57fa31",
     "source_count": 31,
     "enabled_flags": 61,
     "original_samehead_v3_run": "RECHECK_NEW_HEAD",
@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "source_blob_sha": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -35,31 +35,31 @@
     "production_enabled": false
   },
   "regression_gate": {
-    "native31_native32_off31": "PENDING_RC61_SAMEHEAD",
-    "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "native31_native32_off31": "PENDING_REBASE_6868_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_REBASE_6868_SAMEHEAD",
+    "source_class_exact": "PENDING_REBASE_6868_SAMEHEAD",
+    "original31_byte_exact": "PENDING_REBASE_6868_SAMEHEAD",
     "false_positive_or_stale_head": "RED",
     "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA",
     "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI",
     "prompt_sight_negative": "PENDING_MERGED_CANDIDATE_SAMEHEAD_SOURCE_AND_MUTANTS",
-    "full_footprint_native": "PENDING_CURRENT_HEAD"
+    "full_footprint_native": "PENDING_THIS_SHA"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation; optional route prompts validate solid-wall line of sight; full wings/pontoons collision sweep and zero-translation yaw guard",
+    "field": "current land/sea/sky, latest authoritative prompt sight, distinct spatial psychic traps, airborne expiry safe return; whole-craft full-span collision and yaw guard",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "four craft global: retire stale owner/death/role/mode; distinct two-owner trap slots, 95 Part budget preserved; no extra craft/spawn/KO/Remote"
+    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "GQ8_FULL_CRAFT_SWEEP_PREP_PENDING_CI",
+  "adoption": "GQ8_FULL_CRAFT_SWEEP_PENDING_CI",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
+  "caveat": "Preserves latest official source including server-side prompt sight and two spatial trap slots; our only gameplay delta is guarded air expiry safe landing. Studio/Android/FUN not tested."
 }

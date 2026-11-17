@@ -5,9 +5,9 @@
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
   "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
-  "integrator_parent_rc_sha": "6868a9bbf634f569f901c6e682ee77a4abb3fecd",
+  "integrator_parent_rc_sha": "b52ef710159d339ad1f13fd1742efb57fc57fa31",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+  "added_source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
   "source_author_prs": [
     714,
     737,
@@ -21,7 +21,8 @@
     "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
     "GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118",
-    "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118"
+    "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118",
+    "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
@@ -51,7 +52,7 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
@@ -60,11 +61,11 @@
     "actual_studio_android_fun": "NOT_TESTED",
     "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE",
     "historical_accepted_blob": "8262066463911101780036af57fcc2f181bebcf4",
-    "historical_source_git_blob": "ce5fb23099527f3bf020b5b51c328c4f1517dd11"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_orphan_craft_owner": {
     "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
-    "source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "source_scope": "one existing optional32 Studio-only LSS script",
     "native_cases": 8,
     "mutants": 4,
@@ -72,12 +73,12 @@
     "release_authorized": false,
     "status": "PREP_PENDING_EXACT_SHA_CI",
     "rollback": "omit optional script and source lock selection",
-    "historical_source_git_blob": "ce5fb23099527f3bf020b5b51c328c4f1517dd11"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "optional_source_update": {
     "feature_id": "GQ8_LSS_REAL_KO_COMBO_ORDER_SYNC_20261118",
     "previous_source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
-    "proposed_source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "proposed_source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "purpose": "Observe actual server-owned NeutralKOs and Combo in either order, display one bounded 12x FX per streak only with two recent counter advances; no real Combat/Swarm/KO/score writers.",
     "candidate_only": true,
     "source_lock": "SAME_HEAD_NATIVE_ROJO_OFF31_REQUIRED",
@@ -89,7 +90,7 @@
   },
   "gq8_trap_spatial_slots": {
     "feature_id": "GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118",
-    "source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "max_live_traps": 2,
     "separate_centers_studs": 30,
     "trap_width_studs": 15,
@@ -98,24 +99,40 @@
     "studio_android_fun": "NOT_TESTED",
     "rollback": "OFF32 selects byte-exact original31",
     "status": "PREP_PENDING_SAME_HEAD_NATIVE_ROJO",
-    "historical_source_git_blob": "ce5fb23099527f3bf020b5b51c328c4f1517dd11"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_prompt_server_sight": {
     "feature_id": "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118",
     "scope": "one existing optional32 Script's shared prompt() server guard",
     "max_activation_distance": "q.MaxActivationDistance + 1 stud tolerance",
     "visibility": "Server Workspace:Raycast from current avatar Head or Root against collidable solids; cockpit self-craft exception with existing seat.Occupant rule",
-    "source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "spatial_trap_slot_feature_retained": true,
     "original31_byte_exact": true,
     "studio_android_fun": "NOT_TESTED",
     "status": "PENDING_REAL31_32_NATIVE_ROJO_SAME_HEAD",
-    "historical_source_git_blob": "ce5fb23099527f3bf020b5b51c328c4f1517dd11"
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
+  },
+  "gq8_air_expiry_safe_landing": {
+    "feature_id": "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
+    "base_formal_head": "6868a9bbf634f569f901c6e682ee77a4abb3fecd",
+    "source_scope": "one existing optional Studio32 Script; no alteration to canonical31",
+    "conditions": "active same-world living original seated owner, not stale avatar, within 28 studs, high altitude",
+    "behavior": "return to original grounded public dock via safeMove when 180s flying craft expires",
+    "retained": "latest prompt server sight, two spatial trap slots, older sea expiry rescue, real KO combo, owner reaper",
+    "negative_mutants": 7,
+    "rollback": "omit optional script -> exact canonical31",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "art_fun": "NO_GO",
+    "status": "SOURCE_CANDIDATE_PENDING_CI",
+    "historical_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a"
   },
   "gq8_craft_full_footprint": {
     "feature_id": "GQ8_LSS_FULL_CRAFT_SWEEP_20261118",
-    "prior_source_git_blob": "ce5fb23099527f3bf020b5b51c328c4f1517dd11",
-    "source_git_blob": "7b1849666636ba0d74d9f2ff10a85f250e923a91",
+    "prior_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a",
+    "source_git_blob": "4a66537f3938b4234d3d6a918c03720ee72d0301",
     "source_scope": "only existing Studio-only optional 32nd LSS script",
     "boat_sweep_xyz": [
       18,
@@ -133,8 +150,9 @@
     "canonical31_changed": false,
     "preserves_spatial_traps": true,
     "preserves_prompt_server_sight": true,
+    "preserves_air_expiry": true,
     "status": "CANDIDATE_PENDING_SAME_HEAD_NATIVE_ROJO",
-    "rollback": "restore preceding optional32 blob; or omit the optional Script to restore 31 original",
+    "rollback": "restore preceding optional32 blob or omit 32nd Script for original31",
     "studio_android_fun": "NOT_TESTED"
   }
 }

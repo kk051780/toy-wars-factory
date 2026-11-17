@@ -16,8 +16,11 @@ MARKER="GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118"
 
 def expiry_clause(source):
     assert source.count("craft.Destroying:Connect(function()")==1
+    # Scope the sea-only contract to its own if-block. The adjacent new
+    # airborne guard intentionally repeats owner/match/proximity checks;
+    # counting those would let a removed SEA guard evade negative mutants.
     return source.split("craft.Destroying:Connect(function()",1)[1].split(
-        "data.alive=false",1)[0]
+        "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118",1)[0]
 
 
 def meets_contract(clause):

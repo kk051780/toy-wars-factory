@@ -357,6 +357,23 @@ local function install(world)
      end
     end
    end
+   -- GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118
+   -- The 180s Debris timer also expires occupied flying craft, which lack
+   -- the sea-only rescue above. Never drop the live, current seated pilot
+   -- from high altitude; return to the existing grounded public dock.
+   -- Do not move a dismounted player or a stale/dead/replaced character.
+   if active and data.flying then
+    local pilot=data.lastPilot
+    local ch=player.Character
+    local root=ch and ch:FindFirstChild("HumanoidRootPart")
+    if pilot and pilot.Parent==ch and pilot.Health>0 and root
+     and pilot.Sit and seat.Occupant==pilot
+     and matchHuman(player,mode,world,role)
+     and (root.Position-craft:GetPivot().Position).Magnitude<28
+     and craft:GetPivot().Position.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then
+     safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)
+    end
+   end
    data.alive=false
    vessels[craft]=nil
    if perUser[player.UserId]==data then perUser[player.UserId]=nil end
