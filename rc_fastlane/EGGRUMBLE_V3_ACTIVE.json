@@ -362,5 +362,22 @@
     "studio_android_owner_fun": "NOT_TESTED",
     "candidate_enabled": true,
     "note": "Reuse exact source patch/tests from #682 0079e8cdb14adf601f79bcee891d3317b45261d6; final output after GQ81, 31 scripts/40 source-backed flags"
+  },
+  "gq8_burn_replay_reset": {
+    "feature_id": "GQ8_BURN_REPLAY_RESET_20261117",
+    "scope": "existing RoundReplay.resetHuman Humanoid old-round EGGRUMBLE_BurnUntil reset, after #686 all-shield",
+    "source_selected_by_workflow": true,
+    "script_count": 31,
+    "other30_byte_exact": true,
+    "feature_flags_unchanged": 40,
+    "owner_pr": 482,
+    "original_combat_burn_owner": "EGGRUMBLE_SevenRoleCombat",
+    "owned_existing_module": "EGGRUMBLE_RoundReplay",
+    "rollback": "disable only burn overlay, preserve existing GQ8_MULTI_SHIELD_SELECTED31 byte exact",
+    "native": "PENDING_CI",
+    "rojo": "PENDING_CI",
+    "formal_rc": "PREP_CANDIDATE_AWAIT_220_NONFORCE_CAS",
+    "studio_android_owner_fun": "NOT_TESTED",
+    "new_game_remote_store": 0
   }
 }
