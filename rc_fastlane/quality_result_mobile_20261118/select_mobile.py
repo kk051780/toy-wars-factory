@@ -101,6 +101,52 @@ def prepare(base: Path, out: Path) -> None:
         json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print("GQ8_MOBILE_CURRENT31_SINGLE_RESULT_OTHER30_EXACT_OFF_PASS")
 
+
+def verify(base: Path, out: Path, place: Path) -> None:
+    import xml.etree.ElementTree as ET
+    _, before = mapping(base.resolve(strict=True))
+    _, after = mapping(out.resolve(strict=True))
+    if len(before) != 31 or set(before) != set(after):
+        raise ValueError("RED_GQ8_MOBILE_REAL31_SET")
+    changed = [key for key in before if before[key].read_bytes() != after[key].read_bytes()]
+    if changed != [TARGET]:
+        raise ValueError("RED_GQ8_MOBILE_REAL31_ONLY_RESULT")
+    source = before[TARGET].read_text(encoding="utf-8")
+    selected = after[TARGET].read_text(encoding="utf-8")
+    if select(source) != selected or off(selected) != source:
+        raise ValueError("RED_GQ8_MOBILE_REAL31_INVERSE")
+    found = {}
+    for item in ET.parse(place).getroot().iter("Item"):
+        kind = item.get("class")
+        if kind not in ("Script", "ModuleScript", "LocalScript"):
+            continue
+        props = item.find("Properties")
+        if props is None:
+            raise ValueError("RED_GQ8_MOBILE_PLACE_PROPS")
+        name = props.findtext("string[@name='Name']")
+        body = props.findtext("ProtectedString[@name='Source']")
+        if body is None:
+            body = props.findtext("string[@name='Source']")
+        if not name or body is None or name in found:
+            raise ValueError("RED_GQ8_MOBILE_PLACE_DUPLICATE")
+        found[name] = (kind, body.replace("\r\n", "\n"))
+    if len(found) != 31 or set(found) != {key[-1] for key in after}:
+        raise ValueError("RED_GQ8_MOBILE_PLACE_SET")
+    for key, filepath in after.items():
+        kind = ("Script" if filepath.name.endswith(".server.luau") else
+                "LocalScript" if filepath.name.endswith(".client.luau") else "ModuleScript")
+        if found[key[-1]] != (kind, filepath.read_text(encoding="utf-8").replace("\r\n", "\n")):
+            raise ValueError("RED_GQ8_MOBILE_PLACE_SOURCE_" + key[-1])
+    receipt_path = out.parent / "GQ8_MOBILE_RESULT_RECEIPT.json"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    if receipt["before_sha256"] != sha(source) or receipt["after_sha256"] != sha(selected):
+        raise ValueError("RED_GQ8_MOBILE_RECEIPT_SOURCE")
+    receipt.update(native="31/31", rojo="31/31",
+                   place_bytes=place.stat().st_size,
+                   place_sha256=hashlib.sha256(place.read_bytes()).hexdigest())
+    receipt_path.write_text(json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    print("GQ8_MOBILE_REAL31_NATIVE_ROJO_CLASS_SOURCE_OFF_EXACT_PASS")
+
 def selftest() -> None:
     sample = (
         "--!strict\n"
@@ -131,11 +177,12 @@ def selftest() -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=("selftest", "patch-file", "prepare"))
+    ap.add_argument("command", choices=("selftest", "patch-file", "prepare", "verify"))
     ap.add_argument("--source", type=Path)
     ap.add_argument("--out", type=Path)
     ap.add_argument("--off", action="store_true")
     ap.add_argument("--base", type=Path)
+    ap.add_argument("--place", type=Path)
     args = ap.parse_args()
     if args.command == "selftest":
         selftest()
@@ -148,3 +195,7 @@ if __name__ == "__main__":
         if args.base is None or args.out is None:
             ap.error("prepare requires --base and --out")
         prepare(args.base, args.out)
+    elif args.command == "verify":
+        if args.base is None or args.out is None or args.place is None:
+            ap.error("verify requires --base --out --place")
+        verify(args.base, args.out, args.place)
