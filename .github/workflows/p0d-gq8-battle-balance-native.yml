@@ -1,0 +1,60 @@
+name: GQ8 Battle Balance Actual Realm Native and Owner Spec QA
+on:
+  push:
+    branches: ['quality/gq8-battle-balance-native-20261118-0743']
+    paths:
+      - 'quality_gameplay/gq8_battle_balance_20261118/**'
+      - '.github/workflows/p0d-gq8-battle-balance-native.yml'
+      - 'handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau'
+  pull_request:
+    branches:
+      - 'feature/gq8-realm-core-20261118'
+      - 'rc/p0d-s1-kids-rc01'
+    paths:
+      - 'quality_gameplay/gq8_battle_balance_20261118/**'
+      - '.github/workflows/p0d-gq8-battle-balance-native.yml'
+      - 'handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau'
+permissions:
+  contents: read
+jobs:
+  actual-realm-balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Actual source presence and 64-pair owner-policy SPEC ONLY
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_battle_balance_20261118 -p 'test_*.py'
+          echo GQ8_BATTLE_SPEC_ORACLE_PASS_NOT_LIVE_COMBAT_ACCEPTANCE
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_pinned_luau
+          persist-credentials: false
+      - name: Real RealmCore Luau syntax and extracted native damage plus mutant
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq8_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq8_pinned_luau -B /tmp/gq8-battle-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-battle-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 -B quality_gameplay/gq8_battle_balance_20261118/test_realm_battle_balance.py \
+            --native /tmp/gq8-battle-real-valid.luau --mutant /tmp/gq8-battle-real-mutant.luau
+          /tmp/gq8-battle-native/luau-compile --text \
+            handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau >/dev/null
+          /tmp/gq8-battle-native/luau-compile --text /tmp/gq8-battle-real-valid.luau >/dev/null
+          /tmp/gq8-battle-native/luau-compile --text /tmp/gq8-battle-real-mutant.luau >/dev/null
+          /tmp/gq8-battle-native/luau /tmp/gq8-battle-real-valid.luau | tee /tmp/gq8-battle-real-valid.log
+          grep -q GQ8_BATTLE_REALM_ACTUAL_NATIVE_11_CASES_PASS /tmp/gq8-battle-real-valid.log
+          if /tmp/gq8-battle-native/luau /tmp/gq8-battle-real-mutant.luau \
+            >/tmp/gq8-battle-real-mutant.log 2>&1; then
+            echo RED_BATTLE_FIRE_MULTIPLIER_MUTANT_WAS_NOT_CAUGHT
+            exit 1
+          fi
+          grep -q RED_FIRE_UNDERWATER_MULTIPLIER /tmp/gq8-battle-real-mutant.log
+          echo GQ8_BATTLE_REAL_SOURCE_NATIVE_AND_MUTANT_PASS
+          echo REALM_SOURCE_NATIVE_ONLY_ELEMENTAL_64PAIR_SPEC_NOT_GAMEPLAY_IMPLEMENTED
