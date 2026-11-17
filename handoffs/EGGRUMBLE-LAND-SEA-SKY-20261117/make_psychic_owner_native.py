@@ -45,6 +45,14 @@ local function simulate(case)
  local touchedByOwner=case=="owner_touched"
  local rootX=if case=="far_guest" then 30 else 0
  local ch={}
+ guest.Character=ch
+ if case=="old_guest_avatar" then guest.Character={} end
+ function ch:FindFirstChildOfClass(name)
+  if name=="Humanoid" then
+   return {Health=if case=="dead_guest" then 0 else 100}
+  end
+  return nil
+ end
  function ch:FindFirstChild(name)
   if name=="HumanoidRootPart" then return {Position=vec(rootX)} end
   return nil
@@ -68,7 +76,9 @@ local function simulate(case)
  local teleports=0
  local function safeMove(p,at,m,w)
   assert(p==guest and m==mode and w==world)
+  if case=="move_rejected" then return false end
   teleports+=1
+  return true
  end
  local seaRaft={Position=vec(15)}
  local t={Parent=true,Position=vec(0)}
@@ -90,11 +100,12 @@ for _,case in ipairs({"old_owner","dead_owner","different_avatar"}) do
  local n,k=simulate(case)
  assert(n==0 and k==1,"RED_CASTER_LEFT_ACTIVE_TRAP_"..case)
 end
-for _,case in ipairs({"old_guest","far_guest","owner_touched"}) do
+for _,case in ipairs({"old_guest","old_guest_avatar","dead_guest",
+                     "far_guest","owner_touched","move_rejected"}) do
  local n,k,parent=simulate(case)
  assert(n==0 and k==0 and parent,"RED_ILLEGAL_VICTIM_"..case)
 end
-print("LSS_ACTUAL_PSYCHIC_OWNER_LUAU_7_CASES_PASS")
+print("LSS_ACTUAL_PSYCHIC_OWNER_LUAU_10_CASES_PASS")
 '''
 
 def extract(text: str) -> str:
