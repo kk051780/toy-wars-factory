@@ -10,7 +10,7 @@ import argparse
 HERE=Path(__file__).parent
 SOURCE=HERE/"EGGRUMBLE_LandSeaSkyTraversal.server.luau"
 START="local function vehicleSweepExclusions(craft,water,offshoreWater,pilotCharacter)\n"
-END="\nend\n\nlocal function install(world)"
+END="\nend\n\n-- GQ8_LSS_FULL_CRAFT_SWEEP_20261118:"
 
 PRELUDE="""-- Native self/other collision filter regression.
 local craft={Name="Craft"}
@@ -41,7 +41,7 @@ def extract(src: str) -> str:
     body=START+src.split(START,1)[1].split(END,1)[0]+"\nend"
     if body.count("table.insert(ignore,pilotCharacter)") != 1:
         raise ValueError("RED_SERVER_SEATED_PILOT_FILTER_MISSING")
-    if "vehicleSweepExclusions(\n       craft,water,offshoreWater,hum.Parent)" not in src:
+    if "local exclude=vehicleSweepExclusions(\n      craft,water,offshoreWater,hum.Parent)" not in src:
         raise ValueError("RED_FILTER_NOT_WIRED_TO_ACTUAL_SEATED_HUMANOID")
     if "elseif hum and driver==v.owner then" not in src:
         raise ValueError("RED_SERVER_PILOT_OWNERSHIP_AUTHORITY_DRIFT")
