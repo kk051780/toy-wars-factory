@@ -8,9 +8,8 @@ SOURCE=ROOT/"ElementalAffinityPolicy.luau"
 HIT="if dominates[attack]==defense then return 1.25 end"
 
 CONTRACT=r'''
-local m=(function()
 __SOURCE__
-end)()
+local m=M
 local elements=m.ORDER
 assert(#elements==8, "RED_8_ELEMENTS")
 for _,a in ipairs(elements) do
@@ -54,8 +53,11 @@ def generate(out:Path):
  if src.count(HIT)!=1:
   raise RuntimeError("RED_EXPECTED_ONE_COUNTER_POLICY")
  out.mkdir(parents=True,exist_ok=True)
- (out/"good.luau").write_text(CONTRACT.replace("__SOURCE__",src),encoding="utf-8")
- (out/"mutant.luau").write_text(CONTRACT.replace("__SOURCE__",src.replace(HIT,"if dominates[attack]==defense then return .80 end")),encoding="utf-8")
+ if not src.rstrip().endswith("return M"):
+  raise RuntimeError("RED_MODULE_RETURN_EXPECTATION")
+ head=src.rstrip()[:-len("return M")]
+ (out/"good.luau").write_text(CONTRACT.replace("__SOURCE__",head),encoding="utf-8")
+ (out/"mutant.luau").write_text(CONTRACT.replace("__SOURCE__",head.replace(HIT,"if dominates[attack]==defense then return .80 end")),encoding="utf-8")
  print("GQ8_ELEMENT_SOURCE_DERIVED_NATIVE_READY")
 
 if __name__=="__main__":
