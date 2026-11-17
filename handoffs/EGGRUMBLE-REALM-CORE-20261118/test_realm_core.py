@@ -27,8 +27,9 @@ class RealmCoreContract(unittest.TestCase):
   self.assertIn('RealmBattleIntent_V1',client)
   self.assertNotIn('RunService:IsStudio()',source)
   self.assertIn('MaxActivationDistance=13',source)
-  self.assertIn('Rate',source.replace('rate limits','Rate'))
-  self.assertIn('original31',str(ROOT/"compose_core34.py").replace('core34','original31_core34'))
+  self.assertIn('local GUN_INTERVAL = .20',source)
+  self.assertIn('local BOMB_INTERVAL = 8',source)
+  self.assertIn('original_31_byte_exact', (ROOT/"compose_core34.py").read_text())
  def make31(self,path):
   path.mkdir(parents=True,exist_ok=True)
   tree={'ServerScriptService':{}}
