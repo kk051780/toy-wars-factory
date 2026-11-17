@@ -5,16 +5,17 @@
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
   "source_branch_sha": "09de449127d739658a3b9d344ac996430bf7a7b6",
-  "integrator_parent_rc_sha": "d5f912a7cdf5e7882ed703abee96e4ba03ba356b",
+  "integrator_parent_rc_sha": "915c83d468c2102c9947b964c4ebab63054b3e70",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+  "added_source_git_blob": "7afeb1724c301fb868a775e5e800d3421c7178ec",
   "source_author_prs": [
     714,
     737
   ],
   "feature_ids": [
     "GQ8_LSS_LAND_SEA_SKY_OPTIONAL32_20261117",
-    "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117"
+    "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117",
+    "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
@@ -25,5 +26,18 @@
   "same_head_rc_31_and_32_ci": "PENDING",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
-  "art_fun_owner": "NO_GO"
+  "art_fun_owner": "NO_GO",
+  "gq8_trap_owner_fairness": {
+    "feature_id": "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
+    "base_formal_head": "915c83d468c2102c9947b964c4ebab63054b3e70",
+    "selected_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "max_live_traps_global": 2,
+    "max_live_traps_per_owner": 1,
+    "only_optional32_script": true,
+    "canonical31_changed": false,
+    "mutation_negative_required": true,
+    "off_to_current31_byte_exact": true,
+    "studio_android_fun": "NOT_TESTED",
+    "status": "CANDIDATE_PENDING_SAME_HEAD_CI"
+  }
 }

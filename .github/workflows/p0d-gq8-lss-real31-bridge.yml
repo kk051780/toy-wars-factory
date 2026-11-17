@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rehydrate_real31.py'
-          python3 -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_optional32.py'
+          python3 -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
       - name: Resolve exact official HEAD and successful V3 run
         id: official
         run: |
@@ -96,7 +96,7 @@ jobs:
           set -euo pipefail
           cmake -S _pinned_luau -B /tmp/lss-native -G Ninja \
             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/lss-native --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/lss-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import json,subprocess
           from pathlib import Path
@@ -112,6 +112,20 @@ jobs:
                              check=True,stdout=subprocess.DEVNULL)
             print('GQ8_LSS_ACTUAL_ALL_NATIVE_PASS',n)
           PY
+      - name: GQ8 BR psychic trap one-owner-one-slot real Luau and expected-mutant RED
+        run: |
+          set -euo pipefail
+          SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 -B "$SOURCE/make_native_trap_owner.py"             --out /tmp/GQ8_TRAP_OWNER_GOOD.luau --mutant /tmp/GQ8_TRAP_OWNER_MUTANT.luau
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_OWNER_GOOD.luau >/dev/null
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_OWNER_MUTANT.luau >/dev/null
+          /tmp/lss-native/luau /tmp/GQ8_TRAP_OWNER_GOOD.luau | tee /tmp/GQ8_TRAP_OWNER_GOOD.log
+          grep -qx GQ8_LSS_TRAP_OWNER_LUAU_11_CASES_PASS /tmp/GQ8_TRAP_OWNER_GOOD.log
+          if /tmp/lss-native/luau /tmp/GQ8_TRAP_OWNER_MUTANT.luau             >/tmp/GQ8_TRAP_OWNER_MUTANT_EXPECTED_RED.log 2>&1; then
+            echo RED_TRAP_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q RED_SAME_OWNER_TWO_TRAPS /tmp/GQ8_TRAP_OWNER_MUTANT_EXPECTED_RED.log
+          echo GQ8_BR_TRAP_OWNER_REAL_VM_AND_MUTANT_RED_PASS
       - name: Fetch pinned Rojo 7.7.1
         run: |
           set -euo pipefail
