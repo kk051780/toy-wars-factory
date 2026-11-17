@@ -17,7 +17,7 @@ START = '-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 BEGIN'
 END = '-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 END'
 INSERT = '''-- GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117 BEGIN
 -- Server-accepted skill activation, intentionally distinct from a confirmed HIT.
--- No input hook/RemoteEvent/damage; zero additional always-visible HUD.
+-- No input hook, network events or damage; zero always-visible HUD.
 local castCue=Instance.new("Frame")
 castCue.Name="ServerAcceptedCastCue"
 castCue.AnchorPoint=Vector2.new(.5,.5)
