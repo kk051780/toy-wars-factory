@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_blob_sha": "f9ea61cc1ed4a4ec5edbc7078a619790b3181f61",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -44,7 +44,8 @@
     "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI",
     "prompt_sight_negative": "PENDING_MERGED_CANDIDATE_SAMEHEAD_SOURCE_AND_MUTANTS",
     "full_footprint_native": "PENDING_THIS_SHA",
-    "public_travel_native8_mutant_red": "PENDING_THIS_HEAD"
+    "public_travel_native8_mutant_red": "PENDING_THIS_HEAD",
+    "idle_craft_lease_native10_mutant_red": "PENDING_SAME_HEAD_CI"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
@@ -54,7 +55,7 @@
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted"
+    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted; 25s empty-seat lease for idle craft capacity, reboarding resets clock"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
   "adoption": "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_PENDING_SAME_HEAD_CI",
