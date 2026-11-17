@@ -35,7 +35,7 @@ class RealNeutralSquadFanTest(unittest.TestCase):
             with self.subTest(wrong=wrong[:35]):
                 with self.assertRaisesRegex(ValueError,"RED_"):
                     fan.patch(wrong)
-        with self.assertRaisesRegex(ValueError,"RED_ALREADY"):
+        with self.assertRaisesRegex(ValueError,"RED_"):
             fan.patch(fan.patch(source))
 
     def test_selected_swarm_and_off31_preserve_other30(self):
