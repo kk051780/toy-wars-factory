@@ -2487,10 +2487,22 @@ jobs:
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
-            # Compare PR base against live authorized RC head (preserve stale-base fail-closed guard).
+            # GitHub PR event base SHA can lag an official ref advance even after
+            # a verified rebase. Accept only the current, attested PR head if it
+            # actually contains the live RC commit; reject stale/unrelated code.
             live_base=$(git ls-remote origin refs/heads/rc/p0d-s1-kids-rc01 | awk '{print $1}')
-            test -n "$live_base" && test "$current_base" = "$live_base" \
-              || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
+            test -n "$live_base" || { echo "RED: missing live RC branch"; exit 1; }
+            if [ "$current_base" != "$live_base" ]; then
+              candidate_head=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["head"]["sha"])')
+              candidate_branch=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["head"]["ref"])')
+              remote_head=$(git ls-remote origin "refs/heads/$candidate_branch" | awk '{print $1}')
+              test -n "$remote_head" && test "$remote_head" = "$candidate_head" \
+                || { echo "RED: stale or foreign candidate PR head"; exit 1; }
+              git fetch --no-tags --depth=64 origin "$live_base" "$candidate_head" >/dev/null
+              git merge-base --is-ancestor "$live_base" "$candidate_head" \
+                || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
+              echo "GQ470_CURRENT_OFFICIAL_ANCESTOR_AND_CANDIDATE_HEAD_VERIFIED"
+            fi
           fi
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
