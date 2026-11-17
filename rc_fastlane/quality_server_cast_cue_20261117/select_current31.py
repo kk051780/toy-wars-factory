@@ -17,19 +17,22 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from select_cast_cue import FEATURE,ORIGINAL_GIT_BLOB,patch,undo,validate_original,git_blob
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"quality_castle_prompt_session_20261117"))
 from select_castle import mapping
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"quality_rc81_hit042_v3"))
-from select_hit042 import LABEL_ADD as GQ81_LABEL_ADD,PULSE_ADD as GQ81_PULSE_ADD,patch as gq81_patch
+# Pinned current full selected client extracted from the official 31-source Place
+# on 2026-11-17 RC fbede04e. Preserves all earlier hit042/chain/accessibility logic.
+CURRENT_SELECTED_CLIENT_SHA256="d234cc9177d82e41528cc0b25f9e83267f601c7f454a4ccb13a7ec0cc0ccb9c2"
 
 def validate_current_before(before:str)->None:
-    # GQ81 confirmed-hit cue is already adopted; preserve BOTH original inserts.
-    # Reconstruct immutable author482 exactly and replay GQ81 on it, fail closed.
-    if before.count(GQ81_LABEL_ADD)!=1 or before.count(GQ81_PULSE_ADD)!=1:
-        raise ValueError("RED_GQ8_LOST_GQ81_EXISTING_HIT042")
-    original=before.replace(GQ81_PULSE_ADD,"",1).replace(GQ81_LABEL_ADD,"",1)
-    validate_original(original)
-    if gq81_patch(original)!=before:
-        raise ValueError("RED_GQ8_GQ81_SELECTED_SOURCE_DRIFT")
-
+    if hashlib.sha256(before.encode("utf8")).hexdigest()!=CURRENT_SELECTED_CLIENT_SHA256:
+        raise ValueError("RED_GQ8_CURRENT_SELECTED_CLIENT_SHA_DRIFT")
+    for marker in (
+      'hitToast.Name="ConfirmedHit042"',
+      'GQ8_CONFIRMED_HIT_CHAIN_BEGIN',
+      'GQ8_CONFIRMED_HIT_CHAIN_END',
+      'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")',
+      'local function reduced():boolean',
+      'mark.Parent=gui',
+    ):
+        if before.count(marker)!=1:raise ValueError("RED_GQ8_EXISTING_FEATURE_DRIFT_"+marker)
 
 CLIENT=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_CombatFeel")
 FILE="GQ8_EXISTING_COMBATFEEL_CAST_CUE.client.luau"
