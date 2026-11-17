@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           cmake -S _gq8_native_luau -B /tmp/gq8-orphan-native -G Ninja \
             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq8-orphan-native --target Luau.CLI Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq8-orphan-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           SRC=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau
           /tmp/gq8-orphan-native/luau-compile --text "$SRC" >/dev/null
           /tmp/gq8-orphan-native/luau artifacts/gq8-orphan-native/good.luau | grep -q GQ8_LSS_ORPHAN_CRAFT_OWNER_ACTUAL_NATIVE_8_CASE_PASS
