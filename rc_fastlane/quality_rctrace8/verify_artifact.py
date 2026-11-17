@@ -181,6 +181,14 @@ FEATURE_EVIDENCE = {
   'type="TIME_LIMIT_DRAW"')),
 
 
+ "GQ8_NEUTRAL_SPAWN_CLEARANCE_20261117": ("EGGRUMBLE_SwarmCombat", (
+  "-- GQ8_NEUTRAL_SPAWN_CLEARANCE_BEGIN",
+  "spawnOverlap.RespectCanCollide=true",
+  "local function neutralWithinArena(point:Vector3,floor:BasePart):boolean",
+  "local function neutralSpawnClear(point:Vector3):boolean",
+  "workspace:GetPartBoundsInBox(",
+  "for _attempt=1,SPAWN_ATTEMPTS do",
+  "if neutralSpawnClear(point) then")),
  "GQ514_BOSS_KO_ROUND_RESET_20261117": ("EGGRUMBLE_RoundReplay",
   'p:SetAttribute("EGGRUMBLE_BossDefeats",0)'),
  "GQ512_ROUND_COMBO_REPLAY_RESET_20261117": ("EGGRUMBLE_RoundReplay", (
@@ -312,7 +320,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_39_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_43_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
