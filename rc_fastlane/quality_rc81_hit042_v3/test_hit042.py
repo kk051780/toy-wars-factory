@@ -29,6 +29,10 @@ class ConfirmedHitPortTest(unittest.TestCase):
         self.assertEqual(c.count("task.delay(.42,function()"),1)
         self.assertEqual(c.count("task.delay(.17,function()"),1)
         self.assertIn("if thisPulse==pulse and hitToast.Parent then hitToast.Visible=false end",c)
+        # The mark is hidden after .17s; the .42s badge MUST NOT be its child.
+        self.assertIn("hitToast.Parent=gui",c)
+        self.assertIn("hitToast.Position=UDim2.new(.5,6,.49,34)",c)
+        self.assertNotIn("hitToast.Parent=mark",c)
     def test_runtime_unchanged_and_no_extra_authority(self):
         c=patch(self.original)
         self.assertIn("if not RunService:IsStudio() then return end",c)
