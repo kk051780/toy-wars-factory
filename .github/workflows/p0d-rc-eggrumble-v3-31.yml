@@ -1,7 +1,7 @@
 name: P0D EGGRUMBLE V3 official RC companion 31-source pinned build
 on:
   push:
-    branches: [rc/p0d-s1-kids-rc01, quality/gq8-v3-cast-ack-cue-20261117-2314]
+    branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
       - 'rc_fastlane/ACTIVE.json'
@@ -34,7 +34,11 @@ on:
       - 'rc_fastlane/quality_defense_current_human_20261117/**'
       - 'rc_fastlane/quality_audio504_inline31/**'
       - 'rc_fastlane/quality_decor732_rc31/**'
+      - 'rc_fastlane/quality_field_egg_budget_20261118/**'
       - 'rc_fastlane/quality_server_cast_cue_20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
       - 'quality_gameplay/gq732_duplicate_house/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -76,7 +80,11 @@ on:
       - 'rc_fastlane/quality_defense_current_human_20261117/**'
       - 'rc_fastlane/quality_audio504_inline31/**'
       - 'rc_fastlane/quality_decor732_rc31/**'
+      - 'rc_fastlane/quality_field_egg_budget_20261118/**'
       - 'rc_fastlane/quality_server_cast_cue_20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
       - 'quality_gameplay/gq732_duplicate_house/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
@@ -202,8 +210,6 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
-          elif [ "$GITHUB_REF" = refs/heads/quality/gq8-v3-cast-ack-cue-20261117-2314 ]; then
-            echo "GQ8_CAST_CUE_ISOLATED_PREMERGE_NONOFFICIAL_QA"
           else
             test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01
             echo "GQ_OFFICIAL_RC_BRANCH_VALIDATION"
@@ -2907,12 +2913,46 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ732_AFTER_GQ504_CURRENT31_NATIVE_ROJO_INVERSE_OFF_EXACT_PASS
-      - name: GQ8 latest RC31 server-accepted cast cue AFTER audio504 and decor732 native/Rojo
+      - name: GQ8 cap initial field-egg token allocation after GQ732 (real31, reversible)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_field_egg_budget_20261118/select_current.py
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ732_DUPLICATE_DECOR_SELECTED31.project.json"
+          OUT="$DIR/GQ8_FIELD_EGG_BUDGET_SELECTED31.project.json"
+          PLACE="$DIR/GQ8_FIELD_EGG_BUDGET_TRUE_ROJO31.rbxlx"
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_field_egg_budget_20261118 -p 'test_*.py'
+          python3 -B "$SRC" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for path in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_FIELD_EGG_ALL31_REAL_LUAU_COMPILE_PASS")
+          PY
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_FIELD_EGG_GOOD_NATIVE.luau" \
+            | tee "$DIR/GQ8_FIELD_EGG_GOOD_NATIVE.log"
+          grep -qx GQ8_FIELD_EGG_BUDGET_REAL_CASTLE_RULES_NATIVE_PASS "$DIR/GQ8_FIELD_EGG_GOOD_NATIVE.log"
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_FIELD_EGG_OLD_MUTANT_NATIVE.luau" \
+            >"$DIR/GQ8_FIELD_EGG_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo "RED: original unbounded egg allocation was accepted by the native gate"; exit 1
+          fi
+          grep -q GQ8_FIELD_EGG_UNBOUNDED_ACCEPTED_OVER_LIMIT_513 "$DIR/GQ8_FIELD_EGG_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ8_FIELD_EGG_AFTER_GQ732_CURRENT31_NATIVE_ROJO_OFF_EXACT_PASS
+      - name: GQ8 server-accepted cast cue after field egg budget, castle decor and original HIT audio (real31)
+        shell: bash
         run: |
           set -euo pipefail
           SRC=rc_fastlane/quality_server_cast_cue_20261117
           DIR=artifacts/gq515_official_select
-          BASE="$DIR/GQ732_DUPLICATE_DECOR_SELECTED31.project.json"
+          BASE="$DIR/GQ8_FIELD_EGG_BUDGET_SELECTED31.project.json"
           OUT="$DIR/GQ8_CAST_CUE_SELECTED31.project.json"
           PLACE="$DIR/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx"
           python3 -B -m unittest discover -s "$SRC" -p 'test_cast_cue.py' -v
@@ -2924,13 +2964,14 @@ jobs:
           from select_castle import mapping
           _,files=mapping(Path(sys.argv[1]))
           assert len(files)==31
-          for f in files.values():
-           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
-          print("GQ8_SERVER_CAST_CUE_ACTUAL_31_NATIVE_COMPILE_PASS")
+          for file in files.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_CAST_CUE_REAL31_ALL_NATIVE_COMPILE_PASS")
           PY
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_current31.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
-          echo GQ8_SERVER_ACCEPTED_CAST_CUE_31_NATIVE_ROJO_CLASS_SOURCE_EXACT_30_UNCHANGED_OFF_PASS
+          echo GQ8_CAST_CUE_AUDIO_AND_EGG_BUDGET_PRESERVED_ROJO31_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
@@ -2944,7 +2985,6 @@ jobs:
           off=json.loads((base/"GQ31_OFF_RECEIPT.json").read_text())
           place=base/"EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx"
           assert (os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"
-                  or os.environ["GITHUB_REF"]=="refs/heads/quality/gq8-v3-cast-ack-cue-20261117-2314"
                   or (os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
                       and os.environ.get("GITHUB_BASE_REF")=="rc/p0d-s1-kids-rc01"))
           assert m["source_count"]==src["source_count"]==off["source_count"]==31
@@ -3001,7 +3041,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==55
+          assert len([v for v in m["feature_flags"].values() if v is True])==56
           assert m["feature_flags"]["GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117"] is True
           assert m["source_heads"]["gq506_original_respawn"]=="cab48cb5db058442fb4135084b81a57b0bac78c4"
           respawn=json.loads(Path("artifacts/gq515_official_select/GQ506_RESPAWN_RC31_RECEIPT.json").read_text())
@@ -3042,14 +3082,21 @@ jobs:
           assert decor["source_count"]==31 and decor["other30_byte_exact"] and decor["off_returns_previous_rc_exact"]
           assert decor["source_class"]=="ModuleScript" and decor["native"]==decor["rojo"]=="31/31"
           assert decor["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
-          cast_cue=json.loads(Path("artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json").read_text())
-          assert cast_cue["feature_id"]=="GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117"
-          assert cast_cue["source_count"]==31 and cast_cue["other30_byte_exact"] and cast_cue["off_exact"]
-          assert cast_cue["added_scripts"]==0 and cast_cue["new_game_remote_score_store_scripts"]==0
-          assert cast_cue["native"]==cast_cue["rojo"]=="31/31"
-          assert cast_cue["selected_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
-          assert m["source_heads"]["gq8_cast_cue_original482"]=="fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          egg_limit=json.loads(Path("artifacts/gq515_official_select/GQ8_FIELD_EGG_BUDGET_RC31_RECEIPT.json").read_text())
+          assert egg_limit["feature_id"]=="GQ8_FIELD_EGG_CREATION_LIMIT_20261118"
+          assert egg_limit["source_count"]==31 and egg_limit["other30_byte_exact"] and egg_limit["rollback_exact"]
+          assert egg_limit["accepted_max_field_eggs"]==512 and egg_limit["ordinary_field_eggs"]==24
+          assert egg_limit["native"]==egg_limit["rojo"]=="31/31"
+          assert egg_limit["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_FIELD_EGG_BUDGET_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          cue=json.loads(Path("artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json").read_text())
+          assert cue["feature_id"]=="GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117"
+          assert cue["source_count"]==31 and cue["other30_byte_exact"] and cue["off_exact"]
+          assert cue["added_scripts"]==cue["new_game_remote_score_store_scripts"]==0
+          assert cue["native"]==cue["rojo"]=="31/31"
+          assert cue["selected_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ8_V3_SERVER_ACCEPTED_CAST_CUE_20261117"] is True
+          assert m["source_heads"]["gq8_cast_cue_original482"]=="fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          assert m["feature_flags"]["GQ8_FIELD_EGG_CREATION_LIMIT_20261118"] is True
           assert m["feature_flags"]["GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117"] is True
           assert m["feature_flags"]["GQ504_ORIGINAL_CONFIRMED_HIT_AUDIO_INLINE_20261117"] is True
           assert m["source_heads"]["gq504_original_hit_audio"]=="385d3242cbc8d0a3008ee818d8dc30040170fce6"
@@ -3729,11 +3776,16 @@ jobs:
             artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_SELECTED31.project.json
             artifacts/gq515_official_select/GQ732_DUPLICATE_DECOR_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ732_DECOR_DUPLICATE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ732_CURRENT31_NATIVE.log
+            artifacts/gq515_official_select/GQ732_ORIGINAL_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_FIELD_EGG_BUDGET_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ8_FIELD_EGG_BUDGET_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ8_FIELD_EGG_BUDGET_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_CAST_CUE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_CAST_CUE_SELECTED31_RECEIPT.json
-            artifacts/gq515_official_select/GQ732_CURRENT31_NATIVE.log
-            artifacts/gq515_official_select/GQ732_ORIGINAL_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_FIELD_EGG_GOOD_NATIVE.log
+            artifacts/gq515_official_select/GQ8_FIELD_EGG_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ504_REAL_AUDIO_NATIVE.log
             artifacts/gq515_official_select/GQ504_MUTE_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ504_RATE_EXPECTED_RED.log
