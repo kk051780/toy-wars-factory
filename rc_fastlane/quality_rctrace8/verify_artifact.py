@@ -81,7 +81,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 54 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 55 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -240,6 +240,10 @@ FEATURE_EVIDENCE = {
   "-- GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
   "session.isCurrentHuman(player)~=true then",
   "session.isCurrentHuman(closest.player)~=true) then return end")),
+ "GQ8_FIELD_EGG_CREATION_LIMIT_20261118": ("EGGRUMBLE_CastleMatchRules", (
+  "M.MAX_FIELD_EGGS=512",
+  "and m.fieldEggs<=M.MAX_FIELD_EGGS",
+  "invalid egg count")),
  "GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117": ("EGGRUMBLE_CastleMatchRules", (
   "duplicate decoration in this plot",
   "existing.kind==piece.kind",

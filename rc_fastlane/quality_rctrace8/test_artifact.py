@@ -83,11 +83,11 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
 
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_54_known_flags(self):
+    def test_valid_covers_eight_domains_and_55_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],54)
+        self.assertEqual(v["verified_flag_count"],55)
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -206,7 +206,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_DISABLED_PREP_999"]=False
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_DISABLED_PREP_999"])
-        self.assertEqual(v["verified_flag_count"],54)
+        self.assertEqual(v["verified_flag_count"],55)
 
     def test_known_feature_flag_must_be_a_json_boolean(self):
         for nonboolean in (1,"true",None,0):
@@ -223,7 +223,7 @@ class Gate(unittest.TestCase):
         manifest=json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(manifest["source_count"],31)
         enabled={k for k,flag in manifest["feature_flags"].items() if flag is True}
-        self.assertEqual(len(enabled),54)
+        self.assertEqual(len(enabled),55)
         self.assertEqual(set(manifest["feature_flags"]),enabled)
         self.assertEqual(enabled,set(gq8.FEATURE_EVIDENCE))
         self.assertEqual(manifest["source_heads"]["zombie_guard582"],
@@ -254,6 +254,7 @@ class Gate(unittest.TestCase):
             "GQ506_RESPAWN_GRACE_SINGLE_HOST_20261117",
             "GQ8_CASTLE_DEFENSE_CURRENT_HUMAN_20261117",
             "GQ732_CASTLE_DUPLICATE_DECOR_SLOT_20261117",
+            "GQ8_FIELD_EGG_CREATION_LIMIT_20261118",
             "GQ504_ORIGINAL_CONFIRMED_HIT_AUDIO_INLINE_20261117",
         )
         for flag in late:
@@ -262,7 +263,7 @@ class Gate(unittest.TestCase):
             for anchor in anchors:
                 with self.subTest(flag=flag,anchor=anchor):
                     b,r,m,a=fixture()
-                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],54)
+                    self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],55)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
                     with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
