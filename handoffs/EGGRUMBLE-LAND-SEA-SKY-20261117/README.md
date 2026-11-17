@@ -8,7 +8,7 @@
 ## Working code
 - A **single additional Studio-only server script** waits for existing V3 `TEAM_Arena` / `BATTLE_ROYALE_Arena`, checks actual `TacticalBattlefield` and installs a disposable child folder. If the original Host is absent, it creates nothing. This protects the already accepted V3 31-script Game, Combat, Swarm, Castle, AI, Item, Lobby and Score sources, and the older rich51 S1 profile.
 - LAND: existing arena, three routes, fortresses, eggs, AI, neutral Horde, original combo source are **unchanged**, with a visually marked coast and public dock.
-- SEA: visible semi-transparent coastal surface and a recovery raft. This is **not real swimming Terrain water** yet: original solid tactical floor stays intact to avoid cross-session Terrain damage or falling. A role-locked controllable boat and sea-beast mount are added.
+- SEA: a 550×295-stud **off-floor navigable offshore lane** extends 260 studs past the battlefield edge. Builder boats and Beast sea mounts travel on it using server-steered, clamped VehicleSeat movement; two safe docks and public transport allow all seven roles to visit. Pilots who dismount while offshore near the craft are rescued to the shore dock. **This remains visual/non-Terrain water, NOT real player swimming, physical boat buoyancy, currents or underwater combat**. The original solid arena floor is unchanged.
 - SKY: 2 collision platforms 90 studs above the ground; **two public lifts and returns** allow all seven roles access. Flying craft now also have pilot-only step altitude controls (18 studs per command, server movement at <=22 studs/s, absolute altitude 28..148 studs above ground) with bounded 3D Blockcast. Both climb and descent require actual owner plus seated pilot, not a trusted client CFrame.
 - MAD SCIENTIST (`BUILDER`): builds a role-locked boat or airship at a physical launch pad.
 - BEAST TAMER (`BEAST`): summons a role-locked sea beast or flying beast at a physical nest.
@@ -19,7 +19,7 @@
 
 ## Limits, containment and rollback
 - Limits: 4 craft/arena, 95 explicitly-created decorative parts/arena, at most 2 live traps, trap TTL 24s, craft TTL 180s, model movement tick >= 0.10s. Additional Script exists only when this optional profile is built.
-- Scene and movement loop clean up when the corresponding Match World is removed; actions validate server role, mode, alive state, distance, match World existence and seat occupant. Server controls the movement and world limits. Current prototype must still be tested for Roblox-seat physics and latency; test assertions cannot prove that.
+- Scene and movement loop clean up when the corresponding Match World is removed; actions validate server role, mode, alive state, distance, match World existence, current match castle membership and seat occupant. Server controls the movement and world limits. Current prototype must still be tested for Roblox-seat physics and latency; test assertions cannot prove that.
 - No extra game Remote, no DataStore, no second Game/Combat/Swarm, no actual damage/KO; avoids shared Terrain mutations. 31 existing source file bytes remain unchanged, even with this companion ON.
 - **OFF**: omit companion Script. `compose_optional32.py --off` emits a 31-source project referencing the same existing source files and verifies exact bytes; no reverse patch to existing Game/Host needed.
 - New standalone CI tests 31-source **MOCK** exact ON32/OFF31 and actual Rojo+native Luau for the added source. It is **not evidence of the current official 31-source Playtest** and must never be labeled as such.
@@ -33,7 +33,7 @@
 
 ## Remaining real upgrades
 - Full 3,000×3,000 streamed battlefield with navigation and Android budget (currently **890×1,050/arena**). Pilot-only variable-altitude flight is a first playable candidate, **not** a complete freely flying open world.
-- Terrain Water/ocean currents, boats crossing true water, smooth analog altitude controls (current up/down step prompts are discrete), mount animation, sky island air bridges, underwater fortresses and multiple castle entrances.
+- Terrain Water/ocean currents, boat buoyancy on true water (current offshore lane only simulates water), smooth analog altitude controls (current up/down step prompts are discrete), mount animation, sky island air bridges, underwater fortresses and multiple castle entrances.
 - TEAM trap needs authoritative Host team lookup and no friendly fire; area attacks/neutral armies need direct #220 Swarm-budget integration, never a duplicate spawn manager.
 - This prototype uses basic shapes deliberately to test movement topology: **ART_NO_GO / MOBILE_NO_GO / FUN_NO_GO / RC_NOT_ADOPTED**.
 

@@ -23,6 +23,10 @@ local FLIGHT_STEP = 18
 local FLIGHT_VERTICAL_SPEED = 22
 local FLIGHT_MIN_Y_ABOVE_GROUND = 28
 local FLIGHT_MAX_Y_ABOVE_GROUND = 148
+-- World-scoped offshore corridor, not Terrain water or an additional AI field.
+local SEA_OUTER_LENGTH = 260
+local SEA_ROUTE_HALF_WIDTH = 275
+local SEA_OUTER_MARGIN = 32
 local UP = Vector3.new(0,1,0)
 local scenes = {}
 
@@ -57,7 +61,11 @@ end
 
 local function matchHuman(player,mode,world,role)
  return world.Parent~=nil and world:IsDescendantOf(Workspace)
+  and world.Parent.Name==LOBBY
+  and world.Parent:FindFirstChild(world.Name)==world
   and player.Parent==Players and player:GetAttribute("EGGRUMBLE_QueuedMode")==mode
+  -- A queue attribute alone is insufficient; require the current match castle.
+  and world:FindFirstChild("Castle_"..tostring(player.UserId))~=nil
   and player:GetAttribute("EGGRUMBLE_Eliminated")~=true
   and (not role or player:GetAttribute("EGGRUMBLE_Role")==role)
 end
@@ -92,6 +100,8 @@ local function install(world)
  local halfX=floor.Size.X/2-45
  local halfZ=floor.Size.Z/2-45
  local shoreZ=z+halfZ-85
+ local offshoreStartZ=z+halfZ-35
+ local offshoreEndZ=z+halfZ+SEA_OUTER_LENGTH
  local skyZ=z-halfZ+160
  local cloudY=y+90
  local waterColor=Color3.fromRGB(51,167,194)
@@ -124,6 +134,20 @@ local function install(world)
  local water=put(scene,"COASTAL_WATER_VISUAL_ONLY",
   CFrame.new(x,y+0.08,shoreZ),Vector3.new(math.min(650,floor.Size.X-95),0.14,180),
   waterColor,Enum.Material.Glass,false,.28)
+ -- Extension crosses the original floor edge, without editing shared Terrain.
+ -- A server-controlled sea craft can traverse this otherwise unfloored region.
+ local offshoreWater=put(scene,"OFFSHORE_NAVIGABLE_SEA_LANE",
+  CFrame.new(x,y+0.08,(offshoreStartZ+offshoreEndZ)/2),
+  Vector3.new(SEA_ROUTE_HALF_WIDTH*2,0.14,offshoreEndZ-offshoreStartZ),
+  waterColor,Enum.Material.Glass,false,.24)
+ local offshorePads={}
+ for side=-1,1,2 do
+  local sx=x+side*195
+  local pad=put(scene,"OffshoreSafeDock_"..tostring(side),
+   CFrame.new(sx,y+1.65,z+halfZ+188),Vector3.new(30,2.6,27),
+   Color3.fromRGB(161,118,77),Enum.Material.WoodPlanks,true,0)
+  offshorePads[side]=pad
+ end
  for i=1,6 do
   local xi=x-265+(i-1)*106
   local foam=put(scene,"ShoreFoam_"..i,
@@ -137,6 +161,17 @@ local function install(world)
  local seaRaft=put(scene,"SeaTrapRecoveryRaft",
   CFrame.new(x+170,y+1.6,shoreZ+5),Vector3.new(20,2.5,20),
   Color3.fromRGB(202,172,100),Enum.Material.Wood,true,0)
+ -- All seven roles can reach the offshore safe docks using public shuttles.
+ -- This is teleport transport, NOT a claim of working player swimming.
+ station("PublicOffshoreShuttle",Vector3.new(x,y+1,shoreZ-92),
+  goldColor,"沖の桟橋へ","公共の海上シャトル",function(p)
+   safeMove(p,offshorePads[-1].Position+Vector3.new(0,4,0),mode,world)
+  end)
+ for side=-1,1,2 do
+  prompt(offshorePads[side],"海岸へ戻る","公共の帰還桟橋",function(p)
+   safeMove(p,landDock.Position+Vector3.new(0,4,0),mode,world)
+  end)
+ end
 
  for side=-1,1,2 do
   local sx=x+side*220
@@ -177,7 +212,9 @@ local function install(world)
   craft.Parent=scene
   local tint=if role=="BUILDER" then Color3.fromRGB(238,160,70)
    else Color3.fromRGB(98,216,171)
+  -- Forward sea throttle steers offshore, while aircraft retain prior orientation.
   local start=CFrame.new(at+Vector3.new(0,3,0))
+   *(flying and CFrame.new() or CFrame.Angles(0,math.pi,0))
   local hull=put(craft,"Hull",start,Vector3.new(9,2.3,13),tint,
    Enum.Material.SmoothPlastic,true,0)
   hull.Shape=if role=="BEAST" then Enum.PartType.Ball else Enum.PartType.Block
@@ -307,10 +344,25 @@ local function install(world)
    else
     local hum=v.seat.Occupant
     local driver=hum and Players:GetPlayerFromCharacter(hum.Parent)
+    if not hum and v.lastPilot then
+     local departed=v.lastPilot
+     v.lastPilot=nil
+     local ch=v.owner.Character
+     local root=ch and ch:FindFirstChild("HumanoidRootPart")
+     if not v.flying and ch and departed.Parent==ch and root
+      and craft:GetPivot().Position.Z>z+halfZ+10
+      and (root.Position-craft:GetPivot().Position).Magnitude<28
+      and matchHuman(v.owner,mode,world,v.role) then
+      -- A sea pilot who dismounts offshore is rescued, never dropped into void.
+      safeMove(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world)
+      craft:Destroy()
+     end
+    end
     if hum and (driver~=v.owner or not matchHuman(v.owner,mode,world,v.role)
       or hum.Health<=0) then
      hum.Sit=false
     elseif hum and driver==v.owner then
+     v.lastPilot=hum
      local throttle=math.clamp(v.seat.ThrottleFloat,-1,1)
      local steer=math.clamp(v.seat.SteerFloat,-1,1)
      local cf=craft:GetPivot()*CFrame.Angles(0,-steer*step*1.25,0)
@@ -319,17 +371,22 @@ local function install(world)
        v.targetY-cf.Position.Y,-FLIGHT_VERTICAL_SPEED*step,
        FLIGHT_VERTICAL_SPEED*step) else 0
      local point=cf.Position+displacement+Vector3.new(0,rise,0)
+     local lateralBound=if v.flying then halfX-25
+      else math.min(SEA_ROUTE_HALF_WIDTH,halfX-25)
+     local minTravelZ=if v.flying then z-halfZ+25 else shoreZ-90
+     local maxTravelZ=if v.flying then z+halfZ-25
+      else offshoreEndZ-SEA_OUTER_MARGIN
      point=Vector3.new(
-      math.clamp(point.X,x-halfX+25,x+halfX-25),
+      math.clamp(point.X,x-lateralBound,x+lateralBound),
       v.flying and math.clamp(point.Y,
        y+FLIGHT_MIN_Y_ABOVE_GROUND,y+FLIGHT_MAX_Y_ABOVE_GROUND) or y+5,
-      math.clamp(point.Z,z-halfZ+25,z+halfZ-25))
+      math.clamp(point.Z,minTravelZ,maxTravelZ))
      local delta=point-cf.Position
      local allowed=true
      if delta.Magnitude>.1 then
       local params=RaycastParams.new()
       params.FilterType=Enum.RaycastFilterType.Exclude
-      params.FilterDescendantsInstances={craft,water}
+      params.FilterDescendantsInstances={craft,water,offshoreWater}
       params.RespectCanCollide=true
       -- Server wall check; flying craft cannot ghost through solid sky islands.
       allowed=Workspace:Blockcast(v.model.PrimaryPart.CFrame,

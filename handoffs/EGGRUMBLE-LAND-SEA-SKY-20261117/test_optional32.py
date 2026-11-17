@@ -47,6 +47,30 @@ class LandSeaSkySourceTests(unittest.TestCase):
                 self.assertIn(marker, SOURCE)
         self.assertNotIn('v.flying and cloudY+8 or y+5', SOURCE)
 
+    def test_offshore_sea_route_and_safe_return(self):
+        # Geometry/authorship assertions are source-only, NOT engine validation.
+        for marker in [
+            "OFFSHORE_NAVIGABLE_SEA_LANE",
+            "SEA_OUTER_LENGTH = 260",
+            "SEA_ROUTE_HALF_WIDTH = 275",
+            "offshoreEndZ=z+halfZ+SEA_OUTER_LENGTH",
+            "OffshoreSafeDock_",
+            "PublicOffshoreShuttle",
+            "offshorePads[side]",
+            "safeMove(p,landDock.Position",
+            "v.lastPilot=hum",
+            "not hum and v.lastPilot",
+            "craft:GetPivot().Position.Z>z+halfZ+10",
+            "offshoreEndZ-SEA_OUTER_MARGIN",
+            "params.FilterDescendantsInstances={craft,water,offshoreWater}",
+        ]:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, SOURCE)
+        self.assertIn('world:FindFirstChild("Castle_"..tostring(player.UserId))', SOURCE)
+        self.assertIn('world.Parent:FindFirstChild(world.Name)==world', SOURCE)
+        self.assertNotIn('FillBlock(', SOURCE)
+        self.assertNotIn('FillRegion(', SOURCE)
+
     def test_authorization_limits_and_reversibility(self):
         for value in ["MAX_CRAFT = 4", "MAX_PARTS_PER_WORLD = 95",
                       "TRAP_LIFETIME = 24", "VEHICLE_LIFETIME = 180",
