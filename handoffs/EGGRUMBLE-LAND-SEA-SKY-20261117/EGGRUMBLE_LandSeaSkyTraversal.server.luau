@@ -16,6 +16,7 @@ local NAME = "EGGRUMBLE_LAND_SEA_SKY_20261117"
 local MAX_CRAFT = 4
 local MAX_PARTS_PER_WORLD = 95
 local MAX_LIVE_TRAPS = 2
+local PUBLIC_TRAVEL_COOLDOWN = 2.5 -- seconds per player per world
 local MOVE_INTERVAL = 0.10
 local TRAP_LIFETIME = 24
 local VEHICLE_LIFETIME = 180
@@ -144,6 +145,19 @@ local function install(world)
  local lastConstruct={}
  local liveParts=0
  local active=true
+ -- GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_BEGIN
+ -- Rate-limit only voluntary public shortcuts, NEVER emergency rescue.
+ local publicTravelAt={}
+ local function publicTravel(player,at)
+  if not active then return false end
+  local now=os.clock()
+  local prev=publicTravelAt[player.UserId]
+  if prev and now-prev<PUBLIC_TRAVEL_COOLDOWN then return false end
+  if not safeMove(player,at,mode,world) then return false end
+  publicTravelAt[player.UserId]=now -- unsuccessful moves do not consume cooldown
+  return true
+ end
+ -- GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_END
 
  -- Live Instance budget, not a lifetime counter: destroyed crafts/traps return
  -- capacity for later rounds of building without a false budget crash.
@@ -202,11 +216,11 @@ local function install(world)
  -- This is teleport transport, NOT a claim of working player swimming.
  station("PublicOffshoreShuttle",Vector3.new(x,y+1,shoreZ-92),
   goldColor,"沖の桟橋へ","公共の海上シャトル",function(p)
-   safeMove(p,offshorePads[-1].Position+Vector3.new(0,4,0),mode,world)
+   publicTravel(p,offshorePads[-1].Position+Vector3.new(0,4,0))
   end)
  for side=-1,1,2 do
   prompt(offshorePads[side],"海岸へ戻る","公共の帰還桟橋",function(p)
-   safeMove(p,landDock.Position+Vector3.new(0,4,0),mode,world)
+   publicTravel(p,landDock.Position+Vector3.new(0,4,0))
   end)
  end
 
@@ -221,12 +235,12 @@ local function install(world)
   local groundLift=station("PublicCloudLift_"..tostring(side),
    Vector3.new(sx,y+1,skyZ),goldColor,"空島へ","みんなの雲リフト",
    function(p)
-    safeMove(p,Vector3.new(sx,cloudY+5,skyZ),mode,world)
+    publicTravel(p,Vector3.new(sx,cloudY+5,skyZ))
    end)
   station("SkyReturn_"..tostring(side),
    Vector3.new(sx,cloudY+4,skyZ+22),goldColor,"地上へ","安全に帰還",
    function(p)
-    safeMove(p,groundLift.Position+Vector3.new(0,2,0),mode,world)
+    publicTravel(p,groundLift.Position+Vector3.new(0,2,0))
    end)
  end
 
@@ -716,6 +730,7 @@ local function install(world)
   table.clear(lastComboAdvanceAt)
   table.clear(lastShownCombo)
   table.clear(lastSurgeAt)
+  table.clear(publicTravelAt)
   for _,v in pairs(vessels) do v.alive=false end
   scenes[world]=nil
  end)
