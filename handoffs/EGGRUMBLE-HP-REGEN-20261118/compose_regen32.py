@@ -73,7 +73,7 @@ def compose(current31:Path,dest:Path,off:bool=False):
   server=model["tree"].get("ServerScriptService")
   if not isinstance(server,dict):raise ValueError("RED_NO_SERVER_CONTAINER")
   policyData=POLICY.read_bytes()
-  if hashlib.sha1(b"blob "+str(len(policyData)).encode()+b"\\0"+policyData).hexdigest()!=PINNED_POLICY_BLOB:
+  if hashlib.sha1(b"blob "+str(len(policyData)).encode()+b"\0"+policyData).hexdigest()!=PINNED_POLICY_BLOB:
    raise ValueError("RED_UPSTREAM_773_POLICY_SOURCE_BLOB_CHANGED")
   server[NEW]={"$path":os.path.relpath(MODULE,dest.parent).replace(os.sep,"/")}
   server[POLICY_NAME]={"$path":os.path.relpath(POLICY,dest.parent).replace(os.sep,"/")}
