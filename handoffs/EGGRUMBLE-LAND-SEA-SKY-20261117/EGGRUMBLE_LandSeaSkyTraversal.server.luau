@@ -329,10 +329,19 @@ local function install(world)
     local ch=other:FindFirstAncestorOfClass("Model")
     local guest=ch and Players:GetPlayerFromCharacter(ch)
     if not guest or guest==owner or not matchHuman(guest,mode,world,nil) then return end
+    -- Ignore expired avatar parts and dead players; one trap can only consume
+    -- a living current character, not another character's residual collision.
+    if guest.Character~=ch then return end
+    local hum=ch:FindFirstChildOfClass("Humanoid")
     local root=ch:FindFirstChild("HumanoidRootPart")
-    if not root or (root.Position-t.Position).Magnitude>12 then return end
+    if not hum or hum.Health<=0 or not root
+     or (root.Position-t.Position).Magnitude>12 then return end
     fired=true
-    safeMove(guest,seaRaft.Position+Vector3.new(0,3,0),mode,world)
+    -- Keep the one-use trap available if the authoritative move is rejected.
+    if not safeMove(guest,seaRaft.Position+Vector3.new(0,3,0),mode,world) then
+     fired=false
+     return
+    end
     t:Destroy()
    end)
    Debris:AddItem(t,TRAP_LIFETIME)
