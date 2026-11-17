@@ -46,11 +46,11 @@ def prove_place(place,source):
         code=p.findtext("ProtectedString[@name='Source']")
         if code is None:code=p.findtext("string[@name='Source']")
         require(name is not None and code is not None,"PLACE_SCRIPT_SOURCE")
-        found.append((name,clazz,code.replace("\\r\\n","\\n")))
+        found.append((name,clazz,code.replace("\r\n","\n")))
     require(len(found)==32 and len({n for n,_,_ in found})==32,"PLACE_COUNT")
     hit=[(clazz,content) for n,clazz,content in found if n==TARGET]
     require(len(hit)==1 and hit[0][0]=="LocalScript","PLACE_HIT_SOURCE_CLASS")
-    require(hit[0][1]==source.decode("utf-8").replace("\\r\\n","\\n"),
+    require(hit[0][1]==source.decode("utf-8").replace("\r\n","\n"),
             "PLACE_HIT_NOT_CURRENT")
 def main():
     p=argparse.ArgumentParser()
@@ -67,6 +67,6 @@ def main():
                     "roblox_studio_2client":"NOT_TESTED","android_15min":"NOT_TESTED",
                     "owner_accepted":False})
     a.out.parent.mkdir(parents=True,exist_ok=True)
-    a.out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+"\\n")
+    a.out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+"\n")
     print("GQ470_HIT042_CURRENT31_PLUS_SPECTATOR_ONE_PLACE_TRUE_SOURCE_PASS")
 if __name__=="__main__":main()
