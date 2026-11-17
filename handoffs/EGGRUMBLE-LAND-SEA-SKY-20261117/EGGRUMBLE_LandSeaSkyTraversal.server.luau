@@ -296,6 +296,30 @@ local function install(world)
   end
   Debris:AddItem(craft,VEHICLE_LIFETIME)
   craft.Destroying:Connect(function()
+   -- GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118
+   -- Debris expiry can destroy a still-occupied sea craft beyond the floor.
+   -- Recover only its previously server-verified, live and current pilot.
+   if active and not data.flying then
+    local pilot=data.lastPilot
+    local ch=player.Character
+    local root=ch and ch:FindFirstChild("HumanoidRootPart")
+    if pilot and pilot.Parent==ch and pilot.Health>0 and root
+     and matchHuman(player,mode,world,role)
+     and (root.Position-craft:GetPivot().Position).Magnitude<28
+     and craft:GetPivot().Position.Z>z+halfZ+10 then
+     local standingOnDock=false
+     for _,dock in pairs(offshorePads) do
+      if math.abs(root.Position.X-dock.Position.X)<=dock.Size.X/2-2
+       and math.abs(root.Position.Z-dock.Position.Z)<=dock.Size.Z/2-2 then
+       standingOnDock=true
+       break
+      end
+     end
+     if not standingOnDock then
+      safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)
+     end
+    end
+   end
    data.alive=false
    vessels[craft]=nil
    if perUser[player.UserId]==data then perUser[player.UserId]=nil end
@@ -318,21 +342,34 @@ local function install(world)
   function(p)makeRide(p,"BEAST","SKY_BEAST",skySpawn)end)
 
  -- A visible psychic snare, not an unavoidable or lethal teleport.
+ -- GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118_BEGIN
+ -- Prevent a single caster from monopolizing the two global BR trap slots.
+ -- Destroyed traps release their owner and global capacity immediately.
+ local function canReserveTrapSlot(ownerId:number):boolean
+  local live=0
+  for part,previousOwner in pairs(traps) do
+   if part.Parent then
+    if previousOwner==ownerId then return false end
+    live+=1
+   end
+  end
+  return live<MAX_LIVE_TRAPS
+ end
+ -- GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118_END
+
  -- TEAM team-authority is private inside Host, so BR ONLY until a proper
  -- same-session/team server API exists; never infer allies from cosmetics.
  station("PsychicTideTrapConsole",Vector3.new(x+48,y+1,shoreZ-92),
   Color3.fromRGB(174,105,227),"潮流ワナ","超能力者・BR専用",
   function(owner)
    if mode~="BATTLE_ROYALE" or not matchHuman(owner,mode,world,"TRAPPER") then return end
-   local number=0
-   for part in pairs(traps) do if part.Parent then number+=1 end end
-   if number>=MAX_LIVE_TRAPS or liveParts>=MAX_PARTS_PER_WORLD then return end
+   if not canReserveTrapSlot(owner.UserId) or liveParts>=MAX_PARTS_PER_WORLD then return end
    local anchor=Vector3.new(x+48,y+3,shoreZ-57)
    local t=put(scene,"VISIBLE_PSYCHIC_SEA_TRAP",
     CFrame.new(anchor),Vector3.new(15,.8,15),
     Color3.fromRGB(187,93,241),Enum.Material.Neon,false,.22)
    t.CanTouch=true
-   traps[t]=true
+   traps[t]=owner.UserId
    t.Destroying:Connect(function() traps[t]=nil end)
    -- GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_BEGIN
    -- A defeated/disconnected caster cannot leave a live ocean warp behind.

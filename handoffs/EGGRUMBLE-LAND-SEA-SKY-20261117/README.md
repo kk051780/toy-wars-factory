@@ -38,3 +38,8 @@
 - This prototype uses basic shapes deliberately to test movement topology: **ART_NO_GO / MOBILE_NO_GO / FUN_NO_GO / RC_NOT_ADOPTED**.
 
 **Cross-lane nonduplication:** #222 owns world atlas/design cards; #476 owns earlier H1 wings/ride candidates; #522 owns current V3 Builder wall; #710 owns neutral spawn obstacle checks; this slice only owns independently gated V3 movement topology and new optional travel script.
+
+## GQ8 LSS trap owner fairness / 2026-11-18
+- A BR psychic caster can place **at most one active sea-warp trap**, preventing one player from monopolizing both global slots (2 slots still available to two different players). Destroying or expiring the old trap frees its slot immediately; opponent casts remain possible. No TEAM ally-trust inference.
+- Existing `traps` index stores the original server-verified `owner.UserId` instead of a boolean; only the already optional 32nd Studio server script is changed, all canonical31 source bytes preserved. No new Remote, Save, combat, Castle, Score, or HP ownership.
+- A native Luau VM harness derives the actual `canReserveTrapSlot` function, runs 11 owner/global/expiry cases and requires an owner-bypass mutant to fail. The exact official31→optional32/OFF31 Rojo bridge remains the admission gate; Studio 2-client/Android/OWNER FUN remain untested.
