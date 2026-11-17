@@ -41,7 +41,7 @@ def base_518(original: bytes, author_path: Path) -> bytes:
 def apply(parent_518: bytes) -> bytes:
     if parent_518.count(ANCHOR) != 1:
         raise ValueError("RED: unique boss-health anchor changed")
-    if b'model:SetAttribute("EGGRUMBLE_BossHealth",health)' in parent_518:
+    if parent_518.count(b'model:SetAttribute("EGGRUMBLE_BossHealth",health)') != 1:
         raise ValueError("RED: duplicate boss spawn initialization")
     patched = parent_518.replace(ANCHOR, REPLACEMENT, 1)
     if undo(patched) != parent_518:
