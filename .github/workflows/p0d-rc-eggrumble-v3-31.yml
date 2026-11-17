@@ -2416,7 +2416,7 @@ jobs:
           python3 -B "$SCRIPT" verify --base "$BASE" --out "$OUT" \
             --author "$AUTHOR/patch_safe_warp.py" --place "$PLACE"
           echo GQ524_PREEXISTING_ORIGINAL_SAFE_WARP_ALL31_UNCHANGED_NATIVE11_ROJO31_MUTANT_RED_PASS
-      - name: GQ510 truth gate: original MAGE healing already in existing single Combat (native and Rojo31)
+      - name: "GQ510 truth gate: original MAGE healing already in existing single Combat (native and Rojo31)"
         shell: bash
         run: |
           set -euo pipefail
@@ -2464,7 +2464,7 @@ jobs:
             fi
           done
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
-          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx"
+          python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ524_SAFE_WARP_TRUE_ROJO31.rbxlx"
           echo GQ510_EXISTING_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_AND_ZERO_SOURCE_DELTA_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
