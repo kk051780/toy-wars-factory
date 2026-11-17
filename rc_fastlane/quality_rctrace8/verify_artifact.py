@@ -40,7 +40,6 @@ RULES = {
     "GQ_DEAD_CASTER_FENCE:", "currentHumanMember(session,",
   )},
  "castle": {
-  "EGGRUMBLE_CastleMatchRules": ("duplicate decoration in this plot", "existing.kind==piece.kind"),
   "EGGRUMBLE_LobbyCastleModesPreview": (
     "Rules.depositEggs(", "joined[actor.UserId]==mode", "coreBoard.MaxDistance=65",
     "vaultBoard.MaxDistance=40",
