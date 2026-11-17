@@ -296,6 +296,30 @@ local function install(world)
   end
   Debris:AddItem(craft,VEHICLE_LIFETIME)
   craft.Destroying:Connect(function()
+   -- GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118
+   -- Debris expiry can destroy a still-occupied sea craft beyond the floor.
+   -- Recover only its previously server-verified, live and current pilot.
+   if active and not data.flying then
+    local pilot=data.lastPilot
+    local ch=player.Character
+    local root=ch and ch:FindFirstChild("HumanoidRootPart")
+    if pilot and pilot.Parent==ch and pilot.Health>0 and root
+     and matchHuman(player,mode,world,role)
+     and (root.Position-craft:GetPivot().Position).Magnitude<28
+     and craft:GetPivot().Position.Z>z+halfZ+10 then
+     local standingOnDock=false
+     for _,dock in pairs(offshorePads) do
+      if math.abs(root.Position.X-dock.Position.X)<=dock.Size.X/2-2
+       and math.abs(root.Position.Z-dock.Position.Z)<=dock.Size.Z/2-2 then
+       standingOnDock=true
+       break
+      end
+     end
+     if not standingOnDock then
+      safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)
+     end
+    end
+   end
    data.alive=false
    vessels[craft]=nil
    if perUser[player.UserId]==data then perUser[player.UserId]=nil end
