@@ -1,0 +1,5 @@
+# GQ510 actual MAGE TEAM AI ally and wall LOS — author reuse, formal RC31
+
+Original exact PR #510 (0338bd13f9d3d199972bd4cd30e467443083dffa), authored build_candidate.py immutable Git blob 86d757b83057bc370ce8b51c459420af462e86eb. Import this author's source patch and native harness into current 31-source sole SevenRoleCombat. NO new Game, Remote, Store, Combat, Script or invented healing authority. 
+
+TEAM MAGE heals +25 to humans and original server AI friend within 22 studs, walls stop healing using existing lineClear. BR MAGE self-heals only. Enemy, dead, distant, eliminated-castle and removed AI not healed. Exact 30 other source bytes and reversible OFF to selected GQ8_NEUTRAL_SAFE_SELECTED31; native author 1-human/15AI TEAM/BR cases, real 31 native compiled, Rojo Source/Class31, original bug reproduction, two harmful mutant RED. A single new source-backed 45th flag; no catalog-idea promotion. Formal #220 authenticated expectedSHA nonforce CAS after CI same-head V3/S1/QA; no individual author ACK wait. Studio/Android/FUN/OWNER=NOT_TESTED/NO_GO. No main/Roblox Publish/paid/PC changes.
