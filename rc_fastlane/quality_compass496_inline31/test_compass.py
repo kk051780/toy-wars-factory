@@ -58,5 +58,6 @@ class Compass(unittest.TestCase):
  def test_10_source_marker_unique(self):
   out=patch(SAMPLE,self.a)
   self.assertEqual(out.count(FEATURE),1)
-  self.assertEqual(out.count('EGGRUMBLE_GQ_ObjectiveCompass'),1)
+  self.assertEqual(out.count('gui.Name="EGGRUMBLE_GQ_ObjectiveCompass"'),1)
+  self.assertEqual(out.count('if playerGui:FindFirstChild("EGGRUMBLE_GQ_ObjectiveCompass") then return end'),1)
 if __name__=="__main__":unittest.main()
