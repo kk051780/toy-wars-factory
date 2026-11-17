@@ -4,28 +4,30 @@
   "official_branch": "rc/p0d-s1-kids-rc01",
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
-  "source_branch_sha": "09de449127d739658a3b9d344ac996430bf7a7b6",
-  "integrator_parent_rc_sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
+  "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
+  "integrator_parent_rc_sha": "949ab39eac82424f5724775d07ce38403280c326",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
+  "added_source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
   "source_author_prs": [
     714,
     737,
-    749
+    749,
+    753
   ],
   "feature_ids": [
     "GQ8_LSS_LAND_SEA_SKY_OPTIONAL32_20261117",
     "GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_20261117",
     "GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118",
-    "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118"
+    "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
+    "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
   "original31_must_remain_byte_exact": true,
   "new_game_combat_host_swarm_remote_store_authorities": 0,
   "robot_release_authorized": false,
-  "status": "OPTIONAL32_SOURCE_UPGRADE_PENDING_CURRENT_HEAD_QA",
-  "same_head_rc_31_and_32_ci": "PENDING_CURRENT_HEAD",
+  "status": "RC60_CANDIDATE_SAMEHEAD_GATE_PENDING",
+  "same_head_rc_31_and_32_ci": "PENDING",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
@@ -47,13 +49,25 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "8262066463911101780036af57fcc2f181bebcf4",
+    "source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
     "canonical31_changed": false,
     "off_to_formal31_byte_exact": true,
     "actual_studio_android_fun": "NOT_TESTED",
-    "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE"
+    "status": "SOURCE_NATIVE_QA_PENDING_REAL31_32_GATE",
+    "historical_accepted_blob": "8262066463911101780036af57fcc2f181bebcf4"
+  },
+  "gq8_orphan_craft_owner": {
+    "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
+    "source_git_blob": "024c824175dcac157d52cf91f681a382835ddde1",
+    "source_scope": "one existing optional32 Studio-only LSS script",
+    "native_cases": 8,
+    "mutants": 4,
+    "remaining_game31_byte_exact": true,
+    "release_authorized": false,
+    "status": "PREP_PENDING_EXACT_SHA_CI",
+    "rollback": "omit optional script and source lock selection"
   }
 }

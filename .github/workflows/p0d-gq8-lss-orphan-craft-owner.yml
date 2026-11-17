@@ -1,0 +1,64 @@
+name: P0D GQ8 LSS orphan-craft owner lifecycle real native QA
+on:
+  push:
+    branches:
+      - 'feature/gq8-lss-orphan-craft-owner-20261118'
+      - 'quality/gq8-lss-owner-reclaim-rc60-20261118'
+      - 'rc/p0d-s1-kids-rc01'
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-orphan-craft-owner.yml'
+  pull_request:
+    branches:
+      - 'feature/eggrumble-land-sea-sky-traversal-20261117-01'
+      - 'rc/p0d-s1-kids-rc01'
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-orphan-craft-owner.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-source-owner-reaper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Real optional32 source + old expiry + negative contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_optional32.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_craft_expiry.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_orphan_craft.py
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_orphan_craft_native.py artifacts/gq8-orphan-native
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_native_luau
+          persist-credentials: false
+      - name: Actual Luau compile and VM good/mutant behavior (no Studio claim)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_native_luau -B /tmp/gq8-orphan-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-orphan-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          SRC=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau
+          /tmp/gq8-orphan-native/luau-compile --text "$SRC" >/dev/null
+          /tmp/gq8-orphan-native/luau artifacts/gq8-orphan-native/good.luau | grep -q GQ8_LSS_ORPHAN_CRAFT_OWNER_ACTUAL_NATIVE_8_CASE_PASS
+          for variant in STALE_MATCH DEAD_OWNER NO_CHARACTER ALWAYS_TRUE; do
+            file="artifacts/gq8-orphan-native/mutant_${variant}.luau"
+            log="artifacts/gq8-orphan-native/mutant_${variant}.log"
+            if /tmp/gq8-orphan-native/luau "$file" >"$log" 2>&1; then
+              echo "RED_GQ8_ORPHAN_MUTANT_ACCEPTED_${variant}"
+              exit 1
+            fi
+            grep -q -f "artifacts/gq8-orphan-native/mutant_${variant}.expected.txt" "$log"
+          done
+          echo GQ8_ORPHAN_LIVE_OWNER_8_NATIVE_4_MUTANTS_RED_ALL_GREEN

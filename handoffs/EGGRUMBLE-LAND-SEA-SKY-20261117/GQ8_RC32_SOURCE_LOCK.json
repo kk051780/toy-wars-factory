@@ -3,26 +3,27 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
+    "sha": "949ab39eac82424f5724775d07ce38403280c326",
     "source_count": 31,
-    "enabled_flags": 58,
-    "original_samehead_v3_run": "RECHECK_CURRENT_SAMEHEAD",
-    "original_samehead_rc78_run": 44150472728,
-    "original_samehead_balance_run": 44150472839,
-    "all_conclusion": "RECHECK_CURRENT_SAMEHEAD"
+    "enabled_flags": 60,
+    "original_samehead_v3_run": "RECHECK_NEW_HEAD",
+    "original_samehead_rc78_run": "RECHECK_NEW_HEAD",
+    "original_samehead_balance_run": "RECHECK_NEW_HEAD",
+    "all_conclusion": "PREP_PENDING_NEW_HEAD"
   },
   "optional_profile": {
     "id": "eggrumble_v3_lss32_studio",
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "8262066463911101780036af57fcc2f181bebcf4",
+    "source_blob_sha": "024c824175dcac157d52cf91f681a382835ddde1",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
       714,
       737,
-      749
+      749,
+      753
     ]
   },
   "authority": {
@@ -38,20 +39,21 @@
     "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
-    "false_positive_or_stale_head": "RED"
+    "false_positive_or_stale_head": "RED",
+    "orphan_craft_native": "RECHECK_CURRENT_CANDIDATE"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "land/sea/sky additional path, visual water",
+    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "optional four craft; two BR traps global, one live trap per owner; 95 world Parts"
+    "balance": "four craft global: retire stale owner/death/role/mode; existing traps, 95 Part budget preserved"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "SOURCE_CANDIDATE_PENDING_SAMEHEAD_CI_AND_NONFORCE_CAS",
+  "adoption": "P0D_PREP_CURRENT_RC60_NOT_CAS",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
