@@ -2394,15 +2394,15 @@ jobs:
           PY
           python3 -B "$SRC/native_fx.py" --project "$OUT" \
             --out "$DIR/GQ503_LOD_NATIVE12.luau" \
-            --mutant "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau"
+            --mutant "$DIR/GQ503_CRITICAL_FX_MUTANT.luau"
           /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_LOD_NATIVE12.luau" >/dev/null
           /tmp/gq530_all31_native/luau "$DIR/GQ503_LOD_NATIVE12.luau" | tee "$DIR/GQ503_LOD_NATIVE12.log"
           grep -q GQ503_ORIGINAL_FX_LOD_NATIVE12_CASES_PASS "$DIR/GQ503_LOD_NATIVE12.log"
-          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau" >/dev/null
-          if /tmp/gq530_all31_native/luau "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau" > "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log" 2>&1; then
-           echo RED_GQ503_NEAR_PROTECTION_MUTANT_SURVIVED; exit 1
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_CRITICAL_FX_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ503_CRITICAL_FX_MUTANT.luau" > "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log" 2>&1; then
+           echo RED_GQ503_CORE_PROTECTION_MUTANT_SURVIVED; exit 1
           fi
-          grep -q GQ503_NEAR_MUTANT_RED "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log"
+          grep -q GQ503_CORE_PROTECTED "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log"
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/patch_fx.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ503_CLIENT_VISUAL_LOD_TRUE_NATIVE_ROJO31_OFF_EXACT_PASS

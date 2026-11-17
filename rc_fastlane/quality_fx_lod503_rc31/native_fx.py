@@ -26,7 +26,7 @@ def generate(project:Path,out:Path,mutant:Path):
  src=all[TARGET].read_text(encoding="utf8")
  if src.count(PURE)!=1:raise ValueError("RED_NO_CURRENT_SOURCE_PURE_LOD")
  out.write_text(NATIVE.replace("<<FUNCTION>>",PURE),encoding="utf8")
- altered=PURE.replace("distance<=40","distance<=0")
+ altered=PURE.replace('if kind~="SECONDARY" then return false end','if false then return false end')
  if altered==PURE:raise ValueError("RED_MUTANT_NO_GUARD")
  mutant.write_text(NATIVE.replace("<<FUNCTION>>",altered),encoding="utf8")
  print("GQ503_EXACT_SOURCE_FX_BUDGET_NATIVE_AND_MUTANT_READY")
