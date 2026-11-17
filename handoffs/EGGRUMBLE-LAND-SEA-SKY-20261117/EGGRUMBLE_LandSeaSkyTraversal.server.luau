@@ -387,6 +387,24 @@ local function install(world)
  end
  -- GQ8_LSS_TRAP_OWNER_FAIRNESS_20261118_END
 
+ -- GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118_BEGIN
+ -- Two separate 15-stud trap footprints: a second valid BR owner never
+ -- deploys an invisible, overlapping duplicate at the first owner's spot.
+ -- Slots are server-owned metadata, not client-selectable coordinates.
+ local function chooseUnoccupiedTrapSlot()
+  local occupied={}
+  for part in pairs(traps) do
+   if part.Parent then
+    local slot=part:GetAttribute("LSS_TrapSlot")
+    if slot==1 or slot==2 then occupied[slot]=true end
+   end
+  end
+  if not occupied[1] then return 1 end
+  if not occupied[2] then return 2 end
+  return nil
+ end
+ -- GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118_END
+
  -- TEAM team-authority is private inside Host, so BR ONLY until a proper
  -- same-session/team server API exists; never infer allies from cosmetics.
  station("PsychicTideTrapConsole",Vector3.new(x+48,y+1,shoreZ-92),
@@ -394,11 +412,15 @@ local function install(world)
   function(owner)
    if mode~="BATTLE_ROYALE" or not matchHuman(owner,mode,world,"TRAPPER") then return end
    if not canReserveTrapSlot(owner.UserId) or liveParts>=MAX_PARTS_PER_WORLD then return end
-   local anchor=Vector3.new(x+48,y+3,shoreZ-57)
+   local slot=chooseUnoccupiedTrapSlot()
+   if not slot then return end
+   -- 30 studs center separation leaves 15 studs clear between 15-wide traps.
+   local anchor=Vector3.new(x+48+(slot-1)*30,y+3,shoreZ-57)
    local t=put(scene,"VISIBLE_PSYCHIC_SEA_TRAP",
     CFrame.new(anchor),Vector3.new(15,.8,15),
     Color3.fromRGB(187,93,241),Enum.Material.Neon,false,.22)
    t.CanTouch=true
+   t:SetAttribute("LSS_TrapSlot",slot)
    traps[t]=owner.UserId
    t.Destroying:Connect(function() traps[t]=nil end)
    -- GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_BEGIN

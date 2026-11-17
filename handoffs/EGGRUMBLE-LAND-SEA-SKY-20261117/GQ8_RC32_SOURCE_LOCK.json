@@ -3,7 +3,7 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "7560b3a3bbe83cdf2820bd24150e09e7b792e3a9",
+    "sha": "d7bb51aaec90d701d8625ef8ecd16b143ea28d10",
     "source_count": 31,
     "enabled_flags": 61,
     "original_samehead_v3_run": "RECHECK_NEW_HEAD",
@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "92ab83835cc95372ae308f6a222035dbd29e6626",
+    "source_blob_sha": "ce5fb23099527f3bf020b5b51c328c4f1517dd11",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -41,20 +41,21 @@
     "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "false_positive_or_stale_head": "RED",
     "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA",
-    "prompt_sight_negative": "PENDING_SAMEHEAD_SOURCE_AND_MUTANTS"
+    "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI",
+    "prompt_sight_negative": "PENDING_MERGED_CANDIDATE_SAMEHEAD_SOURCE_AND_MUTANTS"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
-    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation; all optional route prompts validate solid-wall line of sight",
+    "field": "existing land/sea/sky traversal, reclaimed orphan craft after owner invalidation; optional route prompts validate solid-wall line of sight",
     "battle": "existing Combat and KO ownership only",
     "castle": "original castle/egg untouched",
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "four craft global: retire stale owner/death/role/mode; existing traps, 95 Part budget preserved"
+    "balance": "four craft global: retire stale owner/death/role/mode; distinct two-owner trap slots, 95 Part budget preserved"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "SOURCE_CANDIDATE_PROMPT_LOS_PENDING_CI",
+  "adoption": "SOURCE_CANDIDATE_PROMPT_LOS_AND_SPATIAL_TRAP_SLOTS_PENDING_CI",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
