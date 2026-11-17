@@ -3,7 +3,7 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "ea396d4482799d1f24dfd549f4489d920d18fb59",
+    "sha": "cd3c39b31c3bbd0bbdbe2b6770e928bf1421d76d",
     "source_count": 31,
     "enabled_flags": 58,
     "original_samehead_v3_run": "RECHECK_CURRENT_SAMEHEAD",
@@ -16,12 +16,13 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "db870a8a93cf74ccedfe55f4c0c985d155a05028",
+    "source_blob_sha": "8262066463911101780036af57fcc2f181bebcf4",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
       714,
-      737
+      737,
+      749
     ]
   },
   "authority": {
@@ -33,10 +34,10 @@
     "production_enabled": false
   },
   "regression_gate": {
-    "native31_native32_off31": "PENDING_PR_SAMEHEAD",
-    "rojo31_rojo32_off31": "PENDING_PR_SAMEHEAD",
-    "source_class_exact": "PENDING_PR_SAMEHEAD",
-    "original31_byte_exact": "PENDING_PR_SAMEHEAD",
+    "native31_native32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "source_class_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
+    "original31_byte_exact": "PENDING_CURRENT_CANDIDATE_SAMEHEAD",
     "false_positive_or_stale_head": "RED"
   },
   "eight_domains": {
@@ -47,13 +48,13 @@
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "optional 4 craft, 2 traps, 95 world parts"
+    "balance": "optional four craft; two BR traps global, one live trap per owner; 95 world Parts"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "SOURCE_SELECT_CANDIDATE_WAITING_EXACT_HEAD_CI_AND_CANONICAL_NONFORCE_CAS",
+  "adoption": "SOURCE_CANDIDATE_PENDING_SAMEHEAD_CI_AND_NONFORCE_CAS",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Existing #714 HEAD 9602a2b... source-lock RC55 is stale. Select only existing original script blob with RC57 current source and current native/Rojo verification; no author duplication. RC parent freshened via merge of latest official commit; current selected31 remains singleton."
+  "caveat": "Original #714 snapshot db870 is superseded by existing #714 combined fairness+offshore-expiry source; 31 canonical game sources remain exact; validate sameHEAD optional32 selection and source blob."
 }
