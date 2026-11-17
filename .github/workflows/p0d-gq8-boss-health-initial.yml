@@ -1,0 +1,61 @@
+name: P0D GQ8 Stone Giant initial health single-script native gate
+on:
+  push:
+    branches: ['quality/gq8-boss-initial-health-20261118']
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'rc_fastlane/quality_boss_health_initial_20261118/**'
+      - '.github/workflows/p0d-gq8-boss-health-initial.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boss-health-real-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _original482
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
+          path: _gq518_original
+          persist-credentials: false
+      - name: Fixed parent/source identity and exact inverse/negative QA
+        shell: bash
+        env:
+          GQ8_ORIGINAL_BOSS: _original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_NeutralStoneGiant.luau
+          GQ8_GQ518_PATCH: _gq518_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py
+        run: |
+          set -euo pipefail
+          test "$(git -C _original482 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _gq518_original rev-parse HEAD)" = f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_boss_health_initial_20261118 -p test_health.py
+          SRC=rc_fastlane/quality_boss_health_initial_20261118/select_health.py
+          python3 -B "$SRC" --original "$GQ8_ORIGINAL_BOSS" --gq518-author "$GQ8_GQ518_PATCH" --out /tmp/EGGRUMBLE_BOSS_HEALTH_ON.luau
+          python3 -B "$SRC" --original "$GQ8_ORIGINAL_BOSS" --gq518-author "$GQ8_GQ518_PATCH" --out /tmp/EGGRUMBLE_BOSS_HEALTH_OFF.luau --off
+          python3 -B _gq518_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py --source "$GQ8_ORIGINAL_BOSS" --output /tmp/EGGRUMBLE_BOSS_GQ518_PARENT.luau
+          cmp /tmp/EGGRUMBLE_BOSS_HEALTH_OFF.luau /tmp/EGGRUMBLE_BOSS_GQ518_PARENT.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Pinned native Luau parse of actual ON and OFF server Boss source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq8-boss-health-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-boss-health-native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-boss-health-native/luau-compile --text /tmp/EGGRUMBLE_BOSS_HEALTH_ON.luau >/dev/null
+          /tmp/gq8-boss-health-native/luau-compile --text /tmp/EGGRUMBLE_BOSS_HEALTH_OFF.luau >/dev/null
+          echo GQ8_REAL_BOSS_HEALTH_INITIAL_NATIVE_ON_OFF_PASS
