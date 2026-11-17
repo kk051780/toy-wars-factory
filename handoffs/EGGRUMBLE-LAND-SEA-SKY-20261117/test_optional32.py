@@ -66,7 +66,8 @@ class LandSeaSkySourceTests(unittest.TestCase):
             "and not dismountOnDock",
             "craft:GetPivot().Position.Z>z+halfZ+10",
             "offshoreEndZ-SEA_OUTER_MARGIN",
-            "params.FilterDescendantsInstances={craft,water,offshoreWater}",
+            "params.FilterDescendantsInstances=vehicleSweepExclusions(",
+            "craft,water,offshoreWater,hum.Parent)",
         ]:
             with self.subTest(marker=marker):
                 self.assertIn(marker, SOURCE)
