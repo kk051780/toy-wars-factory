@@ -12,6 +12,8 @@ on:
       - 'quality_gameplay/gq8_lss_real31_20261117/**'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - 'rc_fastlane/**'
+      - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -36,6 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rehydrate_real31.py'
+          python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rc_auto_follow.py'
           python3 -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_optional32.py'
       - name: Resolve exact official HEAD and successful V3 run
         id: official
