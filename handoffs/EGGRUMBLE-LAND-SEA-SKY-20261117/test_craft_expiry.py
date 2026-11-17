@@ -5,6 +5,8 @@ Only the existing optional32 LSS Script changes; canonical31 is untouched.
 These source/negative-mutant checks DO NOT establish Studio physics behavior.
 """
 from pathlib import Path
+import hashlib
+import json
 import unittest
 
 SOURCE=(Path(__file__).resolve().parent /
@@ -69,6 +71,17 @@ class OffshoreExpiryRescue(unittest.TestCase):
             with self.subTest(mutation=before):
                 self.assertIn(before,clause)
                 self.assertFalse(meets_contract(clause.replace(before,after,1)))
+
+    def test_optional_profile_source_lock_is_real_git_blob(self):
+        src=Path(__file__).resolve().parent / "EGGRUMBLE_LandSeaSkyTraversal.server.luau"
+        data=src.read_bytes()
+        blob=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+        manifest=json.loads((src.parents[2] / "rc_fastlane" /
+                             "EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
+        self.assertEqual(manifest["added_source_git_blob"],blob)
+        self.assertEqual(manifest["gq8_craft_expiry_offshore_rescue"]["source_git_blob"],blob)
+        self.assertIn(MARKER, data.decode("utf-8"))
+        self.assertIn(MARKER, manifest["feature_ids"][-1])
 
     def test_dismount_guard_and_single_authority_preserved(self):
         self.assertIn("not hum and v.lastPilot", SOURCE)
