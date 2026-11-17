@@ -334,5 +334,33 @@
     "android_15min": "NOT_TESTED",
     "owner_acceptance": "NOT_TESTED",
     "rc_status": "PREP_CANDIDATE_UNTIL_AUTHENTICATED_B_WRITER_CAS"
+  },
+  "gq8_multi_shield_replay": {
+    "feature_id": "GQ8_MULTI_SHIELD_REPLAY_CLEANUP_20261117",
+    "scope": "existing RoundReplay.resetHuman one code site",
+    "author_original_pr": 482,
+    "original_blob": "a97e7aeffc988fe9ccde5bf7544b01deb5f243ff",
+    "why": "Reuse #682 defensive RoundReplay cleanup after GQ81 original 0.42 second HIT overlay, preserving both",
+    "affects": [
+      "item",
+      "lobby",
+      "battle",
+      "character",
+      "castle"
+    ],
+    "others": [
+      "field",
+      "neutral",
+      "balance"
+    ],
+    "script_count": 31,
+    "other30_byte_exact": true,
+    "off_rollback": "Re-select unmodified previous EGGRUMBLE_RoundReplay; 30 others exact",
+    "native": "PENDING_CI",
+    "rojo": "PENDING_CI",
+    "formal_rc": "PREP_CANDIDATE_PENDING_CAS_AND_SAMEHEAD",
+    "studio_android_owner_fun": "NOT_TESTED",
+    "candidate_enabled": true,
+    "note": "Reuse exact source patch/tests from #682 0079e8cdb14adf601f79bcee891d3317b45261d6; final output after GQ81, 31 scripts/40 source-backed flags"
   }
 }
