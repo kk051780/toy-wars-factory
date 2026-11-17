@@ -21,7 +21,7 @@ class LivePartLifecycle(unittest.TestCase):
         self.assertIn("liveParts=math.max(0,liveParts-1)",SRC)
         self.assertIn("local craftPartCost=if flying then 6 else 4",SRC)
         self.assertIn("if liveParts+craftPartCost>MAX_PARTS_PER_WORLD then return end",SRC)
-        self.assertIn("if number>=MAX_LIVE_TRAPS or liveParts>=MAX_PARTS_PER_WORLD then return end",SRC)
+        self.assertIn("if not canReserveTrapSlot(owner.UserId) or liveParts>=MAX_PARTS_PER_WORLD then return end",SRC)
         self.assertIn("t.Destroying:Connect(function() traps[t]=nil end)",SRC)
         self.assertNotIn("assert(totalParts<=",SRC)
 
