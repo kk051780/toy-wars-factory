@@ -25,6 +25,28 @@ class TestServerAcceptedCastCue(unittest.TestCase):
   self.assertEqual(on.count("EGGRUMBLE_ImpactSequence"),1)
   self.assertIn('GetAttributeChangedSignal("EGGRUMBLE_SkillCastSignature")',on)
   self.assertIn('if not tones[role] then return end',on)
+ def test_gq504_existing_audio_kept_byte_exact(self):
+  audio='''-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117
+player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)
+-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_END_20261117
+'''
+  before=SAMPLE+audio
+  chosen=mod.patch(before)
+  self.assertEqual(mod.undo(chosen),before)
+  mod.safety_checks(chosen)
+  self.assertEqual(chosen.count('player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence")'),2)
+  self.assertTrue(chosen.endswith(audio))
+ def test_gq504_duplicate_audio_marker_fails_closed(self):
+  audio='''-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_BEGIN_20261117
+player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)
+-- GQ504_CONFIRMED_HIT_AUDIO_INLINE_END_20261117
+'''
+  with self.assertRaisesRegex(ValueError,"RED_DUPLICATE_AUDIO_OWNER"):
+   mod.patch(SAMPLE+audio+audio)
+ def test_second_hit_listener_without_original_audio_owner_is_rejected(self):
+  mutant=SAMPLE+'player:GetAttributeChangedSignal("EGGRUMBLE_ImpactSequence"):Connect(confirmedHit)'
+  with self.assertRaisesRegex(ValueError,"RED_SOURCE_CONTRACT"):
+   mod.patch(mutant)
  def test_no_gameplay_authority(self):
   for forbidden in ("FireServer(", "TakeDamage(", "RemoteEvent", "DataStoreService", ":Activate("):
    self.assertNotIn(forbidden,mod.INSERT)
