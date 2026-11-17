@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GQ514 exact-current31 one-Replay port of original author #512 policy.
+"""GQ514 exact-current31 one-Replay port of original author #514 Boss counter reset.
 No second gameplay authority. OFF exactly restores prior current RoundReplay.
 Original author #514 fixed 0d1be13be6d895bea460ba54aaa91ef346684d7f.
 """
@@ -17,7 +17,7 @@ RECEIPT="GQ514_BOSS_RC31_RECEIPT.json"
 FEATURE="GQ514_BOSS_KO_ROUND_RESET_20261117"
 def patch(s):
     if s.count(ANCHOR)!=1 or "function Replay.resetHuman(" not in s: raise ValueError("RED_GQ514_RESET_ANCHOR_OR_OWNER")
-    if 'p:SetAttribute("EGGRUMBLE_Combo",' in s or 'p:SetAttribute("EGGRUMBLE_BestCombo",' in s: raise ValueError("RED_GQ514_ALREADY_APPLIED")
+    if 'p:SetAttribute("EGGRUMBLE_BossDefeats",0)' in s: raise ValueError("RED_GQ514_ALREADY_APPLIED")
     if s.count(' p:SetAttribute("EGGRUMBLE_Combo",0)')!=1: raise ValueError("RED_GQ514_PREVIOUS_COMBO_NOT_SELECTED")
     if "GQ8_MULTI_SHIELD_REPLAY_CLEANUP_BEGIN" not in s: raise ValueError("RED_GQ514_PARENT_SHIELD_MISSING")
     out=s.replace(ANCHOR,ANCHOR+EXTRA,1)
@@ -115,7 +115,7 @@ def verify(base,out,place):
     d=json.loads(receipt.read_text(encoding="utf-8"))
     d.update(native="31/31",rojo="31/31",place_bytes=place.stat().st_size,place_sha256=hashlib.sha256(place.read_bytes()).hexdigest())
     receipt.write_text(json.dumps(d,sort_keys=True,indent=2)+"\n",encoding="utf-8")
-    print("GQ514_COMBO_SELECTED31_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS")
+    print("GQ514_BOSS_SELECTED31_NATIVE_ROJO_SOURCE_OFF_EXACT_PASS")
 if __name__=="__main__":
     p=argparse.ArgumentParser();p.add_argument("command",choices=["selftest","prepare","native","verify"])
     p.add_argument("--base",type=Path);p.add_argument("--out",type=Path);p.add_argument("--project",type=Path);p.add_argument("--mutant",type=Path);p.add_argument("--place",type=Path)
