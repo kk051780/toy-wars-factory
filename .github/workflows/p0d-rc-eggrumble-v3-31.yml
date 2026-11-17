@@ -23,6 +23,7 @@ on:
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
+      - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -52,6 +53,7 @@ on:
       - 'rc_fastlane/quality_fx505_inline31/**'
       - 'rc_fastlane/quality_burn_reset_20261117/**'
       - 'rc_fastlane/quality_neutral_safe_spawn_20261117/**'
+      - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2368,10 +2370,46 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           echo GQ8_NEUTRAL_SPAWN_BOUND_AND_COLLIDABLE_OVERLAP_ONE_SWARM_NATIVE31_ROJO31_INVERSE_OFF_PASS
+      - name: GQ503 original seven-role secondary VFX mobile LOD inline on original CombatFeel (native31 + Rojo31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=rc_fastlane/quality_fx_lod503_rc31
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ8_NEUTRAL_SAFE_SELECTED31.project.json"
+          OUT="$DIR/GQ503_CLIENT_FX_LOD_SELECTED31.project.json"
+          PLACE="$DIR/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx"
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_fx.py'
+          python3 -B "$SRC/patch_fx.py" prepare --base "$BASE" --out "$OUT"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+           subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ503_ALL_31_ACTUAL_SOURCE_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B "$SRC/native_fx.py" --project "$OUT" \
+            --out "$DIR/GQ503_LOD_NATIVE12.luau" \
+            --mutant "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_LOD_NATIVE12.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ503_LOD_NATIVE12.luau" | tee "$DIR/GQ503_LOD_NATIVE12.log"
+          grep -q GQ503_ORIGINAL_FX_LOD_NATIVE12_CASES_PASS "$DIR/GQ503_LOD_NATIVE12.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ503_NO_NEAR_PROTECTION_MUTANT.luau" > "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log" 2>&1; then
+           echo RED_GQ503_NEAR_PROTECTION_MUTANT_SURVIVED; exit 1
+          fi
+          grep -q GQ503_NEAR_MUTANT_RED "$DIR/GQ503_LOD_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/patch_fx.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          echo GQ503_CLIENT_VISUAL_LOD_TRUE_NATIVE_ROJO31_OFF_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2387,7 +2425,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2437,7 +2475,7 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==44
+          assert len([v for v in m["feature_flags"].values() if v is True])==45
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
           assert m["source_heads"]["gq505_original_fx_author"]=="3ea5f4e87df7e3bb20a63026f892dd9c94f981e9"
           fair=json.loads(Path("artifacts/gq515_official_select/GQ505_FX_FAIR_RECEIPT.json").read_text())
@@ -2456,7 +2494,14 @@ jobs:
           assert neutral["off_returns_previous_swarm_exact"] and neutral["real_rojo_source_class_exact"]=="31/31"
           assert neutral["spawn_attempts_max_per_requested_soldier"]==3
           assert neutral["no_additional_score_remote_game_or_spawn_controller"] is True
-          assert neutral["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert neutral["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
+          fx503=json.loads(Path("artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_RECEIPT.json").read_text())
+          assert fx503["feature_id"]=="GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117"
+          assert fx503["gameplay_sources"]==31 and fx503["other30_byte_exact"] and fx503["off_rollback_exact"]
+          assert fx503["native"]==fx503["rojo"]=="31/31" and fx503["added_runtime_scripts"]==0
+          assert fx503["script_class"]=="LocalScript" and fx503["near_radius_studs"]==40
+          assert fx503["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["GQ503_SEVEN_ROLE_SECONDARY_FX_LOD_20261117"] is True
           assert m["gq8_neutral_safe_spawn"]["source_selected_by_workflow"] is True
           assert m["gq8_burn_replay_reset"]["source_selected_by_workflow"] is True
           assert m["feature_flags"]["GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"] is True
@@ -3031,6 +3076,11 @@ jobs:
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ8_NEUTRAL_SAFE_SPAWN_RECEIPT.json
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ503_CLIENT_FX_LOD_RECEIPT.json
+            artifacts/gq515_official_select/GQ503_LOD_NATIVE12.log
+            artifacts/gq515_official_select/GQ503_LOD_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_NATIVE.log
             artifacts/gq515_official_select/GQ8_NEUTRAL_ARENA_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ8_BURN_NATIVE6.log
