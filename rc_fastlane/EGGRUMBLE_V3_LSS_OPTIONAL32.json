@@ -5,9 +5,9 @@
   "parent_profile": "eggrumble_v3_31",
   "source_count": 32,
   "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
-  "integrator_parent_rc_sha": "e2414c413046cbb68a9a654689a2c7181d3ce040",
+  "integrator_parent_rc_sha": "7560b3a3bbe83cdf2820bd24150e09e7b792e3a9",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+  "added_source_git_blob": "2404eebcd88033f3d69f1260cbea49c57da67784",
   "source_author_prs": [
     714,
     737,
@@ -82,5 +82,28 @@
     "preserves_existing_rc_trap_owner_fairness_and_offshore_rescue": true,
     "lifecycle_cleanup": "World.Destroying unwatchCombo all pairs and clear state",
     "preserves_existing_rc_orphan_owner": true
+  },
+  "gq8_craft_full_footprint": {
+    "feature_id": "GQ8_LSS_FULL_CRAFT_SWEEP_20261118",
+    "prior_source_git_blob": "23b3650b6bdce621c14439226ef03990696b4cea",
+    "source_git_blob": "2404eebcd88033f3d69f1260cbea49c57da67784",
+    "source_scope": "only existing Studio-only optional 32nd LSS script",
+    "boat_sweep_xyz": [
+      18,
+      8,
+      19
+    ],
+    "air_sweep_xyz": [
+      24,
+      8,
+      19
+    ],
+    "full_footprint_blockcast": true,
+    "rotation_only_destination_overlap": true,
+    "max_craft_unchanged": 4,
+    "canonical31_changed": false,
+    "status": "CANDIDATE_PENDING_SAME_HEAD_NATIVE_ROJO",
+    "rollback": "restore prior optional32 blob; or omit extra script for exact canonical31",
+    "studio_android_fun": "NOT_TESTED"
   }
 }
