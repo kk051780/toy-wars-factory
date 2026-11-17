@@ -2911,7 +2911,7 @@ jobs:
           assert audio["voices_max"]==4 and audio["max_cues_per_second"]==6 and audio["volume_cap"]==0.30
           assert audio["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ504_ORIGINAL_CONFIRMED_HIT_AUDIO_INLINE_20261117"] is True
-          assert m["source_heads"]["gq504_original_hit_audio"]=="385d3242cbc8d0a3008ee818d8dc30040170fce6
+          assert m["source_heads"]["gq504_original_hit_audio"]=="385d3242cbc8d0a3008ee818d8dc30040170fce6"
           assert m["feature_flags"]["GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"] is True
           assert m["source_heads"]["gq496_original_objective_compass"]=="8434485c4bbe65f03dc310f4b85157fdd6012465"
           compass=json.loads(Path("artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json").read_text())
