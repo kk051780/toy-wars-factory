@@ -1,0 +1,67 @@
+name: P0D GQ8 LSS pilot-safe Blockcast native QA
+on:
+  pull_request:
+    branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-pilot-self-sweep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-pilot-not-own-obstacle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check existing parent tests and additional negative source contracts
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _lss_pinned_luau
+          persist-credentials: false
+      - name: Compile current real LSS source using pinned Luau
+        run: |
+          set -euo pipefail
+          cmake -S _lss_pinned_luau -B /tmp/lss-pilot-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-pilot-native \
+            --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/lss-pilot-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            >/dev/null
+          echo GQ8_LSS_ACTUAL_SCRIPT_NATIVE_COMPILE_PASS
+      - name: Execute actual Blockcast filter plus compiling no-pilot negative mutant
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_pilot_sweep_native.py \
+            --out /tmp/lss_sweep_actual.luau --mutant /tmp/lss_sweep_mutant.luau
+          /tmp/lss-pilot-native/luau-compile --text /tmp/lss_sweep_actual.luau >/dev/null
+          /tmp/lss-pilot-native/luau-compile --text /tmp/lss_sweep_mutant.luau >/dev/null
+          /tmp/lss-pilot-native/luau /tmp/lss_sweep_actual.luau | tee /tmp/lss_pilot_success.txt
+          grep -q GQ8_LSS_PILOT_OWN_BODY_BLOCKCAST_EXCLUSION_REAL_LUAU_PASS \
+            /tmp/lss_pilot_success.txt
+          if /tmp/lss-pilot-native/luau /tmp/lss_sweep_mutant.luau; then
+            echo 'RED: same-compiling no-pilot mutant must FAIL'; exit 1
+          fi
+          echo GQ8_LSS_PILOT_MUTANT_EXPECTED_RED_PASS
+      - name: Confirm only optional Studio-owned script changed
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau").read_text()
+          assert "if not RunService:IsStudio() then return end" in s
+          assert 'local function vehicleSweepExclusions(' in s
+          assert 'if pilotCharacter then table.insert(ignore,pilotCharacter) end' in s
+          assert 'EGGRUMBLE_SwarmCombat' in s
+          assert 'Instance.new("RemoteEvent")' not in s
+          print("GQ8_LSS_STUDIO_SINGLE_SCRIPT_NO_CANONICAL_SCORE_AUTHORITY")
+          PY
