@@ -60,7 +60,8 @@ jobs:
           cmp -s "$ORIGINAL" artifacts/gq568_off/EGGRUMBLE_BalanceMetrics.luau
           test "$(git hash-object artifacts/gq568_off/EGGRUMBLE_BalanceMetrics.luau)" = 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
           cp "$ROOT/RoundTailNative.spec.luau" artifacts/gq568_on/
-          cp _gq568_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_BalanceMetrics.spec.luau artifacts/gq568_on/
+          mkdir -p artifacts/gq568_on/tests
+          cp _gq568_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_BalanceMetrics.spec.luau artifacts/gq568_on/tests/
           test ! -e artifacts/gq568_on/default.project.json
       - name: Real Luau native test normal/overlong/boundary/mode-coverage
         shell: bash
@@ -70,7 +71,7 @@ jobs:
           cmake --build /tmp/gq568_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           /tmp/gq568_native/luau-compile artifacts/gq568_on/EGGRUMBLE_BalanceMetrics.luau >/dev/null
           /tmp/gq568_native/luau-compile artifacts/gq568_on/RoundTailNative.spec.luau >/dev/null
-          (cd artifacts/gq568_on && /tmp/gq568_native/luau EGGRUMBLE_BalanceMetrics.spec.luau) | tee artifacts/gq568_on/author.log
+          (cd artifacts/gq568_on/tests && /tmp/gq568_native/luau EGGRUMBLE_BalanceMetrics.spec.luau) | tee artifacts/gq568_on/author.log
           grep -q EGGRUMBLE_BALANCE_NATIVE_SOURCE_PASS artifacts/gq568_on/author.log
           (cd artifacts/gq568_on && /tmp/gq568_native/luau RoundTailNative.spec.luau) | tee artifacts/gq568_on/tail.log
           grep -q GQ_V3_BALANCE_OUTLIER_NATIVE_PASS artifacts/gq568_on/tail.log
