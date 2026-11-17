@@ -560,5 +560,24 @@
     "studio_2client": "NOT_TESTED",
     "android_15min": "NOT_TESTED",
     "art_fun_owner": "NO_GO"
+  },
+  "gq8_human_siege_pacing": {
+    "feature_id": "GQ8_HUMAN_SIEGE_PER_ATTACKER_COOLDOWN_20261117",
+    "source_selected_by_workflow": true,
+    "scope": "existing current-game session guarded human SiegeGate prompt only",
+    "script": "EGGRUMBLE_LobbyCastleModesPreview",
+    "gameplay_sources": 31,
+    "one_existing_script_only": true,
+    "other30_byte_exact": true,
+    "per_human_per_target_server_seconds": 1,
+    "cooldown_commits_only_after_success": true,
+    "reset": "closure recreated with castle on next match",
+    "rollback": "unselect latest siege Host and retain previous GQ510_MAGE_SELECTED31 exact script set",
+    "source_validation": "SAME_HEAD_NATIVE31_ROJO31_MUTANT_PENDING",
+    "studio_two_clients": "NOT_TESTED",
+    "android15": "NOT_TESTED",
+    "balanced_siege_duration": "NOT_TESTED",
+    "owner_fun": "NO_GO",
+    "public_release": "BLOCKED"
   }
 }
