@@ -1,5 +1,14 @@
 name: P0D GQ8 LSS Real31 to32 source class bridge
 on:
+  push:
+    branches:
+      - feature/eggrumble-land-sea-sky-traversal-20261117-01
+      - feature/gq8-true31-32-currenthead-autogate-20261117-01
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'quality_gameplay/gq8_real_squad_fan_20261117/**'
+      - 'quality_gameplay/gq8_lss_real31_20261117/**'
+      - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
   pull_request:
     branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
     paths:
