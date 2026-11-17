@@ -11,6 +11,7 @@ from pathlib import Path
 
 HOST_BEGIN = "local function joinQueue(mode:string,p:Player)\n"
 HOST_END = "\n-- Seven job-selection stands:"
+STAND_END = "\nlocal gateTeam=block"
 
 PREFIX = r'''-- GQ8 real selected Host joinQueue body executed with isolated Roblox-facing mocks.
 local function check(cond,label)
@@ -171,6 +172,65 @@ check(#starts==1,"FULL16_DOUBLE_START")
 print("GQ8_REAL_HOST_NATIVE_ROLE_ACK_12_SEMANTIC_CASES_PASS")
 '''
 
+STAND_PREFIX = r'''
+-- Authentic seven-role order and real Host role-stand prompt closures.
+local vectorMt={}
+vectorMt.__add=function(left,right) return setmetatable({},vectorMt) end
+local Vector3={}
+function Vector3.new(x,y,z) return setmetatable({X=x,Y=y,Z=z},vectorMt) end
+local root=Vector3.new(0,0,0)
+local folder={}
+local rolesRegistered={}
+local function block(parent,name,position,size,color)
+ return {Name=name,Position=position}
+end
+local function nearbyBoard(part,label,maxDistance)
+ check(type(label)=="string" and maxDistance==24,"ROLE_STAND_PRESENTATION")
+end
+local function prompt(part,verb,label,callback)
+ check(verb=="職業選択" and type(callback)=="function","ROLE_STAND_PROMPT")
+ check(rolesRegistered[part.Name]==nil,"ROLE_STAND_DUPLICATE")
+ rolesRegistered[part.Name]=callback
+end
+local SevenRoleCombat={}
+function SevenRoleCombat.roleOrder() return table.clone(ORDER) end
+function SevenRoleCombat.info(role)
+ return {name=role,weapon="TEST",color={}}
+end
+'''
+STAND_SUFFIX = r'''
+-- Native executes real callback from 7 actual Host world stands, not a rewritten selection.
+local count=0
+for _ in pairs(rolesRegistered) do count+=1 end
+check(count==7 and #ORDER==7,"STAND_COUNT_SEVEN")
+for _,role in ipairs(ORDER) do
+ check(type(rolesRegistered["ROLE_"..role])=="function","STAND_ROLE_"..role)
+end
+local fresh=player(301)
+fresh:SetAttribute("EGGRUMBLE_SelectedRole","BUILDER")
+joinQueue("BATTLE_ROYALE",fresh)
+check(joined[fresh.UserId]==nil,"STAND_CLIENT_ATTR_SPOOF")
+check(fresh:GetAttribute("EGGRUMBLE_RoleSelectionRequired")==true,"STAND_PROMPT_REQUIRED")
+rolesRegistered.ROLE_NINJA(fresh)
+check(chosenRole[fresh.UserId]=="NINJA","STAND_SERVER_SELECTION")
+check(fresh:GetAttribute("EGGRUMBLE_SelectedRole")=="NINJA","STAND_CLIENT_DISPLAY")
+check(fresh:GetAttribute("EGGRUMBLE_RoleSelectionRequired")==nil,"STAND_CLEAR_ACK")
+joinQueue("BATTLE_ROYALE",fresh)
+check(joined[fresh.UserId]=="BATTLE_ROYALE" and #queues.BATTLE_ROYALE==1,"STAND_TO_BR")
+joinQueue("BATTLE_ROYALE",fresh)
+check(joined[fresh.UserId]==nil and #queues.BATTLE_ROYALE==0,"STAND_CANCEL_BR")
+rolesRegistered.ROLE_BUILDER(fresh)
+check(chosenRole[fresh.UserId]=="BUILDER","STAND_BUILDER_SELECTED")
+joinQueue("BATTLE_ROYALE",fresh)
+check(joined[fresh.UserId]=="BATTLE_ROYALE" and #queues.BATTLE_ROYALE==1,"STAND_BUILDER_QUEUE")
+-- TEAM already active from the source-based full16 scenario: cannot switch class midmatch.
+check(joined[last.UserId]=="TEAM" and sessions.TEAM~=nil,"STAND_ACTIVE_SETUP")
+check(chosenRole[last.UserId]=="BEAST","STAND_ACTIVE_BEFORE")
+rolesRegistered.ROLE_MAGE(last)
+check(chosenRole[last.UserId]=="BEAST","STAND_ACTIVE_LOCKED")
+print("GQ8_REAL_SEVEN_STAND_TO_QUEUE_AND_ACTIVE_LOCK_NATIVE_PASS")
+'''
+
 def load_source(project: Path):
     helper = Path(__file__).with_name("select_role_ready.py")
     spec = importlib.util.spec_from_file_location("gq8_role_select", helper)
@@ -193,9 +253,25 @@ def load_source(project: Path):
         raise ValueError("RED_JOINQUEUE_NOT_COMPLETE")
     if "task.delay(COUNTDOWN," not in body:
         raise ValueError("RED_ORIGINAL_COUNTDOWN_MISSING")
-    return body
+    if source.count(STAND_END) != 1:
+        raise ValueError("RED_ROLE_STAND_TAIL_DRIFT")
+    stand_a = source.index(HOST_END, a) + 1
+    stand_b = source.index(STAND_END, stand_a)
+    stands = source[stand_a:stand_b]
+    if stands.count('prompt(stand,"職業選択",data.name,function(p)') != 1:
+        raise ValueError("RED_ROLE_STAND_ACTUAL_PROMPT_MISSING")
+    if stands.count("chosenRole[p.UserId]=role") != 1 or stands.rstrip().splitlines()[-1].strip() != "end":
+        raise ValueError("RED_ROLE_STAND_CALLBACK_DRIFT")
+    combat = [src for route,src in files.items() if route[-1]=="EGGRUMBLE_SevenRoleCombat"]
+    if len(combat) != 1:
+        raise ValueError("RED_NOT_ONE_COMBAT_ORDER")
+    combat_source = combat[0].read_text(encoding="utf-8")
+    orders = [line for line in combat_source.splitlines() if line.startswith("local ORDER=")]
+    if len(orders) != 1 or "return table.clone(ORDER)" not in combat_source:
+        raise ValueError("RED_COMBAT_ROLE_ORDER_DRIFT")
+    return body, stands, orders[0]
 
-def render(body: str, mutant: bool=False):
+def render(body: str, stands: str, role_order: str, mutant: bool=False, stand_mutant: bool=False):
     if mutant:
         before = "if chosenRole[p.UserId]==nil then"
         if body.count(before) != 1:
@@ -203,18 +279,25 @@ def render(body: str, mutant: bool=False):
         body = body.replace(before,"if false then",1)
     # Luau standalone uses the exact function body; Player is a Roblox-only type.
     body = body.replace("mode:string,p:Player","mode:string,p:any",1)
-    return PREFIX+body+SUFFIX
+    if stand_mutant:
+        needle="chosenRole[p.UserId]=role"
+        if stands.count(needle)!=1:
+            raise ValueError("RED_STAND_MUTANT_DRIFT")
+        stands=stands.replace(needle, "if false then chosenRole[p.UserId]=role end",1)
+    return PREFIX+body+SUFFIX+role_order+"\n"+STAND_PREFIX+stands+"\n"+STAND_SUFFIX
 
 def main():
     cli=argparse.ArgumentParser()
     cli.add_argument("--project",type=Path,required=True)
     cli.add_argument("--out",type=Path,required=True)
     cli.add_argument("--mutant",type=Path,required=True)
+    cli.add_argument("--stand-mutant",type=Path,required=True)
     a=cli.parse_args()
-    body=load_source(a.project)
+    body,stands,order=load_source(a.project)
     a.out.parent.mkdir(parents=True,exist_ok=True)
-    a.out.write_text(render(body),encoding="utf-8")
-    a.mutant.write_text(render(body,True),encoding="utf-8")
+    a.out.write_text(render(body,stands,order),encoding="utf-8")
+    a.mutant.write_text(render(body,stands,order,mutant=True),encoding="utf-8")
+    a.stand_mutant.write_text(render(body,stands,order,stand_mutant=True),encoding="utf-8")
     print("GQ8_REAL_SELECTED_31_SOURCE_ROLE_ACK_NATIVE_HARNESS_GENERATED")
 
 if __name__ == "__main__":

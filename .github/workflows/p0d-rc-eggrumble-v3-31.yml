@@ -1851,11 +1851,14 @@ jobs:
           python3 -B "$SRC/select_role_ready.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
           python3 -B "$SRC/role_native.py" --project "$OUT" \
             --out "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" \
-            --mutant "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau"
+            --mutant "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau" \
+            --stand-mutant "$DIR/GQ8_ROLE_STAND_DISABLED_MUTANT.luau"
           /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" >/dev/null
           /tmp/gq530_all31_native/luau "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" \
             | tee "$DIR/GQ8_ROLE_ACK_NATIVE12_RESULT.log"
           grep -q GQ8_REAL_HOST_NATIVE_ROLE_ACK_12_SEMANTIC_CASES_PASS \
+            "$DIR/GQ8_ROLE_ACK_NATIVE12_RESULT.log"
+          grep -q GQ8_REAL_SEVEN_STAND_TO_QUEUE_AND_ACTIVE_LOCK_NATIVE_PASS \
             "$DIR/GQ8_ROLE_ACK_NATIVE12_RESULT.log"
           /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau" >/dev/null
           if /tmp/gq530_all31_native/luau "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau" \
@@ -1863,7 +1866,13 @@ jobs:
             echo 'RED_GQ8_ROLE_ACK_MUTANT_NOT_CAUGHT'; exit 1
           fi
           grep -q GQ8_NATIVE_ROLE_ACK_RED_ "$DIR/GQ8_ROLE_ACK_MUTANT_EXPECTED_RED.log"
-          echo GQ8_ROLE_ACK_12_REAL_HOST_NATIVE_SEMANTIC_AND_MUTANT_PASS
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_ROLE_STAND_DISABLED_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_ROLE_STAND_DISABLED_MUTANT.luau" \
+            > "$DIR/GQ8_ROLE_STAND_DISABLED_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ8_ROLE_STAND_MUTANT_NOT_CAUGHT; exit 1
+          fi
+          grep -q GQ8_NATIVE_ROLE_ACK_RED_STAND_SERVER_SELECTION "$DIR/GQ8_ROLE_STAND_DISABLED_MUTANT_EXPECTED_RED.log"
+          echo GQ8_ROLE_ACK_12_REAL_HOST_AND_7_STANDS_BOTH_MUTANTS_PASS
           echo GQ8_ROLE_ACK_TEAM_BR_ONE_HOST_OTHER30_BYTE_EXACT_PASS
       - name: GQ8 draw-to-lobby replay lifecycle (real selected31 source, 11 negative mutants, QA-only)
         shell: bash
@@ -2440,9 +2449,31 @@ jobs:
           test "$(git -C _gq634_intake rev-parse HEAD)" = fed9cbb5680d40c68a2e1395e9b84276d7868fb9
           test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
-            test "$current_base" = db88cf5a9eaac827f25457be566d383cb78b8cef \
-              || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
+            python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text())
+          pr=event["pull_request"]
+          if pr["base"]["ref"]!="rc/p0d-s1-kids-rc01":
+              raise SystemExit("RED_GQ470_PR_NOT_CANONICAL_RC")
+          m=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json").read_text())
+          a=json.loads(Path("rc_fastlane/ACTIVE.json").read_text())
+          old="7b3e055bae93ea71a89f981c4e78e8ab72996ae9"
+          if (m.get("base_official_head")!=old or
+              m.get("feature_id")!="GQ470_CASTLE_ELIMINATION_SPECTATE_492" or
+              m.get("original_author",{}).get("commit")!="eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20"):
+              raise SystemExit("RED_GQ470_HISTORICAL_SOURCE_PIN_DRIFT")
+          optional=a.get("source_profiles",{}).get("eggrumble_v3_spectate32_studio",{})
+          regular=a.get("source_profiles",{}).get("eggrumble_v3_31",{})
+          if not (a.get("active_profile")=="rich51" and
+                  regular.get("source_count")==31 and
+                  optional.get("source_count")==32 and
+                  optional.get("default_selected") is False and
+                  optional.get("production_enabled") is False and
+                  optional.get("source_manifest")=="rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json"):
+              raise SystemExit("RED_GQ470_OPTIONAL32_PROFILE_NOT_AUTHENTICALLY_REGISTERED")
+          print("GQ470_POST_ADOPTION_PR_BASE_REGISTERED_SOURCE_PIN_PASS",pr["base"]["sha"])
+          PY
           fi
           python3 -B -m unittest discover -v \
             -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
@@ -2582,6 +2613,7 @@ jobs:
             artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_ROLE_ACK_NATIVE12_RESULT.log
             artifacts/gq515_official_select/GQ8_ROLE_ACK_MUTANT_EXPECTED_RED.log
+            artifacts/gq515_official_select/GQ8_ROLE_STAND_DISABLED_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ518_BOSS_SELECTED31.project.json
             artifacts/gq515_official_select/GQ518_BOSS_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json
