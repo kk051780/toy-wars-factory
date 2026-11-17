@@ -26,6 +26,7 @@ on:
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -58,6 +59,7 @@ on:
       - 'rc_fastlane/quality_warp524_current31/**'
       - 'rc_fastlane/quality_fx_lod503_rc31/**'
       - 'rc_fastlane/quality_mage510_inline31/**'
+      - 'rc_fastlane/quality_compass496_inline31/**'
       - 'rc_fastlane/quality_hit_chain_20261117/**'
       - 'rc_fastlane/quality_combo512_rc31/**'
       - 'rc_fastlane/quality_boss514_rc31/**'
@@ -2506,10 +2508,66 @@ jobs:
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC" verify --base "$BASE" --out "$OUT" --place "$PLACE" --author "$AUTHOR" --baseplace "$DIR/GQ503_CLIENT_FX_LOD_TRUE_ROJO31.rbxlx"
           echo GQ510_EXISTING_MAGE_REAL_AUTHOR_NATIVE_ROJO31_TWO_MUTANTS_AND_ZERO_SOURCE_DELTA_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8434485c4bbe65f03dc310f4b85157fdd6012465
+          path: _gq496_original
+          persist-credentials: false
+      - name: GQ496 original objective compass in one existing CombatFeel (Native13 and Rojo31, OFF)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq496_original rev-parse HEAD)" = 8434485c4bbe65f03dc310f4b85157fdd6012465
+          SRC=rc_fastlane/quality_compass496_inline31
+          AUTHOR=_gq496_original/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116
+          DIR=artifacts/gq515_official_select
+          BASE="$DIR/GQ510_MAGE_SELECTED31.project.json"
+          OUT="$DIR/GQ496_COMPASS_SELECTED31.project.json"
+          PLACE="$DIR/GQ496_COMPASS_TRUE_ROJO31.rbxlx"
+          test "$(git hash-object "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau")" = 43feb1c3c55b727c0d5a8fad5195a32d54da18e2
+          python3 -B -m unittest discover -v -s "$AUTHOR/tests" -p 'test_objective_compass_contract.py'
+          python3 -B -m unittest discover -v -s "$SRC" -p 'test_compass.py'
+          python3 -B "$SRC/select_compass.py" prepare --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau"
+          python3 - "$OUT" <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"rc_fastlane/quality_castle_prompt_session_20261117")
+          from select_castle import mapping
+          _,files=mapping(Path(sys.argv[1]))
+          assert len(files)==31
+          for f in files.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ496_SELECTED_COMPASS_ALL31_LUAU_COMPILE_PASS")
+          PY
+          python3 -B "$AUTHOR/tests/make_native_objective_harness.py" --out "$DIR/GQ496_REAL_PICKER_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ496_REAL_PICKER_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ496_REAL_PICKER_NATIVE.luau" | tee "$DIR/GQ496_REAL_PICKER_NATIVE.log"
+          grep -q 'GQ_REAL_OBJECTIVE_PICKER_NATIVE_PASS cases=13' "$DIR/GQ496_REAL_PICKER_NATIVE.log"
+          python3 - "$DIR/GQ496_REAL_PICKER_NATIVE.luau" "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" <<'PY'
+          from pathlib import Path
+          import sys
+          src=Path(sys.argv[1]).read_text(encoding="utf-8")
+          a="*(otherVault.Position.X-battlefield.Position.X)<0"
+          assert src.count(a)==1,"RED_GQ496_MUTANT_SOURCE_ANCHOR"
+          Path(sys.argv[2]).write_text(src.replace(a,"*(otherVault.Position.X-battlefield.Position.X)>0",1),encoding="utf-8")
+          print("GQ496_TEAM_ENEMY_MISCLASSIFICATION_MUTANT_READY")
+          PY
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ496_ALLY_ENEMY_EXPECTED_RED.luau" \
+            > "$DIR/GQ496_ENEMY_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo RED_GQ496_ALLY_TARGET_FALSE_POSITIVE_WAS_ACCEPTED; exit 1
+          fi
+          grep -q 'TEAM incorrectly marks ally' "$DIR/GQ496_ENEMY_MUTANT_EXPECTED_RED.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SRC/select_compass.py" verify --base "$BASE" --out "$OUT" \
+            --author "$AUTHOR/EGGRUMBLE_ObjectiveCompass.client.luau" --place "$PLACE"
+          echo GQ496_ORIGINAL_CLIENT_OBJECTIVES_NATIVE13_MUTANT_RED_ROJO31_OTHER30_BYTE_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -2525,7 +2583,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx").read_bytes()
           boss518=json.loads(Path("artifacts/gq515_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert boss518["other30_original_sources_byte_identical"] and boss518["inverse_off_rollback_byte_exact"]
           assert boss518["rojo_source_class_exact"]=="31/31" and boss518["source_count"]==31
@@ -2575,7 +2633,16 @@ jobs:
           assert m["gq514_boss_ko_round_reset"]["original_pr"]==514
           assert m["gq8_hit_chain"]["candidate_enabled"] is True
           assert m["gq8_multi_shield_replay"]["candidate_enabled"] is True
-          assert len([v for v in m["feature_flags"].values() if v is True])==47
+          assert len([v for v in m["feature_flags"].values() if v is True])==48
+          assert m["feature_flags"]["GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"] is True
+          assert m["source_heads"]["gq496_original_objective_compass"]=="8434485c4bbe65f03dc310f4b85157fdd6012465"
+          compass=json.loads(Path("artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json").read_text())
+          assert compass["feature_id"]=="GQ496_OBJECTIVE_COMPASS_CURRENT31_20261117"
+          assert compass["game_sources"]==31 and compass["other30_byte_exact"] and compass["off_exact"]
+          assert compass["client_only"] and compass["gated_studio_only"] and compass["added_runtime_scripts"]==0
+          assert compass["native"]==compass["rojo"]=="31/31"
+          assert compass["refresh_cadence_sec"]==0.8 and compass["auto_collapse_sec"]==18
+          assert compass["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ524_NINJA_TRAPPER_WARP_CLEARANCE_20261117"] is True
           assert m["source_heads"]["gq524_original_warp"]=="f90875e14446ba86b1c668ba43efa37fbc74be20"
           warp=json.loads(Path("artifacts/gq515_official_select/GQ524_SAFE_WARP_RC31_RECEIPT.json").read_text())
@@ -2596,7 +2663,7 @@ jobs:
           assert mage["source_count"]==31 and mage["other30_exact"] and mage["off_rollback_exact"]
           assert mage["all31_byte_exact"] and mage["new_game_script_source_count"]==0
           assert mage["native"]==mage["rojo"]=="31/31" and mage["new_game_remote_store"]==0
-          assert mage["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert mage["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx").read_bytes()).hexdigest()
           assert m["feature_flags"]["GQ510_MAGE_TEAM_AI_WALL_LOS_20261117"] is True
           assert m["gq510_mage_heal_20261117"]["original_pr"]==510
           assert m["feature_flags"]["GQ505_SERVER_MODE_FX_FAIR_INLINE31"] is True
@@ -3201,6 +3268,11 @@ jobs:
             artifacts/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
             artifacts/gq515_official_select/GQ510_MAGE_TRUE_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ510_MAGE_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ496_COMPASS_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ496_COMPASS_TRUE_ROJO31.rbxlx
+            artifacts/gq515_official_select/GQ496_OBJECTIVE_COMPASS_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ496_REAL_PICKER_NATIVE.log
+            artifacts/gq515_official_select/GQ496_ENEMY_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ510_ORIGINAL_BUG.log
             artifacts/gq515_official_select/GQ510_NATIVE.log
             artifacts/gq515_official_select/GQ510_MUTANT_WALL_EXPECTED_RED.log
