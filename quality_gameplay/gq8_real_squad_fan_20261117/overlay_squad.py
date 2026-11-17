@@ -61,7 +61,8 @@ def patch(source: str) -> str:
         ix=source.find("SPAWN_BATCH")
         it=source.find("for _=1,math.min(SPAWN_BATCH")
         mid=source.find("session.swarm=api")
-        snippet=source[max(0,it-180):it+750] if it>=0 else source[max(0,ix-150):ix+650]
+        pacing=source.find("lastSpawnAt=os.clock()")
+        snippet=source[max(0,it-180):it+750] if it>=0 else source[max(0,pacing-80):pacing+2600]
         raise ValueError("RED_CURRENT_SWARM_FORMATION_ANCHOR_DRIFT"
            +" helper="+str(source.count(HELPER_ANCHOR))
            +" old="+str(source.count(OLD))
