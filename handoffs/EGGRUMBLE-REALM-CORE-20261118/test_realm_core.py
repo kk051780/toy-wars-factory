@@ -75,7 +75,7 @@ class RealmCoreContract(unittest.TestCase):
   for forbidden in ('DataStoreService','SetAsync','UpdateAsync','EGGRUMBLE_ScoreBalance',
                     'EGGRUMBLE_NeutralKOs', 'EGGRUMBLE_Combo'):
    self.assertNotIn(forbidden,source)
-  self.assertIn('only new underwater neutral',source)
+  self.assertIn('new underwater neutral only',source)
 
 if __name__=='__main__':
  unittest.main()
