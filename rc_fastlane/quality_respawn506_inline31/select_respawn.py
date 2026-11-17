@@ -63,7 +63,7 @@ def patch(before:str,auth:str)->str:
   'local Players=game:GetService("Players")',
   'EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW',
   '-- GQ8_HUMAN_SIEGE_PACING_BEGIN',
-  'GQ8_CASTLE_PROMPT_CURRENT_MATCH_20261117',
+  'or session.isCurrentHuman(p)~=true then return end',
   'session.isCurrentHuman'
  ):
   if guard not in before:raise ValueError("RED_GQ506_EXISTING_HOST_GUARD_LOST "+guard)
