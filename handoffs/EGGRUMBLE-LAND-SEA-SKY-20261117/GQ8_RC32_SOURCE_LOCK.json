@@ -3,13 +3,13 @@
   "canonical_base": {
     "repo": "kk051780/toy-wars-factory",
     "branch": "rc/p0d-s1-kids-rc01",
-    "sha": "915c83d468c2102c9947b964c4ebab63054b3e70",
+    "sha": "ea396d4482799d1f24dfd549f4489d920d18fb59",
     "source_count": 31,
-    "enabled_flags": 57,
-    "original_samehead_v3_run": 44150472780,
+    "enabled_flags": 58,
+    "original_samehead_v3_run": "RECHECK_CURRENT_SAMEHEAD",
     "original_samehead_rc78_run": 44150472728,
     "original_samehead_balance_run": 44150472839,
-    "all_conclusion": "SUCCESS"
+    "all_conclusion": "RECHECK_CURRENT_SAMEHEAD"
   },
   "optional_profile": {
     "id": "eggrumble_v3_lss32_studio",
@@ -55,5 +55,5 @@
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "Existing #714 HEAD 9602a2b... source-lock RC55 is stale. Select only existing original script blob with RC57 current source and current native/Rojo verification; no author duplication."
+  "caveat": "Existing #714 HEAD 9602a2b... source-lock RC55 is stale. Select only existing original script blob with RC57 current source and current native/Rojo verification; no author duplication. RC parent freshened via merge of latest official commit; current selected31 remains singleton."
 }
