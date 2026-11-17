@@ -163,6 +163,12 @@ def native(projectpath:Path,policy:Path,live:Path,spec:Path,out:Path,mutant_acqu
  for snippet in (A2,B2):
   if selected.count(snippet)!=1 or base.count(snippet)!=1:
    raise ValueError("RED_NATIVE_SELECTED_SOURCE_MISMATCH")
+ # Distinguish acquisition from the redundant pre-hit fence: a stale
+ # human must not cause even a line-of-sight ray query from old castle.
+ base=once(base,
+   'workspace={Raycast=function(_,from,direction,params)\n',
+   'local __gq8Raycasts=0\nworkspace={Raycast=function(_,from,direction,params)\n __gq8Raycasts+=1\n',
+   "NATIVE_LOS_PROBE")
  init=' makeHuman("1",Vector3.new(-100,0,0))'
  injection=''' session.isCurrentHuman=function(player)
   return player~=nil and (not session.invalidHumans
@@ -174,7 +180,9 @@ def native(projectpath:Path,policy:Path,live:Path,spec:Path,out:Path,mutant_acqu
  extra='''-- GQ8 actual original Live additional cross-match runtime assertions.
 local stale,staleHum=scenario({"TURRET"},Vector3.new(25,6,-18),Vector3.new(25,6,-18),0)
 stale.invalidHumans={[2]=true}
+__gq8Raycasts=0
 Defense.start(stale);step()
+eq(__gq8Raycasts,0,"GQ8_STALE_HUMAN_NEVER_QUERIED_FOR_LOS")
 eq(staleHum.Health,100,"GQ8_STALE_PLAYER_OTHER_MATCH_NO_TURRET_HIT")
 stale.castleDefenseStop()
 local switched,swHum=scenario({"TURRET"},Vector3.new(25,6,-18),Vector3.new(25,6,-18),0)
