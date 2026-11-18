@@ -213,7 +213,7 @@ actions.JUMP.Visible=false
 actions.DODGE.Visible=false -- requires an existing authorized dodge owner
 -- Reuse the reserved dodge-area anchor for the selected existing special Tool
 -- until a true server-backed dodge exists. No extra HUD footprint.
-local skillUse=button("SelectedSkillUse",gui,"技A")
+local skillUse=button("SelectedSkillUse",gui,"技B")
 skillUse.ZIndex=6
 local drawer=frame("ChoiceDrawer",gui)
 drawer.Visible=false;drawer.ZIndex=11
@@ -226,7 +226,7 @@ for i=1,4 do
  choices[i].Position=UDim2.fromOffset(6,5+(i-1)*40)
  choices[i].ZIndex=12
 end
-local selectedSlot="A"
+local selectedSlot="B"
 local selectedItem=nil
 local function toolWith(prefix)
  local backpack=player:FindFirstChildOfClass("Backpack")
@@ -501,7 +501,7 @@ RunService.RenderStepped:Connect(function(dt)
  fill.Size=UDim2.fromScale(charge,1)
  -- Keep base attack tappable without an optional skill slot.
  actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool("A")~=nil
- actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or "連撃A"
+ actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or "技A"
  skillUse.Text="技"..selectedSlot
  skillUse.Visible=slotTool(selectedSlot)~=nil
  actions.ITEM.Text=#toolWith("EGGRUMBLE_ITEM_")>0 and "道具 ▼" or "道具 0"
