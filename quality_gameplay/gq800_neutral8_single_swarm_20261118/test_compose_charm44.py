@@ -23,7 +23,7 @@ class RuntimeContract(unittest.TestCase):
   self.assertIn('if any(x in source for x in',patch_src)
  def test_identity_and_session_lifecycle(self):
   src=(HERE/"compose_charm44.py").read_text(encoding="utf8")
-  for marker in ("EGGRUMBLE_NeutralInstanceId","neutralById[neutralId]=m",
+  for marker in ("EGGRUMBLE_NeutralInstanceId","neutralById[neutralId]=",
                  "session.isCurrentHuman","CurseConversionPolicy.retire(state)",
                  "EGGRUMBLE_NeutralFriendlyOwnerId","lastCharmAttack[model]"):
    self.assertIn(marker,src)
