@@ -14,6 +14,11 @@ from pathlib import Path
 
 REPO = "kk051780/toy-wars-factory"
 SOURCES = {
+    "official_lss": {
+        "head": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+        "path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+        "blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    },
     "realm": {
         "head": "c51de1ed4feb7a7500ada95d21282402053ef988",
         "path": "handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau",
@@ -168,7 +173,26 @@ def main():
     if args.self_test:
         self_test()
     if args.online:
-        result = analyze(fetch_locked("realm"), fetch_locked("lss"))
+        realm = fetch_locked("realm")
+        candidate = fetch_locked("lss")
+        official = fetch_locked("official_lss")
+        result = analyze(realm, candidate)
+        official_analysis = analyze(realm, official)
+        # The genuinely selected Core36 at the pinned official ref uses the
+        # original Studio-only LSS blob, not the newer PR #772 25-second lease.
+        # A future source selection must not be silently conflated with #772.
+        if official_analysis["status"] != "LIVE_VEHICLE_REACHABILITY_BLOCKED":
+            raise ValueError("OFFICIAL_CORE36_LSS_REACHABILITY_UNEXPECTED_DRIFT_RED")
+        result["official_core36_lss"] = {
+            "official_rc_head": SOURCES["official_lss"]["head"],
+            "selected_lss_blob": SOURCES["official_lss"]["blob"],
+            "uses_candidate_772_blob": official == candidate,
+            "selected_lss_studio_only": official_analysis["studio_only_vehicle_factory"],
+            "selected_25s_idle_lease": "EMPTY_CRAFT_GRACE_SECONDS" in official,
+            "candidate_772_25s_idle_lease": "EMPTY_CRAFT_GRACE_SECONDS" in candidate,
+            "selected_live_paths": official_analysis["live_non_studio_static_paths"],
+            "caution": "Do not label #772 idle lease as official Core36 adopted.",
+        }
         encoded = json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True)
         if args.out:
             p = Path(args.out)
