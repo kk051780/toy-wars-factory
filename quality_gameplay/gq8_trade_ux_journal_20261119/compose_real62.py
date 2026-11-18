@@ -45,7 +45,6 @@ def compose(parent59:Path,receipt59:Path,host59:Path,hostReceipt:Path,official55
  for key,item in preHost.items():
   if original[key]!=item or (key!=HOST and preClasses[key]!=classes[key]):
    raise ValueError("RED_P0_HOST_FIX_ALTERED_SOURCE_OR_UNRELATED_CLASS_"+"/".join(key))
-  raise ValueError("RED_REAL59_OR_REAL55_WRONG_COUNT")
  for k,item in base55.items():
   if original[k]!=item or (k!=HOST and classes.get(k)!=classes55.get(k)):
    raise ValueError("RED_OFFICIAL55_ORIGINAL_SOURCE_DRIFT_"+"/".join(k))
