@@ -1,0 +1,116 @@
+name: GQ800 real43 plus live Curse conversion Real44 Native Rojo OFF43
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq800_curse_bridge_20261119/**'
+      - '.github/workflows/gq800-curse-real44.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  live-curse-real44:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9957ffc2fbaad2cabfcbd9461e20601f9bda7169
+          path: _gq800_801
+          persist-credentials: false
+      - name: Exact canonical RC and original author-source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_RC_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
+          mkdir -p artifacts/source43 artifacts/policy
+          gh run download 44372491757 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL43-NEUTRAL8-PRIVATE-SOURCE-NOT-OFFICIAL --dir artifacts/source43
+          test -s artifacts/source43/portable43/EGGRUMBLE_SOURCE43.project.json
+          test -s artifacts/source43/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/0bd81a807ff6a935642a660b9fe9e0fd05ef484c" --jq '.content' \
+            | base64 -d > artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau
+          test "$(git hash-object artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau)" = 0bd81a807ff6a935642a660b9fe9e0fd05ef484c
+      - name: Compose true original Real43 -> one Swarm plus original Curse44
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq800_curse_bridge_20261119/compose_real44.py \
+            --real43 artifacts/source43/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --selected_swarm quality_gameplay/gq800_curse_bridge_20261119/EGGRUMBLE_SwarmCombat_Curse44.server.luau \
+            --original_curse artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau \
+            --out artifacts/real44/REAL44.project.json
+          python3 -B quality_gameplay/gq800_curse_bridge_20261119/test_curse_runtime_contract.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq800_luau
+          persist-credentials: false
+      - name: Native compile 44 and exact OFF43, original #801 behavioral test
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq800_luau -B /tmp/gq800c44 -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq800c44 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq800_neutral8_single_swarm_20261118")
+          from compose_real43 import flatten
+          for name,expected in (("artifacts/source43/portable43/EGGRUMBLE_SOURCE43.project.json",43),
+                                ("artifacts/real44/REAL44.project.json",44)):
+              _,f=flatten(Path(name));assert len(f)==expected
+              for src in f.values():
+                  subprocess.run(["/tmp/gq800c44/luau-compile","--text",str(src)],check=True,stdout=subprocess.DEVNULL)
+              print("GQ800_FULL_SELECTED_NATIVE_COMPILE_PASS",expected)
+          PY
+          /tmp/gq800c44/luau _gq800_801/quality_gameplay/gq8_land_musou_charm_20261118/test_curse_conversion_native.luau
+      - name: Actual Rojo source/class 44 and OFF43 byte-identical
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq800c44-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq800c44-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq800c44-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq800c44-rojo");p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq800c44-rojo build artifacts/real44/REAL44.project.json -o artifacts/real44/REAL44.rbxlx
+          /tmp/gq800c44-rojo build artifacts/source43/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/real44/OFF43.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real44/REAL44.project.json --place artifacts/real44/REAL44.rbxlx --count 44
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/source43/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --place artifacts/real44/OFF43.rbxlx --count 43
+          cmp artifacts/real44/OFF43.rbxlx artifacts/source43/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          p=Path("artifacts/real44/REAL44.rbxlx")
+          receipt=Path("artifacts/real44/REAL44_RECEIPT.json")
+          d=json.loads(receipt.read_text())
+          d.update({"candidate_head":os.environ["GITHUB_SHA"],"on_native":True,
+            "rojo_exact_source_class":True,"off43_byte_exact":True,
+            "place_bytes":p.stat().st_size,"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
+          receipt.write_text(json.dumps(d,indent=2)+"\n")
+          print("GQ800_REAL44_CURSE_SINGLE_SWARM_NATIVE_ROJO_OFF43_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ800-REAL44-CURSE-LIVE-PRIVATE-NOT-OFFICIAL
+          path: artifacts/real44/
+          retention-days: 3
+          if-no-files-found: error
