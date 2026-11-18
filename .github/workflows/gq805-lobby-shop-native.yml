@@ -1,0 +1,53 @@
+name: GQ805 shop guardians points native policy
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq805_lobby_shop_guardians_20261118/**'
+      - '.github/workflows/gq805-lobby-shop-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq805_luau
+          persist-credentials: false
+      - name: Build native Luau compiler and VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq805_luau -B /tmp/gq805_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq805_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Real Luau compile all sources and execute native policy cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/gq805_lobby_shop_guardians_20261118
+          for f in "$ROOT"/*.luau; do /tmp/gq805_native/luau-compile --text "$f" >/dev/null; done
+          /tmp/gq805_native/luau "$ROOT/test_shop_catalog_native.luau" | tee /tmp/gq805_catalog.log
+          /tmp/gq805_native/luau "$ROOT/test_shop_points_checkout_native.luau" | tee /tmp/gq805_points.log
+          grep -q GQ805_CATALOG_14_GUARDIANS_7_ROLES_FREE_PARITY_PASS /tmp/gq805_catalog.log
+          grep -q GQ805_REWARDS_CHECKOUT_NATIVE_SERVER_ONLY_DUAL_PRICE_PASS /tmp/gq805_points.log
+      - name: Guard single Store and no live Robux grants in candidate source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("quality_gameplay/gq805_lobby_shop_guardians_20261118")
+          txt="\n".join(p.read_text() for p in root.glob("*.luau"))
+          for dangerous in ('DataStoreService")','PromptProductPurchase(','ProcessReceipt =','RemoteEvent")','TakeDamage(','Humanoid.Health='):
+              assert dangerous not in txt,dangerous
+          assert "requiresAtomicStore=true" in txt
+          assert "robuxProductId=nil" in txt
+          print("GQ805_NO_DUPLICATE_STORE_OR_PAID_GRANT_PASS")
+          PY
