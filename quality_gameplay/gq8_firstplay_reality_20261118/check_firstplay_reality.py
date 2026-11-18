@@ -108,9 +108,9 @@ def assess(active: dict, companion: dict, original_host: str, core36: dict) -> d
 def self_test(active: dict, companion: dict, original_host: str, core36: dict) -> int:
     checks = 0
 
-    def expect(a: dict, c: dict, host: str, target: str) -> None:
+    def expect(a: dict, c: dict, host: str, target: str, selected_core: dict | None = None) -> None:
         nonlocal checks
-        got = assess(a, c, host, core36)["verdict"]
+        got = assess(a, c, host, selected_core if selected_core is not None else core36)["verdict"]
         assert got == target, (target, got)
         checks += 1
 
@@ -128,15 +128,16 @@ def self_test(active: dict, companion: dict, original_host: str, core36: dict) -
     expect(changed_active, companion, no_guard_host, "NO_GO_ENGINE_AND_FUN_UNVERIFIED")
 
     evidence_claim = copy.deepcopy(companion)
-    for key in ENGINE_KEYS:
-        evidence_claim[key] = "PASS"
+    evidence_core = copy.deepcopy(core36)
+    for key in ("studio_2client", "android_15min", "human_fun"):
+        evidence_core["acceptance"][key] = "PASS"
     expect(
         changed_active, evidence_claim, no_guard_host,
-        "RECEIPTS_REQUIRE_INDEPENDENT_REVIEW"
+        "RECEIPTS_REQUIRE_INDEPENDENT_REVIEW", evidence_core
     )
     # Even spoofed PASS labels may not defeat the primary/default or Studio guards.
-    expect(active, evidence_claim, no_guard_host, "NO_GO_NOT_PRIMARY_EXPERIENCE")
-    expect(changed_active, evidence_claim, original_host, "NO_GO_STUDIO_ONLY_ORIGINAL_HOST")
+    expect(active, evidence_claim, no_guard_host, "NO_GO_NOT_PRIMARY_EXPERIENCE", evidence_core)
+    expect(changed_active, evidence_claim, original_host, "NO_GO_STUDIO_ONLY_ORIGINAL_HOST", evidence_core)
 
     bad = copy.deepcopy(companion)
     bad["source_count"] = 32
