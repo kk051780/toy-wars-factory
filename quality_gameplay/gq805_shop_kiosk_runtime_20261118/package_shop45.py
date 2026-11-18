@@ -136,8 +136,12 @@ def package(parent41: Path, receipt41: Path, catalog: Path, view: Path,
             raise ValueError("RED_OUTPUT_PATH_COLLISION")
         target.write_bytes(payload)
         node = result["tree"]
-        for name in route[:-1]:
-            node = node.setdefault(name, {})
+        for depth, name in enumerate(route[:-1]):
+            if name not in node:
+                # Rojo knows top-level services but custom intermediate containers
+                # MUST explicitly declare a Roblox class (not an untyped JSON node).
+                node[name] = {} if depth == 0 else {"$className": "Folder"}
+            node = node[name]
         node[route[-1]] = {"$path": dest.as_posix()}
         ledger.append({
             "route": "/".join(route),
