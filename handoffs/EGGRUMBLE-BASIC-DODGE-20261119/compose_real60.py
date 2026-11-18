@@ -11,7 +11,7 @@ from xml.etree import ElementTree as ET
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent/"EGGRUMBLE-HUD-INTEL-20261119"))
 from compose_real40 import contents, project_for, digest
-OFFICIAL_SHA="38d11f0bf311491ba76fe03f818948e5d4b06889"
+OFFICIAL_SHA="5a47e96f6b4766a9c59dd06b111bea53b73bd5ca"
 COMBAT=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 HUD=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_HudIntelRuntime")
 POLICY=("ServerScriptService","EGGRUMBLE_BasicMobilityPolicy")
@@ -170,12 +170,18 @@ def patch_hud(source):
 
 def run(place,receipt,out):
  data=json.loads(receipt.read_text(encoding="utf8"))
- assert data.get("official_rc_adopted") is True,"RED_REAL59_NOT_OFFICIAL"
- assert data.get("official_head")==OFFICIAL_SHA,"RED_REAL59_WRONG_OFFICIAL_HEAD"
- assert data.get("selected59_place_sha256")==digest(place),"RED_REAL59_PLACE_SHA"
+ assert data.get("source_selected_in_formal_rc_branch") is True,"RED_HOST_REPAIR_NOT_OFFICIAL"
+ assert data.get("tested_commit")==OFFICIAL_SHA,"RED_REAL59_HOST_REPAIR_WRONG_HEAD"
+ assert data.get("host_old_class")=="ModuleScript" and data.get("host_new_class")=="Script","RED_HOST_REPAIR_CLASS_RECEIPT"
+ assert data.get("sources")==59,"RED_PARENT_REAL59_COUNT"
  src,classes=contents(ET.parse(place).getroot())
  if len(src)!=59 or COMBAT not in src or HUD not in src or POLICY in src:
   raise ValueError("RED_NOT_UNIQUE_59_SOURCES")
+ host=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
+ if src.get(host,(None,None))[0]!="Script":
+  raise ValueError("RED_NEWEST_OFFICIAL_HOST_NOT_AUTOSTART")
+ if "local function startSession(" not in src[host][1]:
+  raise ValueError("RED_NEWEST_HOST_ACTIVATION_CONTENT")
  if out.exists():raise ValueError("RED_REFUSE_OVERWRITE")
  out.mkdir(parents=True)
  orig=dict(src)
@@ -200,6 +206,8 @@ def run(place,receipt,out):
   "original_modified":["/".join(COMBAT),"/".join(HUD)],
   "added_module":"/".join(POLICY),
   "original_parent_place_sha256":digest(place),
+  "host_original_class":"Script",
+  "parent_host_fix_retained":True,
   "on_sources":onIndex,"off_sources":offIndex,
   "native":"PENDING","rojo":"PENDING","off59":"PENDING",
   "official_rc_adopted":False,"studio2client":"NOT_TESTED",
