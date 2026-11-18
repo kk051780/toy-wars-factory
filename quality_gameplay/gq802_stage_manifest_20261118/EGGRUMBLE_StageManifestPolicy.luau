@@ -1,6 +1,6 @@
 --!strict
 -- GQ802 DW-STAGE-FACTORY: Pure, deterministic SERVER-ONLY stage planning.
--- This file deliberately does NOT create Parts, own weather, call RemoteEvents,
+-- This file deliberately does NOT create Parts, own weather or network endpoints,
 -- change global gravity/time, teleport players or modify existing castle/egg owners.
 local M = {}
 M.VERSION = "DW_STAGE_V1"
@@ -141,7 +141,10 @@ end
 function M.validate(manifest:any):boolean
     if type(manifest)~="table" or manifest.version~=M.VERSION then return false end
     local expected=M.build(manifest.seed,manifest.mode,manifest.playerCount)
-    if not expected or type(manifest.tiles)~="table" or #manifest.tiles~=#expected.tiles
+    if not expected or manifest.source~=expected.source or manifest.tileCount~=expected.tileCount
+        or manifest.uniqueThemeCount~=expected.uniqueThemeCount
+        or manifest.fieldOrigin~=expected.fieldOrigin or manifest.worldClockAuthority~=expected.worldClockAuthority
+        or type(manifest.tiles)~="table" or #manifest.tiles~=#expected.tiles
         or type(manifest.weather)~="table" or #manifest.weather~=#expected.weather
         or manifest.castleAnchors~=expected.castleAnchors
         or manifest.eggAnchors~=expected.eggAnchors
