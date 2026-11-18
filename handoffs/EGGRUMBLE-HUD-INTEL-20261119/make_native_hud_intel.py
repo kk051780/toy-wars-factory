@@ -15,8 +15,13 @@ def check_touch_runtime_source() -> None:
     not claim Studio input or device UX verification.
     """
     required = {
-        "visible Musou after lobby": "actions.MUSOU.Visible=inMatch and #musou>0",
-        "visible Invul after lobby": "actions.INVUL.Visible=inMatch and #invul>0",
+        "visible Musou after lobby": "actions.MUSOU.Visible=inMatch",
+        "visible Invul after lobby": "actions.INVUL.Visible=inMatch",
+        "combat UI hidden in lobby": "gui.Enabled=inMatch",
+        "Musou server-tool readiness": 'local readyM=#musou>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true',
+        "Invul server-tool readiness": 'local readyI=#invul>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true',
+        "Musou false readiness text": 'actions.MUSOU.Text=readyM and "無双" or "無双 --"',
+        "Invul false readiness text": 'actions.INVUL.Text=readyI and "無敵" or "無敵 --"',
         "base attack without a skill": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
         "handedness refresh": "w==lastW and h==lastH and hand==lastHand",
         "handedness cache": "lastW,lastH,lastHand=w,h,hand",
