@@ -1,0 +1,102 @@
+{
+  "schema": "GQ8_REAL61_HUD_TRADE_CROSS_LANE_SOURCE_CANDIDATE_V1",
+  "policy": "OWNER_RC_REAL_NAMING_SINGLE_CANONICAL_20261119",
+  "owner_issue": 839,
+  "quality_issue": 470,
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "baseline_official_head": "a6020867fac80fa3b2ca47478625873fc6f3678e",
+  "baseline_official_run": 44393525211,
+  "baseline_official_artifact_name": "P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO",
+  "parent_profile": "eggrumble_v3_real55",
+  "parent_source_count": 55,
+  "source_profile": "eggrumble_v3_real61_candidate",
+  "source_count": 61,
+  "adoption_status": "CANDIDATE_NOT_FORMALLY_ADOPTED",
+  "status_warning": "This candidate composes only #829 HUD/Fog plus #838 trade preview. New #840 viral host overlay and #841 combat/invul overlays remain outside; formal RC promotion needs owner #220 reconciliation of all active gameplay candidates and same-official-HEAD testing.",
+  "new_sources": [
+    {
+      "pr": 829,
+      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau",
+      "blob": "9358eff6c71bdc2b860b00d98f20d13db6ce3571",
+      "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
+      "class": "ModuleScript"
+    },
+    {
+      "pr": 829,
+      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau",
+      "blob": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
+      "route": "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy",
+      "class": "ModuleScript"
+    },
+    {
+      "pr": 829,
+      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau",
+      "blob": "4899bd52518815630a49954a1adc36151a5c1eea",
+      "route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+      "class": "Script"
+    },
+    {
+      "pr": 829,
+      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau",
+      "blob": "434cdbfb7e724d4d149d6217f0532b176fcc67e1",
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+      "class": "LocalScript"
+    },
+    {
+      "pr": 838,
+      "head": "cb43c19c2d9d443d4631a636a8186e84e94c4c89",
+      "path": "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeJournalContract.luau",
+      "blob": "c3d6ca4ebc518592bddefbb5942f4d60ab5179a9",
+      "route": "ServerScriptService/GQ8_TradeJournalContract",
+      "class": "ModuleScript"
+    },
+    {
+      "pr": 838,
+      "head": "cb43c19c2d9d443d4631a636a8186e84e94c4c89",
+      "path": "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeReview.client.luau",
+      "blob": "a96d9bde201c6bdbb8fe185c81650f99368a9544",
+      "route": "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview",
+      "class": "LocalScript"
+    }
+  ],
+  "pending_intersection": [
+    {
+      "pr": 840,
+      "feature": "viral true Host event overlays + capture",
+      "path_touched": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+      "parent_profile": "REAL55",
+      "status": "NOT_IN_REAL61"
+    },
+    {
+      "pr": 841,
+      "feature": "role counter overlays + module",
+      "path_touched": "ServerScriptService/EGGRUMBLE_SevenRoleCombat, ServerScriptService/EGGRUMBLE_InvulRuntime",
+      "parent_profile": "REAL55",
+      "status": "NOT_IN_REAL61"
+    }
+  ],
+  "prohibits": [
+    "Real number != completion rate",
+    "candidate CI != official RC adoption",
+    "Do not merge this into canonical until pending active features considered",
+    "no Roblox Publish",
+    "no paid/trade settlement",
+    "main never modified"
+  ],
+  "acceptance": {
+    "same_official_head_ci": "PENDING",
+    "rojo61_native61": "PENDING",
+    "off55_preservation": "PENDING",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "first3min_fun": "NOT_TESTED",
+    "art": "NOT_TESTED",
+    "shop_trade_live": false,
+    "purchases": false,
+    "roblox_published": false
+  }
+}
