@@ -1,3 +1,41 @@
+# Latest canonical successor — CANDIDATE-REAL62 (2026-11-19)
+
+Owner #839 naming: Real62 means **62 selected Luau scripts**, never 62% completion.
+Actual formal branch is `rc/p0d-s1-kids-rc01` Real59 private companion,
+HEAD `38d11f0bf311491ba76fe03f818948e5d4b06889` (PR #829).
+The legacy S1 active rich51 is NOT replaced. Candidate Real62 combines
+**59/59 original current official Real59 HUD+Fog/Host/Swarm/Shop sources
+byte-exact** with the 3 scoped scripts from PR #838, no other gameplay
+authority, Remote or DataStore writer. A source-count increase does not
+activate the private companion or enable live item trading.
+
+`compose_real62.py` uses the proven #829 Real59 Place from run 44400478849,
+plus exact official Real55 Place from run 44393525211, hard-checks both
+immutable original 55 scripts, all current 59 sources/class/routes and four
+original HUD/Fog author files, and composes an exact 59→62 selected project.
+OFF59 rebuild is byte-exact. Dedicated candidate gate
+`.github/workflows/gq8-trade-escrow-real62-hud-union.yml`, and formal
+same-new-official-HEAD CI `.github/workflows/p0d-rc-eggrumble-v3-real62.yml`.
+Formal release manifest `rc_fastlane/EGGRUMBLE_V3_REAL62.json` records
+source locks and authenticated B #220 CAS requirements. Historic Real57/58
+pipelines are manual-only to avoid stale a602 canonical fence failures.
+
+Third added ModuleScript: `GQ8_TradeEscrowReducer.luau` implements a
+pure two-account FREE_EARNED unique-instance protocol for a future verified
+Store callback. PREPARE locks offered items, ESCROW isolates serialized
+ownership, CREDIT inserts incoming items but keeps them unusable,
+FINALIZE releases that hold only after durable global COMMIT.
+It is executable in Native Luau with synthetic dual-profile crash/replay,
+version, owner, paid-origin, duplicate-instance and cross-stage tests.
+This is **not** a working transaction implementation: no known existing
+Store has yet been verified to persist per-instance IDs or global trade
+journal and session-lock epochs; the reducer is not wired to DataStore and
+does not mutate real players. Roblox PolicyService and all age/region
+rules, sender restrictions, reports, inventory UI, real two-client Studio,
+Android 15min, visual/fun gates and Robux remain OFF/NOT_TESTED.
+
+## Earlier Real57 historical branch design
+
 # EGGRUMBLE Trade UX + durable-journal contract (Real55→57)
 Feature: GQ8_TRADE_UX_JOURNAL_20261119. Official RC parent HEAD a6020867fac80fa3b2ca47478625873fc6f3678e (#834), profile eggrumble_v3_real55.
 
