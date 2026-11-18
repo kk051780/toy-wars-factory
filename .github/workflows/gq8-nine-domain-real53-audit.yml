@@ -1,0 +1,88 @@
+name: GQ8 nine-domain Real53 source intake safety gate
+on:
+  push:
+    branches: [quality/gq8-9domain-intake-audit-20261119]
+    paths:
+      - "quality_gameplay/gq8_9domain_source_gate_20261119/**"
+      - ".github/workflows/gq8-nine-domain-real53-audit.yml"
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq8_9domain_source_gate_20261119/**"
+      - ".github/workflows/gq8-nine-domain-real53-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  nine-domain-verified-parent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Independent Python negative mutation regressions
+        run: python3 -B quality_gameplay/gq8_9domain_source_gate_20261119/test_audit.py
+      - name: Verified immutable Real53 parent + current official RC identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          echo "CURRENT_OFFICIAL_RC=$CURRENT"
+          test "$CURRENT" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || {
+            echo RED_OFFICIAL_RC_MOVED_REBASE_AUDIT; exit 1;
+          }
+          PROOF="$(gh run view 44390823718 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$PROOF" = "96ac3b4caa2f649f98c9e093c864c39555f3616a success" || {
+            echo RED_REAL53_PARENT_PROOF_CHANGED; exit 1;
+          }
+          mkdir -p artifacts/parent53 artifacts/report
+          gh run download 44390823718 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL53-MUSOU-INVUL-CURSE-SHOP-PRIVATE-NOT-OFFICIAL \
+            --dir artifacts/parent53
+          test -s artifacts/parent53/EGGRUMBLE_REAL53.project.json
+          test -s artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json
+          test -s artifacts/parent53/EGGRUMBLE_REAL53.rbxlx
+      - name: Inspect 53 selected actual source bytes across nine game domains
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_9domain_source_gate_20261119/audit.py \
+            --project artifacts/parent53/EGGRUMBLE_REAL53.project.json \
+            --receipt artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json \
+            --count 53 --out artifacts/report/GQ8_9DOMAIN_REAL53_AUDIT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('artifacts/parent53/EGGRUMBLE_REAL53.rbxlx')
+          r=json.loads(Path('artifacts/report/GQ8_9DOMAIN_REAL53_AUDIT.json').read_text())
+          assert r['source_count']==53 and r['source_coverage_count']==9
+          result={
+            'source_review':'PASS_SOURCE_ONLY',
+            'official_rc_adoption':False,
+            'parent_real53_pr':826,
+            'parent_real53_head':'96ac3b4caa2f649f98c9e093c864c39555f3616a',
+            'parent_real53_evidence_run':44390823718,
+            'formal_rc_head_at_gate':'f77b4d4393d9e9b19b65566413432a7a9f13962b',
+            'candidate_place_bytes':p.stat().st_size,
+            'candidate_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'source_gates':r,
+            'native_rojo_off':'PARENT_REAL53_SAME_HEAD_SUCCESS',
+            'studio2client':'NOT_TESTED',
+            'android15':'NOT_TESTED','fun':'NO_GO',
+            'rollback':'Unselect Real53; retain original formal Core36 source registry',
+            'target':'rc/p0d-s1-kids-rc01',
+            'integration_blocker':'Certified #220 writer CAS and same official HEAD gate'
+          }
+          Path('artifacts/report/GQ8_9DOMAIN_HANDOFF.json').write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+'\n')
+          print('GQ8_REAL53_9DOMAIN_SOURCE_PRESENCE_PASS_NOT_OFFICIAL_RC',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-9DOMAIN-REAL53-SOURCE-AUDIT-NOT-OFFICIAL
+          path: artifacts/report/
+          retention-days: 5
+          if-no-files-found: error
