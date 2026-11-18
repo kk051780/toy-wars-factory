@@ -211,6 +211,10 @@ end
 -- Native Roblox thumbstick/jump are retained, no competing movement joystick.
 actions.JUMP.Visible=false
 actions.DODGE.Visible=false -- requires an existing authorized dodge owner
+-- Reuse the reserved dodge-area anchor for the selected existing special Tool
+-- until a true server-backed dodge exists. No extra HUD footprint.
+local skillUse=button("SelectedSkillUse",gui,"技B")
+skillUse.ZIndex=6
 local drawer=frame("ChoiceDrawer",gui)
 drawer.Visible=false;drawer.ZIndex=11
 local drawerType=""
@@ -222,7 +226,7 @@ for i=1,4 do
  choices[i].Position=UDim2.fromOffset(6,5+(i-1)*40)
  choices[i].ZIndex=12
 end
-local selectedSlot="A"
+local selectedSlot="B"
 local selectedItem=nil
 local function toolWith(prefix)
  local backpack=player:FindFirstChildOfClass("Backpack")
@@ -324,7 +328,14 @@ actions.SKILL.Activated:Connect(function()openDrawer("SKILL")end)
 actions.ATTACK.Activated:Connect(function()
  closeDrawer()
  local basic=toolWith("EGGRUMBLE_BASIC_")
- activate(basic[1] or slotTool(selectedSlot))
+ -- The current 55-source server has no dedicated basic attack Tool.
+ -- Use only its real A skill (clearly labeled) until Combat owner adds basic.
+ activate(basic[1] or slotTool("A"))
+end)
+skillUse.Activated:Connect(function()
+ if not mapSnapshot then return end
+ closeDrawer()
+ activate(slotTool(selectedSlot))
 end)
 -- Both buttons activate ONLY original server-owned Tools; every activation
 -- is re-checked by the original singleton server policy (not this HUD).
@@ -392,6 +403,10 @@ local function updateLayout()
    b.Position=UDim2.fromOffset(p[name].x,p[name].y)
   end
  end
+ local reserved=p.DODGE
+ skillUse.AnchorPoint=Vector2.new(.5,.5)
+ skillUse.Size=UDim2.fromOffset(reserved.size,reserved.size)
+ skillUse.Position=UDim2.fromOffset(reserved.x,reserved.y)
  local mx=p.MAP.x
  if mapExpanded then
   mapBox.Size=UDim2.fromOffset(math.floor(math.min(w*.43,340)),math.floor(math.min(h*.66,285)))
@@ -400,10 +415,13 @@ local function updateLayout()
   mapBox.Size=UDim2.fromOffset(p.MAP.size,p.MAP.size)
   mapBox.Position=UDim2.fromOffset(math.max(5,mx-p.MAP.size/2),8)
  end
- statusBox.Position=UDim2.new(.19,0,0,9)
- statusBox.Size=UDim2.new(.51,0,0,27)
- progress.Position=UDim2.new(.31,0,0,37)
- progress.Size=UDim2.new(.28,0,0,5)
+ local chrome=data.chrome
+ local status=chrome.status
+ local bar=chrome.musouBar
+ statusBox.Position=UDim2.fromOffset(status.x,status.y)
+ statusBox.Size=UDim2.fromOffset(status.w,status.h)
+ progress.Position=UDim2.fromOffset(bar.x,bar.y)
+ progress.Size=UDim2.fromOffset(bar.w,bar.h)
  drawer.Size=UDim2.fromOffset(math.min(178,w*.23),170)
  drawer.Position=UDim2.fromOffset(math.max(w-195,w*.72),math.min(h*.35,147))
  redraw()
@@ -423,19 +441,10 @@ RunService.RenderStepped:Connect(function(dt)
  if h then
   hp.Text=string.format("HP %d/%d",math.max(0,math.floor(h.Health)),math.floor(h.MaxHealth))
  else hp.Text="HP --/--" end
- local status={}
- if h and type(h:GetAttribute("EGGRUMBLE_BurnUntil"))=="number"
-  and h:GetAttribute("EGGRUMBLE_BurnUntil")>os.clock() then
-  table.insert(status,"炎上")
- end
- if h and type(h:GetAttribute("EGGRUMBLE_SlowExpiry"))=="number"
-  and h:GetAttribute("EGGRUMBLE_SlowExpiry")>os.clock() then
-  table.insert(status,"減速")
- end
- if h and type(h:GetAttribute("EGGRUMBLE_MarkedUntil"))=="number"
-  and h:GetAttribute("EGGRUMBLE_MarkedUntil")>os.clock() then
-  table.insert(status,"標的")
- end
+ -- Status expiry timestamps are server os.clock, which is NOT safely
+ -- comparable to the client process os.clock. Use the filtered server flags.
+ local status=(mapSnapshot and mapSnapshot.statuses) or {}
+ if type(status)~="table" then status={} end
  local attr=player:GetAttribute("EGGRUMBLE_Attribute") or "--"
  buffs.Text="属性 "..tostring(attr).." "..table.concat(status," ")
  -- The actual Real55 server sends MusouReadyIn and MusouPhase.
@@ -449,7 +458,8 @@ RunService.RenderStepped:Connect(function(dt)
  local verifiedM=musou~=nil and phaseM=="OFF" and type(readyIn)=="number"
   and readyIn>=0 and readyIn<=0.05
  if activeM then
-  actions.MUSOU.Text="無双中"
+  actions.MUSOU.Text=if phaseM=="KAKUHEN" then "確変中"
+    elseif phaseM=="RUSH" then "連チャン" else "無双中"
  elseif verifiedM then
   actions.MUSOU.Text="無双 発動"
  elseif musou and type(readyIn)=="number" and readyIn>0 then
@@ -482,8 +492,11 @@ RunService.RenderStepped:Connect(function(dt)
  end
  fill.Size=UDim2.fromScale(charge,1)
  -- Keep base attack tappable without an optional skill slot.
- actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil
- actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or ("技"..selectedSlot)
+ actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool("A")~=nil
+ actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or "技A"
+ skillUse.Text="技"..selectedSlot
+ skillUse.Visible=slotTool(selectedSlot)~=nil
+ actions.ITEM.Text=#toolWith("EGGRUMBLE_ITEM_")>0 and "道具 ▼" or "道具 0"
  -- A second existing S1 screen is authoritative for its own combat.
  local s1=playerGui:FindFirstChild("TrapRaidersS1HUD")
  if s1 and s1:IsA("ScreenGui") and s1.Enabled then
@@ -495,6 +508,7 @@ RunService.RenderStepped:Connect(function(dt)
  actions.ITEM.Visible=inMatch
  actions.SKILL.Visible=inMatch
  actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch
+ skillUse.Visible=skillUse.Visible and inMatch
  -- Disabled mode buttons stay visible in combat without claiming server READY.
  actions.INVUL.Visible=inMatch
  actions.MUSOU.Visible=inMatch

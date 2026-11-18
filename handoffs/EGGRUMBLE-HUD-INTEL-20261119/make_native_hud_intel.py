@@ -26,7 +26,11 @@ def check_touch_runtime_source() -> None:
         "invul armed": 'local armed=phaseI=="ARMED"',
         "invul awakened": 'local awakened=phaseI=="AWAKENED"',
         "server owned trigger only": "closeDrawer();activate(tool)",
-        "base attack fallback correctly labeled": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
+        "first existing skill takes attack slot until normal combat owner implements basic": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool("A")~=nil',
+        "independent selected skill trigger": "activate(slotTool(selectedSlot))",
+        "skill use uses reserved dodge area": "local reserved=p.DODGE",
+        "actual dodge hidden until owner implements": 'actions.DODGE.Visible=false -- requires an existing authorized dodge owner',
+        "item source honest count": 'actions.ITEM.Text=#toolWith("EGGRUMBLE_ITEM_")>0 and "道具 ▼" or "道具 0"',
         "handedness refresh": "w==lastW and h==lastH and hand==lastHand",
         "handedness cache": "lastW,lastH,lastHand=w,h,hand",
     }
@@ -73,6 +77,19 @@ for _,shape in ipairs({{851,393},{1280,720},{393,851},{320,260}}) do
     assert(clear.x1>clear.x0 and clear.y1>clear.y0,"RED_COMBAT_VIEW_AREA")
     assert(p.ATTACK.x < clear.x0 or p.ATTACK.x > clear.x1,"RED_ATTACK_COVERS_BATTLE")
     assert(p.MAP.x < clear.x0 or p.MAP.x > clear.x1,"RED_MAP_COVERS_BATTLE")
+    local chrome=l.chrome
+    assert(type(chrome)=="table","RED_HUD_CHROME_ABSENT")
+    local status,bar,map=chrome.status,chrome.musouBar,chrome.map
+    assert(status.x>=0 and status.x+status.w<=shape[1]
+      and status.y>=0 and status.y+status.h<=clear.y0,
+      "RED_HP_STATUS_OUT_OF_SAFE_TOP")
+    assert(bar.x>=status.x and bar.x+bar.w<=status.x+status.w
+      and bar.y>status.y+status.h and bar.y+bar.h<=clear.y0,
+      "RED_MUSOU_BAR_OBSCURES_BATTLE")
+    assert(map.x>=0 and map.x+map.w<=shape[1],"RED_MAP_OUT_OF_SAFE_HORIZONTAL")
+    assert(status.x>=map.x+map.w+8
+      or status.x+status.w<=map.x-8,
+      "RED_HP_OVERLAPS_MAP_ON_COMPACT_OR_LEFTHAND")
   end
 end
 local sync=H.display({})
