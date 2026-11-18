@@ -33,7 +33,7 @@ PATCHED_STRIKE = '  if weather=="THUNDER" and state.pendingLightning and now>=st
 
 
 def blob_sha(source: bytes) -> str:
-    payload = b"blob " + str(len(source)).encode("ascii") + b"\\x00" + source
+    payload = b"blob " + str(len(source)).encode("ascii") + b"\x00" + source
     return hashlib.sha1(payload).hexdigest()
 
 
