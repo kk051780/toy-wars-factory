@@ -70,8 +70,8 @@ class Admission(unittest.TestCase):
   for key in ("DataStoreService","UpdateAsync","SetAsync","RemoteEvent",
               "EGGRUMBLE_Combo","EGGRUMBLE_NeutralKOs"):
    self.assertNotIn(key,src)
-  for key in ("HealthChanged:Connect","h.Died:Connect","world.Destroying:Connect",
-              "Policy.observeHealth","Policy.mageDelta","EGGRUMBLE_BurnUntil"):
+  for key in ("h.HealthChanged:Connect","h.Died:Connect","session.world.Destroying:Connect",
+              "MAGE_COOLDOWN_SECONDS=40","DOWNED_SECONDS=60","PROMPT_HOLD_SECONDS=3"):
    self.assertIn(key,src)
 
 if __name__=="__main__": unittest.main()
