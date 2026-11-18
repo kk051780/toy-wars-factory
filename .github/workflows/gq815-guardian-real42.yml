@@ -1,5 +1,10 @@
 name: GQ815 Real41 to Guardian42 canonical private source/native/Rojo
 on:
+  push:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_guardian_runtime_20261118/**'
+      - '.github/workflows/gq815-guardian-real42.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
