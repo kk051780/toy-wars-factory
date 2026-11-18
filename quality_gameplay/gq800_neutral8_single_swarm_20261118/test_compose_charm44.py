@@ -19,6 +19,11 @@ class RuntimeContract(unittest.TestCase):
   self.assertIn("if m.Parent and h.Health>0 and m.PrimaryPart and not charmedByModel[m]",patch_src)
   self.assertIn("local isCurseAttack=currentZombie(directUser) and directUser.Character==attacker",patch_src)
   self.assertIn("existingSummoned=if numSummoned then",patch_src)
+  self.assertIn("if not state or not state.active then",patch_src)
+  self.assertIn("lastCharmAttack[model]=now",patch_src)
+  self.assertNotIn("if dealt>0 then lastCharmAttack[model]=now end",patch_src)
+  self.assertIn('model:SetAttribute("EGGRUMBLE_NeutralCharmUntil",nil)',patch_src)
+  self.assertIn('model:SetAttribute("EGGRUMBLE_NeutralSeals",nil)',patch_src)
   # Safety applies to generated runtime, not the composer's rejected-token strings.
   self.assertIn('if any(x in source for x in',patch_src)
  def test_identity_and_session_lifecycle(self):
@@ -51,6 +56,26 @@ def check_actual(baseline:pathlib.Path,output:pathlib.Path,curse:pathlib.Path):
  assert "and not charmedByModel[m]" in src
  assert "releaseCharmed(model)" in src
  assert "local dealt=strike(ownerId," in src
+ # These are needed on the ACTUAL selected Real44 script, not just composer text.
+ assert "if not state or not state.active then" in src, "RED_REENTRY_LOCKED_OUT_AFTER_RETIRE"
+ assert "if dealt>0 then lastCharmAttack[model]=now end" not in src, "RED_IDLE_AI_UNBOUNDED_ATTACKS"
+ assert "lastCharmAttack[model]=now" in src, "RED_IDLE_ALLY_ATTACK_BUDGET"
+ for marker in ('model:SetAttribute("EGGRUMBLE_NeutralCharmUntil",nil)',
+                'model:SetAttribute("EGGRUMBLE_NeutralSeals",nil)'):
+  assert marker in src, "RED_CHARM_EXPIRED_VISUAL_LEAK"
+ def contract_valid(candidate:str):
+  return (candidate.count("if not state or not state.active then")==1
+          and candidate.count("lastCharmAttack[model]=now")==1
+          and 'if dealt>0 then lastCharmAttack[model]=now end' not in candidate
+          and 'model:SetAttribute("EGGRUMBLE_NeutralCharmUntil",nil)' in candidate
+          and 'model:SetAttribute("EGGRUMBLE_NeutralSeals",nil)' in candidate)
+ assert contract_valid(src)
+ for broken in (
+  src.replace("if not state or not state.active then","if not state then",1),
+  src.replace("lastCharmAttack[model]=now","if dealt>0 then lastCharmAttack[model]=now end",1),
+  src.replace('model:SetAttribute("EGGRUMBLE_NeutralCharmUntil",nil)',"-- REMOVED",1),
+  src.replace('model:SetAttribute("EGGRUMBLE_NeutralSeals",nil)',"-- REMOVED",1)):
+  assert not contract_valid(broken), "RED_MUTANT_NOT_REJECTED"
  assert "neutralById[neutralId]=nil" in src
  assert "model:SetAttribute(\"EGGRUMBLE_NeutralFriendlyOwnerId\",nil)" in src
  assert "RemoteEvent" not in src and "DataStoreService" not in src
