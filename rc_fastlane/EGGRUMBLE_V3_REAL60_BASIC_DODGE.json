@@ -1,0 +1,50 @@
+{
+  "schema": "P0D_GQ828_REAL60_SINGLE_COMBAT_CORE_ACTION_V1",
+  "feature_id": "GQ828_BASIC_DODGE_REAL60_20261119",
+  "owner_issue": 828,
+  "official_branch": "rc/p0d-s1-kids-rc01",
+  "official_parent_sha": "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca",
+  "official_parent_profile": "eggrumble_v3_real59_host_active",
+  "parent_success_run": 44403496549,
+  "parent_artifact_id": 14474821605,
+  "parent_artifact_name": "GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL",
+  "source_profile": "eggrumble_v3_real60_basic_dodge",
+  "parent_count": 59,
+  "target_count": 60,
+  "source_locks": {
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/EGGRUMBLE_BasicMobilityPolicy.luau": "bfd2ec6be067fe18b7675463bd6e1ca365b8ddf2",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real60.py": "615fd8afca4737d707bb47a23ef3296da378eb3d",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py": "c0ff3d6e9f23d6ea2b753494262ccd04d922469d"
+  },
+  "modified_original_routes": [
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+  ],
+  "new_route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+  "preserve_original_unchanged_count": 57,
+  "invariants": {
+    "single_combat_owner": true,
+    "no_new_direct_take_damage": true,
+    "no_second_swarm_or_host": true,
+    "no_new_remote": true,
+    "forbid_unverified_egg_dodge": true,
+    "forbid_server_unowned_tool": true,
+    "robux_and_trade_enabled": false,
+    "no_roblox_publish": true,
+    "no_main_writes": true,
+    "mobile_semantics": "native jump + true basic ATTACK + actual grounded DODGE + separate selected A/B/C on context anchor",
+    "source_rollback": "Original exact 59 source selection OFF59",
+    "host_auto_start_script_preserved": true
+  },
+  "acceptance": {
+    "candidate_native_rojo_off59_run": 44403176104,
+    "expected_candidate_place_bytes": 639726,
+    "official_rc_adopted": false,
+    "studio_2client": "NOT_TESTED",
+    "android15min": "NOT_TESTED",
+    "art": "NO_GO",
+    "fun": "NO_GO"
+  },
+  "workflow": ".github/workflows/p0d-rc-eggrumble-v3-real60-basic-dodge.yml",
+  "notes": "Source parent MUST preserve newest official PR #844 Host Script class even though source count remains 59. B writer only fresh nonforce CAS; if official RC moves again, rebase."
+}
