@@ -1,0 +1,128 @@
+name: GQ802 six zone visual tile source and real Rojo class gate
+on:
+  push:
+    branches: [feature/gq802-physical-tiles-visual-safety-20261118-01]
+    paths:
+      - 'quality_gameplay/gq802_stage_visual_tiles_20261118/**'
+      - '.github/workflows/gq802-stage-visual-tiles.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_stage_visual_tiles_20261118/**'
+      - '.github/workflows/gq802-stage-visual-tiles.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-validated-visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d6080df13d07792160a52b4c7025e0ae7950379c
+          path: _gq803
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Pin upstream exact author #803 policy and enforce no new authority
+        run: |
+          set -euo pipefail
+          SRC=_gq803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau
+          test "$(git hash-object "$SRC")" = "696d2312ef7408e26b03281caede7606472c155b"
+          mkdir -p artifacts/gq802
+          cp "$SRC" artifacts/gq802/EGGRUMBLE_StageManifestPolicy.luau
+          cp quality_gameplay/gq802_stage_visual_tiles_20261118/*.luau artifacts/gq802/
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("quality_gameplay/gq802_stage_visual_tiles_20261118")
+          files=[root/"EGGRUMBLE_StageTileBlueprintPolicy.luau",
+                 root/"EGGRUMBLE_StageTileVisualRenderer.luau"]
+          banned=("RemoteEvent", "TeleportService", "MemoryStoreService", "DataStoreService",
+                  "MarketplaceService", "workspace.Gravity", "Lighting.ClockTime",
+                  "TakeDamage(", "SetAttribute(\"RealmWeather\"")
+          for file in files:
+              source=file.read_text()
+              for token in banned:
+                  assert token not in source, ("RED_SECOND_GAMEPLAY_AUTHORITY",file.name,token)
+          r=files[1].read_text()
+          for needed in ("p.CanCollide=false","p.CanTouch=false","p.CanQuery=false",
+                         "not originalFloor:IsDescendantOf(world)","DUPLICATE_STAGE",
+                         "MATCH_WORLD_DETACHED","root:Destroy()"):
+              assert needed in r,("RED_VISUAL_SAFETY_MISSING",needed)
+          print("GQ802_TILE_RENDERER_AUTHORITY_AND_COLLISION_SCOPE_PASS")
+          PY
+      - name: Build pinned real native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq802-tiles -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802-tiles --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile actual Studio renderer + execute 180 seeded manifest/geometry tests
+        run: |
+          set -euo pipefail
+          for file in artifacts/gq802/*.luau; do
+            /tmp/gq802-tiles/luau-compile --text "$file" > /dev/null
+          done
+          /tmp/gq802-tiles/luau artifacts/gq802/test_stage_tile_blueprint_native.luau | tee /tmp/gq802-tile-test.log
+          grep -q GQ802_TILE_VISUAL_NATIVE_180_SEEDS_25_VARIANTS_36_NONCOLLIDING_PARTS_MUTANTS_PASS /tmp/gq802-tile-test.log
+      - name: Install exact Rojo 7.7.1 binary
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq802-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq802-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq802-rojo.zip") as z:
+              p=Path("/tmp/gq802-rojo")
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p.write_bytes(z.read(names[0])); p.chmod(0o755)
+          PY
+      - name: Rojo creates exact two ModuleScript classes and sources
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path("artifacts/gq802")
+          names=["EGGRUMBLE_StageTileBlueprintPolicy","EGGRUMBLE_StageTileVisualRenderer"]
+          node={"$className":"ServerScriptService"}
+          for n in names:
+              node[n]={"$path":"gq802/"+n+".luau"}
+          project={"name":"GQ802TileVisualSource","tree":{"$className":"DataModel",
+              "ServerScriptService":node}}
+          Path("artifacts/gq802.project.json").write_text(json.dumps(project))
+          PY
+          /tmp/gq802-rojo build artifacts/gq802.project.json -o artifacts/gq802_tiles.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root=ET.parse("artifacts/gq802_tiles.rbxlx").getroot()
+          modules=[x for x in root.iter("Item") if x.get("class")=="ModuleScript"]
+          assert len(modules)==2,("RED_CLASS_COUNT",len(modules))
+          actual=[]
+          for item in modules:
+              props=item.find("./Properties")
+              srcs=[v for v in props if v.attrib.get("name")=="Source"]
+              assert len(srcs)==1,("RED_SOURCE_COUNT",len(srcs))
+              actual.append(srcs[0].text or "")
+          expected=[
+            Path("artifacts/gq802/EGGRUMBLE_StageTileBlueprintPolicy.luau").read_text(),
+            Path("artifacts/gq802/EGGRUMBLE_StageTileVisualRenderer.luau").read_text()]
+          assert set(actual)==set(expected),"RED_ROJO_SOURCE_MISMATCH"
+          print("GQ802_STAGE_VISUAL_TWO_MODULE_SCRIPTS_ROJO_SOURCE_EXACT_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ802-SIXCELL-VISUAL-SOURCE-ONLY
+          path: artifacts/gq802_tiles.rbxlx
+          retention-days: 7
