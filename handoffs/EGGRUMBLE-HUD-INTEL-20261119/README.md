@@ -58,3 +58,15 @@ RC direct write.
 Successor on this feature must take isolated source through actual GUI/map
 server adapter with source-lock, CI, #220 authenticated fresh expected-SHA CAS
 and same-HEAD artifact receipt. No author ACK necessary.
+
+## Update: Actual Core36 → Real40 runtime source integration candidate (2026-11-19)
+
+Four isolated live runtime sources are now available in addition to the two pure policy modules:
+- `EGGRUMBLE_HudIntelRuntime.client.luau`: touch-safe 3-skill selector and existing server-owned Tool activation, HP/status chips and compact filtered fog minimap. No second skill or damage remote. Base Roblox movement/jump stays native; dodge is not fabricated. MUSOU/INVUL shows unavailable until exact server Tool and server Ready attribute exist.
+- `EGGRUMBLE_MapIntelBridge.server.luau`: one server-created *send-only* `EGGRUMBLE_MapIntelUpdate_V1` RemoteEvent, `FireClient` after server-only fog and LOS projection, zero `OnServerEvent`. Reads actual `TEAM_Arena` / `BATTLE_ROYALE_Arena` and `Castle_<id>/StandardFoundation` positions, starts fog only after server-character arrival within 150 studs of own castle. No additional Combat/Game/Store/Score/HP writer.
+- `compose_real40.py`: extracts the genuine exact 36 source files from the existing formal private Core36 `.rbxlx` artifact and adds exactly those two runtime scripts and two pure policy modules into ON40. OFF36 preserves all original 36 bytes; original source remains unchanged.
+- `.github/workflows/p0d-gq8-hud-real40.yml`: exact-current-HEAD verification, Native compile all ON40/OFF36, pinned Rojo Source/Class, upload actual candidate private Place and receipt. Original Core36 artifact run 44232589275 must be available and current formal RC unchanged.
+
+The map sender is a **separate display-only one-way RemoteEvent** (not a new command/damage/score authority), because selectively revealing secret player positions requires targeted server-to-client replication. No client search or information request is accepted. TEAM enemy/ally markers stay suppressed until the original match authority provides `EGGRUMBLE_MapVerifiedTeam` from verified server roster. No client-derived team or guessed affiliations. This is intentional fail-closed and remains a wiring task. Castles and exploration work independently.
+
+**Known limits:** HUD uses existing A/B/C combat Tools only; a dedicated zero-cooldown normal attack, a dodge mechanic, actual #823/#825 server awakening Tools, real neutral scanning and verified TEAM affiliation still require original-author source integration. They are NOT declared complete. This source is a private source-selected candidate, not official RC, Studio-tested or shop-enabled. Studio/Android/UI art quality remains NOT_TESTED and source-only native PASS never implies playability.
