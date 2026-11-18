@@ -2,18 +2,20 @@
 
 Owner #839 naming: Real62 means **62 selected Luau scripts**, never 62% completion.
 Actual formal branch is `rc/p0d-s1-kids-rc01` Real59 private companion,
-HEAD `38d11f0bf311491ba76fe03f818948e5d4b06889` (PR #829).
+HEAD `5a47e96f6b4766a9c59dd06b111bea53b73bd5ca` (PRs #829 + #844).
 The legacy S1 active rich51 is NOT replaced. Candidate Real62 combines
-**59/59 original current official Real59 HUD+Fog/Host/Swarm/Shop sources
-byte-exact** with the 3 scoped scripts from PR #838, no other gameplay
+**59/59 original current official Real59 HUD+Fog/Host/Swarm/Shop Luau sources
+byte-exact** (including #844 Host ModuleScript→executable Script class correction) with the 3 scoped scripts from PR #838, no other gameplay
 authority, Remote or DataStore writer. A source-count increase does not
 activate the private companion or enable live item trading.
 
 `compose_real62.py` uses the proven #829 Real59 Place from run 44400478849,
-plus exact official Real55 Place from run 44393525211, hard-checks both
+plus exact official Real55 Place from run 44393525211, and the
+#844 P0 executable-Host Real59 Place from run 44403383782; it hard-checks all
 immutable original 55 scripts, all current 59 sources/class/routes and four
 original HUD/Fog author files, and composes an exact 59→62 selected project.
-OFF59 rebuild is byte-exact. Dedicated candidate gate
+OFF59 rebuild is byte-exact to the corrected executable-Host Real59,
+not the older inert-Host Real59 Place. Dedicated candidate gate
 `.github/workflows/gq8-trade-escrow-real62-hud-union.yml`, and formal
 same-new-official-HEAD CI `.github/workflows/p0d-rc-eggrumble-v3-real62.yml`.
 Formal release manifest `rc_fastlane/EGGRUMBLE_V3_REAL62.json` records
