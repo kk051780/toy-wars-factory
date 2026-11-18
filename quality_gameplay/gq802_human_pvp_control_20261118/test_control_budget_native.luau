@@ -43,7 +43,9 @@ assert(B.consume(state,receipt).status=="FREEZE")
 receipt.serverConfirmedHit=false;receipt.uniqueHitId="r8_fake"
 assert(B.consume(state,receipt)==nil)
 receipt.serverConfirmedHit=true
-assert(B.consume(state,receipt).status=="SHOCK" or B.consume(state,receipt)==nil)
+local recovered=B.consume(state,receipt)
+assert(recovered and recovered.hardControl)
+assert(B.consume(state,receipt)==nil)
 -- All 7 roles and 8 elements still participate through single cue policy.
 receipt.targetAvatarKey="player98:a1";receipt.serverTimeSeconds=100
 local roles={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
