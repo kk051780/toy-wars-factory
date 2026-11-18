@@ -58,8 +58,33 @@ function M.layout(w, h, hand)
             item.x = math.floor(w - item.x + 0.5)
         end
     end
+    -- Top chrome uses the space *beside* the map. At 320-393px this
+    -- prevents HP, attributes and map from occupying the same touch region.
+    local mapL = p.MAP.x - p.MAP.size / 2
+    local mapR = p.MAP.x + p.MAP.size / 2
+    local desiredWidth = math.min(w * .55, 480)
+    local statusX, statusWidth
+    if mirror then
+        local rightEdge = mapL - 10
+        statusWidth = math.floor(math.min(desiredWidth, rightEdge - 8))
+        statusX = math.floor(rightEdge - statusWidth)
+    else
+        statusX = math.ceil(mapR + 10)
+        statusWidth = math.floor(math.min(desiredWidth, w - statusX - 8))
+    end
+    assert(statusWidth >= 110, "RED_STATUS_NO_SAFE_WIDTH")
+    local chrome = {
+        status = {x = statusX, y = 9, w = statusWidth, h = 27},
+        musouBar = {
+            x = math.floor(statusX + statusWidth * .25), y = 37,
+            w = math.floor(statusWidth * .58), h = 5,
+        },
+        map = {x = math.floor(mapL), y = 8,
+            w = p.MAP.size, h = p.MAP.size},
+    }
     return {
         anchors = p,
+        chrome = chrome,
         orientation = landscape and "LANDSCAPE" or "PORTRAIT",
         combatClear = {x0 = w * .27, x1 = w * .71, y0 = h * .20, y1 = h * .79},
         safeAreaRequired = true,
