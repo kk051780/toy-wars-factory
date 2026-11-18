@@ -151,7 +151,8 @@ def run(a):
  if chosen[HOST][0]!="Script" or chosen[HOST][1]!=viral[HOST][1]:
   raise ValueError("RED_HOST_STARTUP_OR_VIRAL_NOTIFICATION_LOST")
  for k in hud:
-  if chosen[k]!=hud[k]:raise ValueError("RED_CURRENT_REAL59_HUD_NOT_PRESERVED")
+  if k not in {HOST,COMBAT,INVUL} and chosen[k]!=hud[k]:
+   raise ValueError("RED_CURRENT_REAL59_56_SOURCES_NOT_PRESERVED")
  for k in base:
   if k not in {HOST,COMBAT,INVUL} and chosen[k]!=base[k]:raise ValueError("RED_52_ORIGINAL_CHANGED")
  if a.out.exists():raise ValueError("RED_OUTPUT_EXISTS")
