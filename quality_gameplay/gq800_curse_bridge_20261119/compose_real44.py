@@ -47,7 +47,7 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
             print("RED_REAL43_SCOPED_HUNK_MISMATCH",process.stdout,process.stderr)
             raise AssertionError("RED_ACTUAL_REAL43_SWARM_PATCH_FAILED")
         source=output_file.read_bytes()
-    assert source.count(b"local Swarm={}") == 1    assert source.count(b"local Swarm={}") == 1
+    assert source.count(b"local Swarm={}") == 1
     assert source.count(b"CursePolicy.seal(state,os.clock(),{") == 1
     assert source.count(b"h:TakeDamage(damage)") == 1
     assert source.count(b"eh:TakeDamage(8)") == 1
