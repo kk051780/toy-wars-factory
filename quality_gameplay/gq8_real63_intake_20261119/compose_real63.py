@@ -13,7 +13,8 @@ import xml.etree.ElementTree as ET
 
 ORIGINAL55 = "a6020867fac80fa3b2ca47478625873fc6f3678e"
 ORIGINAL59_HEAD = "38d11f0bf311491ba76fe03f818948e5d4b06889"
-OFFICIAL = "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca"
+FORMAL_REAL62_PARENT = "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca"
+OFFICIAL = "b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff"
 HOST=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
 COMBAT=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 INVUL=("ServerScriptService","EGGRUMBLE_InvulRuntime")
@@ -116,21 +117,29 @@ def run(a):
  viral_doc,viral=flatten(a.viral56)
  counter_doc,counter=flatten(a.counter56)
  hud=from_xml(a.hud59)
- if len(trade)!=62 or len(viral)!=56 or len(counter)!=56 or len(hud)!=59:raise ValueError("RED_CANDIDATE_SOURCE_COUNT")
+ formal62=from_xml(a.formal62)
+ if len(trade)!=62 or len(formal62)!=62 or len(viral)!=56 or len(counter)!=56 or len(hud)!=59:raise ValueError("RED_CANDIDATE_SOURCE_COUNT")
  rt=json.loads(a.trade_receipt.read_text(encoding="utf8"))
  rv=json.loads(a.viral_receipt.read_text(encoding="utf8"))
  rc=json.loads(a.counter_receipt.read_text(encoding="utf8"))
  rh=json.loads(a.hud_receipt.read_text(encoding="utf8"))
+ rf=json.loads(a.formal62_receipt.read_text(encoding="utf8"))
  receipt_verify(trade,rt["on_sources"],"TRADE62")
  receipt_verify(viral,rv["sources"],"VIRAL56")
  receipt_verify(counter,rc["sources"],"COUNTER56")
  receipt_verify(hud,rh["on_sources"],"HUD59")
+ receipt_verify(formal62,rf["on_sources"],"FORMAL62")
  if (rh.get("official_rc_head")!=ORIGINAL55 or rh.get("official_head")!=ORIGINAL59_HEAD or rh.get("official_rc_adopted") is not True or rh.get("baseline_real55_source_count")!=55 or
      set(tuple(x.split("/")) for x in rh["new_routes"])!=HUD):
   raise ValueError("RED_HUD_BASE_CONTRACT")
- if rt.get("canonical_rc_sha")!=ORIGINAL59_HEAD or rt.get("official59_sources_byte_exact")!=59 or rt.get("official55_sources_byte_exact")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55:
+ if (rt.get("canonical_rc_sha")!=ORIGINAL59_HEAD or rt.get("official59_sources_byte_exact")!=59 or rt.get("official55_sources_byte_exact")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55 or rf.get("baseline_official_head")!=FORMAL_REAL62_PARENT or rf.get("combined_count")!=62 or rf.get("host_class")!="Script" or rf.get("official_rc_adopted") is not True):
   raise ValueError("RED_AUTHOR_BASE_CONTRACT")
  check_diff(base,trade,set(),HUD|TRADE,"TRADE62")
+ if set(formal62)!=set(trade):raise ValueError("RED_OFFICIAL62_ROUTES_CHANGED")
+ for k in formal62:
+  if formal62[k][1]!=trade[k][1] or (k!=HOST and formal62[k][0]!=trade[k][0]):
+   raise ValueError("RED_OFFICIAL62_NOT_ORIGINAL_HUD_TRADE_"+"/".join(k))
+ if formal62[HOST][0]!="Script":raise ValueError("RED_FORMAL_REAL62_HOST_NOT_RUNNABLE")
  for k in HUD:
   if hud[k]!=trade[k]:raise ValueError("RED_TRADE62_DROPPED_OFFICIAL59_HUD")
  check_diff(base,hud,set(),HUD,"HUD")
@@ -148,6 +157,12 @@ def run(a):
  for candidate,added in ((hud,HUD),(viral,VIRAL),(counter,COUNTER)):
   for k in added:chosen[k]=candidate[k]
  if len(chosen)!=64:raise ValueError("RED_REAL64_COUNT")
+ for k in formal62:
+  if k not in {HOST,COMBAT,INVUL} and chosen[k]!=formal62[k]:
+   raise ValueError("RED_FORMAL_REAL62_59_SOURCE_LOST_"+"/".join(k))
+ for k in (HOST,COMBAT,INVUL):
+  if chosen[k][0]!=formal62[k][0]:
+   raise ValueError("RED_FORMAL_REAL62_CLASS_DRIFT")
  if chosen[HOST][0]!="Script" or chosen[HOST][1]!=viral[HOST][1]:
   raise ValueError("RED_HOST_STARTUP_OR_VIRAL_NOTIFICATION_LOST")
  for k in hud:
@@ -158,10 +173,10 @@ def run(a):
  if a.out.exists():raise ValueError("RED_OUTPUT_EXISTS")
  a.out.mkdir(parents=True)
  path=put_project(parent_doc,chosen,a.out)
- off59=a.out/"off59"
- off59.mkdir()
- offpath=put_project(parent_doc,hud,off59)
- assert len(flatten(offpath)[1])==59,"RED_OFF59_ROUTE_COUNT"
+ off62=a.out/"off62"
+ off62.mkdir()
+ offpath=put_project(parent_doc,formal62,off62)
+ assert len(flatten(offpath)[1])==62,"RED_OFF62_ROUTE_COUNT"
  origin={}
  for k in chosen:
   origin[k]="VERIFIED_OFFICIAL55"
@@ -173,22 +188,22 @@ def run(a):
   if k in COUNTER:origin[k]="PR841_COUNTER_EXACT"
  report={
   "schema":"GQ8_CROSSLANE_REAL64_SOURCE_SELECTION_V1",
-  "official_base_head":OFFICIAL,"original_real55_source_head":ORIGINAL55,"original_real59_source_head":ORIGINAL59_HEAD,"current_candidate_head":"CI_GITHUB_SHA",
+  "official_base_head":OFFICIAL,"original_real55_source_head":ORIGINAL55,"original_real59_source_head":ORIGINAL59_HEAD,"original_real62_parent_head":FORMAL_REAL62_PARENT,"current_candidate_head":"CI_GITHUB_SHA",
   "formal_rc_adopted":False,"selected_real_sources":64,
-  "preserved_original_unchanged":52,"preserved_current_real59_unchanged":56,"new_since_current_real59":5,"patched_existing_singletons":["/".join(x) for x in (HOST,COMBAT,INVUL)],
+  "preserved_original_unchanged":52,"preserved_current_real59_unchanged":56,"preserved_current_real62_unchanged":59,"new_since_current_real62":2,"patched_existing_singletons":["/".join(x) for x in (HOST,COMBAT,INVUL)],
   "new_sources":9,"source_owners":{"HOST_AUTOSTART_CLASS":844,"HUD_FOG":829,"TRADE_REVIEW_JOURNAL_ESCROW":838,"VIRAL":840,"COUNTER":841},
   "new_gameplay_hp_owner":0,"new_castle_round_owner":0,"new_swarm_owner":0,
   "p0_single_host_autostart_class_fixed":True,
   "paid_trade":False,"robux":False,"publish":False,
   "real_studio_2client":"NOT_TESTED","real_android_15min":"NOT_TESTED","fun":"NOT_TESTED",
-  "rollback":"Rebuild current official Real59 source profile and verify exact OFF59 original Place",
+  "rollback":"Rebuild current formal Real62 source profile and verify exact OFF62 original Place",
   "sources":[{"route":"/".join(k),"class":v[0],"sha256":sha(v[1]),"bytes":len(v[1]),"origin":origin[k]} for k,v in sorted(chosen.items())]
  }
  (a.out/"REAL64_INTAKE_RECEIPT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
- print("GQ8_REAL64_FOUR_AUTHOR_CANDIDATE_COMPOSED_59_PLUS_5_56_UNCHANGED",path)
+ print("GQ8_REAL64_CURRENT_FORMAL62_PLUS_2_59_UNCHANGED",path)
 if __name__=="__main__":
  p=argparse.ArgumentParser()
- for key in ("base55","receipt55","trade62","trade_receipt","viral56","viral_receipt",
+ for key in ("base55","receipt55","trade62","trade_receipt","formal62","formal62_receipt","viral56","viral_receipt",
              "counter56","counter_receipt","hud59","hud_receipt","out"):
   p.add_argument("--"+key.replace("_","-"),type=Path,required=True)
  run(p.parse_args())
