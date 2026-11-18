@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse, copy, hashlib, json, os, re
 from pathlib import Path
 
-ORIGINAL_SWARM_BLOB="fea147ac51411e626b410d172aad5cd72615bd45"
+ORIGINAL_SWARM_BLOB="dd6b5f695310d425a661e8e5c8c1a1f1d185a7f6"
 AUTHOR_FINISHER_BLOB="42f512c4aaa389e0027be774c327e1f5a106aabf"
 SWARM=("ServerScriptService","EGGRUMBLE_SwarmCombat")
 FINISHER=("ServerScriptService","EGGRUMBLE_NeutralFinisherPolicy")
@@ -30,6 +30,52 @@ def flatten(project:Path):
  visit(doc["tree"])
  return doc,found
 
+
+def patch_latest_real42_swarm(original:str,candidate:str)->str:
+ """Keep all original Real42 intermediary author fixes; patch only scoped neutral species cues."""
+ def replace_once(old:str,new:str,label:str):
+  nonlocal original
+  count=original.count(old)
+  if count!=1:raise ValueError("RED_"+label+"_ANCHOR_"+str(count))
+  original=original.replace(old,new,1)
+ require='local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))'
+ replace_once(require,require+'\\nlocal NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',"FINISHER_POLICY_REQUIRE")
+ start='-- Original #482 Swarm remains the ONLY neutral spawner/HP/KO authority.'
+ end='local SWARM_RANGE=240'
+ if candidate.count(start)!=1 or candidate.count(end)!=1:raise ValueError("RED_CANDIDATE_PALETTE")
+ palette=candidate.split(start,1)[1].split(end,1)[0]
+ replace_once('local NEUTRAL_SPEED=7\\n'+end,'local NEUTRAL_SPEED=7\\n'+start+palette+end,"SPECIES_PALETTE")
+ a='local function soldier(parent:Instance,at:Vector3):Model'
+ b='local function labelKo(p:Player,n:number)'
+ if candidate.count('local function soldier(')!=1 or candidate.count(b)!=1:
+  raise ValueError("RED_CANDIDATE_SOLDIER")
+ new_soldier=candidate.split('local function soldier(',1)[1].split(b,1)[0]
+ new_soldier='local function soldier('+new_soldier
+ if original.count(a)!=1 or original.count(b)!=1:raise ValueError("RED_CURRENT_SOLDIER")
+ old_soldier=a+original.split(a,1)[1].split(b,1)[0]
+ if 'local function piece(' not in original or 'h.MaxHealth=NEUTRAL_HEALTH' not in old_soldier:
+  raise ValueError("RED_SOLDIER_NOT_SINGLE_OWNER")
+ replace_once(old_soldier,new_soldier,"SOLDIER_ONLY")
+ replace_once('  local ended=false','  local ended=false\\n  local spawnSerial=0\\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
+ replace_once('local constructed,model=pcall(soldier,all,at)',
+  'spawnSerial+=1\\n   local constructed,model=pcall(soldier,all,at,spawnSerial)',"ADOPT_EXISTING_BUDGET_SPAWNER")
+ cue_start='    local before=h.Health'
+ cue_end='    ImpactFeedback.hit('
+ if candidate.count(cue_start)!=1 or candidate.count(cue_end)!=1:
+  raise ValueError("RED_CANDIDATE_HIT_CUE")
+ new_hit=cue_start+candidate.split(cue_start,1)[1].split(cue_end,1)[0]
+ replace_once('    h:TakeDamage(damage)\\n    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\\n',
+  new_hit,"REAL_KO_CUE")
+ replace_once('local travel=math.min(NEUTRAL_SPEED*.38,best)',
+  'local actualSpeed=tonumber(m:GetAttribute("EGGRUMBLE_NeutralSpeed")) or NEUTRAL_SPEED\\n       local travel=math.min(actualSpeed*.38,best)',"SWARM_PERSONALITY_SPEED")
+ if original.count('h:TakeDamage(damage)')!=1 or original.count('function Swarm.start(session:any)')!=1:
+  raise ValueError("RED_DUPLICATE_DAMAGE_OR_SWARM")
+ for keep in ("KoFence.mayCredit(session,id,m,all)","neutralBudget:acquire","SpawnPacing.step","EncounterFair","Melee"):
+  if keep not in original:raise ValueError("RED_LOST_EXISTING_AUTHOR_SOURCE_"+keep)
+ if original.count('NeutralFinisherPolicy.select(')!=1:
+  raise ValueError("RED_MISSING_REAL_SERVER_HIT_FINISH_CUE")
+ return original
+
 def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Path):
  before_project=Path(before_project).resolve(strict=True)
  swarm_candidate=Path(swarm_candidate).resolve(strict=True)
@@ -39,14 +85,11 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
  doc,before=flatten(before_project)
  if len(before)!=42 or SWARM not in before or FINISHER in before or CASTLE not in before:
   raise ValueError("RED_NOT_REAL42_SINGLE_SWARM_SOURCE")
- print("GQ800_REAL42_ACTUAL_SWARM_SOURCE_BLOB",git_blob(before[SWARM].read_bytes()), "size",len(before[SWARM].read_bytes()))
- print("GQ800_REAL42_EXISTING_SWARM_START\\n"+before[SWARM].read_text(encoding="utf-8")+"\\nGQ800_REAL42_EXISTING_SWARM_END")
- print("GQ800_ORIGINAL_482_EXPECTED",ORIGINAL_SWARM_BLOB)
  if git_blob(before[SWARM].read_bytes())!=ORIGINAL_SWARM_BLOB:
   raise ValueError("RED_ORIGINAL_SWARM_WRITER_CHANGED_REBASE_REQUIRED")
  if git_blob(policy_original.read_bytes())!=AUTHOR_FINISHER_BLOB:
   raise ValueError("RED_UPSTREAM_801_POLICY_BLOB_DRIFT")
- source=swarm_candidate.read_text(encoding="utf-8")
+ source=patch_latest_real42_swarm(before[SWARM].read_text(encoding="utf-8"),swarm_candidate.read_text(encoding="utf-8"))
  if source.count("h:TakeDamage(damage)")!=1 or source.count("function Swarm.start(session:any)")!=1:
   raise ValueError("RED_DUPLICATE_HP_OR_SPAWNER")
  if source.count("NeutralFinisherPolicy.select(")!=1 or "assert(#SPECIES_IDS==8" not in source:
@@ -55,17 +98,19 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
   raise ValueError("RED_NEW_REMOTE_STORE_OWNER")
  if "assert(RunService:IsStudio()" not in source or "lineOfSightToNeutral(origin,attacker,model)" not in source:
   raise ValueError("RED_REMOVED_AUTH_GUARD")
- if git_blob(swarm_candidate.read_bytes())==ORIGINAL_SWARM_BLOB:
+ if git_blob(new_swarm_path.read_bytes())==ORIGINAL_SWARM_BLOB:
   raise ValueError("RED_NO_ACTUAL_GAMEPLAY_EDIT")
 
  out.parent.mkdir(parents=True,exist_ok=True)
+ new_swarm_path=out.parent/"EGGRUMBLE_SwarmCombat_Real43.luau"
+ new_swarm_path.write_text(source,encoding="utf-8",newline="\\n")
  new=copy.deepcopy(doc)
  def relink(node,key=()):
   for name,item in node.items():
    if name.startswith("$"):continue
    route=key+(name,)
    if "$path" in item:
-    selected=swarm_candidate if route==SWARM else before[route]
+    selected=new_swarm_path if route==SWARM else before[route]
     item["$path"]=os.path.relpath(selected,out.parent).replace(os.sep,"/")
    else:relink(item,route)
  relink(new["tree"])
@@ -76,7 +121,7 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
  _,after=flatten(out)
  if set(after)!=(set(before)|{FINISHER}) or len(after)!=43:
   raise ValueError("RED_NOT_REAL43_SINGLETON")
- if after[SWARM].read_bytes()!=swarm_candidate.read_bytes() or after[FINISHER].read_bytes()!=policy_original.read_bytes():
+ if after[SWARM].read_bytes()!=new_swarm_path.read_bytes() or after[FINISHER].read_bytes()!=policy_original.read_bytes():
   raise ValueError("RED_PATCH_POLICY_SELECTION")
  for route,original in before.items():
   if route!=SWARM and after[route].read_bytes()!=original.read_bytes():
@@ -89,7 +134,7 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
   "modified_existing_source":["/".join(SWARM)],
   "new_original_author_source":["/".join(FINISHER)],
   "remaining_original42_byte_exact":41,
-  "original_swarm_blob":ORIGINAL_SWARM_BLOB,
+  "original_real42_swarm_blob":ORIGINAL_SWARM_BLOB,\n  "preserved_author_policies":["KoFence","Melee","SpawnPacing","EncounterFair","neutralBudget"],
   "upstream_801_policy_blob":AUTHOR_FINISHER_BLOB,
   "real_sieges_and_guardians_preserved":True,
   "single_swarm_and_single_hp_ko_owner":True,
