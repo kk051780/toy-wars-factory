@@ -44,8 +44,12 @@ local function findCastles(arena)
     -- server roster; no client team claim is trusted. Unknown colors fail shut.
     local tint=foundation.Color
     local team=nil
-    if (tint-Color3.fromRGB(207,92,86)).Magnitude<.02 then team="RED"
-    elseif (tint-Color3.fromRGB(87,146,218)).Magnitude<.02 then team="BLUE" end
+    local function closeColor(a,b)
+     return math.abs(a.R-b.R)<.02 and math.abs(a.G-b.G)<.02
+       and math.abs(a.B-b.B)<.02
+    end
+    if closeColor(tint,Color3.fromRGB(207,92,86)) then team="RED"
+    elseif closeColor(tint,Color3.fromRGB(87,146,218)) then team="BLUE" end
     table.insert(castles,{id=m.Name,kind="CASTLE",x=foundation.Position.X,
      z=foundation.Position.Z,layer="LAND",ownerId=string.sub(m.Name,8),
      team=team,sourceModel=m})
