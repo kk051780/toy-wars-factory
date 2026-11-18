@@ -59,6 +59,8 @@ def patch(source:str)->str:
   charmedByModel[model]=nil
   lastCharmAttack[model]=nil
   model:SetAttribute("EGGRUMBLE_NeutralFriendlyOwnerId",nil)
+  model:SetAttribute("EGGRUMBLE_NeutralCharmUntil",nil)
+  model:SetAttribute("EGGRUMBLE_NeutralSeals",nil)
   local accent=model:FindFirstChild("SpeciesAccent")
   if accent and accent:IsA("BasePart") then accent.Color=rec.originalColor end
  end
@@ -101,7 +103,9 @@ def patch(source:str)->str:
   '''    if isCurseAttack and user and h.Health>0 and h.MaxHealth>0 and model.PrimaryPart then
      local ownerId=tostring(user.UserId)
      local state=curseStates[ownerId]
-     if not state then
+     if not state or not state.active then
+      -- Dead avatar, role switch, or epoch change retires the previous policy state.
+      -- A verified living ZOMBIE re-entry starts with a clean seal ledger.
       state=CurseConversionPolicy.new(curseEpoch,ownerId)
       curseStates[ownerId]=state
      end
@@ -213,7 +217,9 @@ def patch(source:str)->str:
         -- Same Swarm strike, same 24-target and ray caps, no extra writer.
         local dealt=strike(ownerId,root.Position,5,7,
          root.Position+Vector3.new(0,1,0),model,"CIRCLE")
-        if dealt>0 then lastCharmAttack[model]=now end
+        -- Charge cadence for every authorized attempt, including an empty swing.
+        -- Otherwise up to 3 allies raycast every .38s on low-end Android.
+        lastCharmAttack[model]=now
        end
       end
      end
