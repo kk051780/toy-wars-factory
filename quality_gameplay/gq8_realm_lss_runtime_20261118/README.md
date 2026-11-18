@@ -6,7 +6,7 @@
 
 - PR #764 RealmCoreはStudioガードなく起動し、FIGHTER戦闘機とSUBSEA潜水を自分で生成する。
 - ただし艦砲SHIP、海獣SEA_BEAST、飛行獣SKY_BEAST、飛行艇AIRSHIPの4種は、PR #772 LSS側の車両生成に依存する。RealmCoreは4種の操縦・武器判定を持つが、4種の工場自体を生成しない。
-- PR #772 LSSは冒頭に RunService:IsStudio() の実行制限を置く。よって両候補だけを採用した場合、通常サーバーで4種の生成経路は閉じている。Studio上での実動作は未確認。
+- PR #772 LSSは冒頭に RunService:IsStudio() の実行制限を置く。元のLSS32をそのまま配置した場合は通常サーバーで4種の生成経路が閉じる。ただし正式Core36の生成工程はStudioガードを出力時に除去するため、完成品は別途検証する。Studio上での実動作は未確認。
 - このQAは、通常環境の船・魔獣の機能を「RC統合済」と誤表示することを防ぐ。
 
 | 機能 | 非Studio静的経路 | Studio静的経路 |
@@ -41,5 +41,16 @@
 
 - 公式RC HEAD f77b4d4393d9e9b19b65566413432a7a9f13962b は、非公開V3 Core36 31+Realm3+Regen2を選択して同HEAD Actions 44232589275 が SUCCESS。これは正式RC内の非公開Studio試遊ソース採用であり、ゲーム公開や人間FUN合格ではない。
 - 実際のCore36コンポーザは LSS を**正式RC branch側**から選んでいる。現HEADで選択されたLSS実Git blobは c4ca82218d985914ad98dead565f9f79f5374dcb。新しいPR #772 の改修blob f9ea61cc1ed4a4ec5edbc7078a619790b3181f61 ではない。
-- 両LSSとも冒頭のStudioガードがあり、通常サーバーの4乗物生成経路は源上閉じている。#772が持つ**25秒離席回収は現Core36にはまだ入っていない**。検査器は固定RC blobと候補blobの差を必ずJSON報告する。
+- 両LSS原本にはStudioガードがある。ただしCore36は元#764 compose_core34.pyにより生成LSSの該当ガードを1箇所除去しているため、原本だけでCore36の通常サーバーの4乗物を閉鎖と断定できない。#772が持つ**25秒離席回収は現Core36にはまだ入っていない**。検査器は固定RC blobと候補blobの差を必ずJSON報告する。これは入力原本の性質であって、正式Core36の出力実体そのものではない。
 - したがって「Core36選択済」「#772実装採用済」「通常環境で船・飛行獣が動く」は別々の事実。後二者を現状の達成として扱わない。
+
+## 追補：正式Core36の生成済Source検査（2026-11-18）
+
+**前記の「通常サーバーで4乗物が必ず生成不能」という扱いを訂正。** PR #783で採用されたCore36のビルド手順は、PR #764固定コンポーザ compose_core34.py を実際に実行して、原本LSSのStudioガードを出力時に1箇所だけ除去する。PR #788の元のRAW-source監査はこの出力工程を観測していなかった。
+
+既存PR #788内で作業範囲を統合し、次の独立検証を追加した。
+- verify_composed_core.py: #764固定コンポーザを実行。ダミー31-source Rojo台から34-source生成 → 生成LSSガード除去 → SEA_BOAT / SEA_BEAST / AIRSHIP / SKY_BEASTの4つの実factory呼出が残ることを検証。OFF31はbyte一致、ガード+4 factory欠落の計5負例。
+- GitHub Actions: #764固定HEADと正式Core36の固定HEAD f77b4d4393d9e9b19b65566413432a7a9f13962b から原作者原本を別々にcheckoutし、git blob不一致をRED扱い。
+- REPORT.jsonはRAW sourceだけの結果、COMPOSED_REPORT.jsonがCore34 composer出力の静的到達性を表す。ソース上の到達経路が存在することは、Studio/非Studio実機での遊びや操作成功を意味しない。
+
+**重要な残課題：** 実Core36は#772の25秒離席回収改修blobを採用していない。正式36-source .rbxlx はActions上で構築済みでも、実Robloxサーバーでの乗降、TEAM/BR、海空戦、低性能Android FPS、15分安定、子どもの面白さは未検収。新規Game/Combat/Remote権限を持たず、元作者/RC writerに対する重複実装は行わない。受入責任は #220 sole authenticated writerによる同HEAD CI＋Studio/Android/OWNERゲートを継続する。
