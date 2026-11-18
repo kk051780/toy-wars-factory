@@ -12,7 +12,7 @@ FEATURE_ID: GQ8_REAL42_WEATHER_NEUTRAL43_ITEM_SCULPTURE_SOURCE_INTAKE_20261119
 
 Inputs are exact immutable original author/DRI sources:
 - #796 latest HEAD 34cafed1cb9e92e08bbc8f2afa67d50ae52a083a; run44319450066 portable WEATHER42, 42 original scripts, retaining #809 siege, #811 stages, #814 weather, #764 air/sea and original seven jobs.
-- #815 latest HEAD a8bc2ba30bf67515282ae27de2814c1bc6dbab89; original composer blob 0f712d05533f5744cd95ac147c8c14a5bf6f67fe, neutral8 single-Swarm candidate blob 3f1359b8fa7413bf6885d634d5c9da06190f2e90; #801 unchanged original NeutralFinisherPolicy blob 42f512c4aaa389e0027be774c327e1f5a106aabf.
+- #815 latest HEAD bb54b9009ece96353e927fe7c9826cdb6d66e8d8; original composer blob dd94816c6ec81c3a4c885dc1bdc34abb076be0c1, neutral8 single-Swarm candidate blob 0f4774c543d60b91c261cc6e871d77aa937149cb; #801 unchanged original NeutralFinisherPolicy blob 42f512c4aaa389e0027be774c327e1f5a106aabf.
 - #812 HEAD be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8; original reversible Item visual patch blob 2c81da640d465d27630840be2f1f5245bc7cd5db.
 
 Composition is **42 -> 43 neutral (existing Swarm patched + one author policy) -> 43 item visual (existing Item only)**, then a self-contained portable43 project with same 43 source routes/classes. Original 42 weather unchanged at first stage. Original neutral43 all other 42 sources unchanged in second stage, including the single Swarm/HP/KO/Score/Host/Store/Remote. It uses the existing 3 HEAL/DASH/SHIELD pickups, not new pickups/rewards. Item visual effect is reversible by running #812 inverse against the selected item; OFF43 is the untouched neutral43 original.
