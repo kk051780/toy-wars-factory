@@ -1,0 +1,14 @@
+{
+  "schema": "GQ8_VIRAL_SOURCEREAL_LOCK_V1",
+  "feature_id": "GQ8_VIRAL_MOMENTS_CAPTURE_20261119",
+  "target_rc": "rc/p0d-s1-kids-rc01",
+  "stage": "SOURCE_ONLY_NATIVE_CI_SUCCESS_NOT_OFFICIAL_RC",
+  "rollback": "Remove ViralMomentCapture mapping in default.project.json; retain previous Game/HUD/Coach unchanged; no server or persistent state changes.",
+  "files": {
+    "releases/P0D_S1_KIDS_RC01/src/shared/ViralMomentPolicy.luau": "96929198823898d8e85e7d7b0edb5b5bbea10b2a",
+    "releases/P0D_S1_KIDS_RC01/src/client/ViralMomentCapture.client.luau": "4c7faba0c4de3b6e7f6ddb7e4f5f2cd52325b334",
+    "releases/P0D_S1_KIDS_RC01/default.project.json": "b2e90d66ce5d5bfb5ab20b91e8927ef50deaa2e0",
+    "releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau": "7c5229f600f17537bc1bbbb0b96b6a2435875374",
+    "releases/P0D_S1_KIDS_RC01/src/client/HUD.client.luau": "ee594fbc34e6bf938518fae32c0642c852f11f9e"
+  }
+}
