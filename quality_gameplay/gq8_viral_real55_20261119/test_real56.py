@@ -28,7 +28,7 @@ def check(parent,candidate):
     assert len(compiled)>len(src) and compiled.count('local function startSession(mode:string)')==1
     # All accepted theft/delivery cues occur after a protected successful rules mutation.
     assert compiled.index('if ok and taker and (taker.heldEggs or 0)>before')<compiled.index('gq8CaptureHint(p,session,"EGG_STEAL")')
-    assert compiled.index('if ok and (c.depositedEggs or 0)>before')<compiled.index('gq8CaptureHint(p,session,"EGG_DELIVER")')
+    assert compiled.index('if (c.depositedEggs or 0)>before then')<compiled.index('gq8CaptureHint(p,session,"EGG_DELIVER")')
     client=built[CLIENT].read_text()
     for check in ('local armed = false','StartVideoCaptureAsync','PromptSaveCapturesToGallery',
                   'StopVideoCapture','EGGRUMBLE_ViralSeq','RunService:IsStudio()'):
