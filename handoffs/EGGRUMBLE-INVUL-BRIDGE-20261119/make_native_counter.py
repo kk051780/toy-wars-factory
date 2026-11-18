@@ -61,7 +61,7 @@ local world={Parent={},FindFirstChild=function(self,name)
  if name=="NeutralHorde" then return folder end
 end}
 local count=0
-local swarm={damageFromPlayer=function(self,p,at,radius,damage,shape)
+local swarm={damageFromPlayer=function(p,at,radius,damage,shape)
  assert(shape=="CIRCLE" and radius<=14 and damage>0)
  count+=1
  neutralHum.Health=math.max(0,neutralHum.Health-damage)
