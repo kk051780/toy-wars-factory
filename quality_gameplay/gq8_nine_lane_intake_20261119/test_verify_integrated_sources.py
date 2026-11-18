@@ -77,7 +77,7 @@ with tempfile.TemporaryDirectory() as temp:
 
     original_project = proj.read_text()
     project = json.loads(original_project)
-    project["tree"]["ServerScriptService"]["EGGRUMBLE_MusouFeverPolicy"] = project["tree"]["ServerScriptService"].pop("GQ8_Fixture_00")
+    project["tree"]["ServerScriptService"]["GQ8_Fixture_RENAMED"] = project["tree"]["ServerScriptService"].pop("GQ8_Fixture_00")
     proj.write_text(json.dumps(project))
     denied(proj, rec, "RED_LEDGER_ROUTE_DRIFT")
     proj.write_text(original_project)
