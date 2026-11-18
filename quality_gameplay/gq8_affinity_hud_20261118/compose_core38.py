@@ -100,8 +100,8 @@ def compose(project:Path,dest:Path,enabled:bool):
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
-    p.add_argument("--current31",required=True,type=Path)
+    p.add_argument("--current36",required=True,type=Path)
     p.add_argument("--out",required=True,type=Path)
     p.add_argument("--off",action="store_true")
     a=p.parse_args()
-    compose(a.current31,a.out,not a.off)
+    compose(a.current36,a.out,not a.off)
