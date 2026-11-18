@@ -1,0 +1,208 @@
+name: GQ8 Real65 official63 preserve basic dodge plus viral counter ON65 OFF63
+on:
+  push:
+    branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_real63_intake_20261119/**'
+      - '.github/workflows/gq8-real63-source-composite.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_real63_intake_20261119/**'
+      - '.github/workflows/gq8-real63-source-composite.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compose-one-v3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXPECTED_OFFICIAL: b7bf777778d77ed524b4b43582c1f011e62bec12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fail-closed local route drift and collision tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_real63_intake_20261119/compose_real63.py quality_gameplay/gq8_real63_intake_20261119/compose_real65.py
+          python3 quality_gameplay/gq8_real63_intake_20261119/test_real63.py
+      - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_HEAD_NOT_SAME_CI; exit 1; }
+            test "$(gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$GITHUB_SHA" --jq .status)" = ahead || { echo RED_OFFICIAL_NOT_VERIFIED_BASE_DESCENDANT; exit 1; }
+          else
+            test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_RC_HEAD_MOVED_RECONCILE_ALL_LANES; exit 1; }
+          fi
+          python3 - <<'PY'
+          import json
+          x=json.load(open('rc_fastlane/EGGRUMBLE_V3_REAL65.json'))
+          assert x['source_profile']=='eggrumble_v3_real65' and x['source_count']==65
+          assert x['pre_adoption_official_head']=='ad602cebafc1a9d8caed078ab86c7a58b0fbbbef'
+          assert x['parent_sources']==63 and x['existing_unchanged_real63']==60
+          assert x['host_class']=='Script'
+          assert x['paid_trade_enabled'] is False and x['roblox_published'] is False
+          print('GQ8_REAL65_OFFICIAL63_SOURCE_MANIFEST_PROVENANCE_PASS')
+          PY
+          for pair in \
+            44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e \
+            44401178585:38d11f0bf311491ba76fe03f818948e5d4b06889 \
+            44402402944:42ed8c45b4013c07ee171a6e7d772f074eed2be7 \
+            44403496549:5a47e96f6b4766a9c59dd06b111bea53b73bd5ca \
+            44404334603:b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff \
+            44405940669:ad602cebafc1a9d8caed078ab86c7a58b0fbbbef \
+            44398710101:bdb0bac0cf8aab08c8984ce195b4ff99d3900e70 \
+            44397387116:082d28901a680b546d9a7c253f7a01b68181f8a1
+          do
+            RUN="${pair%%:*}"; SHA="${pair#*:}"
+            FOUND="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq '.head_sha+" "+.conclusion')"
+            test "$FOUND" = "$SHA success" || { echo "RED_AUTHOR_RUN $RUN $FOUND"; exit 1; }
+          done
+          echo GQ8_FIVE_EXACT_HEAD_SUCCESSFUL_NATIVE_SOURCE_AUTHOR_RUNS
+      - name: Download only already-proven immutable original author source artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55
+          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59
+          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62
+          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62
+          gh run download 44405940669 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63
+          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56
+          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56
+          for file in \
+            /tmp/gq863/base55/EGGRUMBLE_REAL55.project.json \
+            /tmp/gq863/base55/B_REAL55_RECEIPT.json \
+            /tmp/gq863/hud59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            /tmp/gq863/hud59/GQ828_REAL59_RECEIPT.json \
+            /tmp/gq863/trade62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
+            /tmp/gq863/trade62/B_REAL62_RECEIPT.json \
+            /tmp/gq863/formal62/EGGRUMBLE_REAL62.rbxlx \
+            /tmp/gq863/formal62/B_REAL62_RECEIPT.json \
+            /tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            /tmp/gq863/formal63/REAL63_RECEIPT.json \
+            /tmp/gq863/viral56/EGGRUMBLE_REAL56.project.json \
+            /tmp/gq863/viral56/GQ8_VIRAL56_RECEIPT.json \
+            /tmp/gq863/counter56/GQ822_REAL56.project.json \
+            /tmp/gq863/counter56/GQ822_REAL56_RECEIPT.json
+          do test -s "$file" || { echo "RED_SOURCE_ARTIFACT_MISSING $file"; exit 1; }; done
+      - name: Compose author64 intermediate then reconcile REAL65 with exact official63 Combat and HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_real63_intake_20261119/compose_real63.py \
+            --base55 /tmp/gq863/base55/EGGRUMBLE_REAL55.project.json \
+            --receipt55 /tmp/gq863/base55/B_REAL55_RECEIPT.json \
+            --hud59 /tmp/gq863/hud59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --hud-receipt /tmp/gq863/hud59/GQ828_REAL59_RECEIPT.json \
+            --trade62 /tmp/gq863/trade62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
+            --trade-receipt /tmp/gq863/trade62/B_REAL62_RECEIPT.json \
+            --formal62 /tmp/gq863/formal62/EGGRUMBLE_REAL62.rbxlx \
+            --formal62-receipt /tmp/gq863/formal62/B_REAL62_RECEIPT.json \
+            --viral56 /tmp/gq863/viral56/EGGRUMBLE_REAL56.project.json \
+            --viral-receipt /tmp/gq863/viral56/GQ8_VIRAL56_RECEIPT.json \
+            --counter56 /tmp/gq863/counter56/GQ822_REAL56.project.json \
+            --counter-receipt /tmp/gq863/counter56/GQ822_REAL56_RECEIPT.json \
+            --out artifacts/real64
+          python3 -B quality_gameplay/gq8_real63_intake_20261119/compose_real65.py \
+            --real64 artifacts/real64/EGGRUMBLE_REAL64.project.json \
+            --real64-receipt artifacts/real64/REAL64_INTAKE_RECEIPT.json \
+            --real62-place /tmp/gq863/formal62/EGGRUMBLE_REAL62.rbxlx \
+            --real63-place /tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --real63-receipt /tmp/gq863/formal63/REAL63_RECEIPT.json \
+            --out artifacts/real65
+          python3 - <<'PY'
+          import json
+          x=json.load(open('artifacts/real64/REAL64_INTAKE_RECEIPT.json'))
+          assert x['selected_real_sources']==64 and x['preserved_current_real62_unchanged']==59
+          assert x['new_sources']==9 and len(x['sources'])==64
+          assert x['paid_trade'] is False and x['publish'] is False
+          y=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
+          assert y['new_selected_source_count']==65 and y['original_real63_byte_unchanged']==60
+          assert y['preserves_real63_basic_attack'] and y['preserves_real63_dodge'] and y['preserves_real63_hud']
+          assert len(y['sources'])==65 and not y['real_paid_trade'] and not y['roblox_publish']
+          print('GQ8_REAL65_FORMAL63_PRESERVED_BASIC_DODGE_AND_COUNTER_VIRAL_SOURCE_STATIC_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile each of all 65 real selected sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq863-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq863-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_real63_intake_20261119')
+          from compose_real63 import flatten
+          _,files=flatten(Path('artifacts/real65/EGGRUMBLE_REAL65.project.json'))
+          assert len(files)==65
+          for route,(cls,body) in files.items():
+            suffix={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}[cls]
+            f=Path('artifacts/real65/sources').joinpath(*route[:-1],route[-1]+suffix)
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+          print('GQ8_REAL65_NATIVE_ACTUAL_65_OF_65_COMPILE_PASS')
+          PY
+      - name: Rojo 7.7.1 REAL65 Source/Class + copied byte-exact official OFF63 + same HEAD fence
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq863-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq863-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq863-rojo.zip') as z:
+            names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(names)==1
+            p=Path('/tmp/gq863-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq863-rojo build artifacts/real65/EGGRUMBLE_REAL65.project.json -o artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real65/off63/EGGRUMBLE_REAL64.project.json -o artifacts/real65/OFF63_REBUILT.rbxlx
+          cmp artifacts/real65/OFF63_EXACT_OFFICIAL.rbxlx /tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real65/EGGRUMBLE_REAL65.project.json --place artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx --count 65
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real65/off63/EGGRUMBLE_REAL64.project.json --place artifacts/real65/OFF63_REBUILT.rbxlx --count 63
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_NOT_SAME_OFFICIAL_HEAD_AFTER_NATIVE_ROJO; exit 1; }
+          else
+            test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_BEFORE_RESULT; exit 1; }
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          f=Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json')
+          j=json.loads(f.read_text())
+          p=Path('artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx')
+          j.update({"candidate_head":os.environ["GITHUB_SHA"],
+            "source_native":"PASS","rojo_source_class":"PASS","off63_bytes":"BYTE_IDENTICAL_COPIED_FROM_OFFICIAL63",
+            "private_place_bytes":p.stat().st_size,
+            "private_place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "formal_rc_adopted":os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01",
+            "official_source_profile":"eggrumble_v3_real65",
+            "selected_official_branch_sha":os.environ["GITHUB_SHA"] if os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01" else None})
+          f.write_text(json.dumps(j,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print('GQ8_REAL65_SOURCE_VERIFY_ONLY_FORMAL_IF_OFFICIAL_SHA',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL65-REAL63-PRESERVED-BASIC-DODGE-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real65/
+          retention-days: 5
+          if-no-files-found: error
