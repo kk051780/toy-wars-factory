@@ -144,9 +144,9 @@ def gen(policy_path,out):
  out=Path(out);out.mkdir(parents=True,exist_ok=True)
  good=BODY.replace("__POLICY__",p).replace("__COUNTER__",q)
  (out/"good.luau").write_text(good)
- if q.count(" return .5\\nend")!=1:
+ if q.count(" return .5\nend")!=1:
   raise ValueError("RED_EXPECTED_SINGLE_50PCT_BARRIER")
- broken=q.replace(" return .5\\nend"," return 1\\nend",1)
+ broken=q.replace(" return .5\nend"," return 1\nend",1)
  mutant=BODY.replace("__POLICY__",p).replace("__COUNTER__",broken)
  if mutant==good: raise ValueError("RED_COUNTER_MUTATION_FAILED")
  (out/"barrier_mutant.luau").write_text(mutant)
