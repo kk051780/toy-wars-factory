@@ -83,7 +83,10 @@ def compose(parent49:Path,receipt49:Path,original44:Path,inputs:dict,out:Path):
   if blob(path.read_bytes())!=BLOBS[name]:
    raise ValueError("RED_ORIGINAL_808_816_GIT_BLOB_CHANGED_"+name)
   body=path.read_text(encoding="utf8")
-  if any(x in body for x in ("RemoteEvent","DataStoreService","MarketplaceService",
+  # Check executable source, not a truthful source comment such as
+  # "Does not call MarketplaceService" in the original #808 view module.
+  executable="\n".join(line.split("--",1)[0] for line in body.splitlines())
+  if any(x in executable for x in ("RemoteEvent","DataStoreService","MarketplaceService",
                               "ProcessReceipt","PromptProductPurchase",
                               "PromptGamePassPurchase","FireServer(")):
    raise ValueError("RED_SHOP_PAYMENT_OR_REMOTE_OWNER_"+name)
