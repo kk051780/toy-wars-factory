@@ -467,7 +467,8 @@ RunService.RenderStepped:Connect(function(dt)
  local verifiedM=musou~=nil and phaseM=="OFF" and type(readyIn)=="number"
   and readyIn>=0 and readyIn<=0.05
  if activeM then
-  actions.MUSOU.Text="無双中"
+  actions.MUSOU.Text=if phaseM=="KAKUHEN" then "確変中"
+    elseif phaseM=="RUSH" then "連チャン" else "無双中"
  elseif verifiedM then
   actions.MUSOU.Text="無双 発動"
  elseif musou and type(readyIn)=="number" and readyIn>0 then
