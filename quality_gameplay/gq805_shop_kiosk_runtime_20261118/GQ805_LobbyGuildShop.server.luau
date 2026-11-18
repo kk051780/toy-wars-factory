@@ -39,6 +39,9 @@ local function plaque(part:BasePart,title:string,height:number)
  label.Text=title;label.Parent=gui
 end
 piece(world,"GuildFloor",Vector3.new(0,-1,0),Vector3.new(29,2,25),Color3.fromRGB(96,116,127),true,Enum.Material.Slate)
+-- The lobby spawn and storefront must be physically connected without assuming prebuilt terrain.
+-- Bridge spans x=-45..-14 in this model, meeting the existing spawn at x=-43 and shop floor edge x=-14.5.
+piece(world,"GuildApproachWalkway",Vector3.new(-29.5,-1,-3),Vector3.new(31,2,7),Color3.fromRGB(119,133,128),true,Enum.Material.Slate)
 for _,offset in ipairs({-12,12}) do
  piece(world,"GuildPillar",Vector3.new(offset,5,8),Vector3.new(2,11,2),Color3.fromRGB(166,134,94),true,Enum.Material.Wood)
 end
