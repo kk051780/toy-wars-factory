@@ -1,15 +1,5 @@
-name: P0D Canonical Real60 Basic Dodge Single Combat Native Rojo OFF59
+name: Historical GQ828 Real60 Parent59 (superseded by Official Real62 to Real63)
 on:
-  push:
-    branches: ['rc/p0d-s1-kids-rc01']
-    paths:
-      - 'rc_fastlane/EGGRUMBLE_V3_REAL60_BASIC_DODGE.json'
-      - '.github/workflows/p0d-rc-eggrumble-v3-real60-basic-dodge.yml'
-  pull_request:
-    branches: ['rc/p0d-s1-kids-rc01']
-    paths:
-      - 'rc_fastlane/EGGRUMBLE_V3_REAL60_BASIC_DODGE.json'
-      - '.github/workflows/p0d-rc-eggrumble-v3-real60-basic-dodge.yml'
   workflow_dispatch:
 permissions:
   contents: read
