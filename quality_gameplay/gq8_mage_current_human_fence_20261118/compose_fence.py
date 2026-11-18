@@ -5,6 +5,7 @@ import argparse,copy,hashlib,json,os
 from pathlib import Path
 
 ORIGINAL_MAGE_GIT_BLOB="c75c2db439a5a68f2bc866ad42562fc16687849d"
+PATCHED_MAGE_GIT_BLOB="29a3ed1d3ee995b2014690d9b7cfd0a8aa4c66e3"
 CURRENT_MARK=' local p=e.player\n if not p.Parent or p.Parent~=Players or not s.world'
 ALLY_MARK='local function allyMage(s:any,target:Player,healer:Player):boolean\n if healer==target'
 CURRENT_GUARD=' local p=e.player\n if type(s.isCurrentHuman)~="function" or not s.isCurrentHuman(p) then return false end\n if not p.Parent or p.Parent~=Players or not s.world'
@@ -56,6 +57,9 @@ def compose(original31,mage32,original_mage,out):
  if candidate[MAGE].read_bytes()!=original_mage.read_bytes():
   raise ValueError("RED_ORIGINAL_MAGE_SOURCE_NOT_SELECTED")
  patched=patch_text(original_mage.read_text(encoding="utf-8"))
+ candidate_pinned=Path(__file__).with_name("EGGRUMBLE_MageRevive_CurrentHuman.luau")
+ if candidate_pinned.read_bytes()!=patched.encode("utf-8") or gitblob(candidate_pinned.read_bytes())!=PATCHED_MAGE_GIT_BLOB:
+  raise ValueError("RED_PINNED_PATCHED_MAGE_BLOB_MISMATCH")
  for route in original:
   if route!=HOST and original[route].read_bytes()!=candidate[route].read_bytes():
    raise ValueError("RED_ORIGINAL31_SOURCE_DRIFT")
