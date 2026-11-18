@@ -16,7 +16,7 @@ local function separated(a,b)
   local dx,dy=a.x-b.x,a.y-b.y
   return math.sqrt(dx*dx+dy*dy) >= (a.size+b.size)*.5 - 1
 end
-for _,shape in ipairs({{851,393},{1280,720},{393,851}}) do
+for _,shape in ipairs({{851,393},{1280,720},{393,851},{320,260}}) do
   for _,hand in ipairs({"RIGHT","LEFT"}) do
     local l=H.layout(shape[1],shape[2],hand)
     local p=l.anchors
