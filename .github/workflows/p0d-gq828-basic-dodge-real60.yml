@@ -28,20 +28,20 @@ jobs:
         run: |
           set -euo pipefail
           RC_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$RC_HEAD" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_OFFICIAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
-          PARENT="$(gh run view 44401178585 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
-          test "$PARENT" = "38d11f0bf311491ba76fe03f818948e5d4b06889 success" || { echo RED_OFFICIAL_PARENT_CI_NOT_SUCCESS; exit 1; }
+          test "$RC_HEAD" = 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca || { echo RED_OFFICIAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
+          PARENT="$(gh run view 44403496549 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$PARENT" = "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca success" || { echo RED_OFFICIAL_PARENT_CI_NOT_SUCCESS; exit 1; }
           echo "BASE_RC=$RC_HEAD" >> "$GITHUB_ENV"
           mkdir -p artifacts/parent-real59
-          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" \
-            --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO \
+          gh run download 44403496549 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL \
             --dir artifacts/parent-real59
           python3 - <<'PY'
           import os
           from pathlib import Path
           files=[
-            ("EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx","PLACE"),
-            ("GQ828_REAL59_RECEIPT.json","RECEIPT"),
+            ("EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx","PLACE"),
+            ("HOST_ACTIVE_RECEIPT.json","RECEIPT"),
           ]
           for name,key in files:
               found=list(Path("artifacts/parent-real59").rglob(name))
