@@ -72,6 +72,22 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
   raise ValueError("RED_DUPLICATE_DAMAGE_OR_SWARM")
  for keep in ("KoFence.mayCredit(session,id,m,all)","neutralBudget:acquire","SpawnPacing.step","EncounterFair","Melee"):
   if keep not in original:raise ValueError("RED_LOST_EXISTING_AUTHOR_SOURCE_"+keep)
+ # GQ8 terrain step: reuse the original singleton Swarm without new spawn/damage authority.
+ # The ground trace is collision-aware and bounds vertical rise to prevent wall climbing.
+ replace_once(
+  '        m:PivotTo(CFrame.lookAt(next,next+near.Unit))',
+  '''        -- Keep neutral feet on walkable ground and reject void/steep wall transitions.
+        -- Existing species rig starts with its root 2*scale above the floor.
+        local scale=(m.PrimaryPart and m.PrimaryPart.Size.Y/2.5) or 1
+        local ground=workspace:Raycast(next+Vector3.new(0,3,0),Vector3.new(0,-8,0),params)
+        if ground and ground.Normal.Y>=.72 then
+         local desiredY=ground.Position.Y+2*scale
+         if math.abs(desiredY-at.Y)<=1.4 then
+          local grounded=Vector3.new(next.X,desiredY,next.Z)
+          m:PivotTo(CFrame.lookAt(grounded,grounded+near.Unit))
+         end
+        end''',
+  "NEUTRAL_ACTUAL_TERRAIN_GROUNDING")
  if original.count('NeutralFinisherPolicy.select(')!=1:
   raise ValueError("RED_MISSING_REAL_SERVER_HIT_FINISH_CUE")
  return original
