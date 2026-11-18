@@ -39,7 +39,7 @@ jobs:
           assert data["original_count"]==62 and data["candidate_count"]==63
           assert data["host_is_original_script"] is True
           assert data["trade3_original_unchanged"] is True
-          assert data["original60_unchanged"] is True
+          assert data["original59_unchanged"] is True
           assert data["paid_purchase_enabled"] is False
           assert data["public_publish_enabled"] is False
           for path,sha in data["source_locks"].items():
@@ -76,7 +76,7 @@ jobs:
               with open(os.environ["GITHUB_ENV"],"a") as f:
                   f.write(f"{key}={found[0]}\n")
           PY
-      - name: Select original exact 59 + one policy and patch ONLY original Combat/HUD
+      - name: Select exact REAL62 + one policy and patch only original Combat/HUD/View
         run: |
           set -euo pipefail
           python3 -B handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py \
