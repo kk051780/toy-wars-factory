@@ -100,15 +100,15 @@ SERVER_MUSOU=r'''
 def patch_swarm(s):
  s=only(s,
  'local NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',
- 'local NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))\\nlocal Musou=require(script.Parent:WaitForChild("EGGRUMBLE_MusouFeverPolicy"))',
+ 'local NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))\nlocal Musou=require(script.Parent:WaitForChild("EGGRUMBLE_MusouFeverPolicy"))',
  "ONE_SERVER_MODULE")
  s=only(s,' local curseEpoch=tostring(session.world)',
-   ' local curseEpoch=tostring(session.world)\\n'+SERVER_MUSOU.rstrip("\\n"),"MATCH_SCOPED_MUSOU")
+   ' local curseEpoch=tostring(session.world)\n'+SERVER_MUSOU.rstrip("\n"),"MATCH_SCOPED_MUSOU")
  match=re.findall(r"(?m)^([ ]*)releaseCharmed\(m\)[ ]*$",s)
  if len(match)!=1:raise ValueError("RED_EXPECT_ONE_DEATH_CLEANUP")
  indent=match[0]
  s=only(s,indent+"releaseCharmed(m)",
-  indent+"local wasCharmed=charmedByModel[m]~=nil\\n"+indent+"releaseCharmed(m)",
+  indent+"local wasCharmed=charmedByModel[m]~=nil\n"+indent+"releaseCharmed(m)",
   "ONE_DEATH_CONVERSION_FENCE")
  s=only(s,"     credit(id)","""     credit(id)
      -- The genuine existing KoFence just accepted this single death and score.
@@ -125,9 +125,9 @@ def patch_swarm(s):
      end""","KO_FENCE_AFTER_CREDIT")
  s=only(s,
   'return strike(tostring(player.UserId),at,radius,damage*bonus,',
-  'local power=Musou.attackMultiplier(musouRound,musouContext(player,os.clock()),"NEUTRAL")\\n   return strike(tostring(player.UserId),at,radius,damage*bonus*power,',
+  'local power=Musou.attackMultiplier(musouRound,musouContext(player,os.clock()),"NEUTRAL")\n   return strike(tostring(player.UserId),at,radius,damage*bonus*power,',
   "SINGLE_SWARM_PLAYER_DAMAGE")
- s=only(s,' local api={\\n',''' local api={
+ s=only(s,' local api={\n',''' local api={
   activateMusou=function(user:Player)
    local ctx=musouContext(user,os.clock())
    local ok,decision=Musou.activate(musouRound,ctx)
@@ -151,7 +151,7 @@ def patch_swarm(s):
 def patch_combat(s):
  s=only(s,
   'enemyHum:TakeDamage(damage*duel*mark)',
-  'local musou=if session.swarm and session.swarm.musouMultiplier then session.swarm.musouMultiplier(p,"HUMAN") else 1\\n    enemyHum:TakeDamage(damage*duel*mark*musou)',
+  'local musou=if session.swarm and session.swarm.musouMultiplier then session.swarm.musouMultiplier(p,"HUMAN") else 1\n    enemyHum:TakeDamage(damage*duel*mark*musou)',
   "PVP_SINGLE_EXISTING_DAMAGE")
  s=only(s,
   'boss.damageFrom(p,math.min(100,amount*boost),true)',
@@ -165,7 +165,7 @@ def patch_combat(s):
   'if item:IsA("Tool") and string.sub(item.Name,1,16)=="EGGRUMBLE_SKILL_" then item:Destroy() end',
   'if item:IsA("Tool") and (string.sub(item.Name,1,16)=="EGGRUMBLE_SKILL_" or item.Name=="EGGRUMBLE_MUSOU_AWAKEN") then item:Destroy() end',
   "ROUND_CLEAR_TOOLS")
- s=only(s,'  end\\nend\\nfunction HeroCombat.clear(p:Player)',r'''  end
+ s=only(s,'  end\nend\nfunction HeroCombat.clear(p:Player)',r'''  end
  -- Real server-side Tool.Activated: no client Remote or damage parameter.
  -- This is a fourth selectable ability, distinct from the defensive #823 skill.
  local musouTool=Instance.new("Tool")
