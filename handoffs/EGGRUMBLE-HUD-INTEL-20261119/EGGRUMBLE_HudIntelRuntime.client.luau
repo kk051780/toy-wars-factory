@@ -391,13 +391,17 @@ RunService.RenderStepped:Connect(function(dt)
   hp.Text=string.format("HP %d/%d",math.max(0,math.floor(h.Health)),math.floor(h.MaxHealth))
  else hp.Text="HP --/--" end
  local status={}
- if char and char:GetAttribute("EGGRUMBLE_BurnUntil")
-  and char:GetAttribute("EGGRUMBLE_BurnUntil")>os.clock() then
+ if h and type(h:GetAttribute("EGGRUMBLE_BurnUntil"))=="number"
+  and h:GetAttribute("EGGRUMBLE_BurnUntil")>os.clock() then
   table.insert(status,"炎上")
  end
- if char and char:GetAttribute("EGGRUMBLE_SlowExpiry")
-  and char:GetAttribute("EGGRUMBLE_SlowExpiry")>os.clock() then
+ if h and type(h:GetAttribute("EGGRUMBLE_SlowExpiry"))=="number"
+  and h:GetAttribute("EGGRUMBLE_SlowExpiry")>os.clock() then
   table.insert(status,"減速")
+ end
+ if h and type(h:GetAttribute("EGGRUMBLE_MarkedUntil"))=="number"
+  and h:GetAttribute("EGGRUMBLE_MarkedUntil")>os.clock() then
+  table.insert(status,"標的")
  end
  local attr=player:GetAttribute("EGGRUMBLE_Attribute") or "--"
  buffs.Text="属性 "..tostring(attr).." "..table.concat(status," ")
