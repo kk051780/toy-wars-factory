@@ -124,4 +124,20 @@ assert(validBR.accepted and validBR.freeForAll)
 assert(validBR.teamA==nil and validBR.teamB==nil)
 brPlan.teamAssignmentDisabled=nil
 assert(second:dispatch(brPlan,10,102030).reason=="INVALID_PLAN_OR_DESTINATION")
+-- A real MemoryStore UpdateAsync yields; if the match expires during the
+-- network call it must be rejected before TeleportAsync starts.
+local transient={}
+for k,v in pairs(deps) do transient[k]=v end
+transient.claimMap={
+ UpdateAsync=function(_self:any,_key:any,callback:any,_ttl:any):any
+  epochEnabled=false
+  return callback(nil)
+ end
+}
+epochEnabled=true
+local before=#requests
+local delayed=M.create(transient)
+assert(delayed:dispatch(p,9,102030).reason=="EPOCH_CHANGED_DURING_CLAIM")
+assert(#requests==before)
+epochEnabled=true
 print("GQ802_MATCH_ROUTE_NATIVE_LIVE_SERVICE_BOUNDARY_GUID_CLAIM_RETRY_FAILSAFE_PASS")
