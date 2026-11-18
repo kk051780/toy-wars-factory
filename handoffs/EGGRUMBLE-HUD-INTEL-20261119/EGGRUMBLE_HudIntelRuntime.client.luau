@@ -189,10 +189,10 @@ fill.BorderSizePixel=0;fill.Size=UDim2.fromScale(0,1)
 fill.Parent=progress;rounded(fill,3)
 local actions={}
 for _,name in ipairs({"ATTACK","JUMP","DODGE","INVUL","MUSOU","ITEM","SKILL"}) do
- actions[name]=button(name,gui,{
+ actions[name]=button(name,gui,({
   ATTACK="攻撃",JUMP="跳ぶ",DODGE="回避",
   INVUL="無敵",MUSOU="無双",ITEM="道具 ▼",SKILL="技 ▼",
- }[name])
+ })[name])
  actions[name].ZIndex=6
 end
 -- Native Roblox thumbstick/jump are retained, no competing movement joystick.
@@ -201,6 +201,7 @@ actions.DODGE.Visible=false -- requires an existing authorized dodge owner
 local drawer=frame("ChoiceDrawer",gui)
 drawer.Visible=false;drawer.ZIndex=11
 local drawerType=""
+local drawerOptions={}
 local choices={}
 for i=1,4 do
  choices[i]=button("Choice_"..i,drawer,"")
@@ -268,21 +269,23 @@ local function openDrawer(which)
    table.insert(options,{id=t.Name,name=t.Name:sub(16),tool=t})
   end
  end
+ drawerOptions=options
  for i,b in ipairs(choices) do
   local item=options[i]
   b.Visible=item~=nil
-  if item then
-   b.Text=item.name
-   b.Activated:Once(function()
-    if drawerType~=which then return end
-    if which=="SKILL" then selectedSlot=item.id
-    else selectedItem=item.id end
-    closeDrawer()
-   end)
-  end
+  if item then b.Text=item.name end
  end
  drawer.Visible=#options>0
  if #options==0 then closeDrawer() end
+end
+for i,b in ipairs(choices) do
+ b.Activated:Connect(function()
+  local item=drawerOptions[i]
+  if not item then return end
+  if drawerType=="SKILL" then selectedSlot=item.id
+  elseif drawerType=="ITEM" then selectedItem=item.id end
+  closeDrawer()
+ end)
 end
 actions.ITEM.Activated:Connect(function()openDrawer("ITEM")end)
 actions.SKILL.Activated:Connect(function()openDrawer("SKILL")end)
