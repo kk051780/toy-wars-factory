@@ -31,7 +31,9 @@ jobs:
           root=quality_gameplay/gq802_human_pvp_control_20261118
           for f in "$root"/*.luau; do /tmp/gq802pvp/luau-compile --text "$f" >/dev/null; done
           /tmp/gq802pvp/luau "$root/test_pvp_control_native.luau" | tee /tmp/gq802pvp.log
+          /tmp/gq802pvp/luau "$root/test_control_budget_native.luau" | tee /tmp/gq802budget.log
           grep -q GQ802_PVP_NATIVE_ROLE7_ELEMENT8_56_RECEIPTS_CC_ANTILOCK_PASS /tmp/gq802pvp.log
+          grep -q GQ802_NATIVE_PVP_BUDGET_EPOCH_AVATAR_HIT_REPLAY_56_GATES_PASS /tmp/gq802budget.log
       - run: |
           python3 - <<'PY'
           from pathlib import Path
