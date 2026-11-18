@@ -13,6 +13,7 @@ local function verifiedPlan(plan:any):boolean
     or plan.requiresAuthoritativeQueueClaim~=true or plan.teleportAuthorizedHere~=false
     or (plan.size~=8 and plan.size~=16)
     or (plan.mode~="TEAM" and plan.mode~="BR")
+    or (plan.mode=="BR" and plan.teamAssignmentDisabled~=true)
     or type(plan.region)~="string" or #plan.region<1 or #plan.region>32
     or type(plan.teamA)~="table" or type(plan.teamB)~="table"
     or #plan.teamA~=plan.size/2 or #plan.teamB~=plan.size/2 then return false end
@@ -79,7 +80,9 @@ function M.create(deps:any):any
   options.ReservedServerId=id
   options:SetTeleportData({
    version=M.VERSION,matchId=id,epoch=epoch,seed=seed,mode=plan.mode,
-   roster=ids,teamA=plan.teamA,teamB=plan.teamB,
+   roster=ids,
+   teamA=if plan.mode=="TEAM" then plan.teamA else nil,
+   teamB=if plan.mode=="TEAM" then plan.teamB else nil,
    -- On destination ALWAYS verify ticket in claimMap; teleportData alone
    -- never grants role, damage, squad, health, score or loot privileges.
    joinDataTrusted=false,
