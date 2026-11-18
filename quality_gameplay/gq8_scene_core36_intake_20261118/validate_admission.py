@@ -32,7 +32,7 @@ class AdmissionError(RuntimeError):
 
 def blob_sha(src:str)->str:
  raw=src.encode("utf-8")
- return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+ return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
 
 def assert_runtime_source(src:str, exact_blob:bool=True)->dict:
  if exact_blob and blob_sha(src)!=EXPECTED_BLOB:
@@ -122,7 +122,7 @@ def main()->None:
  if args.receipt:
   args.receipt.parent.mkdir(parents=True,exist_ok=True)
   args.receipt.write_text(json.dumps({"schema":"GQ8_LSS_SCENE_FULL36_CANDIDATE_V1",
-    "feature_id":FEATURE,**result},ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+    "feature_id":FEATURE,**result},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  print("GQ8_LSS_SCENE_CORE36_SOURCE_EXACT_CANDIDATE_GREEN",json.dumps(result,sort_keys=True))
 
 if __name__=="__main__":
