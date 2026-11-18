@@ -59,8 +59,10 @@ class TestSubseaRealSource(unittest.TestCase):
             rollback(bad)
 
     def test_cooldown_and_hit_mutant_fail_closed(self):
-        bad=apply(self.original).replace(b"data.lastHit=now\n        h:TakeDamage(6)",
+        selected=apply(self.original)
+        bad=selected.replace(b"data.lastHit=now\n       h:TakeDamage(6)",
                                            b"data.lastHit=now\n        h:TakeDamage(600)",1)
+        self.assertNotEqual(selected,bad,"harmful mutation must actually change bytes")
         with self.assertRaisesRegex(ValueError,"RED_GQ8_SUBSEA_SELECTED_DRIFT"):
             rollback(bad)
 
