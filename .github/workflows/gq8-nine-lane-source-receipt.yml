@@ -1,0 +1,212 @@
+name: GQ8 independent nine-domain historical 59-63 and formal 65 source lineage
+on:
+  push:
+    branches:
+      - quality/gq8-nine-lane-source-readiness-20261119-0530
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
+      - '.github/workflows/gq8-nine-lane-source-receipt.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
+      - '.github/workflows/gq8-nine-lane-source-receipt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-nine-domains:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ORIGINAL59_HEAD: 38d11f0bf311491ba76fe03f818948e5d4b06889
+      ORIGINAL59_RUN: '44401178585'
+      ACTIVE59_HEAD: 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca
+      ACTIVE59_RUN: '44403496549'
+      REAL62_HEAD: b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff
+      REAL62_RUN: '44404334603'
+      REAL63_HEAD: ad602cebafc1a9d8caed078ab86c7a58b0fbbbef
+      REAL63_RUN: '44405940669'
+      REAL65_HEAD: 8ca707628d2ecfa04993d6ac758ccff45ec336e5
+      REAL65_RUN: '44415767231'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin newest sole official RC and three verified independent parent artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01 ]; then
+            test "$LIVE" = "$GITHUB_SHA" || { echo RED_OFFICIAL_SHA_MOVED; exit 1; }
+          else
+            test "$LIVE" = "$REAL65_HEAD" || { echo RED_NEWER_OFFICIAL_RC_RECONCILE_REAL65; exit 1; }
+          fi
+          for item in "$ORIGINAL59_RUN:$ORIGINAL59_HEAD" "$ACTIVE59_RUN:$ACTIVE59_HEAD" "$REAL62_RUN:$REAL62_HEAD" "$REAL63_RUN:$REAL63_HEAD" "$REAL65_RUN:$REAL65_HEAD"; do
+            ID="${item%%:*}"; EXPECTED="${item#*:}"
+            test "$(gh run view "$ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "$EXPECTED success" || { echo RED_UNVERIFIED_FORMAL_SOURCE_PARENT_"$ID"; exit 1; }
+          done
+          mkdir -p artifacts/source59 artifacts/host59 artifacts/real62 artifacts/real63 artifacts/evidence
+          gh run download "$ORIGINAL59_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/source59
+          gh run download "$ACTIVE59_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL --dir artifacts/host59
+          gh run download "$REAL62_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir artifacts/real62
+          gh run download "$REAL63_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir artifacts/real63
+          for file in \
+            artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            artifacts/real63/REAL63_RECEIPT.json \
+            artifacts/source59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            artifacts/source59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
+            artifacts/source59/GQ828_REAL59_RECEIPT.json \
+            artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            artifacts/host59/OFF59.rbxlx \
+            artifacts/host59/HOST_ACTIVE_RECEIPT.json \
+            artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            artifacts/real62/OFF59.rbxlx \
+            artifacts/real62/B_REAL62_RECEIPT.json; do test -s "$file"; done
+      - name: Verify exact source evolution 55 to 59 to Host-active 59 to 62, 14 adversarial mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          P=quality_gameplay/gq8_nine_lane_intake_20261119
+          python3 -B "$P/verify_real59.py" \
+            --place59 artifacts/source59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --off55 artifacts/source59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
+            --receipt artifacts/source59/GQ828_REAL59_RECEIPT.json \
+            --expected-head "$ORIGINAL59_HEAD" --output artifacts/evidence/REAL59.json
+          python3 -B "$P/test_real59_negative.py" \
+            --place59 artifacts/source59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --off55 artifacts/source59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
+            --receipt artifacts/source59/GQ828_REAL59_RECEIPT.json \
+            --expected-head "$ORIGINAL59_HEAD"
+          python3 -B "$P/verify_real59_host.py" \
+            --original artifacts/source59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --active artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            --rollback artifacts/host59/OFF59.rbxlx \
+            --receipt artifacts/host59/HOST_ACTIVE_RECEIPT.json \
+            --expected-head "$ACTIVE59_HEAD" \
+            --output artifacts/evidence/HOST59.json
+          python3 -B "$P/verify_real62.py" \
+            --active59 artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --off59 artifacts/real62/OFF59.rbxlx \
+            --receipt artifacts/real62/B_REAL62_RECEIPT.json \
+            --expected-head "$REAL62_HEAD" --output artifacts/evidence/REAL62.json
+          python3 -B "$P/test_real62_negative.py" \
+            --active59 artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --off59 artifacts/real62/OFF59.rbxlx \
+            --receipt artifacts/real62/B_REAL62_RECEIPT.json \
+            --expected-head "$REAL62_HEAD"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("artifacts/evidence/REAL62.json").read_text())
+          assert a["source_count"]==62 and a["original_exact_count"]==59
+          assert a["nine_source_domains"]==9 and a["nine_studio_domains"]==0
+          assert a["host_class"]=="Script" and a["product_go"] is False
+          assert a["paid_inventory_transfer"] is False
+          print("GQ8_INDEPENDENT_REAL62_9_DOMAIN_14_MUTATIONS_NO_FAKE_PRODUCT_GO_PASS")
+          PY
+      - name: Independently audit REAL63 against REAL62 actual source/class and eight adversarial receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          P=quality_gameplay/gq8_nine_lane_intake_20261119
+          python3 -B "$P/verify_real63.py" \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --real63 artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --off62 artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            --receipt artifacts/real63/REAL63_RECEIPT.json \
+            --expected-head "$REAL63_HEAD" --output artifacts/evidence/REAL63.json
+          python3 -B "$P/test_real63_negative.py" \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --real63 artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --off62 artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            --receipt artifacts/real63/REAL63_RECEIPT.json \
+            --expected-head "$REAL63_HEAD"
+          python3 - <<'PY'
+          import json
+          a=json.load(open('artifacts/evidence/REAL63.json'))
+          assert a['source_count']==63 and a['original_unchanged']==60
+          assert a['nine_source_domains']==9 and a['nine_studio_domains']==0
+          assert a['host_class']=='Script' and a['off62_source_class_exact']
+          assert a['product_go'] is False and not a['paid_inventory_transfer']
+          print('GQ8_REAL63_CURRENT_9DOMAIN_NATIVE_SOURCE_AUDIT_NO_FALSE_PRODUCT_GO_PASS')
+          PY
+      - name: Independently source-audit the real official 65-script companion without product claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/real65
+          gh run download "$REAL65_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO --dir artifacts/real65
+          test -s artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx
+          test -s artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'quality_gameplay/gq8_nine_lane_intake_20261119')
+          from verify_real59_host import inspect
+          from verify_real62 import AREAS
+          p = Path('artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx')
+          receipt = json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
+          required = {
+              'candidate_head': os.environ['REAL65_HEAD'],
+              'selected_official_branch_sha': os.environ['REAL65_HEAD'],
+              'official_source_profile': 'eggrumble_v3_real65',
+              'formal_rc_adopted': True,
+              'source_native': 'PASS', 'rojo_source_class': 'PASS',
+              'new_selected_source_count': 65, 'original_real63_byte_unchanged': 60,
+              'preserves_real63_basic_attack': True,
+              'preserves_real63_dodge': True, 'preserves_real63_hud': True,
+              'preserves_real63_presentation': True,
+              'preserves_real63_round_epoch': True,
+              'real_paid_trade': False, 'roblox_publish': False
+          }
+          for key, value in required.items():
+              assert receipt.get(key) == value, ('RED_REAL65_RECEIPT_' + key, receipt.get(key))
+          assert p.stat().st_size == receipt['private_place_bytes']
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == receipt['private_place_sha256']
+          source = inspect(p)
+          records = receipt['sources']
+          index = {r['route']:r for r in records}
+          assert len(source)==len(records)==len(index)==65, 'RED_REAL65_DUPLICATE_OR_MISSING'
+          assert set(source)==set(index), 'RED_REAL65_SOURCE_ROUTE_DRIFT'
+          for route, (kind, body) in source.items():
+              row = index[route]
+              assert row['class']==kind and row['bytes']==len(body) and row['sha256']==hashlib.sha256(body).hexdigest(), ('RED_REAL65_CLASS_BYTE_SHA',route)
+          for domain, required_routes in AREAS.items():
+              assert all(route in source for route in required_routes), ('RED_REAL65_NINE_DOMAIN',domain)
+          assert len(AREAS)==9
+          for singleton in ('EGGRUMBLE_LobbyCastleModesPreview','EGGRUMBLE_SevenRoleCombat','EGGRUMBLE_SwarmCombat'):
+              assert sum(route.endswith('/'+singleton) for route in source)==1, ('RED_DUPLICATE_OWNER',singleton)
+          assert source['ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview'][0]=='Script', 'RED_HOST_NOT_ACTIVE'
+          assert receipt.get('studio_2client')=='NOT_TESTED'
+          assert receipt.get('android_15min')=='NOT_TESTED'
+          assert receipt.get('visual_art')=='NO_GO' and receipt.get('fun')=='NO_GO'
+          out={'schema':'GQ8_FORMAL_REAL65_HISTORICAL_NINE_DOMAIN_SOURCE_RECEIPT_V1',
+               'historical_source_head':os.environ['REAL65_HEAD'],
+               'historical_formal_source_run':int(os.environ['REAL65_RUN']),
+               'game_script_count':65,'nine_source_domains':9,'game_source_class_sha_exact':True,
+               'one_host_combat_swarm':True,'parent63_selected_source_unchanged':60,
+               'studio_solo':'NOT_TESTED','studio_2client':'NOT_TESTED',
+               'android_15min':'NOT_TESTED','fun':'NOT_TESTED',
+               'product_go':False, 'publish':False,'paid_trade':False}
+          Path('artifacts/evidence/REAL65.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print('GQ8_HISTORICAL_REAL65_NINE_DOMAIN_REAL_GAME_SOURCE_EXACT_PASS_PRODUCT_NO_GO')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-NINE-DOMAIN-FORMAL-REAL65-LINEAGE-SOURCE-EVIDENCE-ONLY
+          path: artifacts/evidence/
+          retention-days: 5
+          if-no-files-found: error
