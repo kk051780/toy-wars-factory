@@ -1,0 +1,51 @@
+name: P0D GQ8 Mage Revive Pure Native and Replay Mutant
+on:
+  push:
+    branches: ['feature/gq8-mage-revive-policy-20261118-1218']
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-MAGE-REVIVE-20261118/**'
+      - '.github/workflows/p0d-gq8-mage-revive.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-MAGE-REVIVE-20261118/**'
+      - '.github/workflows/p0d-gq8-mage-revive.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mage-revive-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Build source-derived good and replay-mutant Luau
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-BATTLE-MAGE-REVIVE-20261118/make_native_tests.py --out /tmp/gq8-mage-revive
+          python3 -m py_compile handoffs/EGGRUMBLE-BATTLE-MAGE-REVIVE-20261118/make_native_tests.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile pinned native Luau and check replay mutant is RED
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-mage-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-mage-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-mage-native/luau
+          CC=/tmp/gq8-mage-native/luau-compile
+          "$CC" --text handoffs/EGGRUMBLE-BATTLE-MAGE-REVIVE-20261118/MageRevivePolicy.luau >/dev/null
+          "$CC" --text /tmp/gq8-mage-revive/good.luau >/dev/null
+          "$CC" --text /tmp/gq8-mage-revive/mutant.luau >/dev/null
+          "$CLI" /tmp/gq8-mage-revive/good.luau | tee /tmp/gq8-mage-good.log
+          grep -qx GQ8_MAGE_REVIVE_NATIVE_7_ROLE_GOOD /tmp/gq8-mage-good.log
+          if "$CLI" /tmp/gq8-mage-revive/mutant.luau >/tmp/gq8-mage-mutant.log 2>&1; then
+            echo RED_REPLAY_MUTANT_ACCEPTED
+            exit 1
+          fi
+          grep -q RED_REPLAY /tmp/gq8-mage-mutant.log
+          echo GQ8_MAGE_REVIVE_REAL_NATIVE_AND_MUTANT_RED_PASS
