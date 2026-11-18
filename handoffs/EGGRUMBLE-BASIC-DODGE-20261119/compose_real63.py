@@ -47,7 +47,9 @@ local function executeCoreAction(session:any,p:Player,role:string,
  local now=os.clock()
  local c={
   serverVerified=true,roleVerified=true,ownsTool=true,now=now,
-  matchEpoch=tostring(session.world),mode=session.mode,phase=session.rules.phase,
+  -- Arena names are reused on each round (TEAM_Arena/BR_Arena).
+  -- Use the unique per-round session object, never the arena's display name.
+  matchEpoch=tostring(session),mode=session.mode,phase=session.rules.phase,
   alive=true,castleAlive=true,downed=downed,eliminated=false,
   carryingEgg=carrying,seated=h.SeatPart~=nil,
   realm=realm,onGround=h.FloorMaterial~=Enum.Material.Air,

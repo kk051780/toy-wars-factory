@@ -5,11 +5,15 @@ on:
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL63_BASIC_DODGE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py'
   pull_request:
     branches: ['rc/p0d-s1-kids-rc01']
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL63_BASIC_DODGE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -48,7 +52,7 @@ jobs:
           set -euo pipefail
           RC_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-             test "$RC_HEAD" = b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff || { echo RED_PR_PARENT_MOVED_REBASE_REQUIRED; exit 1; }
+             test "$RC_HEAD" = b7bf777778d77ed524b4b43582c1f011e62bec12 || { echo RED_PR_PARENT_MOVED_REBASE_REQUIRED; exit 1; }
           else
              test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01 && test "$RC_HEAD" = "$GITHUB_SHA" || { echo RED_NOT_REAL63_OFFICIAL_SAME_HEAD; exit 1; }
           fi
@@ -103,6 +107,8 @@ jobs:
           assert 'local CoreAction=require(script.Parent:WaitForChild("EGGRUMBLE_BasicMobilityPolicy"))' in combat
           assert combat.count('core.Activated:Connect(')==1
           assert combat.count('executeCoreAction(session,p,role,action,core)')==1
+          assert 'matchEpoch=tostring(session),mode=session.mode' in combat,"RED_PER_ROUND_EPOCH_SOURCE_MISSING"
+          assert 'matchEpoch=tostring(session.world)' not in combat,"RED_ARENA_NAME_REUSED_AS_EPOCH"
           policy=(root/"on63/sources/EGGRUMBLE_BasicMobilityPolicy.luau").read_text()
           executable="\\n".join(line.split("--",1)[0] for line in policy.splitlines())
           for forbidden in ("RemoteEvent","MarketplaceService","DataStoreService","ProcessReceipt"):
@@ -162,7 +168,7 @@ jobs:
             --place "$ROOT/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx" --count 62
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-             test "$CURRENT" = b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff || { echo RED_PR_FORMAL_PARENT_MOVED; exit 1; }
+             test "$CURRENT" = b7bf777778d77ed524b4b43582c1f011e62bec12 || { echo RED_PR_FORMAL_PARENT_MOVED; exit 1; }
           else
              test "$CURRENT" = "$GITHUB_SHA" || { echo RED_FORMAL_HEAD_MOVED_DURING_BUILD; exit 1; }
           fi
