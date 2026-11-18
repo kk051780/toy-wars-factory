@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GH_TOKEN: \${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
@@ -39,12 +39,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/official
-          gh run download "\${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
             --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
             --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
             --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
-            --out artifacts/current31 --head "\${{ steps.official.outputs.sha }}"
+            --out artifacts/current31 --head "${{ steps.official.outputs.sha }}"
           python3 handoffs/EGGRUMBLE-BATTLE-VFX-20261118/compose_vfx33.py \
             --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --out artifacts/attr-vfx33/ON33.project.json
           python3 handoffs/EGGRUMBLE-BATTLE-VFX-20261118/compose_vfx33.py \
