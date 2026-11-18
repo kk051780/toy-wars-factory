@@ -27,9 +27,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_REFRESH; exit 1; }
-          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq .head.sha)" = a4684d6333db25474ad9f44ff6203aef7119dc6d || { echo RED_REAL44_HEAD_MOVED_REFRESH; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq .head.sha)" = d5c13082d4987a8c89588a12b81edc73adc945ce || { echo RED_REAL44_HEAD_MOVED_REFRESH; exit 1; }
           mkdir -p artifacts/real44 artifacts/real47 artifacts/portable47
-          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" \
+          gh run download 44385257005 --repo "$GITHUB_REPOSITORY" \
             --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/real44
           test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json
           test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.rbxlx
