@@ -1,0 +1,150 @@
+name: GQ8 trade escrow Real57-to-58 native Luau Rojo rollback57
+on:
+  push:
+    branches: [quality/gq8-trade-ux-journal-real57-20261119]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-escrow-real58.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-escrow-real58.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real58-native-escrow-safe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Confirm correct official branch and immutable successful parent Real57
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_RC_HEAD_CHANGED_REBASE_REQUIRED; exit 1; }
+          EVIDENCE="$(gh run view 44396296906 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "cb43c19c2d9d443d4631a636a8186e84e94c4c89 success" || { echo RED_PARENT_REAL57_NOT_VERIFIED; exit 1; }
+          mkdir -p artifacts/verified57
+          gh run download 44396296906 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-TRADE-UX-JOURNAL-REAL57-PRIVATE-NOT-OFFICIAL --dir artifacts/verified57
+          test -s artifacts/verified57/EGGRUMBLE_REAL57.project.json
+          test -s artifacts/verified57/EGGRUMBLE_REAL57.rbxlx
+          test -s artifacts/verified57/OFF55.rbxlx
+          test -s artifacts/verified57/B_REAL57_RECEIPT.json
+          echo GQ8_VERIFIED_REAL57_PARENT_SUCCESS_GIT_SHA_LOCK_PASS
+      - name: Compose exact source58 preserving every old source and owned module
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          python3 "$R/compose_real58.py" \
+            --parent57 artifacts/verified57/EGGRUMBLE_REAL57.project.json \
+            --receipt57 artifacts/verified57/B_REAL57_RECEIPT.json \
+            --out artifacts/escrow58
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,hashlib,json
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten,klass
+          _,old=flatten(Path("artifacts/verified57/EGGRUMBLE_REAL57.project.json"))
+          _,new=flatten(Path("artifacts/escrow58/EGGRUMBLE_REAL58.project.json"))
+          assert len(old)==57 and len(new)==58
+          assert set(new)-set(old)=={("ServerScriptService","GQ8_TradeEscrowReducer")}
+          assert all(old[k].read_bytes()==new[k].read_bytes() and klass(old[k])==klass(new[k]) for k in old)
+          for path,route in [
+              ("quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeJournalContract.luau",("ServerScriptService","GQ8_TradeJournalContract")),
+              ("quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeReview.client.luau",("StarterPlayer","StarterPlayerScripts","GQ8_TradeReview")),
+              ("quality_gameplay/gq8_social_lobby_20261119/GQ8_TradePolicy.luau",("ReplicatedStorage","GQ8Trade","GQ8_TradePolicy")),
+          ]:
+              assert Path(path).read_bytes()==new[route].read_bytes(),("RED_REPO_OLD_SOURCE_DRIFT",path)
+          assert Path("quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeEscrowReducer.luau").read_bytes()==new[("ServerScriptService","GQ8_TradeEscrowReducer")].read_bytes()
+          print("GQ8_TRADE58_57_OF_57_EXACT_PRESERVED_NEW_ESCROW_ONLY_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile actual Real57+58 and escrow/journal adversarial simulations
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8escrow58 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8escrow58 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          for name,count in (
+           ("artifacts/verified57/EGGRUMBLE_REAL57.project.json",57),
+           ("artifacts/escrow58/EGGRUMBLE_REAL58.project.json",58)
+          ):
+           _,src=flatten(Path(name))
+           assert len(src)==count
+           for file in src.values():
+            subprocess.run(["/tmp/gq8escrow58/luau-compile","--text",str(file)],stdout=subprocess.DEVNULL,check=True)
+           print("GQ8_REAL58_TRUE_NATIVE_COMPILATION_PASS",count)
+          PY
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          /tmp/gq8escrow58/luau-compile --text "$R/test_escrow_native.luau" >/dev/null
+          /tmp/gq8escrow58/luau "$R/test_escrow_native.luau" | tee /tmp/gq8_escrow_native.log
+          grep -q GQ8_TRADE58_ESCROW_REDUCER_TWO_ACCOUNT_RESERVE_DEBIT_CREDIT_COMMIT_REPLAY_PAID_FAILCLOSED_PASS /tmp/gq8_escrow_native.log
+          /tmp/gq8escrow58/luau "$R/test_journal_native.luau" | tee /tmp/gq8_journal_native.log
+          grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS /tmp/gq8_journal_native.log
+      - name: True Rojo7.7.1 Source/Class Place58 and OFF57 byte equality
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8escrow58-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8escrow58-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8escrow58-rojo.zip") as z:
+           hits=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+           assert len(hits)==1
+           f=Path("/tmp/gq8escrow58-rojo")
+           f.write_bytes(z.read(hits[0]))
+           f.chmod(0o755)
+          PY
+          /tmp/gq8escrow58-rojo build artifacts/escrow58/EGGRUMBLE_REAL58.project.json -o artifacts/escrow58/EGGRUMBLE_REAL58.rbxlx
+          /tmp/gq8escrow58-rojo build artifacts/verified57/EGGRUMBLE_REAL57.project.json -o artifacts/escrow58/OFF57.rbxlx
+          cmp artifacts/escrow58/OFF57.rbxlx artifacts/verified57/EGGRUMBLE_REAL57.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/escrow58/EGGRUMBLE_REAL58.project.json \
+            --place artifacts/escrow58/EGGRUMBLE_REAL58.rbxlx --count 58
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/verified57/EGGRUMBLE_REAL57.project.json \
+            --place artifacts/escrow58/OFF57.rbxlx --count 57
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_RC_MOVED_WHILE_TESTING; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          path=Path("artifacts/escrow58/EGGRUMBLE_REAL58.rbxlx")
+          receipt=Path("artifacts/escrow58/B_REAL58_RECEIPT.json")
+          out=json.loads(receipt.read_text())
+          out.update({"private_pr_head":os.environ["GITHUB_SHA"],
+           "native_real58":"PASS","rojo_real58":"PASS","rollback_off57":"BYTE_EXACT",
+           "place_bytes":path.stat().st_size,
+           "place_sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
+           "official":False})
+          receipt.write_text(json.dumps(out,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ8_TRADE58_PRIVATE_NATIVE_ROJO_OFF57_PASS",path.stat().st_size())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-TRADE-ESCROW-REAL58-PRIVATE-NOT-OFFICIAL
+          path: artifacts/escrow58/
+          retention-days: 5
+          if-no-files-found: error
