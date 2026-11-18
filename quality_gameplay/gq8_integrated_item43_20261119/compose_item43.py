@@ -87,24 +87,35 @@ def compose_item(original43: Path, patcher: Path, out: Path, portable: Path):
             raise ValueError("RED_LOST_ACTUAL_NEUTRAL_SINGLE_OWNER_" + token)
     patch = load_python(patcher, "pinned_gq802_item_sculpture")
     original_item = before[ITEM].read_bytes()
-    candidate = patch.apply(original_item)
-    if patch.inverse(candidate) != original_item:
-        raise ValueError("RED_GQ802_ITEM_REVERSE_MISMATCH")
-    if original_item == candidate or patch.MARKER.encode() not in candidate:
-        raise ValueError("RED_NO_REAL_ITEM_EDIT")
+    already_selected = patch.MARKER.encode() in original_item
+    if already_selected:
+        # Latest #796 Real42 already carries immutable #812 visual source.
+        # Never reapply the patch or invent a second Item authority.
+        base_item = patch.inverse(original_item)
+        candidate = original_item
+        if patch.apply(base_item) != original_item:
+            raise ValueError("RED_ALREADY_SELECTED_ITEM_INVERSE_MISMATCH")
+    else:
+        candidate = patch.apply(original_item)
+        if patch.inverse(candidate) != original_item:
+            raise ValueError("RED_GQ802_ITEM_REVERSE_MISMATCH")
+    if patch.MARKER.encode() not in candidate:
+        raise ValueError("RED_ITEM_3D_NOT_SELECTED")
     for disallowed in ("RemoteEvent", "DataStoreService", "MarketplaceService"):
         if disallowed in candidate.decode() and disallowed not in original_item.decode():
             raise ValueError("RED_NEW_REMOTE_STORE_OR_CURRENCY_AUTHORITY")
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    suffix = (".server.luau" if before[ITEM].name.endswith(".server.luau") else
-              ".client.luau" if before[ITEM].name.endswith(".client.luau") else ".luau")
-    item_file = out.parent / ("GQ802_SelectedItemSculpture" + suffix)
-    if item_file.exists():
-        raise ValueError("RED_ITEM_SOURCE_EXISTS")
-    item_file.write_bytes(candidate)
     selected_sources = dict(before)
-    selected_sources[ITEM] = item_file
+    if not already_selected:
+        suffix = (".server.luau" if before[ITEM].name.endswith(".server.luau") else
+                  ".client.luau" if before[ITEM].name.endswith(".client.luau") else ".luau")
+        item_file = out.parent / ("GQ802_SelectedItemSculpture" + suffix)
+        if item_file.exists():
+            raise ValueError("RED_ITEM_SOURCE_EXISTS")
+        item_file.write_bytes(candidate)
+        selected_sources[ITEM] = item_file
+    # When already selected in weather42, reuse the ORIGINAL Item source path and bytes.
     selected_doc = relink(doc, selected_sources, out)
     selected_doc["name"] = "GQ8_REAL42_WEATHER_NEUTRAL8_ITEM3D_REAL43_PRIVATE_NOT_RC"
     out.write_text(json.dumps(selected_doc, sort_keys=True, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -112,7 +123,8 @@ def compose_item(original43: Path, patcher: Path, out: Path, portable: Path):
     if len(selected) != 43 or set(selected) != set(before):
         raise ValueError("RED_REAL43_SOURCE_ROUTE_NOT_PRESERVED")
     changed = [route for route in before if before[route].read_bytes() != selected[route].read_bytes()]
-    if changed != [ITEM]:
+    expected_changes = [] if already_selected else [ITEM]
+    if changed != expected_changes:
         raise ValueError("RED_OTHER_REAL43_SOURCE_MUTATED_" + repr(changed))
     if selected[SWARM].read_bytes() != before[SWARM].read_bytes():
         raise ValueError("RED_SINGLE_SWARM_CHANGED")
@@ -150,8 +162,10 @@ def compose_item(original43: Path, patcher: Path, out: Path, portable: Path):
         "this_stage": "original #812 existing FieldItemPickups visual overlay",
         "existing_source_count": 43,
         "selected_source_count": 43,
-        "changed_existing": ["/".join(ITEM)],
-        "unchanged_existing": 42,
+        "changed_existing": ["/".join(route) for route in changed],
+        "unchanged_existing": 43 - len(changed),
+        "item_already_present_in_weather42": already_selected,
+        "item_duplicate_patch_prevented": already_selected,
         "additional_remote_store_hp_score_authority": 0,
         "original_item_blob": patch.git_blob_sha(original_item),
         "selected_item_blob": patch.git_blob_sha(candidate),
