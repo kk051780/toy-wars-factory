@@ -43,7 +43,7 @@ def check(parent,candidate):
     mutants=[
         src.replace('local function startSession(mode:string)','local function startSession_v2(mode:string)',1),
         src.replace('session.world.Name=mode.."_Arena";session.world.Parent=folder','-- removed',1),
-        src.replace('if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end','-- removed',1),
+        src.replace('if c.alive and c.heldEggs>0 then','if c.alive and false then',1),
         src.replace('pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1,entry.id) end)','-- removed',1),
         src.replace('if session.rules.winner~=nil then\n    -- Short factual result shown exactly once','-- removed',1),
     ]
