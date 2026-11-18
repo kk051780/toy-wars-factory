@@ -46,4 +46,14 @@ assert(M.propose(bad,130,"TEAM","JP").status=="FALLBACK_NORMAL_LOBBY")
 assert(M.propose({},130,"TEAM","JP").status=="FALLBACK_NORMAL_LOBBY")
 assert(M.propose(group,130,"HACK","JP").status=="REJECT_INVALID_INPUT")
 assert(M.propose(group,math.huge,"TEAM","JP").status=="REJECT_INVALID_INPUT")
+local royale={}
+for i=1,8 do
+ local t=ticket(i,1200+i*3,nil,20,40)
+ t.mode="BR"
+ royale[i]=t
+end
+local battleRoyale=M.propose(royale,130,"BR","JP")
+assert(battleRoyale.status=="MATCH_READY" and battleRoyale.freeForAll
+ and battleRoyale.teamAssignmentDisabled==true)
+assert(plan.teamAssignmentDisabled==false and plan.freeForAll==false)
 print("GQ802_SKILL_MATCH_NATIVE_8_16_PARTY_BALANCE_ANTI_DUP_PASS")
