@@ -148,6 +148,13 @@ end
 local function craftSweepSize(flying)
  return flying and Vector3.new(24,8,19) or Vector3.new(18,8,19)
 end
+-- GQ8_LSS_SCENE_DETACH_RETIRE_20261118_BEGIN
+-- A world can be reparented/unparented without Destroying ever firing.
+-- Always retire both per-player listeners and the obsolete visual scene.
+local function shouldRetireDetachedScene(worldParentName,withinWorkspace,sceneIsChild)
+ return worldParentName~=LOBBY or not withinWorkspace or not sceneIsChild
+end
+-- GQ8_LSS_SCENE_DETACH_RETIRE_20261118_END
 
 local function install(world)
  if scenes[world] or not world:IsA("Folder") then return end
@@ -660,9 +667,31 @@ local function install(world)
  local hordeSampleElapsed=0
  local elapsed=0
  local heartbeat
+ local function retireScene(removeVisual)
+  if not active then return end -- idempotent when Destroying follows detach
+  active=false
+  if heartbeat then heartbeat:Disconnect() end
+  entered:Disconnect()
+  exited:Disconnect()
+  for player in pairs(combatConnections) do unwatchCombo(player) end
+  table.clear(combatConnections)
+  table.clear(lastNeutralCount)
+  table.clear(lastComboCount)
+  table.clear(lastKOAdvanceAt)
+  table.clear(lastComboAdvanceAt)
+  table.clear(lastShownCombo)
+  table.clear(lastSurgeAt)
+  table.clear(publicTravelAt)
+  for _,v in pairs(vessels) do v.alive=false end
+  scenes[world]=nil
+  -- Destroying of the whole world already removes the scene. Reparenting does not.
+  if removeVisual and scene.Parent then scene:Destroy() end
+ end
  heartbeat=RunService.Heartbeat:Connect(function(dt)
-  if not active or not world.Parent or not scene.Parent then
-   if heartbeat then heartbeat:Disconnect() end
+  if not active or shouldRetireDetachedScene(
+   world.Parent and world.Parent.Name,
+   world:IsDescendantOf(Workspace),scene.Parent==world) then
+   retireScene(true)
    return
   end
   hordeSampleElapsed+=dt
@@ -789,23 +818,7 @@ local function install(world)
    end
   end
  end)
- world.Destroying:Connect(function()
-  active=false
-  if heartbeat then heartbeat:Disconnect() end
-  entered:Disconnect()
-  exited:Disconnect()
-  for player in pairs(combatConnections) do unwatchCombo(player) end
-  table.clear(combatConnections)
-  table.clear(lastNeutralCount)
-  table.clear(lastComboCount)
-  table.clear(lastKOAdvanceAt)
-  table.clear(lastComboAdvanceAt)
-  table.clear(lastShownCombo)
-  table.clear(lastSurgeAt)
-  table.clear(publicTravelAt)
-  for _,v in pairs(vessels) do v.alive=false end
-  scenes[world]=nil
- end)
+ world.Destroying:Connect(function() retireScene(false) end)
  print("[EGGRUMBLE-LSS] Studio-only world slice ready",mode,"live parts",liveParts,
   "ground/sea/sky; original Swarm preserved")
 end
