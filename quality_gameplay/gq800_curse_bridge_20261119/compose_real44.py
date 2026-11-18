@@ -44,22 +44,22 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
     assert require in candidate
     insert("local Swarm={}",require)
     state=splice(' local epoch="CHARM:', ' local function credit(id:string)')
-    insert('  local function credit(id:string)',' local epoch="CHARM:'+state)
-    swap('   local m=model :: Model\n','   local m=model :: Model\n'
+    insert(' local function credit(id:string)',' local epoch="CHARM:'+state)
+    swap('  local m=model :: Model\n','  local m=model :: Model\n'
          '   m:SetAttribute("EGGRUMBLE_NeutralInstanceId",epoch..":"..tostring(spawnSerial))\n')
-    insert('     live[m]=nil\n','     local formerAlly=charmed[m]~=nil\n     release(m)\n')
-    swap('    if type(id)=="string" and session.rules.phase=="ACTIVE"',
-         '    if not formerAlly and type(id)=="string" and session.rules.phase=="ACTIVE"')
-    swap('    if m.Parent and h.Health>0 and m.PrimaryPart then',
-         '    if not charmed[m] and m.Parent and h.Health>0 and m.PrimaryPart then')
+    insert('    live[m]=nil\n','     local formerAlly=charmed[m]~=nil\n     release(m)\n')
+    swap('   if type(id)=="string" and session.rules.phase=="ACTIVE"',
+         '   if not formerAlly and type(id)=="string" and session.rules.phase=="ACTIVE"')
+    swap('   if m.Parent and h.Health>0 and m.PrimaryPart then',
+         '   if not charmed[m] and m.Parent and h.Health>0 and m.PrimaryPart then')
     helpers=splice(' local function seal(', ' local function strike(')
-    insert('  local function strike(',' local function seal('+helpers)
-    insert('     ImpactFeedback.hit(model,user and',
+    insert(' local function strike(',' local function seal('+helpers)
+    insert('    ImpactFeedback.hit(model,user and',
          '     if user and h.Health>0 then seal(id,user,attacker,model,h,origin) end\n')
-    insert('    local candidates=aliveTargets()\n    local victims=liveMeleeVictims()','    allyStep()\n')
-    swap('      if m.Parent and m.PrimaryPart and h.Health>0 then',
-         '      if not charmed[m] and m.Parent and m.PrimaryPart and h.Health>0 then')
-    insert('  print("[EGGRUMBLE_SWARM]',
+    insert('   local candidates=aliveTargets()\n   local victims=liveMeleeVictims()','    allyStep()\n')
+    swap('     if m.Parent and m.PrimaryPart and h.Health>0 then',
+         '     if not charmed[m] and m.Parent and m.PrimaryPart and h.Health>0 then')
+    insert(' print("[EGGRUMBLE_SWARM]',
          '  for m in pairs(charmed) do release(m) end\n'
          '  for id,state in pairs(stateById) do CursePolicy.retire(state);stateById[id]=nil end\n')
     for marker in ("SpawnPacing.step(planner,","KoFence.mayCredit(","Melee.commit(","neutralSpawnClear("):
