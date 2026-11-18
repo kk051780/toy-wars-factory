@@ -1,6 +1,6 @@
 --!strict
 -- GQ8_VIRAL_REAL56_20261119: optional local capture over REAL V3 server-committed Player attributes.
--- Never creates a RemoteEvent; never modifies match, egg, damage, score, inventory or store.
+-- Pure client visual/capture; no network objects or mutations of match, egg, damage, score or store.
 local Players = game:GetService("Players")
 local CaptureService = game:GetService("CaptureService")
 local TweenService = game:GetService("TweenService")
