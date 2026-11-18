@@ -23,30 +23,47 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
     assert blob(preview.read_bytes())==SOURCE_PREVIEW_BLOB,"RED_PREVIEW_SOURCE_CHANGED"
     print("REAL43_ACTUAL_SWARM_BLOB",blob(files[SWARM].read_bytes()))
     assert blob(original_curse.read_bytes())==ORIGINAL_CURSE_BLOB,"RED_NOT_IMMUTABLE_801_POLICY"
-    # Source #815 offers a simplified standalone template, but Real43 must
-    # preserve the ACTUAL newest 42-author Swarm. Apply only our edit hunks
-    # from preview→curse to the real43 selected module, fuzz=0 fail-closed.
-    original_preview=preview.read_text()
-    changed_preview=selected_swarm.read_text()
-    patch_text="".join(difflib.unified_diff(
-        original_preview.splitlines(keepends=True),
-        changed_preview.splitlines(keepends=True),
-        fromfile="preview",tofile="selected",n=3))
-    assert patch_text.count("@@ ")>=2,"RED_EXPECTED_SCOPED_HUNKS"
-    with tempfile.TemporaryDirectory() as tmp:
-        p=Path(tmp)
-        input_file=p/"original.luau"
-        output_file=p/"patched.luau"
-        diff_file=p/"scoped.patch"
-        input_file.write_bytes(files[SWARM].read_bytes())
-        diff_file.write_text(patch_text)
-        process=subprocess.run(["patch","--batch","--fuzz=0",
-             "--output",str(output_file),str(input_file),str(diff_file)],
-             text=True,capture_output=True)
-        if process.returncode!=0:
-            print("RED_REAL43_SCOPED_HUNK_MISMATCH",process.stdout,process.stderr)
-            raise AssertionError("RED_ACTUAL_REAL43_SWARM_PATCH_FAILED")
-        source=output_file.read_bytes()
+    # Inject only accepted new snippets into the actual 43-source Swarm
+    # while preserving independent KoFence, Melee, Pacing, budget and fairness.
+    original=files[SWARM].read_bytes()
+    assert blob(original)=="c21bb111322298ec4dda6ff45f44ef8481d55b3d","RED_ACTUAL_REAL43_SWARM_CHANGED"
+    real=original.decode("utf-8")
+    candidate=selected_swarm.read_text()
+    def splice(left:str,right:str)->str:
+        assert candidate.count(left)==1 and candidate.count(right)==1,("RED_PREVIEW_SNIPPET",left)
+        return candidate.split(left,1)[1].split(right,1)[0]
+    def insert(anchor:str,prefix:str)->None:
+        nonlocal real
+        assert real.count(anchor)==1,("RED_ANCHOR_DRIFT",anchor,real.count(anchor))
+        real=real.replace(anchor,prefix+anchor)
+    def swap(before:str,after:str)->None:
+        nonlocal real
+        assert real.count(before)==1,("RED_REPLACE_DRIFT",before,real.count(before))
+        real=real.replace(before,after)
+    require='local CursePolicy=require(script.Parent:WaitForChild("EGGRUMBLE_CurseConversionPolicy"))\n'
+    assert require in candidate
+    insert("local Swarm={}",require)
+    state=splice(' local epoch="CHARM:', ' local function credit(id:string)')
+    insert('  local function credit(id:string)',' local epoch="CHARM:'+state)
+    insert('   local m=model :: Model\n','  m:SetAttribute("EGGRUMBLE_NeutralInstanceId",epoch..":"..tostring(spawnSerial))\n')
+    insert('     live[m]=nil\n','     local formerAlly=charmed[m]~=nil\n     release(m)\n')
+    swap('    if type(id)=="string" and session.rules.phase=="ACTIVE"',
+         '    if not formerAlly and type(id)=="string" and session.rules.phase=="ACTIVE"')
+    swap('    if m.Parent and h.Health>0 and m.PrimaryPart then',
+         '    if not charmed[m] and m.Parent and h.Health>0 and m.PrimaryPart then')
+    helpers=splice(' local function seal(', ' local function strike(')
+    insert('  local function strike(',' local function seal('+helpers)
+    insert('     ImpactFeedback.hit(model,user and',
+         '     if user and h.Health>0 then seal(id,user,attacker,model,h,origin) end\n')
+    insert('    local candidates=aliveTargets()\n    local victims=liveMeleeVictims()','    allyStep()\n')
+    swap('      if m.Parent and m.PrimaryPart and h.Health>0 then',
+         '      if not charmed[m] and m.Parent and m.PrimaryPart and h.Health>0 then')
+    insert('  print("[EGGRUMBLE_SWARM]',
+         '  for m in pairs(charmed) do release(m) end\n'
+         '  for id,state in pairs(stateById) do CursePolicy.retire(state);stateById[id]=nil end\n')
+    for marker in ("SpawnPacing.step(planner,","KoFence.mayCredit(","Melee.commit(","neutralSpawnClear("):
+        assert marker in real,("RED_ORIGINAL_OWNER_SAFETY_DROPPED",marker)
+    source=real.encode("utf-8")
     assert source.count(b"local Swarm={}") == 1
     assert source.count(b"CursePolicy.seal(state,os.clock(),{") == 1
     assert source.count(b"h:TakeDamage(damage)") == 1
