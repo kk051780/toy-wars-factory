@@ -18,7 +18,7 @@ SWARM=("ServerScriptService","EGGRUMBLE_SwarmCombat")
 CLASSES={"Script":".server.luau","LocalScript":".client.luau","ModuleScript":".luau"}
 BASE="f77b4d4393d9e9b19b65566413432a7a9f13962b"
 
-STYLES=String = """
+STYLES = """
 local NEUTRAL_ORDER={"BANNER_KNIGHT","TINY_SHIELD","SPIKE_BOAR","ACORN_IMP",
  "SHY_WRAITH","ICE_SLIME","SPARK_GOBLIN","BABY_GOLEM"}
 -- Fixed 3-part original rig with at most one new non-collidable part/actor.
@@ -34,7 +34,7 @@ local NEUTRAL_VISUALS={
  BABY_GOLEM={body=Color3.fromRGB(125,132,151),head=Color3.fromRGB(201,204,209),width=2.2,height=2.35,headScale=1.2,style="ROCK"},
 }
 """
-VISUAL=String = """
+VISUAL = """
  local visual=NEUTRAL_VISUALS[species] or NEUTRAL_VISUALS.BANNER_KNIGHT
  m:SetAttribute("EGGRUMBLE_Species",species)
  m:SetAttribute("EGGRUMBLE_NeutralId",actorId)
@@ -67,34 +67,26 @@ VISUAL=String = """
 """
 
 def transform(src:str)->str:
-    # Detect second application before structural source pin checks.
+    # Patch the soldier constructor rather than the caller. Other quality
+    # writers legitimately changed addEnemy and terrain clearance in #707.
     if any(marker in src for marker in ("EGGRUMBLE_NeutralId","NEUTRAL_VISUALS",
                                       "GQ800_NEUTRAL8_REAL_ACTOR")):
         raise ValueError("RED_DUPLICATE_NEUTRAL8_BRIDGE")
-    needles={
+    anchors={
         "local function soldier(parent:Instance,at:Vector3):Model":1,
         " m.PrimaryPart=root\n":1,
-        " local function addEnemy(at:Vector3)\n":1,
-        "  local m=soldier(all,at)\n":1,
     }
-    for needle,n in needles.items():
+    for needle,n in anchors.items():
         if src.count(needle)!=n:
-            loc=src.find("local function addEnemy")
-            excerpt=src[loc:loc+480] if loc>=0 else src[:480]
-            raise ValueError("RED_ORIGINAL_SWARM_SOURCE_CHANGED:"+needle+"\nORIGINAL_SNIPPET="+repr(excerpt))
-    if any(marker in src for marker in ("EGGRUMBLE_NeutralId","NEUTRAL_VISUALS",
-                                      "GQ800_NEUTRAL8_REAL_ACTOR")):
-        raise ValueError("RED_DUPLICATE_NEUTRAL8_BRIDGE")
+            raise ValueError("RED_ORIGINAL_SWARM_SOURCE_CHANGED:"+needle)
     src=src.replace("local function soldier(parent:Instance,at:Vector3):Model",
-       STYLES+"\nlocal function soldier(parent:Instance,at:Vector3,species:string,actorId:string):Model",1)
+       STYLES+"\nlocal nextNeutralActorId=0\n"+
+       "local function soldier(parent:Instance,at:Vector3):Model\n"+
+       " nextNeutralActorId+=1\n"+
+       " local species=NEUTRAL_ORDER[((nextNeutralActorId-1)%#NEUTRAL_ORDER)+1]\n"+
+       ' local actorId="N"..tostring(nextNeutralActorId)',1)
     src=src.replace(" m.PrimaryPart=root\n",VISUAL+" m.PrimaryPart=root\n",1)
-    src=src.replace(" local function addEnemy(at:Vector3)\n",
-       " local nextNeutralId=0\n local function addEnemy(at:Vector3)\n"
-       "  nextNeutralId+=1\n"
-       "  local species=NEUTRAL_ORDER[((nextNeutralId-1)%#NEUTRAL_ORDER)+1]\n",1)
-    src=src.replace("  local m=soldier(all,at)\n",
-       '  local m=soldier(all,at,species,"N"..tostring(nextNeutralId))\n',1)
-    return "-- GQ800_NEUTRAL8_REAL_ACTOR: original single Swarm, cosmetic-only source overlay\n"+src
+    return "-- GQ800_NEUTRAL8_REAL_ACTOR: existing sole Swarm soldier constructor, cosmetic-only\n"+src
 
 def project_routes(project:dict)->dict[tuple[str,...],dict]:
     result={}
