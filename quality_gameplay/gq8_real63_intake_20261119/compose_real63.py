@@ -12,7 +12,8 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 ORIGINAL55 = "a6020867fac80fa3b2ca47478625873fc6f3678e"
-OFFICIAL = "38d11f0bf311491ba76fe03f818948e5d4b06889"
+ORIGINAL59_HEAD = "38d11f0bf311491ba76fe03f818948e5d4b06889"
+OFFICIAL = "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca"
 HOST=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
 COMBAT=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 INVUL=("ServerScriptService","EGGRUMBLE_InvulRuntime")
@@ -76,7 +77,7 @@ def receipt_verify(src,rows,label):
  if set(src)!=set(listed):raise ValueError("RED_RECEIPT_ROUTES_"+label)
  for k,(cls,b) in src.items():
   x=listed[k]
-  if cls!=x["class"] or len(b)!=x["bytes"] or sha(b)!=x["sha256"]:
+  if (("class" in x and cls!=x["class"]) or len(b)!=x["bytes"] or sha(b)!=x["sha256"]):
    raise ValueError("RED_RECEIPT_BYTES_"+label+"_"+"/".join(k))
 def check_diff(base,candidate,allowed_modified,allowed_added,label):
  old=set(base);now=set(candidate)
@@ -124,10 +125,10 @@ def run(a):
  receipt_verify(viral,rv["sources"],"VIRAL56")
  receipt_verify(counter,rc["sources"],"COUNTER56")
  receipt_verify(hud,rh["on_sources"],"HUD59")
- if (rh.get("official_rc_head")!=ORIGINAL55 or rh.get("official_head")!=OFFICIAL or rh.get("official_rc_adopted") is not True or rh.get("baseline_real55_source_count")!=55 or
+ if (rh.get("official_rc_head")!=ORIGINAL55 or rh.get("official_head")!=ORIGINAL59_HEAD or rh.get("official_rc_adopted") is not True or rh.get("baseline_real55_source_count")!=55 or
      set(tuple(x.split("/")) for x in rh["new_routes"])!=HUD):
   raise ValueError("RED_HUD_BASE_CONTRACT")
- if rt.get("canonical_rc_sha")!=OFFICIAL or rt.get("official59_sources_byte_exact")!=59 or rt.get("official55_sources_byte_exact")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55:
+ if rt.get("canonical_rc_sha")!=ORIGINAL59_HEAD or rt.get("official59_sources_byte_exact")!=59 or rt.get("official55_sources_byte_exact")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55:
   raise ValueError("RED_AUTHOR_BASE_CONTRACT")
  check_diff(base,trade,set(),HUD|TRADE,"TRADE62")
  for k in HUD:
@@ -139,11 +140,16 @@ def run(a):
  if len(together)!=64 or len(HUD|TRADE|VIRAL|COUNTER)!=9:
   raise ValueError("RED_CROSSLANE_COLLISION")
  chosen=dict(trade)
- for k in (HOST,):chosen[k]=viral[k]
+ if base[HOST][0]!="ModuleScript" or viral[HOST][0]!="ModuleScript":
+  raise ValueError("RED_REAL59_HOST_CLASS_EXPECTED_MODULESCRIPT")
+ # Reuse PR844 original single-Host class-only startup correction while retaining PR840 notification bytes.
+ chosen[HOST]=("Script",viral[HOST][1])
  for k in (COMBAT,INVUL):chosen[k]=counter[k]
  for candidate,added in ((hud,HUD),(viral,VIRAL),(counter,COUNTER)):
   for k in added:chosen[k]=candidate[k]
  if len(chosen)!=64:raise ValueError("RED_REAL64_COUNT")
+ if chosen[HOST][0]!="Script" or chosen[HOST][1]!=viral[HOST][1]:
+  raise ValueError("RED_HOST_STARTUP_OR_VIRAL_NOTIFICATION_LOST")
  for k in hud:
   if chosen[k]!=hud[k]:raise ValueError("RED_CURRENT_REAL59_HUD_NOT_PRESERVED")
  for k in base:
@@ -158,7 +164,7 @@ def run(a):
  origin={}
  for k in chosen:
   origin[k]="VERIFIED_OFFICIAL55"
-  if k==HOST:origin[k]="PR840_HOST_EXACT_PATCH"
+  if k==HOST:origin[k]="PR844_HOST_CLASS_SCRIPT_PLUS_PR840_HOST_EXACT_PATCH"
   if k in (COMBAT,INVUL):origin[k]="PR841_ORIGINAL_SINGLETON_EXACT_PATCH"
   if k in HUD:origin[k]="PR829_HUD_EXACT"
   if k in TRADE:origin[k]="PR838_TRADE_EXACT"
@@ -166,11 +172,12 @@ def run(a):
   if k in COUNTER:origin[k]="PR841_COUNTER_EXACT"
  report={
   "schema":"GQ8_CROSSLANE_REAL64_SOURCE_SELECTION_V1",
-  "official_base_head":OFFICIAL,"original_real55_source_head":ORIGINAL55,"current_candidate_head":"CI_GITHUB_SHA",
+  "official_base_head":OFFICIAL,"original_real55_source_head":ORIGINAL55,"original_real59_source_head":ORIGINAL59_HEAD,"current_candidate_head":"CI_GITHUB_SHA",
   "formal_rc_adopted":False,"selected_real_sources":64,
   "preserved_original_unchanged":52,"preserved_current_real59_unchanged":56,"new_since_current_real59":5,"patched_existing_singletons":["/".join(x) for x in (HOST,COMBAT,INVUL)],
-  "new_sources":9,"source_owners":{"HUD_FOG":829,"TRADE_REVIEW_JOURNAL_ESCROW":838,"VIRAL":840,"COUNTER":841},
+  "new_sources":9,"source_owners":{"HOST_AUTOSTART_CLASS":844,"HUD_FOG":829,"TRADE_REVIEW_JOURNAL_ESCROW":838,"VIRAL":840,"COUNTER":841},
   "new_gameplay_hp_owner":0,"new_castle_round_owner":0,"new_swarm_owner":0,
+  "p0_single_host_autostart_class_fixed":True,
   "paid_trade":False,"robux":False,"publish":False,
   "real_studio_2client":"NOT_TESTED","real_android_15min":"NOT_TESTED","fun":"NOT_TESTED",
   "rollback":"Rebuild current official Real59 source profile and verify exact OFF59 original Place",
