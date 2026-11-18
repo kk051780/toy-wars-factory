@@ -341,15 +341,16 @@ remote.OnClientEvent:Connect(function(s)
  if not mapExpanded then activeLayer=s.layer or "LAND" end
  redraw()
 end)
-local lastW,lastH=-1,-1
+local lastW,lastH,lastHand=-1,-1,nil
 local function updateLayout()
  local camera=workspace.CurrentCamera
  local size=camera and camera.ViewportSize
  if not size or size.X<=0 or size.Y<=0 then return end
  local w,h=size.X,size.Y
- if w==lastW and h==lastH then return end
- lastW,lastH=w,h
- local data=view.layout(w,h,player:GetAttribute("EGGRUMBLE_LeftHanded") and "LEFT" or "RIGHT")
+ local hand=player:GetAttribute("EGGRUMBLE_LeftHanded") and "LEFT" or "RIGHT"
+ if w==lastW and h==lastH and hand==lastHand then return end
+ lastW,lastH,lastHand=w,h,hand
+ local data=view.layout(w,h,hand)
  local p=data.anchors
  for name,b in pairs(actions) do
   if p[name] then
@@ -412,7 +413,8 @@ RunService.RenderStepped:Connect(function(dt)
  local charge=player:GetAttribute("EGGRUMBLE_MusouCharge")
  if type(charge)~="number" then charge=0 end
  fill.Size=UDim2.fromScale(math.clamp(charge,0,1),1)
- actions.ATTACK.Visible=slotTool(selectedSlot)~=nil
+ -- Keep base attack tappable without an optional skill slot.
+ actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil
  actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or ("技"..selectedSlot)
  -- A second existing S1 screen is authoritative for its own combat.
  local s1=playerGui:FindFirstChild("TrapRaidersS1HUD")
@@ -421,7 +423,7 @@ RunService.RenderStepped:Connect(function(dt)
  end
  local inMatch=mapSnapshot~=nil
  mapBox.Visible=inMatch
- if not inMatch then
-  actions.INVUL.Visible=false;actions.MUSOU.Visible=false
- end
+ -- Every lobby -> battle and round restart must restore server-owned powers.
+ actions.INVUL.Visible=inMatch and #invul>0
+ actions.MUSOU.Visible=inMatch and #musou>0
 end)
