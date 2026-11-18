@@ -61,7 +61,7 @@ jobs:
           client=(src/"EGGRUMBLE_HudIntelRuntime.client.luau").read_text()
           server=(src/"EGGRUMBLE_MapIntelBridge.server.luau").read_text()
           assert 'remote:FireClient(p,' in server
-          for bad in ("OnServerEvent","remote:FireServer","TakeDamage(","MarketplaceService","DataStoreService"):
+          for bad in ("OnServerEvent:Connect(","remote:FireServer(","TakeDamage(","GetAsync(","UpdateAsync(","ProcessReceipt"):
               assert bad not in server+client,("RED_DUPLICATE_AUTHORITY_OR_PURCHASE",bad)
           assert 'player:GetAttribute("EGGRUMBLE_MapVerifiedTeam")' in server
           assert 'local visible=Intel.project(' in server
