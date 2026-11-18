@@ -1,3 +1,9 @@
+## Formal Real62 successor reconciliation
+- Latest canonical parent: `b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff` with **62 original Lua sources officially selected**, [same-head run 44404334603](https://github.com/kk051780/toy-wars-factory/actions/runs/44404334603) SUCCESS, containing original #829 HUD/Fog, #844 Host Script startup, #838 Trade3.
+- This successor imports **exact actual formal Real62 Place** and receipt as a separate SHA/class/byte authority. It verifies the historical candidate trade3 source matches the new real62 source byte-for-byte with only the Host class already corrected, then overlays existing singletons with #840 (Host factual capture notifications) and #841 (Combat/InvulRuntime counter). Adds just 2 new sources; remaining **59/62 formal originals are byte/class identical**.
+- Exact rollback is **OFF62**, byte-comparing Rojo rebuild to downloaded formally selected Real62 Place. Older OFF59 / inert Host is NEVER a new rollback target.
+- Real64 formal manifest is staged; only #220 writer's merge followed by official same-HEAD CI may set adopted=true. Prior candidate green run [44404057117](https://github.com/kk051780/toy-wars-factory/actions/runs/44404057117) was the older verified Real59 child and is not accepted as new formal62-child proof.
+
 # GQ8 REAL64 cross-lane source intake (2026-11-19)
 
 [OWNER_LATEST_LINEAGE_INTEGRATION] [OWNER_RC_REAL_NAMING_SINGLE_CANONICAL_20261119]
