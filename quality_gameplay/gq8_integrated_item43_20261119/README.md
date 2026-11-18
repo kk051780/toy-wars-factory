@@ -1,5 +1,11 @@
 # GQ8 latest successor: REAL42 weather + REAL43 neutral8 + 3D item pickup
 
+## 2026-11-19 live integration discovery: already selected Item source
+
+The immutable #796 WEATHER42 source already contains the **exact #812 GQ802 marker** in the original FieldItemPickups. An initial real CI caught `RED_GQ802_DOUBLE_PATCH`. This is **not** a request to produce another Item controller or to patch the same code twice. The successor composer now validates the existing inverse and reapplication, preserves the existing Item source **byte for byte**, and combines only original #815 Swarm+Policy into a 43-source private candidate. `item_already_present_in_weather42=true`, `changed_existing=[]` in the second stage. If the next official source lacks the original Item patch, its exact #812 patch can be selected once with strict rollback.
+
+Status remains **NO FORMAL RC ADOPTION**. The private Real42 and Real43 source bytes do not become official until the separately authenticated B #220 CAS, same-head build, readback and receipt.
+
 FEATURE_ID: GQ8_REAL42_WEATHER_NEUTRAL43_ITEM_SCULPTURE_SOURCE_INTAKE_20261119
 
 **No parallel game subsystem is invented.** This is an integration-only slice not covered by upstream #796 (weather/castle/stage), #815 (neutral/finisher), or #812 (item preview on old Core36).
