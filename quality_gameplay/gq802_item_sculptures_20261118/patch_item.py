@@ -114,7 +114,7 @@ def inverse(selected:bytes)->bytes:
         raise ValueError("RED_GQ802_SELECTED_ITEM_DRIFT")
     original=(body.replace(NEW_SHOW,OLD_SHOW,1).replace(NEW_HIDE,OLD_HIDE,1)
         .replace(NEW_ITEM,OLD_ITEM,1).replace(HELPER,"",1)).encode()
-    if MARKER in original:
+    if MARKER.encode() in original:
         raise ValueError("RED_GQ802_ROLLBACK_MARKER")
     return original
 
