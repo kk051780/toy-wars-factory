@@ -1,4 +1,4 @@
-name: GQ8 independent nine-lane source receipt no false game acceptance
+name: GQ8 independent nine-lane canonical Real55 actual source audit
 on:
   push:
     branches: [quality/gq8-nine-lane-source-readiness-20261119-0530]
@@ -28,12 +28,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo "RED_FORMAL_RC_REBASE"; exit 1; }
-          test "$(gh run view 44390823718 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "96ac3b4caa2f649f98c9e093c864c39555f3616a success" || { echo "RED_PARENT_CI_DRIFT"; exit 1; }
-          mkdir -p artifacts/parent53 artifacts/nine_lanes
-          gh run download 44390823718 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL53-MUSOU-INVUL-CURSE-SHOP-PRIVATE-NOT-OFFICIAL --dir artifacts/parent53
-          test -s artifacts/parent53/EGGRUMBLE_REAL53.project.json
-          test -s artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo "RED_FORMAL_RC_REBASE"; exit 1; }
+          test "$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "a6020867fac80fa3b2ca47478625873fc6f3678e success" || { echo "RED_PARENT_CI_DRIFT"; exit 1; }
+          mkdir -p artifacts/parent55 artifacts/nine_lanes
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir artifacts/parent55
+          test -s artifacts/parent55/EGGRUMBLE_REAL55.project.json
+          test -s artifacts/parent55/B_REAL55_RECEIPT.json
       - name: Python hostile negative checks and evidence-only nine-pillar audit
         shell: bash
         run: |
@@ -41,21 +41,31 @@ jobs:
           P=quality_gameplay/gq8_nine_lane_intake_20261119
           python3 -B "$P/test_verify_integrated_sources.py"
           python3 -B "$P/verify_integrated_sources.py" \
-            --project artifacts/parent53/EGGRUMBLE_REAL53.project.json \
-            --receipt artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json \
-            --output artifacts/nine_lanes/REAL53_NINE_LANE_SOURCE_ONLY_RECEIPT.json
+            --project artifacts/parent55/EGGRUMBLE_REAL55.project.json \
+            --receipt artifacts/parent55/B_REAL55_RECEIPT.json \
+            --output artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json
           python3 - <<'PY'
           import json
           from pathlib import Path
-          r=json.loads(Path("artifacts/nine_lanes/REAL53_NINE_LANE_SOURCE_ONLY_RECEIPT.json").read_text())
-          assert r["source_count"]==53 and r["evidenced_lanes_source_only"]==9
+          r=json.loads(Path("artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json").read_text())
+          assert r["source_count"]==55 and r["evidenced_lanes_source_only"]==9
           assert r["evidenced_lanes_actual_studio"]==0
-          assert r["official_rc_adopted"] is False
+          assert r["author_private_artifact_claims_formal_rc"] is False
+          # Canonical commit and its exact source build are asserted above.
+          # This receipt is an independent source audit, not a playtest approval.
+          r["formal_rc_cas_head"] = "a6020867fac80fa3b2ca47478625873fc6f3678e"
+          r["formal_rc_samehead_native_rojo_run"] = 44393525211
+          r["formal_rc_source_selected"] = True
+          r["studio_2client_verified"] = False
+          r["android_15min_verified"] = False
+          r["fun_accepted"] = False
+          p=Path("artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json")
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+"\\n")
           print("GQ8_NINE_LANE_RECEIPT_NOT_STUDIO_OR_RC_ACCEPTANCE_PASS")
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ8-NINE-LANE-REAL53-EVIDENCE-ONLY-NOT-OFFICIAL
+          name: GQ8-NINE-LANE-REAL55-FORMAL-SOURCE-EVIDENCE-ONLY
           path: artifacts/nine_lanes/
           retention-days: 5
           if-no-files-found: error
