@@ -19,6 +19,21 @@ def run(place:Path,receipt:Path,out:Path):
     assert len(original)==55,("RED_REAL55_COUNT",len(original))
     assert ("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview") in original
     assert ("ServerScriptService","EGGRUMBLE_SwarmCombat") in original
+    combat=original[("ServerScriptService","EGGRUMBLE_SevenRoleCombat")][1]
+    swarm=original[("ServerScriptService","EGGRUMBLE_SwarmCombat")][1]
+    invul=original[("ServerScriptService","EGGRUMBLE_InvulRuntime")][1]
+    client=(PREFIX/"EGGRUMBLE_HudIntelRuntime.client.luau").read_text(encoding="utf8")
+    assert combat.count('musouTool.Name="EGGRUMBLE_MUSOU_AWAKEN"')==1, "RED_MUSOU_TOOL_ID_CHANGED_IN_REAL55"
+    assert 'musouTool.Activated:Connect(' in combat, "RED_MUSOU_TOOL_SERVER_ACTION_MISSING"
+    assert invul.count('tool.Name="迎撃覚醒"')==1, "RED_V2_INVUL_TOOL_ID_CHANGED_IN_REAL55"
+    assert 'table.insert(r.connections,tool.Activated:Connect(' in invul, "RED_V2_INVUL_TOOL_ACTIVATION_MISSING"
+    assert 'SetAttribute("EGGRUMBLE_MusouReadyIn",' in swarm, "RED_MUSOU_READINESS_REPLICATION_MISSING"
+    assert 'SetAttribute("EGGRUMBLE_MusouPhase",' in swarm, "RED_MUSOU_PHASE_REPLICATION_MISSING"
+    assert 'SetAttribute("EGGRUMBLE_InvulPhase",' in invul, "RED_V2_INVUL_PHASE_REPLICATION_MISSING"
+    assert 'ownedToolByName("EGGRUMBLE_MUSOU_AWAKEN")' in client, "RED_CLIENT_MUSOU_TARGET_MISMATCH"
+    assert 'ownedToolByName("迎撃覚醒")' in client, "RED_CLIENT_INVUL_TARGET_MISMATCH"
+    assert 'EGGRUMBLE_MusouReadyIn' in client and 'EGGRUMBLE_InvulPhase' in client, "RED_CLIENT_REAL_POWER_STATE_MISMATCH"
+    print("GQ828_REAL55_ACTUAL_MUSOU_INVUL_TOOL_NAMES_PHASE_WIRING_VERIFIED")
     assert not out.exists(),"RED_REFUSE_OVERWRITE"
     out.mkdir(parents=True)
     off=out/"off55";off.mkdir()
