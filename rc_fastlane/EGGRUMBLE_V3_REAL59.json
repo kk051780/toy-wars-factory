@@ -22,7 +22,7 @@
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau": "9358eff6c71bdc2b860b00d98f20d13db6ce3571",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "4899bd52518815630a49954a1adc36151a5c1eea",
-    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "de03b3433484c727b6d157ebb5b6d43f0d0818c4"
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "434cdbfb7e724d4d149d6217f0532b176fcc67e1"
   },
   "source_routes": [
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
@@ -96,5 +96,13 @@
       "zero core mobile touch intersections"
     ],
     "runtime": "HudIntelRuntime reads layout.chrome"
+  },
+  "controls": {
+    "normal_attack": "NOT_WIRED_IN_REAL55: only server-owned role A/B/C skills are present; A appears as 技A, never falsely called free normal attack",
+    "skill_selection": "A/B/C drawer, separate SelectedSkillUse using reserved Dodge anchor; starts at B",
+    "dodge": "NOT_WIRED/CONTROL_HIDDEN",
+    "invul": "迎撃覚醒 exact server Tool; actual server snapshot ARMED/AWAKENED and 0.9s remaining ticks",
+    "musou": "EGGRUMBLE_MUSOU_AWAKEN exact Tool; REAL55 MusouReadyIn + MusouPhase replicated status",
+    "items": "Missing inventory server Tools are shown as 道具 0; world pickups remain ProximityPrompt by existing owner."
   }
 }
