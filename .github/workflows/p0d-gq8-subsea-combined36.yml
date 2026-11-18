@@ -1,4 +1,4 @@
-name: GQ8 REAL39 combined Realm Item original stage Host Native Rojo OFF36
+name: GQ8 REAL41 original siege and stage 5-lane Native Rojo OFF39/36/31
 on:
   push:
     branches: ['quality/gq8-subsea-melee-los-20261118']
@@ -15,9 +15,9 @@ permissions:
   contents: read
   actions: read
 jobs:
-  genuine39-composition:
+  genuine41-composition:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 48
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -76,6 +76,12 @@ jobs:
           repository: kk051780/toy-wars-factory
           ref: d6080df13d07792160a52b4c7025e0ae7950379c
           path: _manifest803
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5d44dccde49871cce9dfcf9fc9f08295c8b03b36
+          path: _siege809
           persist-credentials: false
       - name: Immutable original source mutation and exact inverse
         shell: bash
@@ -172,13 +178,23 @@ jobs:
           assert len(unmodified)==32
           print('GQ8_REAL39_ORIGINAL_OWNER_FOUR_CHANGED_32_EXACT_3_STAGE_MODULES_PASS')
           PY
+          python3 _siege809/quality_gameplay/gq804_castle_siege_guardians_20261118/compose_core38.py \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --out artifacts/siege38/SIEGE38.project.json
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/compose_siege41.py \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --wired39 artifacts/wired39/WIRED39.project.json \
+            --siege38 artifacts/siege38/SIEGE38.project.json \
+            --stage-author-dir _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118 \
+            --out artifacts/siege41/REAL41.project.json
+          echo GQ8_TRUE_REAL41_ORIGINAL_SIEGE_AND_STAGE_SINGLE_HOST_SOURCE_READY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
-      - name: Real39 wired and original Core36 OFF36 + OFF31 native syntax
+      - name: True real41 ON + 39/38/36/31 OFF Native syntax
         shell: bash
         run: |
           set -euo pipefail
@@ -189,7 +205,9 @@ jobs:
           import subprocess,sys
           sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
           from compose_real36 import flatten
-          for project,n in [('artifacts/wired39/WIRED39.project.json',39),
+          for project,n in [('artifacts/siege41/REAL41.project.json',41),
+                            ('artifacts/siege38/SIEGE38.project.json',38),
+                            ('artifacts/wired39/WIRED39.project.json',39),
                             ('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json',36),
                             ('artifacts/combined36/COMBINED36.project.json',36),
                             ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
@@ -199,7 +217,7 @@ jobs:
                   subprocess.run(['/tmp/gq8-subsea-combined-native/luau-compile','--text',str(path)],check=True,stdout=subprocess.DEVNULL)
               print('GQ8_STATION_SUBSEA_TRUE_NATIVE',n)
           PY
-      - name: Pinned Rojo exact wired39 and Core36 OFF36 and original31 OFF
+      - name: Pinned Rojo real41 and original 39/38/36/31 Source Class exact
         shell: bash
         run: |
           set -euo pipefail
@@ -214,9 +232,17 @@ jobs:
               p=Path('/tmp/gq8-subsea36-rojo')
               p.write_bytes(z.read(found[0]));p.chmod(0o755)
           PY
+          /tmp/gq8-subsea36-rojo build artifacts/siege41/REAL41.project.json -o artifacts/siege41/REAL41.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/siege38/SIEGE38.project.json -o artifacts/siege38/SIEGE38.rbxlx
           /tmp/gq8-subsea36-rojo build artifacts/wired39/WIRED39.project.json -o artifacts/wired39/WIRED39.rbxlx
           /tmp/gq8-subsea36-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/wired39/CORE36_OFF.rbxlx
           /tmp/gq8-subsea36-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/siege41/REAL41.project.json \
+            --place artifacts/siege41/REAL41.rbxlx --count 41
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/siege38/SIEGE38.project.json \
+            --place artifacts/siege38/SIEGE38.rbxlx --count 38
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/wired39/WIRED39.project.json             --place artifacts/wired39/WIRED39.rbxlx --count 39
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/COMBINED36.project.json             --place artifacts/wired39/CORE36_OFF.rbxlx --count 36
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --place artifacts/combined36/OFF31.rbxlx --count 31
@@ -282,17 +308,50 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project artifacts/portable39/EGGRUMBLE_SOURCE39.project.json \
             --place artifacts/portable39/EGGRUMBLE_SOURCE39.rbxlx --count 39
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/package_real41.py \
+            --real41 artifacts/siege41/REAL41.project.json \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --candidate-head "$GITHUB_SHA" \
+            --out artifacts/portable41/EGGRUMBLE_SOURCE41.project.json
+          /tmp/gq8-subsea36-rojo build artifacts/portable41/EGGRUMBLE_SOURCE41.project.json \
+            -o artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --place artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx --count 41
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          siege=Path('artifacts/siege41/REAL41.rbxlx').read_bytes()
+          portable=Path('artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx').read_bytes()
+          assert hashlib.sha256(siege).digest()==hashlib.sha256(portable).digest(),"RED_PORTABLE41_PLACE_NOT_EXACT"
+          receipt=json.loads(Path('artifacts/siege41/REAL41.project.receipt.json').read_text())
+          receipt.update({
+            "candidate_place_rbxlx_bytes":len(siege),
+            "candidate_place_sha256":hashlib.sha256(siege).hexdigest(),
+            "portable41_rebuild_same_place_sha":True,
+            "native41":True,"rojo41_source_class":True,
+            "off39":True,"off36":True,"off31":True})
+          Path('artifacts/siege41/REAL41_INTEGRATION_RECEIPT.json').write_text(json.dumps(receipt,sort_keys=True,indent=2))
+          print('GQ8_REAL41_CANDIDATE_PLACE_BYTES',len(siege))
+          print('GQ8_REAL41_CANDIDATE_PLACE_SHA256',receipt["candidate_place_sha256"])
+          PY
+          echo GQ8_REAL41_SIEGE_STAGE_ITEM_REALM_NATIVE_ROJO_OFF39_36_31_PASS
           echo GQ8_B_HANDOFF_PORTABLE39_ROJO_SOURCE_CLASS_PASSED
           echo GQ8_REALM_ITEM_STAGE_WIRED39_NATIVE_ROJO_OFF36_OFF31_PASS
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: GQ8-REALM-ITEM-STAGE-WIRED39-PREP-NOT-OFFICIAL
+          name: GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL
           path: |
             artifacts/wired39/WIRED39.rbxlx
             artifacts/wired39/WIRED39.project.receipt.json
             artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json
             artifacts/portable39/
+            artifacts/portable41/
+            artifacts/siege41/REAL41.rbxlx
+            artifacts/siege41/REAL41_INTEGRATION_RECEIPT.json
+            artifacts/siege41/REAL41.project.receipt.json
+            artifacts/siege38/SIEGE38.rbxlx
             artifacts/wired39/CORE36_OFF.rbxlx
             artifacts/combined36/OFF31.rbxlx
             artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
