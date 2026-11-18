@@ -266,7 +266,7 @@ jobs:
               'rollback':'Select original 36-source Core36 project and original31 OFF; rich51 default unchanged'
           }
           out=Path('artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json')
-          out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\\n')
+          out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2))
           print('GQ8_WIRED39_CANDIDATE_PLACE_BYTES',place.stat().st_size)
           print('GQ8_WIRED39_CANDIDATE_PLACE_SHA256',receipt['candidate_place_sha256'])
           print('GQ8_WIRED39_4_ORIGINAL_PATCHED_3_NEW_32_EXACT_OFF36_OFF31_PASS')
