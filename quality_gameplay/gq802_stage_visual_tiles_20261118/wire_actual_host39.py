@@ -20,7 +20,7 @@ NEW_IMPORT=OLD_IMPORT+(
  'local GQ802StageBlueprint=require(script.Parent:WaitForChild("GQ802_StageTileBlueprintPolicy"))\n'
  'local GQ802StageVisuals=require(script.Parent:WaitForChild("GQ802_StageTileVisualRenderer"))\n'
 )
-OLD_BEGIN='  Rules.start(session.rules)\n'
+OLD_BEGIN='  local itemsOK,itemCountOrError=pcall(function()\n'
 NEW_BEGIN=(
  '  -- One trusted visual stage seed/manifest per real session, never a client Remote.\n'
  '  -- Optional visual error keeps original castles, eggs and three routes playable.\n'
