@@ -1,7 +1,9 @@
-name: GQ8 independent nine-lane canonical Real55 actual source audit
+name: GQ8 independent nine-domain Real59 actual Place source audit
 on:
   push:
-    branches: [quality/gq8-nine-lane-source-readiness-20261119-0530]
+    branches:
+      - quality/gq8-nine-lane-source-readiness-20261119-0530
+      - rc/p0d-s1-kids-rc01
     paths:
       - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
       - '.github/workflows/gq8-nine-lane-source-receipt.yml'
@@ -15,57 +17,69 @@ permissions:
   contents: read
   actions: read
 jobs:
-  independently-verify-real55-nine-lanes:
+  independent-real59-nine-domains:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     env:
       GH_TOKEN: ${{ github.token }}
+      REAL59_HEAD: 38d11f0bf311491ba76fe03f818948e5d4b06889
+      REAL59_RUN: '44401178585'
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Verify exact existing parent and canonical RC remain unchanged
+      - name: Authenticate exact latest source-selected Real59 and OFF55 build
         shell: bash
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo "RED_FORMAL_RC_REBASE"; exit 1; }
-          test "$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "a6020867fac80fa3b2ca47478625873fc6f3678e success" || { echo "RED_PARENT_CI_DRIFT"; exit 1; }
-          mkdir -p artifacts/parent55 artifacts/nine_lanes
-          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir artifacts/parent55
-          test -s artifacts/parent55/EGGRUMBLE_REAL55.project.json
-          test -s artifacts/parent55/B_REAL55_RECEIPT.json
-      - name: Python hostile negative checks and evidence-only nine-pillar audit
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$CURRENT" = "$REAL59_HEAD" || { echo RED_STALE_RC_PR_RECONCILE; exit 1; }
+          elif [ "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01 ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_NOT_SAME_HEAD; exit 1; }
+          else
+            test "$CURRENT" = "$REAL59_HEAD" || { echo RED_AUTHOR_BRANCH_STALE; exit 1; }
+          fi
+          VERIFIED="$(gh run view "$REAL59_RUN" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$VERIFIED" = "$REAL59_HEAD success" || { echo RED_UNVERIFIED_FORMAL_59; exit 1; }
+          mkdir -p artifacts/official59 artifacts/nine_lanes
+          gh run download "$REAL59_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO \
+            --dir artifacts/official59
+          test -s artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          test -s artifacts/official59/EGGRUMBLE_OFF55_PRIVATE.rbxlx
+          test -s artifacts/official59/GQ828_REAL59_RECEIPT.json
+      - name: Assert exact 59 source scripts, actual 55-script OFF Place and nine domains
         shell: bash
         run: |
           set -euo pipefail
           P=quality_gameplay/gq8_nine_lane_intake_20261119
-          python3 -B "$P/test_verify_integrated_sources.py"
-          python3 -B "$P/verify_integrated_sources.py" \
-            --project artifacts/parent55/EGGRUMBLE_REAL55.project.json \
-            --receipt artifacts/parent55/B_REAL55_RECEIPT.json \
-            --output artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json
+          python3 -B "$P/verify_real59.py" \
+            --place59 artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --off55 artifacts/official59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
+            --receipt artifacts/official59/GQ828_REAL59_RECEIPT.json \
+            --expected-head "$REAL59_HEAD" \
+            --output artifacts/nine_lanes/REAL59_NINE_DOMAIN_SOURCE_EVIDENCE.json
+          python3 -B "$P/test_real59_negative.py" \
+            --place59 artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --off55 artifacts/official59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
+            --receipt artifacts/official59/GQ828_REAL59_RECEIPT.json \
+            --expected-head "$REAL59_HEAD"
           python3 - <<'PY'
           import json
           from pathlib import Path
-          r=json.loads(Path("artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json").read_text())
-          assert r["source_count"]==55 and r["evidenced_lanes_source_only"]==9
-          assert r["evidenced_lanes_actual_studio"]==0
-          assert r["author_private_artifact_claims_formal_rc"] is False
-          # Canonical commit and its exact source build are asserted above.
-          # This receipt is an independent source audit, not a playtest approval.
-          r["formal_rc_cas_head"] = "a6020867fac80fa3b2ca47478625873fc6f3678e"
-          r["formal_rc_samehead_native_rojo_run"] = 44393525211
-          r["formal_rc_source_selected"] = True
-          r["studio_2client_verified"] = False
-          r["android_15min_verified"] = False
-          r["fun_accepted"] = False
-          p=Path("artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json")
-          p.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
-          print("GQ8_NINE_LANE_OFFICIAL_SOURCE_ONLY_NOT_STUDIO_FUN_PASS")
+          f=Path("artifacts/nine_lanes/REAL59_NINE_DOMAIN_SOURCE_EVIDENCE.json")
+          a=json.loads(f.read_text())
+          assert a["source_count"] == 59
+          assert a["parent_exact_source_count"] == 55
+          assert a["nine_source_domains_selected"] == 9
+          assert a["nine_studio_domains_verified"] == 0
+          assert a["product_go"] is False
+          print("GQ8_REAL59_INDEPENDENT_9_LANES_SOURCE_ONLY_PASS_NO_PRODUCT_CLAIM")
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ8-NINE-LANE-REAL55-FORMAL-SOURCE-EVIDENCE-ONLY
+          name: GQ8-NINE-DOMAIN-FORMAL-REAL59-SOURCE-EVIDENCE-ONLY
           path: artifacts/nine_lanes/
           retention-days: 5
           if-no-files-found: error
