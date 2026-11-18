@@ -124,6 +124,23 @@ jobs:
           /tmp/gq800-rojo build artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/real44/OFF43.rbxlx
           /tmp/gq800-rojo build artifacts/real44/REAL44.project.json -o artifacts/real44/REAL44.rbxlx
           cmp artifacts/real44/OFF43.rbxlx artifacts/original43/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/package_real43.py \
+            --real43 artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --real42 artifacts/original42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            --out artifacts/portable43/EGGRUMBLE_SOURCE43.project.json --candidate-head "$GITHUB_SHA"
+          /tmp/gq800-rojo build artifacts/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          cmp artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx artifacts/real44/OFF43.rbxlx
+          python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/package_real44.py \
+            --original43 artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --real44 artifacts/real44/REAL44.project.json \
+            --out artifacts/portable44/EGGRUMBLE_SOURCE44.project.json --candidate-head "$GITHUB_SHA"
+          /tmp/gq800-rojo build artifacts/portable44/EGGRUMBLE_SOURCE44.project.json -o artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          cmp artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx artifacts/real44/REAL44.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable43/EGGRUMBLE_SOURCE43.project.json --place artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx --count 43
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable44/EGGRUMBLE_SOURCE44.project.json --place artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx --count 44
+          echo GQ800_PORTABLE_CURRENT43_44_SINGLETON_B_INTAKE_READY
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project artifacts/real44/REAL44.project.json --place artifacts/real44/REAL44.rbxlx --count 44
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
@@ -147,5 +164,7 @@ jobs:
             artifacts/real44/OFF43.rbxlx
             artifacts/real44/REAL44.receipt.json
             artifacts/real44/BUILD44_RECEIPT.json
+            artifacts/portable43/
+            artifacts/portable44/
           if-no-files-found: error
           retention-days: 3
