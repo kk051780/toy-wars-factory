@@ -196,7 +196,7 @@ def emit(out:Path):
  if not src.rstrip().endswith(end):raise ValueError("RED_INVALID_MODULE_RETURN")
  body=src.rstrip()[:-len(end)]
  patterns=["M.MAX_MATCH_SECONDS=24.0","M.ARM_SECONDS=3.0",
-           "if M.isInvulnerable(s,c) then return 0 end",
+           "return if M.isInvulnerable(s,c) then 0 else 1",
            "e.used[e.source]+=1"]
  for p in patterns:
   if body.count(p)!=1:raise ValueError("RED_SOURCE_SIGNATURE_"+p)
@@ -204,8 +204,8 @@ def emit(out:Path):
  good=HARNESS.replace("__SOURCE__",body)
  (out/"good.luau").write_text(good,encoding="utf-8")
  mutant1=body.replace("M.MAX_MATCH_SECONDS=24.0","M.MAX_MATCH_SECONDS=240.0")
- mutant2=body.replace("if M.isInvulnerable(s,c) then return 0 end",
-                      "if M.isInvulnerable(s,c) then return 1 end")
+ mutant2=body.replace("return if M.isInvulnerable(s,c) then 0 else 1",
+                      "return if M.isInvulnerable(s,c) then 1 else 1")
  mutant3=body.replace("e.used[e.source]+=1","e.used[e.source]+=0")
  for name,content in [("budget_mutant",mutant1),("damage_mutant",mutant2),
                       ("charge_mutant",mutant3)]:
