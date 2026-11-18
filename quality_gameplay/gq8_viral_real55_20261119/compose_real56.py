@@ -45,7 +45,7 @@ local function startSession(mode:string)''',"HOST_START")
  session.gq8ViralResults=false
  session.world.Name=mode.."_Arena";session.world.Parent=folder''',"SESSION_EPOCH")
     src=regex_exact(src,
-        r"if c\\.alive and c\\.heldEggs>0 then\\n[ \\t]+local ok=pcall\\(function\\(\\) Rules\\.depositEggs\\(session\\.rules,entry\\.id,c\\.heldEggs\\) end\\)\\n[ \\t]+if ok then session\\.refresh\\(\\) end\\n[ \\t]+end",
+        r"if c\.alive and c\.heldEggs>0 then\n[ \t]+local ok=pcall\(function\(\) Rules\.depositEggs\(session\.rules,entry\.id,c\.heldEggs\) end\)\n[ \t]+if ok then session\.refresh\(\) end\n[ \t]+end",
         '''if c.alive and c.heldEggs>0 then
     local before=c.depositedEggs or 0
     local ok=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
