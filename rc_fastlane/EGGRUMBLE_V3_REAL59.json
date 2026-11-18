@@ -22,7 +22,7 @@
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau": "8852e0a8887d924c5e444c9e94f4bc799f195f28",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "0b79b782bb2fc7aa2f17a08c25d5ef083f71e45b",
-    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "4c2d355eea62e9b2becfed134dadcf5257bd85ac"
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "a88b5a64998e6fbbcb2f4561de75e084faece944"
   },
   "source_routes": [
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
@@ -52,5 +52,21 @@
     "art_screenshot": "NOT_TESTED",
     "fun": "NOT_TESTED"
   },
-  "notes": "An official source profile is proven only when approved writer safely advances single RC branch and new exact-head workflow succeeds; source-only PR is not formal adoption. New team and element markers should be Android+Studio tested before release."
+  "notes": "An official source profile is proven only when approved writer safely advances single RC branch and new exact-head workflow succeeds; source-only PR is not formal adoption. New team and element markers should be Android+Studio tested before release.",
+  "power_tool_wiring": {
+    "upstream_verified_by": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/compose_real59.py original55 physical-source contracts",
+    "musou_tool": "EGGRUMBLE_MUSOU_AWAKEN",
+    "musou_server_attributes": [
+      "EGGRUMBLE_MusouPhase",
+      "EGGRUMBLE_MusouReadyIn",
+      "EGGRUMBLE_MusouRemaining"
+    ],
+    "invul_tool": "迎撃覚醒",
+    "invul_server_attributes": [
+      "EGGRUMBLE_InvulPhase",
+      "EGGRUMBLE_InvulUntil"
+    ],
+    "buttons": "existing server-owned Tool.Activated only, no client fake-ready flags",
+    "limitations": "MusouReadyIn is not continuously replicated and InvulReady is not exported by Real55; never claim cooldown precision or guaranteed readiness."
+  }
 }
