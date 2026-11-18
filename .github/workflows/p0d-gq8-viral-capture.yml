@@ -51,3 +51,23 @@ jobs:
           "$CLI" /tmp/gq8-viral-good.luau | tee /tmp/gq8-viral-good.log
           grep -qx GQ8_VIRAL_POLICY_REAL_SOURCE_NATIVE_PASS /tmp/gq8-viral-good.log
           echo GQ8_VIRAL_NATIVE_READY_NOT_STUDIO_ACCEPTED
+
+      - name: Same-HEAD Rojo real project build (no Studio publish)
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 -o /tmp/rojo-7.6.1.zip \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.6.1/rojo-7.6.1-linux-x86_64.zip
+          echo 'a9542a713036897fdbd0173e7a105ea409658333133c949025fcb6f1a7ca909d  /tmp/rojo-7.6.1.zip' | sha256sum -c -
+          mkdir -p /tmp/gq8-rojo
+          unzip -q /tmp/rojo-7.6.1.zip -d /tmp/gq8-rojo
+          chmod +x /tmp/gq8-rojo/rojo
+          /tmp/gq8-rojo/rojo build releases/P0D_S1_KIDS_RC01/default.project.json -o /tmp/gq8-viral-actual.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/gq8-viral-actual.rbxlx')
+          xml=p.read_text()
+          for exact in ('ViralMomentCapture','ViralMomentPolicy','TrapRaidersHUD','TrapRaidersCoach'):
+              assert exact in xml, 'RED_ROJO_SCRIPT_NOT_BUILT_'+exact
+          assert len(xml) > 10000, 'RED_EMPTY_ROJO_PLACE'
+          print('GQ8_VIRAL_SAME_HEAD_ROJO_PLACE_BUILD_PASS_BYTES',p.stat().st_size)
+          PY
