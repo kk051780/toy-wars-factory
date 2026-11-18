@@ -1,4 +1,4 @@
-name: GQ822 exact actual Real44 damage route / invulnerability coverage NO-GO gate
+name: GQ822 actual Real44 to Real48 damage route / invulnerability false-pass gate
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -47,16 +47,45 @@ jobs:
           print("GQ822_ORIGINAL_REAL44_PLACE_SHA256_AND_PORTABLE_BYTES_EXACT_PASS",place.stat().st_size)
           print("GQ822_PR_HEAD_VS_BUILD_RECEIPT",receipt.get("commit"),"NOTE_PR_MERGE_SHA_MAY_DIFFER")
           PY
-      - name: Inventory ALL original real44 direct damage and verify 4 hostile mutants
+      - name: Verify latest Real48 has exact original44 and four readonly shop additions
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE48="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44382280050" --jq '.head_sha')"
+          test "$SOURCE48" = 8de978a03c21bcca46aa030ec6b9c172f74b55a2 || { echo RED_REAL48_RUN_NOT_FIXED; exit 1; }
+          gh run download 44382280050 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL48-CURSE-LOBBYSHOP-PRIVATE-NOT-OFFICIAL --dir artifacts/real48candidate
+          test -s artifacts/real48candidate/EGGRUMBLE_REAL48.rbxlx
+          test -s artifacts/real48candidate/B_REAL48_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          old={p.name:p.read_bytes() for p in Path('artifacts/portable44/sources').rglob('*.luau')}
+          new={p.name:p.read_bytes() for p in Path('artifacts/real48candidate/sources').rglob('*.luau')}
+          added=set(new)-set(old)
+          expected={'GQ805_LobbyGuildShop.server.luau','GQ805_ShopKioskClient.client.luau',
+                    'EGGRUMBLE_LobbyShopView.luau','EGGRUMBLE_LobbyShopCatalog.luau'}
+          assert len(old)==44 and len(new)==48 and added==expected,('RED_REAL48_NEW_RUNTIME_DRIFT',added)
+          assert all(new[k]==v for k,v in old.items()),'RED_REAL48_MUTATED_ORIGINAL44_GAMEPLAY'
+          receipt=json.loads(Path('artifacts/real48candidate/B_REAL48_INTAKE_RECEIPT.json').read_text())
+          place=Path('artifacts/real48candidate/EGGRUMBLE_REAL48.rbxlx')
+          assert receipt['on_source_count']==48 and receipt['off_source_count']==44
+          assert receipt['original44_preserved']==44 and receipt['official_rc_adopted'] is False
+          assert receipt['seller_purchases_enabled'] is False
+          assert receipt['candidate_place_bytes']==place.stat().st_size
+          assert receipt['candidate_place_sha256']==hashlib.sha256(place.read_bytes()).hexdigest()
+          print('GQ822_REAL44_TO_REAL48_ALL_44_ORIGINAL_BYTES_EXACT_AND_FOUR_SHOP_READONLY_PASS',len(new))
+          PY
+      - name: Inventory original Real44 and latest Real48 direct damage plus hostile mutants
         shell: bash
         run: |
           set -euo pipefail
           python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
-            --source-root artifacts/portable44/sources \
+            --source-root artifacts/portable44/sources --source-count 44 \
             --out artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+          python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py --source-root artifacts/real48candidate/sources --source-count 48 --out artifacts/gq822/ACTUAL_REAL48_DAMAGE_ROUTE_RECEIPT.json
           # The current unintegrated product MUST NOT be certified as full invulnerability.
           if python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
-            --source-root artifacts/portable44/sources \
+            --source-root artifacts/real48candidate/sources --source-count 48 \
             --out artifacts/gq822/EXPECTED_RED_RECEIPT.json --require-wired \
             > /tmp/gq822-expected-red.txt 2>&1; then
             echo RED_FALSE_INVULNERABILITY_ACCEPTANCE
