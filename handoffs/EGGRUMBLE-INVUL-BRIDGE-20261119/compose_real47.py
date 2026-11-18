@@ -25,8 +25,8 @@ PVP_REPLACEMENT='''local originalAttackDamage=InvulRuntime.filterDamage(enemyHum
       local attackerAvatar=p.Character
       local warningEnd=os.clock()+counter.tellSeconds
       task.delay(counter.tellSeconds,function()
-       if session.rules.phase~="ACTIVE" or not owner or not state
-        or not state.alive or not owner.alive then return end
+       if session.rules.phase~="ACTIVE" or not enemyState or not state
+        or not state.alive or not enemyState.alive then return end
        if enemyPlayer.Character~=defenderAvatar or p.Character~=attackerAvatar
         or not p.Parent or not enemyPlayer.Parent then return end
        local atRoot=attackerAvatar and attackerAvatar:FindFirstChild("HumanoidRootPart")
