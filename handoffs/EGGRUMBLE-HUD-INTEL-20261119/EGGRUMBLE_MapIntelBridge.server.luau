@@ -145,14 +145,14 @@ local function entityMarkers(p,mode,arena,root,viewer)
  -- Only the original Swarm-author's real tagged Humanoid actors are scanned.
  local horde=arena:FindFirstChild("NeutralHorde")
  if horde then
-  for _,npc in ipairs(horde:GetChildren()) do
+  for index,npc in ipairs(horde:GetChildren()) do
    if count>=MAX_MARKERS then break end
    if npc:IsA("Model") and npc:GetAttribute("EGGRUMBLE_Neutral")==true then
     local h=npc:FindFirstChildOfClass("Humanoid")
     local part=npc:FindFirstChild("HumanoidRootPart")
     if h and h.Health>0 and part and part:IsA("BasePart")
       and (part.Position-root.Position).Magnitude<210 then
-     table.insert(result,{id="N_"..npc.Name.."_"..tostring(npc:GetDebugId()),
+     table.insert(result,{id="N_"..tostring(index),
       kind="NEUTRAL",x=part.Position.X,z=part.Position.Z,layer="LAND",
       serverLineOfSight=los(root.Position+Vector3.new(0,1.5,0),
         part.Position+Vector3.new(0,1.5,0),p.Character,npc)})
