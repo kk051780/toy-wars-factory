@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
-      EXPECTED_OFFICIAL: 38d11f0bf311491ba76fe03f818948e5d4b06889
+      EXPECTED_OFFICIAL: 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq8_real63_intake_20261119/compose_real63.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_real63.py
-      - name: Verify the unique official head and four immutable upstream GREEN build runs
+      - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
           set -euo pipefail
@@ -41,6 +41,7 @@ jobs:
             44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e \
             44401178585:38d11f0bf311491ba76fe03f818948e5d4b06889 \
             44402402944:42ed8c45b4013c07ee171a6e7d772f074eed2be7 \
+            44403496549:5a47e96f6b4766a9c59dd06b111bea53b73bd5ca \
             44398710101:bdb0bac0cf8aab08c8984ce195b4ff99d3900e70 \
             44397387116:082d28901a680b546d9a7c253f7a01b68181f8a1
           do
