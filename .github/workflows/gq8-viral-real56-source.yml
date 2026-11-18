@@ -42,6 +42,20 @@ jobs:
       - name: Real55 plus one actual server-authoritative event hook, no copy of 54 originals
         run: |
           set -euo pipefail
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          _,items=flatten(Path('/tmp/gq8-real55/EGGRUMBLE_REAL55.project.json'))
+          host=items[('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')]
+          lines=host.read_text().splitlines()
+          keys=('depositEggs','takeEggs(', 'local c=session.rules.castles[tostring(player.UserId)]', 'session.rules.winner~=nil', 'session.world.Name=')
+          print('GQ8_REAL55_OWNER_ANCHOR_AUDIT_ONLY')
+          for i,line in enumerate(lines):
+              if any(k in line for k in keys):
+                  print('LINE',i+1, '\\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0,i-3),min(len(lines),i+5))))
+          PY
           python3 -B quality_gameplay/gq8_viral_real55_20261119/compose_real56.py \
             --parent55 /tmp/gq8-real55/EGGRUMBLE_REAL55.project.json \
             --receipt55 /tmp/gq8-real55/B_REAL55_RECEIPT.json \
