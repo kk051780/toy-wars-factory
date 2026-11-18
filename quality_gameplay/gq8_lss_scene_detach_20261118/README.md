@@ -2,7 +2,10 @@
 
 FEATURE_ID=GQ8_LSS_SCENE_DETACH_RETIRE_20261118
 OWNER_SCOPE=One existing Studio-only optional32 LandSeaSkyTraversal Script
-STACKED_AFTER=PR #772 (idle craft lease), no new copy of gameplay
+STACKED_AFTER=PR #772 (idle craft lease + latest high-air dismount rescue)
+PARENT_SHA_RECHECK=d2c01ff5b6a7c90e9ee93ad268e689580781d16a
+PARENT_LSS_BLOB=440bf7fb00b4a67d565603d973d1e84de5c30f4d
+COMPOSED_LSS_BLOB=f7c210ed62e9a0ee8cca78749d8f716317539cd4, no new copy of gameplay
 FORMAL_RC_ADOPTED=NO; P0D_PREP_READY_V1=SOURCE_QA_PENDING
 SOURCE_LOCK=Update both optional32 JSON source blob references to current candidate
 ROLLBACK=Omit optional32 for exact canonical31, or revert ONLY this lifecycle hunk

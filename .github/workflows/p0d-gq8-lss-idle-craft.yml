@@ -22,7 +22,9 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_idle_craft.py
           python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_optional32.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_air_dismount.py
           python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_idle_craft_native.py --out /tmp/gq8-idle-good.luau --mutant /tmp/gq8-idle-mutant.luau
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_air_dismount_native.py --out /tmp/gq8-air-good.luau --mutant /tmp/gq8-air-mutant.luau
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -43,3 +45,10 @@ jobs:
           fi
           grep -q 'SECOND_GRACE\|REBOARDING_GRACE' /tmp/gq8-idle-mutant.log
           echo GQ8_LSS_IDLE_CRAFT_SOURCE_NATIVE_GOOD_MUTANT_RED
+          /tmp/gq8-idle-native/luau /tmp/gq8-air-good.luau | grep -q 'GQ8_LSS_AIR_DISMOUNT_REAL_SOURCE_NATIVE_9_CASES_PASS'
+          if /tmp/gq8-idle-native/luau /tmp/gq8-air-mutant.luau > /tmp/gq8-air-mutant.log 2>&1; then
+            echo RED_AIR_DISMOUNT_MUTANT_UNEXPECTED_PASS
+            exit 1
+          fi
+          grep -q 'SOLID_PLATFORM' /tmp/gq8-air-mutant.log
+          echo GQ8_LSS_AIR_DISMOUNT_NATIVE_GOOD_MUTANT_RED

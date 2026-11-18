@@ -1,0 +1,87 @@
+{
+  "schema": "P0D_GQ8_V3_CORE36_CANONICAL_PRIVATE_SOURCE_SELECTION_V1",
+  "feature_id": "GQ8_REALM34_PLUS_REGEN33_IN_REAL_RC_20261118",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "source_profile": "eggrumble_v3_core36",
+  "baseline_profile": "eggrumble_v3_31",
+  "source_count": 36,
+  "baseline_source_count": 31,
+  "baseline_official_rc_commit": "261b75d0a7093db5c13db3b95dad9a2911f78689",
+  "primary_s1_profile_unchanged": "rich51",
+  "v3_private_studio_profile_selected": true,
+  "production_published": false,
+  "authors": {
+    "realm": {
+      "pr": 764,
+      "immutable_head": "c51de1ed4feb7a7500ada95d21282402053ef988",
+      "composer": "handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py"
+    },
+    "regen": {
+      "pr": 775,
+      "immutable_head": "5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3",
+      "composer": "handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py"
+    },
+    "regen_policy": {
+      "pr": 773,
+      "immutable_head": "c7fcc5e7b107529cb317e1e6f2d6bbbc6b49ee29",
+      "source_blob": "23ccf84f88b2cb2901af33a563ff535e82d7a78f"
+    },
+    "combination_qa": {
+      "pr": 780,
+      "immutable_head": "8f7984c1a9db2c016321d16d47a3ea8d1b5081df",
+      "source_path": "quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py"
+    }
+  },
+  "source_map": {
+    "existing_31": "byte exact except single original Host two equip hooks",
+    "modified_existing": [
+      "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
+    ],
+    "added_sources": [
+      "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+      "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls",
+      "ServerScriptService/EGGRUMBLE_NaturalRegen",
+      "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy"
+    ]
+  },
+  "server_authorities": {
+    "combat": 1,
+    "host": 1,
+    "swarm": 1,
+    "new_remote_owner": 0,
+    "new_store_owner": 0,
+    "new_score_owner": 0,
+    "new_damage_owner": 0
+  },
+  "all_7_roles_free_hp": true,
+  "player_facing_scope": [
+    "character",
+    "field",
+    "battle",
+    "castle_unchanged",
+    "neutral_unchanged",
+    "item_unchanged",
+    "lobby_unchanged",
+    "balance_qa"
+  ],
+  "workflow": ".github/workflows/p0d-rc-eggrumble-v3-core36.yml",
+  "studio_artifact": "EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx",
+  "rollback": "Select original eggrumble_v3_31 source profile / OFF31 byte exact; do not alter rich51 or main",
+  "unsafe_disabled": [
+    "public_publish",
+    "paid_items",
+    "roblox_data_store_changes"
+  ],
+  "acceptance": {
+    "same_head_source_compiler": "PENDING_CANDIDATE",
+    "same_head_rojo_source_class": "PENDING_CANDIDATE",
+    "off31": "PENDING_CANDIDATE",
+    "official_nonforce_expected_sha_cas": false,
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "human_fun": "NOT_TESTED",
+    "owner_acceptance": false
+  }
+}

@@ -16,7 +16,7 @@
     "added_class": "Script",
     "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
     "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
-    "source_blob_sha": "73d5f90d52db66760733304397113ce443db0c80",
+    "source_blob_sha": "f7c210ed62e9a0ee8cca78749d8f716317539cd4",
     "original31_script_count": 31,
     "optional_count": 32,
     "original_author_prs": [
@@ -46,7 +46,8 @@
     "full_footprint_native": "PENDING_THIS_SHA",
     "public_travel_native8_mutant_red": "PENDING_THIS_HEAD",
     "idle_craft_lease_native10_mutant_red": "PENDING_SAME_HEAD_CI",
-    "scene_detach_native7_three_mutants": "PENDING_SAME_HEAD_CI"
+    "air_dismount_native_and_mutant": "PENDING_CURRENT_HEAD",
+    "scene_detach_native7_three_mutants": "PENDING_REBASE_NATIVE_ROJO"
   },
   "eight_domains": {
     "characters": "7 original professions, optional Builder/Beast ride",
@@ -56,13 +57,13 @@
     "neutral": "original single Swarm and budget preserved",
     "items": "original pickups and egg rules preserved",
     "lobby": "original current Host and two modes unchanged",
-    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted; 25s empty-seat lease for idle craft capacity, reboarding resets clock; detached-world observer cleanup prevents retained scene/slots on reparent"
+    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted; 25s empty-seat lease for idle craft capacity, reboarding resets clock; high-air voluntary dismount returns certified pilot safely only without solid support; detached-world observer cleanup prevents retained scene/slots on reparent"
   },
   "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
-  "adoption": "GQ8_LSS_SCENE_DETACH_RETIRE_20261118_SOURCE_PREP_PENDING_NATIVE_ROJO_RC",
+  "adoption": "GQ8_LSS_SCENE_DETACH_RETIRE_20261118_PARENT_AIR_DISMOUNT_SAFE_SOURCE_NATIVE_REVALIDATE",
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "no_main_publish_pay": true,
-  "caveat": "PR #763 public travel uniquely rebased onto current full-craft sweep and prompt sight; no Studio/Android/FUN test; #772 idle-craft source is parent of separate #post772 world-detach cleanup (not formal RC)"
+  "caveat": "PR #763 public travel uniquely rebased onto current full-craft sweep and prompt sight; no Studio/Android/FUN test; #799 stacked world detach lifecycle retains parent air dismount source in sole optional32 Script"
 }
