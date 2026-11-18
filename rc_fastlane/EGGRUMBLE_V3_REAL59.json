@@ -21,8 +21,8 @@
   "source_locks": {
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau": "9358eff6c71bdc2b860b00d98f20d13db6ce3571",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
-    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "4899bd52518815630a49954a1adc36151a5c1eea",
-    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "99e5a58d3d2622643f6a4e74817fa0cfbd8c59d2"
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "1ad87185fb12ad0d51d0761681628558dacc97ca",
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "56c2a8dcb8ed2271e906843aa3b3b8e39cc949b1"
   },
   "source_routes": [
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
@@ -105,5 +105,15 @@
     "musou": "Exact server Tool/attributes; distinct MUSOU/RUSH/KAKUHEN labels 無双中/連チャン/確変中; only server grants ready",
     "items": "Missing inventory server Tools are shown as 道具 0; world pickups remain ProximityPrompt by existing owner."
   },
-  "status_document": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/README.md latest successor correction"
+  "status_document": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/README.md latest successor correction",
+  "status_display": {
+    "server_clock": "MapIntelBridge os.clock matches original Combat Humanoid effect expiry",
+    "effects": [
+      "EGGRUMBLE_BurnUntil",
+      "EGGRUMBLE_SlowExpiry",
+      "EGGRUMBLE_MarkedUntil"
+    ],
+    "recipient": "Only per-viewer private MAP_INTEL payload statuses",
+    "client_rule": "No comparison of server expiry against unsynchronized local os.clock()"
+  }
 }
