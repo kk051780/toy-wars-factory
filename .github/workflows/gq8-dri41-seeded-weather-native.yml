@@ -31,7 +31,17 @@ jobs:
           RC="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$RC" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_CURRENT_RC_MOVED_NEEDS_REBASE; exit 1; }
           DRI="$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')"
-          test "$DRI" = 940b99543d17e9ed6beb66e4a91a70e478868e3c || { echo RED_LATEST_DRI_MOVED_NEEDS_REBASE; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/compare/940b99543d17e9ed6beb66e4a91a70e478868e3c...$DRI" > /tmp/gq8-dri-succession.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gq8-dri-succession.json'))
+          allowed=('.github/workflows/gq815-guardian-real42.yml',
+                   'quality_gameplay/gq8_guardian_runtime_20261118/')
+          changes=[x['filename'] for x in d['files']]
+          assert d['status'] in ('identical','ahead'),('RED_DRI_NOT_DESCENDANT',d['status'])
+          assert all(p==allowed[0] or p.startswith(allowed[1]) for p in changes),('RED_DRI_41_SOURCE_CONFLICT',changes)
+          print('GQ8_DRI_41_AUTHOR_SOURCES_UNCHANGED_AFTER_42_ADDON',len(changes))
+          PY
           gh run download 44311974603 --repo "$GITHUB_REPOSITORY" \
             --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL --dir "$UP"
           test -s "$UP/portable41/EGGRUMBLE_SOURCE41.project.json"
@@ -135,7 +145,17 @@ jobs:
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b
           DRI="$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')"
-          test "$DRI" = 940b99543d17e9ed6beb66e4a91a70e478868e3c
+          gh api "repos/$GITHUB_REPOSITORY/compare/940b99543d17e9ed6beb66e4a91a70e478868e3c...$DRI" > /tmp/gq8-dri-succession.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gq8-dri-succession.json'))
+          allowed=('.github/workflows/gq815-guardian-real42.yml',
+                   'quality_gameplay/gq8_guardian_runtime_20261118/')
+          changes=[x['filename'] for x in d['files']]
+          assert d['status'] in ('identical','ahead'),('RED_DRI_NOT_DESCENDANT',d['status'])
+          assert all(p==allowed[0] or p.startswith(allowed[1]) for p in changes),('RED_DRI_41_SOURCE_CONFLICT',changes)
+          print('GQ8_DRI_41_AUTHOR_SOURCES_UNCHANGED_AFTER_42_ADDON',len(changes))
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ8-DRI-REAL41-SEEDED-WEATHER-ON-OFF-NOT-RC
