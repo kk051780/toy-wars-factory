@@ -38,6 +38,13 @@ function M.create(deps:any):any
    or not validInt(placeId,1,999999999999)
    or placeId~=deps.targetPlaceId then
    return {status="FALLBACK_NORMAL_LOBBY",reason="INVALID_PLAN_OR_DESTINATION"} end
+  -- Existing round Host must supply an active-session epoch validator.
+  -- A bare match proposal/old player cannot request a teleport on its own.
+  if type(deps.isEpochCurrent)~="function" then
+   return {status="FALLBACK_NORMAL_LOBBY",reason="MISSING_ROUND_AUTHORITY"} end
+  local epochOk,active=pcall(deps.isEpochCurrent,epoch)
+  if not epochOk or active~=true then
+   return {status="FALLBACK_NORMAL_LOBBY",reason="OLD_ROUND_EPOCH"} end
   local roster={}
   local ids={}
   for _,id in ipairs(plan.teamA) do ids[#ids+1]=id end
@@ -112,6 +119,12 @@ function M.create(deps:any):any
     then return {status="IGNORED"} end
   local pending=self.byUser[player.UserId]
   if not pending then return {status="IGNORED"} end
+  local epochOk,active=pcall(function()
+   return type(deps.isEpochCurrent)=="function" and deps.isEpochCurrent(pending.epoch)
+  end)
+  if not epochOk or active~=true then
+   self.byUser[player.UserId]=nil
+   return {status="FALLBACK_NORMAL_LOBBY",reason="OLD_ROUND_EPOCH"} end
   if player.Parent~=deps.players or deps.now()-pending.createdAt>90 then
    self.byUser[player.UserId]=nil
    return {status="FALLBACK_NORMAL_LOBBY",reason="LEFT_OR_EXPIRED"} end
@@ -180,7 +193,7 @@ function M.verifyArrival(data:any,userId:any,claimMap:any,privateServerId:any,no
    seed=record.seed,mode=record.mode,freeForAll=record.freeForAll,
    teamA=record.teamA,teamB=record.teamB,source="SERVER_MEMORYSTORE_ONLY"}
 end
-function M.fromRoblox(featureEnabled:boolean, targetPlaceId:number):any
+function M.fromRoblox(featureEnabled:boolean, targetPlaceId:number, isEpochCurrent:any):any
  local RunService=game:GetService("RunService")
  local Players=game:GetService("Players")
  local HttpService=game:GetService("HttpService")
@@ -191,6 +204,7 @@ function M.fromRoblox(featureEnabled:boolean, targetPlaceId:number):any
   isStudio=RunService:IsStudio(),
   inReservedServer=game.PrivateServerId~="",
   jobId=game.JobId, targetPlaceId=targetPlaceId,
+  isEpochCurrent=isEpochCurrent,
   now=os.time,players=Players,teleport=TeleportService,http=HttpService,
   claimMap=MemoryStoreService:GetHashMap("GQ802_MATCH_CLAIMS_V1"),
   optionsFactory=function()return Instance.new("TeleportOptions")end,
