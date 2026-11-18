@@ -1,15 +1,17 @@
 name: GQ8 Real64 four-lane original-source adoption candidate ON64 OFF59
 on:
   push:
-    branches: [integration/gq8-real63-fourlane-20261119-0618]
+    branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL64.json'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL64.json'
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,7 +38,22 @@ jobs:
         run: |
           set -euo pipefail
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_RC_HEAD_MOVED_RECONCILE_ALL_LANES; exit 1; }
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_HEAD_NOT_SAME_CI; exit 1; }
+            test "$(gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$GITHUB_SHA" --jq .status)" = ahead || { echo RED_OFFICIAL_NOT_VERIFIED_BASE_DESCENDANT; exit 1; }
+          else
+            test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_RC_HEAD_MOVED_RECONCILE_ALL_LANES; exit 1; }
+          fi
+          python3 - <<'PY'
+          import json
+          x=json.load(open('rc_fastlane/EGGRUMBLE_V3_REAL64.json'))
+          assert x['source_profile']=='eggrumble_v3_real64' and x['source_count']==64
+          assert x['pre_adoption_official_head']=='5a47e96f6b4766a9c59dd06b111bea53b73bd5ca'
+          assert x['source_deltas']['unchanged_current59']==56
+          assert x['source_deltas']['host_class']=='Script'
+          assert x['authority']['paid_trade_enabled'] is False and x['authority']['roblox_published'] is False
+          print('GQ8_REAL64_SOURCE_MANIFEST_PROVENANCE_PASS')
+          PY
           for pair in \
             44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e \
             44401178585:38d11f0bf311491ba76fe03f818948e5d4b06889 \
@@ -140,7 +157,12 @@ jobs:
           cmp artifacts/real64/OFF59.rbxlx /tmp/gq863/hud59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real64/EGGRUMBLE_REAL64.project.json --place artifacts/real64/EGGRUMBLE_REAL64_PRIVATE.rbxlx --count 64
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real64/off59/EGGRUMBLE_REAL64.project.json --place artifacts/real64/OFF59.rbxlx --count 59
-          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_BEFORE_RESULT; exit 1; }
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_NOT_SAME_OFFICIAL_HEAD_AFTER_NATIVE_ROJO; exit 1; }
+          else
+            test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_BEFORE_RESULT; exit 1; }
+          fi
           python3 - <<'PY'
           from pathlib import Path
           import hashlib,json,os
@@ -151,13 +173,15 @@ jobs:
             "source_native":"PASS","rojo_source_class":"PASS","off59_bytes":"BYTE_IDENTICAL",
             "private_place_bytes":p.stat().st_size,
             "private_place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
-            "formal_rc_adopted":False})
+            "formal_rc_adopted":os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01",
+            "official_source_profile":"eggrumble_v3_real64",
+            "selected_official_branch_sha":os.environ["GITHUB_SHA"] if os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01" else None})
           f.write_text(json.dumps(j,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
           print('GQ8_REAL64_SOURCE_PREP_GREEN_NOT_FORMAL_RC',p.stat().st_size)
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ8-REAL64-FOUR-AUTHOR-COMPOSITE-PRIVATE-NOT-OFFICIAL
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL64-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL64-FOUR-AUTHOR-COMPOSITE-PRIVATE-NOT-OFFICIAL' }}
           path: artifacts/real64/
           retention-days: 5
           if-no-files-found: error
