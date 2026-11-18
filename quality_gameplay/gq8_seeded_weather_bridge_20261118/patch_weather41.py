@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 
 PARENT_HEAD="940b99543d17e9ed6beb66e4a91a70e478868e3c"
+REVIEWED_PR_MERGE_SHA="31ba113bcad3149cafb2555049aa811203171109"
 STAGE_RENDER_BLOB="0284e40646e800727963667fca5148044cad881f"
 REALM=("ServerScriptService","EGGRUMBLE_RealmBattleCore")
 RENDER=("ServerScriptService","GQ802_StageTileVisualRenderer")
@@ -124,7 +125,7 @@ def flatten(project:Path):
 def verify_author(project:Path,receipt:Path):
     doc,files=flatten(project)
     info=json.loads(receipt.read_text(encoding="utf-8"))
-    if len(files)!=EXPECTED_NUM or info.get("candidate_sha")!=PARENT_HEAD or info.get("source_count")!=41:
+    if len(files)!=EXPECTED_NUM or info.get("candidate_sha")!=REVIEWED_PR_MERGE_SHA or info.get("source_count")!=41:
         raise ValueError("RED_NOT_LATEST_DRI_41: "+str((len(files),info.get("candidate_sha"),info.get("source_count"))))
     expected={tuple(v["route"].split("/")):v for v in info["sources"]}
     if set(expected)!=set(files):raise ValueError("RED_AUTHOR_SOURCE_ROUTES")
