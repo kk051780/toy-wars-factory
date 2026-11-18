@@ -22,7 +22,8 @@ class AirDismountTests(unittest.TestCase):
     def test_actual_callback_uses_existing_safe_move_and_cleanup(self):
         self.assertEqual(SOURCE.count(generator.HEARTBEAT),1)
         self.assertEqual(SOURCE.count(generator.RESCUE),1)
-        call=SOURCE.split(generator.HEARTBEAT,1)[1].split("if idleExpired then",1)[0]
+        call=SOURCE.split("elseif v.flying and ch and departed.Parent==ch",1)[1].split("if idleExpired then",1)[0]
+        self.assertIn(generator.HEARTBEAT,call)
         self.assertIn("craft:Destroy()",call)
         self.assertIn("groundParams.FilterDescendantsInstances={ch,craft}",call)
         self.assertIn("groundParams.RespectCanCollide=true",call)
