@@ -80,7 +80,7 @@ jobs:
             --receipt55 /tmp/gq863/base55/B_REAL55_RECEIPT.json \
             --hud59 /tmp/gq863/hud59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
             --hud-receipt /tmp/gq863/hud59/GQ828_REAL59_RECEIPT.json \
-            --trade57 /tmp/gq863/trade62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
+            --trade62 /tmp/gq863/trade62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
             --trade-receipt /tmp/gq863/trade62/B_REAL62_RECEIPT.json \
             --viral56 /tmp/gq863/viral56/EGGRUMBLE_REAL56.project.json \
             --viral-receipt /tmp/gq863/viral56/GQ8_VIRAL56_RECEIPT.json \
@@ -135,10 +135,10 @@ jobs:
             p=Path('/tmp/gq863-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
           PY
           /tmp/gq863-rojo build artifacts/real64/EGGRUMBLE_REAL64.project.json -o artifacts/real64/EGGRUMBLE_REAL64_PRIVATE.rbxlx
-          /tmp/gq863-rojo build /tmp/gq863/base55/EGGRUMBLE_REAL55.project.json -o artifacts/real64/OFF59.rbxlx
+          /tmp/gq863-rojo build artifacts/real64/off59/EGGRUMBLE_REAL64.project.json -o artifacts/real64/OFF59.rbxlx
           cmp artifacts/real64/OFF59.rbxlx /tmp/gq863/hud59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real64/EGGRUMBLE_REAL64.project.json --place artifacts/real64/EGGRUMBLE_REAL64_PRIVATE.rbxlx --count 63
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq863/hud59/on59/GQ828_REAL59_HUD_MAP.project.json --place artifacts/real64/OFF59.rbxlx --count 59
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real64/EGGRUMBLE_REAL64.project.json --place artifacts/real64/EGGRUMBLE_REAL64_PRIVATE.rbxlx --count 64
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real64/off59/EGGRUMBLE_REAL64.project.json --place artifacts/real64/OFF59.rbxlx --count 59
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_BEFORE_RESULT; exit 1; }
           python3 - <<'PY'
           from pathlib import Path
