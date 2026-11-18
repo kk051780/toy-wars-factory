@@ -40,6 +40,11 @@ def run(a):
     # The true current canonical Real63, not an inferred or historical private place.
     official63=from_xml(a.real63_place)
     receipt=json.loads(a.real63_receipt.read_text(encoding="utf8"))
+    print("GQ8_OFFICIAL63_RECEIPT_FIELDS",
+          json.dumps({k:receipt.get(k) for k in
+          ("official_rc_adopted","candidate_git_head","candidate_sources",
+           "original_unchanged","native","rojo","official_parent_sha",
+           "place_sha256")},sort_keys=True))
     require(receipt.get("official_rc_adopted") is True and
             receipt.get("candidate_git_head")==OFFICIAL63 and
             receipt.get("candidate_sources")==63 and
