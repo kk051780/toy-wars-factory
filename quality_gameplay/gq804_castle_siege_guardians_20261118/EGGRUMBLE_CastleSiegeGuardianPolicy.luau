@@ -13,6 +13,9 @@ local GUARDIANS={
 }
 local THRESHOLDS={700,400,200}
 local GATE_MAX=180
+local GATE_ATTACKER_COOLDOWN=1
+local GATE_WINDOW_SECONDS=5
+local GATE_MAX_DAMAGE_WINDOW=72
 local HP_MAX=1000
 local MAX_CASTLE_DAMAGE_WINDOW=150
 local WINDOW_SECONDS=5
@@ -24,7 +27,8 @@ function M.new(matchId:string,castleId:string):any
  assert(type(matchId)=="string" and #matchId>3)
  assert(type(castleId)=="string" and castleId~="")
  return {matchId=matchId,castleId=castleId,gateHP=GATE_MAX,castleHP=HP_MAX,stage="GATE",
-  alive=true,lastAttacks={},windowAt=-math.huge,windowDamage=0,guardianThresholdUsed={},
+  alive=true,gateLastAttacks={},gateWindowAt=-math.huge,gateWindowDamage=0,
+  lastAttacks={},windowAt=-math.huge,windowDamage=0,guardianThresholdUsed={},
   guardianTotal=0,guardianActive={},lastSummon=-math.huge}
 end
 local function ctx(s:any,r:any):boolean
@@ -42,9 +46,18 @@ local function validAmount(v:any):boolean
  return type(v)=="number" and v==v and v>0 and v<math.huge
 end
 function M.gateHit(s:any,r:any):any
- if not legalAttack(s,r) or s.stage~="GATE" or not validAmount(r.damage) then return nil end
- local amount=math.min(36,math.floor(r.damage))
+ if not legalAttack(s,r) or s.stage~="GATE" or not validAmount(r.damage)
+  or type(r.now)~="number" or r.now~=r.now or math.abs(r.now)==math.huge then return nil end
+ -- Server time, not client time. Prevent rapid five-hit gate deletion while
+ -- allowing several allies to cooperate, at most 72 gate HP per 5 seconds.
+ if r.now-(s.gateLastAttacks[r.attackerId] or -math.huge)<GATE_ATTACKER_COOLDOWN then return nil end
+ local inWindow=r.now-s.gateWindowAt<GATE_WINDOW_SECONDS
+ local used=if inWindow then s.gateWindowDamage else 0
+ local amount=math.min(36,math.floor(r.damage),GATE_MAX_DAMAGE_WINDOW-used)
  if amount<1 then return nil end
+ if not inWindow then s.gateWindowAt=r.now;s.gateWindowDamage=0 end
+ s.gateWindowDamage+=amount
+ s.gateLastAttacks[r.attackerId]=r.now
  s.gateHP=math.max(0,s.gateHP-amount)
  if s.gateHP==0 then s.stage="CORE" end
  return {kind=if s.gateHP==0 then "BREACH_READY" else "GATE_HIT",
