@@ -1,15 +1,5 @@
-name: GQ828 Actual Core36 to HUD Map Real40 Native Rojo OFF36
+name: GQ828 Historical Core36 to Real40 Replay (superseded by Real55 to59)
 on:
-  push:
-    branches: ['feature/gq8-hud-intel-fog-20261119']
-    paths:
-      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
-      - '.github/workflows/p0d-gq8-hud-real40.yml'
-  pull_request:
-    branches: ['rc/p0d-s1-kids-rc01']
-    paths:
-      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
-      - '.github/workflows/p0d-gq8-hud-real40.yml'
   workflow_dispatch:
 permissions:
   contents: read
