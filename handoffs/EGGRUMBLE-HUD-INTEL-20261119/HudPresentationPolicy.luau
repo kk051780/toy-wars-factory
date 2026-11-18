@@ -39,14 +39,15 @@ function M.layout(w, h, hand)
         }
     else
         local x = w - 50
+        local menuY = math.min(133, h * .18)
         p = {
             ATTACK = at(x, h - 67, 56, "攻撃"),
             JUMP = at(x, h - 138, 46, "ジャンプ"),
             DODGE = at(x - 66, h - 149, 42, "回避"),
             INVUL = at(x - 102, h - 71, 46, "無敵"),
             MUSOU = at(x - 66, h - 35, 46, "無双"),
-            ITEM = at(x - 65, 133, 42, "道具"),
-            SKILL = at(x + 1, 133, 42, "技"),
+            ITEM = at(x - 65, menuY, 42, "道具"),
+            SKILL = at(x + 1, menuY, 42, "技"),
             CONTEXT = at(x - 145, h - 152, 40, "調べる"),
             MOVE = at(66, h - 75, 95, "移動"),
             MAP = at(60, 64, 88, "地図"),
