@@ -48,7 +48,7 @@ jobs:
           import json
           x=json.load(open('rc_fastlane/EGGRUMBLE_V3_REAL64.json'))
           assert x['source_profile']=='eggrumble_v3_real64' and x['source_count']==64
-          assert x['pre_adoption_official_head']=='b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff''
+          assert x['pre_adoption_official_head']=='b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff'
           assert x['source_deltas']['existing_unchanged_real62']==59
           assert x['source_deltas']['host_class']=='Script'
           assert x['authority']['paid_trade_enabled'] is False and x['authority']['roblox_published'] is False
