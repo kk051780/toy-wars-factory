@@ -45,7 +45,8 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
     insert("local Swarm={}",require)
     state=splice(' local epoch="CHARM:', ' local function credit(id:string)')
     insert('  local function credit(id:string)',' local epoch="CHARM:'+state)
-    insert('   local m=model :: Model\n','  m:SetAttribute("EGGRUMBLE_NeutralInstanceId",epoch..":"..tostring(spawnSerial))\n')
+    swap('   local m=model :: Model\n','   local m=model :: Model\n'
+         '   m:SetAttribute("EGGRUMBLE_NeutralInstanceId",epoch..":"..tostring(spawnSerial))\n')
     insert('     live[m]=nil\n','     local formerAlly=charmed[m]~=nil\n     release(m)\n')
     swap('    if type(id)=="string" and session.rules.phase=="ACTIVE"',
          '    if not formerAlly and type(id)=="string" and session.rules.phase=="ACTIVE"')
