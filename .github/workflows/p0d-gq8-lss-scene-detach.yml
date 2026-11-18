@@ -22,8 +22,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -B -m unittest -v handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/test_scene_detach_cleanup.py
-          python3 -B -m unittest -v handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/test_idle_craft.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_scene_detach_cleanup.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_idle_craft.py
           python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_scene_detach_native.py --out-dir /tmp/gq8-detach
       - uses: actions/checkout@v4
         with:
