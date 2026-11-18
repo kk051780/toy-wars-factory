@@ -1,7 +1,7 @@
 --!strict
 -- GQ8 #824 OPTIONAL VFX MODULE. Cosmetic-only; never awards KO/damage/charges.
 -- Must run in each observing client from the EXISTING server replicated Musou snapshot.
--- No self-subscribed RemoteEvent and no fake display-as-verified from client timers.
+-- No client-owned network channel; cosmetics reflect only server-owned attributes.
 local RunService=game:GetService("RunService")
 local M={}
 local FOLDER="EGGRUMBLE_MUSOU_OBSERVER_AURA"
