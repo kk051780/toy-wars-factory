@@ -1,5 +1,10 @@
 name: GQ8 latest 42 guardians seeded weather source/native/Rojo ON-OFF
 on:
+  push:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_seeded_weather_bridge_20261118/**'
+      - '.github/workflows/gq8-dri42-seeded-weather-real.yml'
   pull_request:
     branches: [quality/gq8-subsea-melee-los-20261118]
     paths:
