@@ -26,7 +26,7 @@ jobs:
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_RC_MOVED_REBASE; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')" = 34cafed1cb9e92e08bbc8f2afa67d50ae52a083a || { echo RED_WEATHER42_DRI_MOVED; exit 1; }
-          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq '.head.sha')" = a8bc2ba30bf67515282ae27de2814c1bc6dbab89 || { echo RED_NEUTRAL43_DRI_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq '.head.sha')" = 34415d1d7bdee15ad64e42b79791a7b5c16e846d || { echo RED_NEUTRAL43_DRI_MOVED; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/812" --jq '.head.sha')" = be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8 || { echo RED_ITEM_AUTHOR_MOVED; exit 1; }
           mkdir -p artifacts/original artifacts/upstream
           gh run download 44319450066 --repo "$GITHUB_REPOSITORY" \
@@ -34,8 +34,8 @@ jobs:
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
           for spec in \
-            "0f712d05533f5744cd95ac147c8c14a5bf6f67fe composer815.py" \
-            "3f1359b8fa7413bf6885d634d5c9da06190f2e90 EGGRUMBLE_SwarmCombat815.luau" \
+            "0ce5ae724ab769edbdcbb20ca062fac15d92fc6c composer815.py" \
+            "5772be17afd7fda185dfde99ca2d44028fb293a5 EGGRUMBLE_SwarmCombat815.luau" \
             "42f512c4aaa389e0027be774c327e1f5a106aabf EGGRUMBLE_NeutralFinisherPolicy801.luau" \
             "2c81da640d465d27630840be2f1f5245bc7cd5db patch_item812.py"; do
             blob="$(echo "$spec" | cut -d' ' -f1)"
