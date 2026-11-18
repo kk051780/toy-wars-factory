@@ -77,7 +77,7 @@ jobs:
           for state in ("on","off"):
               project={"name":"LeviathanLOS"+state,"tree":{"$className":"DataModel","ServerScriptService":{
                   "$className":"ServerScriptService","RealmBattleCore":{
-                      "$path":"artifacts/"+state+"/RealmBattleCore.server.luau"}}}}
+                      "$path":state+"/RealmBattleCore.server.luau"}}}}
               Path("artifacts/"+state+".project.json").write_text(json.dumps(project))
           PY
           for state in on off; do
