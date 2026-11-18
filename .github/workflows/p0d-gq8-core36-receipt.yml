@@ -1,0 +1,34 @@
+name: GQ8 Core36 historical post-CAS receipt accuracy
+on:
+  push:
+    branches:
+      - quality/gq8-core36-postcas-truth-20261118
+    paths:
+      - 'rc_fastlane/ACTIVE.json'
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
+      - 'quality_gameplay/gq8_core36_postcas_receipt_20261118/**'
+      - '.github/workflows/p0d-gq8-core36-receipt.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/ACTIVE.json'
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
+      - 'quality_gameplay/gq8_core36_postcas_receipt_20261118/**'
+      - '.github/workflows/p0d-gq8-core36-receipt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receipt-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Cross-manifest historical source receipt and hostile mutations
+        run: python3 -B -m unittest discover -v -s quality_gameplay/gq8_core36_postcas_receipt_20261118 -p 'validate_receipt.py'
+      - name: Clear evidence classification
+        run: |
+          echo 'PASS=HISTORICAL_SOURCE_ADOPTION_METADATA_ONLY'
+          echo 'ENGINE_STUDIO=NOT_TESTED ANDROID=NOT_TESTED FUN=NOT_TESTED'
