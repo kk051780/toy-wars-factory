@@ -90,4 +90,21 @@ function Visual.render(element,kind,outcome,position,lowEnd)
  Debris:AddItem(holder,d.duration)
  return true
 end
+-- Server-confirmed original V3 cast ID mapping: #482 Mage A/B/C, Warrior C mantle, Zombie C curse.
+-- No speculative element for other seven-role skills; return nil until a verified server tag exists.
+local KNOWN_CASTS={
+ MAGE={A="ICE",B="FIRE",C="LIGHTNING"},
+ WARRIOR={C="DIVINE"},
+ ZOMBIE={C="CURSE"},
+}
+function Visual.elementForServerCast(signature,serverRole)
+ if type(signature)~="string" or type(serverRole)~="string" then return nil,nil end
+ local role,slot,seq=string.match(signature,"^([A-Z]+):([ABC]):(%d+)$")
+ if not role or role~=serverRole or #seq>10 then return nil,nil end
+ local n=tonumber(seq)
+ if not n or n<1 or n>2147483647 then return nil,nil end
+ local element=KNOWN_CASTS[role] and KNOWN_CASTS[role][slot]
+ return element,n
+end
+
 return Visual
