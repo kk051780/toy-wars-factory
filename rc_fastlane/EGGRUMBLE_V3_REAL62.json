@@ -8,7 +8,7 @@
   ],
   "feature_id": "GQ8_TRADE_UX_JOURNAL_ESCROW_20261119",
   "canonical_branch": "rc/p0d-s1-kids-rc01",
-  "prior_official_sha": "38d11f0bf311491ba76fe03f818948e5d4b06889",
+  "prior_official_sha": "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca",
   "parent_profile": "eggrumble_v3_real59",
   "parent_source_count": 59,
   "source_profile": "eggrumble_v3_real62",
@@ -50,15 +50,27 @@
     "studio_2client": "NOT_TESTED",
     "android_15min": "NOT_TESTED",
     "art_fun": "NO_GO",
-    "legacy_rich51_active_runtime_unchanged": true
+    "legacy_rich51_active_runtime_unchanged": true,
+    "current_official_host_runnable_class_preserved": true
   },
   "candidate_runs": {
     "source_only_real62_successful_run": 44402402944,
-    "private_artifact_id": 14474486016
+    "private_artifact_id": 14474486016,
+    "note": "Historical green run before official #844; latest Host corrected rebase requires fresh passing CI"
   },
-  "rollback": "Use original unchanged Real59 complete Place and original55 archive; remove only exactly 3 trade source routes",
+  "rollback": "Use exact current #844 runnable Real59 Host Script profile; removing only 3 trade routes must NOT revert to inert pre-#844 Host ModuleScript",
   "official_build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real62.yml",
   "acceptance": "Only authenticated #220 B writer nonforce fresh expectedSHA RC CAS followed by NEW canonical same-HEAD Native62/Rojo62/OFF59+artifact bytes qualifies source selection. No author ACK wait, no main/write/publish/Robux.",
   "source_dependency_warning": "Current artifact release retention short. Archive source provenance before public release.",
-  "product_blocker": "Store per-instance inventory provenance and two-account persistent idempotent transfer writer are NOT connected; journal/reducer alone do not transfer items."
+  "product_blocker": "Store per-instance inventory provenance and two-account persistent idempotent transfer writer are NOT connected; journal/reducer alone do not transfer items.",
+  "parent_host_activation": {
+    "source_pr": 844,
+    "official_rc_sha": "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca",
+    "successful_candidate_run": 44403383782,
+    "source_count": 59,
+    "source_bytes_modified": 0,
+    "host_class_before": "ModuleScript",
+    "host_class_after": "Script",
+    "source_role": "Preserve runnable latest canonical Real59 Host"
+  }
 }
