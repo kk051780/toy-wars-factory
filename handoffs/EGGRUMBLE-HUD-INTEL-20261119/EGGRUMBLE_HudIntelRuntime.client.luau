@@ -400,10 +400,13 @@ local function updateLayout()
   mapBox.Size=UDim2.fromOffset(p.MAP.size,p.MAP.size)
   mapBox.Position=UDim2.fromOffset(math.max(5,mx-p.MAP.size/2),8)
  end
- statusBox.Position=UDim2.new(.19,0,0,9)
- statusBox.Size=UDim2.new(.51,0,0,27)
- progress.Position=UDim2.new(.31,0,0,37)
- progress.Size=UDim2.new(.28,0,0,5)
+ local chrome=data.chrome
+ local status=chrome.status
+ local bar=chrome.musouBar
+ statusBox.Position=UDim2.fromOffset(status.x,status.y)
+ statusBox.Size=UDim2.fromOffset(status.w,status.h)
+ progress.Position=UDim2.fromOffset(bar.x,bar.y)
+ progress.Size=UDim2.fromOffset(bar.w,bar.h)
  drawer.Size=UDim2.fromOffset(math.min(178,w*.23),170)
  drawer.Position=UDim2.fromOffset(math.max(w-195,w*.72),math.min(h*.35,147))
  redraw()
