@@ -22,3 +22,22 @@ Only #220 authenticated B writer may adopt this new source profile into one `rc/
 
 ## Source ownership and merge exclusion
 Never overwrite any newer #841 counter, #842/#843 trade-composite, #825 MUSOU/INVUL source or original Combat except the scoped patch shown here. If original Combat now contains another basic/dodge Tool, FAIL and reconcile; don't attach duplicate attack loops. The extra normal attack has no new RemoteEvent nor damage/score authority; the only one is original SevenRoleCombat / Swarm.
+
+
+## SUCCESSOR 2026-11-19: CURRENT Real62→Real63 (supersedes Real59→60 above)
+
+The official lineage advanced twice while this feature was built: first #844 fixed the single original Host source class to runnable `Script` at official HEAD `5a47e96f6b4766a9c59dd06b111bea53b73bd5ca`; then #842 adopted exactly three original trade preview/journal/escrow source routes, preserving active Host, at latest official HEAD `b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff` (**Real62**). This source feature has been rebased onto that TRUE latest formal 62-source lineage with a non-force two-parent developer-branch reconciliation. The official sole RC is not yet modified by this feature.
+
+**Now correct:** Real62 62 original source/class instances, +1 pure BasicMobilityPolicy, exactly two original singleton owner source *patches* (`EGGRUMBLE_SevenRoleCombat` and existing `EGGRUMBLE_HudIntelRuntime`) => genuine **Real63**, 60/62 original source instances byte-for-byte unchanged, with Host still executable `Script` and all three original Trade/Journal/Escrow modules preserved byte-exact. New field eggs/Fog and all previous 7-job MUSOU/INVUL remain intact. No second damage or store authority.
+
+The currently active Real63 preselection contract is:
+- `handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py`
+- `rc_fastlane/EGGRUMBLE_V3_REAL63_BASIC_DODGE.json`
+- `.github/workflows/p0d-gq828-basic-dodge-real63.yml` (private candidate)
+- `.github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml` (formal after authorized nonforce CAS)
+
+The older Real60 workflows/manifest are historical/manual only and MUST NOT replace newer 62-source official content. Exact official Real62 physical source parent: Actions run `44404334603` SUCCESS, artifact ID `14473628619`, official commit `b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff`.
+
+Earliest genuine private Real63 Native/Rojo/Off62 candidate SUCCESS: [run 44404983954](https://github.com/kk051780/toy-wars-factory/actions/runs/44404983954), source count 63, actual Place **662,117 bytes**, place/source-class hash `243d502ecf43f3151ab81ee81c6ec61c02ee181fbd9cc877288452e3e88d66d3`, exact OFF62 source-class hash `52ddbbdbd8370bcda6720c468c74f19dcdf706391bb58e0bd8197c57570a5e84`, candidate artifact ID `14472869066` (ZIP 397,094 bytes). Newest PR-head CI after branch reconciliation and formal-style PR gate still required. Formal RC adoption is not proven by this old successful candidate run.
+
+**Real-world GO remains NO:** no actual Roblox Studio 2-client combat/physics test, Android 15 min, attack hit-feel, input overlap screenshots or FUN/ART acceptance. All new moves are free, do not process real purchases and never write `main` or publish. Only the designated sole #220 writer should advance the official branch by nonforce expected-SHA CAS, rechecking that its SHA is still the latest and preserving any further newer approved sources. Then run exact NEW official HEAD gate plus artifact readback before claiming RC_INTEGRATED.
