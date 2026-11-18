@@ -49,3 +49,9 @@ jobs:
           /tmp/gq805_native/luau-compile --text /tmp/GQ805_LobbyShopCatalog.luau >/dev/null
           /tmp/gq805_native/luau-compile --text /tmp/GQ805_LobbyShopView.luau >/dev/null
           echo GQ805_READONLY_GUILD_SHOP_4_SCRIPTS_LUAU_NATIVE_COMPILE_PASS
+      - name: Composite 41+4 source Class+SHA, OFF41 and negative-mutation QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq805_shop_kiosk_runtime_20261118
+          python3 "$R/test_package_shop45.py" /tmp/GQ805_LobbyShopCatalog.luau /tmp/GQ805_LobbyShopView.luau
