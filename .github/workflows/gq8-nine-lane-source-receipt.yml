@@ -1,4 +1,4 @@
-name: GQ8 independent official Real62 nine-domain source and Host audit
+name: GQ8 independent Real63 nine-domain Host, trade and dodge preservation audit
 on:
   push:
     branches:
@@ -28,6 +28,8 @@ jobs:
       ACTIVE59_RUN: '44403496549'
       REAL62_HEAD: b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff
       REAL62_RUN: '44404334603'
+      REAL63_HEAD: ad602cebafc1a9d8caed078ab86c7a58b0fbbbef
+      REAL63_RUN: '44405940669'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,20 +42,25 @@ jobs:
           if [ "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01 ]; then
             test "$LIVE" = "$GITHUB_SHA" || { echo RED_OFFICIAL_SHA_MOVED; exit 1; }
           else
-            test "$LIVE" = "$REAL62_HEAD" || { echo RED_NEWER_OFFICIAL_RC_RECONCILE; exit 1; }
+            test "$LIVE" = "$REAL63_HEAD" || { echo RED_NEWER_OFFICIAL_RC_RECONCILE; exit 1; }
           fi
-          for item in "$ORIGINAL59_RUN:$ORIGINAL59_HEAD" "$ACTIVE59_RUN:$ACTIVE59_HEAD" "$REAL62_RUN:$REAL62_HEAD"; do
+          for item in "$ORIGINAL59_RUN:$ORIGINAL59_HEAD" "$ACTIVE59_RUN:$ACTIVE59_HEAD" "$REAL62_RUN:$REAL62_HEAD" "$REAL63_RUN:$REAL63_HEAD"; do
             ID="${item%%:*}"; EXPECTED="${item#*:}"
             test "$(gh run view "$ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "$EXPECTED success" || { echo RED_UNVERIFIED_FORMAL_SOURCE_PARENT_"$ID"; exit 1; }
           done
-          mkdir -p artifacts/source59 artifacts/host59 artifacts/real62 artifacts/evidence
+          mkdir -p artifacts/source59 artifacts/host59 artifacts/real62 artifacts/real63 artifacts/evidence
           gh run download "$ORIGINAL59_RUN" --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/source59
           gh run download "$ACTIVE59_RUN" --repo "$GITHUB_REPOSITORY" \
             --name GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL --dir artifacts/host59
           gh run download "$REAL62_RUN" --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir artifacts/real62
+          gh run download "$REAL63_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir artifacts/real63
           for file in \
+            artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            artifacts/real63/REAL63_RECEIPT.json \
             artifacts/source59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
             artifacts/source59/EGGRUMBLE_OFF55_PRIVATE.rbxlx \
             artifacts/source59/GQ828_REAL59_RECEIPT.json \
@@ -107,9 +114,35 @@ jobs:
           assert a["paid_inventory_transfer"] is False
           print("GQ8_INDEPENDENT_REAL62_9_DOMAIN_14_MUTATIONS_NO_FAKE_PRODUCT_GO_PASS")
           PY
+      - name: Independently audit REAL63 against REAL62 actual source/class and eight adversarial receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          P=quality_gameplay/gq8_nine_lane_intake_20261119
+          python3 -B "$P/verify_real63.py" \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --real63 artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --off62 artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            --receipt artifacts/real63/REAL63_RECEIPT.json \
+            --expected-head "$REAL63_HEAD" --output artifacts/evidence/REAL63.json
+          python3 -B "$P/test_real63_negative.py" \
+            --real62 artifacts/real62/EGGRUMBLE_REAL62.rbxlx \
+            --real63 artifacts/real63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --off62 artifacts/real63/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx \
+            --receipt artifacts/real63/REAL63_RECEIPT.json \
+            --expected-head "$REAL63_HEAD"
+          python3 - <<'PY'
+          import json
+          a=json.load(open('artifacts/evidence/REAL63.json'))
+          assert a['source_count']==63 and a['original_unchanged']==60
+          assert a['nine_source_domains']==9 and a['nine_studio_domains']==0
+          assert a['host_class']=='Script' and a['off62_source_class_exact']
+          assert a['product_go'] is False and not a['paid_inventory_transfer']
+          print('GQ8_REAL63_CURRENT_9DOMAIN_NATIVE_SOURCE_AUDIT_NO_FALSE_PRODUCT_GO_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ8-NINE-DOMAIN-FORMAL-REAL62-SOURCE-EVIDENCE-ONLY
+          name: GQ8-NINE-DOMAIN-FORMAL-REAL63-SOURCE-EVIDENCE-ONLY
           path: artifacts/evidence/
           retention-days: 5
           if-no-files-found: error
