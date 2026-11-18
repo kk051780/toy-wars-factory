@@ -66,7 +66,7 @@ def compose(parent55,receipt55,prior_runtime46,new_runtime,old_counter_author,ou
  new_runtime=Path(new_runtime).resolve(strict=True)
  old_counter_author=Path(old_counter_author).resolve(strict=True)
  out=Path(out).resolve()
- if out.exists() or out.parent.exists():raise ValueError("RED_REFUSE_REWRITE_PARENT")
+ if out.exists():raise ValueError("RED_REFUSE_REWRITE_PARENT")
  src_doc,src=flatten(parent55)
  receipt=json.loads(receipt55.read_text(encoding="utf-8"))
  if len(src)!=55 or set((POLICY,RUNTIME,COMBAT,SWARM,COUNTER))&set(src)!={POLICY,RUNTIME,COMBAT,SWARM}:
