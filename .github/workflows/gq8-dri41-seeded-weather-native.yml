@@ -1,0 +1,171 @@
+name: GQ8 current DRI real41 stage-seeded Realm weather native Rojo rollback
+on:
+  pull_request:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_seeded_weather_bridge_20261118/**'
+      - '.github/workflows/gq8-dri41-seeded-weather-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-realm-stage-41:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Strict Python source mutation and reversible overlay checks
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_seeded_weather_bridge_20261118 -p 'test_weather_bridge.py'
+      - name: Download exact latest DRI 41 original source and immutable git-blob receipt
+        run: |
+          set -euo pipefail
+          UP=artifacts/upstream
+          mkdir -p "$UP"
+          RC="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$RC" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_CURRENT_RC_MOVED_NEEDS_REBASE; exit 1; }
+          DRI="$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')"
+          gh api "repos/$GITHUB_REPOSITORY/compare/940b99543d17e9ed6beb66e4a91a70e478868e3c...$DRI" > /tmp/gq8-dri-succession.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gq8-dri-succession.json'))
+          allowed=('.github/workflows/gq815-guardian-real42.yml',
+                   'quality_gameplay/gq8_guardian_runtime_20261118/')
+          changes=[x['filename'] for x in d['files']]
+          assert d['status'] in ('identical','ahead'),('RED_DRI_NOT_DESCENDANT',d['status'])
+          assert all(p==allowed[0] or p.startswith(allowed[1]) for p in changes),('RED_DRI_41_SOURCE_CONFLICT',changes)
+          print('GQ8_DRI_41_AUTHOR_SOURCES_UNCHANGED_AFTER_42_ADDON',len(changes))
+          PY
+          # PR Actions built a synthetic merge commit. Its complete tree is
+          # identical to the exact reviewed #796 source branch HEAD.
+          AUTHOR_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/940b99543d17e9ed6beb66e4a91a70e478868e3c" --jq '.tree.sha')"
+          MERGE_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/31ba113bcad3149cafb2555049aa811203171109" --jq '.tree.sha')"
+          test "$AUTHOR_TREE" = b4273a7bf4bdab9ca0856632ff0e2e88b002d998
+          test "$MERGE_TREE" = "$AUTHOR_TREE" || { echo RED_AUTHOR_PR_SYNTHETIC_MERGE_TREE_DRIFT; exit 1; }
+          gh run download 44311974603 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL --dir "$UP"
+          test -s "$UP/portable41/EGGRUMBLE_SOURCE41.project.json"
+          test -s "$UP/portable41/B_PORTABLE41_SOURCE_RECEIPT.json"
+          test -s "$UP/portable41/sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau"
+          echo GQ8_CURRENT_DRI_SOURCE_RECEIPT_DOWNLOADED
+      - name: Compose and verify exact original41 plus two source updates, 39 remaining exact
+        run: |
+          set -euo pipefail
+          DIR=quality_gameplay/gq8_seeded_weather_bridge_20261118
+          python3 -B "$DIR/patch_weather41.py" \
+            --original41 artifacts/upstream/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --receipt artifacts/upstream/portable41/B_PORTABLE41_SOURCE_RECEIPT.json \
+            --out artifacts/weather41/WEATHER41.project.json
+          test -s artifacts/weather41/WEATHER41.project.receipt.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _weather_native
+          persist-credentials: false
+      - name: Native compile original41 and selected41, 15 real phase tests and malicious mutant RED
+        run: |
+          set -euo pipefail
+          cmake -S _weather_native -B /tmp/gq8-weather-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-weather-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_seeded_weather_bridge_20261118.patch_weather41 import flatten
+          for path in (Path('artifacts/upstream/portable41/EGGRUMBLE_SOURCE41.project.json'),
+                       Path('artifacts/weather41/WEATHER41.project.json')):
+              _,files=flatten(path)
+              assert len(files)==41
+              for src in files.values():
+                  subprocess.run(['/tmp/gq8-weather-luau/luau-compile','--text',str(src)],
+                      stdout=subprocess.DEVNULL,check=True)
+              print('GQ8_WEATHER_REAL41_ALL_NATIVE_COMPILE_PASS',len(files))
+          PY
+          DIR=quality_gameplay/gq8_seeded_weather_bridge_20261118
+          python3 -B "$DIR/make_weather_native.py" \
+            --project artifacts/weather41/WEATHER41.project.json \
+            --out /tmp/gq8-weather-good.luau --mutant /tmp/gq8-weather-mutant.luau
+          /tmp/gq8-weather-luau/luau-compile --text /tmp/gq8-weather-good.luau >/dev/null
+          /tmp/gq8-weather-luau/luau /tmp/gq8-weather-good.luau |
+            grep -qx GQ8_STAGE_WEATHER_REAL41_REAL_HELPER_16_CASES_PASS
+          if /tmp/gq8-weather-luau/luau /tmp/gq8-weather-mutant.luau \
+              > /tmp/gq8-weather-mutant.log 2>&1; then
+            echo RED_WEATHER_METEOR_ALIAS_MUTANT_DID_NOT_FAIL; exit 1
+          fi
+          grep -q RED_STORM_THEME_ALIASES /tmp/gq8-weather-mutant.log
+          echo GQ8_WEATHER_REAL41_VM_GOOD_MUTANT_RED_PASS
+      - name: Fetch checksummed original Rojo binary and build real two-state Places
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-weather-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-weather-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-weather-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              exe=Path('/tmp/gq8-weather-rojo')
+              exe.write_bytes(z.read(names[0]));exe.chmod(0o755)
+          PY
+          /tmp/gq8-weather-rojo build artifacts/weather41/WEATHER41.project.json -o artifacts/weather41/WEATHER41.rbxlx
+          /tmp/gq8-weather-rojo build artifacts/upstream/portable41/EGGRUMBLE_SOURCE41.project.json -o artifacts/weather41/OFF41.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/weather41/WEATHER41.project.json \
+            --place artifacts/weather41/WEATHER41.rbxlx --count 41
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/upstream/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --place artifacts/weather41/OFF41.rbxlx --count 41
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import tree_scripts
+          from xml.etree import ElementTree as ET
+          original=tree_scripts(ET.parse('artifacts/weather41/OFF41.rbxlx').getroot())
+          selected=tree_scripts(ET.parse('artifacts/weather41/WEATHER41.rbxlx').getroot())
+          changed={k for k in original if original[k]!=selected[k]}
+          assert len(original)==len(selected)==41
+          assert changed=={
+              ('ServerScriptService','GQ802_StageTileVisualRenderer'),
+              ('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+          },('RED_WEATHER_SOURCE_DRIFT',changed)
+          base=Path('artifacts/weather41')
+          receipt=base/'WEATHER41.project.receipt.json'
+          d=json.loads(receipt.read_text())
+          for name,fn in [('on41','WEATHER41.rbxlx'),('off41','OFF41.rbxlx')]:
+              p=base/fn
+              d[name+'_place_bytes']=p.stat().st_size
+              d[name+'_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          d['samehead_rojo_source_class41']=True
+          d['rollback_all_old41_except_two_exact']=True
+          receipt.write_text(json.dumps(d,sort_keys=True,indent=2)+'\n')
+          print('GQ8_DRI_41_SOURCE_ROJO_ON_OFF_EXACT_PASS',d['on41_place_bytes'])
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b
+          DRI="$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')"
+          gh api "repos/$GITHUB_REPOSITORY/compare/940b99543d17e9ed6beb66e4a91a70e478868e3c...$DRI" > /tmp/gq8-dri-succession.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gq8-dri-succession.json'))
+          allowed=('.github/workflows/gq815-guardian-real42.yml',
+                   'quality_gameplay/gq8_guardian_runtime_20261118/')
+          changes=[x['filename'] for x in d['files']]
+          assert d['status'] in ('identical','ahead'),('RED_DRI_NOT_DESCENDANT',d['status'])
+          assert all(p==allowed[0] or p.startswith(allowed[1]) for p in changes),('RED_DRI_41_SOURCE_CONFLICT',changes)
+          print('GQ8_DRI_41_AUTHOR_SOURCES_UNCHANGED_AFTER_42_ADDON',len(changes))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-DRI-REAL41-SEEDED-WEATHER-ON-OFF-NOT-RC
+          path: |
+            artifacts/weather41/
+          retention-days: 3
+          if-no-files-found: error
