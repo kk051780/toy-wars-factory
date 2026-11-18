@@ -14,6 +14,8 @@ PINNED_PR_HEAD = "96ac3b4caa2f649f98c9e093c864c39555f3616a"
 PINNED_PARENT_RUN = 44389905538
 PINNED_PLACE_SIZE = 572030
 PINNED_PLACE_SHA256 = "47b49a5d8ae758071af8eb5faf1ae8bd247d01f6dfe39557a502bd98dce15690"
+PINNED_OFF49_SIZE = 553099
+PINNED_OFF49_SHA256 = "5761ddad3722486ede0f695020ea1924ff4c3fc5acfbc58ab01152434055694b"
 FORMAL_BASE = "f77b4d4393d9e9b19b65566413432a7a9f13962b"
 
 class GateError(ValueError):
@@ -109,7 +111,7 @@ def run(root, current_rc):
         require(cls == item["class"], "RED_SOURCE_CLASS:" + item["route"])
     require(place.stat().st_size == PINNED_PLACE_SIZE and sha(place.read_bytes()) == PINNED_PLACE_SHA256,
             "RED_PLACE_HASH_OR_SIZE")
-    require(off.stat().st_size > 0, "RED_ROLLBACK_OFF49_EMPTY")
+    require(off.stat().st_size == PINNED_OFF49_SIZE and sha(off.read_bytes()) == PINNED_OFF49_SHA256, "RED_ROLLBACK_OFF49_BYTES_OR_SHA")
     byname = {}
     for route, (path, cls) in sources.items():
         byname.setdefault(route[-1], []).append(path)
