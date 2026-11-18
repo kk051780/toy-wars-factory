@@ -65,9 +65,8 @@ local function startSession(mode:string)''',"HOST_START")
     gq8CaptureHint(p,session,"EGG_STEAL")
    end
    session.refresh()''',"EGG_STEAL_EXACT_COMMIT")
-    src=exact(src,
-'''local c=session.rules.castles[tostring(player.UserId)]
-     if c and not c.alive''',
+    src=regex_exact(src,
+        r"local c=session\.rules\.castles\[tostring\(player\.UserId\)\]\n[ \t]+if c and not c\.alive",
 '''local c=session.rules.castles[tostring(player.UserId)]
      if c and c.alive and c.hp<=Rules.CASTLE_HP*.22
        and not session.gq8ViralDanger[player.UserId] then
@@ -75,9 +74,8 @@ local function startSession(mode:string)''',"HOST_START")
       gq8CaptureHint(player,session,"CASTLE_DANGER")
      end
      if c and not c.alive''',"CASTLE_DANGER_ONLY_AUTHORIZED_STATE")
-    src=exact(src,
-'''if session.rules.winner~=nil then
-    -- Short factual result shown exactly once''',
+    src=regex_exact(src,
+        r"if session\.rules\.winner~=nil then\n[ \t]+-- Short factual result shown exactly once",
 '''if session.rules.winner~=nil then
     if not session.gq8ViralResults then
      session.gq8ViralResults=true
