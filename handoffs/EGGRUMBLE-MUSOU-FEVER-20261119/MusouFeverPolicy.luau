@@ -15,6 +15,7 @@ M.COMBO_WINDOW_SECONDS = 3
 M.RUSH_THRESHOLD = 3
 M.FEVER_THRESHOLD = 7
 M.MAX_RECEIPTS = 24
+M.MAX_MATCH_RECEIPTS = 512
 
 -- Base multipliers apply ONCE at the existing server damage/KO owner.
 -- Do not multiply these with a separate permanent power fantasy awakening.
@@ -67,7 +68,7 @@ local function entry(s,c,create)
   e={role=c.role,avatar=ident(c.avatarEpoch),active=false,
    startAt=0,endsAt=0,capAt=0,readyAt=s.startedAt+M.FIRST_READY_SECONDS,
    lastMutation=-1,used=0,chain=0,lastKO=-math.huge,fever=false,
-   totalExtend=0,receiptCount=0,receipts={}}
+   totalExtend=0,receiptCount=0,receipts={},seen={},seenCount=0}
   s.entries[key]=e
  elseif e and e.role~=c.role then
   -- Role changes must go through the existing authoritative match selection.
@@ -142,7 +143,8 @@ function M.onConfirmedKO(s,c,ko)
  if kind~="NEUTRAL" and kind~="HUMAN" and kind~="BOSS" then
   return false,"INVALID_TARGET"
  end
- if e.receipts[ident(ko.receiptId)] then return false,"REPLAYED_KO" end
+ if e.seen[ident(ko.receiptId)] then return false,"REPLAYED_KO" end
+ if e.seenCount>=M.MAX_MATCH_RECEIPTS then return false,"MATCH_KO_BUDGET" end
  if e.receiptCount>=M.MAX_RECEIPTS then return false,"KO_BUDGET" end
  local w=if kind=="NEUTRAL" then 1 else 2
  if c.now-e.lastKO>M.COMBO_WINDOW_SECONDS then e.chain=0 end
@@ -151,6 +153,8 @@ function M.onConfirmedKO(s,c,ko)
  e.lastMutation=c.now
  e.receiptCount+=1
  e.receipts[ident(ko.receiptId)]=true
+ e.seen[ident(ko.receiptId)]=true
+ e.seenCount+=1
  local seconds=if kind=="NEUTRAL" then .5 else 1.0
  local room=M.MAX_KO_EXTENSION_SECONDS-e.totalExtend
  local add=math.min(room,seconds)
