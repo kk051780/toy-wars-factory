@@ -61,7 +61,7 @@ local function isQualified(r:any):boolean
   or r.friendlyAIHelperVerified==true
 end
 function M.corePermit(s:any,r:any):any
- if not legalAttack(s,r) or s.stage~="CORE" or not isQualified(r)
+ if not legalAttack(s,r) or s.stage=="GATE" or s.stage=="FALLEN" or not isQualified(r)
   or not validAmount(r.damage) or type(r.now)~="number" or r.now~=r.now then return nil end
  if r.now-(s.lastAttacks[r.attackerId] or -math.huge)<ATTACKER_COOLDOWN then return nil end
  local used=if r.now-s.windowAt>=WINDOW_SECONDS then 0 else s.windowDamage
