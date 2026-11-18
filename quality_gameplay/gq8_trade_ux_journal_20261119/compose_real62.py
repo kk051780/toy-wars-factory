@@ -26,9 +26,9 @@ HUD_SOURCE={
 def compose(parent59:Path,receipt59:Path,official55:Path,out:Path):
  if out.exists():raise ValueError("RED_REFUSE_OVERWRITE")
  receipt=json.loads(receipt59.read_text(encoding="utf8"))
- if receipt.get("selected59_place_sha256")!=digest(parent59) or
+ if (receipt.get("selected59_place_sha256")!=digest(parent59) or
     receipt.get("baseline55_exact_sources_unchanged") is not True or
-    len(receipt.get("on_sources",[]))!=59 or len(receipt.get("off_sources",[]))!=55:
+    len(receipt.get("on_sources",[]))!=59 or len(receipt.get("off_sources",[]))!=55):
   raise ValueError("RED_REAL59_PARENT_NOT_SHA_VERIFIED")
  original,classes=contents(ET.parse(parent59).getroot())
  base55,classes55=contents(ET.parse(official55).getroot())
