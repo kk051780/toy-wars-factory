@@ -1,4 +1,4 @@
-name: GQ800 original Real42 to neutral species Real43 Native Rojo OFF
+name: GQ800 latest weather42 to neutral species Real43 Native Rojo OFF
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -18,17 +18,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
-      - name: Pin formal branch and exact original Real42 private author artifact
+      - name: Pin formal branch and current verified guardian-weather Real42 source packet
         shell: bash
         run: |
           set -euo pipefail
           ACTUAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$ACTUAL" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
           mkdir -p artifacts/original artifacts/policy
-          gh run download 44316989683 --repo "$GITHUB_REPOSITORY" \
-            --name GQ815-REAL42-GUARDIAN-PRIVATE-SOURCE-NOT-OFFICIAL --dir artifacts/original
-          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json
-          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          gh run download 44319450066 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL42-GUARDIAN-WEATHER-ON-OFF-NOT-RC --dir artifacts/original
+          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
+          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
+          test -s artifacts/original/portable42/B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("artifacts/original/portable42")
+          r=json.loads((p/"B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json").read_text())
+          stage="ServerScriptService/GQ802_StageTileVisualRenderer"
+          realm="ServerScriptService/EGGRUMBLE_RealmBattleCore"
+          assert r["script_count"]==42, "RED_WEATHER42_BAD_COUNT"
+          assert r["untouched_original_scripts"]==40, "RED_WEATHER42_LOST_ORIGINAL"
+          assert sorted(r["modified_original_scripts"])==sorted((stage,realm)), "RED_WEATHER42_REGRESSED_STAGE_REALM"
+          place=p/"EGGRUMBLE_SOURCE42_WEATHER.rbxlx"
+          assert hashlib.sha256(place.read_bytes()).hexdigest()==r["place_sha256"], "RED_WEATHER42_PLACE_MISMATCH"
+          print("GQ800_REBASE_ON_EXACT_GUARDIAN_WEATHER42_PROVENANCE_PASS")
+          PY
           gh api "repos/$GITHUB_REPOSITORY/git/blobs/42f512c4aaa389e0027be774c327e1f5a106aabf" --jq '.content' | base64 -d >artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau
           test "$(git hash-object artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau)" = 42f512c4aaa389e0027be774c327e1f5a106aabf
           echo GQ800_EXACT_ORIGINAL_AUTHOR_801_POLICY_BLOB_PASS
@@ -38,7 +53,7 @@ jobs:
           set -euo pipefail
           python3 -m unittest discover -s quality_gameplay/gq800_neutral8_single_swarm_20261118 -p 'test_*.py' -v
           python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/compose_real43.py \
-            --original42 artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --original42 artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
             --candidate-swarm quality_gameplay/gq800_neutral8_single_swarm_20261118/EGGRUMBLE_SwarmCombat.luau \
             --original-policy artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau \
             --out artifacts/real43/REAL43.project.json
@@ -61,7 +76,7 @@ jobs:
           spec=importlib.util.spec_from_file_location("composer",file)
           module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
           for project,expected in (
-            ("artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json",42),
+            ("artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json",42),
             ("artifacts/real43/REAL43.project.json",43)):
             _,files=module.flatten(Path(project))
             assert len(files)==expected
@@ -85,17 +100,17 @@ jobs:
             dest.write_bytes(z.read(matches[0]));dest.chmod(0o755)
           PY
           /tmp/gq800-rojo build artifacts/real43/REAL43.project.json -o artifacts/real43/REAL43.rbxlx
-          /tmp/gq800-rojo build artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json -o artifacts/real43/OFF42.rbxlx
+          /tmp/gq800-rojo build artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json -o artifacts/real43/OFF42.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project artifacts/real43/REAL43.project.json \
             --place artifacts/real43/REAL43.rbxlx --count 43
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
-            --project artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --project artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
             --place artifacts/real43/OFF42.rbxlx --count 42
-          cmp artifacts/real43/OFF42.rbxlx artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          cmp artifacts/real43/OFF42.rbxlx artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
           python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/package_real43.py \
             --real43 artifacts/real43/REAL43.project.json \
-            --real42 artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --real42 artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
             --out artifacts/portable43/EGGRUMBLE_SOURCE43.project.json \
             --candidate-head "$GITHUB_SHA"
           /tmp/gq800-rojo build artifacts/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx
