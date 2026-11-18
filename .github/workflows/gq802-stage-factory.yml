@@ -1,0 +1,51 @@
+name: GQ802 dynamic-world seeded manifest native gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_stage_manifest_20261118/**'
+      - '.github/workflows/gq802-stage-factory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq802_luau
+          persist-credentials: false
+      - name: Build pinned native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _gq802_luau -B /tmp/gq802_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile and execute 180 seeds with negative mutants
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/gq802_stage_manifest_20261118
+          for f in "$root"/*.luau; do /tmp/gq802_native/luau-compile --text "$f" > /dev/null; done
+          /tmp/gq802_native/luau "$root/test_stage_manifest_native.luau" | tee /tmp/gq802.log
+          grep -q GQ802_NATIVE_180_SEEDS_LAYOUTS_WEATHER_FAIR_ROUTES_MUTATIONS_PASS /tmp/gq802.log
+      - name: Reject duplicate gameplay/teleport/weather authority
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root=Path("quality_gameplay/gq802_stage_manifest_20261118")
+          code=(root/"EGGRUMBLE_StageManifestPolicy.luau").read_text()
+          forbidden=("Instance.new(", "RemoteEvent", "TakeDamage(", "Humanoid.Health", "workspace.Gravity",
+                     "TeleportService", "MemoryStoreService", "DataStoreService", "MarketplaceService",
+                     "SetAttribute(", "math.random(", "Players:GetPlayer", "Lighting.ClockTime")
+          for entry in forbidden:
+              assert entry not in code, ("AUTHORITY_SCOPE_COLLISION",entry)
+          assert len(list(root.glob("*.luau")))==2
+          print("GQ802_PURE_POLICY_NO_AUTHORITY_COLLISION_PASS")
+          PY
