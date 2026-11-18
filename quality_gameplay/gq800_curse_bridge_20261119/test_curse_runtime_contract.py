@@ -15,6 +15,9 @@ assert "existingSummoned=3" in s and "CursePolicy.retire(" in s
 assert "if not charmed[m] and m.Parent and h.Health>0" in s
 assert "if not charmed[m] and m.Parent and m.PrimaryPart and h.Health>0" in s
 assert "lineOfSightToNeutral(m.PrimaryPart.Position,m,target)" in s
+assert 'local creditBefore=eh:GetAttribute("LastAttackerId")' in s
+assert 'if eh.Health>=hpBefore then' in s
+assert 'eh:SetAttribute("LastAttackerId",creditBefore)' in s
 assert "EGGRUMBLE_CharmRibbon" in s and "Enum.HighlightDepthMode.Occluded" in s
 assert "if not formerAlly and type(id)" in s
 # Ensure only the real server-authority successful Hit path invokes seal.
