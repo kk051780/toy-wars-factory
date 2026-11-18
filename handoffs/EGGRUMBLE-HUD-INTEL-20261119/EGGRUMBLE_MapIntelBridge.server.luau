@@ -125,12 +125,17 @@ local function send(p)
  local mode,arena=ownScene(p)
  local root=rootOf(p)
  if not mode or not root then
+  if state[p] then remote:FireClient(p,{kind="MAP_RESET",version=1}) end
   state[p]=nil
   return
  end
  local castles=findCastles(arena)
  local home=ownCastle(castles,p)
- if not home then return end
+ if not home then
+  if state[p] then remote:FireClient(p,{kind="MAP_RESET",version=1}) end
+  state[p]=nil
+  return
+ end
  local s=state[p]
  if not s or s.arena~=arena or s.mode~=mode then
   -- Do not initialize while the user is still in the lobby.
