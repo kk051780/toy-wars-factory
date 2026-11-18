@@ -64,7 +64,6 @@ def main():
         r.write_text(json.dumps(edited))
         must_fail(lambda: audit(p, r, 53), "RED_SOURCE_CLASS_OR_HASH")
         r.write_text(json.dumps(original))
-        script = next((p.parent / row["route"].replace("ServerScriptService/", "sources/ServerScriptService/")).with_suffix(".luau") for row in [])
         # Modify actual live source, not the receipt.
         raw = p.parent / "sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
         old = raw.read_text()
