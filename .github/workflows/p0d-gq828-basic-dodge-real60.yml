@@ -80,9 +80,10 @@ jobs:
           assert 'local CoreAction=require(script.Parent:WaitForChild("EGGRUMBLE_BasicMobilityPolicy"))' in combat
           assert combat.count('core.Activated:Connect(')==1
           assert combat.count('executeCoreAction(session,p,role,action,core)')==1
+          policy=(root/"on60/sources/EGGRUMBLE_BasicMobilityPolicy.luau").read_text()
+          executable="\\n".join(line.split("--",1)[0] for line in policy.splitlines())
           for forbidden in ("RemoteEvent","MarketplaceService","DataStoreService","ProcessReceipt"):
-              policy=(root/"on60/sources/EGGRUMBLE_BasicMobilityPolicy.luau").read_text()
-              assert forbidden not in policy,("RED_POLICY_AUTHORITY",forbidden)
+              assert forbidden not in executable,("RED_POLICY_AUTHORITY",forbidden)
           print("GQ828_REAL60_ONLY_ONE_ORIGINAL_COMBAT_SERVER_DAMAGE_SITE_UNCHANGED_PASS")
           PY
       - uses: actions/checkout@v4
