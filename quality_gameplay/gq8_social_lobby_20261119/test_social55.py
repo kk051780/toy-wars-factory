@@ -3,7 +3,7 @@
 from pathlib import Path
 import ast,sys,tempfile,json
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-from compose_social50 import ROUTES
+from compose_social55 import ROUTES
 root=Path(__file__).parent
 assert len(ROUTES)==2
 plaza=(root/"GQ8_LobbySocialPlaza.server.luau").read_text()
