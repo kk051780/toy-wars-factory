@@ -246,9 +246,15 @@ function Swarm.start(session:any)
    local h=candidate.target
    local model=h.Parent
    if model and model:IsA("Model") and lineOfSightToNeutral(origin,attacker,model) then
+    local oldAttacker=h:GetAttribute("LastAttackerId")
     h:SetAttribute("LastAttackerId",id)
     local before=h.Health
     h:TakeDamage(damage) -- Existing singleton HP writer; exactly once
+    -- ForceField or zero-damage requests must not fabricate hits or steal KO credit.
+    if h.Health>=before then
+     h:SetAttribute("LastAttackerId",oldAttacker)
+     continue
+    end
     local user=Players:GetPlayerByUserId(tonumber(id) or -1)
     if h.Health<before then
      hitSerial+=1
