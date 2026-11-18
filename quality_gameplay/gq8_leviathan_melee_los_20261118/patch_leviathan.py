@@ -7,26 +7,26 @@ from pathlib import Path
 ORIGINAL_BLOB = "1ba20f2e6b1bf6ce7bab7c4d4abbedb663f0abf1"
 SOURCE_PATH = "handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau"
 
-OLD = """      elseif root and now-data.lastHit>=2 then
-       data.lastHit=now
-       local h=nearest.Character:FindFirstChildOfClass("Humanoid")
-       if h then h:TakeDamage(6) end -- new underwater neutral only, no KO/score
+OLD = """     elseif root and now-data.lastHit>=2 then
+      data.lastHit=now
+      local h=nearest.Character:FindFirstChildOfClass("Humanoid")
+      if h then h:TakeDamage(6) end -- new underwater neutral only, no KO/score
 """
-NEW = """      elseif root and now-data.lastHit>=2 then
-       -- Preserve the original two-second neutral attack cadence even behind cover.
-       data.lastHit=now
-       -- Authoritative wall check. Exclude the creature and this target avatar,
-       -- but keep solid coral, reef, and level geometry as blockers.
-       local params=RaycastParams.new()
-       params.FilterType=Enum.RaycastFilterType.Exclude
-       params.FilterDescendantsInstances={creature,nearest.Character}
-       params.RespectCanCollide=true
-       local origin=creature:GetPivot().Position
-       local obstacle=Workspace:Raycast(origin,root.Position-origin,params)
-       if not obstacle then
-        local h=nearest.Character:FindFirstChildOfClass("Humanoid")
-        if h and h.Health>0 then h:TakeDamage(6) end -- existing neutral, no KO/score
-       end
+NEW = """     elseif root and now-data.lastHit>=2 then
+      -- Preserve the original two-second neutral attack cadence even behind cover.
+      data.lastHit=now
+      -- Authoritative wall check. Exclude the creature and this target avatar,
+      -- but keep solid coral, reef, and level geometry as blockers.
+      local params=RaycastParams.new()
+      params.FilterType=Enum.RaycastFilterType.Exclude
+      params.FilterDescendantsInstances={creature,nearest.Character}
+      params.RespectCanCollide=true
+      local origin=creature:GetPivot().Position
+      local obstacle=Workspace:Raycast(origin,root.Position-origin,params)
+      if not obstacle then
+       local h=nearest.Character:FindFirstChildOfClass("Humanoid")
+       if h and h.Health>0 then h:TakeDamage(6) end -- existing neutral, no KO/score
+      end
 """
 
 def git_blob(data: bytes) -> str:
