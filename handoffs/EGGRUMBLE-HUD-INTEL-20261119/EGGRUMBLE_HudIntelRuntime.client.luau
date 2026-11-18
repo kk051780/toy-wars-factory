@@ -239,6 +239,20 @@ local function toolWith(prefix)
  end
  return out
 end
+-- Match exact tool IDs from the source-selected, original server Combat and Invul.
+-- Tool existence means the player has the server-owned ability; never mint it here.
+local function ownedToolByName(name)
+ for _,tool in ipairs(toolWith("")) do
+  if tool.Name==name then return tool end
+ end
+ return nil
+end
+local function musouTool()
+ return ownedToolByName("EGGRUMBLE_MUSOU_AWAKEN")
+end
+local function counterTool()
+ return ownedToolByName("迎撃覚醒")
+end
 local function slotTool(slot)
  for _,tool in ipairs(toolWith("EGGRUMBLE_SKILL_")) do
   if string.match(tool.Name,"^EGGRUMBLE_SKILL_"..slot.."_") then return tool end
@@ -312,16 +326,22 @@ actions.ATTACK.Activated:Connect(function()
  local basic=toolWith("EGGRUMBLE_BASIC_")
  activate(basic[1] or slotTool(selectedSlot))
 end)
+-- Both buttons activate ONLY original server-owned Tools; every activation
+-- is re-checked by the original singleton server policy (not this HUD).
 actions.MUSOU.Activated:Connect(function()
- local tools=toolWith("EGGRUMBLE_MUSOU_")
- if #tools>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true then
-  closeDrawer();activate(tools[1])
+ if not mapSnapshot then return end
+ local tool=musouTool()
+ local phase=player:GetAttribute("EGGRUMBLE_MusouPhase")
+ if tool and phase~="MUSOU" and phase~="RUSH" and phase~="KAKUHEN" then
+  closeDrawer();activate(tool)
  end
 end)
 actions.INVUL.Activated:Connect(function()
- local tools=toolWith("EGGRUMBLE_INVUL_")
- if #tools>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true then
-  closeDrawer();activate(tools[1])
+ if not mapSnapshot then return end
+ local tool=counterTool()
+ local phase=player:GetAttribute("EGGRUMBLE_InvulPhase")
+ if tool and phase~="ARMED" and phase~="AWAKENED" then
+  closeDrawer();activate(tool)
  end
 end)
 mapToggle.Activated:Connect(function()
@@ -416,18 +436,40 @@ RunService.RenderStepped:Connect(function(dt)
  end
  local attr=player:GetAttribute("EGGRUMBLE_Attribute") or "--"
  buffs.Text="属性 "..tostring(attr).." "..table.concat(status," ")
- -- Never fabricate a ready Musou/Invul state from a client-side countdown.
- local musou=toolWith("EGGRUMBLE_MUSOU_")
- local invul=toolWith("EGGRUMBLE_INVUL_")
- local readyM=#musou>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true
- local readyI=#invul>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true
- actions.MUSOU.Text=readyM and "無双" or "無双 --"
- actions.INVUL.Text=readyI and "無敵" or "無敵 --"
- actions.MUSOU.BackgroundTransparency=readyM and .08 or .48
- actions.INVUL.BackgroundTransparency=readyI and .08 or .48
- local charge=player:GetAttribute("EGGRUMBLE_MusouCharge")
- if type(charge)~="number" then charge=0 end
- fill.Size=UDim2.fromScale(math.clamp(charge,0,1),1)
+ -- The actual Real55 server sends MusouReadyIn and MusouPhase.
+ -- Invul uses the original Japanese named server Tool, and ARMED/AWAKENED
+ -- are two different server-published states. Do not invent Ready attributes.
+ local musou=musouTool()
+ local invul=counterTool()
+ local phaseM=player:GetAttribute("EGGRUMBLE_MusouPhase")
+ local readyIn=player:GetAttribute("EGGRUMBLE_MusouReadyIn")
+ local activeM=phaseM=="MUSOU" or phaseM=="RUSH" or phaseM=="KAKUHEN"
+ local verifiedM=musou~=nil and phaseM=="OFF" and type(readyIn)=="number"
+  and readyIn>=0 and readyIn<=0.05
+ if activeM then
+  actions.MUSOU.Text="無双中"
+ elseif verifiedM then
+  actions.MUSOU.Text="無双 発動"
+ elseif musou and type(readyIn)=="number" and readyIn>0 then
+  actions.MUSOU.Text="無双 充填"
+ else
+  actions.MUSOU.Text="無双 --"
+ end
+ local phaseI=player:GetAttribute("EGGRUMBLE_InvulPhase")
+ local awakened=phaseI=="AWAKENED"
+ local armed=phaseI=="ARMED"
+ actions.INVUL.Text=if awakened then "無敵中"
+  elseif armed then "迎撃構え"
+  elseif invul then "迎撃" else "迎撃 --"
+ actions.MUSOU.BackgroundTransparency=verifiedM and .08 or .48
+ actions.INVUL.BackgroundTransparency=(invul and not awakened and not armed)
+  and .08 or .48
+ -- A bar is only server-snapshot progress, not a client-forged READY timer.
+ local charge=0
+ if musou and type(readyIn)=="number" and readyIn>=0 then
+  charge=1-math.clamp(readyIn/70,0,1)
+ end
+ fill.Size=UDim2.fromScale(charge,1)
  -- Keep base attack tappable without an optional skill slot.
  actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil
  actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or ("技"..selectedSlot)
