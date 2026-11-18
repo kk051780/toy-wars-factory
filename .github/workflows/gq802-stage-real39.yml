@@ -87,6 +87,9 @@ jobs:
             --core36 artifacts/combined36/COMBINED36.project.json \
             --source-dir artifacts/stage_modules \
             --out artifacts/visual39/VISUAL39.project.json
+          python3 quality_gameplay/gq802_stage_visual_tiles_20261118/wire_actual_host39.py \
+            --project artifacts/visual39/VISUAL39.project.json \
+            --out artifacts/wired39/WIRED39.project.json
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -105,6 +108,7 @@ jobs:
           from compose_visual39 import flatten
           for name,expected in [
             ("artifacts/visual39/VISUAL39.project.json",39),
+            ("artifacts/wired39/WIRED39.project.json",39),
             ("artifacts/combined36/COMBINED36.project.json",36),
             ("artifacts/current31/CURRENT31_REAL_SOURCE.project.json",31)]:
               _,files=flatten(Path(name))
@@ -132,9 +136,11 @@ jobs:
         run: |
           set -euo pipefail
           /tmp/gq802-real39-rojo build artifacts/visual39/VISUAL39.project.json -o artifacts/visual39/VISUAL39.rbxlx
+          /tmp/gq802-real39-rojo build artifacts/wired39/WIRED39.project.json -o artifacts/wired39/WIRED39.rbxlx
           /tmp/gq802-real39-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/visual39/CORE36_ROLLBACK.rbxlx
           /tmp/gq802-real39-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/visual39/OFF31_ROLLBACK.rbxlx
-          for entry in "artifacts/visual39/VISUAL39.project.json artifacts/visual39/VISUAL39.rbxlx 39" \
+          for entry in "artifacts/wired39/WIRED39.project.json artifacts/wired39/WIRED39.rbxlx 39" \
+                       "artifacts/visual39/VISUAL39.project.json artifacts/visual39/VISUAL39.rbxlx 39" \
                        "artifacts/combined36/COMBINED36.project.json artifacts/visual39/CORE36_ROLLBACK.rbxlx 36" \
                        "artifacts/current31/CURRENT31_REAL_SOURCE.project.json artifacts/visual39/OFF31_ROLLBACK.rbxlx 31"; do
             set -- $entry
@@ -144,19 +150,21 @@ jobs:
           python3 - <<'PY'
           import hashlib,json
           from pathlib import Path
-          p=Path("artifacts/visual39/VISUAL39.rbxlx")
-          receipt=json.loads(Path("artifacts/visual39/VISUAL39.project.receipt.json").read_text())
+          p=Path("artifacts/wired39/WIRED39.rbxlx")
+          receipt=json.loads(Path("artifacts/wired39/WIRED39.project.receipt.json").read_text())
           receipt.update({"place_bytes":p.stat().st_size,"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
               "native39":True,"rojo39":True,"off36":True,"off31":True})
-          Path("artifacts/visual39/VISUAL39_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
-          print("GQ802_REAL39_ROJO39_OFF36_OFF31_SOURCE_EXACT_PASS",p.stat().st_size)
+          Path("artifacts/wired39/WIRED39_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ802_WIRED39_REAL_HOST_ROJO39_OFF36_OFF31_SOURCE_EXACT_PASS",p.stat().st_size)
           PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ802-REAL39-PRIVATE-SOURCE-REHEARSAL-NOT-LIVE
           path: |
+            artifacts/wired39/WIRED39.rbxlx
+            artifacts/wired39/WIRED39_BUILD_RECEIPT.json
             artifacts/visual39/VISUAL39.rbxlx
             artifacts/visual39/CORE36_ROLLBACK.rbxlx
             artifacts/visual39/OFF31_ROLLBACK.rbxlx
-            artifacts/visual39/VISUAL39_BUILD_RECEIPT.json
+            artifacts/wired39/WIRED39.project.receipt.json
           retention-days: 7
