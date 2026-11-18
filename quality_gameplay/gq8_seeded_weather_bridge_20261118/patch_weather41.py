@@ -171,10 +171,17 @@ def compose(project:Path,receipt:Path,out:Path):
         new_files[route]=target
     selected=copy.deepcopy(doc)
     selected["name"]="GQ8_LATEST_DRI_REAL41_SEEDED_WEATHER_PREP_NOT_RC"
-    for route,path in new_files.items():
-        node=selected["tree"]
-        for part in route:node=node[part]
-        node["$path"]=os.path.relpath(path,out.parent).replace(os.sep,"/")
+    # Full source portability: project directory changes, so all 41 existing
+    # path references must be rebased, not merely the two changed source paths.
+    def relink(node,route=()):
+        for key,val in node.items():
+            if key.startswith("$"):continue
+            r=route+(key,)
+            if "$path" in val:
+                p=new_files.get(r,base[r])
+                val["$path"]=os.path.relpath(p,out.parent).replace(os.sep,"/")
+            else:relink(val,r)
+    relink(selected["tree"])
     out.write_text(json.dumps(selected,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     _,now=flatten(out)
     changed={r for r in base if now[r].read_bytes()!=base[r].read_bytes()}
