@@ -13,6 +13,9 @@ function teleport:TeleportAsync(placeId:any,players:any,options:any):any
  assert(type(options.ReservedServerId)=="string" and #options.ReservedServerId>=32)
  assert(options.data.joinDataTrusted==false)
  assert(options.data.matchId==options.ReservedServerId)
+ if options.data.mode=="BR" then
+  assert(options.data.teamA==nil and options.data.teamB==nil)
+ end
  assert(#players>=1 and #players<=16)
  requests[#requests+1]={id=options.ReservedServerId,count=#players,seed=options.data.seed}
  return {PrivateServerId=options.ReservedServerId}
@@ -84,4 +87,10 @@ failTeleport=true
 assert(second:dispatch(p,8,102030).reason=="TELEPORT_THROW")
 failTeleport=false
 assert(second:teleportFailed(roster[1]).status=="IGNORED")
+local brPlan={status="MATCH_READY",mode="BR",region="JP",size=8,
+ requiresAuthoritativeQueueClaim=true,teleportAuthorizedHere=false,
+ teamAssignmentDisabled=true,teamA={1,2,3,4},teamB={5,6,7,8}}
+assert(second:dispatch(brPlan,9,102030).status=="TELEPORT_INITIATED")
+brPlan.teamAssignmentDisabled=nil
+assert(second:dispatch(brPlan,10,102030).reason=="INVALID_PLAN_OR_DESTINATION")
 print("GQ802_MATCH_ROUTE_NATIVE_LIVE_SERVICE_BOUNDARY_GUID_CLAIM_RETRY_FAILSAFE_PASS")
