@@ -142,7 +142,7 @@ def audit(project: Path, receipt: Path, expected: int, strict: bool = True) -> d
         "domains": domains,
         "source_coverage_count": sum(v["source_present"] for v in domains.values()),
         "domain_count": 9,
-        "formal_rc_adopted": False,
+        "audit_performs_rc_adoption": False,
         "studio_2client": "NOT_TESTED",
         "android_15min": "NOT_TESTED",
         "fun_art": "NO_GO",
