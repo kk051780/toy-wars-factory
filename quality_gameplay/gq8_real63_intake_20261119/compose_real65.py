@@ -3,7 +3,7 @@
 This is a fail-closed merge of pinned author work, not another Combat owner.
 """
 from __future__ import annotations
-import argparse,hashlib,json,subprocess,tempfile
+import argparse,copy,hashlib,json,subprocess,tempfile
 from pathlib import Path
 from compose_real63 import (
     from_xml,flatten,put_project,receipt_verify,sha,HOST,COMBAT,INVUL,
@@ -118,7 +118,16 @@ def run(a):
     # OFF63 is literally the verified official artifact; no reconstruction guess.
     (a.out/"OFF63_EXACT_OFFICIAL.rbxlx").write_bytes(a.real63_place.read_bytes())
     offdir=a.out/"off63";offdir.mkdir()
-    off=put_project(real64_doc,official63,offdir)
+    # Source template from author64 still contains VIRAL+COUNTER $path entries.
+    # Remove *only* those two routes from OFF63 to make its rollback a true
+    # 63-source profile, not a missing-file or phantom-source projection.
+    offdoc=copy.deepcopy(real64_doc)
+    for route in VIRAL|COUNTER:
+        node=offdoc["tree"]
+        for segment in route[:-1]:node=node[segment]
+        require(route[-1] in node,"OFF63_AUTHOR_ROUTE_MISSING")
+        del node[route[-1]]
+    off=put_project(offdoc,official63,offdir)
     require(len(flatten(off)[1])==63,"OFF63_PROJECT_COUNT")
     report={
         "schema":"GQ8_REAL65_FORMAL63_PLUS_VIRAL_COUNTER_SOURCE_PROOF_V1",
