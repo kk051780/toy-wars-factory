@@ -48,7 +48,8 @@ jobs:
             --view artifacts/author808/EGGRUMBLE_LobbyShopView.luau \
             --kiosk quality_gameplay/gq805_shop_kiosk_runtime_20261118 \
             --out artifacts/real45 \
-            --expected-parent-head "$(python3 -c 'import json; print(json.load(open("artifacts/parent/portable41/B_PORTABLE41_SOURCE_RECEIPT.json"))["candidate_sha"])')"\n          python3 quality_gameplay/gq805_shop_kiosk_runtime_20261118/test_package_shop45.py \
+            --expected-parent-head "$(python3 -c 'import json; print(json.load(open("artifacts/parent/portable41/B_PORTABLE41_SOURCE_RECEIPT.json"))["candidate_sha"])')"
+          python3 quality_gameplay/gq805_shop_kiosk_runtime_20261118/test_package_shop45.py \
             artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau \
             artifacts/author808/EGGRUMBLE_LobbyShopView.luau
       - uses: actions/checkout@v4
