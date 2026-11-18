@@ -84,6 +84,9 @@ function M.create(deps:any):any
   if not okClaim or type(claimed)~="table" or claimed.matchId~=id
     or claimed.originJobId~=deps.jobId or claimed.epoch~=epoch then
    return {status="FALLBACK_NORMAL_LOBBY",reason="CLAIM_FAILED"} end
+  local stillValid,stillActive=pcall(deps.isEpochCurrent,epoch)
+  if not stillValid or stillActive~=true then
+   return {status="FALLBACK_NORMAL_LOBBY",reason="EPOCH_CHANGED_DURING_CLAIM"} end
   -- Do not instantiate a second server or teleport controller. One Roblox
   -- service call owns the entire LOCAL cohort. Results can be partial/late.
   local options=deps.optionsFactory()
