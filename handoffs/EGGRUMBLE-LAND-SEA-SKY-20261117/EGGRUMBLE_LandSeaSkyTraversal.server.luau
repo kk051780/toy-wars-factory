@@ -676,10 +676,16 @@ local function install(world)
  local hordeSampleElapsed=0
  local elapsed=0
  local heartbeat
+ local worldDestroyingConnection
  local function retireScene(removeVisual)
   if not active then return end -- idempotent when Destroying follows detach
   active=false
   if heartbeat then heartbeat:Disconnect() end
+  -- On reparent (no Destroying event), release this last world-side signal too.
+  if worldDestroyingConnection then
+   worldDestroyingConnection:Disconnect()
+   worldDestroyingConnection=nil
+  end
   entered:Disconnect()
   exited:Disconnect()
   for player in pairs(combatConnections) do unwatchCombo(player) end
@@ -847,7 +853,7 @@ local function install(world)
    end
   end
  end)
- world.Destroying:Connect(function() retireScene(false) end)
+ worldDestroyingConnection=world.Destroying:Connect(function() retireScene(false) end)
  print("[EGGRUMBLE-LSS] Studio-only world slice ready",mode,"live parts",liveParts,
   "ground/sea/sky; original Swarm preserved")
 end
