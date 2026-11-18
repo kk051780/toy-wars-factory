@@ -168,8 +168,14 @@ def patch_combat(s):
   'if item:IsA("Tool") and string.sub(item.Name,1,16)=="EGGRUMBLE_SKILL_" then item:Destroy() end',
   'if item:IsA("Tool") and (string.sub(item.Name,1,16)=="EGGRUMBLE_SKILL_" or item.Name=="EGGRUMBLE_MUSOU_AWAKEN") then item:Destroy() end',
   "ROUND_CLEAR_TOOLS")
- s=only(s,'  end\nend\nfunction HeroCombat.clear(p:Player)',r'''  end
- -- Real server-side Tool.Activated: no client Remote or damage parameter.
+ marker="function HeroCombat.clear(p:Player)"
+ if s.count(marker)!=1:raise ValueError("RED_CURRENT_CLEAR_ANCHOR")
+ idx=s.index(marker)
+ prefix=s[:idx]
+ # The immediately preceding top-level "end" is the original equip() terminator.
+ close=re.search(r"\nend[ \t]*\n[ \t]*$",prefix)
+ if not close:raise ValueError("RED_CURRENT_EQUIP_CLOSURE")
+ addon=r''' -- Real server-side Tool.Activated: no client Remote or damage parameter.
  -- This is a fourth selectable ability, distinct from the defensive #823 skill.
  local musouTool=Instance.new("Tool")
  musouTool.Name="EGGRUMBLE_MUSOU_AWAKEN"
@@ -183,9 +189,8 @@ def patch_combat(s):
    session.swarm.activateMusou(p)
   end
  end)
- musouTool.Parent=backpack
-end
-function HeroCombat.clear(p:Player)''',"BUTTON_EXISTING_COMBAT_OWNER")
+ musouTool.Parent=backpack'''
+ s=prefix[:close.start()]+"\n"+addon+prefix[close.start():]+s[idx:]
  for t in ["function HeroCombat.equip(", "function HeroCombat.clear(", "neutralAndBotHit(", "ImpactFeedback.hit(", "session.swarm.damageFromPlayer("]:
   if t not in s:raise ValueError("RED_EXISTING_COMBAT_LOST_"+t)
  if s.count("enemyHum:TakeDamage(")!=1:raise ValueError("RED_DOUBLE_PVP_DAMAGE")
