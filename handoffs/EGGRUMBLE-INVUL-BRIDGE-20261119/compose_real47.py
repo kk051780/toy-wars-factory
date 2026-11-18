@@ -28,6 +28,17 @@ PVP_REPLACEMENT='''local originalAttackDamage=InvulRuntime.filterDamage(enemyHum
       local defenderAvatar=enemyPlayer.Character
       local attackerAvatar=p.Character
       local warningEnd=os.clock()+counter.tellSeconds
+      -- One partless visible outline warns the attacker in-world; client UI
+      -- is NOT required to understand that a timed counter may strike.
+      local warning=Instance.new("Highlight")
+      warning.Name="EGGRUMBLE_VisibleCounterTell"
+      warning.Adornee=attackerAvatar
+      warning.FillTransparency=1
+      warning.OutlineTransparency=0
+      warning.OutlineColor=Color3.fromRGB(255,75,65)
+      warning.DepthMode=Enum.HighlightDepthMode.Occluded
+      warning.Parent=session.world
+      Debris:AddItem(warning,counter.tellSeconds)
       task.delay(counter.tellSeconds,function()
        if session.rules.phase~="ACTIVE" or not enemyState or not state
         or not state.alive or not enemyState.alive then return end
