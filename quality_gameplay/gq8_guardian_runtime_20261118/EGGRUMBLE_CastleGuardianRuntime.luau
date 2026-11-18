@@ -108,6 +108,15 @@ local function enemy(session:any,owner:string,id:string):boolean
  return a~=nil and b~=nil and a.alive==true and b.alive==true
   and owner~=id and (session.mode~="TEAM" or a.team~=b.team)
 end
+-- Existing #531 Host is the only current-human membership authority.
+-- Fail closed on disconnected/rejoined players; never infer match ownership from stale castle IDs.
+local function currentHumanMember(session:any,p:Player):boolean
+ if not session or not p then return false end
+ local verify=session.isCurrentHuman
+ if type(verify)~="function" then return false end
+ local ok,allowed=pcall(verify,p)
+ return ok and allowed==true
+end
 local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any
  local best=nil;local nearest=range
  local candidates={}
@@ -118,6 +127,7 @@ local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude
   local hrp=ch and ch:FindFirstChild("HumanoidRootPart")
   if hum and hrp and hrp:IsA("BasePart") and hum.Health>0
    and player:GetAttribute("EGGRUMBLE_Eliminated")~=true
+   and currentHumanMember(session,player)
    and enemy(session,owner,id) then
    table.insert(candidates,{id=id,model=ch,hum=hum,root=hrp})
   end
@@ -256,7 +266,8 @@ function M.attach(session:any,chosenRole:any):any
   if closed or session.rules.phase~="ACTIVE" then return 0 end
   local owner=tostring(p.UserId)
   local c=session.rules.castles[owner]
-  if not c or not c.alive or p:GetAttribute("EGGRUMBLE_Eliminated")==true then return 0 end
+  if not c or not c.alive or not currentHumanMember(session,p)
+   or p:GetAttribute("EGGRUMBLE_Eliminated")==true then return 0 end
   local n=0
   for id,d in pairs(actors) do
    local hum=d.model:FindFirstChildOfClass("Humanoid")
