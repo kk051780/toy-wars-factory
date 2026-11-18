@@ -5,27 +5,28 @@
   "source_count": 64,
   "original_real55_head": "a6020867fac80fa3b2ca47478625873fc6f3678e",
   "selected_real59_head": "38d11f0bf311491ba76fe03f818948e5d4b06889",
-  "pre_adoption_official_head": "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca",
+  "pre_adoption_official_head": "b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff",
   "source_selection_ci_workflow": ".github/workflows/gq8-real63-source-composite.yml",
   "source_files": "quality_gameplay/gq8_real63_intake_20261119/compose_real63.py",
   "author_sources": [
     {
       "pr": 829,
-      "role": "four HUD and fog originals already selected",
+      "role": "4 HUD & Fog original modules already in official Real62",
       "sha": "116dc8f1d9bfe1b25a01ac2c5283bee966677429",
       "official_same_head_run": 44401178585
     },
     {
       "pr": 844,
-      "role": "only preexisting Host ModuleScript to Script class correction; 59 original source bytes unchanged",
+      "role": "P0 sole Host class change already in official Real62 and byte-exact rollback",
       "sha": "4c6d1ab74144d4790d075ef35feb96a43f7ffa4d",
       "official_source_proposal_run": 44403496549
     },
     {
       "pr": 838,
-      "role": "trade review/journal/escrow three NEW original Luau modules, no actual transfers",
+      "role": "3 trade UI+Journal+Escrow source modules ALREADY in formal Real62",
       "sha": "42ed8c45b4013c07ee171a6e7d772f074eed2be7",
-      "candidate_run": 44402402944
+      "candidate_run": 44402402944,
+      "official_same_head_run": 44404334603
     },
     {
       "pr": 840,
@@ -42,13 +43,12 @@
   ],
   "source_deltas": {
     "original_private_55": 55,
-    "already_selected_current_59": 59,
-    "new_selected_from_trade": 3,
-    "new_selected_from_viral": 1,
-    "new_selected_from_counter": 1,
+    "already_selected_formal_real62": 62,
+    "existing_unchanged_real62": 59,
+    "new_viral_script": 1,
+    "new_counter_script": 1,
     "new_total": 64,
-    "unchanged_current59": 56,
-    "changed_original_routes": [
+    "changed_existing_routes": [
       "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
       "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
       "ServerScriptService/EGGRUMBLE_InvulRuntime"
@@ -64,7 +64,7 @@
     "live_transfer_enabled": false,
     "roblox_published": false
   },
-  "rollback": "OFF59 byte exact from pinned official Real59 Place; pre-Real59 OFF55 remains preserved",
+  "rollback": "OFF62 byte exact from pinned official Real62 Place; P0 Host auto-start Script preserved",
   "stage": "CANDIDATE_PENDING_AUTHENTICATED_B_CAS_SAME_HEAD_CI",
   "single_rc_writer": "#220 certified B, fresh SHA nonforce CAS, no author ACK",
   "runtime": "PRIVATE_COMPANION; production S1 rich51 separate",
@@ -72,5 +72,8 @@
   "android_15min": "NOT_TESTED",
   "art": "NOT_TESTED",
   "first3min_fun": "NOT_TESTED",
-  "product_go": false
+  "product_go": false,
+  "parent_selected_profile": "eggrumble_v3_real62_hud_trade",
+  "parent_real62_head": "b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff",
+  "parent_real62_same_head_build": 44404334603
 }
