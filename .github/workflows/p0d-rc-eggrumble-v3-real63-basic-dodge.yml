@@ -4,11 +4,17 @@ on:
     branches: ['rc/p0d-s1-kids-rc01']
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL63_BASIC_DODGE.json'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py'
+      - 'quality_gameplay/gq8_real63_ui_occlusion_20261119/**'
       - '.github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml'
   pull_request:
     branches: ['rc/p0d-s1-kids-rc01']
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL63_BASIC_DODGE.json'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py'
+      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py'
+      - 'quality_gameplay/gq8_real63_ui_occlusion_20261119/**'
       - '.github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml'
   workflow_dispatch:
 permissions:
@@ -35,7 +41,7 @@ jobs:
           assert data["original_count"]==62 and data["candidate_count"]==63
           assert data["host_is_original_script"] is True
           assert data["trade3_original_unchanged"] is True
-          assert data["original60_unchanged"] is True
+          assert data["original59_unchanged"] is True
           assert data["paid_purchase_enabled"] is False
           assert data["public_publish_enabled"] is False
           for path,sha in data["source_locks"].items():
@@ -48,7 +54,12 @@ jobs:
           set -euo pipefail
           RC_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-             test "$RC_HEAD" = b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff || { echo RED_PR_PARENT_MOVED_REBASE_REQUIRED; exit 1; }
+             PR_HEAD="$(python3 -c 'import os,json;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["head"]["sha"])')"
+             gh api "repos/$GITHUB_REPOSITORY/compare/$RC_HEAD...$PR_HEAD" --jq '{status,behind_by,base:.base_commit.sha}' >/tmp/gq8-pr-ancestry.json
+             test "$(jq -r '.behind_by' /tmp/gq8-pr-ancestry.json)" = 0 &&
+             test "$(jq -r '.base' /tmp/gq8-pr-ancestry.json)" = "$RC_HEAD" &&
+             test "$(jq -r '.status' /tmp/gq8-pr-ancestry.json)" = ahead ||
+               { echo RED_PR_PARENT_MOVED_REBASE_REQUIRED; exit 1; }
           else
              test "$GITHUB_REF" = refs/heads/rc/p0d-s1-kids-rc01 && test "$RC_HEAD" = "$GITHUB_SHA" || { echo RED_NOT_REAL63_OFFICIAL_SAME_HEAD; exit 1; }
           fi
@@ -72,7 +83,7 @@ jobs:
               with open(os.environ["GITHUB_ENV"],"a") as f:
                   f.write(f"{key}={found[0]}\n")
           PY
-      - name: Select original exact 59 + one policy and patch ONLY original Combat/HUD
+      - name: Select exact REAL62 + one policy and patch only original Combat/HUD/View
         run: |
           set -euo pipefail
           python3 -B handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py \
@@ -82,7 +93,7 @@ jobs:
           import json
           root=Path("artifacts/gq828real63")
           data=json.loads((root/"REAL63_RECEIPT.json").read_text())
-          assert data["original_unchanged"]==60
+          assert data["original_unchanged"]==59
           assert data["original_parent_place_sha256"] and data["parent_original_sources"]==62
           assert len(data["off_sources"])==62 and len(data["on_sources"])==63
           old={x["route"]:x for x in data["off_sources"]}
@@ -91,7 +102,8 @@ jobs:
           changed={x for x in old if old[x]["sha256"]!=new[x]["sha256"]}
           assert added=={"ServerScriptService/EGGRUMBLE_BasicMobilityPolicy"},("RED_NEW_SOURCE_AUTHORITY",added)
           assert changed=={"ServerScriptService/EGGRUMBLE_SevenRoleCombat",
-                           "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"},("RED_UNREVIEWED_OWNER_CHANGE",changed)
+                           "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+                           "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"},("RED_UNREVIEWED_OWNER_CHANGE",changed)
           def source_file(directory,name):
               files=list((root/directory/"sources").glob(name+".*luau"))
               assert len(files)==1,("RED_CLASS_MISMATCH",name,files)
@@ -103,6 +115,8 @@ jobs:
           assert 'local CoreAction=require(script.Parent:WaitForChild("EGGRUMBLE_BasicMobilityPolicy"))' in combat
           assert combat.count('core.Activated:Connect(')==1
           assert combat.count('executeCoreAction(session,p,role,action,core)')==1
+          assert 'matchEpoch=tostring(session),mode=session.mode' in combat,"RED_ROUND_EPOCH_SOURCE_NOT_UNIQUE"
+          assert 'matchEpoch=tostring(session.world)' not in combat,"RED_REPEATED_ARENA_EPOCH"
           policy=(root/"on63/sources/EGGRUMBLE_BasicMobilityPolicy.luau").read_text()
           executable="\\n".join(line.split("--",1)[0] for line in policy.splitlines())
           for forbidden in ("RemoteEvent","MarketplaceService","DataStoreService","ProcessReceipt"):
@@ -126,6 +140,10 @@ jobs:
           for dir in artifacts/gq828real63/on63/sources artifacts/gq828real63/off62/sources; do
             for file in "$dir"/*.luau; do "$CC" --text "$file" >/dev/null; done
           done
+          python3 -B quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py \
+            --sources artifacts/gq828real63/on63/sources --out /tmp/gq8-real63-layout.luau
+          "$VM" /tmp/gq8-real63-layout.luau | tee /tmp/gq8-real63-layout.log
+          grep -qx GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS /tmp/gq8-real63-layout.log
           python3 -B handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py --out /tmp/gq828-real60-probes
           "$VM" /tmp/gq828-real60-probes/positive.luau | tee /tmp/gq828-real60.log
           grep -qx GQ828_REAL60_BASIC_DODGE_NATIVE_SEVEN_ROLE_COOLDOWN_ANTICHEAT_PASS /tmp/gq828-real60.log
@@ -162,7 +180,10 @@ jobs:
             --place "$ROOT/EGGRUMBLE_OFF62_ROLLBACK_PRIVATE.rbxlx" --count 62
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-             test "$CURRENT" = b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff || { echo RED_PR_FORMAL_PARENT_MOVED; exit 1; }
+             PR_HEAD="$(python3 -c 'import os,json;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["head"]["sha"])')"
+             test "$CURRENT" = "$BASE_RC" &&
+             test "$(gh api "repos/$GITHUB_REPOSITORY/compare/$CURRENT...$PR_HEAD" --jq '.behind_by')" = 0 ||
+               { echo RED_PR_FORMAL_PARENT_MOVED; exit 1; }
           else
              test "$CURRENT" = "$GITHUB_SHA" || { echo RED_FORMAL_HEAD_MOVED_DURING_BUILD; exit 1; }
           fi
