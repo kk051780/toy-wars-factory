@@ -1,0 +1,49 @@
+name: GQ804 castle siege guardian policy Native
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq804_castle_siege_guardians_20261118/**'
+      - '.github/workflows/gq804-castle-siege-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq804_luau
+          persist-credentials: false
+      - name: Pinned Luau compiler VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq804_luau -B /tmp/gq804_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq804_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Actual native source and negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/gq804_castle_siege_guardians_20261118
+          for f in "$ROOT"/*.luau; do /tmp/gq804_luau/luau-compile --text "$f" >/dev/null; done
+          /tmp/gq804_luau/luau "$ROOT/test_siege_guardian_native.luau" | tee /tmp/gq804_results
+          grep -q GQ804_SIEGE_GATE_CORE_BUDGET_GUARDIAN_7ROLE_NATIVE_PASS /tmp/gq804_results
+      - name: No new singleton authority
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeGuardianPolicy.luau")
+          code="\n".join(line.split("--",1)[0] for line in p.read_text().splitlines())
+          for s in ("Instance.new(", "TakeDamage(", "DataStoreService", "RemoteEvent", "MarketplaceService", "Rules.damageCastle("):
+              assert s not in code,s
+          assert 'requiresOriginalRules=true' in code
+          print("GQ804_NO_PARALLEL_CASTLE_DAMAGE_OWNER_PASS")
+          PY
