@@ -5,6 +5,7 @@ Mock only Roblox instance/signal surfaces, not the gameplay code.
 from pathlib import Path
 import argparse
 RUNTIME=Path(__file__).with_name("EGGRUMBLE_InvulRuntime.luau")
+COUNTER=Path(__file__).with_name("EGGRUMBLE_InvulCounterNeutral.luau")
 HARNESS=r'''
 local now=100
 local os={clock=function()return now end}
@@ -52,6 +53,7 @@ function Instance.new(kind)
 end
 __POLICY_SOURCE__
 local Policy=M
+__COUNTER_SOURCE__
 __RUNTIME_SOURCE__
 local runtime=Runtime
 local backpack={}
@@ -122,15 +124,21 @@ print("GQ822_REAL_RUNTIME_NATIVE_FREE_TOOL_PREHIT_ZERO_REPEAT_ZERO_EXPIRY_PASS")
 def build(policy_path,out):
  policy=Path(policy_path).read_text(encoding="utf-8")
  runtime=RUNTIME.read_text(encoding="utf-8")
+ counter=COUNTER.read_text(encoding="utf-8")
  if not policy.rstrip().endswith("return M"):raise ValueError("RED_POLICY_RETURN")
  if not runtime.rstrip().endswith("return Runtime"):raise ValueError("RED_RUNTIME_RETURN")
+ if not counter.rstrip().endswith("return Counter"):raise ValueError("RED_COUNTER_RETURN")
  p=policy.rstrip()[:-len("return M")]
  r=runtime.rstrip()[:-len("return Runtime")]
+ q=counter.rstrip()[:-len("return Counter")]
  require='local Policy=require(script.Parent:WaitForChild("EGGRUMBLE_InvulnerabilityPolicy"))'
  if r.count(require)!=1:raise ValueError("RED_RUNTIME_IMPORT")
  r=r.replace(require,"local Policy=M",1)
+ cr='local Counter=require(script.Parent:WaitForChild("EGGRUMBLE_InvulCounterNeutral"))'
+ if r.count(cr)!=1:raise ValueError("RED_COUNTER_IMPORT")
+ r=r.replace(cr,"local Counter=Counter",1)
  # Interpose exact mock tool factory only - do NOT rewrite the runtime's skill/damage methods.
- body=HARNESS.replace("__POLICY_SOURCE__",p).replace("__RUNTIME_SOURCE__",r)
+ body=HARNESS.replace("__POLICY_SOURCE__",p).replace("__COUNTER_SOURCE__",q).replace("__RUNTIME_SOURCE__",r)
  body=body.replace("__TOOL_BIND__","tool=lastCreatedTool")
  body=body.replace('local Instance={}\nfunction Instance.new(kind)',
    'local Instance={}\nlocal lastCreatedTool=nil\nfunction Instance.new(kind)')
