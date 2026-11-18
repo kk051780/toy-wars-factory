@@ -50,7 +50,7 @@ class Real44Test(unittest.TestCase):
             bridge.patch_swarm(source+'EGGRUMBLE_CurseConversionPolicy')
         with self.assertRaisesRegex(ValueError,"RED_ACTUAL_HIT_HOOK"):
             bridge.patch_swarm(source.replace(
-              'local role=user and (user:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR",
+              'local role=user and (user:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR"',
               "local role=nil"))
         with self.assertRaisesRegex(ValueError,"RED_NOT_IMMUTABLE"):
             with tempfile.TemporaryDirectory() as temp:
