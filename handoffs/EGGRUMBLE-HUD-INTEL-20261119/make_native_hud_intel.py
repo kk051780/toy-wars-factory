@@ -73,6 +73,19 @@ for _,shape in ipairs({{851,393},{1280,720},{393,851},{320,260}}) do
     assert(clear.x1>clear.x0 and clear.y1>clear.y0,"RED_COMBAT_VIEW_AREA")
     assert(p.ATTACK.x < clear.x0 or p.ATTACK.x > clear.x1,"RED_ATTACK_COVERS_BATTLE")
     assert(p.MAP.x < clear.x0 or p.MAP.x > clear.x1,"RED_MAP_COVERS_BATTLE")
+    local chrome=l.chrome
+    assert(type(chrome)=="table","RED_HUD_CHROME_ABSENT")
+    local status,bar,map=chrome.status,chrome.musouBar,chrome.map
+    assert(status.x>=0 and status.x+status.w<=shape[1]
+      and status.y>=0 and status.y+status.h<=clear.y0,
+      "RED_HP_STATUS_OUT_OF_SAFE_TOP")
+    assert(bar.x>=status.x and bar.x+bar.w<=status.x+status.w
+      and bar.y>status.y+status.h and bar.y+bar.h<=clear.y0,
+      "RED_MUSOU_BAR_OBSCURES_BATTLE")
+    assert(map.x>=0 and map.x+map.w<=shape[1],"RED_MAP_OUT_OF_SAFE_HORIZONTAL")
+    assert(status.x>=map.x+map.w+8
+      or status.x+status.w<=map.x-8,
+      "RED_HP_OVERLAPS_MAP_ON_COMPACT_OR_LEFTHAND")
   end
 end
 local sync=H.display({})
