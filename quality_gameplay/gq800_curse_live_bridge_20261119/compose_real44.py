@@ -177,21 +177,13 @@ def patch_swarm(source:str)->str:
     new=old.rsplit(" then",1)[0]+" and not charmed[m] then"
     source=source[:start]+segment.replace(old,new,1)+source[end:]
     # Physical follow is in the already-owned neutral movement loop, not a second controller.
-    old='''       for _,target in ipairs(candidates) do
-        local delta=Vector3.new(target.X-at.X,0,target.Z-at.Z)
-        if delta.Magnitude<best then near=delta;best=delta.Magnitude end
-       end'''
-    new='''       local ownerTarget=charmOwnerPosition(m)
-       if ownerTarget then
-        local delta=Vector3.new(ownerTarget.X-at.X,0,ownerTarget.Z-at.Z)
-        near=delta;best=delta.Magnitude
-        charmedNeutralAttack(m)
-       else
-        for _,target in ipairs(candidates) do
-         local delta=Vector3.new(target.X-at.X,0,target.Z-at.Z)
-         if delta.Magnitude<best then near=delta;best=delta.Magnitude end
-        end
-       end'''
+    # Switch only the converted actor's already-owned movement targets. Do not
+    # mutate the shared candidate list or start a second movement controller.
+    old="for _,target in ipairs(candidates) do"
+    new="""local ownerTarget=charmOwnerPosition(m)
+       if ownerTarget then charmedNeutralAttack(m) end
+       local moveCandidates=if ownerTarget then {ownerTarget} else candidates
+       for _,target in ipairs(moveCandidates) do"""
     source=replace_once(source,old,new,"FOLLOW_OWNER")
     # Explicit expiry, death or role loss cleanup every native Swarm movement tick.
     needle='while all.Parent and session.rules.phase=="ACTIVE" do\n    local candidates=aliveTargets()'
