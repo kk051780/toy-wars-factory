@@ -27,7 +27,7 @@ function M.new(matchId:string,castleId:string):any
  assert(type(matchId)=="string" and #matchId>3)
  assert(type(castleId)=="string" and castleId~="")
  return {matchId=matchId,castleId=castleId,gateHP=GATE_MAX,castleHP=HP_MAX,stage="GATE",
-  alive=true,gateLastAttacks={},gateWindowAt=-math.huge,gateWindowDamage=0,
+  alive=true,gateLastAttacks={},gateHitHistory={},gateClock=-math.huge,
   lastAttacks={},windowAt=-math.huge,windowDamage=0,guardianThresholdUsed={},
   guardianTotal=0,guardianActive={},lastSummon=-math.huge}
 end
@@ -48,15 +48,23 @@ end
 function M.gateHit(s:any,r:any):any
  if not legalAttack(s,r) or s.stage~="GATE" or not validAmount(r.damage)
   or type(r.now)~="number" or r.now~=r.now or math.abs(r.now)==math.huge then return nil end
- -- Server time, not client time. Prevent rapid five-hit gate deletion while
- -- allowing several allies to cooperate, at most 72 gate HP per 5 seconds.
+ -- Server time, not client time. Rolling (not bucketed) 5s total
+ -- prevents boundary exploits where several allies double-burst a castle.
+ if r.now<s.gateClock then return nil end
  if r.now-(s.gateLastAttacks[r.attackerId] or -math.huge)<GATE_ATTACKER_COOLDOWN then return nil end
- local inWindow=r.now-s.gateWindowAt<GATE_WINDOW_SECONDS
- local used=if inWindow then s.gateWindowDamage else 0
+ local used=0
+ for i=#s.gateHitHistory,1,-1 do
+  local hit=s.gateHitHistory[i]
+  if r.now-hit.at>=GATE_WINDOW_SECONDS then
+   table.remove(s.gateHitHistory,i)
+  else
+   used+=hit.amount
+  end
+ end
  local amount=math.min(36,math.floor(r.damage),GATE_MAX_DAMAGE_WINDOW-used)
  if amount<1 then return nil end
- if not inWindow then s.gateWindowAt=r.now;s.gateWindowDamage=0 end
- s.gateWindowDamage+=amount
+ table.insert(s.gateHitHistory,{at=r.now,amount=amount})
+ s.gateClock=r.now
  s.gateLastAttacks[r.attackerId]=r.now
  s.gateHP=math.max(0,s.gateHP-amount)
  if s.gateHP==0 then s.stage="CORE" end
