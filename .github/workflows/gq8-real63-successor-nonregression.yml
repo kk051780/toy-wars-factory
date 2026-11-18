@@ -1,0 +1,72 @@
+name: GQ8 Real63 live successor no-rollback gate
+on:
+  push:
+    branches: ['quality/gq8-real63-successor-nonregression-20261119-0714', 'rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_real63_successor_guard_20261119/**'
+      - '.github/workflows/gq8-real63-successor-nonregression.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL64.json'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_real63_successor_guard_20261119/**'
+      - '.github/workflows/gq8-real63-successor-nonregression.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL64.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-real63-preservation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Real63 nine-domain and basic-dodge adversarial regression tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_real63_successor_guard_20261119/gate.py quality_gameplay/gq8_real63_successor_guard_20261119/test_gate.py
+          python3 -B quality_gameplay/gq8_real63_successor_guard_20261119/test_gate.py
+      - name: Require exact certified Real63 parent and reject stale Real62-only successor manifest
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          STATUS="$(gh api "repos/$GITHUB_REPOSITORY/compare/ad602cebafc1a9d8caed078ab86c7a58b0fbbbef...$CURRENT" --jq .status)"
+          test "$STATUS" = ahead -o "$STATUS" = identical || { echo RED_OFFICIAL_RC_NOT_REAL63_DESCENDANT; exit 1; }
+          FOUND="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44405940669" --jq '.head_sha+" "+.conclusion')"
+          test "$FOUND" = "ad602cebafc1a9d8caed078ab86c7a58b0fbbbef success" || { echo RED_UNVERIFIED_REAL63_ARTIFACT; exit 1; }
+          if [ -f rc_fastlane/EGGRUMBLE_V3_REAL64.json ]; then
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('rc_fastlane/EGGRUMBLE_V3_REAL64.json').read_text())
+          assert x.get('pre_adoption_official_head')=='ad602cebafc1a9d8caed078ab86c7a58b0fbbbef', 'RED_STALE_REAL62_ONLY_PR846_REBASE_REQUIRED'
+          assert x.get('source_count',0)>=63, 'RED_PROPOSED_SOURCE_COUNT_LOWER_THAN_REAL63'
+          assert x.get('source_deltas',{}).get('new_total',0)>=63, 'RED_NO_REAL63_SOURCE_LINEAGE'
+          print('GQ8_REAL63_SUCCESSOR_MANIFEST_FENCE_PASS')
+          PY
+          fi
+          mkdir -p artifacts/gq8-real63-official-source
+          gh run download 44405940669 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO \
+            --dir artifacts/gq8-real63-official-source
+          test -s artifacts/gq8-real63-official-source/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx
+          test -s artifacts/gq8-real63-official-source/REAL63_RECEIPT.json
+      - name: Inspect the actual 63-script Studio Place, not a design document
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_real63_successor_guard_20261119/gate.py \
+            --real63-place artifacts/gq8-real63-official-source/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx \
+            --real63-receipt artifacts/gq8-real63-official-source/REAL63_RECEIPT.json \
+            --expected-head ad602cebafc1a9d8caed078ab86c7a58b0fbbbef \
+            --output artifacts/gq8-real63-official-source/SUCCESSOR_GATE_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL63-NONREGRESSION-SOURCE-ONLY-RECEIPT
+          path: artifacts/gq8-real63-official-source/SUCCESSOR_GATE_RECEIPT.json
+          retention-days: 5
+          if-no-files-found: error
