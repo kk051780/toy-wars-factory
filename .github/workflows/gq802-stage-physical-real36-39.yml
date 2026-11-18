@@ -1,0 +1,126 @@
+name: GQ802 physical six-stage annex true official Core36 to optional39
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_stage_physical_20261118/**'
+      - '.github/workflows/gq802-stage-physical-real36-39.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  physical-real36-to39:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d6080df13d07792160a52b4c7025e0ae7950379c
+          path: _original_stage803
+          persist-credentials: false
+      - name: Reuse immutable original #803 manifest without editing author source
+        run: |
+          set -euo pipefail
+          DIR=quality_gameplay/gq802_stage_physical_20261118
+          cp _original_stage803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau "$DIR/"
+          test "$(git hash-object "$DIR/EGGRUMBLE_StageManifestPolicy.luau")" = 696d2312ef7408e26b03281caede7606472c155b
+          python3 -B -m unittest discover -v -s "$DIR" -p test_stage_physical_contract.py
+          test "$(git -C _original_stage803 rev-parse HEAD)" = d6080df13d07792160a52b4c7025e0ae7950379c
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _stage_luau
+          persist-credentials: false
+      - name: Pinned native Luau 180 seeds and malicious 3-route bypass mutant
+        run: |
+          set -euo pipefail
+          cmake -S _stage_luau -B /tmp/gq802-stage-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802-stage-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          DIR=quality_gameplay/gq802_stage_physical_20261118
+          /tmp/gq802-stage-luau/luau-compile --text "$DIR/EGGRUMBLE_StagePhysicalAnnex.server.luau" >/dev/null
+          /tmp/gq802-stage-luau/luau-compile --text "$DIR/EGGRUMBLE_StagePhysicalPlan.luau" >/dev/null
+          /tmp/gq802-stage-luau/luau-compile --text "$DIR/EGGRUMBLE_StageManifestPolicy.luau" >/dev/null
+          /tmp/gq802-stage-luau/luau "$DIR/test_stage_physical_native.luau" | grep -qx 'GQ802_STAGE_PHYSICAL_180_SEED_6_CELL_3_ROUTE_MUTANT_SAFE_NATIVE_PASS'
+          cp "$DIR/EGGRUMBLE_StagePhysicalPlan.luau" /tmp/gq802-good-plan.luau
+          sed -i 's/groundEntrances=3/groundEntrances=0/' "$DIR/EGGRUMBLE_StagePhysicalPlan.luau"
+          if /tmp/gq802-stage-luau/luau "$DIR/test_stage_physical_native.luau" > /tmp/gq802-mutant.log 2>&1; then
+            echo RED_GQ802_NO_GROUND_ENTRY_MUTANT_PASSED; exit 1
+          fi
+          grep -q 'THREE_LAND_ROUTES_EIGHT_BRIDGES' /tmp/gq802-mutant.log
+          cp /tmp/gq802-good-plan.luau "$DIR/EGGRUMBLE_StagePhysicalPlan.luau"
+          echo GQ802_REAL_STAGE_POLICY_AND_PHYSICAL_PLANNER_MUTANT_RED_PASS
+      - name: Fetch exact official Core36 private Place and source receipt
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
+          mkdir -p artifacts/formal
+          gh run download 44232589275 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO --dir artifacts/formal
+          test -s artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx
+          test -s artifacts/formal/COMBINED36.project.json
+          test -s artifacts/formal/CORE36_RC_SELECTION_RECEIPT.json
+      - name: Exact samehead official Core36 to optional39 and reversible OFF36
+        run: |
+          set -euo pipefail
+          DIR=quality_gameplay/gq802_stage_physical_20261118
+          python3 "$DIR/compose_real36_to39.py" compose \
+            --place artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
+            --template artifacts/formal/COMBINED36.project.json \
+            --receipt artifacts/formal/CORE36_RC_SELECTION_RECEIPT.json \
+            --out artifacts/physical39 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for name,n in (('ON39.project.json',39),('OFF36.project.json',36)):
+              p=Path('artifacts/physical39')/name
+              files=flat_project(json.loads(p.read_text()))
+              assert len(files)==n
+              for node in files.values():
+                  f=(p.parent/node['$path']).resolve(strict=True)
+                  subprocess.run(['/tmp/gq802-stage-luau/luau-compile','--text',str(f)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print('GQ802_TRUE_CORE36_SOURCE_NATIVE_COMPILE_PASS',n)
+          PY
+      - name: Install checksum pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq802-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq802-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq802-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              p=Path('/tmp/gq802-rojo');p.write_bytes(z.read(found[0]));p.chmod(0o755)
+          PY
+      - name: Real ON39 and OFF36 Rojo exact Source Class preservation
+        run: |
+          set -euo pipefail
+          /tmp/gq802-rojo build artifacts/physical39/ON39.project.json -o artifacts/physical39/ON39.rbxlx
+          /tmp/gq802-rojo build artifacts/physical39/OFF36.project.json -o artifacts/physical39/OFF36.rbxlx
+          python3 quality_gameplay/gq802_stage_physical_20261118/compose_real36_to39.py verify \
+            --place artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
+            --receipt artifacts/physical39/GQ802_SOURCE_SELECTION_RECEIPT.json \
+            --on artifacts/physical39/ON39.project.json \
+            --off artifacts/physical39/OFF36.project.json \
+            --on-place artifacts/physical39/ON39.rbxlx \
+            --off-place artifacts/physical39/OFF36.rbxlx
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_CONCURRENT_RC_MOVEMENT; exit 1; }
+          echo GQ802_REAL36_TO39_NATIVE_ROJO_OFF36_SAMEHEAD_PRIVATE_READY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ802-PHYSICAL-STAGE-ON39-OFF36-NOT-RC
+          path: artifacts/physical39/
+          retention-days: 3
+          if-no-files-found: error
