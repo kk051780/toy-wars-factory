@@ -42,6 +42,12 @@ jobs:
           assert all(p==allowed[0] or p.startswith(allowed[1]) for p in changes),('RED_DRI_41_SOURCE_CONFLICT',changes)
           print('GQ8_DRI_41_AUTHOR_SOURCES_UNCHANGED_AFTER_42_ADDON',len(changes))
           PY
+          # PR Actions built a synthetic merge commit. Its complete tree is
+          # identical to the exact reviewed #796 source branch HEAD.
+          AUTHOR_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/940b99543d17e9ed6beb66e4a91a70e478868e3c" --jq '.tree.sha')"
+          MERGE_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/31ba113bcad3149cafb2555049aa811203171109" --jq '.tree.sha')"
+          test "$AUTHOR_TREE" = b4273a7bf4bdab9ca0856632ff0e2e88b002d998
+          test "$MERGE_TREE" = "$AUTHOR_TREE" || { echo RED_AUTHOR_PR_SYNTHETIC_MERGE_TREE_DRIFT; exit 1; }
           gh run download 44311974603 --repo "$GITHUB_REPOSITORY" \
             --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL --dir "$UP"
           test -s "$UP/portable41/EGGRUMBLE_SOURCE41.project.json"
