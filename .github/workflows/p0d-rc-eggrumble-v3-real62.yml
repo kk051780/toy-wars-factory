@@ -61,7 +61,7 @@ jobs:
           /tmp/gq8native/luau quality_gameplay/gq8_trade_ux_journal_20261119/test_journal_native.luau | tee /tmp/tradej.log
           grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS /tmp/tradej.log
           /tmp/gq8native/luau quality_gameplay/gq8_trade_ux_journal_20261119/test_escrow_native.luau | tee /tmp/tradee.log
-          grep -q GQ8_TRADE_ESCROW /tmp/tradee.log
+          grep -q GQ8_TRADE58_ESCROW_REDUCER_TWO_ACCOUNT_RESERVE_DEBIT_CREDIT_COMMIT_REPLAY_PAID_FAILCLOSED_PASS /tmp/tradee.log
           python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/hudprobe
           /tmp/gq8native/luau /tmp/hudprobe/good.luau | tee /tmp/hud.log
           grep -q GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS /tmp/hud.log
