@@ -122,7 +122,7 @@ def compose(parent55,receipt55,prior_runtime46,new_runtime,old_counter_author,ou
  counter=COUNTER_SRC.read_bytes()
  if not counter.startswith(b"--!strict") or counter.count(b"session.swarm.damageFromPlayer(")!=1 or b"TakeDamage(" in counter:
   raise ValueError("RED_DUPLICATE_NEUTRAL_HP_WRITER")
- out.parent.mkdir(parents=True)
+ out.parent.mkdir(parents=True,exist_ok=True)
  out.mkdir()
  doc=copy.deepcopy(src_doc)
  doc["name"]="GQ822_REAL56_SAME_OFFICIAL55_MUSOU_INVUL_COUNTER_SINGLETON_PRIVATE"
