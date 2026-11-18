@@ -14,6 +14,7 @@ local armed = false -- default OFF, session-local, no hidden capture
 local pending = false
 local recording = false
 local token = 0
+local captureSequence = 0
 local latestTitle = ""
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -122,6 +123,7 @@ end
 local function stopRecording()
     if not recording then return end
     recording = false
+    captureSequence += 1 -- invalidate every delayed timer from the old clip
     repaint()
     pcall(function() CaptureService:StopVideoCapture() end)
 end
@@ -130,7 +132,8 @@ local function beginRecording(cue)
     if not armed or pending or recording then return end
     pending = true
     repaint()
-    local currentToken = token
+    captureSequence += 1
+    local thisCapture = captureSequence
     task.spawn(function()
         local ok, result = pcall(function()
             return CaptureService:StartVideoCaptureAsync(function(outcome, capture)
@@ -159,10 +162,9 @@ local function beginRecording(cue)
         recording = true
         repaint()
         status(latestTitle .. "  ｜  最大" .. tostring(cue.recordSeconds) .. "秒録画", 3)
-        local recordedFlag = currentToken
         task.delay(cue.recordSeconds, function()
-            -- No perpetual capture; only the currently running recording can be stopped.
-            if recordedFlag <= token and recording then stopRecording() end
+            -- No perpetual capture; never stop a subsequent clip with an old timer.
+            if thisCapture == captureSequence and recording then stopRecording() end
         end)
     end)
 end
