@@ -119,6 +119,15 @@ local function emptyCraftLease(ownedPilot:boolean, emptySince:number?, now:numbe
 end
 -- GQ8_LSS_IDLE_CRAFT_LEASE_20261118_END
 
+-- GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118_BEGIN
+-- Fail-closed airborne decision; engine provides authoritative avatar and collision checks.
+local function flightDismountNeedsRescue(flying,currentHuman,sameAvatar,nearCraft,
+ highCraft,highAvatar,solidBelow)
+ return flying and currentHuman and sameAvatar and nearCraft
+  and highCraft and highAvatar and not solidBelow
+end
+-- GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118_END
+
 local function safeMove(player,at,mode,world)
  if not matchHuman(player,mode,world,nil) then return false end
  local ch=player.Character
@@ -725,6 +734,26 @@ local function install(world)
       -- A sea pilot who dismounts offshore is rescued, never dropped into void.
       safeMove(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world)
       craft:Destroy()
+     elseif v.flying and ch and departed.Parent==ch and departed.Health>0 and root then
+      -- A jump from a flying craft is not a Debris expiry. Rescue the current
+      -- pilot only when airborne with no actual supporting platform underneath.
+      local pivot=craft:GetPivot().Position
+      local groundParams=RaycastParams.new()
+      groundParams.FilterType=Enum.RaycastFilterType.Exclude
+      groundParams.FilterDescendantsInstances={ch,craft}
+      groundParams.RespectCanCollide=true
+      local solidBelow=Workspace:Raycast(root.Position,Vector3.new(0,-12,0),
+       groundParams)~=nil
+      if flightDismountNeedsRescue(v.flying,
+       matchHuman(v.owner,mode,world,v.role),
+       v.owner.Character==ch and departed.Parent==ch and departed.Health>0,
+       (root.Position-pivot).Magnitude<28,
+       pivot.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4,
+       root.Position.Y>y+18,solidBelow)
+       and safeMove(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world) then
+       -- Existing destruction cleanup releases perUser/global craft capacity.
+       craft:Destroy()
+      end
      end
     end
     if idleExpired then
