@@ -33,5 +33,23 @@ class Neutral8SingleAuthority(unittest.TestCase):
   self.assertIn('if cue.kind=="KO" then',SOURCE)
   self.assertIn('MAX_LOS_RAYS_PER_ATTACK=48',SOURCE)
 
+
+ def test_real_3d_hit_motions_low_budget(self):
+  composer=(ROOT/"compose_real43.py").read_text(encoding="utf-8")
+  self.assertIn('local TweenService=game:GetService("TweenService")',SOURCE)
+  self.assertIn("local function playActualReaction(model:Model,cue:any)",SOURCE)
+  self.assertEqual(SOURCE.count("playActualReaction(model,cue)"),1)
+  self.assertIn('model:GetAttribute("EGGRUMBLE_MotionSerial")==serial',SOURCE)
+  self.assertIn('now-last<.16',SOURCE)
+  self.assertIn('Size=base*factor',SOURCE)
+  self.assertIn('Size=base,',SOURCE)
+  self.assertIn('local TweenService=game:GetService("TweenService")',composer)
+  # Use existing SpeciesAccent: no per-hit new Parts, no second KO authority.
+  self.assertEqual(SOURCE.count('local accent=piece('),1)
+  self.assertEqual(SOURCE.count('h:TakeDamage(damage)'),1)
+  for motion in ("BOW_STUMBLE","SHIELD_TUMBLE","ROLLING_BOAR","JUMP_SPIN",
+                 "PUFF_SMOKE","JELLY_WOBBLE","SPARK_SPRINT","FLAT_THEN_POP"):
+   self.assertIn(motion,SOURCE)
+
 if __name__=="__main__":
  unittest.main()
