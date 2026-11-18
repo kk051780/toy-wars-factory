@@ -41,17 +41,18 @@ local function fingerprint(plan)
  return table.concat(result)
 end
 local function cloneItem(v)
- return {id=v.id,ownerUserId=v.ownerUserId,version=v.version,
-  category=v.category,itemDefId=v.itemDefId,originKind=v.originKind,
-  paidOrigin=false,tradeable=true,bound=false,equipped=false,
-  escrowLocked=false,starterProtected=false}
+ local n={}
+ for k,val in pairs(v) do n[k]=val end -- preserve *all* existing item attributes
+ return n
 end
 local function cloneRecord(raw,owner)
  if type(raw)~="table" or raw.userId~=owner or not safeNum(raw.revision)
     or type(raw.inventory)~="table" or type(raw.tradeState)~="table" then
   return nil
  end
- local new={userId=raw.userId,revision=raw.revision,inventory={},tradeState={}}
+ local new={}
+ for k,val in pairs(raw) do new[k]=val end -- preserve wallet/progression/receipts etc!
+ new.inventory={};new.tradeState={}
  for k,item in pairs(raw.inventory) do
   if not validId(k) or type(item)~="table" then return nil end
   new.inventory[k]=cloneItem(item)
@@ -75,7 +76,8 @@ local function safeTradable(item,id,owner,version)
     and validId(item.itemDefId) and item.originKind=="FREE_EARNED"
     and item.paidOrigin==false and item.tradeable==true
     and item.bound==false and item.equipped==false
-    and item.escrowLocked==false and item.starterProtected==false
+    and item.escrowLocked==false and item.tradeIncomingLocked~=true
+    and item.starterProtected==false
 end
 local function clash(raw,id,tradeId)
  for tid,st in pairs(raw.tradeState) do
@@ -194,7 +196,7 @@ function Escrow.credit(raw,plan,owner,otherReceipt,coordinatorReceipt)
  if not st or st.fingerprint~=fp or (st.phase~="ESCROWED" and st.phase~="CREDITED") then
   return nil,"SELF_ESCROW_NOT_PERSISTED"
  end
- if st.phase=="CREDITED" then
+ if st.phase=="CREDITED" or st.phase=="FINALIZED" then
   if st.receipt==coordinatorReceipt.durableId then return nextRecord,"ALREADY_CREDITED" end
   return nil,"CREDIT_RECEIPT_CONFLICT"
  end
@@ -210,11 +212,44 @@ function Escrow.credit(raw,plan,owner,otherReceipt,coordinatorReceipt)
   local newItem=cloneItem(other)
   newItem.ownerUserId=owner
   newItem.version+=1
+  newItem.escrowLocked=false
+  newItem.tradeIncomingLocked=true -- do not equip/retrade until BOTH credited and durable COMMIT
   nextRecord.inventory[newItem.id]=newItem
  end
  st.phase="CREDITED"
  st.receipt=coordinatorReceipt.durableId
  nextRecord.revision+=1
  return nextRecord,"CREDITED"
+end
+-- Release received items ONLY after the single durable coordinator has completed
+-- both Credit_A and Credit_B, then COMMIT. Fail closed if either account is pending.
+function Escrow.finalize(raw,plan,owner,committed)
+ local mine,incoming=ownerAndOffers(plan,owner)
+ local fp=fingerprint(plan)
+ if not mine or not fp or type(committed)~="table" or
+    committed.tradeId~=plan.tradeId or committed.fingerprint~=fp or
+    committed.globalCommitPersisted~=true or not validId(committed.durableId) then
+  return nil,"NO_DURABLE_GLOBAL_COMMIT"
+ end
+ local nextRecord=cloneRecord(raw,owner)
+ if not nextRecord then return nil,"UNSUPPORTED_PROFILE_SCHEMA" end
+ local st=nextRecord.tradeState[plan.tradeId]
+ if not st or st.fingerprint~=fp or st.receipt~=committed.durableId then
+  return nil,"CREDIT_NOT_CONFIRMED"
+ end
+ if st.phase=="FINALIZED" then return nextRecord,"ALREADY_FINALIZED" end
+ if st.phase~="CREDITED" then return nil,"NOT_CREDITED" end
+ for _,slot in ipairs(incoming) do
+  local item=nextRecord.inventory[slot.id]
+  if not item or item.ownerUserId~=owner or item.id~=slot.id
+   or item.version~=slot.version+1 or item.tradeIncomingLocked~=true then
+    return nil,"CREDIT_LOCKED_ITEM_MISSING"
+  end
+ end
+ for _,slot in ipairs(incoming) do
+  nextRecord.inventory[slot.id].tradeIncomingLocked=false
+ end
+ st.phase="FINALIZED";nextRecord.revision+=1
+ return nextRecord,"FINALIZED"
 end
 return Escrow
