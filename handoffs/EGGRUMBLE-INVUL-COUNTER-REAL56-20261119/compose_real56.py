@@ -7,7 +7,7 @@ interlock and the original real 13 pre-hit damage gate. OFF55 byte exact.
 No new HP/KO/Swarm/Score/remote/store writer.
 """
 from __future__ import annotations
-import argparse,copy,hashlib,json,os,re,importlib.util
+import argparse,copy,hashlib,json,os,re,ast
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
@@ -54,10 +54,16 @@ def exact(body,old,new,tag):
  if body.count(old)!=1:raise ValueError("RED_"+tag+"_COUNT_"+str(body.count(old)))
  return body.replace(old,new,1)
 def original_relay(code_path:Path):
- spec=importlib.util.spec_from_file_location("original_counter47",str(code_path))
- if not spec or not spec.loader:raise ValueError("RED_NO_FIXED_COUNTER_AUTHOR")
- module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
- return module.PVP_REPLACEMENT
+ # Parse one literal original author PvP code constant without importing or
+ # executing the old experimental branch's composer and dependencies.
+ syntax=ast.parse(code_path.read_text(encoding="utf-8"))
+ matches=[ast.literal_eval(line.value) for line in syntax.body
+  if isinstance(line,ast.Assign)
+  and any(isinstance(target,ast.Name) and target.id=="PVP_REPLACEMENT"
+          for target in line.targets)]
+ if len(matches)!=1 or not isinstance(matches[0],str):
+  raise ValueError("RED_NO_SINGLE_FIXED_AUTHOR_COUNTER")
+ return matches[0]
 
 def compose(parent55,receipt55,prior_runtime46,new_runtime,old_counter_author,out):
  parent55=Path(parent55).resolve(strict=True)
