@@ -17,10 +17,20 @@ Individually green PR #764 (31->34) and #775 (31->33) do not prove one compatibl
 
 ### Progress
 
-- Local structural and mutation tests: CI pending.
-- Genuine same-HEAD Source/Native36/Rojo36/OFF31: CI pending.
+- Six structural and malicious mutation regressions: **6/6 PASS**.
+- Real current official31 (SHA `261b75d0a7093db5c13db3b95dad9a2911f78689`) + upstream Realm34/Regeneration33 crosslane composition: **PASS** (original 31 preserved except Host two hooks).
+- Genuine native source compiles: **36/36**, inverse OFF **31/31**, Rojo Source/Class **36/36**, inverse **31/31**.
+- Verified push workflow [#44230658682](https://github.com/kk051780/toy-wars-factory/actions/runs/44230658682) SUCCESS and PR workflow [#44230840455](https://github.com/kk051780/toy-wars-factory/actions/runs/44230840455) SUCCESS, both actual real31 same-HEAD.
+- Existing repo bootstrap offline check and read-only intake: SUCCESS on initial PR head.
+- Exact formal RC branch SHA at readback **unchanged**; integration remains **NO**.
 - Official 36 adoption: **NO**; #220 exclusive.
 - Studio 2 clients, Android 15 min, ART/FUN, OWNER acceptance: **NOT_TESTED**.
 - Feature implementation status is inherited only from the upstream original PRs, never counted as a new runtime feature.
 
 Feature ID: `GQ8_CROSSLANE_REALM_REGEN_COMPOSITION_QA_20261118`.
+
+### Durable handoff / resume
+
+- Checkpoint QA PR [#780](https://github.com/kk051780/toy-wars-factory/pull/780); formal RC intake [#220 comment 6968181372](https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-6968181372); product GQ [#470 comment 6968182008](https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-6968182008), battle owner #765 comment 6968182743.
+- Do not recreate original PR #764/#775 Luau, do not select alternatives #771/#774 as extra policies. Latest branch HEAD reGET and sameHEAD CI before any adoption; only sole authenticated #220 can write formal RC nonforce expected-SHA CAS.
+- Production selection, Studio 2client, Android15min and FUN/OWNER are still unresolved. Result is demonstrable **source combination QA**, not yet playable engine acceptance.
