@@ -38,7 +38,8 @@ jobs:
           cmake --build /tmp/gq8-vfx-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           CLI=/tmp/gq8-vfx-native/luau
           CC=/tmp/gq8-vfx-native/luau-compile
-          "$CC" --text handoffs/EGGRUMBLE-ATTR-VFX-20261118/ElementVisuals.client.luau >/dev/null
+          "$CC" --text handoffs/EGGRUMBLE-ATTR-VFX-20261118/ElementVisuals.luau >/dev/null
+          "$CC" --text handoffs/EGGRUMBLE-ATTR-VFX-20261118/EGGRUMBLE_AttributeCue.client.luau >/dev/null
           "$CC" --text /tmp/gq8-vfx/good.luau >/dev/null
           "$CC" --text /tmp/gq8-vfx/mutant.luau >/dev/null
           "$CLI" /tmp/gq8-vfx/good.luau | tee /tmp/gq8-vfx-good.log
