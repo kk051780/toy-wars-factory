@@ -63,7 +63,7 @@ jobs:
           assert 'remote:FireClient(p,' in server
           for bad in ("OnServerEvent:Connect(","remote:FireServer(","TakeDamage(","GetAsync(","UpdateAsync(","ProcessReceipt"):
               assert bad not in server+client,("RED_DUPLICATE_AUTHORITY_OR_PURCHASE",bad)
-          assert 'player:GetAttribute("EGGRUMBLE_MapVerifiedTeam")' in server
+          assert 'p:GetAttribute("EGGRUMBLE_MapVerifiedTeam")' in server
           assert 'local visible=Intel.project(' in server
           assert 'activate(basic[1] or slotTool(selectedSlot))' in client
           assert "EGGRUMBLE_SKILL_" in client
