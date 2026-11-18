@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$CURRENT" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_NEW_OFFICIAL_RC_REBASE_REQUIRED; exit 1; }
+          test "$CURRENT" = 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca || { echo RED_NEW_OFFICIAL_RC_REBASE_REQUIRED; exit 1; }
           test "$(gh run view 44400478849 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "116dc8f1d9bfe1b25a01ac2c5283bee966677429 success"
           test "$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "a6020867fac80fa3b2ca47478625873fc6f3678e success"
           python3 - <<'PY'
@@ -42,15 +42,20 @@ jobs:
            assert sha==current,(filename,sha,current)
           print("GQ8_REAL62_PRESERVE_4_HUD_REAL59_OFFICIAL_GIT_BLOB_LOCK_PASS")
           PY
-          mkdir -p artifacts/real59 artifacts/official55
+          test "$(gh run view 44403383782 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "4c6d1ab74144d4790d075ef35feb96a43f7ffa4d success" || { echo RED_REAL59_P0_HOST_NOT_VERIFIED; exit 1; }
+          mkdir -p artifacts/real59 artifacts/official55 artifacts/host59
           gh run download 44400478849 --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/real59
           gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir artifacts/official55
+          gh run download 44403383782 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL --dir artifacts/host59
           test -s artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
           test -s artifacts/real59/GQ828_REAL59_RECEIPT.json
           test -s artifacts/official55/EGGRUMBLE_REAL55.rbxlx
           test -s artifacts/official55/B_REAL55_RECEIPT.json
+          test -s artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
+          test -s artifacts/host59/HOST_ACTIVE_RECEIPT.json
           echo GQ8_REAL62_IMMUTABLE_SOURCE_ARTIFACTS_DOWNLOAD_PASS
       - name: Compose verified 59 + 3 without overwriting any official source
         shell: bash
@@ -60,6 +65,8 @@ jobs:
           python3 "$R/compose_real62.py" \
             --real59 artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
             --receipt59 artifacts/real59/GQ828_REAL59_RECEIPT.json \
+            --host59 artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            --hostreceipt artifacts/host59/HOST_ACTIVE_RECEIPT.json \
             --official55 artifacts/official55/EGGRUMBLE_REAL55.rbxlx \
             --out artifacts/union62
           python3 - <<'PY'
@@ -67,7 +74,7 @@ jobs:
           import sys,json
           sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
           from compose_real48 import flatten,klass
-          base=Path("artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json")
+          base=Path("artifacts/union62/off59/GQ8_REAL59_HOST_ACTIVE_CANDIDATE_NOT_OFFICIAL.project.json")
           new=Path("artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json")
           _,old=flatten(base);_,n=flatten(new)
           assert len(old)==59 and len(n)==62
@@ -105,7 +112,7 @@ jobs:
           sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
           from compose_real48 import flatten
           for name,num in [
-            ("artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json",59),
+            ("artifacts/union62/off59/GQ8_REAL59_HOST_ACTIVE_CANDIDATE_NOT_OFFICIAL.project.json",59),
             ("artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json",62)]:
             _,src=flatten(Path(name))
             assert len(src)==num
@@ -134,16 +141,16 @@ jobs:
             p.write_bytes(z.read(hits[0]));p.chmod(0o755)
           PY
           /tmp/gq8union62-rojo build artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json -o artifacts/union62/EGGRUMBLE_REAL62_TRADE_HUD_UNION_PRIVATE.rbxlx
-          /tmp/gq8union62-rojo build artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json -o artifacts/union62/OFF59.rbxlx
-          cmp artifacts/union62/OFF59.rbxlx artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          /tmp/gq8union62-rojo build artifacts/union62/off59/GQ8_REAL59_HOST_ACTIVE_CANDIDATE_NOT_OFFICIAL.project.json -o artifacts/union62/OFF59.rbxlx
+          cmp artifacts/union62/OFF59.rbxlx artifacts/host59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
             --place artifacts/union62/EGGRUMBLE_REAL62_TRADE_HUD_UNION_PRIVATE.rbxlx --count 62
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
-            --project artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json \
+            --project artifacts/union62/off59/GQ8_REAL59_HOST_ACTIVE_CANDIDATE_NOT_OFFICIAL.project.json \
             --place artifacts/union62/OFF59.rbxlx --count 59
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$CURRENT" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_OFFICIAL_RC_MOVED_DURING_UNION; exit 1; }
+          test "$CURRENT" = 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca || { echo RED_OFFICIAL_RC_MOVED_DURING_UNION; exit 1; }
           python3 - <<'PY'
           from pathlib import Path
           import os,json,hashlib
