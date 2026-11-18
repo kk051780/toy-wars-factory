@@ -81,6 +81,11 @@ def run(a):
     def damage_sites(b):
         return sum(line.split(b"--",1)[0].count(b":TakeDamage(")
                    for line in b.splitlines())
+    print("GQ8_COMBAT_DAMAGE_SITES",json.dumps({
+        "formal62":damage_sites(original62[COMBAT][1]),
+        "formal63":damage_sites(original_basic),
+        "counter_author64":damage_sites(real64[COMBAT][1]),
+        "merged65":damage_sites(merged_combat)},sort_keys=True))
     require(damage_sites(merged_combat)==damage_sites(original_basic),
             "SECOND_DAMAGE_OWNER")
     require(merged_combat!=original_basic and
