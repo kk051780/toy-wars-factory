@@ -56,6 +56,15 @@ jobs:
           allowed={".github/workflows/gq804-core38-source-wired.yml",
                    ".github/workflows/gq804-castle-siege-native.yml"}
           assert changed and all(f.startswith(prefix) or f in allowed for f in changed),sorted(changed)
+          import subprocess
+          lock=json.load(open("quality_gameplay/gq804_castle_siege_guardians_20261118/SOURCE_LOCK.json"))
+          assert lock["baseline_rc"]=="f77b4d4393d9e9b19b65566413432a7a9f13962b"
+          assert lock["selected_scripts"]==38 and lock["baseline_scripts"]==36
+          assert lock["sole_damage_authority"]=="ServerScriptService/EGGRUMBLE_CastleMatchRules"
+          for source,expected in lock["pinned_git_blobs"].items():
+              actual=subprocess.check_output(["git","hash-object",source],text=True).strip()
+              assert actual==expected,("RED_AUTHOR_BLOB_DRIFT",source,actual,expected)
+          print("GQ804_PINNED_SOURCE_LOCK_BLOB_EXACT_PASS")
           print("GQ804_CORE38_NONOVERLAP_ONLY_OWNED_PATHS_PASS",len(changed))
           PY
           gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
