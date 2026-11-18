@@ -1,0 +1,86 @@
+--!strict
+local M=require("./EGGRUMBLE_MatchTeleportBridge")
+local roster={}
+local playerService={}
+for id=1,16 do roster[id]={UserId=id,Parent=playerService} end
+function playerService:GetPlayerByUserId(id:number):any return roster[id] end
+local requests={}
+local failTeleport=false
+local teleport={}
+function teleport:TeleportAsync(placeId:any,players:any,options:any):any
+ if failTeleport then error("NETWORK_TRANSIENT") end
+ assert(placeId==102030)
+ assert(type(options.ReservedServerId)=="string" and #options.ReservedServerId>=32)
+ assert(options.data.joinDataTrusted==false)
+ assert(options.data.matchId==options.ReservedServerId)
+ assert(#players>=1 and #players<=16)
+ requests[#requests+1]={id=options.ReservedServerId,count=#players,seed=options.data.seed}
+ return {PrivateServerId=options.ReservedServerId}
+end
+local http={}
+function http:GenerateGUID(_dash:any):string
+ return "12345678-1234-1234-1234-123456789abc"
+end
+local map={saved={}}
+function map:UpdateAsync(key:any,fn:any,ttl:any):any
+ assert(ttl>=180)
+ local nextValue=fn(self.saved[key])
+ self.saved[key]=nextValue
+ return nextValue
+end
+local now=1000
+local deps={
+ enabled=true,isStudio=false,inReservedServer=false,
+ targetPlaceId=102030,jobId="origin-job",
+ players=playerService,teleport=teleport,http=http,claimMap=map,
+ now=function()return now end,
+ optionsFactory=function()return {
+  SetTeleportData=function(self:any,data:any)self.data=data end
+ } end
+}
+local p={status="MATCH_READY",mode="TEAM",region="JP",size=8,
+ requiresAuthoritativeQueueClaim=true,teleportAuthorizedHere=false,
+ teamA={1,2,3,4},teamB={5,6,7,8}}
+local off=M.create({enabled=false,isStudio=false})
+assert(off:dispatch(p,5,102030).status=="FALLBACK_NORMAL_LOBBY")
+local bridge=M.create(deps)
+local started=bridge:dispatch(p,5,102030)
+assert(started.status=="TELEPORT_INITIATED" and started.players==8)
+assert(started.seed>0 and #requests==1)
+assert(map.saved["m:"..started.matchId].reservedServerId==started.matchId)
+assert(bridge:dispatch(p,5,102030).reason=="ALREADY_DISPATCHING")
+local retry=bridge:teleportFailed(roster[1])
+assert(retry.status=="RETRY_INITIATED" and retry.attempt==1)
+assert(requests[2].id==requests[1].id and requests[2].seed==requests[1].seed)
+retry=bridge:teleportFailed(roster[1])
+assert(retry.attempt==2)
+assert(bridge:teleportFailed(roster[1]).reason=="RETRIES_EXHAUSTED")
+bridge:playerLeft(2)
+roster[2].Parent=nil
+assert(bridge:dispatch(p,6,102030).reason=="COHORT_NOT_LOCAL")
+roster[2].Parent=playerService
+now=1100
+bridge:expirePending()
+assert(bridge:dispatch(p,6,102030).status=="TELEPORT_INITIATED")
+bridge:expirePending()
+now=1192
+bridge:expirePending()
+assert(next(bridge.byMatch)==nil)
+local tampered={status="MATCH_READY",mode="TEAM",region="JP",size=8,
+ requiresAuthoritativeQueueClaim=true,teleportAuthorizedHere=true,
+ teamA={1,2,3,4},teamB={5,6,7,8}}
+assert(bridge:dispatch(tampered,7,102030).reason=="INVALID_PLAN_OR_DESTINATION")
+tampered.teleportAuthorizedHere=false
+tampered.teamB={5,6,7,7}
+assert(bridge:dispatch(tampered,7,102030).reason=="INVALID_PLAN_OR_DESTINATION")
+assert(bridge:dispatch(p,7,123).reason=="INVALID_PLAN_OR_DESTINATION")
+local studio=M.create({enabled=true,isStudio=true})
+assert(studio:dispatch(p,7,102030).status=="FALLBACK_NORMAL_LOBBY")
+local reserved=M.create({enabled=true,inReservedServer=true})
+assert(reserved:dispatch(p,7,102030).status=="FALLBACK_NORMAL_LOBBY")
+local second=M.create(deps)
+failTeleport=true
+assert(second:dispatch(p,8,102030).reason=="TELEPORT_THROW")
+failTeleport=false
+assert(second:teleportFailed(roster[1]).status=="IGNORED")
+print("GQ802_MATCH_ROUTE_NATIVE_LIVE_SERVICE_BOUNDARY_GUID_CLAIM_RETRY_FAILSAFE_PASS")
