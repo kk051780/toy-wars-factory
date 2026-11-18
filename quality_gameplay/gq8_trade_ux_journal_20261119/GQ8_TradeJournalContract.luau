@@ -17,7 +17,8 @@ local function copyItems(xs)
     local result={}
     for _,item in ipairs(xs) do
         if type(item)~="table" or type(item.id)~="string" or #item.id<3 or #item.id>120
-           or type(item.version)~="number" or item.version<0 or item.version~=item.version then
+           or type(item.version)~="number" or item.version<0 or item.version~=item.version
+           or item.version==math.huge or item.version~=math.floor(item.version) then
            return nil
         end
         result[#result+1]={id=item.id,version=item.version}
@@ -31,7 +32,7 @@ function Journal.new(plan,now)
        or plan.revision<0 or plan.revision~=math.floor(plan.revision)
        or type(plan.fromA)~="number" or type(plan.toB)~="number"
        or plan.fromA<1 or plan.toB<1 or plan.fromA==plan.toB
-       or type(now)~="number" or now<0 then
+       or type(now)~="number" or now<0 or now~=now or now==math.huge then
         return nil,"BAD_SETTLEMENT_PLAN"
     end
     local a=copyItems(plan.itemsA);local b=copyItems(plan.itemsB)
@@ -73,7 +74,7 @@ function Journal.record(j,receipt)
        or receipt.storeWriterAttested~=true or type(receipt.receiptId)~="string"
        or #receipt.receiptId<8 or #receipt.receiptId>140
        or type(receipt.lockEpoch)~="number" or receipt.lockEpoch<1
-       or receipt.lockEpoch~=math.floor(receipt.lockEpoch)
+       or receipt.lockEpoch~=math.floor(receipt.lockEpoch) or receipt.lockEpoch==math.huge
        or receipt.accountId~=sideOwner(j,receipt.step)
        then return false,"UNTRUSTED_OR_MISMATCHED_RECEIPT" end
     if index<=j.step then
@@ -84,6 +85,9 @@ function Journal.record(j,receipt)
         return false,"REPLAY_CONFLICT"
     end
     if index~=j.step+1 then return false,"STEP_OUT_OF_ORDER" end
+    for _,previous in pairs(j.receipts) do
+        if previous.id==receipt.receiptId then return false,"RECEIPT_REUSED_ACROSS_STEPS" end
+    end
     if j.complete then return false,"ALREADY_COMPLETED" end
     j.receipts[receipt.step]={id=receipt.receiptId,epoch=receipt.lockEpoch,accountId=receipt.accountId}
     j.step=index
