@@ -21,7 +21,7 @@ end
 
 function P.newState(epoch: string): any
  assert(type(epoch) == "string" and #epoch > 0, "RED_INVALID_SESSION_EPOCH")
- return {epoch = epoch, pending = {}, healingCooldown = {}, reviveCooldown = {}, nextTicket = 0}
+ return {epoch = epoch, pending = {}, busyCasters = {}, healingCooldown = {}, reviveCooldown = {}, nextTicket = 0}
 end
 
 local function common(state: any, ctx: any): (boolean, string)
@@ -80,6 +80,7 @@ function P.beginRevive(state: any, ctx: any): (number?, string)
  local caster, target = tostring(ctx.casterId), tostring(ctx.targetId)
  if ctx.now < (state.reviveCooldown[caster] or 0) then return nil, "REVIVE_COOLDOWN" end
  if state.pending[target] ~= nil then return nil, "TARGET_ALREADY_RESERVED" end
+ if state.busyCasters[caster] ~= nil then return nil, "CASTER_ALREADY_CHANNELING" end
  state.nextTicket += 1
  local ticket = state.nextTicket
  state.pending[target] = {
@@ -88,6 +89,7 @@ function P.beginRevive(state: any, ctx: any): (number?, string)
   targetCharacterKey = ctx.targetCharacterKey,
   startedAt = ctx.now, downedAt = ctx.downedAt,
  }
+ state.busyCasters[caster] = ticket
  return ticket, "CHANNEL_STARTED"
 end
 
@@ -120,6 +122,7 @@ function P.completeRevive(state: any, ctx: any, ticket: any): (number, string)
  -- this target HP. At a real Humanoid.Health=0, resurrection is deliberately denied.
  local finalHP = math.min(ctx.targetMaxHP, math.max(1, ctx.targetMaxHP * P.REVIVE_FRACTION))
  state.pending[target] = nil
+ state.busyCasters[caster] = nil
  state.reviveCooldown[caster] = ctx.now + P.REVIVE_COOLDOWN_SECONDS
  return finalHP, "REVIVE"
 end
@@ -130,6 +133,9 @@ function P.cancelRevive(state: any, targetId: any, ticket: any): boolean
  local record = state.pending[target]
  if not record or record.ticket ~= ticket then return false end
  state.pending[target] = nil
+ if state.busyCasters[record.caster] == ticket then
+  state.busyCasters[record.caster] = nil
+ end
  return true
 end
 
