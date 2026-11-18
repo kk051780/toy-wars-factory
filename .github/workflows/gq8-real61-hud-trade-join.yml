@@ -1,0 +1,122 @@
+name: GQ8 Real61 HUD+Trade nonoverlap native Rojo OFF55 source gate
+on:
+  push:
+    branches: [integration/gq8-real61-hud-trade-join-20261119-0618]
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_real61_join_20261119/**'
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-real61-hud-trade-join.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real61-source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Same official Real55 exact head and trusted parent artifact
+        run: |
+          set -euo pipefail
+          BASE=a6020867fac80fa3b2ca47478625873fc6f3678e
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$BASE"
+          test "$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "$BASE success"
+          mkdir -p artifacts/official55
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir artifacts/official55
+          test -s artifacts/official55/EGGRUMBLE_REAL55.rbxlx
+          test -s artifacts/official55/B_REAL55_RECEIPT.json
+      - name: Exact real source joining and cross-domain negative checks
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/compose_real59.py \
+            --place artifacts/official55/EGGRUMBLE_REAL55.rbxlx \
+            --receipt artifacts/official55/B_REAL55_RECEIPT.json --out artifacts/real61
+          python3 -B quality_gameplay/gq8_real61_join_20261119/compose_real61.py \
+            --parent59 artifacts/real61/on59/GQ828_REAL59_HUD_MAP.project.json \
+            --receipt59 artifacts/real61/GQ828_REAL59_RECEIPT.json \
+            --off55 artifacts/real61/off55/GQ828_OFF55.project.json \
+            --out artifacts/real61/on61
+          python3 quality_gameplay/gq8_trade_ux_journal_20261119/test_trade57.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile exact 61 and OFF55 plus existing independent threat mutation suites
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8real61 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8real61 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          for p,n in (("artifacts/real61/on61/GQ8_REAL61_COMPOSITE.project.json",61),
+                      ("artifacts/real61/off55/GQ828_OFF55.project.json",55)):
+            _,scripts=flatten(Path(p))
+            assert len(scripts)==n
+            for f in scripts.values():
+              subprocess.run(["/tmp/gq8real61/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+            print("GQ8_NATIVE_EXACT_SELECTED_SCRIPTS_PASS",n)
+          PY
+          python3 handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/gq8hudnative61
+          /tmp/gq8real61/luau /tmp/gq8hudnative61/good.luau | grep -q GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS
+          for k in auth role fog; do
+            if /tmp/gq8real61/luau "/tmp/gq8hudnative61/$k"_mutant.luau >/tmp/negative.log 2>&1; then exit 1; fi
+            grep -q RED_ /tmp/negative.log
+          done
+          /tmp/gq8real61/luau quality_gameplay/gq8_trade_ux_journal_20261119/test_journal_native.luau | grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS
+      - name: Rojo7.7.1 real61 private Place and OFF55 source class rollback
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/rojo61.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/rojo61.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/rojo61.zip') as z:
+            a=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(a)==1
+            f=Path('/tmp/rojo61');f.write_bytes(z.read(a[0]));f.chmod(0o755)
+          PY
+          /tmp/rojo61 build artifacts/real61/on61/GQ8_REAL61_COMPOSITE.project.json -o artifacts/real61/EGGRUMBLE_REAL61_PRIVATE.rbxlx
+          /tmp/rojo61 build artifacts/real61/off55/GQ828_OFF55.project.json -o artifacts/real61/EGGRUMBLE_OFF55_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real61/on61/GQ8_REAL61_COMPOSITE.project.json \
+            --place artifacts/real61/EGGRUMBLE_REAL61_PRIVATE.rbxlx --count 61
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real61/off55/GQ828_OFF55.project.json \
+            --place artifacts/real61/EGGRUMBLE_OFF55_PRIVATE.rbxlx --count 55
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = a6020867fac80fa3b2ca47478625873fc6f3678e
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path("artifacts/real61/EGGRUMBLE_REAL61_PRIVATE.rbxlx")
+          r=Path("artifacts/real61/on61/GQ8_REAL61_RECEIPT.json")
+          d=json.loads(r.read_text())
+          d.update(candidate_head=os.environ["GITHUB_SHA"],native_rojo="PASS",
+                   candidate_place_bytes=p.stat().st_size,candidate_place_sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+          r.write_text(json.dumps(d,ensure_ascii=False,indent=2)+"\n")
+          print("GQ8_COMPOSITE_REAL61_PRIVATE_ONLY_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL61-HUD-TRADE-PRIVATE-NOT-OFFICIAL
+          path: |
+            artifacts/real61/EGGRUMBLE_REAL61_PRIVATE.rbxlx
+            artifacts/real61/EGGRUMBLE_OFF55_PRIVATE.rbxlx
+            artifacts/real61/on61/GQ8_REAL61_RECEIPT.json
+            artifacts/real61/on61/GQ8_REAL61_COMPOSITE.project.json
+          retention-days: 5
+          if-no-files-found: error
