@@ -36,8 +36,8 @@ class Neutral8Tests(unittest.TestCase):
             self.assertIn(species,out)
         self.assertIn('m:SetAttribute("EGGRUMBLE_Species",species)',out)
         self.assertIn('m:SetAttribute("EGGRUMBLE_NeutralId",actorId)',out)
-        self.assertIn('nextNeutralId+=1',out)
-        self.assertIn('m=soldier(all,at,species,"N"..tostring(nextNeutralId))',out)
+        self.assertIn('nextNeutralActorId+=1',out)
+        self.assertIn('local actorId="N"..tostring(nextNeutralActorId)',out)
         for marker in ("TakeDamage(","RemoteEvent","leaderstats","DataStoreService",
                        "session.botActors=","session.swarm="):
             self.assertEqual(out.count(marker),SOURCE.count(marker),marker)
@@ -47,13 +47,13 @@ class Neutral8Tests(unittest.TestCase):
             mod.transform(mod.transform(SOURCE))
 
     def test_source_drift_is_red(self):
-        changed=SOURCE.replace("local m=soldier(all,at)","local m=soldier(all,at,helper)")
+        changed=SOURCE.replace("local function soldier(parent:Instance,at:Vector3):Model","local function soldier(parent:Instance,at:Vector3,flag:boolean):Model")
         with self.assertRaisesRegex(ValueError,"RED_ORIGINAL_SWARM_SOURCE_CHANGED"):
             mod.transform(changed)
 
     def test_missing_sole_spawn_is_red(self):
         with self.assertRaisesRegex(ValueError,"RED_ORIGINAL_SWARM_SOURCE_CHANGED"):
-            mod.transform(SOURCE.replace(" local function addEnemy(at:Vector3)"," local function spawnMob(at:Vector3)"))
+            mod.transform(SOURCE.replace(" m.PrimaryPart=root"," m.PrimaryPart=body"))
 
     def test_stage_is_one_authority_not_8_spawners(self):
         out=mod.transform(SOURCE)
