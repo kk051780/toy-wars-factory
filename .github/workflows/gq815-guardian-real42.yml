@@ -25,7 +25,7 @@ jobs:
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_HEAD_CHANGED_REBASE; exit 1; }
           mkdir -p artifacts/original
-          gh run download 44311974603 --repo "$GITHUB_REPOSITORY" \
+          gh run download 44317388329 --repo "$GITHUB_REPOSITORY" \
             --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL \
             --dir artifacts/original
           test -s artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json
@@ -38,7 +38,7 @@ jobs:
           j=json.loads((p/"B_PORTABLE41_SOURCE_RECEIPT.json").read_text())
           assert isinstance(j["candidate_sha"],str) and len(j["candidate_sha"])==40  # PullRequest Actions GITHUB_SHA may be synthetic merge SHA
           assert j["source_count"]==41
-          assert hashlib.sha256((p/"EGGRUMBLE_SOURCE41.rbxlx").read_bytes()).hexdigest()=="be6c4fa63b7629fe8133ec08a8fe234563fcf722879db93e9e66978feb9973fd"
+          assert hashlib.sha256((p/"EGGRUMBLE_SOURCE41.rbxlx").read_bytes()).hexdigest()=="1cd5ee40fbee8a9c7f5874689c2a9da44c9cb6f6fa87136c771d7cf87f521384"
           import subprocess
           lock=json.loads(Path("quality_gameplay/gq8_guardian_runtime_20261118/SOURCE_LOCK.json").read_text())
           assert lock["baseline_formal_rc"]=="f77b4d4393d9e9b19b65566413432a7a9f13962b"
@@ -140,7 +140,7 @@ jobs:
           import hashlib,json,os
           file=Path("artifacts/real42/REAL42.rbxlx")
           m={"candidate_head":os.environ["GITHUB_SHA"],
-           "original_lineage":"PR796 original REAL41 at 940b99543d17e9ed6beb66e4a91a70e478868e3c",
+           "original_lineage":"PR796 verified Real41 33f22323f720659ae52628a6025a62eb1394fd24 (rolling gate source)",
            "original_formal_rc":"f77b4d4393d9e9b19b65566413432a7a9f13962b",
            "native42":True,"rojo42_class_source":True,"rollback_off41":True,
            "place_bytes":file.stat().st_size,"place_sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
