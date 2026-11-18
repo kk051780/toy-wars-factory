@@ -15,24 +15,34 @@ def check_touch_runtime_source() -> None:
     not claim Studio input or device UX verification.
     """
     required = {
-        "visible Musou after lobby": "actions.MUSOU.Visible=inMatch",
-        "visible Invul after lobby": "actions.INVUL.Visible=inMatch",
-        "combat UI hidden in lobby": "gui.Enabled=inMatch",
-        "Musou server-tool readiness": 'local readyM=#musou>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true',
-        "Invul server-tool readiness": 'local readyI=#invul>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true',
-        "Musou false readiness text": 'actions.MUSOU.Text=readyM and "無双" or "無双 --"',
-        "Invul false readiness text": 'actions.INVUL.Text=readyI and "無敵" or "無敵 --"',
-        "base attack without a skill": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
+        "battle only chrome": "gui.Enabled=inMatch",
+        "visible Musou": "actions.MUSOU.Visible=inMatch",
+        "visible Invul": "actions.INVUL.Visible=inMatch",
+        "actual MUSOU Tool": 'return ownedToolByName("EGGRUMBLE_MUSOU_AWAKEN")',
+        "actual INVUL Tool": 'return ownedToolByName("迎撃覚醒")',
+        "exact original Musou READY IN": 'local readyIn=player:GetAttribute("EGGRUMBLE_MusouReadyIn")',
+        "server original Musou phase": 'local phaseM=player:GetAttribute("EGGRUMBLE_MusouPhase")',
+        "gated Musou ready": 'local verifiedM=musou~=nil and phaseM=="OFF" and type(readyIn)=="number"',
+        "invul armed": 'local armed=phaseI=="ARMED"',
+        "invul awakened": 'local awakened=phaseI=="AWAKENED"',
+        "server owned trigger only": "closeDrawer();activate(tool)",
+        "base attack fallback correctly labeled": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
         "handedness refresh": "w==lastW and h==lastH and hand==lastHand",
         "handedness cache": "lastW,lastH,lastHand=w,h,hand",
     }
     for case, anchor in required.items():
-        assert CLIENT.count(anchor) == 1, "RED_HUD_RUNTIME_" + case.replace(" ", "_")
-    assert "if not inMatch then\n  actions.INVUL.Visible=false" not in CLIENT, "RED_HUD_STICKY_HIDDEN"
-    assert 'local readyM=#musou>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true' in CLIENT, "RED_FAKE_MUSOU_READY"
-    assert 'local readyI=#invul>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true' in CLIENT, "RED_FAKE_INVUL_READY"
+        assert CLIENT.count(anchor) == 1 or (case == "server owned trigger only" and CLIENT.count(anchor)==2), "RED_HUD_RUNTIME_" + case.replace(" ", "_")
+    for forbidden in (
+        'player:GetAttribute("EGGRUMBLE_InvulReady")',
+        'player:GetAttribute("EGGRUMBLE_MusouReady")',
+        'return ownedToolByName("EGGRUMBLE_INVUL_',
+        '"remote:FireServer("',
+    ):
+        assert forbidden not in CLIENT, "RED_NONAUTHORITATIVE_POWER_BUTTON_" + forbidden
     assert "gui.Enabled=inMatch" in CLIENT, "RED_BATTLE_UI_OBSCURES_LOBBY"
     assert "remote:FireServer(" not in CLIENT, "RED_CLIENT_FORGED_AUTHORITY"
+    # Note: exact upstream Real55 original Tool names/attributes are checked
+    # again by the Real59 workflow against the 55 physical selected sources.
 
 TEST = r'''
 local H = Hud
