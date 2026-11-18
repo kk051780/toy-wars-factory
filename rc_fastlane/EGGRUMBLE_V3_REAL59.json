@@ -1,0 +1,56 @@
+{
+  "schema": "P0D_EGGRUMBLE_V3_REAL59_HUD_INTEL_PRIVATE_COMPANION_V1",
+  "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
+  "owner_issue": 828,
+  "source_pr": 829,
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "prior_official_sha": "a6020867fac80fa3b2ca47478625873fc6f3678e",
+  "parent_profile": "eggrumble_v3_real55",
+  "parent_source_count": 55,
+  "source_profile": "eggrumble_v3_real59",
+  "source_count": 59,
+  "canonical_build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real59.yml",
+  "original_immutable_source_refs": {
+    "real55": {
+      "official_head": "a6020867fac80fa3b2ca47478625873fc6f3678e",
+      "successful_run": 44393525211,
+      "artifact_id": 14468488418,
+      "artifact_name": "P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO"
+    }
+  },
+  "source_locks": {
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau": "8852e0a8887d924c5e444c9e94f4bc799f195f28",
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "0b79b782bb2fc7aa2f17a08c25d5ef083f71e45b",
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "4c2d355eea62e9b2becfed134dadcf5257bd85ac"
+  },
+  "source_routes": [
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
+    "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy",
+    "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+  ],
+  "invariants": {
+    "original_real55_sources_unchanged": true,
+    "one_game_combat_swarm_host": true,
+    "no_new_combat_or_damage_owner": true,
+    "map_remote": "EGGRUMBLE_MapIntelUpdate_V1 server FireClient only, no OnServerEvent",
+    "purchases_enabled": false,
+    "trade_settlement_enabled": false,
+    "primary_rich51_unchanged": true,
+    "public_roblox_publish": false,
+    "privacy": "server role/fog/LOS before per-player payload",
+    "status_truth": "no false MUSOU/INVUL READY without server Tools and replicated flags",
+    "ui": "mobile battle-only; center clear; map uses actual castle/neutral/item"
+  },
+  "rollback": "OFF55 original source selected unchanged; omit four HUD/Fog only",
+  "actual_acceptance": {
+    "official_rc_source_selected": "PENDING_NONFORCE_CAS",
+    "same_head_native_rojo_off55": "PENDING",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "art_screenshot": "NOT_TESTED",
+    "fun": "NOT_TESTED"
+  },
+  "notes": "An official source profile is proven only when approved writer safely advances single RC branch and new exact-head workflow succeeds; source-only PR is not formal adoption. New team and element markers should be Android+Studio tested before release."
+}
