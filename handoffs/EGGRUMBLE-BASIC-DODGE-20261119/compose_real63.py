@@ -175,6 +175,12 @@ def patch_hud(source):
  if 'local reserved=p.DODGE' in source:
   raise ValueError("RED_SELECTED_SKILL_COVERS_DODGE")
  source=only(source,
+  ' choices[i].Size=UDim2.new(1,-12,0,37)',
+  ' choices[i].Size=UDim2.new(1,-12,0,31)',"FOUR_CHOICE_HEIGHT")
+ source=only(source,
+  ' choices[i].Position=UDim2.fromOffset(6,5+(i-1)*40)',
+  ' choices[i].Position=UDim2.fromOffset(6,5+(i-1)*33)',"FOUR_CHOICE_SPACING")
+ source=only(source,
   ' drawer.Size=UDim2.fromOffset(math.min(178,w*.23),170)\n'
   ' drawer.Position=UDim2.fromOffset(math.max(w-195,w*.72),math.min(h*.35,147))',
   ' local dw=math.min(178,math.max(104,math.floor(w*.25)))\n'
