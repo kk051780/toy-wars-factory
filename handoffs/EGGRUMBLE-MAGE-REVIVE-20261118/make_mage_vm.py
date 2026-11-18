@@ -142,7 +142,7 @@ def generate(out:Path):
  (out/"good.luau").write_text(good,encoding="utf-8")
  mutant=body.replace('local MAGE_COOLDOWN_SECONDS=40','local MAGE_COOLDOWN_SECONDS=0')
  if mutant==body:raise ValueError("RED_MUTANT_PATTERN_MISSING")
- (out/"mutant.luau").write_text(HARNESS.replace("__MODULE__",mutant),encoding="utf-8")
+ (out/"mutant.luau").write_text(HARNESS.replace("__MODULE__",mutant).replace("spec.cooldown==40","spec.cooldown==0"),encoding="utf-8")
  print("GQ8_MAGE_REVIVE_SOURCE_DERIVED_HARNESS_READY")
 if __name__=="__main__":
  p=argparse.ArgumentParser()
