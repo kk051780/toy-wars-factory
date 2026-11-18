@@ -121,8 +121,8 @@ def run(a):
  receipt_verify(viral,rv["sources"],"VIRAL56")
  receipt_verify(counter,rc["sources"],"COUNTER56")
  receipt_verify(hud,rh["on_sources"],"HUD59")
- if rh.get("official_rc_head")!=OFFICIAL or rh.get("baseline_real55_source_count")!=55 or
-   set(tuple(x.split("/")) for x in rh["new_routes"])!=HUD:
+ if (rh.get("official_rc_head")!=OFFICIAL or rh.get("baseline_real55_source_count")!=55 or
+     set(tuple(x.split("/")) for x in rh["new_routes"])!=HUD):
   raise ValueError("RED_HUD_BASE_CONTRACT")
  if rt.get("original55_unchanged")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55:
   raise ValueError("RED_AUTHOR_BASE_CONTRACT")
