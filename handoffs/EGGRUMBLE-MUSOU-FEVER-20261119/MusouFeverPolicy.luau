@@ -134,7 +134,7 @@ function M.onConfirmedKO(s,c,ko)
  if type(ko)~="table" or ko.serverConfirmed~=true
    or ko.enemyConfirmed~=true or ko.creditVerified~=true
    or ko.scoreEligible~=true or ko.creditedPlayerId~=c.playerId
-   or ko.isSummoned==true or ko.isConverted==true
+   or ko.isSummoned~=false or ko.isConverted~=false
    or ident(ko.victimId)==nil or ident(ko.receiptId)==nil
    or ident(ko.victimId)==ident(c.playerId) then
   return false,"UNVERIFIED_KO"
@@ -187,7 +187,11 @@ function M.attackMultiplier(s,c,targetKind)
  return 1
 end
 function M.allowEggObjective(s,c)
- return activeEntry(s,c)==nil
+ if not baseContext(s,c) then return false end
+ local e=entry(s,c,false)
+ -- Fail closed even after egg pickup revokes effective attack power:
+ -- the actual item owner must cancel this mode before accepting objective actions.
+ return not (e and e.active and c.now>=e.startAt and c.now<e.endsAt)
 end
 -- Only the existing match / character owner calls cancel, including
 -- pickup, death, invul activation, shield activation and match transitions.
