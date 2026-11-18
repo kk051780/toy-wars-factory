@@ -3,6 +3,7 @@
 from pathlib import Path
 import argparse
 import json
+import subprocess
 
 root = Path(__file__).resolve().parents[2]
 model = root / "releases/P0D_S1_KIDS_RC01/src/shared/ViralMomentPolicy.luau"
@@ -31,6 +32,11 @@ def static_gate():
     for forbidden in ("FireServer(", "TakeDamage(", "Humanoid", "Instance.new(",
                       "RemoteEvent", "DataStoreService", "MarketplaceService"):
         assert forbidden not in source, "RED_VIEWMODEL_GAMEPLAY_WRITER_" + forbidden
+    lock=json.loads((root / "handoffs/EGGRUMBLE-VIRAL-20261119/SOURCE_LOCK.json").read_text())
+    for path, expected in lock["files"].items():
+        got=subprocess.check_output(["git","hash-object",str(root / path)],text=True).strip()
+        assert got == expected, "RED_SOURCE_BLOB_DRIFT_" + path
+    print("GQ8_VIRAL_SOURCE_LOCK_5_EXACT_BLOBS_PASS")
     print("GQ8_VIRAL_STATIC_EXISTING_HUD_GAME_REMOTE_PRESERVED")
 
 TEST = r'''
