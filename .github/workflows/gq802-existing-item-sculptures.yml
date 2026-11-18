@@ -1,0 +1,171 @@
+name: GQ802 existing item 3D silhouette real Core36 Native Rojo OFF31
+on:
+  push:
+    branches: ['quality/gq802-item-sculpture-20261118']
+    paths:
+      - 'quality_gameplay/gq802_item_sculptures_20261118/**'
+      - '.github/workflows/gq802-existing-item-sculptures.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_item_sculptures_20261118/**'
+      - '.github/workflows/gq802-existing-item-sculptures.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  genuine-existing-item:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - name: Official current31 artifact pin and rollback provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN=f77b4d4393d9e9b19b65566413432a7a9f13962b
+          RUN=44232589258
+          ACTUAL="$(gh run view "$RUN" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$ACTUAL" = "$PIN success" || { echo RED_NOT_OFFICIAL_PINNED_31; exit 1; }
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$CURRENT" != "$PIN" ]; then
+            echo "YELLOW_OFFICIAL_HEAD_MOVED:$CURRENT"
+          fi
+          mkdir -p artifacts/official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Genuine existing author 31, Realm34, Regen33 and Core36 build
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/combined36/COMBINED36.project.json
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq802_item_sculptures_20261118')
+          from compose_real36 import flatten,ITEM
+          path=flatten(Path('artifacts/current31/CURRENT31_REAL_SOURCE.project.json'))[1][ITEM]
+          with open(__import__('os').environ['GITHUB_ENV'],'a') as f:
+              f.write('GQ802_REAL_ITEM_SOURCE='+str(path)+'\n')
+          print('ORIGINAL_OFFICIAL_ITEM_FILE',path)
+          PY
+      - name: Real existing ITEM source, 9 Python tests, hidden/respawn native VM preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq802_item_sculptures_20261118 -p 'test_*.py'
+          mkdir -p artifacts/items/ON artifacts/items/OFF
+          python3 quality_gameplay/gq802_item_sculptures_20261118/patch_item.py \
+            --source "$GQ802_REAL_ITEM_SOURCE" \
+            --out artifacts/items/ON/ItemSelected.luau \
+            --harness artifacts/items/item_native_vm.spec.luau
+          python3 quality_gameplay/gq802_item_sculptures_20261118/patch_item.py \
+            --source artifacts/items/ON/ItemSelected.luau --rollback \
+            --out artifacts/items/OFF/ItemSelected.luau
+          cmp "$GQ802_REAL_ITEM_SOURCE" artifacts/items/OFF/ItemSelected.luau
+          python3 quality_gameplay/gq802_item_sculptures_20261118/compose_real36.py \
+            --project36 artifacts/combined36/COMBINED36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/combined36/GQ802_ITEM_REAL36.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile actual current36 / original31 plus source-derived item lifecycle VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq802-item-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802-item-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq802_item_sculptures_20261118')
+          from compose_real36 import flatten
+          for path,n in [('artifacts/combined36/GQ802_ITEM_REAL36.project.json',36),
+                         ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
+              files=flatten(Path(path))[1]
+              assert len(files)==n,(path,len(files))
+              for source in files.values():
+                  subprocess.run(['/tmp/gq802-item-luau/luau-compile','--text',str(source)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print('GQ802_NATIVE_ALL_REAL_SCRIPTS',n)
+          PY
+          /tmp/gq802-item-luau/luau-compile --text artifacts/items/item_native_vm.spec.luau >/dev/null
+          /tmp/gq802-item-luau/luau artifacts/items/item_native_vm.spec.luau
+      - name: Pinned Rojo7.7.1 exact real36 ON, original31 OFF Source and Class
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq802-item-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq802-item-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq802-item-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              f=Path('/tmp/gq802-item-rojo')
+              f.write_bytes(z.read(found[0]));f.chmod(0o755)
+          PY
+          /tmp/gq802-item-rojo build artifacts/combined36/GQ802_ITEM_REAL36.project.json -o artifacts/combined36/GQ802_ITEM_REAL36.rbxlx
+          /tmp/gq802-item-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/GQ802_OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/combined36/GQ802_ITEM_REAL36.project.json \
+            --place artifacts/combined36/GQ802_ITEM_REAL36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --place artifacts/combined36/GQ802_OFF31.rbxlx --count 31
+          echo GQ802_TRUE_ITEM_SCULPTURES_36_NATIVE_ROJO_OFF31_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ802-3ITEM-SILHOUETTES-CORE36-PREP-NOT-PUBLISHED
+          path: |
+            artifacts/combined36/GQ802_ITEM_REAL36.rbxlx
+            artifacts/combined36/GQ802_ITEM_REAL36.receipt.json
+            artifacts/combined36/GQ802_OFF31.rbxlx
+          retention-days: 5
+          if-no-files-found: error
