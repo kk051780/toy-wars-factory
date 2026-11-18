@@ -3,7 +3,7 @@
 
 Does NOT modify #815 existing guardian/Host/Combat/Rules code or add a new
 script. Takes only exact portable source from immutable successful run
-44316775401 and adds the two original-source overlays to selected 42.
+44318289343 and adds the two original-source overlays to selected 42.
 """
 from __future__ import annotations
 import argparse
@@ -18,8 +18,8 @@ from patch_weather41 import (
     flatten,gitblob,patch
 )
 
-SOURCE41_GUARDIAN_RUN=44316775401
-EXPECTED_42_PLACE_SHA="44a9152cb95abd1c838541a2219e102b3094c85d7a25d609c69b385550c9f020"
+SOURCE41_GUARDIAN_RUN=44318289343
+EXPECTED_42_PLACE_SHA="a32b909a951074a72623a003c77ff43afa7c425e5aa907f45cf9f4423be3ee9a"
 CHANGED={REALM,RENDER}
 
 def compose(project:Path,receipt:Path,original_place:Path,out:Path):
@@ -83,7 +83,7 @@ def compose(project:Path,receipt:Path,original_place:Path,out:Path):
         "formal_rc_adopted":False,
         "studio_2client":"NOT_TESTED","android15min":"NOT_TESTED",
         "owner_fun":"NO_GO",
-        "rollback":"Use exact #815 portable42 from run44316775401; no changed old scripts",
+        "rollback":"Use exact #815 portable42 from run44318289343; no changed old scripts",
     }
     out.with_suffix(".receipt.json").write_text(json.dumps(report,sort_keys=True,indent=2)+"\n",encoding="utf8")
     print("GQ8_SEEDED_WEATHER_REAL42_TWO_SOURCE_EXACT_WITH_GUARDIANS_PASS")
