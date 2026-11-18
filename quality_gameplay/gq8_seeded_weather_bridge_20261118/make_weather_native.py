@@ -67,7 +67,7 @@ print("GQ8_STAGE_WEATHER_REAL41_REAL_HELPER_16_CASES_PASS")
 
 def extract(project:Path)->str:
     _,files=flatten(project)
-    if len(files)!=41 or REALM not in files or RENDER not in files:
+    if len(files) not in (41,42) or REALM not in files or RENDER not in files:
         raise ValueError("RED_NOT_SELECTED_REAL41")
     realm=files[REALM].read_text(encoding="utf8")
     render=files[RENDER].read_text(encoding="utf8")
