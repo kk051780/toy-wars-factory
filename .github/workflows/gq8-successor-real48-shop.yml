@@ -35,10 +35,10 @@ jobs:
           set -euo pipefail
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
-          EVIDENCE="$(gh run view 44376856212 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
-          test "$EVIDENCE" = "a4684d6333db25474ad9f44ff6203aef7119dc6d success" || { echo RED_ORIGINAL_REAL44_SOURCE_RUN_NOT_GREEN; exit 1; }
+          EVIDENCE="$(gh run view 44385257005 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "d5c13082d4987a8c89588a12b81edc73adc945ce success" || { echo RED_ORIGINAL_REAL44_SOURCE_RUN_NOT_GREEN; exit 1; }
           mkdir -p artifacts/parent44 artifacts/author808
-          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/parent44
+          gh run download 44385257005 --repo "$GITHUB_REPOSITORY" --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/parent44
           test -s artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json
           test -s artifacts/parent44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json
           test -s artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.rbxlx
