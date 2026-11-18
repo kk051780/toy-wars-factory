@@ -16,10 +16,10 @@
   ],
   "sole_damage_authority": "ServerScriptService/EGGRUMBLE_CastleMatchRules",
   "pinned_git_blobs": {
-    "quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": "c6491674a582b3c6a8db574b44ac9b30da94aa65",
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": "5ffc11569649d9ec42ed9e6f92d81f08a97d882d",
     "quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeBridge.luau": "0603f7999552fbc34f7497d2f564e1d955ff92e9",
     "quality_gameplay/gq804_castle_siege_guardians_20261118/compose_core38.py": "09cfd2b0720fd0cba2641fe8c5ce73dd705649b4",
-    "quality_gameplay/gq804_castle_siege_guardians_20261118/test_siege_guardian_native.luau": "99eb6487f278e287180ec9c45fbfff93d2903fa2"
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/test_siege_guardian_native.luau": "597cdfdcb48b2def1424c65b0b462f630603b93a"
   },
   "fallback": "Use original36 Rojo project without GQ804 two modules or two existing-source siege insertions.",
   "publishes": false,
@@ -34,5 +34,12 @@
     "OFF36 exact",
     "OFF31 exact",
     "sole writer #220 nonforce expected SHA CAS"
-  ]
+  ],
+  "gate_anti_rush": {
+    "per_attacker_cooldown_seconds": 1,
+    "global_gate_damage_per_5_seconds": 72,
+    "initial_gate_hp": 180,
+    "server_time_only": true,
+    "rollback": "Revert policy anti-rush change to original GQ804 author blob c6491674a582b3c6a8db574b44ac9b30da94aa65; core36 OFF remains unchanged."
+  }
 }
