@@ -131,7 +131,7 @@ jobs:
                          selected_place_sha256=hashlib.sha256(place.read_bytes()).hexdigest(),
                          selected_place_bytes=place.stat().st_size,
                          off36_sha256=hashlib.sha256(off.read_bytes()).hexdigest(),
-                         off36_bytes=off.stat().st_size())
+                         off36_bytes=off.stat().st_size)
           f.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
           print("GQ828_ACTUAL_REAL40_ON_OFF_SAME_HEAD_PASS",receipt["selected_place_sha256"])
           PY
