@@ -12,7 +12,7 @@ POLICY_SRC=ROOT/"_regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/EGGRUMBLE_Passiv
 def relfiles(project,files):
  model={"name":"fake source harness","tree":{"ServerScriptService":{},"StarterPlayer":{"StarterPlayerScripts":{}}}}
  for i,(route,text) in enumerate(sorted(files.items())):
-  file=project.parent/("S"+str(i)+".luau")
+  file=project.parent/(project.stem+"_"+str(i)+".luau")
   file.write_text(text,encoding="utf-8")
   cur=model["tree"]
   for node in route[:-1]:cur=cur.setdefault(node,{})
