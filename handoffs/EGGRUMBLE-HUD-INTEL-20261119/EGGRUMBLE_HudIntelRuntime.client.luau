@@ -317,7 +317,13 @@ mapToggle.Activated:Connect(function()
  redraw()
 end)
 remote.OnClientEvent:Connect(function(s)
- if type(s)~="table" or s.kind~="MAP_INTEL" or s.version~=1 then return end
+ if type(s)~="table" or s.version~=1 then return end
+ if s.kind=="MAP_RESET" then
+  mapSnapshot=nil;mapExpanded=false;activeLayer="LAND"
+  closeDrawer();redraw()
+  return
+ end
+ if s.kind~="MAP_INTEL" then return end
  if type(s.x)~="number" or type(s.z)~="number"
   or type(s.markers)~="table" or type(s.explored)~="table"
   or #s.markers>30 or #s.explored>500 then return end
