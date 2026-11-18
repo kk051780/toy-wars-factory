@@ -14,6 +14,7 @@ from compose_real40 import contents, project_for, digest
 OFFICIAL_SHA="b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff"
 COMBAT=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 HUD=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_HudIntelRuntime")
+VIEW=("ReplicatedStorage","EGGRUMBLE_HudPresentationPolicy")
 POLICY=("ServerScriptService","EGGRUMBLE_BasicMobilityPolicy")
 
 def only(s,old,new,label):
@@ -125,6 +126,15 @@ def patch_combat(source):
   raise ValueError("RED_CLIENT_ACTION_EXECUTION_DUPLICATION")
  return source
 
+def patch_view(source):
+ # REAL59 small portrait: top action menus must not obscure HP/status.
+ source=only(source,'local menuY = math.min(133, h * .18)',
+  'local menuY = math.max(62, math.min(133, h * .18))',"PORTRAIT_MENU_STATUS")
+ # Square buttons overlap at a corner despite center-distance circle tests.
+ source=only(source,'MUSOU = at(x - 66, h - 35, 46, "無双")',
+  'MUSOU = at(x - 55, h - 35, 46, "無双")',"PORTRAIT_INVUL_MUSOU")
+ return source
+
 def patch_hud(source):
  source=only(source,'actions.DODGE.Visible=false -- requires an existing authorized dodge owner',
   'actions.DODGE.Visible=false -- enabled only when original owned dodge Tool exists',
@@ -164,6 +174,42 @@ def patch_hud(source):
   ' skillUse.Visible=skillUse.Visible and inMatch', "BATTLE_ONLY_DODGE")
  if 'local reserved=p.DODGE' in source:
   raise ValueError("RED_SELECTED_SKILL_COVERS_DODGE")
+ source=only(source,
+  ' drawer.Size=UDim2.fromOffset(math.min(178,w*.23),170)\n'
+  ' drawer.Position=UDim2.fromOffset(math.max(w-195,w*.72),math.min(h*.35,147))',
+  ' local dw=math.min(178,math.max(104,math.floor(w*.25)))\n'
+  ' local menuBottom=math.max(p.ITEM.y+p.ITEM.size/2,p.SKILL.y+p.SKILL.size/2)\n'
+  ' local dy=math.max(48,math.min(math.floor(menuBottom+8),h-150))\n'
+  ' drawer.Size=UDim2.fromOffset(dw,145)\n'
+  ' drawer.Position=UDim2.fromOffset(math.max(8,w-dw-8),dy)',
+  "DRAWER_OVERLAP")
+ source=only(source,
+  ' actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch\n'
+  ' actions.DODGE.Visible=actions.DODGE.Visible and inMatch\n'
+  ' skillUse.Visible=skillUse.Visible and inMatch',
+  ' -- Menu opens as a compact modal, so its controls never visually stack\n'
+  ' -- over combat buttons. This is visual-only, no client gameplay grant.\n'
+  ' local selecting=drawer.Visible\n'
+  ' actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n'
+  ' actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n'
+  ' skillUse.Visible=skillUse.Visible and inMatch and not selecting',
+  "MODAL_ATTACK_DODGE")
+ source=only(source,
+  ' actions.INVUL.Visible=inMatch\n'
+  ' actions.MUSOU.Visible=inMatch',
+  ' actions.INVUL.Visible=inMatch and not drawer.Visible\n'
+  ' actions.MUSOU.Visible=inMatch and not drawer.Visible',
+  "MODAL_MODE_BUTTONS")
+ source=only(source,
+  '  mapBox.Size=UDim2.fromOffset(math.floor(math.min(w*.43,340)),math.floor(math.min(h*.66,285)))\n'
+  '  mapBox.Position=UDim2.fromOffset(9,math.max(8,math.floor(h*.12)))',
+  '  local mw=math.floor(math.min(w*.43,340))\n'
+  '  local my=math.max(8,math.floor(h*.12))\n'
+  '  local moveTop=p.MOVE.y-p.MOVE.size/2\n'
+  '  local mh=math.max(60,math.min(math.floor(math.min(h*.66,285)),math.floor(moveTop-my-10)))\n'
+  '  mapBox.Size=UDim2.fromOffset(mw,mh)\n'
+  '  mapBox.Position=UDim2.fromOffset(hand=="LEFT" and (w-mw-9) or 9,my)',
+  "MAP_MOVE_CLEARANCE")
  if source.count('actions.DODGE.Activated:Connect(')!=1:
   raise ValueError("RED_DUPLICATE_DODGE_CLICK")
  return source
@@ -175,7 +221,7 @@ def run(place,receipt,out):
  assert data.get("combined_count")==62 and data.get("host_class")=="Script","RED_REAL62_PROFILE_OR_HOST_MISSING"
  assert data.get("real62_sha256")==digest(place),"RED_REAL62_PHYSICAL_SHA_DRIFT"
  src,classes=contents(ET.parse(place).getroot())
- if len(src)!=62 or COMBAT not in src or HUD not in src or POLICY in src:
+ if len(src)!=62 or COMBAT not in src or HUD not in src or VIEW not in src or POLICY in src:
   raise ValueError("RED_NOT_UNIQUE_62_SOURCES")
  host=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
  if src.get(host,(None,None))[0]!="Script":
@@ -193,9 +239,10 @@ def run(place,receipt,out):
  _,offIndex=project_for(src,classes,off,"GQ828_OFF62_EXACT")
  src[COMBAT]=(orig[COMBAT][0],patch_combat(orig[COMBAT][1]))
  src[HUD]=(orig[HUD][0],patch_hud(orig[HUD][1]))
+ src[VIEW]=(orig[VIEW][0],patch_view(orig[VIEW][1]))
  src[POLICY]=("ModuleScript",(HERE/"EGGRUMBLE_BasicMobilityPolicy.luau").read_text(encoding="utf8"))
  assert len(src)==63
- for route in set(orig)-{COMBAT,HUD}:
+ for route in set(orig)-{COMBAT,HUD,VIEW}:
   if src[route]!=orig[route]:raise ValueError("RED_DUPLICATE_CORE_OVERWRITE")
  assert sum("EGGRUMBLE_SwarmCombat"==k[-1] for k in src)==1
  assert sum("EGGRUMBLE_SevenRoleCombat"==k[-1] for k in src)==1
@@ -206,8 +253,8 @@ def run(place,receipt,out):
   "feature_id":"GQ828_BASIC_DODGE_REAL63_20261119",
   "official_parent_sha":OFFICIAL_SHA,
   "parent_original_sources":62,"candidate_sources":63,
-  "original_unchanged":60,
-  "original_modified":["/".join(COMBAT),"/".join(HUD)],
+  "original_unchanged":59,
+  "original_modified":["/".join(COMBAT),"/".join(HUD),"/".join(VIEW)],
   "added_module":"/".join(POLICY),
   "original_parent_place_sha256":digest(place),
   "host_original_class":"Script",
@@ -222,7 +269,7 @@ def run(place,receipt,out):
   "rollback":"OFF62 original physical canonical Host+HUD+Trade source selected"
  }
  (out/"REAL63_RECEIPT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
- print("GQ828_REAL63_ORIGINAL60_PRESERVED_2_OWNER_PATCHED_1_POLICY_PASS")
+ print("GQ828_REAL63_ORIGINAL59_PRESERVED_3_SELECTED_PATCHED_1_POLICY_PASS")
 
 if __name__=="__main__":
  ap=argparse.ArgumentParser()
