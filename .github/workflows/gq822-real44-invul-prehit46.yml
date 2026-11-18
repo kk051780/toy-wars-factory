@@ -69,6 +69,9 @@ jobs:
           print('GQ822_ALL13_ORIGINAL_DAMAGE_OWNER_HOOKS_AND_FREE_SKILL_ATTACHED_PASS')
           PY
           python3 _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/make_native_invul.py --out /tmp/gq822-actual-policy-vm
+          python3 handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py \
+            --policy _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau \
+            --out /tmp/gq822-actual-runtime-vm
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -98,6 +101,14 @@ jobs:
           /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-policy-vm/good.luau >/dev/null
           /tmp/gq822-luau/luau /tmp/gq822-actual-policy-vm/good.luau | tee /tmp/actual-vm.log
           grep -qx GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_MULTISOURCE_COUNTER_PVP_GUARDS_PASS /tmp/actual-vm.log
+          /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-runtime-vm/good.luau >/dev/null
+          /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-runtime-vm/damage_mutant.luau >/dev/null
+          /tmp/gq822-luau/luau /tmp/gq822-actual-runtime-vm/good.luau | tee /tmp/gq822-runtime-good.log
+          grep -qx GQ822_REAL_RUNTIME_NATIVE_FREE_TOOL_PREHIT_ZERO_REPEAT_ZERO_EXPIRY_PASS /tmp/gq822-runtime-good.log
+          if /tmp/gq822-luau/luau /tmp/gq822-actual-runtime-vm/damage_mutant.luau >/tmp/gq822-runtime-mutant.log 2>&1; then
+            echo RED_LIVE_RUNTIME_MUTANT_DID_NOT_FAIL; exit 1
+          fi
+          grep -q RED_FIRST_DAMAGE_SHOULD_BE_ZERO /tmp/gq822-runtime-mutant.log
       - name: Original44 and private46 Rojo 7.7.1 exact Source/Class, original OFF44 match
         run: |
           set -euo pipefail
