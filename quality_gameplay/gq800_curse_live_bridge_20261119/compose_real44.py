@@ -171,7 +171,7 @@ def patch_swarm(source:str)->str:
     end=source.find("local api={",start)
     if start<0 or end<start:raise ValueError("RED_ORIGINAL_STRIKE_BOUNDARIES")
     segment=source[start:end]
-    candidates=re.findall(r'if m\\.Parent and h\\.Health>0 and m\\.PrimaryPart[^\\n]* then',segment)
+    candidates=re.findall(r'if m\.Parent and h\.Health>0 and m\.PrimaryPart[^\n]* then',segment)
     if len(candidates)!=1:raise ValueError("RED_FRIENDLY_FIRE_TARGET_PREDICATE_"+str(len(candidates)))
     old=candidates[0]
     new=old.rsplit(" then",1)[0]+" and not charmed[m] then"
