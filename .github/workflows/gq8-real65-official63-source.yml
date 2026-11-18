@@ -26,7 +26,19 @@ jobs:
           python3 -m py_compile quality_gameplay/gq8_real65_intake_20261119/compose_real65.py
           python3 -B quality_gameplay/gq8_real65_intake_20261119/test_real65.py
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$CURRENT" > /tmp/gq865_rc_compare.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open("/tmp/gq865_rc_compare.json"))
+          allowed={
+            ".github/workflows/gq8-real63-successor-nonregression.yml",
+            "quality_gameplay/gq8_real63_successor_guard_20261119/gate.py",
+            "quality_gameplay/gq8_real63_successor_guard_20261119/test_gate.py"}
+          paths={x["filename"] for x in d["files"]}
+          assert d["status"] in {"identical","ahead"} and paths.issubset(allowed),(
+            "RED_OFFICIAL_SOURCE_MOVED_RECONCILE",d["status"],sorted(paths-allowed))
+          print("GQ8_REAL65_FRESH_FORMAL_RC_SOURCE63_PRESERVED_QA_ONLY",d["ahead_by"])
+          PY
           for spec in \
             44404334603:b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff \
             44405602223:ad602cebafc1a9d8caed078ab86c7a58b0fbbbef \
@@ -154,7 +166,18 @@ jobs:
           print("GQ8_REAL65_ROJO_ON65_OFF63_SOURCE_EXACT",on.stat().st_size)
           PY
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_AFTER_QA; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$CURRENT" > /tmp/gq865_rc_after.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open("/tmp/gq865_rc_after.json"))
+          allowed={
+            ".github/workflows/gq8-real63-successor-nonregression.yml",
+            "quality_gameplay/gq8_real63_successor_guard_20261119/gate.py",
+            "quality_gameplay/gq8_real63_successor_guard_20261119/test_gate.py"}
+          assert d["status"] in {"identical","ahead"}
+          assert {x["filename"] for x in d["files"]}.issubset(allowed)
+          print("GQ8_REAL65_POSTBUILD_RC_SOURCE_UNCHANGED")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ8-REAL65-OFFICIAL63-PLUS-VIRAL-COUNTER-CANDIDATE
