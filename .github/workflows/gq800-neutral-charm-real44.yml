@@ -3,8 +3,7 @@ on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
-      - 'quality_gameplay/gq800_neutral8_single_swarm_20261118/compose_charm44.py'
-      - 'quality_gameplay/gq800_neutral8_single_swarm_20261118/test_compose_charm44.py'
+      - 'quality_gameplay/gq800_neutral8_single_swarm_20261118/**'
       - '.github/workflows/gq800-neutral-charm-real44.yml'
   workflow_dispatch:
 permissions:
@@ -19,31 +18,47 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
-      - name: Pin original43, formal ref and unchanged original author curse policy
+      - name: Pin formal RC and exact immutable Guardian-Weather42 ancestor plus original #801 policies
         shell: bash
         run: |
           set -euo pipefail
           ACTUAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$ACTUAL" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED; exit 1; }
-          mkdir -p artifacts/original43 artifacts/policy
-          gh run download 44372491757 --repo "$GITHUB_REPOSITORY" \
-            --name GQ800-REAL43-NEUTRAL8-PRIVATE-SOURCE-NOT-OFFICIAL --dir artifacts/original43
-          test -s artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json
-          test -s artifacts/original43/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          mkdir -p artifacts/original42 artifacts/original43/portable43 artifacts/policy
+          gh run download 44319450066 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL42-GUARDIAN-WEATHER-ON-OFF-NOT-RC --dir artifacts/original42
+          test -s artifacts/original42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
+          test -s artifacts/original42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
+          test -s artifacts/original42/portable42/B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/original42/portable42")
+          r=json.loads((p/"B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json").read_text())
+          assert r["script_count"]==42 and r["untouched_original_scripts"]==40
+          assert sorted(r["modified_original_scripts"])==sorted((
+            "ServerScriptService/GQ802_StageTileVisualRenderer",
+            "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+          ))
+          assert hashlib.sha256((p/"EGGRUMBLE_SOURCE42_WEATHER.rbxlx").read_bytes()).hexdigest()==r["place_sha256"]
+          print("GQ800_IMMUTABLE_ORIGINAL_WEATHER42_SOURCE_LOCK_PASS")
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/42f512c4aaa389e0027be774c327e1f5a106aabf" --jq .content \
+            | base64 -d > artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau
           gh api "repos/$GITHUB_REPOSITORY/git/blobs/0bd81a807ff6a935642a660b9fe9e0fd05ef484c" --jq .content \
             | base64 -d > artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau
+          test "$(git hash-object artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau)" = 42f512c4aaa389e0027be774c327e1f5a106aabf
           test "$(git hash-object artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau)" = 0bd81a807ff6a935642a660b9fe9e0fd05ef484c
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          p=Path("artifacts/original43/portable43/EGGRUMBLE_SOURCE43.rbxlx")
-          assert p.stat().st_size==495882,"RED_REAL43_PARENT_SIZE"
-          assert hashlib.sha256(p.read_bytes()).hexdigest()=="1a166d89aa2723f7005047da3268e10fb78b8eea1e9fb5fe10cb42978b2d6152","RED_PARENT_SHA"
-          print("GQ800_PINNED_ACTUAL_REAL43_SOURCE_PASS")
-          PY
-      - name: Compose original real43 -> true real44 with unchanged #801 curse
+      - name: Compose current exact same-PR-HEAD 42 -> terrain neutral43 -> live curse44
+        shell: bash
         run: |
           set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/gq800_neutral8_single_swarm_20261118 -p 'test_*.py' -v
+          python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/compose_real43.py \
+            --original42 artifacts/original42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            --candidate-swarm quality_gameplay/gq800_neutral8_single_swarm_20261118/EGGRUMBLE_SwarmCombat.luau \
+            --original-policy artifacts/policy/EGGRUMBLE_NeutralFinisherPolicy.luau \
+            --out artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json
           python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/test_compose_charm44.py
           python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/compose_charm44.py \
             --original43 artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json \
@@ -53,6 +68,19 @@ jobs:
             --original43 artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json \
             --real44 artifacts/real44/REAL44.project.json \
             --curse artifacts/policy/EGGRUMBLE_CurseConversionPolicy.luau
+          python3 - <<'PY'
+          from pathlib import Path
+          import importlib.util
+          f=Path("quality_gameplay/gq800_neutral8_single_swarm_20261118/compose_charm44.py")
+          s=importlib.util.spec_from_file_location("gq800",f)
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          _,src=m.flatten(Path("artifacts/real44/REAL44.project.json"))
+          sw=src[m.SWARM].read_text()
+          assert "NEUTRAL_ACTUAL_TERRAIN_GROUNDING" not in sw  # composer label is not a runtime token
+          assert sw.count("ground.Normal.Y>=.72")>=2, "RED_REAL44_MISSING_NORMAL_AND_CHARMED_GROUND"
+          assert "math.abs(desiredY-root.Position.Y)<=1.4" in sw
+          print("GQ800_CURRENT_SAMEHEAD_44_NORMAL_AND_CHARMED_GROUND_PASS")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -92,6 +120,7 @@ jobs:
            dest=Path("/tmp/gq800-rojo")
            dest.write_bytes(z.read(matched[0]));dest.chmod(0o755)
           PY
+          /tmp/gq800-rojo build artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/original43/portable43/EGGRUMBLE_SOURCE43.rbxlx
           /tmp/gq800-rojo build artifacts/original43/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/real44/OFF43.rbxlx
           /tmp/gq800-rojo build artifacts/real44/REAL44.project.json -o artifacts/real44/REAL44.rbxlx
           cmp artifacts/real44/OFF43.rbxlx artifacts/original43/portable43/EGGRUMBLE_SOURCE43.rbxlx
