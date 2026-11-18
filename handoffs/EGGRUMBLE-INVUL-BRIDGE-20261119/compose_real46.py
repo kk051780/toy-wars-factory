@@ -90,6 +90,10 @@ def compose(original44,policy_src,out):
  name_to_route={r[-1]:r for r in files}
  if any(k not in name_to_route for k in SITES):raise ValueError("RED_MISSING_AUTHOR_DAMAGE_OWNER")
  if HOST not in files:raise ValueError("RED_NO_HOST")
+ count_old_damage=sum(line.split("--",1)[0].count(":TakeDamage(")
+  for source in files.values() for line in source.read_text(encoding="utf-8").splitlines())
+ if count_old_damage!=13:
+  raise ValueError("RED_UNKNOWN_UNAUDITED_DIRECT_DAMAGE_ROUTE_"+str(count_old_damage))
  originalHost=files[HOST].read_text(encoding="utf-8")
  if originalHost.count(ORIG_REQUIRE)!=1 or originalHost.count(EQUIP)!=2:
   raise ValueError("RED_UNEXPECTED_AUTHOR_HOST")
