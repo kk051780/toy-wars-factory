@@ -35,8 +35,8 @@ def compose(parent59:Path,receipt59:Path,host59:Path,hostReceipt:Path,official55
  original,classes=contents(ET.parse(host59).getroot())
  hostRecord=json.loads(hostReceipt.read_text(encoding="utf8"))
  base55,classes55=contents(ET.parse(official55).getroot())
- if hostRecord.get("host_old_class")!="ModuleScript" or
-    hostRecord.get("host_new_class")!="Script" or hostRecord.get("source_bytes_modified")!=0:
+ if (hostRecord.get("host_old_class")!="ModuleScript" or
+     hostRecord.get("host_new_class")!="Script" or hostRecord.get("source_bytes_modified")!=0):
   raise ValueError("RED_UNVERIFIED_P0_HOST_CLASS_FIX_RECEIPT")
  if (len(preHost)!=59 or len(original)!=59 or len(base55)!=55
      or set(preHost)!=set(original) or not set(base55).issubset(original)
