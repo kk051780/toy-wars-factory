@@ -264,7 +264,7 @@ local function send(p)
  remote:FireClient(p,{
    kind="MAP_INTEL",version=1,mode=mode,role=viewer.role,
    layer=layer,cell=Intel.CELL,terrain=terrain,
-   ownCastle=home.id,
+   ownCastle=home.id,scanActive=viewer.pulse~=nil,
    x=x,z=z,explored=explored,markers=public,serverTick=workspace:GetServerTimeNow(),
   })
 end
