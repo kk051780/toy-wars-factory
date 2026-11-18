@@ -92,4 +92,5 @@ local expired=hit("TINY_SHIELD","clock",.2)
 assert(P.seal(invalidClock,1,expired).kind=="SEAL")
 assert(P.step(invalidClock,0/0,snap)[1]==nil and not invalidClock.active)
 
+print("GQ800_CURSE_NATIVE_FRIENDLY_NEUTRAL_SESSION_LIMIT_TTL_PASS")
 print("GQ800_CURSE_NATIVE_REPLAY_AND_INVALID_INPUT_FENCE_PASS")
