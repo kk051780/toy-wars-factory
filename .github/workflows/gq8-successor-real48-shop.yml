@@ -1,5 +1,10 @@
 name: GQ8 successor genuine Real44 plus read-only GuildShop Real48 Native Rojo OFF44
 on:
+  push:
+    branches: [quality/gq8-real48-curse-lobbyshop-intake-20261119]
+    paths:
+      - 'quality_gameplay/gq8_successor_real48_shop_20261119/**'
+      - '.github/workflows/gq8-successor-real48-shop.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
