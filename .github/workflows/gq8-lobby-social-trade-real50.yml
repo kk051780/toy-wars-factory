@@ -43,7 +43,7 @@ jobs:
         run: |
           set -euo pipefail
           R=quality_gameplay/gq8_social_lobby_20261119
-          python3 "$R/test_social50.py"
+          python3 "$R/test_social55.py"
           python3 "$R/compose_social55.py" \
             --parent53 artifacts/parent53/EGGRUMBLE_REAL53.project.json \
             --receipt53 artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json \
