@@ -23,8 +23,30 @@ jobs:
         run: |
           python3 quality_gameplay/gq8_realm_lss_runtime_20261118/audit_runtime_reachability.py \
             --online --out quality_gameplay/gq8_realm_lss_runtime_20261118/REPORT.json
+      - name: Checkout immutable original Realm Core34 composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - name: Checkout formal Core36 LSS input at immutable RC SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f77b4d4393d9e9b19b65566413432a7a9f13962b
+          path: _core36_input
+          persist-credentials: false
+      - name: Execute REAL Core34 composer and inspect emitted LSS and OFF31
+        run: |
+          python3 quality_gameplay/gq8_realm_lss_runtime_20261118/verify_composed_core.py \
+            --composer _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --lss _core36_input/handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out quality_gameplay/gq8_realm_lss_runtime_20261118/COMPOSED_REPORT.json
       - uses: actions/upload-artifact@v4
         with:
           name: GQ8-REALM-LSS-LIVE-REACHABILITY
-          path: quality_gameplay/gq8_realm_lss_runtime_20261118/REPORT.json
+          path: |
+            quality_gameplay/gq8_realm_lss_runtime_20261118/REPORT.json
+            quality_gameplay/gq8_realm_lss_runtime_20261118/COMPOSED_REPORT.json
           if-no-files-found: error
