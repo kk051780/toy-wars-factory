@@ -1,0 +1,57 @@
+{
+  "schema": "GQ8_REAL65_CURRENT_OFFICIAL63_CROSSLANE_INTAKE_V1",
+  "feature_id": "GQ8_REAL65_REAL63_PLUS_VIRAL_COUNTER_20261119",
+  "owner_issues": [
+    828,
+    822,
+    832,
+    839,
+    220
+  ],
+  "baseline_official": "ad602cebafc1a9d8caed078ab86c7a58b0fbbbef",
+  "baseline63_source_count": 63,
+  "base62_source_count": 62,
+  "source_count": 65,
+  "new_sources": 2,
+  "original_modified_sources": 3,
+  "original63_unchanged": 60,
+  "immutable_inputs": {
+    "official62_run": 44404334603,
+    "official62_head": "b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff",
+    "official63_run": 44405602223,
+    "official63_head": "ad602cebafc1a9d8caed078ab86c7a58b0fbbbef",
+    "viral_counter_author_run": 44405503932,
+    "viral_counter_author_head": "7822dae126934eac8df0b482cfa264d452c5b653",
+    "source_author_prs": [
+      847,
+      846,
+      840,
+      841
+    ]
+  },
+  "actual_unchanged_lanes": [
+    "7 roles character and HeroCombat",
+    "field/fog/map",
+    "siege castles and eggs",
+    "neutral Swarm/KO",
+    "pickup and items",
+    "lobby and role selection",
+    "trade preview Journal/Escrow OFF",
+    "HUD mobile default and basic/dodge",
+    "balance/musou invul source selection"
+  ],
+  "source_ownership": "ONE ORIGINAL GAME HOST COMBAT SWARM SCORE STORE ONLY; modify original Host Combat InvulRuntime in place, add 2 original creator modules, preserve 60 existing selected sources byte exact",
+  "source_selection": "quality_gameplay/gq8_real65_intake_20261119/compose_real65.py",
+  "verification_workflow": ".github/workflows/gq8-real65-official63-source.yml",
+  "rollback": "EXACT ORIGINAL FORMAL REAL63 PLACE/63 source classes; no main or release",
+  "studio_solo": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "first3min_fun": "NOT_TESTED",
+  "art_quality": "NO_GO",
+  "publish": false,
+  "paid_trade": false,
+  "robux": false,
+  "source_adopted": false,
+  "drift_rule": "if official RC no longer ad602, STOP and recompose newest source lineage; never overwrite newer RC"
+}
