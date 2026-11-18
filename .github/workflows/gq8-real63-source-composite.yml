@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
-      EXPECTED_OFFICIAL: b7bf777778d77ed524b4b43582c1f011e62bec12
+      EXPECTED_OFFICIAL: d52f2060dda81f0af6d1b143eee25fb416141602
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
           import json
           x=json.load(open('rc_fastlane/EGGRUMBLE_V3_REAL65.json'))
           assert x['source_profile']=='eggrumble_v3_real65' and x['source_count']==65
-          assert x['pre_adoption_official_head']=='ad602cebafc1a9d8caed078ab86c7a58b0fbbbef'
+          assert x['pre_adoption_official_head']=='d52f2060dda81f0af6d1b143eee25fb416141602'
           assert x['parent_sources']==63 and x['existing_unchanged_real63']==60
           assert x['host_class']=='Script'
           assert x['paid_trade_enabled'] is False and x['roblox_published'] is False
@@ -61,6 +61,7 @@ jobs:
             44403496549:5a47e96f6b4766a9c59dd06b111bea53b73bd5ca \
             44404334603:b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff \
             44405940669:ad602cebafc1a9d8caed078ab86c7a58b0fbbbef \
+            44413796990:d52f2060dda81f0af6d1b143eee25fb416141602 \
             44398710101:bdb0bac0cf8aab08c8984ce195b4ff99d3900e70 \
             44397387116:082d28901a680b546d9a7c253f7a01b68181f8a1
           do
@@ -78,7 +79,7 @@ jobs:
           gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59
           gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62
           gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62
-          gh run download 44405940669 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63
+          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63
           gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56
           gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56
           for file in \
@@ -131,6 +132,7 @@ jobs:
           y=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
           assert y['new_selected_source_count']==65 and y['original_real63_byte_unchanged']==60
           assert y['preserves_real63_basic_attack'] and y['preserves_real63_dodge'] and y['preserves_real63_hud']
+          assert y['preserves_real63_hud_presentation'] and y['preserves_round_epoch_isolation']
           assert len(y['sources'])==65 and not y['real_paid_trade'] and not y['roblox_publish']
           print('GQ8_REAL65_FORMAL63_PRESERVED_BASIC_DODGE_AND_COUNTER_VIRAL_SOURCE_STATIC_PASS')
           PY
