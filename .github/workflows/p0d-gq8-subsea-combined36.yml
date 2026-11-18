@@ -271,6 +271,18 @@ jobs:
           print('GQ8_WIRED39_CANDIDATE_PLACE_SHA256',receipt['candidate_place_sha256'])
           print('GQ8_WIRED39_4_ORIGINAL_PATCHED_3_NEW_32_EXACT_OFF36_OFF31_PASS')
           PY
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/package_real39.py \
+            --project39 artifacts/wired39/WIRED39.project.json \
+            --official36 artifacts/combined36/COMBINED36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --candidate-head "$GITHUB_SHA" \
+            --out artifacts/portable39/EGGRUMBLE_SOURCE39.project.json
+          /tmp/gq8-subsea36-rojo build artifacts/portable39/EGGRUMBLE_SOURCE39.project.json \
+            -o artifacts/portable39/EGGRUMBLE_SOURCE39.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable39/EGGRUMBLE_SOURCE39.project.json \
+            --place artifacts/portable39/EGGRUMBLE_SOURCE39.rbxlx --count 39
+          echo GQ8_B_HANDOFF_PORTABLE39_ROJO_SOURCE_CLASS_PASSED
           echo GQ8_REALM_ITEM_STAGE_WIRED39_NATIVE_ROJO_OFF36_OFF31_PASS
       - uses: actions/upload-artifact@v4
         if: success()
@@ -280,6 +292,7 @@ jobs:
             artifacts/wired39/WIRED39.rbxlx
             artifacts/wired39/WIRED39.project.receipt.json
             artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json
+            artifacts/portable39/
             artifacts/wired39/CORE36_OFF.rbxlx
             artifacts/combined36/OFF31.rbxlx
             artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
