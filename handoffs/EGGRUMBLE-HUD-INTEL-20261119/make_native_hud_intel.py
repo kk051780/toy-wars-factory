@@ -26,7 +26,11 @@ def check_touch_runtime_source() -> None:
         "invul armed": 'local armed=phaseI=="ARMED"',
         "invul awakened": 'local awakened=phaseI=="AWAKENED"',
         "server owned trigger only": "closeDrawer();activate(tool)",
-        "base attack fallback correctly labeled": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
+        "first existing skill takes attack slot until normal combat owner implements basic": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool("A")~=nil',
+        "independent selected skill trigger": "activate(slotTool(selectedSlot))",
+        "skill use uses reserved dodge area": "local reserved=p.DODGE",
+        "actual dodge hidden until owner implements": 'actions.DODGE.Visible=false -- requires an existing authorized dodge owner',
+        "item source honest count": 'actions.ITEM.Text=#toolWith("EGGRUMBLE_ITEM_")>0 and "道具 ▼" or "道具 0"',
         "handedness refresh": "w==lastW and h==lastH and hand==lastHand",
         "handedness cache": "lastW,lastH,lastHand=w,h,hand",
     }
