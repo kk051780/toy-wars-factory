@@ -56,9 +56,8 @@ local function startSession(mode:string)''',"HOST_START")
      session.refresh()
     end
    end''',"EGG_DELIVER_EXACT_COMMIT")
-    src=exact(src,
-'''pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1,entry.id) end)
-   session.refresh()''',
+    src=regex_exact(src,
+        r"pcall\(function\(\) Rules\.takeEggs\(session\.rules,tostring\(p\.UserId\),1,entry\.id\) end\)\n[ \t]+session\.refresh\(\)",
 '''local taker=session.rules.castles[tostring(p.UserId)]
    local before=taker and taker.heldEggs or 0
    local ok=pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1,entry.id) end)
