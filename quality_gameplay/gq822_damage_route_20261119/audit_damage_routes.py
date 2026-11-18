@@ -13,7 +13,13 @@ import re
 from pathlib import Path
 
 FEATURE = "GQ822_ACTUAL44_DIRECT_DAMAGE_ROUTE_COVERAGE_20261119"
-PARENT_SOURCE_COUNT = 44
+SUPPORTED_SOURCE_COUNTS = (44, 48)
+EXTRA_REAL48_MODULES = {
+ "EGGRUMBLE_LobbyShopView.luau",
+ "EGGRUMBLE_LobbyShopCatalog.luau",
+ "GQ805_LobbyGuildShop.server.luau",
+ "GQ805_ShopKioskClient.client.luau",
+}
 
 # The original 44-source private project is authority. The classes below refer
 # to the victim, not the attacker. MIXED paths can also hit real players.
@@ -55,9 +61,11 @@ def code_lines(source: str):
         if ":TakeDamage(" in code:
             yield i, code.strip()
 
-def scan(files: dict[str, str]):
-    if len(files) != PARENT_SOURCE_COUNT:
-        raise ValueError("RED_NOT_ACTUAL_REAL44_LUAU_COUNT")
+def scan(files: dict[str, str], required_count=None):
+    if len(files) not in SUPPORTED_SOURCE_COUNTS or (required_count and len(files)!=required_count):
+        raise ValueError("RED_NOT_ORIGINAL_REAL44_OR_REAL48_LUAU_COUNT")
+    if len(files)==48 and not EXTRA_REAL48_MODULES.issubset(files):
+        raise ValueError("RED_REAL48_SHOP_ADDITIONS_MISSING")
     expected_names = set(EXPECTED)
     if not expected_names.issubset(files):
         raise ValueError("RED_MISSING_EXPECTED_DAMAGE_OWNER")
@@ -81,15 +89,15 @@ def scan(files: dict[str, str]):
         raise ValueError("RED_UNREGISTERED_OR_MISSING_DIRECT_DAMAGE_" + repr(sorted(actual ^ known)))
     return sorted(routes, key=lambda x: (x["source"], x["line"]))
 
-def load_files(root: Path):
+def load_files(root: Path, required_count: int):
     root = root.resolve(strict=True)
     found = {}
     for p in root.rglob("*.luau"):
         if p.name in found:
             raise ValueError("RED_DUPLICATE_SOURCE_BASENAME_" + p.name)
         found[p.name] = p.read_text(encoding="utf-8")
-    if len(found) != PARENT_SOURCE_COUNT:
-        raise ValueError("RED_REAL44_SOURCE_DIRECTORY_NOT_EXACT")
+    if len(found) != required_count or required_count not in SUPPORTED_SOURCE_COUNTS:
+        raise ValueError("RED_EXPECTED_44_OR_48_SOURCE_DIRECTORY_NOT_EXACT")
     return found
 
 def selftest(original: dict[str, str]):
@@ -121,16 +129,17 @@ def selftest(original: dict[str, str]):
             raise
     print("GQ822_REAL44_DIRECT_DAMAGE_MUTATION_REJECT_4_OF_4_PASS")
 
-def build(root: Path, out: Path):
-    files = load_files(root)
-    routes = scan(files)
+def build(root: Path, out: Path, source_count: int):
+    files = load_files(root, source_count)
+    routes = scan(files, source_count)
     selftest(files)
     human = sum(x["human_risk"] for x in routes)
     # Explicit NO_GO: inventory is not the damage-bridge. An actual live
     # policy grant, same-match gate and zero-damage real engine tests are needed.
     report = {
       "feature_id": FEATURE,
-      "source_profile": "original_verified_private_REAL44",
+      "source_profile": "original_verified_private_REAL"+str(source_count),
+      "real48_readonly_shop_present": source_count==48,
       "source_count": len(files),
       "direct_humanoid_damage_sites": len(routes),
       "human_or_mixed_target_sites_requiring_bridge_review": human,
@@ -149,17 +158,18 @@ def build(root: Path, out: Path):
     }
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print("GQ822_ACTUAL_REAL44_DAMAGE_PATHS_INVENTORIED",
+    print("GQ822_ACTUAL_LATEST_REAL44_OR_48_DAMAGE_PATHS_INVENTORIED",
           len(files), len(routes), human, "REAL_IMMUNITY_NOT_WIRED")
     return report
 
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--source-root", required=True, type=Path)
+    p.add_argument("--source-count", required=True, type=int, choices=SUPPORTED_SOURCE_COUNTS)
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--require-wired", action="store_true")
     args = p.parse_args()
-    report = build(args.source_root, args.out)
+    report = build(args.source_root, args.out, args.source_count)
     if args.require_wired or report["already_live_invulnerability_policy"]:
         raise SystemExit("RED_INVULNERABILITY_UNPROVEN_IN_REAL44")
 if __name__ == "__main__":
