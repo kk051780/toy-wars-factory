@@ -126,6 +126,40 @@ jobs:
           print('GQ8_REAL42_SEEDED_WEATHER_WITH_GUARDIAN_SAMEHEAD_ROJO_OFF_PASS',
                  info['on42_place_bytes'],info['on42_place_sha256'])
           PY
+      - name: Repackage complete self-contained Real42 source handoff for authenticated B
+        run: |
+          set -euo pipefail
+          DIR=quality_gameplay/gq8_seeded_weather_bridge_20261118
+          python3 -B "$DIR/package_portable_weather42.py" \
+            --selected artifacts/weather42/WEATHER42.project.json \
+            --original artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --out artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
+          /tmp/gq8-weather42-rojo build artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            -o artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            --place artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx --count 42
+          cmp artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx artifacts/weather42/WEATHER42.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('artifacts/weather42')
+          f=root/'portable42/B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          assert r['script_count']==42 and r['untouched_original_scripts']==40
+          assert len(r['sources'])==42
+          assert sorted(r['modified_original_scripts'])==[
+              'ServerScriptService/EGGRUMBLE_RealmBattleCore',
+              'ServerScriptService/GQ802_StageTileVisualRenderer'
+          ]
+          p=root/'WEATHER42.rbxlx'
+          r['place_bytes']=p.stat().st_size
+          r['place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          r['portable42_rojo_exact_original41_plus_guardian_weather']=True
+          f.write_text(json.dumps(r,sort_keys=True,indent=2)+'\n')
+          print('GQ8_PORTABLE_42_COMPLETE_B_WRITER_PACKET_SOURCE_ROJO_BYTE_EXACT_PASS',
+                r['place_bytes'],r['place_sha256'])
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ8-REAL42-GUARDIAN-WEATHER-ON-OFF-NOT-RC
