@@ -69,8 +69,12 @@ jobs:
           assert added=={"ServerScriptService/EGGRUMBLE_BasicMobilityPolicy"},("RED_NEW_SOURCE_AUTHORITY",added)
           assert changed=={"ServerScriptService/EGGRUMBLE_SevenRoleCombat",
                            "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"},("RED_UNREVIEWED_OWNER_CHANGE",changed)
-          combat=(root/"on60/sources/EGGRUMBLE_SevenRoleCombat.server.luau").read_text()
-          original=(root/"off59/sources/EGGRUMBLE_SevenRoleCombat.server.luau").read_text()
+          def source_file(directory,name):
+              files=list((root/directory/"sources").glob(name+".*luau"))
+              assert len(files)==1,("RED_CLASS_MISMATCH",name,files)
+              return files[0].read_text()
+          combat=source_file("on60","EGGRUMBLE_SevenRoleCombat")
+          original=source_file("off59","EGGRUMBLE_SevenRoleCombat")
           direct=lambda s:sum(l.split("--",1)[0].count(":TakeDamage(") for l in s.splitlines())
           assert direct(combat)==direct(original),("RED_SECOND_DAMAGE_SITE",direct(combat),direct(original))
           assert 'local CoreAction=require(script.Parent:WaitForChild("EGGRUMBLE_BasicMobilityPolicy"))' in combat
