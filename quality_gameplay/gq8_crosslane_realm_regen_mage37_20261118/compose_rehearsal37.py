@@ -51,7 +51,9 @@ def inject_mage(host):
  if host.count(COMBAT_IMPORT)!=1 or MAGE_IMPORT in host:
   raise ValueError("RED_HOST_COMBAT_OR_MAGE_IMPORT")
  modified=host.replace(COMBAT_IMPORT,COMBAT_IMPORT+"\n"+MAGE_IMPORT,1)
- hook_pattern=(r"(?m)^([ \\t]*)NaturalRegen\\.attach\\(session,p,role\\)[ \\t]*$"\n               if REGEN_IMPORT in host else EQUIP_PATTERN)\n modified,n=re.subn(hook_pattern,lambda m:m.group(0)+"\n"+m.group(1)+"MageRevive.attach(session,p,role)",modified)
+ hook_pattern=(r"(?m)^([ \t]*)NaturalRegen\.attach\(session,p,role\)[ \t]*$"
+               if REGEN_IMPORT in host else EQUIP_PATTERN)
+ modified,n=re.subn(hook_pattern,lambda m:m.group(0)+"\n"+m.group(1)+"MageRevive.attach(session,p,role)",modified)
  if n!=2:raise ValueError("RED_MAGE_TWO_EQUIP_HOOKS")
  return modified
 
