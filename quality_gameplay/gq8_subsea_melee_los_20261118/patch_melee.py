@@ -13,8 +13,8 @@ FEATURE_ID="GQ8_SUBSEA_LEVIATHAN_MELEE_LOS_20261118"
 UPSTREAM_HEAD="c51de1ed4feb7a7500ada95d21282402053ef988"
 UPSTREAM_BLOB="1ba20f2e6b1bf6ce7bab7c4d4abbedb663f0abf1"
 UPSTREAM_PATH="handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau"
-INSERT_AT="""  local elapsed=0
-  local heartbeat
+INSERT_AT=""" local elapsed=0
+ local heartbeat
 """
 HELPER="""  -- Only the existing subsea Leviathan may apply its 6HP melee to players
   -- with a truly unobstructed path. Ignore attacker and target avatar only.
@@ -31,18 +31,18 @@ HELPER="""  -- Only the existing subsea Leviathan may apply its 6HP melee to pla
    return Workspace:Raycast(from,delta,ray)==nil
   end
 """
-OLD_MELEE="""      elseif root and now-data.lastHit>=2 then
-       data.lastHit=now
-       local h=nearest.Character:FindFirstChildOfClass("Humanoid")
-       if h then h:TakeDamage(6) end -- new underwater neutral only, no KO/score
+OLD_MELEE="""     elseif root and now-data.lastHit>=2 then
+      data.lastHit=now
+      local h=nearest.Character:FindFirstChildOfClass("Humanoid")
+      if h then h:TakeDamage(6) end -- new underwater neutral only, no KO/score
 """
-NEW_MELEE="""      elseif root and now-data.lastHit>=2 then
-       local h=nearest.Character:FindFirstChildOfClass("Humanoid")
-       if h and clearSubseaMeleePath(creature,nearest.Character,root) then
-        -- A blocked swing is not a successful attack and spends no cooldown.
-        data.lastHit=now
-        h:TakeDamage(6) -- subsea neutral only, never alter KO/score ownership
-       end
+NEW_MELEE="""     elseif root and now-data.lastHit>=2 then
+      local h=nearest.Character:FindFirstChildOfClass("Humanoid")
+      if h and clearSubseaMeleePath(creature,nearest.Character,root) then
+       -- A blocked swing is not a successful attack and spends no cooldown.
+       data.lastHit=now
+       h:TakeDamage(6) -- subsea neutral only, never alter KO/score ownership
+      end
 """
 
 def git_blob_sha(content:bytes)->str:
@@ -75,8 +75,8 @@ def native_harness(selected:bytes)->str:
     # Include original helper code, not a rewritten simulation implementation.
     helper=HELPER
     # Exact original-source gameplay branch, recast from elseif to if for isolated VM.
-    branch=NEW_MELEE.replace("      elseif root and now-data.lastHit>=2 then",
-                               "      if root and now-data.lastHit>=2 then",1)
+    branch=NEW_MELEE.replace("     elseif root and now-data.lastHit>=2 then",
+                               "     if root and now-data.lastHit>=2 then",1)
     harness=r'''local Enum={RaycastFilterType={Exclude="Exclude"}}
 local RaycastParams={new=function() return {} end}
 local blocked=nil
