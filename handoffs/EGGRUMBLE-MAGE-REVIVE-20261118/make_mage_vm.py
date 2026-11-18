@@ -31,7 +31,7 @@ local game={GetService=function(self,name)
  if name=="Workspace" then return Workspace end
  error("RED_UNRECOGNIZED_SERVICE:"..name)
 end}
-local Enum={RaycastFilterType={Exclude=1}}
+local Enum={RaycastFilterType={Exclude=1},Font={GothamBold=1}}
 local RaycastParams={new=function() return {} end}
 local UDim2={fromOffset=function(x,y)return{x=x,y=y} end,
  fromScale=function(x,y)return{x=x,y=y} end}
