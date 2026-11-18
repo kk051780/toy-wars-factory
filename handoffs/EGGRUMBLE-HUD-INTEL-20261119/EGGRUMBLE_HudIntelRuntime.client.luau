@@ -437,8 +437,13 @@ RunService.RenderStepped:Connect(function(dt)
   actions.ATTACK.Visible=false
  end
  local inMatch=mapSnapshot~=nil
+ gui.Enabled=inMatch -- no V3 combat chrome over the separate lobby
  mapBox.Visible=inMatch
- -- Every lobby -> battle and round restart must restore server-owned powers.
- actions.INVUL.Visible=inMatch and #invul>0
- actions.MUSOU.Visible=inMatch and #musou>0
+ actions.ITEM.Visible=inMatch
+ actions.SKILL.Visible=inMatch
+ actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch
+ -- Disabled mode buttons stay visible in combat without claiming server READY.
+ actions.INVUL.Visible=inMatch
+ actions.MUSOU.Visible=inMatch
+ if not inMatch then closeDrawer() end
 end)
