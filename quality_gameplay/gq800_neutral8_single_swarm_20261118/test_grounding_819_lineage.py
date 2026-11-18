@@ -17,6 +17,14 @@ class TerrainSourceIntegration(unittest.TestCase):
         ):
             self.assertIn(marker,COMPOSER)
         self.assertEqual(COMPOSER.count('"NEUTRAL_ACTUAL_TERRAIN_GROUNDING"'),1)
+    def test_charmed_followers_get_identical_ground_safety(self):
+        for marker in (
+            "ground.Normal.Y>=.72",
+            "math.abs(desiredY-root.Position.Y)<=1.4",
+            "workspace:Raycast(next+Vector3.new(0,3,0),Vector3.new(0,-8,0),ray)",
+            "model:PivotTo(CFrame.lookAt(grounded,grounded+delta.Unit))",
+        ):
+            self.assertIn(marker,CHARM)
     def test_real43_ground_before_44_curse_selection(self):
         self.assertIn('original=flatten(original43)',CHARM)
         self.assertIn('selected=patch(baseline)',CHARM)
