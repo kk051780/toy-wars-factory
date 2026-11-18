@@ -1,0 +1,64 @@
+{
+  "schema": "P0D_EGGRUMBLE_V3_REAL62_TRADE_HUD_PRIVATE_COMPANION_V1",
+  "owner_issues": [
+    805,
+    810,
+    839,
+    220
+  ],
+  "feature_id": "GQ8_TRADE_UX_JOURNAL_ESCROW_20261119",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "prior_official_sha": "38d11f0bf311491ba76fe03f818948e5d4b06889",
+  "parent_profile": "eggrumble_v3_real59",
+  "parent_source_count": 59,
+  "source_profile": "eggrumble_v3_real62",
+  "source_count": 62,
+  "display_label": "RC-V3.62 (LABEL_ONLY_IF_ADOPTED)",
+  "current_official_selected_at_manifest_creation": false,
+  "runtime_type": "PRIVATE_COMPANION_NOT_ACTIVE_RUNTIME",
+  "parent_hud_profile": {
+    "pr": 829,
+    "official_merge": "38d11f0bf311491ba76fe03f818948e5d4b06889",
+    "successful_run": 44400478849,
+    "source_count": 59
+  },
+  "parent_original55": {
+    "official_sha": "a6020867fac80fa3b2ca47478625873fc6f3678e",
+    "successful_run": 44393525211,
+    "source_count": 55
+  },
+  "trade_feature_pr": 838,
+  "new_source_locks": {
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeJournalContract.luau": "c3d6ca4ebc518592bddefbb5942f4d60ab5179a9",
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeEscrowReducer.luau": "d070554bee9317e538a183052fba882361b65ac4",
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeReview.client.luau": "a96d9bde201c6bdbb8fe185c81650f99368a9544"
+  },
+  "new_source_routes": [
+    "ServerScriptService/GQ8_TradeJournalContract",
+    "ServerScriptService/GQ8_TradeEscrowReducer",
+    "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview"
+  ],
+  "guarantees": {
+    "parent_real59_script_bytes_exact": 59,
+    "original55_script_bytes_exact": 55,
+    "no_new_store_owner": 0,
+    "no_new_remote_owner": 0,
+    "trade_settlement_enabled": false,
+    "no_paid_items": true,
+    "no_robux": true,
+    "no_public_publish": true,
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "art_fun": "NO_GO",
+    "legacy_rich51_active_runtime_unchanged": true
+  },
+  "candidate_runs": {
+    "source_only_real62_successful_run": 44402402944,
+    "private_artifact_id": 14474486016
+  },
+  "rollback": "Use original unchanged Real59 complete Place and original55 archive; remove only exactly 3 trade source routes",
+  "official_build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real62.yml",
+  "acceptance": "Only authenticated #220 B writer nonforce fresh expectedSHA RC CAS followed by NEW canonical same-HEAD Native62/Rojo62/OFF59+artifact bytes qualifies source selection. No author ACK wait, no main/write/publish/Robux.",
+  "source_dependency_warning": "Current artifact release retention short. Archive source provenance before public release.",
+  "product_blocker": "Store per-instance inventory provenance and two-account persistent idempotent transfer writer are NOT connected; journal/reducer alone do not transfer items."
+}
