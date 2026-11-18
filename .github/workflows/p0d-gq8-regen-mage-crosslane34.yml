@@ -22,7 +22,9 @@ jobs:
       GH_TOKEN: \${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-        with: {persist-credentials: false}
+        with:
+          persist-credentials: false
+          fetch-depth: 0
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
