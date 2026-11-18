@@ -16,7 +16,7 @@ class Neutral8SingleAuthority(unittest.TestCase):
   self.assertEqual(SOURCE.count('function Swarm.start(session:any)'),1)
   self.assertEqual(SOURCE.count('local function addEnemy('),1)
   self.assertEqual(SOURCE.count('h:TakeDamage(damage)'),1)
-  self.assertEqual(SOURCE.count('credit(id)'),2) # function and death callback
+  self.assertEqual(SOURCE.count('credit(id)'),1) # single death callback
   self.assertEqual(SOURCE.count('local LIMIT=110'),1)
   self.assertEqual(SOURCE.count('local NEUTRAL_HEALTH=32'),1)
   self.assertIn('assert(RunService:IsStudio()',SOURCE)
