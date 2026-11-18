@@ -4,7 +4,7 @@ Patches only factual *notification after* host-authorized state mutation.
 No new ServerScript, RemoteEvent, trading, HP, damage or Store authority.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, sys
+import argparse, copy, hashlib, json, sys, re
 from pathlib import Path
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"gq8_successor_real48_shop_20261119"))
@@ -18,6 +18,11 @@ def exact(src, before, after, label):
     count=src.count(before)
     if count!=1: raise ValueError("RED_"+label+"_COUNT_"+str(count))
     return src.replace(before,after,1)
+
+def regex_exact(src, pattern, replacement, label):
+    amended,count=re.subn(pattern,replacement,src)
+    if count!=1:raise ValueError("RED_"+label+"_COUNT_"+str(count))
+    return amended
 
 def patch_host(src):
     src=exact(src,"local function startSession(mode:string)",'''-- No extra gameplay owner: only this existing HOST emits factual capture hints.
@@ -39,12 +44,9 @@ local function startSession(mode:string)''',"HOST_START")
  session.gq8ViralDanger={}
  session.gq8ViralResults=false
  session.world.Name=mode.."_Arena";session.world.Parent=folder''',"SESSION_EPOCH")
-    src=exact(src,
-'''if c.alive and c.heldEggs>0 then
-    local ok=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
-    if ok then session.refresh() end
-   end''',
-'''if c.alive and c.heldEggs>0 then
+    src=regex_exact(src,
+        r"if c\\.alive and c\\.heldEggs>0 then\\n[ \\t]+local ok=pcall\\(function\\(\\) Rules\\.depositEggs\\(session\\.rules,entry\\.id,c\\.heldEggs\\) end\\)\\n[ \\t]+if ok then session\\.refresh\\(\\) end\\n[ \\t]+end",
+        '''if c.alive and c.heldEggs>0 then
     local before=c.depositedEggs or 0
     local ok=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
     if ok then
