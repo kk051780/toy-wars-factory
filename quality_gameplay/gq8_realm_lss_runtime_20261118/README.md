@@ -36,3 +36,10 @@
 **現状：SOURCE QA制作中。正式RC追加採用0/1、Studio2client・Android15分・FUN・OWNER受入未実施。**
 
 引継ぎキー: GQ8_REALM_LSS_RUNTIME_REACHABILITY_20261118。次のChatはこのREADME/PR/CI・#220最新HEADを再確認し、検査器の二重制作なしで正式B writerへの是正依頼を追う。
+
+## 最新正式Core36（2026-11-18 UTC 03:41公式固定HEAD）との再照合
+
+- 公式RC HEAD f77b4d4393d9e9b19b65566413432a7a9f13962b は、非公開V3 Core36 31+Realm3+Regen2を選択して同HEAD Actions 44232589275 が SUCCESS。これは正式RC内の非公開Studio試遊ソース採用であり、ゲーム公開や人間FUN合格ではない。
+- 実際のCore36コンポーザは LSS を**正式RC branch側**から選んでいる。現HEADで選択されたLSS実Git blobは c4ca82218d985914ad98dead565f9f79f5374dcb。新しいPR #772 の改修blob f9ea61cc1ed4a4ec5edbc7078a619790b3181f61 ではない。
+- 両LSSとも冒頭のStudioガードがあり、通常サーバーの4乗物生成経路は源上閉じている。#772が持つ**25秒離席回収は現Core36にはまだ入っていない**。検査器は固定RC blobと候補blobの差を必ずJSON報告する。
+- したがって「Core36選択済」「#772実装採用済」「通常環境で船・飛行獣が動く」は別々の事実。後二者を現状の達成として扱わない。
