@@ -12,7 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 
-N = 53
+N = 55
 ROUTES = {
     "characters": [
         "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
@@ -22,7 +22,7 @@ ROUTES = {
         "ServerScriptService/EGGRUMBLE_RealmBattleCore",
         "ServerScriptService/GQ802_StageTileVisualRenderer",
     ],
-    "battle": [
+    "combat": [
         "ServerScriptService/EGGRUMBLE_MusouFeverPolicy",
         "ServerScriptService/EGGRUMBLE_InvulRuntime",
         "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
@@ -31,16 +31,18 @@ ROUTES = {
         "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime",
         "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
     ],
-    "neutral_enemies": [
+    "neutrals": [
         "ServerScriptService/EGGRUMBLE_SwarmCombat",
         "ServerScriptService/EGGRUMBLE_CurseConversionPolicy",
     ],
     "items": [
         "ServerScriptService/EGGRUMBLE_FieldItemPickups",
         "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog",
+        "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy",
     ],
     "lobby": [
         "ServerScriptService/GQ805_LobbyGuildShop",
+        "ServerScriptService/GQ8_LobbySocialPlaza",
         "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient",
     ],
     "ui": [
@@ -116,9 +118,9 @@ def source_class(file: Path):
 def verify(project: Path, receipt: Path):
     files = flatten(project)
     data = json.loads(receipt.read_text(encoding="utf-8"))
-    if len(files) != N or data.get("selected_script_count") != N:
+    if len(files) != N or data.get("selected_real55_count") != N:
         fail("REAL53_COUNT_DRIFT")
-    if data.get("transactions_enabled") is not False or data.get("official_rc_adopted") is not False:
+    if data.get("actual_trade_settlement_enabled") is not False or data.get("formal_rc_adopted") is not False:
         fail("FALSE_COMMERCE_OR_RC_CLAIM")
     ledger = data.get("sources", [])
     if not isinstance(ledger, list) or len(ledger) != N:
@@ -156,22 +158,23 @@ def verify(project: Path, receipt: Path):
         if source_class(files[route]) != cls:
             fail("WRONG_CLIENT_MODULE_CLASS_" + route.replace("/", "_"))
     return {
-        "schema": "GQ8_NINE_LANE_REAL53_SOURCE_EVIDENCE_V1",
+        "schema": "GQ8_NINE_LANE_FORMAL_REAL55_SOURCE_EVIDENCE_V2",
         "parent_feature_ids": ["GQ8_MUSOU_INVUL_REAL49_COMPOSITE_20261119",
-                               "GQ8_REAL53_PRIVATE_MUSOU_INVUL_CURSE_READONLY_SHOP"],
+                               "GQ8_REAL55_CANONICAL_PRIVATE_RC_PROMOTION_20261119"],
         "source_count": N,
         "source_bytes_sum_not_place_size": total_bytes,
         "evidenced_lanes_source_only": len(present),
         "evidenced_lanes_actual_studio": 0,
         "evidenced_lanes_android": 0,
         "evidenced_lanes_fun": 0,
-        "official_rc_adopted": False,
-        "official_rc_feature_adoption_delta": 0,
+        "author_private_artifact_claims_formal_rc": False,
+        "same_head_formal_rc_status": "REQUIRES_EXTERNAL_CI_VERIFICATION",
+        "source_areas_verified_against_formal_manifest": len(present),
         "shop_purchases": "OFF",
         "single_authority_routes": list(SINGLE),
         "lanes": present,
         "blockers": [
-            "Authenticated #220 writer source-select plus fresh non-force expected-SHA CAS",
+            "Formal #220 RC CAS occurred; verify current official SHA and same-HEAD run externally",
             "Same official RC HEAD Native, Rojo, source-lock, OFF and artifact",
             "Roblox Studio 2-client, Android 15min and owner FUN evidence",
         ],
@@ -187,7 +190,7 @@ def main():
     result = verify(a.project, a.receipt)
     a.output.parent.mkdir(parents=True, exist_ok=True)
     a.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print("GQ8_NINE_LANE_REAL53_RECEIPT_HASH_CLASS_NO_FALSE_RC_PASS", result["source_count"], result["evidenced_lanes_source_only"])
+    print("GQ8_NINE_LANE_REAL55_RECEIPT_HASH_CLASS_NO_FALSE_RC_PASS", result["source_count"], result["evidenced_lanes_source_only"])
 
 
 if __name__ == "__main__":
