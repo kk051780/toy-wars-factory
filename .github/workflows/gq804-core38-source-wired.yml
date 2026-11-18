@@ -53,8 +53,9 @@ jobs:
           import json
           changed={f["filename"] for f in json.load(open("/tmp/gq804diff.json"))["files"]}
           prefix="quality_gameplay/gq804_castle_siege_guardians_20261118/"
-          allowed=".github/workflows/gq804-core38-source-wired.yml"
-          assert changed and all(f.startswith(prefix) or f==allowed for f in changed),sorted(changed)
+          allowed={".github/workflows/gq804-core38-source-wired.yml",
+                   ".github/workflows/gq804-castle-siege-native.yml"}
+          assert changed and all(f.startswith(prefix) or f in allowed for f in changed),sorted(changed)
           print("GQ804_CORE38_NONOVERLAP_ONLY_OWNED_PATHS_PASS",len(changed))
           PY
           gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
