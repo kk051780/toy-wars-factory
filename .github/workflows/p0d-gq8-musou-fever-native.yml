@@ -49,7 +49,7 @@ jobs:
           cmake --build /tmp/gq8-musou-build --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           CLI=/tmp/gq8-musou-build/luau
           CC=/tmp/gq8-musou-build/luau-compile
-          for source in handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau /tmp/gq8-musou/*.luau; do
+          for source in handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau /tmp/gq8-musou/*.luau; do
              "$CC" --text "$source" >/dev/null
           done
           "$CLI" /tmp/gq8-musou/good.luau | tee /tmp/gq8-musou.log
