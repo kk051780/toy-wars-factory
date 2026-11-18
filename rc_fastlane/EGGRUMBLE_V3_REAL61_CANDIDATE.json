@@ -12,11 +12,11 @@
   "source_profile": "eggrumble_v3_real61_candidate",
   "source_count": 61,
   "adoption_status": "CANDIDATE_NOT_FORMALLY_ADOPTED",
-  "status_warning": "This candidate composes only #829 HUD/Fog plus #838 trade preview. New #840 viral host overlay and #841 combat/invul overlays remain outside; formal RC promotion needs owner #220 reconciliation of all active gameplay candidates and same-official-HEAD testing.",
+  "status_warning": "Upstream #829 Real59 is already canonical at 38d11f... . This 61 composition must reproduce latest 59/59 byte+class and append only two #838 trade preview routes. #840/#841 remain pending; avoid claim of player QA or paid exchange.",
   "new_sources": [
     {
       "pr": 829,
-      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "head": "116dc8f1d9bfe1b25a01ac2c5283bee966677429",
       "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau",
       "blob": "9358eff6c71bdc2b860b00d98f20d13db6ce3571",
       "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
@@ -24,7 +24,7 @@
     },
     {
       "pr": 829,
-      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "head": "116dc8f1d9bfe1b25a01ac2c5283bee966677429",
       "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau",
       "blob": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
       "route": "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy",
@@ -32,23 +32,23 @@
     },
     {
       "pr": 829,
-      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "head": "116dc8f1d9bfe1b25a01ac2c5283bee966677429",
       "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau",
-      "blob": "4899bd52518815630a49954a1adc36151a5c1eea",
+      "blob": "1ad87185fb12ad0d51d0761681628558dacc97ca",
       "route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
       "class": "Script"
     },
     {
       "pr": 829,
-      "head": "374a34506a1b78d793e36389a46573aae25f44c1",
+      "head": "116dc8f1d9bfe1b25a01ac2c5283bee966677429",
       "path": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau",
-      "blob": "434cdbfb7e724d4d149d6217f0532b176fcc67e1",
+      "blob": "56c2a8dcb8ed2271e906843aa3b3b8e39cc949b1",
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
       "class": "LocalScript"
     },
     {
       "pr": 838,
-      "head": "cb43c19c2d9d443d4631a636a8186e84e94c4c89",
+      "head": "0a06a4e0f1fe4b4ee1ef0da473c4094e4b4a0e9f",
       "path": "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeJournalContract.luau",
       "blob": "c3d6ca4ebc518592bddefbb5942f4d60ab5179a9",
       "route": "ServerScriptService/GQ8_TradeJournalContract",
@@ -56,7 +56,7 @@
     },
     {
       "pr": 838,
-      "head": "cb43c19c2d9d443d4631a636a8186e84e94c4c89",
+      "head": "0a06a4e0f1fe4b4ee1ef0da473c4094e4b4a0e9f",
       "path": "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeReview.client.luau",
       "blob": "a96d9bde201c6bdbb8fe185c81650f99368a9544",
       "route": "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview",
@@ -98,5 +98,10 @@
     "shop_trade_live": false,
     "purchases": false,
     "roblox_published": false
-  }
+  },
+  "live_parent_head": "38d11f0bf311491ba76fe03f818948e5d4b06889",
+  "live_parent_source_profile": "eggrumble_v3_real59",
+  "live_parent_source_count": 59,
+  "live_parent_same_head_run": 44401178585,
+  "liveness_contract": "61 selected must preserve all 59 exact scripts of newest formal Real59, not merely original55; 2 unique Trade sources are additive"
 }
