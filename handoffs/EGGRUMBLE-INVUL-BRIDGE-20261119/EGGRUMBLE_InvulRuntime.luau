@@ -5,6 +5,7 @@
 -- rule engine source is immutable original #823 (NOT reimplemented).
 local Players=game:GetService("Players")
 local Policy=require(script.Parent:WaitForChild("EGGRUMBLE_InvulnerabilityPolicy"))
+local Counter=require(script.Parent:WaitForChild("EGGRUMBLE_InvulCounterNeutral"))
 local Runtime={}
 local matchPolicies=setmetatable({}, {__mode="k"})
 local bound=setmetatable({}, {__mode="k"})
@@ -145,9 +146,52 @@ function Runtime.filterDamage(victimHum:Humanoid,baseDamage:number,
     end
    end)
   end
+  -- Same legitimate defender has now stopped the attack. Delegated counter
+  -- effects preserve original Swarm/Combat HP authority and policy one-shot.
+  Counter.react(r.session,victim,r.role,Policy,r.ledger,c,attackerId)
   return 0
  end
- return baseDamage
+ return baseDamage*Counter.allyMultiplier(r.session,victim,now)
+end
+-- This returns a PvP instruction only; the original SevenRoleCombat owner
+-- (where attacker and victim already satisfy team, range and hit checks)
+-- must apply it after its 0.65s telegraph and second LOS/evasion check.
+function Runtime.claimPvPCounter(session:any,defender:Player,attacker:Player)
+ local r=bound[defender]
+ if not r or r.session~=session or r.role~="WARRIOR" and r.role~="NINJA"
+  or not attacker or attacker==defender or attacker.Parent~=Players then return nil end
+ local now=os.clock()
+ local c=context(defender,r,now)
+ if not c.serverCurrent or not c.characterAlive or c.carryingEgg
+  or c.shieldActive or not Policy.isInvulnerable(r.ledger,c) then return nil end
+ if session.isCurrentHuman and (session.isCurrentHuman(defender)~=true
+  or session.isCurrentHuman(attacker)~=true) then return nil end
+ local home=session.rules.castles[tostring(defender.UserId)]
+ local foe=session.rules.castles[tostring(attacker.UserId)]
+ if not home or not foe or not home.alive or not foe.alive
+  or (session.mode=="TEAM" and home.team==foe.team) then return nil end
+ local dchar=defender.Character
+ local achar=attacker.Character
+ local dr=dchar and dchar:FindFirstChild("HumanoidRootPart")
+ local ar=achar and achar:FindFirstChild("HumanoidRootPart")
+ local ah=achar and achar:FindFirstChildOfClass("Humanoid")
+ if not dr or not ar or not ah or ah.Health<=0 or ah.MaxHealth<=0
+  or (dr.Position-ar.Position).Magnitude>18 then return nil end
+ local ray=RaycastParams.new()
+ ray.FilterType=Enum.RaycastFilterType.Exclude
+ ray.FilterDescendantsInstances={dchar,achar}
+ ray.RespectCanCollide=true
+ local start=dr.Position+Vector3.new(0,1,0)
+ if workspace:Raycast(start,(ar.Position+Vector3.new(0,1,0))-start,ray) then return nil end
+ local command=Policy.claimCounter(r.ledger,c,{
+  serverVerified=true,alive=true,inRange=true,lineOfSight=true,
+  id=tostring(attacker.UserId),class="PLAYER",hpFraction=ah.Health/ah.MaxHealth,
+ })
+ if not command or (command.effect~="NONLETHAL_BURST"
+  and command.effect~="TELEGRAPHED_FINISHER") then return nil end
+ defender:SetAttribute("EGGRUMBLE_AwakenCounterKind",command.effect)
+ attacker:SetAttribute("EGGRUMBLE_CounterThreatUntil",now+command.tellSeconds)
+ return command
 end
 function Runtime.currentPolicySnapshot(p:Player)
  local r=bound[p]
