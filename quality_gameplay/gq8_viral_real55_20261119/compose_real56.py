@@ -40,12 +40,18 @@ local function startSession(mode:string)''',"HOST_START")
  session.gq8ViralResults=false
  session.world.Name=mode.."_Arena";session.world.Parent=folder''',"SESSION_EPOCH")
     src=exact(src,
-'''if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end''',
+'''if c.alive and c.heldEggs>0 then
+    local ok=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
+    if ok then session.refresh() end
+   end''',
 '''if c.alive and c.heldEggs>0 then
     local before=c.depositedEggs or 0
     local ok=pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end)
-    if ok and (c.depositedEggs or 0)>before then
-     gq8CaptureHint(p,session,"EGG_DELIVER")
+    if ok then
+     if (c.depositedEggs or 0)>before then
+      gq8CaptureHint(p,session,"EGG_DELIVER")
+     end
+     session.refresh()
     end
    end''',"EGG_DELIVER_EXACT_COMMIT")
     src=exact(src,
