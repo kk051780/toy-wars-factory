@@ -119,7 +119,7 @@ def audit(project: Path, receipt: Path, expected: int, strict: bool = True) -> d
         raise ValueError(f"RED_INVUL_DIRECT_DAMAGE_BYPASS_{wrapped}_OF_{calls}")
     if expected >= 53:
         shop = next((v for k, v in full_text.items()
-                     if k[-1] == "EGGRUMBLE_LobbyShopView"), "")
+                     if k[-1] == "GQ805_ShopKioskClient"), "")
         if not shop or "robuxEnabled=false" not in shop:
             raise ValueError("RED_READONLY_SHOP_CONTRACT")
     if expected >= 55:
