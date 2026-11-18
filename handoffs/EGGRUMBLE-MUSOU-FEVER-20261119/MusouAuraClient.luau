@@ -144,6 +144,10 @@ function M.update(character,snapshot)
   local a=head:FindFirstChild("MusouAuraOrigin")
   local particles=if a then a:FindFirstChild("RoleAura") else nil
   if particles then
+   local previous=folder:GetAttribute("Mode")
+   if previous~=snapshot.phase then
+    particles:Emit(snapshot.phase=="KAKUHEN" and 28 or 12)
+   end
    local dist=localViewDist(head)
    local rate=if snapshot.phase=="KAKUHEN" then 24 else 12
    particles.Rate=if dist<=85 then rate elseif dist<=140 then 5 else 0
