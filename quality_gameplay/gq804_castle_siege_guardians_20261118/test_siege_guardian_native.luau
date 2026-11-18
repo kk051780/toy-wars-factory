@@ -14,8 +14,34 @@ assert(P.corePermit(s,a)==nil)
 a.losClear=false;assert(P.gateHit(s,a)==nil)
 a.losClear=true;a.isEnemy=false;assert(P.gateHit(s,a)==nil)
 a.isEnemy=true;a.damage=100
-for i=1,5 do local v=P.gateHit(s,a);assert(v and v.gateRemaining==180-i*36) end
+-- A gate cannot vanish in five zero-time spam hits, even for one valid server attacker.
+a.now=0
+local first=P.gateHit(s,a)
+assert(first and first.gateRemaining==144)
+assert(P.gateHit(s,a)==nil and s.gateHP==144)
+a.now=1.1
+local second=P.gateHit(s,a)
+assert(second and second.gateRemaining==108)
+a.now=2.2
+assert(P.gateHit(s,a)==nil and s.gateHP==108)
+local ally=req()
+ally.attackerId="hero-red-ally";ally.damage=100;ally.now=3.3
+assert(P.gateHit(s,ally)==nil and s.gateHP==108) -- global team damage cap
+a.now=5.1
+assert(P.gateHit(s,a).gateRemaining==72)
+a.now=6.2
+assert(P.gateHit(s,a).gateRemaining==36)
+a.now=6.3
+assert(P.gateHit(s,a)==nil)
+a.now=10.2
+assert(P.gateHit(s,a).gateRemaining==0)
 assert(s.stage=="CORE")
+assert(P.gateHit(s,a)==nil)
+local invalidTime=P.new("TEAM:2026","castle-blue")
+local badClock=req();badClock.now=math.huge
+assert(P.gateHit(invalidTime,badClock)==nil)
+badClock.now=0/0
+assert(P.gateHit(invalidTime,badClock)==nil)
 a.damage=100;a.weaponSiegeRating=1
 assert(P.corePermit(s,a)==nil)
 a.freeSiegeToolVerified=true
