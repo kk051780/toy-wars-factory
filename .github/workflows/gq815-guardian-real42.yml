@@ -39,6 +39,14 @@ jobs:
           assert isinstance(j["candidate_sha"],str) and len(j["candidate_sha"])==40  # PullRequest Actions GITHUB_SHA may be synthetic merge SHA
           assert j["source_count"]==41
           assert hashlib.sha256((p/"EGGRUMBLE_SOURCE41.rbxlx").read_bytes()).hexdigest()=="be6c4fa63b7629fe8133ec08a8fe234563fcf722879db93e9e66978feb9973fd"
+          import subprocess
+          lock=json.loads(Path("quality_gameplay/gq8_guardian_runtime_20261118/SOURCE_LOCK.json").read_text())
+          assert lock["baseline_formal_rc"]=="f77b4d4393d9e9b19b65566413432a7a9f13962b"
+          assert lock["original41_count"]==41 and lock["new42_count"]==42
+          for file,expected in lock["pinned_repo_blobs"].items():
+              actual=subprocess.check_output(["git","hash-object",file],text=True).strip()
+              assert expected==actual,("RED_SOURCE_BLOB_DRIFT",file,expected,actual)
+          print("GQ815_ORIGINAL_AND_NEW_AUTHOR_SOURCE_BLOB_LOCK_PASS")
           print("GQ815_IMMUTABLE_OWNER_REAL41_SOURCE_RECEIPT_PASS")
           PY
       - name: Test strict original-source attachment with hostile-anchor mutants
