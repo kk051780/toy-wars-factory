@@ -1,0 +1,142 @@
+name: GQ8 successor genuine Real44 plus read-only GuildShop Real48 Native Rojo OFF44
+on:
+  push:
+    branches: [quality/gq8-real48-curse-lobbyshop-intake-20261119]
+    paths:
+      - 'quality_gameplay/gq8_successor_real48_shop_20261119/**'
+      - '.github/workflows/gq8-successor-real48-shop.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_successor_real48_shop_20261119/**'
+      - '.github/workflows/gq8-successor-real48-shop.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original48:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0360b4c377904ccf4d6ee795d7b1d638b1303a09
+          path: _author816
+          persist-credentials: false
+      - name: Pin official branch, immutable original #815 Real44 and #808 policy blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
+          EVIDENCE="$(gh run view 44385257005 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "d5c13082d4987a8c89588a12b81edc73adc945ce success" || { echo RED_ORIGINAL_REAL44_SOURCE_RUN_NOT_GREEN; exit 1; }
+          mkdir -p artifacts/parent44 artifacts/author808
+          gh run download 44385257005 --repo "$GITHUB_REPOSITORY" --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/parent44
+          test -s artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/parent44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json
+          test -s artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/f71eb575aacd61dd8ccb7719f7dae4caec5fedcd" --jq '.content' | base64 -d >artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/f3cf10c8b0256896e9d194844deda91039429ddc" --jq '.content' | base64 -d >artifacts/author808/EGGRUMBLE_LobbyShopView.luau
+          for line in "f71eb575aacd61dd8ccb7719f7dae4caec5fedcd artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau" "f3cf10c8b0256896e9d194844deda91039429ddc artifacts/author808/EGGRUMBLE_LobbyShopView.luau" "911ce453a91b0ff7be69e232028611e906e13d3d _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_LobbyGuildShop.server.luau" "59eeb7c8b78a136d6bcb89062afc4f5b9d539d83 _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_ShopKioskClient.client.luau"; do
+            set -- $line
+            test "$(git hash-object "$2")" = "$1" || { echo RED_AUTHOR_BLOB_DRIFT "$2"; exit 1; }
+          done
+          echo GQ8_CROSSLANE_ORIGINAL_REAL44_816_808_AUTHOR_LOCK_PASS
+      - name: Select original Real44 and only four read-only GQ805 modules into exact Real48
+        shell: bash
+        run: |
+          set -euo pipefail
+          AR=quality_gameplay/gq8_successor_real48_shop_20261119
+          python3 "$AR/compose_real48.py" \
+            --original44 artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --receipt44 artifacts/parent44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json \
+            --server _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_LobbyGuildShop.server.luau \
+            --client _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_ShopKioskClient.client.luau \
+            --catalog artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau \
+            --view artifacts/author808/EGGRUMBLE_LobbyShopView.luau \
+            --out artifacts/selected48
+          python3 "$AR/test_real48.py" \
+            --original44 artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --receipt44 artifacts/parent44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json \
+            --server _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_LobbyGuildShop.server.luau \
+            --client _author816/quality_gameplay/gq805_shop_kiosk_runtime_20261118/GQ805_ShopKioskClient.client.luau \
+            --catalog artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau \
+            --view artifacts/author808/EGGRUMBLE_LobbyShopView.luau \
+            --selected48 artifacts/selected48/EGGRUMBLE_REAL48.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Real original44 and selected48 Native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8real48 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8real48 --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_successor_real48_shop_20261119')
+          from compose_real48 import flatten
+          for project,expected in (('artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json',44),
+                                   ('artifacts/selected48/EGGRUMBLE_REAL48.project.json',48)):
+            _,files=flatten(Path(project))
+            assert len(files)==expected
+            for src in files.values():
+              subprocess.run(['/tmp/gq8real48/luau-compile','--text',str(src)],check=True,stdout=subprocess.DEVNULL)
+            print('GQ8_ACTUAL_REAL44_REAL48_NATIVE_COMPILE_PASS',expected)
+          PY
+      - name: Pinned Rojo7.7.1 exact Source Class, portable Place ON48 and OFF44
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8real48-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8real48-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8real48-rojo.zip') as z:
+            a=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(a)==1
+            p=Path('/tmp/gq8real48-rojo');p.write_bytes(z.read(a[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8real48-rojo build artifacts/selected48/EGGRUMBLE_REAL48.project.json -o artifacts/selected48/EGGRUMBLE_REAL48.rbxlx
+          /tmp/gq8real48-rojo build artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json -o artifacts/selected48/OFF44.rbxlx
+          cmp artifacts/selected48/OFF44.rbxlx artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/selected48/EGGRUMBLE_REAL48.project.json \
+            --place artifacts/selected48/EGGRUMBLE_REAL48.rbxlx --count 48
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/parent44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --place artifacts/selected48/OFF44.rbxlx --count 44
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_DURING_BUILD; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,json,hashlib
+          p=Path('artifacts/selected48/EGGRUMBLE_REAL48.rbxlx')
+          x=Path('artifacts/selected48/B_REAL48_INTAKE_RECEIPT.json')
+          d=json.loads(x.read_text())
+          d.update({'private_head':os.environ['GITHUB_SHA'],
+            'real48_native_rojo_source_class':'PASS',
+            'off44_exact_place':'PASS',
+            'candidate_place_bytes':p.stat().st_size,
+            'candidate_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+          x.write_text(json.dumps(d,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          print('GQ8_REAL48_AND_OFF44_SELECTED_PRIVATE_BUILD_PASS',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL48-CURSE-LOBBYSHOP-PRIVATE-NOT-OFFICIAL
+          path: artifacts/selected48/
+          retention-days: 5
+          if-no-files-found: error
