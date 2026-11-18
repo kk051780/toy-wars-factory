@@ -4,6 +4,7 @@
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
+local TweenService=game:GetService("TweenService")
 local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))
 -- Exact immutable #801 policy is selected as a sibling ModuleScript; never duplicate an effect/HP owner.
@@ -77,6 +78,45 @@ local function soldier(parent:Instance,at:Vector3,serial:number):Model
  -- eight new HP/spawn budgets. Gameplay balance remains in original Swarm.
  h.MaxHealth=NEUTRAL_HEALTH;h.Health=NEUTRAL_HEALTH;h.BreakJointsOnDeath=false;h.Parent=m
  return m
+end
+-- Low-cost server-driven physical reaction on the existing accent only.
+-- Distinct species-specific pulses; never allocate a new Part per impact.
+local REACTION_SCALE={
+ BOW_STUMBLE=1.13,SHIELD_TUMBLE=1.26,ROLLING_BOAR=1.32,
+ JUMP_SPIN=1.42,PUFF_SMOKE=1.09,JELLY_WOBBLE=1.38,
+ SPARK_SPRINT=1.19,FLAT_THEN_POP=1.46,
+}
+local function playActualReaction(model:Model,cue:any)
+ local accent=model:FindFirstChild("SpeciesAccent")
+ if not accent or not accent:IsA("BasePart") then return end
+ local now=os.clock()
+ local last=tonumber(model:GetAttribute("EGGRUMBLE_LastMotionAt")) or -100
+ if cue.kind~="KO" and now-last<.16 then return end
+ model:SetAttribute("EGGRUMBLE_LastMotionAt",now)
+ local serial=(tonumber(model:GetAttribute("EGGRUMBLE_MotionSerial")) or 0)+1
+ model:SetAttribute("EGGRUMBLE_MotionSerial",serial)
+ local base=accent:GetAttribute("EGGRUMBLE_BaseAccentSize")
+ if typeof(base)~="Vector3" then
+  base=accent.Size
+  accent:SetAttribute("EGGRUMBLE_BaseAccentSize",base)
+ end
+ local factor=REACTION_SCALE[cue.expression] or 1.18
+ if cue.kind=="KO" then factor+=.18 end
+ TweenService:Create(accent,TweenInfo.new(.11,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{
+  Size=base*factor,
+ }):Play()
+ if cue.kind=="KO" then
+  -- Original singleton Swarm keeps all Humanoid/KO/despawn ownership.
+  accent.Material=Enum.Material.Neon
+ else
+  task.delay(.13,function()
+   if model.Parent and accent.Parent and model:GetAttribute("EGGRUMBLE_MotionSerial")==serial then
+    TweenService:Create(accent,TweenInfo.new(.12,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{
+     Size=base,
+    }):Play()
+   end
+  end)
+ end
 end
 local function labelKo(p:Player,n:number)
  p:SetAttribute("EGGRUMBLE_NeutralKOs",n)
@@ -224,6 +264,7 @@ function Swarm.start(session:any)
       model:SetAttribute("EGGRUMBLE_NeutralReaction",cue.expression)
       model:SetAttribute("EGGRUMBLE_NeutralFinisher",cue.finisher)
       model:SetAttribute("EGGRUMBLE_NeutralHitSerial",hitSerial)
+      playActualReaction(model,cue)
       if cue.kind=="KO" then
        local part=model:FindFirstChild("SpeciesAccent")
        if part and part:IsA("BasePart") then part.Material=Enum.Material.Neon end
