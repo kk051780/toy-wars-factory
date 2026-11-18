@@ -64,11 +64,24 @@ jobs:
           test -n "$RUN"
           [[ "$HEAD" =~ ^[0-9a-f]{40}$ ]]
           if [ "$HEAD" != "$CURRENT" ]; then
-            echo "RED_STALE_OFFICIAL31_HEAD: success HEAD=$HEAD latest HEAD=$CURRENT"
-            exit 1
+            # Read-only source rehearsal fallback; prior-HEAD CI is not formal same-HEAD success.
+            CHANGED="$(gh api "repos/$GITHUB_REPOSITORY/compare/$HEAD...$CURRENT" \
+              --jq '[.files[].filename]|sort|join(",")')"
+            if [ "$CHANGED" != ".github/workflows/p0d-rc-eggrumble-v3-core36.yml" ]; then
+              echo "RED_STALE_OFFICIAL31_SOURCE_DIFF: $CHANGED"
+              exit 1
+            fi
+            OLD_MANIFEST="$(gh api "repos/$GITHUB_REPOSITORY/contents/rc_fastlane/EGGRUMBLE_V3_ACTIVE.json?ref=$HEAD" --jq '.sha')"
+            NEW_MANIFEST="$(gh api "repos/$GITHUB_REPOSITORY/contents/rc_fastlane/EGGRUMBLE_V3_ACTIVE.json?ref=$CURRENT" --jq '.sha')"
+            test "$OLD_MANIFEST" = "$NEW_MANIFEST" || { echo RED_FORMAL_MANIFEST_CHANGED; exit 1; }
+            echo "GQ8_SOURCE_PREP_ONLY_STALE_OFFICIAL_CI: HEAD=$HEAD CURRENT=$CURRENT"
+            echo "formal_admission=NO_SAMEHEAD_CI" >> "$GITHUB_OUTPUT"
+          else
+            echo "formal_admission=SAMEHEAD_SOURCE_CI_PRESENT_NOT_ADOPTED" >> "$GITHUB_OUTPUT"
           fi
           echo "run=$RUN" >> "$GITHUB_OUTPUT"
           echo "sha=$HEAD" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
       - name: Fetch genuine official 31-source artifact, no synthetic substitution
         run: |
           set -euo pipefail
@@ -168,8 +181,9 @@ jobs:
             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
             --place artifacts/combined37/OFF31.rbxlx --count 31
           NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$NOW" = "${{ steps.official.outputs.sha }}" || { echo RED_RC_MOVED_DURING_REHEARSAL; exit 1; }
-          echo GQ8_CROSSLANE_REALM34_REGEN33_MAGE32_NATIVE_ROJO37_OFF31_SUCCESS
+          test "$NOW" = "${{ steps.official.outputs.current }}" || { echo RED_RC_MOVED_DURING_REHEARSAL; exit 1; }
+          echo "FORMAL_RC_ADMISSION=${{ steps.official.outputs.formal_admission }}"
+          echo GQ8_CROSSLANE_REALM34_REGEN33_MAGE32_NATIVE_ROJO37_OFF31_PREP_SUCCESS
       - uses: actions/upload-artifact@v4
         with:
           name: GQ8-CROSSLANE-37-REHEARSAL-NOT-OFFICIAL
