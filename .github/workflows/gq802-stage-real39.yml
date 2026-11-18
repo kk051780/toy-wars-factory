@@ -63,7 +63,7 @@ jobs:
             --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
             --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
             --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
-            --out artifacts/current31 --head 261b75d0a7093db5c13db3b95dad9a2911f78689
+            --out artifacts/current31 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
           python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
             --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
             --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
