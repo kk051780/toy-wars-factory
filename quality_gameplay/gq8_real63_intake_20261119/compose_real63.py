@@ -10,7 +10,8 @@ import argparse, copy, hashlib, json, re
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-OFFICIAL = "a6020867fac80fa3b2ca47478625873fc6f3678e"
+ORIGINAL55 = "a6020867fac80fa3b2ca47478625873fc6f3678e"
+OFFICIAL = "38d11f0bf311491ba76fe03f818948e5d4b06889"
 HOST=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
 COMBAT=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 INVUL=("ServerScriptService","EGGRUMBLE_InvulRuntime")
@@ -104,7 +105,7 @@ def put_project(doc,sources,out):
 def run(a):
  parent_doc,base=flatten(a.base55)
  r=json.loads(a.receipt55.read_text(encoding="utf8"))
- if len(base)!=55 or r.get("source_profile")!="eggrumble_v3_real55" or r.get("selected_official_branch_sha")!=OFFICIAL or r.get("official_rc_adopted") is not True:
+ if len(base)!=55 or r.get("source_profile")!="eggrumble_v3_real55" or r.get("selected_official_branch_sha")!=ORIGINAL55 or r.get("official_rc_adopted") is not True:
   raise ValueError("RED_BASE_NOT_OFFICIAL_REAL55")
  receipt_verify(base,r["sources"],"BASE55")
  if not {HOST,COMBAT,INVUL}.issubset(base):raise ValueError("RED_BASE_SINGLETON_MISSING")
@@ -121,7 +122,7 @@ def run(a):
  receipt_verify(viral,rv["sources"],"VIRAL56")
  receipt_verify(counter,rc["sources"],"COUNTER56")
  receipt_verify(hud,rh["on_sources"],"HUD59")
- if (rh.get("official_rc_head")!=OFFICIAL or rh.get("baseline_real55_source_count")!=55 or
+ if (rh.get("official_rc_head")!=ORIGINAL55 or rh.get("official_head")!=OFFICIAL or rh.get("official_rc_adopted") is not True or rh.get("baseline_real55_source_count")!=55 or
      set(tuple(x.split("/")) for x in rh["new_routes"])!=HUD):
   raise ValueError("RED_HUD_BASE_CONTRACT")
  if rt.get("original55_unchanged")!=55 or rv.get("parent")!=55 or rc.get("original55")!=55:
@@ -139,6 +140,8 @@ def run(a):
  for candidate,added in ((trade,TRADE),(hud,HUD),(viral,VIRAL),(counter,COUNTER)):
   for k in added:chosen[k]=candidate[k]
  if len(chosen)!=63:raise ValueError("RED_REAL63_COUNT")
+ for k in hud:
+  if chosen[k]!=hud[k]:raise ValueError("RED_CURRENT_REAL59_HUD_NOT_PRESERVED")
  for k in base:
   if k not in {HOST,COMBAT,INVUL} and chosen[k]!=base[k]:raise ValueError("RED_52_ORIGINAL_CHANGED")
  if a.out.exists():raise ValueError("RED_OUTPUT_EXISTS")
@@ -155,9 +158,9 @@ def run(a):
   if k in COUNTER:origin[k]="PR841_COUNTER_EXACT"
  report={
   "schema":"GQ8_CROSSLANE_REAL63_SOURCE_SELECTION_V1",
-  "official_base_head":OFFICIAL,"current_candidate_head":"CI_GITHUB_SHA",
+  "official_base_head":OFFICIAL,"original_real55_source_head":ORIGINAL55,"current_candidate_head":"CI_GITHUB_SHA",
   "formal_rc_adopted":False,"selected_real_sources":63,
-  "preserved_original_unchanged":52,"patched_existing_singletons":["/".join(x) for x in (HOST,COMBAT,INVUL)],
+  "preserved_original_unchanged":52,"preserved_current_real59_unchanged":56,"new_since_current_real59":4,"patched_existing_singletons":["/".join(x) for x in (HOST,COMBAT,INVUL)],
   "new_sources":8,"source_owners":{"HUD_FOG":829,"TRADE_REVIEW":838,"VIRAL":840,"COUNTER":841},
   "new_gameplay_hp_owner":0,"new_castle_round_owner":0,"new_swarm_owner":0,
   "paid_trade":False,"robux":False,"publish":False,
