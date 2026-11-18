@@ -9,9 +9,10 @@ from compose_real63 import (
     from_xml,flatten,put_project,receipt_verify,sha,HOST,COMBAT,INVUL,
     VIRAL,COUNTER,CLASS_SUFFIX
 )
-OFFICIAL63="ad602cebafc1a9d8caed078ab86c7a58b0fbbbef"
+OFFICIAL63="d52f2060dda81f0af6d1b143eee25fb416141602"
 BASIC=("ServerScriptService","EGGRUMBLE_BasicMobilityPolicy")
 HUD63=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_HudIntelRuntime")
+HUD_POLICY=("ReplicatedStorage","EGGRUMBLE_HudPresentationPolicy")
 def require(ok,label):
     if not ok: raise ValueError("RED_REAL65_"+label)
 def safe_merge(ours:bytes,base:bytes,theirs:bytes)->bytes:
@@ -48,7 +49,7 @@ def run(a):
     require(receipt.get("official_rc_adopted") is True and
             receipt.get("candidate_git_head")==OFFICIAL63 and
             receipt.get("candidate_sources")==63 and
-            receipt.get("original_unchanged")==60,"OFFICIAL63_RECEIPT")
+            receipt.get("original_unchanged")==59,"OFFICIAL63_RECEIPT")
     require(sha(a.real63_place.read_bytes())==receipt.get("place_sha256"),
             "OFFICIAL63_PLACE_HASH")
     receipt_verify(official63,receipt["on_sources"],"OFFICIAL63")
@@ -58,7 +59,7 @@ def run(a):
     require(official63[BASIC][0]=="ModuleScript" and
             official63[HOST][0]=="Script","BASIC_OR_HOST_CLASS")
     changed={k for k in original62 if official63[k]!=original62[k]}
-    require(changed=={COMBAT,HUD63},"OFFICIAL63_ONLY_COMBAT_HUD_MODIFIED")
+    require(changed=={COMBAT,HUD63,HUD_POLICY},"OFFICIAL63_ONLY_COMBAT_HUD_POLICY_MODIFIED")
     require(set(real64)-set(original62)==VIRAL|COUNTER,"AUTHOR64_ONLY_TWO_NEW_ROUTES")
     changed64={k for k in original62 if real64[k]!=original62[k]}
     require(changed64=={HOST,COMBAT,INVUL},"AUTHOR64_ONLY_THREE_OWNER_PATCHES")
@@ -95,6 +96,9 @@ def run(a):
             "COUNTER_REFLECT_DAMAGE_SITE_DRIFT")
     require(merged_combat!=original_basic and
             merged_combat!=real64[COMBAT][1],"COUNTER_OR_DODGE_NOT_COMPOSED")
+    require(b"matchEpoch=tostring(session),mode=session.mode" in merged_combat and
+            b"matchEpoch=tostring(session.world)" not in merged_combat,
+            "LATEST_REAL63_ROUND_EPOCH_FENCE_LOST")
     chosen=dict(official63)
     chosen[HOST]=real64[HOST]
     chosen[COMBAT]=(official63[COMBAT][0],merged_combat)
