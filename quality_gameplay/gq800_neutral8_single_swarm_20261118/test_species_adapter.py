@@ -26,6 +26,13 @@ class Neutral8SingleAuthority(unittest.TestCase):
   self.assertEqual(SOURCE.count('local accent=piece('),1)
   self.assertIn('root.CanTouch=false',SOURCE)
   self.assertIn('p.CanCollide=false',SOURCE)
+ def test_terrain_follow_selected_into_actual_single_swarm(self):
+  composer=(ROOT/"compose_real43.py").read_text(encoding="utf-8")
+  self.assertIn("NEUTRAL_ACTUAL_TERRAIN_GROUNDING",composer)
+  self.assertIn("ground.Normal.Y>=.72",composer)
+  self.assertIn("math.abs(desiredY-at.Y)<=1.4",composer)
+  self.assertIn("Vector3.new(0,-8,0)",composer)
+  self.assertIn("m:PivotTo(CFrame.lookAt(grounded,grounded+near.Unit))",composer)
  def test_actual_ko_and_line_of_sight(self):
   self.assertIn('ko=h.Health<=0',SOURCE)
   self.assertIn('if h.Health<before then',SOURCE)
