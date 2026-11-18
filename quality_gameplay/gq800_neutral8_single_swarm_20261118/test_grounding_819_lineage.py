@@ -22,7 +22,7 @@ class TerrainSourceIntegration(unittest.TestCase):
         self.assertIn('selected=patch(baseline)',CHARM)
         self.assertIn('if len(original)!=43',CHARM)
         self.assertIn('if len(selected_paths)!=44',CHARM)
-        self.assertIn('original[SWARM].read_text',COMPOSER)
+        self.assertIn('before[SWARM].read_text',COMPOSER)
     def test_single_owner_and_immutable_upstream(self):
         self.assertIn('"KoFence.mayCredit(session,id,m,all)"',COMPOSER)
         self.assertIn('"neutralBudget:acquire"',COMPOSER)
