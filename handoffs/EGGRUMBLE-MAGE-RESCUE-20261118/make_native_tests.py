@@ -84,6 +84,9 @@ assert(denied==nil and why2=="TARGET_ALREADY_RESERVED","RED_DOUBLE_REVIVE_RACE")
 local second=clone(v);second.casterId=103;second.casterCharacterKey="103:new"
 denied,why2=P.beginRevive(s,second)
 assert(denied==nil and why2=="TARGET_ALREADY_RESERVED","RED_OTHER_MAGE_RACE")
+local third=clone(v);third.targetId=104;third.targetCharacterKey="104:fresh"
+denied,why2=P.beginRevive(s,third)
+assert(denied==nil and why2=="CASTER_ALREADY_CHANNELING","RED_SAME_MAGE_PARALLEL_CHANNEL")
 v.now=202.999
 amount,reason=P.completeRevive(s,v,t)
 assert(amount==0 and reason=="CHANNEL_INCOMPLETE","RED_EARLY_CHANNEL")
