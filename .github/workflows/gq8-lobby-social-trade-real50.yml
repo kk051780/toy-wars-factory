@@ -75,7 +75,7 @@ jobs:
         run: |
           set -euo pipefail
           cmake -S _pinned_luau -B /tmp/gq8_social_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq8_social_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq8_social_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           python3 - <<'PY'
           import sys,subprocess
           from pathlib import Path
@@ -88,6 +88,10 @@ jobs:
               subprocess.run(['/tmp/gq8_social_luau/luau-compile','--text',str(script)],check=True,stdout=subprocess.DEVNULL)
             print("GQ8_REAL50_NATIVE_SELECTED_COMPILATION_PASS",n)
           PY
+          R=quality_gameplay/gq8_social_lobby_20261119
+          /tmp/gq8_social_luau/luau-compile --text "$R/test_trade_policy_native.luau" >/dev/null
+          /tmp/gq8_social_luau/luau "$R/test_trade_policy_native.luau" | tee /tmp/gq8_trade_vm.log
+          grep -q GQ8_TRADE_POLICY_NATIVE_DOUBLE_CONFIRM_OWNERSHIP_PAID_REPLAY_DUPLICATE_PASS /tmp/gq8_trade_vm.log
       - name: Pinned Rojo7.7.1 Source/Class and byte-exact OFF48 Place
         shell: bash
         run: |
