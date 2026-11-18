@@ -1,0 +1,166 @@
+name: P0D GQ8 LSS detached-world exact Core36 candidate
+on:
+  push:
+    branches: [quality/gq8-lss-scene-detach-cleanup-20261118]
+    paths:
+      - 'quality_gameplay/gq8_scene_core36_intake_20261118/**'
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-scene-core36-rehearsal.yml'
+  pull_request:
+    branches: [quality/gq8-lss-idle-craft-lease-20261118-0810]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-core36:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONPATH: _qa780
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - name: Check original source lock and six hostile-mutation tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_scene_core36_intake_20261118 -p test_admission.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_scene_detach_cleanup.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_idle_craft.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_air_dismount.py
+          python3 -B quality_gameplay/gq8_scene_core36_intake_20261118/validate_admission.py
+          python3 -B -m unittest discover -v -s _qa780/quality_gameplay/gq8_crosslane_20261118 -p 'test_*.py'
+      - name: Lock official RC to known real Core36 and discover proven original31
+        id: original
+        run: |
+          set -euo pipefail
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || { echo RED_RC_MOVED_REBASE_NEEDED; exit 1; }
+          test "$(git hash-object handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau)" = "c0b6b420ae588e2facb22caa793397356c2e8246" || { echo RED_LSS_SOURCE_DRIFT; exit 1; }
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 200 \
+            --json databaseId,headSha,status,conclusion > /tmp/gq8-original31.json
+          RUN="$(jq -r --arg sha '261b75d0a7093db5c13db3b95dad9a2911f78689' '[.[]|select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/gq8-original31.json)"
+          test -n "$RUN" || { echo RED_OFFICIAL_ORIGINAL31_EVIDENCE_MISSING; exit 1; }
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Download original31 immutable Studio source artifact
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.original.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Reuse immutable Realm Regen and crosslane composers for actual36
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/actual31 --head 261b75d0a7093db5c13db3b95dad9a2911f78689
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/actual31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/actual31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/actual31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/candidate36/CANDIDATE36.project.json
+          python3 quality_gameplay/gq8_scene_core36_intake_20261118/validate_admission.py \
+            --original31 artifacts/actual31/CURRENT31_REAL_SOURCE.project.json \
+            --combined36 artifacts/candidate36/CANDIDATE36.project.json \
+            --receipt artifacts/candidate36/SCENE_ADMISSION_RECEIPT.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_luau
+          persist-credentials: false
+      - name: Native compile every original31 and candidate36 real Luau script
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_luau -B /tmp/gq8-scene-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-scene-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from quality_gameplay.gq8_crosslane_20261118.compose_rehearsal36 import flatten
+          for path,count in (
+            ("artifacts/actual31/CURRENT31_REAL_SOURCE.project.json",31),
+            ("artifacts/candidate36/CANDIDATE36.project.json",36)):
+            _,sources=flatten(Path(path))
+            assert len(sources)==count
+            for file in sources.values():
+              subprocess.run(["/tmp/gq8-scene-native/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+            print("GQ8_SCENE_NATIVE_ALL_REAL_SOURCE_PASS",count)
+          PY
+      - name: Actual Rojo Source Class verification for candidate36 and OFF31
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-scene-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-scene-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8-scene-rojo.zip") as z:
+            x=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(x)==1
+            p=Path("/tmp/gq8-scene-rojo")
+            p.write_bytes(z.read(x[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-scene-rojo build artifacts/candidate36/CANDIDATE36.project.json -o artifacts/candidate36/CANDIDATE36.rbxlx
+          /tmp/gq8-scene-rojo build artifacts/actual31/CURRENT31_REAL_SOURCE.project.json -o artifacts/candidate36/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/candidate36/CANDIDATE36.project.json --place artifacts/candidate36/CANDIDATE36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/actual31/CURRENT31_REAL_SOURCE.project.json --place artifacts/candidate36/OFF31.rbxlx --count 31
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || { echo RED_RC_MOVED_DURING_TEST; exit 1; }
+          python3 - <<'PY'
+          import pathlib,hashlib,json,os
+          p=pathlib.Path("artifacts/candidate36/CANDIDATE36.rbxlx")
+          d={"feature_id":"GQ8_LSS_SCENE_DETACH_RETIRE_20261118",
+            "source_head":os.getenv("GITHUB_SHA"),"official_rc_adopted":False,
+            "real36_script_count":36,"inverse_off31_exact":True,
+            "actual_rojo_source_class":True,"place_bytes":p.stat().st_size,
+            "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "studio2client":"NOT_TESTED","android15":"NOT_TESTED","fun":"NOT_TESTED","published":False}
+          pathlib.Path("artifacts/candidate36/CANDIDATE_RECEIPT.json").write_text(
+            json.dumps(d,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("GQ8_SCENE_REAL36_ROJO_OFF31_PASS",d["place_bytes"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-LSS-SCENE-PRIVATE-CORE36-CANDIDATE
+          path: |
+            artifacts/candidate36/
+            artifacts/actual31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error
