@@ -27,14 +27,16 @@ STUDIO_GUARD = re.compile(
 )
 ENGINE_KEYS = ("studio_2client", "android_15min", "art_fun_owner")
 EXPECTED_PROFILE = "eggrumble_v3_31"
+EXPECTED_PRIVATE_PROFILE = "eggrumble_v3_core36"
 EXPECTED_SOURCE_COUNT = 31
 
 
-def assess(active: dict, companion: dict, original_host: str) -> dict:
+def assess(active: dict, companion: dict, original_host: str, core36: dict) -> dict:
     """Source and metadata checks do not simulate Roblox Engine."""
     errors = []
     profiles = active.get("source_profiles") or {}
     listed = profiles.get(EXPECTED_PROFILE) or {}
+    listed_core36 = profiles.get(EXPECTED_PRIVATE_PROFILE) or {}
     flags = companion.get("feature_flags") or {}
     source_count = companion.get("source_count")
 
@@ -42,6 +44,11 @@ def assess(active: dict, companion: dict, original_host: str) -> dict:
         errors.append("V3 companion manifest profile missing/disabled")
     if source_count != EXPECTED_SOURCE_COUNT or listed.get("source_count") != EXPECTED_SOURCE_COUNT:
         errors.append("V3 expected 31-source contract drift")
+    if core36.get("source_profile") != EXPECTED_PRIVATE_PROFILE or core36.get("source_count") != 36 or listed_core36.get("source_count") != 36 or not listed_core36.get("selected_for_private_v3_studio_build"):
+        errors.append("formal V3 private Core36 source selection missing or stale")
+    authorities = core36.get("server_authorities") or {}
+    if any(authorities.get(key) != 1 for key in ("host", "combat", "swarm")) or any(authorities.get(key) != 0 for key in ("new_remote_owner", "new_store_owner", "new_score_owner", "new_damage_owner")):
+        errors.append("Core36 authority contract mismatch")
     if companion.get("canonical_game_host_count") != 1:
         errors.append("duplicate/missing game Host")
     if companion.get("canonical_combat_count") != 1:
@@ -58,12 +65,14 @@ def assess(active: dict, companion: dict, original_host: str) -> dict:
 
     default_profile = active.get("active_profile")
     preview_only = bool(STUDIO_GUARD.search(original_host))
-    engine = {key: companion.get(key, "UNKNOWN") for key in ENGINE_KEYS}
+    acceptance = core36.get("acceptance") or {}
+    engine = {"studio_2client": acceptance.get("studio_2client", "UNKNOWN"), "android_15min": acceptance.get("android_15min", "UNKNOWN"), "art_fun_owner": acceptance.get("human_fun", "UNKNOWN")}
+    # Historic PENDING_CANDIDATE labels in committed manifest are not current CI receipts.
 
     # These are metadata labels, NEVER proof of a real Studio/Android session.
     if errors:
         verdict = "RED_SOURCE_CONTRACT"
-    elif default_profile != EXPECTED_PROFILE:
+    elif default_profile != EXPECTED_PRIVATE_PROFILE:
         verdict = "NO_GO_NOT_PRIMARY_EXPERIENCE"
     elif preview_only:
         verdict = "NO_GO_STUDIO_ONLY_ORIGINAL_HOST"
@@ -79,6 +88,8 @@ def assess(active: dict, companion: dict, original_host: str) -> dict:
         "default_profile": default_profile,
         "v3_companion_enabled": companion.get("enabled") is True,
         "v3_scripts_reported": source_count,
+        "v3_private_core36_sources_reported": core36.get("source_count"),
+        "v3_private_profile_selected": bool(listed_core36.get("selected_for_private_v3_studio_build")),
         "original_host_studio_only_guard": preview_only,
         "eight_domains_source_flags": {
             domain: bool(flags.get(flag)) for domain, flag in DOMAINS.items()
@@ -94,22 +105,22 @@ def assess(active: dict, companion: dict, original_host: str) -> dict:
     }
 
 
-def self_test(active: dict, companion: dict, original_host: str) -> int:
+def self_test(active: dict, companion: dict, original_host: str, core36: dict) -> int:
     checks = 0
 
     def expect(a: dict, c: dict, host: str, target: str) -> None:
         nonlocal checks
-        got = assess(a, c, host)["verdict"]
+        got = assess(a, c, host, core36)["verdict"]
         assert got == target, (target, got)
         checks += 1
 
     # The real pinned source/manifest is the primary positive contract.
-    baseline = assess(active, companion, original_host)
+    baseline = assess(active, companion, original_host, core36)
     assert baseline["verdict"] == "NO_GO_NOT_PRIMARY_EXPERIENCE", baseline
     checks += 1
 
     changed_active = copy.deepcopy(active)
-    changed_active["active_profile"] = EXPECTED_PROFILE
+    changed_active["active_profile"] = EXPECTED_PRIVATE_PROFILE
     expect(changed_active, companion, original_host, "NO_GO_STUDIO_ONLY_ORIGINAL_HOST")
 
     no_guard_host = STUDIO_GUARD.sub("-- removed preview-only guard", original_host)
@@ -141,6 +152,14 @@ def self_test(active: dict, companion: dict, original_host: str) -> int:
         "-- if not RunService:IsStudio() then return end", original_host
     )
     expect(changed_active, companion, comment_only, "NO_GO_ENGINE_AND_FUN_UNVERIFIED")
+    bad_core = copy.deepcopy(core36)
+    bad_core["source_count"] = 35
+    assert assess(active, companion, original_host, bad_core)["verdict"] == "RED_SOURCE_CONTRACT"
+    checks += 1
+    bad_core = copy.deepcopy(core36)
+    bad_core["server_authorities"]["new_remote_owner"] = 1
+    assert assess(active, companion, original_host, bad_core)["verdict"] == "RED_SOURCE_CONTRACT"
+    checks += 1
     print(f"GQ8_FIRSTPLAY_CLASSIFICATION_{checks}_CASES_PASS")
     return checks
 
@@ -150,15 +169,17 @@ def main() -> int:
     p.add_argument("--active", required=True, type=Path)
     p.add_argument("--companion", required=True, type=Path)
     p.add_argument("--pinned-host", required=True, type=Path)
+    p.add_argument("--core36", required=True, type=Path)
     p.add_argument("--report", type=Path)
     p.add_argument("--self-test", action="store_true")
     args = p.parse_args()
     active = json.loads(args.active.read_text(encoding="utf-8"))
     companion = json.loads(args.companion.read_text(encoding="utf-8"))
     original_host = args.pinned_host.read_text(encoding="utf-8")
-    result = assess(active, companion, original_host)
+    core36 = json.loads(args.core36.read_text(encoding="utf-8"))
+    result = assess(active, companion, original_host, core36)
     if args.self_test:
-        self_test(active, companion, original_host)
+        self_test(active, companion, original_host, core36)
     payload = json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     print(payload)
     if args.report:
