@@ -12,11 +12,14 @@ end
 local function safeNum(n)
  return type(n)=="number" and n>=0 and n<=MAX_VERSION and n==math.floor(n)
 end
+local function safeUser(n)
+ return type(n)=="number" and n>0 and n<=9007199254740991 and n==math.floor(n)
+end
 local function ownerAndOffers(plan,owner)
  if type(plan)~="table" or type(plan.tradeId)~="string" or #plan.tradeId<8
     or #plan.tradeId>100 or not safeNum(plan.revision) or type(owner)~="number"
-    or owner~=math.floor(owner) or owner<=0
-    or not safeNum(plan.fromA) or not safeNum(plan.toB)
+    or owner~=math.floor(owner) or not safeUser(owner)
+    or not safeUser(plan.fromA) or not safeUser(plan.toB)
     or plan.fromA==plan.toB or type(plan.itemsA)~="table"
     or type(plan.itemsB)~="table" or #plan.itemsA<1 or #plan.itemsA>8
     or #plan.itemsB<1 or #plan.itemsB>8
@@ -129,7 +132,7 @@ function Escrow.escrow(raw,plan,owner)
  if not nextRecord then return nil,"UNSUPPORTED_PROFILE_SCHEMA" end
  local st=nextRecord.tradeState[plan.tradeId]
  if not st or st.fingerprint~=fp then return nil,"NOT_PREPARED_OR_CONFLICT" end
- if st.phase=="ESCROWED" or st.phase=="CREDITED" then
+ if st.phase=="ESCROWED" or st.phase=="CREDITED" or st.phase=="FINALIZED" then
   return nextRecord,"ALREADY_ESCROWED"
  end
  if st.phase~="RESERVED" then return nil,"UNKNOWN_PHASE" end
@@ -138,6 +141,9 @@ function Escrow.escrow(raw,plan,owner)
   local record=st.outgoing[slot.id]
   if not owned or not record or owned.ownerUserId~=owner or owned.version~=slot.version
     or owned.escrowLocked~=true or owned.paidOrigin~=false or owned.originKind~="FREE_EARNED"
+    or owned.equipped~=false or owned.bound~=false or owned.starterProtected~=false
+    or owned.tradeIncomingLocked==true or owned.tradeable~=true
+    or owned.category~=record.category or owned.itemDefId~=record.itemDefId
     or record.id~=slot.id or record.version~=slot.version then
     return nil,"ESCROW_SOURCE_CHANGED"
   end
@@ -156,7 +162,7 @@ function Escrow.receipt(raw,plan,owner)
  if type(raw)~="table" or type(raw.tradeState)~="table" then return nil,"NO_PROFILE" end
  local st=raw.tradeState[plan.tradeId]
  if type(st)~="table" or st.fingerprint~=fp or
-    (st.phase~="ESCROWED" and st.phase~="CREDITED") then
+    (st.phase~="ESCROWED" and st.phase~="CREDITED" and st.phase~="FINALIZED") then
   return nil,"ESCROW_NOT_DURABLE"
  end
  local items={}
