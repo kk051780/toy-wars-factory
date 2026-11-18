@@ -38,7 +38,7 @@ def actual_helper(source:str|None=None)->str:
    raise ValueError("RED_DETACH_PREDICATE_DRIFT:"+p)
  if s.count("shouldRetireDetachedScene(\n")!=1:
   raise ValueError("RED_DETACH_NOT_WIRED_TO_HEARTBEAT")
- if "retireScene(true)" not in s or "world.Destroying:Connect(function() retireScene(false) end)" not in s:
+ if "retireScene(true)" not in s or "worldDestroyingConnection=world.Destroying:Connect(function() retireScene(false) end)" not in s or "worldDestroyingConnection:Disconnect()" not in s:
   raise ValueError("RED_DETACH_RETIRE_MISSING")
  return helper
 

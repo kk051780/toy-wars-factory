@@ -25,7 +25,8 @@ class SceneDetachTest(unittest.TestCase):
   self.assertEqual(SRC.count("retireScene(true)"),1)
   self.assertEqual(SRC.count("retireScene(false)"),1)
   self.assertIn("if not active then return end -- idempotent",SRC)
-  self.assertIn("world.Destroying:Connect(function() retireScene(false) end)",SRC)
+  self.assertIn("worldDestroyingConnection=world.Destroying:Connect(function() retireScene(false) end)",SRC)
+  self.assertIn("worldDestroyingConnection:Disconnect()",SRC)
   self.assertIn("if removeVisual and scene.Parent then scene:Destroy() end",SRC)
   for needle in ("entered:Disconnect()","exited:Disconnect()",
    "for player in pairs(combatConnections) do unwatchCombo(player) end",

@@ -22,7 +22,7 @@ REQUIRED_ADDITIONS={
  ("ServerScriptService","EGGRUMBLE_NaturalRegen"),
  ("ServerScriptService","EGGRUMBLE_PassiveRegenPolicy"),
 }
-EXPECTED_BLOB="f7c210ed62e9a0ee8cca78749d8f716317539cd4"
+EXPECTED_BLOB="c0b6b420ae588e2facb22caa793397356c2e8246"
 STUDIO_GATE="if not RunService:IsStudio() then return end"
 PROMOTION="-- Promoted REALM34 core: same V3 session guards on all servers; no Studio gate."
 FEATURE="GQ8_LSS_SCENE_DETACH_RETIRE_20261118"
@@ -41,7 +41,8 @@ def assert_runtime_source(src:str, exact_blob:bool=True)->dict:
   "current-world cleanup":"local function retireScene(removeVisual)",
   "current arena test":"shouldRetireDetachedScene(",
   "heartbeat retirement":"retireScene(true)",
-  "world Destroying":"world.Destroying:Connect(function() retireScene(false) end)",
+  "world Destroying":"worldDestroyingConnection=world.Destroying:Connect(function() retireScene(false) end)",
+  "world event disposal":"worldDestroyingConnection:Disconnect()",
   "original dismount rescue":"local function flightDismountNeedsRescue(",
   "original idle craft reclaim":"local function emptyCraftLease(",
   "server current player guard":"currentCraftOwner(v.owner,mode,world,v.role)",

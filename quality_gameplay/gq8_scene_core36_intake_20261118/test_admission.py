@@ -30,7 +30,8 @@ class Core36SceneAdmission(unittest.TestCase):
  def test_each_missing_critical_guard_is_a_red(self):
   needles=[
     "local function retireScene(removeVisual)",
-    "world.Destroying:Connect(function() retireScene(false) end)",
+    "worldDestroyingConnection=world.Destroying:Connect(function() retireScene(false) end)",
+    "worldDestroyingConnection:Disconnect()",
     "retireScene(true)",
     "flightDismountNeedsRescue(",
     "emptyCraftLease(",

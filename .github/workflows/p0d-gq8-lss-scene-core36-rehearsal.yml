@@ -55,7 +55,7 @@ jobs:
           set -euo pipefail
           NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$NOW" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || { echo RED_RC_MOVED_REBASE_NEEDED; exit 1; }
-          test "$(git hash-object handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau)" = "f7c210ed62e9a0ee8cca78749d8f716317539cd4" || { echo RED_LSS_SOURCE_DRIFT; exit 1; }
+          test "$(git hash-object handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau)" = "c0b6b420ae588e2facb22caa793397356c2e8246" || { echo RED_LSS_SOURCE_DRIFT; exit 1; }
           gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
             --branch rc/p0d-s1-kids-rc01 --limit 200 \
             --json databaseId,headSha,status,conclusion > /tmp/gq8-original31.json
