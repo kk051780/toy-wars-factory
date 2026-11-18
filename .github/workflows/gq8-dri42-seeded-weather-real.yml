@@ -33,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/original
-          gh run download 44316775401 --repo "$GITHUB_REPOSITORY" \
+          gh run download 44318289343 --repo "$GITHUB_REPOSITORY" \
             --name GQ815-REAL42-GUARDIAN-PRIVATE-SOURCE-NOT-OFFICIAL --dir artifacts/original
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
