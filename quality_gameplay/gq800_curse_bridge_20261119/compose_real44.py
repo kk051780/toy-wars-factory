@@ -75,6 +75,24 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
     out.parent.mkdir(parents=True,exist_ok=True)
     result=copy.deepcopy(old)
     result["name"]="GQ800_REAL44_CURSE_SOURCE_PREVIEW_NOT_OFFICIAL"
+    # Real43 is a portable project rooted in a DIFFERENT artifact directory.
+    # Rehydrate every unchanged author source into this portable Real44 root;
+    # otherwise Rojo/project references would resolve to missing files.
+    for route,original_file in files.items():
+        if route==SWARM:continue
+        name=original_file.name
+        if name.endswith(".server.luau"):ext=".server.luau"
+        elif name.endswith(".client.luau"):ext=".client.luau"
+        elif name.endswith(".luau"):ext=".luau"
+        else:raise ValueError("RED_UNEXPECTED_SCRIPT_CLASS")
+        rel=Path("sources").joinpath(*route[:-1],route[-1]+ext)
+        target=out.parent/rel
+        target.parent.mkdir(parents=True,exist_ok=True)
+        assert not target.exists(),"RED_DUPLICATE_SELECTED_SOURCE"
+        target.write_bytes(original_file.read_bytes())
+        node=result["tree"]
+        for part in route:node=node[part]
+        node["$path"]=rel.as_posix()
     selected=out.parent/"EGGRUMBLE_SwarmCombat_Curse44.luau"
     selected.write_bytes(source)
     policy=out.parent/"EGGRUMBLE_CurseConversionPolicy.luau"
