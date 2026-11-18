@@ -4,7 +4,7 @@
 local M={}
 local MAX=8
 local DELAY=5
-local TYPES={WEAPON=true,BEAST=true,GUARDIAN=true,ITEM=true,ABILITY=true,VEHICLE=true,COSMETIC=true}
+local TYPES={WEAPON=true,BEAST=true,GUARDIAN=true,ITEM=true,ABILITY=true,VEHICLE=true,COSMETIC=true,EGG=true}
 local function side(trade,userId)
     if type(userId)~="number" then return nil end
     if userId==trade.a then return "a" end
@@ -40,7 +40,7 @@ function M.setOffer(trade,userId,ids,inventory,now)
         local item=inventory[id]
         if type(item)~="table" or item.ownerUserId~=userId or not TYPES[item.category]
             or item.tradeable~=true or item.bound==true or item.equipped==true
-            or item.escrowLocked==true or item.starterProtected==true
+            or item.escrowLocked==true or item.starterProtected==true or item.paidOrigin==true
             or type(item.version)~="number" or item.version<0 then
             return false,"ITEM_NOT_TRADABLE"
         end
@@ -73,7 +73,8 @@ local function verifyOffer(offer,ownerId,inventory)
         local item=inventory[slot.id]
         if type(item)~="table" or item.ownerUserId~=ownerId or item.version~=slot.version
             or item.category~=slot.category or item.tradeable~=true or item.bound==true
-            or item.equipped==true or item.escrowLocked==true or item.starterProtected==true then
+            or item.equipped==true or item.escrowLocked==true or item.starterProtected==true
+            or item.paidOrigin==true then
             return false
         end
     end
@@ -86,9 +87,17 @@ function M.proposeSettlement(trade,inventoryA,inventoryB)
     if not verifyOffer(trade.aOffer,trade.a,inventoryA) or not verifyOffer(trade.bOffer,trade.b,inventoryB) then
         return false,"INVENTORY_CHANGED"
     end
-    local sendA={} local sendB={}
-    for _,v in ipairs(trade.aOffer) do table.insert(sendA,{id=v.id,version=v.version}) end
-    for _,v in ipairs(trade.bOffer) do table.insert(sendB,{id=v.id,version=v.version}) end
+    local sendA={} local sendB={} local seen={}
+    for _,v in ipairs(trade.aOffer) do
+        if seen[v.id] then return false,"DUPLICATE_GLOBAL_INSTANCE" end
+        seen[v.id]=true
+        table.insert(sendA,{id=v.id,version=v.version})
+    end
+    for _,v in ipairs(trade.bOffer) do
+        if seen[v.id] then return false,"DUPLICATE_GLOBAL_INSTANCE" end
+        seen[v.id]=true
+        table.insert(sendB,{id=v.id,version=v.version})
+    end
     return true,{tradeId=trade.tradeId,revision=trade.revision,
         fromA=trade.a,toB=trade.b,itemsA=sendA,itemsB=sendB,
         requiresExistingStoreAtomicJournal=true,alreadySettled=false}
