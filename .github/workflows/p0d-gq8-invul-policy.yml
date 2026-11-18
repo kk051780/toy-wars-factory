@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Generate authentic source-derived good and 2 attack mutants
+      - name: Generate authentic source-derived good and 3 attack mutants
         run: |
           set -euo pipefail
           python3 -B handoffs/EGGRUMBLE-INVUL-20261119/make_native_invul.py --out /tmp/gq8-invul
@@ -50,7 +50,7 @@ jobs:
              "$CC" --text "$src" >/dev/null
           done
           "$CLI" /tmp/gq8-invul/good.luau | tee /tmp/gq8-invul-good.log
-          grep -qx GQ8_INVUL_SOURCE_VM_7ROLE_SKILL_ITEM_GUARD_NO_STACK_TEAM_ROLLBACK_PASS /tmp/gq8-invul-good.log
+          grep -qx GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_MULTISOURCE_COUNTER_PVP_GUARDS_PASS /tmp/gq8-invul-good.log
           if "$CLI" /tmp/gq8-invul/budget_mutant.luau > /tmp/gq8-invul-budget-mutant.log 2>&1; then
              echo RED_UNLIMITED_DURATION_MUTANT_UNDETECTED; exit 1
           fi
@@ -59,4 +59,8 @@ jobs:
              echo RED_DAMAGE_LEAK_MUTANT_UNDETECTED; exit 1
           fi
           grep -q RED_DAMAGE_LEAK /tmp/gq8-invul-damage-mutant.log
-          echo GQ8_INVUL_NATIVE_LUAU7ROLE_GOOD_BUDGET_MUTANT_DAMAGE_MUTANT_PASS
+          if "$CLI" /tmp/gq8-invul/charge_mutant.luau > /tmp/gq8-invul-charge-mutant.log 2>&1; then
+             echo RED_UNLIMITED_SKILL_CHARGES_MUTANT_UNDETECTED; exit 1
+          fi
+          grep -q RED_INFINITE_SKILL /tmp/gq8-invul-charge-mutant.log
+          echo GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_BUDGET_DAMAGE_CHARGE_MUTANTS_PASS
