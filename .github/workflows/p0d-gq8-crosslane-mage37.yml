@@ -1,0 +1,169 @@
+name: P0D GQ8 Realm Regen Mage Genuine37 SameHEAD Native Rojo QA
+on:
+  push:
+    branches: ['quality/gq8-crosslane-mage37-20261118']
+    paths:
+      - 'quality_gameplay/gq8_crosslane_mage_20261118/**'
+      - '.github/workflows/p0d-gq8-crosslane-mage37.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_crosslane_mage_20261118/**'
+      - '.github/workflows/p0d-gq8-crosslane-mage37.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real37-crosslane-source-rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _cross780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2f4c1e43a7802929de3f633370b32791f7bf8d96
+          path: _mage777
+          persist-credentials: false
+      - name: Independent structural and negative mutation tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_crosslane_mage_20261118 -p 'test_*.py'
+          python3 -B -m unittest discover -v -s _cross780/quality_gameplay/gq8_crosslane_20261118 -p 'test_*.py'
+      - name: Get exact current official HEAD and same-HEAD successful RC31 artifact
+        id: official
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 70 \
+            --json databaseId,headSha,status,conclusion > /tmp/official31.json
+          RUN="$(jq -r --arg head "$CURRENT" '[.[]|select(.headSha==$head and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official31.json)"
+          test -n "$RUN" || { echo RED_NO_SUCCESS_ON_CURRENT_RC_HEAD; exit 1; }
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "sha=$CURRENT" >> "$GITHUB_OUTPUT"
+      - name: Download genuine official RC31 Studio Place source/receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Rehydrate exact official31; reuse earlier 36 and original Mage32
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head "${{ steps.official.outputs.sha }}"
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _cross780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/combined36/COMBINED36.project.json
+          python3 _mage777/handoffs/EGGRUMBLE-MAGE-REVIVE-20261118/compose_mage32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/mage32/MAGE32.project.json
+          python3 quality_gameplay/gq8_crosslane_mage_20261118/compose_rehearsal37.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --combined36 artifacts/combined36/COMBINED36.project.json \
+            --mage32 artifacts/mage32/MAGE32.project.json \
+            --out artifacts/combined37/COMBINED37.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Actual Luau compile 37 / 36 / 31 on fixed language compiler
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-realm-regen-mage -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-realm-regen-mage --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_crosslane_mage_20261118")
+          from compose_rehearsal37 import flatten
+          for p,count in (
+            ("artifacts/combined37/COMBINED37.project.json",37),
+            ("artifacts/combined36/COMBINED36.project.json",36),
+            ("artifacts/current31/CURRENT31_REAL_SOURCE.project.json",31)):
+              _,files=flatten(Path(p))
+              assert len(files)==count,(p,len(files))
+              for source in files.values():
+                  subprocess.run(["/tmp/gq8-realm-regen-mage/luau-compile","--text",str(source)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print("GQ8_CROSSLANE_NATIVE_VERIFIED",count)
+          PY
+      - name: Pinned Rojo7.7.1 build all 37/36/31 with exact Source and Script Class
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq8-rojo.zip") as z:
+            names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(names)==1
+            f=Path("/tmp/gq8-rojo")
+            f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+          /tmp/gq8-rojo build artifacts/combined37/COMBINED37.project.json -o artifacts/combined37/COMBINED37.rbxlx
+          /tmp/gq8-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/combined37/COMBINED36.rbxlx
+          /tmp/gq8-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined37/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/combined37/COMBINED37.project.json \
+            --place artifacts/combined37/COMBINED37.rbxlx --count 37
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/combined36/COMBINED36.project.json \
+            --place artifacts/combined37/COMBINED36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --place artifacts/combined37/OFF31.rbxlx --count 31
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "${{ steps.official.outputs.sha }}" || { echo RED_RC_MOVED_STOP_CAS; exit 1; }
+          echo GQ8_REALM_REGEN_MAGE37_SAMEHEAD_NATIVE_ROJO37_36_OFF31_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REALM-REGEN-MAGE37-PRIVATE-REHEARSAL-NOT-OFFICIAL
+          path: |
+            artifacts/combined37/
+            artifacts/current31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error
