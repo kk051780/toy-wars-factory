@@ -1,16 +1,8 @@
 name: GQ8 trade UI journal Real55-to-57 native Luau Rojo OFF55
+# Historical immutable baseline, superseded by Real62 canonical latest Real59 union.
 on:
-  push:
-    branches: [quality/gq8-trade-ux-journal-real57-20261119]
-    paths:
-      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
-      - '.github/workflows/gq8-trade-ux-journal-real57.yml'
-  pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
-    paths:
-      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
-      - '.github/workflows/gq8-trade-ux-journal-real57.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
