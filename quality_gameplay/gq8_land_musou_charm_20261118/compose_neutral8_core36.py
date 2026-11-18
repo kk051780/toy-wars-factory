@@ -79,7 +79,9 @@ def transform(src:str)->str:
     }
     for needle,n in needles.items():
         if src.count(needle)!=n:
-            raise ValueError("RED_ORIGINAL_SWARM_SOURCE_CHANGED:"+needle)
+            loc=src.find("local function addEnemy")
+            excerpt=src[loc:loc+480] if loc>=0 else src[:480]
+            raise ValueError("RED_ORIGINAL_SWARM_SOURCE_CHANGED:"+needle+"\nORIGINAL_SNIPPET="+repr(excerpt))
     if any(marker in src for marker in ("EGGRUMBLE_NeutralId","NEUTRAL_VISUALS",
                                       "GQ800_NEUTRAL8_REAL_ACTOR")):
         raise ValueError("RED_DUPLICATE_NEUTRAL8_BRIDGE")
