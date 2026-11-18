@@ -93,7 +93,7 @@ v.pulse={kind="ENEMY_SENSE",expiresAt=200,serverVerified=true}
 local sea={id="sub",kind="ENEMY",x=160,z=0,team="BLUE",layer="SEA",serverLineOfSight=true}
 assert(#M.project(v,{sea},100)==0,"RED_CROSS_LAYER_WALLHACK")
 local near={id="near",kind="ENEMY",x=40,z=0,team="BLUE",layer="LAND",serverLineOfSight=true}
-assert(#M.project(v,{near},100)==1,"RED_LEGIT_LOS_BROKEN")
+assert(#M.project(v,{near},100)==1 and M.project(v,{near},100)[1].precision=="EXACT","RED_LEGIT_LOS_BROKEN")
 near.stealthed=true
 assert(#M.project(v,{near},100)==1 and M.project(v,{near},100)[1].precision=="SECTOR","RED_STEALTH_EXACT_LEAK")
 near.serverLineOfSight=false
