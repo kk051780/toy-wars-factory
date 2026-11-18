@@ -26,7 +26,7 @@ jobs:
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_RC_MOVED_REBASE; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/796" --jq '.head.sha')" = 34cafed1cb9e92e08bbc8f2afa67d50ae52a083a || { echo RED_WEATHER42_DRI_MOVED; exit 1; }
-          echo "GQ8_NEUTRAL_AUTHOR_CURRENT_HEAD=$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq '.head.sha') PINNED_SOURCE_HEAD=712a998aa1ad9491404e6a8fbbaee49f1017b4af"
+          echo "GQ8_NEUTRAL_AUTHOR_CURRENT_HEAD=$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq '.head.sha') PINNED_SOURCE_HEAD=bb54b9009ece96353e927fe7c9826cdb6d66e8d8"
           test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/812" --jq '.head.sha')" = be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8 || { echo RED_ITEM_AUTHOR_MOVED; exit 1; }
           mkdir -p artifacts/original artifacts/upstream
           gh run download 44319450066 --repo "$GITHUB_REPOSITORY" \
@@ -34,7 +34,7 @@ jobs:
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
           test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
           for spec in \
-            "3ed0ec0e1299fa8f8f0e78254daa444906a4f63c composer815.py" \
+            "dd94816c6ec81c3a4c885dc1bdc34abb076be0c1 composer815.py" \
             "0f4774c543d60b91c261cc6e871d77aa937149cb EGGRUMBLE_SwarmCombat815.luau" \
             "42f512c4aaa389e0027be774c327e1f5a106aabf EGGRUMBLE_NeutralFinisherPolicy801.luau" \
             "2c81da640d465d27630840be2f1f5245bc7cd5db patch_item812.py"; do
@@ -104,7 +104,7 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-item43-rojo.zip
-          echo "00feb4fa0829a1dd72b49df2639da519a352fbe13cadcd83969e2ba2bb5693c4  /tmp/gq8-item43-rojo.zip" | sha256sum -c
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-item43-rojo.zip" | sha256sum -c
           python3 - <<'PY'
           from pathlib import Path
           from zipfile import ZipFile
