@@ -35,6 +35,7 @@ jobs:
           python3 quality_gameplay/gq8_firstplay_reality_20261118/check_firstplay_reality.py \
             --active rc_fastlane/ACTIVE.json \
             --companion rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
+            --core36 rc_fastlane/EGGRUMBLE_V3_CORE36.json \
             --pinned-host _gq8_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
             --self-test \
             --report /tmp/gq8-firstplay-reality.json
