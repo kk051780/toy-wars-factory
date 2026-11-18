@@ -1,0 +1,100 @@
+name: P0D GQ8 Attr VFX actual official31 to client33 Native Rojo
+on:
+  push:
+    branches: ['feature/gq8-attr-vfx-20261118-1218']
+    paths:
+      - 'quality_gameplay/gq8_attribute_visual_real31_20261118/**'
+      - 'handoffs/EGGRUMBLE-ATTR-VFX-20261118/**'
+      - '.github/workflows/p0d-gq8-attr-vfx-real33.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_attribute_visual_real31_20261118/**'
+      - 'handoffs/EGGRUMBLE-ATTR-VFX-20261118/**'
+      - '.github/workflows/p0d-gq8-attr-vfx-real33.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  current31-to-vfx33:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact candidate scope and Python harness
+        run: |
+          set -euo pipefail
+          python3 -B -m py_compile quality_gameplay/gq8_attribute_visual_real31_20261118/compose_real33.py
+          python3 -B handoffs/EGGRUMBLE-ATTR-VFX-20261118/make_native_tests.py --out /tmp/attr-vfx-native
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_attr_luau
+          persist-credentials: false
+      - name: Pinned Luau compiler for actual V3 scripts
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_attr_luau -B /tmp/gq8-attr-compiler -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-attr-compiler --target Luau.Compile.CLI --parallel 4
+      - name: Install checksum pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-attr-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-attr-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-attr-rojo.zip') as z:
+              names=[a for a in z.namelist() if a.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/gq8-attr-rojo'); p.write_bytes(z.read(names[0])); p.chmod(0o755)
+          PY
+      - name: Current official31 artifact rehydration and ON33 OFF31 actual compiler Rojo Source/Class
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$H" =~ ^[a-f0-9]{40}$ ]]
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 100 --json databaseId,headSha,status,conclusion > /tmp/gq8-attr-official-runs.json
+          RUN="$(jq -r --arg sha "$H" '[.[] | select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/gq8-attr-official-runs.json)"
+          test -n "$RUN" || { echo RED_NO_CURRENT_OFFICIAL_V3_SAMEHEAD_SUCCESS "$H"; exit 1; }
+          mkdir -p artifacts/attr-official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/attr-official
+          test -s artifacts/attr-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract --place artifacts/attr-official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx --template artifacts/attr-official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json --receipt artifacts/attr-official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json --out artifacts/attr-real31 --head "$H"
+          COMPOSE=quality_gameplay/gq8_attribute_visual_real31_20261118/compose_real33.py
+          python3 "$COMPOSE" --current31 artifacts/attr-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/attr-onoff/ON33.project.json
+          python3 "$COMPOSE" --current31 artifacts/attr-real31/CURRENT31_REAL_SOURCE.project.json --out artifacts/attr-onoff/OFF31.project.json --off
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for profile,n in (('ON33',33),('OFF31',31)):
+              project=Path('artifacts/attr-onoff')/(profile+'.project.json')
+              scripts=flat_project(json.loads(project.read_text()))
+              assert len(scripts)==n,'RED_ACTUAL_SCRIPT_COUNT'
+              for meta in scripts.values():
+                  src=(project.parent/meta['$path']).resolve(strict=True)
+                  subprocess.run(['/tmp/gq8-attr-compiler/luau-compile','--text',str(src)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_ATTR_VFX_TRUE_NATIVE_ALL',profile,n)
+          PY
+          /tmp/gq8-attr-rojo build artifacts/attr-onoff/ON33.project.json -o artifacts/attr-onoff/ON33.rbxlx
+          /tmp/gq8-attr-rojo build artifacts/attr-onoff/OFF31.project.json -o artifacts/attr-onoff/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/attr-onoff/ON33.project.json --place artifacts/attr-onoff/ON33.rbxlx --count 33
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/attr-onoff/OFF31.project.json --place artifacts/attr-onoff/OFF31.rbxlx --count 31
+          H_AFTER="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H" = "$H_AFTER" || { echo RED_OFFICIAL_HEAD_MOVED_DURING_BUILD; exit 1; }
+          echo GQ8_ATTR_VFX_OFFICIAL_REAL31_TO33_AND_EXACT_OFF31_NATIVE_ROJO_PASS "$H" "$RUN"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ8-ELEMENT-VFX-REAL33-PRIVATE-CANDIDATE-NOT-RC
+          path: artifacts/attr-onoff/
+          if-no-files-found: error
+          retention-days: 3
