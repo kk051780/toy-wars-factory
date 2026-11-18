@@ -9,9 +9,10 @@ from compose_real63 import (
     from_xml,flatten,put_project,receipt_verify,sha,HOST,COMBAT,INVUL,
     VIRAL,COUNTER,CLASS_SUFFIX
 )
-OFFICIAL63="ad602cebafc1a9d8caed078ab86c7a58b0fbbbef"
+OFFICIAL63="d52f2060dda81f0af6d1b143eee25fb416141602"
 BASIC=("ServerScriptService","EGGRUMBLE_BasicMobilityPolicy")
 HUD63=("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_HudIntelRuntime")
+HUD_POLICY=("ReplicatedStorage","EGGRUMBLE_HudPresentationPolicy")
 def require(ok,label):
     if not ok: raise ValueError("RED_REAL65_"+label)
 def safe_merge(ours:bytes,base:bytes,theirs:bytes)->bytes:
@@ -48,7 +49,7 @@ def run(a):
     require(receipt.get("official_rc_adopted") is True and
             receipt.get("candidate_git_head")==OFFICIAL63 and
             receipt.get("candidate_sources")==63 and
-            receipt.get("original_unchanged")==60,"OFFICIAL63_RECEIPT")
+            receipt.get("original_unchanged")==59,"OFFICIAL63_RECEIPT")
     require(sha(a.real63_place.read_bytes())==receipt.get("place_sha256"),
             "OFFICIAL63_PLACE_HASH")
     receipt_verify(official63,receipt["on_sources"],"OFFICIAL63")
@@ -58,7 +59,7 @@ def run(a):
     require(official63[BASIC][0]=="ModuleScript" and
             official63[HOST][0]=="Script","BASIC_OR_HOST_CLASS")
     changed={k for k in original62 if official63[k]!=original62[k]}
-    require(changed=={COMBAT,HUD63},"OFFICIAL63_ONLY_COMBAT_HUD_MODIFIED")
+    require(changed=={COMBAT,HUD63,HUD_POLICY},"OFFICIAL63_ONLY_COMBAT_HUD_PRESENTATION_MODIFIED")
     require(set(real64)-set(original62)==VIRAL|COUNTER,"AUTHOR64_ONLY_TWO_NEW_ROUTES")
     changed64={k for k in original62 if real64[k]!=original62[k]}
     require(changed64=={HOST,COMBAT,INVUL},"AUTHOR64_ONLY_THREE_OWNER_PATCHES")
@@ -74,6 +75,12 @@ def run(a):
         b'executeCoreAction(session,p,role,action,core)',
         b'EGGRUMBLE_BasicMobilityPolicy'
     ]
+    require(original_basic.count(b"matchEpoch=tostring(session),mode=session.mode")==1 and
+            b"matchEpoch=tostring(session.world)" not in original_basic,
+            "PARENT_ROUND_EPOCH_NOT_ISOLATED")
+    require(merged_combat.count(b"matchEpoch=tostring(session),mode=session.mode")==1 and
+            b"matchEpoch=tostring(session.world)" not in merged_combat,
+            "ROUND_EPOCH_REGRESSION")
     for marker in basic_markers:
         require(merged_combat.count(marker)==original_basic.count(marker)
                 and merged_combat.count(marker)>0,
@@ -105,7 +112,7 @@ def run(a):
     require(len(chosen)==65,"FINAL65_COUNT")
     unchanged={k for k in official63 if chosen[k]==official63[k]}
     require(len(unchanged)==60,"FORMAL63_ORIGINAL60_NOT_PRESERVED")
-    for k in (BASIC,HUD63):
+    for k in (BASIC,HUD63,HUD_POLICY):
         require(chosen[k]==official63[k],"DODGE_POLICY_OR_TOUCH_HUD_LOST")
     require(sum(k[-1]=="EGGRUMBLE_SevenRoleCombat" for k in chosen)==1,
             "DUPLICATE_COMBAT_OWNER")
@@ -136,7 +143,8 @@ def run(a):
         "added_exact_routes":["/".join(k) for k in sorted(VIRAL|COUNTER)],
         "patched_existing_routes":["/".join(k) for k in (HOST,COMBAT,INVUL)],
         "preserves_real63_basic_attack":True,"preserves_real63_dodge":True,
-        "preserves_real63_hud":True,"host_class":"Script",
+        "preserves_real63_hud":True,"preserves_real63_hud_presentation":True,
+        "preserves_round_epoch_isolation":True,"host_class":"Script",
         "owner_game":1,"owner_combat":1,"owner_swarm":1,
         "new_damage_sites":1,"counter_reflect_damage_owner":"EXISTING_SINGLE_COMBAT",
         "new_store_writers":0,"new_remotes":0,
