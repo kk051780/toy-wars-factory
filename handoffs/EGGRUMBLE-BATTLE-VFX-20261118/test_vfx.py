@@ -43,7 +43,7 @@ def make(out):
     p=Path(out)
     p.mkdir(parents=True,exist_ok=True)
     (p/"good.luau").write_text(body+TESTS,encoding="utf-8")
-    (p/"mutant.luau").write_text(body.replace(marker,"parts=low and 99 or 99,")+TESTS,encoding="utf-8")
+    (p/"mutant.luau").write_text(body.replace(marker,"parts=low and 99 or 4,")+TESTS,encoding="utf-8")
 class QA(unittest.TestCase):
     def test_no_server_authority(self):
         c=CLIENT.read_text(encoding="utf-8")
