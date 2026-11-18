@@ -83,6 +83,10 @@ fake=ko(1);fake.isSummoned=true
 assert(not p.onConfirmedKO(s,c,fake),"RED_SUMMON_FARM")
 fake=ko(1);fake.isConverted=true
 assert(not p.onConfirmedKO(s,c,fake),"RED_CONVERT_FARM")
+fake=ko(1);fake.isSummoned=nil
+assert(not p.onConfirmedKO(s,c,fake),"RED_MISSING_SUMMON_PROOF")
+fake=ko(1);fake.isConverted=nil
+assert(not p.onConfirmedKO(s,c,fake),"RED_MISSING_CONVERT_PROOF")
 fake=ko(1);fake.targetKind="CASTLE"
 assert(not p.onConfirmedKO(s,c,fake),"RED_CASTLE_FARM")
 for i=1,7 do
@@ -155,6 +159,7 @@ d.serverCurrent=true;d.mode="BATTLE_ROYALE"
 assert(p.activate(sc,d),"RED_BR_MODE_BLOCKED")
 d.now=71;d.carryingEgg=true
 assert(p.attackMultiplier(sc,d,"NEUTRAL")==1,"RED_EGG_WITH_POWER")
+assert(not p.allowEggObjective(sc,d),"RED_EGG_PAYOUT_BEFORE_CANCEL")
 d.carryingEgg=false
 assert(p.cancel(sc,d),"RED_EGG_PICKUP_MUST_CANCEL")
 d.now=72
