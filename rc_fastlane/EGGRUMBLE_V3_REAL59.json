@@ -22,7 +22,7 @@
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau": "9358eff6c71bdc2b860b00d98f20d13db6ce3571",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/MapVisibilityPolicy.luau": "9fbb08a86c555a9bfbb7c63b064fdb87ff8ab8bc",
     "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_MapIntelBridge.server.luau": "4899bd52518815630a49954a1adc36151a5c1eea",
-    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "434cdbfb7e724d4d149d6217f0532b176fcc67e1"
+    "handoffs/EGGRUMBLE-HUD-INTEL-20261119/EGGRUMBLE_HudIntelRuntime.client.luau": "99e5a58d3d2622643f6a4e74817fa0cfbd8c59d2"
   },
   "source_routes": [
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
@@ -102,7 +102,8 @@
     "skill_selection": "A/B/C drawer, separate SelectedSkillUse using reserved Dodge anchor; starts at B",
     "dodge": "NOT_WIRED/CONTROL_HIDDEN",
     "invul": "迎撃覚醒 exact server Tool; actual server snapshot ARMED/AWAKENED and 0.9s remaining ticks",
-    "musou": "EGGRUMBLE_MUSOU_AWAKEN exact Tool; REAL55 MusouReadyIn + MusouPhase replicated status",
+    "musou": "Exact server Tool/attributes; distinct MUSOU/RUSH/KAKUHEN labels 無双中/連チャン/確変中; only server grants ready",
     "items": "Missing inventory server Tools are shown as 道具 0; world pickups remain ProximityPrompt by existing owner."
-  }
+  },
+  "status_document": "handoffs/EGGRUMBLE-HUD-INTEL-20261119/README.md latest successor correction"
 }
