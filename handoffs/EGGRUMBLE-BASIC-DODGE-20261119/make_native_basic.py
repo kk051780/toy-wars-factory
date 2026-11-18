@@ -55,6 +55,18 @@ for _,role in ipairs(roles) do
 end
 assert(not policy.take({},"INVALID","BASIC",100,ctx()),"RED_UNKNOWN_ROLE")
 assert(not policy.take({},"WARRIOR","PURCHASE",100,ctx()),"RED_UNKNOWN_ACTION_PURCHASE")
+-- In production both TEAM rounds name their world TEAM_Arena. A world-name
+-- cooldown key incorrectly carries 3-4s cooldown into the next game.
+local firstSession={world={Name="TEAM_Arena"}}
+local nextSession={world={Name="TEAM_Arena"}}
+assert(firstSession.world.Name==nextSession.world.Name)
+local firstCtx=ctx();firstCtx.matchEpoch=tostring(firstSession)
+local nextCtx=ctx();nextCtx.matchEpoch=tostring(nextSession)
+assert(firstCtx.matchEpoch~=nextCtx.matchEpoch,"RED_SESSION_EPOCH_NOT_UNIQUE")
+local roundLedger={}
+assert(policy.take(roundLedger,"WARRIOR","DODGE",200,firstCtx),"RED_ROUND1_DODGE")
+assert(policy.take(roundLedger,"WARRIOR","DODGE",200,nextCtx),"RED_ROUND2_DODGE_BLEED")
+assert(not policy.take(roundLedger,"WARRIOR","DODGE",200.1,nextCtx),"RED_ROUND2_SPAM")
 assert(not policy.take({},"WARRIOR","BASIC",math.huge,ctx()),"RED_INFINITY")
 assert(not policy.take({},"WARRIOR","BASIC",0/0,ctx()),"RED_NAN")
 print("GQ828_REAL60_BASIC_DODGE_NATIVE_SEVEN_ROLE_COOLDOWN_ANTICHEAT_PASS")

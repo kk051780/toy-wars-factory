@@ -1,15 +1,10 @@
+# Historical Real62-to-Real63 candidate checker. After formal Real63 adoption,
+# this old 62-parent strict gate is no longer an RC PR status gate.
+# The active non-weakened canonical 63 Native/Rojo/OFF62 job is:
+# .github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml
+# Explicit manual dispatch remains for reproducing the old parent only.
 name: GQ828 Official Real62 to Basic Dodge Real63 Actual Native Rojo OFF62
 on:
-  push:
-    branches: ['feature/gq828-basic-dodge-real60-20261119']
-    paths:
-      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/**'
-      - '.github/workflows/p0d-gq828-basic-dodge-real63.yml'
-  pull_request:
-    branches: ['rc/p0d-s1-kids-rc01']
-    paths:
-      - 'handoffs/EGGRUMBLE-BASIC-DODGE-20261119/**'
-      - '.github/workflows/p0d-gq828-basic-dodge-real63.yml'
   workflow_dispatch:
 permissions:
   contents: read
