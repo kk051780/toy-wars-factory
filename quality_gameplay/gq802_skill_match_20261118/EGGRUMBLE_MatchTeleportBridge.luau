@@ -62,6 +62,9 @@ function M.create(deps:any):any
    version=M.VERSION,matchId=id,epoch=epoch,mode=plan.mode,region=plan.region,
    seed=seed,createdAt=deps.now(),players=ids,
    reservedServerId=id,originJobId=deps.jobId,stat="RESERVED",
+   teamA=if plan.mode=="TEAM" then plan.teamA else nil,
+   teamB=if plan.mode=="TEAM" then plan.teamB else nil,
+   freeForAll=plan.mode=="BR",
   }
   local map=deps.claimMap
   local claimed
@@ -142,13 +145,48 @@ function M.create(deps:any):any
  end
  return self
 end
+-- Destination must verify the MemStore server reservation; TeleportData is
+-- a client-observable HINT, never an authority for team/role/HP/rewards.
+function M.verifyArrival(data:any,userId:any,claimMap:any,privateServerId:any,now:any):any
+ if type(data)~="table" or data.version~=M.VERSION
+  or type(data.matchId)~="string" or #data.matchId<32
+  or data.joinDataTrusted~=false
+  or not validInt(data.epoch,1,1000000000)
+  or not validInt(userId,1,999999999999)
+  or type(privateServerId)~="string" or privateServerId~=data.matchId
+  or not validInt(now,0,20000000000) then
+   return {accepted=false,reason="INVALID_OR_WRONG_RESERVED_SERVER"} end
+ local ok,record=pcall(function()
+  return claimMap:GetAsync("m:"..data.matchId)
+ end)
+ if not ok or type(record)~="table" or record.version~=M.VERSION
+  or record.matchId~=data.matchId or record.reservedServerId~=privateServerId
+  or record.epoch~=data.epoch or record.seed~=data.seed
+  or record.stat~="RESERVED" or not validInt(record.createdAt,0,20000000000)
+  or now<record.createdAt or now-record.createdAt>TTL_SECONDS
+  or type(record.players)~="table" or (#record.players~=8 and #record.players~=16)
+  or record.mode~=data.mode then
+   return {accepted=false,reason="MISSING_OR_EXPIRED_SERVER_TICKET"} end
+ local seen={}
+ local joined=false
+ for _,id in ipairs(record.players) do
+  if not validInt(id,1,999999999999) or seen[id] then
+   return {accepted=false,reason="INVALID_SERVER_ROSTER"} end
+  seen[id]=true
+  if id==userId then joined=true end
+ end
+ if not joined then return {accepted=false,reason="NOT_IN_SERVER_ROSTER"} end
+ return {accepted=true,matchId=record.matchId,epoch=record.epoch,
+   seed=record.seed,mode=record.mode,freeForAll=record.freeForAll,
+   teamA=record.teamA,teamB=record.teamB,source="SERVER_MEMORYSTORE_ONLY"}
+end
 function M.fromRoblox(featureEnabled:boolean, targetPlaceId:number):any
  local RunService=game:GetService("RunService")
  local Players=game:GetService("Players")
  local HttpService=game:GetService("HttpService")
  local TeleportService=game:GetService("TeleportService")
  local MemoryStoreService=game:GetService("MemoryStoreService")
- return M.create({
+ local bridge=M.create({
   enabled=featureEnabled==true,
   isStudio=RunService:IsStudio(),
   inReservedServer=game.PrivateServerId~="",
@@ -157,5 +195,14 @@ function M.fromRoblox(featureEnabled:boolean, targetPlaceId:number):any
   claimMap=MemoryStoreService:GetHashMap("GQ802_MATCH_CLAIMS_V1"),
   optionsFactory=function()return Instance.new("TeleportOptions")end,
  })
+ if featureEnabled==true and not RunService:IsStudio() and game.PrivateServerId=="" then
+  TeleportService.TeleportInitFailed:Connect(function(player:any)
+   bridge:teleportFailed(player)
+  end)
+  Players.PlayerRemoving:Connect(function(player:any)
+   bridge:playerLeft(player.UserId)
+  end)
+ end
+ return bridge
 end
 return M
