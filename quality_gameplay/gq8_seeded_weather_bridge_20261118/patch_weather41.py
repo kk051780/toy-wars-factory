@@ -53,7 +53,10 @@ REALM_OLD='''  local phase=math.floor((now-state.started)/WEATHER_PHASE_SECONDS)
    or phase==1 and "WIND" or "CLEAR"
 '''
 REALM_NEW='''  local weather,weatherTheme=weatherFromVerifiedStage(now,state.started,world)
-  core:SetAttribute("RealmWeatherTheme",weatherTheme)
+  if state.weatherTheme~=weatherTheme then
+   state.weatherTheme=weatherTheme
+   core:SetAttribute("RealmWeatherTheme",weatherTheme)
+  end
 '''
 HELPER_ANCHOR='local function part(parent,name,cf,size,color,collide,alpha)\n'
 REALM_HELPER='''-- GQ8_SEEDED_WEATHER_REALM_BRIDGE_BEGIN
