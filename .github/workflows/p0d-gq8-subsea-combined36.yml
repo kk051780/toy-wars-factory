@@ -1,4 +1,4 @@
-name: GQ8 four authored Realm changes true Core36 Native Rojo OFF31
+name: GQ8 five-source Realm+Item original Core36 Native Rojo OFF31
 on:
   push:
     branches: ['quality/gq8-subsea-melee-los-20261118']
@@ -59,6 +59,12 @@ jobs:
           ref: 0db4493e11c328707495647ead446cd97b665f6b
           path: _compact795
           persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8
+          path: _item812
+          persist-credentials: false
       - name: Immutable original source mutation and exact inverse
         shell: bash
         env:
@@ -105,6 +111,25 @@ jobs:
             --compact-module _compact795/quality_gameplay/gq8_realm_compact_touch_20261118/verify_compact.py \
             --compact-candidate _compact795/quality_gameplay/gq8_realm_compact_touch_20261118/EGGRUMBLE_RealmBattleControls.client.luau \
             --out artifacts/combined36/REALM_FOURLANE36.project.json
+          python3 _item812/quality_gameplay/gq802_item_sculptures_20261118/compose_real36.py \
+            --project36 artifacts/combined36/REALM_FOURLANE36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
+          from compose_real36 import flatten
+          original=flatten(Path('artifacts/combined36/COMBINED36.project.json'))
+          candidate=flatten(Path('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json'))
+          assert len(original)==len(candidate)==36 and set(original)==set(candidate)
+          changed=[p for p in original if original[p].read_bytes()!=candidate[p].read_bytes()]
+          expected={('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+                    ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+                    ('ServerScriptService','EGGRUMBLE_FieldItemPickups')}
+          assert set(changed)==expected,(changed,expected)
+          print('GQ8_REALM_FOUR_AND_ITEM_SOURCE_SELECT_3_ORIGINAL_33_IDENTICAL_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -122,7 +147,7 @@ jobs:
           import subprocess,sys
           sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
           from compose_real36 import flatten
-          for project,n in [('artifacts/combined36/REALM_FOURLANE36.project.json',36),
+          for project,n in [('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json',36),
                             ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
               files=flatten(Path(project))
               assert len(files)==n
@@ -145,18 +170,18 @@ jobs:
               p=Path('/tmp/gq8-subsea36-rojo')
               p.write_bytes(z.read(found[0]));p.chmod(0o755)
           PY
-          /tmp/gq8-subsea36-rojo build artifacts/combined36/REALM_FOURLANE36.project.json -o artifacts/combined36/REALM_FOURLANE36.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json -o artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx
           /tmp/gq8-subsea36-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/REALM_FOURLANE36.project.json             --place artifacts/combined36/REALM_FOURLANE36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json             --place artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx --count 36
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --place artifacts/combined36/OFF31.rbxlx --count 31
           echo GQ8_REALM_FOUR_AUTHOR_FIXES_REAL36_NATIVE_ROJO_OFF31_PASS
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: GQ8-FOUR-REALM-SOURCE-PREP-NOT-OFFICIAL
+          name: GQ8-FIVE-LANE-SOURCE-PREP-NOT-OFFICIAL
           path: |
-            artifacts/combined36/REALM_FOURLANE36.rbxlx
-            artifacts/combined36/REALM_FOURLANE36.receipt.json
+            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx
+            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
             artifacts/combined36/OFF31.rbxlx
           if-no-files-found: error
           retention-days: 5
