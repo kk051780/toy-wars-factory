@@ -3,7 +3,7 @@
 No extra HP, spawner, KO, remote, store, or score writer. Experimental Studio profile.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, os
+import argparse, copy, hashlib, json, os, re
 from pathlib import Path
 
 FINISHER=("ServerScriptService","EGGRUMBLE_NeutralFinisherPolicy")
@@ -64,17 +64,23 @@ def patch(source:str)->str:
  end
 ''',"SESSION_CHARM_STATE")
  # Reuse each actual spawned model's serial as a unique per-session key, never Model.Name.
- once('  live[m]=h\n  h.Died:Connect(function()',
-  '''  live[m]=h
-  local neutralId=tostring(spawnSerial)
-  m:SetAttribute("EGGRUMBLE_NeutralInstanceId",neutralId)
-  neutralById[neutralId]=m
-  h.Died:Connect(function()''',"REAL_NEUTRAL_ID")
- once('   live[m]=nil\n   local id=h:GetAttribute("LastAttackerId")',
-  '''   live[m]=nil
-   neutralById[neutralId]=nil
-   releaseCharmed(m)
-   local id=h:GetAttribute("LastAttackerId")''',"CHARM_DEATH_CLEANUP")
+ # Existing Real43 preserves the earlier KoFence-safe spawn wrapper; its
+ # local model variable is not the simplistic preview 'm'. Capture actual owner.
+ added=re.findall(r"(?m)^([ \t]*)live\[([A-Za-z_]\w*)\]=h[ \t]*$",source)
+ if len(added)!=1:raise ValueError("RED_REAL43_LIVE_SPAWN_ANCHOR_"+str(len(added)))
+ indent,actor=added[0]
+ marker=indent+"live["+actor+"]=h"
+ source=source.replace(marker,marker+"""
+"""+indent+"local neutralId=tostring(spawnSerial)"+"""
+"""+indent+actor+':SetAttribute("EGGRUMBLE_NeutralInstanceId",neutralId)'+"""
+"""+indent+"neutralById[neutralId]="+actor,1)
+ dead=re.findall(r"(?m)^([ \t]*)live\[([A-Za-z_]\w*)\]=nil[ \t]*$",source)
+ if len(dead)!=1 or dead[0][1]!=actor:
+  raise ValueError("RED_REAL43_LIVE_DEATH_ANCHOR_"+str(dead))
+ dead_indent=dead[0][0]; dead_marker=dead_indent+"live["+actor+"]=nil"
+ source=source.replace(dead_marker,dead_marker+"""
+"""+dead_indent+"neutralById[neutralId]=nil"+"""
+"""+dead_indent+"releaseCharmed("+actor+")",1)
  once('if m.Parent and h.Health>0 and m.PrimaryPart then',
   'if m.Parent and h.Health>0 and m.PrimaryPart and not charmedByModel[m] then',
   "NO_FRIENDLY_DAMAGE_TARGET")
