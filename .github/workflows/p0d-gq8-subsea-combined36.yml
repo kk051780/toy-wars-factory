@@ -1,4 +1,4 @@
-name: GQ8 five-source Realm+Item original Core36 Native Rojo OFF31
+name: GQ8 REAL39 combined Realm Item original stage Host Native Rojo OFF36
 on:
   push:
     branches: ['quality/gq8-subsea-melee-los-20261118']
@@ -15,9 +15,9 @@ permissions:
   contents: read
   actions: read
 jobs:
-  genuine36-composition:
+  genuine39-composition:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -64,6 +64,18 @@ jobs:
           repository: kk051780/toy-wars-factory
           ref: be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8
           path: _item812
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb862f6ed206f1bc082274689a7f47cbc500d5a6
+          path: _stage811
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d6080df13d07792160a52b4c7025e0ae7950379c
+          path: _manifest803
           persist-credentials: false
       - name: Immutable original source mutation and exact inverse
         shell: bash
@@ -130,13 +142,43 @@ jobs:
           assert set(changed)==expected,(changed,expected)
           print('GQ8_REALM_FOUR_AND_ITEM_SOURCE_SELECT_3_ORIGINAL_33_IDENTICAL_PASS')
           PY
+          mkdir -p artifacts/stage_modules
+          cp _manifest803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau artifacts/stage_modules/
+          cp _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileBlueprintPolicy.luau artifacts/stage_modules/
+          cp _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileVisualRenderer.luau artifacts/stage_modules/
+          python3 _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/compose_visual39.py \
+            --core36 artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json \
+            --source-dir artifacts/stage_modules \
+            --out artifacts/visual39/VISUAL39.project.json
+          python3 _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/wire_actual_host39.py \
+            --project artifacts/visual39/VISUAL39.project.json \
+            --out artifacts/wired39/WIRED39.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'_stage811/quality_gameplay/gq802_stage_visual_tiles_20261118')
+          from compose_visual39 import flatten,ADDITIONS
+          base=flatten(Path('artifacts/combined36/COMBINED36.project.json'))[1]
+          selected=flatten(Path('artifacts/wired39/WIRED39.project.json'))[1]
+          assert len(base)==36 and len(selected)==39
+          assert set(selected)==set(base)|set(ADDITIONS)
+          changed=[key for key in base if base[key].read_bytes()!=selected[key].read_bytes()]
+          expected={('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+                    ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+                    ('ServerScriptService','EGGRUMBLE_FieldItemPickups'),
+                    ('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')}
+          assert set(changed)==expected,(changed,expected)
+          unmodified=[key for key in base if key not in expected]
+          assert len(unmodified)==32
+          print('GQ8_REAL39_ORIGINAL_OWNER_FOUR_CHANGED_32_EXACT_3_STAGE_MODULES_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
-      - name: All real 36 ON and original31 OFF Native syntax
+      - name: Real39 wired and original Core36 OFF36 + OFF31 native syntax
         shell: bash
         run: |
           set -euo pipefail
@@ -147,7 +189,9 @@ jobs:
           import subprocess,sys
           sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
           from compose_real36 import flatten
-          for project,n in [('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json',36),
+          for project,n in [('artifacts/wired39/WIRED39.project.json',39),
+                            ('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json',36),
+                            ('artifacts/combined36/COMBINED36.project.json',36),
                             ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
               files=flatten(Path(project))
               assert len(files)==n
@@ -155,7 +199,7 @@ jobs:
                   subprocess.run(['/tmp/gq8-subsea-combined-native/luau-compile','--text',str(path)],check=True,stdout=subprocess.DEVNULL)
               print('GQ8_STATION_SUBSEA_TRUE_NATIVE',n)
           PY
-      - name: Pinned Rojo real36 source/class exact with off31 byte rollback
+      - name: Pinned Rojo exact wired39 and Core36 OFF36 and original31 OFF
         shell: bash
         run: |
           set -euo pipefail
@@ -170,18 +214,22 @@ jobs:
               p=Path('/tmp/gq8-subsea36-rojo')
               p.write_bytes(z.read(found[0]));p.chmod(0o755)
           PY
-          /tmp/gq8-subsea36-rojo build artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json -o artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/wired39/WIRED39.project.json -o artifacts/wired39/WIRED39.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/wired39/CORE36_OFF.rbxlx
           /tmp/gq8-subsea36-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json             --place artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/wired39/WIRED39.project.json             --place artifacts/wired39/WIRED39.rbxlx --count 39
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/COMBINED36.project.json             --place artifacts/wired39/CORE36_OFF.rbxlx --count 36
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --place artifacts/combined36/OFF31.rbxlx --count 31
-          echo GQ8_REALM_FOUR_AUTHOR_FIXES_REAL36_NATIVE_ROJO_OFF31_PASS
+          echo GQ8_REALM_ITEM_STAGE_WIRED39_NATIVE_ROJO_OFF36_OFF31_PASS
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: GQ8-FIVE-LANE-SOURCE-PREP-NOT-OFFICIAL
+          name: GQ8-REALM-ITEM-STAGE-WIRED39-PREP-NOT-OFFICIAL
           path: |
-            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.rbxlx
-            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
+            artifacts/wired39/WIRED39.rbxlx
+            artifacts/wired39/WIRED39.project.receipt.json
+            artifacts/wired39/CORE36_OFF.rbxlx
             artifacts/combined36/OFF31.rbxlx
+            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
           if-no-files-found: error
           retention-days: 5
