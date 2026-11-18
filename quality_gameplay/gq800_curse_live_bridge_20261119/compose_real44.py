@@ -155,7 +155,7 @@ def patch_swarm(source:str)->str:
         "SERVER_UID")
     source=replace_once(source,
         "local hitSerial=0",
-        "local hitSerial=0\n  local charmed:{}={}\n  local curseStates:{}={}\n  local lastCharmAttack:{}={}",
+        "local hitSerial=0\n  local charmed={}\n  local curseStates={}\n  local lastCharmAttack={}",
         "CHARM_MEMORY")
     source=replace_once(source,
         "local function strike(id:string,",
@@ -166,10 +166,16 @@ def patch_swarm(source:str)->str:
         'local role=user and (user:GetAttribute("EGGRUMBLE_Role") or "WARRIOR") or "WARRIOR"\n      applyCurseOnVerifiedHit(user,model,h,hitSerial,origin,role)',
         "ACTUAL_HIT_HOOK")
     # Only hostile neutrals may be struck; charmed actors still stay in the sole live set.
-    source=replace_once(source,
-        'if m.Parent and h.Health>0 and m.PrimaryPart then\n     local delta=m.PrimaryPart.Position-at',
-        'if m.Parent and h.Health>0 and m.PrimaryPart and not charmed[m] then\n     local delta=m.PrimaryPart.Position-at',
-        "FRIENDLY_FIRE")
+    # Keep the original neutral-target predicates (pacing/budget/LOS) intact.
+    start=source.find("local function strike(")
+    end=source.find("local api={",start)
+    if start<0 or end<start:raise ValueError("RED_ORIGINAL_STRIKE_BOUNDARIES")
+    segment=source[start:end]
+    candidates=re.findall(r'if m\\.Parent and h\\.Health>0 and m\\.PrimaryPart[^\\n]* then',segment)
+    if len(candidates)!=1:raise ValueError("RED_FRIENDLY_FIRE_TARGET_PREDICATE_"+str(len(candidates)))
+    old=candidates[0]
+    new=old.rsplit(" then",1)[0]+" and not charmed[m] then"
+    source=source[:start]+segment.replace(old,new,1)+source[end:]
     # Physical follow is in the already-owned neutral movement loop, not a second controller.
     old='''       for _,target in ipairs(candidates) do
         local delta=Vector3.new(target.X-at.X,0,target.Z-at.Z)
