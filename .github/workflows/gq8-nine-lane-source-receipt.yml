@@ -15,7 +15,7 @@ permissions:
   contents: read
   actions: read
 jobs:
-  independently-verify-real53-nine-lanes:
+  independently-verify-real55-nine-lanes:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
@@ -60,8 +60,8 @@ jobs:
           r["android_15min_verified"] = False
           r["fun_accepted"] = False
           p=Path("artifacts/nine_lanes/REAL55_NINE_LANE_FORMAL_SOURCE_RECEIPT.json")
-          p.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+"\\n")
-          print("GQ8_NINE_LANE_RECEIPT_NOT_STUDIO_OR_RC_ACCEPTANCE_PASS")
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ8_NINE_LANE_OFFICIAL_SOURCE_ONLY_NOT_STUDIO_FUN_PASS")
           PY
       - uses: actions/upload-artifact@v4
         with:
