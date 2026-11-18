@@ -7,11 +7,15 @@ in the SAME original SevenRoleCombat HP owner. No second Swarm or Score.
 """
 import argparse,copy,hashlib,json,os
 from pathlib import Path
-from compose_real46 import compose as compose46, flatten,HOST,SITES,exact_blob
+import compose_real46 as prior
+from compose_real46 import flatten,HOST,SITES,exact_blob
 
 ROOT=Path(__file__).resolve().parent
 COUNTER=ROOT/"EGGRUMBLE_InvulCounterNeutral.luau"
 NEW=("ServerScriptService","EGGRUMBLE_InvulCounterNeutral")
+RUNTIME_ROUTE=("ServerScriptService","EGGRUMBLE_InvulRuntime")
+RUNTIME_NEW=ROOT/"EGGRUMBLE_InvulRuntime.luau"
+RUNTIME46_BLOB="2ada705fd09c2d49453ca1cd2e1e28bf0902f147"
 HERO=("ServerScriptService","EGGRUMBLE_SevenRoleCombat")
 PVP_ORIGINAL='enemyHum:TakeDamage(InvulRuntime.filterDamage(enemyHum,damage*duel*mark,"PLAYER",p.UserId))'
 PVP_REPLACEMENT='''local originalAttackDamage=InvulRuntime.filterDamage(enemyHum,damage*duel*mark,"PLAYER",p.UserId)
@@ -67,14 +71,22 @@ PVP_REPLACEMENT='''local originalAttackDamage=InvulRuntime.filterDamage(enemyHum
       end)
      end
     end'''
-def make(real44,policy,out):
+def make(real44,policy,original_runtime46,out):
  out=Path(out).resolve()
  if out.exists() or out.parent.exists():raise ValueError("RED_REFUSE_EXISTING_PARENT")
  out.parent.mkdir(parents=True)
  real46=out.parent/"source46"/"ON46.project.json"
- compose46(Path(real44),Path(policy),real46)
+ original_runtime46=Path(original_runtime46).resolve(strict=True)
+ if exact_blob(original_runtime46.read_bytes())!=RUNTIME46_BLOB:
+  raise ValueError("RED_PRIOR46_RUNTIME_BLOB_CHANGED")
+ old_runtime=prior.RUNTIME
+ prior.RUNTIME=original_runtime46
+ try:
+  prior.compose(Path(real44),Path(policy),real46)
+ finally:
+  prior.RUNTIME=old_runtime
  original46,old=flatten(real46)
- if len(old)!=46 or NEW in old or HERO not in old:
+ if len(old)!=46 or NEW in old or HERO not in old or RUNTIME_ROUTE not in old:
   raise ValueError("RED_NOT_UNMODIFIED_ORIGINAL46")
  hero=old[HERO].read_text(encoding="utf-8")
  if hero.count(PVP_ORIGINAL)!=1 or "claimPvPCounter(" in hero:
@@ -94,27 +106,38 @@ def make(real44,policy,out):
  pvp_target.write_text(amended,encoding="utf-8")
  counter_target=out.parent/"source47"/"ServerScriptService"/"EGGRUMBLE_InvulCounterNeutral.luau"
  counter_target.write_bytes(counter_src)
+ # The new Runtime needs Counter: keep original #830 Runtime in OFF46,
+ # select this branch's Runtime ONLY in ON47.
+ runtime_body=RUNTIME_NEW.read_bytes()
+ if b"Counter.react(" not in runtime_body or b"claimPvPCounter(" not in runtime_body:
+  raise ValueError("RED_NO_ACTUAL_ROLE_COUNTER_BRIDGE")
+ runtime_target=out.parent/"source47"/"ServerScriptService"/"EGGRUMBLE_InvulRuntime.luau"
+ runtime_target.write_bytes(runtime_body)
  model=copy.deepcopy(original46)
  node=model["tree"]["ServerScriptService"]
  node[HERO[-1]]["$path"]=os.path.relpath(pvp_target,out.parent).replace(os.sep,"/")
  node[NEW[-1]]={"$path":os.path.relpath(counter_target,out.parent).replace(os.sep,"/")}
+ node[RUNTIME_ROUTE[-1]]["$path"]=os.path.relpath(runtime_target,out.parent).replace(os.sep,"/")
  model["name"]="EGGRUMBLE_REAL47_SEVEN_ROLE_AWAKEN_COUNTER_SINGLE_COMBAT_AND_SWARM"
  out.write_text(json.dumps(model,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  _,new=flatten(out)
  if len(new)!=47 or set(new)!=set(old)|{NEW}:raise ValueError("RED_WRONG47_ROUTES")
  for route,f in old.items():
-  if route!=HERO and new[route].read_bytes()!=f.read_bytes():
+  if route not in (HERO,RUNTIME_ROUTE) and new[route].read_bytes()!=f.read_bytes():
    raise ValueError("RED_MODIFIED_OTHER_SOURCES_"+"/".join(route))
  if new[HERO].read_text().replace(PVP_REPLACEMENT,PVP_ORIGINAL,1)!=hero:
   raise ValueError("RED_CANNOT_REMOVE_SINGLE_COMBAT_PVP_INSERT")
+ if new[RUNTIME_ROUTE].read_bytes()!=RUNTIME_NEW.read_bytes():
+  raise ValueError("RED_RUNTIME_NOT_SWITCHED_TO_ROLE_COUNTER")
  if new[NEW].read_bytes()!=COUNTER.read_bytes():
   raise ValueError("RED_COUNTER_OWNER_DRIFT")
  receipt={
   "feature_id":"GQ822_SEVEN_ROLE_AWAKENED_COUNTER_REAL47",
   "official_rc_written":False,"publish":False,
   "original44":44,"previous46":46,"counter47":47,
-  "modified_existing_relative_to_original46":["/".join(HERO)],
-  "original_other46_byte_exact":45,"added_counter_script":"/".join(NEW),
+  "modified_existing_relative_to_original46":["/".join(HERO),"/".join(RUNTIME_ROUTE)],
+  "original_other46_byte_exact":44,
+  "off46_runtime_original_blob":RUNTIME46_BLOB,"added_counter_script":"/".join(NEW),
   "new_parallel_damage_owners":0,
   "new_single_original_combat_return_damage_sites":1,
   "all_existing_13_pre_damage_sites_intact":True,
@@ -134,6 +157,7 @@ if __name__=="__main__":
  a=argparse.ArgumentParser()
  a.add_argument("--original44",required=True,type=Path)
  a.add_argument("--policy",required=True,type=Path)
+ a.add_argument("--original-runtime46",required=True,type=Path)
  a.add_argument("--out",required=True,type=Path)
  args=a.parse_args()
- make(args.original44,args.policy,args.out)
+ make(args.original44,args.policy,args.original_runtime46,args.out)
