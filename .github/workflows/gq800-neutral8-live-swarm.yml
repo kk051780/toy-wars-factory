@@ -1,0 +1,35 @@
+name: GQ800 actual Swarm eight-species native preview source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq800_neutral8_single_swarm_20261118/**'
+      - '.github/workflows/gq800-neutral8-live-swarm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq800_luau
+          persist-credentials: false
+      - name: Build pinned native Luau CLI
+        run: |
+          set -euo pipefail
+          cmake -S _gq800_luau -B /tmp/gq800-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq800-native --target Luau.Compile.CLI --parallel 4
+      - name: Compile actual single-Swarm source candidate
+        run: |
+          set -euo pipefail
+          /tmp/gq800-native/luau-compile --text quality_gameplay/gq800_neutral8_single_swarm_20261118/EGGRUMBLE_SwarmCombat.luau >/dev/null
+          python3 -m unittest discover -s quality_gameplay/gq800_neutral8_single_swarm_20261118 -p 'test_*.py' -v
+          echo GQ800_NEUTRAL8_SWARM_SOURCE_NATIVE_PASS

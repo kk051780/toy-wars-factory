@@ -1,0 +1,37 @@
+from pathlib import Path
+import re
+import unittest
+
+ROOT=Path(__file__).resolve().parent
+SOURCE=(ROOT/"EGGRUMBLE_SwarmCombat.luau").read_text(encoding="utf-8")
+
+class Neutral8SingleAuthority(unittest.TestCase):
+ def test_eight_species_and_policy_reuse(self):
+  self.assertIn('NeutralFinisherPolicy.listSpecies()',SOURCE)
+  for value in ('ACORN_IMP','BABY_GOLEM','BANNER_KNIGHT','ICE_SLIME','SHY_WRAITH','SPARK_GOBLIN','SPIKE_BOAR','TINY_SHIELD'):
+   self.assertIn(value,SOURCE)
+  self.assertIn('NeutralFinisherPolicy.species(speciesId)',SOURCE)
+  self.assertIn('NeutralFinisherPolicy.select(',SOURCE)
+ def test_single_spawn_damage_and_credit_authority(self):
+  self.assertEqual(SOURCE.count('function Swarm.start(session:any)'),1)
+  self.assertEqual(SOURCE.count('local function addEnemy('),1)
+  self.assertEqual(SOURCE.count('h:TakeDamage(damage)'),1)
+  self.assertEqual(SOURCE.count('credit(id)'),2) # function and death callback
+  self.assertEqual(SOURCE.count('local LIMIT=110'),1)
+  self.assertEqual(SOURCE.count('local NEUTRAL_HEALTH=32'),1)
+  self.assertIn('assert(RunService:IsStudio()',SOURCE)
+ def test_no_duplicate_remote_store_or_enemy_rig(self):
+  for token in ('RemoteEvent','DataStoreService','MarketplaceService','FireServer(', 'GetAsync(', 'ProcessReceipt'):
+   self.assertNotIn(token,SOURCE)
+  self.assertEqual(SOURCE.count('local accent=piece('),1)
+  self.assertIn('root.CanTouch=false',SOURCE)
+  self.assertIn('p.CanCollide=false',SOURCE)
+ def test_actual_ko_and_line_of_sight(self):
+  self.assertIn('ko=h.Health<=0',SOURCE)
+  self.assertIn('if h.Health<before then',SOURCE)
+  self.assertIn('lineOfSightToNeutral(origin,attacker,model)',SOURCE)
+  self.assertIn('if cue.kind=="KO" then',SOURCE)
+  self.assertIn('MAX_LOS_RAYS_PER_ATTACK=48',SOURCE)
+
+if __name__=="__main__":
+ unittest.main()
