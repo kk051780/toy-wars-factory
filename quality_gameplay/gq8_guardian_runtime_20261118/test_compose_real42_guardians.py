@@ -39,4 +39,17 @@ class TestGuard42(unittest.TestCase):
     r=Path(temp);source=self.base(r,flag)
     with self.assertRaisesRegex(ValueError,"RED_(COMBAT_ACTUAL_SERVER_HIT|BRIDGE_SHARE_ORIGINAL_STATE)"):
      compose(source,r/"staged"/"source42.project.json")
+ def test_guardian_current_match_membership_fail_closed(self):
+  # Source-level regression fence; actual VM/Studio tests remain separate gates.
+  source=(Path(__file__).resolve().parent/"EGGRUMBLE_CastleGuardianRuntime.luau").read_text(encoding="utf-8")
+  self.assertEqual(source.count("local function currentHumanMember("),1)
+  helper=source.split("local function currentHumanMember(",1)[1].split("local function targetOf(",1)[0]
+  self.assertIn('local verify=session.isCurrentHuman',helper)
+  self.assertIn('if type(verify)~="function" then return false end',helper)
+  self.assertIn("local ok,allowed=pcall(verify,p)",helper)
+  self.assertIn("return ok and allowed==true",helper)
+  target=source.split("local function targetOf(",1)[1].split("local function impact(",1)[0]
+  incoming=source.split("local function damageFromPlayer(",1)[1]
+  self.assertEqual(target.count("currentHumanMember(session,player)"),1)
+  self.assertEqual(incoming.count("currentHumanMember(session,p)"),1)
 if __name__=="__main__":unittest.main()
