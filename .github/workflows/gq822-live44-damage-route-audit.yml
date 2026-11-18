@@ -1,5 +1,10 @@
 name: GQ822 actual Real44 to Real48 damage route / invulnerability false-pass gate
 on:
+  push:
+    branches: [quality/gq822-actual44-damage-route-gate-20261119]
+    paths:
+      - "quality_gameplay/gq822_damage_route_20261119/**"
+      - ".github/workflows/gq822-live44-damage-route-audit.yml"
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -96,6 +101,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: GQ822-REAL44-DAMAGE-ROUTE-RECEIPT-NOT-RC
-          path: artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+          path: |
+            artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+            artifacts/gq822/ACTUAL_REAL48_DAMAGE_ROUTE_RECEIPT.json
           retention-days: 5
           if-no-files-found: error
