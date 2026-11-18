@@ -38,7 +38,7 @@ class PhysicalStageContracts(unittest.TestCase):
 
     def test_actual_formal36_and_optional39_with_off36_wired(self):
         self.assertIn('if len(original) != 36', COMPOSE)
-        self.assertIn('if len(flat_project(on_model)) == 39', COMPOSE)
+        self.assertIn('assert len(flat_project(on_model)) == 39', COMPOSE)
         self.assertIn('if rollback != old or {k: selected[k] for k in old} != old:', COMPOSE)
         self.assertIn('GQ802_REAL39_SOURCE_CLASS_EXACT_AND_OFF36_ROLLBACK_GREEN', COMPOSE)
         self.assertIn('ORIGINAL_STAGE_BLOB = "696d2312ef7408e26b03281caede7606472c155b"', COMPOSE)
