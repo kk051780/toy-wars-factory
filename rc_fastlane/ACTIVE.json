@@ -108,6 +108,25 @@
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "publish_authorized": false
+    },
+    "eggrumble_v3_core36": {
+      "source_commit": "8f7984c1a9db2c016321d16d47a3ea8d1b5081df",
+      "source_count": 36,
+      "kind": "v3_canonical_private_studio_selection",
+      "source_manifest": "rc_fastlane/EGGRUMBLE_V3_CORE36.json",
+      "build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-core36.yml",
+      "assembly": "existing 31 from official source + original Realm34/PR764 3 extras + original Regen33/PR775 Host hooks and 2 modules",
+      "replaces_v3_private_playtest_profile": "eggrumble_v3_31",
+      "original_31_companion_still_supported": true,
+      "selected_for_private_v3_studio_build": true,
+      "selected_for_roblox_publish": false,
+      "primary_active_profile_unchanged": "rich51",
+      "verification": "candidate latest official SHA and actual31->36 Native Rojo Source/Class, OFF31 and same-HEAD CI required",
+      "rollback": "Exclude 5 additive scripts + original Host regen hooks, rebuild eggrumble_v3_31 OFF31",
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "status": "CANDIDATE_PRIVATE_RC_SOURCE_SELECTION_PENDING_SAME_HEAD_CI"
     }
   },
   "required_fast_gates": [
@@ -237,6 +256,8 @@
     "studio_android_owner": "NOT_TESTED",
     "last_verified_rc_head": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",
     "last_verified_rc_workflow_run": 43852865328,
-    "note": "This receipt verifies previous RC HEAD only; a new HEAD requires fresh same-head CI. The old S1 active_profile stays rich51."
+    "note": "This receipt verifies previous RC HEAD only; a new HEAD requires fresh same-head CI. The old S1 active_profile stays rich51.",
+    "intended_private_v3_profile": "eggrumble_v3_core36",
+    "core36_status": "PREP_PENDING_CAS_AND_OFFICIAL_CI"
   }
 }
