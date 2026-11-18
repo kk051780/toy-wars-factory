@@ -220,6 +220,57 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/wired39/WIRED39.project.json             --place artifacts/wired39/WIRED39.rbxlx --count 39
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/COMBINED36.project.json             --place artifacts/wired39/CORE36_OFF.rbxlx --count 36
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --place artifacts/combined36/OFF31.rbxlx --count 31
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,'_stage811/quality_gameplay/gq802_stage_visual_tiles_20261118')
+          from compose_visual39 import flatten
+          place=Path('artifacts/wired39/WIRED39.rbxlx')
+          stage=Path('artifacts/wired39/WIRED39.project.json')
+          original=Path('artifacts/combined36/COMBINED36.project.json')
+          before=flatten(original)[1]
+          after=flatten(stage)[1]
+          new=set(after)-set(before)
+          changed={r for r in before if before[r].read_bytes()!=after[r].read_bytes()}
+          expected_new={
+              ('ServerScriptService','GQ802_StageManifestPolicy'),
+              ('ServerScriptService','GQ802_StageTileBlueprintPolicy'),
+              ('ServerScriptService','GQ802_StageTileVisualRenderer')}
+          expected_changed={
+              ('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+              ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+              ('ServerScriptService','EGGRUMBLE_FieldItemPickups'),
+              ('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')}
+          assert len(before)==36 and len(after)==39
+          assert new==expected_new and changed==expected_changed
+          assert len(set(before)-changed)==32
+          receipt={
+              'candidate_head':os.environ['GITHUB_SHA'],
+              'candidate_not_formal_rc':True,
+              'formal_rc_baseline':'f77b4d4393d9e9b19b65566413432a7a9f13962b',
+              'source_author_prs':[792,796,797,795,812,803,811],
+              'original36_source_count':36,
+              'selected39_source_count':39,
+              'added_optional_stage_modules':['/'.join(r) for r in sorted(new)],
+              'modified_original_scripts':['/'.join(r) for r in sorted(changed)],
+              'other32_original_scripts_byte_exact':True,
+              'off36_original_exact':True,
+              'off31_original_exact':True,
+              'native39_rojo39_source_and_class':'PASS',
+              'candidate_place_rbxlx_bytes':place.stat().st_size,
+              'candidate_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'studio_2client':'NOT_TESTED',
+              'android_15min':'NOT_TESTED',
+              'fun_owner':'NO_GO',
+              'same_head_real_rc_cas':'NOT_PERFORMED',
+              'rollback':'Select original 36-source Core36 project and original31 OFF; rich51 default unchanged'
+          }
+          out=Path('artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json')
+          out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\\n')
+          print('GQ8_WIRED39_CANDIDATE_PLACE_BYTES',place.stat().st_size)
+          print('GQ8_WIRED39_CANDIDATE_PLACE_SHA256',receipt['candidate_place_sha256'])
+          print('GQ8_WIRED39_4_ORIGINAL_PATCHED_3_NEW_32_EXACT_OFF36_OFF31_PASS')
+          PY
           echo GQ8_REALM_ITEM_STAGE_WIRED39_NATIVE_ROJO_OFF36_OFF31_PASS
       - uses: actions/upload-artifact@v4
         if: success()
@@ -228,6 +279,7 @@ jobs:
           path: |
             artifacts/wired39/WIRED39.rbxlx
             artifacts/wired39/WIRED39.project.receipt.json
+            artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json
             artifacts/wired39/CORE36_OFF.rbxlx
             artifacts/combined36/OFF31.rbxlx
             artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
