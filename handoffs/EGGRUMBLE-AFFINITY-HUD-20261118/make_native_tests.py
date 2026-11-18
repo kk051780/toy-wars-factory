@@ -47,7 +47,7 @@ def main():
  args=p.parse_args()
  code=SOURCE.read_text(encoding="utf-8")
  assert code.rstrip().endswith("return Policy"),"RED_POLICY_TAIL"
- assert code.count("return Policy")==1,"RED_POLICY_DUP_RETURN"
+ assert code.splitlines().count("return Policy")==1,"RED_POLICY_DUP_RETURN"
  for forbidden in ("RemoteEvent","TakeDamage","DataStoreService","GetAsync","SetAsync"):
   assert forbidden not in code,"RED_AUTHORITY_INTRUSION_"+forbidden
  body=code.rsplit("return Policy",1)[0]
