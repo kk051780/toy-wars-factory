@@ -318,10 +318,17 @@ function Swarm.start(session:any)
      if victim then
       local eh=live[victim]
       if eh and eh.Health>0 then
+       local hpBefore=eh.Health
+       local creditBefore=eh:GetAttribute("LastAttackerId")
        eh:SetAttribute("LastAttackerId",st.id)
        eh:TakeDamage(8) -- Existing singleton Swarm HP/KO authority.
        allyCd[m]=os.clock()
-       m:SetAttribute("EGGRUMBLE_NeutralReaction","ALLY_STRIKE")
+       -- ForceFields/zero real damage cannot steal original KO credit.
+       if eh.Health>=hpBefore then
+        eh:SetAttribute("LastAttackerId",creditBefore)
+       else
+        m:SetAttribute("EGGRUMBLE_NeutralReaction","ALLY_STRIKE")
+       end
       end
      end
     end
