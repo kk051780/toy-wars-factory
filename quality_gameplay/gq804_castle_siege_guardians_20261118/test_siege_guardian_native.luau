@@ -50,15 +50,15 @@ assert(permit and permit.damage==60)
 assert(not P.commitCorePermit(s,permit,{originalRulesAccepted=false,matchId="TEAM:2026",castleId="castle-blue",actualDamage=60}))
 assert(P.commitCorePermit(s,permit,{originalRulesAccepted=true,matchId="TEAM:2026",castleId="castle-blue",actualDamage=60}))
 assert(P.corePermit(s,a)==nil)
-a.now=1.1
+a.now=11.3
 assert(P.corePermit(s,a).damage==60)
 local b=P.corePermit(s,a)
 assert(P.commitCorePermit(s,b,{originalRulesAccepted=true,matchId="TEAM:2026",castleId="castle-blue",actualDamage=60}))
-a.now=2.2;assert(P.corePermit(s,a).damage==30)
+a.now=12.4;assert(P.corePermit(s,a).damage==30)
 local c=P.corePermit(s,a);assert(P.commitCorePermit(s,c,{originalRulesAccepted=true,matchId="TEAM:2026",castleId="castle-blue",actualDamage=30}))
-a.now=3.3;assert(P.corePermit(s,a)==nil)
-a.now=5.2;assert(P.corePermit(s,a).damage==60)
-local low=req();low.now=6;low.weaponSiegeRating=0;low.coordinatedHumanCount=2
+a.now=13.5;assert(P.corePermit(s,a)==nil)
+a.now=15.4;assert(P.corePermit(s,a).damage==60)
+local low=req();low.now=16;low.weaponSiegeRating=0;low.coordinatedHumanCount=2
 assert(P.corePermit(s,low)~=nil)
 low.coordinatedHumanCount=1;low.masteryLevel=10;low.earnedSiegeSkillVerified=true
 assert(P.corePermit(s,low)~=nil)
@@ -68,23 +68,23 @@ low.friendlyAIHelperVerified=false;assert(P.corePermit(s,low)==nil)
 local hp=req();hp.originalRulesAccepted=true;hp.hp=690
 assert(P.recordOriginalCastleHp(s,hp).stage=="INNER")
 local guard={verifiedByServer=true,matchId="TEAM:2026",targetCastleId="castle-blue",
- phase="ACTIVE",ownerCastleAlive=true,now=10,role="WARRIOR",guardianMasteryLevel=25,
+ phase="ACTIVE",ownerCastleAlive=true,now=20,role="WARRIOR",guardianMasteryLevel=25,
  equippedGuardianOwnedByCastle=true,equippedGuardianType="WAR_BANNER"}
 local proposal=P.guardianProposal(s,guard)
 assert(proposal and proposal.threshold==700 and proposal.tier==3)
 guard.actorId="guard1";guard.serverSpawnAccepted=true
 assert(P.confirmGuardianSpawn(s,proposal,guard))
 assert(not P.confirmGuardianSpawn(s,proposal,guard))
-guard.now=11;assert(P.guardianProposal(s,guard)==nil)
-guard.now=51;hp.hp=390;assert(P.recordOriginalCastleHp(s,hp).stage=="INNER")
+guard.now=21;assert(P.guardianProposal(s,guard)==nil)
+guard.now=61;hp.hp=390;assert(P.recordOriginalCastleHp(s,hp).stage=="INNER")
 local p2=P.guardianProposal(s,guard);assert(p2 and p2.threshold==400)
 guard.actorId="guard2";assert(P.confirmGuardianSpawn(s,p2,guard))
-guard.now=95;hp.hp=190;assert(P.recordOriginalCastleHp(s,hp).stage=="FINAL")
+guard.now=105;hp.hp=190;assert(P.recordOriginalCastleHp(s,hp).stage=="FINAL")
 assert(P.guardianProposal(s,guard)==nil)
 assert(P.releaseGuardian(s,"guard1",true))
 local p3=P.guardianProposal(s,guard);assert(p3 and p3.threshold==200)
 guard.actorId="guard3";assert(P.confirmGuardianSpawn(s,p3,guard))
-guard.now=150;assert(P.guardianProposal(s,guard)==nil)
+guard.now=160;assert(P.guardianProposal(s,guard)==nil)
 hp.hp=0;assert(P.recordOriginalCastleHp(s,hp).kind=="TRUE_CASTLE_FALL")
 assert(P.guardianProposal(s,guard)==nil)
 local invalid=P.new("BR:2026","castle-blue")
