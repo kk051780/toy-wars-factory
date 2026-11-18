@@ -29,6 +29,9 @@ def check_touch_runtime_source() -> None:
     for case, anchor in required.items():
         assert CLIENT.count(anchor) == 1, "RED_HUD_RUNTIME_" + case.replace(" ", "_")
     assert "if not inMatch then\n  actions.INVUL.Visible=false" not in CLIENT, "RED_HUD_STICKY_HIDDEN"
+    assert 'local readyM=#musou>0 and player:GetAttribute("EGGRUMBLE_MusouReady")==true' in CLIENT, "RED_FAKE_MUSOU_READY"
+    assert 'local readyI=#invul>0 and player:GetAttribute("EGGRUMBLE_InvulReady")==true' in CLIENT, "RED_FAKE_INVUL_READY"
+    assert "gui.Enabled=inMatch" in CLIENT, "RED_BATTLE_UI_OBSCURES_LOBBY"
     assert "remote:FireServer(" not in CLIENT, "RED_CLIENT_FORGED_AUTHORITY"
 
 TEST = r'''
