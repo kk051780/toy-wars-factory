@@ -124,7 +124,8 @@ local function redraw()
   for _,p in ipairs(markerPool) do p.Visible=false end
   return
  end
- mapTitle.Text=(mapExpanded and "探索マップ" or "MAP").."  ["..activeLayer.."]"
+ mapTitle.Text=(mapExpanded and "探索マップ" or "MAP").." ["..activeLayer.."]"
+  ..(s.scanActive==true and " 索敵中" or "")
  local visited={}
  for _,key in ipairs(s.explored or {}) do
   if type(key)=="string" then visited[key]=true end
@@ -168,6 +169,11 @@ local function redraw()
       elseif m.kind=="ALLY" then "味"
       elseif m.kind=="ENEMY" then "敵"
       elseif m.kind=="NEUTRAL" then "兵"
+      elseif m.kind=="CASTLE_GATE" then "門"
+      elseif m.kind=="EGG" then "卵"
+      elseif m.kind=="MAGIC_TREASURE" then "宝"
+      elseif m.kind=="RESOURCE" then "物"
+      elseif m.kind=="ENEMY_TRAIL" then "跡"
       else "•"
     pin.BackgroundColor3=if m.kind=="SELF" then Color3.fromRGB(49,154,197)
       elseif m.kind=="ENEMY" then Color3.fromRGB(166,76,89)
