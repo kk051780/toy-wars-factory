@@ -51,7 +51,7 @@ function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())
   for _,entry in ipairs(snapshot.catalog) do
    if entry.category==category then
     local card=Instance.new("Frame")
-    card.Size=UDim2.new(1,-6,0,75);card.BackgroundColor3=Color3.fromRGB(40,52,72)
+    card.Size=UDim2.new(1,-6,0,94);card.BackgroundColor3=Color3.fromRGB(40,52,72)
     card.BorderSizePixel=0;card.Parent=products
     local name=Instance.new("TextLabel");name.Text=entry.label
     name.Font=Enum.Font.GothamBold;name.TextColor3=Color3.fromRGB(242,242,246)
@@ -67,12 +67,27 @@ function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())
     local buy=Instance.new("TextButton")
     buy.Text=if snapshot.owned and snapshot.owned[entry.id] then "所有済" else "BP購入"
     buy.Font=Enum.Font.GothamBold;buy.TextScaled=true
-    buy.Size=UDim2.fromOffset(112,30);buy.Position=UDim2.new(1,-118,0,23)
+    buy.Size=UDim2.fromOffset(112,30);buy.Position=UDim2.new(1,-118,0,12)
     buy.Parent=card
     buy.Active=onRequest~=nil and not (snapshot.owned and snapshot.owned[entry.id])
     buy.AutoButtonColor=buy.Active
     buy.Activated:Connect(function()
      if onRequest and buy.Active then onRequest(entry.id,"BP") end
+    end)
+    -- Real Roblox product IDs/prices must be supplied by the server. Disabled by default.
+    local robux=Instance.new("TextButton")
+    robux.Name="RobuxPurchase"
+    local productConfigured=snapshot.robuxEnabled==true and
+      type(entry.robuxProductId)=="number" and entry.robuxProductId>0
+    robux.Text=if productConfigured then "Robux購入" else "Robux準備中"
+    robux.Font=Enum.Font.GothamBold;robux.TextScaled=true
+    robux.Size=UDim2.fromOffset(112,30);robux.Position=UDim2.new(1,-118,0,51)
+    robux.Parent=card
+    robux.Active=productConfigured and onRequest~=nil and
+      not (snapshot.owned and snapshot.owned[entry.id])
+    robux.AutoButtonColor=robux.Active
+    robux.Activated:Connect(function()
+     if onRequest and robux.Active then onRequest(entry.id,"ROBUX") end
     end)
    end
   end
