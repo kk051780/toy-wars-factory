@@ -1,0 +1,72 @@
+name: GQ822 exact actual Real44 damage route / invulnerability coverage NO-GO gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq822_damage_route_20261119/**"
+      - ".github/workflows/gq822-live44-damage-route-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  damage-route-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin original current 44 game-source artifact; reject missing or fake source
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORMAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$FORMAL" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED; exit 1; }
+          RUN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44376856212" --jq .head_sha)"
+          test "$RUN_SHA" = a4684d6333db25474ad9f44ff6203aef7119dc6d || { echo RED_ORIGINAL44_RUN_PROVENANCE; exit 1; }
+          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          test -s artifacts/real44/REAL44.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          receipt=json.loads(Path("artifacts/real44/BUILD44_RECEIPT.json").read_text())
+          place=Path("artifacts/real44/REAL44.rbxlx")
+          assert receipt["source_count"]==44 and receipt["official_rc_adopted"] is False
+          assert receipt["place_bytes"]==place.stat().st_size
+          assert receipt["sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert place.read_bytes()==Path("artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx").read_bytes()
+          manifest=json.loads(Path("artifacts/portable44/EGGRUMBLE_SOURCE44.project.json").read_text())
+          assert "tree" in manifest and "ServerScriptService" in manifest["tree"]
+          print("GQ822_ORIGINAL_REAL44_PLACE_SHA256_AND_PORTABLE_BYTES_EXACT_PASS",place.stat().st_size)
+          print("GQ822_PR_HEAD_VS_BUILD_RECEIPT",receipt.get("commit"),"NOTE_PR_MERGE_SHA_MAY_DIFFER")
+          PY
+      - name: Inventory ALL original real44 direct damage and verify 4 hostile mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
+            --source-root artifacts/portable44/sources \
+            --out artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+          # The current unintegrated product MUST NOT be certified as full invulnerability.
+          if python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
+            --source-root artifacts/portable44/sources \
+            --out artifacts/gq822/EXPECTED_RED_RECEIPT.json --require-wired \
+            > /tmp/gq822-expected-red.txt 2>&1; then
+            echo RED_FALSE_INVULNERABILITY_ACCEPTANCE
+            exit 1
+          fi
+          grep -q RED_INVULNERABILITY_UNPROVEN_IN_REAL44 /tmp/gq822-expected-red.txt
+          echo GQ822_FAIL_CLOSED_UNWIRED_REAL44_INTEGRATION_GATE_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ822-REAL44-DAMAGE-ROUTE-RECEIPT-NOT-RC
+          path: artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+          retention-days: 5
+          if-no-files-found: error
