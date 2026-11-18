@@ -65,6 +65,11 @@ def wire(project:Path,out:Path):
  if len(sources)!=39 or HOST not in sources or not ADDITIONS.issubset(sources):
   raise ValueError("RED_NOT_VERIFIED_REAL39_SOURCE")
  original=sources[HOST].read_text("utf-8")
+ print("GQ802_EXACT_REAL_HOST_ANCHOR_DIAG_BEGIN")
+ for lineno,line in enumerate(original.splitlines(),1):
+  if any(k in line for k in ("TacticalBattlefield","FieldEgg_","FieldItems","RaidItemIntake","Rules.start","closeRound","world:Destroy","session.world","Rules.new","session.rules.phase","startSession","NaturalRegen.attach")):
+   print("GQ802_HOST_LINE",lineno,repr(line[:200]))
+ print("GQ802_EXACT_REAL_HOST_ANCHOR_DIAG_END")
  changed=patch(original)
  if inverse(changed)!=original:raise ValueError("RED_DIFFERENT_ORIGINAL_HOST")
  out.parent.mkdir(parents=True,exist_ok=True)
