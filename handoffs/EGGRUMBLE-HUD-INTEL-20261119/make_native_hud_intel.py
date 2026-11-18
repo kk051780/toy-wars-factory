@@ -6,6 +6,26 @@ import argparse
 ROOT = Path(__file__).resolve().parent
 HUD = (ROOT / "HudPresentationPolicy.luau").read_text(encoding="utf8")
 MAP = (ROOT / "MapVisibilityPolicy.luau").read_text(encoding="utf8")
+CLIENT = (ROOT / "EGGRUMBLE_HudIntelRuntime.client.luau").read_text(encoding="utf8")
+
+def check_touch_runtime_source() -> None:
+    """The real Roblox client must re-enable buttons after lobby/map reset.
+
+    Source-exact structural gate complements native pure-policy tests. It does
+    not claim Studio input or device UX verification.
+    """
+    required = {
+        "visible Musou after lobby": "actions.MUSOU.Visible=inMatch and #musou>0",
+        "visible Invul after lobby": "actions.INVUL.Visible=inMatch and #invul>0",
+        "base attack without a skill": 'actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil',
+        "handedness refresh": "w==lastW and h==lastH and hand==lastHand",
+        "handedness cache": "lastW,lastH,lastHand=w,h,hand",
+    }
+    for case, anchor in required.items():
+        assert CLIENT.count(anchor) == 1, "RED_HUD_RUNTIME_" + case.replace(" ", "_")
+    assert "if not inMatch then\n  actions.INVUL.Visible=false" not in CLIENT, "RED_HUD_STICKY_HIDDEN"
+    assert "remote:FireServer(" not in CLIENT, "RED_CLIENT_FORGED_AUTHORITY"
+
 TEST = r'''
 local H = Hud
 local M = Map
@@ -109,6 +129,7 @@ def main() -> None:
     a.add_argument("--out",type=Path,required=True)
     args=a.parse_args()
     args.out.mkdir(parents=True,exist_ok=True)
+    check_touch_runtime_source()
     assert "RemoteEvent" not in HUD+MAP
     for bad in ("DataStoreService","MarketplaceService","FireServer(","OnServerEvent","TakeDamage(","Humanoid.Health"):
         assert bad not in HUD+MAP,bad
