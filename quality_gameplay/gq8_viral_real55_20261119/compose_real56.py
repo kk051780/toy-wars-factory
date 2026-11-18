@@ -138,7 +138,7 @@ def compose(parent55:Path, receipt55:Path, client:Path, out:Path):
     assert len(after)==56 and set(after)==set(old)|{CLIENT},"RED_REAL56_WIRING"
     for route,file in old.items():
         if route!=HOST: assert after[route].read_bytes()==file.read_bytes(),"RED_ORIGINAL_PRESERVATION_"+"/".join(route)
-    assert klass(after[HOST])=="Script" and klass(after[CLIENT])=="LocalScript"
+    assert klass(after[HOST])==klass(old[HOST]) and klass(after[CLIENT])=="LocalScript",("RED_CLASS",klass(after[HOST]),klass(old[HOST]),klass(after[CLIENT]))
     result={"feature_id":FEATURE,"parent":55,"candidate":56,"modified_old_source":["/".join(HOST)],
         "unchanged_original_source_count":54,"new_client_source":["/".join(CLIENT)],
         "new_remote_owners":0,"new_store_owners":0,"publish_enabled":False,"filming_default_off":True,
