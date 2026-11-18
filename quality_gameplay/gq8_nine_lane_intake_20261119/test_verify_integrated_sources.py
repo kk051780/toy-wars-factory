@@ -14,8 +14,8 @@ def make_fixture(root: Path):
     assert len(rows) < N
     rows += ["ServerScriptService/GQ8_Fixture_%02d" % i for i in range(N - len(rows))]
     project = {"name": "synthetic_fixture_not_a_playable_place", "tree": {}}
-    receipt = {"selected_script_count": N, "transactions_enabled": False,
-               "official_rc_adopted": False, "sources": []}
+    receipt = {"selected_real55_count": N, "actual_trade_settlement_enabled": False,
+               "formal_rc_adopted": False, "sources": []}
     for route in rows:
         path = route.split("/")
         suffix = ".client.luau" if EXPECTED.get(route) == "LocalScript" else (
@@ -51,10 +51,10 @@ with tempfile.TemporaryDirectory() as temp:
     root = Path(temp)
     proj, rec = make_fixture(root)
     report = verify(proj, rec)
-    assert report["source_count"] == 53
+    assert report["source_count"] == 55
     assert report["evidenced_lanes_source_only"] == 9
     assert report["evidenced_lanes_actual_studio"] == 0
-    assert report["official_rc_adopted"] is False
+    assert report["author_private_artifact_claims_formal_rc"] is False
 
     original_receipt = rec.read_text()
     item = json.loads(original_receipt)
@@ -63,7 +63,7 @@ with tempfile.TemporaryDirectory() as temp:
     denied(proj, rec, "RED_DUPLICATE_LEDGER_ROUTE")
 
     item = json.loads(original_receipt)
-    item["transactions_enabled"] = True
+    item["actual_trade_settlement_enabled"] = True
     rec.write_text(json.dumps(item))
     denied(proj, rec, "RED_FALSE_COMMERCE_OR_RC_CLAIM")
     rec.write_text(original_receipt)
@@ -83,8 +83,8 @@ with tempfile.TemporaryDirectory() as temp:
     proj.write_text(original_project)
 
     item = json.loads(original_receipt)
-    item["official_rc_adopted"] = True
+    item["formal_rc_adopted"] = True
     rec.write_text(json.dumps(item))
     denied(proj, rec, "RED_FALSE_COMMERCE_OR_RC_CLAIM")
 
-print("GQ8_NINE_LANE_RECEIPT_5_HOSTILE_MUTATION_CASES_PASS")
+print("GQ8_REAL55_NINE_LANE_RECEIPT_5_HOSTILE_MUTATION_CASES_PASS")
