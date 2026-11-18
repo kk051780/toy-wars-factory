@@ -93,6 +93,18 @@ jobs:
             --project artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
             --place artifacts/real43/OFF42.rbxlx --count 42
           cmp artifacts/real43/OFF42.rbxlx artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          python3 -B quality_gameplay/gq800_neutral8_single_swarm_20261118/package_real43.py \
+            --real43 artifacts/real43/REAL43.project.json \
+            --real42 artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --out artifacts/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --candidate-head "$GITHUB_SHA"
+          /tmp/gq800-rojo build artifacts/portable43/EGGRUMBLE_SOURCE43.project.json -o artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable43/EGGRUMBLE_SOURCE43.project.json \
+            --place artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx --count 43
+          cmp artifacts/portable43/EGGRUMBLE_SOURCE43.rbxlx artifacts/real43/REAL43.rbxlx
+          echo GQ800_REAL43_PORTABLE_AUTHOR_SOURCE_CLASS_EQUIVALENCE_PASS
+
           python3 - <<'PY'
           import json,hashlib,os
           from pathlib import Path
@@ -115,5 +127,6 @@ jobs:
             artifacts/real43/REAL43.rbxlx
             artifacts/real43/OFF42.rbxlx
             artifacts/real43/GQ800_REAL43_BUILD_RECEIPT.json
+            artifacts/portable43/
           if-no-files-found: error
           retention-days: 3
