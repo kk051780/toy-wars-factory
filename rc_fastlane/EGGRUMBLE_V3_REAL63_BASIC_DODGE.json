@@ -13,15 +13,16 @@
   "candidate_count": 63,
   "source_locks": {
     "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/EGGRUMBLE_BasicMobilityPolicy.luau": "bfd2ec6be067fe18b7675463bd6e1ca365b8ddf2",
-    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py": "b3d16e4e40ce4cad01a14d275599f7a17bc0bfe3",
-    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py": "c0ff3d6e9f23d6ea2b753494262ccd04d922469d"
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py": "b551ba79b4a3aeaee6a50b619dc2abbbed0a2671",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py": "c0ff3d6e9f23d6ea2b753494262ccd04d922469d",
+    "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py": "5715c178736170e3bc739bb1c60a670f7053707d"
   },
   "modified_existing_routes": [
     "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
-    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
   ],
   "new_route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
-  "original60_unchanged": true,
   "host_is_original_script": true,
   "trade3_original_unchanged": true,
   "damage_owner_original_only": true,
@@ -35,5 +36,28 @@
   "fun": "NO_GO",
   "official_rc_adopted": false,
   "canonical_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml",
-  "notice": "Current authorized B #220 only latest nonforce expected-sha CAS after same-HEAD proof; prior Real60 parent59 is historical. Stop if newer RC appeared and reconcile instead of rollback."
+  "notice": "Source candidate: current official newest Real63 parent via prior formal Real62 physical Place; independent #220 B review/nonforce expectedSha CAS and exact NEW HEAD native/Rojo/OFF gate required. Do not claim Studio overlap verified or permit main/Publish/Robux.",
+  "original59_unchanged": true,
+  "ui_overlap_fix": {
+    "feature_id": "GQ8_REAL59_HUD_OCCLUSION_REAL63_20261119",
+    "viewports_tested_natively": [
+      "320x260",
+      "393x851",
+      "375x667",
+      "600x300",
+      "851x393",
+      "1280x720",
+      "1024x768"
+    ],
+    "handedness": [
+      "LEFT",
+      "RIGHT"
+    ],
+    "combat_hud_owner": "existing single EGGRUMBLE_HudIntelRuntime",
+    "drawers": "compact modal hides combat action surfaces while selecting",
+    "expanded_map": "movement/thumbstick clearance",
+    "server_rules_changed": false,
+    "studio_visual_test": "NOT_TESTED",
+    "official_rc_adopted": false
+  }
 }
