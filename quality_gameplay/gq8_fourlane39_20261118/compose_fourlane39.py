@@ -2,6 +2,8 @@
 """Immutable genuine31 + previously green Realm/Regen36 + author Mage32/VFX33."""
 import argparse,copy,hashlib,json,os,re
 from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
 from quality_gameplay.gq8_crosslane_20261118.compose_rehearsal36 import flatten,digest,HOST,CORE,REGEN
 MAGE={("ServerScriptService","EGGRUMBLE_MageRevive")}
 VFX={("ReplicatedStorage","EGGRUMBLE_ElementVisuals"),
