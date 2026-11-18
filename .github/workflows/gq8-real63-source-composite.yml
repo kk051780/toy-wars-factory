@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
-      EXPECTED_OFFICIAL: ad602cebafc1a9d8caed078ab86c7a58b0fbbbef
+      EXPECTED_OFFICIAL: b7bf777778d77ed524b4b43582c1f011e62bec12
     steps:
       - uses: actions/checkout@v4
         with:
