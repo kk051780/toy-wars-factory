@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SOURCE = HERE / "ElementVisuals.client.luau"
+SOURCE = HERE / "ElementVisuals.luau"
 APPEND = r'''
 local elements={"FIRE","WATER","LIGHTNING","WIND","EARTH","ICE","DIVINE","CURSE"}
 local kinds={"WEAPON","ATTACK","SHIELD"}
@@ -35,6 +35,18 @@ end
 assert(Visual.describe("INVALID","ATTACK","NORMAL",false)==nil,"RED_INVALID_ELEMENT")
 assert(Visual.describe("FIRE","INVALID","NORMAL",false)==nil,"RED_INVALID_KIND")
 assert(Visual.describe("FIRE","ATTACK","INVALID",false)==nil,"RED_INVALID_RESULT")
+local known={{"MAGE:A:1","MAGE","ICE"},{"MAGE:B:2","MAGE","FIRE"},{"MAGE:C:3","MAGE","LIGHTNING"},{"WARRIOR:C:4","WARRIOR","DIVINE"},{"ZOMBIE:C:5","ZOMBIE","CURSE"}}
+for _,case in ipairs(known) do
+ local element,seq=Visual.elementForServerCast(case[1],case[2])
+ assert(element==case[3] and seq>0,"RED_VERIFIED_CAST_MAP")
+end
+local noCast={"NINJA:B:6","MAGE:D:7","WARRIOR:A:8","MAGE:A:-1","MAGE:A:0","MAGE:A:999999999999"}
+for _,sig in ipairs(noCast) do
+ local element=Visual.elementForServerCast(sig,"MAGE")
+ assert(element==nil,"RED_INVENTED_ELEMENT")
+end
+local spoof=Visual.elementForServerCast("MAGE:A:9","WARRIOR")
+assert(spoof==nil,"RED_ROLE_MISMATCH")
 local cap,beams=Visual.capacity()
 assert(cap==8 and beams==8,"RED_BUDGET")
 print("GQ8_ATTR_VFX_NATIVE_SHAPES_BUDGET_CONTRACT_PASS")
