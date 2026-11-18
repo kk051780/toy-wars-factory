@@ -40,8 +40,15 @@ local function findCastles(arena)
   if m:IsA("Model") and string.sub(m.Name,1,7)=="Castle_" then
    local foundation=m:FindFirstChild("StandardFoundation")
    if foundation and foundation:IsA("BasePart") then
+    -- The canonical Castle Host sets these side colors from its verified
+    -- server roster; no client team claim is trusted. Unknown colors fail shut.
+    local tint=foundation.Color
+    local team=nil
+    if (tint-Color3.fromRGB(207,92,86)).Magnitude<.02 then team="RED"
+    elseif (tint-Color3.fromRGB(87,146,218)).Magnitude<.02 then team="BLUE" end
     table.insert(castles,{id=m.Name,kind="CASTLE",x=foundation.Position.X,
-     z=foundation.Position.Z,layer="LAND",ownerId=string.sub(m.Name,8)})
+     z=foundation.Position.Z,layer="LAND",ownerId=string.sub(m.Name,8),
+     team=team,sourceModel=m})
    end
   end
  end
@@ -91,15 +98,17 @@ end
 local function entityMarkers(p,mode,arena,root,viewer)
  local result=findCastles(arena)
  local count=#result
- -- Unknown TEAM affiliation is deliberately not interpreted as enemy.
- -- TEAM server authority must publish verified team attributes first.
- local pteam=p:GetAttribute("EGGRUMBLE_MapVerifiedTeam")
+ local selfHome=ownCastle(result,p)
+ -- Server-authored, source-pinned castle foundation color is a read-only
+ -- projection of the original Host's TEAM roster; unknown remains private.
+ local pteam=selfHome and selfHome.team
  local ownTeam=mode=="BATTLE_ROYALE" and ("BR_"..p.UserId) or pteam
  if mode=="BATTLE_ROYALE" or (pteam=="RED" or pteam=="BLUE") then
   for _,other in ipairs(Players:GetPlayers()) do
    if other~=p and other:GetAttribute("EGGRUMBLE_QueuedMode")==mode then
+    local otherCastle=ownCastle(result,other)
     local theirTeam=mode=="BATTLE_ROYALE" and ("BR_"..other.UserId)
-      or other:GetAttribute("EGGRUMBLE_MapVerifiedTeam")
+      or (otherCastle and otherCastle.team)
     local eroot=rootOf(other)
     if theirTeam and eroot and count<MAX_MARKERS then
      local sameTeam=theirTeam==ownTeam
@@ -113,12 +122,68 @@ local function entityMarkers(p,mode,arena,root,viewer)
       stealthed=(other:GetAttribute("EGGRUMBLE_StealthUntil") or 0)>os.clock(),
      })
      count+=1
+     if not sameTeam and count<MAX_MARKERS then
+      table.insert(result,{id="TRAIL_"..other.UserId,kind="ENEMY_TRAIL",
+       x=pos.X,z=pos.Z,layer=realmOf(other),expiresAt=workspace:GetServerTimeNow()+2})
+      count+=1
+     end
     end
    end
   end
  end
- -- Future realm actors / neutral sources must be validated by their owners
- -- before joining this list. Never infer unrevealed map coordinates locally.
+ -- Real castle gates exist as the already-owned server Host model children.
+ for _,castle in ipairs(findCastles(arena)) do
+  if count>=MAX_MARKERS then break end
+  local gate=castle.sourceModel:FindFirstChild("SiegeGate")
+  if gate and gate:IsA("BasePart")
+   and (gate.Position-root.Position).Magnitude<=200 then
+   table.insert(result,{id="GATE_"..castle.id,kind="CASTLE_GATE",
+    x=gate.Position.X,z=gate.Position.Z,layer="LAND"})
+   count+=1
+  end
+ end
+ -- Only the original Swarm-author's real tagged Humanoid actors are scanned.
+ local horde=arena:FindFirstChild("NeutralHorde")
+ if horde then
+  for _,npc in ipairs(horde:GetChildren()) do
+   if count>=MAX_MARKERS then break end
+   if npc:IsA("Model") and npc:GetAttribute("EGGRUMBLE_Neutral")==true then
+    local h=npc:FindFirstChildOfClass("Humanoid")
+    local part=npc:FindFirstChild("HumanoidRootPart")
+    if h and h.Health>0 and part and part:IsA("BasePart")
+      and (part.Position-root.Position).Magnitude<210 then
+     table.insert(result,{id="N_"..npc.Name.."_"..tostring(npc:GetDebugId()),
+      kind="NEUTRAL",x=part.Position.X,z=part.Position.Z,layer="LAND",
+      serverLineOfSight=los(root.Position+Vector3.new(0,1.5,0),
+        part.Position+Vector3.new(0,1.5,0),p.Character,npc)})
+     count+=1
+    end
+   end
+  end
+ end
+ -- Actual original field pickups; different roles can scout distinct items.
+ local items=arena:FindFirstChild("EGGRUMBLE_FieldItems")
+ if items then
+  for _,part in ipairs(items:GetChildren()) do
+   if count>=MAX_MARKERS then break end
+   if part:IsA("BasePart") and (part.Position-root.Position).Magnitude<=210 then
+    local kind=if part.Name:find("_SHIELD") then "MAGIC_TREASURE" else "RESOURCE"
+    table.insert(result,{id=part.Name,kind=kind,x=part.Position.X,
+      z=part.Position.Z,layer="LAND"})
+    count+=1
+   end
+  end
+ end
+ -- Egg objectives require explored tiles: never preload their hidden coordinates.
+ for _,part in ipairs(arena:GetChildren()) do
+  if count>=MAX_MARKERS then break end
+  if part:IsA("BasePart") and string.match(part.Name,"^FieldEgg_%d+$")
+    and (part.Position-root.Position).Magnitude<=250 then
+   table.insert(result,{id=part.Name,kind="EGG",
+    x=part.Position.X,z=part.Position.Z,layer="LAND"})
+   count+=1
+  end
+ end
  return result
 end
 local function send(p)
@@ -143,7 +208,8 @@ local function send(p)
   local dz=root.Position.Z-home.z
   if dx*dx+dz*dz>150*150 then return end
   s={mode=mode,arena=arena,explored=Intel.newExploration(home.x,home.z),
-      lastX=root.Position.X,lastZ=root.Position.Z,lastLayer="LAND"}
+      lastX=root.Position.X,lastZ=root.Position.Z,lastLayer="LAND",
+      mapStartTime=workspace:GetServerTimeNow()}
   state[p]=s
  end
  local x,z=root.Position.X,root.Position.Z
@@ -160,9 +226,22 @@ local function send(p)
    s.explored=Intel.newExploration(x,z)
  end
  local layer=realmOf(p)
- local viewer={playerId=tostring(p.UserId),team=mode=="BATTLE_ROYALE"
-       and ("BR_"..p.UserId) or p:GetAttribute("EGGRUMBLE_MapVerifiedTeam"),
-     role=getRole(p),x=x,z=z,layer=layer,explored=s.explored,serverVerified=true}
+ local role=getRole(p)
+ local team=mode=="BATTLE_ROYALE" and ("BR_"..p.UserId) or home.team
+ local viewer={playerId=tostring(p.UserId),team=team,
+     role=role,x=x,z=z,layer=layer,explored=s.explored,serverVerified=true}
+ -- A free server-timed passive reconnaissance window (8s every 65s)
+ -- is intentionally different from paid items or client-triggered scans.
+ local since=workspace:GetServerTimeNow()-s.mapStartTime
+ local pulseKind={
+  WARRIOR="SIEGE_SENSE",MAGE="MAGIC_SENSE",NINJA="TRAIL_SENSE",
+  TRAPPER="ENEMY_SENSE",BUILDER="RESOURCE_SENSE",
+  BEAST="BEAST_SENSE",ZOMBIE="CURSE_SENSE",
+ }
+ if since>=20 and (since-20)%65<8 and pulseKind[role] then
+  viewer.pulse={kind=pulseKind[role],
+    expiresAt=workspace:GetServerTimeNow()+1.3,serverVerified=true}
+ end
  local marks=entityMarkers(p,mode,arena,root,viewer)
  table.insert(marks,{id="SELF",kind="SELF",ownerId=tostring(p.UserId),
    x=x,z=z,layer=layer})
