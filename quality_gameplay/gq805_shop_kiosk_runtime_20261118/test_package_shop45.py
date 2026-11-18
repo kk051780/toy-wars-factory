@@ -32,6 +32,8 @@ def test(catalog:Path,view:Path):
         kiosk=Path(__file__).parent
         report=package(doc,receipt,catalog,view,kiosk,p/"good",head)
         assert report["source_count"]==45
+        project=json.loads((p/"good"/"EGGRUMBLE_REAL45_KIOSK.project.json").read_text())
+        assert project["tree"]["ReplicatedStorage"]["GQ805Shop"]["$className"]=="Folder"
         assert report["unchanged_original_count"]==41
         assert report["original41_readback_pass"] is True
         assert (p/"good"/"sources"/"ReplicatedStorage"/"GQ805Shop"/"EGGRUMBLE_LobbyShopView.luau").read_bytes()==view.read_bytes()
