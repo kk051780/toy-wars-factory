@@ -6,7 +6,7 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
-      # Build again at every official HEAD when non-gameplay source audit or historical QA changes.
+      # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
       - '.github/workflows/gq8-nine-lane-source-receipt.yml'
       - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
-      EXPECTED_OFFICIAL: 8fa9af83be93c7cd5c7a147ea33e1e333d9e975b
+      EXPECTED_OFFICIAL: d52f2060dda81f0af6d1b143eee25fb416141602
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,7 +46,17 @@ jobs:
           if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
             test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_HEAD_NOT_SAME_CI; exit 1; }
             test "$(gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$GITHUB_SHA" --jq .status)" = ahead || { echo RED_OFFICIAL_NOT_VERIFIED_BASE_DESCENDANT; exit 1; }
+          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            # The PR must be based on the actual current canonical RC, never a stale author SHA.
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test -n "$PR_HEAD" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_NOT_LIVE_CANONICAL_RC; exit 1; }
+            BASE_LINEAGE="$(gh api "repos/$GITHUB_REPOSITORY/compare/$EXPECTED_OFFICIAL...$PR_BASE" --jq .status)"
+            test "$BASE_LINEAGE" = ahead || test "$BASE_LINEAGE" = identical || { echo RED_PR_BASE_OLDER_OR_DIVERGENT; exit 1; }
+            HEAD_LINEAGE="$(gh api "repos/$GITHUB_REPOSITORY/compare/$PR_BASE...$PR_HEAD" --jq .status)"
+            test "$HEAD_LINEAGE" = ahead || { echo RED_PR_HEAD_NOT_DESCENDANT_OF_LIVE_RC; exit 1; }
           else
+            # Legacy branch CI is pinned to its immutable author base; do not silently rebase it.
             test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_RC_HEAD_MOVED_RECONCILE_ALL_LANES; exit 1; }
           fi
           python3 - <<'PY'
@@ -190,6 +200,10 @@ jobs:
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
             test "$CURRENT" = "$GITHUB_SHA" || { echo RED_NOT_SAME_OFFICIAL_HEAD_AFTER_NATIVE_ROJO; exit 1; }
+          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            # Repeat the optimistic lease after the 65-source native/Rojo build.
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_RESULT; exit 1; }
           else
             test "$CURRENT" = "$EXPECTED_OFFICIAL" || { echo RED_OFFICIAL_MOVED_BEFORE_RESULT; exit 1; }
           fi
