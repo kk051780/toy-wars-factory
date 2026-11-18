@@ -34,11 +34,13 @@ function map:UpdateAsync(key:any,fn:any,ttl:any):any
  return nextValue
 end
 local now=1000
+local epochEnabled=true
 local deps={
  enabled=true,isStudio=false,inReservedServer=false,
  targetPlaceId=102030,jobId="origin-job",
  players=playerService,teleport=teleport,http=http,claimMap=map,
  now=function()return now end,
+ isEpochCurrent=function(epoch:number):boolean return epochEnabled and epoch>=1 and epoch<=9 end,
  optionsFactory=function()return {
   SetTeleportData=function(self:any,data:any)self.data=data end
  } end
@@ -62,6 +64,10 @@ assert(checked.teamA[1]==1 and checked.teamB[1]==5)
 assert(M.verifyArrival(validData,16,map,started.matchId,1001).reason=="NOT_IN_SERVER_ROSTER")
 assert(M.verifyArrival(validData,1,map,"ANOTHER_SERVER",1001).reason=="INVALID_OR_WRONG_RESERVED_SERVER")
 assert(M.verifyArrival(validData,1,map,started.matchId,1181).reason=="MISSING_OR_EXPIRED_SERVER_TICKET")
+epochEnabled=false
+assert(bridge:teleportFailed(roster[5]).reason=="OLD_ROUND_EPOCH")
+assert(bridge:dispatch(p,6,102030).reason=="OLD_ROUND_EPOCH")
+epochEnabled=true
 validData.seed=12
 assert(not M.verifyArrival(validData,1,map,started.matchId,1001).accepted)
 validData.seed=started.seed
