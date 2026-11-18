@@ -11,7 +11,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"gq8_successor_real48_
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"handoffs"/"EGGRUMBLE-HUD-INTEL-20261119"))
 from compose_real40 import contents,project_for,digest
 from compose_real48 import flatten,klass
-OFFICIAL59="38d11f0bf311491ba76fe03f818948e5d4b06889"
+OFFICIAL59="5a47e96f6b4766a9c59dd06b111bea53b73bd5ca"
+HOST=("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")
 ADDS={
  ("ServerScriptService","GQ8_TradeJournalContract"):("ModuleScript","GQ8_TradeJournalContract.luau"),
  ("ServerScriptService","GQ8_TradeEscrowReducer"):("ModuleScript","GQ8_TradeEscrowReducer.luau"),
@@ -23,25 +24,37 @@ HUD_SOURCE={
  ("ServerScriptService","EGGRUMBLE_MapIntelBridge"):"EGGRUMBLE_MapIntelBridge.server.luau",
  ("StarterPlayer","StarterPlayerScripts","EGGRUMBLE_HudIntelRuntime"):"EGGRUMBLE_HudIntelRuntime.client.luau",
 }
-def compose(parent59:Path,receipt59:Path,official55:Path,out:Path):
+def compose(parent59:Path,receipt59:Path,host59:Path,hostReceipt:Path,official55:Path,out:Path):
  if out.exists():raise ValueError("RED_REFUSE_OVERWRITE")
  receipt=json.loads(receipt59.read_text(encoding="utf8"))
  if (receipt.get("selected59_place_sha256")!=digest(parent59) or
     receipt.get("baseline55_exact_sources_unchanged") is not True or
     len(receipt.get("on_sources",[]))!=59 or len(receipt.get("off_sources",[]))!=55):
   raise ValueError("RED_REAL59_PARENT_NOT_SHA_VERIFIED")
- original,classes=contents(ET.parse(parent59).getroot())
+ preHost,preClasses=contents(ET.parse(parent59).getroot())
+ original,classes=contents(ET.parse(host59).getroot())
+ hostRecord=json.loads(hostReceipt.read_text(encoding="utf8"))
  base55,classes55=contents(ET.parse(official55).getroot())
- if len(original)!=59 or len(base55)!=55 or not set(base55).issubset(original):
+ if hostRecord.get("host_old_class")!="ModuleScript" or
+    hostRecord.get("host_new_class")!="Script" or hostRecord.get("source_bytes_modified")!=0:
+  raise ValueError("RED_UNVERIFIED_P0_HOST_CLASS_FIX_RECEIPT")
+ if (len(preHost)!=59 or len(original)!=59 or len(base55)!=55
+     or set(preHost)!=set(original) or not set(base55).issubset(original)
+     or preClasses.get(HOST)!="ModuleScript" or classes.get(HOST)!="Script"):
+  raise ValueError("RED_REAL59_HOST_OR_ORIGINAL55_COUNT_CLASS")
+ for key,item in preHost.items():
+  if original[key]!=item or (key!=HOST and preClasses[key]!=classes[key]):
+   raise ValueError("RED_P0_HOST_FIX_ALTERED_SOURCE_OR_UNRELATED_CLASS_"+"/".join(key))
   raise ValueError("RED_REAL59_OR_REAL55_WRONG_COUNT")
  for k,item in base55.items():
-  if original[k]!=item or classes.get(k)!=classes55.get(k):
+  if original[k]!=item or (k!=HOST and classes.get(k)!=classes55.get(k)):
    raise ValueError("RED_OFFICIAL55_ORIGINAL_SOURCE_DRIFT_"+"/".join(k))
  onReceipts={tuple(s["route"].split("/")):s for s in receipt["on_sources"]}
  if set(onReceipts)!=set(original):raise ValueError("RED_REAL59_RECEIPT_ROUTE_MISMATCH")
  for key,(cls,source) in original.items():
   row=onReceipts[key]
-  if row["class"]!=cls or row["sha256"]!=hashlib.sha256(source.encode("utf8")).hexdigest():
+  expectedClass="ModuleScript" if key==HOST else cls
+  if row["class"]!=expectedClass or row["sha256"]!=hashlib.sha256(source.encode("utf8")).hexdigest():
    raise ValueError("RED_REAL59_SOURCE_BLOB_DRIFT_"+"/".join(key))
  for key,filename in HUD_SOURCE.items():
   f=Path("handoffs/EGGRUMBLE-HUD-INTEL-20261119")/filename
@@ -53,7 +66,7 @@ def compose(parent59:Path,receipt59:Path,official55:Path,out:Path):
   raise ValueError("RED_DUPLICATE_NAME")
  out.mkdir(parents=True)
  off=out/"off59";off.mkdir()
- offProject,offRoutes=project_for(original,classes,off,"GQ828_REAL59_HUD_MAP")
+ offProject,offRoutes=project_for(original,classes,off,"GQ8_REAL59_HOST_ACTIVE_CANDIDATE_NOT_OFFICIAL")
  plus=dict(original)
  for route,(cls,filename) in ADDS.items():
   source=(HERE/filename).read_text(encoding="utf8").replace("\r\n","\n")
@@ -77,6 +90,8 @@ def compose(parent59:Path,receipt59:Path,official55:Path,out:Path):
   "added_trade_sources":3,
   "on_project":str(onProject),"off_project":str(offProject),
   "parent_real59_sha256":digest(parent59),"official_real55_sha256":digest(official55),
+  "host59_activated_place_sha256":digest(host59),
+  "host59_activated_source_class":True,"original59_host_class_was":"ModuleScript",
   "on_sources":onRoutes,"off_sources":offRoutes,
   "new_routes":["/".join(k) for k in ADDS],
   "feature_union":"HUD_FOG_829 plus TRADE_UI_JOURNAL_ESCROW_838",
@@ -92,7 +107,9 @@ if __name__=="__main__":
  ap=argparse.ArgumentParser()
  ap.add_argument("--real59",type=Path,required=True)
  ap.add_argument("--receipt59",type=Path,required=True)
+ ap.add_argument("--host59",type=Path,required=True)
+ ap.add_argument("--hostreceipt",type=Path,required=True)
  ap.add_argument("--official55",type=Path,required=True)
  ap.add_argument("--out",type=Path,required=True)
  a=ap.parse_args()
- compose(a.real59,a.receipt59,a.official55,a.out)
+ compose(a.real59,a.receipt59,a.host59,a.hostreceipt,a.official55,a.out)
