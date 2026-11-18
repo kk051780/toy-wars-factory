@@ -91,10 +91,12 @@ jobs:
               root=ET.parse("artifacts/"+state+".rbxlx").getroot()
               scripts=[x for x in root.iter("Item") if x.get("class")=="Script"]
               assert len(scripts)==1,(state,len(scripts))
-              src=scripts[0].find("./Properties/ProtectedString[@name='Source']")
-              assert src is not None,(state,"Source missing")
+              props=scripts[0].find("./Properties")
+              assert props is not None,(state,"Properties missing")
+              source_props=[p for p in props if p.attrib.get("name")=="Source"]
+              assert len(source_props)==1,(state,"Source missing",[(p.tag,p.get("name")) for p in props])
               expected=Path("artifacts/"+state+"/RealmBattleCore.server.luau").read_text()
-              assert src.text==expected,(state,"Source mismatch")
+              assert source_props[0].text==expected,(state,"Source mismatch",source_props[0].tag)
           assert restore(Path("artifacts/on/RealmBattleCore.server.luau").read_text())==Path("artifacts/off/RealmBattleCore.server.luau").read_text()
           print("GQ8_LEVIATHAN_MELEE_ROJO_SCRIPT_SOURCE_AND_OFF_PASS")
           PY
