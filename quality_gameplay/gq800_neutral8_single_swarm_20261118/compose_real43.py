@@ -39,12 +39,12 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
   if count!=1:raise ValueError("RED_"+label+"_ANCHOR_"+str(count))
   original=original.replace(old,new,1)
  require='local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))'
- replace_once(require,require+'\\nlocal NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',"FINISHER_POLICY_REQUIRE")
+ replace_once(require,require+'\nlocal NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',"FINISHER_POLICY_REQUIRE")
  start='-- Original #482 Swarm remains the ONLY neutral spawner/HP/KO authority.'
  end='local SWARM_RANGE=240'
  if candidate.count(start)!=1 or candidate.count(end)!=1:raise ValueError("RED_CANDIDATE_PALETTE")
  palette=candidate.split(start,1)[1].split(end,1)[0]
- replace_once('local NEUTRAL_SPEED=7\\n'+end,'local NEUTRAL_SPEED=7\\n'+start+palette+end,"SPECIES_PALETTE")
+ replace_once('local NEUTRAL_SPEED=7\n'+end,'local NEUTRAL_SPEED=7\n'+start+palette+end,"SPECIES_PALETTE")
  a='local function soldier(parent:Instance,at:Vector3):Model'
  b='local function labelKo(p:Player,n:number)'
  if candidate.count('local function soldier(')!=1 or candidate.count(b)!=1:
@@ -56,18 +56,18 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
  if 'local function piece(' not in original or 'h.MaxHealth=NEUTRAL_HEALTH' not in old_soldier:
   raise ValueError("RED_SOLDIER_NOT_SINGLE_OWNER")
  replace_once(old_soldier,new_soldier,"SOLDIER_ONLY")
- replace_once('  local ended=false','  local ended=false\\n  local spawnSerial=0\\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
+ replace_once('  local ended=false','  local ended=false\n  local spawnSerial=0\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
  replace_once('local constructed,model=pcall(soldier,all,at)',
-  'spawnSerial+=1\\n   local constructed,model=pcall(soldier,all,at,spawnSerial)',"ADOPT_EXISTING_BUDGET_SPAWNER")
+  'spawnSerial+=1\n   local constructed,model=pcall(soldier,all,at,spawnSerial)',"ADOPT_EXISTING_BUDGET_SPAWNER")
  cue_start='    local before=h.Health'
  cue_end='    ImpactFeedback.hit('
  if candidate.count(cue_start)!=1 or candidate.count(cue_end)!=1:
   raise ValueError("RED_CANDIDATE_HIT_CUE")
  new_hit=cue_start+candidate.split(cue_start,1)[1].split(cue_end,1)[0]
- replace_once('    h:TakeDamage(damage)\\n    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\\n',
+ replace_once('    h:TakeDamage(damage)\n    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n',
   new_hit,"REAL_KO_CUE")
  replace_once('local travel=math.min(NEUTRAL_SPEED*.38,best)',
-  'local actualSpeed=tonumber(m:GetAttribute("EGGRUMBLE_NeutralSpeed")) or NEUTRAL_SPEED\\n       local travel=math.min(actualSpeed*.38,best)',"SWARM_PERSONALITY_SPEED")
+  'local actualSpeed=tonumber(m:GetAttribute("EGGRUMBLE_NeutralSpeed")) or NEUTRAL_SPEED\n       local travel=math.min(actualSpeed*.38,best)',"SWARM_PERSONALITY_SPEED")
  if original.count('h:TakeDamage(damage)')!=1 or original.count('function Swarm.start(session:any)')!=1:
   raise ValueError("RED_DUPLICATE_DAMAGE_OR_SWARM")
  for keep in ("KoFence.mayCredit(session,id,m,all)","neutralBudget:acquire","SpawnPacing.step","EncounterFair","Melee"):
@@ -98,12 +98,12 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
   raise ValueError("RED_NEW_REMOTE_STORE_OWNER")
  if "assert(RunService:IsStudio()" not in source or "lineOfSightToNeutral(origin,attacker,model)" not in source:
   raise ValueError("RED_REMOVED_AUTH_GUARD")
- if git_blob(new_swarm_path.read_bytes())==ORIGINAL_SWARM_BLOB:
+ if git_blob(source.encode("utf-8"))==ORIGINAL_SWARM_BLOB:
   raise ValueError("RED_NO_ACTUAL_GAMEPLAY_EDIT")
 
  out.parent.mkdir(parents=True,exist_ok=True)
  new_swarm_path=out.parent/"EGGRUMBLE_SwarmCombat_Real43.luau"
- new_swarm_path.write_text(source,encoding="utf-8",newline="\\n")
+ new_swarm_path.write_text(source,encoding="utf-8",newline="\n")
  new=copy.deepcopy(doc)
  def relink(node,key=()):
   for name,item in node.items():
