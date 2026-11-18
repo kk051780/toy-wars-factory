@@ -6,11 +6,18 @@ from __future__ import annotations
 import argparse, copy, hashlib, json, os, re
 from pathlib import Path
 
+# Verified source lineage: #796 weather Guardian42, same-head run 44319450066.
+WEATHER42_RUN=44319450066
+WEATHER42_PLACE_SHA256="ecb52ec035f0013d6fd9e19c599bce5fb0f272037e7e091346e3dc38523417d1"
 ORIGINAL_SWARM_BLOB="dd6b5f695310d425a661e8e5c8c1a1f1d185a7f6"
 AUTHOR_FINISHER_BLOB="42f512c4aaa389e0027be774c327e1f5a106aabf"
 SWARM=("ServerScriptService","EGGRUMBLE_SwarmCombat")
 FINISHER=("ServerScriptService","EGGRUMBLE_NeutralFinisherPolicy")
 CASTLE=("ServerScriptService","EGGRUMBLE_CastleMatchRules")
+WEATHER_ROUTES={
+ ("ServerScriptService","EGGRUMBLE_RealmBattleCore"),
+ ("ServerScriptService","GQ802_StageTileVisualRenderer"),
+}
 
 def git_blob(data:bytes)->str:
  return hashlib.sha1(("blob %d"%len(data)).encode()+bytes([0])+data).hexdigest()
@@ -87,7 +94,7 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
  out=Path(out).resolve()
  if out.exists():raise ValueError("RED_REFUSE_OVERWRITE")
  doc,before=flatten(before_project)
- if len(before)!=42 or SWARM not in before or FINISHER in before or CASTLE not in before:
+ if len(before)!=42 or SWARM not in before or FINISHER in before or CASTLE not in before or not WEATHER_ROUTES.issubset(before):
   raise ValueError("RED_NOT_REAL42_SINGLE_SWARM_SOURCE")
  if git_blob(before[SWARM].read_bytes())!=ORIGINAL_SWARM_BLOB:
   raise ValueError("RED_ORIGINAL_SWARM_WRITER_CHANGED_REBASE_REQUIRED")
@@ -139,13 +146,17 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
   "new_original_author_source":["/".join(FINISHER)],
   "remaining_original42_byte_exact":41,
   "original_real42_swarm_blob":ORIGINAL_SWARM_BLOB,
+  "parent_weather42_run":WEATHER42_RUN,
+  "parent_weather42_place_sha256":WEATHER42_PLACE_SHA256,
+  "weather_and_stage_renderer_exact":all(
+      after[route].read_bytes()==before[route].read_bytes() for route in WEATHER_ROUTES),
   "preserved_author_policies":["KoFence","Melee","SpawnPacing","EncounterFair","neutralBudget"],
   "upstream_801_policy_blob":AUTHOR_FINISHER_BLOB,
   "real_sieges_and_guardians_preserved":True,
   "single_swarm_and_single_hp_ko_owner":True,
   "official_rc_adopted":False,"studio_2client":"NOT_TESTED",
   "android":"NOT_TESTED","art_fun":"NO_GO",
-  "rollback":"Exact original Real42 portable original; no independent new Swarm instance"}
+  "rollback":"Restore exact #796 seeded-weather Guardian42 42-source packet from run44319450066; never revert to old pre-weather Guardian42."}
  out.with_suffix(".receipt.json").write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
  print("GQ800_ORIGINAL_REAL42_TO43_SINGLE_SWARM_NATIVE_ROJO_SELECT_READY")
  return receipt
