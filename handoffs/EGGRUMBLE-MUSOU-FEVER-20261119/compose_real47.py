@@ -110,7 +110,10 @@ def patch_swarm(s):
  s=only(s,indent+"releaseCharmed(m)",
   indent+"local wasCharmed=charmedByModel[m]~=nil\n"+indent+"releaseCharmed(m)",
   "ONE_DEATH_CONVERSION_FENCE")
- s=only(s,"     credit(id)","""     credit(id)
+ credit_matches=re.findall(r"(?m)^([ \\t]*)credit\\(id\\)[ \\t]*$",s)
+ if len(credit_matches)!=1:raise ValueError("RED_KO_CREDIT_ANCHOR_"+str(len(credit_matches)))
+ credit_indent=credit_matches[0]
+ s=only(s,credit_indent+"credit(id)","""     credit(id)
      -- The genuine existing KoFence just accepted this single death and score.
      -- No synthetic KO or duplicate scoring; the neutralId is session-unique.
      if attacker and not wasCharmed then
@@ -122,7 +125,7 @@ def patch_swarm(s):
        targetKind="NEUTRAL",isSummoned=false,isConverted=false,
       })
       if ok then musouReflect(attacker) end
-     end""","KO_FENCE_AFTER_CREDIT")
+     end""".replace("     credit(id)",credit_indent+"credit(id)",1),"KO_FENCE_AFTER_CREDIT")
  s=only(s,
   'return strike(tostring(player.UserId),at,radius,damage*bonus,',
   'local power=Musou.attackMultiplier(musouRound,musouContext(player,os.clock()),"NEUTRAL")\n   return strike(tostring(player.UserId),at,radius,damage*bonus*power,',
