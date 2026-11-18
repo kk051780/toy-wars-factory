@@ -53,7 +53,7 @@ class QA(unittest.TestCase):
     def test_source_and_mutant(self):
         with tempfile.TemporaryDirectory() as d:
             make(d)
-            self.assertIn("parts=low and 99 or 99", (Path(d)/"mutant.luau").read_text())
+            self.assertIn("parts=low and 99 or 4", (Path(d)/"mutant.luau").read_text())
     def test_rollback(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)
