@@ -48,8 +48,8 @@ def main():
     original=SOURCE.read_text(encoding="utf-8")
     assert original.rstrip().endswith("return Visual"), "RED_SOURCE_TAIL_CHANGED"
     assert original.count("return Visual")==1, "RED_SOURCE_TERM_AMBIGUOUS"
-    code_lines="\\n".join(line for line in original.splitlines() if not line.lstrip().startswith("--"))
-    assert not any(word in code_lines for word in ["TakeDamage(", "Instance.new(\\"RemoteEvent\\")", "DataStoreService", ".Health=", "GetAsync(", "SetAsync("]), "RED_DAMAGE_AUTHORITY_INTRUSION"
+    code_lines = "\n".join(line for line in original.splitlines() if not line.lstrip().startswith("--"))
+    assert not any(word in code_lines for word in ["TakeDamage(", "RemoteEvent.new(", "DataStoreService", ".Health=", "GetAsync(", "SetAsync("]), "RED_DAMAGE_AUTHORITY_INTRUSION"
     body=original.rsplit("return Visual",1)[0]
     (out/"good.luau").write_text(body+APPEND,encoding="utf-8")
     assert "local MAX_ACTIVE=8" in body
