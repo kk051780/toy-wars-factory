@@ -26,6 +26,7 @@ function http:GenerateGUID(_dash:any):string
  return string.format("%08x-1234-1234-1234-123456789abc",self.counter)
 end
 local map={saved={}}
+function map:GetAsync(key:any):any return self.saved[key] end
 function map:UpdateAsync(key:any,fn:any,ttl:any):any
  assert(ttl>=180)
  local nextValue=fn(self.saved[key])
@@ -53,6 +54,24 @@ assert(started.status=="TELEPORT_INITIATED" and started.players==8)
 assert(started.seed>0 and #requests==1)
 assert(map.saved["m:"..started.matchId].reservedServerId==started.matchId)
 assert(bridge:dispatch(p,5,102030).reason=="ALREADY_DISPATCHING")
+local validData={version=M.VERSION,matchId=started.matchId,epoch=5,
+ seed=started.seed,mode="TEAM",joinDataTrusted=false}
+local checked=M.verifyArrival(validData,1,map,started.matchId,1001)
+assert(checked.accepted and checked.source=="SERVER_MEMORYSTORE_ONLY")
+assert(checked.teamA[1]==1 and checked.teamB[1]==5)
+assert(M.verifyArrival(validData,16,map,started.matchId,1001).reason=="NOT_IN_SERVER_ROSTER")
+assert(M.verifyArrival(validData,1,map,"ANOTHER_SERVER",1001).reason=="INVALID_OR_WRONG_RESERVED_SERVER")
+assert(M.verifyArrival(validData,1,map,started.matchId,1181).reason=="MISSING_OR_EXPIRED_SERVER_TICKET")
+validData.seed=12
+assert(not M.verifyArrival(validData,1,map,started.matchId,1001).accepted)
+validData.seed=started.seed
+local source=map.saved["m:"..started.matchId]
+source.players[2]=source.players[1]
+assert(M.verifyArrival(validData,1,map,started.matchId,1001).reason=="INVALID_SERVER_ROSTER")
+source.players[2]=2
+source.stat="EXPIRED"
+assert(not M.verifyArrival(validData,1,map,started.matchId,1001).accepted)
+source.stat="RESERVED"
 local retry=bridge:teleportFailed(roster[1])
 assert(retry.status=="RETRY_INITIATED" and retry.attempt==1)
 assert(requests[2].id==requests[1].id and requests[2].seed==requests[1].seed)
@@ -90,7 +109,13 @@ assert(second:teleportFailed(roster[1]).status=="IGNORED")
 local brPlan={status="MATCH_READY",mode="BR",region="JP",size=8,
  requiresAuthoritativeQueueClaim=true,teleportAuthorizedHere=false,
  teamAssignmentDisabled=true,teamA={1,2,3,4},teamB={5,6,7,8}}
-assert(second:dispatch(brPlan,9,102030).status=="TELEPORT_INITIATED")
+local startedBR=second:dispatch(brPlan,9,102030)
+assert(startedBR.status=="TELEPORT_INITIATED")
+local brData={version=M.VERSION,matchId=startedBR.matchId,epoch=9,
+ seed=startedBR.seed,mode="BR",joinDataTrusted=false}
+local validBR=M.verifyArrival(brData,1,map,startedBR.matchId,1192)
+assert(validBR.accepted and validBR.freeForAll)
+assert(validBR.teamA==nil and validBR.teamB==nil)
 brPlan.teamAssignmentDisabled=nil
 assert(second:dispatch(brPlan,10,102030).reason=="INVALID_PLAN_OR_DESTINATION")
 print("GQ802_MATCH_ROUTE_NATIVE_LIVE_SERVICE_BOUNDARY_GUID_CLAIM_RETRY_FAILSAFE_PASS")
