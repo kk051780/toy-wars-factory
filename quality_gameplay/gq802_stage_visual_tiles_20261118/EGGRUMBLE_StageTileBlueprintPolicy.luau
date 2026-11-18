@@ -61,7 +61,7 @@ function M.plan(manifest:any,stagePolicy:any):(any,string?)
   local details={
     part("TileFloorArt","Block",0,0.06,0,48,0.12,48,primary,0.52),
     part("RelicPedestal","Block",0,0.85,0,10,1.7,10,primary,0.1),
-    part("RelicMonument",silhouette=="DOME" or silhouette=="SPHERE" and "Ball" or
+    part("RelicMonument",silhouette=="DOME" and "Ball" or silhouette=="SPHERE" and "Ball" or
        silhouette=="RING" and "Cylinder" or "Block",0,height/2+1.8,0,
        silhouette=="STEP" and 12 or 7,height,7,accent,0.20),
     part("LeftTrailMark","Block",-18,0.18,0,3,0.20,15,accent,0.42),
