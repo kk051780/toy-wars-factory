@@ -73,6 +73,13 @@ mapToggle.BackgroundTransparency=1
 mapToggle.Size=UDim2.fromScale(1,1)
 mapToggle.ZIndex=10
 local mapExpanded=false
+local refreshMapLayout=function() end
+local layerButton=button("MapLayer",mapBox,"陸/海/空")
+layerButton.Size=UDim2.fromOffset(66,20)
+layerButton.AnchorPoint=Vector2.new(1,0)
+layerButton.Position=UDim2.new(1,-4,0,1)
+layerButton.Visible=false
+layerButton.ZIndex=12
 local activeLayer="LAND"
 local mapSnapshot=nil
 local tilePool={}
@@ -129,8 +136,8 @@ local function redraw()
  local span=mapExpanded and 960 or 640
  local cx,cz=s.x,s.z
  local count=0
- local nx=math.min(18,math.max(7,math.floor(width/12)))
- local nz=math.min(13,math.max(7,math.floor(height/12)))
+ local nx=math.min(12,math.max(7,math.floor(width/12)))
+ local nz=math.min(10,math.max(7,math.floor(height/12)))
  for ix=1,nx do
   for iz=1,nz do
    count+=1
@@ -307,20 +314,23 @@ actions.INVUL.Activated:Connect(function()
  end
 end)
 mapToggle.Activated:Connect(function()
- if not mapExpanded then mapExpanded=true;closeDrawer()
- else
-  local nextLayer=if activeLayer=="LAND" then "SEA"
-    elseif activeLayer=="SEA" then "SKY" else "LAND"
-  if nextLayer=="LAND" then mapExpanded=false end
-  activeLayer=nextLayer
- end
+ mapExpanded=not mapExpanded
+ if mapExpanded then closeDrawer() end
+ layerButton.Visible=mapExpanded
+ refreshMapLayout()
+ redraw()
+end)
+layerButton.Activated:Connect(function()
+ activeLayer=if activeLayer=="LAND" then "SEA"
+   elseif activeLayer=="SEA" then "SKY" else "LAND"
  redraw()
 end)
 remote.OnClientEvent:Connect(function(s)
  if type(s)~="table" or s.version~=1 then return end
  if s.kind=="MAP_RESET" then
   mapSnapshot=nil;mapExpanded=false;activeLayer="LAND"
-  closeDrawer();redraw()
+  layerButton.Visible=false
+  closeDrawer();refreshMapLayout();redraw()
   return
  end
  if s.kind~="MAP_INTEL" then return end
@@ -349,8 +359,13 @@ local function updateLayout()
   end
  end
  local mx=p.MAP.x
- mapBox.Size=UDim2.fromOffset(p.MAP.size,p.MAP.size)
- mapBox.Position=UDim2.fromOffset(math.max(5,mx-p.MAP.size/2),8)
+ if mapExpanded then
+  mapBox.Size=UDim2.fromOffset(math.floor(math.min(w*.43,340)),math.floor(math.min(h*.66,285)))
+  mapBox.Position=UDim2.fromOffset(9,math.max(8,math.floor(h*.12)))
+ else
+  mapBox.Size=UDim2.fromOffset(p.MAP.size,p.MAP.size)
+  mapBox.Position=UDim2.fromOffset(math.max(5,mx-p.MAP.size/2),8)
+ end
  statusBox.Position=UDim2.new(.19,0,0,9)
  statusBox.Size=UDim2.new(.51,0,0,27)
  progress.Position=UDim2.new(.31,0,0,37)
@@ -358,6 +373,10 @@ local function updateLayout()
  drawer.Size=UDim2.fromOffset(math.min(178,w*.23),170)
  drawer.Position=UDim2.fromOffset(math.max(w-195,w*.72),math.min(h*.35,147))
  redraw()
+end
+refreshMapLayout=function()
+ lastW=-1
+ updateLayout()
 end
 local elapsed=0
 RunService.RenderStepped:Connect(function(dt)
