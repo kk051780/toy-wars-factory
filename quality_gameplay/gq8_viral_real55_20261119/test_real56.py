@@ -45,7 +45,7 @@ def check(parent,candidate):
         src.replace('session.world.Name=mode.."_Arena";session.world.Parent=folder','-- removed',1),
         src.replace('if c.alive and c.heldEggs>0 then','if c.alive and false then',1),
         src.replace('pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1,entry.id) end)','-- removed',1),
-        src.replace('if session.rules.winner~=nil then\n    -- Short factual result shown exactly once','-- removed',1),
+        src.replace('if session.rules.winner~=nil then','if session.rules.winner==nil then',1),
     ]
     for i,bad in enumerate(mutants):
         assert bad!=src,"RED_UNAVAILABLE_MUTATION_"+str(i)
