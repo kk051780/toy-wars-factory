@@ -1,0 +1,49 @@
+{
+  "schema": "P0D_GQ828_REAL60_SINGLE_COMBAT_CORE_ACTION_V1",
+  "feature_id": "GQ828_BASIC_DODGE_REAL60_20261119",
+  "owner_issue": 828,
+  "official_branch": "rc/p0d-s1-kids-rc01",
+  "official_parent_sha": "38d11f0bf311491ba76fe03f818948e5d4b06889",
+  "official_parent_profile": "eggrumble_v3_real59",
+  "parent_success_run": 44401178585,
+  "parent_artifact_id": 14473365566,
+  "parent_artifact_name": "P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO",
+  "source_profile": "eggrumble_v3_real60_basic_dodge",
+  "parent_count": 59,
+  "target_count": 60,
+  "source_locks": {
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/EGGRUMBLE_BasicMobilityPolicy.luau": "bfd2ec6be067fe18b7675463bd6e1ca365b8ddf2",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real60.py": "38a5d4b7444087dcf51988452e2f4464cef10d97",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py": "c0ff3d6e9f23d6ea2b753494262ccd04d922469d"
+  },
+  "modified_original_routes": [
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+  ],
+  "new_route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+  "preserve_original_unchanged_count": 57,
+  "invariants": {
+    "single_combat_owner": true,
+    "no_new_direct_take_damage": true,
+    "no_second_swarm_or_host": true,
+    "no_new_remote": true,
+    "forbid_unverified_egg_dodge": true,
+    "forbid_server_unowned_tool": true,
+    "robux_and_trade_enabled": false,
+    "no_roblox_publish": true,
+    "no_main_writes": true,
+    "mobile_semantics": "native jump + true basic ATTACK + actual grounded DODGE + separate selected A/B/C on context anchor",
+    "source_rollback": "Original exact 59 source selection OFF59"
+  },
+  "acceptance": {
+    "candidate_native_rojo_off59_run": 44403176104,
+    "expected_candidate_place_bytes": 639726,
+    "official_rc_adopted": false,
+    "studio_2client": "NOT_TESTED",
+    "android15min": "NOT_TESTED",
+    "art": "NO_GO",
+    "fun": "NO_GO"
+  },
+  "workflow": ".github/workflows/p0d-rc-eggrumble-v3-real60-basic-dodge.yml",
+  "notes": "Do not mark RC_INTEGRATED until authenticated B writer nonforce CAS and exact new official HEAD formal CI success. If official branch changed reconcile latest before CAS."
+}
