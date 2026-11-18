@@ -1,0 +1,96 @@
+name: GQ8 Official Real59 P0 Host AutoStart Source and Rollback
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - '.github/workflows/gq8-host-autostart-real59.yml'
+      - 'quality_gameplay/gq8_host_activation_20261119/**'
+  push:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - '.github/workflows/gq8-host-autostart-real59.yml'
+      - 'quality_gameplay/gq8_host_activation_20261119/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  official59-host-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify latest official RC and actual successful Real59 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED=38d11f0bf311491ba76fe03f818948e5d4b06889
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$LIVE" = "$EXPECTED" || { echo RED_MOVING_RC_RECONCILE_NEWEST; exit 1; }
+          else
+            test "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" && test "$LIVE" = "$GITHUB_SHA" || { echo RED_NOT_FRESH_FORMAL_RC_HEAD; exit 1; }
+          fi
+          SOURCE="$(gh run view 44401178585 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$SOURCE" = "$EXPECTED success" || { echo RED_REAL59_SOURCE_NO_PROOF; exit 1; }
+          mkdir -p artifacts/official59
+          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/official59
+          test -s artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+      - name: Reproduce the P0 on official Place and reconstruct exact 59 selected source bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=quality_gameplay/gq8_host_activation_20261119
+          python3 "$D/test_real59.py"
+          python3 "$D/repair_real59.py" --base artifacts/official59 --out artifacts/active59
+      - name: Build true host Script ON59 and identical original OFF59 using pinned Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-host-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-host-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq8-host-rojo.zip') as z:
+            matches=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+            assert len(matches)==1
+            p=Path('/tmp/gq8-rojo');p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-rojo build artifacts/active59/EGGRUMBLE_REAL59_HOST_ACTIVE.project.json -o artifacts/active59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
+          python3 quality_gameplay/gq8_host_activation_20261119/repair_real59.py --verify artifacts/active59/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
+          /tmp/gq8-rojo build artifacts/active59/OFF59.project.json -o artifacts/active59/OFF59.rbxlx
+          cmp artifacts/active59/OFF59.rbxlx artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_host_activation_20261119/repair_real59.py --verify artifacts/active59/OFF59.rbxlx --original
+          END_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$END_HEAD" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_FORMAL_PARENT_MOVED_DURING_PR; exit 1; }
+          else
+            test "$END_HEAD" = "$GITHUB_SHA" || { echo RED_NEW_FORMAL_HEAD_CHANGED_DURING_TEST; exit 1; }
+          fi
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path("artifacts/active59/HOST_ACTIVE_RECEIPT.json")
+          r=json.loads(p.read_text())
+          r["tested_commit"]=os.environ["GITHUB_SHA"]
+          r["source_selected_in_formal_rc_branch"]=(
+            os.environ["GITHUB_EVENT_NAME"]=="push" and
+            os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01")
+          r["studio_solo"]="NOT_TESTED"
+          r["studio_two_client"]="NOT_TESTED"
+          r["android"]="NOT_TESTED"
+          r["product_acceptance"]="NO_GO"
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+"\n")
+          PY
+          echo GQ8_REAL59_P0_HOST_ACTIVE_SOURCE59_AND_OFF59_ROJO_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL
+          path: artifacts/active59/
+          retention-days: 5
+          if-no-files-found: error
