@@ -196,11 +196,6 @@ def patch_swarm(source:str)->str:
     end
     for model in pairs(charmed) do releaseCharm(model) end
   end)""","EXPIRE_SESSION")
-    if source.count(needle)!=2:
-        raise ValueError("RED_EXPECT_TWO_ORIGINAL_SWARM_LOOPS")
-    pos=source.find(needle,source.find(needle)+len(needle))
-    source=source[:pos]+needle.replace("    local candidates=aliveTargets()",
-        "    expireCharms()\n    local candidates=aliveTargets()")+source[pos+len(needle):]
     if source.count("function Swarm.start(session:any)")!=1 or source.count("local function charmedNeutralAttack(")!=1:
         raise ValueError("RED_DUPLICATE_CONTROLLER")
     if any(v in source for v in ("DataStoreService","MarketplaceService","RemoteEvent")):
