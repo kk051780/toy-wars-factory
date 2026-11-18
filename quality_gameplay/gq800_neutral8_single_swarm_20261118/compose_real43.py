@@ -39,7 +39,7 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
   if count!=1:raise ValueError("RED_"+label+"_ANCHOR_"+str(count))
   original=original.replace(old,new,1)
  require='local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))'
- replace_once(require,require+'\nlocal NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',"FINISHER_POLICY_REQUIRE")
+ replace_once(require,require+'\nlocal TweenService=game:GetService("TweenService")\nlocal NeutralFinisherPolicy=require(script.Parent:WaitForChild("EGGRUMBLE_NeutralFinisherPolicy"))',"FINISHER_POLICY_REQUIRE")
  start='-- Original #482 Swarm remains the ONLY neutral spawner/HP/KO authority.'
  end='local SWARM_RANGE=240'
  if candidate.count(start)!=1 or candidate.count(end)!=1:raise ValueError("RED_CANDIDATE_PALETTE")
