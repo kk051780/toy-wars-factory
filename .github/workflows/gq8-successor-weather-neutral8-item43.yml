@@ -137,7 +137,12 @@ jobs:
           s=tree_scripts(ET.parse('artifacts/item43/ITEM43.rbxlx').getroot())
           assert set(n)-set(w)=={('ServerScriptService','EGGRUMBLE_NeutralFinisherPolicy')}
           assert {r for r in w if w[r]!=n[r]}=={('ServerScriptService','EGGRUMBLE_SwarmCombat')}
-          assert {r for r in n if n[r]!=s[r]}=={('ServerScriptService','EGGRUMBLE_FieldItemPickups')}
+          import json
+          receipt=json.loads(Path('artifacts/item43/INTEGRATED_ITEM43_RECEIPT.json').read_text())
+          expected={tuple(route.split('/')) for route in receipt['changed_existing']}
+          assert {r for r in n if n[r]!=s[r]}==expected
+          assert receipt['item_already_present_in_weather42'] and not expected
+          print("GQ8_ALREADY_SELECTED_ITEM_PREVENT_DUPLICATE_PATCH_PASS")
           assert len(w)==42 and len(n)==len(s)==43
           print("GQ8_REAL42_TO_NEUTRAL43_TO_ITEM43_EXACT_ROUTE_CLASS_DIFF_PASS")
           PY
