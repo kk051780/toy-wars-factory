@@ -15,9 +15,12 @@ jobs:
     timeout-minutes: 28
     env:
       GH_TOKEN: ${{ github.token }}
+      CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
-        with: {persist-credentials: false}
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
@@ -102,7 +105,7 @@ jobs:
           p=Path("artifacts/real44/REAL44.rbxlx")
           receipt=Path("artifacts/real44/REAL44_RECEIPT.json")
           d=json.loads(receipt.read_text())
-          d.update({"candidate_head":os.environ["GITHUB_SHA"],"on_native":True,
+          d.update({"candidate_head":os.environ["CANDIDATE_HEAD"],"on_native":True,
             "rojo_exact_source_class":True,"off43_byte_exact":True,
             "place_bytes":p.stat().st_size,"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
           receipt.write_text(json.dumps(d,indent=2)+"\n")
