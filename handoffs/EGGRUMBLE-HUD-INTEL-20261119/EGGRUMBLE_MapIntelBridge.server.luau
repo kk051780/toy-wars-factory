@@ -6,6 +6,8 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local RunService=game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Intel=require(script.Parent:WaitForChild("EGGRUMBLE_MapVisibilityPolicy"))
+-- Read-only existing V2 policy ledger; this does not create another damage owner.
+local InvulRuntime=require(script.Parent:WaitForChild("EGGRUMBLE_InvulRuntime"))
 local NAME="EGGRUMBLE_MapIntelUpdate_V1"
 local remote=ReplicatedStorage:FindFirstChild(NAME)
 assert(remote==nil,"RED_DUPLICATE_MAP_REMOTE_OWNER")
@@ -259,6 +261,16 @@ local function send(p)
  for key,value in pairs(s.explored) do
   if value and #explored<MAX_VISIBLE_CELLS then table.insert(explored,key) end
  end
+ -- Direct original authoritative V2 snapshot corrects stale ARMED player attrs
+ -- after expiry without modifying the original Combat/Invul damage ownership.
+ local realDefense=InvulRuntime.currentPolicySnapshot(p)
+ local phase=realDefense.phase
+ if phase~="ARMED" and phase~="AWAKENED" then phase="NONE" end
+ local remain=tonumber(realDefense.remaining) or 0
+ remain=math.min(12,math.max(0,remain))
+ local defense={phase=phase,remaining=remain,
+   spent=type(realDefense.spent)=="number" and realDefense.spent or 0,
+   role=viewer.role}
  local bounds=arena:FindFirstChild("TacticalBattlefield")
  local terrain=nil
  if bounds and bounds:IsA("BasePart") then
@@ -268,7 +280,7 @@ local function send(p)
  remote:FireClient(p,{
    kind="MAP_INTEL",version=1,mode=mode,role=viewer.role,
    layer=layer,cell=Intel.CELL,terrain=terrain,
-   ownCastle=home.id,scanActive=viewer.pulse~=nil,
+   ownCastle=home.id,scanActive=viewer.pulse~=nil,defense=defense,
    x=x,z=z,explored=explored,markers=public,serverTick=workspace:GetServerTimeNow(),
   })
 end
