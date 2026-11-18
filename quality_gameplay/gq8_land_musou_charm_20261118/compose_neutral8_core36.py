@@ -67,6 +67,10 @@ VISUAL=String = """
 """
 
 def transform(src:str)->str:
+    # Detect second application before structural source pin checks.
+    if any(marker in src for marker in ("EGGRUMBLE_NeutralId","NEUTRAL_VISUALS",
+                                      "GQ800_NEUTRAL8_REAL_ACTOR")):
+        raise ValueError("RED_DUPLICATE_NEUTRAL8_BRIDGE")
     needles={
         "local function soldier(parent:Instance,at:Vector3):Model":1,
         " m.PrimaryPart=root\n":1,
