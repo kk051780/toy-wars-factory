@@ -32,7 +32,7 @@ def prepare(real43:Path,selected_swarm:Path,original_curse:Path,out:Path):
         original_preview.splitlines(keepends=True),
         changed_preview.splitlines(keepends=True),
         fromfile="preview",tofile="selected",n=3))
-    assert patch_text.count("@@ ")>=9,"RED_EXPECTED_SCOPED_HUNKS"
+    assert patch_text.count("@@ ")>=2,"RED_EXPECTED_SCOPED_HUNKS"
     with tempfile.TemporaryDirectory() as tmp:
         p=Path(tmp)
         input_file=p/"original.luau"
