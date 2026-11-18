@@ -339,7 +339,9 @@ end)
 actions.INVUL.Activated:Connect(function()
  if not mapSnapshot then return end
  local tool=counterTool()
- local phase=player:GetAttribute("EGGRUMBLE_InvulPhase")
+ local defense=mapSnapshot and mapSnapshot.defense
+ local phase=(type(defense)=="table" and defense.phase)
+  or player:GetAttribute("EGGRUMBLE_InvulPhase")
  if tool and phase~="ARMED" and phase~="AWAKENED" then
   closeDrawer();activate(tool)
  end
@@ -455,15 +457,24 @@ RunService.RenderStepped:Connect(function(dt)
  else
   actions.MUSOU.Text="無双 --"
  end
- local phaseI=player:GetAttribute("EGGRUMBLE_InvulPhase")
+ -- Current V2 server policy is delivered in the existing private map update;
+ -- unlike a stale Player attribute it returns to NONE when the 3s arm expires.
+ local defense=mapSnapshot and mapSnapshot.defense
+ local phaseI=if type(defense)=="table" then defense.phase
+   else player:GetAttribute("EGGRUMBLE_InvulPhase")
  local awakened=phaseI=="AWAKENED"
  local armed=phaseI=="ARMED"
- actions.INVUL.Text=if awakened then "無敵中"
-  elseif armed then "迎撃構え"
+ local remain=if type(defense)=="table" and type(defense.remaining)=="number"
+   then math.max(0,defense.remaining) else 0
+ actions.INVUL.Text=if awakened then string.format("無敵 %.0fs",remain)
+  elseif armed then string.format("迎撃 %.0fs",remain)
   elseif invul then "迎撃" else "迎撃 --"
  actions.MUSOU.BackgroundTransparency=verifiedM and .08 or .48
  actions.INVUL.BackgroundTransparency=(invul and not awakened and not armed)
   and .08 or .48
+ actions.INVUL.BackgroundColor3=if awakened then Color3.fromRGB(37,132,165)
+   elseif armed then Color3.fromRGB(122,97,158)
+   else Color3.fromRGB(43,65,84)
  -- A bar is only server-snapshot progress, not a client-forged READY timer.
  local charge=0
  if musou and type(readyIn)=="number" and readyIn>=0 then
