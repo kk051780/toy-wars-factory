@@ -110,7 +110,7 @@ def patch_swarm(s):
  s=only(s,indent+"releaseCharmed(m)",
   indent+"local wasCharmed=charmedByModel[m]~=nil\n"+indent+"releaseCharmed(m)",
   "ONE_DEATH_CONVERSION_FENCE")
- credit_matches=re.findall(r"(?m)^([ \\t]*)credit\\(id\\)[ \\t]*$",s)
+ credit_matches=re.findall(r"(?m)^([ \t]*)credit\(id\)[ \t]*$",s)
  if len(credit_matches)!=1:raise ValueError("RED_KO_CREDIT_ANCHOR_"+str(len(credit_matches)))
  credit_indent=credit_matches[0]
  s=only(s,credit_indent+"credit(id)","""     credit(id)
