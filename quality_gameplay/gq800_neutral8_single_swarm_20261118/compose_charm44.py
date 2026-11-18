@@ -197,7 +197,16 @@ def patch(source:str)->str:
         ray.RespectCanCollide=true
         if not workspace:Raycast(root.Position+Vector3.new(0,1,0),step,ray) then
          local next=root.Position+step
-         model:PivotTo(CFrame.lookAt(next,next+delta.Unit))
+         -- Same #819 ground safety as unconverted neutrals; never ghost/float across void.
+         local scale=(root.Size.Y/2.5)
+         local ground=workspace:Raycast(next+Vector3.new(0,3,0),Vector3.new(0,-8,0),ray)
+         if ground and ground.Normal.Y>=.72 then
+          local desiredY=ground.Position.Y+2*scale
+          if math.abs(desiredY-root.Position.Y)<=1.4 then
+           local grounded=Vector3.new(next.X,desiredY,next.Z)
+           model:PivotTo(CFrame.lookAt(grounded,grounded+delta.Unit))
+          end
+         end
         end
        end
        if now-(lastCharmAttack[model] or -100)>=1.2 then
