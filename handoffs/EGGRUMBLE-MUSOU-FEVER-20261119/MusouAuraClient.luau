@@ -28,6 +28,11 @@ local function validSnapshot(s)
   and type(s.remaining)=="number" and s.remaining==s.remaining and s.remaining>0
 end
 local function clean(character)
+ local head=character:FindFirstChild("Head")
+ if head then
+  local origin=head:FindFirstChild("MusouAuraOrigin")
+  if origin then origin:Destroy() end
+ end
  local old=character:FindFirstChild(FOLDER)
  if old then old:Destroy() end
 end
@@ -87,8 +92,6 @@ function M.start(character,snapshot)
  local a=Instance.new("Attachment")
  a.Name="MusouAuraOrigin"
  a.Parent=head
- a.Parent=folder
- a.Parent=head
  local particles=Instance.new("ParticleEmitter")
  particles.Name="RoleAura"
  particles.Texture="rbxasset://textures/particles/sparkles_main.dds"
@@ -118,14 +121,7 @@ function M.update(character,snapshot)
  if not RunService:IsClient() or not character then return end
  local folder=character:FindFirstChild(FOLDER)
  if not validSnapshot(snapshot) then
-  if folder then
-   local head=character:FindFirstChild("Head")
-   if head then
-    local a=head:FindFirstChild("MusouAuraOrigin")
-    if a then a:Destroy() end
-   end
-   folder:Destroy()
-  end
+  if folder then clean(character) end
   return
  end
  if not folder or folder:GetAttribute("RoleId")~=snapshot.role then
