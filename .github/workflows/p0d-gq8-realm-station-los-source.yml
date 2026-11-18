@@ -92,20 +92,15 @@ jobs:
               root=ET.parse(v+'.rbxlx').getroot()
               scripts=[x for x in root.iter('Item') if x.attrib.get('class')=='Script']
               assert len(scripts)==1,(v,len(scripts))
-              sources=[x.text or '' for x in scripts[0].iter('ProtectedString')
-                       if x.attrib.get('name')=='Source']
+              # Match the canonical V3 verifier: Rojo 7.7.1 can emit
+              # Source as <string> while an empty ProtectedString also exists.
+              props=scripts[0].find('Properties')
+              assert props is not None,v
+              source=props.findtext("string[@name='Source']")
+              if source is None:
+                  source=props.findtext("ProtectedString[@name='Source']")
               raw=Path(v+'/RealmStationLOS.server.luau').read_text()
-              if not (len(sources)==1 and sources[0]==raw):
-                  import hashlib
-                  from itertools import zip_longest
-                  source=sources[0] if sources else ''
-                  mismatch=next((i for i,(a,b) in enumerate(zip_longest(source,raw))
-                                 if a!=b),-1)
-                  print('ROJO_EXACT_SOURCE_MISMATCH',v,'source_len',len(source),
-                        'raw_len',len(raw),'first_diff',mismatch,
-                        'source_around',repr(source[max(0,mismatch-30):mismatch+70]),
-                        'raw_around',repr(raw[max(0,mismatch-30):mismatch+70]))
-                  raise AssertionError(v)
+              assert source is not None and source.replace("\r\n","\n")==raw,v
           print('GQ8_REALM_STATION_LOS_ROJO_SOURCE_CLASS_ON_OFF_PASS')
           PY
       - uses: actions/upload-artifact@v4
