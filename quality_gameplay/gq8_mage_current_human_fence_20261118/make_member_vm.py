@@ -41,7 +41,7 @@ def write_cases(patched_source:Path,original_harness:Path,out:Path):
  text=text.replace(before,after,1)
  out.mkdir(parents=True,exist_ok=True)
  for name,variant in (("good",body),
-   ("target_mutant",body.replace(CURRENT_GUARD,CURRENT_MARK,1)),
+   ("target_mutant",body.replace(CURRENT_GUARD,CURRENT_MARK,1).replace(" or not s.isCurrentHuman(target)","",1)),
    ("healer_mutant",body.replace(ALLY_GUARD,ALLY_MARK,1))):
   (out/(name+".luau")).write_text(text.replace("__MODULE__",variant),encoding="utf-8")
  print("GQ8_MAGE_MEMBERSHIP_REAL_NATIVE_GOOD_AND_2_MUTANTS_EMITTED")
