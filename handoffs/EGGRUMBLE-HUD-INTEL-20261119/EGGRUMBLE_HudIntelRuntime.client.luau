@@ -296,7 +296,12 @@ for i,b in ipairs(choices) do
   local item=drawerOptions[i]
   if not item then return end
   if drawerType=="SKILL" then selectedSlot=item.id
-  elseif drawerType=="ITEM" then selectedItem=item.id end
+  elseif drawerType=="ITEM" then
+   selectedItem=item.id
+   -- Selecting an already-owned consumable performs its existing Tool action.
+   -- This never calls MarketplaceService, a store Remote or client damage.
+   activate(item.tool)
+  end
   closeDrawer()
  end)
 end
