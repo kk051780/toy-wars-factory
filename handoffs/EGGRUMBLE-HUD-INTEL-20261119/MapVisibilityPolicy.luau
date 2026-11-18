@@ -108,6 +108,10 @@ function M.project(viewer, markers, now)
                       or (viewer.role == "ZOMBIE" and validPulse(viewer, "CURSE_SENSE", now))) then
                     precision = "SECTOR"
                 end
+            elseif m.kind == "EGG" then
+                -- Objectives become visible only through actual server exploration,
+                -- never just because a client asked for them.
+                if explored then precision = "EXACT" end
             elseif m.kind == "RESOURCE" or m.kind == "DEVICE" then
                 if explored then precision = "EXACT"
                 elseif viewer.role == "BUILDER" and d <= 200
