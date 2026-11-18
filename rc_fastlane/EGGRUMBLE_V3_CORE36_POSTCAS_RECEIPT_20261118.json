@@ -1,0 +1,49 @@
+{
+  "schema": "P0D_GQ8_CORE36_POSTCAS_ADOPTION_RECEIPT_V1",
+  "feature_id": "GQ8_CORE36_VERIFIED_SOURCE_RECEIPT_20261118",
+  "scope": "HISTORICAL_FORMAL_PRIVATE_RC_SOURCE_ADOPTION_ONLY",
+  "formal_branch": "rc/p0d-s1-kids-rc01",
+  "observed_formal_rc_sha": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+  "previous_formal_rc_sha": "261b75d0a7093db5c13db3b95dad9a2911f78689",
+  "original_author_selection": {
+    "base_source_count": 31,
+    "selected_private_source_count": 36,
+    "added_realm_sources": 3,
+    "added_regen_sources": 2,
+    "singleton_host": true,
+    "singleton_combat": true,
+    "singleton_swarm": true
+  },
+  "source_qa": {
+    "same_head_native": "SUCCESS",
+    "same_head_rojo_source_class": "SUCCESS",
+    "off31": "SUCCESS",
+    "github_actions_run_id": 44232589275,
+    "github_actions_run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/44232589275",
+    "source_head_sha": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+    "reported_conclusion": "completed_success"
+  },
+  "artifact": {
+    "id": 14396515259,
+    "name": "P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-RC",
+    "type": "GITHUB_ACTIONS_ZIP",
+    "zip_size_in_bytes": 366128,
+    "studio_rbxlx_bytes": "UNKNOWN_NOT_MEASURED"
+  },
+  "owner_accepted": false,
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "art_quality": "NO_GO",
+  "human_fun": "NOT_TESTED",
+  "roblox_published": false,
+  "default_s1_profile": "rich51",
+  "frozen_original_core36_manifest_status": "CANDIDATE_PRIVATE_RC_SOURCE_SELECTION_PENDING_SAME_HEAD_CI",
+  "frozen_original_core36_acceptance": {
+    "same_head_source_compiler": "PENDING_CANDIDATE",
+    "same_head_rojo_source_class": "PENDING_CANDIDATE",
+    "off31": "PENDING_CANDIDATE",
+    "official_nonforce_expected_sha_cas": false
+  },
+  "note": "Original Core36 selector manifest records pre-CAS design state and remains byte exact. This append-only post-CAS receipt records subsequently verified historical adoption. For current adoption status, re-fetch live official ref and exact-head CI; this is not a future-head or engine certificate.",
+  "rollback": "Omit only this independent receipt and QA; original Core36 manifests and game code unaffected"
+}

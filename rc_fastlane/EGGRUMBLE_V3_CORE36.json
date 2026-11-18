@@ -75,30 +75,13 @@
     "roblox_data_store_changes"
   ],
   "acceptance": {
-    "same_head_source_compiler": "SUCCESS_AT_VERIFIED_HEAD",
-    "same_head_rojo_source_class": "SUCCESS_AT_VERIFIED_HEAD",
-    "off31": "SUCCESS_AT_VERIFIED_HEAD",
-    "official_nonforce_expected_sha_cas": true,
+    "same_head_source_compiler": "PENDING_CANDIDATE",
+    "same_head_rojo_source_class": "PENDING_CANDIDATE",
+    "off31": "PENDING_CANDIDATE",
+    "official_nonforce_expected_sha_cas": false,
     "studio_2client": "NOT_TESTED",
     "android_15min": "NOT_TESTED",
     "human_fun": "NOT_TESTED",
-    "owner_acceptance": false,
-    "same_head_receipt_is_historical": true
-  },
-  "verified_rc_source_receipt": {
-    "official_rc_head": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
-    "previous_rc_head": "261b75d0a7093db5c13db3b95dad9a2911f78689",
-    "source_count_on": 36,
-    "source_count_off": 31,
-    "official_workflow_run_id": 44232589275,
-    "official_workflow_conclusion": "success",
-    "official_workflow_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/44232589275",
-    "official_artifact_id": 14396515259,
-    "official_artifact_zip_bytes": 366128,
-    "artifact_is_zip_not_rbxlx": true,
-    "actual_studio_rbxlx_bytes": "UNKNOWN_NOT_MEASURED",
-    "adoption_scope": "PRIVATE_V3_SOURCE_ONLY",
-    "current_rc_head_must_be_rechecked": true,
-    "no_owner_fun_studio_android_acceptance": true
+    "owner_acceptance": false
   }
 }
