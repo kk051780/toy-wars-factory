@@ -178,21 +178,23 @@ def main():
         official = fetch_locked("official_lss")
         result = analyze(realm, candidate)
         official_analysis = analyze(realm, official)
-        # The genuinely selected Core36 at the pinned official ref uses the
-        # original Studio-only LSS blob, not the newer PR #772 25-second lease.
-        # A future source selection must not be silently conflated with #772.
+        # Core36 selects this original raw LSS as an INPUT, not as final emitted
+        # source: compose_core34.py promotes the raw Studio guard in the OUTPUT.
+        # The companion COMPOSED_REPORT tests the real composer independently.
+        # It is still correct that #772's 25-second idle lease is NOT selected.
         if official_analysis["status"] != "LIVE_VEHICLE_REACHABILITY_BLOCKED":
             raise ValueError("OFFICIAL_CORE36_LSS_REACHABILITY_UNEXPECTED_DRIFT_RED")
-        result["official_core36_lss"] = {
+        result["official_core36_raw_lss_input"] = {
             "official_rc_head": SOURCES["official_lss"]["head"],
             "selected_lss_blob": SOURCES["official_lss"]["blob"],
             "uses_candidate_772_blob": official == candidate,
-            "selected_lss_studio_only": official_analysis["studio_only_vehicle_factory"],
+            "raw_input_studio_guard": official_analysis["studio_only_vehicle_factory"],
             "selected_25s_idle_lease": "EMPTY_CRAFT_GRACE_SECONDS" in official,
             "candidate_772_25s_idle_lease": "EMPTY_CRAFT_GRACE_SECONDS" in candidate,
-            "selected_live_paths": official_analysis["live_non_studio_static_paths"],
-            "caution": "Do not label #772 idle lease as official Core36 adopted.",
+            "raw_input_paths_without_composition": official_analysis["live_non_studio_static_paths"],
+            "caution": "RAW input is not Core36 emitted runtime. See COMPOSED_REPORT.json; #772 idle lease not adopted.",
         }
+        result["scope"] = "RAW_OPTIONAL32_AND_RAW_CORE36_INPUT_ONLY_NOT_EMITTED_SOURCE"
         encoded = json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True)
         if args.out:
             p = Path(args.out)
