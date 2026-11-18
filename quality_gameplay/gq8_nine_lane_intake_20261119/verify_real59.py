@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-from verify_integrated_sources import flatten, source_class, ROUTES, SINGLE
+from verify_integrated_sources import ROUTES, SINGLE
 import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "handoffs/EGGRUMBLE-HUD-INTEL-20261119"))
@@ -40,8 +40,9 @@ def require(ok, code):
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
-def verify(project: Path, receipt: Path, off55: Path, expected_head: str):
-    files = flatten(project)
+def verify(place59: Path, receipt: Path, off55: Path, expected_head: str):
+    on_place, _ = contents(ET.parse(place59).getroot())
+    files = {'/'.join(route): (cls, source.encode('utf8')) for route, (cls, source) in on_place.items()}
     data = json.loads(receipt.read_text(encoding="utf8"))
     require(len(expected_head) == 40 and all(c in "0123456789abcdef" for c in expected_head),
             "INVALID_EXPECTED_HEAD")
@@ -80,12 +81,11 @@ def verify(project: Path, receipt: Path, off55: Path, expected_head: str):
     original_routes = {"/".join(key): value for key, value in original.items()}
     require(set(original_routes) == set(off), "OFF55_REAL_SOURCE_ROUTE_DRIFT")
     source_bytes_sum = 0
-    for route, path in files.items():
-        b = path.read_bytes()
+    for route, (actual_class, b) in files.items():
         item = on[route]
         require(item.get("sha256") == sha(b) and item.get("bytes") == len(b),
                 "ON59_SOURCE_HASH_" + route.replace("/", "_"))
-        require(item.get("class") == source_class(path),
+        require(item.get("class") == actual_class,
                 "ON59_SOURCE_CLASS_" + route.replace("/", "_"))
         source_bytes_sum += len(b)
         if route in original_routes:
@@ -94,7 +94,7 @@ def verify(project: Path, receipt: Path, off55: Path, expected_head: str):
             require(item == off[route] and original_class == item["class"] and
                     b == original_bytes, "OFF55_SOURCE_CHANGED_" + route.replace("/", "_"))
     for route, required_class in ADDED.items():
-        require(source_class(files[route]) == required_class,
+        require(files[route][0] == required_class,
                 "FOUR_ADDITIONS_CLASS_" + route.replace("/", "_"))
     for owner_route in SINGLE:
         require(sum(route == owner_route for route in files) == 1,
@@ -124,13 +124,13 @@ def verify(project: Path, receipt: Path, off55: Path, expected_head: str):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--project", type=Path, required=True)
+    ap.add_argument("--place59", type=Path, required=True)
     ap.add_argument("--receipt", type=Path, required=True)
     ap.add_argument("--off55", type=Path, required=True)
     ap.add_argument("--expected-head", required=True)
     ap.add_argument("--output", type=Path, required=True)
     args = ap.parse_args()
-    result = verify(args.project, args.receipt, args.off55, args.expected_head)
+    result = verify(args.place59, args.receipt, args.off55, args.expected_head)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf8")
     print("GQ8_FORMAL_REAL59_NINE_DOMAIN_SOURCE_EXACT_OFF55_PASS", result["source_count"])
