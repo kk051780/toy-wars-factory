@@ -1,0 +1,99 @@
+name: GQ8 Real53 formal admission rehearsal - immutable source Rojo OFF
+on:
+  push:
+    branches: [quality/gq8-real53-formal-intake-20261119]
+    paths:
+      - 'quality_gameplay/gq8_rc53_admission_20261119/**'
+      - '.github/workflows/gq8-real53-admission-rehearsal.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_rc53_admission_20261119/**'
+      - '.github/workflows/gq8-real53-admission-rehearsal.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verified-real53:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Current formal RC and verified immutable source
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || { echo RED_FORMAL_RC_MOVED; exit 1; }
+          RUN="$(gh run view 44390806767 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$RUN" = "96ac3b4caa2f649f98c9e093c864c39555f3616a success" || { echo RED_UPSTREAM_RUN_NOT_GREEN; exit 1; }
+          echo "FORMAL_RC_READBACK=$CURRENT" >> "$GITHUB_ENV"
+          mkdir -p artifacts/real53
+          gh run download 44390806767 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL53-MUSOU-INVUL-CURSE-SHOP-PRIVATE-NOT-OFFICIAL \
+            --dir artifacts/real53
+          test -s artifacts/real53/EGGRUMBLE_REAL53.rbxlx
+      - name: Independent source/class/route/receipt and four negative mutants
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc53_admission_20261119/verify_real53_admission.py \
+            --artifact-root artifacts/real53 --current-rc "$FORMAL_RC_READBACK"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all selected 53 original Luau sources again
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/real53 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/real53 --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_rc53_admission_20261119")
+          from verify_real53_admission import extract_paths
+          found=extract_paths(Path("artifacts/real53/EGGRUMBLE_REAL53.project.json"))
+          assert len(found)==53
+          for path,cls in found.values():
+              subprocess.run(["/tmp/real53/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ8_REAL53_INDEPENDENT_NATIVE_ALL53_PASS")
+          PY
+      - name: Pinned Rojo rebuild Source/Class and byte compare
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/real53-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/real53-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/real53-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/real53-rojo");p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/real53-rojo build artifacts/real53/EGGRUMBLE_REAL53.project.json -o artifacts/real53/REBUILD.rbxlx
+          cmp artifacts/real53/EGGRUMBLE_REAL53.rbxlx artifacts/real53/REBUILD.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real53/EGGRUMBLE_REAL53.project.json \
+            --place artifacts/real53/REBUILD.rbxlx --count 53
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = "$FORMAL_RC_READBACK" || { echo RED_CONCURRENT_RC_UPDATE; exit 1; }
+          echo GQ8_REAL53_NATIVE_ROJO_OFF49_REHEARSAL_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL53-ADMISSION-REHEARSAL-NOT-OFFICIAL
+          path: |
+            artifacts/real53/RC53_ADMISSION_REHEARSAL_RECEIPT.json
+            artifacts/real53/B_REAL53_INTAKE_RECEIPT.json
+            artifacts/real53/EGGRUMBLE_REAL53.project.json
+            artifacts/real53/EGGRUMBLE_REAL53.rbxlx
+            artifacts/real53/OFF49.rbxlx
+          retention-days: 4
+          if-no-files-found: error
