@@ -35,3 +35,22 @@ WARRIOR 武神; MAGE 魔法使い; NINJA 暗殺者 (retain legacy ID); TRAPPER �
 SPEC=COMPLETE; SOURCE_POLICY=ADDED; OBSERVER_VFX_MODULE=ADDED; NATIVE_CI=AWAIT_LIVE_EVIDENCE; SINGLETON_COMBAT_WIRING=NOT_DONE; FORMAL_RC_ADOPTION=0/1; STUDIO_2CLIENT=NOT_TESTED; ANDROID_15MIN=NOT_TESTED; FUN_ART=NO_GO; MAIN/PUBLISH/ROBLOX_PAYMENTS=UNTOUCHED.
 
 Non-overlap feature paths: handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/** and .github/workflows/p0d-gq8-musou-fever-native.yml. Rollback: omit optional two modules; original official Core36 and the latest selected #818 game source unchanged. No original author personal ACK is required. Next successor Chat reGET issue #824 + exact PR HEAD + #810/#220 + official HEAD and keep responsibility through legitimate RC adoption.
+
+
+## 2026-11-19 latest: Real44 original gameplay -> Real47 single-owner candidate
+
+Supersedes the earlier `SINGLETON_COMBAT_WIRING=NOT_DONE` statement **for the private selectable Real47 candidate only**. Formal RC remains unmodified. Exact immutable selected upstream is PR #815 HEAD `d5c13082d4987a8c89588a12b81edc73adc945ce`, its verified Real44 artifact from run `44385257005`, original formal Core36 branch `f77b4d4393d9e9b19b65566413432a7a9f13962b`.
+
+### Actual integration source and verifiable result
+- `compose_real47.py` source-selects 44 real existing original scripts and adds 3 modules, changing **only the original singleton EGGRUMBLE_SwarmCombat and EGGRUMBLE_SevenRoleCombat** (42 other originals byte exact). New 47 are: existing server-owned MusouFeverPolicy ModuleScript, StarterPlayerScripts MusouAuraClient ModuleScript, StarterPlayerScripts MusouAuraController LocalScript.
+- Existing server-side SevenRoleCombat equipment now adds a fourth genuine selectable Tool `EGGRUMBLE_MUSOU_AWAKEN`; `Activated` validates role/match/player on server and calls existing Swarm API, never a new client damage Remote. Original Tool cleanup removes it at round end.
+- Existing Swarm player neutral-hit path applies the `NEUTRAL` multiplier exactly once before its **one** original `Humanoid:TakeDamage`; existing KoFence->credit path emits actual unique per-match neutral KO receipts and refreshes MUSOU/RUSH/KAKUHEN state. Existing human PvP damage and real boss damage pass through role-specific policy multipliers without a new damage owner. Existing neutral charm source is retained.
+- Replicated server Player attributes expose phase/role/remaining; the read-only StarterPlayerScripts LocalScript observes all players, rendering 7 distinct cosmetic auras. One bounded scheduled expiry callback per state update and no extra AI/KO loop.
+- Original game policy untouched: server roster/actual heldEggs, active mode, old avatar, downed, castle alive, no ForceField, and explicit server invul indicator gate in context. Direct egg objective/guard and defensive #823 integration still needs composite testing, **do not infer complete all-source defense/egg/CC security** from this candidate.
+- Same exact HEAD `9065372c385bad1f228450a74fa052503d02b7b3` Native+Rojo result **COMPLETED SUCCESS**: https://github.com/kk051780/toy-wars-factory/actions/runs/44387396403
+  - Original44 **44/44** and candidate47 **47/47** true Native Luau compile; exact policy VM and all 3 malicious mutations gated.
+  - Real47 Rojo Source/Class+Portable47 byte equality; OFF44 Rojo Place **byte exact** to certified upstream Real44.
+  - Candidate Real47 Place **532,452 bytes**, SHA256 `5965e9ef2bc313df5d3e427c774200990e79351672eb59f23896bee978fed1f4`.
+  - Private artifact `GQ8-MUSOU-REAL47-PORTABLE-NOT-OFFICIAL` (workflow run artifact ID 14466482902; compressed archive 503,996 bytes) contains all 47 sources, project, Place, receipts and OFF44. This is **not** a published Roblox game.
+- Future integration MUST reconcile latest parallel #823 V2 counter-awakening and its actual Real46 private source (run #44386320845) into one author-owned Combat and Swarm. The isolated Real47 **does not include** all #823 original all-damage prehit guard source and must not displace it. Original #815 latest source is immutable for this receipt and must be re-fetched at future official RC selection.
+- Formal `rc/p0d-s1-kids-rc01` **adoption 0/1**; only #220 authenticated CAS writer may update with new fresh expected SHA plus same-HEAD Rojo/Native/OFF/Place readback. Current Chat does not claim its B writer authentication. Studio 2 clients / Android15 min / ART / fun **not tested; NO_GO**. Main/Publish/pay untouched. No original author approval required for successor DRI.
