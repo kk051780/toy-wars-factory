@@ -48,7 +48,7 @@ def patch(source:str)->str:
   raise ValueError("RED_NOT_ACTUAL_CORE36_HOST_REGEN")
  for old,new in ((OLD_IMPORT,NEW_IMPORT),(OLD_BEGIN,NEW_BEGIN),(OLD_CLOSE,NEW_CLOSE)):
   if source.count(old)!=1 or new in source:
-   raise ValueError("RED_NOT_ONE_ORIGINAL_HOST_ANCHOR")
+   raise ValueError("RED_NOT_ONE_ORIGINAL_HOST_ANCHOR:"+repr((old,source.count(old),new in source)))
   source=source.replace(old,new,1)
  return source
 
