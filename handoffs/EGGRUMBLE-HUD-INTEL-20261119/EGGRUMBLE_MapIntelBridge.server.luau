@@ -264,6 +264,22 @@ local function send(p)
  -- Direct original authoritative V2 snapshot corrects stale ARMED player attrs
  -- after expiry without modifying the original Combat/Invul damage ownership.
  local realDefense=InvulRuntime.currentPolicySnapshot(p)
+ local verifiedStatuses={}
+ local character=p.Character
+ local humanoid=character and character:FindFirstChildOfClass("Humanoid")
+ if humanoid then
+  local nowClock=os.clock() -- same authoritative server clock as original Combat
+  for _,entry in ipairs({
+     {"EGGRUMBLE_BurnUntil","炎上"},
+     {"EGGRUMBLE_SlowExpiry","減速"},
+     {"EGGRUMBLE_MarkedUntil","標的"}
+  }) do
+   local expiry=humanoid:GetAttribute(entry[1])
+   if type(expiry)=="number" and expiry==expiry and expiry>nowClock then
+    table.insert(verifiedStatuses,entry[2])
+   end
+  end
+ end
  local phase=realDefense.phase
  if phase~="ARMED" and phase~="AWAKENED" then phase="NONE" end
  local remain=tonumber(realDefense.remaining) or 0
@@ -281,6 +297,7 @@ local function send(p)
    kind="MAP_INTEL",version=1,mode=mode,role=viewer.role,
    layer=layer,cell=Intel.CELL,terrain=terrain,
    ownCastle=home.id,scanActive=viewer.pulse~=nil,defense=defense,
+   statuses=verifiedStatuses,
    x=x,z=z,explored=explored,markers=public,serverTick=workspace:GetServerTimeNow(),
   })
 end
