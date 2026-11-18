@@ -1,0 +1,163 @@
+name: GQ822 Latest Official Real55 to 56 Seven-Role Counter Single Source Native Rojo
+on:
+  push:
+    branches: ['feature/gq822-counter-real55-to56-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-COUNTER-REAL56-20261119/**'
+      - '.github/workflows/gq822-official55-counter56-native-rojo.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-COUNTER-REAL56-20261119/**'
+      - '.github/workflows/gq822-official55-counter56-native-rojo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-official55-to-private56:
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f7d4a736fefe1b680ba8f0f1b39a53606531cd47
+          path: _prior830
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: bc40c4dd0999db8fc7cc52dec75b5abb242d1d0f
+          path: _counter47
+          persist-credentials: false
+      - name: Verify EXACT officially selected Real55 source and source classes
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_OFFICIAL55_MOVED_STOP_NO_OVERWRITE; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44393525211" --jq .head_sha)" = "$CURRENT"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44393525211" --jq .conclusion)" = success
+          test "$(git hash-object _prior830/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau)" = 2ada705fd09c2d49453ca1cd2e1e28bf0902f147
+          test "$(git hash-object _counter47/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau)" = 8192baf3800ee517d84f1cb1076d5debec483b61
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO \
+            --dir artifacts/official55
+          test -s artifacts/official55/EGGRUMBLE_REAL55.project.json
+          test -s artifacts/official55/EGGRUMBLE_REAL55.rbxlx
+          test -s artifacts/official55/B_REAL55_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path('artifacts/official55')
+          r=json.loads((p/'B_REAL55_RECEIPT.json').read_text())
+          place=p/'EGGRUMBLE_REAL55.rbxlx'
+          assert r['selected_official_branch_sha']=='a6020867fac80fa3b2ca47478625873fc6f3678e'
+          assert r['selected_real55_count']==55 and r['official_rc_adopted'] is True
+          assert r['private_place_sha256']==hashlib.sha256(place.read_bytes()).hexdigest()
+          print('GQ822_LATEST_FORMAL55_SELECTED_SAMEHEAD_REALPLACE_SHA256_PASS')
+          PY
+      - name: Make only scoped current Real55 -> Real56 / prove original53 intact
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-INVUL-COUNTER-REAL56-20261119/compose_real56.py \
+            --official55 artifacts/official55/EGGRUMBLE_REAL55.project.json \
+            --receipt55 artifacts/official55/B_REAL55_RECEIPT.json \
+            --prior-runtime46 _prior830/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau \
+            --counter-runtime _counter47/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau \
+            --counter-author-composer _counter47/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real47.py \
+            --out artifacts/on56
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'handoffs/EGGRUMBLE-INVUL-COUNTER-REAL56-20261119')
+          from compose_real56 import flatten
+          before=Path('artifacts/official55/EGGRUMBLE_REAL55.project.json')
+          after=Path('artifacts/on56/GQ822_REAL56.project.json')
+          _,original=flatten(before);_,candidate=flatten(after)
+          assert len(original)==55 and len(candidate)==56
+          for route,source in original.items():
+           if route[-1] not in ('EGGRUMBLE_SevenRoleCombat','EGGRUMBLE_InvulRuntime'):
+            assert candidate[route].read_bytes()==source.read_bytes(),('RED_EXISTING_GAME_CLONED',route)
+          r=json.loads(Path('artifacts/on56/GQ822_REAL56_RECEIPT.json').read_text())
+          assert r['musou_guard_preserved'] and r['prehit_gate_13_preserved']
+          assert r['other53_byte_exact'] and r['new_parallel_combat_hp_swarm_writers']==0
+          print('GQ822_OFFICIAL55_TO_REAL56_53_ORIGINAL_SOURCES_EXACT')
+          PY
+          python3 _counter47/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_counter.py \
+            --policy artifacts/on56/sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau \
+            --out /tmp/gq822-live56-counter-vm
+          python3 _counter47/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py \
+            --policy artifacts/on56/sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau \
+            --out /tmp/gq822-live56-runtime-vm
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Actual 55/56 Native Luau compile + same author counter/runtime VM / 2 mutations
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq822-official56-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq822-official56-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'handoffs/EGGRUMBLE-INVUL-COUNTER-REAL56-20261119')
+          from compose_real56 import flatten
+          for proj,n in (('artifacts/official55/EGGRUMBLE_REAL55.project.json',55),
+                         ('artifacts/on56/GQ822_REAL56.project.json',56)):
+           _,files=flatten(Path(proj));assert len(files)==n
+           for f in files.values():
+            subprocess.run(['/tmp/gq822-official56-native/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+           print('GQ822_OFFICIAL_REAL55_NEW56_NATIVE_COMPILE_PASS',n)
+          PY
+          for file in /tmp/gq822-live56-counter-vm/*.luau /tmp/gq822-live56-runtime-vm/*.luau; do
+            /tmp/gq822-official56-native/luau-compile --text "$file" >/dev/null
+          done
+          /tmp/gq822-official56-native/luau /tmp/gq822-live56-counter-vm/good.luau | tee /tmp/gq822-neutral-counter-good.txt
+          grep -qx GQ822_REAL_COUNTER_NATIVE_MAGE_TRAPPER_BUILDER_BEAST_ZOMBIE_SINGLE_SWARM_PASS /tmp/gq822-neutral-counter-good.txt
+          /tmp/gq822-official56-native/luau /tmp/gq822-live56-runtime-vm/good.luau | tee /tmp/gq822-runtime-good.txt
+          grep -qx GQ822_REAL_RUNTIME_NATIVE_FREE_TOOL_PREHIT_ZERO_REPEAT_ZERO_EXPIRY_PASS /tmp/gq822-runtime-good.txt
+          if /tmp/gq822-official56-native/luau /tmp/gq822-live56-counter-vm/barrier_mutant.luau >/tmp/gq822-barrier-mutant.log 2>&1; then
+            echo RED_NO_HALVED_ALLY_DAMAGE; exit 1
+          fi
+          grep -q RED_ALLY_BARRIER_MISSING /tmp/gq822-barrier-mutant.log
+          if /tmp/gq822-official56-native/luau /tmp/gq822-live56-runtime-vm/damage_mutant.luau >/tmp/gq822-damage-mutant.log 2>&1; then
+            echo RED_DAMAGE_ZERO_NOT_ENFORCED; exit 1
+          fi
+          grep -q RED_FIRST_DAMAGE_SHOULD_BE_ZERO /tmp/gq822-damage-mutant.log
+          echo GQ822_REAL56_NATIVE_MUSOU_INVUL_COUNTER_COHABITATION_AND_2_MUTANTS_PASS
+      - name: Pinned Rojo7.7.1 exact Real56 Source/Class and OFF55 private Place bytes
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq822-rojo56.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq822-rojo56.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq822-rojo56.zip') as z:
+           f=[n for n in z.namelist() if n.split('/')[-1]=='rojo'];assert len(f)==1
+           p=Path('/tmp/gq822-rojo56');p.write_bytes(z.read(f[0]));p.chmod(0o755)
+          PY
+          /tmp/gq822-rojo56 build artifacts/on56/GQ822_REAL56.project.json -o artifacts/on56/GQ822_REAL56.rbxlx
+          /tmp/gq822-rojo56 build artifacts/official55/EGGRUMBLE_REAL55.project.json -o artifacts/on56/OFF55.rbxlx
+          cmp artifacts/on56/OFF55.rbxlx artifacts/official55/EGGRUMBLE_REAL55.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/on56/GQ822_REAL56.project.json --place artifacts/on56/GQ822_REAL56.rbxlx --count 56
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/official55/EGGRUMBLE_REAL55.project.json --place artifacts/on56/OFF55.rbxlx --count 55
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_OFFICIAL_BRANCH_MOVED_STOP_NO_CAS; exit 1; }
+          echo GQ822_CURRENT_CANONICAL_REAL55_PLUS_COUNTER56_ROJO_NATIVE_OFF55_PASS_NOT_RC
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL
+          path: artifacts/on56/
+          retention-days: 4
+          if-no-files-found: error
