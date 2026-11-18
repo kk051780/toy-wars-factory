@@ -7,7 +7,7 @@ Scope **cross-domain source selection**, not duplicated authoring. Ownership rem
 - #808 exact original immutable ShopCatalog and ShopView ModuleScripts.
 
 ## Exact source proof
-Parent #815 run **44376856212**, SHA **a4684d6333db25474ad9f44ff6203aef7119dc6d** SUCCESS; actual 44-source artifact **14460768958**.
+Parent #815 run **44385257005**, SHA **d5c13082d4987a8c89588a12b81edc73adc945ce** SUCCESS; actual 44-source artifact **14465676309** (candidate ZIP 960,295 bytes; Place 509,822 bytes). Preserves the same existing one Swarm and all original upstream sources while additionally fixing round-death/role-swap re-entry, stale neutral aura/seal flags, and empty-hit ally cadence. Previous parent run 44376856212 is historical only and must not be selected into newer Real48.
 Original #816 immutable HEAD **0360b4c377904ccf4d6ee795d7b1d638b1303a09** and two exact script Git blobs.
 Original #808 immutable catalog Git blob `f71eb575aacd61dd8ccb7719f7dae4caec5fedcd`, original view blob `f3cf10c8b0256896e9d194844deda91039429ddc`.
 
