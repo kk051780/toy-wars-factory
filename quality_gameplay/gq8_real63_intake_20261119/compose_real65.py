@@ -86,8 +86,13 @@ def run(a):
         "formal63":damage_sites(original_basic),
         "counter_author64":damage_sites(real64[COMBAT][1]),
         "merged65":damage_sites(merged_combat)},sort_keys=True))
-    require(damage_sites(merged_combat)==damage_sites(original_basic),
-            "SECOND_DAMAGE_OWNER")
+    # #841 adds exactly one authorized counter-reflect damage application in
+    # the SAME original Combat owner. Compare to its pinned original author,
+    # not the older three-site baseline; reject any accidental duplicate.
+    require(damage_sites(original62[COMBAT][1])==damage_sites(original_basic)
+            and damage_sites(real64[COMBAT][1])==damage_sites(original_basic)+1
+            and damage_sites(merged_combat)==damage_sites(real64[COMBAT][1]),
+            "COUNTER_REFLECT_DAMAGE_SITE_DRIFT")
     require(merged_combat!=original_basic and
             merged_combat!=real64[COMBAT][1],"COUNTER_OR_DODGE_NOT_COMPOSED")
     chosen=dict(official63)
@@ -124,7 +129,8 @@ def run(a):
         "preserves_real63_basic_attack":True,"preserves_real63_dodge":True,
         "preserves_real63_hud":True,"host_class":"Script",
         "owner_game":1,"owner_combat":1,"owner_swarm":1,
-        "new_damage_sites":0,"new_store_writers":0,"new_remotes":0,
+        "new_damage_sites":1,"counter_reflect_damage_owner":"EXISTING_SINGLE_COMBAT",
+        "new_store_writers":0,"new_remotes":0,
         "real_paid_trade":False,"roblox_publish":False,
         "native":"PENDING","rojo":"PENDING","formal_rc_adopted":False,
         "studio_2client":"NOT_TESTED","android_15min":"NOT_TESTED",
