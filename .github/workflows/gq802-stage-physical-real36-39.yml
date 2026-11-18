@@ -64,17 +64,17 @@ jobs:
           test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
           mkdir -p artifacts/formal
           gh run download 44232589275 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO --dir artifacts/formal
-          test -s artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx
-          test -s artifacts/formal/COMBINED36.project.json
-          test -s artifacts/formal/CORE36_RC_SELECTION_RECEIPT.json
+          test -s artifacts/formal/combined36/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx
+          test -s artifacts/formal/combined36/COMBINED36.project.json
+          test -s artifacts/formal/combined36/CORE36_RC_SELECTION_RECEIPT.json
       - name: Exact samehead official Core36 to optional39 and reversible OFF36
         run: |
           set -euo pipefail
           DIR=quality_gameplay/gq802_stage_physical_20261118
           python3 "$DIR/compose_real36_to39.py" compose \
-            --place artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
-            --template artifacts/formal/COMBINED36.project.json \
-            --receipt artifacts/formal/CORE36_RC_SELECTION_RECEIPT.json \
+            --place artifacts/formal/combined36/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
+            --template artifacts/formal/combined36/COMBINED36.project.json \
+            --receipt artifacts/formal/combined36/CORE36_RC_SELECTION_RECEIPT.json \
             --out artifacts/physical39 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
           python3 - <<'PY'
           import json,subprocess
@@ -109,7 +109,7 @@ jobs:
           /tmp/gq802-rojo build artifacts/physical39/ON39.project.json -o artifacts/physical39/ON39.rbxlx
           /tmp/gq802-rojo build artifacts/physical39/OFF36.project.json -o artifacts/physical39/OFF36.rbxlx
           python3 quality_gameplay/gq802_stage_physical_20261118/compose_real36_to39.py verify \
-            --place artifacts/formal/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
+            --place artifacts/formal/combined36/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx \
             --receipt artifacts/physical39/GQ802_SOURCE_SELECTION_RECEIPT.json \
             --on artifacts/physical39/ON39.project.json \
             --off artifacts/physical39/OFF36.project.json \
