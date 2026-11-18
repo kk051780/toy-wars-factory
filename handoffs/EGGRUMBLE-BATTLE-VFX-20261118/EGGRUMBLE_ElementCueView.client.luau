@@ -1,5 +1,5 @@
 --!strict
--- #765 lane2: additive, local-only, no RemoteEvent or damage/HP/score writers.
+-- #765 lane2: additive, local-only, no network emitters or damage/HP/score writers.
 -- No permanent HUD panels. The only trigger is the server's optional visual cue.
 local Players=game:GetService("Players")
 local UserInputService=game:GetService("UserInputService")
