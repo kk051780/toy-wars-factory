@@ -441,19 +441,10 @@ RunService.RenderStepped:Connect(function(dt)
  if h then
   hp.Text=string.format("HP %d/%d",math.max(0,math.floor(h.Health)),math.floor(h.MaxHealth))
  else hp.Text="HP --/--" end
- local status={}
- if h and type(h:GetAttribute("EGGRUMBLE_BurnUntil"))=="number"
-  and h:GetAttribute("EGGRUMBLE_BurnUntil")>os.clock() then
-  table.insert(status,"炎上")
- end
- if h and type(h:GetAttribute("EGGRUMBLE_SlowExpiry"))=="number"
-  and h:GetAttribute("EGGRUMBLE_SlowExpiry")>os.clock() then
-  table.insert(status,"減速")
- end
- if h and type(h:GetAttribute("EGGRUMBLE_MarkedUntil"))=="number"
-  and h:GetAttribute("EGGRUMBLE_MarkedUntil")>os.clock() then
-  table.insert(status,"標的")
- end
+ -- Status expiry timestamps are server os.clock, which is NOT safely
+ -- comparable to the client process os.clock. Use the filtered server flags.
+ local status=(mapSnapshot and mapSnapshot.statuses) or {}
+ if type(status)~="table" then status={} end
  local attr=player:GetAttribute("EGGRUMBLE_Attribute") or "--"
  buffs.Text="属性 "..tostring(attr).." "..table.concat(status," ")
  -- The actual Real55 server sends MusouReadyIn and MusouPhase.
