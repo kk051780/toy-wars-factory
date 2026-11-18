@@ -211,6 +211,10 @@ end
 -- Native Roblox thumbstick/jump are retained, no competing movement joystick.
 actions.JUMP.Visible=false
 actions.DODGE.Visible=false -- requires an existing authorized dodge owner
+-- Reuse the reserved dodge-area anchor for the selected existing special Tool
+-- until a true server-backed dodge exists. No extra HUD footprint.
+local skillUse=button("SelectedSkillUse",gui,"技A")
+skillUse.ZIndex=6
 local drawer=frame("ChoiceDrawer",gui)
 drawer.Visible=false;drawer.ZIndex=11
 local drawerType=""
@@ -324,7 +328,14 @@ actions.SKILL.Activated:Connect(function()openDrawer("SKILL")end)
 actions.ATTACK.Activated:Connect(function()
  closeDrawer()
  local basic=toolWith("EGGRUMBLE_BASIC_")
- activate(basic[1] or slotTool(selectedSlot))
+ -- The current 55-source server has no dedicated basic attack Tool.
+ -- Use only its real A skill (clearly labeled) until Combat owner adds basic.
+ activate(basic[1] or slotTool("A"))
+end)
+skillUse.Activated:Connect(function()
+ if not mapSnapshot then return end
+ closeDrawer()
+ activate(slotTool(selectedSlot))
 end)
 -- Both buttons activate ONLY original server-owned Tools; every activation
 -- is re-checked by the original singleton server policy (not this HUD).
@@ -392,6 +403,10 @@ local function updateLayout()
    b.Position=UDim2.fromOffset(p[name].x,p[name].y)
   end
  end
+ local reserved=p.DODGE
+ skillUse.AnchorPoint=Vector2.new(.5,.5)
+ skillUse.Size=UDim2.fromOffset(reserved.size,reserved.size)
+ skillUse.Position=UDim2.fromOffset(reserved.x,reserved.y)
  local mx=p.MAP.x
  if mapExpanded then
   mapBox.Size=UDim2.fromOffset(math.floor(math.min(w*.43,340)),math.floor(math.min(h*.66,285)))
@@ -485,8 +500,11 @@ RunService.RenderStepped:Connect(function(dt)
  end
  fill.Size=UDim2.fromScale(charge,1)
  -- Keep base attack tappable without an optional skill slot.
- actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool(selectedSlot)~=nil
- actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or ("技"..selectedSlot)
+ actions.ATTACK.Visible=#toolWith("EGGRUMBLE_BASIC_")>0 or slotTool("A")~=nil
+ actions.ATTACK.Text=toolWith("EGGRUMBLE_BASIC_")[1] and "攻撃" or "連撃A"
+ skillUse.Text="技"..selectedSlot
+ skillUse.Visible=slotTool(selectedSlot)~=nil
+ actions.ITEM.Text=#toolWith("EGGRUMBLE_ITEM_")>0 and "道具 ▼" or "道具 0"
  -- A second existing S1 screen is authoritative for its own combat.
  local s1=playerGui:FindFirstChild("TrapRaidersS1HUD")
  if s1 and s1:IsA("ScreenGui") and s1.Enabled then
@@ -498,6 +516,7 @@ RunService.RenderStepped:Connect(function(dt)
  actions.ITEM.Visible=inMatch
  actions.SKILL.Visible=inMatch
  actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch
+ skillUse.Visible=skillUse.Visible and inMatch
  -- Disabled mode buttons stay visible in combat without claiming server READY.
  actions.INVUL.Visible=inMatch
  actions.MUSOU.Visible=inMatch
