@@ -52,11 +52,13 @@ def pack(original42:Path,real43:Path,out:Path,head:str):
   "previous_unchanged_sources":41,
   "modified_original":["/".join(SWARM)],"added":["/".join(FINISHER)],
   "exact_real42_swarm_git_blob":ORIGINAL_SWARM_BLOB,
+  "parent_weather42_run":44319450066,
+  "parent_weather42_place_sha256":"ecb52ec035f0013d6fd9e19c599bce5fb0f272037e7e091346e3dc38523417d1",
   "original_author_801_git_blob":AUTHOR_FINISHER_BLOB,
   "no_second_game_remote_store_swarm_hp_ko_owner":True,
   "official_rc_adopted":False,"studio_2client":"NOT_TESTED",
   "android15":"NOT_TESTED","owner_fun":"NO_GO",
-  "rollback":"Select complete original portable Real42; if formal HEAD moved preserve all accepted original scripts",
+  "rollback":"Restore #796 exact seeded-weather Guardian42 portable Real42 from run44319450066; preserve other newer formally accepted sources",
   "sources":receipts}
  (out.parent/"B_PORTABLE43_SOURCE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
  print("GQ800_PORTABLE43_SOURCE_CLASS_PRECHECK_PASS",sum(x["bytes"] for x in receipts))
