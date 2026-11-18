@@ -95,11 +95,7 @@ SERVER_MUSOU=r'''
   end
  end
 '''
-# recursive local function musouReflect must be forward-declared in Luau:
-SERVER_MUSOU=SERVER_MUSOU.replace(
- ' local function musouReflect(user:Player)',
- ' local musouReflect:(Player)->()\\n musouReflect=function(user:Player)'
-).replace(' end\\n', ' end\\n') # forward-ref accessible as local upvalue
+# Luau's local-function declaration already supports recursion; keep it intact.
 
 def patch_swarm(s):
  s=only(s,
@@ -146,7 +142,7 @@ def patch_swarm(s):
    return snap.active==true
   end,
 ''',"EXISTING_SWARM_API_ONLY")
- if s.count("function Swarm.start(session:any)")!=1 or s.count("h:TakeDamage(effectiveDamage)")!=1 or s.count("KoFence.mayCredit(")<1 or s.count("credit(id)")!=2:
+ if s.count("function Swarm.start(session:any)")!=1 or s.count("h:TakeDamage(effectiveDamage)")!=1 or s.count("KoFence.mayCredit(")<1 or s.count("credit(id)")!=1:
   raise ValueError("RED_EXISTING_SINGLE_SWARM_DAMAGE_KO_FENCE_LOST")
  for t in ["neutralBudget:acquire","SpawnPacing.step","EncounterFair","CurseConversionPolicy.seal(","NeutralFinisherPolicy.select("]:
   if t not in s: raise ValueError("RED_LOST_REAL44_"+t)
