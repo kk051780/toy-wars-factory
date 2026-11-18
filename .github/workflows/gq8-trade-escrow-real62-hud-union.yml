@@ -1,0 +1,169 @@
+name: GQ8 Real62 Official59 HUD preserved plus Trade3 Native Rojo OFF59
+on:
+  push:
+    branches: [quality/gq8-trade-ux-journal-real57-20261119]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-escrow-real62-hud-union.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-escrow-real62-hud-union.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real62-hud-trade-preserved:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Lock latest Real59 official and immutable original Real59 + Real55 proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_NEW_OFFICIAL_RC_REBASE_REQUIRED; exit 1; }
+          test "$(gh run view 44400478849 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "116dc8f1d9bfe1b25a01ac2c5283bee966677429 success"
+          test "$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')" = "a6020867fac80fa3b2ca47478625873fc6f3678e success"
+          python3 - <<'PY'
+          import json,subprocess
+          p=json.load(open("rc_fastlane/EGGRUMBLE_V3_REAL59.json"))
+          assert p["source_count"]==59 and p["parent_source_count"]==55
+          assert p["prior_official_sha"]=="a6020867fac80fa3b2ca47478625873fc6f3678e"
+          for filename,sha in p["source_locks"].items():
+           current=subprocess.check_output(["git","hash-object",filename],text=True).strip()
+           assert sha==current,(filename,sha,current)
+          print("GQ8_REAL62_PRESERVE_4_HUD_REAL59_OFFICIAL_GIT_BLOB_LOCK_PASS")
+          PY
+          mkdir -p artifacts/real59 artifacts/official55
+          gh run download 44400478849 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/real59
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir artifacts/official55
+          test -s artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          test -s artifacts/real59/GQ828_REAL59_RECEIPT.json
+          test -s artifacts/official55/EGGRUMBLE_REAL55.rbxlx
+          test -s artifacts/official55/B_REAL55_RECEIPT.json
+          echo GQ8_REAL62_IMMUTABLE_SOURCE_ARTIFACTS_DOWNLOAD_PASS
+      - name: Compose verified 59 + 3 without overwriting any official source
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          python3 "$R/compose_real62.py" \
+            --real59 artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --receipt59 artifacts/real59/GQ828_REAL59_RECEIPT.json \
+            --official55 artifacts/official55/EGGRUMBLE_REAL55.rbxlx \
+            --out artifacts/union62
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,json
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten,klass
+          base=Path("artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json")
+          new=Path("artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json")
+          _,old=flatten(base);_,n=flatten(new)
+          assert len(old)==59 and len(n)==62
+          assert set(n)-set(old)=={
+            ("ServerScriptService","GQ8_TradeJournalContract"),
+            ("ServerScriptService","GQ8_TradeEscrowReducer"),
+            ("StarterPlayer","StarterPlayerScripts","GQ8_TradeReview")}
+          assert all(old[k].read_bytes()==n[k].read_bytes() and klass(old[k])==klass(n[k]) for k in old)
+          for route,filename in {
+              ("ServerScriptService","GQ8_TradeJournalContract"):"GQ8_TradeJournalContract.luau",
+              ("ServerScriptService","GQ8_TradeEscrowReducer"):"GQ8_TradeEscrowReducer.luau",
+              ("StarterPlayer","StarterPlayerScripts","GQ8_TradeReview"):"GQ8_TradeReview.client.luau"
+          }.items():
+              assert n[route].read_bytes()==Path("quality_gameplay/gq8_trade_ux_journal_20261119",filename).read_bytes()
+          m=json.loads(Path("artifacts/union62/B_REAL62_RECEIPT.json").read_text())
+          assert m["official55_sources_byte_exact"]==55 and m["official59_sources_byte_exact"]==59
+          assert not m["live_trade"] and not m["robux"]
+          print("GQ8_REAL62_EXACT_REAL59_59_OF59_PRESERVED_PLUS3_SCOPE_ONLY_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile real 59 and 62; execute two-account trade VM adversarial tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8union62 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8union62 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          for name,num in [
+            ("artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json",59),
+            ("artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json",62)]:
+            _,src=flatten(Path(name))
+            assert len(src)==num
+            for f in src.values():
+                subprocess.run(["/tmp/gq8union62/luau-compile","--text",str(f)],stdout=subprocess.DEVNULL,check=True)
+            print("GQ8_REAL62_NATIVE_SOURCE_COMPILE_PASS",num)
+          PY
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          /tmp/gq8union62/luau "$R/test_escrow_native.luau" | tee /tmp/gq8_union_escrow.log
+          grep -q GQ8_TRADE58_ESCROW_REDUCER_TWO_ACCOUNT_RESERVE_DEBIT_CREDIT_COMMIT_REPLAY_PAID_FAILCLOSED_PASS /tmp/gq8_union_escrow.log
+          /tmp/gq8union62/luau "$R/test_journal_native.luau" | tee /tmp/gq8_union_journal.log
+          grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS /tmp/gq8_union_journal.log
+      - name: Actual pinned Rojo62 and byte-identical OFF59 Place plus exact source/class
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8union62-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8union62-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8union62-rojo.zip") as z:
+            hits=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(hits)==1
+            p=Path("/tmp/gq8union62-rojo")
+            p.write_bytes(z.read(hits[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8union62-rojo build artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json -o artifacts/union62/EGGRUMBLE_REAL62_TRADE_HUD_UNION_PRIVATE.rbxlx
+          /tmp/gq8union62-rojo build artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json -o artifacts/union62/OFF59.rbxlx
+          cmp artifacts/union62/OFF59.rbxlx artifacts/real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/union62/on62/GQ8_REAL62_OFFICIAL59_HUD_PLUS_TRADE_NO_GRANT.project.json \
+            --place artifacts/union62/EGGRUMBLE_REAL62_TRADE_HUD_UNION_PRIVATE.rbxlx --count 62
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/union62/off59/GQ828_REAL59_HUD_MAP.project.json \
+            --place artifacts/union62/OFF59.rbxlx --count 59
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = 38d11f0bf311491ba76fe03f818948e5d4b06889 || { echo RED_OFFICIAL_RC_MOVED_DURING_UNION; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,json,hashlib
+          base=Path("artifacts/union62")
+          pl=base/"EGGRUMBLE_REAL62_TRADE_HUD_UNION_PRIVATE.rbxlx"
+          off=base/"OFF59.rbxlx"
+          rp=base/"B_REAL62_RECEIPT.json"
+          data=json.loads(rp.read_text())
+          data.update({"candidate_git_head":os.environ["GITHUB_SHA"],
+            "actual_compiler":"PASS","actual_vm":"PASS","rojo_source_class62":"PASS",
+            "rollback_off59":"BYTE_IDENTICAL","real62_place_bytes":pl.stat().st_size,
+            "real62_place_sha256":hashlib.sha256(pl.read_bytes()).hexdigest(),
+            "off59_place_sha256":hashlib.sha256(off.read_bytes()).hexdigest(),
+            "official_rc_adopted":False})
+          rp.write_text(json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2)+"\n")
+          print("GQ8_REAL62_HUD_REAL59_TRADE3_NATIVE_ROJO_OFF59_PRIVATE_PASS",pl.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL
+          path: artifacts/union62/
+          retention-days: 5
+          if-no-files-found: error
