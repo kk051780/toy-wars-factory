@@ -1,0 +1,145 @@
+name: GQ8 trade UI journal Real55-to-57 native Luau Rojo OFF55
+on:
+  push:
+    branches: [quality/gq8-trade-ux-journal-real57-20261119]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-ux-journal-real57.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_trade_ux_journal_20261119/**'
+      - '.github/workflows/gq8-trade-ux-journal-real57.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-exact-trade57:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Lock genuine canonical head and immutable Real55 source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_OFFICIAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
+          EVIDENCE="$(gh run view 44392759736 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "d416e172dde4260ecf318c250f19a332576482e1 success" || { echo RED_ORIGINAL55_NOT_VERIFIED; exit 1; }
+          mkdir -p artifacts/original55
+          gh run download 44392759736 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-SOCIAL-TRADE-REAL55-PRIVATE-NOT-OFFICIAL --dir artifacts/original55
+          test -s artifacts/original55/EGGRUMBLE_REAL55.project.json
+          test -s artifacts/original55/B_REAL55_RECEIPT.json
+          test -s artifacts/original55/EGGRUMBLE_REAL55.rbxlx
+          test "$(git hash-object quality_gameplay/gq8_social_lobby_20261119/GQ8_LobbySocialPlaza.server.luau)" = 0df22b7b5a38012f6f3fb005734307cd9d94bb3a
+          test "$(git hash-object quality_gameplay/gq8_social_lobby_20261119/GQ8_TradePolicy.luau)" = f654f56f9aa7f00d4920809317c35acb652a54e0
+          echo GQ8_ORIGINAL55_PARENT_SAME_REAL55_GAME_AND_SOCIAL_BLOBS_LOCKED
+      - name: Native policy static test and original 55 source byte-lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          python3 "$R/test_trade57.py"
+          python3 "$R/compose_real57.py" \
+            --parent55 artifacts/original55/EGGRUMBLE_REAL55.project.json \
+            --receipt55 artifacts/original55/B_REAL55_RECEIPT.json \
+            --out artifacts/trade57
+          python3 - <<'PY'
+          import json,hashlib,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          oldp=Path("artifacts/original55/EGGRUMBLE_REAL55.project.json")
+          newp=Path("artifacts/trade57/EGGRUMBLE_REAL57.project.json")
+          _,a=flatten(oldp);_,b=flatten(newp)
+          assert len(a)==55 and len(b)==57
+          assert len(set(b)-set(a))==2
+          assert all(b[k].read_bytes()==a[k].read_bytes() for k in a)
+          assert set(b)-set(a)=={
+              ("ServerScriptService","GQ8_TradeJournalContract"),
+              ("StarterPlayer","StarterPlayerScripts","GQ8_TradeReview")}
+          j=json.loads(Path("artifacts/trade57/B_REAL57_RECEIPT.json").read_text())
+          assert j["source_on"]==57 and j["source_off"]==55 and not j["trade_settlement"]
+          print("GQ8_REAL55_55_OF_55_SOURCES_BIT_EXACT_AND_TRADE57_ONLY2_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile all genuine original55 and selected57 and execute adversarial journal
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8trade57 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8trade57 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          for project,count in (("artifacts/original55/EGGRUMBLE_REAL55.project.json",55),
+                                ("artifacts/trade57/EGGRUMBLE_REAL57.project.json",57)):
+            _,scripts=flatten(Path(project))
+            assert len(scripts)==count
+            for x in scripts.values():
+              subprocess.run(["/tmp/gq8trade57/luau-compile","--text",str(x)],stdout=subprocess.DEVNULL,check=True)
+            print("GQ8_TRUE_LUAU_REAL55_OR_REAL57_COMPILE_PASS",count)
+          PY
+          R=quality_gameplay/gq8_trade_ux_journal_20261119
+          /tmp/gq8trade57/luau-compile --text "$R/test_journal_native.luau" >/dev/null
+          /tmp/gq8trade57/luau "$R/test_journal_native.luau" | tee /tmp/gq8_tradejournal_native.log
+          grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS /tmp/gq8_tradejournal_native.log
+      - name: Pinned Rojo7.7.1 Source/Class genuine Real57 and OFF55 original Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8trade57-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8trade57-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq8trade57-rojo.zip") as z:
+            hits=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+            assert len(hits)==1
+            f=Path("/tmp/gq8trade57-rojo")
+            f.write_bytes(z.read(hits[0]));f.chmod(0o755)
+          PY
+          /tmp/gq8trade57-rojo build artifacts/trade57/EGGRUMBLE_REAL57.project.json -o artifacts/trade57/EGGRUMBLE_REAL57.rbxlx
+          /tmp/gq8trade57-rojo build artifacts/original55/EGGRUMBLE_REAL55.project.json -o artifacts/trade57/OFF55.rbxlx
+          cmp artifacts/trade57/OFF55.rbxlx artifacts/original55/EGGRUMBLE_REAL55.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/trade57/EGGRUMBLE_REAL57.project.json \
+            --place artifacts/trade57/EGGRUMBLE_REAL57.rbxlx --count 57
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/original55/EGGRUMBLE_REAL55.project.json \
+            --place artifacts/trade57/OFF55.rbxlx --count 55
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_RC_MOVED_DURING_TESTS; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          f=Path("artifacts/trade57/B_REAL57_RECEIPT.json")
+          p=Path("artifacts/trade57/EGGRUMBLE_REAL57.rbxlx")
+          data=json.loads(f.read_text())
+          data.update({"private_head":os.environ["GITHUB_SHA"],
+            "source57_native_vm_rojo":"PASS","off55_place":"BYTE_IDENTICAL",
+            "place_bytes":p.stat().st_size,
+            "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
+          f.write_text(json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2)+"\n")
+          print("GQ8_TRADE57_PRIVATE_BUILD_ONLY_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-TRADE-UX-JOURNAL-REAL57-PRIVATE-NOT-OFFICIAL
+          path: artifacts/trade57/
+          retention-days: 5
+          if-no-files-found: error
