@@ -56,7 +56,7 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
  if 'local function piece(' not in original or 'h.MaxHealth=NEUTRAL_HEALTH' not in old_soldier:
   raise ValueError("RED_SOLDIER_NOT_SINGLE_OWNER")
  replace_once(old_soldier,new_soldier,"SOLDIER_ONLY")
- replace_once('  local ended=false','  local ended=false\n  local spawnSerial=0\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
+ replace_once('local ended=false','local ended=false\n  local spawnSerial=0\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
  replace_once('local constructed,model=pcall(soldier,all,at)',
   'spawnSerial+=1\n   local constructed,model=pcall(soldier,all,at,spawnSerial)',"ADOPT_EXISTING_BUDGET_SPAWNER")
  cue_start='    local before=h.Health'
