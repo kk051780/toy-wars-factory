@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Compose one verifiable REAL63 private Place from four independent SAME-REAL55 author artifacts.
+"""Compose one verifiable REAL64 private Place from four independent SAME-REAL55 author artifacts.
 
 No existing gameplay author is replaced. The only allowed legacy edits are:
 Host <- #840, Combat + InvulRuntime <- #841. Four #829, two #838,
 one #840 and one #841 new routes are integrated independently.
+Current certified source profile is Real59; trade adds 3, viral and counter add 1 each.
 """
 from __future__ import annotations
 import argparse, copy, hashlib, json, re
@@ -150,6 +151,10 @@ def run(a):
  if a.out.exists():raise ValueError("RED_OUTPUT_EXISTS")
  a.out.mkdir(parents=True)
  path=put_project(parent_doc,chosen,a.out)
+ off59=a.out/"off59"
+ off59.mkdir()
+ offpath=put_project(parent_doc,hud,off59)
+ assert len(flatten(offpath)[1])==59,"RED_OFF59_ROUTE_COUNT"
  origin={}
  for k in chosen:
   origin[k]="VERIFIED_OFFICIAL55"
@@ -168,7 +173,7 @@ def run(a):
   "new_gameplay_hp_owner":0,"new_castle_round_owner":0,"new_swarm_owner":0,
   "paid_trade":False,"robux":False,"publish":False,
   "real_studio_2client":"NOT_TESTED","real_android_15min":"NOT_TESTED","fun":"NOT_TESTED",
-  "rollback":"Rebuild immutable official Real55 project and verify OFF55 exact original Place",
+  "rollback":"Rebuild current official Real59 source profile and verify exact OFF59 original Place",
   "sources":[{"route":"/".join(k),"class":v[0],"sha256":sha(v[1]),"bytes":len(v[1]),"origin":origin[k]} for k,v in sorted(chosen.items())]
  }
  (a.out/"REAL64_INTAKE_RECEIPT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
