@@ -1,0 +1,110 @@
+name: P0D BATTLE-ATTR-VFX Real31 to33 Native Rojo Gate
+on:
+  push:
+    branches: ['feature/gq8-attr-vfx-20261118-lane2']
+    paths: ['handoffs/EGGRUMBLE-BATTLE-VFX-20261118/**', '.github/workflows/p0d-gq8-attr-vfx.yml']
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths: ['handoffs/EGGRUMBLE-BATTLE-VFX-20261118/**', '.github/workflows/p0d-gq8-attr-vfx.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Local contract and generate true Luau good/mutant
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-BATTLE-VFX-20261118 -p 'test_*.py'
+          python3 handoffs/EGGRUMBLE-BATTLE-VFX-20261118/test_vfx.py --generate /tmp/vfx-vm
+      - name: Select completed genuine31 official SHA/run
+        id: official
+        run: |
+          set -euo pipefail
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 70 --json databaseId,headSha,status,conclusion > /tmp/official.json
+          RUN="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official.json)"
+          SHA="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].headSha // empty' /tmp/official.json)"
+          test -n "$RUN"
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+      - name: Rehydrate real31 and compose optional33 + OFF31
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "\${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head "\${{ steps.official.outputs.sha }}"
+          python3 handoffs/EGGRUMBLE-BATTLE-VFX-20261118/compose_vfx33.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --out artifacts/attr-vfx33/ON33.project.json
+          python3 handoffs/EGGRUMBLE-BATTLE-VFX-20261118/compose_vfx33.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --out artifacts/attr-vfx33/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native real Luau, deliberate mutant RED, original31 + ON33 + OFF31 compile
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/vfx-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/vfx-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/vfx-luau/luau-compile --text /tmp/vfx-vm/good.luau >/dev/null
+          /tmp/vfx-luau/luau /tmp/vfx-vm/good.luau | tee /tmp/vfx-good.log
+          grep -qx GQ8_ATTR_VFX_EIGHT_SHAPES_FIVE_RESULTS_LOD_MUTATION_PASS /tmp/vfx-good.log
+          if /tmp/vfx-luau/luau /tmp/vfx-vm/mutant.luau >/tmp/vfx-mutant.log 2>&1; then
+            echo RED_MUTANT_ACCEPTED;exit 1
+          fi
+          grep -q RED_LOW_ANDROID_BUDGET /tmp/vfx-mutant.log
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,subprocess
+          sys.path.insert(0,'handoffs/EGGRUMBLE-BATTLE-VFX-20261118')
+          from compose_vfx33 import files
+          for project,count in [('artifacts/attr-vfx33/ON33.project.json',33),('artifacts/attr-vfx33/OFF31.project.json',31)]:
+              _,items=files(project)
+              assert len(items)==count
+              for source in items.values():
+                  subprocess.run(['/tmp/vfx-luau/luau-compile','--text',str(source)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_ATTR_VFX_NATIVE_SOURCE',count)
+          PY
+      - name: Install SHA-256 pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/vfx-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/vfx-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/vfx-rojo.zip') as z:
+              xs=[v for v in z.namelist() if v.split('/')[-1]=='rojo']
+              assert len(xs)==1
+              p=Path('/tmp/vfx-rojo');p.write_bytes(z.read(xs[0]));p.chmod(0o755)
+          PY
+      - name: Same-source Rojo Source+Class ON33/OFF31
+        run: |
+          set -euo pipefail
+          /tmp/vfx-rojo build artifacts/attr-vfx33/ON33.project.json -o artifacts/attr-vfx33/ON33.rbxlx
+          /tmp/vfx-rojo build artifacts/attr-vfx33/OFF31.project.json -o artifacts/attr-vfx33/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/attr-vfx33/ON33.project.json --place artifacts/attr-vfx33/ON33.rbxlx --count 33
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/attr-vfx33/OFF31.project.json --place artifacts/attr-vfx33/OFF31.rbxlx --count 31
+          echo GQ8_ATTR_VFX_REAL33_ROJO_OFF31_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-ATTR-VFX33-SOURCE-PREP-NO-PUBLISH
+          path: artifacts/attr-vfx33/
+          retention-days: 3
+          if-no-files-found: error
