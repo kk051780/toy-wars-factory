@@ -1,0 +1,139 @@
+name: GQ828 Historical Core36 to Real40 Replay (superseded by Real55 to59)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  genuine-hud-map-real40:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Select one exact official RC input, no stale/head race
+        run: |
+          set -euo pipefail
+          RC_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$RC_HEAD" = "f77b4d4393d9e9b19b65566413432a7a9f13962b" || { echo RED_OFFICIAL_RC_CHANGED_REPLAN_REQUIRED; exit 1; }
+          echo "RC_HEAD=$RC_HEAD" >> "$GITHUB_ENV"
+          mkdir -p artifacts/core36
+          gh run download 44232589275 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO --dir artifacts/core36
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("artifacts/core36")
+          for name,key in [("EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx","PLACE"),
+                           ("CORE36_RC_SELECTION_RECEIPT.json","RECEIPT")]:
+              matching=list(root.rglob(name))
+              assert len(matching)==1,(name,len(matching))
+              with open(__import__("os").environ["GITHUB_ENV"],"a") as f:
+                  f.write(f"{key}={matching[0]}\n")
+          PY
+      - name: Rehydrate same real 36 selected scripts; add four unique live UI+map scripts; preserve OFF36
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/compose_real40.py \
+            --place "$PLACE" --receipt "$RECEIPT" --out artifacts/gq828
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("artifacts/gq828/SOURCE_SELECTION_RECEIPT.json").read_text())
+          assert m["original36_source_preserved"] is True and m["source_count"]==40
+          assert m["official_rc_adopted"] is False and m["purchases_enabled"] is False
+          assert len(m["on_sources"])==40 and len(m["off_sources"])==36
+          new={x["route"] for x in m["on_sources"]}-{x["route"] for x in m["off_sources"]}
+          assert new==set(m["new_sources"]),("RED_UNEXPECTED_RUNTIME_DIFF",new)
+          src=Path("handoffs/EGGRUMBLE-HUD-INTEL-20261119")
+          client=(src/"EGGRUMBLE_HudIntelRuntime.client.luau").read_text()
+          server=(src/"EGGRUMBLE_MapIntelBridge.server.luau").read_text()
+          assert 'remote:FireClient(p,' in server
+          for bad in ("OnServerEvent:Connect(","remote:FireServer(","TakeDamage(","GetAsync(","UpdateAsync(","ProcessReceipt"):
+              assert bad not in server+client,("RED_DUPLICATE_AUTHORITY_OR_PURCHASE",bad)
+          assert 'Color3.fromRGB(207,92,86)' in server and 'Color3.fromRGB(87,146,218)' in server
+          assert 'ownCastle(result,other)' in server and 'theirTeam' in server
+          assert 'GetDebugId(' not in server
+          assert 'local visible=Intel.project(' in server
+          assert 'activate(basic[1] or slotTool(selectedSlot))' in client
+          assert "EGGRUMBLE_SKILL_" in client
+          print("GQ828_REAL40_SINGLE_EXISTING_COMBAT_TOOL_INTENT_AND_FILTERED_MAP_ONLY_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile all actual 40 and original36 source + seven role privacy regression
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq828-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq828-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CC=/tmp/gq828-luau/luau-compile
+          for dir in artifacts/gq828/on40/sources artifacts/gq828/off36/sources; do
+            for f in "$dir"/*.luau; do "$CC" --text "$f" >/dev/null; done
+          done
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/gq828-native
+          /tmp/gq828-luau/luau /tmp/gq828-native/good.luau | tee /tmp/gq828-native.log
+          grep -qx GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS /tmp/gq828-native.log
+          for mutant in auth role fog; do
+            if /tmp/gq828-luau/luau "/tmp/gq828-native/${mutant}_mutant.luau" >"/tmp/gq828-${mutant}.log" 2>&1; then
+              echo "RED_UNDETECTED_${mutant}_MUTANT"; exit 1
+            fi
+            grep -q RED_ "/tmp/gq828-${mutant}.log"
+          done
+          echo GQ828_REAL40_ALL_NATIVE_COMPILE_AND_PRIVACY_PASS
+      - name: Pinned Rojo actual 40 selected + byte-exact OFF36 source/class verification
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq828-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq828-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq828-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq828-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq828-rojo build artifacts/gq828/on40/GQ828_REAL40_HUD_MAP.project.json -o artifacts/gq828/EGGRUMBLE_HUD_MAP_REAL40_PRIVATE.rbxlx
+          /tmp/gq828-rojo build artifacts/gq828/off36/GQ828_OFF36.project.json -o artifacts/gq828/EGGRUMBLE_HUD_MAP_OFF36_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq828/on40/GQ828_REAL40_HUD_MAP.project.json \
+            --place artifacts/gq828/EGGRUMBLE_HUD_MAP_REAL40_PRIVATE.rbxlx --count 40
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq828/off36/GQ828_OFF36.project.json \
+            --place artifacts/gq828/EGGRUMBLE_HUD_MAP_OFF36_PRIVATE.rbxlx --count 36
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "$RC_HEAD" || { echo RED_FORMAL_HEAD_MOVED_DURING_REAL40_BUILD; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          root=Path("artifacts/gq828")
+          f=root/"SOURCE_SELECTION_RECEIPT.json"
+          receipt=json.loads(f.read_text())
+          place=root/"EGGRUMBLE_HUD_MAP_REAL40_PRIVATE.rbxlx"
+          off=root/"EGGRUMBLE_HUD_MAP_OFF36_PRIVATE.rbxlx"
+          receipt.update(native="PASS",rojo="PASS",off36="PASS",build_sha=os.getenv("GITHUB_SHA"),
+                         selected_place_sha256=hashlib.sha256(place.read_bytes()).hexdigest(),
+                         selected_place_bytes=place.stat().st_size,
+                         off36_sha256=hashlib.sha256(off.read_bytes()).hexdigest(),
+                         off36_bytes=off.stat().st_size)
+          f.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
+          print("GQ828_ACTUAL_REAL40_ON_OFF_SAME_HEAD_PASS",receipt["selected_place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ828-HUD-MAP-REAL40-ON-OFF-CANDIDATE-NOT-RC
+          path: |
+            artifacts/gq828/EGGRUMBLE_HUD_MAP_REAL40_PRIVATE.rbxlx
+            artifacts/gq828/EGGRUMBLE_HUD_MAP_OFF36_PRIVATE.rbxlx
+            artifacts/gq828/SOURCE_SELECTION_RECEIPT.json
+            artifacts/gq828/on40/GQ828_REAL40_HUD_MAP.project.json
+          retention-days: 3
+          if-no-files-found: error
