@@ -55,4 +55,17 @@ jobs:
               if "Swarm" in t or "Host" in t or "Combat" in t or "Item" in t or "Castle" in t:
                 for i,l in hits[:85]:
                   print("  LINE",i,l[:220])
+              windows=[]
+              if t.endswith("/EGGRUMBLE_SevenRoleCombat"):
+                windows=[(385,448),(770,815),(1020,1094)]
+              elif t.endswith("/EGGRUMBLE_SwarmCombat"):
+                windows=[(313,343),(402,456),(507,538)]
+              elif t.endswith("/EGGRUMBLE_LobbyCastleModesPreview"):
+                windows=[(1190,1240),(1260,1310),(1400,1470)]
+              elif t.endswith("/EGGRUMBLE_FieldItemPickups"):
+                windows=[(1,85)]
+              for aa,bb in windows:
+                print("CODE_WINDOW",t,aa,bb)
+                for pos in range(aa,min(bb,len(lines))+1):
+                  print("CODE",pos,lines[pos-1][:250])
           PY
