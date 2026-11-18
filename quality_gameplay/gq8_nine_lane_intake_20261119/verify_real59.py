@@ -12,10 +12,34 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from verify_integrated_sources import ROUTES, SINGLE
-import sys
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "handoffs/EGGRUMBLE-HUD-INTEL-20261119"))
-from compose_real40 import contents
+import re
+
+def contents(root):
+    """Extract original Luau and script classes directly from Rojo's actual .rbxlx XML."""
+    original = {}
+    classes = {}
+    def recurse(item, prefix):
+        props = item.find("Properties")
+        name = props.findtext("string[@name='Name']") if props is not None else None
+        if not name or not re.fullmatch(r"[A-Za-z0-9_]+", name):
+            raise ValueError("RED_INVALID_MODEL_ROUTE")
+        route = prefix + (name,)
+        if route in classes:
+            raise ValueError("RED_DUPLICATE_MODEL_ROUTE")
+        cls = item.get("class")
+        classes[route] = cls
+        if cls in ("Script", "LocalScript", "ModuleScript"):
+            src = props.findtext("string[@name='Source']")
+            if src is None:
+                src = props.findtext("ProtectedString[@name='Source']")
+            if src is None:
+                raise ValueError("RED_MISSING_MODEL_SOURCE")
+            original[route] = (cls, src.replace("\r\n", "\n"))
+        for child in item.findall("Item"):
+            recurse(child, route)
+    for item in root.findall("Item"):
+        recurse(item, ())
+    return original, classes
 
 ADDED = {
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy": "ModuleScript",
