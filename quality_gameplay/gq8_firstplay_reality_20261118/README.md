@@ -6,6 +6,10 @@ No duplicate of #780 Realm×Regen composition or #581 stale CI receipt gate:
 this checks whether successful V3 source tests imply real default gameplay.
 
 Formal RC at branch creation: 261b75d0a7093db5c13db3b95dad9a2911f78689.
+During development #220 sole writer adopted original Realm #764 and Regen #775
+into official private V3 Core36, readback f77b4d4393d9e9b19b65566413432a7a9f13962b.
+The active S1 primary remains rich51. This QA now checks both retained 31
+and selected private Core36 manifests and singleton runtime authority.
 Original author #482 source pinned to:
 fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9.
 The original LobbyCastleModesPreview Host has a direct IsStudio-only return.
@@ -19,7 +23,7 @@ playability are different. No source profile or engine gate is modified.
 - Read current active and companion manifests; assert single Host/Combat/AI/Swarm.
 - Check eight SOURCE-presence flags: character, field, battle, castle,
   neutral, item, lobby, balance. These ARE NOT engine/FUN acceptance.
-- Test 10 actual/mutant classifications including false claims of primary
+- Test 12 actual/mutant classifications including false claims of primary
   profile, Studio guard removal, fake PASS metadata, missing source, duplicate
   Host, missing neutral and commented-out guard.
 - Success of this QA workflow means correct NO_GO classification. It does
