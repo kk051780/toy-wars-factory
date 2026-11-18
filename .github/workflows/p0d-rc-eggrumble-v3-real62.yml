@@ -44,7 +44,7 @@ jobs:
           assert m["parent_source_count"]==59 and m["source_count"]==62
           assert m["guarantees"]["no_new_store_owner"]==0
           assert not m["guarantees"]["trade_settlement_enabled"]
-          assert not m["guarantees"]["no_public_publish"]
+          assert m["guarantees"]["no_public_publish"] is True
           for path,sha in m["new_source_locks"].items():
             got=subprocess.check_output(["git","hash-object",path],text=True).strip()
             assert got==sha,("RED_REAL62_TRADE_AUTHOR_SOURCE_DRIFT",path,got,sha)
