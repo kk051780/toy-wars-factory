@@ -1,0 +1,52 @@
+name: P0D GQ8 Affinity Readonly HUD Client Source Native QA
+on:
+  push:
+    branches: ['feature/gq8-affinity-hud-20261118-1240']
+    paths:
+      - 'handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/**'
+      - '.github/workflows/p0d-gq8-affinity-hud-native.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/**'
+      - '.github/workflows/p0d-gq8-affinity-hud-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-guide-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Derive native tests from actual client Luau source
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/make_native_tests.py --out /tmp/gq8-guide
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile and execute true native Luau plus deliberate budget mutant
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-guide-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-guide-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-guide-native/luau
+          CC=/tmp/gq8-guide-native/luau-compile
+          "$CC" --text handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/AffinityGuidePolicy.luau >/dev/null
+          "$CC" --text handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/EGGRUMBLE_AffinityGuide.client.luau >/dev/null
+          "$CC" --text /tmp/gq8-guide/good.luau >/dev/null
+          "$CC" --text /tmp/gq8-guide/mutant.luau >/dev/null
+          "$CLI" /tmp/gq8-guide/good.luau | tee /tmp/gq8-guide-good.log
+          grep -qx 'GQ8_AFFINITY_HUD_NATIVE_MATRIX_CAST_AND_SPOOF_PASS' /tmp/gq8-guide-good.log
+          if "$CLI" /tmp/gq8-guide/mutant.luau >/tmp/gq8-guide-mutant.log 2>&1; then
+            echo RED_VISUAL_BUDGET_MUTANT_WAS_ACCEPTED
+            exit 1
+          fi
+          grep -q RED_MATRIX /tmp/gq8-guide-mutant.log
+          echo GQ8_AFFINITY_HUD_TRUE_NATIVE_AND_MUTANT_RED_PASS
