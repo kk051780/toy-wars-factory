@@ -183,7 +183,7 @@ def negative_probes(root):
             return
         raise GateError("RED_NEGATIVE_MUTATION_NOT_REJECTED")
     must_reject(lambda x: x.update(transactions_enabled=True))
-    must_reject(lambda x: x["sources"][0].update(sha256="0"*64))
+    must_reject(lambda x: x["sources"][0].update(sha256="0"*63))
     must_reject(lambda x: x.update(current_intake_head="0"*40))
     must_reject(lambda x: x["sources"].pop())
     print("GQ8_REAL53_FOUR_ADVERSARIAL_RECEIPT_MUTANTS_REJECTED")
