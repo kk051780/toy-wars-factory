@@ -1,0 +1,106 @@
+name: GQ8 original Subsea Leviathan melee wall occlusion QA
+on:
+  push:
+    branches: ['quality/gq8-subsea-melee-los-20261118']
+    paths:
+      - 'quality_gameplay/gq8_subsea_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-subsea-melee-los.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_subsea_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-subsea-melee-los.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-source-melee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - name: Real original source, inverse, and harmful mutants
+        env:
+          GQ8_SUBSEA_REALM_ORIGINAL: _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=quality_gameplay/gq8_subsea_melee_los_20261118
+          python3 -B -m unittest discover -s "$SRC" -p 'test_*.py' -v
+          mkdir -p artifacts/gq8-subsea/ON artifacts/gq8-subsea/OFF
+          python3 "$SRC/patch_melee.py" --source "$GQ8_SUBSEA_REALM_ORIGINAL" --out artifacts/gq8-subsea/ON/RealmCore.server.luau --harness artifacts/gq8-subsea/melee_vm.spec.luau
+          python3 "$SRC/patch_melee.py" --rollback --source artifacts/gq8-subsea/ON/RealmCore.server.luau --out artifacts/gq8-subsea/OFF/RealmCore.server.luau
+          cmp "$GQ8_SUBSEA_REALM_ORIGINAL" artifacts/gq8-subsea/OFF/RealmCore.server.luau
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=Path('artifacts/gq8-subsea')
+          for mode in ('ON','OFF'):
+              proj={'name':'GQ8Subsea'+mode,
+                    'tree':{'$className':'DataModel',
+                     'ServerScriptService':{'$className':'ServerScriptService',
+                      'RealmCore':{'$path':mode+'/RealmCore.server.luau'}}}}
+              (r/(mode+'.project.json')).write_text(json.dumps(proj))
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile original, selected, OFF and execute actual selected subsea melee
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-subsea-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-subsea-build --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          for f in _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau artifacts/gq8-subsea/ON/RealmCore.server.luau artifacts/gq8-subsea/OFF/RealmCore.server.luau artifacts/gq8-subsea/melee_vm.spec.luau; do
+            /tmp/gq8-subsea-build/luau-compile --text "$f" >/dev/null
+          done
+          /tmp/gq8-subsea-build/luau artifacts/gq8-subsea/melee_vm.spec.luau
+      - name: Pinned Rojo ON/OFF original Script Class and Source
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-subsea-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-subsea-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq8-subsea-rojo.zip') as z:
+              names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(names)==1
+              f=Path('/tmp/gq8-subsea-rojo');f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+          cd artifacts/gq8-subsea
+          /tmp/gq8-subsea-rojo build ON.project.json -o ON.rbxlx
+          /tmp/gq8-subsea-rojo build OFF.project.json -o OFF.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for variant in ('ON','OFF'):
+              root=ET.parse(variant+'.rbxlx').getroot()
+              scripts=[item for item in root.iter('Item') if item.get('class')=='Script']
+              assert len(scripts)==1,(variant,len(scripts))
+              props=scripts[0].find('Properties')
+              assert props is not None
+              text=props.findtext("string[@name='Source']")
+              if text is None:
+                  text=props.findtext("ProtectedString[@name='Source']")
+              assert text is not None
+              assert text.replace('\r\n','\n')==Path(variant+'/RealmCore.server.luau').read_text()
+          print('GQ8_SUBSEA_ROJO_ON_OFF_SOURCE_CLASS_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ8_SUBSEA_LEVIATHAN_MELEE_LOS_SOURCE_ONLY
+          path: artifacts/gq8-subsea/
+          retention-days: 7
