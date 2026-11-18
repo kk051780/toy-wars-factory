@@ -46,9 +46,13 @@ jobs:
         run: |
           set -euo pipefail
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 70 --json databaseId,headSha,status,conclusion >/tmp/official.json
-          RUN="$(jq -r --arg h "$CURRENT" '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official.json)"
-          test -n "$RUN"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?branch=rc%2Fp0d-s1-kids-rc01&per_page=100" >/tmp/official.json
+          RUN="$(jq -r --arg h "$CURRENT" '[.workflow_runs[] | select(.head_sha==$h and .name=="P0D EGGRUMBLE V3 official RC companion 31-source pinned build" and .status=="completed" and .conclusion=="success")][0].id // empty' /tmp/official.json)"
+          if [ -z "$RUN" ]; then
+            jq -r '[.workflow_runs[] | [.id,.head_sha,.name,.conclusion]] | .[:12]' /tmp/official.json
+            echo RED_NO_CURRENT_SAMEHEAD_OFFICIAL31_SUCCESS; exit 1
+          fi
+          echo "CURRENT_OFFICIAL=$CURRENT RUN=$RUN"
           echo "sha=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "run=$RUN" >> "$GITHUB_OUTPUT"
       - name: Download real official source and rehydrate canonical31
