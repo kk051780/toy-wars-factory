@@ -59,6 +59,10 @@ def patch_latest_real42_swarm(original:str,candidate:str)->str:
  replace_once('local ended=false','local ended=false\n  local spawnSerial=0\n  local hitSerial=0',"SPAWN_SERIAL_COUNTER")
  replace_once('local constructed,model=pcall(soldier,all,at)',
   'spawnSerial+=1\n   local constructed,model=pcall(soldier,all,at,spawnSerial)',"ADOPT_EXISTING_BUDGET_SPAWNER")
+ # Preserve previous KO credit when a blocked Humanoid:TakeDamage causes no HP loss.
+ replace_once('    h:SetAttribute("LastAttackerId",id)\n',
+  '    local oldAttacker=h:GetAttribute("LastAttackerId")\n    h:SetAttribute("LastAttackerId",id)\n',
+  "FAILED_DAMAGE_CREDIT_RESTORE")
  cue_start='    local before=h.Health'
  cue_end='    ImpactFeedback.hit('
  if candidate.count(cue_start)!=1 or candidate.count(cue_end)!=1:

@@ -51,5 +51,18 @@ class Neutral8SingleAuthority(unittest.TestCase):
                  "PUFF_SMOKE","JELLY_WOBBLE","SPARK_SPRINT","FLAT_THEN_POP"):
    self.assertIn(motion,SOURCE)
 
+ def test_only_confirmed_hp_loss_counts_hit_and_ko_credit(self):
+  # An invulnerable ForceField/zero damage cannot count as a real hit.
+  start=SOURCE.index('    h:TakeDamage(damage)')
+  guard=SOURCE.index('    if h.Health>=before then',start)
+  feedback=SOURCE.index('    ImpactFeedback.hit(',guard)
+  self.assertLess(start,guard)
+  self.assertLess(guard,feedback)
+  self.assertIn('local oldAttacker=h:GetAttribute("LastAttackerId")',SOURCE)
+  self.assertIn('h:SetAttribute("LastAttackerId",oldAttacker)\n     continue',SOURCE)
+  composer=(ROOT/"compose_real43.py").read_text(encoding="utf-8")
+  self.assertIn('FAILED_DAMAGE_CREDIT_RESTORE',composer)
+  self.assertIn('cue_start=\'    local before=h.Health\'',composer)
+
 if __name__=="__main__":
  unittest.main()
