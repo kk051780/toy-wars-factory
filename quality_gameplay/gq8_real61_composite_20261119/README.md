@@ -1,0 +1,1 @@
+Composite Real61: Real55 official 55 unchanged plus #829 four HUD/Fog and #838 two read-only trade review scripts. This is a private SOURCE candidate; #220 authenticated B writer CAS plus same-official-head QA required. #840/#841 existing Host/Combat overlay not integrated. No spending or Roblox Publish.
