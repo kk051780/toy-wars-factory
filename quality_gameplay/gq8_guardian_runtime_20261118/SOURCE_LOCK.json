@@ -3,10 +3,10 @@
   "canonical_rc_branch": "rc/p0d-s1-kids-rc01",
   "baseline_formal_rc": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
   "upstream_latest_dri_pr": 796,
-  "upstream_real41_head": "940b99543d17e9ed6beb66e4a91a70e478868e3c",
-  "upstream_immutable_actions_run": 44311974603,
-  "upstream_immutable_artifact_id": 14431340803,
-  "upstream_portable41_place_sha256": "be6c4fa63b7629fe8133ec08a8fe234563fcf722879db93e9e66978feb9973fd",
+  "upstream_real41_head": "33f22323f720659ae52628a6025a62eb1394fd24",
+  "upstream_immutable_actions_run": 44317388329,
+  "upstream_immutable_artifact_id": 14433915697,
+  "upstream_portable41_place_sha256": "1cd5ee40fbee8a9c7f5874689c2a9da44c9cb6f6fa87136c771d7cf87f521384",
   "original41_count": 41,
   "new42_count": 42,
   "original_modified_routes": [
@@ -29,5 +29,12 @@
   "studio_2client": "NOT_TESTED",
   "android15": "NOT_TESTED",
   "art_gate": "NO_GO",
-  "purchase_receipts_enabled": false
+  "purchase_receipts_enabled": false,
+  "upstream_guardian_gate_rolling5s": {
+    "source_author_pr": 809,
+    "pinned_head": "a5b6b17d96886b797eef4d85073159a182b71693",
+    "per_attacker_seconds": 1,
+    "total_damage_per_rolling_5s": 72,
+    "requires_original_castle_rules": true
+  }
 }
