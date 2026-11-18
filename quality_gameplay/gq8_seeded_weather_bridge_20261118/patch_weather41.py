@@ -125,7 +125,7 @@ def verify_author(project:Path,receipt:Path):
     doc,files=flatten(project)
     info=json.loads(receipt.read_text(encoding="utf-8"))
     if len(files)!=EXPECTED_NUM or info.get("candidate_sha")!=PARENT_HEAD or info.get("source_count")!=41:
-        raise ValueError("RED_NOT_LATEST_DRI_41")
+        raise ValueError("RED_NOT_LATEST_DRI_41: "+str((len(files),info.get("candidate_sha"),info.get("source_count"))))
     expected={tuple(v["route"].split("/")):v for v in info["sources"]}
     if set(expected)!=set(files):raise ValueError("RED_AUTHOR_SOURCE_ROUTES")
     for k,p in files.items():
