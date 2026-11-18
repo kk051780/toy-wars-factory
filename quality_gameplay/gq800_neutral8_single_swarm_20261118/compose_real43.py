@@ -40,6 +40,7 @@ def compose(before_project:Path,swarm_candidate:Path,policy_original:Path,out:Pa
  if len(before)!=42 or SWARM not in before or FINISHER in before or CASTLE not in before:
   raise ValueError("RED_NOT_REAL42_SINGLE_SWARM_SOURCE")
  print("GQ800_REAL42_ACTUAL_SWARM_SOURCE_BLOB",git_blob(before[SWARM].read_bytes()), "size",len(before[SWARM].read_bytes()))
+ print("GQ800_REAL42_EXISTING_SWARM_START\\n"+before[SWARM].read_text(encoding="utf-8")+"\\nGQ800_REAL42_EXISTING_SWARM_END")
  print("GQ800_ORIGINAL_482_EXPECTED",ORIGINAL_SWARM_BLOB)
  if git_blob(before[SWARM].read_bytes())!=ORIGINAL_SWARM_BLOB:
   raise ValueError("RED_ORIGINAL_SWARM_WRITER_CHANGED_REBASE_REQUIRED")
