@@ -13,7 +13,7 @@ FINISHER=("ServerScriptService","EGGRUMBLE_NeutralFinisherPolicy")
 CASTLE=("ServerScriptService","EGGRUMBLE_CastleMatchRules")
 
 def git_blob(data:bytes)->str:
- return hashlib.sha1(("blob %d\\0"%len(data)).encode()+data).hexdigest()
+ return hashlib.sha1(("blob %d"%len(data)).encode()+bytes([0])+data).hexdigest()
 
 def flatten(project:Path):
  project=Path(project).resolve(strict=True)
