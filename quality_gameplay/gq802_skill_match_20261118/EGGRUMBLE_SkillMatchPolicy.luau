@@ -131,6 +131,8 @@ function M.propose(tickets:any,now:any,mode:any,region:any):any
        size=target,teamA=balanced.teamA,teamB=balanced.teamB,
        ratingMin=minRating,ratingMax=maxRating,noviceBand=g0.novice,
        teamGapRatio=balanced.gapRatio,
+       -- BR participants are separately allocated players, NEVER a team alliance.
+       teamAssignmentDisabled=mode=="BR",freeForAll=mode=="BR",
        -- Existing lobby MUST atomically claim tickets and reserve server.
        requiresAuthoritativeQueueClaim=true,
        teleportAuthorizedHere=false,randomStageAssignedHere=false}
