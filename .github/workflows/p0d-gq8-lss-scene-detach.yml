@@ -1,0 +1,48 @@
+name: P0D GQ8 LSS detached world lifecycle native QA
+on:
+  push:
+    branches: ['quality/gq8-lss-scene-detach-cleanup-20261118']
+  pull_request:
+    branches: ['quality/gq8-lss-idle-craft-lease-20261118-0810','rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-scene-detach.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-scene-detach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original source / cleanup negative contract / source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest -v handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/test_scene_detach_cleanup.py
+          python3 -B -m unittest -v handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/test_idle_craft.py
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_scene_detach_native.py --out-dir /tmp/gq8-detach
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_detach_luau
+          persist-credentials: false
+      - name: Native compile real optional32 and test 7 cases + 3 RED mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_detach_luau -B /tmp/gq8-detach-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-detach-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq8-detach-native/luau-compile --text handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau >/dev/null
+          /tmp/gq8-detach-native/luau /tmp/gq8-detach/good.luau | grep -q 'GQ8_LSS_SCENE_DETACH_NATIVE_7_CASES_PASS'
+          for i in 0 1 2; do
+            if /tmp/gq8-detach-native/luau /tmp/gq8-detach/mutant${i}.luau >/tmp/gq8-detach-mutant-${i}.log 2>&1; then
+              echo RED_DETACH_MUTANT_UNEXPECTED_PASS_${i}
+              exit 1
+            fi
+          done
+          echo GQ8_LSS_SCENE_DETACH_ACTUAL_LUAU_NATIVE_PASS_MUTANTS_RED
