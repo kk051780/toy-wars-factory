@@ -42,6 +42,18 @@ local badClock=req();badClock.now=math.huge
 assert(P.gateHit(invalidTime,badClock)==nil)
 badClock.now=0/0
 assert(P.gateHit(invalidTime,badClock)==nil)
+-- The fixed-bucket implementation used to allow 144 HP near a 5s boundary.
+local boundary=P.new("TEAM:2026","castle-blue")
+local rush=req();rush.damage=100;rush.now=4.90
+assert(P.gateHit(boundary,rush).gateRemaining==144)
+rush.attackerId="hero-ally";rush.now=4.99
+assert(P.gateHit(boundary,rush).gateRemaining==108)
+rush.attackerId="hero-third";rush.now=5.01
+assert(P.gateHit(boundary,rush)==nil and boundary.gateHP==108)
+rush.now=4.98
+assert(P.gateHit(boundary,rush)==nil and boundary.gateHP==108) -- stale server time
+rush.now=9.91
+assert(P.gateHit(boundary,rush).gateRemaining==72)
 a.damage=100;a.weaponSiegeRating=1
 assert(P.corePermit(s,a)==nil)
 a.freeSiegeToolVerified=true
