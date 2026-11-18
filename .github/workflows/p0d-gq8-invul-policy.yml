@@ -54,7 +54,7 @@ jobs:
           if "$CLI" /tmp/gq8-invul/budget_mutant.luau > /tmp/gq8-invul-budget-mutant.log 2>&1; then
              echo RED_UNLIMITED_DURATION_MUTANT_UNDETECTED; exit 1
           fi
-          grep -q RED_TOTAL_BUDGET /tmp/gq8-invul-budget-mutant.log
+          grep -q RED_24S_MATCH_BUDGET /tmp/gq8-invul-budget-mutant.log
           if "$CLI" /tmp/gq8-invul/damage_mutant.luau > /tmp/gq8-invul-damage-mutant.log 2>&1; then
              echo RED_DAMAGE_LEAK_MUTANT_UNDETECTED; exit 1
           fi
