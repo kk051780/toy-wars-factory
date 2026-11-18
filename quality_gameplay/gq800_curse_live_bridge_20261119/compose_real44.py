@@ -185,8 +185,17 @@ def patch_swarm(source:str)->str:
        local moveCandidates=if ownerTarget then {ownerTarget} else candidates
        for _,target in ipairs(moveCandidates) do"""
     source=replace_once(source,old,new,"FOLLOW_OWNER")
-    # Explicit expiry, death or role loss cleanup every native Swarm movement tick.
-    needle='while all.Parent and session.rules.phase=="ACTIVE" do\n    local candidates=aliveTargets()'
+    # Same singleton Swarm-owned bounded cleanup lease. Do not patch unrelated
+    # original movement/spawn loop formats; end-of-round releases every owner.
+    source=replace_once(source,"session.swarm=api",
+      """session.swarm=api
+  task.spawn(function()
+    while all.Parent and session.rules.phase=="ACTIVE" do
+      expireCharms()
+      task.wait(.38)
+    end
+    for model in pairs(charmed) do releaseCharm(model) end
+  end)""","EXPIRE_SESSION")
     if source.count(needle)!=2:
         raise ValueError("RED_EXPECT_TWO_ORIGINAL_SWARM_LOOPS")
     pos=source.find(needle,source.find(needle)+len(needle))
