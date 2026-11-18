@@ -30,7 +30,7 @@ function M.layout(w, h, hand)
             JUMP = at(xR + 4 * s, yB - 115 * s, small, "ジャンプ"),
             DODGE = at(xR - 72 * s, yB - 122 * s, small - 4, "回避"),
             INVUL = at(xR - 125 * s, yB - 60 * s, small + 2, "無敵"),
-            MUSOU = at(xR - 83 * s, yB + 17 * s, small + 4, "無双"),
+            MUSOU = at(xR - 83 * s, yB + 8 * s, small + 4, "無双"),
             ITEM = at(xR - 80 * s, math.max(64, h * .32), small - 4, "道具"),
             SKILL = at(xR + 1 * s, math.max(64, h * .32), small - 4, "技"),
             CONTEXT = at(xR - 158 * s, yB - 131 * s, small - 8, "調べる"),
