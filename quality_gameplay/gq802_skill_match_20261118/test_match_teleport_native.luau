@@ -17,9 +17,10 @@ function teleport:TeleportAsync(placeId:any,players:any,options:any):any
  requests[#requests+1]={id=options.ReservedServerId,count=#players,seed=options.data.seed}
  return {PrivateServerId=options.ReservedServerId}
 end
-local http={}
+local http={counter=0}
 function http:GenerateGUID(_dash:any):string
- return "12345678-1234-1234-1234-123456789abc"
+ self.counter=self.counter+1
+ return string.format("%08x-1234-1234-1234-123456789abc",self.counter)
 end
 local map={saved={}}
 function map:UpdateAsync(key:any,fn:any,ttl:any):any
