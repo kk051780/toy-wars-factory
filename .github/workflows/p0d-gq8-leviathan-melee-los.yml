@@ -1,0 +1,108 @@
+name: GQ8 Leviathan neutral melee LOS source-lock native gate
+on:
+  push:
+    branches: [feature/gq8-leviathan-melee-los-20261118-01]
+    paths:
+      - 'quality_gameplay/gq8_leviathan_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-leviathan-melee-los.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_leviathan_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-leviathan-melee-los.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-locked-neutral-melee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - name: Checkout isolated candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin exact author Realm source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - name: Negative source mutation and exact inverse tests
+        env:
+          REALM_ORIGINAL: _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_leviathan_melee_los_20261118 -p 'test_*.py'
+          mkdir -p artifacts/on artifacts/off
+          python3 -B quality_gameplay/gq8_leviathan_melee_los_20261118/patch_leviathan.py --source "$REALM_ORIGINAL" --out artifacts/on/RealmBattleCore.server.luau
+          cp "$REALM_ORIGINAL" artifacts/off/RealmBattleCore.server.luau
+      - name: Checkout pinned Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Native Luau syntax original ON and OFF
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq8-leviathan-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-leviathan-build --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-leviathan-build/luau-compile --text artifacts/on/RealmBattleCore.server.luau > /dev/null
+          /tmp/gq8-leviathan-build/luau-compile --text artifacts/off/RealmBattleCore.server.luau > /dev/null
+          echo GQ8_LEVIATHAN_MELEE_NATIVE_ON_OFF_PASS
+      - name: Install pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq8-rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+      - name: Build and verify actual Script class and source ON OFF
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for state in ("on","off"):
+              project={"name":"LeviathanLOS"+state,"tree":{"$className":"DataModel","ServerScriptService":{
+                  "$className":"ServerScriptService","RealmBattleCore":{
+                      "$path":"artifacts/"+state+"/RealmBattleCore.server.luau"}}}}
+              Path("artifacts/"+state+".project.json").write_text(json.dumps(project))
+          PY
+          for state in on off; do
+            /tmp/gq8-rojo build "artifacts/$state.project.json" -o "artifacts/$state.rbxlx"
+          done
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          from quality_gameplay.gq8_leviathan_melee_los_20261118.patch_leviathan import restore
+          for state in ("on","off"):
+              root=ET.parse("artifacts/"+state+".rbxlx").getroot()
+              scripts=[x for x in root.iter("Item") if x.get("class")=="Script"]
+              assert len(scripts)==1,(state,len(scripts))
+              src=scripts[0].find("./Properties/ProtectedString[@name='Source']")
+              assert src is not None,(state,"Source missing")
+              expected=Path("artifacts/"+state+"/RealmBattleCore.server.luau").read_text()
+              assert src.text==expected,(state,"Source mismatch")
+          assert restore(Path("artifacts/on/RealmBattleCore.server.luau").read_text())==Path("artifacts/off/RealmBattleCore.server.luau").read_text()
+          print("GQ8_LEVIATHAN_MELEE_ROJO_SCRIPT_SOURCE_AND_OFF_PASS")
+          PY
+      - name: Attach private source proof only
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-LEVIATHAN-MELEE-LOS-SOURCE-ONLY
+          path: |
+            artifacts/on.rbxlx
+            artifacts/off.rbxlx
+          retention-days: 7
