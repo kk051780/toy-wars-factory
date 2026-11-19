@@ -60,6 +60,21 @@ def fix_viral_capture_callback_scope(author_host:bytes)->bytes:
             "VIRAL_SCOPE_FORWARD_BINDING_NOT_FIXED")
     return fixed
 
+def add_fb014_firstplay(host:bytes)->bytes:
+    """One local first-play path sign; preserve the single Host and 65 routes."""
+    anchor=b"-- GQ646_LOBBY_SAFE_SPAWN_END\n"
+    marker=b"GQ8_FB014_FIRSTPLAY_GUIDE_BEGIN"
+    require(host.count(anchor)==1,"FB014_SAFE_SPAWN_ANCHOR_DRIFT")
+    require(host.count(marker)==0,"FB014_ALREADY_PRESENT")
+    guide="-- GQ8_FB014_FIRSTPLAY_GUIDE_BEGIN: lobby-only, no HUD/Remote/queue owner.\nlocal fb014Anchor=Instance.new(\"Part\")\nfb014Anchor.Name=\"GQ8_FB014_FIRSTPLAY_ANCHOR\"\nfb014Anchor.Anchored=true\nfb014Anchor.CanCollide=false\nfb014Anchor.CanTouch=false\nfb014Anchor.CanQuery=false\nfb014Anchor.Transparency=1\nfb014Anchor.Size=Vector3.new(2,2,1)\nfb014Anchor.Position=root+Vector3.new(0,4,-15)\nfb014Anchor.Parent=folder\nlocal fb014Gui=Instance.new(\"BillboardGui\")\nfb014Gui.Name=\"GQ8_FB014_FIRSTPLAY_SIGN\"\nfb014Gui.Size=UDim2.fromOffset(288,92)\nfb014Gui.StudsOffsetWorldSpace=Vector3.new(0,1.8,0)\nfb014Gui.AlwaysOnTop=false\nfb014Gui.MaxDistance=44\nfb014Gui.Parent=fb014Anchor\nlocal fb014Text=Instance.new(\"TextLabel\")\nfb014Text.Name=\"Instructions\"\nfb014Text.Size=UDim2.fromScale(1,1)\nfb014Text.BackgroundColor3=Color3.fromRGB(30,37,51)\nfb014Text.BackgroundTransparency=.18\nfb014Text.BorderSizePixel=0\nfb014Text.Font=Enum.Font.GothamBold\nfb014Text.TextColor3=Color3.fromRGB(245,248,235)\nfb014Text.TextSize=17\nfb014Text.TextWrapped=true\nfb014Text.Text=\"はじめての出撃\\n① 奥の職業台で役職選択\\n② 戻ってTEAM／BRゲートで出撃\"\nfb014Text.Parent=fb014Gui\n-- GQ8_FB014_FIRSTPLAY_GUIDE_END\n"
+    updated=host.replace(anchor,anchor+guide.encode("utf8"),1)
+    require(updated.count(b"GQ8_FB014_FIRSTPLAY_SIGN")==1 and
+            updated.count(b'fb014Gui.MaxDistance=44')==1 and
+            updated.count(b'fb014Anchor.CanCollide=false')==1 and
+            updated.count(b'fb014Text.Text="')==1 and
+            updated.count(anchor)==1,"FB014_SELECTED_SOURCE_MUTATION")
+    return updated
+
 def run(a):
     # Existing verified composite has 64 sources from official62 + two authors.
     real64_doc,real64=flatten(a.real64)
@@ -135,7 +150,7 @@ def run(a):
             merged_combat!=real64[COMBAT][1],"COUNTER_OR_DODGE_NOT_COMPOSED")
     chosen=dict(official63)
     fixed_host=fix_viral_capture_callback_scope(real64[HOST][1])
-    chosen[HOST]=(real64[HOST][0],fixed_host)
+    chosen[HOST]=(real64[HOST][0],add_fb014_firstplay(fixed_host))
     chosen[COMBAT]=(official63[COMBAT][0],merged_combat)
     chosen[INVUL]=real64[INVUL]
     for k in VIRAL|COUNTER:
@@ -172,6 +187,7 @@ def run(a):
         require(source.count(b'canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)')==1
                 and b'FindFirstChildWhichIsA("SpawnLocation"' not in source,
                 "LOBBY_STARTUP_RACE_FENCE_NOT_IN_SELECTED_SOURCE")
+    require(chosen[HOST][1].count(b"GQ8_FB014_FIRSTPLAY_GUIDE_BEGIN")==1, "FB014_NOT_IN_FINAL_HOST")
     require(len(chosen)==65,"FINAL65_COUNT")
     unchanged={k for k in official63 if chosen[k]==official63[k]}
     require(len(unchanged)==58,"FORMAL63_ORIGINAL58_NOT_PRESERVED")
