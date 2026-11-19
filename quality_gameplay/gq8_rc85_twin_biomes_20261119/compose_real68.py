@@ -70,7 +70,7 @@ def do(base:Path,source:Path,out:Path,head:str):
  r65=json.loads((base/"REAL65_INTAKE_RECEIPT.json").read_text())
  gate(r65.get("rc86_starry_path") and r65.get("rc86_meteor_shortcut") and
       r65.get("rc85_dojo_lobby_training") and r65.get("legacy_rc86_wind") and
-      r65.get("rc86_undead_command") and r65.get("rc86_trapper_pair_portal"),"LEGACY_ALREADY_ADOPTED")
+      r65.get("rc86_three_undead_command") and r65.get("rc86_trapper_pair_warp"),"LEGACY_ALREADY_ADOPTED")
  old={}
  for route,path in selected.items():
   f=base/path
