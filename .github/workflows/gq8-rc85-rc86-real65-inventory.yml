@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      GH_TOKEN: \${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
       OFFICIAL_SHA: 4b4516557fd8da748c48eb92a5beba4e4c47b7ed
     steps:
       - uses: actions/checkout@v4
