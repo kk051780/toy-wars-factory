@@ -5,6 +5,7 @@ on:
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -20,6 +21,7 @@ on:
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -46,6 +48,8 @@ jobs:
           python3 quality_gameplay/gq8_real63_intake_20261119/test_fb014_firstplay.py
           python3 -m py_compile quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py
           python3 quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -207,6 +211,23 @@ jobs:
             assert len(data)==entry['bytes'] and sha256(data).hexdigest()==entry['sha256']
           assert Path('artifacts/real65/OFF63_EXACT_OFFICIAL.rbxlx').read_bytes()==Path('/tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx').read_bytes()
           print('GQ8_REAL65_LATE_HOST_SOURCE65_SHA_CLASS_OFF63_PASS')
+          PY
+      - name: Compose original RC86 FB029 Ninja wind into existing REAL65 Combat without second authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          doc=json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
+          proof=doc['legacy_rc86_wind']
+          assert doc['new_selected_source_count']==65 and proof['unchanged_other_sources']==64
+          assert proof['new_remote_count']==0 and proof['new_damage_owner_count']==0
+          assert proof['original_rc86_run']==43754858996 and proof['new_script_count']==0
+          print('GQ8_RC85_RC86_NONLOSS_WIND_ACTUAL_REAL65_INTAKE_PASS')
           PY
       - uses: actions/checkout@v4
         with:
