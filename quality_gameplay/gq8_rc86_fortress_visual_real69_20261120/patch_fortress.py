@@ -85,7 +85,7 @@ def run(root, head):
     previous = root / 'off69_fortress'
     previous.mkdir()
     for f, raw, _ in before.values():
-        dest = previous / f.relative_to(root)
+        dest = previous / f.relative_to(root.resolve())
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(raw)
     (previous / project_path.name).write_bytes(project_path.read_bytes())
