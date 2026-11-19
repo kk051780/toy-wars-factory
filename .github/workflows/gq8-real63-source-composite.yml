@@ -824,6 +824,81 @@ jobs:
             --parent artifacts/real67 \
             --current artifacts/real68 \
             --out artifacts/real68/REAL68_NONLOSS_AUDIT.json
+      - name: Restore original RC86 Gorogan mobile LOD in ONE existing REAL68 A01 client, full OFF68
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc86_gorogan_mobile_lod_real68_20261120/patch_real68.py
+          python3 -B quality_gameplay/gq8_rc86_gorogan_mobile_lod_real68_20261120/patch_real68.py --base artifacts/real68 --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import pathlib,json,hashlib,subprocess
+          root=pathlib.Path('artifacts/real68')
+          receipt=json.loads((root/'REAL68_LEGACY_INTAKE_RECEIPT.json').read_text())
+          project=json.loads((root/'EGGRUMBLE_REAL68.project.json').read_text())
+          oldproject=json.loads((root/'off68/EGGRUMBLE_REAL68.project.json').read_text())
+          def flatten(pr,folder):
+            items={}
+            def walk(node,prefix=()):
+              if '$path' in node:
+                route='/'.join(prefix)
+                assert route not in items
+                path=folder/node['$path']
+                assert path.is_file(),route
+                items[route]=(path.read_bytes(),node.get('$className',''))
+              else:
+                for name,child in node.items():
+                  if not name.startswith('$') and isinstance(child,dict):
+                    walk(child,prefix+(name,))
+            walk(pr['tree'])
+            return items
+          now=flatten(project,root)
+          old=flatten(oldproject,root/'off68')
+          assert len(old)==len(now)==68 and set(old)==set(now)
+          target='StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD'
+          assert receipt['rc86_gorogan_mobile_lod']['all68_routes_preserved']
+          assert receipt['rc86_gorogan_mobile_lod']['other67_selected_source_bodies_byte_identical']
+          assert sum(now[k][0]!=old[k][0] for k in old)==1
+          assert old[target][1]==now[target][1]
+          assert hashlib.sha256(old[target][0]).hexdigest()=='7b2936ef15a025409d54acb498b79254a8bf2957ade2faf96f1bb1985f103889'
+          for route,(raw,cls) in now.items():
+            assert hashlib.sha256(raw).hexdigest()==receipt['source_hashes'][route],route
+            assert cls==old[route][1]
+          def compile_all(pr,folder):
+            def walk(node):
+              if '$path' in node:
+                subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(folder/node['$path'])],check=True,stdout=subprocess.DEVNULL)
+              else:
+                for name,child in node.items():
+                  if not name.startswith('$') and isinstance(child,dict):walk(child)
+            walk(pr['tree'])
+          compile_all(project,root)
+          print('GQ8_RC86_GOROGAN_LOD_NATIVE_REAL68_68_SELECTED_67_UNCHANGED_EXACT_OFF68')
+          PY
+          /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL68.project.json -o artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real68/off68/EGGRUMBLE_REAL68.project.json -o artifacts/real68/OFF68_REBUILT.rbxlx
+          cmp artifacts/real68/OFF68_REBUILT.rbxlx artifacts/real68/OFF68_EXACT_PRE_LOD.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real68/EGGRUMBLE_REAL68.project.json --place artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx --count 68
+          python3 - <<'PY'
+          import os,json,pathlib,hashlib
+          root=pathlib.Path('artifacts/real68')
+          path=root/'REAL68_LEGACY_INTAKE_RECEIPT.json'
+          receipt=json.loads(path.read_text())
+          place=root/'EGGRUMBLE_REAL68_PRIVATE.rbxlx'
+          receipt['rc86_gorogan_mobile_lod']['native_rojo']='PASS_68_OF_68'
+          receipt['rc86_gorogan_mobile_lod']['off68_place_byte_exact']=True
+          receipt['candidate_head']=os.environ['GITHUB_SHA']
+          receipt['private_place_bytes']=place.stat().st_size
+          receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          path.write_text(json.dumps(receipt,indent=2,sort_keys=True,ensure_ascii=False)+'\n')
+          print('GQ8_SINGLE_REAL68_GOROGAN_LOD_NOLOSS_POST_BUILD',place.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_MOVED_BEFORE_GOROGAN_LOD_PROOF; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_GOROGAN_LOD_PROOF; exit 1; }
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL68-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL68-RC85-TWIN-BIOMES-PRIVATE-NOT-OFFICIAL' }}
