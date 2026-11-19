@@ -1,0 +1,41 @@
+{
+  "schema": "GQ8_ONE_CANONICAL_V3_REAL66_PRIVATE_COMPANION_SOURCE_PROFILE_V1",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "source_profile": "eggrumble_v3_real66",
+  "source_count": 66,
+  "parent_profile": "eggrumble_v3_real65",
+  "parent_sources_byte_exact": 65,
+  "new_source_count": 1,
+  "new_route": "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
+  "feature_id": "GQ8_LEGACY_RC85_86_EXPLORATION_INTAKE_20261119",
+  "source_pr": 868,
+  "comparison_inventory_pr": 866,
+  "source_workflow": ".github/workflows/gq8-real63-source-composite.yml",
+  "source_assembler": "quality_gameplay/gq8_rc85_rc86_exploration_20261119/compose_real66.py",
+  "intake_policy": "Only one official branch; 66 selected V3 sources only after official same-head CI. Old REAL65 remains byte-exact OFF65 rollback, not a second release.",
+  "preserve_previous": [
+    "original REAL65 65 source bodies and classes",
+    "RC86 Ninja wind #864",
+    "RC86 6 stage weapons #865",
+    "15 pickup aliases #869",
+    "RC86 safe reach and neutral-basic bonus #870",
+    "all existing V3 game/host/combat/swarm/realm/shop authority"
+  ],
+  "preserved_active_s1_profile": "rich51",
+  "selected_for_v3_private_companion": true,
+  "selected_for_public_roblox_publish": false,
+  "studio_solo": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "art": "NO_GO",
+  "first3min_fun": "NO_GO",
+  "paid_trading": false,
+  "full_rc85_rc86_semantic_parity": "NOT_VERIFIED",
+  "remaining_legacy_sources_to_reconcile": [
+    "#476",
+    "#479",
+    "#481",
+    "PR #866 physical-lineage diff results"
+  ],
+  "rollback": "Use the copied exact REAL65 source and Place from official same-head artifact, do not replace any existing Game/Combat/Swarm authority"
+}
