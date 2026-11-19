@@ -64,7 +64,7 @@ jobs:
           x=json.load(open('rc_fastlane/EGGRUMBLE_V3_REAL65.json'))
           assert x['source_profile']=='eggrumble_v3_real65' and x['source_count']==65
           assert x['pre_adoption_official_head']=='d52f2060dda81f0af6d1b143eee25fb416141602'
-          assert x['parent_sources']==63 and x['existing_unchanged_real63']==60
+          assert x['parent_sources']==63 and x['existing_unchanged_real63']==58
           assert x['real63_parent_original62_unchanged']==59
           assert 'ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy' in x['preserved_routes']
           assert x['host_class']=='Script'
@@ -146,11 +146,12 @@ jobs:
           assert x['new_sources']==9 and len(x['sources'])==64
           assert x['paid_trade'] is False and x['publish'] is False
           y=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
-          assert y['new_selected_source_count']==65 and y['original_real63_byte_unchanged']==60
+          assert y['new_selected_source_count']==65 and y['original_real63_byte_unchanged']==58
           assert y['preserves_real63_basic_attack'] and y['preserves_real63_dodge'] and y['preserves_real63_hud']
           assert y['preserves_real63_presentation'] and y['preserves_real63_round_epoch']
           assert y['official63_parent_original62_unchanged']==59
           assert len(y['sources'])==65 and not y['real_paid_trade'] and not y['roblox_publish']
+          assert y['lobby_spawn_order_race_fenced'] and len(y['patched_existing_routes'])==5
           print('GQ8_REAL65_FORMAL63_PRESERVED_BASIC_DODGE_AND_COUNTER_VIRAL_SOURCE_STATIC_PASS')
           PY
       - uses: actions/checkout@v4

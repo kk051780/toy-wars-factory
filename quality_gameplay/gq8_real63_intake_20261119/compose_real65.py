@@ -141,9 +141,33 @@ def run(a):
     for k in VIRAL|COUNTER:
         require(k not in chosen,"NEW_ROUTE_ALREADY_OWNED")
         chosen[k]=real64[k]
+    # GQ8 unique startup fix: both showroom Scripts must wait for the *Host-owned*
+    # safe spawn. Studio starts independent ServerScripts in unspecified order.
+    SHOP=("ServerScriptService","GQ805_LobbyGuildShop")
+    PLAZA=("ServerScriptService","GQ8_LobbySocialPlaza")
+    def patch_spawn(route,old,new):
+        cls,body=chosen[route]
+        require(cls=="Script" and body.count(old)==1,
+                "LOBBY_BOOTSTRAP_EXPECTED_ORIGINAL_"+route[-1])
+        chosen[route]=(cls,body.replace(old,new,1))
+    patch_spawn(SHOP,
+        b'local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)\n'
+        b'local origin=spawn and spawn.Position or Vector3.new(0,4,0)',
+        b'local canonical=workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\n'
+        b'if not canonical then warn("[GQ805 SHOP] canonical lobby missing: skip") return end\n'
+        b'local spawn=canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\n'
+        b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ805 SHOP] canonical spawn missing: skip") return end\n'
+        b'local origin=spawn.Position')
+    patch_spawn(PLAZA,
+        b'local spawn = workspace:FindFirstChildWhichIsA("SpawnLocation", true)\n'
+        b'if not spawn then warn("[GQ8 SOCIAL] no safe SpawnLocation: skip") return end',
+        b'local canonical = workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\n'
+        b'if not canonical then warn("[GQ8 SOCIAL] canonical lobby missing: skip") return end\n'
+        b'local spawn = canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\n'
+        b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ8 SOCIAL] canonical spawn missing: skip") return end')
     require(len(chosen)==65,"FINAL65_COUNT")
     unchanged={k for k in official63 if chosen[k]==official63[k]}
-    require(len(unchanged)==60,"FORMAL63_ORIGINAL60_NOT_PRESERVED")
+    require(len(unchanged)==58,"FORMAL63_ORIGINAL58_NOT_PRESERVED")
     for k in (BASIC,HUD63,VIEW63):
         require(chosen[k]==official63[k],"DODGE_POLICY_OR_TOUCH_HUD_LOST")
     require(sum(k[-1]=="EGGRUMBLE_SevenRoleCombat" for k in chosen)==1,
@@ -171,10 +195,11 @@ def run(a):
     report={
         "schema":"GQ8_REAL65_FORMAL63_PLUS_VIRAL_COUNTER_SOURCE_PROOF_V1",
         "official_parent_head":OFFICIAL63,"new_selected_source_count":65,
-        "original_real63_source_count":63,"original_real63_byte_unchanged":60,
+        "original_real63_source_count":63,"original_real63_byte_unchanged":58,
         "official63_parent_original62_unchanged":59,
         "added_exact_routes":["/".join(k) for k in sorted(VIRAL|COUNTER)],
-        "patched_existing_routes":["/".join(k) for k in (HOST,COMBAT,INVUL)],
+        "patched_existing_routes":["/".join(k) for k in (HOST,COMBAT,INVUL,SHOP,PLAZA)],
+        "lobby_spawn_order_race_fenced":True,
         "preserves_real63_basic_attack":True,"preserves_real63_dodge":True,
         "preserves_real63_hud":True,"preserves_real63_presentation":True,
         "preserves_real63_round_epoch":True,"host_class":"Script",
