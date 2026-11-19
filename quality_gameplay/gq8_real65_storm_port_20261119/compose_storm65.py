@@ -17,6 +17,7 @@ def run(project,receipt_path,helper_file):
  helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
  check(helper.ROUTE==ROUTE and helper.SOURCE_BLOB=="1ba20f2e6b1bf6ce7bab7c4d4abbedb663f0abf1","ORIGINAL_PROVENANCE")
  doc,src=flatten(project)
+ print("GQ8_REAL65_ACTUAL_REALM_ROUTE_CANDIDATES",[(("/".join(k)),v[0]) for k,v in src.items() if "Realm" in k[-1] or "LandSea" in k[-1] or "Weather" in k[-1] or "Storm" in k[-1]])
  check(len(src)==65 and ROUTE in src and src[ROUTE][0]=="Script","REAL65_REALM_CLASS")
  check(helper.blob_sha(src[ROUTE][1])==helper.SOURCE_BLOB,"REALM_AUTHOR_SOURCE_CHANGED_OR_ALREADY_FIXED")
  fixed=helper.patch_source(src[ROUTE][1])
