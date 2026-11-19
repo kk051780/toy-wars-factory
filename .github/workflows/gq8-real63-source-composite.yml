@@ -40,6 +40,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq8_real63_intake_20261119/compose_real63.py quality_gameplay/gq8_real63_intake_20261119/compose_real65.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_real63.py
+          python3 quality_gameplay/gq8_real63_intake_20261119/test_fb014_firstplay.py
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
