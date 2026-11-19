@@ -4,7 +4,7 @@ one source-exact, existing Combat owner neutral-only controlled bond intake.
 No separate Game/Store/Remote/score/HP/XP writer and byte-exact OFF67 backup.
 """
 from __future__ import annotations
-import argparse,copy,hashlib,json,shutil
+import argparse,copy,hashlib,json,shutil,os
 from pathlib import Path
 
 ROUTE="ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
@@ -63,7 +63,13 @@ def do(base:Path,source:Path,out:Path,head:str):
  r67=json.loads((base/"REAL67_LEGACY_INTAKE_RECEIPT.json").read_text())
  p67=json.loads((base/"EGGRUMBLE_REAL67.project.json").read_text())
  selected=source_paths(p67["tree"])
- gate(r67.get("formal_adopted") is True and r67.get("candidate_head")==head,"PARENT_NOT_CURRENT_FORMAL_SHA")
+ gate(r67.get("candidate_head")==head
+       and r67.get("native_selected")=="PASS_67_OF_67"
+       and r67.get("rojo_source_class")=="PASS_67_OF_67"
+       and r67.get("off66_place_byte_exact") is True,
+       "PARENT67_NOT_SAME_HEAD_NATIVE_ROJO_OFF66")
+ gate(r67.get("formal_adopted") is (os.environ.get("GITHUB_REF")=="refs/heads/rc/p0d-s1-kids-rc01"),
+       "PR_VS_FORMAL_PROFILE_EVENT_FENCE")
  gate(len(selected)==67 and r67["source_count"]==67,"PARENT67")
  gate(r67["parent_all66_byte_identical"] and r67["new_route"]=="ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes","CUMULATIVE_CANYON")
  gate(ROUTE not in selected and COMBAT in selected,"DUPLICATE_OR_MISSING_COMBAT")
