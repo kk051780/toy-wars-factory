@@ -9,6 +9,7 @@ on:
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
+      - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -29,6 +30,7 @@ on:
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
+      - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -713,5 +715,87 @@ jobs:
           path: artifacts/real67/
           # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
           # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
+          retention-days: 30
+          if-no-files-found: error
+      - name: Source-select original RC85 TwinBiomes4 TrainingLv3 Bond180 with ONE V3 neutral Combat owner (REAL68)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/compose_real68.py
+          python3 quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/test_twin68.py
+          python3 -B quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/compose_real68.py \
+            --base artifacts/real67 \
+            --out artifacts/real68 \
+            --source quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/EGGRUMBLE_LegacyTwinBiomes.server.luau \
+            --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          base=Path('artifacts/real67')
+          root=Path('artifacts/real68')
+          rc=json.loads((root/'REAL68_LEGACY_INTAKE_RECEIPT.json').read_text())
+          pr=json.loads((root/'EGGRUMBLE_REAL68.project.json').read_text())
+          assert rc['selected_source_count']==68 and rc['previous_selected_source_count']==67
+          assert rc['unchanged_existing_source_bodies']==66 and rc['one_existing_combat_modified']
+          assert rc['added_game_or_store_or_remote_owners']==0 and rc['new_server_script_count']==1
+          assert rc['starfall_meteor_canyon_trapper_undead_preserved']
+          assert rc['source_adopted_flags']==['TWIN_BIOMES_4NPC_V1','TWIN_CREATURE_TRAINING_V1','TWIN_BOND_PVE_COMPANION_V1']
+          assert rc['pve_bonus_nonstack_with_dojo'] and rc['same_existing_combat_neutral_damage_writer']
+          assert rc['original_training_xp_cap']==7 and rc['original_bond_seconds']==180
+          assert (root/'OFF_COMBAT_REAL67_EXACT.luau').is_file()
+          assert hashlib.sha256((root/'OFF_COMBAT_REAL67_EXACT.luau').read_bytes()).hexdigest()==rc['combat_original_sha256']
+          count=0
+          def walk(node,parts=()):
+            global count
+            for name,item in node.items():
+              if name.startswith('$') or not isinstance(item,dict):continue
+              if '$path' in item:
+                route='/'.join(parts+(name,))
+                data=(root/item['$path']).read_bytes()
+                assert hashlib.sha256(data).hexdigest()==rc['source_hashes'][route],route
+                subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(root/item['$path'])],check=True,stdout=subprocess.DEVNULL)
+                count+=1
+              else:walk(item,parts+(name,))
+          walk(pr['tree'])
+          assert count==68 and len(rc['source_hashes'])==68
+          print('GQ8_REAL68_RC85_TWIN_BIOMES_TRAINING_BOND_NATIVE68_NONLOSS_SOURCE_67_PARENT_PASS',count)
+          PY
+          /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL68.project.json -o artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL67.project.json -o artifacts/real68/OFF67_REBUILT.rbxlx
+          cmp artifacts/real68/OFF67_REBUILT.rbxlx artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real68/EGGRUMBLE_REAL68.project.json \
+            --place artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx --count 68
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          root=Path('artifacts/real68')
+          f=root/'REAL68_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          p=root/'EGGRUMBLE_REAL68_PRIVATE.rbxlx'
+          assert r['selected_source_count']==68 and r['unchanged_existing_source_bodies']==66
+          assert r['original_species']==['AWARIN','SANGORU','RAIKO','KUMONON']
+          r.update({
+           'formal_adopted':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+           'candidate_head':os.environ['GITHUB_SHA'],
+           'private_place_bytes':p.stat().st_size,
+           'private_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+           'native_selected':'PASS_68_OF_68','rojo_source_class':'PASS_68_OF_68',
+           'off67_place_byte_exact':True
+          })
+          f.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ8_SINGLE_FORMAL_REAL68_TWIN_NONLOSS_OFF67_68_OF_68_PASS',p.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_REAL68_OFFICIAL_MOVED_BEFORE_PROOF; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_REAL68_PR_BASE_MOVED_BEFORE_PROOF; exit 1; }
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL68-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL68-RC85-TWIN-BIOMES-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real68/
           retention-days: 30
           if-no-files-found: error
