@@ -19,8 +19,22 @@ def run(project,receipt_path,helper_file):
  doc,src=flatten(project)
  print("GQ8_REAL65_ACTUAL_REALM_ROUTE_CANDIDATES",[(("/".join(k)),v[0]) for k,v in src.items() if "Realm" in k[-1] or "LandSea" in k[-1] or "Weather" in k[-1] or "Storm" in k[-1]])
  check(len(src)==65 and ROUTE in src and src[ROUTE][0]=="ModuleScript","REAL65_EXPECT_INERT_MODULE")
- check(helper.blob_sha(src[ROUTE][1])==helper.SOURCE_BLOB,"REALM_AUTHOR_SOURCE_CHANGED_OR_ALREADY_FIXED")
- fixed=helper.patch_source(src[ROUTE][1])
+ current=src[ROUTE][1]
+ exact_author=helper.blob_sha(current)==helper.SOURCE_BLOB
+ body=current.decode("utf8")
+ # PR797's two original code anchors must still be present exactly once,
+ # even when another author has added unrelated Realm functionality.
+ if body.count(helper.PATCHED_TRANSITION)==1 and body.count(helper.PATCHED_STRIKE)==1:
+  check(body.count(helper.ORIGINAL_TRANSITION)==0 and body.count(helper.ORIGINAL_STRIKE)==0,
+        "MIXED_ALREADY_PATCHED_REALM")
+  fixed=current
+  state="ALREADY_SOURCE_PATCHED_REQUIRE_ONLY_CLASS_ACTIVATION"
+ else:
+  check(body.count(helper.ORIGINAL_TRANSITION)==1 and body.count(helper.ORIGINAL_STRIKE)==1,
+        "REALM_ANCHORS_CHANGED")
+  fixed=helper.patch_source(current,verify_blob=exact_author)
+  state="EXACT_AUTHOR" if exact_author else "SOURCE_DRIFT_ANCHOR_LOCKED"
+ print("GQ8_REAL65_CURRENT_REALM_PROVENANCE",{"git_blob":helper.blob_sha(current),"author_exact":exact_author,"patch_mode":state,"original_len":len(current),"patched_len":len(fixed)})
  node=doc["tree"]["ServerScriptService"]["EGGRUMBLE_RealmBattleCore"]
  check(set(node)=={"$path"},"SOURCE_ROUTE_AMBIGUOUS")
  path=(project.parent/node["$path"]).resolve(strict=True)
@@ -45,7 +59,7 @@ def run(project,receipt_path,helper_file):
  indexed[ROUTE]["sha256"]=sha(fixed);indexed[ROUTE]["bytes"]=len(fixed);indexed[ROUTE]["class"]="Script"
  receipt["original_real63_byte_unchanged"]=59
  receipt["patched_existing_routes"].append("/".join(ROUTE))
- receipt["realm_storm797"]={"feature_id":"GQ8_REALM_STORM_PHASE_FENCE_20261118","reused_author_pr":797,"helper_git_blob":HELPER_BLOB,"original_source_blob":helper.SOURCE_BLOB,"only_changed_route":"/".join(ROUTE),"repaired_class":"ModuleScript -> Script (server auto-start)","other_original_real65_sources_byte_exact":64,"rollback":"prior official REAL65 source/Place, OFF63 exact","studio_2client":"NOT_TESTED","android":"NOT_TESTED","fun":"NO_GO"}
+ receipt["realm_storm797"]={"feature_id":"GQ8_REALM_STORM_PHASE_FENCE_20261118","reused_author_pr":797,"helper_git_blob":HELPER_BLOB,"original_source_blob":helper.SOURCE_BLOB,"actual_real65_source_blob":helper.blob_sha(current),"author_source_exact":exact_author,"patch_mode":state,"only_changed_route":"/".join(ROUTE),"repaired_class":"ModuleScript -> Script (server auto-start)","other_original_real65_sources_byte_exact":64,"rollback":"prior official REAL65 source/Place, OFF63 exact","studio_2client":"NOT_TESTED","android":"NOT_TESTED","fun":"NO_GO"}
  receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
  print("GQ8_REAL65_STORM797_FIXED65_WITH64_UNCHANGED_PASS")
 if __name__=="__main__":
