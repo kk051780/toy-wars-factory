@@ -1,7 +1,8 @@
 --!strict
 -- GQ8_RC85_RC86_WCS_STARRY_METEOR_REAL67_20261119
--- Source selective adaptation of original RC85/86 WCS_F01_C01 and METEOR_FOURTH_V1;
--- original STARRY_PATH_V1 already resides in the sole V3 Realm (#879), reused.
+-- Port ONLY original RC85/86 WCS_F01_C01 physical canyon and Moguron gate.
+-- ORIGINAL Starfall10 (#879) and MeteorFourth (#884) are ALREADY in V3 Realm;
+-- both reused at the same canyon, never cloned.
 -- ONE existing V3 TEAM/BR world, one *environment* Script,
 -- zero Game/HP/score/combat/egg/Remote/Store/paid authority. Studio only.
 -- Original provenance: original 85-script Place artifact 14158848286.
@@ -10,7 +11,7 @@ if not RunService:IsStudio() then return end
 local Workspace=game:GetService("Workspace")
 local Players=game:GetService("Players")
 local LOBBY="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
-local FEATURE="GQ8_RC85_RC86_WCS_METEOR_REUSE_STAR_REAL67_20261119"
+local FEATURE="GQ8_RC85_WCS_REUSE_STAR_METEOR_REAL67_20261119"
 local installed:{[Instance]:boolean}={}
 local boundLobby:{[Instance]:boolean}={}
 
@@ -44,13 +45,14 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  stage:SetAttribute("FeatureId",FEATURE)
  stage:SetAttribute("GameOwner","EXISTING_EGGRUMBLE_LobbyCastleModesPreview")
  stage:SetAttribute("StageMode",mode)
- stage:SetAttribute("LegacyFlags","WCS_F01_C01,METEOR_FOURTH_V1")
+ stage:SetAttribute("LegacyFlags","WCS_F01_C01")
  stage:SetAttribute("ExistingStarSource","GQ8_RC86_STARRY_PATH_SINGLE_REALM_REAL66_20261119")
  stage:SetAttribute("NoCombatStoreScoreRemotes",true)
  stage:SetAttribute("SafeRouteAlwaysAvailable",true)
  stage:SetAttribute("StarStepsOwned",0)
  stage:SetAttribute("ExistingStarStepsReused",10)
- stage:SetAttribute("MeteorMaxSegments",12)
+ stage:SetAttribute("ExistingMeteorSegmentsReused",12)
+ stage:SetAttribute("MeteorOwnedSegments",0)
  stage.Parent=arena
  -- Raised stage with 20 climbable physical entry steps; the original entire
  -- floor remains safe if someone falls (never deletes/overwrites V3 terrain).
@@ -109,7 +111,7 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  local east=block("EastBank",Vector3.new(50,4,85),
   Vector3.new(50,-2,0),grass,Enum.Material.Grass,true)
  local safe=block("AlwaysOpenSafeRoute",Vector3.new(50,3,12),
-  Vector3.new(0,-1.5,30),slate,Enum.Material.Slate,true)
+  Vector3.new(0,-1.5,-30),slate,Enum.Material.Slate,true)
  block("CrystalCanyonBottom",Vector3.new(50,1.5,85),
   Vector3.new(0,-21,0),Color3.fromRGB(42,66,85),Enum.Material.Slate,true)
  for i=1,6 do
@@ -126,9 +128,9 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   crystal.CanQuery=false
  end
  local shortcut=block("ShortcutBridge",Vector3.new(50,2,12),
-  Vector3.new(0,-1,15),slate,Enum.Material.Slate,true)
+  Vector3.new(0,-1,-15),slate,Enum.Material.Slate,true)
  local gate=block("ShortcutGate",Vector3.new(3,9,12),
-  Vector3.new(0,4.5,15),violet,Enum.Material.Neon,true,.2)
+  Vector3.new(0,4.5,-15),violet,Enum.Material.Neon,true,.2)
  local gateOpen=false
  local gateUntil=0
  local nextGate=0
@@ -141,10 +143,10 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  end
  local function mole(side:string,x:number)
   local torso=block("Moguron_"..side.."_Body",Vector3.new(4,3,4),
-   Vector3.new(x,2.4,15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
+   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
   torso.Shape=Enum.PartType.Ball
   local nose=block("Moguron_"..side.."_Nose",Vector3.new(1.5,1.2,1.5),
-   Vector3.new(x,2.65,13),gold,Enum.Material.Neon,false)
+   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)
   nose.Shape=Enum.PartType.Ball
   addPrompt(torso,"橋をひらく","橋掘りモグロン",function(p:Player)
    if not authorized(p,torso) or gateOpen or os.clock()<nextGate then return end
@@ -161,56 +163,23 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   stage:Destroy();installed[arena]=nil;return
  end
  stage:SetAttribute("UniqueStarPathReused",true)
- -- Meteor is an independent *fourth* route at z=-17, not a clone of Starfall.
- local meteor:{BasePart}={}
- for i=1,8 do
-  local s=block(string.format("MeteorBridge_%02d",i),
-   Vector3.new(6.6,1.2,9),Vector3.new(-21.875+(i-1)*6.25,-.6,-17),
-   blue,Enum.Material.Neon,false,1)
-  table.insert(meteor,s)
+ -- MeteorFourth is ALREADY selected by PR #884 in this same Realm.
+ -- Reuse the original 12-part route at +30 Z; do not create an owner here.
+ local existingMeteor=originalRealm and originalRealm:FindFirstChild("GQ8_RC86_MeteorShortcut")
+ if not existingMeteor or existingMeteor:GetAttribute("TemporaryBridgeParts")~=12 then
+  stage:Destroy();installed[arena]=nil;return
  end
- local signal=block("MeteorWarningAnchor",Vector3.new(1,1,1),
-  Vector3.new(0,8,-17),gold,Enum.Material.Neon,false,1)
- local gui=Instance.new("BillboardGui")
- gui.Name="MeteorRouteSignal";gui.Size=UDim2.fromOffset(240,58)
- gui.MaxDistance=100;gui.AlwaysOnTop=false;gui.Parent=signal
- local label=Instance.new("TextLabel")
- label.Name="Signal";label.Size=UDim2.fromScale(1,1)
- label.Text="";label.BackgroundTransparency=.5
- label.BackgroundColor3=Color3.fromRGB(19,31,54)
- label.TextColor3=gold;label.Font=Enum.Font.GothamBold
- label.TextScaled=true;label.Parent=gui
- local function setMeteor(open:boolean)
-  for _,s in ipairs(meteor) do
-   s.CanCollide=open;s.CanQuery=open;s.Transparency=if open then .08 else 1
-  end
-  stage:SetAttribute("MeteorFourthRouteOpen",open)
- end
- setMeteor(false)
+ stage:SetAttribute("UniqueMeteorRouteReused",true)
  -- Non-blocking per-arena lifecycle. Never retire an occupied walkway.
  task.spawn(function()
   while live() do
-   if gateOpen and os.clock()>=gateUntil and not occupied(15,13) then
+   if gateOpen and os.clock()>=gateUntil and not occupied(-15,13) then
     setGate(false)
    end
    task.wait(.45)
   end
  end)
- task.spawn(function()
-  while live() do
-   task.wait(55)
-   if not live() then break end
-   label.Text="5秒後、流星の道が出現"
-   task.wait(5)
-   if not live() then break end
-   setMeteor(true);label.Text="流星の道・22秒間"
-   local endsAt=os.clock()+22
-   repeat task.wait(.45) until not live()
-    or (os.clock()>=endsAt and not occupied(-17,9))
-   if not live() then break end
-   setMeteor(false);label.Text=""
-  end
- end)
+
  arena.Destroying:Connect(function()
   installed[arena]=nil
  end)
@@ -227,7 +196,8 @@ local function bindLobby(lobby:Instance)
    -- Never disarm permanently because field world finished booting late.
    while candidate.Parent==lobby and (candidate:FindFirstChild("TacticalBattlefield")==nil
     or not candidate:FindFirstChild("EGGRUMBLE_REALM_BATTLE_CORE")
-    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_StarfallPath")) do
+    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_StarfallPath")
+    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_MeteorShortcut")) do
     task.wait(.3)
    end
    local floor=candidate:FindFirstChild("TacticalBattlefield")
