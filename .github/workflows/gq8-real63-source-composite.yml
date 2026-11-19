@@ -302,7 +302,7 @@ jobs:
           assert r['pickup_prompt_alias']['selected_script_count']==65
           print('GQ8_LEGACY_RC86_REACH_BONUS_BASIC_ONLY_NONLOSS_PASS')
           PY
-      - name: Preserve legacy Dojo real BEAST and WEAPON XP by reusing existing formal65 Social and Combat
+      - name: Source-select original RC85 BEAST/WEAPON practice stations into existing REAL65 Social and Combat (preserve selected REAL66 explorer)
         shell: bash
         run: |
           set -euo pipefail
@@ -313,32 +313,26 @@ jobs:
           python3 - <<'PY'
           import json,hashlib
           from pathlib import Path
-          p=Path('artifacts/real65/EGGRUMBLE_REAL65.project.json')
-          doc=json.loads(p.read_text())
-          r=json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
-          t=r['rc85_dojo_lobby_training']
-          assert len(r['sources'])==65 and len({x['route'] for x in r['sources']})==65
-          assert r['original_real63_byte_unchanged']==54
-          assert len(r['patched_existing_routes'])==9
-          assert set(t['changed_existing_routes'])=={
-           'ServerScriptService/GQ8_LobbySocialPlaza',
-           'ServerScriptService/EGGRUMBLE_SevenRoleCombat'}
-          assert t['new_script_count']==t['new_remote_count']==t['new_game_owners']==0
-          assert t['unchanged_selected_routes']==63
-          assert t['original_dojo_rules']['skills']==['BEAST','WEAPON']
-          assert t['original_dojo_rules']['costs']==[10,15,20,25]
-          assert t['original_dojo_rules']['seconds_per_skill']==180
-          assert t['original_dojo_rules']['actual_friend_training_multiplier']==1.5
-          assert t['original_dojo_rules']['neutral_pve_per_level']==0.05
-          assert r['legacy_rc86_wind']['new_script_count']==0
-          assert r['stage_weapon_reach_balance']['pve_basic_only']==True
-          for row in r['sources']:
-           node=doc['tree']
-           for seg in row['route'].split('/'):node=node[seg]
-           raw=(p.parent/node['$path']).read_bytes()
-           assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256']
-          assert 'EGGRUMBLE_LegacyExplorationBridge' not in doc['tree']['ServerScriptService']
-          print('GQ8_RC85_DOJO_REAL_PVE_AND_REAL66_EXPLORATION_NO_DUPLICATE_PASS')
+          root=Path('artifacts/real65')
+          receipt=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          proj=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          legacy=receipt['rc85_rc86_realm_shards_dojo']
+          assert len(receipt['sources'])==65
+          assert legacy['new_script_count']==0 and legacy['new_game_owners']==0
+          assert legacy['changed_existing_routes']==[
+            'ServerScriptService/GQ8_LobbySocialPlaza',
+            'ServerScriptService/EGGRUMBLE_SevenRoleCombat']
+          assert legacy['unchanged_selected_routes']==63
+          assert legacy['original_dojo_rules']['skills']==['BEAST','WEAPON']
+          assert legacy['original_dojo_rules']['max_level']==5
+          assert legacy['original_dojo_rules']['actual_friend_training_multiplier']==1.5
+          assert legacy['do_not_select_second_realm_or_shard']
+          for row in receipt['sources']:
+            node=proj['tree']
+            for segment in row['route'].split('/'):node=node[segment]
+            data=(root/node['$path']).read_bytes()
+            assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
+          print('GQ8_RC85_DOJO_2_REAL_SOCIAL_PADS_PVE_BASIC_ONLY_65_EXISTING_SOURCE_PASS')
           PY
       - uses: actions/checkout@v4
         with:
