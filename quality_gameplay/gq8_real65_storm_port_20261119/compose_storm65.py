@@ -42,7 +42,7 @@ def run(project,receipt_path,helper_file):
  active_path=path.with_name("EGGRUMBLE_RealmBattleCore.server.luau")
  check(not active_path.exists(),"ACTIVE_REALM_SCRIPT_COLLISION")
  receipt=json.loads(receipt_path.read_text(encoding="utf8"))
- check(receipt["new_selected_source_count"]==65 and receipt["original_real63_byte_unchanged"]==60 and len(receipt["sources"])==65,"PARENT_RECEIPT")
+ check(receipt["new_selected_source_count"]==65 and receipt["original_real63_byte_unchanged"]==58 and len(receipt["sources"])==65,"PARENT_RECEIPT")
  indexed={tuple(r["route"].split("/")):r for r in receipt["sources"]}
  check(set(indexed)==set(src),"RECEIPT_ROUTES")
  for key,(cls,body) in src.items():
@@ -57,7 +57,7 @@ def run(project,receipt_path,helper_file):
  for key in src:
   check(new[key]==(("Script",fixed) if key==ROUTE else src[key]),"SOURCE_DRIFT_"+"/".join(key))
  indexed[ROUTE]["sha256"]=sha(fixed);indexed[ROUTE]["bytes"]=len(fixed);indexed[ROUTE]["class"]="Script"
- receipt["original_real63_byte_unchanged"]=59
+ receipt["original_real63_byte_unchanged"]=57
  receipt["patched_existing_routes"].append("/".join(ROUTE))
  receipt["realm_storm797"]={"feature_id":"GQ8_REALM_STORM_PHASE_FENCE_20261118","reused_author_pr":797,"helper_git_blob":HELPER_BLOB,"original_source_blob":helper.SOURCE_BLOB,"actual_real65_source_blob":helper.blob_sha(current),"author_source_exact":exact_author,"patch_mode":state,"only_changed_route":"/".join(ROUTE),"repaired_class":"ModuleScript -> Script (server auto-start)","other_original_real65_sources_byte_exact":64,"rollback":"prior official REAL65 source/Place, OFF63 exact","studio_2client":"NOT_TESTED","android":"NOT_TESTED","fun":"NO_GO"}
  receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
