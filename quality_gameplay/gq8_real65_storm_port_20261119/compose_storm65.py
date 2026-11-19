@@ -18,13 +18,15 @@ def run(project,receipt_path,helper_file):
  check(helper.ROUTE==ROUTE and helper.SOURCE_BLOB=="1ba20f2e6b1bf6ce7bab7c4d4abbedb663f0abf1","ORIGINAL_PROVENANCE")
  doc,src=flatten(project)
  print("GQ8_REAL65_ACTUAL_REALM_ROUTE_CANDIDATES",[(("/".join(k)),v[0]) for k,v in src.items() if "Realm" in k[-1] or "LandSea" in k[-1] or "Weather" in k[-1] or "Storm" in k[-1]])
- check(len(src)==65 and ROUTE in src and src[ROUTE][0]=="Script","REAL65_REALM_CLASS")
+ check(len(src)==65 and ROUTE in src and src[ROUTE][0]=="ModuleScript","REAL65_EXPECT_INERT_MODULE")
  check(helper.blob_sha(src[ROUTE][1])==helper.SOURCE_BLOB,"REALM_AUTHOR_SOURCE_CHANGED_OR_ALREADY_FIXED")
  fixed=helper.patch_source(src[ROUTE][1])
  node=doc["tree"]["ServerScriptService"]["EGGRUMBLE_RealmBattleCore"]
  check(set(node)=={"$path"},"SOURCE_ROUTE_AMBIGUOUS")
  path=(project.parent/node["$path"]).resolve(strict=True)
- check(path==project.parent.resolve()/"sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau","ROUTE_PATH")
+ check(path==project.parent.resolve()/"sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.luau","ROUTE_PATH")
+ active_path=path.with_name("EGGRUMBLE_RealmBattleCore.server.luau")
+ check(not active_path.exists(),"ACTIVE_REALM_SCRIPT_COLLISION")
  receipt=json.loads(receipt_path.read_text(encoding="utf8"))
  check(receipt["new_selected_source_count"]==65 and receipt["original_real63_byte_unchanged"]==60 and len(receipt["sources"])==65,"PARENT_RECEIPT")
  indexed={tuple(r["route"].split("/")):r for r in receipt["sources"]}
@@ -32,15 +34,18 @@ def run(project,receipt_path,helper_file):
  for key,(cls,body) in src.items():
   r=indexed[key]
   check(r["sha256"]==sha(body) and r["bytes"]==len(body) and r["class"]==cls,"PREPATCH_DRIFT_"+"/".join(key))
- path.write_bytes(fixed)
+ active_path.write_bytes(fixed)
+ path.unlink()
+ node["$path"]="sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau"
+ project.write_text(json.dumps(doc,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
  _,new=flatten(project)
  check(len(new)==65 and set(new)==set(src),"SOURCE_COUNT")
  for key in src:
-  check(new[key]==((src[key][0],fixed) if key==ROUTE else src[key]),"SOURCE_DRIFT_"+"/".join(key))
- indexed[ROUTE]["sha256"]=sha(fixed);indexed[ROUTE]["bytes"]=len(fixed)
+  check(new[key]==(("Script",fixed) if key==ROUTE else src[key]),"SOURCE_DRIFT_"+"/".join(key))
+ indexed[ROUTE]["sha256"]=sha(fixed);indexed[ROUTE]["bytes"]=len(fixed);indexed[ROUTE]["class"]="Script"
  receipt["original_real63_byte_unchanged"]=59
  receipt["patched_existing_routes"].append("/".join(ROUTE))
- receipt["realm_storm797"]={"feature_id":"GQ8_REALM_STORM_PHASE_FENCE_20261118","reused_author_pr":797,"helper_git_blob":HELPER_BLOB,"original_source_blob":helper.SOURCE_BLOB,"only_changed_route":"/".join(ROUTE),"other_original_real65_sources_byte_exact":64,"rollback":"prior official REAL65 source/Place, OFF63 exact","studio_2client":"NOT_TESTED","android":"NOT_TESTED","fun":"NO_GO"}
+ receipt["realm_storm797"]={"feature_id":"GQ8_REALM_STORM_PHASE_FENCE_20261118","reused_author_pr":797,"helper_git_blob":HELPER_BLOB,"original_source_blob":helper.SOURCE_BLOB,"only_changed_route":"/".join(ROUTE),"repaired_class":"ModuleScript -> Script (server auto-start)","other_original_real65_sources_byte_exact":64,"rollback":"prior official REAL65 source/Place, OFF63 exact","studio_2client":"NOT_TESTED","android":"NOT_TESTED","fun":"NO_GO"}
  receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
  print("GQ8_REAL65_STORM797_FIXED65_WITH64_UNCHANGED_PASS")
 if __name__=="__main__":
