@@ -6,6 +6,7 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -24,6 +25,7 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -502,10 +504,78 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_66_PROOF; exit 1; }
           fi
+      - name: Port only missing RC85 Crystal Canyon and RC86 meteor bridge around existing ten-star Realm path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_runtime_contract.py
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/compose_real67.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/compose_real67.py \
+            --base artifacts/real66 \
+            --source quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/EGGRUMBLE_LegacyCanyonRoutes.server.luau \
+            --out artifacts/real67 --sha "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,subprocess,hashlib
+          from pathlib import Path
+          root=Path('artifacts/real67')
+          proj=json.loads((root/'EGGRUMBLE_REAL67.project.json').read_text())
+          rec=json.loads((root/'REAL67_LEGACY_INTAKE_RECEIPT.json').read_text())
+          routes={}
+          def collect(node,prefix=()):
+            for key,value in node.items():
+              if key.startswith('$') or not isinstance(value,dict):continue
+              route=prefix+(key,)
+              if '$path' in value:routes['/'.join(route)]=value['$path']
+              else:collect(value,route)
+          collect(proj['tree'])
+          assert len(routes)==67 and len(set(routes))==67
+          assert rec['parent_formal_source_count']==66
+          assert rec['parent_all66_byte_identical'] and rec['requires_existing_realm_10star_path']
+          assert rec['ported_policy_flags']==['WCS_F01_C01','METEOR_FOURTH_V1']
+          assert rec['new_star_steps_generated']==0
+          for route,rel in routes.items():
+            f=root/rel
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+            if route==rec['new_route']:
+              b=f.read_bytes()
+              assert len(b)==rec['new_bytes'] and hashlib.sha256(b).hexdigest()==rec['new_sha256']
+          print('GQ8_SOURCE_LOCKED_67_OF_67_NATIVE_LUAU_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real67/EGGRUMBLE_REAL67.project.json -o artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real67/EGGRUMBLE_REAL66.project.json -o artifacts/real67/OFF66_REBUILT.rbxlx
+          cmp artifacts/real67/OFF66_REBUILT.rbxlx artifacts/real66/EGGRUMBLE_REAL66_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real67/EGGRUMBLE_REAL67.project.json \
+            --place artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx --count 67
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          root=Path('artifacts/real67')
+          f=root/'REAL67_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          p=root/'EGGRUMBLE_REAL67_PRIVATE.rbxlx'
+          assert r['source_count']==67 and r['parent_all66_byte_identical']
+          assert r['ported_policy_flags']==['WCS_F01_C01','METEOR_FOURTH_V1']
+          r.update({'candidate_head':os.environ['GITHUB_SHA'],
+            'formal_adopted':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+            'private_place_bytes':p.stat().st_size,
+            'private_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'native_selected':'PASS_67_OF_67','rojo_source_class':'PASS_67_OF_67',
+            'off66_place_byte_exact':True})
+          f.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ8_REAL67_CUMULATIVE_OFF66_EXACT_PASS',p.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_REAL67_HEAD_MOVED; exit 1; }
+          else
+            BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$BASE" && test "$CURRENT" = "$BASE" || { echo RED_REAL67_PR_BASE_MOVED; exit 1; }
+          fi
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL66-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL66-LEGACY-EXPLORATION-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real66/
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL67-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL67-WCS-METEOR-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real67/
           # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
           # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
           retention-days: 30
