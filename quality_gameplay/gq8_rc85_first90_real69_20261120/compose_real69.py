@@ -87,7 +87,7 @@ def compose(base:pathlib.Path,out:pathlib.Path,feature:pathlib.Path,head:str)->d
     current.write_bytes(raw)
     node=pr["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     need("EGGRUMBLE_LegacyFirst90" not in node,"ROUTE_DUPLICATE")
-    node["EGGRUMBLE_LegacyFirst90"]={"$path":NEW_REL,"$className":"LocalScript"}
+    node["EGGRUMBLE_LegacyFirst90"]={"$path":NEW_REL}  # .client.luau implies LocalScript in Rojo
     pr["name"]="EGGRUMBLE_REAL69_ONE_V3_FIRST90_PRIVATE_STUDIO"
     (out/"EGGRUMBLE_REAL69.project.json").write_text(
         json.dumps(pr,sort_keys=True,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
