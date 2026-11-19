@@ -117,19 +117,19 @@ def run(a):
                 "LOBBY_BOOTSTRAP_EXPECTED_ORIGINAL_"+route[-1])
         chosen[route]=(cls,body.replace(old,new,1))
     patch_spawn(SHOP,
-        b'local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)\\n'
+        b'local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)\n'
         b'local origin=spawn and spawn.Position or Vector3.new(0,4,0)',
-        b'local canonical=workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\\n'
-        b'if not canonical then warn("[GQ805 SHOP] canonical lobby missing: skip") return end\\n'
-        b'local spawn=canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\\n'
-        b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ805 SHOP] canonical spawn missing: skip") return end\\n'
+        b'local canonical=workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\n'
+        b'if not canonical then warn("[GQ805 SHOP] canonical lobby missing: skip") return end\n'
+        b'local spawn=canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\n'
+        b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ805 SHOP] canonical spawn missing: skip") return end\n'
         b'local origin=spawn.Position')
     patch_spawn(PLAZA,
-        b'local spawn = workspace:FindFirstChildWhichIsA("SpawnLocation", true)\\n'
+        b'local spawn = workspace:FindFirstChildWhichIsA("SpawnLocation", true)\n'
         b'if not spawn then warn("[GQ8 SOCIAL] no safe SpawnLocation: skip") return end',
-        b'local canonical = workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\\n'
-        b'if not canonical then warn("[GQ8 SOCIAL] canonical lobby missing: skip") return end\\n'
-        b'local spawn = canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\\n'
+        b'local canonical = workspace:WaitForChild("EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",60)\n'
+        b'if not canonical then warn("[GQ8 SOCIAL] canonical lobby missing: skip") return end\n'
+        b'local spawn = canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\n'
         b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ8 SOCIAL] canonical spawn missing: skip") return end')
     require(len(chosen)==65,"FINAL65_COUNT")
     unchanged={k for k in official63 if chosen[k]==official63[k]}
