@@ -43,9 +43,11 @@ def main():
     require(len(receipt["sources"]) == 65, "REAL65_RECEIPT_COUNT")
     require(ROUTE not in base_files, "DUPLICATE_BRIDGE")
     require(receipt["new_selected_source_count"] == 65, "REAL65_SOURCE_COUNT")
-    require(receipt.get("formal_rc_adopted") is True, "BASE_NOT_OFFICIAL")
+    require(receipt.get("formal_rc_adopted") is False, "OFF65_PARENT_FLAG_MUST_BE_ROLLBACK")
+    require(receipt.get("source_native") == "PASS" and receipt.get("rojo_source_class") == "PASS", "OFF65_PARENT_NOT_NATIVE_ROJO_VERIFIED")
     require(receipt.get("candidate_head") == a.official_sha, "HEAD_MISMATCH")
     require((a.base / "EGGRUMBLE_REAL65_PRIVATE.rbxlx").is_file(), "OFF65_PLACE_MISSING")
+    require((a.base / "OFF63_EXACT_OFFICIAL.rbxlx").is_file(), "OFF63_LOST")
     for row in receipt["sources"]:
         route = row["route"]
         require(route in base_files, "RECEIPT_PATH_" + route)
@@ -72,7 +74,7 @@ def main():
         "schema":"GQ8_LEGACY_REAL66_SINGLE_RUNTIME_PRIVATE_V1",
         "feature_id":FEATURE,
         "official_parent_head":a.official_sha,
-        "parent_profile":"REAL65",
+        "parent_profile":"OFF65_VERIFIED_BYTE_EXACT",
         "candidate_selected_count":66,
         "parent_original_exact":65,
         "added_script_count":1,
@@ -93,5 +95,6 @@ def main():
     (a.out/"REAL66_LEGACY_INTAKE_RECEIPT.json").write_text(json.dumps(newreceipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
     print("GQ8_LEGACY_66_REAL65_BASE_65_OF_65_BYTE_EXACT_PASS")
     print("GQ8_LEGACY_66_NEW_SCRIPT_ONLY_ROUTE_CLASS_PASS")
+    print("GQ8_SINGLE_FORMAL_RC66_CANONICAL_SOURCE_SELECTED_NOT_YET_NATIVE_ROJO")
 if __name__ == "__main__":
     main()
