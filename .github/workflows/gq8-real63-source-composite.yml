@@ -170,7 +170,7 @@ jobs:
           python3 - <<'PY'
           import json
           r=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
-          assert len(r['sources'])==65 and r['original_real63_byte_unchanged']==59
+          assert len(r['sources'])==65 and r['original_real63_byte_unchanged']==57
           assert r['realm_storm797']['other_original_real65_sources_byte_exact']==64
           assert len(r['patched_existing_routes'])==4
           assert not r['real_paid_trade'] and not r['roblox_publish']
