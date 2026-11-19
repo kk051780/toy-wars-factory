@@ -1,0 +1,28 @@
+{
+  "schema": "GQ8_CANONICAL_V3_REAL66_SELECTED_SOURCE_PROFILE_V1",
+  "policy": "#839 single official RC",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "source_profile": "eggrumble_v3_real66",
+  "source_count": 66,
+  "source_selection": "REAL65 original 65 + 1 legacy exploration Studio Script",
+  "studio_private_companion": true,
+  "active_s1_runtime_unchanged": true,
+  "feature_id": "GQ8_LEGACY_RC85_86_EXPLORATION_INTAKE_20261119",
+  "provenance_pr": 868,
+  "source_bridge": "quality_gameplay/gq8_rc85_rc86_exploration_20261119/EGGRUMBLE_LegacyExplorationBridge.server.luau",
+  "source_composer": "quality_gameplay/gq8_rc85_rc86_exploration_20261119/compose_real66.py",
+  "official_workflow": ".github/workflows/gq8-real63-source-composite.yml",
+  "safety": {
+    "single_host": true,
+    "single_combat": true,
+    "single_swarm": true,
+    "publish": false,
+    "monetization": false
+  },
+  "rollback": "OFF65_REBUILT.rbxlx must be byte-identical to prior REAL65",
+  "studio_solo": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "visual_fun": "NO_GO",
+  "known_gap": "This does not prove full historical RC85/RC86/RC91 gameplay parity; PR #866 physical-source inventory and #476/#479/#481 residual features still require source-selective reconciliation."
+}

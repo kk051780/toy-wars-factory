@@ -4,7 +4,7 @@ All 65 official selected original byte/class/source routes must survive.
 This writes a reversible PRIVATE candidate; never updates the official branch.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, shutil
+import argparse, copy, hashlib, json, os, shutil
 from pathlib import Path
 
 ROUTE = "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge"
@@ -43,7 +43,10 @@ def main():
     require(len(receipt["sources"]) == 65, "REAL65_RECEIPT_COUNT")
     require(ROUTE not in base_files, "DUPLICATE_BRIDGE")
     require(receipt["new_selected_source_count"] == 65, "REAL65_SOURCE_COUNT")
-    require(receipt.get("formal_rc_adopted") is True, "BASE_NOT_OFFICIAL")
+    require(receipt.get("official_source_profile") == "eggrumble_v3_real65", "BASE_PROFILE")
+    # On PR this is a same-HEAD candidate; on the sole RC ref it is formally adopted.
+    official = os.environ.get("GITHUB_REF") == "refs/heads/rc/p0d-s1-kids-rc01"
+    require(receipt.get("formal_rc_adopted") is official, "BASE_ADOPTION_CONTEXT")
     require(receipt.get("candidate_head") == a.official_sha, "HEAD_MISMATCH")
     require((a.base / "EGGRUMBLE_REAL65_PRIVATE.rbxlx").is_file(), "OFF65_PLACE_MISSING")
     for row in receipt["sources"]:
