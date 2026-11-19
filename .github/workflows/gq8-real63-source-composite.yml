@@ -4,6 +4,7 @@ on:
     branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
+      - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -15,6 +16,7 @@ on:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
+      - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -152,6 +154,26 @@ jobs:
           assert y['official63_parent_original62_unchanged']==59
           assert len(y['sources'])==65 and not y['real_paid_trade'] and not y['roblox_publish']
           print('GQ8_REAL65_FORMAL63_PRESERVED_BASIC_DODGE_AND_COUNTER_VIRAL_SOURCE_STATIC_PASS')
+          PY
+      - name: Reuse immutable PR797 thunder-clear phase fence in actual REAL65
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq8-author797
+          gh api 'repos/kk051780/toy-wars-factory/contents/quality_gameplay/gq8_realm_storm_phase_fence_20261118/apply.py?ref=458d726fd0e335827e5c64d2c02c0f51fd37e512' --jq .content | base64 -d > /tmp/gq8-author797/apply.py
+          test "$(git hash-object /tmp/gq8-author797/apply.py)" = e8665138825488256aaa0875c55b1c623d9887b8
+          python3 -B quality_gameplay/gq8_real65_storm_port_20261119/compose_storm65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json \
+            --author-helper /tmp/gq8-author797/apply.py
+          python3 - <<'PY'
+          import json
+          r=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
+          assert len(r['sources'])==65 and r['original_real63_byte_unchanged']==59
+          assert r['realm_storm797']['other_original_real65_sources_byte_exact']==64
+          assert len(r['patched_existing_routes'])==4
+          assert not r['real_paid_trade'] and not r['roblox_publish']
+          print('GQ8_REAL65_STORM_65_REAL_SOURCE_REUSE_PASS')
           PY
       - uses: actions/checkout@v4
         with:
