@@ -11,6 +11,7 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
+      - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -32,6 +33,7 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
+      - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -812,6 +814,16 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_REAL68_PR_BASE_MOVED_BEFORE_PROOF; exit 1; }
           fi
+      - name: "Verify one formal RC - REAL67 preservation and RC85/RC86 source trace"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/verify_nonloss.py
+          python3 quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/verify_nonloss.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/verify_nonloss.py \
+            --parent artifacts/real67 \
+            --current artifacts/real68 \
+            --out artifacts/real68/REAL68_NONLOSS_AUDIT.json
       - name: Restore original RC86 Gorogan mobile LOD in ONE existing REAL68 A01 client, full OFF68
         shell: bash
         run: |
