@@ -24,10 +24,20 @@ for marker in [
  'p:GetAttribute("EGGRUMBLE_QueuedMode")~=mode',
  'p:GetAttribute("EGGRUMBLE_Eliminated")==true',
  'rp.RespectCanCollide=true',
- 'if gateOpen and os.clock()>=gateUntil and not occupied(15,13) then',
+ 'if gateOpen and os.clock()>=gateUntil and not occupied(-15,13) then',
+ '"ExistingMeteorSegmentsReused",12',
+ '"MeteorOwnedSegments",0',
+ '"UniqueMeteorRouteReused",true',
+ 'Vector3.new(0,-1.5,-30)',
+ 'Vector3.new(0,-1,-15)',
+ 'Vector3.new(0,4.5,-15)',
 ]:once(marker)
 assert lua.count('"GQ8_RC85_WCS_Canyon"')==2
 assert lua.count('"GQ8_RC86_StarfallPath"')==2
+assert lua.count('"GQ8_RC86_MeteorShortcut"')==2
+assert 'Vector3.new(0,-1.5,30),slate' not in lua
+assert 'Vector3.new(0,-1,15),slate' not in lua
+assert 'not occupied(15,13)' not in lua
 assert lua.count('block("WestAccessStep_"..i')==1
 assert lua.count('block("EastAccessStep_"..i')==1
 assert 'for i=1,6 do' in lua
