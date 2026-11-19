@@ -8,6 +8,7 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -27,6 +28,7 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -600,6 +602,81 @@ jobs:
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL66-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL66-LEGACY-EXPLORATION-PRIVATE-NOT-OFFICIAL' }}
           path: artifacts/real66/
+          # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
+          # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
+          retention-days: 30
+          if-no-files-found: error
+      - name: Select ONLY RC85 Canyon with old Starfall and Meteor already formally adopted (exact OFF66)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_runtime_contract.py
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/compose_real67.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/compose_real67.py \
+            --base artifacts/real66 \
+            --source quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/EGGRUMBLE_LegacyCanyonRoutes.server.luau \
+            --out artifacts/real67 --sha "$GITHUB_SHA"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess,hashlib
+          root=Path('artifacts/real67')
+          project=json.loads((root/'EGGRUMBLE_REAL67.project.json').read_text())
+          receipt=json.loads((root/'REAL67_LEGACY_INTAKE_RECEIPT.json').read_text())
+          def sources(node,path=()):
+            for name,child in node.items():
+              if not isinstance(child,dict) or name.startswith('$'): continue
+              if '$path' in child:
+                yield '/'.join(path+(name,)), child['$path']
+              else: yield from sources(child,path+(name,))
+          routePaths=dict(sources(project['tree']))
+          assert len(routePaths)==67
+          assert len(set(routePaths))==67
+          assert receipt['parent_formal_source_count']==66
+          assert receipt['parent_all66_byte_identical']
+          assert receipt['no_duplicate_game_owners'] and receipt['no_damage_score_store_remote']
+          assert receipt['ported_policy_flags']==['WCS_F01_C01'] and receipt['parent_all66_byte_identical']
+          for route,path in routePaths.items():
+            b=(root/path).read_bytes()
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(root/path)],check=True,stdout=subprocess.DEVNULL)
+            if route==receipt['new_route']:
+              assert len(b)==receipt['new_bytes'] and hashlib.sha256(b).hexdigest()==receipt['new_sha256']
+          print('GQ8_SINGLE_REAL67_NATIVE67_CLASS_SOURCE_PRESERVATION_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real67/EGGRUMBLE_REAL67.project.json -o artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real67/EGGRUMBLE_REAL66.project.json -o artifacts/real67/OFF66_REBUILT.rbxlx
+          cmp artifacts/real67/OFF66_REBUILT.rbxlx artifacts/real66/EGGRUMBLE_REAL66_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real67/EGGRUMBLE_REAL67.project.json \
+            --place artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx --count 67
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          root=Path('artifacts/real67')
+          f=root/'REAL67_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          p=root/'EGGRUMBLE_REAL67_PRIVATE.rbxlx'
+          assert r['source_count']==67 and r['parent_all66_byte_identical']
+          assert r['new_route']=='ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes'
+          r.update({'candidate_head':os.environ['GITHUB_SHA'],
+           'formal_adopted':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+           'private_place_bytes':p.stat().st_size,
+           'private_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+           'native_selected':'PASS_67_OF_67','rojo_source_class':'PASS_67_OF_67',
+           'off66_place_byte_exact':True})
+          f.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ8_OFFICIAL_SOURCE_SELECTED_REAL67_NONLOSS_GATE_PASS',p.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_REAL67_OFFICIAL_MOVED_BEFORE_PROOF; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_REAL67_PR_BASE_MOVED_BEFORE_PROOF; exit 1; }
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL67-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL67-WCS-STARRY-METEOR-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real67/
           # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
           # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
           retention-days: 30
