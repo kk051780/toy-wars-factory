@@ -227,5 +227,7 @@ jobs:
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL65-REAL63-PRESERVED-BASIC-DODGE-PRIVATE-NOT-OFFICIAL' }}
           path: artifacts/real65/
-          retention-days: 5
+          # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
+          # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
+          retention-days: 30
           if-no-files-found: error
