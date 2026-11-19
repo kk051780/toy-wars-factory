@@ -366,6 +366,35 @@ jobs:
             assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
           print('GQ8_RC86_STARRY_PATH_FORMAL66_ORIGINAL65_SOURCE_CLASS_HASH_NONLOSS_PASS')
           PY
+      - name: Reconcile original RC86 three undead soldiers 48s ATTACK GUARD FOLLOW in sole Combat
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_undead_command65.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_undead_command65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('artifacts/real65')
+          receipt=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          project=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          d=receipt['rc86_three_undead_command']
+          assert len(receipt['sources'])==65 and d['new_script_count']==0
+          assert d['count']==3 and d['duration_seconds']==48
+          assert d['legacy_commands']==['ATTACK','GUARD','FOLLOW']
+          assert d['other_sources_unchanged']==64
+          assert d['new_game_remote_store_or_damage_owner']==0
+          assert d['v3_focus_preserved'] and d['attack_neutral_only']
+          assert receipt['rc85_dojo_lobby_training'] and receipt['stage_weapon_reach_balance']
+          for row in receipt['sources']:
+              node=project['tree']
+              for part in row['route'].split('/'):node=node[part]
+              raw=(root/node['$path']).read_bytes()
+              assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256'],row['route']
+          print('GQ8_RC86_UNDEAD3_48S_SAME_65_SOURCE_NATIVE_ROJO_READY')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
