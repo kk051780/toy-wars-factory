@@ -1,4 +1,4 @@
-name: GQ8 Real65 official63 preserve basic dodge plus viral counter ON65 OFF63
+name: GQ8 single formal RC source selected REAL66 legacy exploration OFF65
 on:
   push:
     branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
@@ -6,6 +6,8 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -22,6 +24,8 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -368,10 +372,47 @@ jobs:
           f.write_text(json.dumps(j,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
           print('GQ8_REAL65_SOURCE_VERIFY_ONLY_FORMAL_IF_OFFICIAL_SHA',p.stat().st_size)
           PY
+      - name: Select verified RC86 exploration into one formal V3 REAL66 source, exact OFF65
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_exploration_20261119/compose_real66.py
+          python3 quality_gameplay/gq8_rc85_rc86_exploration_20261119/test_bridge.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_exploration_20261119/compose_real66.py \
+            --base artifacts/real65 \
+            --source quality_gameplay/gq8_rc85_rc86_exploration_20261119/EGGRUMBLE_LegacyExplorationBridge.server.luau \
+            --out artifacts/real66 --official-sha "$GITHUB_SHA"
+          /tmp/gq863-luau/luau-compile --text artifacts/real66/sources/ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau > /dev/null
+          /tmp/gq863-rojo build artifacts/real66/EGGRUMBLE_REAL66.project.json -o artifacts/real66/EGGRUMBLE_REAL66_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real66/EGGRUMBLE_REAL66.project.json \
+            --place artifacts/real66/EGGRUMBLE_REAL66_PRIVATE.rbxlx --count 66
+          cmp artifacts/real66/EGGRUMBLE_REAL65_PRIVATE.rbxlx artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          root=Path('artifacts/real66')
+          f=root/'REAL66_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          assert r['parent_original_exact']==65 and r['candidate_selected_count']==66
+          assert r['added_script_count']==1
+          assert r['formal_adopted']==(os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01')
+          p=root/'EGGRUMBLE_REAL66_PRIVATE.rbxlx'
+          r.update({'candidate_head':os.environ['GITHUB_SHA'],'selected_source_profile':'eggrumble_v3_real66','native66_selected':'PASS','rojo66_source_class':'PASS','off65_place_byte_exact':True,'private_place_bytes':p.stat().st_size,'private_place_sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+          f.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ8_FORMAL_REAL66_EXACT_ORIGINAL65_PLUS_ONE_PASS',p.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_MOVED_BEFORE_66_PROOF; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_66_PROOF; exit 1; }
+          fi
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL65-REAL63-PRESERVED-BASIC-DODGE-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real65/
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL66-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL66-LEGACY-EXPLORATION-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real66/
           # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
           # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
           retention-days: 30
