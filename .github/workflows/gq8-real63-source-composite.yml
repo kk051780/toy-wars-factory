@@ -5,6 +5,7 @@ on:
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -20,6 +21,7 @@ on:
     paths:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
+      - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -207,6 +209,34 @@ jobs:
             assert len(data)==entry['bytes'] and sha256(data).hexdigest()==entry['sha256']
           assert Path('artifacts/real65/OFF63_EXACT_OFFICIAL.rbxlx').read_bytes()==Path('/tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx').read_bytes()
           print('GQ8_REAL65_LATE_HOST_SOURCE65_SHA_CLASS_OFF63_PASS')
+          PY
+      - name: Port real RC86 six stage weapons into the existing REAL65 Item/Combat owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_stage_weapons65.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_stage_weapons65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path('artifacts/real65/EGGRUMBLE_REAL65.project.json')
+          doc=json.loads(p.read_text())
+          receipt=json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
+          assert len(receipt['sources'])==65 and receipt['original_real63_byte_unchanged']==55
+          assert len(receipt['patched_existing_routes'])==8
+          assert receipt['rc85_rc86_stage_weapon_delta']['added_script_owners']==0
+          assert receipt['late_host_world_watch']['no_20s_permanent_disarm']
+          seen=[]
+          for x in receipt['sources']:
+            node=doc['tree']
+            for seg in x['route'].split('/'):node=node[seg]
+            b=(p.parent/node['$path']).read_bytes()
+            assert len(b)==x['bytes'] and hashlib.sha256(b).hexdigest()==x['sha256']
+            seen.append(x['route'])
+          assert len(set(seen))==65
+          print('GQ8_RC85_RC86_REAL65_SINGLE_OWNER_65_SOURCE_HASH_PASS')
           PY
       - uses: actions/checkout@v4
         with:
