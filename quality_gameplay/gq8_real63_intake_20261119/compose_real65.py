@@ -27,6 +27,39 @@ def safe_merge(ours:bytes,base:bytes,theirs:bytes)->bytes:
                 "COMBAT_CONFLICT_MARKER")
         return r.stdout
 
+def fix_viral_capture_callback_scope(author_host:bytes)->bytes:
+    """Fix author #840's Luau lexical forward-scope bug without a second Host.
+
+    The egg deposit/steal callbacks are declared inside createWorldCastle BEFORE
+    'local function gq8CaptureHint'; Luau binds those earlier references to the
+    absent GLOBAL, so successful egg actions error before session.refresh().
+    Reposition the exact author block ahead of the existing function. No other
+    source edits, Remote, combat authority, or gameplay policy changes.
+    """
+    start=b"-- No extra gameplay owner: only this existing HOST emits factual capture hints.\n"
+    stop=b"\nlocal function startSession(mode:string)"
+    before=b"local function createWorldCastle(session:any,entry:any,index:number)"
+    require(author_host.count(start)==1 and author_host.count(stop)==1
+            and author_host.count(before)==1,"VIRAL_SCOPE_ANCHORS")
+    first=author_host.index(start)
+    last=author_host.index(stop,first)
+    block=author_host[first:last]
+    require(block.count(b"local function gq8CaptureHint(")==1
+            and block.count(b"local gq8ViralEpoch=0")==1
+            and author_host.count(b"gq8CaptureHint(p,session,")==2,
+            "VIRAL_SCOPE_AUTHOR_SHAPE")
+    require(author_host.index(b"gq8CaptureHint(p,session,")<first,
+            "VIRAL_SCOPE_BUG_NOT_PRESENT_STOP_REPATCH")
+    without=author_host[:first]+author_host[last:]
+    pos=without.index(before)
+    fixed=without[:pos]+block+b"\n"+without[pos:]
+    require(fixed.count(b"local function gq8CaptureHint(")==1
+            and fixed.index(b"local function gq8CaptureHint(")<
+                fixed.index(b"gq8CaptureHint(p,session,")
+            and fixed.count(b"gq8CaptureHint(p,session,")==2,
+            "VIRAL_SCOPE_FORWARD_BINDING_NOT_FIXED")
+    return fixed
+
 def run(a):
     # Existing verified composite has 64 sources from official62 + two authors.
     real64_doc,real64=flatten(a.real64)
@@ -101,7 +134,8 @@ def run(a):
     require(merged_combat!=original_basic and
             merged_combat!=real64[COMBAT][1],"COUNTER_OR_DODGE_NOT_COMPOSED")
     chosen=dict(official63)
-    chosen[HOST]=real64[HOST]
+    fixed_host=fix_viral_capture_callback_scope(real64[HOST][1])
+    chosen[HOST]=(real64[HOST][0],fixed_host)
     chosen[COMBAT]=(official63[COMBAT][0],merged_combat)
     chosen[INVUL]=real64[INVUL]
     for k in VIRAL|COUNTER:
@@ -144,6 +178,9 @@ def run(a):
         "preserves_real63_basic_attack":True,"preserves_real63_dodge":True,
         "preserves_real63_hud":True,"preserves_real63_presentation":True,
         "preserves_real63_round_epoch":True,"host_class":"Script",
+        "viral_egg_callback_forward_scope_fixed":True,
+        "viral_author64_host_sha256":sha(real64[HOST][1]),
+        "viral_fixed_host_sha256":sha(fixed_host),
         "owner_game":1,"owner_combat":1,"owner_swarm":1,
         "new_damage_sites":1,"counter_reflect_damage_owner":"EXISTING_SINGLE_COMBAT",
         "new_store_writers":0,"new_remotes":0,
