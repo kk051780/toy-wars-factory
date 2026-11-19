@@ -107,7 +107,7 @@ def run(root, head):
         'original_rc86_artifact': 14161823401,
         'port_marker': MARKER,
         'single_existing_owner': TARGET,
-        'original_68_routes_preserved': True,
+        'original_69_routes_preserved': True,
         'only_existing_art_source_modified': True,
         'pre_art_exact_rollback': 'off69_fortress plus OFF69_PRE_FORTRESS_EXACT.rbxlx',
         'visual_details_per_castle': 8,
@@ -117,7 +117,7 @@ def run(root, head):
         'product_acceptance': 'NO_GO',
     }
     receipt_path.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + '\n')
-    print('RC86_FB015_FORTRESS_SELECTIVE_REAL69_SOURCE_PORT_OFF68_PASS', len(after))
+    print('RC86_FB015_FORTRESS_SELECTIVE_REAL69_SOURCE_PORT_OFF69_PASS', len(after))
 
 
 if __name__ == '__main__':

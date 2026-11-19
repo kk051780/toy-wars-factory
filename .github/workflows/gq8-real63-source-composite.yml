@@ -998,7 +998,7 @@ jobs:
           assert all(after[k][1]==before[k][1] for k in before)
           assert hashlib.sha256(before[art][0]).hexdigest()=='91c89619b2d4819cde31a8f63865fb6b73fee6c0e5b2d30564383f0fd1fa458b'
           assert b'GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120' in after[art][0]
-          assert receipt['rc86_fortress_detail_visual']['original_68_routes_preserved']
+          assert receipt['rc86_fortress_detail_visual']['original_69_routes_preserved']
           for k,(body,_) in after.items():
             assert receipt['source_hashes'][k]==hashlib.sha256(body).hexdigest(),k
           def compile_all(base):
@@ -1011,7 +1011,7 @@ jobs:
             walk(project['tree'])
           compile_all(root)
           compile_all(rollback)
-          print('GQ8_RC86_FORTRESS_NATIVE_REAL69_68_OF_68_SOURCE_CLASS_AND_ROLLBACK_PASS')
+          print('GQ8_RC86_FORTRESS_NATIVE_REAL69_69_OF_69_SOURCE_CLASS_AND_ROLLBACK_PASS')
           PY
           /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           /tmp/gq863-rojo build artifacts/real69/off69_fortress/EGGRUMBLE_REAL69.project.json -o artifacts/real69/OFF68_FORTRESS_REBUILT.rbxlx
@@ -1025,7 +1025,7 @@ jobs:
           path=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
           receipt=json.loads(path.read_text())
           place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
-          receipt['rc86_fortress_detail_visual']['native_rojo']='PASS_68_OF_68'
+          receipt['rc86_fortress_detail_visual']['native_rojo']='PASS_69_OF_69'
           receipt['rc86_fortress_detail_visual']['off69_fortress_byte_exact']=True
           receipt['build_head']=os.environ['GITHUB_SHA']
           receipt['private_place_bytes']=place.stat().st_size
