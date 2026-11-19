@@ -193,6 +193,65 @@ def report(places: dict) -> dict:
             "engine_functional_parity": "NOT_TESTED",
             "studio_acceptance": "NOT_TESTED",
         }
+    # Follow-up physical check: current adopted V3 ports intentionally use NEW
+    # EGGRUMBLE names, so legacy source anchors alone would create false gaps.
+    # Static source presence is never equivalent to verified Studio gameplay.
+    def source_at(route: str) -> str:
+        return real.get(route, {}).get("source", "")
+
+    field_src = source_at("ServerScriptService/EGGRUMBLE_FieldItemPickups")
+    combat_src = source_at("ServerScriptService/EGGRUMBLE_SevenRoleCombat")
+    stage_markers = [
+        "GQ8_RC86_STAGE_WEAPONS_TO_REAL65_20261119", "SUN_BLADE",
+        "WIND_SPEAR", "THUNDER_BOW",
+    ]
+    stage_source = all(m in field_src for m in stage_markers) and (
+        "RC86 temporary field weapons" in combat_src
+    )
+    wind_markers = [
+        "RC86_FB029_WIND_SINGLE_COMBAT_PORT", "EGGRUMBLE_RC86WindUntil",
+        '":NINJA:RC86_WIND"', "now+2.5",
+    ]
+    wind_source = all(m in combat_src for m in wind_markers)
+    zombie_markers = [
+        "local LIMIT = 3", "local LIFETIME = 14",
+        "FOLLOW = true, GUARD = true, FOCUS = true",
+        "ZombieCommander.begin(p,{",
+    ]
+    zombie_source = all(m in combat_src for m in zombie_markers)
+    legacy_undead = source_at("ServerScriptService/TrapRaidersS1/UndeadSquad")
+    legacy_undead = places["rc86"]["scripts"].get(
+        "ServerScriptService/TrapRaidersS1/UndeadSquad", {}).get("source", "")
+    old_undead_48 = "local MAX_DURATION = 48" in legacy_undead
+    evidence = {
+        "stage_weapon_pickups": {
+            "source_port_verified_by_markers": stage_source,
+            "port": "Existing FieldItemPickups + existing SevenRoleCombat; three kinds, 6 floor spawns, 18s boosts",
+            "CI_source_only": True,
+            "engine_functional_parity": "NOT_TESTED",
+        },
+        "ninja_wind_run": {
+            "source_port_verified_by_markers": wind_source,
+            "port": "Existing SevenRoleCombat Ninja B, 18s cooldown, 2.5s speed boost",
+            "CI_source_only": True,
+            "engine_functional_parity": "NOT_TESTED",
+        },
+        "three_undead_command_squad": {
+            "different_3_unit_implementation_verified": zombie_source,
+            "legacy_source_duration_48s": old_undead_48,
+            "current_source_duration_14s": zombie_source,
+            "old_commands": ["ATTACK", "GUARD", "FOLLOW"],
+            "new_commands": ["FOLLOW", "GUARD", "FOCUS"],
+            "semantic_parity": "DIFFERENT_LIFETIME_AND_COMMANDS_NEED_GAMEPLAY_DESIGN_REVIEW",
+            "engine_functional_parity": "NOT_TESTED",
+        },
+    }
+    if stage_source:
+        features["stage_weapon_pickups"]["status"] = "SOURCE_PORT_PRESENT_AFTER_865_ENGINE_NOT_TESTED"
+    if wind_source:
+        features["ninja_wind_run"]["status"] = "SOURCE_PORT_PRESENT_AFTER_864_ENGINE_NOT_TESTED"
+    if zombie_source:
+        features["three_undead_command_squad"]["status"] = "ALTERNATIVE_THREE_SERVANT_COMBAT_EXISTS_BEHAVIOR_DIFFERS"
     source_summary = {
         label: {
             "place_sha256": p["place_sha256"], "place_bytes": p["place_bytes"],
@@ -220,6 +279,7 @@ def report(places: dict) -> dict:
             "rc91_to_real65": compare(places["rc91"], places["real65"]),
         },
         "features": features,
+        "reconciliation_source_contracts": evidence,
         "artifacts": source_summary,
         "prohibited_actions": ["overwrite_REAL65_with_legacy_Game",
                                "duplicate_Host_Combat_Swarm_Store_Remote",
@@ -269,6 +329,8 @@ def main() -> None:
               "old=", len(v["legacy_source_hits"]),
               "real65=", len(v["real65_exact_anchor_hits"]),
               "analog=", len(v["real65_alternative_hits"]))
+    for k, e in data["reconciliation_source_contracts"].items():
+        print("PORT_CONTRACT", k, json.dumps(e, sort_keys=True))
     print("FORMAL_FULL_UNIFICATION_NOT_YET_PROVEN")
 
 
