@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Source-locked RC85/RC86 original REALM_HUNT, STAR_SHARDS and 2-lane DOJO
-ports into the ONLY existing REAL65 Realm, SocialPlaza and Combat owners.
-No S1 Game/Store/Remote/HP/Score/round replacement; preserve original 65 routes.
+"""Source-locked RC85 two-lane DOJO port into current SocialPlaza/Combat.
+RC86 exploration Realm4+Star6 is ALREADY adopted via independent PR #877
+as one and only real 66th script. NEVER create another Realm/Shard quest.
+Retain all original REAL65 scripts and let formal composer select REAL66.
 """
 import argparse,hashlib,json
 from pathlib import Path
@@ -9,106 +10,6 @@ MARK="GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119"
 REALM="ServerScriptService/EGGRUMBLE_RealmBattleCore"
 SOCIAL="ServerScriptService/GQ8_LobbySocialPlaza"
 COMBAT="ServerScriptService/EGGRUMBLE_SevenRoleCombat"
-
-REALM_BODY=r'''
- -- GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119
- -- Original RC85 REALM_HUNT_V1 four discoveries + STAR_SHARDS_V1 six safe
- -- collectibles translated to verified V3 per-match world coordinates.
- -- One existing Realm script owns the world. Cosmetic quest ONLY, no score,
- -- XP, extra Game, extra Store, remotes, saved items or client permissions.
- local legacyHunts={
-  {kind="REALM",id="SKY",title="空のひみつ",location=flightPad.Position+Vector3.new(0,4,8),
-   color=Color3.fromRGB(115,218,255)},
-  {kind="REALM",id="SEA",title="海のひみつ",location=dive.Position+Vector3.new(0,4,8),
-   color=Color3.fromRGB(66,196,239)},
-  {kind="REALM",id="EMBER",title="炎のひみつ",location=Vector3.new(x-85,y+3,z+68),
-   color=Color3.fromRGB(252,121,61)},
-  {kind="REALM",id="STAR",title="星のひみつ",location=Vector3.new(x+85,y+3,z-68),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="1",title="星の欠片 1/6",location=Vector3.new(x-110,y+3,z+104),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="2",title="星の欠片 2/6",location=Vector3.new(x-65,y+3,z+45),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="3",title="星の欠片 3/6",location=Vector3.new(x-10,y+3,z-100),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="4",title="星の欠片 4/6",location=Vector3.new(x+40,y+3,z+100),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="5",title="星の欠片 5/6",location=Vector3.new(x+95,y+3,z-45),
-   color=Color3.fromRGB(198,149,255)},
-  {kind="SHARD",id="6",title="星の欠片 6/6",location=Vector3.new(x+10,y+3,z+10),
-   color=Color3.fromRGB(198,149,255)},
- }
- local legacyRecords:{[Player]:any}={}
- local legacyQuestFolder=Instance.new("Folder")
- legacyQuestFolder.Name="GQ8_RC85_LegacyQuests"
- legacyQuestFolder:SetAttribute("Owner","EGGRUMBLE_RealmBattleCore")
- legacyQuestFolder:SetAttribute("CosmeticOnly",true)
- legacyQuestFolder.Parent=core
- local function questPrefix(kind:string):string
-  return if kind=="REALM" then "EGGRUMBLE_RealmHunt_"..mode.."_"
-   else "EGGRUMBLE_StarShards_"..mode.."_"
- end
- local function legacyDiscover(player:Player,kind:string,id:string)
-  if not eligible(player,mode,world) or not state.active then return end
-  local stateFor=legacyRecords[player]
-  if not stateFor then
-   stateFor={REALM={},SHARD={}}
-   legacyRecords[player]=stateFor
-   for _,quest in ipairs({"REALM","SHARD"}) do
-    local prefix=questPrefix(quest)
-    player:SetAttribute(prefix.."Count",0)
-    player:SetAttribute(prefix.."Complete",false)
-   end
-  end
-  local found=stateFor[kind]
-  if not found or found[id] then return end
-  found[id]=true
-  local count=0
-  for _ in pairs(found) do count+=1 end
-  local total=if kind=="REALM" then 4 else 6
-  local prefix=questPrefix(kind)
-  player:SetAttribute(prefix..id,true)
-  player:SetAttribute(prefix.."Count",count)
-  player:SetAttribute(prefix.."Complete",count==total)
- end
- for _,quest in ipairs(legacyHunts) do
-  -- Explicit bounds: V3 physical arena footprint, no remote teleport.
-  local dx=quest.location.X-x
-  local dz=quest.location.Z-z
-  if math.abs(dx)<halfX-18 and math.abs(dz)<halfZ-18 then
-   local node=part(legacyQuestFolder,
-    "Legacy_"..quest.kind.."_"..quest.id,CFrame.new(quest.location),
-    Vector3.new(2.5,2.5,2.5),quest.color,false,.08)
-   node.Shape=Enum.PartType.Ball;node.Material=Enum.Material.Neon
-   node.CanQuery=false;node.CanTouch=false
-   -- Server validates the *living current-mode human* even after prompt fires.
-   prompt(node,"発見する",quest.title,function(player:Player)
-    legacyDiscover(player,quest.kind,quest.id)
-   end)
-   local gui=Instance.new("BillboardGui")
-   gui.Name="QuestTitle";gui.Size=UDim2.fromOffset(136,40)
-   gui.StudsOffsetWorldSpace=Vector3.new(0,2.8,0)
-   gui.MaxDistance=34;gui.AlwaysOnTop=false;gui.Parent=node
-   local title=Instance.new("TextLabel")
-   title.BackgroundTransparency=1;title.TextColor3=quest.color
-   title.Font=Enum.Font.GothamBold;title.TextScaled=true
-   title.Size=UDim2.fromScale(1,1);title.Text=quest.title;title.Parent=gui
-  end
- end
- world.Destroying:Connect(function()
-  for p in pairs(legacyRecords) do
-   if p.Parent==Players then
-    for _,kind in ipairs({"REALM","SHARD"}) do
-     local prefix=questPrefix(kind)
-     p:SetAttribute(prefix.."Count",nil)
-     p:SetAttribute(prefix.."Complete",nil)
-     for id in pairs(legacyRecords[p][kind]) do p:SetAttribute(prefix..id,nil) end
-    end
-   end
-   legacyRecords[p]=nil
-  end
- end)
-'''
 
 SOCIAL_BODY=r'''
 -- GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119
@@ -252,7 +153,7 @@ def main(project_path,receipt_path):
        and receipt.get("pickup_prompt_alias") and receipt.get("late_host_world_watch"),"LATEST_PARENTS")
  check(MARK not in receipt,"ALREADY_INTEGRATED")
  rows={r["route"]:r for r in receipt["sources"]}
- check(len(rows)==65 and all(route in rows for route in (REALM,SOCIAL,COMBAT)),"REQUIRED_OWNER")
+ check(len(rows)==65 and all(route in rows for route in (SOCIAL,COMBAT)),"REQUIRED_OWNER")
  def original(route):
   node=project["tree"]
   for part in route.split("/"): node=node[part]
@@ -263,11 +164,9 @@ def main(project_path,receipt_path):
   return path,raw.decode("utf8")
  # First verify all 65 original receipt rows before making changes.
  for route in rows:original(route)
- realmPath,realm=original(REALM)
  socialPath,social=original(SOCIAL)
  combatPath,combat=original(COMBAT)
- check(MARK not in realm and MARK not in social and MARK not in combat,"DUPLICATE_PATCH")
- realm=replace_once(realm," local function clearDive(player)\n",REALM_BODY+"\n local function clearDive(player)\n","REALM_AFTER_REAL_WORLD_STATIONS")
+ check(MARK not in social and MARK not in combat,"DUPLICATE_PATCH")
  social=replace_once(social,"local t=0\nlocal hb:RBXScriptConnection?",SOCIAL_BODY+"\nlocal t=0\nlocal hb:RBXScriptConnection?","SOCIAL_PAD_AND_OWNER")
  social=replace_once(social,
   "    t+=dt;if t<1 then return end;t=0\n",
@@ -281,36 +180,37 @@ def main(project_path,receipt_path):
   " -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.\n",
   COMBAT_BODY+"\n -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.\n",
   "COMBAT_NEUTRAL_ONLY_HIT")
- check(realm.count("legacyDiscover(player,quest.kind,quest.id)")==1,"REALM_REAL_PROMPT")
  check(social.count("stepLegacyDojo(player,root,now,step)")==1 and
        social.count('player:SetAttribute("EGGRUMBLE_DojoServerGranted",true)')==1,"REAL_DOJO")
  check(combat.count('neutralDamage*=1+(level-1)*.05')==1,"COMBAT_SINGLE_BUFF")
- for route,path,body in [(REALM,realmPath,realm),(SOCIAL,socialPath,social),(COMBAT,combatPath,combat)]:
+ for route,path,body in [(SOCIAL,socialPath,social),(COMBAT,combatPath,combat)]:
   raw=body.encode("utf8");path.write_bytes(raw)
   rows[route]["sha256"]=hashlib.sha256(raw).hexdigest()
   rows[route]["bytes"]=len(raw)
  for route in rows:original(route)
  check(len(set(r["route"] for r in receipt["sources"]))==65,"SCRIPT_COUNT")
  # No new original route was modified; all 3 already in prior patched list.
- check(set((REALM,SOCIAL,COMBAT)).issubset(set(receipt["patched_existing_routes"])),"PRIOR_PATCH_ROUTE")
+ check(set((SOCIAL,COMBAT)).issubset(set(receipt["patched_existing_routes"])),"PRIOR_PATCH_ROUTE")
  receipt["rc85_rc86_realm_shards_dojo"]={
   "feature_id":MARK,"original_rc85_source_artifact_id":14158848286,
   "original_rc86_source_artifact_id":14161823401,
-  "ported_policy_flags":["REALM_HUNT_V1","STAR_SHARDS_V1","FB007_LOBBY_DOJO_PHYSICAL_V1"],
+  "ported_policy_flags":["FB007_LOBBY_DOJO_PHYSICAL_V1"],
   "original_dojo_rules":{"skills":["BEAST","WEAPON"],"max_level":5,
      "costs":[10,15,20,25],"seconds_per_skill":180,
      "actual_friend_training_multiplier":1.5,"neutral_pve_per_level":0.05},
-  "quest_locations":4,"shard_locations":6,
+  "quest_locations":0,"shard_locations":0,
   "new_script_count":0,"new_game_owners":0,"new_remote_count":0,
   "new_store_count":0,"new_damage_writers":0,
-  "changed_existing_routes":[REALM,SOCIAL,COMBAT],
-  "unchanged_selected_routes":62,
+  "changed_existing_routes":[SOCIAL,COMBAT],
+  "unchanged_selected_routes":63,
   "original_real63_byte_unchanged":receipt["original_real63_byte_unchanged"],
+  "legacy_exploration_formal_source":"PR #877 canonical REAL66 already selected",
+  "do_not_select_second_realm_or_shard":"#868 source is now selected once via REAL66 only",
   "studio_2client":"NOT_TESTED","android":"NOT_TESTED",
   "feature_parity":"PORT_LOGIC_SOURCE_ONLY_ENGINE_NOT_TESTED",
   "rollback":"prior formal REAL65 composer HEAD; OFF63 byte exact"}
  receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf8")
- print("GQ8_RC85_REALM4_SHARDS6_DOJO2_LEVEL5_NATIVE65_READY")
+ print("GQ8_RC85_DOJO2_LEVEL5_SAME_REAL66_PROVENANCE_NATIVE65_READY")
 if __name__=="__main__":
  p=argparse.ArgumentParser()
  p.add_argument("--project",type=Path,required=True)
