@@ -58,6 +58,8 @@ jobs:
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -333,6 +335,36 @@ jobs:
             data=(root/node['$path']).read_bytes()
             assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
           print('GQ8_RC85_DOJO_2_REAL_SOCIAL_PADS_PVE_BASIC_ONLY_65_EXISTING_SOURCE_PASS')
+          PY
+      - name: Port original RC86 ten-step temporary Starfall Path into existing ONE REAL66 Realm world
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          base=Path('artifacts/real65')
+          doc=json.loads((base/'EGGRUMBLE_REAL65.project.json').read_text())
+          receipt=json.loads((base/'REAL65_INTAKE_RECEIPT.json').read_text())
+          p=receipt['rc86_starry_path']
+          assert p['old_feature_flag']=='STARRY_PATH_V1'
+          assert p['original_switches']==2 and p['original_timed_steps']==10
+          assert p['open_seconds']==16 and p['reopen_cooldown']==7
+          assert p['occupancy_prevents_drop'] is True and p['studio_only'] is True
+          assert p['current_realm_owner_reused'] and p['old_66_explorer_preserved']
+          assert p['original_65_sources']==65 and p['unchanged_sources']==64
+          assert p['new_script_count']==0 and p['new_remote_count']==0
+          assert receipt['rc85_dojo_lobby_training'] and receipt['stage_weapon_reach_balance']
+          assert len(receipt['sources'])==65
+          for row in receipt['sources']:
+            node=doc['tree']
+            for seg in row['route'].split('/'):node=node[seg]
+            data=(base/node['$path']).read_bytes()
+            assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
+          print('GQ8_RC86_STARRY_PATH_FORMAL66_ORIGINAL65_SOURCE_CLASS_HASH_NONLOSS_PASS')
           PY
       - uses: actions/checkout@v4
         with:
