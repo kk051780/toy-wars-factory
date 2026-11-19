@@ -66,6 +66,8 @@ jobs:
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_meteor_shortcut66.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_meteor_shortcut66.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_egg_relay67.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_egg_relay67.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -497,6 +499,37 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
+      - name: Port true original RC86 TEAM egg relay 8x4 studs 12s and server atomic one-egg inventory within existing single Host+Rules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_egg_relay67.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('artifacts/real65')
+          rec=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          project=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          relay=rec['rc86_egg_relay']
+          assert relay['original_rc86_flag']=='EGG_RELAY_CLASSIC_V1'
+          assert relay['original_horizontal_studs']==8 and relay['original_vertical_studs']==4
+          assert relay['original_cooldown_seconds']==12
+          assert relay['one_egg_atomic_existing_inventory'] is True and relay['team_only'] is True
+          assert relay['server_raycast_los'] and relay['server_authoritative_both_positions']
+          assert relay['new_Game_Store_Remote_damage_writers']==0
+          assert relay['selected_existing_scripts']==65 and relay['unchanged_existing_scripts']==63
+          assert rec['rc86_three_undead_command'] and rec['rc86_meteor_shortcut']
+          assert rec['rc86_trapper_pair_warp'] and rec['rc86_fb016_foliage_sightline']
+          assert len(rec['sources'])==65
+          for row in rec['sources']:
+            node=project['tree']
+            for key in row['route'].split('/'):node=node[key]
+            data=(root/node['$path']).read_bytes()
+            assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
+          print('GQ8_RC86_TEAM_EGG_RELAY_TRUE_SERVER_ATOMIC_IN_CURRENT_REAL67_PASS')
+          PY
       - name: Native Luau compile each of all 65 real selected sources
         shell: bash
         run: |
