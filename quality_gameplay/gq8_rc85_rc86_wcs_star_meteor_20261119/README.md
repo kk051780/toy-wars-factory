@@ -15,3 +15,6 @@ Exactly one new **environment-only** \`ServerScriptService/EGGRUMBLE_LegacyCanyo
 Latest formal workflow must PASS full 67/67 Native Luau+Rojo and byte exact OFF66, retaining previously verified OFF65 and OFF63. Do not merge until same-PR-head QA PASS; after nonforce CAS repeat official same-head build and compare ZIP/Place bytes. Real Studio solo/2client/Android15min, visual quality/FUN/OWNER all **NOT_TESTED/NO_GO**, source QA does NOT prove product ready. Old original 48 flags still require further unique source parity reconciliation; do not claim complete historical migration.
 
 Author ACK not needed; no main change, no Roblox Publish, no paid operation, no second formal branch.
+
+## Updated live certified RC base
+Intake refreshed after actual formal RC check at SHA ee7a3ce17fb7e6aed44b5c2c35a189b5ff72e79e. The latest PR push must supply a fresh GitHub pull_request.base.sha and pass the exact same-head Native/Rojo/rollback gate. This receipt does not waive any current-HEAD validation.
