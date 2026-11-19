@@ -22,7 +22,7 @@ CASE_MAP = {
     "stage_weapon_pickups": {
         "legacy": "rc85",
         "anchors": ["P0D_STAGE_USABLE_WEAPON_LOOT", "StagePickupLoot"],
-        "real65_alternatives": ["GQ8_FieldItemPickups", "GQ8_RaidItemIntake"],
+        "real65_alternatives": ["EGGRUMBLE_FieldItemPickups", "EGGRUMBLE_RaidItemIntake"],
         "domain": "item",
     },
     "three_undead_command_squad": {
@@ -40,7 +40,7 @@ CASE_MAP = {
     "castle_breach_gate": {
         "legacy": "rc85",
         "anchors": ["Owner361CastleBattlefield", "SIEGE"],
-        "real65_alternatives": ["EGGRUMBLE_SiegeBridge", "CastleMatchRules", "GQ804"],
+        "real65_alternatives": ["EGGRUMBLE_CastleSiegeBridge", "EGGRUMBLE_CastleMatchRules", "GQ804"],
         "domain": "castle",
     },
     "wide_castle_field": {
