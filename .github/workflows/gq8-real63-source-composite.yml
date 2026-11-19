@@ -229,6 +229,35 @@ jobs:
           assert proof['original_rc86_run']==43754858996 and proof['new_script_count']==0
           print('GQ8_RC85_RC86_NONLOSS_WIND_ACTUAL_REAL65_INTAKE_PASS')
           PY
+      - name: Adopt RC86 six battle weapon pickups in the same existing REAL65 Item and Combat
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_stage_weapons65.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_stage_weapons65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path('artifacts/real65/EGGRUMBLE_REAL65.project.json')
+          doc=json.loads(p.read_text())
+          receipt=json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
+          assert len(receipt['sources'])==65 and receipt['original_real63_byte_unchanged']==55
+          assert len(receipt['patched_existing_routes'])==8
+          assert receipt['rc85_rc86_stage_weapon_delta']['added_script_owners']==0
+          assert receipt['legacy_rc86_wind']['new_script_count']==0
+          assert receipt['late_host_world_watch']['no_20s_permanent_disarm']
+          seen=[]
+          for entry in receipt['sources']:
+            node=doc['tree']
+            for part in entry['route'].split('/'): node=node[part]
+            content=(p.parent/node['$path']).read_bytes()
+            assert len(content)==entry['bytes'] and hashlib.sha256(content).hexdigest()==entry['sha256']
+            seen.append(entry['route'])
+          assert len(set(seen))==65
+          print('GQ8_RC85_RC86_WIND_AND_WEAPONS_FORMAL65_NONLOSS_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
