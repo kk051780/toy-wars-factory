@@ -9,8 +9,9 @@ on:
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
-      - 'quality_gameplay/gq8_rc86_fortress_visual_real68_20261120/**'
+      - 'quality_gameplay/gq8_rc86_fortress_visual_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
+      - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -32,8 +33,9 @@ on:
       - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**'
-      - 'quality_gameplay/gq8_rc86_fortress_visual_real68_20261120/**'
+      - 'quality_gameplay/gq8_rc86_fortress_visual_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
+      - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -901,18 +903,81 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_GOROGAN_LOD_PROOF; exit 1; }
           fi
-      - name: "Source-select RC86 FB015 fortress details into single existing REAL68 castle art owner"
+      - name: Integrate RC85 First90 V3 client-only guide, REAL69, preserve every REAL68 source
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m py_compile quality_gameplay/gq8_rc86_fortress_visual_real68_20261120/patch_fortress.py
-          python3 -B quality_gameplay/gq8_rc86_fortress_visual_real68_20261120/patch_fortress.py --base artifacts/real68 --head "$GITHUB_SHA"
+          python3 -m py_compile quality_gameplay/gq8_rc85_first90_real69_20261120/compose_real69.py
+          python3 -B quality_gameplay/gq8_rc85_first90_real69_20261120/compose_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_first90_real69_20261120/compose_real69.py \
+            --base artifacts/real68 \
+            --out artifacts/real69 \
+            --source quality_gameplay/gq8_rc85_first90_real69_20261120/EGGRUMBLE_LegacyFirst90.client.luau \
+            --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,pathlib,sys,subprocess,hashlib
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('artifacts/real69')
+          pr=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          off=project_scan(root/'off_parent68','EGGRUMBLE_REAL68.project.json')
+          r=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert len(pr)==69 and len(off)==68 and len(r['source_hashes'])==69
+          assert set(pr)-set(off)=={'StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90'}
+          assert all(pr[k]['sha256']==off[k]['sha256'] for k in off)
+          assert all(pr[k]['sha256']==r['source_hashes'][k] and pr[k]['class']==r['source_classes'][k] for k in pr)
+          for row in pr.values():
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',
+              str(root/row['path'])],check=True,stdout=subprocess.DEVNULL)
+          print('REAL69_NATIVE_69_OF_69_AND_68_PRIOR_BYTE_EXACT_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/off_parent68/EGGRUMBLE_REAL68.project.json -o artifacts/real69/OFF68_PARENT_REBUILT.rbxlx
+          cmp artifacts/real69/OFF68_PARENT_REBUILT.rbxlx artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            --place artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 - <<'PY'
+          import json,pathlib,hashlib,os,shutil
+          root=pathlib.Path('artifacts/real69')
+          file=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(file.read_text())
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          assert r['old_68_bodies_byte_identical']==68
+          r['native_rojo']='PASS_69_OF_69'
+          r['off68_parent_place_byte_exact']=True
+          r['private_place_bytes']=place.stat().st_size
+          r['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          r['canonical_build']=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          file.write_text(json.dumps(r,sort_keys=True,indent=2,ensure_ascii=False)+'\n')
+          d=root/'delivery'
+          d.mkdir()
+          shutil.copytree(root/'sources',d/'sources')
+          shutil.copy2(place,d/place.name)
+          shutil.copy2(root/'EGGRUMBLE_REAL69.project.json',d/'EGGRUMBLE_REAL69.project.json')
+          shutil.copy2(file,d/'REAL69_LEGACY_INTAKE_RECEIPT.json')
+          assert len(list(d.glob('*.rbxlx')))==1
+          print('ONE_STUDIO_PLACE_REAL69_ONLY_SIZE',place.stat().st_size)
+          PY
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_OFFICIAL_MOVED_BEFORE_REAL69_BUILD; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_REAL69_PR_BASE_STALE; exit 1; }
+          fi
+      - name: "Source-select RC86 FB015 fortress details into single existing REAL69 castle art owner"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc86_fortress_visual_real69_20261120/patch_fortress.py
+          python3 -B quality_gameplay/gq8_rc86_fortress_visual_real69_20261120/patch_fortress.py --base artifacts/real69 --head "$GITHUB_SHA"
           python3 - <<'PY'
           import pathlib,json,hashlib,subprocess
-          root=pathlib.Path('artifacts/real68')
-          project=json.loads((root/'EGGRUMBLE_REAL68.project.json').read_text())
-          receipt=json.loads((root/'REAL68_LEGACY_INTAKE_RECEIPT.json').read_text())
-          rollback=root/'off68_fortress'
+          root=pathlib.Path('artifacts/real69')
+          project=json.loads((root/'EGGRUMBLE_REAL69.project.json').read_text())
+          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          rollback=root/'off69_fortress'
           def routes(base):
             found={}
             def walk(node,prefix=()):
@@ -928,11 +993,11 @@ jobs:
             return found
           before=routes(rollback); after=routes(root)
           art='ServerScriptService/EGGRUMBLE_FlagshipFieldArt'
-          assert len(before)==len(after)==68 and set(before)==set(after)
+          assert len(before)==len(after)==69 and set(before)==set(after)
           assert sum(after[k][0]!=before[k][0] for k in before)==1
           assert all(after[k][1]==before[k][1] for k in before)
           assert hashlib.sha256(before[art][0]).hexdigest()=='91c89619b2d4819cde31a8f63865fb6b73fee6c0e5b2d30564383f0fd1fa458b'
-          assert b'GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL68_20261120' in after[art][0]
+          assert b'GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120' in after[art][0]
           assert receipt['rc86_fortress_detail_visual']['original_68_routes_preserved']
           for k,(body,_) in after.items():
             assert receipt['source_hashes'][k]==hashlib.sha256(body).hexdigest(),k
@@ -946,28 +1011,40 @@ jobs:
             walk(project['tree'])
           compile_all(root)
           compile_all(rollback)
-          print('GQ8_RC86_FORTRESS_NATIVE_REAL68_68_OF_68_SOURCE_CLASS_AND_ROLLBACK_PASS')
+          print('GQ8_RC86_FORTRESS_NATIVE_REAL69_68_OF_68_SOURCE_CLASS_AND_ROLLBACK_PASS')
           PY
-          /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL68.project.json -o artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx
-          /tmp/gq863-rojo build artifacts/real68/off68_fortress/EGGRUMBLE_REAL68.project.json -o artifacts/real68/OFF68_FORTRESS_REBUILT.rbxlx
-          cmp artifacts/real68/OFF68_FORTRESS_REBUILT.rbxlx artifacts/real68/OFF68_PRE_FORTRESS_EXACT.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/off69_fortress/EGGRUMBLE_REAL69.project.json -o artifacts/real69/OFF68_FORTRESS_REBUILT.rbxlx
+          cmp artifacts/real69/OFF68_FORTRESS_REBUILT.rbxlx artifacts/real69/OFF69_PRE_FORTRESS_EXACT.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
-            --project artifacts/real68/EGGRUMBLE_REAL68.project.json \
-            --place artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx --count 68
+            --project artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            --place artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
           python3 - <<'PY'
-          import pathlib,json,hashlib,os
-          root=pathlib.Path('artifacts/real68')
-          path=root/'REAL68_LEGACY_INTAKE_RECEIPT.json'
+          import pathlib,json,hashlib,os,shutil
+          root=pathlib.Path('artifacts/real69')
+          path=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
           receipt=json.loads(path.read_text())
-          place=root/'EGGRUMBLE_REAL68_PRIVATE.rbxlx'
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
           receipt['rc86_fortress_detail_visual']['native_rojo']='PASS_68_OF_68'
-          receipt['rc86_fortress_detail_visual']['off68_fortress_byte_exact']=True
-          receipt['candidate_head']=os.environ['GITHUB_SHA']
+          receipt['rc86_fortress_detail_visual']['off69_fortress_byte_exact']=True
+          receipt['build_head']=os.environ['GITHUB_SHA']
           receipt['private_place_bytes']=place.stat().st_size
           receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
           path.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
-          print('GQ8_RC86_FORTRESS_SINGLE_REAL68_NOLOSS',place.stat().st_size)
+          # Update the sole Studio Place in the official REAL69 delivery package.
+          d=root/'delivery'
+          d.mkdir(exist_ok=True)
+          shutil.copy2(place,d/place.name)
+          shutil.copy2(path,d/path.name)
+          shutil.copy2(root/'EGGRUMBLE_REAL69.project.json',d/'EGGRUMBLE_REAL69.project.json')
+          src=root/'sources/ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau'
+          dest=d/'sources/ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau'
+          dest.parent.mkdir(parents=True,exist_ok=True)
+          shutil.copy2(src,dest)
+          assert len(list(d.glob('*.rbxlx')))==1
+          print('GQ8_RC86_FORTRESS_SINGLE_REAL69_NOLOSS',place.stat().st_size)
           PY
+          tar -czf artifacts/real69/delivery/OFF69_FORTRESS_ROLLBACK.tar.gz -C artifacts/real69 off69_fortress OFF69_PRE_FORTRESS_EXACT.rbxlx
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
             test "$CURRENT" = "$GITHUB_SHA" || { echo RED_FORTRESS_FORMAL_HEAD_DRIFT; exit 1; }
@@ -977,7 +1054,7 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL68-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL68-RC85-TWIN-BIOMES-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real68/
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL' }}
+          path: artifacts/real69/delivery/
           retention-days: 30
           if-no-files-found: error

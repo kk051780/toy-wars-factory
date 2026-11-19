@@ -12,7 +12,7 @@ import shutil
 
 TARGET = "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
 EXPECTED = "91c89619b2d4819cde31a8f63865fb6b73fee6c0e5b2d30564383f0fd1fa458b"
-MARKER = "GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL68_20261120"
+MARKER = "GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120"
 
 
 def digest(b):
@@ -44,7 +44,7 @@ def patch(source):
   Vector3.new(26,23.1,-26),bronze,Enum.Material.Metal)
 '''
     assert source.count(anchor) == 1, 'CASTLE_ANCHOR_MOVED'
-    extra = ''' -- GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL68_20261120
+    extra = ''' -- GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120
  -- Original RC86 FB015_FORTRESS_DETAIL_ART_V2 roof/slit/banner motif is
  -- selectively adapted to this *existing* V3 castle owner, not the old S1 Game.
  -- Eight static lightweight art parts/castle. No Core/Gate/HP/egg interaction.
@@ -70,33 +70,33 @@ def patch(source):
 
 
 def run(root, head):
-    project_path = root / 'EGGRUMBLE_REAL68.project.json'
-    receipt_path = root / 'REAL68_LEGACY_INTAKE_RECEIPT.json'
+    project_path = root / 'EGGRUMBLE_REAL69.project.json'
+    receipt_path = root / 'REAL69_LEGACY_INTAKE_RECEIPT.json'
     project = json.loads(project_path.read_text())
     receipt = json.loads(receipt_path.read_text())
     before = files(project, root)
-    assert len(before) == 68 and TARGET in before
-    assert receipt['selected_source_count'] == 68 and len(receipt['source_hashes']) == 68
-    assert receipt['candidate_head'] == head
+    assert len(before) == 69 and TARGET in before
+    assert receipt['selected_source_count'] == 69 and len(receipt['source_hashes']) == 69
+    assert receipt['build_head'] == head
     assert digest(before[TARGET][1]) == EXPECTED, 'TARGET_ORIGINAL_SOURCE_MISMATCH'
-    assert not (root / 'off68_fortress').exists(), 'NO_DOUBLE_ROLLBACK'
+    assert not (root / 'off69_fortress').exists(), 'NO_DOUBLE_ROLLBACK'
     for route, (_, raw, _) in before.items():
         assert receipt['source_hashes'][route] == digest(raw), 'PARENT_DIGEST_' + route
-    previous = root / 'off68_fortress'
+    previous = root / 'off69_fortress'
     previous.mkdir()
     for f, raw, _ in before.values():
         dest = previous / f.relative_to(root)
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(raw)
     (previous / project_path.name).write_bytes(project_path.read_bytes())
-    shutil.copyfile(root / 'EGGRUMBLE_REAL68_PRIVATE.rbxlx',
-                    root / 'OFF68_PRE_FORTRESS_EXACT.rbxlx')
+    shutil.copyfile(root / 'EGGRUMBLE_REAL69_PRIVATE.rbxlx',
+                    root / 'OFF69_PRE_FORTRESS_EXACT.rbxlx')
     old_source = before[TARGET][1].decode('utf-8')
     new_source = patch(old_source).encode('utf-8')
     before[TARGET][0].write_bytes(new_source)
     after = files(project, root)
     rollback = files(project, previous)
-    assert len(after) == len(rollback) == 68 and set(after) == set(rollback)
+    assert len(after) == len(rollback) == 69 and set(after) == set(rollback)
     for route, (_, raw, cls) in before.items():
         assert rollback[route][1] == raw and rollback[route][2] == cls, route
         assert after[route][1] == (new_source if route == TARGET else raw), route
@@ -109,7 +109,7 @@ def run(root, head):
         'single_existing_owner': TARGET,
         'original_68_routes_preserved': True,
         'only_existing_art_source_modified': True,
-        'pre_art_exact_rollback': 'off68_fortress plus OFF68_PRE_FORTRESS_EXACT.rbxlx',
+        'pre_art_exact_rollback': 'off69_fortress plus OFF69_PRE_FORTRESS_EXACT.rbxlx',
         'visual_details_per_castle': 8,
         'gameplay_semantic_parity': 'NOT_PROVEN',
         'studio': 'NOT_TESTED',
@@ -117,7 +117,7 @@ def run(root, head):
         'product_acceptance': 'NO_GO',
     }
     receipt_path.write_text(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + '\n')
-    print('RC86_FB015_FORTRESS_SELECTIVE_REAL68_SOURCE_PORT_OFF68_PASS', len(after))
+    print('RC86_FB015_FORTRESS_SELECTIVE_REAL69_SOURCE_PORT_OFF68_PASS', len(after))
 
 
 if __name__ == '__main__':
