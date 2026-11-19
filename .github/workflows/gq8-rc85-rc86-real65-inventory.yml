@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py
           python3 quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py --selftest
-      - name: Verify pinned legacy success and select fresh formal REAL65 same-HEAD source
+      - name: Verify pinned historical REAL65 run and newest formal REAL68 HEAD independently
         shell: bash
         run: |
           set -euo pipefail
@@ -47,11 +47,19 @@ jobs:
             actual="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id" --jq '.head_sha + ":" + .conclusion')"
             test "$actual" = "$expected:success" || { echo "RED_WRONG_LEGACY_RUN $id $actual"; exit 1; }
           done
-          run_id="$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/gq8-real63-source-composite.yml/runs?branch=rc%2Fp0d-s1-kids-rc01&per_page=30" --jq '.workflow_runs | map(select(.head_sha == "'"$current"'" and .event == "push" and .conclusion == "success")) | first | .id')"
-          test -n "$run_id" && test "$run_id" != null || { echo "RED_NO_CURRENT_FORMAL_SAMEHEAD_SUCCESS"; exit 1; }
+          # Historical baseline: REAL65 no longer ships from the newest official
+          # run (the canonical Studio handoff is REAL68). Pin the original
+          # immutable successful REAL65 run instead of requesting a nonexistent
+          # REAL65 artifact from latest-HEAD. Current REAL68 is checked separately.
+          run_id=44510286705
+          expected="fdce18cbefe64f60c58a4122b153608dff7cdfea:success"
+          observed="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id" --jq '.head_sha + ":" + .conclusion')"
+          test "$observed" = "$expected" || { echo "RED_HISTORICAL_REAL65_RUN $observed"; exit 1; }
+          newest="$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/gq8-real63-source-composite.yml/runs?branch=rc%2Fp0d-s1-kids-rc01&per_page=30" --jq '.workflow_runs | map(select(.head_sha == "'"$current"'" and .event == "push" and .conclusion == "success")) | first | .id')"
+          test -n "$newest" && test "$newest" != null || { echo "RED_NO_CURRENT_FORMAL_SAMEHEAD_SUCCESS"; exit 1; }
           echo "PINNED_CURRENT_OFFICIAL=$current" >> "$GITHUB_ENV"
           echo "PINNED_CURRENT_RUN=$run_id" >> "$GITHUB_ENV"
-          echo "LIVE_OFFICIAL_REAL65=$current RUN=$run_id"
+          echo "HISTORIC_REAL65=$run_id LIVE_OFFICIAL=$current VERIFIED_RUN=$newest"
       - name: Download verified immutable source Places from GitHub Actions
         shell: bash
         run: |
