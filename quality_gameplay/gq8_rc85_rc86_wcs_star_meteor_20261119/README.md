@@ -1,0 +1,20 @@
+# RC85 original Crystal Canyon / Moguron: add ONLY remaining WCS into ONE REAL67
+
+Canonical official GitHub branch remains \`rc/p0d-s1-kids-rc01\`. Source profile REAL66 already contains former RC85/86 enhancements: PR #879 original Starfall10, PR #884 original MeteorFourth55+5+22, PR #882 original 3-undead, PR #878 two-lane dojo, PR #877 4 RealmHunt+6 StarShards, PR #864/865/869/870 Ninja Wind/RC86 weapons/server pickup fixes.
+
+**Critical de-duplication**: #879 10-step Starfall and #884 12-segment Meteor are ALREADY REAL66 functional source in the existing \`EGGRUMBLE_RealmBattleCore\`. This PR therefore does NOT recreate either timed bridge or their script owners. It ports **only the unselected original \`WCS_F01_C01\` Crystal Canyon** from old real RC85 artifact 14158848286 / RC86 artifact 14161823401 into the SAME team/battle royale arena. The existing Star and Meteor are reused as the other two of four visible bridge routes.
+
+## Exact genuine original source provenance
+\`TrapRaidersS1/WCS_CrystalCanyon\`: SHA256 \`17ee851bda13076effdd81de68346f83b8d82366ec7b09de4f7cd938a1b78198\`, original old source body extracted from the actual 85-script Place XML. Reimplemented useful behavior: West/East bank, always-collidable safe crossing, actual reachable access stairs, seven canyon crystals, two physical Moguron server-authorized prompts for 14s gate opening, four-second cooldown beginning on actual closure, do not close while a living player is in the gate, physical return floor. The prior old WCS anchor \`P0D_CrystalCanyonAnchor\` is absent in modern V3, so new scene uses *existing* \`TEAM_Arena/BATTLE_ROYALE_Arena\` \`TacticalBattlefield\` (anchored floor, same area where current REAL66 Starfall and Meteor physically live).
+
+**V3 spatial alignment**: current #879 Star center = floor(x,topY+12,z-175); #884 Meteor center = floor(x,topY+12,z-145), exactly +30Z relative. This new WCS world center is at the existing Star center, with four distinct lanes: permanent safe z=-30, Moguron temporary shortcut z=-15, existing ten-star path z=0, existing 12-piece Meteor z=+30. Both raised canyon banks extend Z±42.5, and six walkable access stairs each side descend to original ground, never deleting original floor. Existing star and meteor are guarded with owner source marker and exact counts before adding this new scene. No timers, owners, remotes or world route copies for Star/Meteor.
+
+## Source level nonloss / CI
+Exactly one new **environment-only** \`ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes\` Script; current 65 REAL65 sources and one #877 exploration Script (66 total) must be SHA byte exact preserved from the just-built official REAL66 candidate. \`compose_real67.py\` verifies current same-head receipt and every original source/path/class including existing #879 Starfall and #884 Meteor author receipts. Studio-only like the old original. Two real TEAM/BR worlds, safe per-session cleanup, server mode/humanoid/range/LOS with \`RespectCanCollide\`. No second Game, Combat, Store, HP/Score/egg/Reward, Remote or paid system. No Work/Codex.
+
+Latest formal workflow must PASS full 67/67 Native Luau+Rojo and byte exact OFF66, retaining previously verified OFF65 and OFF63. Do not merge until same-PR-head QA PASS; after nonforce CAS repeat official same-head build and compare ZIP/Place bytes. Real Studio solo/2client/Android15min, visual quality/FUN/OWNER all **NOT_TESTED/NO_GO**, source QA does NOT prove product ready. Old original 48 flags still require further unique source parity reconciliation; do not claim complete historical migration.
+
+Author ACK not needed; no main change, no Roblox Publish, no paid operation, no second formal branch.
+
+## Updated live certified RC base
+Intake refreshed after actual formal RC check at SHA ee7a3ce17fb7e6aed44b5c2c35a189b5ff72e79e. The latest PR push must supply a fresh GitHub pull_request.base.sha and pass the exact same-head Native/Rojo/rollback gate. This receipt does not waive any current-HEAD validation.
