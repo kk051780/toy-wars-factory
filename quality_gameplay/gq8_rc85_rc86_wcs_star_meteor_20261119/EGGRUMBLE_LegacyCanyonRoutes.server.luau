@@ -50,6 +50,8 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  stage:SetAttribute("SafeRouteAlwaysAvailable",true)
  stage:SetAttribute("StarStepsOwned",0)
  stage:SetAttribute("ExistingStarStepsReused",10)
+ stage:SetAttribute("ExistingMeteorSegmentsReused",12)
+ stage:SetAttribute("MeteorOwnedSegments",0)
  stage.Parent=arena
  -- Raised stage with 20 climbable physical entry steps; the original entire
  -- floor remains safe if someone falls (never deletes/overwrites V3 terrain).
@@ -108,7 +110,7 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  local east=block("EastBank",Vector3.new(50,4,85),
   Vector3.new(50,-2,0),grass,Enum.Material.Grass,true)
  local safe=block("AlwaysOpenSafeRoute",Vector3.new(50,3,12),
-  Vector3.new(0,-1.5,30),slate,Enum.Material.Slate,true)
+  Vector3.new(0,-1.5,-30),slate,Enum.Material.Slate,true)
  block("CrystalCanyonBottom",Vector3.new(50,1.5,85),
   Vector3.new(0,-21,0),Color3.fromRGB(42,66,85),Enum.Material.Slate,true)
  for i=1,6 do
@@ -125,9 +127,9 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   crystal.CanQuery=false
  end
  local shortcut=block("ShortcutBridge",Vector3.new(50,2,12),
-  Vector3.new(0,-1,15),slate,Enum.Material.Slate,true)
+  Vector3.new(0,-1,-15),slate,Enum.Material.Slate,true)
  local gate=block("ShortcutGate",Vector3.new(3,9,12),
-  Vector3.new(0,4.5,15),violet,Enum.Material.Neon,true,.2)
+  Vector3.new(0,4.5,-15),violet,Enum.Material.Neon,true,.2)
  local gateOpen=false
  local gateUntil=0
  local nextGate=0
@@ -140,10 +142,10 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  end
  local function mole(side:string,x:number)
   local torso=block("Moguron_"..side.."_Body",Vector3.new(4,3,4),
-   Vector3.new(x,2.4,15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
+   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
   torso.Shape=Enum.PartType.Ball
   local nose=block("Moguron_"..side.."_Nose",Vector3.new(1.5,1.2,1.5),
-   Vector3.new(x,2.65,13),gold,Enum.Material.Neon,false)
+   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)
   nose.Shape=Enum.PartType.Ball
   addPrompt(torso,"橋をひらく","橋掘りモグロン",function(p:Player)
    if not authorized(p,torso) or gateOpen or os.clock()<nextGate then return end
@@ -160,11 +162,17 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   stage:Destroy();installed[arena]=nil;return
  end
  stage:SetAttribute("UniqueStarPathReused",true)
- -- Meteor is an independent *fourth* route at z=-17, not a clone of Starfall.
+ local existingMeteor=originalRealm and originalRealm:FindFirstChild("GQ8_RC86_MeteorShortcut")
+ if not existingMeteor or existingMeteor:GetAttribute("TemporaryBridgeParts")~=12 then
+  stage:Destroy();installed[arena]=nil;return
+ end
+ stage:SetAttribute("UniqueMeteorRouteReused",true)
+ -- WCS safe (-30Z) and Moguron shortcut (-15Z) stay separate from
+ -- existing Realm Starfall(0Z) and MeteorFourth(+30Z); no double route owner.
  -- Non-blocking per-arena lifecycle. Never retire an occupied walkway.
  task.spawn(function()
   while live() do
-   if gateOpen and os.clock()>=gateUntil and not occupied(15,13) then
+   if gateOpen and os.clock()>=gateUntil and not occupied(-15,13) then
     setGate(false)
    end
    task.wait(.45)
@@ -186,7 +194,8 @@ local function bindLobby(lobby:Instance)
    -- Never disarm permanently because field world finished booting late.
    while candidate.Parent==lobby and (candidate:FindFirstChild("TacticalBattlefield")==nil
     or not candidate:FindFirstChild("EGGRUMBLE_REALM_BATTLE_CORE")
-    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_StarfallPath")) do
+    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_StarfallPath")
+    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_MeteorShortcut")) do
     task.wait(.3)
    end
    local floor=candidate:FindFirstChild("TacticalBattlefield")
