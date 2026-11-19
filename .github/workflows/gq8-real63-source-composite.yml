@@ -6,6 +6,7 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -24,6 +25,7 @@ on:
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
+      - 'quality_gameplay/gq8_rc86_trapper_pair_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -394,6 +396,37 @@ jobs:
               raw=(root/node['$path']).read_bytes()
               assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256'],row['route']
           print('GQ8_RC86_UNDEAD3_48S_SAME_65_SOURCE_NATIVE_ROJO_READY')
+          PY
+      - name: Port historical RC86 two-stage TRAPPER team warp into same Combat source (65 unchanged routes, REAL66 no duplicate)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc86_trapper_pair_20261119/port_rc86_trapper_pair66.py
+          python3 -B quality_gameplay/gq8_rc86_trapper_pair_20261119/port_rc86_trapper_pair66.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('artifacts/real65')
+          rec=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          d=rec['rc86_trapper_pair_warp']
+          assert len(rec['sources'])==65 and d['new_selected_luau']==0
+          assert d['new_game_owners']==d['new_remote_owners']==d['new_damage_owners']==0
+          assert d['other_original65_sources_byte_exact']==64
+          assert d['old_short_warp_preserved'] and d['server_session_team_egg_down_los_ground_collision_checks']
+          assert d['all_original_roles_and_existing_buffs_preserved']
+          assert rec['rc86_starry_path'] and rec['rc86_three_undead_command']
+          assert rec['rc85_dojo_lobby_training'] and rec['stage_weapon_reach_balance']
+          backup=root/d['rollback_file']
+          assert backup.is_file() and hashlib.sha256(backup.read_bytes()).hexdigest()==d['backup_original_combat_sha256']
+          project=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          for row in rec['sources']:
+            node=project['tree']
+            for seg in row['route'].split('/'):node=node[seg]
+            raw=(root/node['$path']).read_bytes()
+            assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256'],row['route']
+          print('GQ8_RC86_TRAPPER_PAIR_ALL_SOURCE_LOCKS_65_OF_65_AND_OLD_OFF_PASS')
           PY
       - uses: actions/checkout@v4
         with:
