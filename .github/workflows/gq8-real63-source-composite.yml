@@ -172,7 +172,7 @@ jobs:
           r=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
           assert len(r['sources'])==65 and r['original_real63_byte_unchanged']==57
           assert r['realm_storm797']['other_original_real65_sources_byte_exact']==64
-          assert len(r['patched_existing_routes'])==4
+          assert len(r['patched_existing_routes'])==6
           assert not r['real_paid_trade'] and not r['roblox_publish']
           print('GQ8_REAL65_STORM_65_REAL_SOURCE_REUSE_PASS')
           PY
