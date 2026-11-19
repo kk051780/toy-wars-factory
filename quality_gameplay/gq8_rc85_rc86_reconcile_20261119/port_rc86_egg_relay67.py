@@ -25,8 +25,8 @@ M.RELAY_HORIZONTAL_STUDS=8
 M.RELAY_VERTICAL_STUDS=4
 M.RELAY_COOLDOWN_SECONDS=12'''
 
-RULES_NEW_OLD='''   teamDeposits={RED=0,BLUE=0},teamSiegeTokens={RED=0,BLUE=0},'''
-RULES_NEW_NEW='''   teamDeposits={RED=0,BLUE=0},teamSiegeTokens={RED=0,BLUE=0},
+RULES_NEW_OLD='''  teamDeposits={RED=0,BLUE=0},teamSiegeTokens={RED=0,BLUE=0},'''
+RULES_NEW_NEW='''  teamDeposits={RED=0,BLUE=0},teamSiegeTokens={RED=0,BLUE=0},
    eggRelayLastAt={},eggRelaySerial=0,'''
 
 RULES_FN_OLD='''function M.auditEggConservation(m:any):any'''
@@ -87,7 +87,7 @@ HOST_STOP_NEW='''  if session.guardians then session.guardians.shutdown() end
   -- Original RC86 relay lives in this session only; no prompt survives teardown.
   if session.eggRelayStop then session.eggRelayStop() end'''
 
-HOST_INSERT_OLD='''  -- Actual anchored 3D bot actors roam between castles and must reach their goal'''
+HOST_INSERT_OLD=''' -- Actual anchored 3D bot actors roam between castles and must reach their goal'''
 HOST_INSERT_NEW='''  -- GQ8_RC86_EGG_RELAY_CLASSIC_SINGLE_CASTLE_AUTHORITY_REAL67_20261119
   -- Reuse this ONE Host, its real players and the ONE CastleMatchRules owner.
   -- Each recipient triggers a server-only prompt on the current egg carrier.
