@@ -316,7 +316,7 @@ jobs:
           root=Path('artifacts/real65')
           receipt=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
           proj=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
-          legacy=receipt['rc85_rc86_realm_shards_dojo']
+          legacy=receipt['rc85_dojo_lobby_training']
           assert len(receipt['sources'])==65
           assert legacy['new_script_count']==0 and legacy['new_game_owners']==0
           assert legacy['changed_existing_routes']==[
