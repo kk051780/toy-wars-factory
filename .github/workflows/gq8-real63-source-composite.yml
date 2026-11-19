@@ -52,6 +52,8 @@ jobs:
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -277,6 +279,24 @@ jobs:
           assert x['selected_script_count']==65 and x['additional_game_owners']==0
           assert x['server_verb']=='拾う' and len(x['accepted_ui_aliases'])==2
           print('GQ8_15_PICKUPS_SERVER_VERB_ALIAS_AND_REAL65_65_SOURCE_PASS')
+          PY
+      - name: Restore RC86 StageWeapon reach and constrain bonus to original neutral-only basic M1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
+          a=r['stage_weapon_reach_balance']
+          assert a['script_count']==65 and a['unchanged_source_count']==63
+          assert a['original_reach']==[0,3.5,1.7]
+          assert a['pve_basic_only']==True and not a['skill_mult'] and not a['pvp_mult']
+          assert a['wall_ray_respect_can_collide'] and a['added_new_scripts']==0
+          assert r['pickup_prompt_alias']['selected_script_count']==65
+          print('GQ8_LEGACY_RC86_REACH_BONUS_BASIC_ONLY_NONLOSS_PASS')
           PY
       - uses: actions/checkout@v4
         with:
