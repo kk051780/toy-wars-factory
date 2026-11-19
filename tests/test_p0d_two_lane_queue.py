@@ -14,7 +14,11 @@ def pr(n,head=NEW,features="WCS_NEW",updated="2026-11-14T00:10:00Z",draft=False,
             "base":{"ref":OFFICIAL,"sha":base}, "head":{"sha":head,"repo":{"full_name":REPO}},
             "body":"\n".join(["P0D_PREP_READY_V1",f"PINNED_HEAD: {head}",f"BASE_RC: {base}",
                       f"FEATURE_IDS: {features}","SOURCE_LOCK: rc_fastlane/SOURCE_LOCK.json",
-                      "ROLLBACK: Disable independent feature flags and rebuild source exact"])}
+                      "ROLLBACK: Disable independent feature flags and rebuild source exact",
+                      "OWNER_FAST_ADMISSION_V2", "DECISION: ADOPT",
+                      "DESIGN_SOURCE: https://github.com/kk051780/toy-wars-factory/issues/219",
+                      "QUALITY_EVIDENCE: https://github.com/kk051780/toy-wars-factory/issues/470",
+                      "VALUE_DELTA: Improve first-minute clarity and make egg-stealing wins more exciting"])}
 
 def api(path):
     if "/commits/" in path:
@@ -89,6 +93,36 @@ class TwoLaneQueueTests(unittest.TestCase):
             manifest(x["body"]+"\nPINNED_HEAD: "+NEW)
         with self.assertRaisesRegex(ValueError,"INVALID_SOURCE_LOCK"):
             manifest(x["body"].replace("rc_fastlane/SOURCE_LOCK.json","../bad.json"))
+    def test_v2_quality_design_value_and_decision_required(self):
+        original=pr(419)
+        for token, reason in (
+            ("OWNER_FAST_ADMISSION_V2", "MISSING_UNIQUE_OWNER_FAST_ADMISSION_V2"),
+            ("DECISION: ADOPT", "MISSING_FIELDS_DECISION"),
+            ("QUALITY_EVIDENCE: https://github.com/kk051780/toy-wars-factory/issues/470",
+             "MISSING_FIELDS_QUALITY_EVIDENCE"),
+        ):
+            candidate=dict(original)
+            candidate["body"]=original["body"].replace(token, "")
+            got=choose_latest(OLD,[candidate],api)
+            self.assertEqual(got["ready_count"],0)
+            self.assertIn(reason,got["all_labeled_candidates"][0]["reason"])
+        no_value=pr(420)
+        no_value["body"]=no_value["body"].replace("DECISION: ADOPT","DECISION: REWORK")
+        got=choose_latest(OLD,[no_value],api)
+        self.assertEqual(got["all_labeled_candidates"][0]["reason"],"NOT_ADOPT_DECISION")
+        bogus=pr(421)
+        bogus["body"]=bogus["body"].replace(
+            "https://github.com/kk051780/toy-wars-factory/issues/470",
+            "https://example.com/fake")
+        got=choose_latest(OLD,[bogus],api)
+        self.assertIn("INVALID_QUALITY_EVIDENCE_URL",got["all_labeled_candidates"][0]["reason"])
+    def test_v2_quality_fields_propagate_to_selected(self):
+        got=choose_latest(OLD,[pr(422)],api)
+        selected=got["selected"][0]
+        self.assertEqual(selected["decision"],"ADOPT")
+        self.assertIn("/issues/470",selected["quality_evidence"])
+        self.assertIn("egg-stealing",selected["value_delta"])
+
     def test_official_head_recheck_at_selection(self):
         d=choose_latest(NEW,[pr(413,base=OLD)],api)
         self.assertEqual(d["ready_count"],0)
