@@ -66,7 +66,7 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
     require(set(now) == set(previous), "ROUTE_NONLOSS")
     require(not any(route.startswith(OLD_S1_PREFIX) for route in now),
             "DUPLICATE_OLD_S1_GAME")
-    require(receipt.get("formal_branch") == FORMAL, "FORMAL_BRANCH")
+    require(receipt.get("official_branch") == FORMAL, "FORMAL_BRANCH")
     require(receipt.get("selected_source_count") == 69, "RECEIPT_SOURCE_COUNT")
     require(set(receipt.get("source_hashes", {})) == set(now), "RECEIPT_ROUTE_SET")
     for route, info in now.items():
