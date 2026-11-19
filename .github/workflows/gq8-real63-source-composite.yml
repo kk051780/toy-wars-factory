@@ -50,6 +50,8 @@ jobs:
           python3 quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -257,6 +259,24 @@ jobs:
             seen.append(entry['route'])
           assert len(set(seen))==65
           print('GQ8_RC85_RC86_WIND_AND_WEAPONS_FORMAL65_NONLOSS_PASS')
+          PY
+      - name: Fix original nine plus RC86 six pickup server verb mismatch without extra Item owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('artifacts/real65/REAL65_INTAKE_RECEIPT.json'))
+          assert d['new_selected_source_count']==65
+          assert d['original_real63_byte_unchanged']==54
+          assert len(d['patched_existing_routes'])==9
+          x=d['pickup_prompt_alias']
+          assert x['selected_script_count']==65 and x['additional_game_owners']==0
+          assert x['server_verb']=='拾う' and len(x['accepted_ui_aliases'])==2
+          print('GQ8_15_PICKUPS_SERVER_VERB_ALIAS_AND_REAL65_65_SOURCE_PASS')
           PY
       - uses: actions/checkout@v4
         with:
