@@ -491,6 +491,40 @@ jobs:
               assert len(b)==item['bytes'] and hashlib.sha256(b).hexdigest()==item['sha256'],route
           print('GQ8_RC86_FB016_A01_FOLIAGE_CAMERA_SINGLE_SOURCE_65_OF_65_PASS')
           PY
+      - name: Port exact RC86 Gorogan rune silhouette to existing V3 boss art owner, no extra script
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_gorogan_art67.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_gorogan_art67.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path('artifacts/real65')
+          r=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          project=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          feature=r['rc86_gorogan_art_v2']
+          assert len(r['sources'])==65 and feature['script_count_delta']==0
+          assert feature['total_max_per_boss']==17 and feature['added_noncolliding_visual_parts_per_boss']==12
+          assert feature['other_selected_sources_byte_identical']==64
+          assert feature['old_source_sha256']=='8699dd37fea2c78a11ac5d8081931a08189581f4ada7694eec735317009d2e60'
+          assert feature['new_remote_game_damage_store_owner']==0
+          assert r['rc86_three_undead_command'] and r['rc86_meteor_shortcut'] and r['rc86_trapper_pair_warp']
+          for row in r['sources']:
+            node=project['tree']
+            for component in row['route'].split('/'):
+              node=node[component]
+            raw=(root/node['$path']).read_bytes()
+            assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256'],row['route']
+          art=project['tree']['ServerScriptService']['EGGRUMBLE_EncounterReadabilityArt']
+          body=(root/art['$path']).read_text()
+          for marker in ('local MAX_BOSS_ORNAMENT_PARTS=17','GoroganCrownHorn','GoroganRuneEye',
+            'GoroganBackSpine','EGGRUMBLE_StoneGiantVisual_VisualOnly','EGGRUMBLE_InteriorHeraldry_VisualOnly'):
+            assert marker in body,marker
+          print('GQ8_ORIGINAL_RC86_GOROGAN_17_ART_ONLY_SINGLE_V3_OWNER_NATIVE65_READY')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
