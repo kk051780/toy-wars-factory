@@ -2,8 +2,8 @@
 """Build REAL67 from already composed same-head REAL66 without losing ANY script.
 
 Read exact runtime REAL66 artifact, add ONE Studio-only environmental Script from
-real original RC85/86 proven feature flags WCS_F01_C01, STARRY_PATH_V1,
-METEOR_FOURTH_V1. The single official RC branch remains rc/p0d-s1-kids-rc01.
+real original RC85/86 proven feature flags WCS_F01_C01 and METEOR_FOURTH_V1;
+existing STARRY_PATH_V1 is already owned by #879 Realm without duplication. The single official RC branch remains rc/p0d-s1-kids-rc01.
 """
 from __future__ import annotations
 import argparse,copy,hashlib,json,shutil
@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROUTE="ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
 REL="sources/ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau"
-FEATURE="GQ8_RC85_RC86_WCS_STARRY_METEOR_REAL67_20261119"
+FEATURE="GQ8_RC85_RC86_WCS_METEOR_REUSE_STAR_REAL67_20261119"
 def h(data:bytes)->str:return hashlib.sha256(data).hexdigest()
 def ensure(ok:bool,tag:str):
  if not ok:raise ValueError("RED_GQ8_SINGLE_RC_67_"+tag)
@@ -49,8 +49,8 @@ def compose(parent:Path,source:Path,out:Path,sha:str)->None:
  code=source.read_bytes()
  ensure(code.startswith(b"--!strict\n") and FEATURE.encode() in code,"SOURCE_LOCK_FEATURE")
  ensure(b'if not RunService:IsStudio() then return end' in code,"STUDIO_ONLY")
- for key in (b"WCS_F01_C01",b"STARRY_PATH_V1",b"METEOR_FOURTH_V1",
-             b"AlwaysOpenSafeRoute",b"StarStep_",b"MeteorBridge_",
+ for key in (b"WCS_F01_C01",b"GQ8_RC86_StarfallPath",b"METEOR_FOURTH_V1",
+             b"AlwaysOpenSafeRoute",b"ExistingStarStepsReused",b"MeteorBridge_",
              b"not occupied(",b"Workspace.ChildAdded:Connect"):
   ensure(key in code,"OLD_SOURCE_PARITY_"+key.decode())
  shutil.copytree(parent,out)
@@ -89,10 +89,13 @@ def compose(parent:Path,source:Path,out:Path,sha:str)->None:
     "StarfallPath":"f88ec4005a5cb611a2f5acfd7eb67309f2de3799a2f51ebe6208bc2ee3670b35",
     "MeteorFourth":"d4894535eec6f1bb40c1e17a9626e1bcd98a00307ad0db858c4073e6b92b4bd2"
   },
-  "ported_policy_flags":["WCS_F01_C01","STARRY_PATH_V1","METEOR_FOURTH_V1"],
+  "ported_policy_flags":["WCS_F01_C01","METEOR_FOURTH_V1"],
+  "preserved_existing_star_path_flag":"STARRY_PATH_V1",
+  "preserved_existing_star_author":"PR #879 existing EGGRUMBLE_RealmBattleCore",
+  "new_star_steps_generated":0,
   "original_semantics":{
    "canyon_always_safe_route":True,"moguron_open_seconds":14,"gate_cooldown_seconds":4,
-   "star_steps":10,"star_open_seconds":16,"star_cooldown_seconds":7,
+   "already_selected_star_steps":10,"already_selected_star_open_seconds":16,"already_selected_star_cooldown_seconds":7,
    "meteor_quiet_seconds":55,"meteor_warning_seconds":5,
    "meteor_open_seconds":22,"dont_close_under_player":True,
    "two_symmetric_prompt_sides":True,
