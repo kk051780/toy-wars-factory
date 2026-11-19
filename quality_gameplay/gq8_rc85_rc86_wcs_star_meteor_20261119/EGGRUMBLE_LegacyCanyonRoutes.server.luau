@@ -1,7 +1,8 @@
 --!strict
 -- GQ8_RC85_RC86_WCS_STARRY_METEOR_REAL67_20261119
--- Source selective adaptation of original RC85/86 WCS_F01_C01, STARRY_PATH_V1,
--- METEOR_FOURTH_V1. ONE existing V3 TEAM/BR world, one *environment* Script,
+-- Source selective adaptation of original RC85/86 WCS_F01_C01 and METEOR_FOURTH_V1;
+-- original STARRY_PATH_V1 already resides in the sole V3 Realm (#879), reused.
+-- ONE existing V3 TEAM/BR world, one *environment* Script,
 -- zero Game/HP/score/combat/egg/Remote/Store/paid authority. Studio only.
 -- Original provenance: original 85-script Place artifact 14158848286.
 local RunService=game:GetService("RunService")
@@ -9,7 +10,7 @@ if not RunService:IsStudio() then return end
 local Workspace=game:GetService("Workspace")
 local Players=game:GetService("Players")
 local LOBBY="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
-local FEATURE="GQ8_RC85_RC86_WCS_STARRY_METEOR_REAL67_20261119"
+local FEATURE="GQ8_RC85_RC86_WCS_METEOR_REUSE_STAR_REAL67_20261119"
 local installed:{[Instance]:boolean}={}
 local boundLobby:{[Instance]:boolean}={}
 
@@ -43,15 +44,17 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  stage:SetAttribute("FeatureId",FEATURE)
  stage:SetAttribute("GameOwner","EXISTING_EGGRUMBLE_LobbyCastleModesPreview")
  stage:SetAttribute("StageMode",mode)
- stage:SetAttribute("LegacyFlags","WCS_F01_C01,STARRY_PATH_V1,METEOR_FOURTH_V1")
+ stage:SetAttribute("LegacyFlags","WCS_F01_C01,METEOR_FOURTH_V1")
+ stage:SetAttribute("ExistingStarSource","GQ8_RC86_STARRY_PATH_SINGLE_REALM_REAL66_20261119")
  stage:SetAttribute("NoCombatStoreScoreRemotes",true)
  stage:SetAttribute("SafeRouteAlwaysAvailable",true)
- stage:SetAttribute("StarSteps",10)
+ stage:SetAttribute("StarStepsOwned",0)
+ stage:SetAttribute("ExistingStarStepsReused",10)
  stage:SetAttribute("MeteorMaxSegments",12)
  stage.Parent=arena
  -- Raised stage with 20 climbable physical entry steps; the original entire
  -- floor remains safe if someone falls (never deletes/overwrites V3 terrain).
- local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+31,-160)
+ local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)
  local grass=Color3.fromRGB(80,151,107)
  local slate=Color3.fromRGB(72,83,112)
  local violet=Color3.fromRGB(175,113,237)
@@ -109,9 +112,9 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   Vector3.new(0,-1.5,30),slate,Enum.Material.Slate,true)
  block("CrystalCanyonBottom",Vector3.new(50,1.5,85),
   Vector3.new(0,-21,0),Color3.fromRGB(42,66,85),Enum.Material.Slate,true)
- for i=1,10 do
-  local d=80+(i-1)*11
-  local h=-1.5-(i-1)*3.2
+ for i=1,6 do
+  local d=80+(i-1)*10
+  local h=-1.5-(i-1)*2.2
   block("WestAccessStep_"..i,Vector3.new(12,1.2,15),
    Vector3.new(-d,h,0),slate,Enum.Material.Cobblestone,true)
   block("EastAccessStep_"..i,Vector3.new(12,1.2,15),
@@ -123,9 +126,9 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   crystal.CanQuery=false
  end
  local shortcut=block("ShortcutBridge",Vector3.new(50,2,12),
-  Vector3.new(0,-1,0),slate,Enum.Material.Slate,true)
+  Vector3.new(0,-1,15),slate,Enum.Material.Slate,true)
  local gate=block("ShortcutGate",Vector3.new(3,9,12),
-  Vector3.new(0,4.5,0),violet,Enum.Material.Neon,true,.2)
+  Vector3.new(0,4.5,15),violet,Enum.Material.Neon,true,.2)
  local gateOpen=false
  local gateUntil=0
  local nextGate=0
@@ -138,10 +141,10 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  end
  local function mole(side:string,x:number)
   local torso=block("Moguron_"..side.."_Body",Vector3.new(4,3,4),
-   Vector3.new(x,2.4,0),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
+   Vector3.new(x,2.4,15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
   torso.Shape=Enum.PartType.Ball
   local nose=block("Moguron_"..side.."_Nose",Vector3.new(1.5,1.2,1.5),
-   Vector3.new(x,2.65,-2),gold,Enum.Material.Neon,false)
+   Vector3.new(x,2.65,13),gold,Enum.Material.Neon,false)
   nose.Shape=Enum.PartType.Ball
   addPrompt(torso,"橋をひらく","橋掘りモグロン",function(p:Player)
    if not authorized(p,torso) or gateOpen or os.clock()<nextGate then return end
@@ -150,36 +153,14 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  end
  mole("WEST",-34);mole("EAST",34)
  setGate(false)
- -- Original Starfall ten stones: separate from safe route and gate.
- local stones:{BasePart}={}
- for i=1,10 do
-  local t=block("StarStep_"..i,Vector3.new(6,1.5,13),
-   Vector3.new(-22.5+(i-1)*5,-.75,-35),
-   if i%2==0 then blue else violet,Enum.Material.Neon,false,.82)
-  table.insert(stones,t)
+ -- Original Starfall's 10 timed physical stones belong to EXISTING Realm owner.
+ -- This world attaches next to that exact route; NEVER duplicate those stones.
+ local originalRealm=arena:FindFirstChild("EGGRUMBLE_REALM_BATTLE_CORE")
+ local existingStar=originalRealm and originalRealm:FindFirstChild("GQ8_RC86_StarfallPath")
+ if not existingStar or existingStar:GetAttribute("TimedStarSteps")~=10 then
+  stage:Destroy();installed[arena]=nil;return
  end
- local starOpen=false
- local starUntil=0
- local nextStar=0
- local function setStar(open:boolean)
-  if starOpen and not open then nextStar=os.clock()+7 end
-  starOpen=open
-  for _,s in ipairs(stones) do
-   s.CanCollide=open;s.CanQuery=open
-   s.Transparency=if open then .07 else .82
-  end
-  stage:SetAttribute("StarPathOpen",open)
- end
- for _,s in ipairs({{"WEST",-34},{"EAST",34}}) do
-  local orb=block("StarSwitch_"..s[1],Vector3.new(3,3,3),
-   Vector3.new(s[2]::number,3,-35),violet,Enum.Material.Neon,false)
-  orb.Shape=Enum.PartType.Ball
-  addPrompt(orb,"星の橋を呼ぶ","星降る秘境・16秒",function(p:Player)
-   if not authorized(p,orb) or starOpen or os.clock()<nextStar then return end
-   setStar(true);starUntil=os.clock()+16
-  end)
- end
- setStar(false)
+ stage:SetAttribute("UniqueStarPathReused",true)
  -- Meteor is an independent *fourth* route at z=-17, not a clone of Starfall.
  local meteor:{BasePart}={}
  for i=1,8 do
@@ -209,11 +190,8 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
  -- Non-blocking per-arena lifecycle. Never retire an occupied walkway.
  task.spawn(function()
   while live() do
-   if gateOpen and os.clock()>=gateUntil and not occupied(0,13) then
+   if gateOpen and os.clock()>=gateUntil and not occupied(15,13) then
     setGate(false)
-   end
-   if starOpen and os.clock()>=starUntil and not occupied(-35,9) then
-    setStar(false)
    end
    task.wait(.45)
   end
@@ -247,7 +225,9 @@ local function bindLobby(lobby:Instance)
   if not mode then return end
   task.spawn(function()
    -- Never disarm permanently because field world finished booting late.
-   while candidate.Parent==lobby and candidate:FindFirstChild("TacticalBattlefield")==nil do
+   while candidate.Parent==lobby and (candidate:FindFirstChild("TacticalBattlefield")==nil
+    or not candidate:FindFirstChild("EGGRUMBLE_REALM_BATTLE_CORE")
+    or not candidate.EGGRUMBLE_REALM_BATTLE_CORE:FindFirstChild("GQ8_RC86_StarfallPath")) do
     task.wait(.3)
    end
    local floor=candidate:FindFirstChild("TacticalBattlefield")
