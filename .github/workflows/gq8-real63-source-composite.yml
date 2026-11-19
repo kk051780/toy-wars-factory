@@ -395,6 +395,37 @@ jobs:
               assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256'],row['route']
           print('GQ8_RC86_UNDEAD3_48S_SAME_65_SOURCE_NATIVE_ROJO_READY')
           PY
+      - name: Preserve RC86 FB016 camera foliage sightline in sole A01 client LOD 65-source composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_foliage_a01_66.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_foliage_a01_66.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_foliage_a01_66.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          base=Path('artifacts/real65')
+          d=json.loads((base/'REAL65_INTAKE_RECEIPT.json').read_text())
+          p=json.loads((base/'EGGRUMBLE_REAL65.project.json').read_text())
+          f=d['rc86_fb016_foliage_sightline']
+          assert d['new_selected_source_count']==65 and len(d['sources'])==65
+          assert f['new_scripts']==0 and f['unchanged_other_original_routes']==64
+          assert f['original_A01_distance_lod_preserved'] and f['max_canopies']==160
+          assert f['new_game_remote_damage_store_owners']==0
+          assert d['rc85_dojo_lobby_training'] and d['rc86_starry_path'] and d['rc86_three_undead_command']
+          rows={x['route']:x for x in d['sources']}
+          assert len(rows)==65
+          assert rows['StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD']['class']=='LocalScript'
+          for route,item in rows.items():
+              node=p['tree']
+              for seg in route.split('/'): node=node[seg]
+              b=(base/node['$path']).read_bytes()
+              assert len(b)==item['bytes'] and hashlib.sha256(b).hexdigest()==item['sha256'],route
+          print('GQ8_RC86_FB016_A01_FOLIAGE_CAMERA_SINGLE_SOURCE_65_OF_65_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
