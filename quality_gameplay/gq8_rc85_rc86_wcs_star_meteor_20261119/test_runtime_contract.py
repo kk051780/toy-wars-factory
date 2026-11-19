@@ -13,7 +13,6 @@ for marker in [
  '"ExistingStarStepsReused",10',
  '"UniqueStarPathReused",true',
  '"StarStepsOwned",0',
- '"GQ8_RC86_StarfallPath"',
  '"AlwaysOpenSafeRoute"',
  '"ShortcutGate"',
  '"CrystalCanyonBottom"',
@@ -22,12 +21,13 @@ for marker in [
  'while candidate.Parent==lobby and (candidate:FindFirstChild("TacticalBattlefield")==nil',
  'os.clock()+14',
  'os.clock()+4',
- '"GQ8_RC85_WCS_Canyon"',
  'p:GetAttribute("EGGRUMBLE_QueuedMode")~=mode',
  'p:GetAttribute("EGGRUMBLE_Eliminated")==true',
  'rp.RespectCanCollide=true',
  'if gateOpen and os.clock()>=gateUntil and not occupied(15,13) then',
 ]:once(marker)
+assert lua.count('"GQ8_RC85_WCS_Canyon"')==2
+assert lua.count('"GQ8_RC86_StarfallPath"')==2
 assert lua.count('block("WestAccessStep_"..i')==1
 assert lua.count('block("EastAccessStep_"..i')==1
 assert 'for i=1,6 do' in lua
