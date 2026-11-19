@@ -22,7 +22,6 @@ jobs:
     timeout-minutes: 15
     env:
       GH_TOKEN: ${{ github.token }}
-      OFFICIAL_SHA: 4b4516557fd8da748c48eb92a5beba4e4c47b7ed
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,24 +31,27 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py
           python3 quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py --selftest
-      - name: Fail closed on source run identity or moving formal RC
+      - name: Verify pinned legacy success and select fresh formal REAL65 same-HEAD source
         shell: bash
         run: |
           set -euo pipefail
-          branch_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$branch_sha" = "$OFFICIAL_SHA" || { echo "RED_LIVE_FORMAL_RC_MOVED_REBASE_RECOMPARE"; exit 1; }
+          current="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test -n "$current"
           for pair in \
             43709500167:886d8f243eced1ef949ee94ec6123831ce29ae75 \
             43714858562:0556ed62b326bd5c1072447294438ecc5c6096c7 \
-            43767133429:c405088d7655265ef4d1f79ee519c57faf168c43 \
-            44511568217:4b4516557fd8da748c48eb92a5beba4e4c47b7ed
+            43767133429:c405088d7655265ef4d1f79ee519c57faf168c43
           do
-            id="${pair%%:*}"
-            expected="${pair#*:}"
+            id="$(echo "$pair" | cut -d: -f1)"
+            expected="$(echo "$pair" | cut -d: -f2)"
             actual="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id" --jq '.head_sha + ":" + .conclusion')"
-            test "$actual" = "$expected:success" || { echo "RED_WRONG_SOURCE_RUN $id $actual"; exit 1; }
+            test "$actual" = "$expected:success" || { echo "RED_WRONG_LEGACY_RUN $id $actual"; exit 1; }
           done
-          echo EXACT_FOUR_IMMUTABLE_ARTIFACT_RUNS_PASS
+          run_id="$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/gq8-real63-source-composite.yml/runs?branch=rc%2Fp0d-s1-kids-rc01&per_page=30" --jq '.workflow_runs | map(select(.head_sha == "'"$current"'" and .event == "push" and .conclusion == "success")) | first | .id')"
+          test -n "$run_id" && test "$run_id" != null || { echo "RED_NO_CURRENT_FORMAL_SAMEHEAD_SUCCESS"; exit 1; }
+          echo "PINNED_CURRENT_OFFICIAL=$current" >> "$GITHUB_ENV"
+          echo "PINNED_CURRENT_RUN=$run_id" >> "$GITHUB_ENV"
+          echo "LIVE_OFFICIAL_REAL65=$current RUN=$run_id"
       - name: Download verified immutable source Places from GitHub Actions
         shell: bash
         run: |
@@ -58,7 +60,11 @@ jobs:
           gh run download 43709500167 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc85
           gh run download 43714858562 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc86
           gh run download 43767133429 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc91
-          gh run download 44511568217 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/real65
+          gh run download "$PINNED_CURRENT_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO \
+            --dir /tmp/gq8-unification/real65
+          actual="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$actual" = "$PINNED_CURRENT_OFFICIAL" || { echo "RED_FORMAL_MOVED_DURING_DOWNLOAD"; exit 1; }
       - name: Compare all physical scripts and classify retention without assuming functional parity
         run: |
           set -euo pipefail
