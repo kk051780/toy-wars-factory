@@ -50,6 +50,8 @@ jobs:
           python3 quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_weapons65.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_weapons65.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -228,6 +230,24 @@ jobs:
           assert proof['new_remote_count']==0 and proof['new_damage_owner_count']==0
           assert proof['original_rc86_run']==43754858996 and proof['new_script_count']==0
           print('GQ8_RC85_RC86_NONLOSS_WIND_ACTUAL_REAL65_INTAKE_PASS')
+          PY
+      - name: Port original RC86 six wall-safe weapon pickups into existing REAL65 Item+Combat source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_weapons65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/real65/REAL65_INTAKE_RECEIPT.json').read_text())
+          w=r['legacy_rc86_stage_weapons']
+          assert w['script_count']==65 and w['unchanged_existing_sources']==63
+          assert w['new_remote']==0 and w['new_store']==0 and w['new_damage_owner']==0
+          assert w['six_real_pickups']==True and len(w['types'])==3
+          assert r['legacy_rc86_wind']['new_script_count']==0
+          print('RC86_FB030_SIX_STAGE_WEAPON_ITEMS_AND_EXISTING_COMBAT_SOURCE_PASS')
           PY
       - uses: actions/checkout@v4
         with:
