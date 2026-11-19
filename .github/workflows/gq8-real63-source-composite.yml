@@ -60,6 +60,8 @@ jobs:
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_starry_path66.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_meteor_shortcut66.py
+          python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_meteor_shortcut66.py --self-test
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -365,6 +367,36 @@ jobs:
             data=(base/node['$path']).read_bytes()
             assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
           print('GQ8_RC86_STARRY_PATH_FORMAL66_ORIGINAL65_SOURCE_CLASS_HASH_NONLOSS_PASS')
+          PY
+      - name: Port old RC86 MeteorFourth shortcut into same REAL66 Realm without any second weather owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_meteor_shortcut66.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('artifacts/real65')
+          receipt=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          project=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          meteor=receipt['rc86_meteor_shortcut']
+          assert meteor['original_flag']=='METEOR_FOURTH_V1'
+          assert meteor['quiet_seconds']==55 and meteor['warning_seconds']==5
+          assert meteor['open_seconds']==22 and meteor['original_timed_segments']==12
+          assert meteor['no_retract_while_occupied'] is True
+          assert meteor['parent_starry_path_preserved'] and meteor['legacy_explorer66_preserved']
+          assert meteor['unchanged_script_sources']==64
+          assert meteor['new_script_count']==0 and meteor['new_remote']==0
+          assert receipt['rc86_starry_path'] and receipt['rc85_dojo_lobby_training']
+          assert len(receipt['sources'])==65
+          for row in receipt['sources']:
+            node=project['tree']
+            for seg in row['route'].split('/'):node=node[seg]
+            data=(root/node['$path']).read_bytes()
+            assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
+          print('GQ8_RC86_METEOR_FOURTH_REAL66_65_SELECTED_SHA_HIERARCHY_PASS')
           PY
       - uses: actions/checkout@v4
         with:
