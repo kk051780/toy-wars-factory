@@ -761,7 +761,7 @@ jobs:
           print('GQ8_REAL68_RC85_TWIN_BIOMES_TRAINING_BOND_NATIVE68_NONLOSS_SOURCE_67_PARENT_PASS',count)
           PY
           /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL68.project.json -o artifacts/real68/EGGRUMBLE_REAL68_PRIVATE.rbxlx
-          /tmp/gq863-rojo build artifacts/real68/EGGRUMBLE_REAL67.project.json -o artifacts/real68/OFF67_REBUILT.rbxlx
+          /tmp/gq863-rojo build artifacts/real68/off67/EGGRUMBLE_REAL67.project.json -o artifacts/real68/OFF67_REBUILT.rbxlx
           cmp artifacts/real68/OFF67_REBUILT.rbxlx artifacts/real67/EGGRUMBLE_REAL67_PRIVATE.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project artifacts/real68/EGGRUMBLE_REAL68.project.json \
