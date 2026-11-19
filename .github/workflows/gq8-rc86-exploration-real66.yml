@@ -1,15 +1,10 @@
-name: GQ8 RC85 RC86 legacy exploration REAL66 ON OFF65 private build
+# Legacy standalone PRIVATE build retained as manual-only source diagnosis.
+# PR/push automatic REAL66 selection is now covered by the existing unified
+# gq8-real63-source-composite.yml full Native66/Rojo66/OFF65 same-HEAD gate.
+# Avoid racing ahead of the same-head official65 artifact (RED_NO_SAMEHEAD...)
+# and preserve the old workflow for deliberate historical debugging.
+name: GQ8 RC85 RC86 legacy exploration REAL66 ON OFF65 private build (manual archive)
 on:
-  pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
-    paths:
-      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
-      - '.github/workflows/gq8-rc86-exploration-real66.yml'
-  push:
-    branches: [quality/gq8-rc86-v3-exploration-bridge-20261119]
-    paths:
-      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
-      - '.github/workflows/gq8-rc86-exploration-real66.yml'
   workflow_dispatch:
 permissions:
   contents: read
