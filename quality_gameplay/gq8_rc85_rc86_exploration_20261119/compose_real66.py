@@ -34,6 +34,7 @@ def main():
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--official-sha", required=True)
+    p.add_argument("--candidate", action="store_true", help="PR proof before formal RC adoption")
     a = p.parse_args()
     require(not a.out.exists(), "NO_OVERWRITE")
     receipt = json.loads((a.base / "REAL65_INTAKE_RECEIPT.json").read_text())
@@ -43,7 +44,7 @@ def main():
     require(len(receipt["sources"]) == 65, "REAL65_RECEIPT_COUNT")
     require(ROUTE not in base_files, "DUPLICATE_BRIDGE")
     require(receipt["new_selected_source_count"] == 65, "REAL65_SOURCE_COUNT")
-    require(receipt.get("formal_rc_adopted") is True, "BASE_NOT_OFFICIAL")
+    require(receipt.get("formal_rc_adopted") is (not a.candidate), "BASE_OFFICIAL_CANDIDATE_STATE")
     require(receipt.get("candidate_head") == a.official_sha, "HEAD_MISMATCH")
     require((a.base / "EGGRUMBLE_REAL65_PRIVATE.rbxlx").is_file(), "OFF65_PLACE_MISSING")
     for row in receipt["sources"]:
