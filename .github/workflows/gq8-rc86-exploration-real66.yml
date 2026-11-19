@@ -1,10 +1,8 @@
 name: GQ8 RC85 RC86 legacy exploration REAL66 ON OFF65 private build
 on:
-  pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
-    paths:
-      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
-      - '.github/workflows/gq8-rc86-exploration-real66.yml'
+  # Superseded PR-preview gate: formal REAL66 native66/Rojo66/OFF65 now runs
+  # in gq8-real63-source-composite.yml as the sole canonical selection.
+  # Keep this original author-branch/manual gate for immutable legacy comparison.
   push:
     branches: [quality/gq8-rc86-v3-exploration-bridge-20261119]
     paths:
