@@ -65,6 +65,17 @@ local function install(arena:Instance,mode:string)
    local root=char and char:FindFirstChild("HumanoidRootPart")
    if not hum or hum.Health<=0 or not root or not root:IsA("BasePart")
     or (root.Position-point).Magnitude>10 then return end
+   -- ProximityPrompt.RequiresLineOfSight is presentation-only. Reject forged
+   -- Triggered attempts through the original solid castle gate or rock walls.
+   local rayStart=root.Position+Vector3.new(0,1.5,0)
+   local rayDirection=point-rayStart
+   if rayDirection.Magnitude>12 then return end
+   local rayParams=RaycastParams.new()
+   rayParams.FilterType=Enum.RaycastFilterType.Exclude
+   rayParams.FilterDescendantsInstances={char,folder}
+   rayParams.RespectCanCollide=true
+   local occlusion=workspace:Raycast(rayStart,rayDirection,rayParams)
+   if occlusion and occlusion.Instance and occlusion.Instance.CanCollide then return end
    local uid=p.UserId
    if not found[uid] then found[uid]={};count[uid]={realms=0,shards=0} end
    if found[uid][id] then return end
@@ -88,6 +99,15 @@ local function install(arena:Instance,mode:string)
   end)
  end
  arena.Destroying:Connect(function()
+  for uid in pairs(found) do
+   local player=Players:GetPlayerByUserId(uid)
+   if player and player:GetAttribute("EGGRUMBLE_LegacyExplore_Mode")==mode then
+    player:SetAttribute("EGGRUMBLE_LegacyExplore_Mode",nil)
+    player:SetAttribute("EGGRUMBLE_LegacyExplore_Realms",nil)
+    player:SetAttribute("EGGRUMBLE_LegacyExplore_Shards",nil)
+    player:SetAttribute("EGGRUMBLE_LegacyExplore_Complete",nil)
+   end
+  end
   installed[arena]=nil;table.clear(found);table.clear(count)
  end)
 end
