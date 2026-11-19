@@ -667,14 +667,7 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_PR_BASE_MOVED_BEFORE_66_PROOF; exit 1; }
           fi
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL66-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL66-LEGACY-EXPLORATION-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real66/
-          # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
-          # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
-          retention-days: 30
-          if-no-files-found: error
+      # REAL66 is a verified internal parent/rollback; ONLY the latest REAL68 is published.
       - name: Select ONLY RC85 Canyon with old Starfall and Meteor already formally adopted (exact OFF66)
         shell: bash
         run: |
@@ -742,14 +735,7 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_REAL67_PR_BASE_MOVED_BEFORE_PROOF; exit 1; }
           fi
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL67-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL67-WCS-STARRY-METEOR-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real67/
-          # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
-          # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
-          retention-days: 30
-          if-no-files-found: error
+      # REAL67 is a verified internal parent/rollback; ONLY the latest REAL68 is published.
       - name: Source-select original RC85 TwinBiomes4 TrainingLv3 Bond180 with ONE V3 neutral Combat owner (REAL68)
         shell: bash
         run: |
