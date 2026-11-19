@@ -130,7 +130,7 @@ def integrate(project_path,receipt_path):
     must(receipt.get('rc85_dojo_lobby_training')
          and receipt.get('legacy_rc86_wind')
          and receipt.get('rc86_three_undead_command')
-         and receipt.get('rc85_rc86_starry_path'),"PRESERVE_CUMULATIVE_GAME")
+         and receipt.get('rc86_starry_path'),"PRESERVE_CUMULATIVE_GAME")
     def get(row):
         node=project['tree']
         for seg in row['route'].split('/'): node=node[seg]
