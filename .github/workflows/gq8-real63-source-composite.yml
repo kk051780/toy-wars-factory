@@ -13,6 +13,7 @@ on:
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
+      - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -38,6 +39,7 @@ on:
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
+      - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
@@ -1118,6 +1120,16 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_DISCOVERY_PR_BASE_DRIFT; exit 1; }
           fi
+      - name: Final REAL69 69-route/17-family RC85+RC86 on REAL65 nonloss gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py \
+            --root artifacts/real69 \
+            --out artifacts/real69/delivery/REAL69_LEGACY17_NONLOSS_AUDIT.json \
+            --head "$GITHUB_SHA"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL' }}
