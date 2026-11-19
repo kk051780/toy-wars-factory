@@ -10,6 +10,8 @@ on:
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
       - '.github/workflows/gq8-nine-lane-source-receipt.yml'
       - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
+      - 'quality_gameplay/gq8_9domain_source_gate_20261119/**'
+      - '.github/workflows/gq8-nine-domain-real53-audit.yml'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
       - 'quality_gameplay/gq8_lss_real31_20261117/test_rc_auto_follow.py'
   pull_request:
