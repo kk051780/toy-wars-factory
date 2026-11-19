@@ -30,6 +30,9 @@ def compose(parent:Path,source:Path,out:Path,sha:str)->None:
  ensure(not out.exists(),"NO_OVERWRITE")
  project=json.loads((parent/"EGGRUMBLE_REAL66.project.json").read_text())
  receipt=json.loads((parent/"REAL66_LEGACY_INTAKE_RECEIPT.json").read_text())
+ previous65=json.loads((parent/"REAL65_INTAKE_RECEIPT.json").read_text())
+ ensure(previous65.get("rc86_starry_path",{}).get("original_timed_steps")==10,
+        "REQUIRE_ALREADY_ADOPTED_STAR_FROM_879")
  prior=selected(project["tree"])
  ensure(len(prior)==66 and receipt["candidate_selected_count"]==66,"PARENT_66")
  ensure(ROUTE not in prior,"NO_DOUBLE_ROUTES")
@@ -92,6 +95,7 @@ def compose(parent:Path,source:Path,out:Path,sha:str)->None:
   "ported_policy_flags":["WCS_F01_C01","METEOR_FOURTH_V1"],
   "preserved_existing_star_path_flag":"STARRY_PATH_V1",
   "preserved_existing_star_author":"PR #879 existing EGGRUMBLE_RealmBattleCore",
+  "requires_existing_realm_10star_path":True,
   "new_star_steps_generated":0,
   "original_semantics":{
    "canyon_always_safe_route":True,"moguron_open_seconds":14,"gate_cooldown_seconds":4,
