@@ -82,6 +82,11 @@
     "guard": "Wait for Host-owned GQ646 lobby spawn instead of arbitrary existing spawn",
     "source_preparation": "PATCH_IN_SAME_COMPOSER",
     "product_studio": "NOT_TESTED",
-    "rollback": "Disable two startup patches preserving upstream viral scope fix and storm profile"
+    "rollback": "Disable two startup patches preserving upstream viral scope fix and storm profile",
+    "upstream_nonloss_required": [
+      "#858 viral-capture Host lexical-scope fix",
+      "#859 storm/Realm executable-Script + thunder phase fence",
+      "REAL65 65 existing selected original routes"
+    ]
   }
 }
