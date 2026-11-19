@@ -43,7 +43,8 @@ def main():
     require(len(receipt["sources"]) == 65, "REAL65_RECEIPT_COUNT")
     require(ROUTE not in base_files, "DUPLICATE_BRIDGE")
     require(receipt["new_selected_source_count"] == 65, "REAL65_SOURCE_COUNT")
-    require(receipt.get("formal_rc_adopted") is True, "BASE_NOT_OFFICIAL")
+    require(isinstance(receipt.get("formal_rc_adopted"), bool), "BASE_ADOPTION_STATUS_MISSING")
+    require(receipt.get("official_source_profile") == "eggrumble_v3_real65", "BASE_PROFILE_NOT_REAL65")
     require(receipt.get("candidate_head") == a.official_sha, "HEAD_MISMATCH")
     require((a.base / "EGGRUMBLE_REAL65_PRIVATE.rbxlx").is_file(), "OFF65_PLACE_MISSING")
     for row in receipt["sources"]:
@@ -83,7 +84,7 @@ def main():
         "new_sha256":sha(bridge),
         "original65":[{"route":r,"path":base_files[r],"sha256":sha((a.base/base_files[r]).read_bytes())} for r in sorted(base_files)],
         "off65_parent_place_sha256":sha((a.base/"EGGRUMBLE_REAL65_PRIVATE.rbxlx").read_bytes()),
-        "formal_adopted":False,
+        "formal_adopted":receipt["formal_rc_adopted"],
         "roblox_publish":False,
         "studio_2client":"NOT_TESTED",
         "android":"NOT_TESTED",
