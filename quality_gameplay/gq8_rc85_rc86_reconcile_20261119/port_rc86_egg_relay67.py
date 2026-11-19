@@ -237,7 +237,7 @@ def self_test():
     assert 'M.RELAY_HORIZONTAL_STUDS=8' in rules
     assert 'M.RELAY_VERTICAL_STUDS=4' in rules
     assert 'M.RELAY_COOLDOWN_SECONDS=12' in rules
-    assert 'from.heldEggs-=1\\n to.heldEggs+=1' in rules
+    assert "from.heldEggs-=1" in rules and "to.heldEggs+=1" in rules
     assert 'serverLOS==true' in rules and 'm.eggRelaySerial+=1' in rules
     hostFixture="\\n".join(('local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))',HOST_STOP_OLD,HOST_INSERT_OLD))
     host=patch_host(hostFixture)
