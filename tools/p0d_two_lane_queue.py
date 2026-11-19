@@ -33,14 +33,16 @@ def manifest(body: str) -> dict[str, Any]:
     rows = [x.strip() for x in body.splitlines()]
     if rows.count("P0D_PREP_READY_V1") != 1:
         raise ValueError("MISSING_UNIQUE_PREP_READY_CONTRACT")
+    if rows.count("OWNER_FAST_ADMISSION_V2") != 1:
+        raise ValueError("MISSING_UNIQUE_OWNER_FAST_ADMISSION_V2")
     values: dict[str, str] = {}
     for row in rows:
-        m = re.fullmatch(r"(PINNED_HEAD|BASE_RC|FEATURE_IDS|SOURCE_LOCK|ROLLBACK):\s*(\S.*)", row)
+        m = re.fullmatch(r"(PINNED_HEAD|BASE_RC|FEATURE_IDS|SOURCE_LOCK|ROLLBACK|DECISION|DESIGN_SOURCE|QUALITY_EVIDENCE|VALUE_DELTA):\s*(\S.*)", row)
         if m:
             if m.group(1) in values:
                 raise ValueError("DUPLICATE_CONTRACT_FIELD_" + m.group(1))
             values[m.group(1)] = m.group(2).strip()
-    missing = set(("PINNED_HEAD", "BASE_RC", "FEATURE_IDS", "SOURCE_LOCK", "ROLLBACK")) - set(values)
+    missing = set(("PINNED_HEAD", "BASE_RC", "FEATURE_IDS", "SOURCE_LOCK", "ROLLBACK", "DECISION", "DESIGN_SOURCE", "QUALITY_EVIDENCE", "VALUE_DELTA")) - set(values)
     if missing:
         raise ValueError("MISSING_FIELDS_" + ",".join(sorted(missing)))
     if not PIN.fullmatch(values["PINNED_HEAD"]) or not PIN.fullmatch(values["BASE_RC"]):
@@ -53,8 +55,18 @@ def manifest(body: str) -> dict[str, Any]:
         raise ValueError("INVALID_SOURCE_LOCK_PATH")
     if len(values["ROLLBACK"]) < 12:
         raise ValueError("MISSING_REAL_ROLLBACK")
+    if values["DECISION"] != "ADOPT":
+        raise ValueError("NOT_ADOPT_DECISION")
+    evidence_pattern = r"https://github\.com/kk051780/toy-wars-factory/(issues|pull)/[0-9]+(?:#issuecomment-[0-9]+)?"
+    for field in ("DESIGN_SOURCE", "QUALITY_EVIDENCE"):
+        if not re.fullmatch(evidence_pattern, values[field]):
+            raise ValueError("INVALID_" + field + "_URL")
+    if not 12 <= len(values["VALUE_DELTA"]) <= 300:
+        raise ValueError("INVALID_VALUE_DELTA")
     return {"head": values["PINNED_HEAD"], "base": values["BASE_RC"], "features": feature_ids,
-            "source_lock": lock, "rollback": values["ROLLBACK"]}
+            "source_lock": lock, "rollback": values["ROLLBACK"],
+            "decision": "ADOPT", "design_source": values["DESIGN_SOURCE"],
+            "quality_evidence": values["QUALITY_EVIDENCE"], "value_delta": values["VALUE_DELTA"]}
 
 def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
     if not PIN.fullmatch(official_sha):
@@ -87,7 +99,9 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         except ValueError as exc:
             item["reason"] = str(exc)
             continue
-        item.update({"head": sha, "features": m["features"], "source_lock": m["source_lock"]})
+        item.update({"head": sha, "features": m["features"], "source_lock": m["source_lock"],
+                     "decision": m["decision"], "design_source": m["design_source"],
+                     "quality_evidence": m["quality_evidence"], "value_delta": m["value_delta"]})
         if m["head"] != sha or m["base"] != official_sha:
             item["reason"] = "STALE_PREP_MANIFEST_SHA"
             continue
