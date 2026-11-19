@@ -1,4 +1,4 @@
-name: GQ8 Real65 official63 preserve basic dodge plus viral counter ON65 OFF63
+name: GQ8 Real66 cumulative RC85 RC86 REAL65 OFF65 OFF63
 on:
   push:
     branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
@@ -8,6 +8,8 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
       - '.github/workflows/gq8-nine-lane-source-receipt.yml'
       - 'quality_gameplay/gq8_nine_lane_intake_20261119/**'
@@ -24,6 +26,8 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
   workflow_dispatch:
 permissions:
   contents: read
@@ -54,6 +58,8 @@ jobs:
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/fix_item_prompt_alias65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py
           python3 quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_stage_reach_balance65.py --self-test
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_exploration_20261119/integrate_real66.py
+          python3 quality_gameplay/gq8_rc85_rc86_exploration_20261119/test_bridge.py
       - name: Verify the unique official head and original GREEN build runs and P0 Host fix class evidence
         shell: bash
         run: |
@@ -298,13 +304,35 @@ jobs:
           assert r['pickup_prompt_alias']['selected_script_count']==65
           print('GQ8_LEGACY_RC86_REACH_BONUS_BASIC_ONLY_NONLOSS_PASS')
           PY
+      - name: Select original RC86 exploration as one REAL66 source without losing REAL65
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object quality_gameplay/gq8_rc85_rc86_exploration_20261119/EGGRUMBLE_LegacyExplorationBridge.server.luau)" = 89cab7de50f7efc03bf5d3f3cfaa667855c14d19
+          python3 -B quality_gameplay/gq8_rc85_rc86_exploration_20261119/integrate_real66.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json \
+            --source quality_gameplay/gq8_rc85_rc86_exploration_20261119/EGGRUMBLE_LegacyExplorationBridge.server.luau \
+            --out-project artifacts/real65/EGGRUMBLE_REAL66.project.json \
+            --out-receipt artifacts/real65/REAL66_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/real65/REAL66_INTAKE_RECEIPT.json').read_text())
+          assert r['new_selected_source_count']==66
+          assert r['legacy_exploration']['unchanged_original_source_count']==65
+          assert len(r['sources'])==66 and sum(x['route']=='ServerScriptService/EGGRUMBLE_LegacyExplorationBridge' for x in r['sources'])==1
+          assert r['legacy_exploration']['realms']==4 and r['legacy_exploration']['shards']==6
+          assert not r['real_paid_trade'] and not r['roblox_publish']
+          print('GQ8_LEGACY_RC86_REAL66_65_BYTE_EXACT_ONLY_ONE_NEW_ROUTE_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
-      - name: Native Luau compile each of all 65 real selected sources
+      - name: Native Luau compile each of all 66 cumulative real selected sources
         shell: bash
         run: |
           set -euo pipefail
@@ -315,15 +343,15 @@ jobs:
           from pathlib import Path
           sys.path.insert(0,'quality_gameplay/gq8_real63_intake_20261119')
           from compose_real63 import flatten
-          _,files=flatten(Path('artifacts/real65/EGGRUMBLE_REAL65.project.json'))
-          assert len(files)==65
+          _,files=flatten(Path('artifacts/real65/EGGRUMBLE_REAL66.project.json'))
+          assert len(files)==66
           for route,(cls,body) in files.items():
             suffix={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}[cls]
             f=Path('artifacts/real65/sources').joinpath(*route[:-1],route[-1]+suffix)
             subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
-          print('GQ8_REAL65_NATIVE_ACTUAL_65_OF_65_COMPILE_PASS')
+          print('GQ8_REAL66_NATIVE_ACTUAL_66_OF_66_COMPILE_PASS')
           PY
-      - name: Rojo 7.7.1 REAL65 Source/Class + copied byte-exact official OFF63 + same HEAD fence
+      - name: Rojo 7.7.1 REAL66 Source/Class plus exact OFF65 and OFF63 + same HEAD fence
         shell: bash
         run: |
           set -euo pipefail
@@ -338,9 +366,13 @@ jobs:
             p=Path('/tmp/gq863-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
           PY
           /tmp/gq863-rojo build artifacts/real65/EGGRUMBLE_REAL65.project.json -o artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx
+          cp artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx artifacts/real65/OFF65_EXACT_BEFORE_LEGACY_EXPLORATION.rbxlx
+          /tmp/gq863-rojo build artifacts/real65/EGGRUMBLE_REAL66.project.json -o artifacts/real65/EGGRUMBLE_REAL66_PRIVATE.rbxlx
           /tmp/gq863-rojo build artifacts/real65/off63/EGGRUMBLE_REAL64.project.json -o artifacts/real65/OFF63_REBUILT.rbxlx
           cmp artifacts/real65/OFF63_EXACT_OFFICIAL.rbxlx /tmp/gq863/formal63/EGGRUMBLE_REAL63_BASIC_DODGE_PRIVATE.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real65/EGGRUMBLE_REAL65.project.json --place artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx --count 65
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real65/EGGRUMBLE_REAL66.project.json --place artifacts/real65/EGGRUMBLE_REAL66_PRIVATE.rbxlx --count 66
+          cmp artifacts/real65/EGGRUMBLE_REAL65_PRIVATE.rbxlx artifacts/real65/OFF65_EXACT_BEFORE_LEGACY_EXPLORATION.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/real65/off63/EGGRUMBLE_REAL64.project.json --place artifacts/real65/OFF63_REBUILT.rbxlx --count 63
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
@@ -366,11 +398,24 @@ jobs:
             "official_source_profile":"eggrumble_v3_real65",
             "selected_official_branch_sha":os.environ["GITHUB_SHA"] if os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01" else None})
           f.write_text(json.dumps(j,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
-          print('GQ8_REAL65_SOURCE_VERIFY_ONLY_FORMAL_IF_OFFICIAL_SHA',p.stat().st_size)
+          f66=Path('artifacts/real65/REAL66_INTAKE_RECEIPT.json')
+          y=json.loads(f66.read_text())
+          c=Path('artifacts/real65/EGGRUMBLE_REAL66_PRIVATE.rbxlx')
+          y.update({"candidate_head":os.environ["GITHUB_SHA"],
+            "source_native":"PASS","rojo_source_class":"PASS",
+            "off65_place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "off65_exact_original_65":True,"off63_bytes":"BYTE_IDENTICAL_COPIED_FROM_OFFICIAL63",
+            "private_place_bytes":c.stat().st_size,
+            "private_place_sha256":hashlib.sha256(c.read_bytes()).hexdigest(),
+            "formal_rc_adopted":os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01",
+            "official_source_profile":"eggrumble_v3_real66",
+            "selected_official_branch_sha":os.environ["GITHUB_SHA"] if os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01" else None})
+          f66.write_text(json.dumps(y,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print('GQ8_REAL66_SINGLE_SOURCE_CUMULATIVE_ONLY_FORMAL_IF_OFFICIAL_SHA',c.stat().st_size)
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL65-REAL63-PRESERVED-BASIC-DODGE-PRIVATE-NOT-OFFICIAL' }}
+          name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL66-CUMULATIVE-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL66-LEGACY-EXPLORATION-CANDIDATE-NOT-OFFICIAL' }}
           path: artifacts/real65/
           # GQ8_REAL65_ARTIFACT_RETENTION_30D: Studio handoff needs a longer owner inspection window.
           # This extends only the final private artifact; upstream immutable inputs still have their own expiry.
