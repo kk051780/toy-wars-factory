@@ -923,11 +923,7 @@ jobs:
                 found[name]=(f.read_bytes(),node.get('$className'))
               else:
                 for k,v in node.items():
-                  if not k.startswith(' || 'GQ8-REAL68-RC85-TWIN-BIOMES-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real68/
-          retention-days: 30
-          if-no-files-found: error
-) and isinstance(v,dict):walk(v,prefix+(k,))
+                  if not k.startswith('$') and isinstance(v,dict):walk(v,prefix+(k,))
             walk(project['tree'])
             return found
           before=routes(rollback); after=routes(root)
@@ -946,11 +942,7 @@ jobs:
                 subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(base/node['$path'])],check=True,stdout=subprocess.DEVNULL)
               else:
                 for k,v in node.items():
-                  if not k.startswith(' || 'GQ8-REAL68-RC85-TWIN-BIOMES-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real68/
-          retention-days: 30
-          if-no-files-found: error
-) and isinstance(v,dict):walk(v)
+                  if not k.startswith('$') and isinstance(v,dict):walk(v)
             walk(project['tree'])
           compile_all(root)
           compile_all(rollback)
