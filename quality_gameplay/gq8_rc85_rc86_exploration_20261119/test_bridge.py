@@ -13,6 +13,12 @@ assert 'RunService:IsStudio()' in s
 assert 'if found[uid][id] then return end' in s
 assert 'folder.Parent~=arena or arena.Parent~=origin' in s
 assert 'prompt.RequiresLineOfSight=true' in s
+# Native presentation line-of-sight is not a server authorization check.
+assert 'rayParams.RespectCanCollide=true' in s
+assert 'rayParams.FilterDescendantsInstances={char,folder}' in s
+assert 'workspace:Raycast(rayStart,rayDirection,rayParams)' in s
+assert 'occlusion.Instance.CanCollide then return end' in s
+assert 'player:SetAttribute("EGGRUMBLE_LegacyExplore_Complete",nil)' in s
 assert 'folder:SetAttribute("SessionOnly",true)' in s
 for bad in ('DataStoreService','RemoteEvent','TakeDamage(',':FireServer(',':FireClient(',':FireAllClients(',':LoadCharacter(',':PivotTo('):
     assert bad not in s,bad
