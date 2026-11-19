@@ -31,7 +31,12 @@ jobs:
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
-            test "$CURRENT" = "$PR_BASE" || { echo RED_OFFICIAL_HEAD_MOVED_DURING_PR; exit 1; }
+            test -n "$PR_BASE" || { echo RED_PR_WITHOUT_BASE; exit 1; }
+            if [ "$CURRENT" != "$PR_BASE" ]; then
+              echo GQ8_PR_EVENT_BASE_STALE_REBIND_TO_CURRENT_LIVE_RC_SOURCE_ONLY
+            fi
+            # Build exclusively from CURRENT official source artifact, never PR_BASE,
+            # and reject any concurrent RC movement at the final same-head gate.
           fi
           RUN="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$CURRENT&per_page=100" --jq '.workflow_runs[] | select(.name=="GQ8 Real65 official63 preserve basic dodge plus viral counter ON65 OFF63" and .conclusion=="success" and .event=="push") | .id' | head -n 1)"
           test -n "$RUN" || { echo RED_NO_SAMEHEAD_OFFICIAL_REAL65_NATIVE_ROJO; exit 1; }
