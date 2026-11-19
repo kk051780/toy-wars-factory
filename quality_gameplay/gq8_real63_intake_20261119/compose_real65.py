@@ -185,6 +185,20 @@ def run(a):
     a.out.mkdir(parents=True)
     on=put_project(real64_doc,chosen,a.out)
     (a.out/"EGGRUMBLE_REAL64.project.json").rename(a.out/"EGGRUMBLE_REAL65.project.json")
+    # The original multi-lane helper builds a REAL64-named project by design.
+    # This selected REAL65 Place must identify itself correctly in Studio.
+    # Change only the project metadata, never any original game script bytes.
+    selected_project=a.out/"EGGRUMBLE_REAL65.project.json"
+    spec=json.loads(selected_project.read_text(encoding="utf8"))
+    require(spec.get("name")=="GQ8_REAL64_COMBINED_PRIVATE_NOT_PUBLISHED",
+            "STUDIO_PROJECT_EXPECTED_PARENT_NAME")
+    spec["name"]="EGGRUMBLE_REAL65_PRIVATE_STUDIO"
+    selected_project.write_text(json.dumps(spec,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
+                                encoding="utf8")
+    require(flatten(selected_project)[1]==chosen and
+            json.loads(selected_project.read_text(encoding="utf8"))["name"]==
+            "EGGRUMBLE_REAL65_PRIVATE_STUDIO",
+            "STUDIO_PROJECT_METADATA_ONLY")
     # OFF63 is literally the verified official artifact; no reconstruction guess.
     (a.out/"OFF63_EXACT_OFFICIAL.rbxlx").write_bytes(a.real63_place.read_bytes())
     offdir=a.out/"off63";offdir.mkdir()
