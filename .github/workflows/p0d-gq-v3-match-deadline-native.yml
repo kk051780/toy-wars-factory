@@ -1,0 +1,37 @@
+name: EGGRUMBLE V3 15m deadline pure native QA
+on:
+  push:
+    branches:
+      - 'quality/eggrumble-v3-match-deadline-20261116-01'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Existing Python source contract and build executable harness
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s quality_gameplay/v3_match_deadline_20261116/tests -p 'test_*.py'
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/make_native_deadline_harness.py --out /tmp/deadline_contract_native.luau
+      - name: Build upstream native Luau (same technique as V3 author's source CI)
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/eggrumble-luau
+          cmake -S /tmp/eggrumble-luau -B /tmp/eggrumble-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/eggrumble-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Compile original policy then execute tests in actual native Luau
+        run: |
+          set -euo pipefail
+          /tmp/eggrumble-luau/build/luau-compile quality_gameplay/v3_match_deadline_20261116/EGGRUMBLE_DeadlinePolicy.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau-compile /tmp/deadline_contract_native.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau /tmp/deadline_contract_native.luau
+      - name: Quality boundary
+        run: |
+          echo "Source/pure Luau QA only; no Rojo source wiring, Studio, Android, ART, FUN, or official RC acceptance."
