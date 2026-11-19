@@ -6,13 +6,13 @@ Retain all original REAL65 scripts and let formal composer select REAL66.
 """
 import argparse,hashlib,json
 from pathlib import Path
-MARK="GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119"
+MARK="GQ8_RC85_DOJO_RECONCILE_20261119"
 REALM="ServerScriptService/EGGRUMBLE_RealmBattleCore"
 SOCIAL="ServerScriptService/GQ8_LobbySocialPlaza"
 COMBAT="ServerScriptService/EGGRUMBLE_SevenRoleCombat"
 
 SOCIAL_BODY=r'''
--- GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119
+-- GQ8_RC85_DOJO_RECONCILE_20261119
 -- Original RC85 DojoRules: BEAST/WEAPON, 180s each, levels1..5, costs
 -- 10/15/20/25, +50% when *actual* friends are practicing together.
 -- One existing SocialPlaza script owns physical pads and XP, no second Game,
@@ -121,7 +121,7 @@ SOCIAL_TICK=r'''
 '''
 
 COMBAT_BODY=r'''
- -- GQ8_RC85_REALM_SHARDS_DOJO_RECONCILE_20261119
+ -- GQ8_RC85_DOJO_RECONCILE_20261119
  -- Original RC85 session-only dojo +5% per level (<=20%). Only the
  -- existing Combat neutral Swarm hit consumes this. Player/server attributes
  -- are set by the Studio-only SocialPlaza station; client changes do not
@@ -191,7 +191,7 @@ def main(project_path,receipt_path):
  check(len(set(r["route"] for r in receipt["sources"]))==65,"SCRIPT_COUNT")
  # No new original route was modified; all 3 already in prior patched list.
  check(set((SOCIAL,COMBAT)).issubset(set(receipt["patched_existing_routes"])),"PRIOR_PATCH_ROUTE")
- receipt["rc85_rc86_realm_shards_dojo"]={
+ receipt["rc85_dojo_lobby_training"]={
   "feature_id":MARK,"original_rc85_source_artifact_id":14158848286,
   "original_rc86_source_artifact_id":14161823401,
   "ported_policy_flags":["FB007_LOBBY_DOJO_PHYSICAL_V1"],
