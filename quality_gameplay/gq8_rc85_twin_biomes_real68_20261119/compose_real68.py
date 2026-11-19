@@ -117,6 +117,18 @@ def main(base:pathlib.Path,out:pathlib.Path,src:pathlib.Path,head:str):
  originalCombat=files[COMBAT_ROUTE][1]
  patched=patch_combat(originalCombat.decode('utf8')).encode('utf8')
  shutil.copytree(base,out)
+ # OFF67 must point to a separate ORIGINAL source tree; the main REAL68 tree
+ # intentionally modifies its Combat. Never mistake the patched source for OFF67.
+ off=out/'off67'
+ off.mkdir(exist_ok=False)
+ for route,(rel,oldraw,_) in files.items():
+  oldfile=off/rel
+  oldfile.parent.mkdir(parents=True,exist_ok=True)
+  oldfile.write_bytes(oldraw)
+ (off/'EGGRUMBLE_REAL67.project.json').write_bytes((base/'EGGRUMBLE_REAL67.project.json').read_bytes())
+ check(len(load_sources(off,proj))==67,'OFF67_ORIGINAL_PROJECT_SOURCE_COUNT')
+ for route,(_,oldraw,_) in files.items():
+  check(load_sources(off,proj)[route][1]==oldraw,'OFF67_SOURCE_CHANGED_'+route)
  path=out/NEW_FILE
  path.parent.mkdir(parents=True,exist_ok=True)
  path.write_bytes(raw)
