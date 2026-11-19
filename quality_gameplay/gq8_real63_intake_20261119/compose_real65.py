@@ -165,6 +165,13 @@ def run(a):
         b'if not canonical then warn("[GQ8 SOCIAL] canonical lobby missing: skip") return end\n'
         b'local spawn = canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)\n'
         b'if not spawn or not spawn:IsA("SpawnLocation") then warn("[GQ8 SOCIAL] canonical spawn missing: skip") return end')
+    # Evidence: the selected physical Place must contain exactly these guards,
+    # not merely a source-only flag or a fallback to arbitrary map spawns.
+    for route in (SHOP,PLAZA):
+        source=chosen[route][1]
+        require(source.count(b'canonical:WaitForChild("GQ646_LOBBY_NEUTRAL_SPAWN",30)')==1
+                and b'FindFirstChildWhichIsA("SpawnLocation"' not in source,
+                "LOBBY_STARTUP_RACE_FENCE_NOT_IN_SELECTED_SOURCE")
     require(len(chosen)==65,"FINAL65_COUNT")
     unchanged={k for k in official63 if chosen[k]==official63[k]}
     require(len(unchanged)==58,"FORMAL63_ORIGINAL58_NOT_PRESERVED")
