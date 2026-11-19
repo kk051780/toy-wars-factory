@@ -1,0 +1,101 @@
+name: P0D FB005 private 1-human team bots cumulative native source gate
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/private_solo_team_bots_cumulative.py
+      - .github/workflows/p0d-quality-private-solo-bots-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/private_solo_team_bots_cumulative.py
+      - .github/workflows/p0d-quality-private-solo-bots-native.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-game-ai-real-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download pinned native82 cumulative original author + spectator
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_private_ai_parent
+          gh run download 43691542351 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-CUMULATIVE-ROLE7-SPECTATOR-SOURCE-NOGO \
+            -D /tmp/p0d_private_ai_parent
+          test -s /tmp/p0d_private_ai_parent/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip
+      - name: Reproduce real locked Game + SoloTeamBots only; verify score/winner untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/private_solo_team_bots_cumulative.py \
+            --parent /tmp/p0d_private_ai_parent/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip \
+            --out /tmp/P0D_FB005_REAL_SOLO_BOTS_PRIVATE.zip \
+            --extract /tmp/p0d_private_bots_actual_luau
+          python3 - <<'PY'
+          import json,zipfile,sys
+          from pathlib import Path
+          sys.path.insert(0,'product_quality')
+          import private_solo_team_bots_cumulative as m
+          with zipfile.ZipFile('/tmp/P0D_FB005_REAL_SOLO_BOTS_PRIVATE.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+              assert r['source_scripts']==82 and r['unchanged_parent_source']==80
+              assert r['place_sha256']==m.PLACE_SHA and r['place_bytes']==780350
+              assert r['egg_score_winner_source_exact'] and r['source_lock_exact']
+              assert r['private_only'] and r['default_off'] and not r['official_rc_write']
+              assert r['product']=='NO_GO'
+          paths=list(Path('/tmp/p0d_private_bots_actual_luau').glob('*.luau'))
+          assert len(paths)==82
+          game=Path('/tmp/p0d_private_bots_actual_luau/Game.luau').read_text()
+          bot=Path('/tmp/p0d_private_bots_actual_luau/SoloTeamBots.luau').read_text()
+          assert 'pcall(SoloTeamBots.start,map,getTeamName(player),botAuthority)' in game
+          assert 'pcall(SoloTeamBots.tick,now)' in game
+          assert 'SoloTeamBots.tryHumanHit(team,root.Position,look' in game
+          assert 'PRIVATE_SOLO_BOTS_DISABLED' in game
+          assert 'horde:tick(now,eligibleSoloPlayers(),healthy)' in game
+          assert 'sevenJobPickAckSeq[player]~=selectedAck' in game
+          assert 'game.PrivateServerId ~= ""' in bot
+          assert 'workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE")==true' in bot
+          assert 'workspace:GetAttribute("P0D_PRIVATE_SOLO_TEAM_BOTS")==true' in bot
+          assert 'callbacks.deposit(bot,bot.team,bot.carry)' in bot
+          for func in (m.swap,):
+              try: func('changed author source','missing','fixed','NEGATIVE_ANCHOR')
+              except ValueError: pass
+              else: raise AssertionError('FAIL_OPEN_WRONG_SOURCE')
+          print('PRIVATE_AI_DOUBLE_FLAG_EGG_SCORE_LOCK_AND_MUTATION_GATES_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau_private_ai
+          persist-credentials: false
+      - name: Native pinned Luau compile all 82 actual Place script sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau_private_ai rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau_private_ai -B /tmp/p0d_luau_private_ai_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau_private_ai_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_luau_private_ai_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_private_bots_actual_luau -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 82
+          echo P0D_PRIVATE_SOLO_TEAM_BOTS_ACTUAL_82_NATIVE_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-FB005-PRIVATE-SOLO-BOTS-SOURCE-NO-GO
+          path: /tmp/P0D_FB005_REAL_SOLO_BOTS_PRIVATE.zip
+          retention-days: 7

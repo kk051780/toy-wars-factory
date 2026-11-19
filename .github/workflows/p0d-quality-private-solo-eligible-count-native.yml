@@ -1,0 +1,94 @@
+name: P0D FB005 actual solo bot eligible player count native82
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/private_solo_eligible_count_fix.py
+      - .github/workflows/p0d-quality-private-solo-eligible-count-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/private_solo_eligible_count_fix.py
+      - .github/workflows/p0d-quality-private-solo-eligible-count-native.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-game-native82:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch pinned cumulative original Game and SoloTeamBots (no RC write)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_eligible_parent
+          gh run download 43693926711 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-SOLO-BOTS-SAFE-SPECTATOR-CUMULATIVE-SOURCE-NOGO \
+            -D /tmp/p0d_eligible_parent
+          test -s /tmp/p0d_eligible_parent/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip
+      - name: Build real Game-only fix; pinned blob, egg authority, 81 scripts and negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/private_solo_eligible_count_fix.py \
+            --parent /tmp/p0d_eligible_parent/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip \
+            --out /tmp/P0D_FB005_ELIGIBLE_COUNT_PRIVATE.zip \
+            --extract /tmp/p0d_eligible_source
+          python3 - <<'PY'
+          import sys,json,zipfile
+          from pathlib import Path
+          sys.path.insert(0,'product_quality')
+          from private_solo_eligible_count_fix import patch,LATCH_BEFORE,LATCH_AFTER,FAIL_BEFORE,FAIL_AFTER
+          for corrupt in ("",LATCH_BEFORE,LATCH_AFTER,FAIL_BEFORE,FAIL_AFTER,LATCH_BEFORE*2):
+              try: patch(corrupt)
+              except (ValueError,AssertionError): pass
+              else: raise AssertionError('STALE_SOURCE_OR_DUPLICATE_ANCHOR_ACCEPTED')
+          with zipfile.ZipFile('/tmp/P0D_FB005_ELIGIBLE_COUNT_PRIVATE.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+          assert r['place_bytes']==780882
+          assert r['place_sha256']=='cabd147e588b4dc7599e115c335b0d8c9acaf9f953c48a2dcb79d6985bbd2246'
+          assert r['scripts']==82 and r['unchanged_parent_scripts']==81
+          assert r['egg_score_winner_unchanged'] and r['source_lock_exact']
+          assert r['private_only'] and r['default_off'] and not r['official_rc_write']
+          g=Path('/tmp/p0d_eligible_source/Game.luau').read_text()
+          bots=Path('/tmp/p0d_eligible_source/SoloTeamBots.luau').read_text()
+          assert LATCH_AFTER in g and FAIL_AFTER in g
+          assert LATCH_BEFORE not in g and FAIL_BEFORE not in g
+          assert 'callbacks.deposit(bot,bot.team,bot.carry)' in bots
+          assert 'p:GetAttribute("P0D_LateJoinSpectator")~=true' in bots
+          assert len(list(Path('/tmp/p0d_eligible_source').glob('*.luau')))==82
+          print('ORIGINAL_82_GAME_SOLO_ELIGIBLE_COUNT_SOURCE_NEGATIVE_PASS_NOT_ENGINE')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau_pinned
+          persist-credentials: false
+      - name: Native compile all actual 82 Luau scripts, including patched Game
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau_pinned rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau_pinned -B /tmp/p0d_eligible_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_eligible_luau --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_eligible_luau/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_eligible_source -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 82
+          echo 'P0D_REAL_SOLO_ELIGIBLE_COUNT_NATIVE_82_PASS_STUDIO_NOT_TESTED'
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-SOLO-ELIGIBLE-82-SOURCE-NOGO
+          path: /tmp/P0D_FB005_ELIGIBLE_COUNT_PRIVATE.zip
+          retention-days: 7

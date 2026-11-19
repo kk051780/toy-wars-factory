@@ -1,0 +1,166 @@
+name: P0D product quality benchmark and gate - source-only (read-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'product_quality/**'
+      - '.github/workflows/p0d-product-quality-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  product-quality-spec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Unit tests for fail-closed scoring and acceptance rules
+        run: python3 -B -m unittest discover -s product_quality -p 'test_*.py' -v
+      - name: Verify public competitor reference provenance (not actual gameplay measurement)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          b=json.loads(Path('product_quality/competitors_20261115.json').read_text(encoding='utf-8'))
+          assert b['schema']=='P0D_COMPETITOR_BASELINE_V1'
+          assert len(b['games'])==5
+          for g in b['games']:
+              assert g['url'].startswith('https://www.rolimons.com/game/')
+              assert g['visits']>0
+              assert 0<=g['like_percent']<=100
+              assert g['avg_session_minutes']>0
+              assert g['measurements_verified'] is False
+              assert all(g[k] is None for k in ('map_size_studs','effective_paths','character_count','item_count','retention_d1','retention_d7'))
+          print('5 public KPI baselines captured; real competitor game measurements remain UNKNOWN')
+          PY
+      - name: Require an unmeasured candidate to be NO_GO (expected failure as evidence)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          set +e
+          python3 -B product_quality/check_product_quality.py --candidate product_quality/CANDIDATE_TEMPLATE.json --report /tmp/product_quality/PRODUCT_QUALITY_REPORT.json
+          CODE=$?
+          set -e
+          test "$CODE" -eq 1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/PRODUCT_QUALITY_REPORT.json').read_text())
+          assert r['decision']=='PRODUCT_NO_GO'
+          assert r['total_score'] is None
+          assert 'PRODUCT_SCORE_UNKNOWN' in r['problems']
+          print('PASS: unevaluated game is rejected; no fake acceptance')
+          PY
+      - name: Audit source-confirmed live baseline vs Studio-only battlefield extent (FB-009)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          python3 -B product_quality/field_baseline.py --out /tmp/product_quality/FIELD_BASELINE_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/FIELD_BASELINE_REPORT.json').read_text())
+          assert r['status']=='FIELD_P0_NEEDS_REAL_LIVE_AND_STUDIO_ROUTE_MEASUREMENT'
+          assert r['studio_only_extension']['studio_guard_source_confirmed']
+          assert r['objective_geometry_lower_bounds']['walking_seconds'] is None
+          assert r['external_competitor_map_studs'] is None
+          print('PASS static source evidence; field gameplay/P0 remains NO_GO until real path test')
+          PY
+      - name: Audit all 67 catalog entries against owner core roles (advisory NO_GO)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/audit_catalog.py --catalog rc_fastlane/FEATURE_CATALOG.json --report /tmp/product_quality/CATALOG_AUDIT_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path('/tmp/product_quality/CATALOG_AUDIT_REPORT.json').read_text())
+          assert r['row_count'] == 67
+          assert r['gameplay_engine_pass_count'] is None
+          assert r['decision'] == 'CATALOG_REVIEW_REQUIRED'
+          print('Review required, never gameplay PASS:', r['issues'])
+          PY
+      - name: Trace every official catalog feature and all 7 full abilities (expected NO_GO)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          set +e
+          python3 -B product_quality/check_concept_trace.py --catalog rc_fastlane/FEATURE_CATALOG.json --trace product_quality/DESIGN_TO_GAME_TRACE_MATRIX.json --report /tmp/product_quality/DESIGN_TO_GAME_TRACE_REPORT.json
+          CODE=$?
+          set -e
+          test "$CODE" -eq 1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/DESIGN_TO_GAME_TRACE_REPORT.json').read_text())
+          assert r['decision'] == 'DESIGN_NO_GO'
+          assert r['catalog_entries'] == 67
+          assert r['inventory_covered'] == 67
+          assert r['design_coverage'] == '67/67'
+          assert r['verified_design_contracts'] == '8/67'
+          assert r['seven_jobs_full_engine_pass'] == '0/7'
+          assert r['release_unresolved'] > 0
+          print('67 inventory mapped / 8 role design contracts verified / engine proof remains NO_GO')
+          PY
+      - name: Fetch the actual pinned official RC82 build (READ-ONLY)
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 43677046865
+          name: P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO
+          github-token: ${{ github.token }}
+          path: /tmp/product_quality/official_source
+      - name: Verify 82 genuine Luau scripts and audit all 7 role source branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import hashlib
+          d=Path("/tmp/product_quality/official_source")
+          place=d/"P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx"
+          blob=place.read_bytes()
+          assert len(blob)==772452, "OFFICIAL_PLACE_BYTES_CHANGED"
+          assert hashlib.sha256(blob).hexdigest()=="79938054ff3d4c6859e195789be35520032bb8b9ff4bb3c7ff80515d0dcb22dd","OFFICIAL_PLACE_SHA256_CHANGED"
+          assert (d/"SOURCE_LOCK.json").is_file(),"OFFICIAL_SOURCE_LOCK_MISSING"
+          target=Path("/tmp/product_quality/P0D_RC82_PINNED_FOR_AUDIT.zip")
+          with ZipFile(target,"w",ZIP_DEFLATED) as z:
+            z.write(place,place.name)
+            z.write(d/"SOURCE_LOCK.json","SOURCE_LOCK.json")
+          print("GITHUB_OFFICIAL_RC82_ACTUAL_PLACE_SHA256_PINNED")
+          PY
+          python3 -B product_quality/audit_actual_place.py \
+            --artifact /tmp/product_quality/P0D_RC82_PINNED_FOR_AUDIT.zip \
+            --official-head d2f3ed1a47558fdaf07be0181c83c698bdb2ce34 \
+            --report /tmp/product_quality/ACTUAL_RC82_GAMEPLAY_SOURCE_AUDIT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path("/tmp/product_quality/ACTUAL_RC82_GAMEPLAY_SOURCE_AUDIT.json").read_text())
+          assert r["source_lock_exact"] is True
+          assert r["scripts_examined"]==82
+          assert r["place_bytes"]==772452
+          assert r["gameplay_engine_pass"] is False
+          assert r["decision"]=="GAMEPLAY_SOURCE_REMEDIATION_REQUIRED"
+          assert "BUILDER" in r["role_source_gaps"]
+          assert "MAGE" in r["role_source_gaps"]
+          assert "BEAST_TAMER" in r["role_source_gaps"]
+          assert "NECROMANCER" in r["role_source_gaps"]
+          print("PASS_82_REAL_SOURCE_LOCK_AND_SEVEN_ROLE_MVP_GAP_DIAGNOSIS",r["role_source_gaps"])
+          PY
+      - name: Publish transparent NO_GO report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-PRODUCT-QUALITY-NOT-OWNER-APPROVED
+          path: /tmp/product_quality/*.json
+          retention-days: 14
+          if-no-files-found: warn

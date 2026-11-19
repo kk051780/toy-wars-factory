@@ -1,0 +1,156 @@
+name: P0D #470 spectator Horde real Game native82 Rojo source exact (private NO-GO)
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/p0d_native_spectator_source.py
+      - .github/workflows/p0d-spectator-source-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/p0d_native_spectator_source.py
+      - .github/workflows/p0d-spectator-source-native.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  native82-source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Retrieve original author's exact verified b20 private artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_author_b20
+          gh run download 43690968621 -R kk051780/toy-wars-factory \
+            -n P0D-ROLE7-RC82-READY-ORIGINAL-AUTHOR-PATCH-NO-GO \
+            -D /tmp/p0d_author_b20
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          d=Path('/tmp/p0d_author_b20')
+          assert (d/'P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip').is_file(), 'PARENT_ARTIFACT_MISSING'
+          with ZipFile('/tmp/p0d_author_b20.zip','w',ZIP_DEFLATED) as z:
+            for p in sorted(d.iterdir()):
+              assert p.is_file() and not p.is_symlink()
+              z.write(p,p.name)
+          print('PINNED_ORIGINAL_AUTHOR_SOURCE_ARTIFACT_RETRIEVED')
+          PY
+      - name: Reproduce private spectator patch from exact actual author Place and both source locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/p0d_native_spectator_source.py \
+            --author-artifact /tmp/p0d_author_b20.zip \
+            --out /tmp/P0D_SPECTATOR_ACTUAL_PRIVATE.zip \
+            --scripts /tmp/p0d_spectator_rojo
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib,importlib.util,json,sys,xml.etree.ElementTree as ET
+          sys.path.insert(0,'product_quality')
+          import p0d_native_spectator_source as v
+          path=Path('/tmp/P0D_SPECTATOR_ACTUAL_PRIVATE.zip')
+          with ZipFile(path) as z:
+            b=z.read(v.NAME)
+            locks=json.loads(z.read('SOURCE_LOCK.json'))
+            features=json.loads(z.read('RC_FEATURE_LOCK.json'))
+            receipt=json.loads(z.read('RECEIPT.json'))
+          assert len(b)==778905
+          assert hashlib.sha256(b).hexdigest()==v.RESULT
+          assert receipt['official_rc_head']==v.RC
+          assert receipt['decision']=='PRODUCT_NO_GO' and receipt['studio']=='NOT_RUN'
+          assert len(v.verify(b,locks,features))==82
+          assert sum(1 for p in Path('/tmp/p0d_spectator_rojo/src').rglob('*.luau'))==82
+          source=v.verify(b,locks,features)['Game']
+          assert 'horde:tick(now,eligibleSoloPlayers(),healthy)' in source
+          assert 'victim:GetAttribute("P0D_LateJoinSpectator")~=true' in source
+          assert 'local castCharacter=player.Character' in source
+          assert 'mobCombo[player]=if hitNow<(mobComboUntil[player] or 0)' in source
+          try: v.patch(source)
+          except ValueError as e: assert str(e).startswith('ANCHOR_DRIFT_')
+          else: raise AssertionError('MUTANT_SECOND_PATCH_NOT_REJECTED')
+          try: v.verify(b,{**locks,'blobs':{**locks['blobs'],v.GAME:v.PARENT_GAME}},features)
+          except ValueError: pass
+          else: raise AssertionError('MUTANT_STALE_LOCK_NOT_REJECTED')
+          print('GATE_82_SOURCE_LOCK_BOTH_MANIFESTS_AND_NEGATIVE_CHECKS_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Compile ALL 82 actual modified-source Luau scripts natively
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_spectator_compiler -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_spectator_compiler --target Luau.Compile.CLI --parallel 4
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_spectator_compiler/luau-compile "$file" >/dev/null
+            count=$((count+1))
+          done < <(find /tmp/p0d_spectator_rojo/src -name '*.luau' -type f -print0)
+          test "$count" -eq 82
+          echo 'P0D_SPECTATOR_NEW_LUAU_NATIVE_82_OF_82_PASS'
+      - name: Verify pinned Rojo 7.7.1 source-only full roundtrip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_spectator_rojo_cli.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_spectator_rojo_cli.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_spectator_rojo_cli.zip') as z:
+            matches=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+            assert len(matches)==1
+            p=Path('/tmp/p0d_spectator_rojo_cli')
+            p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_spectator_rojo_cli build /tmp/p0d_spectator_rojo/default.project.json \
+            -o /tmp/P0D_SPECTATOR_ROJO_REBUILT.rbxlx
+          python3 - <<'PY'
+          from collections import Counter
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          manifest=json.loads(Path('/tmp/p0d_spectator_rojo/manifest.json').read_text())
+          tree=ET.fromstring(Path('/tmp/P0D_SPECTATOR_ROJO_REBUILT.rbxlx').read_bytes())
+          got=[]
+          def walk(node,prev=()):
+            p=node.find('Properties')
+            name=p.findtext("string[@name='Name']") if p is not None else None
+            source=p.findtext("string[@name='Source']") if p is not None else None
+            here=prev+((name,) if name is not None else ())
+            if source is not None:
+              b=source.encode('utf-8')
+              digest=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+              got.append(dict(path='/'.join(here),kind=node.attrib['class'],blob=digest))
+            for kid in node.findall('Item'): walk(kid,here)
+          for item in tree.findall('Item'):walk(item)
+          assert len(got)==82 and Counter(x['path'] for x in got)==Counter(x['path'] for x in manifest)
+          expected={x['path']:(x['kind'],x['blob']) for x in manifest}
+          actual={x['path']:(x['kind'],x['blob']) for x in got}
+          if actual!=expected:
+            raise ValueError('ROJO_CLASS_PATH_SOURCE_EXACT_FAIL')
+          print('P0D_SPECTATOR_NEW_ROJO_SOURCE_EXACT_82_OF_82_PASS')
+          PY
+      - name: Preserve private NO_GO source candidate for authorized original-author integration
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-QUALITY-297-SPECTATOR-SOURCE-NATIVE82-NOGO
+          path: /tmp/P0D_SPECTATOR_ACTUAL_PRIVATE.zip
+          retention-days: 7
