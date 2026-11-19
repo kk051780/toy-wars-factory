@@ -1,35 +1,25 @@
-# RC85/RC86 → formal V3 REAL65: non-duplicated exploration + dojo
+# RC85 two-lane real dojo adopted into sole formal REAL66
 
-**Formal RC is ONE Git branch**: \`rc/p0d-s1-kids-rc01\`. Its source label REAL65 means 65 actual selected Luau routes, not percentage complete or proof that all old S1 flags have transferred.
+## Live concurrency / non-duplication decision
+The owner explicitly requires old RC85, RC86, and new REAL65 achievements to accumulate in **one official RC**, not separate live Games. During this Dojo integration another authenticated owner integrated [PR #877](https://github.com/kk051780/toy-wars-factory/pull/877): the independently tested [#868](https://github.com/kk051780/toy-wars-factory/pull/868) 4 Realm discoveries and 6 Star Shards became a **selected 66th actual Script** in the one canonical RC. The old 65 scripts were byte-exact retained. Do NOT independently add RealmHunt/StarShards again inside \`EGGRUMBLE_RealmBattleCore\`. This PR consciously discards its earlier unmerged duplicate Realm prototype and instead only ports the missing physical dojo+PvE training feature.
 
-## Original files, not just issue titles
+## Original real original sources
+Old RC85 85-source artifact #14158848286 and RC86 86-source artifact #14161823401 include \`TrapRaidersS1/LobbyDojoIsland\` and \`TrapRaidersS1/DojoRules\`:
+- Session-only two actual BEAST + WEAPON trainable skills, level1..5, exact XP costs [10,15,20,25], max 180 seconds per skill, 1XP/second, 1.5x XP if *real Roblox friends* practice together
+- Exactly +5% per above-base level to PvE damage (max 20%): original pure \`DojoRules.pveDamageMultiplier\`
+- No offline training, persistent levels, XP purchase, currency, paid trade, remote Game authority or saved progression. Other four old skill training spots were visual/policy candidates only.
 
-Actual original CI artifact \`14158848286\` (RC85 85 sources) and \`14161823401\` (RC86 86 sources), plus verified RC86 wall-LOS \`14177514150\`. These artifacts contain exact source-lock and old \`RC_FEATURE_LOCK\` (48 enabled flags). Core three inputs:
-- \`ServerScriptService/TrapRaidersS1/RealmHunt\`: 4 distinct SKY/SEA/EMBER/STAR discoveries, per-player counters, cosmetic-only, no 2nd Game/Store.
-- \`ServerScriptService/TrapRaidersS1/StarShardHunt\`: 6 session-only collectible fragments, no currency/save, originally placed on old Starry Path.
-- \`ServerScriptService/TrapRaidersS1/DojoRules\` + \`LobbyDojoIsland\`: real physical lobby and pure skill policy \`BEAST\` / \`WEAPON\`, levels 1..5, level costs 10/15/20/25 XP, 180s per skill, real friends training together 1.5x XP, PvE-only 5% per level capped 20%.
+## Current REAL66 source-selective integration
+\`port_realm_shards_dojo65.py\` runs after original formal REAL65 source composer and accepted #864 Wind, #865 weapon pickups, #869 server prompt alias and #870 LOS/reach balancing; then current formal composer selects #877 original Realm4+Shard6 Script as its 66th current source.
 
-PR #868 **already implemented and native/Rojo verified** a separate \`EGGRUMBLE_LegacyExplorationBridge.server.luau\` REAL66 *candidate*, but its extra 66th server Script is NOT selected in the official REAL65 composer. Do **not** enable that 66th candidate *as well* as this Realm port: duplicate quest landmarks/markers would result. Reuse its verified design, source markers and guard tests, and port discovery into original V3 Realm owner instead, preserving the selected **65 of 65** original source route contracts.
+This patch modifies only TWO existing selected official V3 source owners:
+1. **\`ServerScriptService/GQ8_LobbySocialPlaza\` (Script):** builds original two trainable physical stations behind existing lobby social plaza (never duplicate lobby/castle/spawn), authorizes direct server proximity and opt-in; accumulates only bounded server-measured 1s in-range while not queued into TEAM/BR. Caches true Roblox friendship query for 60s, 1.5x XP if a real friend is co-located, updates level and in-world readable station title, cleans state on PlayerRemoving.
+2. **\`ServerScriptService/EGGRUMBLE_SevenRoleCombat\` (existing ModuleScript):** when existing, authoritative server-granted dojo level is present, apply exact original \`1+(level-1)*.05\` (up to1.2) only to the existing \`neutralAndBotHit\` neutral Swarm damage. BEAST-class uses Beast level and other roles' basic attack uses Weapon level. Does not alter original stage weapon bonus, PvP player HP, bot HP, castle/guardian HP, summons, KO score, egg or currency.
 
-## Implementation, exact existing owners (NO SECOND GAME)
+All other 63 REAL65 source bytes/class/paths remain exactly the same. The independent #877 exploration Script remains exactly one 66th source in formal Real66, **never a second Game**. OFF63 and OFF65 comparators stay intact.
 
-\`port_realm_shards_dojo65.py\` is a post-#870 source-locked overlay. All 65 original route bytes/class are checked against the official receipt before edits; exactly 3 *already-modified* selected routes are changed; the other 62 stay exact. No new script/remote/HP/KO/Store/round/egg/score authority.
+## Source-only QA vs product QA
+A PR-head same-source GitHub Actions run validates original 65 hashes before the two modifications and every selected 65 hash afterward, native Luau/rojo for all selected 65 plus the original new exploration 66th, byte-exact OFF63 and exact 65-to-66 selection. The certified formal RC writer uses fresh HEAD nonforce CAS and then same-HEAD official Build. Studio actual solo/2clients, Android15min, art and child FUN are NOT_TESTED until explicitly run. No main, no Work/Codex, no publish and no paid transactions.
 
-1. **Current \`EGGRUMBLE_RealmBattleCore\`** already owns TEAM and BR physical arena discovery, sea/sky aircraft/subsea, and storm world. It now additionally places four reachable 3D landmark prompts and six small star fragments in the same current arena; uses the Realm script's own server-side current-mode/valid-castle/elimination/humanoid eligibility and original wall-safe prompt path. Per-current-mode/round player attribute counters only; no source spawns independent old S1 world. Attributes cleaned when arena destroyed. Cosmetic-only; 10 objects per arena, no persistence or gacha.
-2. **Current \`GQ8_LobbySocialPlaza\`** already owns physical Studio-only social scene. Adds a walkable little dojo with two real practice pads; server authorizes proximity and no active TEAM/BR queue. 1-second *server-measured* progress only while standing on chosen pad; 180s bounded per skill, level1→5 with the original cost table. 1.5x if *genuine Roblox friends* are co-training, cached per pair to avoid repeated friend API work. PlayerRemoving clears session profile; no DataStore/paid boost/UI-guide.
-3. **Current \`EGGRUMBLE_SevenRoleCombat\`** consumes the server-only dojo rank ONLY in existing \`neutralAndBotHit\`'s neutral Swarm damage amount. PvP player, castle, bot, guardian, summon and egg authority remain unchanged. An actual BEAST role consumes BEAST rank; other players' verified basic M1 consumes WEAPON rank. No client action to set levels and max multiplier 1.20.
-
-A source QA marker includes all 3 old flag candidates:
-- \`REALM_HUNT_V1\` → adapted functional 4/4 Realm collectibles.
-- \`STAR_SHARDS_V1\` → adapted functional 6/6 collectible shards (old \`STARRY_PATH\` 10-stone physical route *not* thereby included).
-- \`FB007_LOBBY_DOJO_PHYSICAL_V1\` → adapted 2 real training stations, exact original Dojo XP rules, bounded +20% neutral-only PvE.
-Formal bridge source \`EGGRUMBLE_LegacyExplorationBridge\` remains repository-only reference; no duplicate selected Script.
-
-### Non-loss validation and hard limits
-
-1. Reproduce the original deterministic official selected sources with previous #864 wind + #865 RC86 weapon pickups + #869 15 item prompt aliases + #870 neutral-only wall-safe reach. Apply this helper once after those original overlays.
-2. Recheck all 65 \`route/class/path/sha256/bytes\`, 9 existing patched route owners unchanged (the same existing 3 already in 9), exact OFF63, pinned actual Luau Native 65/65, pinned Rojo 65/65, official same-head artifact and .rbxlx. Do not merge if CI not GREEN at fresh PR HEAD and current official base.
-3. Real Studio (1/2 clients), Android15min, player-perceived art/FUN, 4+6 accessible terrain navigation, physical dojo friend co-training, neutral PvE damage only and no PvP, post-join/rejoin cleanup: NOT_TESTED until actually run in Roblox. No public publish, Work/Codex, paid transactions, main changes.
-4. **Remaining old RC85/86 48-flag semantic feature audit is open**: \`STARRY_PATH\`, original CrystalCanyon bridge and meteor, twin biomes + 4 original NPC species and bond training, saved PvE mastery/beast evolution, original 3D castle/Gorogan, six-skill durability, first-90 onboarding, etc. The source being 65 is not proof all are done.
-
-Regression-first changes only, no author acknowledgement needed, use certified #220 same-head CAS/nonforce. This artifact is an independent real functional increment, NOT permission to declare the entire legacy cumulative project finished.
+## Important outstanding remaining RC85/RC86 inventory
+Only the original 48 legacy feature flags that have concrete REAL66 runtime implementations may be checked off. Still unresolved: old STARRY_PATH 10 stones, WCS CrystalCanyon bridging, METEOR lane, twin biomes and 4 species, SAVED PvE MASTERY/BEAST evolution, original Gorogan full physical AI, castle art, 7-job X/C role parity, first90 onboarding and many other game experience features. **One official RC branch exists; full semantically feature-complete one-game migration is NOT yet established.**
