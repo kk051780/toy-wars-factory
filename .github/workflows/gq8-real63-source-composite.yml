@@ -302,6 +302,38 @@ jobs:
           assert r['pickup_prompt_alias']['selected_script_count']==65
           print('GQ8_LEGACY_RC86_REACH_BONUS_BASIC_ONLY_NONLOSS_PASS')
           PY
+      - name: Source-select original RC85 BEAST/WEAPON practice stations into existing REAL65 Social and Combat (preserve selected REAL66 explorer)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_realm_shards_dojo65.py
+          python3 -B quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_realm_shards_dojo65.py \
+            --project artifacts/real65/EGGRUMBLE_REAL65.project.json \
+            --receipt artifacts/real65/REAL65_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('artifacts/real65')
+          receipt=json.loads((root/'REAL65_INTAKE_RECEIPT.json').read_text())
+          proj=json.loads((root/'EGGRUMBLE_REAL65.project.json').read_text())
+          legacy=receipt['rc85_dojo_lobby_training']
+          assert len(receipt['sources'])==65
+          assert legacy['new_script_count']==0 and legacy['new_game_owners']==0
+          assert legacy['changed_existing_routes']==[
+            'ServerScriptService/GQ8_LobbySocialPlaza',
+            'ServerScriptService/EGGRUMBLE_SevenRoleCombat']
+          assert legacy['unchanged_selected_routes']==63
+          assert legacy['original_dojo_rules']['skills']==['BEAST','WEAPON']
+          assert legacy['original_dojo_rules']['max_level']==5
+          assert legacy['original_dojo_rules']['actual_friend_training_multiplier']==1.5
+          assert legacy['do_not_select_second_realm_or_shard']
+          for row in receipt['sources']:
+            node=proj['tree']
+            for segment in row['route'].split('/'):node=node[segment]
+            data=(root/node['$path']).read_bytes()
+            assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
+          print('GQ8_RC85_DOJO_2_REAL_SOCIAL_PADS_PVE_BASIC_ONLY_65_EXISTING_SOURCE_PASS')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
