@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -73,6 +74,22 @@ def transform(text):
   check(text.count(token)==changed.count(token),"NEW_RUNTIME_OR_AUTHORITY")
  return changed
 
+def validate_design(blueprint_text,manifest_text):
+ # Certified render budget is a CAP of 42; actual six tiles x six details = 36.
+ check("M.MAX_PARTS=42" in blueprint_text and "M.CELL_COUNT=6" in blueprint_text,
+       "BLUEPRINT_BUDGET_OR_CELLS")
+ details=blueprint_text.split("local details={",1)
+ check(len(details)==2,"BLUEPRINT_DETAILS_MISSING")
+ six=details[1].split("\\n  }",1)[0]
+ check(len(re.findall(r'\\bpart\\("',six))==6,"SIX_DETAILS_PER_CELL")
+ check("plan.partCount+=#details" in blueprint_text,"SOURCE_BUDGET_COUNTS")
+ themes=set(re.findall(r'\\{"[A-Z0-9_]+","([A-Z]+)"',manifest_text))
+ candidate=set(re.findall(r'(?m)^ ([A-Z]+)=\\{Enum\\.Material\\.',MATERIALS))
+ check(themes==candidate and len(themes)==10,"ACTUAL_MANIFEST_THEME_COVERAGE")
+ check("Enum.Material.Neon" not in MATERIALS and
+       "Instance.new" not in MATERIALS,"LOW_GLARE_INERT_MATERIALS")
+ return {"expected_render_parts":36,"certified_cap":42,"themes":sorted(themes)}
+
 def selftest():
  tokens="plan.partCount>42 p.CanCollide=false p.CanTouch=false p.CanQuery=false p.CastShadow=false p.Transparency=spec.transparency p.Color=Color3.fromRGB p.CFrame=originalFloor.CFrame made~=plan.partCount function M.clear(world)"
  sample=tokens+"\n"+ANCHOR+OLD
@@ -84,7 +101,20 @@ def selftest():
   try: transform(mutation)
   except ValueError: pass
   else: raise AssertionError("RED_STAGE_MUTANT_NOT_CAUGHT")
- print("GQ470_STAGE_THEME_SELFTEST_4_NEGATIVES_PASS")
+ blueprint='M.MAX_PARTS=42\\nM.CELL_COUNT=6\\nlocal details={\\n'+(' part("a",nil)\\n'*6)+'  }\\nplan.partCount+=#details'
+ manifest=''.join('{"PREFAB_'+str(i)+'","'+theme+'",1},' for i,theme in enumerate(
+  ["REGAL","COSMOS","TIME","DREAM","HEAVEN","SKY","ICE","UNDERWORLD","FOREST","SEA"]))
+ # This synthetic input exercises fail-closed contract, not real Studio evidence.
+ try: validate_design(blueprint.replace("M.MAX_PARTS=42","M.MAX_PARTS=43"),manifest)
+ except ValueError: pass
+ else: raise AssertionError("RED_CHANGED_PART_CAP_NOT_REJECTED")
+ try: validate_design(blueprint,manifest.replace('"REGAL"','"INVALID"'))
+ except ValueError: pass
+ else: raise AssertionError("RED_UNKNOWN_THEME_NOT_REJECTED")
+ try: validate_design(blueprint.replace(' part("a",nil)\\n','',1),manifest)
+ except ValueError: pass
+ else: raise AssertionError("RED_FIVE_PART_BLUEPRINT_NOT_REJECTED")
+ print("GQ470_STAGE_THEME_SELFTEST_7_NEGATIVES_PASS")
 
 def apply(root):
  root=root.resolve()
@@ -97,6 +127,10 @@ def apply(root):
        original_receipt.get("canonical_build") is True,"IMMUTABLE_FORMAL_BASE")
  check(original_receipt.get("source_hashes")==
        {k:sha(p.read_bytes()) for k,p in originals.items()},"69_SOURCE_LOCK")
+ design=validate_design(
+  originals["ServerScriptService/GQ802_StageTileBlueprintPolicy"].read_text(),
+  originals["ServerScriptService/GQ802_StageManifestPolicy"].read_text())
+ check(design["expected_render_parts"]<=design["certified_cap"],"BUDGET_EXCEEDED")
  old=originals[ROUTE].read_bytes()
  check(sha(old)==OLD_SHA,"TARGET_SOURCE_HASH")
  backup=root/OFF
@@ -117,7 +151,7 @@ def apply(root):
   "source_only":"A_PREP_NOT_FORMAL","formal_base":BASE,"route":ROUTE,
   "original_sha256":OLD_SHA,"candidate_sha256":sha(new),
   "changed_selected":1,"unchanged_selected":68,
-  "part_count_original":42,"part_count_candidate":42,
+  "render_parts_original":36,"render_parts_candidate":36,"max_parts_cap":42,
   "extra_parts":0,"extra_scripts":0,"extra_remotes":0,
   "studio":"NOT_TESTED","android":"NOT_TESTED","human_art":"NOT_TESTED",
   "screenshots_received":0,"screenshots_required":32,"owner_accepted":False}
