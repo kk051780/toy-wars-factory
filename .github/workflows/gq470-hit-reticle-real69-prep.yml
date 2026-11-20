@@ -1,4 +1,4 @@
-name: GQ470 REAL69 Hit Reticle Centering A PREP
+name: GQ470 REAL69 Composed Hit Streak and Centered Reticle A PREP
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -19,17 +19,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Source lock, genuine current REAL69 artifact, exact 1-of-69 patch + 12 negative mutations
+      - name: Two pinned original art authors, genuine REAL69 source, 12 negative mutations
         shell: bash
         run: |
           set -euo pipefail
           test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_FORMAL_HEAD_DRIFT; exit 1; }
           test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success" || { echo RED_BASE_RUN; exit 1; }
-          mkdir -p /tmp/hit-original
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44834993878 --jq '.head_sha+" "+.conclusion')" = "d94e8852b0da3d3c65d671f8ea263ab042b11c8d success" || { echo RED_949_HEAD_RUN; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/pulls/949 --jq .head.sha)" = "d94e8852b0da3d3c65d671f8ea263ab042b11c8d" || { echo RED_949_AUTHOR_MOVED; exit 1; }
+          mkdir -p /tmp/hit-original /tmp/hit-author
           gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/hit-original
-          python3 -m py_compile quality_gameplay/gq470_hit_reticle_real69_20261121/patch_hit_reticle.py
+          gh run download 44834993878 --repo "$GITHUB_REPOSITORY" --name GQ470-REAL69-HIT-MATTE-STREAK-A-NOT-FORMAL --dir /tmp/hit-author
+          python3 -m py_compile quality_gameplay/gq470_hit_reticle_real69_20261121/patch_hit_reticle.py quality_gameplay/gq470_hit_reticle_real69_20261121/compose_949_952.py
           python3 -B quality_gameplay/gq470_hit_reticle_real69_20261121/patch_hit_reticle.py --self-test --base /tmp/hit-original
-          python3 -B quality_gameplay/gq470_hit_reticle_real69_20261121/patch_hit_reticle.py --base /tmp/hit-original --out /tmp/hit-candidate
+          python3 -B quality_gameplay/gq470_hit_reticle_real69_20261121/compose_949_952.py --base /tmp/hit-original --author949 /tmp/hit-author --out /tmp/hit-candidate
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -107,7 +110,7 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ470-REAL69-HIT-RETICLE-SOURCE-ONLY-NOT-FORMAL
+          name: GQ470-REAL69-HIT-949-952-COMPOSITE-A-NOT-FORMAL
           path: |
             /tmp/hit-candidate/EGGRUMBLE_REAL69.project.json
             /tmp/hit-candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
@@ -116,6 +119,7 @@ jobs:
             /tmp/hit-candidate/ORIGINAL_REBUILT.rbxlx
             /tmp/hit-candidate/HIT_LEGACY48_AUDIT.json
             /tmp/hit-candidate/ART_CHECK_REPORT.json
+            /tmp/hit-candidate/GQ470_HIT_949_952_COMPOSITE_QA.json
             /tmp/hit-candidate/B220_RETICLE_ONE_SOURCE_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
