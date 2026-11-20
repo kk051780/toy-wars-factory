@@ -128,7 +128,7 @@ jobs:
                   'other_sources_byte_exact':68,'studio':'NOT_TESTED',
                   'candidate_head':os.environ['GITHUB_SHA']}
           (root/'delivery'/'REAL69_LEGACY17_NONLOSS_AUDIT.json').write_text(
-             json.dumps(report,ensure_ascii=False,sort_keys=True,indent=2)+'\\n')
+             json.dumps(report,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           print('GQ470_HUD_SOURCE_MARKER_17_FAMILY_68_EXACT_PASS')
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
