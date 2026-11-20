@@ -17,6 +17,7 @@ BASE_HEAD = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 TARGET = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls"
 TARGET_FILE = "sources/" + TARGET + ".client.luau"
 BEFORE_SHA = "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+AFTER_SHA = "b33030c9e8f170221b5dc21b467055672e04fc3a457d87f1b6978e7da6f59a5b"
 MARK = "GQ470_FB015_REALM_CLIENT_GRADE_REAL69_20261121"
 
 RUN_SERVICE = 'local RunService=game:GetService("RunService")\n'
@@ -157,6 +158,7 @@ def build(artifact: pathlib.Path, destination: pathlib.Path) -> dict:
         check(sha(original) == BEFORE_SHA, "ORIGINAL_SHA")
         before_text = original.decode("utf-8")
         after = patch(before_text).encode("utf-8")
+        check(sha(after) == AFTER_SHA, "EXPECTED_RESULT_SHA_LOCK")
         check(unpatch(after.decode("utf-8")).encode("utf-8") == original,
               "BYTE_EXACT_OFF")
         destination.mkdir(parents=True)
