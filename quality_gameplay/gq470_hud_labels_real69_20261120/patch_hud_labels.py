@@ -94,11 +94,11 @@ def selected_map(root: Path) -> dict[str,Path]:
     walk(data['tree'],'')
     return result
 
-def apply(root:Path)->None:
+def apply(root:Path, official_ci_head:str|None=None)->None:
     paths=selected_map(root)
     receipt=json.loads((root/RECEIPT).read_text())
     require(len(paths)==69 and COMBAT in paths and HUD in paths,'69_SELECTED_ROUTES')
-    require(receipt.get('build_head')==BASE and len(receipt.get('source_hashes',{}))==69,'BASE_RECEIPT')
+    require(receipt.get('build_head')==(official_ci_head or BASE) and len(receipt.get('source_hashes',{}))==69,'BASE_RECEIPT')
     old={k:hashlib.sha256(p.read_bytes()).hexdigest() for k,p in paths.items()}
     require(old==receipt['source_hashes'],'RECEIPT_HASH_DRIFT')
     rollback=root/'off69_hud_labels'
@@ -113,7 +113,7 @@ def apply(root:Path)->None:
     require({k for k in old if old[k]!=after[k]}=={COMBAT,HUD},'EXACT_2_SOURCES')
     require(all(old[k]==after[k] for k in old if k not in (COMBAT,HUD)),'OTHER_67_EXACT')
     receipt['source_hashes'].update({COMBAT:after[COMBAT],HUD:after[HUD]})
-    receipt['build_head']='PREP_HUD_LABELS_FROM_'+BASE
+    receipt['build_head']=official_ci_head or 'PREP_HUD_LABELS_FROM_'+BASE
     receipt['gq470_fb015_hud_tool_labels']={
       'feature_id':MARK,'base_official_head':BASE,'only_modified':[COMBAT,HUD],
       'source_count':69,'unchanged_selected_sources':67,
@@ -138,9 +138,11 @@ def selftest()->None:
 if __name__=='__main__':
     a=argparse.ArgumentParser()
     a.add_argument('--base',type=Path)
+    a.add_argument('--head',type=str,default=None,
+                   help='same-run official/PR source-composite head; only certified B may adopt')
     a.add_argument('--self-test',action='store_true')
     opts=a.parse_args()
     if opts.self_test: selftest()
     else:
         require(opts.base is not None,'MISSING_OFFICIAL_ARTIFACT')
-        apply(opts.base)
+        apply(opts.base,opts.head)
