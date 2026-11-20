@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """GQ470 FB-015: source-exact, low-part neutral horde silhouette candidate.
 
-Changes ONLY the soldier() 3-Part visuals of the existing REAL69 SwarmCombat
+Changes ONLY the soldier() 8-species, 3-Part visuals of the REAL69 SwarmCombat
 ModuleScript. No new script, NPC, combat authority, per-frame render loop,
 health, KO, source route, or RC branch writer. Studio/Android/ART untested.
 """
@@ -20,57 +20,44 @@ from verify_nonloss import project_scan
 
 FORMAL_HEAD = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 FORMAL_BRANCH = "rc/p0d-s1-kids-rc01"
-FEATURE = "GQ470_FB015_NEUTRAL_HORDE_3_SHAPES_REAL69_20261121"
+FEATURE = "GQ470_FB015_NEUTRAL_HORDE_8_SPECIES_MATTE_FACETS_REAL69_20261121"
 ROUTE = "ServerScriptService/EGGRUMBLE_SwarmCombat"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
-START = "local function soldier(parent:Instance,at:Vector3):Model\n"
-END = "local function labelKo(p:Player,n:number)\n"
-OLD_VISUAL = """ local root=piece(m,"HumanoidRootPart",at+Vector3.new(0,2,0),Vector3.new(1.7,2.5,1.5),Color3.fromRGB(127,102,89))
+START = "local function soldier(parent:Instance,at:Vector3,serial:number):Model\n"
+END = "-- Low-cost server-driven physical reaction on the existing accent only.\n"
+OLD_VISUAL = """ local sc=visual.scale
+ local root=piece(m,"HumanoidRootPart",at+Vector3.new(0,2*sc,0),Vector3.new(1.7,2.5,1.5)*sc,visual.color)
  root.CanTouch=false
- local head=piece(m,"Head",root.Position+Vector3.new(0,1.85,0),Vector3.new(1.3,1.3,1.3),Color3.fromRGB(180,158,128))
+ local head=piece(m,"Head",root.Position+Vector3.new(0,1.85*sc,0),Vector3.new(1.3,1.3,1.3)*sc,visual.accent)
  head.Shape=Enum.PartType.Ball;head.CanTouch=false
- piece(m,"Shield",root.Position+Vector3.new(-1.1,-.1,-.25),Vector3.new(.5,1.5,1.4),Color3.fromRGB(94,101,114))
+ local accent=piece(m,"SpeciesAccent",root.Position+Vector3.new(-1.1*sc,-.1*sc,-.25*sc),Vector3.new(.5,1.5,1.4)*sc,visual.accent)
 """
-NEW_VISUAL = """ -- GQ470_FB015_NEUTRAL_HORDE_3_SHAPES_REAL69_20261121
- -- Three readable horde silhouettes; STILL exactly three world BaseParts
- -- (root + head + shield). No new Instance loops, collisions, damage, or AI.
- local variant=math.abs(math.floor(at.X*.71)+math.floor(at.Z*1.29)*7)%3
- local kind=if variant==0 then "BULWARK" elseif variant==1 then "SCOUT" else "LANCER"
- m:SetAttribute("EGGRUMBLE_NeutralVisual",kind)
- local bodySize=if variant==0 then Vector3.new(2.05,2.60,1.62)
-  elseif variant==1 then Vector3.new(1.40,2.23,1.22)
-  else Vector3.new(1.72,2.72,1.37)
- local bodyColor=if variant==0 then Color3.fromRGB(112,100,93)
-  elseif variant==1 then Color3.fromRGB(83,118,120)
-  else Color3.fromRGB(124,112,83)
- local root=piece(m,"HumanoidRootPart",at+Vector3.new(0,2,0),bodySize,bodyColor)
+NEW_VISUAL = """ -- GQ470_FB015_NEUTRAL_HORDE_8_SPECIES_MATTE_FACETS_REAL69_20261121
+ -- Keep all eight real species, original personality/motion/HP/speed/KO and
+ -- original THREE BaseParts per NPC. Only existing silhouettes/materials differ.
+ local sc=visual.scale
+ local root=piece(m,"HumanoidRootPart",at+Vector3.new(0,2*sc,0),Vector3.new(1.7,2.5,1.5)*sc,visual.color)
  root.CanTouch=false
- root.Material=if variant==1 then Enum.Material.Fabric else Enum.Material.Slate
- root.CastShadow=false
- local headSize=if variant==0 then Vector3.new(1.42,1.35,1.42)
-  elseif variant==1 then Vector3.new(1.09,1.09,1.09)
-  else Vector3.new(1.24,1.50,1.24)
- local headColor=if variant==0 then Color3.fromRGB(184,159,130)
-  elseif variant==1 then Color3.fromRGB(148,181,178)
-  else Color3.fromRGB(193,178,134)
- local head=piece(m,"Head",root.Position+Vector3.new(0,1.85,0),headSize,headColor)
- head.Shape=Enum.PartType.Ball;head.CanTouch=false;head.CastShadow=false
- -- Replaces the ONE former rectangular shield, never adds a fourth world Part.
- local shield=Instance.new("WedgePart")
- shield.Name="Shield";shield.Anchored=true;shield.CanCollide=false
- shield.Size=if variant==0 then Vector3.new(.77,1.78,1.54)
-  elseif variant==1 then Vector3.new(.35,1.26,1.12)
-  else Vector3.new(.53,2.06,1.20)
- local tilt=if variant==0 then -13 elseif variant==1 then 23 else -24
- shield.CFrame=CFrame.new(root.Position+Vector3.new(-1.1,-.1,-.25))
-  *CFrame.Angles(0,math.rad(tilt),0)
- shield.Color=if variant==0 then Color3.fromRGB(81,92,107)
-  elseif variant==1 then Color3.fromRGB(75,113,126)
-  else Color3.fromRGB(119,98,67)
- shield.Material=Enum.Material.Slate
- shield.CastShadow=false
- shield.Parent=m
+ root.Material=Enum.Material.Slate;root.CastShadow=false
+ local head=piece(m,"Head",root.Position+Vector3.new(0,1.85*sc,0),Vector3.new(1.3,1.3,1.3)*sc,visual.accent)
+ head.Shape=Enum.PartType.Ball;head.CanTouch=false
+ head.Material=Enum.Material.SmoothPlastic;head.CastShadow=false
+ -- Replace exactly the existing SpeciesAccent, not a fourth Part.
+ -- Keep a sphere-capable Part for boar/slime/acorn; wedge-face for five others.
+ local accent:BasePart
+ if speciesId=="ICE_SLIME" or speciesId=="ACORN_IMP" or speciesId=="SPIKE_BOAR" then
+  accent=piece(m,"SpeciesAccent",root.Position+Vector3.new(-1.1*sc,-.1*sc,-.25*sc),Vector3.new(.5,1.5,1.4)*sc,visual.accent)
+ else
+  local facet=Instance.new("WedgePart")
+  facet.Name="SpeciesAccent";facet.Anchored=true;facet.CanCollide=false
+  facet.Position=root.Position+Vector3.new(-1.1*sc,-.1*sc,-.25*sc)
+  facet.Size=Vector3.new(.5,1.5,1.4)*sc
+  facet.Color=visual.accent;facet.Parent=m
+  accent=facet
+ end
+ accent.Material=if speciesId=="SHY_WRAITH" then Enum.Material.Fabric else Enum.Material.Slate
+ accent.CastShadow=false
 """
 
 def demand(value: bool, reason: str) -> None:
@@ -82,81 +69,94 @@ def digest(data: bytes) -> str:
 
 def transform(source: str) -> str:
     demand(FEATURE not in source, "ALREADY_APPLIED")
-    if source.count(START) != 1 or source.count(END) != 1:
-        # On actual immutable official REAL69 only, surface minimal source
-        # anchors for remediation instead of guessing or replacing a new owner.
-        import re
-        functions = re.findall(r"(?:local\s+)?function\s+[A-Za-z0-9_.:]+\(", source)
-        print("GQ470_ACTUAL_SWARM_FUNCTIONS", functions[:65])
-        print("GQ470_ACTUAL_SWARM_VISUAL_LINES",
-              [s.strip()[:165] for s in source.splitlines()
-               if any(k in s for k in ("soldier", "Shield", "HumanoidRootPart",
-                                       "labelKo", "NameDisplayDistance", "NEUTRAL_HEALTH"))][:50])
-        if source.count("local function soldier(") == 1:
-            piece = source[source.index("local function soldier("):source.index("local function labelKo(")]
-            print("GQ470_ACTUAL_SOLDIER_BODY_BEGIN")
-            print(piece[:12000])
-            print("GQ470_ACTUAL_SOLDIER_BODY_END")
-        demand(False, "SOLDIER_SCOPE_OR_FUNCTION_MISSING")
+    demand(source.count(START) == 1 and source.count(END) == 1,
+           "EIGHT_SPECIES_SOLDIER_SCOPE_MISSING")
     lo, hi = source.index(START), source.index(END)
-    demand(lo < hi, "SOLDIER_SCOPE_ORDER")
+    demand(lo < hi, "SOLDIER_REACTION_ORDER")
     section = source[lo:hi]
-    demand(section.count(OLD_VISUAL) == 1, "EXACT_THREE_PART_ART_DRIFT")
+    demand(section.count(OLD_VISUAL) == 1, "EXACT_VISUAL_ANCHOR_DRIFT")
+    demand(section.count('local speciesId=SPECIES_IDS[(serial-1)%#SPECIES_IDS+1]') == 1
+           and 'NeutralFinisherPolicy.species(speciesId)' in section
+           and 'm:SetAttribute("EGGRUMBLE_NeutralSpecies",speciesId)' in section,
+           "EIGHT_SPECIES_SOURCE_AND_PERSONALITY")
+    for species in ("ICE_SLIME", "ACORN_IMP", "SPIKE_BOAR", "SHY_WRAITH",
+                    "BANNER_KNIGHT", "BABY_GOLEM", "SPARK_GOBLIN", "TINY_SHIELD"):
+        demand(species in section, "EIGHT_SPECIES_NOT_PRESERVED_" + species)
     demand('h.NameDisplayDistance=0;h.HealthDisplayDistance=16' in section,
-           "EXISTING_P0_NEAR_HP_NAME_POLICY_NOT_PRESERVED")
-    demand(section.count(" m.PrimaryPart=root") == 1 and
-           section.count(" h.MaxHealth=NEUTRAL_HEALTH") == 1 and
-           section.count(" return m") == 1, "NPC_CONTRACT_DRIFT")
+           "P0_NEAR_HP_NAME_POLICY_NOT_PRESERVED")
+    demand('m.PrimaryPart=root' in section and
+           'h.MaxHealth=NEUTRAL_HEALTH' in section and
+           'return m' in section, "NEUTRAL_GAMEPLAY_CONTRACT")
     changed = section.replace(OLD_VISUAL, NEW_VISUAL, 1)
     after = source[:lo] + changed + source[hi:]
     demand(after.replace(NEW_VISUAL, OLD_VISUAL, 1) == source,
-           "UNRELATED_SCRIPT_BYTES_CHANGED")
+           "UNRELATED_SOURCE_BYTES")
     demand(after.count(FEATURE) == 1 and
-           changed.count('Instance.new("WedgePart")') == 1 and
-           changed.count('piece(m,"HumanoidRootPart"') == 1 and
-           changed.count('piece(m,"Head"') == 1 and
-           changed.count('piece(m,"Shield"') == 0, "THREE_PART_BUDGET")
+           NEW_VISUAL.count('Instance.new("WedgePart")') == 1 and
+           NEW_VISUAL.count('piece(m,"HumanoidRootPart"') == 1 and
+           NEW_VISUAL.count('piece(m,"Head"') == 1 and
+           NEW_VISUAL.count('piece(m,"SpeciesAccent"') == 1 and
+           'local accent:BasePart' in NEW_VISUAL,
+           "THREE_PART_ACCURATE_SOURCE_COUNT")
     forbidden = ('RemoteEvent', 'DataStoreService', 'MarketplaceService',
                  ':TakeDamage(', 'task.spawn(', 'RunService.', 'CanCollide=true')
-    demand(not any(v in NEW_VISUAL for v in forbidden),
-           "AUTHORITY_OR_PERFORMANCE_SCOPE")
+    demand(not any(v in NEW_VISUAL for v in forbidden), "NO_NEW_AUTHORITY")
     return after
 
 def selftest() -> None:
-    # Actual original 3-Part visual source from #482, plus official P0 HUD LOD.
     example = ("--!strict\n" + START +
-       ' local m=Instance.new("Model")\n m.Parent=parent\n' + OLD_VISUAL +
-       ' m.PrimaryPart=root\n local h=Instance.new("Humanoid")\n' +
-       ' h.NameDisplayDistance=0;h.HealthDisplayDistance=16\n' +
-       ' h.MaxHealth=NEUTRAL_HEALTH;h.Health=NEUTRAL_HEALTH\n' +
-       ' return m\nend\n' + END + ' return nil\nend\n')
-    transformed = transform(example)
-    demand(transformed != example and
-           transformed.count("EGGRUMBLE_NeutralVisual") == 1 and
-           transformed.count("Instance.new(") == 3,
-           "POSITIVE_VISUAL_OUTPUT")
-    # Three actual coordinate bins must produce three archetypes.
-    bins = {(abs(int(x*.71//1)+int(z*1.29//1)*7)%3)
-            for x,z in ((0,0),(0,1),(3,0),(9,-2),(-3,10))}
-    demand(bins == {0,1,2}, "DETERMINISTIC_VARIANT_DIVERSITY")
-    mutants = (
-        transformed,
-        example.replace('piece(m,"Shield"', 'piece(m,"ExtraShield"'),
-        example.replace('h.HealthDisplayDistance=16', 'h.HealthDisplayDistance=64'),
-        example.replace(' m.PrimaryPart=root', ''),
-        example.replace(' h.MaxHealth=NEUTRAL_HEALTH', ''),
-        example.replace(' return m', ' return nil'),
-        example.replace(START, 'local function soldier(parent,at)\n'),
-        example + START + "end\n",
-    )
-    rejected = 0
-    for bad in mutants:
+       ' local m=Instance.new("Model")\n' +
+       ' local speciesId=SPECIES_IDS[(serial-1)%#SPECIES_IDS+1]\n' +
+       ' local profile=NeutralFinisherPolicy.species(speciesId)\n' +
+       ' m:SetAttribute("EGGRUMBLE_NeutralSpecies",speciesId)\n' +
+       ' local visual=SPECIES_VISUAL[speciesId]\n' +
+       OLD_VISUAL +
+       ' if speciesId=="ICE_SLIME" or speciesId=="ACORN_IMP" then\n'
+       '  root.Shape=Enum.PartType.Ball\n'
+       ' elseif speciesId=="SPIKE_BOAR" then\n'
+       '  accent.Shape=Enum.PartType.Ball\n'
+       ' elseif speciesId=="SHY_WRAITH" then\n'
+       '  root.Transparency=.34;head.Transparency=.24\n'
+       ' elseif speciesId=="BANNER_KNIGHT" then\n'
+       '  accent.Size=Vector3.new(.28,3.2,1.1)*sc\n'
+       ' elseif speciesId=="BABY_GOLEM" then\n'
+       '  head.Size=Vector3.new(1.7,1.5,1.55)*sc\n'
+       ' elseif speciesId=="SPARK_GOBLIN" then\n'
+       '  head.Shape=Enum.PartType.Ball\n'
+       ' elseif speciesId=="TINY_SHIELD" then\n'
+       '  accent.Size=Vector3.new(.55,1.8,1.7)*sc\n end\n'
+       ' m.PrimaryPart=root\n'
+       ' local h=Instance.new("Humanoid")\n'
+       ' h.NameDisplayDistance=0;h.HealthDisplayDistance=16\n'
+       ' h.MaxHealth=NEUTRAL_HEALTH;h.Health=NEUTRAL_HEALTH\n'
+       ' return m\nend\n' + END +
+       'local function playActualReaction(model:Model,cue:any)\n'
+       ' local accent=model:FindFirstChild("SpeciesAccent")\nend\n')
+    candidate = transform(example)
+    demand(candidate.replace(NEW_VISUAL, OLD_VISUAL, 1) == example
+           and 'WedgePart' in candidate
+           and 'SpeciesAccent' in candidate
+           and 'ICE_SLIME' in candidate
+           and 'TINY_SHIELD' in candidate
+           and candidate.count(FEATURE) == 1, "POSITIVE_EIGHT_PRESERVED")
+    corrupts = [
+      candidate, example.replace(' local speciesId=SPECIES_IDS[(serial-1)%#SPECIES_IDS+1]', ''),
+      example.replace('h.HealthDisplayDistance=16', 'h.HealthDisplayDistance=100'),
+      example.replace('m.PrimaryPart=root', ''),
+      example.replace(' h.MaxHealth=NEUTRAL_HEALTH', ''),
+      example.replace(' return m', ' return nil'),
+      example.replace(START, 'local function soldier(parent,at)\n'),
+      example.replace('elseif speciesId=="TINY_SHIELD"','elseif speciesId=="OTHER"'),
+      example.replace('local accent=piece(m,"SpeciesAccent"', 'local accent=piece(m,"DifferentAccent"'),
+    ]
+    failed = 0
+    for bad in corrupts:
         try:
             transform(bad)
         except (ValueError, AssertionError):
-            rejected += 1
-    demand(rejected == len(mutants), "NEGATIVE_MUTANTS_NOT_REJECTED")
-    print("GQ470_NEUTRAL_SHAPES_3_PARTS_THREE_VARIANTS_8_NEGATIVES_PASS")
+            failed += 1
+    demand(failed == len(corrupts), "NINE_MUTANTS_NOT_REJECTED")
+    print("GQ470_EIGHT_SPECIES_3PART_MATTE_WEDGE_NINE_NEGATIVES_PASS")
 
 def selected(root: Path) -> dict:
     result = project_scan(root, PROJECT)
@@ -217,7 +217,7 @@ def run(root: Path, author_head: str) -> None:
         "class": "ModuleScript", "old_sha256": digest(original),
         "new_sha256": digest(candidate), "selected_sources": 69,
         "other_source_bytes_exact": 68, "npc_parts_before": 3,
-        "npc_parts_after": 3, "added_world_parts": 0,
+        "npc_parts_after": 3, "added_world_parts": 0, "species_kept": 8,
         "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "matched_camera_png": "0/32", "android_15min": "NOT_TESTED",
         "kid_fun": "NOT_TESTED", "art_gate": "ART_NO_GO",
