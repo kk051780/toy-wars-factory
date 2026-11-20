@@ -15,6 +15,7 @@ on:
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
       - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
       - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
+      - 'quality_gameplay/gq470_bot_art_variants_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -48,6 +49,7 @@ on:
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
       - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
       - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
+      - 'quality_gameplay/gq470_bot_art_variants_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -1363,6 +1365,95 @@ jobs:
           else
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_HUD_PR_BASE_STALE; exit 1; }
+          fi
+      - name: "GQ470 FB015: real AI bot silhouettes 3 variants, exact source and ON/OFF69"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATCH=quality_gameplay/gq470_bot_art_variants_real69_20261120/patch_bot_art69.py
+          python3 -m py_compile "$PATCH"
+          python3 -B "$PATCH" --self-test
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,sys
+          root=pathlib.Path('artifacts/real69')
+          sys.path.insert(0,'quality_gameplay/gq470_bot_art_variants_real69_20261120')
+          from patch_bot_art69 import selected,TARGET,BASE_HASH
+          original=selected(root)
+          r=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert len(original)==len(r['source_hashes'])==69
+          assert r['build_head']==os.environ['GITHUB_SHA']
+          assert hashlib.sha256(original[TARGET].read_bytes()).hexdigest()==BASE_HASH
+          assert {k:hashlib.sha256(v.read_bytes()).hexdigest() for k,v in original.items()}==r['source_hashes']
+          assert (root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx').is_file()
+          print('GQ470_BOT_OFFICIAL_69_PARENT_SOURCE_FENCE_PASS')
+          PY
+          python3 -B "$PATCH" --base artifacts/real69 --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import hashlib,json,pathlib,subprocess,sys
+          root=pathlib.Path('artifacts/real69')
+          sys.path.insert(0,'quality_gameplay/gq470_bot_art_variants_real69_20261120')
+          from patch_bot_art69 import selected,TARGET,MARK
+          on,off=selected(root),selected(root/'off69_bot_art')
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          changed={k for k in on if on[k].read_bytes()!=off[k].read_bytes()}
+          assert changed=={TARGET},changed
+          expected='1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424'
+          assert hashlib.sha256(on[TARGET].read_bytes()).hexdigest()==expected
+          r=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert r['source_hashes']=={k:hashlib.sha256(v.read_bytes()).hexdigest() for k,v in on.items()}
+          assert r['gq470_bot_art_variants']['other_selected_routes_byte_exact']==68
+          assert r['gq470_bot_art_variants']['max_parts_per_bot']==7
+          assert not r['gq470_bot_art_variants']['owner_accepted']
+          assert MARK.encode() in on[TARGET].read_bytes()
+          for route in on:
+           for path in (on[route],off[route]):
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(path)],
+              check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_BOT_SOURCE_EXACT_1_OF_69_NATIVE_ON_OFF_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/off69_bot_art/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/OFF69_BOT_ART_REBUILT.rbxlx
+          cmp artifacts/real69/OFF69_BOT_ART_REBUILT.rbxlx artifacts/real69/off69_bot_art/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            --place artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,shutil,sys
+          root=pathlib.Path('artifacts/real69')
+          sys.path.insert(0,'quality_gameplay/gq470_bot_art_variants_real69_20261120')
+          from patch_bot_art69 import selected,TARGET
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          receipt_path=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(receipt_path.read_text())
+          meta=r['gq470_bot_art_variants']
+          meta['native_rojo_off69']='PASS_SOURCE_ONLY'
+          meta['studio']='NOT_TESTED'
+          meta['android']='NOT_TESTED'
+          meta['human_art']='NOT_TESTED'
+          meta['owner_accepted']=False
+          assert r['build_head']==os.environ['GITHUB_SHA']
+          r['private_place_bytes']=place.stat().st_size
+          r['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt_path.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          delivery=root/'delivery'
+          delivery.mkdir(exist_ok=True)
+          shutil.copy2(place,delivery/place.name)
+          shutil.copy2(receipt_path,delivery/receipt_path.name)
+          targetfile=selected(root)[TARGET].relative_to(root)
+          (delivery/targetfile).parent.mkdir(parents=True,exist_ok=True)
+          shutil.copy2(root/targetfile,delivery/targetfile)
+          assert len(list(delivery.glob('*.rbxlx')))==1
+          print('GQ470_BOT_ONLY_OFFICIAL_PLACE_BYTES',place.stat().st_size)
+          PY
+          tar -czf artifacts/real69/delivery/OFF69_BOT_ART_ROLLBACK.tar.gz -C artifacts/real69 off69_bot_art
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_BOT_FORMAL_HEAD_DRIFT; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_BOT_PR_BASE_STALE; exit 1; }
           fi
       - name: Final REAL69 69-route/17-family RC85+RC86 on REAL65 nonloss gate
         shell: bash
