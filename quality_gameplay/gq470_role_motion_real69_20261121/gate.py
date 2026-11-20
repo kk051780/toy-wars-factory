@@ -84,6 +84,14 @@ def compose(base,out):
       "rojo_on_off":"PENDING_CI","studio":"NOT_TESTED","android15":"NOT_TESTED",
       "human_before_after_screenshots":"0/32","art_gate":"NO_GO",
       "fun_gate":"NO_GO","owner_accepted":False,"formal_rc_adopted":False}
+    # Candidate receipt mirrors only the one changed real selected source.
+    # Immutable base receipt lives in OFF69_SOURCE_EXACT for bytewise rollback.
+    shutil.copy2(base/"REAL69_LEGACY_INTAKE_RECEIPT.json",off/"REAL69_LEGACY_INTAKE_RECEIPT.json")
+    receipt["source_hashes"][ROUTE]=NEW
+    receipt["gq470_role_motion"]={"feature":FEATURE,"original_sha256":BASE,"candidate_sha256":NEW,
+      "official_base":RC,"changed_one":ROUTE,"original_68_unchanged":True,
+      "gameplay_authority_modified":False,"studio":"NOT_TESTED","art_go":False}
+    (out/"REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
     (out/"ART_CHECK_REPORT_ROLE_MOTION.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     handoff=out/"B220_ONE_SOURCE_NOT_FORMAL"
     (handoff/"selected_sources").mkdir(parents=True)
