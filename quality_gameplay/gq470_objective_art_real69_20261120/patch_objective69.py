@@ -12,13 +12,13 @@ TARGET = 'ServerScriptService/EGGRUMBLE_EncounterReadabilityArt'
 PROJECT = 'EGGRUMBLE_REAL69.project.json'
 RECEIPT = 'REAL69_LEGACY_INTAKE_RECEIPT.json'
 EXPECTED_SHA = '899cc3a1fddcf53b31a163f7e406f3758e1b607b185fc1d1f27ce10952d1be97'
-FEATURE = 'GQ470_P0_OBJECTIVE_EGG_VAULT_SILHOUETTE_REAL69_20261120'
+FEATURE = 'GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120'
 OLD_EGG = ''' jewel(trim,egg,"GoldenCradle","Cylinder",Vector3.new(.16,4.35,4.35),
   CFrame.new(0,-1.5,0)*CFrame.Angles(0,0,math.rad(90)),gold,Enum.Material.Metal)
  jewel(trim,egg,"TopGem","Wedge",Vector3.new(1.1,.85,1.1),
   CFrame.new(0,1.54,0),jade,Enum.Material.Glass,.12)
 '''
-NEW_EGG = ''' -- GQ470_P0_OBJECTIVE_EGG_VAULT_SILHOUETTE_REAL69_20261120
+NEW_EGG = ''' -- GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120
  -- Keep two ornament Parts per egg (56 pieces max in 28-egg arena), no on-screen UI.
  -- Released eggs have a warm accent to distinguish the post-castle-loot phase.
  local isReleased = egg.Name:match("^ReleasedEgg_") ~= nil
@@ -28,26 +28,6 @@ NEW_EGG = ''' -- GQ470_P0_OBJECTIVE_EGG_VAULT_SILHOUETTE_REAL69_20261120
  jewel(trim,egg,"RaisedEggCrest","Wedge",Vector3.new(1.9,2.2,1.35),
   CFrame.new(0,1.85,0)*CFrame.Angles(0,math.rad(45),0),crestTint,Enum.Material.SmoothPlastic)
 '''
-OLD_VAULT = ''' jewel(art,part,"StationBadge","Cylinder",Vector3.new(.15,2.9,2.9),
-  CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
-  if isVault then gold else jade,Enum.Material.Metal)
- -- Distinguish enemy-vault theft from your own deposit through shape and color.
-'''
-NEW_VAULT = ''' -- One new noncolliding silhouette part per real objective station, rather than a GUI.
- -- Gold raised fortress crest = steal; green low receiving wing = deposit.
- jewel(art,part,"ObjectiveStationBase","Cylinder",Vector3.new(.15,3.15,3.15),
-  CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
-  if isVault then gold else jade,Enum.Material.Metal)
- if isVault then
-  jewel(art,part,"VaultFortressCrown","Wedge",Vector3.new(2.6,1.65,.7),
-   CFrame.new(0,part.Size.Y/2+2.1,0),gold,Enum.Material.Limestone)
- else
-  jewel(art,part,"DepositReceivingWing","Wedge",Vector3.new(2.8,.95,.75),
-   CFrame.new(0,part.Size.Y/2+1.65,0)*CFrame.Angles(0,math.pi,0),jade,Enum.Material.SmoothPlastic)
- end
- part.Destroying:Connect(function() marked[part]=nil end)
-'''
-
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -73,15 +53,14 @@ def selected(root: Path) -> dict[str, Path]:
 def transform(source: str) -> str:
     assert FEATURE not in source, 'RED_DOUBLE_APPLY'
     assert source.count(OLD_EGG) == 1, 'RED_EGG_ANCHOR'
-    assert source.count(OLD_VAULT) == 1, 'RED_VAULT_ANCHOR'
     assert 'if not RunService:IsStudio() then return end' in source, 'RED_STUDIO_FENCE'
     assert 'MAX_DECORATED_EGGS_PER_ARENA=28' in source, 'RED_EGG_BUDGET'
     assert 'p.CanCollide=false' in source and 'p.CanTouch=false' in source and 'p.CanQuery=false' in source, 'RED_VISUAL_PHYSICS'
     assert 'local function decorateEgg(egg:BasePart)' in source and 'local function decorateVault(part:BasePart)' in source, 'RED_OWNERS'
-    out = source.replace(OLD_EGG, NEW_EGG, 1).replace(OLD_VAULT, NEW_VAULT, 1)
+    out = source.replace(OLD_EGG, NEW_EGG, 1)
     assert out.count(FEATURE) == 1, 'RED_PATCH_MARKER'
-    assert 'BillboardGui' not in NEW_EGG + NEW_VAULT, 'RED_GUI'
-    assert NEW_EGG.count('jewel(') == 2 and NEW_VAULT.count('jewel(') == 3, 'RED_PART_BUDGET'
+    assert 'BillboardGui' not in NEW_EGG, 'RED_GUI'
+    assert NEW_EGG.count('jewel(') == 2, 'RED_EGG_PART_BUDGET'
     return out
 
 
@@ -93,11 +72,10 @@ p.CanTouch=false
 p.CanQuery=false
 local function decorateEgg(egg:BasePart) end
 local function decorateVault(part:BasePart) end
-''' + OLD_EGG + OLD_VAULT
+''' + OLD_EGG
     candidate = transform(source)
-    assert 'VaultFortressCrown' in candidate and 'DepositReceivingWing' in candidate
     assert 'isReleased' in candidate and 'RaisedEggCrest' in candidate
-    for bad in [candidate, source.replace(OLD_EGG,''), source.replace(OLD_VAULT,''),
+    for bad in [candidate, source.replace(OLD_EGG,''), source.replace('local function decorateEgg(egg:BasePart)','local function decorateNoEgg(egg:BasePart)'),
                 source.replace('p.CanCollide=false','p.CanCollide=true'),
                 source.replace('if not RunService:IsStudio() then return end', '')]:
         try:
@@ -137,7 +115,9 @@ def main(root: Path):
         'only_changed_selected_route': TARGET,
         'other_selected_routes_byte_exact': 68,
         'decorative_egg_parts_per_egg_old_new': [2,2],
-        'additional_vault_parts_per_station': 1,
+        'vault_deposit_source_untouched': True,
+        'scope_nonoverlap_with_pr_922': 'decorateEgg_only',
+        'additional_vault_parts_per_station': 0,
         'collision_changed': False, 'authority_changed': False,
         'reversible_off': 'off69_objective',
         'visual_evidence': 'NOT_TESTED', 'android_15min': 'NOT_TESTED',
