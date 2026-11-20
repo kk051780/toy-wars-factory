@@ -248,6 +248,21 @@ def verify_attestation(receipt: dict, before: dict[str, bytes],
                "ATTESTATION_SOURCE_META_" + str(s.pr))
 
 
+def verify_place_provenance(root: Path, receipt: dict) -> None:
+    """Do not accept a changed/stale Place after the pinned Rojo build."""
+    state = receipt.get("gq470_art6_composite", {}).get("native_rojo_off69")
+    demand(state in (None, "PASS_SOURCE_ONLY"), "ROJO_STATUS")
+    actual = (root / PLACE).read_bytes()
+    if state is None:
+        # Before the build the candidate still contains the immutable official Place.
+        demand(digest(actual) == BASE_PLACE_SHA256, "UNBUILT_PLACE_DRIFT")
+        return
+    demand(type(receipt.get("private_place_bytes")) is int and
+           receipt["private_place_bytes"] == len(actual), "PLACE_BYTES")
+    demand(receipt.get("private_place_sha256") == digest(actual), "PLACE_SHA256")
+    demand(digest(actual) != BASE_PLACE_SHA256, "PLACE_NOT_REBUILT")
+
+
 def verify_candidate(output: Path) -> None:
     receipt = json.loads((output / RECEIPT).read_text(encoding="utf-8"))
     # OFF is an independently pinned genuine official artifact, not arbitrary
@@ -268,6 +283,7 @@ def verify_candidate(output: Path) -> None:
         demand(receipt["source_hashes"][route] == digest(raw),
                "CANDIDATE_SOURCE_HASH")
     verify_attestation(receipt, before, after)
+    verify_place_provenance(output, receipt)
     demand((output / PROJECT).read_bytes() ==
            (output / OFF / PROJECT).read_bytes(), "CANDIDATE_PROJECT")
     print("GQ470_ART6_69_SOURCE_LOCK_6_DELTA_63_EXACT_ATTESTED_PASS")
@@ -351,7 +367,33 @@ def self_test() -> None:
         pass
     else:
         raise AssertionError("RED_ART6_ATTESTATION_META_MUTANT")
-    print("GQ470_ART6_16_MUTATION_NEGATIVES_PASS")
+    # The generated .rbxlx must remain bound to its receipt after Rojo.
+    with tempfile.TemporaryDirectory(prefix="gq470-art6-place-") as tmp:
+        root = Path(tmp)
+        built = b"ART6_candidate_Rojo_Place"
+        (root / PLACE).write_bytes(built)
+        place_receipt = {
+            "gq470_art6_composite": {"native_rojo_off69": "PASS_SOURCE_ONLY"},
+            "private_place_bytes": len(built),
+            "private_place_sha256": digest(built),
+        }
+        verify_place_provenance(root, place_receipt)
+        for kind in ("wrong_bytes", "wrong_sha", "fake_status", "missing_status"):
+            bad = copy.deepcopy(place_receipt)
+            if kind == "wrong_bytes":
+                bad["private_place_bytes"] += 1
+            elif kind == "wrong_sha":
+                bad["private_place_sha256"] = digest(b"forged")
+            elif kind == "fake_status":
+                bad["gq470_art6_composite"]["native_rojo_off69"] = "ART_PASS"
+            else:
+                bad["gq470_art6_composite"].pop("native_rojo_off69")
+            try:
+                verify_place_provenance(root, bad)
+            except ValueError:
+                continue
+            raise AssertionError("RED_ART6_PLACE_MUTANT_" + kind)
+    print("GQ470_ART6_20_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
