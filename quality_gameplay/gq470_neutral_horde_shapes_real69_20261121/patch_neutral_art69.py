@@ -92,6 +92,11 @@ def transform(source: str) -> str:
               [s.strip()[:165] for s in source.splitlines()
                if any(k in s for k in ("soldier", "Shield", "HumanoidRootPart",
                                        "labelKo", "NameDisplayDistance", "NEUTRAL_HEALTH"))][:50])
+        if source.count("local function soldier(") == 1:
+            piece = source[source.index("local function soldier("):source.index("local function labelKo(")]
+            print("GQ470_ACTUAL_SOLDIER_BODY_BEGIN")
+            print(piece[:12000])
+            print("GQ470_ACTUAL_SOLDIER_BODY_END")
         demand(False, "SOLDIER_SCOPE_OR_FUNCTION_MISSING")
     lo, hi = source.index(START), source.index(END)
     demand(lo < hi, "SOLDIER_SCOPE_ORDER")
