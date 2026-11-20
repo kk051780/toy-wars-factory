@@ -1,0 +1,46 @@
+{
+  "schema": "P0D_GQ804_CORE38_SINGLE_DAMAGE_AUTHOR_SOURCE_LOCK_V1",
+  "baseline_rc": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+  "profile": "GQ804_PREMERGE_REAL_SOURCE_38",
+  "baseline_profile": "eggrumble_v3_core36",
+  "baseline_scripts": 36,
+  "selected_scripts": 38,
+  "unchanged_original_script_count": 34,
+  "original_modified_scripts": [
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+    "ServerScriptService/EGGRUMBLE_BotActors"
+  ],
+  "new_scripts": [
+    "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy",
+    "ServerScriptService/EGGRUMBLE_CastleSiegeBridge"
+  ],
+  "sole_damage_authority": "ServerScriptService/EGGRUMBLE_CastleMatchRules",
+  "pinned_git_blobs": {
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": "fadc76186d2e0323ca3568ec67e762b89a666a09",
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/EGGRUMBLE_CastleSiegeBridge.luau": "0603f7999552fbc34f7497d2f564e1d955ff92e9",
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/compose_core38.py": "09cfd2b0720fd0cba2641fe8c5ce73dd705649b4",
+    "quality_gameplay/gq804_castle_siege_guardians_20261118/test_siege_guardian_native.luau": "a7b952b1ee7bfbc937cf9f63ec14d4a52014013d"
+  },
+  "fallback": "Use original36 Rojo project without GQ804 two modules or two existing-source siege insertions.",
+  "publishes": false,
+  "robux": false,
+  "formal_rc_write": false,
+  "guardian_ai_connected": false,
+  "engine_status": "NOT_TESTED",
+  "android_status": "NOT_TESTED",
+  "required_gates": [
+    "same-head native38",
+    "real Rojo38 Source+Class",
+    "OFF36 exact",
+    "OFF31 exact",
+    "sole writer #220 nonforce expected SHA CAS"
+  ],
+  "gate_anti_rush": {
+    "per_attacker_cooldown_seconds": 1,
+    "global_gate_damage_per_5_seconds": 72,
+    "initial_gate_hp": 180,
+    "server_time_only": true,
+    "rollback": "Restore original GQ804 policy blob c6491674a582b3c6a8db574b44ac9b30da94aa65; retain OFF36/OFF31 evidence.",
+    "rolling_window": true
+  }
+}
