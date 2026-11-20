@@ -48,8 +48,13 @@ NEW = """function Feedback.ko(world:Instance,target:Model,role:string):boolean
  -- Real server-confirmed KO only. Two solid asymmetrical 3D slash fins
  -- replace one expanding Neon sphere; no light, particles, Remote or audio.
  -- Original six-KOs-per-second budget applies to the whole two-fin burst.
+ -- Art orientation follows horizontal victim facing; no camera-facing HUD.
  if not world.Parent or not target.PrimaryPart or not budget(true) then return false end
- local at=target.PrimaryPart.Position
+ local pivot=target.PrimaryPart.CFrame
+ local at=pivot.Position
+ local flatLook=Vector3.new(pivot.LookVector.X,0,pivot.LookVector.Z)
+ if flatLook.Magnitude<.001 then flatLook=Vector3.new(0,0,-1) end
+ local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)
  local accent=colors[role] or colors.WARRIOR
  for side=-1,1,2 do
   local fin=Instance.new("WedgePart")
@@ -60,7 +65,7 @@ NEW = """function Feedback.ko(world:Instance,target:Model,role:string):boolean
   fin.CanQuery=false;fin.CastShadow=false
   fin.Color=if side==1 then accent else Color3.fromRGB(245,245,235)
   fin.Transparency=.12
-  fin.CFrame=CFrame.new(at+Vector3.new(side*.38,1.0,0))
+  fin.CFrame=burstFrame*CFrame.new(side*.38,1.0,0)
    *CFrame.Angles(0,math.rad(side*28),math.rad(side*37))
   fin.Parent=world
   local endAt=fin.CFrame*CFrame.new(side*.74,.7,0)
@@ -122,7 +127,9 @@ def self_test():
                'function Feedback.attacker() end\nfunction Feedback.clear() end\n')
     patched = transform(fixture)
     must('WedgePart' in patched and 'Enum.Material.Neon' not in patched and
-         "TweenService:Create" in patched and 'for side=-1,1,2 do' in patched, "SCULPT_PRESENT")
+         "TweenService:Create" in patched and 'for side=-1,1,2 do' in patched and
+         "local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)" in patched and
+         "flatLook.Magnitude<.001" in patched, "SCULPT_PRESENT")
     for mutant in (patched, fixture.replace(OLD, ""), fixture.replace("MAX_KO_BURSTS_PER_SEC=6", "MAX_KO_BURSTS_PER_SEC=60"),
                    fixture.replace('local Debris=game:GetService("Debris")', ""),
                    fixture.replace("function Feedback.attacker(", "function Attacker("),
@@ -168,6 +175,8 @@ def apply(root: Path, head: str):
         "ko_per_second_limit": 6,
         "new_parts_per_confirmed_ko": 2,
         "previous_parts_per_confirmed_ko": 1,
+        "yaw_follows_victim": True,
+        "zero_flat_look_guard": True,
         "new_remotes": 0,
         "new_gameplay_authority": False,
         "rollback": OFF,
