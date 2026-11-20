@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Source-locked, reversible REAL69 objective art repair (visual only)."""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+import shutil
+from pathlib import Path
+
+BASE = 'bb96b5bdb2d1cb668e928792541dfb96893e7f30'
+TARGET = 'ServerScriptService/EGGRUMBLE_EncounterReadabilityArt'
+PROJECT = 'EGGRUMBLE_REAL69.project.json'
+RECEIPT = 'REAL69_LEGACY_INTAKE_RECEIPT.json'
+EXPECTED_SHA = '9ec9982ed0d6e68457712e4e5dd10e7fb608c666adfe2e6904a209f5692a50c9'
+FEATURE = 'GQ470_P0_STATION_LOW_PART_REAL69_20261120'
+OLD_VAULT = ''' jewel(art,part,"StationBadge","Cylinder",Vector3.new(.15,2.9,2.9),
+  CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
+  if isVault then gold else jade,Enum.Material.Metal)
+ -- Distinguish enemy-vault theft from your own deposit through shape and color.
+'''
+NEW_VAULT = ''' -- One new noncolliding silhouette part per real objective station, rather than a GUI.
+ -- Gold raised fortress crest = steal; green low receiving wing = deposit.
+ jewel(art,part,"ObjectiveStationBase","Cylinder",Vector3.new(.15,3.15,3.15),
+  CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
+  if isVault then gold else jade,Enum.Material.Metal)
+ if isVault then
+  jewel(art,part,"VaultFortressCrown","Wedge",Vector3.new(2.6,1.65,.7),
+   CFrame.new(0,part.Size.Y/2+2.1,0),gold,Enum.Material.Limestone)
+ else
+  jewel(art,part,"DepositReceivingWing","Wedge",Vector3.new(2.8,.95,.75),
+   CFrame.new(0,part.Size.Y/2+1.65,0)*CFrame.Angles(0,math.pi,0),jade,Enum.Material.SmoothPlastic)
+ end
+ part.Destroying:Connect(function() marked[part]=nil end)
+'''
+
+def digest(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def selected(root: Path) -> dict[str, Path]:
+    project = json.loads((root / PROJECT).read_text())
+    output: dict[str, Path] = {}
+    def walk(node, route=''):
+        if not isinstance(node, dict):
+            return
+        if '$path' in node:
+            p = (root / node['$path']).resolve()
+            assert p.is_relative_to(root.resolve()) and p.is_file(), 'RED_PROJECT_PATH'
+            assert route not in output, 'RED_DUPLICATE_ROUTE'
+            output[route] = p
+        for k, child in node.items():
+            if not k.startswith('$'):
+                walk(child, route + '/' + k if route else k)
+    walk(project['tree'])
+    return output
+
+
+def transform(source: str) -> str:
+    assert FEATURE not in source, 'RED_DOUBLE_APPLY'
+    assert 'GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120' in source, 'RED_PRIOR_EGG_ADOPTION_LOST'
+    assert source.count(OLD_VAULT) == 1, 'RED_VAULT_ANCHOR'
+    assert 'if not RunService:IsStudio() then return end' in source, 'RED_STUDIO_FENCE'
+    assert 'MAX_DECORATED_EGGS_PER_ARENA=28' in source, 'RED_EGG_BUDGET'
+    assert all(k in source for k in ('p.CanCollide=false','p.CanTouch=false','p.CanQuery=false')), 'RED_VISUAL_PHYSICS'
+    assert 'local function decorateEgg(egg:BasePart)' in source and 'local function decorateVault(part:BasePart)' in source, 'RED_OWNERS'
+    out = source.replace(OLD_VAULT, NEW_VAULT, 1)
+    assert out.count('VaultFortressCrown') == 1 and out.count('DepositReceivingWing') == 1, 'RED_STATION_SPLIT'
+    assert NEW_VAULT.count('jewel(') == 3, 'RED_STATION_PART_BUDGET'
+    assert source.split('local function decorateVault(part:BasePart)',1)[0] == out.split('local function decorateVault(part:BasePart)',1)[0], 'RED_EGG_SOURCE_NONLOSS'
+    assert 'BillboardGui' not in NEW_VAULT, 'RED_NO_GUI'
+    return out
+
+
+def self_test():
+    source = ('''-- GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120
+if not RunService:IsStudio() then return end
+MAX_DECORATED_EGGS_PER_ARENA=28
+p.CanCollide=false
+p.CanTouch=false
+p.CanQuery=false
+local function decorateEgg(egg:BasePart) end
+local function decorateVault(part:BasePart)
+''' + OLD_VAULT + '\nend\n')
+    new = transform(source)
+    assert 'VaultFortressCrown' in new and 'DepositReceivingWing' in new
+    mutants = [new, source.replace(OLD_VAULT,''),
+               source.replace('GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120','NO_EGG_ADOPTION'),
+               source.replace('p.CanQuery=false','p.CanQuery=true'),
+               source.replace('if not RunService:IsStudio() then return end','')]
+    for mutant in mutants:
+        try:transform(mutant)
+        except AssertionError:continue
+        raise AssertionError('RED_MUTANT_ACCEPTED')
+    print('GQ470_STATION_ONLY_5_NEGATIVES_PASS')
+
+def main(root: Path):
+    paths = selected(root)
+    receipt_file = root / RECEIPT
+    receipt = json.loads(receipt_file.read_text())
+    assert len(paths) == 69 and len(receipt['source_hashes']) == 69, 'RED_69_SOURCE_COUNT'
+    assert receipt.get('build_head') == BASE and receipt.get('canonical_build') is True, 'RED_STALE_BASE'
+    assert receipt.get('source_hashes', {}).get(TARGET) == EXPECTED_SHA, 'RED_TARGET_RECEIPT'
+    for route, path in paths.items():
+        assert digest(path.read_bytes()) == receipt['source_hashes'][route], 'RED_SOURCE_HASH_'+route
+    original = paths[TARGET].read_bytes()
+    assert digest(original) == EXPECTED_SHA, 'RED_TARGET_BYTES'
+    modified = transform(original.decode('utf-8')).encode('utf-8')
+    assert modified != original
+    undo = root/'off69_station'
+    assert not undo.exists(), 'RED_ALREADY_PATCHED'
+    undo.mkdir()
+    shutil.copy2(root/PROJECT,undo/PROJECT)
+    shutil.copy2(receipt_file,undo/RECEIPT)
+    shutil.copy2(root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx',undo/'EGGRUMBLE_REAL69_PRIVATE.rbxlx')
+    shutil.copytree(root/'sources',undo/'sources')
+    paths[TARGET].write_bytes(modified)
+    changed = {route for route, path in paths.items() if path.read_bytes() != selected(undo)[route].read_bytes()}
+    assert changed == {TARGET}, 'RED_NONOVERLAP'
+    receipt['source_hashes'][TARGET] = digest(modified)
+    receipt['gq470_station_visual'] = {
+        'feature_id': FEATURE, 'official_base': BASE,
+        'only_changed_selected_route': TARGET,
+        'other_selected_routes_byte_exact': 68,
+        'decorative_egg_parts_per_egg_old_new': [2,2],
+        'existing_egg_source_preserved': True,
+        'origin_closed_pr_922': 'reuse low_part_variant',
+        'additional_vault_parts_per_station': 1,
+        'collision_changed': False, 'authority_changed': False,
+        'reversible_off': 'off69_station',
+        'visual_evidence': 'NOT_TESTED', 'android_15min': 'NOT_TESTED',
+        'owner_accepted': False
+    }
+    receipt_file.write_text(json.dumps(receipt,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+    assert selected(root).keys() == selected(undo).keys()
+    print('GQ470_STATION_REAL69_SOURCE_PATCH_READY', digest(modified))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--base', type=Path)
+    parser.add_argument('--self-test', action='store_true')
+    args = parser.parse_args()
+    if args.self_test:
+        self_test()
+    else:
+        assert args.base is not None, 'RED_MISSING_BASE'
+        main(args.base)
