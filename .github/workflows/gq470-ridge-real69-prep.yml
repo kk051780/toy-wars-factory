@@ -131,7 +131,24 @@ jobs:
           p.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --root "$ROOT" --out "$ROOT/RIDGE_LEGACY17_NONLOSS_AUDIT.json" --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,pathlib,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          root=pathlib.Path('/tmp/gq470-ridge')
+          now=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          old=project_scan(root/'off69_ridge','EGGRUMBLE_REAL69.project.json')
+          assert len(now)==len(old)==69
+          assert {k for k in now if now[k]['sha256']!=old[k]['sha256']}=={'ServerScriptService/EGGRUMBLE_FlagshipFieldArt'}
+          families=marker_check(now)
+          assert len(families)==17
+          output={'source_family_count':17,'source_marker_status':families,
+                  'same_official_source_except_one_ridge':True,
+                  'engine_studio_android_fun':'NOT_TESTED'}
+          (root/'RIDGE_LEGACY17_NONLOSS_AUDIT.json').write_text(json.dumps(output,ensure_ascii=False,indent=2)+'\n')
+          print('GQ470_RIDGE_17_FAMILY_MARKERS_WITH_EXACT_PRIOR_SOURCES_PASS')
+          PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/RIDGE_LEGACY48_FEATURE_AUDIT.json"
           echo GQ470_RIDGE_LEGACY17_48_QA_PASS_NOT_STUDIO
