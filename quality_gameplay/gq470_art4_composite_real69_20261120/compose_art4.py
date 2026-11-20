@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GQ470: compose four existing REAL69 art-source PREPs into ONE A-only candidate.
+"""GQ470: compose six existing REAL69 art-source PREPs into ONE A-only candidate.
 
 Never modifies the official RC. Each independently pinned patcher runs against
 the *same* immutable official REAL69 artifact, then only its selected-source
@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
-OFF = "OFF69_ART4_ORIGINAL"
+OFF = "OFF69_ART6_ORIGINAL"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
@@ -35,6 +35,8 @@ class Slice:
     target: str
     metadata: str
     head_flag: bool = False
+    candidate_path: str = ""
+    candidate_blob: str = ""
 
 SLICES = (
     Slice(924, "ea2882ae8c703bd987f2834ccb131959db34ffe2",
@@ -55,6 +57,19 @@ SLICES = (
           "31cf788512299677a6024fc6f62e9da9aecf6cbe",
           "ServerScriptService/EGGRUMBLE_ImpactFeedback",
           "gq470_ko_slashed_confirmed", True),
+
+    Slice(930, "a721e7acbd78b6232bf1da39ab29e6e0df442f9b",
+          "quality_gameplay/gq470_stonegiant_silhouette_real69_20261120/patch_stone_giant69.py",
+          "a040fa3e031930fae7304e404235bb79c8dd219c",
+          "ServerScriptService/EGGRUMBLE_NeutralStoneGiant",
+          "gq470_stone_giant_silhouette", True),
+    Slice(929, "4255940b975bfb8481c964838f494ee08f80b753",
+          "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py",
+          "2c2fe3bd14c70954a58e74e9c73bec8d6a12f0b7",
+          "ServerScriptService/EGGRUMBLE_WeaponSilhouettes",
+          "gq470_fb015_weapon_sculpt", False,
+          "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau",
+          "e3392e031795b786311d57bf8fca05a931246260"),
 )
 
 def digest(data: bytes) -> str:
@@ -62,7 +77,7 @@ def digest(data: bytes) -> str:
 
 def demand(test: bool, reason: str) -> None:
     if not test:
-        raise ValueError("RED_ART4_COMPOSITE_" + reason)
+        raise ValueError("RED_ART6_COMPOSITE_" + reason)
 
 def selected(root: Path) -> dict[str, Path]:
     data = json.loads((root / PROJECT).read_text(encoding="utf-8"))
@@ -127,12 +142,17 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
     for s in SLICES:
         patcher = patchers / Path(s.path).name
         demand(patcher.is_file() and not patcher.is_symlink(), "PATCHER_MISSING")
-        with tempfile.TemporaryDirectory(prefix="gq470-art4-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="gq470-art6-") as temporary:
             stage = Path(temporary) / "candidate"
             shutil.copytree(formal, stage, symlinks=False)
             command = [sys.executable, str(patcher), "--base", str(stage)]
             if s.head_flag:
                 command += ["--head", BASE]
+            if s.candidate_path:
+                candidate = patchers / Path(s.candidate_path).name
+                demand(candidate.is_file() and not candidate.is_symlink(),
+                       "PINNED_CANDIDATE_MISSING")
+                command += ["--candidate", str(candidate)]
             subprocess.run(command, check=True)
             altered = data_map(stage)
             changed_routes(originals, altered, {s.target})
@@ -168,8 +188,8 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
 
     # Keep formal BUILD identity distinct: this receipt is not an official release.
     receipt["canonical_build"] = False
-    receipt["build_head"] = "A_PREP_ART4_FROM_" + BASE
-    receipt["gq470_art4_composite"] = {
+    receipt["build_head"] = "A_PREP_ART6_FROM_" + BASE
+    receipt["gq470_art6_composite"] = {
         "source_only": True, "formal_parent": BASE,
         "formal_rc_unchanged": True, "candidate_only": True,
         "selected_sources_total": ROUTES,
@@ -185,12 +205,12 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
     (output / RECEIPT).write_text(
         json.dumps(receipt, sort_keys=True, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8")
-    print("GQ470_ART4_4_SOURCES_COMPOSED_65_EXACT_OFF69_PASS")
+    print("GQ470_ART6_6_SOURCES_COMPOSED_63_EXACT_OFF69_PASS")
 
 def verify_attestation(receipt: dict, before: dict[str, bytes],
                        after: dict[str, bytes]) -> None:
     """Do not trust self-consistent candidate SHA claims without pinned provenance."""
-    info = receipt.get("gq470_art4_composite")
+    info = receipt.get("gq470_art6_composite")
     demand(isinstance(info, dict), "ATTESTATION_MISSING")
     expected_flags = {
         "source_only": True, "formal_parent": BASE,
@@ -232,7 +252,7 @@ def verify_candidate(output: Path) -> None:
     after = data_map(output)
     changed_routes(before, after, {s.target for s in SLICES})
     demand(receipt.get("canonical_build") is False and
-           receipt.get("build_head") == "A_PREP_ART4_FROM_" + BASE and
+           receipt.get("build_head") == "A_PREP_ART6_FROM_" + BASE and
            receipt.get("official_branch") == "rc/p0d-s1-kids-rc01",
            "MISREPRESENTED_FORMAL_OR_OWNER")
     demand(receipt.get("selected_source_count") == ROUTES and
@@ -246,12 +266,12 @@ def verify_candidate(output: Path) -> None:
     verify_attestation(receipt, before, after)
     demand((output / PROJECT).read_bytes() ==
            (output / OFF / PROJECT).read_bytes(), "CANDIDATE_PROJECT")
-    print("GQ470_ART4_69_SOURCE_LOCK_4_DELTA_65_EXACT_ATTESTED_PASS")
+    print("GQ470_ART6_69_SOURCE_LOCK_6_DELTA_63_EXACT_ATTESTED_PASS")
 
 def self_test() -> None:
     original = {"r" + str(i): b"A" for i in range(ROUTES)}
     altered = dict(original)
-    targets = {"r1", "r2", "r3", "r4"}
+    targets = {"r1", "r2", "r3", "r4", "r7", "r8"}
     for name in targets:
         altered[name] = b"B"
     changed_routes(original, altered, targets)
@@ -268,8 +288,8 @@ def self_test() -> None:
             changed_routes(original, candidate, claimed)
         except ValueError:
             continue
-        raise AssertionError("RED_ART4_MUTANT_ACCEPTED_" + str(index))
-    demand(len({s.target for s in SLICES}) == 4, "DISJOINT_SLICES")
+        raise AssertionError("RED_ART6_MUTANT_ACCEPTED_" + str(index))
+    demand(len({s.target for s in SLICES}) == 6, "DISJOINT_SLICES")
     source_before = {s.target: b"A" for s in SLICES}
     source_after = {s.target: b"B" for s in SLICES}
     info = {
@@ -289,7 +309,7 @@ def self_test() -> None:
             for s in SLICES
         ],
     }
-    valid = {"gq470_art4_composite": info}
+    valid = {"gq470_art6_composite": info}
     valid.update({s.metadata: {"owner_accepted": False} for s in SLICES})
     verify_attestation(valid, source_before, source_after)
     cases = (
@@ -302,20 +322,20 @@ def self_test() -> None:
     )
     for field, value in cases:
         mutant = copy.deepcopy(valid)
-        mutant["gq470_art4_composite"][field] = value
+        mutant["gq470_art6_composite"][field] = value
         try:
             verify_attestation(mutant, source_before, source_after)
         except ValueError:
             continue
-        raise AssertionError("RED_ART4_ATTESTATION_MUTANT_" + field)
+        raise AssertionError("RED_ART6_ATTESTATION_MUTANT_" + field)
     for mutation in ("pinned_pr_head", "after_sha256"):
         mutant = copy.deepcopy(valid)
-        mutant["gq470_art4_composite"]["pinned_inputs"][0][mutation] = "FAKE"
+        mutant["gq470_art6_composite"]["pinned_inputs"][0][mutation] = "FAKE"
         try:
             verify_attestation(mutant, source_before, source_after)
         except ValueError:
             continue
-        raise AssertionError("RED_ART4_ATTESTATION_PIN_MUTANT_" + mutation)
+        raise AssertionError("RED_ART6_ATTESTATION_PIN_MUTANT_" + mutation)
     mutant = copy.deepcopy(valid)
     mutant[SLICES[0].metadata]["owner_accepted"] = True
     try:
@@ -323,8 +343,8 @@ def self_test() -> None:
     except ValueError:
         pass
     else:
-        raise AssertionError("RED_ART4_ATTESTATION_META_MUTANT")
-    print("GQ470_ART4_15_MUTATION_NEGATIVES_PASS")
+        raise AssertionError("RED_ART6_ATTESTATION_META_MUTANT")
+    print("GQ470_ART6_15_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -337,7 +357,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.manifest:
         for s in SLICES:
-            print(f"{s.pr}\t{s.head}\t{s.path}\t{s.blob}")
+            print(f"{s.pr}\t{s.head}\t{s.path}\t{s.blob}\t{s.candidate_path or chr(45)}\t{s.candidate_blob or chr(45)}")
     elif args.self_test:
         self_test()
     elif args.verify is not None:
