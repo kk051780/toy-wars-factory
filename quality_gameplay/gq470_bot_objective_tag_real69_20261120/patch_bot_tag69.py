@@ -22,7 +22,7 @@ EDITS=(
  (' text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=true',
   ' text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=false'),
  (' text.BackgroundColor3=Color3.fromRGB(20,30,44);text.BackgroundTransparency=.25',
-  ' text.BackgroundTransparency=1'),
+  ' text.BackgroundTransparency=1;text.TextStrokeTransparency=.45;text.TextStrokeColor3=Color3.fromRGB(5,12,20)'),
  (' text.Text=id.."\\n出陣";text.Parent=label',
   ' text.Text=(if team=="RED" then "赤軍" elseif team=="BLUE" then "青軍" else "AI");text.Parent=label'),
  (' hum.Name="Humanoid";hum.RequiresNeck=false;hum.MaxHealth=100;hum.Health=100',
@@ -58,6 +58,8 @@ def patch(src:str)->str:
  need(src.count(MARK)==1 and "label.MaxDistance=22" in src,"NEAR_ONLY")
  need("ui.Text=id.." not in src and 'text.Text=id.."\\n' not in src,"NO_INTERNAL_IDS")
  need("NameDisplayDistance=0;hum.HealthDisplayDistance=18" in src,"NAME_HEALTH_BUDGET")
+ need("text.TextStrokeTransparency=.45" in src and
+      "text.TextStrokeColor3=Color3.fromRGB(5,12,20)" in src,"TRANSPARENT_TAG_TEXT_EDGE")
  need("RemoteEvent" not in "".join(y for _,y in EDITS),"NO_NEW_AUTHORITY")
  return src
 
@@ -66,7 +68,8 @@ def selftest()->None:
  for before,_ in EDITS: original+=before+"\n"
  modified=patch(original)
  need("label.Size=UDim2.fromOffset(104,24)" in modified,"SIZE")
- need("ui.Text=(if me.team" in modified,"DYNAMIC_TEAM_AND_EGG")
+ need("ui.Text=(if me.team" in modified and
+      "text.TextStrokeTransparency=.45" in modified,"DYNAMIC_TEAM_AND_EGG_TEXT_EDGE")
  for broken in (modified,original.replace(EDITS[0][0],""),
                 original.replace(EDITS[-1][0],""),
                 original.replace("Router.navigate","ROUTER_REMOVED"),
@@ -100,6 +103,7 @@ def apply(root:Path)->None:
   "original_source_sha256":ORIGINAL_SHA,"changed_source_sha256":digest(new),
   "other_selected_routes_byte_exact":68,"source_count":69,
   "tag_pixels":[104,24],"tag_max_studs":22,"near_hp_studs":18,
+  "transparent_text_edge_stroke_opacity":0.45,"text_edge_rgb":[5,12,20],
   "new_gameplay_authority":False,"extra_ui_instances":0,
   "rollback":"off69_bot_tag","studio":"NOT_TESTED","android":"NOT_TESTED",
   "human_art":"NOT_TESTED","owner_accepted":False}
