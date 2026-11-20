@@ -126,6 +126,7 @@ def main(root: Path):
     undo.mkdir()
     shutil.copy2(root/PROJECT,undo/PROJECT)
     shutil.copy2(receipt_file,undo/RECEIPT)
+    shutil.copy2(root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx',undo/'EGGRUMBLE_REAL69_PRIVATE.rbxlx')
     shutil.copytree(root/'sources',undo/'sources')
     paths[TARGET].write_bytes(modified)
     changed = {route for route, path in paths.items() if path.read_bytes() != selected(undo)[route].read_bytes()}
