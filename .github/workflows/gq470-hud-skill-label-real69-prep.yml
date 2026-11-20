@@ -111,7 +111,26 @@ jobs:
           print('HUD_ACTUAL_PRIVATE_PLACE_BYTES',p.stat().st_size)
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --root "$ROOT" --out "$ROOT/delivery/REAL69_LEGACY17_NONLOSS_AUDIT.json" --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,os,pathlib,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120')
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from verify_real69 import marker_check
+          root=pathlib.Path('/tmp/gq470-hud')
+          after=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          before=project_scan(root/'off69_hud','EGGRUMBLE_REAL69.project.json')
+          target='StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime'
+          assert len(after)==len(before)==69 and set(after)==set(before)
+          assert len(marker_check(after))==len(marker_check(before))==17
+          assert {k for k in after if after[k]['sha256'] != before[k]['sha256']}=={target}
+          report={'selected_scripts':69,'legacy_families':17,'only_modified_source':target,
+                  'other_sources_byte_exact':68,'studio':'NOT_TESTED',
+                  'candidate_head':os.environ['GITHUB_SHA']}
+          (root/'delivery'/'REAL69_LEGACY17_NONLOSS_AUDIT.json').write_text(
+             json.dumps(report,ensure_ascii=False,sort_keys=True,indent=2)+'\\n')
+          print('GQ470_HUD_SOURCE_MARKER_17_FAMILY_68_EXACT_PASS')
+          PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/delivery/REAL69_HUD_LEGACY48_AUDIT.json"
           test "$(find "$ROOT/delivery" -maxdepth 1 -name '*.rbxlx' | wc -l)" -eq 1
