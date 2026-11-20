@@ -1,0 +1,310 @@
+name: GQ470 REAL69 twin NPC silhouette A source QA
+on:
+  push:
+    branches:
+      - feature/gq470-twin-npc-silhouettes-real69-20261121
+  pull_request:
+    paths:
+      - "quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/**"
+      - ".github/workflows/gq470-twin-npc-silhouettes-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-fixture-negative-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Python patch script
+        run: python3 -m py_compile quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py
+      - name: Run authored source patch and negative mutation rejection
+        run: |
+          python3 quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py \
+            --fixture quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/EGGRUMBLE_LegacyTwinBiomes.server.luau \
+            --output "$RUNNER_TEMP/twin_npc_candidate.luau" \
+            --report "$RUNNER_TEMP/qa.json"
+      - name: Fail closed on missing visual integrity or false engine claims
+        run: |
+          python3 - "$RUNNER_TEMP/qa.json" "$RUNNER_TEMP/twin_npc_candidate.luau" <<'PY'
+          import json, pathlib, sys
+          report=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          source=pathlib.Path(sys.argv[2]).read_text()
+          assert report["mutations_rejected"] >= 9
+          assert report["formal_source_gate"] == "FIXTURE_ONLY_NOT_FORMAL"
+          assert report["native_rojo_off69"] == "NOT_TESTED"
+          assert report["studio_android_human_art_owner"] == "NOT_TESTED"
+          assert source.count("ArtSilhouette") == 1
+          assert source.count('Instance.new("Part")') == 2
+          assert 'prompt.Parent = body' in source
+          assert 'table.insert(animate,{model=npc' in source
+          assert 'Enum.Material.Neon,false,npc)' not in source
+          print("GQ470_TWIN_NPC_SOURCE_FIXTURE_NEGATIVE_PASS_NOT_FORMAL")
+          PY
+
+  exact-official-69-source-qa:
+    needs: source-fixture-negative-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      GH_TOKEN: ${{ github.token }}
+      A_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify official immutable parent and download the real 69-source artifact
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p "$RUNNER_TEMP/twin69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
+            --dir "$RUNNER_TEMP/twin69"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          r=json.loads((root/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          selected=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          assert r["build_head"]=="e80973c354f14a0d0088577f3cc1a875454f0f8f"
+          assert r["selected_source_count"]==len(selected)==69
+          assert r["source_hashes"]=={k:v["sha256"] for k,v in selected.items()}
+          assert r["source_classes"]=={k:v["class"] for k,v in selected.items()}
+          assert selected["ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"]["sha256"]=="c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+          assert (root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").stat().st_size==798390
+          print("OFFICIAL_REAL69_69_SOURCES_SHA_CLASS_ROUTE_AND_RECEIPT_PASS")
+          PY
+      - name: Generate source-exact 1/69 candidate, 9 mutation negatives
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/twin69"
+          SCRIPT=quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py
+          mkdir -p "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/selected_sources/ServerScriptService"
+          python3 -B "$SCRIPT" --source "$ROOT/sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau" \
+            --output "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/selected_sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau" \
+            --report "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/QA_SOURCE_EXACT.json"
+          python3 - <<'PY'
+          import hashlib,json,os,shutil,sys
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          packet=Path(os.environ["RUNNER_TEMP"])/"B220_TWIN_NPC_SOURCE_ONLY"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          old=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          target="ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+          newfile=packet/"selected_sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau"
+          assert len(old)==69 and old[target]["class"]=="Script"
+          q=json.loads((packet/"QA_SOURCE_EXACT.json").read_text())
+          assert q["formal_source_gate"]=="EXACT_FORMAL_SOURCE" and q["mutations_rejected"]==9
+          assert q["candidate_sha256"]==hashlib.sha256(newfile.read_bytes()).hexdigest()
+          assert q["source_sha256"]==old[target]["sha256"]
+          assert newfile.read_bytes()!=Path(root/old[target]["path"]).read_bytes()
+          original=Path(root/old[target]["path"])
+          shutil.copy2(original,root/"TWIN_NPC_OFF69_ORIGINAL_SOURCE.luau")
+          original.write_bytes(newfile.read_bytes())
+          on=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          assert len(on)==69 and set(on)==set(old)
+          assert {k for k in on if on[k]["sha256"]!=old[k]["sha256"]}=={target}
+          assert all(on[k]["class"]==old[k]["class"] and on[k]["path"]==old[k]["path"] for k in on)
+          r=json.loads((root/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          r["source_hashes"][target]=on[target]["sha256"]
+          r["gq470_twin_npc_silhouettes"]={"feature_id":q["feature_id"],
+              "formal_parent":"e80973c354f14a0d0088577f3cc1a875454f0f8f",
+              "route":target,"old_sha":old[target]["sha256"],
+              "new_sha":on[target]["sha256"],"unchanged_selected_sources":68,
+              "extra_parts":0,"added_game_authority":False,
+              "studio_android_human_art":"NOT_TESTED","owner_accepted":False}
+          (root/"REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(json.dumps(r,indent=2,ensure_ascii=False)+"\n")
+          manifest={"feature_id":q["feature_id"],"parent_rc_head":r["build_head"],
+              "candidate_head":os.environ["A_HEAD"],
+              "source_class":"Script","selected_route":target,
+              "old_source_sha256":old[target]["sha256"],
+              "new_source_sha256":on[target]["sha256"],"selected_source_count":69,
+              "unchanged_selected_source_count":68,"rollback":"ORIGINAL_SOURCE_AND_OFFICIAL_PLACE",
+              "never_whole_pr_merge":True,"admission":"B220_AUTHENTICATED_CAS_REQUIRED",
+              "studio":"NOT_TESTED","android":"NOT_TESTED","human_art":"NOT_TESTED","owner_accepted":False}
+          (packet/"SOURCE_SELECT_MANIFEST.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
+          print("REAL69_EXACT_CHANGED_ONE_OF_69_OTHERS_68_BYTE_EXACT_PASS")
+          PY
+      - name: Re-audit original 48 RC85/86 feature flags against candidate 69 source
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base "$RUNNER_TEMP/twin69" \
+            --report "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/REAL69_48FLAG_TRUTH.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"B220_TWIN_NPC_SOURCE_ONLY/REAL69_48FLAG_TRUTH.json"
+          audit=json.loads(p.read_text())
+          assert audit["source_count"]==69 and audit["original_legacy_flags"]==48
+          assert audit["flag_inventory_verified"] is True
+          assert audit["all_48_semantic_parity"]=="NOT_PROVEN"
+          assert sum(audit["summary"].values())==48
+          print("REAL69_CANDIDATE_LEGACY48_TRACE_PASS_NOT_SEMANTIC_ENGINE")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_pinned_luau
+          persist-credentials: false
+      - name: Native compile all actual ON69 and OFF69 sources
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_pinned_luau -B /tmp/gq470-twin-npc-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-twin-npc-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sources=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          assert len(sources)==69
+          for route,info in sources.items():
+              subprocess.run(["/tmp/gq470-twin-npc-luau/luau-compile","--text",str(root/info["path"])],
+                             check=True,stdout=subprocess.DEVNULL)
+          original=root/"TWIN_NPC_OFF69_ORIGINAL_SOURCE.luau"
+          subprocess.run(["/tmp/gq470-twin-npc-luau/luau-compile","--text",str(original)],
+                         check=True,stdout=subprocess.DEVNULL)
+          print("REAL69_NATIVE_LUAU_ON69_OFF69_PASS")
+          PY
+      - name: Pinned Rojo actual Place ON/OFF, 17-family, 48 source truth and rollback bytes
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-twin-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-twin-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-twin-rojo.zip") as z:
+              names=[s for s in z.namelist() if s.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq470-twin-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          ROOT="$RUNNER_TEMP/twin69"
+          /tmp/gq470-twin-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import os,sys
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          old=root/"TWIN_NPC_OFF69_ORIGINAL_SOURCE.luau"
+          target=root/"sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau"
+          candidate=target.read_bytes()
+          target.write_bytes(old.read_bytes())
+          print("OFF69 source restored for inverse test")
+          PY
+          /tmp/gq470-twin-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx
+          cmp /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 - <<'PY'
+          import json,os,sys,hashlib
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          packet=Path(os.environ["RUNNER_TEMP"])/"B220_TWIN_NPC_SOURCE_ONLY"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120")
+          from verify_real69 import marker_check
+          src=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          assert len(src)==69 and len(marker_check(src))==17
+          original=json.loads((root/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          target="ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+          assert src[target]["sha256"]==original["gq470_twin_npc_silhouettes"]["old_sha"]
+          assert (root/"RC85_RC86_REAL69_ALL48_FEATURE_TRUTH.json").is_file()
+          candidate=(packet/"selected_sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau")
+          assert original["gq470_twin_npc_silhouettes"]["new_sha"]==hashlib.sha256(candidate.read_bytes()).hexdigest()
+          on=Path("/tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx")
+          off=Path("/tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx")
+          assert on.stat().st_size>0 and off.stat().st_size==798390
+          manifest=json.loads((packet/"SOURCE_SELECT_MANIFEST.json").read_text())
+          manifest["candidate_place_bytes"]=on.stat().st_size
+          manifest["candidate_place_sha256"]=hashlib.sha256(on.read_bytes()).hexdigest()
+          manifest["off69_original_place_byte_exact"]=True
+          manifest["native_69"]="PASS_SOURCE_ONLY"
+          manifest["rojo_on_off_69"]="PASS_SOURCE_ONLY"
+          manifest["legacy17"]="PASS_SOURCE_ONLY"
+          manifest["legacy48_inventory_file"]="PRESENT_NOT_SEMANTIC_ENGINE_PROOF"
+          (packet/"SOURCE_SELECT_MANIFEST.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
+          print("REAL69_TWIN_NPC_NATIVE_ROJO_ON_OFF69_ORIGINAL_PLACE_EXACT_PASS_NOT_STUDIO")
+          PY
+      - name: Full Rojo XML instance-tree parity except one verified script source
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          original=(root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").read_bytes()
+          candidate=Path("/tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx").read_bytes()
+          inverse=Path("/tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx").read_bytes()
+          assert inverse==original, "OFF69_PLACE_NOT_EXACT"
+          before=ET.fromstring(original);after=ET.fromstring(candidate)
+          def node(tree):
+              matches=[]
+              for item in tree.iter("Item"):
+                  props=item.find("Properties")
+                  if props is None: continue
+                  name=props.find('string[@name="Name"]')
+                  if name is not None and name.text=="EGGRUMBLE_LegacyTwinBiomes":
+                      matches.append((item,props.find('string[@name="Source"]')))
+              assert len(matches)==1 and matches[0][0].attrib["class"]=="Script"
+              assert matches[0][1] is not None
+              return matches[0][1]
+          old_src=node(before);new_src=node(after)
+          expected_old="c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+          expected_new="2e4b398927873a51203115feda60027c0720b847f3f5f2dd1f5189c1a161a8d6"
+          assert hashlib.sha256(old_src.text.encode()).hexdigest()==expected_old
+          assert hashlib.sha256(new_src.text.encode()).hexdigest()==expected_new
+          assert sum(1 for _ in before.iter("Item"))==sum(1 for _ in after.iter("Item"))==75
+          new_src.text=old_src.text
+          assert ET.tostring(before)==ET.tostring(after), "NON_SOURCE_PLACE_DRIFT"
+          # Ensure regression guard actually catches an independent instance insertion.
+          test=ET.fromstring(candidate)
+          ET.SubElement(test,"Item",{"class":"Part","referent":"unexpected"})
+          assert ET.tostring(before)!=ET.tostring(test), "NEGATIVE_PART_INSERTION_UNDETECTED"
+          print("REAL69_ROJO_FULL_XML_STRUCTURE_EXACT_EXCEPT_SINGLE_VERIFIED_SOURCE_PASS")
+          PY
+      - name: Strict B220 source-only packet and 14 forged manifest rejection tests
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/verify_b_packet.py \
+            --root "$RUNNER_TEMP/twin69" \
+            --packet "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY" \
+            --on-place /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx \
+            --off-place /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx \
+            --expected-head "$A_HEAD"
+      - name: Real69 ART420 source-only report, 32 missing screenshot slots and negatives
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/art_gate_twin_npc.py \
+            --old-place "$RUNNER_TEMP/twin69/EGGRUMBLE_REAL69_PRIVATE.rbxlx" \
+            --new-place /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx \
+            --evidence-template art_quality/EVIDENCE_TEMPLATE.json \
+            --candidate-head "$A_HEAD" \
+            --out "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/ART_CHECK_REPORT.json"
+      - name: Verify archived B220 packet including ART report is self-authenticating
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/verify_b_packet.py \
+            --root "$RUNNER_TEMP/twin69" \
+            --packet "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY" \
+            --on-place /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx \
+            --off-place /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx \
+            --expected-head "$A_HEAD"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-TWIN-NPC-REAL69-SOURCE-ONLY-B220-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/B220_TWIN_NPC_SOURCE_ONLY/**
+            /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx
+            /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx
+          if-no-files-found: error
+          retention-days: 7
