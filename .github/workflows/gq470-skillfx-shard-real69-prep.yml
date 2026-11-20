@@ -128,27 +128,20 @@ jobs:
           r.write_text(json.dumps(v,sort_keys=True,indent=2)+"\n")
           print("GQ470_SKILLFX_PRIVATE_CANDIDATE_PLACE_BYTES",p.stat().st_size)
           PY
-      - name: One actual selected source candidate B handoff, no RC merge
+      - name: B220 exact two-file selected source and manifest, 3 forged-packet negatives
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import sys,hashlib,json
-          from pathlib import Path
-          sys.path.insert(0,"quality_gameplay/gq470_skillfx_shard_real69_20261121")
-          from patch_skillfx69 import selected,ROUTE,BASE,FEATURE
-          root=Path("/tmp/gq470-skillfx")
-          source=selected(root)[ROUTE].read_bytes()
-          row={"feature_id":FEATURE,"source_route":ROUTE,"base_rc":BASE,
-               "candidate_head":"${{ github.event.pull_request.head.sha || github.sha }}",
-               "selected_source_sha256":hashlib.sha256(source).hexdigest(),
-               "source_select_only":True,"formal_rc_adopted":False,
-               "studio_art_fun":"NOT_TESTED",
-               "official_b_writer":"#220 authenticated fresh nonforce CAS required"}
-          (root/"B220_SKILLFX_SOURCE_ONLY_NOT_FORMAL.json").write_text(
-               json.dumps(row,sort_keys=True,indent=2)+"\n")
-          print("GQ470_SKILLFX_B220_SOURCE_READY_NOT_OFFICIAL")
-          PY
+          EXP=quality_gameplay/gq470_skillfx_shard_real69_20261121/export_b220.py
+          python3 -m py_compile "$EXP"
+          python3 -B "$EXP" --self-test
+          python3 -B "$EXP" --candidate /tmp/gq470-skillfx \
+            --out /tmp/gq470-skillfx/B220_SKILLFX_ONE_SELECTED_SOURCE_NOT_FORMAL \
+            --head "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -B "$EXP" --candidate /tmp/gq470-skillfx \
+            --out /tmp/gq470-skillfx/B220_SKILLFX_ONE_SELECTED_SOURCE_NOT_FORMAL \
+            --head "${{ github.event.pull_request.head.sha || github.sha }}" --check
+          echo GQ470_SKILLFX_B220_ONE_SOURCE_ONLY_PREP_READY_NOT_OFFICIAL
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-SKILLFX-SCULPTED-FLASH-A-PREP-NOT-FORMAL
@@ -159,7 +152,7 @@ jobs:
             /tmp/gq470-skillfx/SKILLFX_SHARD_SOURCE_REPORT.json
             /tmp/gq470-skillfx/ART_CHECK_REPORT.json
             /tmp/gq470-skillfx/SKILLFX_LEGACY48_SOURCE_AUDIT.json
-            /tmp/gq470-skillfx/B220_SKILLFX_SOURCE_ONLY_NOT_FORMAL.json
+            /tmp/gq470-skillfx/B220_SKILLFX_ONE_SELECTED_SOURCE_NOT_FORMAL/**
             /tmp/gq470-skillfx/sources/**
             /tmp/gq470-skillfx/OFF69_SKILLFX_SHARD_FLASH_REBUILT.rbxlx
           if-no-files-found: error
