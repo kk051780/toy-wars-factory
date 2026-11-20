@@ -1,0 +1,232 @@
+name: P0D GQ V3 Bot Route Full-Step Ray Native Differential
+on:
+  push:
+    paths:
+      - 'quality_gameplay/v3_bot_route_fullstep_20261116/**'
+      - '.github/workflows/p0d-gq-v3-bot-route-fullstep.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_bot_route_fullstep_20261116/**'
+      - '.github/workflows/p0d-gq-v3-bot-route-fullstep.yml'
+permissions:
+  contents: read
+jobs:
+  original-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Immutable original #484 BotPathRouter, never editing original branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin quality/eggrumble-v3-spatial-bot-intake-20261116
+          mkdir -p /tmp/gq-route
+          git show 6b52eaf1f2725496277998fe0c5532b7a8fcaab5:handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau > /tmp/gq-route/original.luau
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --source /tmp/gq-route/original.luau \
+            --output /tmp/gq-route/overlay.luau
+      - name: Source SHA lock and unique real-ray hunk negative tests
+        shell: bash
+        env:
+          GQ_ROUTE_ORIGINAL: /tmp/gq-route/original.luau
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/v3_bot_route_fullstep_20261116 -p 'test_*.py' -v
+      - name: Build open source Luau CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-route-luau
+          cmake -S /tmp/gq-route-luau -B /tmp/gq-route-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-route-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Execute actual #484 routeClear against 8.5-stud wall negative case
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py \
+            --original /tmp/gq-route/original.luau \
+            --patched /tmp/gq-route/overlay.luau \
+            --output-dir /tmp/gq-route
+          /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/overlay.luau >/dev/null
+          for name in original patched; do
+            /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/$name.spec.luau >/dev/null
+            /tmp/gq-route-luau/build/luau /tmp/gq-route/$name.spec.luau
+          done
+          echo 'NATIVE SOURCE-GEOMETRY: owner old ray fails last stud; private overlay covers full step.'
+          echo 'ACTUAL STUDIO/ANDROID/OWNER/FORMAL RC INTEGRATION=NOT TESTED.'
+
+      - name: Execute full original Router.navigate and verify no physical PivotTo through tail wall
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py \
+            --original /tmp/gq-route/original.luau \
+            --patched /tmp/gq-route/overlay.luau \
+            --outdir /tmp/gq-route
+          for variant in original fixed mutant; do
+            /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/navigate-$variant.spec.luau >/dev/null
+          done
+          /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-original.spec.luau
+          /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-fixed.spec.luau
+          if /tmp/gq-route-luau/build/luau /tmp/gq-route/navigate-mutant.spec.luau; then
+            echo 'RED: reverting full-step ray unexpectedly passed physical-move safety assertions'
+            exit 1
+          fi
+          echo 'GQ_FULL_ROUTER_NAVIGATE_POSITIVE_AND_UNSAFE_MUTANT_NEGATIVE_PASS'
+
+  private26-source-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - name: Read isolated repair branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read original #482 full game at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _author
+          persist-credentials: false
+      - name: Read original #484 spatial AI and composer at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality
+          persist-credentials: false
+      - name: Read original #485 art at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art
+          persist-credentials: false
+      - name: Read original #487 score at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score
+          persist-credentials: false
+      - name: Reuse author #485 ART and #484 PRIVATE26 composer without altering original source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          mkdir -p artifacts
+          python3 _art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_ROUTE_ORIGINAL_ART.project.json
+          python3 _quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _author --quality _quality --art _art --score _score \
+            --art-project artifacts/GQ_ROUTE_ORIGINAL_ART.project.json \
+            --out artifacts/GQ_ROUTE_ORIGINAL26.project.json
+      - name: Select only fixed current #484 Router one-line patch into PRIVATE26 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --source _quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau \
+            --output artifacts/EGGRUMBLE_BotPathRouter.luau
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          original=Path("artifacts/GQ_ROUTE_ORIGINAL26.project.json")
+          out=Path("artifacts/GQ_ROUTE_PRIVATE26.project.json")
+          doc=json.loads(original.read_text(encoding="utf-8"))
+          target=doc["tree"]["ServerScriptService"]["EGGRUMBLE_BotPathRouter"]
+          assert set(target)=={"$path"},target
+          assert "EGGRUMBLE_BotPathRouter.luau" in target["$path"],target
+          doc["tree"]["ServerScriptService"]["EGGRUMBLE_BotPathRouter"]={"$path":"EGGRUMBLE_BotPathRouter.luau"}
+          doc["name"]="GQ_V3_ROUTE_FULLSTEP_26_PRIVATE_NO_RC"
+          out.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          PY
+      - name: Build pinned Rojo 7.7.1 unpublished PRIVATE26 Roblox Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_route_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_route_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_route_rojo.zip") as z:
+              binaries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(binaries)==1
+              p=Path("/tmp/gq_route_rojo")
+              p.write_bytes(z.read(binaries[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq_route_rojo build artifacts/GQ_ROUTE_PRIVATE26.project.json -o artifacts/GQ_ROUTE_PRIVATE26.rbxlx
+      - name: Verify actual 26 embedded Luau sources and exact 25 original unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          original=Path("artifacts/GQ_ROUTE_ORIGINAL26.project.json").resolve()
+          patched=Path("artifacts/GQ_ROUTE_PRIVATE26.project.json").resolve()
+          place=Path("artifacts/GQ_ROUTE_PRIVATE26.rbxlx")
+          def files(project):
+              tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+              out={}
+              def walk(obj):
+                  for name,child in obj.items():
+                      if name.startswith("$") or not isinstance(child,dict):continue
+                      if "$path" in child:
+                          assert name not in out,name
+                          source=(project.parent/child["$path"]).resolve(strict=True)
+                          kind="Script" if source.name.endswith(".server.luau") else ("LocalScript" if source.name.endswith(".client.luau") else "ModuleScript")
+                          out[name]=(kind,source.read_text(encoding="utf-8").replace("\r\n","\n"))
+                      else:walk(child)
+              walk(tree)
+              return out
+          a=files(original)
+          b=files(patched)
+          assert len(a)==len(b)==26,(len(a),len(b))
+          assert set(a)==set(b)
+          changed=[n for n in a if a[n]!=b[n]]
+          assert changed==["EGGRUMBLE_BotPathRouter"],changed
+          old=a[changed[0]][1]
+          new=b[changed[0]][1]
+          before="local ray=workspace:Raycast(at,diff.Unit*math.min(8,diff.Magnitude),p)"
+          after="local ray=workspace:Raycast(at,diff.Unit*diff.Magnitude,p)"
+          assert new.replace(after,before)==old
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              cls=item.attrib.get("class")
+              if cls not in ("Script","LocalScript","ModuleScript"):continue
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              assert name is not None and src is not None and name not in actual
+              actual[name]=(cls,src.replace("\r\n","\n"))
+          assert actual==b,{"missing":sorted(set(b)-set(actual)),"extra":sorted(set(actual)-set(b)),"different":[n for n in set(b)&set(actual) if b[n]!=actual[n]]}
+          receipt={"status":"PRIVATE_SOURCE_ONLY_NOT_FORMAL_RC","source_author":"#484","author_head":"6b52eaf1f2725496277998fe0c5532b7a8fcaab5",
+                   "source_count":len(b),"original_source_unchanged":25,"modified_original_source":changed,
+                   "place_bytes":place.stat().st_size,"place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+                   "source_sha256":{n:hashlib.sha256(src.encode()).hexdigest() for n,(cl,src) in b.items()},
+                   "official_rc_adopted":0,"studio":"NOT_TESTED","android":"NOT_TESTED","owner_fun":"NOT_TESTED"}
+          Path("artifacts/GQ_ROUTE_PRIVATE26_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("GQ_PRIVATE_26_OF_26_SOURCE_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
+      - name: Upload ONLY unpublished candidate for author review
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-V3-ROUTE-FULLSTEP-26-PRIVATE-NO-RC
+          path: |
+            artifacts/GQ_ROUTE_PRIVATE26.project.json
+            artifacts/GQ_ROUTE_PRIVATE26.rbxlx
+            artifacts/GQ_ROUTE_PRIVATE26_RECEIPT.json
+          retention-days: 3
