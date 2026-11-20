@@ -78,6 +78,34 @@ class GuildSculptTests(unittest.TestCase):
             with self.subTest(name=name),self.assertRaisesRegex(ValueError,"RED_GQ470_GUILD_"):
                 patch(raw)
 
+    def test_mobile_scene_budget_and_unblocked_kiosk_lane(self):
+        # Static coordinates only: not evidence of Studio camera visibility.
+        self.assertIn("pitch.Size=Vector3.new(17,3,14.5)",NEW_ROOF)
+        self.assertIn("half*7.25,11,2",NEW_ROOF)
+        self.assertIn("made+=1",NEW_ROOF)
+        self.assertIn("Vector3.new(bulk,tall",NEW_PREVIEW)
+        self.assertIn('torso.Shape=if i==2 or i==4',NEW_PREVIEW)
+        self.assertIn("weapon.CastShadow=true",NEW_PREVIEW)
+        # Original physical podium: 29x25 studs, guard spacing 3.8 studs.
+        # West and east roof wedges after 90deg yaw cover 14.5 studs each.
+        floor_half_x=29/2
+        roof_wedge_extent=14.5/2
+        roof_left=(-7.25-roof_wedge_extent,-7.25+roof_wedge_extent)
+        roof_right=(7.25-roof_wedge_extent,7.25+roof_wedge_extent)
+        self.assertEqual(roof_left[1],roof_right[0])
+        self.assertEqual((roof_left[0],roof_right[1]),(-14.5,14.5))
+        self.assertEqual(2+1+2+1+1+1+14*4,64)  # floor, walkway, pillar2, back, door, roof2, previews
+        for i in range(1,8):
+            x=(i-4)*3.8
+            # Pedestal half-width 1.3, largest weapon projected x=1+.325.
+            self.assertLess(abs(x)+max(1.3,1+.325),floor_half_x)
+            if i<7:
+                self.assertGreater(3.8-2.6,1.0)  # visually separated 7 role podiums
+        self.assertEqual(14*4,56)
+        self.assertLessEqual(64,80)  # static private kiosk, not actual frame cost
+        # Still a World ProximityPrompt, not a full-screen always-on purchase HUD.
+        self.assertEqual(patch(FIXTURE).count('prompt.Name="GQ805_ShopReadOnlyPrompt"'),1)
+
     def _zip(self,path,corrupt=None):
         tree={"ServerScriptService":{
             "GQ805_LobbyGuildShop":{"$path":FILE,"$className":"Script"}}}
