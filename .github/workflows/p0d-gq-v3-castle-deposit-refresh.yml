@@ -1,0 +1,148 @@
+name: P0D GQ V3 castle deposit refresh — source only, no RC write
+on:
+  push:
+    branches:
+      - 'quality/gq-v3-castle-deposit-refresh-20261116'
+  pull_request:
+    paths:
+      - '.github/workflows/p0d-gq-v3-castle-deposit-refresh.yml'
+      - 'quality_gameplay/v3_castle_deposit_refresh_20261116/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  private-source-and-native-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated writer branch (no protected RC modifications)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout exact latest existing author composite PR484
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_owner
+          persist-credentials: false
+      - name: Pin actual owner commit and native source lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_owner rev-parse HEAD)" = "6b52eaf1f2725496277998fe0c5532b7a8fcaab5"
+          python3 -B -m unittest discover -v -s quality_gameplay/v3_castle_deposit_refresh_20261116/tests
+          mkdir -p artifacts
+          owner_host="_v3_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+          cp "$owner_host" artifacts/HOST_OFF_AUTHOR.luau
+          python3 quality_gameplay/v3_castle_deposit_refresh_20261116/compose.py --input "$owner_host" --output artifacts/HOST_ON_CANDIDATE.luau
+          python3 quality_gameplay/v3_castle_deposit_refresh_20261116/compose.py --input "$owner_host" --output artifacts/HOST_OFF_RESTORED.luau --off
+          cmp -s artifacts/HOST_OFF_AUTHOR.luau artifacts/HOST_OFF_RESTORED.luau
+          cmp -s "$owner_host" artifacts/HOST_OFF_RESTORED.luau
+          cp artifacts/HOST_ON_CANDIDATE.luau "$owner_host"
+          echo "AUTHOR_SOURCE_PINNED; ON_ONE_CALLBACK; OFF_BYTE_IDENTICAL"
+      - name: Build pinned native Luau syntax and runtime VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Parse all real game source files and execute original callback
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/eggrumble_gq_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/eggrumble_gq_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          root=Path('_v3_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          tree=json.loads((root/'EGGRUMBLE_V3_STUDIO.project.json').read_text())['tree']
+          files=[]
+          def walk(node):
+              if isinstance(node,dict):
+                  if '$path' in node:files.append(root/node['$path'])
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith('$'):walk(v)
+          walk(tree)
+          assert len(files)>=16,('SOURCE_MISSING',len(files))
+          for f in files:
+              assert f.exists(),str(f)
+              subprocess.run(['/tmp/eggrumble_gq_native/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+          print('ALL_MAPPED_REAL_V3_SOURCES_NATIVE_PARSE_PASS',len(files))
+          PY
+          python3 quality_gameplay/v3_castle_deposit_refresh_20261116/native_callback_test.py --source _v3_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau --luau /tmp/eggrumble_gq_native/luau | tee artifacts/DEPOSIT_NATIVE.log
+          grep -q GQ_DEPOSIT_REFRESH_ACTUAL_CALLBACK_NATIVE_7_7_PASS artifacts/DEPOSIT_NATIVE.log
+      - name: Acquire checksum-pinned Rojo for private, unpublished Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq_rojo.zip') as z:
+              paths=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+              assert len(paths)==1
+              p=Path('/tmp/gq_rojo')
+              p.write_bytes(z.read(paths[0]));p.chmod(0o755)
+          PY
+          /tmp/gq_rojo build _v3_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_DEPOSIT_PRIVATE_NOT_RC.rbxlx
+      - name: Verify private Place contains exactly mapped Luau source and all eight domains unchanged outside Host
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path('_v3_owner/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          project=root/'EGGRUMBLE_V3_STUDIO.project.json'
+          scene=Path('artifacts/EGGRUMBLE_V3_DEPOSIT_PRIVATE_NOT_RC.rbxlx')
+          expected={}
+          def walk(node):
+              if isinstance(node,dict):
+                  if '$path' in node:return
+                  for name,child in node.items():
+                      if name.startswith('$') or not isinstance(child,dict):continue
+                      if '$path' in child:
+                          f=root/child['$path']
+                          kind='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                          assert name not in expected,name
+                          expected[name]=(kind,f.read_text(encoding='utf-8').replace('\r\n','\n'))
+                      else:walk(child)
+          walk(json.loads(project.read_text())['tree'])
+          actual={}
+          for item in ET.parse(scene).getroot().iter('Item'):
+              kind=item.get('class')
+              if kind not in ('Script','LocalScript','ModuleScript'):continue
+              prop=item.find('Properties')
+              if prop is None:continue
+              name=prop.findtext("string[@name='Name']")
+              source=prop.findtext("ProtectedString[@name='Source']")
+              if source is None:source=prop.findtext("string[@name='Source']")
+              if not name:continue
+              assert name not in actual,name
+              actual[name]=(kind, (source or '').replace('\r\n','\n'))
+          assert expected==actual,{'missing':sorted(set(expected)-set(actual)),'extra':sorted(set(actual)-set(expected)),'different':[x for x in expected.keys()&actual.keys() if expected[x]!=actual[x]]}
+          h=hashlib.sha256(scene.read_bytes()).hexdigest()
+          receipt={'status':'PRIVATE_NO_RC','original_author_sha':'6b52eaf1f2725496277998fe0c5532b7a8fcaab5','exact_sources':len(expected),'place_bytes':scene.stat().st_size,'place_sha256':h,'native_callback_cases':7,'official_rc_adopted':False}
+          Path('artifacts/RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('PRIVATE_PLACE_SOURCE_EXACT_PASS',receipt)
+          PY
+      - name: Upload short-retention PRIVATE-only receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_V3_CASTLE_DEPOSIT_PRIVATE_SOURCE_NOT_RC
+          path: |
+            artifacts/EGGRUMBLE_V3_DEPOSIT_PRIVATE_NOT_RC.rbxlx
+            artifacts/DEPOSIT_NATIVE.log
+            artifacts/RECEIPT.json
+            artifacts/HOST_ON_CANDIDATE.luau
+            artifacts/HOST_OFF_AUTHOR.luau
+          retention-days: 3
