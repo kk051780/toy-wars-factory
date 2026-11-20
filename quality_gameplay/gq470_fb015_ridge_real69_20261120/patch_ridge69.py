@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] /
                        "gq8_rc85_rc86_real68_nonloss_20261120"))
 from verify_nonloss import project_scan
 
-PARENT = "c226c63eeb235503f9292503b61f2173550337ec"
+PARENT = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 TARGET = "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
 MARK = "GQ470_FB015_RIDGE_HORIZON_P0_20261120"
 PRIOR = "GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120"

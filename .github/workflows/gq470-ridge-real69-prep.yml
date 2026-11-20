@@ -18,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Source-level negative tests and immutable official receipt
         shell: bash
@@ -25,9 +26,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py
           python3 -B quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py --self-test
-          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44686473297 --jq '.head_sha+" "+.conclusion')" = "c226c63eeb235503f9292503b61f2173550337ec success"
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
           mkdir -p /tmp/gq470-ridge
-          gh run download 44686473297 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ridge
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ridge
           test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json
           test -s /tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json
           test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
@@ -93,10 +94,11 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ridge/off69_ridge/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx --count 69
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
-          test "$CURRENT" = "c226c63eeb235503f9292503b61f2173550337ec" || { echo RED_RIDGE_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
+          PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
+          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_RIDGE_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
-            test "$PR_BASE" = "$CURRENT" || { echo RED_RIDGE_STALE_PR_BASE; exit 1; }
+            test -n "$PR_HEAD" && test "$PR_HEAD" = "$(git rev-parse HEAD)" || { echo RED_RIDGE_PR_HEAD_MISMATCH; exit 1; }
+            test "$(gh api "repos/$GITHUB_REPOSITORY/compare/$CURRENT...$PR_HEAD" --jq .status)" = ahead || { echo RED_RIDGE_NOT_FORMAL_DESCENDANT; exit 1; }
           fi
           python3 - <<'PY'
           import hashlib,json,os
@@ -113,7 +115,7 @@ jobs:
           x['human_art_accepted']=False
           r['private_place_bytes']=p.stat().st_size
           r['private_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
-          r['candidate_ci_ref']=os.environ['GITHUB_SHA']
+          r['candidate_ci_ref']=__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip()
           rec.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           print('GQ470_RIDGE_FULL_SOURCE_BUILD_PASS_NOT_STUDIO_PASS',p.stat().st_size)
           PY
@@ -126,8 +128,8 @@ jobs:
           import json,os,pathlib
           p=pathlib.Path('/tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json')
           r=json.loads(p.read_text())
-          assert r['gq470_fb015_ridge_visual']['original_formal_sha']=='c226c63eeb235503f9292503b61f2173550337ec'
-          r['build_head']=os.environ['GITHUB_SHA']
+          assert r['gq470_fb015_ridge_visual']['original_formal_sha']=='e80973c354f14a0d0088577f3cc1a875454f0f8f'
+          r['build_head']=__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip()
           p.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
