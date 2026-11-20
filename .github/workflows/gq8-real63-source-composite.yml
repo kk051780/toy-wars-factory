@@ -18,6 +18,7 @@ on:
       - 'quality_gameplay/gq470_bot_art_variants_real69_20261120/**'
       - 'quality_gameplay/gq470_reef_sculpt_real69_20261120/**'
       - 'quality_gameplay/gq470_objective_art_real69_20261120/**'
+      - 'art_quality/gq470_real69_source_gate.py'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -54,6 +55,7 @@ on:
       - 'quality_gameplay/gq470_bot_art_variants_real69_20261120/**'
       - 'quality_gameplay/gq470_reef_sculpt_real69_20261120/**'
       - 'quality_gameplay/gq470_objective_art_real69_20261120/**'
+      - 'art_quality/gq470_real69_source_gate.py'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -1679,6 +1681,33 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_48_FLAGS_PR_BASE_STALE; exit 1; }
           fi
+      - name: "GQ470 #420 ART gate: audit actual REAL69 .rbxlx and emit ART_NO_GO report"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile art_quality/gq470_real69_source_gate.py
+          python3 -B art_quality/gq470_real69_source_gate.py --self-test
+          python3 -B art_quality/gq470_real69_source_gate.py \
+            --root artifacts/real69 --head "$GITHUB_SHA" \
+            --out artifacts/real69/delivery/ART_CHECK_REPORT.json
+          python3 - <<'PY'
+          import json,pathlib,os
+          p=pathlib.Path('artifacts/real69/delivery/ART_CHECK_REPORT.json')
+          r=json.loads(p.read_text())
+          assert r['official_build_head']==os.environ['GITHUB_SHA']
+          assert r['source_gate']['status']=='PASS_SOURCE_ONLY'
+          assert r['source_gate']['actual_place_scripts']==69
+          assert r['source_gate']['verified_visual_feature_sources']==3
+          assert len(r['features'])==3
+          assert r['visual_evidence_gate']['screenshots_required']==32
+          assert r['visual_evidence_gate']['screenshots_received']==0
+          assert r['mobile_runtime']['status']=='NOT_TESTED'
+          assert r['kid_first_3_minutes_fun']['status']=='NOT_TESTED'
+          assert r['owner_accepted'] is False
+          assert r['art_gate']=='ART_NO_GO' and r['product_gate']=='PRODUCT_NO_GO'
+          assert len(list(p.parent.glob('*.rbxlx')))==1
+          print('ART_CHECK_REPORT_REAL69_69_SELECTED_3_FEATURES_32_IMAGES_MISSING_NO_GO_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL' }}
