@@ -103,14 +103,6 @@ jobs:
           assert r["source_gate"]["status"]=="PASS_SOURCE_ONLY"
           assert r["visual_evidence_gate"]["screenshots_received"]==0
           assert r["art_gate"]=="ART_NO_GO"
-          handoff=root/"B220_TRAPPER_PORTAL_SOURCE_ONLY"
-          handoff.mkdir()
-          s=selected(root)[ROUTE]
-          (handoff/"EGGRUMBLE_SevenRoleCombat.luau").write_bytes(s.read_bytes())
-          (handoff/"HANDOFF.json").write_text(json.dumps({
-            "source_route":ROUTE,"source_sha256":hashlib.sha256(s.read_bytes()).hexdigest(),
-            "changed_routes":1,"other_exact":68,"official_rc_integrated":False,
-            "studio":"NOT_TESTED","android":"NOT_TESTED","human_art":"NOT_TESTED"},indent=2)+"\n")
           place=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
           receipt=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
           meta=json.loads(receipt.read_text())
@@ -120,6 +112,16 @@ jobs:
           print("TRAPPER_PRIVATE_CANDIDATE_PLACE_BYTES",place.stat().st_size)
           print("TRAPPER_SOURCE_PREP_NOT_RUNTIME_ART_PASS")
           PY
+      - name: B220 certified-source handoff packet and five forged-route negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPORT=quality_gameplay/gq470_trapper_portal_art_real69_20261121/export_b220.py
+          python3 -m py_compile "$EXPORT"
+          python3 -B "$EXPORT" --self-test
+          python3 -B "$EXPORT" --base /tmp/trapper-art --out /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY
+          python3 -B "$EXPORT" --base /tmp/trapper-art --out /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY --check
+          echo TRAPPER_B220_SOURCE_MANIFEST_OLD_NEW_SHA_CLASS_EXACT_NOT_FORMAL
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-TRAPPER-PORTAL-ART-69-A-PREP-NOT-FORMAL
