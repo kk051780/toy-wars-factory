@@ -86,6 +86,7 @@ class SourceGate(unittest.TestCase):
             self.assertEqual(result["art_owner"], "NO_GO")
             routed = dest / module.ROUTE
             self.assertTrue(routed.exists())
+            self.assertTrue(str(routed).endswith(".client.luau"))
             self.assertEqual(routed.read_bytes(), SOURCE.read_bytes())
 
 if __name__ == "__main__":

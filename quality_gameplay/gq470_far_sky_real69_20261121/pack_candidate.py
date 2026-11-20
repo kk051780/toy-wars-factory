@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "EGGRUMBLE_FarSkyFacets.client.luau"
-ROUTE = Path("selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.luau")
+ROUTE = Path("selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau")
 BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 
 def package(destination: Path) -> dict:
