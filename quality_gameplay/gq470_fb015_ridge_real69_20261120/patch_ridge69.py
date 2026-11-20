@@ -135,7 +135,10 @@ def verify_contour_geometry(spec: str) -> None:
     need(len(rows) == 3, "THREE_DISTINCT_CONTOURS")
     need("local x=side*410" in spec and
          "local z=(index-2)*270+side*contour.drift" in spec and
-         "for _,side in ipairs({-1,1}) do" in spec, "FIXED_HORIZON_COORDINATES")
+         spec.count("for _,side in ipairs({-1,1}) do") == 1 and
+         spec.count("for index=1,3 do") == 1 and
+         spec.count("local contour=ridgeContours[index]") == 1,
+         "FIXED_HORIZON_COORDINATES_AND_LOOPS")
     seen = set()
     for index, values in enumerate(rows, 1):
         h, yaw, drift, depth, lean, notch = map(int, values)
@@ -296,6 +299,8 @@ def selftest() -> None:
         RIDGE.replace("notch=3", "notch=33", 1),
         RIDGE.replace("local x=side*410", "local x=side*300", 1),
         RIDGE.replace("local z=(index-2)*270", "local z=(index-2)*120", 1),
+        RIDGE.replace("for index=1,3 do", "for index=1,4 do", 1),
+        RIDGE.replace("for _,side in ipairs({-1,1}) do", "for _,side in ipairs({-1,1,0}) do", 1),
     ):
         try:
             verify_contour_geometry(mutant)
@@ -331,7 +336,7 @@ def selftest() -> None:
             pass
         else:
             raise AssertionError("NEGATIVE_MUTANT_WAS_ACCEPTED")
-    print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_8_GEOMETRY_MUTANTS_PASS")
+    print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_10_GEOMETRY_MUTANTS_PASS")
     print("GQ470_RIDGE_ATOMIC_TWO_PART_BUDGET_AND_REFUND_GUARD_PASS")
     print("GQ470_RIDGE_5_ATOMIC_SOURCE_MUTATIONS_REJECTED")
     print("GQ470_RIDGE_4_MATTE_STYLE_AND_MOBILE_NEGATIVES_PASS")
