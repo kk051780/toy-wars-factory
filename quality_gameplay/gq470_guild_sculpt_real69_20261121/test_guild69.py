@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch as mock_patch
 from zipfile import ZipFile
 
 from patch_guild69 import (
@@ -119,17 +120,30 @@ class GuildSculptTests(unittest.TestCase):
             tree["ServerScriptService"][key]={"$path":filename,"$className":"Script"}
             originals[filename]=body
             hashes[route]=digest(body)
-        receipt={"canonical_build":True,"build_head":BASE,"selected_source_count":69,"source_hashes":hashes}
+        classes={route:"Script" for route in hashes}
+        receipt={"canonical_build":True,"official_branch":"rc/p0d-s1-kids-rc01",
+                 "source_profile":"REAL69","build_head":BASE,
+                 "selected_source_count":69,"source_hashes":hashes,
+                 "source_classes":classes}
         if corrupt=="head":receipt["build_head"]="0"*40
         if corrupt=="source":originals[FILE]+=b"BAD"
         if corrupt=="route":tree["ServerScriptService"]["GQ805_LobbyGuildShop"]["$path"]="sources/other.server.luau"
         if corrupt=="hash":receipt["source_hashes"][ROUTE]="f"*64
         if corrupt=="count":receipt["selected_source_count"]=68
+        if corrupt=="branch":receipt["official_branch"]="main"
+        if corrupt=="profile":receipt["source_profile"]="rich51"
+        if corrupt=="class":receipt["source_classes"][ROUTE]="ModuleScript"
+        if corrupt=="project_class":tree["ServerScriptService"]["GQ805_LobbyGuildShop"]["$className"]="ModuleScript"
+        if corrupt=="rehashed":
+            originals[FILE] += b"\n-- forged extra author data"
+            receipt["source_hashes"][ROUTE]=digest(originals[FILE])
         with ZipFile(path,"w") as z:
             z.writestr("EGGRUMBLE_REAL69.project.json",json.dumps({"tree":tree}))
             z.writestr("REAL69_LEGACY_INTAKE_RECEIPT.json",json.dumps(receipt))
             for name,payload in originals.items():
                 z.writestr(name,payload)
+            if corrupt=="duplicate_zip":
+                z.writestr("REAL69_LEGACY_INTAKE_RECEIPT.json",json.dumps(receipt))
         return originals
 
     def test_actual69_route_fixture_bytes_class_and_inverse(self):
@@ -137,7 +151,10 @@ class GuildSculptTests(unittest.TestCase):
             base=Path(d);archive=base/"source.zip"
             sources=self._zip(archive)
             out=base/"candidate"
-            result=build(archive,out)
+            # A synthetic fixture cannot have the canonical original Luau SHA.
+            # Mock pinned hash only *within this unit fixture*, never in real CI build.
+            with mock_patch("patch_guild69.ORIGINAL_SOURCE_SHA",digest(FIXTURE.encode())):
+                result=build(archive,out)
             self.assertEqual(result["selected_script_count"],69)
             self.assertEqual(result["other_selected_byte_exact"],68)
             self.assertEqual(result["extra_decorative_parts"],1)
@@ -157,11 +174,13 @@ class GuildSculptTests(unittest.TestCase):
     def test_stale_artifact_and_mutated_69_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
-            for case in ("head","source","route","hash","count"):
+            for case in ("head","source","route","hash","count","branch",
+                         "profile","class","project_class","rehashed","duplicate_zip"):
                 with self.subTest(case=case):
                     z=root/(case+".zip");self._zip(z,corrupt=case)
-                    with self.assertRaisesRegex(ValueError,"RED_GQ470_GUILD_"):
-                        build(z,root/("out_"+case))
+                    with mock_patch("patch_guild69.ORIGINAL_SOURCE_SHA",digest(FIXTURE.encode())):
+                        with self.assertRaisesRegex(ValueError,"RED_GQ470_GUILD_"):
+                            build(z,root/("out_"+case))
 
 if __name__=="__main__":
     unittest.main()
