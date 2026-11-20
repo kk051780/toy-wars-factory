@@ -83,7 +83,10 @@ def validate_design(blueprint_text,manifest_text):
  six=details[1].split("\n  }",1)[0]
  check(len(re.findall(r'\bpart\("',six))==6,"SIX_DETAILS_PER_CELL")
  check("plan.partCount+=#details" in blueprint_text,"SOURCE_BUDGET_COUNTS")
- themes=set(re.findall(r'\{"[A-Z0-9_]+","([A-Z]+)"',manifest_text))
+ check(manifest_text.count("local CATALOG = {")==1 and
+       manifest_text.count("local WEATHERS =")==1,"MANIFEST_ANCHORS")
+ catalog=manifest_text.split("local CATALOG = {",1)[1].split("local WEATHERS =",1)[0]
+ themes=set(re.findall(r'\{"[A-Z0-9_]+","([A-Z]+)"',catalog))
  candidate=set(re.findall(r'(?m)^ ([A-Z]+)=\{Enum\.Material\.',MATERIALS))
  check(themes==candidate and len(themes)==10,"ACTUAL_MANIFEST_THEME_COVERAGE")
  check("Enum.Material.Neon" not in MATERIALS and
@@ -104,6 +107,7 @@ def selftest():
  blueprint='M.MAX_PARTS=42\nM.CELL_COUNT=6\nlocal details={\n'+(' part("a",nil)\n'*6)+'  }\nplan.partCount+=#details'
  manifest=''.join('{"PREFAB_'+str(i)+'","'+theme+'",1},' for i,theme in enumerate(
   ["REGAL","COSMOS","TIME","DREAM","HEAVEN","SKY","ICE","UNDERWORLD","FOREST","SEA"]))
+ manifest="local CATALOG = {"+manifest+"local WEATHERS = {}"
  # This synthetic input exercises fail-closed contract, not real Studio evidence.
  try: validate_design(blueprint.replace("M.MAX_PARTS=42","M.MAX_PARTS=43"),manifest)
  except ValueError: pass
