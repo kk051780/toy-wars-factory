@@ -14,6 +14,7 @@ import zipfile
 
 BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 ORIGINAL_ARTIFACT = 14610422120
+ORIGINAL_SOURCE_SHA = "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
 ROUTE = "ServerScriptService/GQ805_LobbyGuildShop"
 FILE = "sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau"
 FEATURE = "GQ470_FB015_GUILD_GUARDIAN_SCULPT_REAL69_20261121"
@@ -127,6 +128,7 @@ def build(archive_file: Path, output_dir: Path) -> dict:
     insist(not output_dir.exists(), "DEST_EXISTS")
     with zipfile.ZipFile(archive_file) as z:
         names=z.namelist()
+        insist(len(names)==len(set(names)),"DUPLICATE_ZIP_ENTRY")
         insist(all(not name.startswith("/") and
                    ".." not in PurePosixPath(name).parts for name in names),
                "ZIP_PATH_TRAVERSAL")
@@ -137,10 +139,17 @@ def build(archive_file: Path, output_dir: Path) -> dict:
         paths=selected_routes(project)
         insist(receipt.get("build_head")==BASE and receipt.get("canonical_build") is True,
                "PINNED_FORMAL_HEAD")
+        insist(receipt.get("official_branch")=="rc/p0d-s1-kids-rc01" and
+               receipt.get("source_profile")=="REAL69",
+               "CANONICAL_BRANCH_AND_PROFILE")
         insist(len(paths)==69 and receipt.get("selected_source_count")==69,
                "SOURCE_COUNT_69")
         insist(set(paths)==set(receipt.get("source_hashes",{})), "RECEIPT_ROUTES")
-        insist(paths.get(ROUTE)==FILE, "GUILD_ROUTE_CLASS")
+        insist(set(paths)==set(receipt.get("source_classes",{})), "RECEIPT_CLASSES_69")
+        insist(paths.get(ROUTE)==FILE, "GUILD_ROUTE_PATH")
+        insist(receipt["source_classes"].get(ROUTE)=="Script", "GUILD_RECEIPT_SCRIPT_CLASS")
+        selected_guild=project["tree"].get("ServerScriptService",{}).get("GQ805_LobbyGuildShop",{})
+        insist(selected_guild.get("$className","Script")=="Script","GUILD_PROJECT_SCRIPT_CLASS")
         sources={}
         for route,path in paths.items():
             insist(path.startswith("sources/") and path in names, "PATH_" + route)
@@ -148,6 +157,7 @@ def build(archive_file: Path, output_dir: Path) -> dict:
             insist(digest(raw)==receipt["source_hashes"][route], "HASH_" + route)
             sources[route]=raw
         original=sources[ROUTE]
+        insist(digest(original)==ORIGINAL_SOURCE_SHA,"SOURCE_ORIGINAL_PINNED_SHA")
         candidate=patch(original.decode("utf-8")).encode("utf-8")
         insist(unpatch(candidate.decode("utf-8")).encode("utf-8")==original,
                "EXACT_OFF69")
