@@ -36,7 +36,7 @@ EDITS = (
     ("b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at",
      "b.MaxDistance=25;b.AlwaysOnTop=false;b.Parent=at"),
     ("t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.18",
-     "t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36"),
+     "t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36;t.TextStrokeTransparency=.52;t.TextStrokeColor3=Color3.fromRGB(8,16,24)"),
     (OLD_ROOF, NEW_ROOF),
 )
 
@@ -75,7 +75,9 @@ def transform(source: str) -> str:
         source = source.replace(old, new, 1)
     need(source.count(MARK) == 1, "PATCH_MARK")
     need('b.Size=UDim2.fromOffset(136,38)' in source and
-         'b.MaxDistance=25' in source, "LABEL_BOUNDS")
+         'b.MaxDistance=25' in source and
+         't.TextStrokeTransparency=.52' in source and
+         't.TextStrokeColor3=Color3.fromRGB(8,16,24)' in source, "LABEL_BOUNDS_AND_CONTRAST")
     need('roofLeft.CastShadow=false' in source and
          'roofRight.CastShadow=false' in source and
          'ridge.CastShadow=false' in source and
@@ -100,6 +102,7 @@ def self_test() -> None:
     need(updated.count("PhotoRoof_") == 3 and
          updated.count('ridge.CastShadow=false') == 1,
          "TWO_PITCHED_ROOFS_AND_ONE_RIDGE_CAP")
+    need('t.TextStrokeTransparency=.52' in updated, "SIGN_TEXT_CONTRAST")
     need('GQ8_TradeSettlementDisabled' in updated, "TRADE_GUARD")
     mutants = [
         updated,
@@ -147,6 +150,8 @@ def apply(root: Path) -> None:
         "exact_untouched_selected_sources": 68, "script_count": 69,
         "world_label_pixels_before": [180, 50], "world_label_pixels_after": [136, 38],
         "world_label_distance_before": 42, "world_label_distance_after": 25,
+        "world_label_text_stroke_transparency_after": 0.52,
+        "world_label_text_stroke_color_after_rgb": [8, 16, 24],
         "photo_roof_parts_before": 1, "photo_roof_parts_after": 3,
         "net_new_visual_parts": 2, "new_ui_instances": 0, "new_authority": False,
         "rollback": OFF, "studio_visual": "NOT_TESTED",
