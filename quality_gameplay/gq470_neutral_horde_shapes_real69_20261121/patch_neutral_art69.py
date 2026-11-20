@@ -82,8 +82,17 @@ def digest(data: bytes) -> str:
 
 def transform(source: str) -> str:
     demand(FEATURE not in source, "ALREADY_APPLIED")
-    demand(source.count(START) == 1 and source.count(END) == 1,
-           "SOLDIER_SCOPE_OR_FUNCTION_MISSING")
+    if source.count(START) != 1 or source.count(END) != 1:
+        # On actual immutable official REAL69 only, surface minimal source
+        # anchors for remediation instead of guessing or replacing a new owner.
+        import re
+        functions = re.findall(r"(?:local\\s+)?function\\s+[A-Za-z0-9_.:]+\\(", source)
+        print("GQ470_ACTUAL_SWARM_FUNCTIONS", functions[:65])
+        print("GQ470_ACTUAL_SWARM_VISUAL_LINES",
+              [s.strip()[:165] for s in source.splitlines()
+               if any(k in s for k in ("soldier", "Shield", "HumanoidRootPart",
+                                       "labelKo", "NameDisplayDistance", "NEUTRAL_HEALTH"))][:50])
+        demand(False, "SOLDIER_SCOPE_OR_FUNCTION_MISSING")
     lo, hi = source.index(START), source.index(END)
     demand(lo < hi, "SOLDIER_SCOPE_ORDER")
     section = source[lo:hi]
