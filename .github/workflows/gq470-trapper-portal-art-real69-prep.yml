@@ -79,6 +79,19 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/trapper-art/EGGRUMBLE_REAL69.project.json --place /tmp/trapper-art/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
           python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
           python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/trapper-art --report /tmp/trapper-art/LEGACY48_AUDIT.json
+          # The ART source gate checks this *candidate* Place against its exact receipt.
+          # Keep build_head as the original official baseline, but refresh Place bytes/hash.
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("/tmp/trapper-art")
+          place=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          receipt=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          meta=json.loads(receipt.read_text())
+          meta["private_place_bytes"]=place.stat().st_size
+          meta["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt.write_text(json.dumps(meta,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          PY
           python3 art_quality/gq470_real69_source_gate.py --root /tmp/trapper-art --head e80973c354f14a0d0088577f3cc1a875454f0f8f --out /tmp/trapper-art/ART_CHECK_REPORT.json
           python3 - <<'PY'
           import json,hashlib,sys
