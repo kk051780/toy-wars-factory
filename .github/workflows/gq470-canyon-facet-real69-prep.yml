@@ -142,6 +142,18 @@ jobs:
           python3 -B "$EXPORT" --candidate /tmp/gq470-canyon \
             --out /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL --check
           echo GQ470_CANYON_B220_ONLY_SOURCE_HANDOFF_NOT_FORMAL
+      - name: Fixed-camera 4-of-32 Canyon Studio art capture guide (NO screenshots fabricated)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SPEC=quality_gameplay/gq470_canyon_facet_real69_20261121/prepare_capture_spec.py
+          python3 -m py_compile "$SPEC"
+          python3 -B "$SPEC" --self-test
+          python3 -B "$SPEC" \
+            --candidate /tmp/gq470-canyon \
+            --candidate-head "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out /tmp/gq470-canyon/CANYON_CAPTURE_GUIDE_NOT_REAL_SCREENSHOTS.json
+          echo GQ470_CANYON_FIXED_CAMERA_NO_SCREENSHOTS_RECEIVED
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-CANYON-FACETS-ART-PREP-NOT-FORMAL
@@ -154,5 +166,6 @@ jobs:
             /tmp/gq470-canyon/CANYON_FACET_LEGACY48_AUDIT.json
             /tmp/gq470-canyon/ART_CHECK_REPORT.json
             /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL/**
+            /tmp/gq470-canyon/CANYON_CAPTURE_GUIDE_NOT_REAL_SCREENSHOTS.json
           if-no-files-found: error
           retention-days: 7
