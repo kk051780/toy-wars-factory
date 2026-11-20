@@ -1,0 +1,63 @@
+name: GQ8 Musou Rush Kakuhen Seven Role Native Source QA
+on:
+  push:
+    branches: ['feature/gq8-musou-fever-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-fever-native.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-fever-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  musou-authority-native-vm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate no parallel server gameplay owner and generate source-derived VM tests
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/make_native_musou.py --out /tmp/gq8-musou
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path("handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau").read_text()
+          for bad in ("RemoteEvent", "DataStoreService", "UpdateAsync", "TakeDamage(", "Humanoid.Health=", "SetAttribute(", "Instance.new(", "OnServerEvent"):
+             assert bad not in src, "RED_NEW_GAMEPLAY_OWNER_"+bad
+          assert src.count('M.ROLES = {')==1
+          assert src.count("M.HARD_CAP_SECONDS = 20")==1
+          assert src.count('M.NEUTRAL_FEVER_BONUS=1.25')==1
+          print("GQ8_MUSOU_SINGLE_OWNER_NO_NEW_DAMAGE_REMOTE_STORE")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile actual source; run good native test and reject malicious mutants
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-musou-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-musou-build --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-musou-build/luau
+          CC=/tmp/gq8-musou-build/luau-compile
+          for source in handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau /tmp/gq8-musou/*.luau; do
+             "$CC" --text "$source" >/dev/null
+          done
+          "$CLI" /tmp/gq8-musou/good.luau | tee /tmp/gq8-musou.log
+          grep -qx GQ8_MUSOU_NATIVE_7ROLE_RECHARGE_RUSH_KAKUHEN_PVP_ROLLBACK_PASS /tmp/gq8-musou.log
+          for mutant in replay pvp fever; do
+             if "$CLI" "/tmp/gq8-musou/$mutant""_mutant.luau" >"/tmp/gq8-musou-$mutant.log" 2>&1; then
+                echo "RED_UNDETECTED_$mutant""_MUTANT"; exit 1
+             fi
+             grep -q "RED_" "/tmp/gq8-musou-$mutant.log"
+          done
+          echo GQ8_MUSOU_NATIVE_GOOD_AND_THREE_MUTANTS_PASS
