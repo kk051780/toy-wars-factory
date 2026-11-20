@@ -32,6 +32,15 @@ PATCHES = (
   v.BackgroundTransparency=.10""",
     ),
     (
+        """ mapTitle.Text=(mapExpanded and "探索マップ" or "MAP").." ["..activeLayer.."]"
+  ..(s.scanActive==true and " 索敵中" or "")""",
+        """ -- Client-only presentation text; LAND/SEA/SKY server values unchanged.
+ local layerLabel=if activeLayer=="LAND" then "陸"
+   elseif activeLayer=="SEA" then "海" else "空"
+ mapTitle.Text=(mapExpanded and "探索地図" or "地図").."・"..layerLabel
+  ..(s.scanActive==true and " 索敵中" or "")""",
+    ),
+    (
         """ local count=0
  local nx=math.min(12,math.max(7,math.floor(width/12)))""",
         """ local count=0
@@ -133,6 +142,7 @@ local function redraw()
     good = patch(body)
     need(good.count(MARK) == 1 and
          'm.kind=="CASTLE" and m.team=="BLUE"' in good and
+         'mapExpanded and "探索地図" or "地図"' in good and
          'mapExpanded and 13 or 11' in good and
          'pin.ZIndex=if m.kind=="SELF" then 9' in good and
          'm.kind=="CASTLE_GATE" then 7' in good and
