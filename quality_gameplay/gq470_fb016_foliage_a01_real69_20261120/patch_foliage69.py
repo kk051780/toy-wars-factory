@@ -23,12 +23,25 @@ local function insideCanopy(part:BasePart,point:Vector3):boolean
   and math.abs(at.Z)<=part.Size.Z*.5+.5
 end
 local function blocksAvatar(part:BasePart,eye:Vector3,avatar:Vector3):boolean
- local travel=avatar-eye
- local squared=travel:Dot(travel)
- if squared<.01 then return false end
- local t=math.clamp((part.Position-eye):Dot(travel)/squared,0,1)
- if t<=0 or t>=1 then return false end
- return insideCanopy(part,eye+travel*t)
+ -- Clip the camera→avatar segment against the canopy's rotated 3D box.
+ -- This avoids spherical false positives and handles diagonal crossings.
+ local start=part.CFrame:PointToObjectSpace(eye)
+ local finish=part.CFrame:PointToObjectSpace(avatar)
+ local delta=finish-start
+ local tMin,tMax=0,1
+ local function clipAxis(origin:number,step:number,radius:number):boolean
+  if math.abs(step)<0.0001 then return math.abs(origin)<=radius end
+  local enter=(-radius-origin)/step
+  local leave=(radius-origin)/step
+  if enter>leave then enter,leave=leave,enter end
+  tMin=math.max(tMin,enter)
+  tMax=math.min(tMax,leave)
+  return tMin<=tMax
+ end
+ return clipAxis(start.X,delta.X,part.Size.X*.5+.5)
+  and clipAxis(start.Y,delta.Y,part.Size.Y*.5+.5)
+  and clipAxis(start.Z,delta.Z,part.Size.Z*.5+.5)
+  and tMax>.02 and tMin<.98
 end
 task.spawn(function()
  while script.Parent and live do
@@ -46,9 +59,11 @@ task.spawn(function()
     local inside=insideCanopy(part,eye)
     local intersects=if avatar then blocksAvatar(part,eye,avatar) else false
     local fade=inside or intersects
-    if occluded[part]~=fade then
+    local alpha=if fade then (if inside then .88 else .76) else 0
+    -- Distance LOD may have restored .93 on nearward transition; re-sync.
+    if occluded[part]~=fade or part.LocalTransparencyModifier~=alpha then
      occluded[part]=fade
-     part.LocalTransparencyModifier=if fade then (if inside then .88 else .76) else 0
+     part.LocalTransparencyModifier=alpha
     end
    else
     occluded[part]=nil -- far-distance A01 LOD remains authoritative
@@ -107,7 +122,7 @@ def selftest():
   +BEGIN+"local old=RunService.RenderStepped:Connect(function() end)\n"
   +END+" fadeConn:Disconnect()\nend)\n")
  out=transform(original)
- require("insideCanopy" in out and "task.wait(.16)" in out and ".76" in out,"FIX_PRESENT")
+ require("insideCanopy" in out and "clipAxis" in out and "task.wait(.16)" in out and ".76" in out,"FIX_PRESENT")
  for broken in (out,original.replace(BEGIN,""),original.replace(" fadeConn:Disconnect()\n",""),
   original.replace("local MAX_CANOPIES=160","local MAX_CANOPIES=0"),
   original.replace("if not RunService:IsStudio() then return end","")):
