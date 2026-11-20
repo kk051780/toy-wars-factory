@@ -18,6 +18,8 @@ NO_AUTHORITY = ("RemoteEvent", "RemoteFunction", "DataStoreService",
 
 def audit(src: str) -> dict:
     if src.count(MARK) != 1: raise ValueError("SOURCE_MARKER")
+    # Strip inline Luau comments; an in-source '= 20 -- text' is still exact.
+    assignments_only = "\\n".join(line.split("--", 1)[0] for line in src.splitlines())
     # Full-line numerical contracts: "= 40" cannot masquerade as "= 4".
     for symbol, amount, reason in (
         ("EXPECTED_ROUTES", 3, "THREE_ROUTES"),
@@ -25,7 +27,7 @@ def audit(src: str) -> dict:
         ("SIDE_OFFSET", 20, "CORRIDOR_OFFSET"),
         ("MIN_ANCHOR_SEPARATION", 24, "UNIQUE_ANCHORS"),
     ):
-        statements = re.findall(r"(?m)^\s*local\s+" + symbol + r"\s*=\s*(\d+)\s*$", src)
+        statements = re.findall(r"(?m)^\s*local\s+" + symbol + r"\s*=\s*(\d+)\s*$", assignments_only)
         if statements != [str(amount)]: raise ValueError(reason)
     if src.count("makePart(decoration,") != 4: raise ValueError("GEOMETRY_COUNT")
     if any(name not in src for name in PART_NAMES): raise ValueError("DISTINCT_PARTS")
