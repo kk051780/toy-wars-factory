@@ -33,13 +33,21 @@ RIDGE = '''-- GQ470_FB015_RIDGE_HORIZON_P0_20261120
 -- Exactly twelve noncolliding wedge silhouettes per arena, mobile budget
 -- remains original 320 total. No transparency cards, particles or lights.
 local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)
+ -- Irregular but deterministic silhouettes: three contours, mirrored lanes
+ -- staggered in height/angle/depth. Exactly twelve original nonphysics parts.
+ local ridgeContours = {
+  {height=14,yaw=-19,drift=-16},
+  {height=23,yaw=13,drift=8},
+  {height=17,yaw=27,drift=19},
+ }
  for _,side in ipairs({-1,1}) do
   for index=1,3 do
+   local contour=ridgeContours[index]
    local x=side*410
-   local z=(index-2)*270
+   local z=(index-2)*270+side*contour.drift
    local at=ground(x,z)
-   local h=12+(index%2)*5
-   local turn=if side<0 then -22 else 22
+   local h=contour.height+(if side>0 then 3 else 0)
+   local turn=side*contour.yaw
    createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
     Vector3.new(18,h,31),CFrame.new(at+Vector3.new(0,h/2,0))
      *CFrame.Angles(0,math.rad(turn),0),darkStone,Enum.Material.Slate)
@@ -88,8 +96,9 @@ def selftest() -> None:
                + FUNCTION_ANCHOR + "\n"
                + CALL_ANCHOR)
     result = patch(minimal)
-    need("for index=1,3 do" in result and "drawHorizonRidges" in result,
-         "HAPPY_PATH")
+    need("for index=1,3 do" in result and "drawHorizonRidges" in result
+         and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result,
+         "HAPPY_PATH_IRREGULAR_CONTOURS")
     for broken in (minimal.replace(PRIOR, "missing"),
                    minimal.replace("= 320", "= 600"),
                    minimal.replace(CALL_ANCHOR, ""),
