@@ -12,7 +12,7 @@ permissions:
 jobs:
   verify-ridge-candidate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -20,6 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Source-level negative tests and immutable official receipt
+        shell: bash
         run: |
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py
@@ -42,3 +43,88 @@ jobs:
           assert not a['human_art_accepted']
           print("GQ470_RIDGE_SOURCE_QA_PASS_NOT_STUDIO_ACCEPTED")
           PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 69 selected and 69 rollback Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-ridge-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-ridge-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=Path('/tmp/gq470-ridge')
+          on=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          off=project_scan(root/'off69_ridge','EGGRUMBLE_REAL69.project.json')
+          assert len(on)==69 and len(off)==69 and set(on)==set(off)
+          target='ServerScriptService/EGGRUMBLE_FlagshipFieldArt'
+          assert {k for k in on if on[k]['sha256'] != off[k]['sha256']}=={target}
+          assert all(on[k]['class']==off[k]['class'] for k in on)
+          for folder,scripts in ((root,on),(root/'off69_ridge',off)):
+              for route,item in scripts.items():
+                  subprocess.run(['/tmp/gq470-ridge-luau/luau-compile','--text',str(folder/item['path'])],
+                                 stdout=subprocess.DEVNULL,check=True)
+          print('GQ470_RIDGE_NATIVE_ON69_OFF69_PASS')
+          PY
+      - name: Rojo 7.7.1 ON/OFF exact source and inverse place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-ridge-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-ridge-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-ridge-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/gq470-ridge-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-ridge-rojo build /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-ridge-rojo build /tmp/gq470-ridge/off69_ridge/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx
+          cmp /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx /tmp/gq470-ridge/off69_ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ridge/off69_ridge/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx --count 69
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo RED_RIDGE_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$PR_BASE" = "$CURRENT" || { echo RED_RIDGE_STALE_PR_BASE; exit 1; }
+          fi
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('/tmp/gq470-ridge')
+          rec=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(rec.read_text())
+          p=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          x=r['gq470_fb015_ridge_visual']
+          x['native69_off69']='PASS'
+          x['rojo69_off69']='PASS'
+          x['studio']='NOT_TESTED'
+          x['android']='NOT_TESTED'
+          x['human_art_accepted']=False
+          r['private_place_bytes']=p.stat().st_size
+          r['private_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          r['candidate_ci_ref']=os.environ['GITHUB_SHA']
+          rec.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ470_RIDGE_FULL_SOURCE_BUILD_PASS_NOT_STUDIO_PASS',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-RIDGE-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-ridge/sources/**
+            /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx
+          if-no-files-found: error
+          retention-days: 7
