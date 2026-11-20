@@ -108,7 +108,7 @@ def transform(source:str)->str:
     return patched
 
 def self_test()->None:
-    original=('local fairQuota=ModeFairQuota.new(72,12)\n'
+    original=('function SkillFX.emit(\n'\n              'local fairQuota=ModeFairQuota.new(72,12)\n'
               'local MAX_NEW_PER_PULSE=6\n'
               'if active>ACTIVE_LIMIT-MAX_NEW_PER_PULSE\n'
               'if role=="WARRIOR" then\n'
