@@ -220,6 +220,60 @@ jobs:
           assert sum(p.is_file() for p in dst.parent.parent.rglob('*'))==3
           print('GQ470_B220_LSS_ART_ONE_SOURCE_PACKAGE_SOURCE_PASS',head)
           PY
+      - name: B220 exact three-file admission and forged-input negatives
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from subprocess import check_output
+          import copy,hashlib,json
+          d=Path('/tmp/gq470-lss-on69/B220_SHOREFACET_SINGLE_SELECTED_SOURCE_ONLY')
+          files={p.relative_to(d).as_posix():p.read_bytes() for p in d.rglob('*') if p.is_file()}
+          route='selected_sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau'
+          assert set(files)=={route,'B220_SHOREFACET_MANIFEST.json','GQ470_SHOREFOAM_SOURCE_QA.json'}
+          m=json.loads(files['B220_SHOREFACET_MANIFEST.json'])
+          qa=json.loads(files['GQ470_SHOREFOAM_SOURCE_QA.json'])
+          expected_head=check_output(['git','rev-parse','HEAD'],text=True).strip()
+          expected_base='e80973c354f14a0d0088577f3cc1a875454f0f8f'
+          def verify(meta,source,paths):
+              assert len(paths)==3
+              assert meta['candidate_head_exact']==expected_head
+              assert meta['formal_base_head']==expected_base
+              assert meta['source_select_route']=='ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal'
+              assert meta['selected_source_class']=='Script'
+              assert meta['selected_source_path']==route
+              assert meta['total_selected_source_count']==69 and meta['other_sources_byte_exact']==68
+              assert meta['original_selected_sha256']==qa['source_sha_before']
+              assert meta['candidate_selected_sha256']==qa['source_sha_after']
+              assert meta['candidate_selected_sha256']==hashlib.sha256(source).hexdigest()
+              assert meta['no_pr_whole_merge'] and meta['no_formal_rc_write_by_A']
+              assert meta['owner_accepted'] is False and meta['art_gate']=='ART_NO_GO'
+              assert meta['studio']=='NOT_TESTED' and meta['android']=='NOT_TESTED'
+          verify(m,files[route],set(files))
+          mutations={
+              'candidate_sha':({'candidate_selected_sha256':'0'*64},None,None),
+              'selected_class':({'selected_source_class':'LocalScript'},None,None),
+              'route':({'source_select_route':'ServerScriptService/EGGRUMBLE_Game'},None,None),
+              'original_sha':({'original_selected_sha256':'0'*64},None,None),
+              'candidate_head':({'candidate_head_exact':'f'*40},None,None),
+              'formal_head':({'formal_base_head':'f'*40},None,None),
+              'fake_art_go':({'art_gate':'ART_GO'},None,None),
+              'whole_pr_merge':({'no_pr_whole_merge':False},None,None),
+              'script_bytes':({},files[route]+b'bad',None),
+              'extra_packet_file':({},None,set(files)|{'bad.file'}),
+          }
+          negatives=0
+          for label,(delta,bytes_,pathset) in mutations.items():
+              try:
+                  verify({**m,**delta},bytes_ if bytes_ is not None else files[route],
+                         pathset if pathset is not None else set(files))
+              except AssertionError:
+                  negatives+=1
+              else:
+                  raise RuntimeError('RED_B220_SHOREFACET_FORGED_PACKET_'+label)
+          assert negatives==10
+          print('GQ470_SHORE_B220_REAL_PACKET_10_MUTANTS_REJECTED_PASS',expected_head)
+          PY
       - name: Upload actual Luau source B handoff
         uses: actions/upload-artifact@v4
         with:
