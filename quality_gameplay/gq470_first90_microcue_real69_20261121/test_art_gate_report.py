@@ -106,6 +106,18 @@ class ReportEvidenceTests(unittest.TestCase):
         self.assertIn("not measured viewport obstruction",
                       self.report["static_visual_delta"]["interpretation"])
 
+    def test_human_capture_checkpoints_match_actual_first90_steps(self):
+        baseline=(HERE.parents[1]/patch.ORIGINAL_LOCAL).read_text(encoding="utf-8")
+        self.assertIn("local STEP1=22",baseline)
+        self.assertIn("local STEP2=48",baseline)
+        slots=self.report["first90_focus_checks"]
+        checkpoint_seconds={item["elapsed_s"] for item in slots}
+        self.assertTrue({2,8,22,24,48,90}.issubset(checkpoint_seconds))
+        self.assertNotIn(30,checkpoint_seconds)  # not a step transition
+        self.assertNotIn(55,checkpoint_seconds)
+        self.assertTrue(all("4.5秒" in item["expectation"]
+                            for item in slots if item["elapsed_s"] in (22,48)))
+
     def test_synthetic_evidence_mutations_rejected(self):
         mutations=[
             ("falsely green visual",lambda x:x["decisions"].update(human_art="PASS")),
