@@ -14,6 +14,7 @@ on:
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
       - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
+      - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -46,6 +47,7 @@ on:
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
       - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
+      - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -1273,6 +1275,94 @@ jobs:
           else
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_GQ470_PR_BASE_STALE; exit 1; }
+          fi
+      - name: "GQ470 HUD names: source-exact two-script visual repair; Native/Rojo/OFF69"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATCH=quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py
+          python3 -m py_compile "$PATCH"
+          python3 -B "$PATCH" --self-test
+          python3 - <<'PY'
+          import pathlib,shutil
+          root=pathlib.Path('artifacts/real69')
+          off=root/'off69_hud_build'
+          assert not off.exists() and not (root/'off69_hud_labels').exists()
+          shutil.copytree(root/'sources',off/'sources')
+          shutil.copy2(root/'EGGRUMBLE_REAL69.project.json',off/'EGGRUMBLE_REAL69.project.json')
+          shutil.copy2(root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx',root/'OFF69_PRE_HUD_DISPLAY_EXACT.rbxlx')
+          print('GQ470_HUD_SINGLE_ROLLBACK_SNAPSHOT_READY')
+          PY
+          python3 -B "$PATCH" --base artifacts/real69 --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,pathlib,subprocess,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('artifacts/real69')
+          before=project_scan(root/'off69_hud_build','EGGRUMBLE_REAL69.project.json')
+          after=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          changed={'ServerScriptService/EGGRUMBLE_SevenRoleCombat',
+                   'StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime'}
+          assert len(before)==len(after)==69 and set(before)==set(after)
+          assert {route for route in before if before[route]['sha256']!=after[route]['sha256']}==changed
+          assert all(before[k]['class']==after[k]['class'] and before[k]['path']==after[k]['path'] for k in before)
+          assert all(before[k]['sha256']==after[k]['sha256'] for k in before if k not in changed)
+          assert b'GQ470_HUD_TOOL_DISPLAY_IDS_REAL69_20261120' in after['ServerScriptService/EGGRUMBLE_SevenRoleCombat']['source']
+          assert b'GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120' in after['StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime']['source']
+          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert receipt['build_head']==__import__('os').environ['GITHUB_SHA']
+          assert receipt['gq470_fb015_hud_tool_labels']['unchanged_selected_sources']==67
+          assert all(receipt['source_hashes'][k]==after[k]['sha256'] for k in after)
+          for base,items in [(root,after),(root/'off69_hud_build',before)]:
+           for v in items.values():
+            subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(base/v['path'])],
+                           check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_HUD_NATIVE_ON69_OFF69_SOURCE_LOCK_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/off69_hud_build/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/OFF69_HUD_DISPLAY_REBUILT.rbxlx
+          cmp artifacts/real69/OFF69_HUD_DISPLAY_REBUILT.rbxlx artifacts/real69/OFF69_PRE_HUD_DISPLAY_EXACT.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            --place artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 - <<'PY'
+          import json,pathlib,hashlib,os,shutil,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('artifacts/real69')
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          rpath=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          receipt=json.loads(rpath.read_text())
+          meta=receipt['gq470_fb015_hud_tool_labels']
+          meta['native_rojo_off69']='PASS_69_OF_69_SOURCE_BUILD'
+          meta['studio_android_fun']='NOT_TESTED'
+          meta['owner_accepted']=False
+          receipt['build_head']=os.environ['GITHUB_SHA']
+          receipt['private_place_bytes']=place.stat().st_size
+          receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          rpath.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          delivery=root/'delivery'
+          for source in [place,rpath]:
+           shutil.copy2(source,delivery/source.name)
+          selected=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          for route in meta['only_modified']:
+           p=pathlib.Path(selected[route]['path'])
+           destination=delivery/p
+           destination.parent.mkdir(parents=True,exist_ok=True)
+           shutil.copy2(root/p,destination)
+          assert len(list(delivery.glob('*.rbxlx')))==1
+          print('GQ470_HUD_SINGLE_OFFICIAL_CANDIDATE_PLACE',place.stat().st_size)
+          PY
+          tar -czf artifacts/real69/delivery/OFF69_HUD_DISPLAY_ROLLBACK.tar.gz -C artifacts/real69 \
+            off69_hud_build off69_hud_labels OFF69_PRE_HUD_DISPLAY_EXACT.rbxlx
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_HUD_FORMAL_SAME_HEAD_DRIFT; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_HUD_PR_BASE_STALE; exit 1; }
           fi
       - name: Final REAL69 69-route/17-family RC85+RC86 on REAL65 nonloss gate
         shell: bash
