@@ -7,7 +7,7 @@ import json
 import shutil
 from pathlib import Path
 
-BASE = 'da5ca812b4852f78ffd54a49617e7d4cede75d15'
+BASE = 'c8f59a3d5815276ed71f9f62edd7e568e61911e3'
 TARGET = 'ServerScriptService/EGGRUMBLE_EncounterReadabilityArt'
 PROJECT = 'EGGRUMBLE_REAL69.project.json'
 RECEIPT = 'REAL69_LEGACY_INTAKE_RECEIPT.json'
