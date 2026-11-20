@@ -12,6 +12,8 @@ import argparse
 import hashlib
 import json
 import re
+import struct
+import zlib
 from pathlib import Path
 
 from check_art_quality import SCENES, DEVICES, VERSIONS, CATEGORIES, evidence_audit, png_info
@@ -31,6 +33,53 @@ def need(ok: bool, reason: str) -> None:
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+
+def verified_png_integrity(path: Path) -> tuple[int, int, str]:
+    """Require a complete CRC-valid PNG, not just its magic bytes and IHDR.
+
+    The common art checker supplies the resolution/size gates; this stricter
+    evidence counter blocks truncated, corrupted, or trailing-junk files from
+    inflating the REAL69 capture progress metric. It is NOT Studio provenance.
+    """
+    width, height, sha = png_info(path)
+    data = path.read_bytes()
+    offset = 8
+    seen_header = seen_pixels = seen_end = False
+    while offset < len(data):
+        if len(data) - offset < 12:
+            raise ValueError("TRUNCATED_PNG_CHUNK")
+        length = struct.unpack_from(">I", data, offset)[0]
+        label = data[offset + 4:offset + 8]
+        payload_end = offset + 8 + length
+        next_offset = payload_end + 4
+        if next_offset > len(data):
+            raise ValueError("TRUNCATED_PNG_PAYLOAD")
+        if len(label) != 4 or not all(
+            65 <= letter <= 90 or 97 <= letter <= 122 for letter in label
+        ):
+            raise ValueError("INVALID_PNG_CHUNK_NAME")
+        stored_crc = struct.unpack_from(">I", data, payload_end)[0]
+        actual_crc = zlib.crc32(data[offset + 4:payload_end]) & 0xFFFFFFFF
+        if stored_crc != actual_crc:
+            raise ValueError("PNG_CHUNK_CRC_MISMATCH")
+        if label == b"IHDR":
+            if seen_header or offset != 8 or length != 13:
+                raise ValueError("PNG_IHDR_ORDER")
+            seen_header = True
+        elif not seen_header:
+            raise ValueError("PNG_IHDR_MISSING")
+        if label == b"IDAT":
+            seen_pixels = True
+        if label == b"IEND":
+            if seen_end or length != 0 or next_offset != len(data):
+                raise ValueError("PNG_IEND_OR_TRAILING_DATA")
+            seen_end = True
+        offset = next_offset
+    if not (seen_header and seen_pixels and seen_end):
+        raise ValueError("PNG_REQUIRED_CHUNKS_MISSING")
+    return width, height, sha
 
 
 def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
@@ -83,7 +132,7 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
         if file.is_symlink() or not file.resolve().is_relative_to(root):
             continue
         try:
-            width, height, sha = png_info(file)
+            width, height, sha = verified_png_integrity(file)
         except (OSError, ValueError):
             continue
         if key[1] == "pc" and (width < 1280 or height < 720):

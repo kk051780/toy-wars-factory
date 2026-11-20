@@ -206,6 +206,37 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
                       result["image_evidence"]["violations"])
         self.assertEqual(result["art_gate"], "ART_NO_GO")
 
+
+    def test_corrupt_png_crc_is_not_real_capture_progress(self):
+        # These are synthetic fixtures, never Studio screenshots.
+        png = self.root / "bad_crc.png"
+        damaged = bytearray(synthetic_png(91))
+        damaged[-1] ^= 1  # Corrupt IEND CRC, while leaving header intact.
+        png.write_bytes(damaged)
+        manifest = self.root / "manifest_png_crc.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "forest", "device": "pc",
+                       "version": "after", "file": "bad_crc.png"}]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(synthetic_png(91))
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
+    def test_truncated_and_trailing_png_payload_are_not_counted(self):
+        png = self.root / "bad_tail.png"
+        good = synthetic_png(92)
+        manifest = self.root / "manifest_png_tail.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "beast", "device": "pc",
+                       "version": "before", "file": "bad_tail.png"}]
+        }), encoding="utf-8")
+        for bad in (good[:-12], good + b"UNTRUSTED_TRAILING_BYTES"):
+            with self.subTest(size=len(bad)):
+                png.write_bytes(bad)
+                self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(good)
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):
         # No real captures: the synthetic manifest can only produce BLOCKED.
         m = self.root / "manifest.json"
