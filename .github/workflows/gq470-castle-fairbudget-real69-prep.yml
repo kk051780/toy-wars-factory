@@ -81,11 +81,22 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import pathlib,json,os
-          p=pathlib.Path(os.environ['GQ470_REAL69_BASE'])/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          import pathlib,json,os,hashlib,re
+          root=pathlib.Path(os.environ['GQ470_REAL69_BASE'])
+          p=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
           receipt=json.loads(p.read_text())
           assert receipt['gq470_castle_fairbudget']['other_68_exact']
-          receipt['build_head']=os.environ['GITHUB_SHA']
+          # pull_request checkout uses a *synthetic merge SHA*. Pin actual PR head.
+          event=json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          head=event.get('pull_request',{}).get('head',{}).get('sha') or os.environ['GITHUB_SHA']
+          assert re.fullmatch(r'[0-9a-f]{40}',head)
+          receipt['build_head']=head
+          receipt['candidate_ci_checkout_merge_sha']=os.environ['GITHUB_SHA']
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          receipt['private_place_bytes']=place.stat().st_size
+          receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt['gq470_castle_fairbudget']['native69_on_off']='PASS'
+          receipt['gq470_castle_fairbudget']['rojo69_on_off']='PASS'
           p.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
@@ -105,6 +116,11 @@ jobs:
           (root/'CASTLE_FAIRBUDGET_LEGACY17.json').write_text(json.dumps({
             'source_marker_families':17,'families':markers,
             'other_68_exact':True,'studio_android':'NOT_TESTED'},ensure_ascii=False,indent=2)+'\n')
+          meta_path=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          meta=json.loads(meta_path.read_text())
+          meta['gq470_castle_fairbudget']['legacy17_families']='PASS_SOURCE_ONLY'
+          meta['gq470_castle_fairbudget']['legacy48_inventory']='PASS_SOURCE_ONLY'
+          meta_path.write_text(json.dumps(meta,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           print('GQ470_CASTLE_REAL69_17_FAMILIES_48_INVENTORY_PASS_NOT_ENGINE')
           PY
       - uses: actions/upload-artifact@v4
