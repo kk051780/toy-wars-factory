@@ -59,7 +59,7 @@ class ShoreFoamSourceTests(unittest.TestCase):
             "removed craft": self.original.replace("local function makeRide", "BAD_CRAFT"),
             "changed foam": self.original.replace("Vector3.new(55,.10,2.3)", "Vector3.new(55,1,2.3)"),
             "double foam": self.original.replace(OLD, OLD + "\n" + OLD, 1),
-            "not studio": self.original.replace("if not RunService:IsStudio() then return end", "if true then return end"),
+            "missing cloud": self.original.replace("PublicCloudLift_", "BAD_CLOUD_LIFT"),
         }
         for label, raw in mutations.items():
             with self.subTest(label=label):
