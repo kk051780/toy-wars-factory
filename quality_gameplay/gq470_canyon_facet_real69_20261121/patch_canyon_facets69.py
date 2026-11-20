@@ -91,14 +91,14 @@ def verify_visual_contract(fragment: str) -> None:
 
     This is a source/geometry upper-bound check, NOT actual camera visibility.
     """
-    constructors = re.findall(r'Instance\\.new\\("([^"]+)"\\)', fragment)
+    constructors = re.findall(r'Instance\.new\("([^"]+)"\)', fragment)
     demand(constructors == ["WedgePart"], "ONE_WEDGE_PART_FACTORY")
     demand(fragment.count("for i=1,7 do") == 1 and
            fragment.count('facet.Parent=stage') == 1 and
            fragment.count('stage:SetAttribute("CanyonFacetVisualBudget",7)') == 1,
            "ONLY_SEVEN_DECORATIONS")
     assignments = re.findall(
-        r'(?m)^\\s*facet\\.(CanCollide|CanTouch|CanQuery|CastShadow)\\s*=\\s*(\\w+)',
+        r'(?m)^\s*facet\.(CanCollide|CanTouch|CanQuery|CastShadow)\s*=\s*(\w+)',
         fragment)
     expected = [(key, "false") for key in
                 ("CanCollide", "CanTouch", "CanQuery", "CastShadow")]
@@ -178,11 +178,11 @@ def self_test() -> None:
            "POSITIVE")
     for bad in (
         NEW.replace('facet.CanCollide=false', 'facet.CanCollide=true'),
-        NEW.replace('facet.CanQuery=false', 'facet.CanQuery=false\\n  facet.CanQuery=true'),
+        NEW.replace('facet.CanQuery=false', 'facet.CanQuery=false\n  facet.CanQuery=true'),
         NEW.replace('facet.CastShadow=false', 'facet.CastShadow=true'),
         NEW.replace('Instance.new("WedgePart")', 'Instance.new("Part")'),
         NEW.replace("for i=1,7 do", "for i=1,8 do"),
-        NEW.replace('facet.Parent=stage', 'facet.Parent=stage\\n  facet.Parent=stage'),
+        NEW.replace('facet.Parent=stage', 'facet.Parent=stage\n  facet.Parent=stage'),
         NEW.replace('local bankX=if rightBank then 32 else -32',
                     'local bankX=if rightBank then 25 else -25'),
     ):
