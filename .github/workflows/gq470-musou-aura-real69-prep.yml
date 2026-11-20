@@ -71,6 +71,14 @@ jobs:
           assert qa["original_sha256"]==old[route]["sha256"]
           assert qa["candidate_sha256"]==new[route]["sha256"]
           assert (t/"off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx").stat().st_size==798390
+          # A candidate has a DIFFERENT selected source SHA than the official OFF receipt.
+          # Keep untouched OFF official receipt; update candidate receipt only for honest
+          # legacy48/17 family checks (otherwise fail closed on genuine A source drift).
+          candidate_receipt=dict(official)
+          candidate_receipt["source_hashes"]=dict(official["source_hashes"])
+          candidate_receipt["source_hashes"][route]=new[route]["sha256"]
+          (t/"on69/REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(
+              json.dumps(candidate_receipt,indent=2,ensure_ascii=False)+"\n")
           manifest=dict(feature_id=qa["feature_id"],a_head=os.environ["A_HEAD"],
             base_rc=os.environ["ORIG_HEAD"],target_route=route,source_class="ModuleScript",
             original_sha256=qa["original_sha256"],candidate_sha256=qa["candidate_sha256"],
