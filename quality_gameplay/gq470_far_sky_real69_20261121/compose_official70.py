@@ -20,7 +20,7 @@ NEW_ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets"
 NEW_PATH = "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau"
 THIS = Path(__file__).resolve().parent
 SOURCE = THIS / "EGGRUMBLE_FarSkyFacets.client.luau"
-LIB = THIS.parents[1] / "gq8_rc85_rc86_real68_nonloss_20261120"
+LIB = THIS.parent / "gq8_rc85_rc86_real68_nonloss_20261120"
 sys.path.insert(0, str(LIB))
 from verify_nonloss import project_scan
 
