@@ -1,0 +1,25 @@
+name: GQ470 P0 Three Route Landmarks source gate (A only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_castle_route_landmarks_20261121/**'
+      - '.github/workflows/gq470-route-landmarks-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-art-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source only + negative mutation QA (not Studio nor Android)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/gq470_castle_route_landmarks_20261121 -p 'test_*.py' -v
+          echo "GQ470_3_APPROACH_LANDMARK_SOURCE_QA_ONLY"
+          echo "OFFICIAL_REAL69=UNCHANGED STUDIO/ANDROID/HUMAN_ART=NOT_TESTED"
