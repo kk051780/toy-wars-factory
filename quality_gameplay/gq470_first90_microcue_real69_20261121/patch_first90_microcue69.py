@@ -36,7 +36,8 @@ local started=os.clock()
 local alive=true
 local previousCue=""
 local cueShownAt=started
-local lastReminderAt=started"""
+local lastReminderAt=started
+local lastBoundHead:BasePart?=nil"""
 LOOP_OLD = """  local message=cue(now)
   local head=billboard.Adornee
   billboard.Enabled=message~="" and head~=nil and head.Parent~=nil
@@ -56,6 +57,12 @@ LOOP_NEW = """  local message=cue(now)
    lastReminderAt=now
   end
   local head=billboard.Adornee
+  -- Late spawns and respawns must receive the current cue after the Head binds.
+  -- Only a DIFFERENT adornee resets the window, so polling never prolongs it.
+  if head~=lastBoundHead then
+   lastBoundHead=head
+   if head then cueShownAt=now end
+  end
   -- Never show when eliminated, detached, or without an avatar head.
   billboard.Enabled=message~="" and now-cueShownAt<CUE_VISIBLE_SECONDS
    and head~=nil and head.Parent~=nil and player.Character==currentCharacter
