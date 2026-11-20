@@ -152,6 +152,7 @@ jobs:
           PY
           python3 -B quality_gameplay/gq470_fieldart_916_934_composite_20261121/compose.py --verify "$R"
           python3 -B quality_gameplay/gq470_fieldart_916_934_composite_20261121/compose.py --export-b "$R"
+          python3 -B quality_gameplay/gq470_fieldart_916_934_composite_20261121/verify_b_packet.py --base "$R" --negative-tests
           echo A_PREP_READY_NOT_FORMAL_NOT_ENGINE_NOT_ART_GO
       - uses: actions/upload-artifact@v4
         with:
