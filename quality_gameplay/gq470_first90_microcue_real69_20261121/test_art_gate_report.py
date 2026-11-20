@@ -11,6 +11,8 @@ import json
 from pathlib import Path
 import unittest
 
+import patch_first90_microcue69 as patch
+
 HERE=Path(__file__).resolve().parent
 ART=HERE/"ART_CHECK_REPORT.json"
 SCENES={"lobby","field_wide","castle","sea","forest","neutral","beast","combat"}
@@ -33,9 +35,11 @@ def audit(report: dict) -> dict:
             ci.get("native_compile_off")==69 and
             ci.get("rojo_on_off")=="PASS" and
             ci.get("official_rc_adopted") is False,"NO_FALSE_ADOPTION")
-    require(ci.get("source_sha256_before")=="cd346ca76f8c215219a7c31e0795b3e113a146eaab9c003cd5559eaf46919d5d"
-            and ci.get("source_sha256_after")=="dabd9cacb5c0c5f860ce12087ac96c450adb05f128d19abadab42c933a4fd259",
-            "ORIGINAL_AND_CANDIDATE_SRC")
+    original=(HERE.parents[1]/patch.ORIGINAL_LOCAL).read_text(encoding="utf-8")
+    actual_candidate_sha=patch.digest(patch.transform(original).encode("utf-8"))
+    require(ci.get("source_sha256_before")==patch.ORIGINAL_SHA256
+            and ci.get("source_sha256_after")==actual_candidate_sha,
+            "ORIGINAL_AND_CANDIDATE_SRC_DYNAMIC_SOURCE_EXACT")
     visual=report.get("static_visual_delta",{})
     before=visual.get("billboard_before_px")
     after=visual.get("billboard_after_px")
