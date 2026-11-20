@@ -33,7 +33,9 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> int:
+def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
+                     expected_head: str | None = None,
+                     expected_place_sha: str | None = None) -> int:
     """Count actual valid, distinct PNG files, never just manifest rows.
 
     The legacy generic evidence gate counts unique declared keys even when
@@ -46,6 +48,14 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> in
     except (ValueError, OSError):
         return 0
     if not isinstance(manifest, dict):
+        return 0
+    # A real PNG from a stale Studio build is not valid progress for this RC.
+    # The standalone counter remains backwards compatible for synthetic QA;
+    # production audit always pins both the official HEAD and exact Place.
+    if expected_head is not None and manifest.get("after_head") != expected_head:
+        return 0
+    if (expected_place_sha is not None and
+            manifest.get("after_place_sha256") != expected_place_sha):
         return 0
     shots = manifest.get("shots")
     if not isinstance(shots, list):
@@ -119,7 +129,8 @@ def audit(source_report_path: Path, place: Path, expected_head: str,
         visual = {"gate": "FAIL", "violations": ["INVALID_MANIFEST_STRUCTURE"],
                   "shots_received": 0}
     violations = list(visual.get("violations", []))
-    valid = actual_png_count(evidence_path, screenshots)
+    valid = actual_png_count(evidence_path, screenshots,
+                             expected_head, expected_sha)
     manifest = None
     if evidence_path is not None and evidence_path.is_file():
         try:

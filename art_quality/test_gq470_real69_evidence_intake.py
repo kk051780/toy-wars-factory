@@ -169,6 +169,43 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
                 self.assertIn("INVALID_MANIFEST_STRUCTURE",
                               result["image_evidence"]["violations"])
 
+    def test_stale_pngs_do_not_count_toward_current_rc_progress(self):
+        # A genuine file path is not current-HEAD / current-Place proof.
+        # A stale manifest must count ZERO valid files for this RC.
+        png = self.root / "capture.png"
+        png.write_bytes(synthetic_png(73))
+        manifest = self.root / "stale_evidence.json"
+        data = {
+            "schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+            "before_head": "f" * 40, "after_head": HEAD,
+            "after_place_sha256": self.sha,
+            "shots": [{"scene": "castle", "device": "pc",
+                       "version": "after", "file": "capture.png"}],
+            "ratings": {}, "performance": {},
+        }
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root, HEAD, self.sha), 1)
+        self.assertEqual(self.check(manifest, self.root)
+                         ["image_evidence"]["actual_distinct_valid_png_files"], 1)
+
+        data["after_head"] = "0" * 40
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root, HEAD, self.sha), 0)
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertIn("AFTER_HEAD_NOT_CURRENT_REAL69",
+                      result["image_evidence"]["violations"])
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
+        data["after_head"] = HEAD
+        data["after_place_sha256"] = "f" * 64
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertIn("STUDIO_PLACE_SHA_MISMATCH",
+                      result["image_evidence"]["violations"])
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):
         # No real captures: the synthetic manifest can only produce BLOCKED.
         m = self.root / "manifest.json"
