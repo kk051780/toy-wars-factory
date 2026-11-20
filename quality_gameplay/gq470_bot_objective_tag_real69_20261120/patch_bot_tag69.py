@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse, hashlib, json, shutil
 from pathlib import Path
 
-BASE="c8f59a3d5815276ed71f9f62edd7e568e61911e3"
+BASE="e80973c354f14a0d0088577f3cc1a875454f0f8f"
 TARGET="ServerScriptService/EGGRUMBLE_BotActors"
 ORIGINAL_SHA="b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
 MARK="GQ470_FB015_NEAR_BOT_TAG_REAL69_20261120"

@@ -4,7 +4,7 @@ on:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq470_bot_objective_tag_real69_20261120/**'
-      - '.github/workflows/gq470-bot-art-real69-prep.yml'
+      - '.github/workflows/gq470-bot-tag-real69-prep.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Verify patch negative tests and current exact REAL69 input
         shell: bash
@@ -25,9 +26,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py
           python3 -B quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py --self-test
-          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44692717743 --jq '.head_sha+" "+.conclusion')" = "c8f59a3d5815276ed71f9f62edd7e568e61911e3 success"
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
           mkdir -p /tmp/gq470-bot-tag
-          gh run download 44692717743 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-bot-tag
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-bot-tag
           test -s /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           test -s /tmp/gq470-bot-tag/REAL69_LEGACY_INTAKE_RECEIPT.json
           python3 -B quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py --base /tmp/gq470-bot-tag
@@ -92,12 +93,12 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-bot-tag/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-bot-tag/off69_bot_tag/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx --count 69
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "c8f59a3d5815276ed71f9f62edd7e568e61911e3" || { echo RED_STALE_REAL69_PARENT; exit 1; }
+          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_REAL69_PARENT; exit 1; }
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             # GitHub pull_request.base.sha can lag the live canonical ref.
             # Trust fresh ref + actual commit graph, never a stale event snapshot.
             PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
-            test -n "$PR_HEAD" && test "$PR_HEAD" = "$GITHUB_SHA" || { echo RED_PR_HEAD_MISMATCH; exit 1; }
+            test -n "$PR_HEAD" && test "$PR_HEAD" = "$(git rev-parse HEAD)" || { echo RED_PR_HEAD_MISMATCH; exit 1; }
             LINEAGE="$(gh api "repos/$GITHUB_REPOSITORY/compare/$CURRENT...$PR_HEAD" --jq .status)"
             test "$LINEAGE" = ahead || { echo RED_PR_HEAD_NOT_CURRENT_RC_DESCENDANT; exit 1; }
           fi
@@ -108,7 +109,7 @@ jobs:
           p=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
           r=json.loads(p.read_text())
           output=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
-          r['build_head']=os.environ['GITHUB_SHA']
+          r['build_head']=__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip()
           r['gq470_fb015_bot_tag']['native_rojo_off69']='PASS'
           r['gq470_fb015_bot_tag']['studio']='NOT_TESTED'
           r['private_place_bytes']=output.stat().st_size
