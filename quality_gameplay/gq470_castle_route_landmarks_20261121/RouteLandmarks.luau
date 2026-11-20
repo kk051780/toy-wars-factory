@@ -13,10 +13,10 @@ local MIN_ANCHOR_SEPARATION = 24
 
 local STONE = Color3.fromRGB(72, 83, 104)
 local EDGE = Color3.fromRGB(161, 173, 184)
-local PROFILE = {
- {Vector3.new(2.6, 3.2, 1.6), -19}, -- pointed northern approach
- {Vector3.new(4.6, 1.6, 1.4), 0},   -- broad central approach
- {Vector3.new(2.3, 4.2, 1.5), 22}, -- high southern approach
+local PROFILE: {{size: Vector3, yaw: number}} = {
+ {size=Vector3.new(2.6, 3.2, 1.6), yaw=-19}, -- pointed northern approach
+ {size=Vector3.new(4.6, 1.6, 1.4), yaw=0},   -- broad central approach
+ {size=Vector3.new(2.3, 4.2, 1.5), yaw=22}, -- high southern approach
 }
 
 local function makePart(parent: Model, name: string, dimensions: Vector3,
@@ -93,8 +93,8 @@ function RouteLandmarks.attach(root: Instance, anchors: {BasePart}, teamTint: Co
    frame * CFrame.new(5, 3, 0), STONE, false)
   makePart(decoration, motif .. "_Lintel", Vector3.new(11.2, 1.2, 1.7),
    frame * CFrame.new(0, 6.7, 0), EDGE, false)
-  makePart(decoration, motif .. "_Crest", profile[1],
-   frame * CFrame.new(0, 8.8, 0) * CFrame.Angles(0, math.rad(profile[2]), 0),
+  makePart(decoration, motif .. "_Crest", profile.size,
+   frame * CFrame.new(0, 8.8, 0) * CFrame.Angles(0, math.rad(profile.yaw), 0),
    teamTint, true)
  end
  decoration.Parent = root
