@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 import shutil
@@ -127,12 +128,24 @@ def verify_contour_geometry(spec: str) -> None:
         r"\{height=(\d+),yaw=(-?\d+),drift=(-?\d+),depth=(\d+),lean=(-?\d+),notch=(\d+)\}",
         spec)
     need(len(rows) == 3, "THREE_DISTINCT_CONTOURS")
+    need("local x=side*410" in spec and
+         "local z=(index-2)*270+side*contour.drift" in spec and
+         "for _,side in ipairs({-1,1}) do" in spec, "FIXED_HORIZON_COORDINATES")
     seen = set()
     for index, values in enumerate(rows, 1):
         h, yaw, drift, depth, lean, notch = map(int, values)
         need(12 <= h <= 28 and 24 <= depth <= 38, "SILHOUETTE_SCALE")
         need(abs(yaw) <= 32 and abs(drift) <= 24 and abs(lean) <= 9
              and 0 <= notch <= 4, "SILHOUETTE_SKEW")
+        yaw_r = math.radians(abs(yaw))
+        half_base_x = 9 * math.cos(yaw_r) + depth / 2 * math.sin(yaw_r)
+        cap_yaw_r = math.radians(abs(yaw * .7))
+        half_cap_x = 5.5 * math.cos(cap_yaw_r) + (depth - 6) / 2 * math.sin(cap_yaw_r)
+        # Conservative skew margin for the 3D tilted wedge bounding box.
+        base_inner_x = 410 + notch - half_base_x - 2
+        cap_inner_x = 410 - (2 + notch * .25) - half_cap_x - 2
+        need(min(base_inner_x, cap_inner_x) >= 388,
+             "HORIZON_FULL_WEDGE_FOOTPRINT")
         for side in (-1, 1):
             x, z = side * 410, (index - 2) * 270 + side * drift
             need(abs(x) >= 405 and abs(z) <= 310, "ROUTE_CLEARANCE")
@@ -184,6 +197,8 @@ def selftest() -> None:
         RIDGE.replace("drift=-16", "drift=-316", 1),
         RIDGE.replace("yaw=-19", "yaw=-119", 1),
         RIDGE.replace("notch=3", "notch=33", 1),
+        RIDGE.replace("local x=side*410", "local x=side*300", 1),
+        RIDGE.replace("local z=(index-2)*270", "local z=(index-2)*120", 1),
     ):
         try:
             verify_contour_geometry(mutant)
@@ -216,7 +231,7 @@ def selftest() -> None:
             pass
         else:
             raise AssertionError("NEGATIVE_MUTANT_WAS_ACCEPTED")
-    print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_6_GEOMETRY_MUTANTS_PASS")
+    print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_8_GEOMETRY_MUTANTS_PASS")
     print("GQ470_RIDGE_ATOMIC_TWO_PART_BUDGET_AND_REFUND_GUARD_PASS")
     print("GQ470_RIDGE_PATCH_AND_6_SOURCE_NEGATIVES_PASS")
 
