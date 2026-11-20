@@ -28,7 +28,7 @@ def sha(blob: bytes) -> str:
 
 def must(value: bool, reason: str) -> None:
     if not value:
-        raise ValueError("RED_KO_SLASH_" + reason)
+        raise ValueError("RED_STONE_GIANT_ART_" + reason)
 
 def selected(root: Path) -> dict[str, Path]:
     project = json.loads((root / PROJECT).read_text(encoding="utf-8"))
