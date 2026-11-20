@@ -64,7 +64,8 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> in
         if (key in seen_keys or key[0] not in SCENES or
                 key[1] not in DEVICES or key[2] not in VERSIONS):
             continue
-        seen_keys.add(key)
+        # Only validated, distinct PNGs consume a camera slot. The shared
+        # #420 gate still independently rejects duplicate manifest rows.
         name = shot.get("file")
         if not isinstance(name, str):
             continue
@@ -79,6 +80,7 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> in
             continue
         if sha in seen_hashes:
             continue
+        seen_keys.add(key)
         seen_hashes.add(sha)
         count += 1
     return count
