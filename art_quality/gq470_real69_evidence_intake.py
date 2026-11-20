@@ -45,6 +45,8 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> in
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (ValueError, OSError):
         return 0
+    if not isinstance(manifest, dict):
+        return 0
     shots = manifest.get("shots")
     if not isinstance(shots, list):
         return 0
@@ -55,7 +57,10 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None) -> in
     for shot in shots:
         if not isinstance(shot, dict):
             continue
-        key = (shot.get("scene"), shot.get("device"), shot.get("version"))
+        scene, device, version = (shot.get("scene"), shot.get("device"), shot.get("version"))
+        if not all(isinstance(v, str) for v in (scene, device, version)):
+            continue
+        key = (scene, device, version)
         if (key in seen_keys or key[0] not in SCENES or
                 key[1] not in DEVICES or key[2] not in VERSIONS):
             continue
@@ -104,13 +109,23 @@ def audit(source_report_path: Path, place: Path, expected_head: str,
     need(source.get("owner_accepted") is False and
          source.get("art_gate") == "ART_NO_GO", "UNAUTHORIZED_ART_APPROVAL")
 
-    visual = evidence_audit(evidence_path, screenshots, expected_sha)
+    # The shared #420 validator assumes mapping-shaped JSON. Fail closed with
+    # a report (not an uncaught traceback) for structurally invalid manifests.
+    try:
+        visual = evidence_audit(evidence_path, screenshots, expected_sha)
+    except (AttributeError, TypeError):
+        visual = {"gate": "FAIL", "violations": ["INVALID_MANIFEST_STRUCTURE"],
+                  "shots_received": 0}
     violations = list(visual.get("violations", []))
     valid = actual_png_count(evidence_path, screenshots)
     manifest = None
     if evidence_path is not None and evidence_path.is_file():
         try:
-            manifest = json.loads(evidence_path.read_text(encoding="utf-8"))
+            parsed = json.loads(evidence_path.read_text(encoding="utf-8"))
+            if isinstance(parsed, dict):
+                manifest = parsed
+            else:
+                violations.append("INVALID_MANIFEST_ROOT")
         except (ValueError, OSError):
             pass
     if manifest is not None:
