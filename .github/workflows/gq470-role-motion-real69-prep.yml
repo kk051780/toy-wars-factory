@@ -49,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           cmake -S _pinned_luau -B /tmp/gq470-role-motion-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470-role-motion-luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq470-role-motion-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import os,subprocess,sys
           from pathlib import Path
@@ -63,6 +63,8 @@ jobs:
                              check=True,stdout=subprocess.DEVNULL)
           print("GQ470_ROLE_MOTION_NATIVE_LUAU_ON69_OFF69_PASS")
           PY
+          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py --root "$RUNNER_TEMP/real69-motion" --out /tmp/gq470-role-motion-native-test.luau
+          /tmp/gq470-role-motion-luau/luau /tmp/gq470-role-motion-native-test.luau
       - name: Pinned Rojo ON69 / OFF69 / exact original rollback
         shell: bash
         run: |
