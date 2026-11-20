@@ -1,0 +1,57 @@
+name: GQ805 unique 3D kiosk runtime native and no-commerce gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq805_shop_kiosk_runtime_20261118/**'
+      - '.github/workflows/gq805-shop-kiosk-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-script-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original source / non-commerce negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq805_shop_kiosk_runtime_20261118/test_shop_kiosk_contract.py
+          git fetch --no-tags --depth=1 origin 5b829902e2d6de96db8def04dccff974157ae243
+          REF=5b829902e2d6de96db8def04dccff974157ae243
+          ROOT=quality_gameplay/gq805_lobby_shop_guardians_20261118
+          git show "$REF:$ROOT/EGGRUMBLE_LobbyShopCatalog.luau" >/tmp/GQ805_LobbyShopCatalog.luau
+          git show "$REF:$ROOT/EGGRUMBLE_LobbyShopView.client.luau" >/tmp/GQ805_LobbyShopView.luau
+          test "$(git hash-object /tmp/GQ805_LobbyShopCatalog.luau)" = f71eb575aacd61dd8ccb7719f7dae4caec5fedcd
+          test "$(git hash-object /tmp/GQ805_LobbyShopView.luau)" = f3cf10c8b0256896e9d194844deda91039429ddc
+          grep -q 'function Shop.mount(' /tmp/GQ805_LobbyShopView.luau
+          grep -q 'function M.list(' /tmp/GQ805_LobbyShopCatalog.luau
+          echo GQ805_ORIGINAL_808_BLOBS_LOCKED_AND_SHOP_PREVIEW_SAFE
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq805_luau
+          persist-credentials: false
+      - name: Native compile original selected modules and both new actual Roblox scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq805_luau -B /tmp/gq805_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq805_native --target Luau.Compile.CLI --parallel 4
+          R=quality_gameplay/gq805_shop_kiosk_runtime_20261118
+          /tmp/gq805_native/luau-compile --text "$R/GQ805_LobbyGuildShop.server.luau" >/dev/null
+          /tmp/gq805_native/luau-compile --text "$R/GQ805_ShopKioskClient.client.luau" >/dev/null
+          /tmp/gq805_native/luau-compile --text /tmp/GQ805_LobbyShopCatalog.luau >/dev/null
+          /tmp/gq805_native/luau-compile --text /tmp/GQ805_LobbyShopView.luau >/dev/null
+          echo GQ805_READONLY_GUILD_SHOP_4_SCRIPTS_LUAU_NATIVE_COMPILE_PASS
+      - name: Composite 41+4 source Class+SHA, OFF41 and negative-mutation QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq805_shop_kiosk_runtime_20261118
+          python3 "$R/test_package_shop45.py" /tmp/GQ805_LobbyShopCatalog.luau /tmp/GQ805_LobbyShopView.luau

@@ -1,0 +1,130 @@
+name: GQ805 true source-locked Real41 plus Kiosk45 Native Rojo and OFF41
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq805_shop_kiosk_runtime_20261118/**'
+      - '.github/workflows/gq805-shop-true-real45.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real45:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch successful ORIGINAL PR796 Real41 portable source and immutable PR808 UI
+        shell: bash
+        run: |
+          set -euo pipefail
+          PARENT_RUN=44317388329
+          PARENT_HEAD=33f22323f720659ae52628a6025a62eb1394fd24
+          EVIDENCE="$(gh run view "$PARENT_RUN" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "$PARENT_HEAD success" || { echo RED_PARENT_REAL41_NOT_PINNED_GREEN; exit 1; }
+          mkdir -p artifacts/parent artifacts/author808
+          gh run download "$PARENT_RUN" --repo "$GITHUB_REPOSITORY" --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL --dir artifacts/parent
+          test -s artifacts/parent/portable41/EGGRUMBLE_SOURCE41.project.json
+          test -s artifacts/parent/portable41/B_PORTABLE41_SOURCE_RECEIPT.json
+          test -s artifacts/parent/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/f71eb575aacd61dd8ccb7719f7dae4caec5fedcd" --jq '.content' | base64 -d >artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/f3cf10c8b0256896e9d194844deda91039429ddc" --jq '.content' | base64 -d >artifacts/author808/EGGRUMBLE_LobbyShopView.luau
+          test "$(git hash-object artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau)" = f71eb575aacd61dd8ccb7719f7dae4caec5fedcd
+          test "$(git hash-object artifacts/author808/EGGRUMBLE_LobbyShopView.luau)" = f3cf10c8b0256896e9d194844deda91039429ddc
+          echo GQ805_REAL41_SOURCE_AND_808_AUTHOR_BLOBS_PINNED_GREEN
+      - name: Compose REAL41 + 4 new/reused original scripts -> reversible REAL45 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq805_shop_kiosk_runtime_20261118/package_shop45.py \
+            --real41 artifacts/parent/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --receipt41 artifacts/parent/portable41/B_PORTABLE41_SOURCE_RECEIPT.json \
+            --catalog artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau \
+            --view artifacts/author808/EGGRUMBLE_LobbyShopView.luau \
+            --kiosk quality_gameplay/gq805_shop_kiosk_runtime_20261118 \
+            --out artifacts/real45 \
+            --expected-parent-head "$(python3 -c 'import json; print(json.load(open("artifacts/parent/portable41/B_PORTABLE41_SOURCE_RECEIPT.json"))["candidate_sha"])')"
+          python3 quality_gameplay/gq805_shop_kiosk_runtime_20261118/test_package_shop45.py \
+            artifacts/author808/EGGRUMBLE_LobbyShopCatalog.luau \
+            artifacts/author808/EGGRUMBLE_LobbyShopView.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq805_native
+          persist-credentials: false
+      - name: Native compile exact real41 OFF and added real45 ON source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq805_native -B /tmp/gq805_real45 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq805_real45 --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'quality_gameplay/gq805_shop_kiosk_runtime_20261118')
+          from package_shop45 import flatten
+          for project,expected in [
+            ("artifacts/parent/portable41/EGGRUMBLE_SOURCE41.project.json",41),
+            ("artifacts/real45/EGGRUMBLE_REAL45_KIOSK.project.json",45)]:
+            _,files=flatten(Path(project))
+            assert len(files)==expected
+            for src in files.values():
+              subprocess.run(['/tmp/gq805_real45/luau-compile','--text',str(src)],check=True,stdout=subprocess.DEVNULL)
+            print("GQ805_REAL_NATIVE_ALL_ORIGINAL_SOURCE_COMPILE_PASS",expected)
+          PY
+      - name: Pinned Rojo 7.7.1 OFF41 and ON45 actual Source + Class readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq805-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq805-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq805-rojo.zip') as z:
+            names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(names)==1
+            path=Path('/tmp/gq805-rojo')
+            path.write_bytes(z.read(names[0]));path.chmod(0o755)
+          PY
+          /tmp/gq805-rojo build artifacts/real45/EGGRUMBLE_REAL45_KIOSK.project.json -o artifacts/real45/EGGRUMBLE_REAL45_KIOSK.rbxlx
+          /tmp/gq805-rojo build artifacts/parent/portable41/EGGRUMBLE_SOURCE41.project.json -o artifacts/real45/OFF41.rbxlx
+          cmp artifacts/real45/OFF41.rbxlx artifacts/parent/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real45/EGGRUMBLE_REAL45_KIOSK.project.json \
+            --place artifacts/real45/EGGRUMBLE_REAL45_KIOSK.rbxlx --count 45
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/parent/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --place artifacts/real45/OFF41.rbxlx --count 41
+          python3 - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          rp=Path('artifacts/real45/B_PRIVATE45_SOURCE_RECEIPT.json')
+          doc=json.loads(rp.read_text(encoding='utf8'))
+          place=Path('artifacts/real45/EGGRUMBLE_REAL45_KIOSK.rbxlx')
+          doc.update({
+            'candidate_head':os.environ['GITHUB_SHA'],
+            'parent41_real_source_native_rojo_off41':'PASS',
+            'real45_all_source_native_rojo':'PASS',
+            'portable_place_bytes':place.stat().st_size,
+            'portable_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'formal_rc_adopted':False,
+            'studio_2client':'NOT_TESTED','android15':'NOT_TESTED','owner_fun':'NOT_TESTED'})
+          rp.write_text(json.dumps(doc,sort_keys=True,indent=2,ensure_ascii=False)+'\n',encoding='utf8')
+          print('GQ805_TRUE_REAL45_NATIVE_ROJO_OFF41_PRIVATE_PASS',doc['portable_place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ805-TRUE-REAL45-SHOP-KIOSK-PRIVATE-NOT-OFFICIAL
+          path: |
+            artifacts/real45/
+          if-no-files-found: error
+          retention-days: 5
