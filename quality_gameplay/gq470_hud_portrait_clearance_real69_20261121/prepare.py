@@ -18,13 +18,12 @@ TARGET = "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 ORIGINAL = (
-    ("        local menuY = math.min(133, h * .18)",
+    ("        local menuY = math.max(62, math.min(133, h * .18))",
      """        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121
         -- On compact portrait screens the old y=h*.18 put MENU buttons
-        -- over the HP status strip. Reserve 7px clearance beneath it.
+        -- very close to the HP status strip. Reserve a 7px clearance.
         local menuY = clamp(h * .18, 64, 133)
-        -- The 320px-wide layout can draw MENU buttons nearer the edge
-        -- without stealing the central combat view.
+        -- Narrow portrait ITEM shifts outward to protect the combat center.
         local itemInset = if w <= 360 then 45 else 65"""),
     ('            INVUL = at(x - 102, h - 71, 46, "無敵"),',
      '            INVUL = at(x - 122, h - 71, 46, "無敵"),'),
@@ -105,7 +104,7 @@ def native_test_source(policy: str) -> str:
 
 def self_test() -> None:
     fake = ("function M.layout(w, h, hand)\n"
-            "        local menuY = math.min(133, h * .18)\n"
+            "        local menuY = math.max(62, math.min(133, h * .18))\n"
             '            INVUL = at(x - 102, h - 71, 46, "無敵"),\n'
             '            ITEM = at(x - 65, menuY, 42, "道具"),\n'
             "end\nfunction M.display(snapshot) end\n"
@@ -116,7 +115,7 @@ def self_test() -> None:
             and "at(x - 122" in good
             and "x - itemInset" in good, "SELF_PASS")
     negatives = [good, fake.replace("x - 102", "x - 103"),
-                 fake.replace("math.min(133, h * .18)", "math.min(133, h * .19)"),
+                 fake.replace("math.max(62, math.min(133, h * .18))", "math.max(62, math.min(133, h * .19))"),
                  fake.replace("return M", "return Missing"),
                  fake.replace("function M.display(snapshot)", "function X(snapshot)")]
     for num, mutant in enumerate(negatives):
