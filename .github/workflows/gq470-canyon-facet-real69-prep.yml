@@ -114,11 +114,11 @@ jobs:
           python3 art_quality/gq470_real69_source_gate.py \
             --root /tmp/gq470-canyon \
             --head e80973c354f14a0d0088577f3cc1a875454f0f8f \
-            --out /tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json
+            --out /tmp/gq470-canyon/ART_CHECK_REPORT.json
           python3 - <<'PY'
           import json
           from pathlib import Path
-          r=json.loads(Path("/tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json").read_text())
+          r=json.loads(Path("/tmp/gq470-canyon/ART_CHECK_REPORT.json").read_text())
           assert r["source_gate"]["status"]=="PASS_SOURCE_ONLY"
           assert r["source_gate"]["actual_place_scripts"]==69
           assert r["source_gate"]["selected_routes_source_class_hash_exact"]==69
@@ -152,7 +152,7 @@ jobs:
             /tmp/gq470-canyon/sources/**
             /tmp/gq470-canyon/OFF69_CANYON_FACETS_REBUILT.rbxlx
             /tmp/gq470-canyon/CANYON_FACET_LEGACY48_AUDIT.json
-            /tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json
+            /tmp/gq470-canyon/ART_CHECK_REPORT.json
             /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
