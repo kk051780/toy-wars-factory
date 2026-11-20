@@ -1,0 +1,143 @@
+name: GQ822 original Real44 all13 prehit zero + free skill Real46 Native Rojo
+on:
+  push:
+    branches: ['feature/gq822-real44-invul-first-hit-gate-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/**'
+      - '.github/workflows/gq822-real44-invul-prehit46.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/**'
+      - '.github/workflows/gq822-real44-invul-prehit46.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original44-prehit46:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9e0da4259746086e3968ba4e3b19a18cddfb8e76
+          path: _pinned_inv823
+          persist-credentials: false
+      - name: Check exact official Core36, immutable original44 artifact and V2 Policy blob
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_RC_MOVED_REBASE_REQUIRED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44376856212" --jq .head_sha)" = a4684d6333db25474ad9f44ff6203aef7119dc6d
+          test "$(git hash-object _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau)" = 1c38af7f0ed65a7a90b65bbc98b0ab35d54c971c
+          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          test -s artifacts/real44/REAL44.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          receipt=json.loads(Path('artifacts/real44/BUILD44_RECEIPT.json').read_text())
+          place=Path('artifacts/real44/REAL44.rbxlx')
+          assert receipt['source_count']==44 and not receipt['official_rc_adopted']
+          assert receipt['sha256']==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert place.read_bytes()==Path('artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx').read_bytes()
+          print('GQ822_REAL44_EXACT_ORIGINAL_STUDIO_PLACE_SHA256_PASS')
+          PY
+      - name: Structural negative mutations and compose original game Real46 from immutable44
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119 -p 'test_*.py'
+          python3 -B handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real46.py \
+            --original44 artifacts/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --policy _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau \
+            --out artifacts/on46/ON46.project.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/on46/ON46.project.receipt.json').read_text())
+          assert r['candidate46']==46 and r['original_direct_hit_sites_guarded']==13
+          assert r['original_unmodified_source_count']==37
+          assert r['new_HP_damage_writer_count']==0 and r['official_rc_adopted'] is False
+          assert r['source_policy_blob']=='1c38af7f0ed65a7a90b65bbc98b0ab35d54c971c'
+          print('GQ822_ALL13_ORIGINAL_DAMAGE_OWNER_HOOKS_AND_FREE_SKILL_ATTACHED_PASS')
+          PY
+          python3 _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/make_native_invul.py --out /tmp/gq822-actual-policy-vm
+          python3 handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py \
+            --policy _pinned_inv823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau \
+            --out /tmp/gq822-actual-runtime-vm
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all Real46 and original44 and execute actual #823 V2 policy VM
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq822-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq822-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119')
+          from compose_real46 import flatten
+          for project,count in [('artifacts/portable44/EGGRUMBLE_SOURCE44.project.json',44),
+                                ('artifacts/on46/ON46.project.json',46)]:
+             _,files=flatten(Path(project))
+             assert len(files)==count
+             for path in files.values():
+                subprocess.run(['/tmp/gq822-luau/luau-compile','--text',str(path)],
+                               check=True,stdout=subprocess.DEVNULL)
+             print('GQ822_ACTUAL_NATIVE_ALL_SOURCES_PASS',count)
+          PY
+          /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-policy-vm/good.luau >/dev/null
+          /tmp/gq822-luau/luau /tmp/gq822-actual-policy-vm/good.luau | tee /tmp/actual-vm.log
+          grep -qx GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_MULTISOURCE_COUNTER_PVP_GUARDS_PASS /tmp/actual-vm.log
+          /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-runtime-vm/good.luau >/dev/null
+          /tmp/gq822-luau/luau-compile --text /tmp/gq822-actual-runtime-vm/damage_mutant.luau >/dev/null
+          /tmp/gq822-luau/luau /tmp/gq822-actual-runtime-vm/good.luau | tee /tmp/gq822-runtime-good.log
+          grep -qx GQ822_REAL_RUNTIME_NATIVE_FREE_TOOL_PREHIT_ZERO_REPEAT_ZERO_EXPIRY_PASS /tmp/gq822-runtime-good.log
+          if /tmp/gq822-luau/luau /tmp/gq822-actual-runtime-vm/damage_mutant.luau >/tmp/gq822-runtime-mutant.log 2>&1; then
+            echo RED_LIVE_RUNTIME_MUTANT_DID_NOT_FAIL; exit 1
+          fi
+          grep -q RED_FIRST_DAMAGE_SHOULD_BE_ZERO /tmp/gq822-runtime-mutant.log
+      - name: Original44 and private46 Rojo 7.7.1 exact Source/Class, original OFF44 match
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq822-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq822-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq822-rojo.zip') as z:
+             names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+             assert len(names)==1
+             dest=Path('/tmp/gq822-rojo')
+             dest.write_bytes(z.read(names[0]))
+             dest.chmod(0o755)
+          PY
+          /tmp/gq822-rojo build artifacts/on46/ON46.project.json -o artifacts/on46/ON46.rbxlx
+          /tmp/gq822-rojo build artifacts/portable44/EGGRUMBLE_SOURCE44.project.json -o artifacts/on46/OFF44.rbxlx
+          cmp artifacts/on46/OFF44.rbxlx artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/on46/ON46.project.json --place artifacts/on46/ON46.rbxlx --count 46
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable44/EGGRUMBLE_SOURCE44.project.json --place artifacts/on46/OFF44.rbxlx --count 44
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_LATEST_RC_MOVED; exit 1; }
+          echo GQ822_ORIGINAL44_NEW46_LUAU_ROJO_SOURCE_CLASS_OFF44_GREEN_NOT_OFFICIAL_RC
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ822-REAL46-PREHIT-GATE-PRIVATE-NOT-OFFICIAL
+          path: |
+            artifacts/on46/
+            artifacts/portable44/B_PORTABLE44_SOURCE_RECEIPT.json
+          retention-days: 4
+          if-no-files-found: error
