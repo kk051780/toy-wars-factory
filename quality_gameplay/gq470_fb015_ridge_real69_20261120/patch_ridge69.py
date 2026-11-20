@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import sys
@@ -41,10 +42,12 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
  arena.Destroying:Once(function()
   ridgeVisuals[arena]=nil
  end)
+ -- Three unequal stepped profiles, mirrored by shore without repeating
+ -- identical silhouettes. Each side has six matte, nonphysical Wedges.
  local ridgeContours = {
-  {height=14,yaw=-19,drift=-16},
-  {height=23,yaw=13,drift=8},
-  {height=17,yaw=27,drift=19},
+  {height=14,yaw=-19,drift=-16,depth=27,lean=-7,notch=3},
+  {height=23,yaw=13,drift=8,depth=35,lean=6,notch=1},
+  {height=17,yaw=27,drift=19,depth=25,lean=-4,notch=4},
  }
  for _,side in ipairs({-1,1}) do
   for index=1,3 do
@@ -54,13 +57,20 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
    local at=ground(x,z)
    local h=contour.height+(if side>0 then 3 else 0)
    local turn=side*contour.yaw
+   local lean=side*contour.lean
    local basePart=createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
-    Vector3.new(18,h,31),CFrame.new(at+Vector3.new(0,h/2,0))
-     *CFrame.Angles(0,math.rad(turn),0),darkStone,Enum.Material.Slate)
+    Vector3.new(18,h,contour.depth),
+    CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))
+     *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),
+    darkStone,Enum.Material.Slate)
    if basePart then table.insert(bucket,basePart) end
+   -- Slightly interpenetrating limestone ridge cap: no floating crown or
+   -- broad horizontal neon slab, even from mirrored camera viewpoints.
    local crownPart=createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
-    Vector3.new(11,4,24),CFrame.new(at+Vector3.new(-side*2,h+1,0))
-     *CFrame.Angles(0,math.rad(-turn),0),limestone,Enum.Material.Limestone)
+    Vector3.new(11,4,contour.depth-6),
+    CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))
+     *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),
+    limestone,Enum.Material.Limestone)
    if crownPart then table.insert(bucket,crownPart) end
   end
  end
@@ -100,7 +110,28 @@ def need(condition: bool, code: str) -> None:
     if not condition:
         raise ValueError("RED_GQ470_RIDGE_" + code)
 
+def verify_contour_geometry(spec: str) -> None:
+    """Fail closed on cliffs that crowd the routes or blow mobile visual bounds."""
+    rows = re.findall(
+        r"\\{height=(\\d+),yaw=(-?\\d+),drift=(-?\\d+),depth=(\\d+),lean=(-?\\d+),notch=(\\d+)\\}",
+        spec)
+    need(len(rows) == 3, "THREE_DISTINCT_CONTOURS")
+    seen = set()
+    for index, values in enumerate(rows, 1):
+        h, yaw, drift, depth, lean, notch = map(int, values)
+        need(12 <= h <= 28 and 24 <= depth <= 38, "SILHOUETTE_SCALE")
+        need(abs(yaw) <= 32 and abs(drift) <= 24 and abs(lean) <= 9
+             and 0 <= notch <= 4, "SILHOUETTE_SKEW")
+        for side in (-1, 1):
+            x, z = side * 410, (index - 2) * 270 + side * drift
+            need(abs(x) >= 405 and abs(z) <= 310, "ROUTE_CLEARANCE")
+            need((x, z) not in seen, "DUPLICATE_RIDGE_ANCHOR")
+            seen.add((x, z))
+    need(len(seen) == 6, "SIX_GEOMETRY_ANCHORS")
+
+
 def patch(source: str) -> str:
+    verify_contour_geometry(RIDGE)
     need(MARK not in source, "DUPLICATE")
     need(source.count(PRIOR) == 1, "FORTRESS_904_ANCESTRY")
     need(source.count("local MAX_CASTLE_PARTS = 19") == 1, "CASTLE_BUDGET_DRIFT")
@@ -134,6 +165,24 @@ def selftest() -> None:
                + FUNCTION_ANCHOR + "\n"
                + CALL_ANCHOR)
     result = patch(minimal)
+    verify_contour_geometry(RIDGE)
+    for mutant in (
+        RIDGE.replace("height=14", "height=2", 1),
+        RIDGE.replace("depth=27", "depth=230", 1),
+        RIDGE.replace("lean=-7", "lean=-27", 1),
+        RIDGE.replace("drift=-16", "drift=-316", 1),
+        RIDGE.replace("yaw=-19", "yaw=-119", 1),
+        RIDGE.replace("notch=3", "notch=33", 1),
+    ):
+        try:
+            verify_contour_geometry(mutant)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("RIDGE_GEOMETRY_MUTANT_ACCEPTED")
+    need("contour.depth-6" in result and "math.rad(-lean*1.4)" in result
+         and "CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))" in result,
+         "SCULPTED_CAP_AND_BASE_MISSING")
     need("for index=1,3 do" in result and "drawHorizonRidges" in result
          and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result
          and "arena.Destroying:Once(function()" in result
@@ -151,7 +200,8 @@ def selftest() -> None:
             pass
         else:
             raise AssertionError("NEGATIVE_MUTANT_WAS_ACCEPTED")
-    print("GQ470_RIDGE_PATCH_AND_4_NEGATIVES_PASS")
+    print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_6_GEOMETRY_MUTANTS_PASS")
+    print("GQ470_RIDGE_PATCH_AND_6_SOURCE_NEGATIVES_PASS")
 
 def apply(root: Path) -> None:
     original = project_scan(root, PROJECT)
