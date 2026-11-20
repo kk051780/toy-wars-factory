@@ -24,11 +24,13 @@ def png_chunk(name: bytes, data: bytes) -> bytes:
     return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body))
 
 
-def synthetic_png(index: int, width: int = 1280, height: int = 720) -> bytes:
+def synthetic_png(index: int, width: int = 1280, height: int = 720,
+                  compression_level: int = 6, broken_zlib: bool = False) -> bytes:
     """Deliberately synthetic PNG fixture; never claim Studio evidence."""
     hdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
     row = bytes([0]) + (bytes([index % 256, 10, 30]) * width)
-    image_data = zlib.compress(row * height)
+    image_data = (b"NOT_A_ZLIB_STREAM" if broken_zlib else
+                  zlib.compress(row * height, level=compression_level))
     filler = ("UNIT_TEST_FIXTURE_NOT_STUDIO_%d" % index).encode() + b"z" * 1100
     return (bytes([137,80,78,71,13,10,26,10]) +
             png_chunk(b"IHDR", hdr) +
@@ -257,6 +259,40 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
         }), encoding="utf-8")
         self.assertEqual(actual_png_count(manifest, self.root), 1)
         second.write_bytes(synthetic_png(2))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_valid_crc_does_not_hide_corrupt_zlib_pixels(self):
+        # Forged PNG has a legal signature, IHDR, IDAT CRC and IEND, but its
+        # IDAT stream cannot decode. It is never camera evidence.
+        png = self.root / "forged_zlib.png"
+        png.write_bytes(synthetic_png(121, broken_zlib=True))
+        manifest = self.root / "manifest_forged_zlib.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "forest", "device": "pc", "version": "after",
+                       "file": png.name}]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(synthetic_png(121))
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
+    def test_recompressed_identical_scanlines_count_only_once(self):
+        # Re-encoding the same RGB scanlines at different zlib levels makes
+        # different file and IDAT hashes but no new rendered view.
+        low = self.root / "recompress_low.png"
+        high = self.root / "recompress_high.png"
+        low.write_bytes(synthetic_png(122, compression_level=1))
+        high.write_bytes(synthetic_png(122, compression_level=9))
+        self.assertNotEqual(hashlib.sha256(low.read_bytes()).hexdigest(),
+                            hashlib.sha256(high.read_bytes()).hexdigest())
+        manifest = self.root / "manifest_recompression.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": "sea", "device": "pc", "version": "before", "file": low.name},
+                {"scene": "sea", "device": "pc", "version": "after", "file": high.name},
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        high.write_bytes(synthetic_png(123, compression_level=9))
         self.assertEqual(actual_png_count(manifest, self.root), 2)
 
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):

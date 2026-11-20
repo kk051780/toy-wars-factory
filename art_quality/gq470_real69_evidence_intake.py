@@ -47,7 +47,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
     data = path.read_bytes()
     offset = 8
     seen_header = seen_pixels = seen_end = False
-    pixels = hashlib.sha256()
+    encoded_scanlines: list[bytes] = []
     while offset < len(data):
         if len(data) - offset < 12:
             raise ValueError("TRUNCATED_PNG_CHUNK")
@@ -73,7 +73,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
             raise ValueError("PNG_IHDR_MISSING")
         if label == b"IDAT":
             seen_pixels = True
-            pixels.update(data[offset + 8:payload_end])
+            encoded_scanlines.append(data[offset + 8:payload_end])
         if label == b"IEND":
             if seen_end or length != 0 or next_offset != len(data):
                 raise ValueError("PNG_IEND_OR_TRAILING_DATA")
@@ -81,7 +81,49 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
         offset = next_offset
     if not (seen_header and seen_pixels and seen_end):
         raise ValueError("PNG_REQUIRED_CHUNKS_MISSING")
-    return width, height, sha, pixels.hexdigest()
+
+    # CRC alone does not prove valid image pixels: an attacker can recompute a
+    # chunk CRC around a corrupt or truncated zlib stream. Bound inflation by
+    # the IHDR's exact scanline budget (also handles Adam7 interlace), require
+    # the zlib checksum/end marker, and hash *decoded scanlines* so merely
+    # recompressing the same screenshot cannot count as a second camera view.
+    depth, color, compression, filtering, interlace = data[24:29]
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(color)
+    if (channels is None or depth not in (1, 2, 4, 8, 16)
+            or compression != 0 or filtering != 0 or interlace not in (0, 1)
+            or (color in (2, 4, 6) and depth not in (8, 16))
+            or (color == 3 and depth == 16)):
+        raise ValueError("PNG_UNSUPPORTED_IHDR")
+    passes = ((0, 0, 1, 1),) if interlace == 0 else (
+        (0, 0, 8, 8), (4, 0, 8, 8), (0, 4, 4, 8),
+        (2, 0, 4, 4), (0, 2, 2, 4), (1, 0, 2, 2), (0, 1, 1, 2))
+    scanlines: list[tuple[int, int]] = []
+    expected = 0
+    for x0, y0, dx, dy in passes:
+        cols = max(0, (width - x0 + dx - 1) // dx)
+        rows = max(0, (height - y0 + dy - 1) // dy)
+        if not cols or not rows:
+            continue
+        row_length = 1 + (cols * channels * depth + 7) // 8
+        scanlines.append((rows, row_length))
+        expected += rows * row_length
+    if not 0 < expected <= 128 * 1024 * 1024:
+        raise ValueError("PNG_DECODE_BUDGET_EXCEEDED")
+    decoder = zlib.decompressobj()
+    try:
+        raw = decoder.decompress(b"".join(encoded_scanlines), expected + 1)
+    except zlib.error as exc:
+        raise ValueError("PNG_INVALID_IDAT_ZLIB") from exc
+    if (len(raw) != expected or not decoder.eof or
+            decoder.unused_data or decoder.unconsumed_tail):
+        raise ValueError("PNG_INVALID_IDAT_SCANLINES")
+    cursor = 0
+    for rows, row_length in scanlines:
+        for _ in range(rows):
+            if raw[cursor] > 4:
+                raise ValueError("PNG_INVALID_SCANLINE_FILTER")
+            cursor += row_length
+    return width, height, sha, hashlib.sha256(raw).hexdigest()
 
 
 def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
