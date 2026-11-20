@@ -159,6 +159,30 @@ def verify_contour_geometry(spec: str) -> None:
     need(len(seen) == 6, "SIX_GEOMETRY_ANCHORS")
 
 
+def verify_stylized_low_cost_art(spec: str) -> None:
+    """P0 #420 source-level material guard, not a rendered beauty verdict."""
+    forbidden = (
+        "Enum.Material.Neon",
+        "Enum.Material.Glass",
+        "BillboardGui",
+        "SurfaceGui",
+        "ParticleEmitter",
+        "PointLight",
+        "SurfaceLight",
+        "SpotLight",
+        "Instance.new(",
+    )
+    need(not any(token in spec for token in forbidden),
+         "NO_GLARE_HUD_OR_EXTRA_INSTANCES")
+    need(spec.count("createVisual(arena,art,") == 2 and
+         spec.count("Enum.Material.Slate") == 1 and
+         spec.count("Enum.Material.Limestone") == 1,
+         "TWO_MATTE_STONE_SURFACES_ONLY")
+    need("local baseTint=darkStone:Lerp(limestone,.07*(index-1))" in spec and
+         "local crownTint=limestone:Lerp(darkStone,.08*(3-index))" in spec,
+         "PALETTE_VARIATION_NOT_IN_PER_FRAME_LOOP")
+
+
 def verify_atomic_source_contract(source: str) -> None:
     """Test actual inserted source tokens, not merely a test model's booleans."""
     start = source.find("local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)")
@@ -191,6 +215,7 @@ def verify_atomic_source_contract(source: str) -> None:
 
 def patch(source: str) -> str:
     verify_contour_geometry(RIDGE)
+    verify_stylized_low_cost_art(RIDGE)
     need(MARK not in source, "DUPLICATE")
     need(source.count(PRIOR) == 1, "FORTRESS_904_ANCESTRY")
     need(source.count("local MAX_CASTLE_PARTS = 19") == 1, "CASTLE_BUDGET_DRIFT")
@@ -226,6 +251,20 @@ def selftest() -> None:
                + CALL_ANCHOR)
     result = patch(minimal)
     verify_contour_geometry(RIDGE)
+    verify_stylized_low_cost_art(RIDGE)
+    for style_mutant in (
+        RIDGE.replace("Enum.Material.Slate", "Enum.Material.Neon", 1),
+        RIDGE.replace("Enum.Material.Limestone", "Enum.Material.Glass", 1),
+        RIDGE + "Instance.new(\\\"BillboardGui\\\")",
+        RIDGE.replace("local baseTint=darkStone:Lerp(limestone,.07*(index-1))",
+                      "local baseTint=darkStone", 1),
+    ):
+        try:
+            verify_stylized_low_cost_art(style_mutant)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("STYLIZED_ART_NEGATIVE_MUTANT_ACCEPTED")
     ridge_start = result.index("local function drawHorizonRidges(")
     ridge_end = result.index(FUNCTION_ANCHOR, ridge_start)
     ridge_block = result[ridge_start:ridge_end]
@@ -295,6 +334,7 @@ def selftest() -> None:
     print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_8_GEOMETRY_MUTANTS_PASS")
     print("GQ470_RIDGE_ATOMIC_TWO_PART_BUDGET_AND_REFUND_GUARD_PASS")
     print("GQ470_RIDGE_5_ATOMIC_SOURCE_MUTATIONS_REJECTED")
+    print("GQ470_RIDGE_4_MATTE_STYLE_AND_MOBILE_NEGATIVES_PASS")
     print("GQ470_RIDGE_PATCH_AND_6_SOURCE_NEGATIVES_PASS")
 
 def apply(root: Path) -> None:
