@@ -98,8 +98,39 @@ def inspect(root: Path) -> tuple[bytes, dict]:
     }
     return replacement, manifest
 
+def validate_b_manifest(meta: dict) -> None:
+    import re
+    need(meta.get("feature_id") == FEATURE and
+         meta.get("official_branch") == BRANCH and
+         meta.get("expected_parent_head") == BASE and
+         meta.get("source_route") == ROUTE and
+         meta.get("source_class") == "Script",
+         "MANIFEST_SOURCE_IDENTITY")
+    for key in ("expected_original_source_sha256", "candidate_source_sha256",
+                "candidate_private_place_sha256"):
+        need(isinstance(meta.get(key), str) and
+             re.fullmatch(r"[0-9a-f]{64}", meta[key]) is not None,
+             "MANIFEST_SHA256_" + key)
+    need(meta["expected_original_source_sha256"] !=
+         meta["candidate_source_sha256"], "MANIFEST_NO_SOURCE_DELTA")
+    need(meta.get("other_68_byte_exact") is True and
+         meta.get("source_count_before_after") == [69, 69] and
+         meta.get("new_runtime_authority") is False and
+         meta.get("same_source_class") is True and
+         meta.get("requires_certified_b220_writer") is True and
+         meta.get("requires_fresh_formal_head_cas") is True and
+         meta.get("formal_rc_integrated") is False and
+         meta.get("owner_accepted") is False,
+         "MANIFEST_NO_FAKE_ADOPTION")
+    for key in ("studio_solo", "studio_2client", "android_15min", "human_art"):
+        need(meta.get(key) == "NOT_TESTED", "MANIFEST_NO_FAKE_RUNTIME_" + key)
+    need(isinstance(meta.get("candidate_private_place_bytes"), int) and
+         meta["candidate_private_place_bytes"] > 0, "MANIFEST_PLACE_BYTES")
+
+
 def export(root: Path, out: Path, check: bool):
     data, manifest = inspect(root)
+    validate_b_manifest(manifest)
     out = out.resolve()
     rel = Path("selected_sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau")
     source_path = out / rel
@@ -139,7 +170,50 @@ def selftest():
             pass
         else:
             raise AssertionError("RED_B220_FORGED_INPUT_ACCEPTED")
-    print("GQ470_TRAPPER_B220_FIVE_FORGED_ROUTE_MUTANTS_RED_PASS")
+    import copy
+    valid = {
+        "feature_id": FEATURE, "official_branch": BRANCH,
+        "expected_parent_head": BASE, "source_route": ROUTE,
+        "source_class": "Script",
+        "expected_original_source_sha256": "a" * 64,
+        "candidate_source_sha256": "b" * 64,
+        "candidate_private_place_sha256": "c" * 64,
+        "candidate_private_place_bytes": 799348,
+        "other_68_byte_exact": True,
+        "source_count_before_after": [69, 69],
+        "new_runtime_authority": False,
+        "same_source_class": True,
+        "requires_certified_b220_writer": True,
+        "requires_fresh_formal_head_cas": True,
+        "formal_rc_integrated": False,
+        "owner_accepted": False,
+        "studio_solo": "NOT_TESTED", "studio_2client": "NOT_TESTED",
+        "android_15min": "NOT_TESTED", "human_art": "NOT_TESTED",
+    }
+    validate_b_manifest(valid)
+    mutants = [
+        ("expected_parent_head", "deadbeef"),
+        ("source_class", "LocalScript"),
+        ("expected_original_source_sha256", "deadbeef"),
+        ("candidate_source_sha256", valid["expected_original_source_sha256"]),
+        ("requires_certified_b220_writer", False),
+        ("requires_fresh_formal_head_cas", False),
+        ("formal_rc_integrated", True),
+        ("owner_accepted", True),
+        ("studio_2client", "PASS"),
+        ("source_count_before_after", [68, 69]),
+        ("candidate_private_place_bytes", 0),
+    ]
+    for key, val in mutants:
+        altered = copy.deepcopy(valid)
+        altered[key] = val
+        try:
+            validate_b_manifest(altered)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("RED_B220_FORGED_MANIFEST_ACCEPTED_" + key)
+    print("GQ470_TRAPPER_B220_FIVE_ROUTE_AND_11_MANIFEST_MUTANTS_RED_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
