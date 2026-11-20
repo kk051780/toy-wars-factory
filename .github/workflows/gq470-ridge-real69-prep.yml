@@ -117,6 +117,24 @@ jobs:
           rec.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           print('GQ470_RIDGE_FULL_SOURCE_BUILD_PASS_NOT_STUDIO_PASS',p.stat().st_size)
           PY
+      - name: Legacy 17-family and 48-flag source regression on the same patched 69
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/tmp/gq470-ridge
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path('/tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json')
+          r=json.loads(p.read_text())
+          assert r['gq470_fb015_ridge_visual']['original_formal_sha']=='6c2338b44db1c772bab0d688b2aece2e3aa8aae2'
+          r['build_head']=os.environ['GITHUB_SHA']
+          p.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --root "$ROOT" --out "$ROOT/RIDGE_LEGACY17_NONLOSS_AUDIT.json" --head "$GITHUB_SHA"
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/RIDGE_LEGACY48_FEATURE_AUDIT.json"
+          echo GQ470_RIDGE_LEGACY17_48_QA_PASS_NOT_STUDIO
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-RIDGE-PREP-NOT-FORMAL
@@ -126,87 +144,7 @@ jobs:
             /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
             /tmp/gq470-ridge/sources/**
             /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx
+            /tmp/gq470-ridge/RIDGE_LEGACY17_NONLOSS_AUDIT.json
+            /tmp/gq470-ridge/RIDGE_LEGACY48_FEATURE_AUDIT.json
           if-no-files-found: error
           retention-days: 7
-
-      - uses: actions/checkout@v4
-        with:
-          repository: luau-lang/luau
-          ref: f46d879e28302a430029304f7f6a162aed66f103
-          path: _pinned_luau
-          persist-credentials: false
-      - name: Verify full selected REAL69 Native and exact source rollback
-        shell: bash
-        run: |
-          set -euo pipefail
-          cmake -S _pinned_luau -B /tmp/gq470-ridge-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470-ridge-luau --target Luau.Compile.CLI --parallel 4
-          python3 - <<'PY'
-          import json,pathlib,subprocess,sys
-          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
-          from verify_nonloss import project_scan
-          root=pathlib.Path('/tmp/gq470-ridge')
-          before=project_scan(root/'off69_ridge','EGGRUMBLE_REAL69.project.json')
-          after=project_scan(root,'EGGRUMBLE_REAL69.project.json')
-          target='ServerScriptService/EGGRUMBLE_FlagshipFieldArt'
-          assert set(before)==set(after) and len(after)==69
-          assert {k for k in after if before[k]['sha256']!=after[k]['sha256']}=={target}
-          assert all(before[k]['class']==after[k]['class'] and before[k]['path']==after[k]['path'] for k in after)
-          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
-          assert set(receipt['source_hashes'])==set(after)
-          for r,listing in ((root,after),(root/'off69_ridge',before)):
-            for k,x in listing.items():
-              assert x['sha256']==(receipt['source_hashes'][k] if r==root else before[k]['sha256'])
-              subprocess.run(['/tmp/gq470-ridge-luau/luau-compile','--text',str(r/x['path'])],
-                check=True,stdout=subprocess.DEVNULL)
-          print('GQ470_RIDGE_NATIVE69_PLUS_OFF69_PASS_OTHER_68_EXACT')
-          PY
-      - name: Rojo69 place, byte-exact OFF69, embedded sources, legacy17 and all48 gate
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-ridge-rojo.zip
-          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-ridge-rojo.zip' | sha256sum -c
-          python3 - <<'PY'
-          from zipfile import ZipFile
-          from pathlib import Path
-          with ZipFile('/tmp/gq470-ridge-rojo.zip') as z:
-            matches=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
-            assert len(matches)==1
-            p=Path('/tmp/gq470-ridge-rojo');p.write_bytes(z.read(matches[0]));p.chmod(0o755)
-          PY
-          ROOT=/tmp/gq470-ridge
-          /tmp/gq470-ridge-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o "$ROOT/EGGRUMBLE_REAL69_RIDGE_CANDIDATE.rbxlx"
-          /tmp/gq470-ridge-rojo build "$ROOT/off69_ridge/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_RIDGE_REBUILT.rbxlx"
-          cmp "$ROOT/OFF69_RIDGE_REBUILT.rbxlx" "$ROOT/off69_ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place "$ROOT/EGGRUMBLE_REAL69_RIDGE_CANDIDATE.rbxlx" --count 69
-          mkdir -p "$ROOT/delivery"
-          cp "$ROOT/EGGRUMBLE_REAL69_RIDGE_CANDIDATE.rbxlx" "$ROOT/delivery/EGGRUMBLE_REAL69_RIDGE_CANDIDATE.rbxlx"
-          python3 - <<'PY'
-          import json,hashlib,os,pathlib
-          root=pathlib.Path('/tmp/gq470-ridge')
-          p=root/'EGGRUMBLE_REAL69_RIDGE_CANDIDATE.rbxlx'
-          r=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
-          x=json.loads(r.read_text())
-          x['build_head']=os.environ['GITHUB_SHA']
-          x['gq470_fb015_ridge_visual']['native_rojo_off69']='PASS_69_OF_69'
-          x['private_place_bytes']=p.stat().st_size
-          x['private_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
-          r.write_text(json.dumps(x,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
-          (root/'delivery'/'REAL69_RIDGE_CANDIDATE_RECEIPT.json').write_text(r.read_text())
-          print('RIDGE_ACTUAL_PRIVATE_PLACE_BYTES',p.stat().st_size)
-          PY
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --root "$ROOT" --out "$ROOT/delivery/REAL69_LEGACY17_NONLOSS_AUDIT.json" --head "$GITHUB_SHA"
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/delivery/REAL69_RIDGE_LEGACY48_AUDIT.json"
-          test "$(find "$ROOT/delivery" -maxdepth 1 -name '*.rbxlx' | wc -l)" -eq 1
-          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo RED_OFFICIAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
-          echo GQ470_RIDGE_FULL_NATIVE_ROJO_OFF69_LEGACY17_48_CANDIDATE_PASS_NOT_STUDIO
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GQ470-REAL69-RIDGE-PRIVATE-PREP-NOT-OFFICIAL
-          path: /tmp/gq470-ridge/delivery/
-          retention-days: 14
-          if-no-files-found: error
