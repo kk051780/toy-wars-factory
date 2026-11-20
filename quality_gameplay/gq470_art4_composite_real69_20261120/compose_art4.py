@@ -162,11 +162,14 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
     """
     must_have = {
         924: ('label.Size=UDim2.fromOffset(104,24)', 'label.MaxDistance=22',
-              'HealthDisplayDistance=18', 'text.TextStrokeTransparency=.45'),
+              'HealthDisplayDistance=18', 'text.TextStrokeTransparency=.45',
+              'label.AlwaysOnTop=false'),
         926: ('local MAX_CANOPIES=160', 'local MAX_TRACKED_PARTS=1800',
               'local function blocksAvatar(', 'clipAxis(', 'task.wait(.16)'),
         925: ('b.Size=UDim2.fromOffset(136,38)', 'b.MaxDistance=25',
-              'PhotoRoof_Left', 'PhotoRoof_Right', 'PhotoRoof_Ridge'),
+              'PhotoRoof_Left', 'PhotoRoof_Right', 'PhotoRoof_Ridge',
+              'b.AlwaysOnTop=false', 'roofLeft.CastShadow=false',
+              'roofRight.CastShadow=false', 'ridge.CastShadow=false'),
         928: ('local MAX_KO_BURSTS_PER_SEC=6', 'for side=-1,1,2 do',
               'Instance.new("WedgePart")', 'Debris:AddItem(fin,.30)',
               'fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false',
@@ -178,7 +181,9 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
               'crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false',
               'crown.CastShadow=false'),
         929: ('PART_BUDGET_PER_AVATAR=8', 'TAPERED_WEAPONS',
-              'Instance.new("WedgePart")', 'role=="NINJA"'),
+              'Instance.new("WedgePart")', 'role=="NINJA"',
+              'p.Massless=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false',
+              'p.CastShadow=false'),
     }
     # Constructor *sites*, not measured runtime parts. Four matte boss
     # wedges per spawn and two KO fins per confirmed death still need Studio QA.
@@ -227,12 +232,12 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
 
 def art_budget_self_test() -> None:
     sample = {
-        924: 'label.Size=UDim2.fromOffset(104,24) label.MaxDistance=22 HealthDisplayDistance=18 text.TextStrokeTransparency=.45',
+        924: 'label.Size=UDim2.fromOffset(104,24) label.MaxDistance=22 HealthDisplayDistance=18 text.TextStrokeTransparency=.45 label.AlwaysOnTop=false',
         926: 'local MAX_CANOPIES=160 local MAX_TRACKED_PARTS=1800 local function blocksAvatar( clipAxis( task.wait(.16)',
-        925: 'b.Size=UDim2.fromOffset(136,38) b.MaxDistance=25 part("PhotoRoof_Left" part("PhotoRoof_Right" part("PhotoRoof_Ridge"',
+        925: 'b.Size=UDim2.fromOffset(136,38) b.MaxDistance=25 part("PhotoRoof_Left" part("PhotoRoof_Right" part("PhotoRoof_Ridge" b.AlwaysOnTop=false roofLeft.CastShadow=false roofRight.CastShadow=false ridge.CastShadow=false',
         928: 'local MAX_KO_BURSTS_PER_SEC=6 for side=-1,1,2 do Instance.new("WedgePart") Debris:AddItem(fin,.30) fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false fin.CanQuery=false;fin.CastShadow=false',
         930: 'BasaltShoulder_ BasaltCrown_ for side=-1,1,2 do shoulder.Anchored=true shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false shoulder.CastShadow=false crown.Anchored=true crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false crown.CastShadow=false Instance.new("WedgePart") Instance.new("WedgePart")',
-        929: 'PART_BUDGET_PER_AVATAR=8 TAPERED_WEAPONS Instance.new("WedgePart") role=="NINJA"',
+        929: 'PART_BUDGET_PER_AVATAR=8 TAPERED_WEAPONS Instance.new("WedgePart") role=="NINJA" p.Massless=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false p.CastShadow=false',
     }
     after = {sl.target: sample[sl.pr].encode() for sl in SLICES}
     before = dict(after)
@@ -267,6 +272,18 @@ def art_budget_self_test() -> None:
         (930, 'crown.CanTouch=false', 'crown.CanTouch=true'),
         (930, 'crown.CanQuery=false', 'crown.CanQuery=true'),
         (930, 'shoulder.CastShadow=false', 'shoulder.CastShadow=true'),
+        # Other three ART6 lanes: no always-on-top screen clutter,
+        # no roof cast-shadow, and massless non-physical held weapons.
+        (924, 'label.AlwaysOnTop=false', 'label.AlwaysOnTop=true'),
+        (925, 'b.AlwaysOnTop=false', 'b.AlwaysOnTop=true'),
+        (925, 'roofLeft.CastShadow=false', 'roofLeft.CastShadow=true'),
+        (925, 'roofRight.CastShadow=false', 'roofRight.CastShadow=true'),
+        (925, 'ridge.CastShadow=false', 'ridge.CastShadow=true'),
+        (929, 'p.Massless=true', 'p.Massless=false'),
+        (929, 'p.CanCollide=false', 'p.CanCollide=true'),
+        (929, 'p.CanTouch=false', 'p.CanTouch=true'),
+        (929, 'p.CanQuery=false', 'p.CanQuery=true'),
+        (929, 'p.CastShadow=false', 'p.CastShadow=true'),
     )
     for index, (pr, old, new) in enumerate(physics_mutants):
         route = next(sl.target for sl in SLICES if sl.pr == pr)
@@ -278,6 +295,7 @@ def art_budget_self_test() -> None:
         except ValueError:
             continue
         raise AssertionError("RED_ART6_PHYSICS_MUTANT_" + str(index))
+    print("GQ470_ART6_10_ADDITIONAL_VISUAL_SAFETY_MUTANTS_PASS")
     # A commented-out nominal budget cannot authorize a larger active limit.
     for pr, original_marker, bad_marker in (
             (924, 'label.MaxDistance=22', 'label.MaxDistance=222'),
