@@ -1,0 +1,120 @@
+name: GQ470 REAL69 confirmed KO slash art source PREP (not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_ko_slash_real69_20261120/**'
+      - '.github/workflows/gq470-ko-slash-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-exact-ko-slash-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-locked 69-script confirmed KO slash patch and six mutation negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py
+          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470-ko
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ko
+          test -s /tmp/gq470-ko/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          test -s /tmp/gq470-ko/REAL69_LEGACY_INTAKE_RECEIPT.json
+          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py --base /tmp/gq470-ko
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-ko/REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          x=r["gq470_ko_slashed_confirmed"]
+          assert x["other_sources_unchanged"]==68
+          assert x["new_parts_per_confirmed_ko"]==2 and x["new_remotes"]==0
+          assert x["new_gameplay_authority"] is False and x["pc_android_beauty"]=="NOT_TESTED"
+          print("KO_SLASH_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 69 selected Luau ON and OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-ko-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-ko-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_ko_slash_real69_20261120")
+          from patch_ko_slash69 import selected,ROUTE
+          root=Path("/tmp/gq470-ko")
+          on=selected(root); off=selected(root/"OFF69_KO_SLASH")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={ROUTE}
+          for sources in (on,off):
+              for src in sources.values():
+                  subprocess.run(["/tmp/gq470-ko-luau/luau-compile","--text",str(src)],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_KO_NATIVE_ON69_OFF69_PASS")
+          PY
+      - name: Exact Rojo ON/OFF Place and source nonloss gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-ko-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-ko-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq470-ko-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq470-ko-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-ko-rojo build /tmp/gq470-ko/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-ko/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-ko-rojo build /tmp/gq470-ko/OFF69_KO_SLASH/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-ko/OFF69_KO_SLASH_REBUILT.rbxlx
+          cmp /tmp/gq470-ko/OFF69_KO_SLASH_REBUILT.rbxlx /tmp/gq470-ko/OFF69_KO_SLASH/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ko/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ko/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ko/OFF69_KO_SLASH/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ko/OFF69_KO_SLASH_REBUILT.rbxlx --count 69
+          python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-ko --report /tmp/gq470-ko/KO_SLASH_LEGACY48_AUDIT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path("/tmp/gq470-ko")
+          f=r/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          x=json.loads(f.read_text())
+          x["gq470_ko_slashed_confirmed"]["native_rojo_off69"]="PASS_SOURCE_ONLY"
+          p=r/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          x["private_place_bytes"]=p.stat().st_size
+          x["private_place_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
+          f.write_text(json.dumps(x,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ470_KO_ART_PRIVATE_CANDIDATE_BYTES",p.stat().st_size)
+          PY
+          echo GQ470_KO_SLASH_NATIVE_ROJO_OFF_LEGACY48_PASS_NOT_ART_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-KO-SLASH-ART-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-ko/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-ko/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-ko/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-ko/sources/**
+            /tmp/gq470-ko/OFF69_KO_SLASH_REBUILT.rbxlx
+            /tmp/gq470-ko/KO_SLASH_LEGACY48_AUDIT.json
+          if-no-files-found: error
+          retention-days: 7
