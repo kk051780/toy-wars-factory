@@ -21,6 +21,55 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_sky_luau
+          persist-credentials: false
+      - name: Native Luau compile the exact candidate source
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_sky_luau -B /tmp/gq470-sky-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-sky-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470-sky-luau/luau-compile --text quality_gameplay/gq470_far_sky_real69_20261121/EGGRUMBLE_FarSkyFacets.client.luau >/dev/null
+          echo "NATIVE_SINGLE_CANDIDATE_PASS_NOT_70_SOURCE_ENGINE"
+      - name: Pinned Rojo standalone candidate class and Source identity
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-sky-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-sky-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-sky-rojo.zip") as z:
+              matches=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(matches)==1
+              p=Path("/tmp/gq470-sky-rojo")
+              p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-sky-rojo build quality_gameplay/gq470_far_sky_real69_20261121/candidate.project.json -o "$RUNNER_TEMP/GQ470_FAR_SKY_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          f=Path(os.environ["RUNNER_TEMP"])/"GQ470_FAR_SKY_NOT_FORMAL.rbxlx"
+          root=ET.parse(f).getroot()
+          matches=[]
+          for item in root.iter("Item"):
+              name=item.find('./Properties/string[@name="Name"]')
+              if name is not None and name.text=="EGGRUMBLE_FarSkyFacets":
+                  matches.append(item)
+          assert len(matches)==1
+          assert matches[0].get("class")=="LocalScript"
+          source=matches[0].find('./Properties/string[@name="Source"]')
+          if source is None:
+              source=matches[0].find('./Properties/ProtectedString[@name="Source"]')
+          original=Path("quality_gameplay/gq470_far_sky_real69_20261121/EGGRUMBLE_FarSkyFacets.client.luau").read_text()
+          assert source is not None and source.text is not None and source.text.strip()==original.strip()
+          print("ROJO_STANDALONE_ONE_LOCAL_SCRIPT_SOURCE_EXACT_PASS",f.stat().st_size)
+          PY
       - name: Verify isolated source safety and negative regressions
         run: |
           python3 -m unittest discover -s quality_gameplay/gq470_far_sky_real69_20261121 -p 'test_*.py' -v
