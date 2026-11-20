@@ -155,6 +155,58 @@ def changed_routes(before: dict[str, bytes], after: dict[str, bytes],
     demand({k for k in before if before[k] != after[k]} == expected, "SOURCE_SCOPE")
 
 
+def active_luau_source(source: str) -> str:
+    """Remove Luau line/long comments without corrupting quoted '--' strings.
+
+    An inert --[[ ... ]] marker must never satisfy a live ART budget. This
+    conservative source-only filter is not a Luau compiler or runtime test.
+    """
+    out: list[str] = []
+    i = 0
+    quote: str | None = None
+    while i < len(source):
+        ch = source[i]
+        if quote is not None:
+            out.append(ch)
+            if ch == "\\" and i + 1 < len(source):
+                out.append(source[i + 1])
+                i += 2
+                continue
+            if ch == quote:
+                quote = None
+            i += 1
+            continue
+        if ch in ("'", '"'):
+            quote = ch
+            out.append(ch)
+            i += 1
+            continue
+        if source.startswith("--", i):
+            j = i + 2
+            if j < len(source) and source[j] == "[":
+                k = j + 1
+                while k < len(source) and source[k] == "=":
+                    k += 1
+                if k < len(source) and source[k] == "[":
+                    close = "]" + source[j + 1:k] + "]"
+                    end = source.find(close, k + 1)
+                    demand(end >= 0, "UNCLOSED_LUA_LONG_COMMENT")
+                    removed = source[i:end + len(close)]
+                    out.append(" " + "\n" * removed.count("\n"))
+                    i = end + len(close)
+                    continue
+            end = source.find("\n", i + 2)
+            if end < 0:
+                out.append(" ")
+                break
+            out.append("\n")
+            i = end + 1
+            continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
 def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
     """Source-based visual budgets for six disjoint original art modules.
 
@@ -194,8 +246,7 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
         original, updated = before[sl.target].decode(), after[sl.target].decode()
         # Reject budget markers that exist only in Luau line comments. This
         # remains a source gate, not a substitute for engine or image evidence.
-        active_lines = "\n".join(line.split("--", 1)[0]
-                                 for line in updated.splitlines())
+        active_lines = active_luau_source(updated)
         for marker in must_have[sl.pr]:
             demand(marker in active_lines,
                    "ART_BUDGET_ACTIVE_MARKER_" + str(sl.pr))
@@ -312,6 +363,35 @@ def art_budget_self_test() -> None:
         except ValueError:
             continue
         raise AssertionError("RED_ART6_COMMENTED_BUDGET_MUTANT_" + str(pr))
+    # Block comments are also inert: a safe-looking visual budget in a
+    # long comment must not mask a larger live billboard/KO cost.
+    for open_mark, close_mark in (("--[[", "]]"), ("--[=[", "]=]")):
+        for pr, original_marker, bad_marker in (
+                (924, "label.MaxDistance=22", "label.MaxDistance=222"),
+                (925, "b.MaxDistance=25", "b.MaxDistance=255"),
+                (928, "local MAX_KO_BURSTS_PER_SEC=6",
+                 "local MAX_KO_BURSTS_PER_SEC=60")):
+            route = next(sl.target for sl in SLICES if sl.pr == pr)
+            broken = dict(after)
+            forged = bad_marker + "\n" + open_mark + "\n" + original_marker + "\n" + close_mark
+            broken[route] = after[route].replace(
+                original_marker.encode(), forged.encode(), 1)
+            try:
+                art_budget_gate(before, broken)
+            except ValueError:
+                continue
+            raise AssertionError("RED_ART6_BLOCK_COMMENT_MUTANT_" +
+                                 str(pr) + "_" + open_mark)
+    demand(active_luau_source('local s="left--right" -- discard\nlocal k=1') ==
+           'local s="left--right" \nlocal k=1',
+           "LUACOMMENT_STRING_SAFETY")
+    try:
+        active_luau_source("--[=[ never closed")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("RED_ART6_UNCLOSED_BLOCK_COMMENT")
+    print("GQ470_ART6_6_BLOCK_COMMENT_MUTANTS_AND_LEXER_PASS")
     print("GQ470_ART6_17_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
 
 
