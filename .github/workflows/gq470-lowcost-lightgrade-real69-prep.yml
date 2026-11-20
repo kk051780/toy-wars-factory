@@ -1,0 +1,35 @@
+name: GQ470 low-cost scene grade REAL69 isolated PREP source QA
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "quality_gameplay/gq470_lightgrade_real69_20261121/**"
+      - ".github/workflows/gq470-lowcost-lightgrade-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-source-safety-only:
+    name: Static source contract (NOT Studio / NOT final ART pass)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout fixed candidate SHA
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify real candidate code and negative mutations
+        run: |
+          python3 -B -m unittest -v quality_gameplay/gq470_lightgrade_real69_20261121/test_scene_grade.py
+      - name: Artifact boundary
+        run: |
+          echo "A_SOURCE_STATIC_ONLY=true"
+          echo "REAL69_SELECTED_GAME_SCRIPTS_CHANGED=0"
+          echo "NATIVE_LUAU=NOT_TESTED"
+          echo "ROJO_ON_OFF=NOT_TESTED"
+          echo "STUDIO_SOLO=NOT_TESTED"
+          echo "STUDIO_2CLIENT=NOT_TESTED"
+          echo "ANDROID_15MIN=NOT_TESTED"
+          echo "HUMAN_ART=NOT_TESTED"
+          echo "OFFICIAL_RC_ADOPTED=NO"
