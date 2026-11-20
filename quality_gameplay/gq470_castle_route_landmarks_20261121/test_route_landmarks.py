@@ -19,7 +19,7 @@ NO_AUTHORITY = ("RemoteEvent", "RemoteFunction", "DataStoreService",
 def audit(src: str) -> dict:
     if src.count(MARK) != 1: raise ValueError("SOURCE_MARKER")
     # Strip inline Luau comments; an in-source '= 20 -- text' is still exact.
-    assignments_only = "\\n".join(line.split("--", 1)[0] for line in src.splitlines())
+    assignments_only = "\n".join(line.split("--", 1)[0] for line in src.splitlines())
     # Full-line numerical contracts: "= 40" cannot masquerade as "= 4".
     for symbol, amount, reason in (
         ("EXPECTED_ROUTES", 3, "THREE_ROUTES"),
