@@ -1,0 +1,49 @@
+name: GQ470 P0 HUD readable Tool names REAL69 source PREP (not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
+      - '.github/workflows/gq470-hud-tool-display-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-display-compat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify only official post-915 source is patched
+        run: |
+          set -euo pipefail
+          SCRIPT=quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py
+          python3 -m py_compile "$SCRIPT"
+          python3 -B "$SCRIPT" --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44673605213 --jq '.head_sha+" "+.conclusion')" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2 success"
+          mkdir -p "$RUNNER_TEMP/gq470-hud-labels"
+          gh run download 44673605213 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/gq470-hud-labels"
+          python3 -B "$SCRIPT" --base "$RUNNER_TEMP/gq470-hud-labels"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'gq470-hud-labels'
+          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          state=receipt['gq470_fb015_hud_tool_labels']
+          assert state['unchanged_selected_sources']==67
+          assert state['source_count']==69 and len(state['only_modified'])==2
+          assert state['studio_android_fun']=='NOT_TESTED'
+          combat=(root/'sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau').read_text()
+          hud=(root/'sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau').read_text()
+          assert 'tool.Name="技"..slot.."・"..data.skills[index]' in combat
+          assert 'toolIdentity(tool)' in hud
+          assert 'player.UserId' in combat
+          assert 'GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120' in hud
+          assert (root/'off69_hud_labels/sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau').is_file()
+          print('GQ470_REAL69_TWO_SOURCE_67_EXACT_QA_PASS_NOT_STUDIO')
+          PY
