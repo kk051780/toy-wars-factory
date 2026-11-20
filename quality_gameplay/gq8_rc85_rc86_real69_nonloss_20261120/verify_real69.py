@@ -21,6 +21,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] /
 from verify_nonloss import EVIDENCE, FORMAL, OLD_S1_PREFIX, project_scan
 
 HUD = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+P0_COMBAT = "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
+P0_SWARM = "ServerScriptService/EGGRUMBLE_SwarmCombat"
+P0_MARKERS = ((P0_COMBAT, "GQ8_P0_COMBAT_BOT_USERID_SCOPE_20261120"),
+              (P0_SWARM, "GQ8_P0_NEUTRAL_BILLBOARD_DISTANCE_20261120"))
 EXTRA = (
     ("rc85_rc86_4realms_6shards",
      "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
@@ -74,11 +78,17 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
                 "RECEIPT_SHA_" + route)
         require(previous[route]["class"] == info["class"] and
                 previous[route]["path"] == info["path"], "CLASS_PATH_CHANGED_" + route)
-        if route != HUD:
+        if route not in (HUD, P0_COMBAT, P0_SWARM):
             require(previous[route]["sha256"] == info["sha256"],
                     "UNRELATED_SCRIPT_CHANGED_" + route)
     require(previous[HUD]["sha256"] != now[HUD]["sha256"],
             "HUD_PORT_NOT_SELECTED")
+    for route, marker in P0_MARKERS:
+        require(route in now and route in previous, "P0_ROUTE_MISSING_" + route)
+        require(previous[route]["sha256"] != now[route]["sha256"],
+                "P0_REPAIR_NOT_SELECTED_" + route)
+        require(marker.encode("utf-8") in now[route]["source"],
+                "P0_REPAIR_MARKER_MISSING_" + route)
     if expected_head:
         require(receipt.get("build_head") == expected_head, "WRONG_BUILD_HEAD")
     require(receipt.get("rc85_realm_hunt_discovery_toast", {})
@@ -104,7 +114,8 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
         "selected_luau_sources": 69,
         "source_route_class_hash_receipt": "PASS_69_OF_69",
         "hud_selected_delta": "EXACT_ONE_SCRIPT",
-        "unrelated_pre_discovery_scripts_byte_exact": 68,
+        "unrelated_pre_discovery_scripts_byte_exact": 66,
+        "gq470_p0_combat_swarm_repaired_source_routes": 2,
         "historic_source_family_evidence": family_results,
         "source_family_marker_count": len(family_results),
         "old_legacy_enabled_flags": 48,
