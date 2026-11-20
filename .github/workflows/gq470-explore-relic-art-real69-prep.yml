@@ -1,0 +1,215 @@
+name: GQ470 REAL69 exploration relic sculpt 0-Part PREP (not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_explore_relic_art_real69_20261121/**'
+      - '.github/workflows/gq470-explore-relic-art-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-exact-explore-relic-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-locked 69-script explore shoreline geometry patch and eight mutation negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_explore_relic_art_real69_20261121/patch_explore_relic69.py
+          python3 -B quality_gameplay/gq470_explore_relic_art_real69_20261121/patch_explore_relic69.py --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470-explore
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-explore
+          test -s /tmp/gq470-explore/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          test -s /tmp/gq470-explore/REAL69_LEGACY_INTAKE_RECEIPT.json
+          python3 -B quality_gameplay/gq470_explore_relic_art_real69_20261121/patch_explore_relic69.py --base /tmp/gq470-explore
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-explore/REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          x=r["gq470_explore_relic_art"]
+          assert x["unchanged_selected_routes"]==68
+          assert x["parts_per_marker_before_after"]==[3,3] and x["new_instances_per_arena"]==0
+          assert x["gameplay_authority_changed"] is False and x["human_art"]=="NOT_TESTED"
+          print("EXPLORE_RELIC_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 69 selected Luau ON and OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-explore-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-explore-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_explore_relic_art_real69_20261121")
+          from patch_explore_relic69 import selected,TARGET
+          root=Path("/tmp/gq470-explore")
+          on=selected(root); off=selected(root/"OFF69_EXPLORE_RELIC_SCULPT")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={TARGET}
+          for sources in (on,off):
+              for src in sources.values():
+                  subprocess.run(["/tmp/gq470-explore-luau/luau-compile","--text",str(src)],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_EXPLORE_RELIC_NATIVE_ON69_OFF69_PASS")
+          PY
+      - name: Exact Rojo ON/OFF Place and source nonloss gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-explore-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-explore-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq470-explore-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq470-explore-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-explore-rojo build /tmp/gq470-explore/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-explore/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-explore-rojo build /tmp/gq470-explore/OFF69_EXPLORE_RELIC_SCULPT/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-explore/OFF69_EXPLORE_RELIC_REBUILT.rbxlx
+          cmp /tmp/gq470-explore/OFF69_EXPLORE_RELIC_REBUILT.rbxlx /tmp/gq470-explore/OFF69_EXPLORE_RELIC_SCULPT/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-explore/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-explore/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-explore/OFF69_EXPLORE_RELIC_SCULPT/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-explore/OFF69_EXPLORE_RELIC_REBUILT.rbxlx --count 69
+          python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-explore --report /tmp/gq470-explore/EXPLORE_RELIC_LEGACY48_AUDIT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path("/tmp/gq470-explore")
+          f=r/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          x=json.loads(f.read_text())
+          x["gq470_explore_relic_art"]["native_rojo_off69"]="PASS_SOURCE_ONLY"
+          p=r/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          x["private_place_bytes"]=p.stat().st_size
+          x["private_place_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
+          f.write_text(json.dumps(x,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ470_EXPLORE_RELIC_ART_PRIVATE_CANDIDATE_BYTES",p.stat().st_size)
+          PY
+          echo GQ470_EXPLORE_RELIC_NATIVE_ROJO_OFF_LEGACY48_PASS_NOT_ART_PASS
+      - name: Existing #420 REAL69 ART source-only audit, never visual PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 art_quality/gq470_real69_source_gate.py --self-test
+          python3 art_quality/gq470_real69_source_gate.py \
+            --root /tmp/gq470-explore \
+            --head e80973c354f14a0d0088577f3cc1a875454f0f8f \
+            --out /tmp/gq470-explore/ART_CHECK_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-explore/ART_CHECK_REPORT.json").read_text())
+          assert r["source_gate"]["status"]=="PASS_SOURCE_ONLY"
+          assert r["source_gate"]["actual_place_scripts"]==69
+          assert r["source_gate"]["selected_routes_source_class_hash_exact"]==69
+          assert r["visual_evidence_gate"]["screenshots_received"]==0
+          assert r["visual_evidence_gate"]["screenshots_required"]==32
+          assert r["human_art"]["status"]=="NOT_TESTED"
+          assert r["mobile_runtime"]["status"]=="NOT_TESTED"
+          assert r["owner_accepted"] is False
+          assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
+          print("GQ470_EXPLORE_RELIC_420_ART_SOURCE_PASS_RUNTIME_AND_OWNER_NOT_TESTED")
+          PY
+      - name: Source lock JSON, actual on-Place and selected route attestation; six tamper negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy, hashlib, json, sys
+          from pathlib import Path
+          sys.path.insert(0, "quality_gameplay/gq470_explore_relic_art_real69_20261121")
+          import patch_explore_relic69 as gate
+          base=Path("/tmp/gq470-explore")
+          claim=json.loads(Path("quality_gameplay/gq470_explore_relic_art_real69_20261121/source_lock.json").read_text())
+          receipt=json.loads((base/gate.RECEIPT).read_text())
+          selected=gate.selected(base)
+          original=gate.selected(base/gate.OFF)
+          actual=(base/gate.PLACE).read_bytes()
+          def valid(lock):
+              return (lock.get("schema")=="GQ470_REAL69_SOURCE_LOCK_V1"
+                  and lock.get("feature_id")==gate.MARK
+                  and lock.get("pinned_formal_base")==gate.BASE
+                  and lock.get("selected_route")==gate.TARGET
+                  and lock.get("original_selected_source_git_blob")==gate.ORIGINAL_GIT_BLOB
+                  and lock.get("selected_script_class")==receipt["source_classes"][gate.TARGET]=="Script"
+                  and lock.get("selected_source_count")==len(selected)==69
+                  and lock.get("changed_selected_routes")==1
+                  and lock.get("unchanged_selected_routes")==68
+                  and lock.get("expected_candidate_selected_sha256")==gate.sha(selected[gate.TARGET].read_bytes())
+                  and lock.get("expected_candidate_private_place_sha256")==hashlib.sha256(actual).hexdigest()
+                  and lock.get("original_place_off_rollback")==gate.OFF
+                  and lock.get("parts_per_marker_before_after")==[3,3]
+                  and lock.get("new_extra_part_instances")==0
+                  and lock.get("owner_accepted") is False)
+          assert valid(claim), "RED_REAL_SOURCE_LOCK_MISMATCH"
+          for key,value in [
+              ("pinned_formal_base","0"*40),
+              ("selected_route","ServerScriptService/EGGRUMBLE_Game"),
+              ("expected_candidate_selected_sha256","0"*64),
+              ("expected_candidate_private_place_sha256","0"*64),
+              ("selected_script_class","LocalScript"),
+              ("new_extra_part_instances",1),
+          ]:
+              other=copy.deepcopy(claim);other[key]=value
+              assert not valid(other), "RED_SOURCE_LOCK_MUTANT_ACCEPTED_"+key
+          assert sum(selected[k].read_bytes()!=original[k].read_bytes() for k in selected)==1
+          print("GQ470_EXPLORE_RELIC_ACTUAL_SOURCE_LOCK_6_MUTATIONS_PASS")
+          PY
+      - name: B220 source-only one-script handoff; verify no hidden files
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPORT=quality_gameplay/gq470_explore_relic_art_real69_20261121/export_b1.py
+          python3 -m py_compile "$EXPORT"
+          python3 -B "$EXPORT" --self-test
+          python3 -B "$EXPORT" --candidate /tmp/gq470-explore \
+            --out /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL
+          python3 -B "$EXPORT" --candidate /tmp/gq470-explore \
+            --out /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL --check
+          echo GQ470_EXPLORE_RELIC_B220_REAL_SELECTED_BYTES_NOT_OFFICIAL
+      - name: Existing 32-image ART gate reproducible capture instructions; no fake PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          SPEC=quality_gameplay/gq470_explore_relic_art_real69_20261121/prepare_capture_spec.py
+          python3 -m py_compile "$SPEC"
+          python3 -B "$SPEC" --self-test
+          python3 -B "$SPEC" --candidate /tmp/gq470-explore \
+            --candidate-head "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out /tmp/gq470-explore/EXPLORE_RELIC_CAPTURE_GUIDE_NO_REAL_SCREENSHOTS.json
+          echo GQ470_REAL69_CAPTURE_GUIDE_0_OF_32_REAL_IMAGES_ONLY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-EXPLORE-RELIC-ART-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-explore/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-explore/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-explore/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-explore/sources/**
+            /tmp/gq470-explore/OFF69_EXPLORE_RELIC_REBUILT.rbxlx
+            /tmp/gq470-explore/EXPLORE_RELIC_LEGACY48_AUDIT.json
+            /tmp/gq470-explore/ART_CHECK_REPORT.json
+            /tmp/gq470-explore/EXPLORE_RELIC_CAPTURE_GUIDE_NO_REAL_SCREENSHOTS.json
+            /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL/**
+          if-no-files-found: error
+          retention-days: 7
