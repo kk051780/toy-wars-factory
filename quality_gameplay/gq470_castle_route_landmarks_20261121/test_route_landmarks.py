@@ -18,10 +18,15 @@ NO_AUTHORITY = ("RemoteEvent", "RemoteFunction", "DataStoreService",
 
 def audit(src: str) -> dict:
     if src.count(MARK) != 1: raise ValueError("SOURCE_MARKER")
-    if "local EXPECTED_ROUTES = 3" not in src: raise ValueError("THREE_ROUTES")
-    if "local PARTS_PER_ROUTE = 4" not in src: raise ValueError("FOUR_PARTS")
-    if "local SIDE_OFFSET = 20" not in src: raise ValueError("CORRIDOR_OFFSET")
-    if "local MIN_ANCHOR_SEPARATION = 24" not in src: raise ValueError("UNIQUE_ANCHORS")
+    # Full-line numerical contracts: "= 40" cannot masquerade as "= 4".
+    for symbol, amount, reason in (
+        ("EXPECTED_ROUTES", 3, "THREE_ROUTES"),
+        ("PARTS_PER_ROUTE", 4, "FOUR_PARTS"),
+        ("SIDE_OFFSET", 20, "CORRIDOR_OFFSET"),
+        ("MIN_ANCHOR_SEPARATION", 24, "UNIQUE_ANCHORS"),
+    ):
+        statements = re.findall(r"(?m)^\\s*local\\s+" + symbol + r"\\s*=\\s*(\\d+)\\s*$", src)
+        if statements != [str(amount)]: raise ValueError(reason)
     if src.count("makePart(decoration,") != 4: raise ValueError("GEOMETRY_COUNT")
     if any(name not in src for name in PART_NAMES): raise ValueError("DISTINCT_PARTS")
     if src.count("Instance.new(\"WedgePart\")") != 1: raise ValueError("TAPERED_CRESTS")
