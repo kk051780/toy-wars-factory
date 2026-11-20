@@ -1,0 +1,297 @@
+name: GQ470 LSS shore-foam REAL69 source PREP (not Studio)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_lss_shorefoam_real69_20261121/**"
+      - "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau"
+      - ".github/workflows/gq470-lss-shorefoam-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real69-art-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact candidate HEAD, not PR synthetic merge
+        env:
+          EXPECTED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          HEAD_NOW="$(git rev-parse HEAD)"
+          test "$HEAD_NOW" = "$EXPECTED_PR_HEAD"
+          echo "GQ470_EXACT_A_HEAD=$HEAD_NOW"
+      - name: Source/negative/rollback unittest
+        run: python3 -B -m unittest discover -s quality_gameplay/gq470_lss_shorefoam_real69_20261121 -p 'test_*.py' -v
+      - name: Pin genuine original REAL69 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14610422120/zip \
+            -o /tmp/real69.zip
+          unzip -t /tmp/real69.zip >/dev/null
+      - name: Exact official69 single-source ON and inverse
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_lss_shorefoam_real69_20261121/patch_shorefoam69.py \
+            --artifact /tmp/real69.zip --out /tmp/gq470-lss-on69
+          cp -a /tmp/gq470-lss-on69 /tmp/gq470-lss-off69
+          cp /tmp/gq470-lss-on69/OFF69_ORIGINAL_LSS.server.luau \
+            /tmp/gq470-lss-off69/sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau
+      - name: Checkout pinned Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native all69 ON/OFF source and single-route byte accounting
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-lss-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-lss-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          a=Path('/tmp/gq470-lss-on69/sources')
+          b=Path('/tmp/gq470-lss-off69/sources')
+          left={str(p.relative_to(a)):p for p in a.rglob('*.luau')}
+          right={str(p.relative_to(b)):p for p in b.rglob('*.luau')}
+          target='ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau'
+          assert len(left)==len(right)==69 and set(left)==set(right)
+          assert {k for k in left if left[k].read_bytes()!=right[k].read_bytes()}=={target}
+          for group in (left,right):
+              for p in group.values():
+                  subprocess.run(['/tmp/gq470-lss-luau/luau-compile','--text',str(p)],
+                      check=True,stdout=subprocess.DEVNULL)
+          report=json.loads(Path('/tmp/gq470-lss-on69/GQ470_SHOREFOAM_SOURCE_QA.json').read_text())
+          assert report['unchanged_selected_routes']==68
+          assert report['new_parts']==0 and report['rollback_byte_exact']
+          print('GQ470_SHORE_NATIVE_SOURCE69_ON_OFF_PASS')
+          PY
+      - name: Pinned Rojo ON/OFF actual Place byte inverse
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq470-lss-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-lss-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-lss-rojo.zip') as z:
+              items=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(items)==1
+              p=Path('/tmp/gq470-lss-rojo')
+              p.write_bytes(z.read(items[0]));p.chmod(0o755)
+          with ZipFile('/tmp/real69.zip') as z:
+              Path('/tmp/gq470-real69-original.rbxlx').write_bytes(
+                  z.read('EGGRUMBLE_REAL69_PRIVATE.rbxlx'))
+          PY
+          /tmp/gq470-lss-rojo build /tmp/gq470-lss-on69/EGGRUMBLE_REAL69.project.json \
+            -o /tmp/gq470-lss-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-lss-rojo build /tmp/gq470-lss-off69/EGGRUMBLE_REAL69.project.json \
+            -o /tmp/gq470-lss-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          cmp /tmp/gq470-lss-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx /tmp/gq470-real69-original.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project /tmp/gq470-lss-on69/EGGRUMBLE_REAL69.project.json \
+            --place /tmp/gq470-lss-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+      - name: Emit art-gate truthful 0-of-32 source-candidate evidence
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib,json
+          out=Path('/tmp/gq470-lss-on69')
+          with ZipFile('/tmp/real69.zip') as archive:
+              original=json.loads(archive.read('ART_CHECK_REPORT.json'))
+          q=json.loads((out/'GQ470_SHOREFOAM_SOURCE_QA.json').read_text())
+          current=(out/'EGGRUMBLE_REAL69_PRIVATE.rbxlx').read_bytes()
+          assert original['official_build_head']==q['formal_base_head']
+          assert original['visual_evidence_gate']['screenshots_required']==32
+          assert original['visual_evidence_gate']['screenshots_received']==0
+          assert original['art_gate']=='ART_NO_GO'
+          report={
+              'schema':'GQ470_SHOREFOAM_REAL69_ART_GATE_CANDIDATE_ONLY_V1',
+              'formal_rc_head_not_changed':q['formal_base_head'],
+              'candidate_status':'A_SOURCE_PREP_NOT_FORMAL_RC',
+              'candidate_selected_script':'ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal',
+              'original_source_sha256':q['source_sha_before'],
+              'candidate_source_sha256':q['source_sha_after'],
+              'source_gate':'PASS_SOURCE_ONLY',
+              'selected_source_count':69,
+              'other_selected_sources_byte_identical':68,
+              'decorative_part_delta':0,
+              'new_render_loops':0,
+              'candidate_place_bytes':len(current),
+              'candidate_place_sha256':hashlib.sha256(current).hexdigest(),
+              'formal_place_bytes_unchanged':original['private_place_bytes'],
+              'visual_evidence_gate':{
+                  'scenes':original['visual_evidence_gate']['scenes'],
+                  'same_camera_before_after_pc_android_required':True,
+                  'screenshots_required':32,'screenshots_received':0,
+                  'status':'MISSING'},
+              'human_art':{'pc_target':4.5,'android_target':4.0,'actual':'NOT_TESTED'},
+              'mobile_runtime':{
+                  'low_end_median_fps_min':30,'low_end_p10_fps_min':25,
+                  'warm_fps_drop_max_fraction':0.2,
+                  'device_model':None,'android_15min':'NOT_TESTED'},
+              'kid_first_3_minutes_fun':'NOT_TESTED',
+              'studio_solo':'NOT_TESTED','studio_two_client':'NOT_TESTED',
+              'product_gate':'PRODUCT_NO_GO','art_gate':'ART_NO_GO',
+              'mobile_gate':'MOBILE_NO_GO','fun_gate':'FUN_NO_GO',
+              'owner_accepted':False,'official_rc_adopted':False,
+              'scene_under_review':'sea',
+              'visual_hypothesis_not_measurement':
+                  'six rectangular shore foam strips become six muted oval angled patches',
+          }
+          assert len(report['visual_evidence_gate']['scenes'])==8
+          (out/'GQ470_SHOREFOAM_ART_CHECK_REPORT.json').write_text(
+              json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          print('GQ470_SHOREFOAM_ART_SOURCE_REPORT_0OF32_NO_GO')
+          print('CANDIDATE_PLACE_BYTES',len(current))
+          print('CANDIDATE_PLACE_SHA256',report['candidate_place_sha256'])
+          PY
+      - name: 17 family source markers and one-source B220 package
+        env:
+          VERIFIED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 - <<'PY'
+          import json,shutil,sys,hashlib,os
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120')
+          from verify_real69 import marker_check
+          on=Path('/tmp/gq470-lss-on69')
+          off=Path('/tmp/gq470-lss-off69')
+          a=project_scan(on,'EGGRUMBLE_REAL69.project.json')
+          b=project_scan(off,'EGGRUMBLE_REAL69.project.json')
+          assert len(a)==len(b)==69
+          assert {k for k in a if a[k]['sha256']!=b[k]['sha256']}=={
+              'ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal'}
+          assert marker_check(a)==marker_check(b) and len(marker_check(a))==17
+          dst=on/'B220_SHOREFACET_SINGLE_SELECTED_SOURCE_ONLY'/'selected_sources'/'ServerScriptService'
+          dst.mkdir(parents=True)
+          shutil.copyfile(on/'sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau',
+              dst/'EGGRUMBLE_LandSeaSkyTraversal.server.luau')
+          qa=json.loads((on/'GQ470_SHOREFOAM_SOURCE_QA.json').read_text())
+          shutil.copyfile(on/'GQ470_SHOREFOAM_SOURCE_QA.json',dst.parent.parent/'GQ470_SHOREFOAM_SOURCE_QA.json')
+          selected=(dst/'EGGRUMBLE_LandSeaSkyTraversal.server.luau').read_bytes()
+          assert hashlib.sha256(selected).hexdigest()==qa['source_sha_after']
+          assert qa['changed_selected_routes']==['ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal']
+          assert qa['unchanged_selected_routes']==68 and qa['rollback_byte_exact']
+          head=os.environ['VERIFIED_PR_HEAD']
+          assert len(head)==40 and all(x in '0123456789abcdef' for x in head)
+          manifest={
+              'schema':'GQ470_SHOREFOAM_B220_SINGLE_ORIGINAL_SOURCE_HANDOFF_V1',
+              'candidate_head_exact':head,
+              'formal_base_head':qa['formal_base_head'],
+              'feature_id':'GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121',
+              'fb_ids':['FB-011','FB-015'],
+              'source_select_route':'ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal',
+              'selected_source_class':'Script',
+              'selected_source_path':'selected_sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau',
+              'original_selected_sha256':qa['source_sha_before'],
+              'candidate_selected_sha256':qa['source_sha_after'],
+              'total_selected_source_count':69,'other_sources_byte_exact':68,
+              'original_artifact_id':14610422120,
+              'preconditions':'B MUST reGET official SHA, route/class/hash and P0 #910 priority',
+              'rollback':'Restore original selected Luau source bytes (OFF69_ORIGINAL_LSS.server.luau) before Rojo',
+              'no_pr_whole_merge':True,'no_formal_rc_write_by_A':True,
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_accepted':False,
+              'source_only_if_run_green':True,'art_gate':'ART_NO_GO',
+          }
+          (dst.parent.parent/'B220_SHOREFACET_MANIFEST.json').write_text(
+              json.dumps(manifest,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          assert sum(p.is_file() for p in dst.parent.parent.rglob('*'))==3
+          print('GQ470_B220_LSS_ART_ONE_SOURCE_PACKAGE_SOURCE_PASS',head)
+          PY
+      - name: B220 exact three-file admission and forged-input negatives
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from subprocess import check_output
+          import copy,hashlib,json
+          d=Path('/tmp/gq470-lss-on69/B220_SHOREFACET_SINGLE_SELECTED_SOURCE_ONLY')
+          files={p.relative_to(d).as_posix():p.read_bytes() for p in d.rglob('*') if p.is_file()}
+          route='selected_sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau'
+          assert set(files)=={route,'B220_SHOREFACET_MANIFEST.json','GQ470_SHOREFOAM_SOURCE_QA.json'}
+          m=json.loads(files['B220_SHOREFACET_MANIFEST.json'])
+          qa=json.loads(files['GQ470_SHOREFOAM_SOURCE_QA.json'])
+          expected_head=check_output(['git','rev-parse','HEAD'],text=True).strip()
+          expected_base='e80973c354f14a0d0088577f3cc1a875454f0f8f'
+          def verify(meta,source,paths):
+              assert len(paths)==3
+              assert meta['candidate_head_exact']==expected_head
+              assert meta['formal_base_head']==expected_base
+              assert meta['source_select_route']=='ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal'
+              assert meta['selected_source_class']=='Script'
+              assert meta['selected_source_path']==route
+              assert meta['total_selected_source_count']==69 and meta['other_sources_byte_exact']==68
+              assert meta['original_selected_sha256']==qa['source_sha_before']
+              assert meta['candidate_selected_sha256']==qa['source_sha_after']
+              assert meta['candidate_selected_sha256']==hashlib.sha256(source).hexdigest()
+              assert meta['no_pr_whole_merge'] and meta['no_formal_rc_write_by_A']
+              assert meta['owner_accepted'] is False and meta['art_gate']=='ART_NO_GO'
+              assert meta['studio']=='NOT_TESTED' and meta['android']=='NOT_TESTED'
+          verify(m,files[route],set(files))
+          mutations={
+              'candidate_sha':({'candidate_selected_sha256':'0'*64},None,None),
+              'selected_class':({'selected_source_class':'LocalScript'},None,None),
+              'route':({'source_select_route':'ServerScriptService/EGGRUMBLE_Game'},None,None),
+              'original_sha':({'original_selected_sha256':'0'*64},None,None),
+              'candidate_head':({'candidate_head_exact':'f'*40},None,None),
+              'formal_head':({'formal_base_head':'f'*40},None,None),
+              'fake_art_go':({'art_gate':'ART_GO'},None,None),
+              'whole_pr_merge':({'no_pr_whole_merge':False},None,None),
+              'script_bytes':({},files[route]+b'bad',None),
+              'extra_packet_file':({},None,set(files)|{'bad.file'}),
+          }
+          negatives=0
+          for label,(delta,bytes_,pathset) in mutations.items():
+              try:
+                  verify({**m,**delta},bytes_ if bytes_ is not None else files[route],
+                         pathset if pathset is not None else set(files))
+              except AssertionError:
+                  negatives+=1
+              else:
+                  raise RuntimeError('RED_B220_SHOREFACET_FORGED_PACKET_'+label)
+          assert negatives==10
+          print('GQ470_SHORE_B220_REAL_PACKET_10_MUTANTS_REJECTED_PASS',expected_head)
+          PY
+      - name: Upload actual Luau source B handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-SHOREFOAM-B220-SOURCE-NOT-FORMAL
+          path: /tmp/gq470-lss-on69/B220_SHOREFACET_SINGLE_SELECTED_SOURCE_ONLY/
+          retention-days: 3
+          if-no-files-found: error
+      - name: Upload isolated candidate build for authenticated B
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-SHOREFOAM-ON-SOURCE-NOT-STUDIO
+          path: /tmp/gq470-lss-on69/
+          retention-days: 3
+          if-no-files-found: error
+      - name: Preserve honest quality status
+        run: |
+          echo 'PREP_SOURCE_PASS=ONLY_IF_RUN_GREEN'
+          echo 'OFFICIAL_RC_ADOPTED=NO'
+          echo 'STUDIO_AND_ANDROID=NOT_TESTED'
+          echo 'ART_MOBILE_FUN=NO_GO'
+          echo 'OWNER_ACCEPTED=0'

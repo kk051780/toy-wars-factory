@@ -223,11 +223,27 @@ local function install(world)
    Color3.fromRGB(161,118,77),Enum.Material.WoodPlanks,true,0)
   offshorePads[side]=pad
  end
+ -- GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121
+ -- Six original, visual-only surf patches. Varied ellipses break up the
+ -- six glaring rectangular stripes while preserving route and part budget.
+ -- All foam stays shallow, noncolliding and outside the public land dock.
  for i=1,6 do
   local xi=x-265+(i-1)*106
+  local sideways=if i%2==0 then 1 else -1
+  local drift=math.sin(i*1.73)*1.55
+  local surfAngle=math.rad(sideways*(7+(i%3)*4))
+  local width=47+(i%3)*5
   local foam=put(scene,"ShoreFoam_"..i,
-   CFrame.new(xi,y+0.21,shoreZ-63),Vector3.new(55,.10,2.3),
-   Color3.fromRGB(225,247,248),Enum.Material.SmoothPlastic,false,.19)
+   CFrame.new(xi,y+0.21,shoreZ-63+drift)*CFrame.Angles(0,surfAngle,0),
+   Vector3.new(width,.10,2.0+(i%2)*.45),
+   if i%2==0 then Color3.fromRGB(190,225,228)
+    else Color3.fromRGB(207,235,237),
+   Enum.Material.SmoothPlastic,false,.33)
+  -- Cylinder's local X axis is the length: flattened oval-like surf,
+  -- not a thick pipe, and neither casts nor receives physics queries.
+  foam.Shape=Enum.PartType.Cylinder
+  foam.CastShadow=false
+  foam.CanQuery=false
  end
  -- Dock markers form a safe, ground-based free path for every class.
  local landDock=put(scene,"PublicSeaDock",

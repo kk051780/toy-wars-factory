@@ -1,0 +1,12 @@
+# GQ470 FB-011 / FB-015 — REAL69 shoreline surf facets (A PREP)
+
+- **Actual Luau changed:** `handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau` original source, with one isolated selected-route overlay via `patch_shorefoam69.py`.
+- **Canonical REAL69 selected target:** `ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal`, **only** within the authentic official HEAD `e80973c354f14a0d0088577f3cc1a875454f0f8f` artifact `14610422120`.
+- **Visible change:** Six identically sized straight/bright rectangular ShoreFoam bars become six varied, muted, angled, very flat elliptical surf streaks; no additional Parts, no shadow or physics queries. All six existing surf positions, dock, offshore water, vehicles, sky, combo, prompts, Game and Combat remain owned by original source.
+- **Nonoverlap:** Distinct source/feature from concurrent #916/#920/#921/#923-#940. Earlier #370/#371 coastal concept informs the upgrade, but no old build/PR is merged.
+- **Source gates:** mutations, 69 route/hash readback, exact OFF Luau inverse, one-route/68 untouched, pinned Native Luau ON69/OFF69, Rojo actual Place OFF exact and ON69, 17 family marker checks, and one-source B220 export. CI result MUST be checked at the candidate **same HEAD**; do not claim PASS from workflow definition.
+- **Art gate:** must capture matching viewpoints before/after for shoreline/land dock, offshore sea lane, low-end Android. Source work `SOURCE_WIP` until actual Actions success. Screenshots 0/32; FPS, heat, Studio solo/2client, child FUN, OWNER acceptance `NOT_TESTED`. `ART_NO_GO`, `MOBILE_NO_GO`, `FUN_NO_GO`, `PRODUCT_NO_GO` remain.
+- **B integration:** only #220 authenticated sole RC writer can read candidate same-HEAD source artifact, rebase to freshly fetched formal RC, compare the target route SHA and all other 68 routes, perform nonforce expected-SHA CAS, official same-HEAD Native/Rojo/receipt/Place/ZIP build and capacity measurement. Source-only PREP is NOT formal adoption. Never merge the whole PR directly, write to main, publish, or spend.
+- **Rollback:** Replace the modified selected-route `EGGRUMBLE_LandSeaSkyTraversal.server.luau` with `OFF69_ORIGINAL_LSS.server.luau` (byte-exact), rerun 69 source verification/Place. No other 68 routes or scripts need reversal.
+
+**Soft claim:** #218 comment [7051810576](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7051810576).
