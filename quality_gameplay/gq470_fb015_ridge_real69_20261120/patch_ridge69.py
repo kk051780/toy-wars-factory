@@ -154,6 +154,36 @@ def verify_contour_geometry(spec: str) -> None:
     need(len(seen) == 6, "SIX_GEOMETRY_ANCHORS")
 
 
+def verify_atomic_source_contract(source: str) -> None:
+    """Test actual inserted source tokens, not merely a test model's booleans."""
+    start = source.find("local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)")
+    end = source.find("local function paintArena(arena:Instance)", start)
+    need(start >= 0 and end > start, "RIDGE_ATOMIC_BODY_SCOPE")
+    block = source[start:end]
+    markers = (
+        "(budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA",
+        "if basePart then",
+        "if crownPart then",
+        "table.insert(bucket,basePart)",
+        "table.insert(bucket,crownPart)",
+        "basePart:Destroy()",
+        "budgets[arena]=math.max(0,(budgets[arena] or 0)-1)",
+    )
+    need(all(block.count(x) == 1 for x in markers),
+         "RUNTIME_PAIR_BUDGET_OR_REFUND_CONTRACT")
+    # Pair is reserved before either allocation; bucket is committed only
+    # after both allocations succeeded, with a refund on second failure.
+    indices = [block.index(x) for x in markers]
+    need(indices[0] < indices[1] < indices[2] < indices[3] <
+         indices[4] < indices[5] < indices[6],
+         "RUNTIME_PAIR_ORDER_AND_ATOMICITY")
+    need(block.count("createVisual(arena,art,") == 2,
+         "EXACTLY_TWO_RIDGE_VISUAL_ALLOCATIONS")
+    need("if bucket then return end" in block and
+         "ridgeVisuals[arena]=nil" in block,
+         "RIDGE_REPAINT_AND_TEARDOWN")
+
+
 def patch(source: str) -> str:
     verify_contour_geometry(RIDGE)
     need(MARK not in source, "DUPLICATE")
@@ -178,6 +208,7 @@ def patch(source: str) -> str:
          "SOURCE_INSERT_COUNT")
     need("RemoteEvent" not in RIDGE and "Tool" not in RIDGE and "DataStore" not in RIDGE,
          "NO_AUTHORITY")
+    verify_atomic_source_contract(out)
     return out
 
 def selftest() -> None:
@@ -190,6 +221,22 @@ def selftest() -> None:
                + CALL_ANCHOR)
     result = patch(minimal)
     verify_contour_geometry(RIDGE)
+    for guard, altered in (
+        ("(budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA",
+         "(budgets[arena] or 0)+1<=MAX_VISUAL_PARTS_PER_ARENA"),
+        ("if crownPart then", "if true then"),
+        ("table.insert(bucket,crownPart)", "table.insert(bucket,basePart)"),
+        ("basePart:Destroy()", "basePart:ClearAllChildren()"),
+        ("budgets[arena]=math.max(0,(budgets[arena] or 0)-1)",
+         "budgets[arena]=math.max(0,(budgets[arena] or 0)+1)"),
+    ):
+        need(result.count(guard) == 1, "ATOMIC_MUTANT_TEST_ANCHOR")
+        try:
+            verify_atomic_source_contract(result.replace(guard, altered, 1))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("ATOMIC_RIDGE_SOURCE_MUTANT_ACCEPTED")
     for mutant in (
         RIDGE.replace("height=14", "height=2", 1),
         RIDGE.replace("depth=27", "depth=230", 1),
@@ -233,6 +280,7 @@ def selftest() -> None:
             raise AssertionError("NEGATIVE_MUTANT_WAS_ACCEPTED")
     print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_8_GEOMETRY_MUTANTS_PASS")
     print("GQ470_RIDGE_ATOMIC_TWO_PART_BUDGET_AND_REFUND_GUARD_PASS")
+    print("GQ470_RIDGE_5_ATOMIC_SOURCE_MUTATIONS_REJECTED")
     print("GQ470_RIDGE_PATCH_AND_6_SOURCE_NEGATIVES_PASS")
 
 def apply(root: Path) -> None:
