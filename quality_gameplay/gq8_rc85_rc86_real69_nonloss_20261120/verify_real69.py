@@ -23,6 +23,11 @@ from verify_nonloss import EVIDENCE, FORMAL, OLD_S1_PREFIX, project_scan
 HUD = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
 P0_COMBAT = "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
 P0_SWARM = "ServerScriptService/EGGRUMBLE_SwarmCombat"
+BOT_ART = "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt"
+BOT_ART_BASE_SHA = "7ca5be97c2c76cb0b7d4c228168a6f14fa6ecf213de31eb4222086d358462da4"
+BOT_ART_ADOPT_SHA = "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+BOT_ART_MARKER = "GQ470_ART_BOT_THREE_ARCHETYPES_REAL69_20261120"
+BOT_ART_ORIGINAL_HEAD = "c226c63eeb235503f9292503b61f2173550337ec"
 P0_MARKERS = ((P0_COMBAT, "GQ8_P0_COMBAT_BOT_USERID_SCOPE_20261120"),
               (P0_SWARM, "GQ8_P0_NEUTRAL_BILLBOARD_DISTANCE_20261120"))
 EXTRA = (
@@ -61,6 +66,58 @@ def marker_check(sources: dict) -> dict[str, str]:
         result[feature] = "SOURCE_PRESENT_ENGINE_NOT_TESTED"
     return result
 
+def verify_bot_art(now: dict, previous: dict, receipt: dict,
+                   root: pathlib.Path) -> dict:
+    """Bounded #920 source adoption; one visual Script, exact A verified bytes.
+
+    Unlike a general exemption, every other route remains byte-locked.
+    All Studio/Android/owner visual judgments still require real-world proof.
+    """
+    meta = receipt.get("gq470_bot_art_variants")
+    require(isinstance(meta, dict), "BOT_ART_ADOPTION_RECEIPT_MISSING")
+    require(BOT_ART in now and BOT_ART in previous, "BOT_ART_ROUTE_MISSING")
+    require(meta.get("route") == BOT_ART and
+            meta.get("feature_id") == BOT_ART_MARKER and
+            meta.get("formal_parent") == BOT_ART_ORIGINAL_HEAD,
+            "BOT_ART_IDENTITY_MISMATCH")
+    require(previous[BOT_ART]["sha256"] == BOT_ART_BASE_SHA and
+            now[BOT_ART]["sha256"] == BOT_ART_ADOPT_SHA and
+            meta.get("original_source_sha256") == BOT_ART_BASE_SHA and
+            meta.get("changed_source_sha256") == BOT_ART_ADOPT_SHA,
+            "BOT_ART_DIGEST_NOT_CERTIFIED")
+    require(BOT_ART_MARKER.encode("utf-8") in now[BOT_ART]["source"] and
+            BOT_ART_MARKER.encode("utf-8") not in previous[BOT_ART]["source"],
+            "BOT_ART_MARKER_NOT_REAL")
+    require(meta.get("other_selected_routes_byte_exact") == 68 and
+            meta.get("source_count") == 69 and
+            meta.get("max_parts_per_bot") == 7 and
+            meta.get("new_scripts") == 0 and
+            meta.get("new_combat_authority") is False and
+            meta.get("collision_changed") is False and
+            meta.get("owner_accepted") is False and
+            meta.get("native_rojo_off69") == "PASS_SOURCE_ONLY",
+            "BOT_ART_BUDGET_OR_AUTHORITY_DRIFT")
+    off = project_scan(root / "off69_bot_art", "EGGRUMBLE_REAL69.project.json")
+    require(len(off) == 69 and set(off) == set(now), "BOT_ART_OFF69_ROUTE_SET")
+    require(off[BOT_ART]["sha256"] == BOT_ART_BASE_SHA and
+            {key for key in now
+             if off[key]["sha256"] != now[key]["sha256"]} == {BOT_ART},
+            "BOT_ART_OFF69_INVERSE_NOT_EXACT")
+    require(all(off[key]["class"] == now[key]["class"] and
+                off[key]["path"] == now[key]["path"] for key in now),
+            "BOT_ART_OFF69_CLASS_PATH_DRIFT")
+    return {
+        "feature_id": BOT_ART_MARKER,
+        "selected_route": BOT_ART,
+        "source_original_sha256": BOT_ART_BASE_SHA,
+        "source_adopted_sha256": BOT_ART_ADOPT_SHA,
+        "unchanged_vs_pre_bot_selected_sources": 68,
+        "native_rojo_off69": "PASS_SOURCE_ONLY",
+        "studio_android_human_art": "NOT_TESTED",
+        "owner_accepted": False,
+    }
+
+
 def verify(root: pathlib.Path, expected_head: str = "") -> dict:
     now = project_scan(root, "EGGRUMBLE_REAL69.project.json")
     previous = project_scan(root / "off69_discovery", "EGGRUMBLE_REAL69.project.json")
@@ -78,9 +135,10 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
                 "RECEIPT_SHA_" + route)
         require(previous[route]["class"] == info["class"] and
                 previous[route]["path"] == info["path"], "CLASS_PATH_CHANGED_" + route)
-        if route not in (HUD, P0_COMBAT, P0_SWARM):
+        if route not in (HUD, P0_COMBAT, P0_SWARM, BOT_ART):
             require(previous[route]["sha256"] == info["sha256"],
                     "UNRELATED_SCRIPT_CHANGED_" + route)
+    bot_art_receipt = verify_bot_art(now, previous, receipt, root)
     require(previous[HUD]["sha256"] != now[HUD]["sha256"],
             "HUD_PORT_NOT_SELECTED")
     for route, marker in P0_MARKERS:
@@ -114,7 +172,8 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
         "selected_luau_sources": 69,
         "source_route_class_hash_receipt": "PASS_69_OF_69",
         "hud_selected_delta": "EXACT_ONE_SCRIPT",
-        "unrelated_pre_discovery_scripts_byte_exact": 66,
+        "unrelated_pre_discovery_scripts_byte_exact": 65,
+        "gq470_fb015_bot_silhouette_source_adoption": bot_art_receipt,
         "gq470_p0_combat_swarm_repaired_source_routes": 2,
         "historic_source_family_evidence": family_results,
         "source_family_marker_count": len(family_results),
@@ -133,6 +192,13 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
 
 def selftest() -> None:
     assert len(FAMILIES) == 17
+    # Guard the fixed source adoption against identifier, digest and acceptance lies.
+    fixed = (BOT_ART, BOT_ART_MARKER, BOT_ART_ORIGINAL_HEAD,
+             BOT_ART_BASE_SHA, BOT_ART_ADOPT_SHA)
+    assert len(set(fixed)) == 5
+    for bad in ("UNKNOWN", "", "SOURCE_UNVERIFIED"):
+        assert bad not in fixed
+    assert len(BOT_ART_BASE_SHA) == len(BOT_ART_ADOPT_SHA) == 64
     data = {route: {"source": marker.encode("utf-8"), "class": "Script", "path": route}
             for _, route, marker in FAMILIES}
     # Routes reused by multiple features must accumulate all source markers.
