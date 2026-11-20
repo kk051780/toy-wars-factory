@@ -91,12 +91,22 @@ E1=''' builtArenas[arena]=true
  end)
 '''
 
+F='''local function castleAt(arena:Instance,castle:Model)
+ if builtCastles[castle] then return end
+'''
+F1='''local function castleAt(arena:Instance,castle:Model)
+ if builtCastles[castle] then return end
+ -- Even when the StandardCore arrives before TacticalBattlefield, paint the
+ -- existing 140 scenery parts first. paintArena retries all existing castles.
+ if not builtArenas[arena] then return end
+'''
+
 def need(ok,code):
     if not ok: raise ValueError('RED_GQ470_CASTLE_FAIRBUDGET_'+code)
 def sha(raw): return hashlib.sha256(raw).hexdigest()
 def transform(src):
     need(FEATURE not in src,'DOUBLE_APPLY')
-    for marker,original in [('BUDGET',A),('CASTLE',B),('ADD',C),('TRACK',D),('ARENA_LIFECYCLE',E)]:
+    for marker,original in [('BUDGET',A),('CASTLE',B),('ADD',C),('TRACK',D),('ARENA_LIFECYCLE',E),('SCENERY_FIRST',F)]:
         need(src.count(original)==1,marker+'_ANCHOR')
     for key,expected in [('MAX_VISUAL_PARTS_PER_ARENA',320),('MAX_CASTLE_PARTS',19)]:
         need(re.search(r'(?m)^local '+key+r' = '+str(expected)+r'$',src) is not None,key)
@@ -105,7 +115,7 @@ def transform(src):
                 'createVisual(arena,deco,name,kind,size,cf,color,material)'):
         need(key in src,'PRIOR_ART_'+key[:14])
     out=(src.replace(A,A1,1).replace(B,B1,1).replace(C,C1,1)
-         .replace(D,D1,1).replace(E,E1,1))
+         .replace(D,D1,1).replace(E,E1,1).replace(F,F1,1))
     need(out.count(FEATURE)==1 and 'local MAX_CASTLE_PARTS = 19' in out,'ADOPTION')
     # Protect the terrain-and-navigation author separately; this patch also
     # touches paintArena's cleanup lifecycle, so its whole tail must not compare.
@@ -163,6 +173,7 @@ def apply(root):
        'recounts_alive_visuals_after_castle_deletion':True,
        'castle_and_arena_cleanup_handlers':True,
        'optional_only_reclaimed_for_late_castles':True,
+       'scenery_painted_before_castles_even_on_early_core':True,
        'rollback':'OFF69_CASTLE_BUDGET','studio':'NOT_TESTED',
        'android15':'NOT_TESTED','human_art':'NOT_TESTED','owner_accepted':False}
     (root/RECEIPT).write_text(json.dumps(meta,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
