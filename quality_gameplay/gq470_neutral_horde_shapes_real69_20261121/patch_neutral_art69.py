@@ -87,9 +87,16 @@ def transform(source: str) -> str:
     demand('m.PrimaryPart=root' in section and
            'h.MaxHealth=NEUTRAL_HEALTH' in section and
            'return m' in section, "NEUTRAL_GAMEPLAY_CONTRACT")
-    changed = section.replace(OLD_VISUAL, NEW_VISUAL, 1)
+    # Existing boar is a Part, but the other five accents become WedgeParts.
+    # Narrow the union before using Part-only .Shape under --!strict.
+    boar_old = 'accent.Shape=Enum.PartType.Ball'
+    boar_new = 'if accent:IsA("Part") then accent.Shape=Enum.PartType.Ball end'
+    demand(section.count(boar_old) == 1, "BOAR_PART_TYPE_GUARD_DRIFT")
+    changed = section.replace(OLD_VISUAL, NEW_VISUAL, 1).replace(
+        boar_old, boar_new, 1)
     after = source[:lo] + changed + source[hi:]
-    demand(after.replace(NEW_VISUAL, OLD_VISUAL, 1) == source,
+    demand(after.replace(NEW_VISUAL, OLD_VISUAL, 1).replace(
+        boar_new, boar_old, 1) == source,
            "UNRELATED_SOURCE_BYTES")
     demand(after.count(FEATURE) == 1 and
            NEW_VISUAL.count('Instance.new("WedgePart")') == 1 and
@@ -133,7 +140,9 @@ def selftest() -> None:
        'local function playActualReaction(model:Model,cue:any)\n'
        ' local accent=model:FindFirstChild("SpeciesAccent")\nend\n')
     candidate = transform(example)
-    demand(candidate.replace(NEW_VISUAL, OLD_VISUAL, 1) == example
+    demand(candidate.replace(NEW_VISUAL, OLD_VISUAL, 1).replace(
+           'if accent:IsA("Part") then accent.Shape=Enum.PartType.Ball end',
+           'accent.Shape=Enum.PartType.Ball', 1) == example
            and 'WedgePart' in candidate
            and 'SpeciesAccent' in candidate
            and 'ICE_SLIME' in candidate
@@ -148,6 +157,7 @@ def selftest() -> None:
       example.replace(START, 'local function soldier(parent,at)\n'),
       example.replace('elseif speciesId=="TINY_SHIELD"','elseif speciesId=="OTHER"'),
       example.replace('local accent=piece(m,"SpeciesAccent"', 'local accent=piece(m,"DifferentAccent"'),
+      example.replace('accent.Shape=Enum.PartType.Ball', 'accent.Size=Vector3.new(1,1,1)'),
     ]
     failed = 0
     for bad in corrupts:
@@ -155,8 +165,8 @@ def selftest() -> None:
             transform(bad)
         except (ValueError, AssertionError):
             failed += 1
-    demand(failed == len(corrupts), "NINE_MUTANTS_NOT_REJECTED")
-    print("GQ470_EIGHT_SPECIES_3PART_MATTE_WEDGE_NINE_NEGATIVES_PASS")
+    demand(failed == len(corrupts), "MUTANTS_NOT_REJECTED")
+    print("GQ470_EIGHT_SPECIES_3PART_MATTE_WEDGE_TEN_NEGATIVES_PASS")
 
 def selected(root: Path) -> dict:
     result = project_scan(root, PROJECT)
