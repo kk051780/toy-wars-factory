@@ -25,16 +25,15 @@ PRIOR = "GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 FUNCTION_ANCHOR = "local function paintArena(arena:Instance)"
-CALL_ANCHOR = " -- Broken long-distance ruin silhouette at the central axis; not a new wall.\n"
+CALL_ANCHOR = " for _,child in ipairs(arena:GetChildren()) do\n  if child:IsA(\"Model\") and child.Name:sub(1,7)==\"Castle_\" then castleAt(arena,child) end\n end\n"
 
 RIDGE = '''-- GQ470_FB015_RIDGE_HORIZON_P0_20261120
--- Six coastal-looking stepped ridgelines at +/-410 studs, far outside all
--- three 23-stud assault roads; never create physics walls or distracting UI.
--- Exactly twelve noncolliding wedge silhouettes per arena, mobile budget
--- remains original 320 total. No transparency cards, particles or lights.
+-- Visual-only horizon cliffs are strictly lower priority than all baseline
+-- terrain/ruin visuals and every current or future castle ornament.
+-- At most twelve noncolliding wedges; castles may reclaim them on budget hit.
 local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)
- -- Irregular but deterministic silhouettes: three contours, mirrored lanes
- -- staggered in height/angle/depth. Exactly twelve original nonphysics parts.
+ local bucket=ridgeVisuals[arena] or {}
+ ridgeVisuals[arena]=bucket
  local ridgeContours = {
   {height=14,yaw=-19,drift=-16},
   {height=23,yaw=13,drift=8},
@@ -48,21 +47,44 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
    local at=ground(x,z)
    local h=contour.height+(if side>0 then 3 else 0)
    local turn=side*contour.yaw
-   createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
+   local basePart=createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
     Vector3.new(18,h,31),CFrame.new(at+Vector3.new(0,h/2,0))
      *CFrame.Angles(0,math.rad(turn),0),darkStone,Enum.Material.Slate)
-   createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
+   if basePart then table.insert(bucket,basePart) end
+   local crownPart=createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
     Vector3.new(11,4,24),CFrame.new(at+Vector3.new(-side*2,h+1,0))
      *CFrame.Angles(0,math.rad(-turn),0),limestone,Enum.Material.Limestone)
+   if crownPart then table.insert(bucket,crownPart) end
   end
  end
 end
 
 '''
 
-CALL = ''' -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: silhouette-only side ridges.
+CALL = ''' -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: add only after baseline and present castles.
  drawHorizonRidges(arena,art,onGround)
 '''
+
+BUDGET_ANCHOR = "local budgets:{[Instance]:number}={}\n"
+CREATE_VISUAL_GUARD = " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then return nil end"
+PRIORITY_BUDGET = '''local ridgeVisuals:{[Instance]:{BasePart}}={}
+local function reclaimRidgeForCastle(arena:Instance):boolean
+ local bucket=ridgeVisuals[arena]
+ if not bucket then return false end
+ while #bucket>0 do
+  local p=table.remove(bucket)
+  if p and p.Parent then
+   p:Destroy()
+   budgets[arena]=math.max(0,(budgets[arena] or 0)-1)
+   return true
+  end
+ end
+ return false
+end
+'''
+PRIORITY_GUARD = ''' if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then
+  if parent.Name~="EGGRUMBLE_CastleArt_VisualOnly" or not reclaimRidgeForCastle(arena) then return nil end
+ end'''
 
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -80,8 +102,14 @@ def patch(source: str) -> str:
     need(source.count(CALL_ANCHOR) == 1, "SCENE_ANCHOR_DRIFT")
     need("p.CanCollide=false" in source and "p.CanQuery=false" in source and
          "p.CastShadow=false" in source, "NONPHYSICAL_ART_GUARD")
-    out = source.replace(FUNCTION_ANCHOR, RIDGE + FUNCTION_ANCHOR)
-    out = out.replace(CALL_ANCHOR, CALL + CALL_ANCHOR)
+    need(source.count(BUDGET_ANCHOR) == 1, "BUDGET_TABLE_ANCHOR")
+    need(source.count(CREATE_VISUAL_GUARD) == 1, "VISUAL_GUARD_ANCHOR")
+    out = source.replace(BUDGET_ANCHOR, BUDGET_ANCHOR + PRIORITY_BUDGET)
+    out = out.replace(CREATE_VISUAL_GUARD, PRIORITY_GUARD)
+    out = out.replace(FUNCTION_ANCHOR, RIDGE + FUNCTION_ANCHOR)
+    out = out.replace(CALL_ANCHOR, CALL_ANCHOR + CALL)
+    need(out.count("reclaimRidgeForCastle(arena)") == 1 and
+         out.count("table.insert(bucket,") == 2, "CASTLE_PRIORITY_GUARD")
     need(out.count(MARK) == 2 and out.count("drawHorizonRidges(arena,art,onGround)") == 1,
          "SOURCE_INSERT_COUNT")
     need("RemoteEvent" not in RIDGE and "Tool" not in RIDGE and "DataStore" not in RIDGE,
@@ -91,6 +119,7 @@ def patch(source: str) -> str:
 def selftest() -> None:
     minimal = ("local MAX_CASTLE_PARTS = 19\n"
                "local MAX_VISUAL_PARTS_PER_ARENA = 320\n"
+               + BUDGET_ANCHOR + CREATE_VISUAL_GUARD + "\n"
                "-- " + PRIOR + "\n"
                "p.CanCollide=false;p.CanQuery=false;p.CastShadow=false\n"
                + FUNCTION_ANCHOR + "\n"
@@ -102,6 +131,8 @@ def selftest() -> None:
     for broken in (minimal.replace(PRIOR, "missing"),
                    minimal.replace("= 320", "= 600"),
                    minimal.replace(CALL_ANCHOR, ""),
+                   minimal.replace(BUDGET_ANCHOR, ""),
+                   minimal.replace(CREATE_VISUAL_GUARD, ""),
                    result):
         try:
             patch(broken)
