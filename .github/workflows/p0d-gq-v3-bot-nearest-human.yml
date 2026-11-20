@@ -1,0 +1,108 @@
+name: P0D GQ V3 bot nearest eligible human source 21 native Rojo
+on:
+  push:
+    branches: [quality/p0d-v3-bot-nearest-human-20261116]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-bot-human-fairness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _author482
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _author484
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 4a8fd3823b8ebd4a9867a6f54a16d4db0a423a6e
+          path: _member531
+          persist-credentials: false
+      - name: Exact pinned author 484 AI + author 531 session-member composition
+        run: |
+          set -euo pipefail
+          test "$(git -C _author482 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _author484 rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _member531 rev-parse HEAD)" = 4a8fd3823b8ebd4a9867a6f54a16d4db0a423a6e
+          python3 _member531/quality_gameplay/v3_bot_human_match_membership_20261116/compose.py \
+            --source-dir _author482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --ai-bot-file _author484/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau \
+            --out-dir artifacts/member
+      - name: Pure original-source negative/rollback QA
+        env:
+          GQ_ORIGINAL_AI: _author484/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau
+        run: |
+          set -euo pipefail
+          python3 -m unittest quality_gameplay/v3_bot_nearest_human_20261116/test_patch.py -v
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/patch_nearest.py \
+            --bot-source artifacts/member/EGGRUMBLE_BotActors.luau --out-dir artifacts/on
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/private.py assemble \
+            --author _author482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --member artifacts/member --out artifacts/private
+          cmp artifacts/on/EGGRUMBLE_BotActors.luau artifacts/private/EGGRUMBLE_BotActors.luau
+          cmp artifacts/on/EGGRUMBLE_BotActors.OFF.luau artifacts/private/GQ_BOT_NEAREST_OFF.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Compile all 21 real source and execute original patched BotActor in native VM
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq-bot-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-bot-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          src=Path("artifacts/private")
+          files=[x for x in src.glob("*.luau") if x.name!="GQ_BOT_NEAREST_OFF.luau"]
+          assert len(files)==21, len(files)
+          for file in files:
+              subprocess.run(["/tmp/gq-bot-luau/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_BOT_NEAREST_ACTUAL_ORIGINAL21_NATIVE_PARSE_PASS",len(files))
+          PY
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/make_native_harness.py \
+            --bot artifacts/private/EGGRUMBLE_BotActors.luau --out artifacts/private/GQ_BOT_MELEE_NATIVE.luau
+          /tmp/gq-bot-luau/luau artifacts/private/GQ_BOT_MELEE_NATIVE.luau | tee /tmp/bot-native.log
+          grep -q GQ_REAL_BOT_HUMAN_NEAREST_NATIVE_6_CASES_PASS /tmp/bot-native.log
+      - name: Pinned Rojo 7.7.1 actual private Studio Place and source/class readback
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq-bot-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq-bot-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq-bot-rojo.zip") as z:
+              entries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(entries)==1
+              out=Path("/tmp/gq-bot-rojo")
+              out.write_bytes(z.read(entries[0]))
+              out.chmod(0o755)
+          PY
+          /tmp/gq-bot-rojo build artifacts/private/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/private/GQ_BOT_NEAREST_PRIVATE21.rbxlx
+          python3 quality_gameplay/v3_bot_nearest_human_20261116/private.py verify \
+            --out artifacts/private --place artifacts/private/GQ_BOT_NEAREST_PRIVATE21.rbxlx
+      - name: Upload private source-only proof (NOT formal RC or Studio gameplay acceptance)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-V3-BOT-NEAREST-PRIVATE21-SOURCE-NO-GO
+          path: |
+            artifacts/private/GQ_BOT_NEAREST_PRIVATE21.rbxlx
+            artifacts/private/GQ_PRIVATE21_RECEIPT.json
+            artifacts/private/GQ_BOT_NEAREST_OFF.luau
+            artifacts/private/GQ_BOT_MELEE_NATIVE.luau
+          retention-days: 3
