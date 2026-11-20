@@ -15,14 +15,17 @@ jobs:
     timeout-minutes: 16
     env:
       GH_TOKEN: ${{ github.token }}
+      AUTHOR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Fetch pinned formal REAL69 and patch exactly one actual selected Luau source
         shell: bash
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AUTHOR_HEAD_SHA" || { echo WRONG_HEAD_CHECKOUT; exit 1; }
           OFFICIAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$OFFICIAL" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo STALE_FORMAL_RC_NO_ADMISSION; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
@@ -101,7 +104,7 @@ jobs:
           d.update(native_luau='SOURCE_PASS_69_ON_OFF',rojo_on_off='SOURCE_PASS',
             private_candidate_place_bytes=place.stat().st_size,
             private_candidate_place_sha256=hashlib.sha256(place.read_bytes()).hexdigest(),
-            candidate_head=os.environ['GITHUB_SHA'])
+            candidate_head=os.environ['AUTHOR_HEAD_SHA'])
           path.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
           (root/'B220_ONE_SOURCE_NOT_FORMAL/SOURCE_SELECT_MANIFEST.json').write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
           print('GQ470_RESULT_MATTE_B220_HANDOFF_PREP_ONLY_ART_NO_GO')
