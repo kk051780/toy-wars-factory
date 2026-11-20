@@ -1,0 +1,123 @@
+name: GQ470 REAL69 Trapper portal visual A PREP
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_trapper_portal_art_real69_20261121/**'
+      - '.github/workflows/gq470-trapper-portal-art-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact genuine REAL69 and 14 negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCRIPT=quality_gameplay/gq470_trapper_portal_art_real69_20261121/patch_trapper_portal69.py
+          python3 -m py_compile "$SCRIPT"
+          python3 -B "$SCRIPT" --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_RC; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/trapper-art
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/trapper-art
+          test -s /tmp/trapper-art/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 -B "$SCRIPT" --base /tmp/trapper-art
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau source compile 69 ON and OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/trapper-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/trapper-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_trapper_portal_art_real69_20261121")
+          from patch_trapper_portal69 import selected,OFF,ROUTE,unpatch
+          root=Path("/tmp/trapper-art")
+          on,off=selected(root),selected(root/OFF)
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={ROUTE}
+          assert unpatch(on[ROUTE].read_text())==off[ROUTE].read_text()
+          for scripts in (on,off):
+              for f in scripts.values():
+                  subprocess.run(["/tmp/trapper-luau/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("TRAPPER_NATIVE69_ON_OFF_REAL_SOURCE_PASS")
+          PY
+      - name: Pinned Rojo ON/OFF rollback and source/ART420 check
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/trapper-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/trapper-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/trapper-rojo.zip") as z:
+              members=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(members)==1
+              f=Path("/tmp/trapper-rojo");f.write_bytes(z.read(members[0]));f.chmod(0o755)
+          PY
+          /tmp/trapper-rojo build /tmp/trapper-art/EGGRUMBLE_REAL69.project.json -o /tmp/trapper-art/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/trapper-rojo build /tmp/trapper-art/OFF69_TRAPPER_PORTAL_ART/EGGRUMBLE_REAL69.project.json -o /tmp/trapper-art/TRAPPER_OFF_REBUILT.rbxlx
+          cmp /tmp/trapper-art/TRAPPER_OFF_REBUILT.rbxlx /tmp/trapper-art/OFF69_TRAPPER_PORTAL_ART/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/trapper-art/EGGRUMBLE_REAL69.project.json --place /tmp/trapper-art/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/trapper-art --report /tmp/trapper-art/LEGACY48_AUDIT.json
+          python3 art_quality/gq470_real69_source_gate.py --root /tmp/trapper-art --head e80973c354f14a0d0088577f3cc1a875454f0f8f --out /tmp/trapper-art/ART_CHECK_REPORT.json
+          python3 - <<'PY'
+          import json,hashlib,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_trapper_portal_art_real69_20261121")
+          from patch_trapper_portal69 import selected,ROUTE
+          root=Path("/tmp/trapper-art")
+          r=json.loads((root/"ART_CHECK_REPORT.json").read_text())
+          assert r["source_gate"]["status"]=="PASS_SOURCE_ONLY"
+          assert r["visual_evidence_gate"]["screenshots_received"]==0
+          assert r["art_gate"]=="ART_NO_GO"
+          handoff=root/"B220_TRAPPER_PORTAL_SOURCE_ONLY"
+          handoff.mkdir()
+          s=selected(root)[ROUTE]
+          (handoff/"EGGRUMBLE_SevenRoleCombat.luau").write_bytes(s.read_bytes())
+          (handoff/"HANDOFF.json").write_text(json.dumps({
+            "source_route":ROUTE,"source_sha256":hashlib.sha256(s.read_bytes()).hexdigest(),
+            "changed_routes":1,"other_exact":68,"official_rc_integrated":False,
+            "studio":"NOT_TESTED","android":"NOT_TESTED","human_art":"NOT_TESTED"},indent=2)+"\n")
+          place=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          receipt=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          meta=json.loads(receipt.read_text())
+          meta["private_place_bytes"]=place.stat().st_size
+          meta["private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt.write_text(json.dumps(meta,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("TRAPPER_PRIVATE_CANDIDATE_PLACE_BYTES",place.stat().st_size)
+          print("TRAPPER_SOURCE_PREP_NOT_RUNTIME_ART_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-TRAPPER-PORTAL-ART-69-A-PREP-NOT-FORMAL
+          path: |
+            /tmp/trapper-art/EGGRUMBLE_REAL69.project.json
+            /tmp/trapper-art/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/trapper-art/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/trapper-art/sources/**
+            /tmp/trapper-art/TRAPPER_OFF_REBUILT.rbxlx
+            /tmp/trapper-art/LEGACY48_AUDIT.json
+            /tmp/trapper-art/ART_CHECK_REPORT.json
+            /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY/**
+          if-no-files-found: error
+          retention-days: 7
