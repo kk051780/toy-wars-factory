@@ -66,12 +66,12 @@ end)
 '''
 DIVER = ' local isDiver=currentKind=="SUBSEA"\n'
 DIVER_NEW = DIVER + ' local gradeTarget=isDiver and "SUBSEA" or "NONE"\n'
-WEATHER = '   local weather=core and core:GetAttribute("RealmWeather") or "CLEAR"\n'
+WEATHER = '  local weather=core and core:GetAttribute("RealmWeather") or "CLEAR"\n'
 WEATHER_NEW = WEATHER + '''   if weather=="THUNDER" then gradeTarget="THUNDER"
    elseif weather=="WIND" then gradeTarget="WIND" end
 '''
-AFTER_FLIGHT = '  end\n  heading.Text=currentKind=="FIGHTER"'
-AFTER_FLIGHT_NEW = '  end\n  updateRealmGrade(gradeTarget)\n  heading.Text=currentKind=="FIGHTER"'
+AFTER_FLIGHT = ' end\n heading.Text=currentKind=="FIGHTER"'
+AFTER_FLIGHT_NEW = ' end\n updateRealmGrade(gradeTarget)\n heading.Text=currentKind=="FIGHTER"'
 REPLACEMENTS = (
     (RUN_SERVICE, RUN_SERVICE_NEW, "SERVICE"),
     (KIND, KIND_NEW, "GRADE"),
