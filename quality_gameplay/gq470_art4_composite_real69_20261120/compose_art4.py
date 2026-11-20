@@ -169,7 +169,9 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
             receipt[s.metadata] = meta
             provenance.append({
                 "pr": s.pr, "pinned_pr_head": s.head,
-                "pinned_patcher_git_blob": s.blob, "route": s.target,
+                "pinned_patcher_git_blob": s.blob,
+                "pinned_candidate_git_blob": s.candidate_blob,
+                "route": s.target,
                 "before_sha256": digest(originals[s.target]),
                 "after_sha256": digest(altered[s.target]),
             })
@@ -233,7 +235,9 @@ def verify_attestation(receipt: dict, before: dict[str, bytes],
     for s, pin in zip(SLICES, pins):
         expected = {
             "pr": s.pr, "pinned_pr_head": s.head,
-            "pinned_patcher_git_blob": s.blob, "route": s.target,
+            "pinned_patcher_git_blob": s.blob,
+                "pinned_candidate_git_blob": s.candidate_blob,
+                "route": s.target,
             "before_sha256": digest(before[s.target]),
             "after_sha256": digest(after[s.target]),
         }
@@ -304,7 +308,9 @@ def self_test() -> None:
         "product_go": False, "art_go": False,
         "pinned_inputs": [
             {"pr": s.pr, "pinned_pr_head": s.head,
-             "pinned_patcher_git_blob": s.blob, "route": s.target,
+             "pinned_patcher_git_blob": s.blob,
+                "pinned_candidate_git_blob": s.candidate_blob,
+                "route": s.target,
              "before_sha256": digest(source_before[s.target]),
              "after_sha256": digest(source_after[s.target])}
             for s in SLICES
@@ -329,7 +335,7 @@ def self_test() -> None:
         except ValueError:
             continue
         raise AssertionError("RED_ART6_ATTESTATION_MUTANT_" + field)
-    for mutation in ("pinned_pr_head", "after_sha256"):
+    for mutation in ("pinned_pr_head", "after_sha256", "pinned_candidate_git_blob"):
         mutant = copy.deepcopy(valid)
         mutant["gq470_art6_composite"]["pinned_inputs"][0][mutation] = "FAKE"
         try:
@@ -345,7 +351,7 @@ def self_test() -> None:
         pass
     else:
         raise AssertionError("RED_ART6_ATTESTATION_META_MUTANT")
-    print("GQ470_ART6_15_MUTATION_NEGATIVES_PASS")
+    print("GQ470_ART6_16_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
