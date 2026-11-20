@@ -83,6 +83,26 @@ jobs:
           (t/"packet/B220_ONE_SOURCE_NOT_FORMAL.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
           print("SOURCE_LOCK_EXACT_1_OF_69_AND_9_MUTANTS_PASS")
           PY
+      - name: Independent seven-role visual budget and authority guard with 11 negatives
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_musou_aura_lod_real69_20261121/verify_budget_authority.py \
+            --original "$RUNNER_TEMP/off69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --candidate "$RUNNER_TEMP/on69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --out "$RUNNER_TEMP/packet/VISUAL_BUDGET_AUTHORITY_QA.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"packet/VISUAL_BUDGET_AUTHORITY_QA.json"
+          r=json.loads(p.read_text())
+          assert r["negative_mutants_rejected"]==11
+          assert r["one_selected_existing_module"]
+          assert len(r["seven_roles"])==7
+          assert r["new_world_parts"]==r["new_event_or_render_loops"]==0
+          assert r["area_reduction_pct"]>50
+          assert r["studio_performance"]=="NOT_TESTED"
+          print("ART_SOURCE_BUDGET_SEVEN_ROLES_AND_11_NEGATIVES_PASS")
+          PY
       - name: Audit all original 48 legacy flags and 17 source families (source != engine)
         run: |
           set -euo pipefail
