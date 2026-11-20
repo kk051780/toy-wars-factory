@@ -1,0 +1,212 @@
+name: GQ470 P0 REAL69 custom skill labels source-exact PREP (not official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_hud_skill_clarity_20261120/**'
+      - '.github/workflows/gq470-hud-skill-label-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-hud-label-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-level negative tests and immutable official receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_hud_skill_clarity_20261120/patch_hud69.py
+          python3 -B quality_gameplay/gq470_hud_skill_clarity_20261120/patch_hud69.py --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44673605213 --jq '.head_sha+" "+.conclusion')" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2 success"
+          mkdir -p /tmp/gq470-hud-label
+          gh run download 44673605213 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-hud-label
+          test -s /tmp/gq470-hud-label/EGGRUMBLE_REAL69.project.json
+          test -s /tmp/gq470-hud-label/REAL69_LEGACY_INTAKE_RECEIPT.json
+          test -s /tmp/gq470-hud-label/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 -B quality_gameplay/gq470_hud_skill_clarity_20261120/patch_hud69.py --base /tmp/gq470-hud-label
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/gq470-hud-label/REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          a=r['gq470_fb004_hud_skill_label']
+          assert a['other_68_scripts_byte_exact'] is True
+          assert a['tool_names_changed'] is False and a['gameplay_server_authority_changed'] is False
+          assert a['default_roblox_backpack_label_fixed'] is False
+          assert not a['owner_accepted']
+          print("GQ470_HUD_LABEL_SOURCE_QA_PASS_NOT_STUDIO_ACCEPTED")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 69 selected and 69 rollback Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-hud-label-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-hud-label-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=Path('/tmp/gq470-hud-label')
+          on=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          off=project_scan(root/'off69_hud_label','EGGRUMBLE_REAL69.project.json')
+          assert len(on)==69 and len(off)==69 and set(on)==set(off)
+          target='StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime'
+          assert {k for k in on if on[k]['sha256'] != off[k]['sha256']}=={target}
+          assert all(on[k]['class']==off[k]['class'] for k in on)
+          for folder,scripts in ((root,on),(root/'off69_hud_label',off)):
+              for route,item in scripts.items():
+                  subprocess.run(['/tmp/gq470-hud-label-luau/luau-compile','--text',str(folder/item['path'])],
+                                 stdout=subprocess.DEVNULL,check=True)
+          print('GQ470_HUD_LABEL_NATIVE_ON69_OFF69_PASS')
+          PY
+      - name: Rojo 7.7.1 ON/OFF exact source and inverse place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-hud-label-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-hud-label-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-hud-label-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/gq470-hud-label-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-hud-label-rojo build /tmp/gq470-hud-label/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-hud-label/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-hud-label-rojo build /tmp/gq470-hud-label/off69_hud_label/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-hud-label/OFF69_HUD_LABEL_REBUILT.rbxlx
+          cmp /tmp/gq470-hud-label/OFF69_HUD_LABEL_REBUILT.rbxlx /tmp/gq470-hud-label/off69_hud_label/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-hud-label/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-hud-label/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-hud-label/off69_hud_label/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-hud-label/OFF69_HUD_LABEL_REBUILT.rbxlx --count 69
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo RED_HUD_LABEL_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$PR_BASE" = "$CURRENT" || { echo RED_HUD_LABEL_STALE_PR_BASE; exit 1; }
+          fi
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('/tmp/gq470-hud-label')
+          rec=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(rec.read_text())
+          p=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          x=r['gq470_fb004_hud_skill_label']
+          x['native69_off69']='PASS'
+          x['rojo69_off69']='PASS'
+          x['studio']='NOT_TESTED'
+          x['android']='NOT_TESTED'
+          x['owner_accepted']=False
+          r['private_place_bytes']=p.stat().st_size
+          r['private_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          r['candidate_ci_ref']=os.environ['GITHUB_SHA']
+          rec.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          print('GQ470_HUD_LABEL_FULL_SOURCE_BUILD_PASS_NOT_STUDIO_PASS',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-HUD-LABEL-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-hud-label/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-hud-label/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-hud-label/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-hud-label/sources/**
+            /tmp/gq470-hud-label/OFF69_HUD_LABEL_REBUILT.rbxlx
+          if-no-files-found: error
+          retention-days: 7
+
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Verify full selected REAL69 Native and exact source rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-hud-label-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-hud-label-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,pathlib,subprocess,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('/tmp/gq470-hud-label')
+          before=project_scan(root/'off69_hud_label','EGGRUMBLE_REAL69.project.json')
+          after=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          target='StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime'
+          assert set(before)==set(after) and len(after)==69
+          assert {k for k in after if before[k]['sha256']!=after[k]['sha256']}=={target}
+          assert all(before[k]['class']==after[k]['class'] and before[k]['path']==after[k]['path'] for k in after)
+          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert set(receipt['source_hashes'])==set(after)
+          for r,listing in ((root,after),(root/'off69_hud_label',before)):
+            for k,x in listing.items():
+              assert x['sha256']==(receipt['source_hashes'][k] if r==root else before[k]['sha256'])
+              subprocess.run(['/tmp/gq470-hud-label-luau/luau-compile','--text',str(r/x['path'])],
+                check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_HUD_LABEL_NATIVE69_PLUS_OFF69_PASS_OTHER_68_EXACT')
+          PY
+      - name: Rojo69 place, byte-exact OFF69, embedded sources, legacy17 and all48 gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-hud-label-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-hud-label-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-hud-label-rojo.zip') as z:
+            matches=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+            assert len(matches)==1
+            p=Path('/tmp/gq470-hud-label-rojo');p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          ROOT=/tmp/gq470-hud-label
+          /tmp/gq470-hud-label-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o "$ROOT/EGGRUMBLE_REAL69_HUD_LABEL_CANDIDATE.rbxlx"
+          /tmp/gq470-hud-label-rojo build "$ROOT/off69_hud_label/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_HUD_LABEL_REBUILT.rbxlx"
+          cmp "$ROOT/OFF69_HUD_LABEL_REBUILT.rbxlx" "$ROOT/off69_hud_label/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place "$ROOT/EGGRUMBLE_REAL69_HUD_LABEL_CANDIDATE.rbxlx" --count 69
+          mkdir -p "$ROOT/delivery"
+          cp "$ROOT/EGGRUMBLE_REAL69_HUD_LABEL_CANDIDATE.rbxlx" "$ROOT/delivery/EGGRUMBLE_REAL69_HUD_LABEL_CANDIDATE.rbxlx"
+          python3 - <<'PY'
+          import json,hashlib,os,pathlib
+          root=pathlib.Path('/tmp/gq470-hud-label')
+          p=root/'EGGRUMBLE_REAL69_HUD_LABEL_CANDIDATE.rbxlx'
+          r=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          x=json.loads(r.read_text())
+          x['build_head']=os.environ['GITHUB_SHA']
+          x['gq470_fb004_hud_skill_label']['native_rojo_off69']='PASS_69_OF_69'
+          x['private_place_bytes']=p.stat().st_size
+          x['private_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          r.write_text(json.dumps(x,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          (root/'delivery'/'REAL69_HUD_LABEL_CANDIDATE_RECEIPT.json').write_text(r.read_text())
+          print('HUD_LABEL_ACTUAL_PRIVATE_PLACE_BYTES',p.stat().st_size)
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --root "$ROOT" --out "$ROOT/delivery/REAL69_LEGACY17_NONLOSS_AUDIT.json" --head "$GITHUB_SHA"
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/delivery/REAL69_HUD_LABEL_LEGACY48_AUDIT.json"
+          test "$(find "$ROOT/delivery" -maxdepth 1 -name '*.rbxlx' | wc -l)" -eq 1
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo RED_OFFICIAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
+          echo GQ470_HUD_LABEL_FULL_NATIVE_ROJO_OFF69_LEGACY17_48_CANDIDATE_PASS_NOT_STUDIO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-HUD_LABEL-PRIVATE-PREP-NOT-OFFICIAL
+          path: /tmp/gq470-hud-label/delivery/
+          retention-days: 14
+          if-no-files-found: error
