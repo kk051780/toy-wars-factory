@@ -51,7 +51,15 @@ NEW_VISUAL = """ -- GQ470_FB015_NEUTRAL_HORDE_8_SPECIES_MATTE_FACETS_REAL69_2026
  else
   local facet=Instance.new("WedgePart")
   facet.Name="SpeciesAccent";facet.Anchored=true;facet.CanCollide=false
-  facet.Position=root.Position+Vector3.new(-1.1*sc,-.1*sc,-.25*sc)
+  -- Species-specific facet orientation makes banners, shields, ghosts and
+  -- sparks distinguishable without adding a part, surface decal or loop.
+  local tilt=if speciesId=="BANNER_KNIGHT" then 8
+   elseif speciesId=="BABY_GOLEM" then 28
+   elseif speciesId=="SPARK_GOBLIN" then -32
+   elseif speciesId=="TINY_SHIELD" then 17
+   else -11
+  facet.CFrame=CFrame.new(root.Position+Vector3.new(-1.1*sc,-.1*sc,-.25*sc))
+   *CFrame.Angles(0,math.rad(tilt),0)
   facet.Size=Vector3.new(.5,1.5,1.4)*sc
   facet.Color=visual.accent;facet.Parent=m
   accent=facet
@@ -103,6 +111,7 @@ def transform(source: str) -> str:
            NEW_VISUAL.count('piece(m,"HumanoidRootPart"') == 1 and
            NEW_VISUAL.count('piece(m,"Head"') == 1 and
            NEW_VISUAL.count('piece(m,"SpeciesAccent"') == 1 and
+           'CFrame.Angles(0,math.rad(tilt),0)' in NEW_VISUAL and
            'local accent:BasePart' in NEW_VISUAL,
            "THREE_PART_ACCURATE_SOURCE_COUNT")
     forbidden = ('RemoteEvent', 'DataStoreService', 'MarketplaceService',
