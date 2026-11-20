@@ -11,6 +11,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -207,6 +208,32 @@ def active_luau_source(source: str) -> str:
     return "".join(out)
 
 
+
+# Require exact active Luau budget assignments, not a decimal/prefix lookalike
+# or human-readable marker embedded elsewhere. This does not grade beauty.
+EXACT_VISUAL_ASSIGNMENTS: dict[int, dict[str, str]] = {
+    924: {"label.MaxDistance": "22", "hum.HealthDisplayDistance": "18"},
+    926: {"MAX_CANOPIES": "160", "MAX_TRACKED_PARTS": "1800"},
+    925: {"b.MaxDistance": "25"},
+    928: {"MAX_KO_BURSTS_PER_SEC": "6"},
+    929: {"PART_BUDGET_PER_AVATAR": "8"},
+}
+
+def exact_visual_assignments(source: str, pr: int) -> None:
+    """Reject fractional caps and decoys; require one active assignment."""
+    for field, expected in EXACT_VISUAL_ASSIGNMENTS.get(pr, {}).items():
+        pattern = re.compile(r"^\s*(?:local\s+)?" + re.escape(field) +
+                             r"\s*=\s*(.*?)\s*$")
+        actual: list[str] = []
+        for line in source.splitlines():
+            for statement in line.split("--", 1)[0].split(";"):
+                match = pattern.fullmatch(statement)
+                if match:
+                    actual.append(match.group(1).strip())
+        demand(actual == [expected],
+               "ART_EXACT_ASSIGNMENT_" + str(pr) + "_" +
+               field.replace(".", "_").upper())
+
 def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
     """Source-based visual budgets for six disjoint original art modules.
 
@@ -244,6 +271,7 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
                         'MarketplaceService', 'TakeDamage', 'FireServer(')
     for sl in SLICES:
         original, updated = before[sl.target].decode(), after[sl.target].decode()
+        exact_visual_assignments(updated, sl.pr)
         # Reject budget markers that exist only in Luau line comments. This
         # remains a source gate, not a substitute for engine or image evidence.
         active_lines = active_luau_source(updated)
@@ -290,6 +318,14 @@ def art_budget_self_test() -> None:
         930: 'BasaltShoulder_ BasaltCrown_ for side=-1,1,2 do shoulder.Anchored=true shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false shoulder.CastShadow=false crown.Anchored=true crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false crown.CastShadow=false Instance.new("WedgePart") Instance.new("WedgePart")',
         929: 'PART_BUDGET_PER_AVATAR=8 TAPERED_WEAPONS Instance.new("WedgePart") role=="NINJA" p.Massless=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false p.CastShadow=false',
     }
+    # Fixtures mirror semicolon-separated Luau property assignments.
+    sample[924] = sample[924].replace(
+        ' label.MaxDistance=22', ';label.MaxDistance=22').replace(
+        ' HealthDisplayDistance=18', ';hum.HealthDisplayDistance=18')
+    sample[926] = sample[926].replace(
+        ' local MAX_TRACKED_PARTS=1800', ';local MAX_TRACKED_PARTS=1800')
+    sample[925] = sample[925].replace(
+        ' b.MaxDistance=25', ';b.MaxDistance=25')
     after = {sl.target: sample[sl.pr].encode() for sl in SLICES}
     before = dict(after)
     for sl in SLICES:
@@ -347,6 +383,27 @@ def art_budget_self_test() -> None:
             continue
         raise AssertionError("RED_ART6_PHYSICS_MUTANT_" + str(index))
     print("GQ470_ART6_10_ADDITIONAL_VISUAL_SAFETY_MUTANTS_PASS")
+    # Previous substring matching accepted 22.5 or 6.5 as exact 22 or 6.
+    decimal_mutants = (
+        (924, 'label.MaxDistance=22', 'label.MaxDistance=22.5'),
+        (924, 'hum.HealthDisplayDistance=18', 'hum.HealthDisplayDistance=18.5'),
+        (925, 'b.MaxDistance=25', 'b.MaxDistance=25.01'),
+        (926, 'MAX_CANOPIES=160', 'MAX_CANOPIES=160.5'),
+        (926, 'MAX_TRACKED_PARTS=1800', 'MAX_TRACKED_PARTS=1800.5'),
+        (928, 'MAX_KO_BURSTS_PER_SEC=6', 'MAX_KO_BURSTS_PER_SEC=6.5'),
+        (929, 'PART_BUDGET_PER_AVATAR=8', 'PART_BUDGET_PER_AVATAR=8.5'),
+    )
+    for index, (pr, old, new) in enumerate(decimal_mutants):
+        route = next(sl.target for sl in SLICES if sl.pr == pr)
+        broken = dict(after)
+        demand(old.encode() in broken[route], "EXACT_MUTANT_FIXTURE")
+        broken[route] = broken[route].replace(old.encode(), new.encode(), 1)
+        try:
+            art_budget_gate(before, broken)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART6_DECIMAL_BUDGET_MUTANT_" + str(index))
+    print("GQ470_ART6_7_EXACT_VISUAL_BUDGET_MUTANTS_PASS")
     # A commented-out nominal budget cannot authorize a larger active limit.
     for pr, original_marker, bad_marker in (
             (924, 'label.MaxDistance=22', 'label.MaxDistance=222'),
@@ -715,7 +772,7 @@ def self_test() -> None:
             except ValueError:
                 continue
             raise AssertionError("RED_ART6_PLACE_MUTANT_" + kind)
-    print("GQ470_ART6_46_MUTATION_NEGATIVES_PASS")
+    print("GQ470_ART6_53_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
