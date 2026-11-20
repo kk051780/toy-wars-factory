@@ -12,7 +12,7 @@ permissions:
   contents: read
   actions: read
 jobs:
-  source-exact-ko-slash-art:
+  source-exact-castle-gatehp-art:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -26,13 +26,13 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_gatehp_matte_real69_20261121/patch_gatehp69.py
-          python3 -B quality_gameplay/gq470_gatehp_matte_real69_20261121/patch_gatehp69.py --base /tmp/gq470-gatehp --self-test
           test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
           test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
           mkdir -p /tmp/gq470-gatehp
           gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-gatehp
           test -s /tmp/gq470-gatehp/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           test -s /tmp/gq470-gatehp/REAL69_LEGACY_INTAKE_RECEIPT.json
+          python3 -B quality_gameplay/gq470_gatehp_matte_real69_20261121/patch_gatehp69.py --base /tmp/gq470-gatehp --self-test
           python3 -B quality_gameplay/gq470_gatehp_matte_real69_20261121/patch_gatehp69.py --base /tmp/gq470-gatehp
           python3 - <<'PY'
           import json
