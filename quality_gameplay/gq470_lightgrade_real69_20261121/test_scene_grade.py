@@ -110,7 +110,7 @@ class GradeContractTests(unittest.TestCase):
             "android_oversaturation": (
                 'saturation = 0.08', 'saturation = 0.40'),
             "missing_destroy": (
-                'grade:Destroy()', '-- grade:Destroy()'),
+                'grade:Destroy()', '-- REMOVED_DESTROY'),
             "atmosphere_takeover": (
                 'if ownsAtmosphere and atmosphere ~= nil then',
                 'if atmosphere ~= nil then'),
