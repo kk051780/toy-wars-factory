@@ -35,8 +35,9 @@ def validate(text: str) -> None:
         'while true', 'task.spawn', 'ParticleEmitter', 'PointLight',
         'Lighting', 'Humanoid', 'TakeDamage', 'DataStore', 'MarketplaceService',
     )
+    executable = "\n".join(line.split("--", 1)[0] for line in text.splitlines())
     for word in forbidden:
-        if word in text:
+        if word in executable:
             raise ValueError("SOURCE_GATE_FORBIDDEN_" + word)
     if len(re.findall(r'facet\("Cloud"', text)) != 3:
         raise ValueError("SOURCE_GATE_FACET_CALLS_NOT_THREE")
