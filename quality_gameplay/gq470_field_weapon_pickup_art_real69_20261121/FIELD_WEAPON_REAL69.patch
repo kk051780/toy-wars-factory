@@ -1,0 +1,42 @@
+--- a/sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau
++++ b/sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau
+@@ -273,6 +273,25 @@
+    shaft.Material=Enum.Material.SmoothPlastic;shaft.Color=def.color
+    shaft.Position=base.Position+Vector3.new(0,1.65,0)
+    shaft.Parent=folder
++   -- GQ470_FB015_FIELD_WEAPON_PICKUP_FACETS_REAL69_20261121
++   -- Six lightweight, static accents: a beveled sword, spear tip, and bow limb.
++   -- This creates no power, touch, raycast, render-loop or purchase authority.
++   local facet=Instance.new("WedgePart")
++   facet.Name="GQ470_WeaponFacet_"..kind
++   facet.Size=if kind=="SUN_BLADE" then Vector3.new(1.24,.90,.48)
++    elseif kind=="WIND_SPEAR" then Vector3.new(.74,1.02,.42)
++    else Vector3.new(.75,1.05,.40)
++   facet.Anchored=true;facet.CanCollide=false;facet.CanTouch=false;facet.CanQuery=false
++   facet.Material=Enum.Material.SmoothPlastic
++   facet.Color=if kind=="SUN_BLADE" then Color3.fromRGB(238,198,138)
++    elseif kind=="WIND_SPEAR" then Color3.fromRGB(183,236,213)
++    else Color3.fromRGB(198,177,239)
++   facet.CFrame=if kind=="SUN_BLADE" then
++    CFrame.new(shaft.Position+Vector3.new(0,1.03,0))*CFrame.Angles(0,0,math.rad(14))
++    elseif kind=="WIND_SPEAR" then
++    CFrame.new(shaft.Position+Vector3.new(0,1.59,0))*CFrame.Angles(0,0,math.rad(90))
++    else CFrame.new(shaft.Position+Vector3.new(0,.22,0))*CFrame.Angles(0,0,math.rad(35))
++   facet.Parent=folder
+    local prompt=Instance.new("ProximityPrompt")
+    prompt.ActionText="拾って強化";prompt.ObjectText=def.label.."・18秒"
+    prompt.MaxActivationDistance=8;prompt.RequiresLineOfSight=true;prompt.HoldDuration=.25
+@@ -293,11 +312,11 @@
+     weaponBuffs[player]=lease
+     player:SetAttribute("EGGRUMBLE_FieldWeaponKind",kind)
+     player:SetAttribute("EGGRUMBLE_FieldWeaponUntil",lease.expires)
+-    available=false;prompt.Enabled=false;base.Transparency=1;shaft.Transparency=1
++    available=false;prompt.Enabled=false;base.Transparency=1;shaft.Transparency=1;facet.Transparency=1
+     task.delay(18,function() clearWeaponBuff(player,lease) end)
+     task.delay(15,function()
+      if not matchActive() or not base.Parent then return end
+-     available=true;prompt.Enabled=true;base.Transparency=0;shaft.Transparency=0
++     available=true;prompt.Enabled=true;base.Transparency=0;shaft.Transparency=0;facet.Transparency=0
+     end)
+    end)
+   end
