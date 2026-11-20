@@ -59,6 +59,7 @@ def transform(source: str) -> str:
     assert 'local function decorateEgg(egg:BasePart)' in source and 'local function decorateVault(part:BasePart)' in source, 'RED_OWNERS'
     out = source.replace(OLD_EGG, NEW_EGG, 1)
     assert out.count(FEATURE) == 1, 'RED_PATCH_MARKER'
+    assert source.split('local function decorateVault(part:BasePart)',1)[1] == out.split('local function decorateVault(part:BasePart)',1)[1], 'RED_STATION_OWNER_OVERLAP'
     assert 'BillboardGui' not in NEW_EGG, 'RED_GUI'
     assert NEW_EGG.count('jewel(') == 2, 'RED_EGG_PART_BUDGET'
     return out
@@ -71,8 +72,7 @@ p.CanCollide=false
 p.CanTouch=false
 p.CanQuery=false
 local function decorateEgg(egg:BasePart) end
-local function decorateVault(part:BasePart) end
-''' + OLD_EGG
+''' + OLD_EGG + 'local function decorateVault(part:BasePart) end\n'
     candidate = transform(source)
     assert 'isReleased' in candidate and 'RaisedEggCrest' in candidate
     for bad in [candidate, source.replace(OLD_EGG,''), source.replace('local function decorateEgg(egg:BasePart)','local function decorateNoEgg(egg:BasePart)'),
