@@ -130,6 +130,51 @@ jobs:
           assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
           print("GQ470_EXPLORE_RELIC_420_ART_SOURCE_PASS_RUNTIME_AND_OWNER_NOT_TESTED")
           PY
+      - name: Source lock JSON, actual on-Place and selected route attestation; six tamper negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy, hashlib, json, sys
+          from pathlib import Path
+          sys.path.insert(0, "quality_gameplay/gq470_explore_relic_art_real69_20261121")
+          import patch_explore_relic69 as gate
+          base=Path("/tmp/gq470-explore")
+          claim=json.loads(Path("quality_gameplay/gq470_explore_relic_art_real69_20261121/source_lock.json").read_text())
+          receipt=json.loads((base/gate.RECEIPT).read_text())
+          selected=gate.selected(base)
+          original=gate.selected(base/gate.OFF)
+          actual=(base/gate.PLACE).read_bytes()
+          def valid(lock):
+              return (lock.get("schema")=="GQ470_REAL69_SOURCE_LOCK_V1"
+                  and lock.get("feature_id")==gate.MARK
+                  and lock.get("pinned_formal_base")==gate.BASE
+                  and lock.get("selected_route")==gate.TARGET
+                  and lock.get("original_selected_source_git_blob")==gate.ORIGINAL_GIT_BLOB
+                  and lock.get("selected_script_class")==receipt["source_classes"][gate.TARGET]=="Script"
+                  and lock.get("selected_source_count")==len(selected)==69
+                  and lock.get("changed_selected_routes")==1
+                  and lock.get("unchanged_selected_routes")==68
+                  and lock.get("expected_candidate_selected_sha256")==gate.sha(selected[gate.TARGET].read_bytes())
+                  and lock.get("expected_candidate_private_place_sha256")==hashlib.sha256(actual).hexdigest()
+                  and lock.get("original_place_off_rollback")==gate.OFF
+                  and lock.get("parts_per_marker_before_after")==[3,3]
+                  and lock.get("new_extra_part_instances")==0
+                  and lock.get("owner_accepted") is False)
+          assert valid(claim), "RED_REAL_SOURCE_LOCK_MISMATCH"
+          for key,value in [
+              ("pinned_formal_base","0"*40),
+              ("selected_route","ServerScriptService/EGGRUMBLE_Game"),
+              ("expected_candidate_selected_sha256","0"*64),
+              ("expected_candidate_private_place_sha256","0"*64),
+              ("selected_script_class","LocalScript"),
+              ("new_extra_part_instances",1),
+          ]:
+              other=copy.deepcopy(claim);other[key]=value
+              assert not valid(other), "RED_SOURCE_LOCK_MUTANT_ACCEPTED_"+key
+          assert sum(selected[k].read_bytes()!=original[k].read_bytes() for k in selected)==1
+          print("GQ470_EXPLORE_RELIC_ACTUAL_SOURCE_LOCK_6_MUTATIONS_PASS")
+          PY
       - name: B220 source-only one-script handoff; verify no hidden files
         shell: bash
         run: |
