@@ -235,6 +235,43 @@ jobs:
           (packet/"SOURCE_SELECT_MANIFEST.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
           print("REAL69_TWIN_NPC_NATIVE_ROJO_ON_OFF69_ORIGINAL_PLACE_EXACT_PASS_NOT_STUDIO")
           PY
+      - name: Full Rojo XML instance-tree parity except one verified script source
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"twin69"
+          original=(root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").read_bytes()
+          candidate=Path("/tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx").read_bytes()
+          inverse=Path("/tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx").read_bytes()
+          assert inverse==original, "OFF69_PLACE_NOT_EXACT"
+          before=ET.fromstring(original);after=ET.fromstring(candidate)
+          def node(tree):
+              matches=[]
+              for item in tree.iter("Item"):
+                  props=item.find("Properties")
+                  if props is None: continue
+                  name=props.find('string[@name="Name"]')
+                  if name is not None and name.text=="EGGRUMBLE_LegacyTwinBiomes":
+                      matches.append((item,props.find('string[@name="Source"]')))
+              assert len(matches)==1 and matches[0][0].attrib["class"]=="Script"
+              assert matches[0][1] is not None
+              return matches[0][1]
+          old_src=node(before);new_src=node(after)
+          expected_old="c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+          expected_new="2e4b398927873a51203115feda60027c0720b847f3f5f2dd1f5189c1a161a8d6"
+          assert hashlib.sha256(old_src.text.encode()).hexdigest()==expected_old
+          assert hashlib.sha256(new_src.text.encode()).hexdigest()==expected_new
+          assert sum(1 for _ in before.iter("Item"))==sum(1 for _ in after.iter("Item"))==75
+          new_src.text=old_src.text
+          assert ET.tostring(before)==ET.tostring(after), "NON_SOURCE_PLACE_DRIFT"
+          # Ensure regression guard actually catches an independent instance insertion.
+          test=ET.fromstring(candidate)
+          ET.SubElement(test,"Item",{"class":"Part","referent":"unexpected"})
+          assert ET.tostring(before)!=ET.tostring(test), "NEGATIVE_PART_INSERTION_UNDETECTED"
+          print("REAL69_ROJO_FULL_XML_STRUCTURE_EXACT_EXCEPT_SINGLE_VERIFIED_SOURCE_PASS")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-TWIN-NPC-REAL69-SOURCE-ONLY-B220-NOT-FORMAL
