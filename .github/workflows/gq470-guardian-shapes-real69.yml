@@ -87,8 +87,8 @@ jobs:
             walk(project['tree'])
             assert len(paths)==69
             for p in paths:
-              r=subprocess.run(['/tmp/gq470-guardian-luau/luau-compile','--text',str(p)],capture_output=True,text=True)
-              assert r.returncode==0,(stage,str(p),r.stderr[-300:])
+              r=subprocess.run(['/tmp/gq470-guardian-luau/luau-compile','--text',str(p)],capture_output=True)
+              assert r.returncode==0,(stage,str(p),r.stderr[-300:].decode('utf-8',errors='replace'))
           print('NATIVE_ORIGINAL69_PLUS_CANDIDATE69_PASS_SOURCE_ONLY')
           PY
       - name: Pinned Rojo candidate Place and OFF original byte exact
