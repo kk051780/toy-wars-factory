@@ -274,6 +274,7 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
         exact_visual_assignments(updated, sl.pr)
         # Reject budget markers that exist only in Luau line comments. This
         # remains a source gate, not a substitute for engine or image evidence.
+        active_original = active_luau_source(original)
         active_lines = active_luau_source(updated)
         for marker in must_have[sl.pr]:
             demand(marker in active_lines,
@@ -283,11 +284,12 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
                 demand(end == len(active_lines) or not active_lines[end].isdigit(),
                        "ART_BUDGET_NUMERIC_SUFFIX_" + str(sl.pr))
         for marker in no_new_authority:
-            demand(updated.count(marker) == original.count(marker),
+            demand(active_lines.count(marker) == active_original.count(marker),
                    "ART_BUDGET_AUTHORITY_" + str(sl.pr))
-        demand(updated.count('Instance.new(') - original.count('Instance.new(')
+        demand(active_lines.count('Instance.new(') - active_original.count('Instance.new(')
                == additional_sites[sl.pr], "ART_BUDGET_CONSTRUCTOR_" + str(sl.pr))
-    chosen = {sl.pr: after[sl.target].decode() for sl in SLICES}
+    chosen = {sl.pr: active_luau_source(after[sl.target].decode())
+              for sl in SLICES}
     demand('RunService.RenderStepped:Connect' not in chosen[926],
            "ART_FOREST_RENDER_LOOP")
     demand(chosen[925].count('part("PhotoRoof_') == 3,
@@ -461,6 +463,22 @@ def art_budget_self_test() -> None:
     else:
         raise AssertionError("RED_ART6_UNCLOSED_BLOCK_COMMENT")
     print("GQ470_ART6_6_BLOCK_COMMENT_MUTANTS_AND_LEXER_PASS")
+    # Compare only live Luau tokens: commented-out Remote/Store/Part
+    # constructors cannot balance a newly active gameplay authority/cost.
+    for pr, token in ((924, "RemoteEvent"), (925, "DataStore"),
+                      (926, "Instance.new(")):
+        route = next(sl.target for sl in SLICES if sl.pr == pr)
+        prior = dict(before)
+        changed = dict(after)
+        prior[route] += ("\n-- " + token + "\n").encode()
+        changed[route] += ("\n" + token + "\n").encode()
+        try:
+            art_budget_gate(prior, changed)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART6_INERT_AUTHORITY_OR_PART_" + str(pr))
+    print("GQ470_ART6_3_INERT_AUTHORITY_PART_MUTANTS_PASS")
+
     print("GQ470_ART6_17_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
 
 
