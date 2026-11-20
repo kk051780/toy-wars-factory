@@ -8,6 +8,7 @@ byte delta is transplanted. The candidate is not a Roblox/ART/OWNER pass.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import shutil
@@ -23,6 +24,7 @@ PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 ROUTES = 69
+BASE_PLACE_SHA256 = "fc63171149a86f6b39779ba6ebe7e18fcb7099fbde98ad2ec33a7cb92b3a9934"
 
 @dataclass(frozen=True)
 class Slice:
@@ -89,6 +91,8 @@ def changed_routes(before: dict[str, bytes], after: dict[str, bytes],
 def verify_formal(root: Path) -> tuple[dict, dict[str, bytes]]:
     receipt = json.loads((root / RECEIPT).read_text(encoding="utf-8"))
     files = data_map(root)
+    demand(digest((root / PLACE).read_bytes()) == BASE_PLACE_SHA256,
+           "FORMAL_PLACE_HASH")
     demand(receipt.get("official_branch") == "rc/p0d-s1-kids-rc01",
            "FORMAL_BRANCH")
     demand(receipt.get("build_head") == BASE and
@@ -183,20 +187,66 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
         encoding="utf-8")
     print("GQ470_ART4_4_SOURCES_COMPOSED_65_EXACT_OFF69_PASS")
 
+def verify_attestation(receipt: dict, before: dict[str, bytes],
+                       after: dict[str, bytes]) -> None:
+    """Do not trust self-consistent candidate SHA claims without pinned provenance."""
+    info = receipt.get("gq470_art4_composite")
+    demand(isinstance(info, dict), "ATTESTATION_MISSING")
+    expected_flags = {
+        "source_only": True, "formal_parent": BASE,
+        "formal_rc_unchanged": True, "candidate_only": True,
+        "selected_sources_total": ROUTES,
+        "selected_sources_changed": len(SLICES),
+        "other_selected_sources_byte_exact": ROUTES - len(SLICES),
+        "rollback": OFF, "new_gameplay_authority": False,
+        "owner_accepted": False, "product_go": False, "art_go": False,
+        "studio_solo": "NOT_TESTED", "studio_2client": "NOT_TESTED",
+        "android_15min": "NOT_TESTED", "art_32_real_png": "0/32",
+        "kid_first3min": "NOT_TESTED",
+    }
+    for field, expected in expected_flags.items():
+        demand(type(info.get(field)) is type(expected) and
+               info.get(field) == expected, "ATTESTATION_" + field.upper())
+    pins = info.get("pinned_inputs")
+    demand(isinstance(pins, list) and len(pins) == len(SLICES),
+           "ATTESTATION_PIN_COUNT")
+    for s, pin in zip(SLICES, pins):
+        expected = {
+            "pr": s.pr, "pinned_pr_head": s.head,
+            "pinned_patcher_git_blob": s.blob, "route": s.target,
+            "before_sha256": digest(before[s.target]),
+            "after_sha256": digest(after[s.target]),
+        }
+        demand(isinstance(pin, dict) and pin == expected,
+               "ATTESTATION_PIN_" + str(s.pr))
+        meta = receipt.get(s.metadata)
+        demand(isinstance(meta, dict) and meta.get("owner_accepted") is False,
+               "ATTESTATION_SOURCE_META_" + str(s.pr))
+
+
 def verify_candidate(output: Path) -> None:
     receipt = json.loads((output / RECEIPT).read_text(encoding="utf-8"))
-    before = data_map(output / OFF)
+    # OFF is an independently pinned genuine official artifact, not arbitrary
+    # files that could collude with a forged candidate receipt.
+    formal_receipt, before = verify_formal(output / OFF)
     after = data_map(output)
     changed_routes(before, after, {s.target for s in SLICES})
-    demand(receipt["canonical_build"] is False and
-           receipt["gq470_art4_composite"]["owner_accepted"] is False,
+    demand(receipt.get("canonical_build") is False and
+           receipt.get("build_head") == "A_PREP_ART4_FROM_" + BASE and
+           receipt.get("official_branch") == "rc/p0d-s1-kids-rc01",
            "MISREPRESENTED_FORMAL_OR_OWNER")
+    demand(receipt.get("selected_source_count") == ROUTES and
+           receipt.get("source_classes") == formal_receipt["source_classes"],
+           "CANDIDATE_CLASS_OR_COUNT_DRIFT")
+    demand(set(receipt.get("source_hashes", {})) == set(after),
+           "CANDIDATE_ROUTE_RECEIPT")
     for route, raw in after.items():
         demand(receipt["source_hashes"][route] == digest(raw),
                "CANDIDATE_SOURCE_HASH")
+    verify_attestation(receipt, before, after)
     demand((output / PROJECT).read_bytes() ==
            (output / OFF / PROJECT).read_bytes(), "CANDIDATE_PROJECT")
-    print("GQ470_ART4_69_SOURCE_LOCK_4_DELTA_65_EXACT_PASS")
+    print("GQ470_ART4_69_SOURCE_LOCK_4_DELTA_65_EXACT_ATTESTED_PASS")
 
 def self_test() -> None:
     original = {"r" + str(i): b"A" for i in range(ROUTES)}
@@ -220,7 +270,61 @@ def self_test() -> None:
             continue
         raise AssertionError("RED_ART4_MUTANT_ACCEPTED_" + str(index))
     demand(len({s.target for s in SLICES}) == 4, "DISJOINT_SLICES")
-    print("GQ470_ART4_6_MUTATION_NEGATIVES_PASS")
+    source_before = {s.target: b"A" for s in SLICES}
+    source_after = {s.target: b"B" for s in SLICES}
+    info = {
+        "source_only": True, "formal_parent": BASE, "formal_rc_unchanged": True,
+        "candidate_only": True, "selected_sources_total": ROUTES,
+        "selected_sources_changed": 4, "other_selected_sources_byte_exact": 65,
+        "rollback": OFF, "new_gameplay_authority": False,
+        "studio_solo": "NOT_TESTED", "studio_2client": "NOT_TESTED",
+        "android_15min": "NOT_TESTED", "art_32_real_png": "0/32",
+        "kid_first3min": "NOT_TESTED", "owner_accepted": False,
+        "product_go": False, "art_go": False,
+        "pinned_inputs": [
+            {"pr": s.pr, "pinned_pr_head": s.head,
+             "pinned_patcher_git_blob": s.blob, "route": s.target,
+             "before_sha256": digest(source_before[s.target]),
+             "after_sha256": digest(source_after[s.target])}
+            for s in SLICES
+        ],
+    }
+    valid = {"gq470_art4_composite": info}
+    valid.update({s.metadata: {"owner_accepted": False} for s in SLICES})
+    verify_attestation(valid, source_before, source_after)
+    cases = (
+        ("formal_parent", "FAKE"),
+        ("selected_sources_changed", 3),
+        ("owner_accepted", True),
+        ("art_32_real_png", "32/32"),
+        ("new_gameplay_authority", True),
+        ("pinned_inputs", []),
+    )
+    for field, value in cases:
+        mutant = copy.deepcopy(valid)
+        mutant["gq470_art4_composite"][field] = value
+        try:
+            verify_attestation(mutant, source_before, source_after)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART4_ATTESTATION_MUTANT_" + field)
+    for mutation in ("pinned_pr_head", "after_sha256"):
+        mutant = copy.deepcopy(valid)
+        mutant["gq470_art4_composite"]["pinned_inputs"][0][mutation] = "FAKE"
+        try:
+            verify_attestation(mutant, source_before, source_after)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART4_ATTESTATION_PIN_MUTANT_" + mutation)
+    mutant = copy.deepcopy(valid)
+    mutant[SLICES[0].metadata]["owner_accepted"] = True
+    try:
+        verify_attestation(mutant, source_before, source_after)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("RED_ART4_ATTESTATION_META_MUTANT")
+    print("GQ470_ART4_15_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
