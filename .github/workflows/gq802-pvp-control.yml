@@ -1,0 +1,45 @@
+name: GQ802 human PvP 8 element CC anti-lock native gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_human_pvp_control_20261118/**'
+      - '.github/workflows/gq802-pvp-control.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pvp-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq802_pvp_luau
+          persist-credentials: false
+      - run: |
+          set -euo pipefail
+          cmake -S _gq802_pvp_luau -B /tmp/gq802pvp -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802pvp --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - run: |
+          set -euo pipefail
+          root=quality_gameplay/gq802_human_pvp_control_20261118
+          for f in "$root"/*.luau; do /tmp/gq802pvp/luau-compile --text "$f" >/dev/null; done
+          /tmp/gq802pvp/luau "$root/test_pvp_control_native.luau" | tee /tmp/gq802pvp.log
+          /tmp/gq802pvp/luau "$root/test_control_budget_native.luau" | tee /tmp/gq802budget.log
+          grep -q GQ802_PVP_NATIVE_ROLE7_ELEMENT8_56_RECEIPTS_CC_ANTILOCK_PASS /tmp/gq802pvp.log
+          grep -q GQ802_NATIVE_PVP_BUDGET_EPOCH_AVATAR_HIT_REPLAY_56_GATES_PASS /tmp/gq802budget.log
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          code=Path("quality_gameplay/gq802_human_pvp_control_20261118/EGGRUMBLE_PvPControlCuePolicy.luau").read_text()
+          for forbidden in ("TakeDamage(", "Instance.new(", "DataStoreService", "SetAttribute(",
+                            "Humanoid.Health", "OnServerEvent:Connect(", "MarketplaceService", "workspace.Gravity"):
+              assert forbidden not in code, forbidden
+          print("GQ802_PVP_NO_DUPLICATE_DAMAGE_AUTHORITY_PASS")
+          PY

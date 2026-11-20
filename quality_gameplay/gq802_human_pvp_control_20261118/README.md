@@ -1,0 +1,11 @@
+# GQ802 | Human PvP control cue and status policy (PURE Luau only)
+Owner #802. Reuses existing elemental #765/#766, HUD/VFX #778, human membership guards #535, neutral finisher #801, natural HP regen #775 and Mage revive #777.
+
+This SOURCE is not a second Combat system and does not damage anybody. It is only a deterministic decision on an already server-confirmed legal human-vs-human hit receipt. Existing authoritative Combat is responsible for hit IDs, round epoch, team checks, physics validation, damage, actual status timers/ownership, cleanup on KO, respawn and disconnect. Client cannot request effect duration/strength.
+
+Eight effects: fire burn mark, ice freeze, electric shock, water wet slow, wind safe launch (max14 studs), earth comic stagger, divine radiant mark, curse mark. The default hard freeze 0.9s and shock 0.55s, wind 0.35s and earth 0.4s. Two hard hits or >=1.8s CC over rolling 8s must downgrade to 0.6s soft slow; temporary immunity also downgrades. 7 role-specific original cues plus LOW Android budget. Visual identity uses sound, geometric icon + form, not only colors. No gore and no exaggerated never-ending hit-stun.
+
+SOURCE: 2 pure Luau files + test+README/workflow. No Damage/Remote/Store/Physics ownership. CI Native Luau after PR is required. Existing Core36/31 untouched. OFF = module omission. Runtime wiring, actual PvP status application, full source-lock/Rojo, same-HEAD RC intake by #220, Studio 2client, Android15m, real entertainment score remain UNTESTED/NOT IMPLEMENTED.
+
+## Additive status-budget state: latest #806 continuation
+New `EGGRUMBLE_ControlBudgetPolicy.luau` stores a server-local per-avatar hit-id replay fence and rolling 8-second hard-CC budget keyed by authoritative session epoch and avatar generation. Duplicate client-visible hits, stale round callbacks, stale timestamps, fake enemy hits or killed players cannot spend CC twice. The return value is the existing role/element cue only; existing Combat is still the sole side-effect owner. Per-avatar cleanup on new character, death, disconnect, server retirement and match reset is required at integration. Native test covers 56 class/element combinations, 2-action stun limit, expiry, immunity, replay and round reset. No actual player physics, effects, damage, inventory or server teleport in this candidate.
