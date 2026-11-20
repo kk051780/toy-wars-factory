@@ -1,0 +1,26 @@
+name: GQ470 REAL69 Art Evidence Intake QA (source-only, not ART GO)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'art_quality/gq470_real69_evidence_intake.py'
+      - 'art_quality/test_gq470_real69_evidence_intake.py'
+      - '.github/workflows/gq470-real69-art-evidence-intake.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fail-closed-real69-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compile and run negative tests for REAL69 image evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m py_compile art_quality/gq470_real69_evidence_intake.py art_quality/test_gq470_real69_evidence_intake.py
+          python3 -B -m unittest discover -s art_quality -p 'test_gq470_real69_evidence_intake.py' -v
+          echo 'SOURCE_QA_ONLY; STUDIO/ANDROID/HUMAN_ART/OWNER_ACCEPTED remain NOT_TESTED/NO_GO'
