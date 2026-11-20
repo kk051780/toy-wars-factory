@@ -1,0 +1,145 @@
+name: P0D Battle765 Natural Regen Real31-to33 Native Rojo QA
+on:
+  push:
+    branches: ['feature/gq8-natural-regen-20261118']
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-natural-regen32.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-natural-regen32.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real33-regen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Python exact31 source/Host-only injection and rollback
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-HP-REGEN-20261118 -p 'test_*.py'
+          python3 -B handoffs/EGGRUMBLE-HP-REGEN-20261118/make_native_regen.py --out /tmp/regen-vm
+      - name: Pin genuine original31 completed official RC source and commit
+        id: official
+        run: |
+          set -euo pipefail
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 70 \
+            --json databaseId,headSha,status,conclusion > /tmp/official31.json
+          RUN="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official31.json)"
+          H="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].headSha // empty' /tmp/official31.json)"
+          test -n "$RUN"
+          [[ "$H" =~ ^[0-9a-f]{40}$ ]]
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "sha=$H" >> "$GITHUB_OUTPUT"
+      - name: Download the immutable canonical V3 31-source Place and receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Extract genuine31, compose original-Host-lane Regen33 and inverse OFF31
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head "${{ steps.official.outputs.sha }}"
+          python3 handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile real33 and OFF31; run source-derived native Luau and mutant-RED
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-regen-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-regen-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-regen-luau/luau
+          CC=/tmp/gq8-regen-luau/luau-compile
+          "$CC" --text /tmp/regen-vm/good.luau >/dev/null
+          "$CC" --text /tmp/regen-vm/mutant.luau >/dev/null
+          "$CLI" /tmp/regen-vm/good.luau | tee /tmp/regen-good.log
+          grep -qx GQ8_REGEN_ACTUAL_VM_7ROLE_LIFECYCLE_HIT_BURN_ROUND_PASS /tmp/regen-good.log
+          if "$CLI" /tmp/regen-vm/mutant.luau >/tmp/regen-mutant.log 2>&1; then
+            echo RED_TENFOLD_REGEN_MUTANT_ACCEPTED
+            exit 1
+          fi
+          grep -q RED_REGEN_AMOUNT /tmp/regen-mutant.log
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,subprocess
+          sys.path.insert(0,"handoffs/EGGRUMBLE-HP-REGEN-20261118")
+          from compose_regen32 import files
+          for path,count in (("artifacts/regen33/REGEN33.project.json",33),
+                             ("artifacts/regen33/OFF31.project.json",31)):
+              _,source=files(Path(path))
+              assert len(source)==count,(path,len(source))
+              for s in source.values():
+                  subprocess.run(["/tmp/gq8-regen-luau/luau-compile","--text",str(s)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print("GQ8_REGEN_NATIVE_ACTUAL",count)
+          PY
+      - name: Install SHA-256 pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/regen-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/regen-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/regen-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              dest=Path('/tmp/regen-rojo')
+              dest.write_bytes(z.read(found[0]))
+              dest.chmod(0o755)
+          PY
+      - name: Real Rojo32 and inverse31 Class + Source exact, pin drift status
+        run: |
+          set -euo pipefail
+          /tmp/regen-rojo build artifacts/regen33/REGEN33.project.json -o artifacts/regen33/REGEN33.rbxlx
+          /tmp/regen-rojo build artifacts/regen33/OFF31.project.json -o artifacts/regen33/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/regen33/REGEN33.project.json \
+            --place artifacts/regen33/REGEN33.rbxlx --count 33
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/regen33/OFF31.project.json \
+            --place artifacts/regen33/OFF31.rbxlx --count 31
+          NOW="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$NOW" = "${{ steps.official.outputs.sha }}" ]; then
+            echo GQ8_REGEN_SAMEHEAD_PINNED_RC_MATCH
+          else
+            echo YELLOW_REGEN_RC_DRIFT_PINNED_SOURCE_PREP_NO_CAS
+          fi
+          echo GQ8_REGEN33_NATIVE_ROJO32_OFF31_SOURCE_EXACT_SUCCESS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-REGEN33-STUDIO-PREP-NOT-PUBLISHED
+          path: |
+            artifacts/regen33/
+            artifacts/current31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error
