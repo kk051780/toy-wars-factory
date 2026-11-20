@@ -54,7 +54,7 @@ def audit(old: bytes,new: bytes,evidence: dict,head: str) -> dict:
     require(sha(old)==SHA_ORIGINAL and len(old)==798390, "ORIGINAL_PLACE_SHA")
     require(new_src.count("GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121")==1,
             "ACTUAL_ART_MARKER")
-    require(all('ArtSilhouette"' in new_src for _ in range(1)) and
+    require('body:SetAttribute("ArtSilhouette",info.id)' in new_src and
             new_src.count('stem.CFrame=stem.CFrame*CFrame.Angles')==1 and
             new_src.count('horn.CFrame=horn.CFrame*CFrame.Angles')==1,
             "SILHOUETTE_CONTENT")
@@ -74,9 +74,10 @@ def audit(old: bytes,new: bytes,evidence: dict,head: str) -> dict:
                      "source_count_changed":1,"unchanged_other_sources":68,
                      "place_items_before_after":[75,75],
                      "place_structural_xml_equal_except_selected_source":True,
-                     "actual_neutral_npc_variants":4,"actual_spawn_per_biome_shore":2,
+                     "source_declared_neutral_npc_variants":4,"biome_shores":2,
+                     "source_declared_total_neutral_npc_instances":8,
                      "new_static_parts_in_source":0,
-                     "source_no_new_damaging_authority":True,
+                     "changed_other_authority_script_routes":0,
                      "warning":"Static source checks do not prove in-engine NPC count, visibility or quality"},
       "visual_evidence_gate":{"status":"MISSING","screenshots_required":32,
                               "screenshots_received":0, "scenes":list(SCENES),
