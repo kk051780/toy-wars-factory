@@ -40,13 +40,20 @@ class RealmHuntContract(unittest.TestCase):
             self.assertIn(key,server)
         self.assertIn("core.CanCollide=false",server)
         self.assertIn("ring.CanCollide=false",server)
+        self.assertIn("facet.CanCollide=false",server)
+        self.assertIn("plinth.CanCollide=false",server)
+        self.assertIn('folder:SetAttribute("VisualPartBudget",16)',server)
         self.assertIn("local LANDMARKS",server)
         self.assertIn("COSMETIC_ONLY",server)
+        self.assertNotIn("Enum.Material.Neon",server)
+        self.assertIn("billboard.AlwaysOnTop=false",server)
     def test_readonly_client_counter(self):
         client=self.parts[1][1]
         self.assertIn('GetAttributeChangedSignal(prefix..key)',client)
         self.assertIn('math.clamp(math.floor(n),0,4)',client)
-        self.assertIn("card.Visible=enabled",client)
+        self.assertIn("cue(complete and 6 or 4)",client)
+        self.assertIn("visibilityLease==mine",client)
+        self.assertIn("card.Visible=false",client)
         self.assertNotIn("SetAttribute(",client)
         self.assertNotIn("RemoteEvent",client)
 
