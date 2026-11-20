@@ -221,6 +221,9 @@ def selftest() -> None:
                + CALL_ANCHOR)
     result = patch(minimal)
     verify_contour_geometry(RIDGE)
+    ridge_start = result.index("local function drawHorizonRidges(")
+    ridge_end = result.index(FUNCTION_ANCHOR, ridge_start)
+    ridge_block = result[ridge_start:ridge_end]
     for guard, altered in (
         ("(budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA",
          "(budgets[arena] or 0)+1<=MAX_VISUAL_PARTS_PER_ARENA"),
@@ -230,9 +233,12 @@ def selftest() -> None:
         ("budgets[arena]=math.max(0,(budgets[arena] or 0)-1)",
          "budgets[arena]=math.max(0,(budgets[arena] or 0)+1)"),
     ):
-        need(result.count(guard) == 1, "ATOMIC_MUTANT_TEST_ANCHOR")
+        need(ridge_block.count(guard) == 1, "ATOMIC_MUTANT_TEST_ANCHOR")
+        mutant_source = (result[:ridge_start] +
+                         ridge_block.replace(guard, altered, 1) +
+                         result[ridge_end:])
         try:
-            verify_atomic_source_contract(result.replace(guard, altered, 1))
+            verify_atomic_source_contract(mutant_source)
         except ValueError:
             pass
         else:
