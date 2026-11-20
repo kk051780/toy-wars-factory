@@ -272,6 +272,15 @@ jobs:
           assert ET.tostring(before)!=ET.tostring(test), "NEGATIVE_PART_INSERTION_UNDETECTED"
           print("REAL69_ROJO_FULL_XML_STRUCTURE_EXACT_EXCEPT_SINGLE_VERIFIED_SOURCE_PASS")
           PY
+      - name: Strict B220 source-only packet and 14 forged manifest rejection tests
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/verify_b_packet.py \
+            --root "$RUNNER_TEMP/twin69" \
+            --packet "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY" \
+            --on-place /tmp/GQ470_TWIN_NPC_ON69_PRIVATE.rbxlx \
+            --off-place /tmp/GQ470_TWIN_NPC_OFF69_PRIVATE.rbxlx \
+            --expected-head "$A_HEAD"
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-TWIN-NPC-REAL69-SOURCE-ONLY-B220-NOT-FORMAL
