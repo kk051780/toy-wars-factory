@@ -57,6 +57,9 @@ jobs:
           assert r['author_head_sha']==os.environ['AUTHOR_HEAD_SHA']
           assert r['formal_parent_sha']==os.environ['FORMAL_HEAD']
           assert r['other_source_bytes_exact']==68 and r['added_world_parts']==0
+          assert r['species_kept']==8 and r['npc_parts_before']==r['npc_parts_after']==3
+          assert r['matched_camera_png']=='0/32' and r['art_gate']=='ART_NO_GO'
+          assert r['formal_rc_adopted'] is False and r['owner_accepted'] is False
           assert sha256((root/after[target]['path']).read_bytes()).hexdigest()==r['new_sha256']
           assert sha256((off/before[target]['path']).read_bytes()).hexdigest()==r['old_sha256']
           print('GQ470_NEUTRAL_MATTE_ONE_REAL_SCRIPT_68_UNCHANGED_3_PARTS_PASS')
@@ -129,6 +132,10 @@ jobs:
           packet.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
           assert not r['formal_rc_adopted'] and not r['owner_accepted']
           print('GQ470_NEUTRAL_HORDE_B220_CANDIDATE_PACKET_SOURCE_ONLY')
+          print('GQ470_NEUTRAL_HORDE_PLACE_BYTES', r['candidate_place_bytes'],
+                'ORIGINAL_BYTES', r['official_original_place_bytes'])
+          print('GQ470_NEUTRAL_HORDE_ONE_SOURCE_SHA', r['new_sha256'],
+                'ORIGINAL_SHA', r['old_sha256'])
           PY
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL_HEAD" || { echo FORMAL_RC_MOVED_REVIEW_NEW_HEAD_REQUIRED; exit 1; }
       - uses: actions/upload-artifact@v4
