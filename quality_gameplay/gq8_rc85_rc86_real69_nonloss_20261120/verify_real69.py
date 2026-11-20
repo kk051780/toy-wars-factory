@@ -102,15 +102,24 @@ def verify_bot_art(now: dict, previous: dict, receipt: dict,
             meta.get("owner_accepted") is False and
             meta.get("native_rojo_off69") == "PASS_SOURCE_ONLY",
             "BOT_ART_BUDGET_OR_AUTHORITY_DRIFT")
+    # Validate the BOT stage at its own immutable boundary. A later REEF
+    # stage is allowed to change its disjoint source, not retroactively count
+    # as an extra bot-stage modification.
     off = project_scan(root / "off69_bot_art", "EGGRUMBLE_REAL69.project.json")
-    require(len(off) == 69 and set(off) == set(now), "BOT_ART_OFF69_ROUTE_SET")
+    after_bot = project_scan(root / "off69_reef", "EGGRUMBLE_REAL69.project.json")
+    require(len(off) == len(after_bot) == len(now) == 69 and
+            set(off) == set(after_bot) == set(now), "BOT_ART_OFF69_ROUTE_SET")
     require(off[BOT_ART]["sha256"] == BOT_ART_BASE_SHA and
+            after_bot[BOT_ART]["sha256"] == BOT_ART_ADOPT_SHA and
             {key for key in now
-             if off[key]["sha256"] != now[key]["sha256"]} == {BOT_ART},
+             if off[key]["sha256"] != after_bot[key]["sha256"]} == {BOT_ART},
             "BOT_ART_OFF69_INVERSE_NOT_EXACT")
-    require(all(off[key]["class"] == now[key]["class"] and
-                off[key]["path"] == now[key]["path"] for key in now),
+    require(all(off[key]["class"] == after_bot[key]["class"] and
+                off[key]["path"] == after_bot[key]["path"] for key in now),
             "BOT_ART_OFF69_CLASS_PATH_DRIFT")
+    require(after_bot[REEF_ART]["sha256"] == REEF_ART_BASE_SHA and
+            after_bot[BOT_ART]["sha256"] == now[BOT_ART]["sha256"],
+            "BOT_ART_REEF_STAGE_SEPARATION")
     return {
         "feature_id": BOT_ART_MARKER,
         "selected_route": BOT_ART,
