@@ -1,0 +1,191 @@
+name: P0D GQ Human PvP/Heal Current-Match Membership (Private)
+
+on:
+  pull_request:
+    paths:
+      - "quality_gameplay/v3_human_combat_membership_20261116/**"
+      - ".github/workflows/p0d-gq-human-combat-membership.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-exact-human-combat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AUTHOR: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+      HOST_MEMBER_AUTHOR: bb650bc33831d20090deb9aa3a874f35e3843c71
+      ROOT: handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+      QG: quality_gameplay/v3_human_combat_membership_20261116
+      ORIGINAL: /tmp/gq_human_original
+      PRIVATE: /tmp/gq_human_private21
+      DEP: /tmp/gq_human_reused_531
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch fixed authentic original and single existing #531 host membership owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$AUTHOR"
+          git fetch --no-tags --depth=1 origin "$HOST_MEMBER_AUTHOR"
+          mkdir -p "$ORIGINAL" "$PRIVATE" "$DEP"
+          for file in EGGRUMBLE_SevenRoleCombat.luau EGGRUMBLE_BotActors.luau EGGRUMBLE_LobbyCastleModesPreview.server.luau; do
+            git show "$AUTHOR:$ROOT/$file" > "$ORIGINAL/$file"
+          done
+          git show "$HOST_MEMBER_AUTHOR:quality_gameplay/v3_bot_human_match_membership_20261116/compose.py" > "$DEP/compose.py"
+          git show "$HOST_MEMBER_AUTHOR:quality_gameplay/v3_bot_human_match_membership_20261116/private21.py" > "$DEP/private21.py"
+          python3 "$DEP/compose.py" --source-dir "$ORIGINAL" --out-dir "$PRIVATE"
+          python3 "$DEP/private21.py" assemble --out "$PRIVATE"
+          python3 "$QG/compose.py" --original "$ORIGINAL/EGGRUMBLE_SevenRoleCombat.luau" --out "$PRIVATE"
+          GQ_ORIGINAL_COMBAT="$ORIGINAL/EGGRUMBLE_SevenRoleCombat.luau" \
+            python3 -m unittest discover -s "$QG" -p 'test_*.py' -v
+      - name: Build native Luau CLI to test actual combat and source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth=1 https://github.com/luau-lang/luau.git /tmp/gq_human_luau
+          cmake -S /tmp/gq_human_luau -B /tmp/gq_human_luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq_human_luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          python3 "$QG/make_native_harness.py" \
+            --combat "$PRIVATE/EGGRUMBLE_SevenRoleCombat.luau" \
+            --host "$PRIVATE/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --out /tmp/gq_human_native_harness.luau
+          /tmp/gq_human_luau/build/luau-compile /tmp/gq_human_native_harness.luau >/dev/null
+          /tmp/gq_human_luau/build/luau /tmp/gq_human_native_harness.luau
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/gq_human_luau/build/luau-compile "$file" >/dev/null
+            count=$((count+1))
+          done < <(find "$PRIVATE" -maxdepth 1 -name '*.luau' -type f -print0)
+          test "$count" -eq 21
+          echo "NATIVE_21_REAL_ORIGINAL_SOURCE_CANDIDATE_PASS"
+      - name: Build checksum-locked Rojo private 21-source Place (never official RC)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq_human_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_human_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_human_rojo.zip") as zipfile:
+              matches=[name for name in zipfile.namelist() if name.split("/")[-1]=="rojo"]
+              assert len(matches)==1
+              target=Path("/tmp/gq_human_rojo")
+              target.write_bytes(zipfile.read(matches[0]))
+              target.chmod(0o755)
+          PY
+          /tmp/gq_human_rojo build \
+            "$PRIVATE/EGGRUMBLE_V3_STUDIO.project.json" \
+            -o "$PRIVATE/GQ_HUMAN_COMBAT_MEMBERSHIP_PRIVATE21.rbxlx"
+      - name: Verify 21 script source/class bytes exactly and correct 3-overlays receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$DEP/private21.py" verify \
+            --out "$PRIVATE" \
+            --place "$PRIVATE/GQ_HUMAN_COMBAT_MEMBERSHIP_PRIVATE21.rbxlx"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          folder=Path(os.environ["PRIVATE"])
+          receipt=folder/"PRIVATE21_RECEIPT.json"
+          data=json.loads(receipt.read_text())
+          assert data["source_count"]==21 and data["source_exact"]
+          data["original_author_scripts_unchanged"]=18
+          data["patched_author_scripts"]=[
+              "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+              "EGGRUMBLE_BotActors.luau",
+              "EGGRUMBLE_SevenRoleCombat.luau",
+          ]
+          data["host_membership_reused_from_531"]=os.environ["HOST_MEMBER_AUTHOR"]
+          data["human_combat_off_restores_original_482"]=True
+          data["official_rc_adopted"]=False
+          data["android_studio_fun_owner"]="NOT_TESTED"
+          receipt.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n")
+          print("GQ_HUMAN_COMBAT_PRIVATE21_3_OVERLAYS_18_ORIGINAL_SOURCE_EXACT_PASS")
+          PY
+      - name: Build source-exact REAL #529 Combat + current #531 membership + #484 AI bot duel
+        shell: bash
+        run: |
+          set -euo pipefail
+          for author in \
+            0338bd13f9d3d199972bd4cd30e467443083dffa \
+            8f0275692c54874f823d66748d470fb849607df5 \
+            f90875e14446ba86b1c668ba43efa37fbc74be20 \
+            99ae00fbec2b5057c54e938d741ea99b0caad924 \
+            e78bff41e70564d0b26578e3c3a85f4698e6110e \
+            6b52eaf1f2725496277998fe0c5532b7a8fcaab5; do
+            git fetch --no-tags --depth=1 origin "$author"
+          done
+          python3 "$QG/compose_five_author.py" build --out "$PRIVATE"
+          # Execute the REAL #484 author's castle/grounded navigation source
+          # regression suite against the combined #531/#535 private Place inputs.
+          mkdir -p "$PRIVATE/tests"
+          git show 6b52eaf1f2725496277998fe0c5532b7a8fcaab5:"$ROOT/tests/test_bot_spatial_quality.py" > "$PRIVATE/tests/test_bot_spatial_quality.py"
+          python3 -m unittest discover -s "$PRIVATE/tests" -p 'test_bot_spatial_quality.py' -v
+          echo "GQ_ORIGINAL_484_CASTLE_FIELD_NAV_SOURCE_TESTS_PASS"
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/gq_human_luau/build/luau-compile "$file" > /dev/null
+            count=$((count+1))
+          done < <(find "$PRIVATE" -maxdepth 1 -name '*.luau' -type f -print0)
+          test "$count" -eq 22
+          python3 "$QG/make_native_harness.py" \
+            --combat "$PRIVATE/EGGRUMBLE_SevenRoleCombat.luau" \
+            --host "$PRIVATE/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --out /tmp/gq_human_five_author_native.luau
+          /tmp/gq_human_luau/build/luau-compile /tmp/gq_human_five_author_native.luau > /dev/null
+          /tmp/gq_human_luau/build/luau /tmp/gq_human_five_author_native.luau
+          echo "GQ_REAL_4_AUTHOR_COMBAT_PLUS_CURRENT_531_484_BOT_DUEL_22_NATIVE_PASS"
+          git show e78bff41e70564d0b26578e3c3a85f4698e6110e:quality_gameplay/v3_bot_human_match_membership_20261116/make_native_bot_hit_harness.py > "$DEP/make_native_bot_hit_harness.py"
+          python3 "$DEP/make_native_bot_hit_harness.py" \
+            --patched-host "$PRIVATE/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --patched-bot "$PRIVATE/EGGRUMBLE_BotActors.luau" \
+            --out /tmp/gq_human_ai484_hit_native.luau
+          /tmp/gq_human_luau/build/luau-compile /tmp/gq_human_ai484_hit_native.luau > /dev/null
+          /tmp/gq_human_luau/build/luau /tmp/gq_human_ai484_hit_native.luau
+          python3 "$DEP/make_native_bot_hit_harness.py" \
+            --patched-host "$PRIVATE/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --patched-bot "$PRIVATE/EGGRUMBLE_BotActors.luau" \
+            --out /tmp/gq_human_ai484_hit_mutant.luau --mutant
+          if /tmp/gq_human_luau/build/luau /tmp/gq_human_ai484_hit_mutant.luau; then
+            echo "RED: removed membership predicate mutant incorrectly passed"
+            exit 1
+          fi
+          echo "GQ_484_ORIGINAL_BOT_DUEL_AND_531_CURRENT_HUMAN_TARGET_NATIVE_14_PASS_MUTANT_FAIL_EXPECTED"
+      - name: Build and byte-check exact original22 composite private Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq_human_rojo build \
+            "$PRIVATE/EGGRUMBLE_V3_STUDIO.project.json" \
+            -o "$PRIVATE/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx"
+          python3 "$QG/compose_five_author.py" verify \
+            --out "$PRIVATE" \
+            --place "$PRIVATE/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx"
+          echo "PRIVATE22_REMAINS_ENGINE_UNTESTED_NO_FORMAL_RC"
+      - name: Preserve unpublished source and engine-untested proof only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq-human-combat-membership-private21-not-rc
+          path: |
+            /tmp/gq_human_private21/GQ_HUMAN_COMBAT_MEMBERSHIP_PRIVATE21.rbxlx
+            /tmp/gq_human_private21/GQ_FIVE_AUTHOR_MEMBERSHIP_PRIVATE22.rbxlx
+            /tmp/gq_human_private21/GQ_FIVE_AUTHOR_PRIVATE22_RECEIPT.json
+            /tmp/gq_human_private21/EGGRUMBLE_BotActors.luau
+            /tmp/gq_human_private21/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+            /tmp/gq_human_private21/EGGRUMBLE_BotPathRouter.luau
+            /tmp/gq_human_private21/GQ_HUMAN_COMBAT_LOCK.json
+            /tmp/gq_human_private21/overlay_source_lock.json
+            /tmp/gq_human_private21/PRIVATE21_RECEIPT.json
+          if-no-files-found: warn
+      - name: Preserve true release state
+        run: |
+          echo "OFFICIAL_RC_CAS=NOT_DONE, OWNER_CLAIM=SOFT_REQUEST_ONLY"
+          echo "STUDIO_2CLIENT/ANDROID/ART/FUN/OWNER_ACCEPTANCE=NO_GO"
