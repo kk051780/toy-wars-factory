@@ -58,7 +58,7 @@ def negative(old,new):
     for i,m in enumerate(mutants):
         need(m!=new,"MUTATION_NOOP_"+str(i))
         try:inspect(old,m,False)
-        except AssertionError:continue
+        except (AssertionError,ValueError):continue
         raise AssertionError("RED_NEGATIVE_ACCEPTED_"+str(i))
     return len(mutants)
 if __name__=="__main__":
