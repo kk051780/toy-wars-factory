@@ -126,7 +126,7 @@ def build(candidate: Path, package: Path) -> None:
           row["candidate_source_sha256"])
 
 def self_test() -> None:
-    require(gate.TARGET == "ServerScriptService/EGGRUMBLE_LegacyExploreRelicRoutes",
+    require(gate.TARGET == "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
             "SOURCE_TARGET_FIXED")
     sample = manifest(b"original", b"actual replacement", "Script")
     require(sample["changed_selected_routes"] == 1
