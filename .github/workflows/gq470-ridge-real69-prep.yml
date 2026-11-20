@@ -1,0 +1,44 @@
+name: GQ470 P0 flagship ridgeline source-exact PREP (not official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_fb015_ridge_real69_20261120/**'
+      - '.github/workflows/gq470-ridge-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-ridge-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-level negative tests and immutable official receipt
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py
+          python3 -B quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44673605213 --jq '.head_sha+" "+.conclusion')" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2 success"
+          mkdir -p /tmp/gq470-ridge
+          gh run download 44673605213 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ridge
+          test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json
+          test -s /tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json
+          test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 -B quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py --base /tmp/gq470-ridge
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          a=r['gq470_fb015_ridge_visual']
+          assert a['other_selected_routes_byte_exact']==68
+          assert a['new_selected_scripts']==0 and a['new_visual_parts_per_arena_max']==12
+          assert a['collision_or_gameplay_authority_changed'] is False
+          assert not a['human_art_accepted']
+          print("GQ470_RIDGE_SOURCE_QA_PASS_NOT_STUDIO_ACCEPTED")
+          PY
