@@ -79,6 +79,57 @@ def demand(test: bool, reason: str) -> None:
     if not test:
         raise ValueError("RED_ART6_COMPOSITE_" + reason)
 
+# Immutable author SOURCE-budget contracts, not real device or ART scores.
+# Prevent a future visual-slice intake from silently growing Parts/UI/KO cost,
+# changing combat authority, or inventing human/OWNER acceptance evidence.
+SOURCE_ART_BUDGETS: dict[int, dict[str, object]] = {
+    924: {"tag_pixels": [104, 24], "tag_max_studs": 22,
+          "near_hp_studs": 18, "extra_ui_instances": 0,
+          "new_gameplay_authority": False},
+    926: {"max_canopies": 160, "max_tracked_parts": 1800,
+          "new_parts": 0, "remote_or_damage_changes": False,
+          "source_only": True},
+    925: {"world_label_pixels_after": [136, 38],
+          "world_label_distance_after": 25,
+          "photo_roof_parts_after": 3, "net_new_visual_parts": 2,
+          "new_ui_instances": 0, "new_authority": False},
+    928: {"ko_per_second_limit": 6, "new_parts_per_confirmed_ko": 2,
+          "yaw_follows_victim": True, "zero_flat_look_guard": True,
+          "new_remotes": 0, "new_gameplay_authority": False,
+          "source_only": True},
+    930: {"new_static_decorative_wedges_per_boss": 4,
+          "new_remotes": 0, "new_gameplay_authority": False,
+          "collision_or_targeting_changed": False, "source_only": True},
+    929: {"total_existing_visual_parts": 32, "additional_visual_parts": 0,
+          "new_selected_scripts": 0, "changed_selected_scripts": 1,
+          "art_or_engine_pass": "NOT_TESTED",
+          "source_gate": "SOURCE_PREP_PASS"},
+}
+SOURCE_HASH_FIELDS = {
+    924: ("original_source_sha256", "changed_source_sha256"),
+    925: ("original_source_sha256", "new_source_sha256"),
+    926: ("before_sha256", "after_sha256"),
+    928: ("before_sha256", "after_sha256"),
+    929: ("before_sha256", "after_sha256"),
+    930: ("before_sha256", "after_sha256"),
+}
+
+def verify_source_budget(s: Slice, meta: dict, before: bytes,
+                         after: bytes) -> None:
+    """Check ART source budgets and both real source digests per owner."""
+    demand(isinstance(meta, dict), "SOURCE_BUDGET_METADATA_" + str(s.pr))
+    for field, expected in SOURCE_ART_BUDGETS[s.pr].items():
+        got = meta.get(field)
+        demand(type(got) is type(expected) and got == expected,
+               "SOURCE_BUDGET_" + str(s.pr) + "_" + field.upper())
+    before_field, after_field = SOURCE_HASH_FIELDS[s.pr]
+    demand(meta.get(before_field) == digest(before),
+           "SOURCE_BUDGET_BEFORE_HASH_" + str(s.pr))
+    demand(meta.get(after_field) == digest(after),
+           "SOURCE_BUDGET_AFTER_HASH_" + str(s.pr))
+    demand(meta.get("owner_accepted") is False,
+           "SOURCE_BUDGET_FAKE_OWNER_PASS_" + str(s.pr))
+
 def selected(root: Path) -> dict[str, Path]:
     data = json.loads((root / PROJECT).read_text(encoding="utf-8"))
     found: dict[str, Path] = {}
@@ -162,8 +213,7 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
             demand(stage_receipt["source_hashes"][s.target] ==
                    digest(altered[s.target]), "PATCHER_SOURCE_RECEIPT")
             meta = stage_receipt.get(s.metadata)
-            demand(isinstance(meta, dict) and meta.get("owner_accepted") is False,
-                   "PATCHER_METADATA_OR_FAKE_ACCEPTANCE")
+            verify_source_budget(s, meta, originals[s.target], altered[s.target])
             outpaths[s.target].write_bytes(altered[s.target])
             receipt["source_hashes"][s.target] = digest(altered[s.target])
             receipt[s.metadata] = meta
@@ -244,8 +294,7 @@ def verify_attestation(receipt: dict, before: dict[str, bytes],
         demand(isinstance(pin, dict) and pin == expected,
                "ATTESTATION_PIN_" + str(s.pr))
         meta = receipt.get(s.metadata)
-        demand(isinstance(meta, dict) and meta.get("owner_accepted") is False,
-               "ATTESTATION_SOURCE_META_" + str(s.pr))
+        verify_source_budget(s, meta, before[s.target], after[s.target])
 
 
 def verify_place_provenance(root: Path, receipt: dict) -> None:
@@ -333,7 +382,14 @@ def self_test() -> None:
         ],
     }
     valid = {"gq470_art6_composite": info}
-    valid.update({s.metadata: {"owner_accepted": False} for s in SLICES})
+    valid.update({
+        s.metadata: {
+            "owner_accepted": False,
+            **SOURCE_ART_BUDGETS[s.pr],
+            SOURCE_HASH_FIELDS[s.pr][0]: digest(source_before[s.target]),
+            SOURCE_HASH_FIELDS[s.pr][1]: digest(source_after[s.target]),
+        } for s in SLICES
+    })
     verify_attestation(valid, source_before, source_after)
     cases = (
         ("formal_parent", "FAKE"),
@@ -367,6 +423,26 @@ def self_test() -> None:
         pass
     else:
         raise AssertionError("RED_ART6_ATTESTATION_META_MUTANT")
+    # Independent source-budget and exact before/after digest mutations.
+    for s in SLICES:
+        field = next(iter(SOURCE_ART_BUDGETS[s.pr]))
+        mutant = copy.deepcopy(valid)
+        mutant[s.metadata][field] = "BUDGET_BYPASS"
+        try:
+            verify_attestation(mutant, source_before, source_after)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("RED_ART6_SOURCE_BUDGET_MUTANT_" + str(s.pr))
+        for hashfield in SOURCE_HASH_FIELDS[s.pr]:
+            mutant = copy.deepcopy(valid)
+            mutant[s.metadata][hashfield] = "FORGED_SOURCE_HASH"
+            try:
+                verify_attestation(mutant, source_before, source_after)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("RED_ART6_SOURCE_HASH_MUTANT_" + str(s.pr))
     # The generated .rbxlx must remain bound to its receipt after Rojo.
     with tempfile.TemporaryDirectory(prefix="gq470-art6-place-") as tmp:
         root = Path(tmp)
@@ -393,7 +469,7 @@ def self_test() -> None:
             except ValueError:
                 continue
             raise AssertionError("RED_ART6_PLACE_MUTANT_" + kind)
-    print("GQ470_ART6_20_MUTATION_NEGATIVES_PASS")
+    print("GQ470_ART6_38_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
