@@ -1,0 +1,365 @@
+#!/usr/bin/env python3
+"""Synthetic negative QA only. No test fixture is a real Studio screenshot."""
+from __future__ import annotations
+
+import hashlib
+import json
+import struct
+import sys
+import tempfile
+import unittest
+import zlib
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gq470_real69_evidence_intake import audit, actual_png_count, REQUIRED
+
+HEAD = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
+SCENES = ("lobby", "field_wide", "castle", "sea", "forest",
+          "neutral", "beast", "combat")
+
+
+def png_chunk(name: bytes, data: bytes) -> bytes:
+    body = name + data
+    return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body))
+
+
+def synthetic_png(index: int, width: int = 1280, height: int = 720,
+                  compression_level: int = 6, broken_zlib: bool = False,
+                  filter_mode: int = 0) -> bytes:
+    """Deliberately synthetic PNG fixture; never claim Studio evidence."""
+    hdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    pixels = bytes([index % 256, 10, 30]) * width
+    if filter_mode == 0:
+        encoded = (b"\x00" + pixels) * height
+    else:
+        if filter_mode not in (1, 2, 3, 4):
+            raise ValueError("INVALID_SYNTHETIC_FILTER")
+        rows = []
+        previous = bytes(len(pixels))
+        for _ in range(height):
+            line = bytearray(len(pixels))
+            for j, value in enumerate(pixels):
+                a = pixels[j - 3] if j >= 3 else 0
+                b = previous[j]
+                c = previous[j - 3] if j >= 3 else 0
+                if filter_mode == 1:  # Sub
+                    predictor = a
+                elif filter_mode == 2:  # Up
+                    predictor = b
+                elif filter_mode == 3:  # Average
+                    predictor = (a + b) // 2
+                else:  # Paeth
+                    p = a + b - c
+                    da, db, dc = abs(p - a), abs(p - b), abs(p - c)
+                    predictor = a if da <= db and da <= dc else (
+                        b if db <= dc else c)
+                line[j] = (value - predictor) & 255
+            rows.append(bytes([filter_mode]) + bytes(line))
+            previous = pixels
+        encoded = b"".join(rows)
+    image_data = (b"NOT_A_ZLIB_STREAM" if broken_zlib else
+                  zlib.compress(encoded, level=compression_level))
+    filler = ("UNIT_TEST_FIXTURE_NOT_STUDIO_%d" % index).encode() + b"z" * 1100
+    return (bytes([137,80,78,71,13,10,26,10]) +
+            png_chunk(b"IHDR", hdr) +
+            png_chunk(b"tEXt", filler) +
+            png_chunk(b"IDAT", image_data) + png_chunk(b"IEND", b""))
+
+
+class Real69EvidenceIntakeTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.place = self.root / "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+        # Synthetic receipt fixture; this test does not assess real Luau.
+        self.place.write_bytes(b"<roblox>UNIT_TEST_FIXTURE</roblox>")
+        self.sha = hashlib.sha256(self.place.read_bytes()).hexdigest()
+        self.report = self.root / "ART_CHECK_REPORT.json"
+        self.data = {
+            "schema": "P0D_REAL69_GQ470_ART_CHECK_REPORT_V1",
+            "only_formal_branch": "rc/p0d-s1-kids-rc01",
+            "selected_profile": "REAL69_PRIVATE_COMPANION",
+            "official_build_head": HEAD,
+            "private_place_sha256": self.sha,
+            "private_place_bytes": self.place.stat().st_size,
+            "source_gate": {
+                "status": "PASS_SOURCE_ONLY",
+                "actual_place_scripts": 69,
+                "selected_routes_source_class_hash_exact": 69,
+                "verified_visual_feature_sources": 3,
+            },
+            "owner_accepted": False,
+            "art_gate": "ART_NO_GO",
+        }
+        self.save()
+
+    def save(self):
+        self.report.write_text(json.dumps(self.data), encoding="utf-8")
+
+    def check(self, manifest=None, screenshots=None):
+        return audit(self.report, self.place, HEAD, manifest, screenshots)
+
+    def test_missing_real_evidence_stays_no_go(self):
+        result = self.check()
+        self.assertEqual(result["image_evidence"]["required"], 32)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+        self.assertIs(result["owner_accepted"], False)
+
+    def test_current_head_source_and_place_are_mandatory(self):
+        self.data["official_build_head"] = "0" * 40
+        self.save()
+        with self.assertRaisesRegex(ValueError, "STALE_OR_WRONG"):
+            self.check()
+        self.data["official_build_head"] = HEAD
+        self.data["private_place_sha256"] = "f" * 64
+        self.save()
+        with self.assertRaisesRegex(ValueError, "PLACE_BYTES_OR_SHA"):
+            self.check()
+
+    def test_forged_manifest_keys_are_not_actual_images(self):
+        manifest = self.root / "manifest.json"
+        fake = {"schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+                "before_head": "f" * 40,
+                "after_head": HEAD,
+                "after_place_sha256": self.sha,
+                "shots": [{"scene": sc, "device": device, "version": version,
+                           "file": "missing/" + sc + "-" + device + "-" + version + ".png"}
+                          for sc in SCENES for device in ("pc", "android")
+                          for version in ("before", "after")],
+                "ratings": {}, "performance": {}, "critical_visual_blockers": [],
+                "human_reviewer": ""}
+        manifest.write_text(json.dumps(fake), encoding="utf-8")
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["declared_shot_keys"], 32)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
+    def test_real_file_counter_rejects_same_image_and_missing(self):
+        one = self.root / "one.png"
+        two = self.root / "two.png"
+        one.write_bytes(synthetic_png(1))
+        two.write_bytes(one.read_bytes())
+        manifest = self.root / "manifest.json"
+        shots = [
+            {"scene": "forest", "device": "pc", "version": "before", "file": "one.png"},
+            {"scene": "forest", "device": "pc", "version": "after", "file": "two.png"},
+            {"scene": "forest", "device": "android", "version": "before", "file": "missing.png"},
+        ]
+        manifest.write_text(json.dumps({"shots": shots}), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        two.write_bytes(synthetic_png(2))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_invalid_first_duplicate_does_not_hide_valid_png(self):
+        # A broken first capture must not consume the sole camera slot.
+        # The shared manifest validator still flags duplicate rows as NO_GO.
+        good = self.root / "good.png"
+        good.write_bytes(synthetic_png(87))
+        manifest = self.root / "invalid_first_duplicate.json"
+        manifest.write_text(json.dumps({
+            "schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+            "before_head": "f" * 40, "after_head": HEAD,
+            "after_place_sha256": self.sha,
+            "shots": [
+                {"scene": "forest", "device": "pc", "version": "after",
+                 "file": "missing.png"},
+                {"scene": "forest", "device": "pc", "version": "after",
+                 "file": "good.png"},
+            ],
+            "ratings": {}, "performance": {},
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 1)
+        self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
+    def test_untrusted_manifest_shapes_fail_closed_with_report(self):
+        # Malformed JSON structures must not crash the evidence intake CLI.
+        # They cannot become visual proof, even with a valid source Place.
+        m = self.root / "malformed_manifest.json"
+        examples = [
+            [],
+            {"shots": [{"scene": [], "device": "pc", "version": "before",
+                        "file": "fake.png"}]},
+            {"shots": [], "ratings": {}, "performance": []},
+        ]
+        for invalid in examples:
+            with self.subTest(manifest=invalid):
+                m.write_text(json.dumps(invalid), encoding="utf-8")
+                self.assertEqual(actual_png_count(m, self.root), 0)
+                result = self.check(m, self.root)
+                self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+                self.assertEqual(result["art_gate"], "ART_NO_GO")
+                self.assertIs(result["owner_accepted"], False)
+                self.assertIn("INVALID_MANIFEST_STRUCTURE",
+                              result["image_evidence"]["violations"])
+
+    def test_stale_pngs_do_not_count_toward_current_rc_progress(self):
+        # A genuine file path is not current-HEAD / current-Place proof.
+        # A stale manifest must count ZERO valid files for this RC.
+        png = self.root / "capture.png"
+        png.write_bytes(synthetic_png(73))
+        manifest = self.root / "stale_evidence.json"
+        data = {
+            "schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+            "before_head": "f" * 40, "after_head": HEAD,
+            "after_place_sha256": self.sha,
+            "shots": [{"scene": "castle", "device": "pc",
+                       "version": "after", "file": "capture.png"}],
+            "ratings": {}, "performance": {},
+        }
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root, HEAD, self.sha), 1)
+        self.assertEqual(self.check(manifest, self.root)
+                         ["image_evidence"]["actual_distinct_valid_png_files"], 1)
+
+        data["after_head"] = "0" * 40
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root, HEAD, self.sha), 0)
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertIn("AFTER_HEAD_NOT_CURRENT_REAL69",
+                      result["image_evidence"]["violations"])
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
+        data["after_head"] = HEAD
+        data["after_place_sha256"] = "f" * 64
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 0)
+        self.assertIn("STUDIO_PLACE_SHA_MISMATCH",
+                      result["image_evidence"]["violations"])
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
+
+    def test_corrupt_png_crc_is_not_real_capture_progress(self):
+        # These are synthetic fixtures, never Studio screenshots.
+        png = self.root / "bad_crc.png"
+        damaged = bytearray(synthetic_png(91))
+        damaged[-1] ^= 1  # Corrupt IEND CRC, while leaving header intact.
+        png.write_bytes(damaged)
+        manifest = self.root / "manifest_png_crc.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "forest", "device": "pc",
+                       "version": "after", "file": "bad_crc.png"}]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(synthetic_png(91))
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
+    def test_truncated_and_trailing_png_payload_are_not_counted(self):
+        png = self.root / "bad_tail.png"
+        good = synthetic_png(92)
+        manifest = self.root / "manifest_png_tail.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "beast", "device": "pc",
+                       "version": "before", "file": "bad_tail.png"}]
+        }), encoding="utf-8")
+        for bad in (good[:-12], good + b"UNTRUSTED_TRAILING_BYTES"):
+            with self.subTest(size=len(bad)):
+                png.write_bytes(bad)
+                self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(good)
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
+
+    def test_metadata_only_png_duplicates_do_not_inflate_image_count(self):
+        # Fixture index 1 and 257 have identical RGB/IDAT, but their tEXt
+        # chunk differs. Unique file SHA is not enough for a real-image tally.
+        first, second = self.root / "pixel_a.png", self.root / "pixel_b.png"
+        first.write_bytes(synthetic_png(1))
+        second.write_bytes(synthetic_png(257))
+        self.assertNotEqual(hashlib.sha256(first.read_bytes()).hexdigest(),
+                            hashlib.sha256(second.read_bytes()).hexdigest())
+        manifest = self.root / "metadata_only_dupe.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": "castle", "device": "pc", "version": "before",
+                 "file": first.name},
+                {"scene": "castle", "device": "pc", "version": "after",
+                 "file": second.name},
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        second.write_bytes(synthetic_png(2))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_valid_crc_does_not_hide_corrupt_zlib_pixels(self):
+        # Forged PNG has a legal signature, IHDR, IDAT CRC and IEND, but its
+        # IDAT stream cannot decode. It is never camera evidence.
+        png = self.root / "forged_zlib.png"
+        png.write_bytes(synthetic_png(121, broken_zlib=True))
+        manifest = self.root / "manifest_forged_zlib.json"
+        manifest.write_text(json.dumps({
+            "shots": [{"scene": "forest", "device": "pc", "version": "after",
+                       "file": png.name}]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 0)
+        png.write_bytes(synthetic_png(121))
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+
+    def test_recompressed_identical_scanlines_count_only_once(self):
+        # Re-encoding the same RGB scanlines at different zlib levels makes
+        # different file and IDAT hashes but no new rendered view.
+        low = self.root / "recompress_low.png"
+        high = self.root / "recompress_high.png"
+        low.write_bytes(synthetic_png(122, compression_level=1))
+        high.write_bytes(synthetic_png(122, compression_level=9))
+        self.assertNotEqual(hashlib.sha256(low.read_bytes()).hexdigest(),
+                            hashlib.sha256(high.read_bytes()).hexdigest())
+        manifest = self.root / "manifest_recompression.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": "sea", "device": "pc", "version": "before", "file": low.name},
+                {"scene": "sea", "device": "pc", "version": "after", "file": high.name},
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        high.write_bytes(synthetic_png(123, compression_level=9))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_png_reversible_filter_reencoding_cannot_inflate_capture_count(self):
+        # Five different CRC-valid PNG encodings of the SAME RGB pixels must
+        # occupy only one camera-evidence slot. This was previously 5/5.
+        files = []
+        for filter_mode in range(5):
+            path = self.root / ("filter_%s.png" % filter_mode)
+            path.write_bytes(synthetic_png(141, filter_mode=filter_mode))
+            files.append(path)
+        self.assertEqual(len({hashlib.sha256(p.read_bytes()).hexdigest()
+                              for p in files}), 5)
+        manifest = self.root / "filtered_reencodings.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": SCENES[i], "device": "pc", "version": "before",
+                 "file": path.name}
+                for i, path in enumerate(files)
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        # A genuinely different synthetic pixel raster is still distinct.
+        files[-1].write_bytes(synthetic_png(142, filter_mode=4))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_pc_rating_4_does_not_meet_4_point_5_target(self):
+        # No real captures: the synthetic manifest can only produce BLOCKED.
+        m = self.root / "manifest.json"
+        m.write_text(json.dumps({
+            "schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+            "before_head": "f" * 40, "after_head": HEAD,
+            "after_place_sha256": self.sha, "shots": [],
+            "ratings": {"castle": {"pc": 4, "android": 4}},
+            "performance": {}, "critical_visual_blockers": [],
+        }), encoding="utf-8")
+        result = self.check(m, self.root)
+        self.assertIn("PC_ART_TARGET_4_5_NOT_MET:castle",
+                      result["image_evidence"]["violations"])
+
+if __name__ == "__main__":
+    unittest.main()
