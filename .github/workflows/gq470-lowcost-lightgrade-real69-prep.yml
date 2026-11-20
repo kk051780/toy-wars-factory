@@ -165,6 +165,36 @@ jobs:
           assert a["all_48_semantic_parity"]==b["all_48_semantic_parity"]=="NOT_PROVEN"
           print("GQ470_REALM_LEGACY48_SOURCE_ON_OFF_ACCOUNTING_PASS_SEMANTICS_NOT_PROVEN")
           PY
+      - name: Export exact one-selected-LocalScript B source handoff only
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,shutil
+          from pathlib import Path
+          root=Path("/tmp/gq470-realm-grade-on69")
+          out=root/"B220_REALM_GRADE_SINGLE_SELECTED_SOURCE_NOT_FORMAL"
+          assert not out.exists()
+          dst=out/"selected_sources"/"StarterPlayer"/"StarterPlayerScripts"
+          dst.mkdir(parents=True)
+          src=root/"sources"/"StarterPlayer"/"StarterPlayerScripts"/"EGGRUMBLE_RealmBattleControls.client.luau"
+          shutil.copyfile(src,dst/src.name)
+          manifest=Path("quality_gameplay/gq470_lightgrade_real69_20261121/SOURCE_SELECT_MANIFEST.json")
+          m=json.loads(manifest.read_text())
+          assert m["selected_existing_route"]=="StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls"
+          assert hashlib.sha256(src.read_bytes()).hexdigest()==m["selected_source_sha256"]
+          assert m["untouched_selected_source_count"]==68
+          assert m["approved_for_formal_rc_write"] is False
+          shutil.copyfile(manifest,out/manifest.name)
+          assert sum(f.is_file() for f in out.rglob("*"))==2
+          print("B220_REALM_GRADE_EXACT_ONE_SOURCE_NOT_FORMAL",m["selected_source_sha256"])
+          PY
+      - name: Upload narrow source-only B writer handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REALM-GRADE-B220-ONE-SOURCE-NOT-FORMAL
+          path: /tmp/gq470-realm-grade-on69/B220_REALM_GRADE_SINGLE_SELECTED_SOURCE_NOT_FORMAL/
+          retention-days: 3
+          if-no-files-found: error
       - name: Upload exact candidate sources for authenticated B review
         uses: actions/upload-artifact@v4
         with:
