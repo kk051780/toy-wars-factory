@@ -1,0 +1,31 @@
+name: GQ470 far sky faceted banks A source QA
+on:
+  push:
+    branches:
+      - quality/gq470-farcloud-sky-depth-real69-20261121
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "quality_gameplay/gq470_far_sky_real69_20261121/**"
+      - ".github/workflows/gq470-far-sky-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-gate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify isolated source safety and negative regressions
+        run: |
+          python3 -m unittest discover -s quality_gameplay/gq470_far_sky_real69_20261121 -p 'test_*.py' -v
+      - name: Package candidate without official RC mutation
+        run: |
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/pack_candidate.py --out "$RUNNER_TEMP/sky-source-only"
+          test -s "$RUNNER_TEMP/sky-source-only/selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.luau"
+          echo "A_SOURCE_ONLY: no Luau Native, Rojo, Studio or ART GO claimed"
