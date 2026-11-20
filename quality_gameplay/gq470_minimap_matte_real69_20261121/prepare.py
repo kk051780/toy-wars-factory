@@ -74,7 +74,14 @@ PATCHES = (
     ),
     (
         """    pin.TextSize=mapExpanded and 13 or 10""",
-        """    pin.TextSize=mapExpanded and 13 or 11""",
+        """    pin.TextSize=mapExpanded and 13 or 11
+    -- Battle objectives remain visible when 30 server-filtered pins overlap.
+    -- Canvas map toggle remains ZIndex=10; these are not input controls.
+    pin.ZIndex=if m.kind=="SELF" then 9
+      elseif m.kind=="EGG" then 8
+      elseif m.kind=="CASTLE" or m.kind=="CASTLE_GATE" then 7
+      elseif m.kind=="ALLY" then 6
+      else 5""",
     ),
 )
 
@@ -127,6 +134,8 @@ local function redraw()
     need(good.count(MARK) == 1 and
          'm.kind=="CASTLE" and m.team=="BLUE"' in good and
          'mapExpanded and 13 or 11' in good and
+         'pin.ZIndex=if m.kind=="SELF" then 9' in good and
+         'm.kind=="CASTLE_GATE" then 7' in good and
          'local revealedTint=' in good, "SELFTEST_PATCH_NOT_PRESENT")
     mutants = [
         good,
