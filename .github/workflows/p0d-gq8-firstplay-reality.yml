@@ -1,0 +1,47 @@
+name: GQ8 first-play reality and 8-domain source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_firstplay_reality_20261118/**'
+      - '.github/workflows/p0d-gq8-firstplay-reality.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  firstplay-reality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout pinned original V3 author source read-only
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _gq8_original
+          persist-credentials: false
+      - name: Assert original Host immutable source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq8_original rev-parse HEAD)" = "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+      - name: Source-derived first-play gate and ten mutant/positive assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_firstplay_reality_20261118/check_firstplay_reality.py \
+            --active rc_fastlane/ACTIVE.json \
+            --companion rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
+            --core36 rc_fastlane/EGGRUMBLE_V3_CORE36.json \
+            --pinned-host _gq8_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --self-test \
+            --report /tmp/gq8-firstplay-reality.json
+      - name: Upload classification receipt (not engine evidence)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq8-firstplay-reality-source-classification
+          path: /tmp/gq8-firstplay-reality.json
+          retention-days: 7
