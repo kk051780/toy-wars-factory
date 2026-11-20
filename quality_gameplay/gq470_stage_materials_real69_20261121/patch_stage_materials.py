@@ -93,6 +93,19 @@ def validate_design(blueprint_text,manifest_text):
        "Instance.new" not in MATERIALS,"LOW_GLARE_INERT_MATERIALS")
  return {"expected_render_parts":36,"certified_cap":42,"themes":sorted(themes)}
 
+HOST_VISUAL_REQUIREMENTS=(
+ 'local GQ802StageVisuals=require(script.Parent:WaitForChild("GQ802_StageTileVisualRenderer"))',
+ 'GQ802StageVisuals.render(session.world,floor,',
+ 'GQ802StageVisuals.clear(session.world)',
+ 'Stage visuals OFF; legacy match kept',
+)
+def validate_host_reachability(host_text):
+ # Original real selected match Host must call the exact renderer and keep the
+ # visual-failure fallback so a material issue cannot cancel gameplay.
+ for anchor in HOST_VISUAL_REQUIREMENTS:
+  check(host_text.count(anchor)==1,"HOST_REACHABILITY_MISSING")
+ return True
+
 def selftest():
  tokens="plan.partCount>42 p.CanCollide=false p.CanTouch=false p.CanQuery=false p.CastShadow=false p.Transparency=spec.transparency p.Color=Color3.fromRGB p.CFrame=originalFloor.CFrame made~=plan.partCount function M.clear(world)"
  sample=tokens+"\n"+ANCHOR+OLD
@@ -118,7 +131,13 @@ def selftest():
  try: validate_design(blueprint.replace(' part("a",nil)\n','',1),manifest)
  except ValueError: pass
  else: raise AssertionError("RED_FIVE_PART_BLUEPRINT_NOT_REJECTED")
- print("GQ470_STAGE_THEME_SELFTEST_7_NEGATIVES_PASS")
+ host="\\n".join(HOST_VISUAL_REQUIREMENTS)
+ validate_host_reachability(host)
+ for anchor in HOST_VISUAL_REQUIREMENTS:
+  try: validate_host_reachability(host.replace(anchor,""))
+  except ValueError: pass
+  else: raise AssertionError("RED_DEAD_HOST_HOOK_NOT_CAUGHT")
+ print("GQ470_STAGE_THEME_SELFTEST_11_NEGATIVES_PASS")
 
 def apply(root):
  root=root.resolve()
@@ -131,6 +150,8 @@ def apply(root):
        original_receipt.get("canonical_build") is True,"IMMUTABLE_FORMAL_BASE")
  check(original_receipt.get("source_hashes")==
        {k:sha(p.read_bytes()) for k,p in originals.items()},"69_SOURCE_LOCK")
+ validate_host_reachability(
+  originals["ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"].read_text())
  design=validate_design(
   originals["ServerScriptService/GQ802_StageTileBlueprintPolicy"].read_text(),
   originals["ServerScriptService/GQ802_StageManifestPolicy"].read_text())
