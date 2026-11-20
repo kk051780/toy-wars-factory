@@ -96,6 +96,63 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
             --project /tmp/gq470-lss-on69/EGGRUMBLE_REAL69.project.json \
             --place /tmp/gq470-lss-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+      - name: Emit art-gate truthful 0-of-32 source-candidate evidence
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib,json
+          out=Path('/tmp/gq470-lss-on69')
+          with ZipFile('/tmp/real69.zip') as archive:
+              original=json.loads(archive.read('ART_CHECK_REPORT.json'))
+          q=json.loads((out/'GQ470_SHOREFOAM_SOURCE_QA.json').read_text())
+          current=(out/'EGGRUMBLE_REAL69_PRIVATE.rbxlx').read_bytes()
+          assert original['official_build_head']==q['formal_base_head']
+          assert original['visual_evidence_gate']['screenshots_required']==32
+          assert original['visual_evidence_gate']['screenshots_received']==0
+          assert original['art_gate']=='ART_NO_GO'
+          report={
+              'schema':'GQ470_SHOREFOAM_REAL69_ART_GATE_CANDIDATE_ONLY_V1',
+              'formal_rc_head_not_changed':q['formal_base_head'],
+              'candidate_status':'A_SOURCE_PREP_NOT_FORMAL_RC',
+              'candidate_selected_script':'ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal',
+              'original_source_sha256':q['source_sha_before'],
+              'candidate_source_sha256':q['source_sha_after'],
+              'source_gate':'PASS_SOURCE_ONLY',
+              'selected_source_count':69,
+              'other_selected_sources_byte_identical':68,
+              'decorative_part_delta':0,
+              'new_render_loops':0,
+              'candidate_place_bytes':len(current),
+              'candidate_place_sha256':hashlib.sha256(current).hexdigest(),
+              'formal_place_bytes_unchanged':original['private_place_bytes'],
+              'visual_evidence_gate':{
+                  'scenes':original['visual_evidence_gate']['scenes'],
+                  'same_camera_before_after_pc_android_required':True,
+                  'screenshots_required':32,'screenshots_received':0,
+                  'status':'MISSING'},
+              'human_art':{'pc_target':4.5,'android_target':4.0,'actual':'NOT_TESTED'},
+              'mobile_runtime':{
+                  'low_end_median_fps_min':30,'low_end_p10_fps_min':25,
+                  'warm_fps_drop_max_fraction':0.2,
+                  'device_model':None,'android_15min':'NOT_TESTED'},
+              'kid_first_3_minutes_fun':'NOT_TESTED',
+              'studio_solo':'NOT_TESTED','studio_two_client':'NOT_TESTED',
+              'product_gate':'PRODUCT_NO_GO','art_gate':'ART_NO_GO',
+              'mobile_gate':'MOBILE_NO_GO','fun_gate':'FUN_NO_GO',
+              'owner_accepted':False,'official_rc_adopted':False,
+              'scene_under_review':'sea',
+              'visual_hypothesis_not_measurement':
+                  'six rectangular shore foam strips become six muted oval angled patches',
+          }
+          assert len(report['visual_evidence_gate']['scenes'])==8
+          (out/'GQ470_SHOREFOAM_ART_CHECK_REPORT.json').write_text(
+              json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          print('GQ470_SHOREFOAM_ART_SOURCE_REPORT_0OF32_NO_GO')
+          print('CANDIDATE_PLACE_BYTES',len(current))
+          print('CANDIDATE_PLACE_SHA256',report['candidate_place_sha256'])
+          PY
       - name: 17 family source markers and one-source B220 package
         run: |
           set -euo pipefail
