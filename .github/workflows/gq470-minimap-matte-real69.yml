@@ -1,0 +1,194 @@
+name: GQ470 REAL69 matte minimap ART source PREP
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_minimap_matte_real69_20261121/**'
+      - '.github/workflows/gq470-minimap-matte-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-only-nonoverlap-minimap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      A_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin immutable official 69-script source and patch only its map visuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$A_HEAD" || { echo RED_SYNTHETIC_PR_HEAD; exit 1; }
+          SCRIPT=quality_gameplay/gq470_minimap_matte_real69_20261121/prepare.py
+          python3 -B "$SCRIPT" --self-test
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p "$RUNNER_TEMP/gq470-minimap"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/gq470-minimap"
+          python3 -B "$SCRIPT" --base "$RUNNER_TEMP/gq470-minimap"
+          python3 - <<'PY'
+          import os,sys,json
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_minimap_matte_real69_20261121")
+          from prepare import ROUTE,MARK,ROLLBACK,selected,patch,BASE
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-minimap"
+          live=selected(root)
+          off=selected(root/ROLLBACK)
+          assert len(live)==len(off)==69
+          src=live[ROUTE].read_text()
+          original=off[ROUTE].read_text()
+          assert src==patch(original) and src.count(MARK)==1
+          assert "GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120" in src
+          assert original.count("Instance.new(")==src.count("Instance.new(")
+          assert original.count("actions.ATTACK.Activated:Connect")==src.count("actions.ATTACK.Activated:Connect")
+          r=json.loads((root/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          x=r["gq470_minimap_matte"]
+          assert x["original_official_head"]==BASE
+          assert x["formal_rc_adopted"] is False and x["real_before_after_png"]==0
+          print("GQ470_ACTUAL_FILTERED_MINIMAP_SELECTED_SOURCE_NOT_STUDIO_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all real69 ON and OFF Luau without creating a second Game owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-minimap-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-minimap-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_minimap_matte_real69_20261121")
+          from prepare import selected,ROLLBACK
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-minimap"
+          both=list(selected(root).values())+list(selected(root/ROLLBACK).values())
+          assert len(both)==138
+          for file in both:
+              subprocess.run(["/tmp/gq470-minimap-luau/luau-compile","--text",str(file)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_ACTUAL_NATIVE_138_ON_OFF_LUAU_PASS")
+          PY
+      - name: Rojo ON/OFF from genuine selected scripts and exact original Place rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-minimap-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-minimap-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-minimap-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq470-minimap-rojo")
+              p.write_bytes(z.read(names[0]))
+              p.chmod(0o755)
+          PY
+          ROOT="$RUNNER_TEMP/gq470-minimap"
+          /tmp/gq470-minimap-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_MINIMAP_CANDIDATE_PRIVATE.rbxlx"
+          /tmp/gq470-minimap-rojo build "$ROOT/OFF69_MINIMAP_MATTE_ROLLBACK/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_MINIMAP_OFF69_PRIVATE.rbxlx"
+          cmp "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx" "$ROOT/GQ470_MINIMAP_OFF69_PRIVATE.rbxlx"
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place "$ROOT/GQ470_MINIMAP_CANDIDATE_PRIVATE.rbxlx" --count 69
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/OFF69_MINIMAP_MATTE_ROLLBACK/EGGRUMBLE_REAL69.project.json" --place "$ROOT/GQ470_MINIMAP_OFF69_PRIVATE.rbxlx" --count 69
+          echo GQ470_MINIMAP_REAL69_ORIGINAL_ROLLBACK_PLACE_EXACT_PASS
+      - name: Exact 1/69 source source-lock 17 families 48 flags and B220 proof packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,shutil,sys
+          from pathlib import Path
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          sys.path.insert(0,"quality_gameplay/gq470_minimap_matte_real69_20261121")
+          from prepare import selected,BASE,MARK,ROUTE,ROLLBACK
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-minimap"
+          on=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          off=project_scan(root/ROLLBACK,"EGGRUMBLE_REAL69.project.json")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k]["sha256"]!=off[k]["sha256"]}=={ROUTE}
+          assert all(on[k]["class"]==off[k]["class"] for k in on)
+          assert on[ROUTE]["class"]=="LocalScript"
+          assert len(marker_check(on))==17
+          rfile=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          rec=json.loads(rfile.read_text())
+          status=rec["gq470_minimap_matte"]
+          assert status["candidate_sha256"]==on[ROUTE]["sha256"]
+          assert status["original_sha256"]==off[ROUTE]["sha256"]
+          assert all(rec["source_hashes"][k]==on[k]["sha256"] for k in on)
+          place=root/"GQ470_MINIMAP_CANDIDATE_PRIVATE.rbxlx"
+          orig=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          status["native_rojo"]="PASS_SOURCE_ONLY"
+          status["engine"]="NOT_TESTED"
+          status["human_art"]="NOT_TESTED"
+          status["android"]="NOT_TESTED"
+          status["formal_rc_adopted"]=False
+          status["owner_accepted"]=False
+          rec["candidate_private_place_bytes"]=place.stat().st_size
+          rec["candidate_private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          rec["original_private_place_bytes"]=orig.stat().st_size
+          rec["source_only_head"]=os.environ["A_HEAD"]
+          rfile.write_text(json.dumps(rec,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          bundle=root/"B220_MINIMAP_SOURCE_ONLY"
+          dst=bundle/"selected_sources"/"StarterPlayer"/"StarterPlayerScripts"/"EGGRUMBLE_HudIntelRuntime.client.luau"
+          dst.parent.mkdir(parents=True)
+          shutil.copy2(selected(root)[ROUTE],dst)
+          manifest={"kind":"ONE_SELECTED_SOURCE_ONLY_NOT_FORMAL",
+              "source_only_head":os.environ["A_HEAD"],
+              "base_official_sha":BASE, "feature_id":MARK,
+              "selected_route":ROUTE,"class":"LocalScript",
+              "source_count":69,"other_sources_exact":68,
+              "original_sha256":off[ROUTE]["sha256"],
+              "candidate_sha256":on[ROUTE]["sha256"],
+              "new_3d_parts":0,"new_gui_instances":0,"new_remotes":0,
+              "new_render_loops":0,
+              "candidate_place_bytes":place.stat().st_size,
+              "original_place_bytes":orig.stat().st_size,
+              "rollback":"exact official REAL69 selected LocalScript",
+              "human_art":"NOT_TESTED","android":"NOT_TESTED",
+              "studio":"NOT_TESTED","formal_rc_adopted":False,
+              "owner_accepted":False,"b220_only_nonforce_cas":True}
+          (bundle/"SOURCE_SELECT_MANIFEST.json").write_text(json.dumps(manifest,indent=2,sort_keys=True)+"\n")
+          (root/"GQ470_MINIMAP_ART_CHECK_REPORT.json").write_text(
+              json.dumps({"source_only":"PASS","required_genuine_png":32,
+                  "genuine_png":0,"pc_art_score":None,"android_art_score":None,
+                  "android_15min_fps":None,"first3min_fun":None,
+                  "studio_2client":"NOT_TESTED","owner_accepted":False,
+                  "art_gate":"ART_NO_GO","product_gate":"PRODUCT_NO_GO"},
+                  indent=2,sort_keys=True)+"\n")
+          print("GQ470_MINIMAP_ONE_REAL_SOURCE_B220_PACKET_PASS")
+          PY
+          ROOT="$RUNNER_TEMP/gq470-minimap"
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/GQ470_MINIMAP_LEGACY48.json"
+          test "$(git rev-parse HEAD)" = "$A_HEAD" || { echo RED_A_HEAD_CHANGED; exit 1; }
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo STALE_FORMAL_RC_DEFER_B220; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test "$PR_BASE" = "$CURRENT" || { echo STALE_PR_BASE_DEFER_B220; exit 1; }
+          fi
+          echo SOURCE_READY_ONLY_DO_NOT_ADOPT_WITHOUT_B220_250_420_910
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-MINIMAP-MATTE-SOURCE-ONLY-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/gq470-minimap/B220_MINIMAP_SOURCE_ONLY/**
+            ${{ runner.temp }}/gq470-minimap/REAL69_LEGACY_INTAKE_RECEIPT.json
+            ${{ runner.temp }}/gq470-minimap/GQ470_MINIMAP_LEGACY48.json
+            ${{ runner.temp }}/gq470-minimap/GQ470_MINIMAP_ART_CHECK_REPORT.json
+            ${{ runner.temp }}/gq470-minimap/GQ470_MINIMAP_CANDIDATE_PRIVATE.rbxlx
+            ${{ runner.temp }}/gq470-minimap/GQ470_MINIMAP_OFF69_PRIVATE.rbxlx
+          if-no-files-found: error
+          retention-days: 7
