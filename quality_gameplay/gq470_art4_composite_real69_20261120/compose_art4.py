@@ -295,7 +295,8 @@ def self_test() -> None:
     info = {
         "source_only": True, "formal_parent": BASE, "formal_rc_unchanged": True,
         "candidate_only": True, "selected_sources_total": ROUTES,
-        "selected_sources_changed": 4, "other_selected_sources_byte_exact": 65,
+        "selected_sources_changed": len(SLICES),
+        "other_selected_sources_byte_exact": ROUTES - len(SLICES),
         "rollback": OFF, "new_gameplay_authority": False,
         "studio_solo": "NOT_TESTED", "studio_2client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "art_32_real_png": "0/32",
