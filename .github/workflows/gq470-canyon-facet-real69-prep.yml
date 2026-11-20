@@ -130,6 +130,18 @@ jobs:
           assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
           print("GQ470_CANYON_420_ART_SOURCE_PASS_RUNTIME_AND_OWNER_NOT_TESTED")
           PY
+      - name: B220 one-source selected Luau handoff and negative admission tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPORT=quality_gameplay/gq470_canyon_facet_real69_20261121/export_b1.py
+          python3 -m py_compile "$EXPORT"
+          python3 -B "$EXPORT" --self-test
+          python3 -B "$EXPORT" --candidate /tmp/gq470-canyon \
+            --out /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL
+          python3 -B "$EXPORT" --candidate /tmp/gq470-canyon \
+            --out /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL --check
+          echo GQ470_CANYON_B220_ONLY_SOURCE_HANDOFF_NOT_FORMAL
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-CANYON-FACETS-ART-PREP-NOT-FORMAL
@@ -141,5 +153,6 @@ jobs:
             /tmp/gq470-canyon/OFF69_CANYON_FACETS_REBUILT.rbxlx
             /tmp/gq470-canyon/CANYON_FACET_LEGACY48_AUDIT.json
             /tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json
+            /tmp/gq470-canyon/B220_CANYON_ONE_SOURCE_ONLY_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
