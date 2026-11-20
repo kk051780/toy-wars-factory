@@ -124,6 +124,27 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
         two.write_bytes(synthetic_png(2))
         self.assertEqual(actual_png_count(manifest, self.root), 2)
 
+    def test_untrusted_manifest_shapes_fail_closed_with_report(self):
+        # Malformed JSON structures must not crash the evidence intake CLI.
+        # They cannot become visual proof, even with a valid source Place.
+        m = self.root / "malformed_manifest.json"
+        examples = [
+            [],
+            {"shots": [{"scene": [], "device": "pc", "version": "before",
+                        "file": "fake.png"}]},
+            {"shots": [], "ratings": {}, "performance": []},
+        ]
+        for invalid in examples:
+            with self.subTest(manifest=invalid):
+                m.write_text(json.dumps(invalid), encoding="utf-8")
+                self.assertEqual(actual_png_count(m, self.root), 0)
+                result = self.check(m, self.root)
+                self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+                self.assertEqual(result["art_gate"], "ART_NO_GO")
+                self.assertIs(result["owner_accepted"], False)
+                self.assertIn("INVALID_MANIFEST_STRUCTURE",
+                              result["image_evidence"]["violations"])
+
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):
         # No real captures: the synthetic manifest can only produce BLOCKED.
         m = self.root / "manifest.json"
