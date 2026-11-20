@@ -105,9 +105,36 @@ jobs:
           shutil.copy2(source,pkg/'EGGRUMBLE_LegacyFirst90.client.luau')
           shutil.copy2(base/p.RECEIPT,pkg/p.RECEIPT)
           shutil.copy2(pathlib.Path('quality_gameplay/gq470_first90_microcue_real69_20261121/source_lock.json'),pkg/'source_lock.json')
-          manifest={'schema':'GQ470_FIRST90_MICROCUE_B220_SOURCE_ONLY_V1','candidate_git_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'formal_parent_sha':p.BASE,'selected_route':p.ROUTE,'changed_source_count':1,'other_selected_sources_exact':68,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'formal_rc_adopted':False,'studio':'NOT_TESTED','android':'NOT_TESTED','human_art':'NOT_TESTED','owner_accepted':False}
-          (pkg/'B220_SOURCE_MANIFEST.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n')
-          print('GQ470_B220_MICROCUE_SOURCE_EXPORTED',manifest['source_sha256'])
+          current_head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          source_sha=hashlib.sha256(source.read_bytes()).hexdigest()
+          report=json.loads(pathlib.Path('quality_gameplay/gq470_first90_microcue_real69_20261121/ART_CHECK_REPORT.json').read_text())
+          assert source_sha==report['candidate_source_ci']['source_sha256_after']
+          assert len(report['visual_evidence_gate']['shots'])==32
+          assert report['visual_evidence_gate']['real_png_captures_received']==0
+          original_place=base/p.OFF/p.PLACE
+          candidate_place=base/p.PLACE
+          source_manifest={'schema':'GQ470_FIRST90_MICROCUE_B220_SOURCE_ONLY_V1',
+            'candidate_git_sha':current_head,'formal_parent_sha':p.BASE,
+            'selected_route':p.ROUTE,'changed_source_count':1,
+            'other_selected_sources_exact':68,'source_sha256':source_sha,
+            'source_sha256_before':p.ORIGINAL_SHA256,
+            'original_off_place_sha256':hashlib.sha256(original_place.read_bytes()).hexdigest(),
+            'original_off_place_bytes':original_place.stat().st_size,
+            'candidate_place_sha256':hashlib.sha256(candidate_place.read_bytes()).hexdigest(),
+            'candidate_place_bytes':candidate_place.stat().st_size,
+            'formal_rc_adopted':False,'studio':'NOT_TESTED','android':'NOT_TESTED',
+            'human_art':'NOT_TESTED','owner_accepted':False}
+          (pkg/'B220_SOURCE_MANIFEST.json').write_text(json.dumps(source_manifest,sort_keys=True,indent=2)+'\n')
+          report['candidate_source_ci']['verified_head']=current_head
+          report['candidate_source_ci']['candidate_place_sha256']=source_manifest['candidate_place_sha256']
+          report['candidate_source_ci']['candidate_place_bytes']=source_manifest['candidate_place_bytes']
+          report['candidate_source_ci']['original_place_sha256']=source_manifest['original_off_place_sha256']
+          report['candidate_source_ci']['original_place_bytes']=source_manifest['original_off_place_bytes']
+          report['candidate_source_ci']['conclusion']='SUCCESS_SOURCE_ONLY'
+          report['decisions']['source_gate']='PASS_SOURCE_ONLY_ON_'+current_head[:7].upper()
+          (pkg/'ART_CHECK_REPORT.json').write_text(json.dumps(report,sort_keys=True,indent=2,ensure_ascii=False)+'\n')
+          print('GQ470_B220_MICROCUE_SOURCE_EXPORTED',source_sha)
+          print('GQ470_ART_EVIDENCE_0_OF_32_UNTESTED',source_manifest['candidate_place_bytes'])
           PY
       - uses: actions/upload-artifact@v4
         with:
