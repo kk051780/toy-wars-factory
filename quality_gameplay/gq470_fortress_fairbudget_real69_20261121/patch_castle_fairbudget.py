@@ -107,7 +107,11 @@ def transform(src):
     out=(src.replace(A,A1,1).replace(B,B1,1).replace(C,C1,1)
          .replace(D,D1,1).replace(E,E1,1))
     need(out.count(FEATURE)==1 and 'local MAX_CASTLE_PARTS = 19' in out,'ADOPTION')
-    need(src.split('local function drawTree(',1)[1]==out.split('local function drawTree(',1)[1],'TERRAIN_DRIFT')
+    # Protect the terrain-and-navigation author separately; this patch also
+    # touches paintArena's cleanup lifecycle, so its whole tail must not compare.
+    section=lambda text: text.split('local function drawTree(',1)[1].split('local function paintArena(',1)[0]
+    need(section(src)==section(out),'TERRAIN_DRIFT')
+    need(src.split('local function handleNew(',1)[1]==out.split('local function handleNew(',1)[1],'EVENT_OWNER_DRIFT')
     return out
 
 def selected(root):
