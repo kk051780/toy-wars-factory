@@ -45,6 +45,72 @@ jobs:
           python3 -B -m unittest discover \
             -s quality_gameplay/gq470_lightgrade_real69_20261121 \
             -p "test_*.py" -v
+      - name: Checkout pinned native Luau compiler sources
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 69 selected ON and OFF Luau sources
+        run: |
+          set -euo pipefail
+          ON=/tmp/gq470-realm-grade-on69
+          OFF=/tmp/gq470-realm-grade-off69
+          cp -a "$ON" "$OFF"
+          cp "$ON/OFF69_REALM_GRADE_ORIGINAL.client.luau" \
+            "$OFF/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau"
+          cmake -S _pinned_luau -B /tmp/gq470-realm-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-realm-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import pathlib,subprocess
+          on=pathlib.Path("/tmp/gq470-realm-grade-on69/sources")
+          off=pathlib.Path("/tmp/gq470-realm-grade-off69/sources")
+          left={str(p.relative_to(on)):p for p in on.rglob("*.luau")}
+          right={str(p.relative_to(off)):p for p in off.rglob("*.luau")}
+          target="StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau"
+          assert len(left)==len(right)==69 and set(left)==set(right)
+          assert {k for k in left if left[k].read_bytes()!=right[k].read_bytes()}=={target}
+          for group in (left,right):
+              for p in group.values():
+                  subprocess.run(["/tmp/gq470-realm-luau/luau-compile","--text",str(p)],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_REALM_NATIVE_LUAU_ON69_OFF69_PASS_SOURCE_ONLY")
+          PY
+      - name: Pinned Rojo ON/OFF real Place rebuild and byte-exact original
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq470-realm-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-realm-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq470-realm-rojo.zip") as z:
+              matches=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(matches)==1
+              p=Path("/tmp/gq470-realm-rojo")
+              p.write_bytes(z.read(matches[0]))
+              p.chmod(0o755)
+          with ZipFile("/tmp/gq470-real69-official.zip") as z:
+              Path("/tmp/gq470-real69-original-place.rbxlx").write_bytes(
+                  z.read("EGGRUMBLE_REAL69_PRIVATE.rbxlx"))
+          PY
+          /tmp/gq470-realm-rojo build /tmp/gq470-realm-grade-on69/EGGRUMBLE_REAL69.project.json \
+            -o /tmp/gq470-realm-grade-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-realm-rojo build /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69.project.json \
+            -o /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          cmp /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx \
+            /tmp/gq470-real69-original-place.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project /tmp/gq470-realm-grade-on69/EGGRUMBLE_REAL69.project.json \
+            --place /tmp/gq470-realm-grade-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69.project.json \
+            --place /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          echo "GQ470_REALM_ROJO_ON69_OFF69_REAL_PLACE_PASS_SOURCE_ONLY"
       - name: Upload exact candidate sources for authenticated B review
         uses: actions/upload-artifact@v4
         with:
