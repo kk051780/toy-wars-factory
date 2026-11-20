@@ -124,6 +124,10 @@ def audit(source_report_path: Path, place: Path, expected_head: str,
             parsed = json.loads(evidence_path.read_text(encoding="utf-8"))
             if isinstance(parsed, dict):
                 manifest = parsed
+                if (("shots" in manifest and not isinstance(manifest["shots"], list)) or
+                    ("ratings" in manifest and not isinstance(manifest["ratings"], dict)) or
+                    ("performance" in manifest and not isinstance(manifest["performance"], dict))):
+                    violations.append("INVALID_MANIFEST_STRUCTURE")
             else:
                 violations.append("INVALID_MANIFEST_ROOT")
         except (ValueError, OSError):
