@@ -10,7 +10,7 @@ ROUTE="StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills"
 REL="sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau"
 PROJECT="EGGRUMBLE_REAL69.project.json"
 BASE="95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
-NEW="bcc83fd61c4cac1e54f4fb5b2564e3bbb04fc74f0d645b989891b163e87adf7b"
+NEW="1856594a79d2e7ab7d4f6ac386c9379a45a8647a4168f65354246e888428bffb"
 RC="e80973c354f14a0d0088577f3cc1a875454f0f8f"
 FEATURE="GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121"
 
@@ -38,7 +38,9 @@ def validate(source):
     check("local MAX_ANIMATED_AVATARS=16" in source and "local MAX_VIEW_DISTANCE=130" in source,"MOBILE_BOUNDS")
     check("local DURATION={A=.26,B=.48,C=.82}" in source,"SERVER_PACING")
     check(source.count("RunService.PreSimulation:Connect(")==1 and "RenderStepped:Connect(" not in source,"ONE_LOOP")
-    check("local pulse,snap=motionProfile(t)" in source and "local function smoothstep(t:number)" in source,"TIMING")
+    check("local pulse,snap=motionProfile(t,slot)" in source and "local function smoothstep(t:number)" in source,"TIMING")
+    check('local strikeEnd=(slot=="A") and .36 or .42' in source,"A_STRIKE_PHASE")
+    check('local holdEnd=(slot=="A") and .62 or .54' in source,"A_25FPS_HOLD")
     check("characterListener:Disconnect()" in source,"LISTENER_CLEANUP")
     check("resetPose(record)\n   active[uid]=nil\n  end" in source,"OFFSCREEN_UNPOSE")
     for job in ("WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"):
@@ -47,7 +49,7 @@ def validate(source):
         check(denied not in source,"NO_AUTHORITY_"+denied)
 
 def test_mutations(source):
-    for token in ("characterListener:Disconnect()","local pulse,snap=motionProfile(t)",
+    for token in ("characterListener:Disconnect()","local pulse,snap=motionProfile(t,slot)",
                   "if not RunService:IsStudio() then return end","RunService.PreSimulation:Connect("):
         check(token in source,"NEGATIVE_PRECONDITION")
         try: validate(source.replace(token,"",1))
