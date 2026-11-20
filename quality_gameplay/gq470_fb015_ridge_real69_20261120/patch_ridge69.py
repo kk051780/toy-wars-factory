@@ -33,15 +33,14 @@ RIDGE = '''-- GQ470_FB015_RIDGE_HORIZON_P0_20261120
 -- At most twelve noncolliding wedges; castles may reclaim them on budget hit.
 local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)
  local bucket=ridgeVisuals[arena]
- if not bucket then
-  bucket={}
-  ridgeVisuals[arena]=bucket
-  -- Match arenas are recreated. Release the only strong arena key and
-  -- its retained decorative Part references on world destruction.
-  arena.Destroying:Once(function()
-   ridgeVisuals[arena]=nil
-  end)
- end
+ -- A scene may be repainted; keep one bounded ridge set per arena, never 12 more.
+ if bucket then return end
+ bucket={}
+ ridgeVisuals[arena]=bucket
+ -- The arena teardown releases both its reference and decorative-Part list.
+ arena.Destroying:Once(function()
+  ridgeVisuals[arena]=nil
+ end)
  local ridgeContours = {
   {height=14,yaw=-19,drift=-16},
   {height=23,yaw=13,drift=8},
@@ -118,7 +117,8 @@ def patch(source: str) -> str:
     out = out.replace(CALL_ANCHOR, CALL_ANCHOR + CALL)
     need(out.count("reclaimRidgeForCastle(arena)") == 1 and
          out.count("table.insert(bucket,") == 2 and
-         out.count("arena.Destroying:Once(function()") == 1, "CASTLE_PRIORITY_AND_SCENE_CLEANUP")
+         out.count("arena.Destroying:Once(function()") == 1 and
+         out.count("if bucket then return end") == 1, "CASTLE_PRIORITY_AND_SCENE_CLEANUP")
     need(out.count(MARK) == 2 and out.count("drawHorizonRidges(arena,art,onGround)") == 1,
          "SOURCE_INSERT_COUNT")
     need("RemoteEvent" not in RIDGE and "Tool" not in RIDGE and "DataStore" not in RIDGE,
@@ -136,7 +136,8 @@ def selftest() -> None:
     result = patch(minimal)
     need("for index=1,3 do" in result and "drawHorizonRidges" in result
          and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result
-         and "arena.Destroying:Once(function()" in result,
+         and "arena.Destroying:Once(function()" in result
+         and "if bucket then return end" in result,
          "HAPPY_PATH_IRREGULAR_CONTOURS")
     for broken in (minimal.replace(PRIOR, "missing"),
                    minimal.replace("= 320", "= 600"),
