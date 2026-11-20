@@ -86,7 +86,7 @@ def transform(source: str) -> str:
         # On actual immutable official REAL69 only, surface minimal source
         # anchors for remediation instead of guessing or replacing a new owner.
         import re
-        functions = re.findall(r"(?:local\\s+)?function\\s+[A-Za-z0-9_.:]+\\(", source)
+        functions = re.findall(r"(?:local\s+)?function\s+[A-Za-z0-9_.:]+\(", source)
         print("GQ470_ACTUAL_SWARM_FUNCTIONS", functions[:65])
         print("GQ470_ACTUAL_SWARM_VISUAL_LINES",
               [s.strip()[:165] for s in source.splitlines()
