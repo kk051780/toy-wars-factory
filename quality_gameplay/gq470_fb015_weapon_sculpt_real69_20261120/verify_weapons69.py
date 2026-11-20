@@ -11,7 +11,7 @@ import shutil
 FORMAL = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 TARGET = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes"
 EXPECTED_BEFORE = "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
-EXPECTED_AFTER = "205eecf33e53b5bb0183c717154803caea86ec7a5f4e8b1a8578bc09b68df530"
+EXPECTED_AFTER = "9a19fa6394b44f3bdf7ed60b09ca789cadfd2eec75eee57d6a0075c3e1a0a741"
 FEATURE = "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120"
 SOURCE = Path("quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau")
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -19,7 +19,7 @@ RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 ROLES = ("WARRIOR", "MAGE", "NINJA", "TRAPPER", "BUILDER", "BEAST", "ZOMBIE")
 PIECES = (5, 4, 5, 4, 5, 4, 5)
-TAPERED = ("OdachiBlade", "TwinDaggerNear", "TwinDaggerFar", "TamingHorn", "BeastClawLeft", "BeastClawRight")
+TAPERED = ("OdachiBlade", "TwinDaggerNear", "TwinDaggerFar", "TamingHorn", "BeastClawLeft", "BeastClawRight", "PrismProngLeft", "PrismProngRight", "PsiOrbitLeft", "PsiOrbitRight", "RailGunBarrelLeft", "RailGunBarrelRight", "SoulProngLeft", "SoulProngRight")
 
 def digest(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
@@ -69,6 +69,7 @@ def check(before: bytes, after: bytes) -> dict:
     demand(max(after_parts) <= 8 and sum(after_parts) == 32, "MOBILE_PART_CAP")
     demand("PART_BUDGET_PER_AVATAR=8" in new, "BUDGET_DRIFT")
     demand(all(f"{n}=true" in new for n in TAPERED), "TAPERED_ROLE_COVERAGE")
+    demand(new.count("p.Transparency=if material==Enum.Material.Neon then .32 else 0") == 1, "WEAPON_GLARE_BUDGET")
     demand(new.count('Instance.new("WedgePart")') == 1, "WEDGE_OBJECT_BUDGET")
     for marker in ('CanCollide=false', 'CanTouch=false', 'CanQuery=false',
                    'Massless=true', 'CastShadow=false', 'EGGRUMBLE_SafeGrip',
@@ -91,7 +92,7 @@ def selftest() -> None:
     # candidate cases. Full old hash/source and all 69 checks run in apply().
     demand(digest(candidate) == EXPECTED_AFTER, "CURRENT_PR_SHA")
     source = candidate.decode("utf-8")
-    demand(len(source.encode("utf-8")) == 6419, "CANDIDATE_BYTE_LENGTH")
+    demand(len(source.encode("utf-8")) == 6662, "CANDIDATE_BYTE_LENGTH")
     demand(pieces_by_role(source)[0] == PIECES, "ROLE_COUNTS")
     mutations = (
         source.replace('OdachiBlade=true', 'OdachiBlade=false'),
@@ -99,11 +100,16 @@ def selftest() -> None:
         source.replace('role=="ZOMBIE"', 'role=="GHOST"'),
         source.replace('PART_BUDGET_PER_AVATAR=8', 'PART_BUDGET_PER_AVATAR=888'),
         source.replace('Instance.new("WedgePart")', 'Instance.new("Part")'),
+        source.replace("PrismProngLeft=true", "PrismProngLeft=false"),
+        source.replace("PsiOrbitLeft=true", "PsiOrbitLeft=false"),
+        source.replace("RailGunBarrelLeft=true", "RailGunBarrelLeft=false"),
+        source.replace("SoulProngLeft=true", "SoulProngLeft=false"),
+        source.replace("then .32 else 0", "then .03 else 0"),
     )
     for corrupt in mutations:
         demand(digest(corrupt.encode("utf-8")) != EXPECTED_AFTER, "NEGATIVE_FALSE_ACCEPT")
-    demand(len(mutations) == 5, "MUTATION_TEST_CASES")
-    print("GQ470_FB015_WEAPON_CANDIDATE_AND_5_NEGATIVE_SOURCE_MUTANTS_PASS")
+    demand(len(mutations) == 10, "MUTATION_TEST_CASES")
+    print("GQ470_FB015_WEAPON_CANDIDATE_AND_10_NEGATIVE_SOURCE_MUTANTS_PASS")
 
 def apply(root: Path, candidate: Path) -> None:
     root = root.resolve()
