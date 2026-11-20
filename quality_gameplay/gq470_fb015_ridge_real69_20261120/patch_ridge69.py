@@ -32,8 +32,16 @@ RIDGE = '''-- GQ470_FB015_RIDGE_HORIZON_P0_20261120
 -- terrain/ruin visuals and every current or future castle ornament.
 -- At most twelve noncolliding wedges; castles may reclaim them on budget hit.
 local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)
- local bucket=ridgeVisuals[arena] or {}
- ridgeVisuals[arena]=bucket
+ local bucket=ridgeVisuals[arena]
+ if not bucket then
+  bucket={}
+  ridgeVisuals[arena]=bucket
+  -- Match arenas are recreated. Release the only strong arena key and
+  -- its retained decorative Part references on world destruction.
+  arena.Destroying:Once(function()
+   ridgeVisuals[arena]=nil
+  end)
+ end
  local ridgeContours = {
   {height=14,yaw=-19,drift=-16},
   {height=23,yaw=13,drift=8},
@@ -109,7 +117,8 @@ def patch(source: str) -> str:
     out = out.replace(FUNCTION_ANCHOR, RIDGE + FUNCTION_ANCHOR)
     out = out.replace(CALL_ANCHOR, CALL_ANCHOR + CALL)
     need(out.count("reclaimRidgeForCastle(arena)") == 1 and
-         out.count("table.insert(bucket,") == 2, "CASTLE_PRIORITY_GUARD")
+         out.count("table.insert(bucket,") == 2 and
+         out.count("arena.Destroying:Once(function()") == 1, "CASTLE_PRIORITY_AND_SCENE_CLEANUP")
     need(out.count(MARK) == 2 and out.count("drawHorizonRidges(arena,art,onGround)") == 1,
          "SOURCE_INSERT_COUNT")
     need("RemoteEvent" not in RIDGE and "Tool" not in RIDGE and "DataStore" not in RIDGE,
@@ -126,7 +135,8 @@ def selftest() -> None:
                + CALL_ANCHOR)
     result = patch(minimal)
     need("for index=1,3 do" in result and "drawHorizonRidges" in result
-         and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result,
+         and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result
+         and "arena.Destroying:Once(function()" in result,
          "HAPPY_PATH_IRREGULAR_CONTOURS")
     for broken in (minimal.replace(PRIOR, "missing"),
                    minimal.replace("= 320", "= 600"),
@@ -183,6 +193,7 @@ def apply(root: Path) -> None:
         "other_selected_routes_byte_exact": 68,
         "new_selected_scripts": 0,
         "new_visual_parts_per_arena_max": 12,
+        "arena_destroy_cleanup": "Destroying:Once clears ridgeVisuals key and part references",
         "total_arena_visual_budget_unchanged": 320,
         "collision_or_gameplay_authority_changed": False,
         "rollback": "off69_ridge",
