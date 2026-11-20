@@ -1,51 +1,31 @@
-# GQ470 FB-015: mobile-conscious scene grade (REAL69 A only)
+# GQ470 FB-015 — REAL69 海中・雷雨の軽量カラートーン（A候補）
 
-Status: **candidate source / not installed / ART_NO_GO**. The single formal RC
-\`rc/p0d-s1-kids-rc01\` is not changed by this PR. This branch adds no runtime
-route to the canonical 69 selected Luau scripts. No owner acceptance is implied.
+**状態:** SOURCE_WIP / not in official RC / Studio・Android・ART・FUNは未検証。
 
-## Player moment and original reuse
+## プレイヤーに届く改善
 
-Improve battlefield depth, faction/egg readability and stylistic consistency
-when the weather changes without drawing additional giant glow boxes or labels.
-Reuses the *palette/art-direction concept* from original FB-015 world art
-[PR #377](https://github.com/kk051780/toy-wars-factory/pull/377).
-Does not change #377 or copy its large tree/ground Part layer. Disjoint from
-active castle #934, canyon #933, canopy #926, reef #921, weapon #929,
-ImpactFeedback #928, lobby #925 and composite #931 source targets.
+既存の陸海空クライアント `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls` にだけ、海中 SUBSEA・戦闘機の THUNDER/WIND の状況に応じた控えめな色調を追加する。既存 `RealmWeather` と `currentKind` に従うだけで、天候の実制御、移動・攻撃・HP・城・卵・スコアに触れない。初回ロビーと通常徒歩中は効果なし、視界を塞ぐHUDもなし。
 
-The new \`EGGRUMBLE_LowCostSceneGrade.luau\` is an explicit-install ModuleScript:
-- CLEAR / GOLDEN / OVERCAST / STORM palettes; 0 new Parts and 0 per-frame loops.
-- At most one **new** Atmosphere (only if none exists) and one ColorCorrection.
-- Never changes existing Atmosphere, Lighting clock/brightness or another lane's
-  effects. Refuses duplicate installs, unknown moods and non-Studio runtime.
-- \`setMood("STORM")\` for weather bridge; \`destroy()\` cleans up only objects
-  created by this module. No game/host/combat/storage/Remote/HP/egg/score writes.
-- A source-only static/negative gate checks these promises but **does not**
-  compile or execute Luau on Roblox.
+- 実体: `patch_realm_color69.py` が現在の正式REAL69ソースを一度だけ差し替える **既存1ソース・69本中68本完全一致** の候補を生成。
+- 描画負荷上限: 状態が必要な時だけ `ColorCorrectionEffect` を最大1つ生成。新規Part/Remote/RenderStepped接続 0。既存0.13秒間隔の処理へ統合。Studio以外での一般公開や課金は別ゲート。
+- 時間・モード境界: SUBSEA/THUNDER/WIND を抜けたら即無効化。LocalScript破棄時に自身のEffectを破棄。他班名のEffect、Atmosphere、Lighting.ClockTime、カメラ/他UIを変更しない。
+- 旧アート方向性の再利用: PR #377 の淡い気象色の意図をREAL69の現行ステートに合わせて一箇所へ縮退。樹木・城・海のPart追加はしない。
+- 試遊設計: 同じ視点・天候で旧新PC/Android画像を比較。海中の対象識別、雷雨の敵/卵/城の視認性・低性能端末のFPS低下を #420 で人間採点する。不合格ならOFF。
 
-## B source-admission contract (not yet satisfied)
+## 再現可能な正本ソース検証
 
-A registered #220 B writer must re-get the *latest* official head and ensure:
-1. #218 distinct-path claim and #250 ADOPT value card; no overlap with #377.
-2. Choose one existing presentation-owner integration location, **not** a second
-   Game/Host/HUD authority. Wire its actual weather session boundary to
-   \`install\` / \`setMood\` / \`destroy\`; no unbounded event subscriptions.
-3. Source-lock the changed original selected route(s), check other original
-   routes byte-exact, then run official same-head Native Luau + Rojo ON/OFF,
-   original Place rollback, legacy17/48, and formal ZIP/Place size receipt.
-4. Integrate only through fresh expected-SHA / force=false CAS to the sole RC,
-   never by merging this entire PREP branch.
-5. Compare fixed-view PC/Android screenshots for CLEAR/GOLDEN/STORM,
-   readability of egg/team highlights, and mobile performance against #420.
+固定する正式RC: `e80973c354f14a0d0088577f3cc1a875454f0f8f`。同HEADの公式Actions `44695199140`、artifact `14610422120`。対象オリジナル SHA256 `8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f`。
 
-Stage: \`SOURCE_WIP\`; \`PREP_READY=NO\` until genuine selected original route
-and fixed-source CI; \`RC_INTEGRATED=NO\`; \`ENGINE_PASS=NOT_TESTED\`;
-\`OLD_NEW_SCREENSHOTS=0/32\`; \`ANDROID15=NOT_TESTED\`; \`KID_FUN=NOT_TESTED\`;
-\`HUMAN_ART=NOT_TESTED\`; \`OWNER_ACCEPTED=0\`.
+```sh
+python3 -B quality_gameplay/gq470_lightgrade_real69_20261121/patch_realm_color69.py --artifact official-real69.zip --out candidate69
+REAL69_ARTIFACT=official-real69.zip python3 -B -m unittest discover -s quality_gameplay/gq470_lightgrade_real69_20261121 -p 'test_*.py' -v
+```
 
-Rollback: omit the optional module/integration on B build; at runtime,
-\`controller.destroy()\` removes the owned ColorCorrection and, only when it
-was created here, Atmosphere. Does not restore/alter any other lane's effects.
+強制条件: 元artifactのREAL69全69ルート/全SHA/official HEAD検証、対象1ソースだけの実パッチ、逆変換で元Source完全復元、負例6件、持続ループ/3D追加・表示権威の拡大なし。generated candidateは **公式RCでも実Placeでもない**。CI成功でもLuau Native/Rojo ON/OFF/実機PASSの代替にならない。
 
-Trace: #910 P0-C; #470 F1/F7; #420 art/mobile; #364 FB-015.
+## RCへの統合
+
+#218 scoped claim request [lighting](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7050610576) / [existing REAL69 realm client](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7050692761)。
+#910 P0-A/B遊べる一戦より先に本候補で統合枠を奪わない。#250が ADOPT した時のみ、#220認証Bが最新正式HEADを再取得し、対象 **既存1クライアントのソースのみ** を採用、fresh expected SHA / force=false CAS。新正式HEAD同一のLuau Native、Rojo ON/OFF、Place/ZIP、旧17/48保全・SourceLock、OFF復元、#420画像比較を行う。PR丸ごとmerge禁止。最新HEAD変化時は元ハッシュ・衝突を再検査する。
+
+**未達ゲート:** real Studio Solo/2client=NOT_TESTED; 32枚画像=0/32; Android15分=NOT_TESTED; Human Art=NOT_TESTED; KID FUN=NOT_TESTED; OWNER_ACCEPTED=0; PRODUCT/ART/MOBILE/FUN_NO_GO。
