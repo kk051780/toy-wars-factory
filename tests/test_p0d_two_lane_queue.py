@@ -2,7 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"tools"))
-from p0d_two_lane_queue import manifest, choose_latest, OFFICIAL, REPO, RUN_NAME
+from p0d_two_lane_queue import manifest, choose_latest, OFFICIAL, REPO, RUN_NAME, REAL69_ARTIFACT
 
 OLD="a"*40
 NEW="b"*40
@@ -29,7 +29,9 @@ def api(path):
     if "/actions/runs?" in path:
         sha=path.split("head_sha=")[1].split("&")[0]
         return {"workflow_runs":[{"head_sha":sha,"name":RUN_NAME,"status":"completed",
-             "conclusion":"success","id":99,"created_at":"2026-11-14T00:10:30Z"}]}
+             "conclusion":"success","event":"pull_request","id":99,"created_at":"2026-11-14T00:10:30Z"}]}
+    if "/actions/runs/99/artifacts?" in path:
+        return {"artifacts":[{"id":900,"name":REAL69_ARTIFACT,"expired":False,"size_in_bytes":1935000}]}
     raise AssertionError("unexpected " + path)
 
 class TwoLaneQueueTests(unittest.TestCase):
@@ -38,6 +40,8 @@ class TwoLaneQueueTests(unittest.TestCase):
         self.assertEqual(d["ready_count"],1)
         self.assertTrue(d["no_auto_merge"])
         self.assertEqual(d["selected"][0]["head"],NEW)
+        self.assertEqual(d["selected"][0]["candidate_artifact_zip_bytes"],1935000)
+        self.assertEqual(d["selected"][0]["candidate_artifact_id"],900)
     def test_only_opted_in_and_non_draft(self):
         bare=pr(400,label=False)
         bare["body"]="Not yet ready"
@@ -56,8 +60,8 @@ class TwoLaneQueueTests(unittest.TestCase):
         def failed(path):
             if "/compare/" in path:return {"status":"ahead","ahead_by":1,"behind_by":0}
             return {"workflow_runs":[
-                {"head_sha":NEW,"name":RUN_NAME,"status":"completed","conclusion":"failure","id":100,"created_at":"2026-11-14T00:11:30Z"},
-                {"head_sha":NEW,"name":RUN_NAME,"status":"completed","conclusion":"success","id":99,"created_at":"2026-11-14T00:10:30Z"}]}
+                {"head_sha":NEW,"name":RUN_NAME,"status":"completed","conclusion":"failure","event":"pull_request","id":100,"created_at":"2026-11-14T00:11:30Z"},
+                {"head_sha":NEW,"name":RUN_NAME,"status":"completed","conclusion":"success","event":"pull_request","id":99,"created_at":"2026-11-14T00:10:30Z"}]}
         d=choose_latest(OLD,[pr(404)],failed)
         self.assertEqual(d["ready_count"],0)
         self.assertEqual(d["all_labeled_candidates"][0]["reason"],"LATEST_SAME_HEAD_FULL_RC_CI_NOT_GREEN")
@@ -122,6 +126,31 @@ class TwoLaneQueueTests(unittest.TestCase):
         self.assertEqual(selected["decision"],"ADOPT")
         self.assertIn("/issues/470",selected["quality_evidence"])
         self.assertIn("egg-stealing",selected["value_delta"])
+
+    def test_reject_green_rich51_without_real69_composite(self):
+        def legacy_only(path):
+            if "/actions/runs?" in path:
+                return {"workflow_runs":[{"head_sha":NEW,"name":"P0D canonical RC fast-lane Studio build",
+                                          "event":"pull_request","status":"completed","conclusion":"success",
+                                          "id":98,"created_at":"2026-11-14T00:10:30Z"}]}
+            return api(path)
+        d=choose_latest(OLD,[pr(423)],legacy_only)
+        self.assertEqual(d["ready_count"],0)
+        self.assertEqual(d["all_labeled_candidates"][0]["reason"],"LATEST_SAME_HEAD_FULL_RC_CI_NOT_GREEN")
+
+    def test_reject_real69_green_but_missing_or_bad_artifact(self):
+        def artifact_replaced(payload):
+            def g(path):
+                if "/actions/runs/99/artifacts?" in path:return {"artifacts":payload}
+                return api(path)
+            return g
+        for artifacts in ([],[{"id":900,"name":REAL69_ARTIFACT,"expired":True,"size_in_bytes":1935000}],
+                          [{"id":900,"name":REAL69_ARTIFACT,"expired":False,"size_in_bytes":0}],
+                          [{"id":900,"name":REAL69_ARTIFACT,"expired":False,"size_in_bytes":1935000},
+                           {"id":901,"name":REAL69_ARTIFACT,"expired":False,"size_in_bytes":1935000}]):
+            d=choose_latest(OLD,[pr(424)],artifact_replaced(artifacts))
+            self.assertEqual(d["ready_count"],0)
+            self.assertEqual(d["all_labeled_candidates"][0]["reason"],"REAL69_CANDIDATE_ARTIFACT_MISSING_OR_DUPLICATE")
 
     def test_official_head_recheck_at_selection(self):
         d=choose_latest(NEW,[pr(413,base=OLD)],api)
