@@ -168,9 +168,15 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
         925: ('b.Size=UDim2.fromOffset(136,38)', 'b.MaxDistance=25',
               'PhotoRoof_Left', 'PhotoRoof_Right', 'PhotoRoof_Ridge'),
         928: ('local MAX_KO_BURSTS_PER_SEC=6', 'for side=-1,1,2 do',
-              'Instance.new("WedgePart")', 'Debris:AddItem(fin,.30)'),
+              'Instance.new("WedgePart")', 'Debris:AddItem(fin,.30)',
+              'fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false',
+              'fin.CanQuery=false;fin.CastShadow=false'),
         930: ('BasaltShoulder_', 'BasaltCrown_', 'for side=-1,1,2 do',
-              'shoulder.CanCollide=false', 'crown.CanCollide=false'),
+              'shoulder.Anchored=true',
+              'shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false',
+              'shoulder.CastShadow=false', 'crown.Anchored=true',
+              'crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false',
+              'crown.CastShadow=false'),
         929: ('PART_BUDGET_PER_AVATAR=8', 'TAPERED_WEAPONS',
               'Instance.new("WedgePart")', 'role=="NINJA"'),
     }
@@ -219,8 +225,8 @@ def art_budget_self_test() -> None:
         924: 'label.Size=UDim2.fromOffset(104,24) label.MaxDistance=22 HealthDisplayDistance=18 text.TextStrokeTransparency=.45',
         926: 'local MAX_CANOPIES=160 local MAX_TRACKED_PARTS=1800 local function blocksAvatar( clipAxis( task.wait(.16)',
         925: 'b.Size=UDim2.fromOffset(136,38) b.MaxDistance=25 part("PhotoRoof_Left" part("PhotoRoof_Right" part("PhotoRoof_Ridge"',
-        928: 'local MAX_KO_BURSTS_PER_SEC=6 for side=-1,1,2 do Instance.new("WedgePart") Debris:AddItem(fin,.30)',
-        930: 'BasaltShoulder_ BasaltCrown_ for side=-1,1,2 do shoulder.CanCollide=false crown.CanCollide=false Instance.new("WedgePart") Instance.new("WedgePart")',
+        928: 'local MAX_KO_BURSTS_PER_SEC=6 for side=-1,1,2 do Instance.new("WedgePart") Debris:AddItem(fin,.30) fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false fin.CanQuery=false;fin.CastShadow=false',
+        930: 'BasaltShoulder_ BasaltCrown_ for side=-1,1,2 do shoulder.Anchored=true shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false shoulder.CastShadow=false crown.Anchored=true crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false crown.CastShadow=false Instance.new("WedgePart") Instance.new("WedgePart")',
         929: 'PART_BUDGET_PER_AVATAR=8 TAPERED_WEAPONS Instance.new("WedgePart") role=="NINJA"',
     }
     after = {sl.target: sample[sl.pr].encode() for sl in SLICES}
@@ -244,7 +250,30 @@ def art_budget_self_test() -> None:
         except ValueError:
             continue
         raise AssertionError("RED_ART_BUDGET_MUTANT_" + str(pr))
-    print("GQ470_ART6_6_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
+    # New stage-level safety contract: decorative combat VFX/boss geometry must
+    # stay anchored, non-collidable, untouchable, unqueryable and shadow-free.
+    # Existing per-author tests are not a substitute for composite acceptance.
+    physics_mutants = (
+        (928, 'fin.CanCollide=false', 'fin.CanCollide=true'),
+        (928, 'fin.CanTouch=false', 'fin.CanTouch=true'),
+        (928, 'fin.CanQuery=false', 'fin.CanQuery=true'),
+        (928, 'fin.CastShadow=false', 'fin.CastShadow=true'),
+        (930, 'shoulder.CanCollide=false', 'shoulder.CanCollide=true'),
+        (930, 'crown.CanTouch=false', 'crown.CanTouch=true'),
+        (930, 'crown.CanQuery=false', 'crown.CanQuery=true'),
+        (930, 'shoulder.CastShadow=false', 'shoulder.CastShadow=true'),
+    )
+    for index, (pr, old, new) in enumerate(physics_mutants):
+        route = next(sl.target for sl in SLICES if sl.pr == pr)
+        broken = dict(after)
+        demand(old.encode() in broken[route], "PHYSICS_MUTANT_FIXTURE")
+        broken[route] = broken[route].replace(old.encode(), new.encode(), 1)
+        try:
+            art_budget_gate(before, broken)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART6_PHYSICS_MUTANT_" + str(index))
+    print("GQ470_ART6_14_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
 
 
 def verify_formal(root: Path) -> tuple[dict, dict[str, bytes]]:
