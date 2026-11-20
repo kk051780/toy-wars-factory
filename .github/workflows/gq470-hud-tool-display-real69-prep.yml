@@ -113,3 +113,67 @@ jobs:
           test -s /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx
           test -s /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx
           echo GQ470_HUD_REAL69_NATIVE_ROJO_ON69_OFF69_PASS_NOT_STUDIO_ACCEPTED
+      - name: Legacy 17-family, 48-flag and inverse Rojo exact recovery gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gq470-hud-labels"
+          python3 - <<'PY'
+          import json,os,pathlib,subprocess,sys,hashlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'gq470-hud-labels'
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          on=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          off=project_scan(root/'off69_hud_rollback_69','EGGRUMBLE_REAL69.project.json')
+          expected={'ServerScriptService/EGGRUMBLE_SevenRoleCombat',
+                    'StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime'}
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k]['sha256']!=off[k]['sha256']}==expected
+          assert all(on[k]['class']==off[k]['class'] for k in on)
+          for info in off.values():
+              subprocess.run(['/tmp/gq470-hud-luau/luau-compile','--text',
+                str(root/'off69_hud_rollback_69'/info['path'])],
+                check=True,stdout=subprocess.DEVNULL)
+          families=marker_check(on)
+          assert len(families)==17
+          receipt=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(receipt.read_text())
+          assert r['gq470_fb015_hud_tool_labels']['base_official_head']=='6c2338b44db1c772bab0d688b2aece2e3aa8aae2'
+          assert all(r['source_hashes'][k]==on[k]['sha256'] for k in on)
+          r['gq470_fb015_hud_tool_labels']['native_rojo_off69']='PASS_SOURCE_ONLY'
+          r['gq470_fb015_hud_tool_labels']['studio_android_fun']='NOT_TESTED'
+          r['gq470_fb015_hud_tool_labels']['owner_accepted']=False
+          r['candidate_private_place_bytes']=pathlib.Path('/tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx').stat().st_size
+          r['candidate_private_place_sha256']=hashlib.sha256(pathlib.Path('/tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx').read_bytes()).hexdigest()
+          r['candidate_ci_head']=os.environ['GITHUB_SHA']
+          receipt.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          (root/'HUD_REAL69_LEGACY17_NONLOSS_AUDIT.json').write_text(
+              json.dumps({'family_count':17,'families':families,'changed_routes':sorted(expected),
+                          'preserved_original_routes':67,'studio':'NOT_TESTED'},ensure_ascii=False,indent=2)+'\n')
+          print('GQ470_HUD_69_ON_OFF_COMPILE_17_FAMILY_PRESERVED_PASS')
+          PY
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx --count 69
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/off69_hud_rollback_69/EGGRUMBLE_REAL69.project.json" --place /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx --count 69
+          cmp /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/HUD_REAL69_LEGACY48_FEATURE_AUDIT.json"
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo STALE_PARENT_NO_ADMISSION; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test "$PR_BASE" = "$CURRENT" || { echo STALE_PR_BASE_NO_ADMISSION; exit 1; }
+          fi
+          echo GQ470_HUD_COMPLETE_SOURCE_ONLY_GATE_PASS_NOT_STUDIO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-HUD-HOTBAR-PREP-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/gq470-hud-labels/EGGRUMBLE_REAL69.project.json
+            ${{ runner.temp }}/gq470-hud-labels/REAL69_LEGACY_INTAKE_RECEIPT.json
+            ${{ runner.temp }}/gq470-hud-labels/HUD_REAL69_LEGACY17_NONLOSS_AUDIT.json
+            ${{ runner.temp }}/gq470-hud-labels/HUD_REAL69_LEGACY48_FEATURE_AUDIT.json
+            /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx
+            /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx
+          if-no-files-found: error
+          retention-days: 7
