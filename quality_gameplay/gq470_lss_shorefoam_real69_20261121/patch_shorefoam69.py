@@ -31,8 +31,7 @@ def digest(payload: bytes) -> str:
 def patch(source: str) -> str:
     require(MARK not in source, "ALREADY_PATCHED")
     require(source.count(OLD) == 1, "UNIQUE_SIX_FOAM_ANCHOR")
-    for expected in ("if not RunService:IsStudio() then return end",
-                     "MAX_PARTS_PER_WORLD = 95",
+    for expected in ("MAX_PARTS_PER_WORLD = 95",
                      "COASTAL_WATER_VISUAL_ONLY",
                      "OFFSHORE_NAVIGABLE_SEA_LANE",
                      "PublicOffshoreShuttle", "PublicCloudLift_",
