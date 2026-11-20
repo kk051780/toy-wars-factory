@@ -26,6 +26,10 @@ class CastleVisualBudgetTests(unittest.TestCase):
         self.assertIn('if old then old:Destroy() end',modified)
         self.assertIn('castle.Destroying:Connect(',modified)
         self.assertIn('arena.Destroying:Connect(',modified)
+        self.assertIn('if not builtArenas[arena] then return end',modified)
+        self.assertLess(modified.index('if not builtArenas[arena] then return end'),
+                        modified.index('if not reserveCastleIdentity(arena) then return end'))
+        self.assertIn('for _,child in ipairs(arena:GetChildren()) do',modified)
         self.assertIn('trackedArt[arena]=nil',modified)
         self.assertEqual(modified.count('table.insert(tracked,p)'),1)
         self.assertEqual(modified.count('if not optionalIndex then return false end'),1)
@@ -104,6 +108,17 @@ class CastleVisualBudgetTests(unittest.TestCase):
         self.assertEqual(active,310)
         self.assertLessEqual(active+10,320)
 
+    def test_castle_early_creation_sceneries_before_essentials(self):
+        source=patch.transform(self.source)
+        # Source-only order: castleAt is gated until paintArena has set the
+        # builtArenas flag and completed the 140-part landscape pass.
+        self.assertIn('if not builtArenas[arena] then return end',source)
+        paint=source.split('local function paintArena(arena:Instance)',1)[1]
+        self.assertLess(paint.index('drawRouteMarker('),
+                        paint.index('for _,child in ipairs(arena:GetChildren()) do'))
+        self.assertLess(paint.index('drawTree(arena,art,'),
+                        paint.index('for _,child in ipairs(arena:GetChildren()) do'))
+
     def test_mutants_fail_closed(self):
         cases=[
           (patch.A,''),
@@ -111,6 +126,7 @@ class CastleVisualBudgetTests(unittest.TestCase):
           (patch.C,''),
           (patch.D,''),
           (patch.E,''),
+          (patch.F,''),
           ('local MAX_VISUAL_PARTS_PER_ARENA = 320','local MAX_VISUAL_PARTS_PER_ARENA = 3200'),
           ('local MAX_CASTLE_PARTS = 19','local MAX_CASTLE_PARTS = 9'),
           ('local function drawRouteMarker(','local function fakeRoute('),
