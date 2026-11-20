@@ -58,11 +58,11 @@ jobs:
           import subprocess,sys
           from pathlib import Path
           sys.path.insert(0,"quality_gameplay/gq470_ko_slash_real69_20261120")
-          from patch_ko_slash69 import selected,TARGET
+          from patch_ko_slash69 import selected,ROUTE
           root=Path("/tmp/gq470-ko")
           on=selected(root); off=selected(root/"OFF69_KO_SLASH")
           assert len(on)==len(off)==69 and set(on)==set(off)
-          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={TARGET}
+          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={ROUTE}
           for sources in (on,off):
               for src in sources.values():
                   subprocess.run(["/tmp/gq470-ko-luau/luau-compile","--text",str(src)],
