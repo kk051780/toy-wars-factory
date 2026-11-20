@@ -37,7 +37,7 @@ jobs:
           r=json.loads(Path("/tmp/gq470-social/REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
           x=r["gq470_social_plaza_art"]
           assert x["exact_untouched_selected_sources"]==68
-          assert x["net_new_visual_parts"]==1 and x["new_ui_instances"]==0
+          assert x["net_new_visual_parts"]==2 and x["photo_roof_parts_after"]==3 and x["new_ui_instances"]==0
           assert x["new_authority"] is False and x["studio_visual"]=="NOT_TESTED"
           print("SOCIAL_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS")
           PY
