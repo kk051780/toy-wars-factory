@@ -24,6 +24,11 @@ HUD = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
 P0_COMBAT = "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
 P0_SWARM = "ServerScriptService/EGGRUMBLE_SwarmCombat"
 BOT_ART = "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt"
+REEF_ART = "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+REEF_ART_BASE_SHA = "686b39af03bd8df1e1c81da449fd2b1415c8093c4a14c650853b64be8047537e"
+REEF_ART_ADOPT_SHA = "c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+REEF_ART_MARKER = "GQ470_ART_REEF_ORGANIC_SIGN_READABLE_REAL69_20261120"
+REEF_ART_ORIGINAL_HEAD = "c226c63eeb235503f9292503b61f2173550337ec"
 BOT_ART_BASE_SHA = "7ca5be97c2c76cb0b7d4c228168a6f14fa6ecf213de31eb4222086d358462da4"
 BOT_ART_ADOPT_SHA = "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
 BOT_ART_MARKER = "GQ470_ART_BOT_THREE_ARCHETYPES_REAL69_20261120"
@@ -118,6 +123,53 @@ def verify_bot_art(now: dict, previous: dict, receipt: dict,
     }
 
 
+def verify_reef_art(now: dict, previous: dict, receipt: dict,
+                    root: pathlib.Path) -> dict:
+    """ART-FB015: fail-closed one-source coral and visual sign readability."""
+    meta = receipt.get("gq470_reef_sculpt_visual")
+    require(isinstance(meta, dict), "REEF_ART_RECEIPT_MISSING")
+    require(REEF_ART in now and REEF_ART in previous, "REEF_ROUTE_MISSING")
+    require(meta.get("selected_source") == REEF_ART and
+            meta.get("feature_id") == REEF_ART_MARKER and
+            meta.get("formal_parent") == REEF_ART_ORIGINAL_HEAD,
+            "REEF_IDENTITY_MISMATCH")
+    require(previous[REEF_ART]["sha256"] == REEF_ART_BASE_SHA and
+            now[REEF_ART]["sha256"] == REEF_ART_ADOPT_SHA and
+            meta.get("original_source_sha256") == REEF_ART_BASE_SHA and
+            meta.get("new_source_sha256") == REEF_ART_ADOPT_SHA,
+            "REEF_DIGEST_NOT_CERTIFIED")
+    require(REEF_ART_MARKER.encode() in now[REEF_ART]["source"] and
+            REEF_ART_MARKER.encode() not in previous[REEF_ART]["source"],
+            "REEF_MARKER_INVALID")
+    require(meta.get("other_selected_routes_byte_exact") == 68 and
+            meta.get("new_part_count_across_2_reefs") == 8 and
+            meta.get("old_sign_range_studs") == 100 and
+            meta.get("new_sign_range_studs") == 38 and
+            meta.get("collision_changed") is False and
+            meta.get("new_game_authority") is False and
+            meta.get("owner_accepted") is False and
+            meta.get("native_rojo_off69") == "PASS_SOURCE_ONLY",
+            "REEF_BUDGET_OR_AUTHORITY_DRIFT")
+    off = project_scan(root / "off69_reef", "EGGRUMBLE_REAL69.project.json")
+    require(len(off) == 69 and set(off) == set(now), "REEF_OFF69_ROUTE_SET")
+    require(off[REEF_ART]["sha256"] == REEF_ART_BASE_SHA and
+            {key for key in now if off[key]["sha256"] != now[key]["sha256"]} ==
+                {REEF_ART},
+            "REEF_OFF69_INVERSE_NOT_EXACT")
+    require(all(off[key]["class"] == now[key]["class"] and
+                off[key]["path"] == now[key]["path"] for key in now),
+            "REEF_OFF69_CLASS_PATH_DRIFT")
+    return {
+        "feature_id": REEF_ART_MARKER,
+        "selected_route": REEF_ART,
+        "source_adopted_sha256": REEF_ART_ADOPT_SHA,
+        "unchanged_vs_pre_reef_selected_sources": 68,
+        "native_rojo_off69": "PASS_SOURCE_ONLY",
+        "studio_android_human_art": "NOT_TESTED",
+        "owner_accepted": False,
+    }
+
+
 def verify(root: pathlib.Path, expected_head: str = "") -> dict:
     now = project_scan(root, "EGGRUMBLE_REAL69.project.json")
     previous = project_scan(root / "off69_discovery", "EGGRUMBLE_REAL69.project.json")
@@ -135,10 +187,11 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
                 "RECEIPT_SHA_" + route)
         require(previous[route]["class"] == info["class"] and
                 previous[route]["path"] == info["path"], "CLASS_PATH_CHANGED_" + route)
-        if route not in (HUD, P0_COMBAT, P0_SWARM, BOT_ART):
+        if route not in (HUD, P0_COMBAT, P0_SWARM, BOT_ART, REEF_ART):
             require(previous[route]["sha256"] == info["sha256"],
                     "UNRELATED_SCRIPT_CHANGED_" + route)
     bot_art_receipt = verify_bot_art(now, previous, receipt, root)
+    reef_art_receipt = verify_reef_art(now, previous, receipt, root)
     require(previous[HUD]["sha256"] != now[HUD]["sha256"],
             "HUD_PORT_NOT_SELECTED")
     for route, marker in P0_MARKERS:
@@ -172,7 +225,8 @@ def verify(root: pathlib.Path, expected_head: str = "") -> dict:
         "selected_luau_sources": 69,
         "source_route_class_hash_receipt": "PASS_69_OF_69",
         "hud_selected_delta": "EXACT_ONE_SCRIPT",
-        "unrelated_pre_discovery_scripts_byte_exact": 65,
+        "unrelated_pre_discovery_scripts_byte_exact": 64,
+        "gq470_fb015_reef_sculpt_source_adoption": reef_art_receipt,
         "gq470_fb015_bot_silhouette_source_adoption": bot_art_receipt,
         "gq470_p0_combat_swarm_repaired_source_routes": 2,
         "historic_source_family_evidence": family_results,
@@ -199,6 +253,8 @@ def selftest() -> None:
     for bad in ("UNKNOWN", "", "SOURCE_UNVERIFIED"):
         assert bad not in fixed
     assert len(BOT_ART_BASE_SHA) == len(BOT_ART_ADOPT_SHA) == 64
+    assert len(REEF_ART_BASE_SHA) == len(REEF_ART_ADOPT_SHA) == 64
+    assert REEF_ART != BOT_ART and REEF_ART != HUD
     data = {route: {"source": marker.encode("utf-8"), "class": "Script", "path": route}
             for _, route, marker in FAMILIES}
     # Routes reused by multiple features must accumulate all source markers.
