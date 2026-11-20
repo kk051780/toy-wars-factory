@@ -141,7 +141,37 @@ jobs:
               studio="NOT_TESTED",android15="NOT_TESTED",human_art="NOT_TESTED",owner_accepted=False)
           (p/"ART_CHECK_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
           assert off.stat().st_size==798390
-          print("ROJO_ON69_OFF69_ORIGINAL_BYTE_EXACT_PASS")
+          # Validate the complete authentic Rojo XML hierarchy, not only source inventory.
+          # Patching the ONE selected ModuleScript's Source back to official original
+          # must reconstruct the entire original private Place XML (75 exact Items).
+          from xml.etree import ElementTree as ET
+          newxml=ET.parse(on).getroot()
+          oldxml=ET.parse(off).getroot()
+          assert len(list(newxml.iter("Item")))==len(list(oldxml.iter("Item")))==75
+          def selected_source(root):
+              matches=[]
+              for item in root.iter("Item"):
+                  name=item.find('./Properties/string[@name="Name"]')
+                  if name is not None and name.text=="EGGRUMBLE_MusouAuraClient":
+                      matches.append(item)
+              assert len(matches)==1
+              assert matches[0].get("class")=="ModuleScript"
+              source=matches[0].find('./Properties/string[@name="Source"]')
+              assert source is not None and source.text is not None
+              return source
+          candidate_source=selected_source(newxml)
+          original_source=selected_source(oldxml)
+          actual_selected=(p/"selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau").read_text()
+          assert candidate_source.text==actual_selected
+          meta=json.loads((p/"B220_ONE_SOURCE_NOT_FORMAL.json").read_text())
+          assert hashlib.sha256(candidate_source.text.encode()).hexdigest()==meta["candidate_sha256"]
+          assert hashlib.sha256(original_source.text.encode()).hexdigest()==meta["original_sha256"]
+          candidate_source.text=original_source.text
+          assert ET.tostring(newxml)==ET.tostring(oldxml), "RED_PLACE_DIFF_BESIDES_ONE_SCRIPT_SOURCE"
+          report["real_place_xml_items"]=75
+          report["only_one_module_source_changed_in_real_place"]=True
+          (p/"ART_CHECK_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          print("ROJO_ON69_OFF69_ORIGINAL_BYTE_EXACT_AND_75_ITEM_XML_SINGLE_SOURCE_PASS")
           PY
       - uses: actions/upload-artifact@v4
         with:
