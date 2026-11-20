@@ -36,7 +36,7 @@ def digest(data: bytes) -> str:
 
 
 
-def verified_png_integrity(path: Path) -> tuple[int, int, str]:
+def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
     """Require a complete CRC-valid PNG, not just its magic bytes and IHDR.
 
     The common art checker supplies the resolution/size gates; this stricter
@@ -47,6 +47,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str]:
     data = path.read_bytes()
     offset = 8
     seen_header = seen_pixels = seen_end = False
+    pixels = hashlib.sha256()
     while offset < len(data):
         if len(data) - offset < 12:
             raise ValueError("TRUNCATED_PNG_CHUNK")
@@ -72,6 +73,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str]:
             raise ValueError("PNG_IHDR_MISSING")
         if label == b"IDAT":
             seen_pixels = True
+            pixels.update(data[offset + 8:payload_end])
         if label == b"IEND":
             if seen_end or length != 0 or next_offset != len(data):
                 raise ValueError("PNG_IEND_OR_TRAILING_DATA")
@@ -79,7 +81,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str]:
         offset = next_offset
     if not (seen_header and seen_pixels and seen_end):
         raise ValueError("PNG_REQUIRED_CHUNKS_MISSING")
-    return width, height, sha
+    return width, height, sha, pixels.hexdigest()
 
 
 def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
@@ -112,6 +114,7 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
     root = (screenshots or manifest_path.parent).resolve()
     seen_keys: set[tuple[str, str, str]] = set()
     seen_hashes: set[str] = set()
+    seen_pixel_streams: set[str] = set()
     count = 0
     for shot in shots:
         if not isinstance(shot, dict):
@@ -132,15 +135,18 @@ def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
         if file.is_symlink() or not file.resolve().is_relative_to(root):
             continue
         try:
-            width, height, sha = verified_png_integrity(file)
+            width, height, sha, pixel_sha = verified_png_integrity(file)
         except (OSError, ValueError):
             continue
         if key[1] == "pc" and (width < 1280 or height < 720):
             continue
-        if sha in seen_hashes:
+        # Ancillary PNG metadata can change the file SHA without changing a
+        # single pixel. Count the same image at most once across 32 slots.
+        if sha in seen_hashes or pixel_sha in seen_pixel_streams:
             continue
         seen_keys.add(key)
         seen_hashes.add(sha)
+        seen_pixel_streams.add(pixel_sha)
         count += 1
     return count
 

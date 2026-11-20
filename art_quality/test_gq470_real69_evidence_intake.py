@@ -237,6 +237,28 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
         png.write_bytes(good)
         self.assertEqual(actual_png_count(manifest, self.root), 1)
 
+
+    def test_metadata_only_png_duplicates_do_not_inflate_image_count(self):
+        # Fixture index 1 and 257 have identical RGB/IDAT, but their tEXt
+        # chunk differs. Unique file SHA is not enough for a real-image tally.
+        first, second = self.root / "pixel_a.png", self.root / "pixel_b.png"
+        first.write_bytes(synthetic_png(1))
+        second.write_bytes(synthetic_png(257))
+        self.assertNotEqual(hashlib.sha256(first.read_bytes()).hexdigest(),
+                            hashlib.sha256(second.read_bytes()).hexdigest())
+        manifest = self.root / "metadata_only_dupe.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": "castle", "device": "pc", "version": "before",
+                 "file": first.name},
+                {"scene": "castle", "device": "pc", "version": "after",
+                 "file": second.name},
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        second.write_bytes(synthetic_png(2))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):
         # No real captures: the synthetic manifest can only produce BLOCKED.
         m = self.root / "manifest.json"
