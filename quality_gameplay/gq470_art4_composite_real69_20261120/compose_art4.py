@@ -187,11 +187,16 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
                         'MarketplaceService', 'TakeDamage', 'FireServer(')
     for sl in SLICES:
         original, updated = before[sl.target].decode(), after[sl.target].decode()
+        # Reject budget markers that exist only in Luau line comments. This
+        # remains a source gate, not a substitute for engine or image evidence.
+        active_lines = "\n".join(line.split("--", 1)[0]
+                                 for line in updated.splitlines())
         for marker in must_have[sl.pr]:
-            demand(marker in updated, "ART_BUDGET_MARKER_" + str(sl.pr))
+            demand(marker in active_lines,
+                   "ART_BUDGET_ACTIVE_MARKER_" + str(sl.pr))
             if marker[-1].isdigit():
-                end = updated.index(marker) + len(marker)
-                demand(end == len(updated) or not updated[end].isdigit(),
+                end = active_lines.index(marker) + len(marker)
+                demand(end == len(active_lines) or not active_lines[end].isdigit(),
                        "ART_BUDGET_NUMERIC_SUFFIX_" + str(sl.pr))
         for marker in no_new_authority:
             demand(updated.count(marker) == original.count(marker),
@@ -273,7 +278,23 @@ def art_budget_self_test() -> None:
         except ValueError:
             continue
         raise AssertionError("RED_ART6_PHYSICS_MUTANT_" + str(index))
-    print("GQ470_ART6_14_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
+    # A commented-out nominal budget cannot authorize a larger active limit.
+    for pr, original_marker, bad_marker in (
+            (924, 'label.MaxDistance=22', 'label.MaxDistance=222'),
+            (925, 'b.MaxDistance=25', 'b.MaxDistance=255'),
+            (928, 'local MAX_KO_BURSTS_PER_SEC=6',
+             'local MAX_KO_BURSTS_PER_SEC=60')):
+        route = next(sl.target for sl in SLICES if sl.pr == pr)
+        broken = dict(after)
+        forged = '-- ' + original_marker + '\n' + bad_marker
+        broken[route] = after[route].replace(
+            original_marker.encode(), forged.encode(), 1)
+        try:
+            art_budget_gate(before, broken)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART6_COMMENTED_BUDGET_MUTANT_" + str(pr))
+    print("GQ470_ART6_17_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
 
 
 def verify_formal(root: Path) -> tuple[dict, dict[str, bytes]]:
