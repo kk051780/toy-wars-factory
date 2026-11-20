@@ -124,6 +124,30 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
         two.write_bytes(synthetic_png(2))
         self.assertEqual(actual_png_count(manifest, self.root), 2)
 
+    def test_invalid_first_duplicate_does_not_hide_valid_png(self):
+        # A broken first capture must not consume the sole camera slot.
+        # The shared manifest validator still flags duplicate rows as NO_GO.
+        good = self.root / "good.png"
+        good.write_bytes(synthetic_png(87))
+        manifest = self.root / "invalid_first_duplicate.json"
+        manifest.write_text(json.dumps({
+            "schema": "P0D_ART_STUDIO_EVIDENCE_V1",
+            "before_head": "f" * 40, "after_head": HEAD,
+            "after_place_sha256": self.sha,
+            "shots": [
+                {"scene": "forest", "device": "pc", "version": "after",
+                 "file": "missing.png"},
+                {"scene": "forest", "device": "pc", "version": "after",
+                 "file": "good.png"},
+            ],
+            "ratings": {}, "performance": {},
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        result = self.check(manifest, self.root)
+        self.assertEqual(result["image_evidence"]["actual_distinct_valid_png_files"], 1)
+        self.assertEqual(result["image_evidence"]["status"], "BLOCKED")
+        self.assertEqual(result["art_gate"], "ART_NO_GO")
+
     def test_untrusted_manifest_shapes_fail_closed_with_report(self):
         # Malformed JSON structures must not crash the evidence intake CLI.
         # They cannot become visual proof, even with a valid source Place.
