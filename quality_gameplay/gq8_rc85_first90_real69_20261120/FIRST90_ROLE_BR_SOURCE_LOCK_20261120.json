@@ -1,0 +1,29 @@
+{
+  "schema": "EGGRUMBLE_FIRST90_ROLE_BR_ONE_SOURCE_LOCK_V1",
+  "feature_id": "FB014_FIRST90_ROLE_MODE_PARITY",
+  "official_target": "rc/p0d-s1-kids-rc01",
+  "parent_official_head": "967f57cf04d71dcbf52dab3e244c8d7065cc77a0",
+  "selected_profile": "REAL69",
+  "selected_script_count": 69,
+  "one_changed_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90",
+  "source_file": "quality_gameplay/gq8_rc85_first90_real69_20261120/EGGRUMBLE_LegacyFirst90.client.luau",
+  "source_class": "LocalScript",
+  "original_sha256": "15b2da4db44b603b3d90070cf16f7c01d3e488c9009e3347150c0efd86494e99",
+  "patched_sha256": "cd346ca76f8c215219a7c31e0795b3e113a146eaab9c003cd5559eaf46919d5d",
+  "server_expected_attributes": [
+    "EGGRUMBLE_SelectedRole",
+    "EGGRUMBLE_Role",
+    "EGGRUMBLE_QueuedMode"
+  ],
+  "server_canonical_modes": [
+    "TEAM",
+    "BATTLE_ROYALE"
+  ],
+  "scope": "Studio-only first90 local hint; no new server, damage, score, data, remote writer",
+  "rollback": "restore original exact 15b2da4d... client source; all other REAL69 source routes immutable",
+  "studio_solo": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NO_GO",
+  "paid_publish": false
+}
