@@ -25,7 +25,16 @@ jobs:
           python3 -m py_compile quality_gameplay/gq470_objective_art_real69_20261120/patch_objective69.py
           python3 -B quality_gameplay/gq470_objective_art_real69_20261120/patch_objective69.py --self-test
           test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44691719095 --jq '.head_sha+" "+.conclusion')" = "da5ca812b4852f78ffd54a49617e7d4cede75d15 success"
-          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = 'da5ca812b4852f78ffd54a49617e7d4cede75d15' || { echo RED_STALE_RC; exit 1; }
+          # A-PREP can validate its pinned immutable official artifact even when the
+          # unique B writer moves the formal RC to a verified descendant. It never
+          # authorizes B adoption without re-pinning/rebuilding against fresh HEAD.
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          PINNED='da5ca812b4852f78ffd54a49617e7d4cede75d15'
+          RELATION="$(gh api "repos/$GITHUB_REPOSITORY/compare/$PINNED...$LIVE" --jq .status)"
+          test "$RELATION" = ahead -o "$RELATION" = identical || { echo RED_OFFICIAL_DIVERGED_FROM_PINNED_SOURCE; exit 1; }
+          if [ "$LIVE" != "$PINNED" ]; then
+            echo "SOURCE_ONLY_STALE_FOR_B_ADOPTION_REPIN_TO_FRESH_HEAD=$LIVE"
+          fi
           if [ "$GITHUB_EVENT_NAME" = 'pull_request' ]; then
             PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_HEAD"
