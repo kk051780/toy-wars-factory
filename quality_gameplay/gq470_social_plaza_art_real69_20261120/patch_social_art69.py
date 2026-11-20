@@ -26,7 +26,11 @@ roofLeft.CFrame=CFrame.new(center+Vector3.new(-4.4,9.2,0))*CFrame.Angles(0,0,mat
 roofLeft.CastShadow=false
 local roofRight=part("PhotoRoof_Right",Vector3.new(4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)
 roofRight.CFrame=CFrame.new(center+Vector3.new(4.4,9.2,0))*CFrame.Angles(0,0,math.rad(-13))
-roofRight.CastShadow=false'''
+roofRight.CastShadow=false
+-- The ridge cap hides the flat seam between both roof planes with one low-cost,
+-- nonphysical slate beam. It does not introduce another sign or prompt.
+local ridge=part("PhotoRoof_Ridge",Vector3.new(0,10.25,0),Vector3.new(1.4,.85,12.5),Color3.fromRGB(52,91,122),Enum.Material.Slate,false)
+ridge.CastShadow=false'''
 EDITS = (
     ("b.Size=UDim2.fromOffset(180,50)", "b.Size=UDim2.fromOffset(136,38)"),
     ("b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at",
@@ -73,7 +77,9 @@ def transform(source: str) -> str:
     need('b.Size=UDim2.fromOffset(136,38)' in source and
          'b.MaxDistance=25' in source, "LABEL_BOUNDS")
     need('roofLeft.CastShadow=false' in source and
-         'roofRight.CastShadow=false' in source, "ROOF_GPU")
+         'roofRight.CastShadow=false' in source and
+         'ridge.CastShadow=false' in source and
+         'PhotoRoof_Ridge' in source, "ROOF_GPU")
     need('CanQuery=solid' in source and
          'partCount+=1' in source, "EXISTING_PART_POLICY")
     need("RemoteEvent" not in NEW_ROOF and
@@ -91,7 +97,9 @@ def self_test() -> None:
         + "\n".join(old for old, _ in EDITS) + "\n"
     )
     updated = transform(original)
-    need(updated.count("PhotoRoof_") == 2, "TWO_PITCHED_ROOFS")
+    need(updated.count("PhotoRoof_") == 3 and
+         updated.count('ridge.CastShadow=false') == 1,
+         "TWO_PITCHED_ROOFS_AND_ONE_RIDGE_CAP")
     need('GQ8_TradeSettlementDisabled' in updated, "TRADE_GUARD")
     mutants = [
         updated,
@@ -139,8 +147,8 @@ def apply(root: Path) -> None:
         "exact_untouched_selected_sources": 68, "script_count": 69,
         "world_label_pixels_before": [180, 50], "world_label_pixels_after": [136, 38],
         "world_label_distance_before": 42, "world_label_distance_after": 25,
-        "photo_roof_parts_before": 1, "photo_roof_parts_after": 2,
-        "net_new_visual_parts": 1, "new_ui_instances": 0, "new_authority": False,
+        "photo_roof_parts_before": 1, "photo_roof_parts_after": 3,
+        "net_new_visual_parts": 2, "new_ui_instances": 0, "new_authority": False,
         "rollback": OFF, "studio_visual": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "kid_fun": "NOT_TESTED",
         "owner_accepted": False
