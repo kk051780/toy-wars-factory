@@ -216,7 +216,7 @@ jobs:
               'source_only_if_run_green':True,'art_gate':'ART_NO_GO',
           }
           (dst.parent.parent/'B220_SHOREFACET_MANIFEST.json').write_text(
-              json.dumps(manifest,ensure_ascii=False,indent=2,sort_keys=True)+'\\n')
+              json.dumps(manifest,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
           assert sum(p.is_file() for p in dst.parent.parent.rglob('*'))==3
           print('GQ470_B220_LSS_ART_ONE_SOURCE_PACKAGE_SOURCE_PASS',head)
           PY
