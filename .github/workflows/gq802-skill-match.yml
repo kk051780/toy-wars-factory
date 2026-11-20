@@ -1,0 +1,55 @@
+name: GQ802 novice party fairness skill-match native gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq802_skill_match_20261118/**'
+      - '.github/workflows/gq802-skill-match.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-cohorts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq802_native
+          persist-credentials: false
+      - run: |
+          set -euo pipefail
+          cmake -S _gq802_native -B /tmp/gq802_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - run: |
+          set -euo pipefail
+          root=quality_gameplay/gq802_skill_match_20261118
+          for f in "$root"/*.luau; do /tmp/gq802_native/luau-compile --text "$f" >/dev/null; done
+          /tmp/gq802_native/luau "$root/test_skill_match_native.luau" | tee /tmp/gq802_match.log
+          grep -q GQ802_SKILL_MATCH_NATIVE_8_16_PARTY_BALANCE_ANTI_DUP_PASS /tmp/gq802_match.log
+          /tmp/gq802_native/luau "$root/test_match_teleport_native.luau" | tee /tmp/gq802_route.log
+          grep -q GQ802_MATCH_ROUTE_NATIVE_LIVE_SERVICE_BOUNDARY_GUID_CLAIM_RETRY_FAILSAFE_PASS /tmp/gq802_route.log
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau")
+          s=p.read_text()
+          for marker in ("MemoryStoreService", "TeleportService", "Instance.new(",
+                         "DataStoreService", "OnServerEvent:Connect(", "Humanoid.Health",
+                         "MarketplaceService", "workspace.Gravity"):
+              # Check EXECUTABLE source only, not the ownership comment header.
+              code="\n".join(line.split("--",1)[0] for line in s.splitlines())
+              assert marker not in code, marker
+          bridge=Path("quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau").read_text()
+          assert 'ReservedServerId=id' in bridge and 'TeleportAsync(' in bridge
+          # Reject the deprecated routing APIs and any client network authority
+          for forbidden in ("ReserveServerAsync", "ReservedServerAccessCode", "ShouldReserveServer",
+                            "OnServerEvent:Connect(", "RemoteEvent"):
+              assert forbidden not in bridge, forbidden
+          print("GQ802_NATIVE_ROUTE_GUID_ONLY_NO_DEPRECATED_TELEPORT_PASS")
+          PY
