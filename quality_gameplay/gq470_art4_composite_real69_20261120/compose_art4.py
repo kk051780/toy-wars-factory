@@ -326,6 +326,18 @@ def art_budget_self_test() -> None:
         ' local MAX_TRACKED_PARTS=1800', ';local MAX_TRACKED_PARTS=1800')
     sample[925] = sample[925].replace(
         ' b.MaxDistance=25', ';b.MaxDistance=25')
+    # The compact synthetic source puts multiple statements on one line.
+    # Separate trailing tokens so the value parser checks the full literal.
+    sample[924] = sample[924].replace(
+        ' text.TextStrokeTransparency', ';text.TextStrokeTransparency')
+    sample[926] = sample[926].replace(
+        ' local function blocksAvatar(', ';local function blocksAvatar(')
+    sample[925] = sample[925].replace(
+        ' part("PhotoRoof_Left"', ';part("PhotoRoof_Left"')
+    sample[928] = sample[928].replace(
+        ' for side=-1,1,2 do', ';for side=-1,1,2 do')
+    sample[929] = sample[929].replace(
+        ' TAPERED_WEAPONS', ';TAPERED_WEAPONS')
     after = {sl.target: sample[sl.pr].encode() for sl in SLICES}
     before = dict(after)
     for sl in SLICES:
