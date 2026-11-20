@@ -1,0 +1,78 @@
+{
+  "name": "EGGRUMBLE_V3_STUDIO_BATTLE_SOURCE_ONLY",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "EGGRUMBLE_CastleMatchRules": {
+        "$path": "EGGRUMBLE_CastleMatchRules.luau"
+      },
+      "EGGRUMBLE_BotPathRouter": {
+        "$path": "EGGRUMBLE_BotPathRouter.luau"
+      },
+      "EGGRUMBLE_BotActors": {
+        "$path": "EGGRUMBLE_BotActors.luau"
+      },
+      "EGGRUMBLE_SwarmCombat": {
+        "$path": "EGGRUMBLE_SwarmCombat.luau"
+      },
+      "EGGRUMBLE_LobbyCastleModesPreview": {
+        "$path": "EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+      },
+      "EGGRUMBLE_InteractionGuard": {
+        "$path": "EGGRUMBLE_InteractionGuard.luau"
+      },
+      "EGGRUMBLE_SevenRoleCombat": {
+        "$path": "EGGRUMBLE_SevenRoleCombat.luau"
+      },
+      "EGGRUMBLE_MatchResultService": {
+        "$path": "EGGRUMBLE_MatchResultService.luau"
+      },
+      "EGGRUMBLE_CombatBalance": {
+        "$path": "EGGRUMBLE_CombatBalance.luau"
+      },
+      "EGGRUMBLE_SkillFX": {
+        "$path": "EGGRUMBLE_SkillFX.luau"
+      },
+      "EGGRUMBLE_RoundReplay": {
+        "$path": "EGGRUMBLE_RoundReplay.luau"
+      },
+      "EGGRUMBLE_AttackGeometry": {
+        "$path": "EGGRUMBLE_AttackGeometry.luau"
+      },
+      "EGGRUMBLE_ImpactFeedback": {
+        "$path": "EGGRUMBLE_ImpactFeedback.luau"
+      },
+      "EGGRUMBLE_WeaponSilhouettes": {
+        "$path": "EGGRUMBLE_WeaponSilhouettes.luau"
+      },
+      "EGGRUMBLE_DivineMantle": {
+        "$path": "EGGRUMBLE_DivineMantle.luau"
+      },
+      "EGGRUMBLE_FieldItemPickups": {
+        "$path": "EGGRUMBLE_FieldItemPickups.luau"
+      },
+      "EGGRUMBLE_RaidItemIntake": {
+        "$path": "EGGRUMBLE_RaidItemIntake.luau"
+      },
+      "EGGRUMBLE_NeutralStoneGiant": {
+        "$path": "EGGRUMBLE_NeutralStoneGiant.luau"
+      },
+      "EGGRUMBLE_BossSessionFence": {
+        "$path": "EGGRUMBLE_BossSessionFence.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "EGGRUMBLE_CombatFeel": {
+          "$path": "EGGRUMBLE_CombatFeel.client.luau"
+        },
+        "EGGRUMBLE_ProceduralSkills": {
+          "$path": "EGGRUMBLE_ProceduralSkills.client.luau"
+        }
+      }
+    }
+  }
+}

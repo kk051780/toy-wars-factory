@@ -1,0 +1,57 @@
+name: EGGRUMBLE V3 egg vault lifecycle real Luau source regression
+on:
+  push:
+    branches: [feature/p0d-pqg-seven-hero-playable-20261116-01]
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_EggVaultLifecycle.spec.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/run_egg_vault_native.luau'
+      - '.github/workflows/p0d-eggrumble-v3-egg-vault-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  egg-vault-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Build pinned native Luau interpreter and source compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/eggrumble_v3_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/eggrumble_v3_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Execute actual original pure rules in native interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          mkdir -p /tmp/eggrumble_v3_vault_case
+          cp "$root/EGGRUMBLE_CastleMatchRules.luau" /tmp/eggrumble_v3_vault_case/Rules.luau
+          cp "$root/tests/EGGRUMBLE_EggVaultLifecycle.spec.luau" /tmp/eggrumble_v3_vault_case/Spec.luau
+          cp "$root/tests/run_egg_vault_native.luau" /tmp/eggrumble_v3_vault_case/Runner.luau
+          sha256sum /tmp/eggrumble_v3_vault_case/*.luau
+          for f in /tmp/eggrumble_v3_vault_case/*.luau; do /tmp/eggrumble_v3_luau/luau-compile "$f" >/dev/null; done
+          cd /tmp/eggrumble_v3_vault_case
+          /tmp/eggrumble_v3_luau/luau Runner.luau | tee native_result.log
+          grep -q EGGRUMBLE_V3_EGG_VAULT_LIFECYCLE_NATIVE_PASS_SOURCE_ONLY native_result.log
+          printf '%s\n' 'STUDIO_NOT_RUN' 'ANDROID_NOT_RUN' 'OFFICIAL_RC_NOT_INTEGRATED' 'OWNER_ACCEPTED=0' > LIMITATIONS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: EGGRUMBLE-V3-EGG-VAULT-NATIVE-SOURCE-ONLY
+          path: |
+            /tmp/eggrumble_v3_vault_case/native_result.log
+            /tmp/eggrumble_v3_vault_case/LIMITATIONS.txt
+          if-no-files-found: ignore
+          retention-days: 7

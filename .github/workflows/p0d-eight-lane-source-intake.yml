@@ -1,0 +1,29 @@
+name: P0D isolated eight-lane source contract intake
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-eight-lane-source-intake.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python source contract tests (all isolated lanes)
+        run: |
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests \
+            -p 'test_*contract.py' -v
+      - name: Report source readiness separately from official RC status
+        run: |
+          python3 -B handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/p0d_rc_intake_readiness.py | tee "$RUNNER_TEMP/p0d-rc-intake.json"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0d-eight-lane-source-intake
+          path: ${{ runner.temp }}/p0d-rc-intake.json
+          retention-days: 7

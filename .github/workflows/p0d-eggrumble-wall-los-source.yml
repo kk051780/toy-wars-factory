@@ -1,0 +1,90 @@
+name: P0D EGGRUMBLE wall line-of-sight SOURCE regression
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-wall-los-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-eggrumble-los-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-wall-los:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regression for real 3D AI/human strikes blocked by solid castle walls
+        run: |
+          python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_hero_line_of_sight_contract.py' -v
+      - name: Regression for neutral swarm real source and KO attribution
+        run: |
+          python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_swarm_wall_los_contract.py' -v
+      - name: Validate V3 Studio 5-script source wiring and wall-gated AI
+        run: |
+          python3 -B -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_world_collision_contract.py' -v
+          python3 -B -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_v3_studio_project_wiring.py' -v
+      - name: Pinned Rojo source-exact Studio preview Place build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo_v3.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo_v3.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_rojo_v3.zip') as z:
+              names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              binary=Path('/tmp/p0d_rojo_v3')
+              binary.write_bytes(z.read(names[0]))
+              binary.chmod(0o755)
+          PY
+          /tmp/p0d_rojo_v3 build handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/EGGRUMBLE_V3_STUDIO_SOURCE_ONLY.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,xml.etree.ElementTree as ET
+          base=Path('handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116')
+          expected={
+              'EGGRUMBLE_CastleMatchRules':('ModuleScript','EGGRUMBLE_CastleMatchRules.luau'),
+              'EGGRUMBLE_BotPathRouter':('ModuleScript','EGGRUMBLE_BotPathRouter.luau'),
+              'EGGRUMBLE_BotActors':('ModuleScript','EGGRUMBLE_BotActors.luau'),
+              'EGGRUMBLE_SwarmCombat':('ModuleScript','EGGRUMBLE_SwarmCombat.luau'),
+              'EGGRUMBLE_LobbyCastleModesPreview':('Script','EGGRUMBLE_LobbyCastleModesPreview.server.luau')
+          }
+          built=Path('artifacts/EGGRUMBLE_V3_STUDIO_SOURCE_ONLY.rbxlx')
+          tree=ET.fromstring(built.read_bytes())
+          got={}
+          for item in tree.iter('Item'):
+              prop=item.find('Properties')
+              if prop is None:continue
+              name=prop.findtext("string[@name='Name']")
+              if name not in expected:continue
+              assert name not in got,('duplicate Script',name)
+              code=prop.findtext("string[@name='Source']")
+              if code is None:code=prop.findtext("ProtectedString[@name='Source']")
+              assert code is not None,('no SOURCE',name)
+              cls,source=expected[name]
+              assert item.attrib['class']==cls,(name,item.attrib['class'],cls)
+              assert code.replace('\r\n','\n')==(base/source).read_text(encoding='utf-8').replace('\r\n','\n'),('source mismatch',name)
+              got[name]=True
+          assert set(got)==set(expected),(set(got),set(expected))
+          digest=hashlib.sha256(built.read_bytes()).hexdigest()
+          print('EGGRUMBLE_V3_FIVE_REAL_STUDIO_SOURCE_IDENTITIES_PASS',len(got))
+          print('PRIVATE_SOURCE_ONLY_PLACE_BYTES',built.stat().st_size,'SHA256',digest)
+          Path('artifacts/SOURCE_ONLY_STATUS.txt').write_text(
+              'Rojo 5/5 source identities PASS\nStudio real play NOT_RUN\nAndroid NOT_RUN\nOfficial RC NOT_INTEGRATED\nOWNER_ACCEPTED=0\n',encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-V3-FIVE-SCRIPT-ROJO-SOURCE-ONLY
+          path: artifacts/
+          retention-days: 7
+      - name: Report engine proof boundary
+        run: |
+          echo 'SOURCE test only. Native Luau / Roblox Studio / Android / #420 / OWNER remain NOT_RUN.'
