@@ -25,7 +25,7 @@ def audit(src: str) -> dict:
         ("SIDE_OFFSET", 20, "CORRIDOR_OFFSET"),
         ("MIN_ANCHOR_SEPARATION", 24, "UNIQUE_ANCHORS"),
     ):
-        statements = re.findall(r"(?m)^\\s*local\\s+" + symbol + r"\\s*=\\s*(\\d+)\\s*$", src)
+        statements = re.findall(r"(?m)^\s*local\s+" + symbol + r"\s*=\s*(\d+)\s*$", src)
         if statements != [str(amount)]: raise ValueError(reason)
     if src.count("makePart(decoration,") != 4: raise ValueError("GEOMETRY_COUNT")
     if any(name not in src for name in PART_NAMES): raise ValueError("DISTINCT_PARTS")
