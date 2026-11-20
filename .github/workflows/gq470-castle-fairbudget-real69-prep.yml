@@ -76,6 +76,37 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$R/EGGRUMBLE_REAL69.project.json" --place "$R/EGGRUMBLE_REAL69_PRIVATE.rbxlx" --count 69
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$R/OFF69_CASTLE_BUDGET/EGGRUMBLE_REAL69.project.json" --place "$R/OFF69_CASTLE_BUDGET/REBUILT_OFF.rbxlx" --count 69
           echo GQ470_CASTLE_ROJO_69_ON_OFF_PASS_ART_NO_GO
+      - name: Legacy 17-family and 48-flag selected-source regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,json,os
+          p=pathlib.Path(os.environ['GQ470_REAL69_BASE'])/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          receipt=json.loads(p.read_text())
+          assert receipt['gq470_castle_fairbudget']['other_68_exact']
+          receipt['build_head']=os.environ['GITHUB_SHA']
+          p.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$GQ470_REAL69_BASE" --report "$GQ470_REAL69_BASE/CASTLE_FAIRBUDGET_LEGACY48.json"
+          python3 - <<'PY'
+          import json,pathlib,os,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          root=pathlib.Path(os.environ['GQ470_REAL69_BASE'])
+          now=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          old=project_scan(root/'OFF69_CASTLE_BUDGET','EGGRUMBLE_REAL69.project.json')
+          assert len(now)==len(old)==69 and set(now)==set(old)
+          assert {k for k in now if now[k]['sha256']!=old[k]['sha256']}=={'ServerScriptService/EGGRUMBLE_FlagshipFieldArt'}
+          markers=marker_check(now)
+          assert len(markers)==17
+          (root/'CASTLE_FAIRBUDGET_LEGACY17.json').write_text(json.dumps({
+            'source_marker_families':17,'families':markers,
+            'other_68_exact':True,'studio_android':'NOT_TESTED'},ensure_ascii=False,indent=2)+'\n')
+          print('GQ470_CASTLE_REAL69_17_FAMILIES_48_INVENTORY_PASS_NOT_ENGINE')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-CASTLE-FAIRBUDGET-REAL69-PREP-NOT-FORMAL
@@ -84,5 +115,7 @@ jobs:
             /tmp/gq470-castle-base/REAL69_LEGACY_INTAKE_RECEIPT.json
             /tmp/gq470-castle-base/EGGRUMBLE_REAL69_PRIVATE.rbxlx
             /tmp/gq470-castle-base/sources/**
+            /tmp/gq470-castle-base/CASTLE_FAIRBUDGET_LEGACY17.json
+            /tmp/gq470-castle-base/CASTLE_FAIRBUDGET_LEGACY48.json
           if-no-files-found: error
           retention-days: 7
