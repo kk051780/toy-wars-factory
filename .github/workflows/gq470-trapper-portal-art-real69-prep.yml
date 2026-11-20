@@ -122,6 +122,22 @@ jobs:
           python3 -B "$EXPORT" --base /tmp/trapper-art --out /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY
           python3 -B "$EXPORT" --base /tmp/trapper-art --out /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY --check
           echo TRAPPER_B220_SOURCE_MANIFEST_OLD_NEW_SHA_CLASS_EXACT_NOT_FORMAL
+      - name: Exact matched-camera 32-slot ART420 capture contract, never fake PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          CAPTURE=quality_gameplay/gq470_trapper_portal_art_real69_20261121/capture_contract.py
+          python3 -m py_compile "$CAPTURE"
+          python3 -B "$CAPTURE" --self-test
+          python3 -B "$CAPTURE" --out /tmp/trapper-art/TRAPPER_ART_32_SLOT_CAPTURE_SPEC_NO_PNG.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/trapper-art/TRAPPER_ART_32_SLOT_CAPTURE_SPEC_NO_PNG.json").read_text())
+          assert len(r["capture_slots"])==32
+          assert r["received_png"]==0 and r["art_gate"]=="ART_NO_GO"
+          print("TRAPPER_32_MATCHED_CAMERA_CAPTURE_SLOTS_NOT_RENDERED")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-TRAPPER-PORTAL-ART-69-A-PREP-NOT-FORMAL
@@ -133,6 +149,7 @@ jobs:
             /tmp/trapper-art/TRAPPER_OFF_REBUILT.rbxlx
             /tmp/trapper-art/LEGACY48_AUDIT.json
             /tmp/trapper-art/ART_CHECK_REPORT.json
+            /tmp/trapper-art/TRAPPER_ART_32_SLOT_CAPTURE_SPEC_NO_PNG.json
             /tmp/trapper-art/B220_TRAPPER_PORTAL_SOURCE_ONLY/**
           if-no-files-found: error
           retention-days: 7
