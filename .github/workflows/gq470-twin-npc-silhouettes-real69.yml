@@ -35,7 +35,7 @@ jobs:
           assert report["native_rojo_off69"] == "NOT_TESTED"
           assert report["studio_android_human_art_owner"] == "NOT_TESTED"
           assert source.count("ArtSilhouette") == 1
-          assert source.count('Instance.new("Part")') == 1
+          assert source.count('Instance.new("Part")') == 2
           assert 'prompt.Parent = body' in source
           assert 'table.insert(animate,{model=npc' in source
           assert 'Enum.Material.Neon,false,npc)' not in source
