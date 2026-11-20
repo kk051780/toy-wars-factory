@@ -102,7 +102,7 @@ def transform(source: str) -> str:
     must('local Debris=game:GetService("Debris")' in source, "SERVICE_ANCHOR")
     for lock in ("local MAX_KO_BURSTS_PER_SEC=6", "local MAX_FEEDBACK_PER_SEC=18",
                  "function Feedback.hit(", "function Feedback.attacker(",
-                 "function Feedback.clear(", "if not budget(false)", "if not budget(true)"):
+                 "function Feedback.clear(", "if not budget(false)", "or not budget(true)"):
         must(lock in source, "ORIGINAL_CONTRACT")
     must("RemoteEvent" not in NEW and "TakeDamage" not in NEW and "DataStore" not in NEW, "NO_NEW_AUTHORITY")
     out = source.replace('local Debris=game:GetService("Debris")',
@@ -126,7 +126,7 @@ def self_test():
     for mutant in (patched, fixture.replace(OLD, ""), fixture.replace("MAX_KO_BURSTS_PER_SEC=6", "MAX_KO_BURSTS_PER_SEC=60"),
                    fixture.replace('local Debris=game:GetService("Debris")', ""),
                    fixture.replace("function Feedback.attacker(", "function Attacker("),
-                   fixture.replace("if not budget(true)", "if budget(true)")):
+                   fixture.replace("or not budget(true)", "or budget(true)")):
         try:
             transform(mutant)
         except ValueError:
