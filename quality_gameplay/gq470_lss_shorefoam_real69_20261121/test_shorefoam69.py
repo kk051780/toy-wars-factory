@@ -66,6 +66,48 @@ class ShoreFoamSourceTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "RED_GQ470_SHOREFOAM_"):
                     patch(raw)
 
+    def test_foam_sightline_and_route_geometry_static_budget(self):
+        # A source-level geometry bound, NOT a claim of real camera visibility.
+        import math
+        self.assertIn("local xi=x-265+(i-1)*106", NEW)
+        self.assertIn("math.sin(i*1.73)*1.55", NEW)
+        self.assertIn("local width=47+(i%3)*5", NEW)
+        self.assertIn("local surfAngle=math.rad(sideways*(7+(i%3)*4))", NEW)
+        self.assertIn("foam.Shape=Enum.PartType.Cylinder", NEW)
+        self.assertIn("foam.CanQuery=false", NEW)
+        self.assertIn("foam.CastShadow=false", NEW)
+        self.assertIn("Enum.Material.SmoothPlastic,false,.33", NEW)
+        self.assertIn("p.CanCollide=collide; p.CanTouch=collide", self.committed)
+        bounds = []
+        for i in range(1, 7):
+            cx = -265 + (i-1)*106
+            cz = -63 + math.sin(i*1.73)*1.55
+            angle = math.radians((1 if i%2 == 0 else -1)*(7+(i%3)*4))
+            width = 47 + (i%3)*5
+            depth = 2.0 + (i%2)*.45
+            # Conservative projected bounding box for the shallow surf patch.
+            hx = abs(math.cos(angle))*width/2 + abs(math.sin(angle))*depth/2
+            hz = abs(math.sin(angle))*width/2 + abs(math.cos(angle))*depth/2
+            bounds.append((cx-hx,cx+hx,cz-hz,cz+hz))
+            # Public land dock is centered at shoreZ-92 with 18-stud depth.
+            # Surf near shoreZ-63 must not invade its public passage.
+            self.assertGreater(cz-hz, -83)
+            self.assertLess(cz+hz, -45)
+            self.assertLessEqual(width, 57)
+            self.assertLessEqual(depth, 2.45)
+        self.assertEqual(len(bounds), 6)
+        for current, following in zip(bounds, bounds[1:]):
+            self.assertGreater(following[0]-current[1], 35)
+
+    def test_visual_palette_is_less_glary_without_extra_surface(self):
+        old_brightness = sum((225,247,248))/3
+        variants = ((190,225,228), (207,235,237))
+        for tint in variants:
+            self.assertLess(sum(tint)/3, old_brightness)
+        self.assertEqual(NEW.count("foam=put("), OLD.count("foam=put("))
+        self.assertNotIn("local extraFoam=", NEW)
+        self.assertNotIn("Instance.new", NEW)
+
     def _archive(self, path: Path, *, corrupt: bool = False):
         # Fake inputs ONLY test verifier behaviour. Real CI must separately
         # download the pinned official 69-source workflow artifact.
