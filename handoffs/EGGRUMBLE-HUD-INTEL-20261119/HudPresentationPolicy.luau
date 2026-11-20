@@ -39,14 +39,20 @@ function M.layout(w, h, hand)
         }
     else
         local x = w - 50
-        local menuY = math.min(133, h * .18)
+        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121
+        -- On compact portrait screens the old y=h*.18 put MENU buttons
+        -- over the HP status strip. Reserve 7px clearance beneath it.
+        local menuY = clamp(h * .18, 64, 133)
+        -- The 320px-wide layout can draw MENU buttons nearer the edge
+        -- without stealing the central combat view.
+        local itemInset = if w <= 360 then 45 else 65
         p = {
             ATTACK = at(x, h - 67, 56, "攻撃"),
             JUMP = at(x, h - 138, 46, "ジャンプ"),
             DODGE = at(x - 66, h - 149, 42, "回避"),
-            INVUL = at(x - 102, h - 71, 46, "無敵"),
+            INVUL = at(x - 122, h - 71, 46, "無敵"),
             MUSOU = at(x - 66, h - 35, 46, "無双"),
-            ITEM = at(x - 65, menuY, 42, "道具"),
+            ITEM = at(x - itemInset, menuY, 42, "道具"),
             SKILL = at(x + 1, menuY, 42, "技"),
             CONTEXT = at(x - 145, h - 152, 40, "調べる"),
             MOVE = at(66, h - 75, 95, "移動"),
