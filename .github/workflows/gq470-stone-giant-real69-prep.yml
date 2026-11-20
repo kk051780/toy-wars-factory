@@ -60,14 +60,14 @@ jobs:
           sys.path.insert(0,"quality_gameplay/gq470_stonegiant_silhouette_real69_20261120")
           from patch_stone_giant69 import selected,ROUTE
           root=Path("/tmp/gq470-stone")
-          on=selected(root); off=selected(root/"OFF69_STONE_GIANT")
+          on=selected(root); off=selected(root/"OFF69_STONE_GIANT_SILHOUETTE")
           assert len(on)==len(off)==69 and set(on)==set(off)
           assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={ROUTE}
           for sources in (on,off):
               for src in sources.values():
                   subprocess.run(["/tmp/gq470-stone-luau/luau-compile","--text",str(src)],
                                  check=True,stdout=subprocess.DEVNULL)
-          print("GQ470_KO_NATIVE_ON69_OFF69_PASS")
+          print("GQ470_STONE_GIANT_NATIVE_ON69_OFF69_PASS")
           PY
       - name: Exact Rojo ON/OFF Place and source nonloss gate
         shell: bash
@@ -85,10 +85,10 @@ jobs:
               p.write_bytes(z.read(names[0]));p.chmod(0o755)
           PY
           /tmp/gq470-stone-rojo build /tmp/gq470-stone/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-stone/EGGRUMBLE_REAL69_PRIVATE.rbxlx
-          /tmp/gq470-stone-rojo build /tmp/gq470-stone/OFF69_STONE_GIANT/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-stone/OFF69_STONE_GIANT_REBUILT.rbxlx
-          cmp /tmp/gq470-stone/OFF69_STONE_GIANT_REBUILT.rbxlx /tmp/gq470-stone/OFF69_STONE_GIANT/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-stone-rojo build /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE_REBUILT.rbxlx
+          cmp /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE_REBUILT.rbxlx /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-stone/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-stone/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
-          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-stone/OFF69_STONE_GIANT/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-stone/OFF69_STONE_GIANT_REBUILT.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE_REBUILT.rbxlx --count 69
           python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
           python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-stone --report /tmp/gq470-stone/STONE_GIANT_LEGACY48_AUDIT.json
@@ -103,7 +103,7 @@ jobs:
           x["private_place_bytes"]=p.stat().st_size
           x["private_place_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
           f.write_text(json.dumps(x,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
-          print("GQ470_KO_ART_PRIVATE_CANDIDATE_BYTES",p.stat().st_size)
+          print("GQ470_STONE_GIANT_ART_PRIVATE_CANDIDATE_BYTES",p.stat().st_size)
           PY
           echo GQ470_STONE_GIANT_NATIVE_ROJO_OFF_LEGACY48_PASS_NOT_ART_PASS
       - uses: actions/upload-artifact@v4
@@ -114,7 +114,7 @@ jobs:
             /tmp/gq470-stone/REAL69_LEGACY_INTAKE_RECEIPT.json
             /tmp/gq470-stone/EGGRUMBLE_REAL69_PRIVATE.rbxlx
             /tmp/gq470-stone/sources/**
-            /tmp/gq470-stone/OFF69_STONE_GIANT_REBUILT.rbxlx
+            /tmp/gq470-stone/OFF69_STONE_GIANT_SILHOUETTE_REBUILT.rbxlx
             /tmp/gq470-stone/STONE_GIANT_LEGACY48_AUDIT.json
           if-no-files-found: error
           retention-days: 7
