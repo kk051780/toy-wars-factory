@@ -113,7 +113,7 @@ def need(condition: bool, code: str) -> None:
 def verify_contour_geometry(spec: str) -> None:
     """Fail closed on cliffs that crowd the routes or blow mobile visual bounds."""
     rows = re.findall(
-        r"\\{height=(\\d+),yaw=(-?\\d+),drift=(-?\\d+),depth=(\\d+),lean=(-?\\d+),notch=(\\d+)\\}",
+        r"\{height=(\d+),yaw=(-?\d+),drift=(-?\d+),depth=(\d+),lean=(-?\d+),notch=(\d+)\}",
         spec)
     need(len(rows) == 3, "THREE_DISTINCT_CONTOURS")
     seen = set()
