@@ -13,6 +13,7 @@ on:
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
+      - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -44,6 +45,7 @@ on:
       - 'quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/**'
       - 'quality_gameplay/gq8_rc85_first90_real69_20261120/**'
       - 'quality_gameplay/gq8_rc85_explore_toast_real69_20261120/**'
+      - 'quality_gameplay/gq8_p0_combat_visual_real69_20261120/**'
       - 'rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - 'tools/p0d_two_lane_queue.py'
@@ -1203,6 +1205,74 @@ jobs:
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_FB019_PR_BASE_DRIFT; exit 1; }
           fi
+      - name: "GQ470 P0 Combat UserId and neutral label LOD; Native/Rojo/OFF69"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_p0_combat_visual_real69_20261120/patch_combat_neutral69.py
+          python3 -B quality_gameplay/gq8_p0_combat_visual_real69_20261120/patch_combat_neutral69.py --self-test
+          python3 -B quality_gameplay/gq8_p0_combat_visual_real69_20261120/patch_combat_neutral69.py \
+            --base artifacts/real69 --head "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json,pathlib,subprocess,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('artifacts/real69')
+          old=project_scan(root/'off69_p0','EGGRUMBLE_REAL69.project.json')
+          new=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          changed={'ServerScriptService/EGGRUMBLE_SevenRoleCombat','ServerScriptService/EGGRUMBLE_SwarmCombat'}
+          assert set(old)==set(new) and len(new)==69
+          assert {k for k in old if old[k]['sha256']!=new[k]['sha256']}==changed
+          assert all(old[k]['class']==new[k]['class'] and old[k]['path']==new[k]['path'] for k in old)
+          receipt=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          assert all(receipt['source_hashes'][k]==new[k]['sha256'] for k in new)
+          for base,listing in [(root,new),(root/'off69_p0',old)]:
+            for entry in listing.values():
+              subprocess.run(['/tmp/gq863-luau/luau-compile','--text',str(base/entry['path'])],
+                             stdout=subprocess.DEVNULL,check=True)
+          print('GQ470_P0_TWO_SOURCE_NATIVE69_AND_OFF69_PASS')
+          PY
+          /tmp/gq863-rojo build artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq863-rojo build artifacts/real69/off69_p0/EGGRUMBLE_REAL69.project.json \
+            -o artifacts/real69/OFF69_P0_REBUILT.rbxlx
+          cmp artifacts/real69/OFF69_P0_REBUILT.rbxlx artifacts/real69/OFF69_PRE_GQ470_P0_EXACT.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real69/EGGRUMBLE_REAL69.project.json \
+            --place artifacts/real69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 - <<'PY'
+          import json,pathlib,hashlib,os,shutil,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=pathlib.Path('artifacts/real69')
+          receiptpath=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          receipt=json.loads(receiptpath.read_text())
+          place=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          receipt['gq470_p0_combat_neutral_visibility']['native_rojo_off69']='PASS_69_OF_69'
+          receipt['build_head']=os.environ['GITHUB_SHA']
+          receipt['private_place_bytes']=place.stat().st_size
+          receipt['private_place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          receiptpath.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
+          deliver=root/'delivery'
+          shutil.copy2(place,deliver/place.name)
+          shutil.copy2(receiptpath,deliver/receiptpath.name)
+          selected=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          for route in ('ServerScriptService/EGGRUMBLE_SevenRoleCombat',
+                        'ServerScriptService/EGGRUMBLE_SwarmCombat'):
+            p=pathlib.Path(selected[route]['path'])
+            (deliver/p).parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(root/p,deliver/p)
+          assert len(list(deliver.glob('*.rbxlx')))==1
+          print('GQ470_P0_REAL69_ONE_DELIVERY',place.stat().st_size)
+          PY
+          tar -czf artifacts/real69/delivery/OFF69_GQ470_P0_ROLLBACK.tar.gz -C artifacts/real69 \
+            off69_p0 OFF69_PRE_GQ470_P0_EXACT.rbxlx
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" ]; then
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_GQ470_FORMAL_HEAD_DRIFT; exit 1; }
+          else
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_GQ470_PR_BASE_STALE; exit 1; }
       - name: Final REAL69 69-route/17-family RC85+RC86 on REAL65 nonloss gate
         shell: bash
         run: |
