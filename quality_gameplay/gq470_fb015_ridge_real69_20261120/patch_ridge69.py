@@ -58,20 +58,31 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
    local h=contour.height+(if side>0 then 3 else 0)
    local turn=side*contour.yaw
    local lean=side*contour.lean
-   local basePart=createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
-    Vector3.new(18,h,contour.depth),
-    CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))
-     *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),
-    darkStone,Enum.Material.Slate)
-   if basePart then table.insert(bucket,basePart) end
-   -- Slightly interpenetrating limestone ridge cap: no floating crown or
-   -- broad horizontal neon slab, even from mirrored camera viewpoints.
-   local crownPart=createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
-    Vector3.new(11,4,contour.depth-6),
-    CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))
-     *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),
-    limestone,Enum.Material.Limestone)
-   if crownPart then table.insert(bucket,crownPart) end
+   -- Reserve both pieces before sculpting a complete profile. If the 320
+   -- scene cap is almost full, skip this pair rather than leave a bare wedge.
+   if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then
+    local basePart=createVisual(arena,art,"HorizonCliffBase_"..side.."_"..index,"Wedge",
+     Vector3.new(18,h,contour.depth),
+     CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))
+      *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),
+     darkStone,Enum.Material.Slate)
+    if basePart then
+     -- Matched limestone cap penetrates the base: no detached floating crown.
+     local crownPart=createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
+      Vector3.new(11,4,contour.depth-6),
+      CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))
+       *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),
+      limestone,Enum.Material.Limestone)
+     if crownPart then
+      table.insert(bucket,basePart)
+      table.insert(bucket,crownPart)
+     else
+      -- Defensive rollback for a failed crown allocation; no half cliff.
+      basePart:Destroy()
+      budgets[arena]=math.max(0,(budgets[arena] or 0)-1)
+     end
+    end
+   end
   end
  end
 end
@@ -183,6 +194,11 @@ def selftest() -> None:
     need("contour.depth-6" in result and "math.rad(-lean*1.4)" in result
          and "CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))" in result,
          "SCULPTED_CAP_AND_BASE_MISSING")
+    need("(budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA" in result
+         and "if basePart then" in result and "if crownPart then" in result
+         and "basePart:Destroy()" in result
+         and "budgets[arena]=math.max(0,(budgets[arena] or 0)-1)" in result,
+         "ATOMIC_TWOPART_RIDGE_AND_REFUND")
     need("for index=1,3 do" in result and "drawHorizonRidges" in result
          and "local ridgeContours" in result and "local contour=ridgeContours[index]" in result
          and "arena.Destroying:Once(function()" in result
@@ -201,6 +217,7 @@ def selftest() -> None:
         else:
             raise AssertionError("NEGATIVE_MUTANT_WAS_ACCEPTED")
     print("GQ470_RIDGE_SCULPTED_6_ANCHORS_12_WEDGES_6_GEOMETRY_MUTANTS_PASS")
+    print("GQ470_RIDGE_ATOMIC_TWO_PART_BUDGET_AND_REFUND_GUARD_PASS")
     print("GQ470_RIDGE_PATCH_AND_6_SOURCE_NEGATIVES_PASS")
 
 def apply(root: Path) -> None:
