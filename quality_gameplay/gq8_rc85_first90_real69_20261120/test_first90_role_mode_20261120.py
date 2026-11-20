@@ -11,6 +11,7 @@ import unittest
 
 HERE=Path(__file__).resolve().parent
 SRC=HERE/"EGGRUMBLE_LegacyFirst90.client.luau"
+LOCK=json.loads((HERE/"FIRST90_ROLE_BR_SOURCE_LOCK_20261120.json").read_text(encoding="utf-8"))
 ROUTE="StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90"
 ORIGINAL_SHA256="15b2da4db44b603b3d90070cf16f7c01d3e488c9009e3347150c0efd86494e99"
 OLD_BLOCK='''local function cue(now:number):string
@@ -43,6 +44,14 @@ class First90LiveServerContract(unittest.TestCase):
         restored=exact_rollback(SRC.read_bytes())
         self.assertEqual(hashlib.sha256(restored).hexdigest(),ORIGINAL_SHA256)
         self.assertLess(len(SRC.read_bytes())-len(restored),650)
+    def test_source_lock_and_single_role_source(self):
+        self.assertEqual(LOCK["selected_script_count"],69)
+        self.assertEqual(LOCK["one_changed_route"],ROUTE)
+        self.assertEqual(LOCK["source_class"],"LocalScript")
+        self.assertEqual(LOCK["original_sha256"],ORIGINAL_SHA256)
+        self.assertEqual(hashlib.sha256(SRC.read_bytes()).hexdigest(),LOCK["patched_sha256"])
+        self.assertEqual(LOCK["server_canonical_modes"],["TEAM","BATTLE_ROYALE"])
+
     def test_server_role_and_mode_are_correct_not_legacy_shorthand(self):
         src=SRC.read_text(encoding="utf-8")
         self.assertIn('local role=player:GetAttribute("EGGRUMBLE_SelectedRole")',src)
