@@ -928,6 +928,9 @@ jobs:
             --out artifacts/real69 \
             --source quality_gameplay/gq8_rc85_first90_real69_20261120/EGGRUMBLE_LegacyFirst90.client.luau \
             --head "$GITHUB_SHA"
+          EGGRUMBLE_SELECTED_BUILD=artifacts/real69 python3 -B -m unittest discover -v \
+            -s quality_gameplay/gq8_rc85_first90_real69_20261120 \
+            -p test_first90_role_mode_20261120.py
           python3 - <<'PY'
           import json,pathlib,sys,subprocess,hashlib
           sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
