@@ -1,0 +1,103 @@
+--- a/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau
++++ b/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau
+@@ -11,6 +11,7 @@
+ local MAX_VIEW_DISTANCE=130
+ local active:{[number]:any}={}
+ local listeners:{[number]:RBXScriptConnection}={}
++local characterListeners:{[number]:RBXScriptConnection}={}
+ local sequences:{[number]:number}={}
+ local DURATION={A=.26,B=.48,C=.82}
+ local function jointOf(character:Model,names:{string}):any
+@@ -87,7 +88,7 @@
+  listeners[uid]=p:GetAttributeChangedSignal("EGGRUMBLE_SkillCastSignature"):Connect(function()
+   readCast(p)
+  end)
+- p.CharacterRemoving:Connect(function(character)
++ characterListeners[uid]=p.CharacterRemoving:Connect(function(character)
+   local record=active[uid]
+   if record and record.char==character then
+    resetPose(record);active[uid]=nil
+@@ -98,6 +99,8 @@
+  local uid=p.UserId
+  local c=listeners[uid]
+  if c then c:Disconnect();listeners[uid]=nil end
++ local characterListener=characterListeners[uid]
++ if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end
+  local record=active[uid]
+  if record then resetPose(record);active[uid]=nil end
+  sequences[uid]=nil
+@@ -105,9 +108,35 @@
+ for _,p in ipairs(Players:GetPlayers()) do watch(p) end
+ Players.PlayerAdded:Connect(watch)
+ Players.PlayerRemoving:Connect(unwatch)
++-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.
++-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery
++-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.
++-- Normalized time is server-cast-driven; no server damage/skill timing changes.
++local function smoothstep(t:number):number
++ local x=math.clamp(t,0,1)
++ return x*x*(3-2*x)
++end
++local function motionProfile(t:number,slot:string):(number,number)
++ local u=math.clamp(t,0,1)
++ -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.
++ -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).
++ -- Longer B/C skills keep their previous pacing without changing server timing.
++ local strikeEnd=(slot=="A") and .36 or .42
++ local holdEnd=(slot=="A") and .62 or .54
++ if u<.18 then
++  return -.20*smoothstep(u/.18),0
++ elseif u<strikeEnd then
++  local strike=smoothstep((u-.18)/(strikeEnd-.18))
++  return -.20+1.20*strike,strike
++ elseif u<holdEnd then
++  return 1,1
++ else
++  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))
++  return recover,recover
++ end
++end
+ local function rotate(role:string,slot:string,t:number):(CFrame,CFrame,CFrame)
+- local pulse=math.sin(math.pi*math.clamp(t,0,1))
+- local snap=math.sin(math.pi*math.min(1,t*1.8))
++ local pulse,snap=motionProfile(t,slot)
+  local left=CFrame.new();local right=CFrame.new();local waist=CFrame.new()
+  if role=="WARRIOR" then
+   right=CFrame.Angles(-1.35*pulse,.3*snap,-.7*pulse)
+@@ -136,10 +165,24 @@
+   waist=CFrame.Angles(0,-.16*pulse,0)
+  end
+  if slot=="B" then
+-  right=right*CFrame.Angles(-.25*pulse,0,0)
++  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)
++  if role=="MAGE" or role=="ZOMBIE" then
++   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)
++  elseif role=="BUILDER" then
++   waist=waist*CFrame.Angles(0,-.14*snap,0)
++  end
+  elseif slot=="C" then
+   right=right*CFrame.Angles(-.45*pulse,0,-.18*pulse)
+   left=left*CFrame.Angles(-.55*pulse,0,.18*pulse)
++  if role=="WARRIOR" then
++   waist=waist*CFrame.Angles(0,-.19*snap,0)
++  elseif role=="NINJA" then
++   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)
++  elseif role=="BEAST" then
++   left=left*CFrame.Angles(-.12*snap,0,.14*snap)
++  elseif role=="TRAPPER" then
++   waist=waist*CFrame.Angles(-.10*snap,0,0)
++  end
+  end
+  return right,left,waist
+ end
+@@ -166,6 +209,10 @@
+    additive(record,js.right,r)
+    additive(record,js.left,l)
+    additive(record,js.waist,w)
++  else
++   -- Distance cull must unpose the avatar, not freeze an old swing in view.
++   resetPose(record)
++   active[uid]=nil
+   end
+  end
+ end)
