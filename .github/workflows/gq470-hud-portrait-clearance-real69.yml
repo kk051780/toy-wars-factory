@@ -1,0 +1,193 @@
+name: GQ470 REAL69 portrait HUD clearance ART source PREP
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_hud_portrait_clearance_real69_20261121/**'
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/HudPresentationPolicy.luau'
+      - '.github/workflows/gq470-hud-portrait-clearance-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  one-selected-module-art-prep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Immutable official 69-source artifact and patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCRIPT=quality_gameplay/gq470_hud_portrait_clearance_real69_20261121/prepare.py
+          python3 -B "$SCRIPT" --self-test
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p "$RUNNER_TEMP/gq470-portrait"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/gq470-portrait"
+          python3 -B "$SCRIPT" --base "$RUNNER_TEMP/gq470-portrait"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_hud_portrait_clearance_real69_20261121")
+          from prepare import TARGET,BASE,MARK,selected_map,patch_module
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-portrait"
+          r=json.loads((root/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          a=r["gq470_fb015_hud_portrait"]
+          assert a["formal_rc_base"]==BASE and a["selected_route"]==TARGET
+          assert a["source_count"]==69 and a["unchanged_selected_sources"]==68
+          assert r["source_classes"][TARGET]=="ModuleScript"
+          assert a["owner_accepted"] is False and a["formal_rc_adopted"] is False
+          p=selected_map(root)
+          original=(root/"OFF69_HUD_PORTRAIT_ROLLBACK"/p[TARGET].relative_to(root)).read_text()
+          modified=p[TARGET].read_text()
+          assert patch_module(original)==modified
+          assert modified.count(MARK)==1
+          assert (root/"HUD_PORTRAIT_NATIVE_TEST.luau").is_file()
+          print("REAL69_VISUAL_SOURCE_ONE_OF_69_CHANGED_ACTUAL_LUAU_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile 69 ON/OFF Luau and run 18 native viewport tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-portrait-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-portrait-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          ROOT="$RUNNER_TEMP/gq470-portrait"
+          /tmp/gq470-portrait-luau/luau-compile --text "$ROOT/HUD_PORTRAIT_NATIVE_TEST.luau" >/dev/null
+          /tmp/gq470-portrait-luau/luau "$ROOT/HUD_PORTRAIT_NATIVE_TEST.luau"
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_hud_portrait_clearance_real69_20261121")
+          from prepare import selected_map
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-portrait"
+          on=selected_map(root)
+          off=selected_map(root/"OFF69_HUD_PORTRAIT_ROLLBACK")
+          assert len(on)==len(off)==69
+          for p in list(on.values())+list(off.values()):
+            subprocess.run(["/tmp/gq470-portrait-luau/luau-compile","--text",str(p)],
+                           stdout=subprocess.DEVNULL,check=True)
+          print("REAL69_ON_OFF_138_ACTUAL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+      - name: Build real selected 69-source Rojo Place and inverse original
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-portrait-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-portrait-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-portrait-rojo.zip") as z:
+            entries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(entries)==1
+            dst=Path("/tmp/gq470-portrait-rojo")
+            dst.write_bytes(z.read(entries[0]))
+            dst.chmod(0o755)
+          PY
+          ROOT="$RUNNER_TEMP/gq470-portrait"
+          /tmp/gq470-portrait-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_PORTRAIT_CANDIDATE_PRIVATE.rbxlx"
+          /tmp/gq470-portrait-rojo build "$ROOT/OFF69_HUD_PORTRAIT_ROLLBACK/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_PORTRAIT_OFF69_PRIVATE.rbxlx"
+          cmp "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx" "$ROOT/GQ470_PORTRAIT_OFF69_PRIVATE.rbxlx"
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place "$ROOT/GQ470_PORTRAIT_CANDIDATE_PRIVATE.rbxlx" --count 69
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/OFF69_HUD_PORTRAIT_ROLLBACK/EGGRUMBLE_REAL69.project.json" --place "$ROOT/GQ470_PORTRAIT_OFF69_PRIVATE.rbxlx" --count 69
+          echo GQ470_ONE_SOURCE_REAL69_NATIVE_ROJO_OFF_ROLLBACK_PASS_NOT_STUDIO
+      - name: Verify 17 source families, 48 legacy flags, B220 genuine one-source packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gq470-portrait"
+          python3 - <<'PY'
+          import hashlib,json,os,shutil,sys
+          from pathlib import Path
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          sys.path.insert(0,"quality_gameplay/gq470_hud_portrait_clearance_real69_20261121")
+          from prepare import BASE,MARK,TARGET,selected_map
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["RUNNER_TEMP"])/"gq470-portrait"
+          on=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          off=project_scan(root/"OFF69_HUD_PORTRAIT_ROLLBACK","EGGRUMBLE_REAL69.project.json")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k]["sha256"]!=off[k]["sha256"]}=={TARGET}
+          assert on[TARGET]["class"]==off[TARGET]["class"]=="ModuleScript"
+          assert all(on[k]["class"]==off[k]["class"] for k in on)
+          assert len(marker_check(on))==17
+          rfile=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          receipt=json.loads(rfile.read_text())
+          status=receipt["gq470_fb015_hud_portrait"]
+          assert status["candidate_source_sha256"]==on[TARGET]["sha256"]
+          assert status["original_source_sha256"]==off[TARGET]["sha256"]
+          assert all(receipt["source_hashes"][k]==on[k]["sha256"] for k in on)
+          place=root/"GQ470_PORTRAIT_CANDIDATE_PRIVATE.rbxlx"
+          original=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          status["native_rojo"]="PASS_SOURCE_ONLY"
+          status["studio_android_fun"]="NOT_TESTED"
+          status["art_human"]="NOT_TESTED"
+          status["real_png"]=0
+          status["formal_rc_adopted"]=False
+          status["owner_accepted"]=False
+          receipt["candidate_private_place_bytes"]=place.stat().st_size
+          receipt["candidate_private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt["original_private_place_bytes"]=original.stat().st_size
+          receipt["source_only_head"]=os.environ["GITHUB_SHA"]
+          rfile.write_text(json.dumps(receipt,indent=2,sort_keys=True,ensure_ascii=False)+"\n")
+          bundle=root/"B220_HUD_PORTRAIT_SOURCE_ONLY"
+          bundle.mkdir()
+          paths=selected_map(root)
+          dst=bundle/"selected_sources"/"ReplicatedStorage"/"EGGRUMBLE_HudPresentationPolicy.luau"
+          dst.parent.mkdir(parents=True)
+          shutil.copy2(paths[TARGET],dst)
+          manifest={"kind":"ONE_SELECTED_SOURCE_ONLY_NOT_FORMAL",
+            "source_only_head":os.environ["GITHUB_SHA"],"base_official_sha":BASE,
+            "feature_id":MARK,"selected_route":TARGET,"class":"ModuleScript",
+            "source_count":69,"other_sources_exact":68,
+            "original_sha256":off[TARGET]["sha256"],
+            "candidate_sha256":on[TARGET]["sha256"],
+            "new_place_bytes":place.stat().st_size,
+            "old_place_bytes":original.stat().st_size,
+            "rollback":"restore exact original selected source",
+            "fresh_nonforce_cas_only_by_b220":True,
+            "art_no_go":True,"studio_android_fun":"NOT_TESTED",
+            "owner_accepted":False,"formal_rc_adopted":False}
+          (bundle/"SOURCE_SELECT_MANIFEST.json").write_text(
+            json.dumps(manifest,indent=2,sort_keys=True,ensure_ascii=False)+"\n")
+          (root/"GQ470_HUD_PORTRAIT_ART_CHECK_REPORT.json").write_text(
+            json.dumps({"source_only":"PASS","pc_android_before_after_png":0,
+             "genuine_screenshots_required":32,"pc_art_score":None,"android_art_score":None,
+             "android_15min_fps":None,"first3min_fun":None,"owner_accepted":False,
+             "art_gate":"ART_NO_GO","product_gate":"PRODUCT_NO_GO"},
+             indent=2,sort_keys=True)+"\n")
+          print("GQ470_17_FAMILY_ONE_SOURCE_B220_SOURCE_ONLY_PACKET_PASS")
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/GQ470_HUD_PORTRAIT_LEGACY48.json"
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo STALE_FORMAL_RC_NO_ADMISSION; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            BASE_NOW="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test "$BASE_NOW" = "$CURRENT" || { echo STALE_PR_BASE_NO_ADMISSION; exit 1; }
+          fi
+          echo GQ470_REAL69_SOURCE_QA_ONLY_NOT_FORMAL_RC_NOT_ART_GO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-HUD-PORTRAIT-SOURCE-ONLY-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/gq470-portrait/B220_HUD_PORTRAIT_SOURCE_ONLY/**
+            ${{ runner.temp }}/gq470-portrait/REAL69_LEGACY_INTAKE_RECEIPT.json
+            ${{ runner.temp }}/gq470-portrait/GQ470_HUD_PORTRAIT_LEGACY48.json
+            ${{ runner.temp }}/gq470-portrait/GQ470_HUD_PORTRAIT_ART_CHECK_REPORT.json
+            ${{ runner.temp }}/gq470-portrait/GQ470_PORTRAIT_CANDIDATE_PRIVATE.rbxlx
+            ${{ runner.temp }}/gq470-portrait/GQ470_PORTRAIT_OFF69_PRIVATE.rbxlx
+          if-no-files-found: error
+          retention-days: 7
