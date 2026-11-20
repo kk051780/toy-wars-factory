@@ -9,6 +9,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import re
 import shutil
 from pathlib import Path
 
@@ -84,6 +86,47 @@ def selected(root: Path) -> dict[str, Path]:
     walk(document["tree"])
     return out
 
+def verify_visual_contract(fragment: str) -> None:
+    """Fail closed if styling changes reintroduce physics or blocked corridors.
+
+    This is a source/geometry upper-bound check, NOT actual camera visibility.
+    """
+    constructors = re.findall(r'Instance\\.new\\("([^"]+)"\\)', fragment)
+    demand(constructors == ["WedgePart"], "ONE_WEDGE_PART_FACTORY")
+    demand(fragment.count("for i=1,7 do") == 1 and
+           fragment.count('facet.Parent=stage') == 1 and
+           fragment.count('stage:SetAttribute("CanyonFacetVisualBudget",7)') == 1,
+           "ONLY_SEVEN_DECORATIONS")
+    assignments = re.findall(
+        r'(?m)^\\s*facet\\.(CanCollide|CanTouch|CanQuery|CastShadow)\\s*=\\s*(\\w+)',
+        fragment)
+    expected = [(key, "false") for key in
+                ("CanCollide", "CanTouch", "CanQuery", "CastShadow")]
+    demand(sorted(assignments) == sorted(expected),
+           "EXACTLY_ONE_NO_PHYSICS_SETTER_EACH")
+    demand(fragment.count("facet.Anchored=true") == 1 and
+           fragment.count("facet.Material=Enum.Material.SmoothPlastic") == 1,
+           "MATTE_STATIC")
+    demand('facet.Transparency=.04' in fragment and
+           'facet.Size=Vector3.new(2.2,h,2)' in fragment,
+           "VISUAL_SIZE")
+    demand('local bankX=if rightBank then 32 else -32' in fragment and
+           'local shoreZ=-29+(i-1)*10' in fragment and
+           'local h=7+(i%3)*1.5' in fragment,
+           "PINNED_GEOMETRY")
+    demand("Enum.Material.Neon" not in fragment and
+           "BillboardGui" not in fragment and
+           "ProximityPrompt" not in fragment,
+           "NO_NEON_GUI_PROMPT")
+    for i in range(1, 8):
+        x = 32 if i % 2 else -32
+        z = -29 + (i-1)*10
+        height = 7 + (i%3)*1.5
+        # Conservatively upper-bound rotation-expanded footprint in X.
+        max_half_x = 2.2/2 + math.sin(math.radians(7))*height/2 + 2/2
+        demand(abs(x)-max_half_x >= 29, "STUD4_SAFE_CENTER_MARGIN")
+        demand(abs(z)+2.5 <= 42.5, "BANK_LONGITUDINAL_BOUNDS")
+
 def transform(source: str) -> str:
     demand(FEATURE not in source, "DOUBLE_APPLY")
     demand(AUTHOR_MARK in source, "ORIGINAL_AUTHOR")
@@ -103,6 +146,7 @@ def transform(source: str) -> str:
            candidate.count('Instance.new("WedgePart")') ==
            source.count('Instance.new("WedgePart")') + 1,
            "ONE_FACET_FACTORY")
+    verify_visual_contract(NEW)
     demand(NEW.count("Instance.new(") == 1, "SEVEN_ONLY")
     demand('local bankX=if rightBank then 32 else -32' in NEW and
            'local shoreZ=-29+(i-1)*10' in NEW, "SHORE_NOT_BRIDGE")
@@ -132,6 +176,23 @@ def self_test() -> None:
     demand('CanyonShoreFacet_' in changed and
            'CanyonFacetVisualBudget",7' in changed,
            "POSITIVE")
+    for bad in (
+        NEW.replace('facet.CanCollide=false', 'facet.CanCollide=true'),
+        NEW.replace('facet.CanQuery=false', 'facet.CanQuery=false\\n  facet.CanQuery=true'),
+        NEW.replace('facet.CastShadow=false', 'facet.CastShadow=true'),
+        NEW.replace('Instance.new("WedgePart")', 'Instance.new("Part")'),
+        NEW.replace("for i=1,7 do", "for i=1,8 do"),
+        NEW.replace('facet.Parent=stage', 'facet.Parent=stage\\n  facet.Parent=stage'),
+        NEW.replace('local bankX=if rightBank then 32 else -32',
+                    'local bankX=if rightBank then 25 else -25'),
+    ):
+        try:
+            verify_visual_contract(bad)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("RED_CANYON_VISUAL_CONTRACT_MUTANT_ACCEPTED")
+    print("GQ470_CANYON_7_ADDITIONAL_VISUAL_SAFETY_NEGATIVES_PASS")
     for mutant in (
         changed,
         sample.replace(OLD, ""),
