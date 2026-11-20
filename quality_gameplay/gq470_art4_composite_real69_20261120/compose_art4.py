@@ -154,6 +154,95 @@ def changed_routes(before: dict[str, bytes], after: dict[str, bytes],
     demand(set(before) == set(after), "ROUTE_DRIFT")
     demand({k for k in before if before[k] != after[k]} == expected, "SOURCE_SCOPE")
 
+
+def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
+    """Source-based visual budgets for six disjoint original art modules.
+
+    This checks bounded code and readability, NOT rendered beauty or mobile FPS.
+    """
+    must_have = {
+        924: ('label.Size=UDim2.fromOffset(104,24)', 'label.MaxDistance=22',
+              'HealthDisplayDistance=18', 'text.TextStrokeTransparency=.45'),
+        926: ('local MAX_CANOPIES=160', 'local MAX_TRACKED_PARTS=1800',
+              'local function blocksAvatar(', 'clipAxis(', 'task.wait(.16)'),
+        925: ('b.Size=UDim2.fromOffset(136,38)', 'b.MaxDistance=25',
+              'PhotoRoof_Left', 'PhotoRoof_Right', 'PhotoRoof_Ridge'),
+        928: ('local MAX_KO_BURSTS_PER_SEC=6', 'for side=-1,1,2 do',
+              'Instance.new("WedgePart")', 'Debris:AddItem(fin,.30)'),
+        930: ('BasaltShoulder_', 'BasaltCrown_', 'for side=-1,1,2 do',
+              'shoulder.CanCollide=false', 'crown.CanCollide=false'),
+        929: ('PART_BUDGET_PER_AVATAR=8', 'TAPERED_WEAPONS',
+              'Instance.new("WedgePart")', 'role=="NINJA"'),
+    }
+    # Constructor *sites*, not measured runtime parts. Four matte boss
+    # wedges per spawn and two KO fins per confirmed death still need Studio QA.
+    additional_sites = {924: 0, 926: 0, 925: 0, 928: 0, 930: 2, 929: 1}
+    no_new_authority = ('RemoteEvent', 'RemoteFunction', 'DataStore',
+                        'MarketplaceService', 'TakeDamage', 'FireServer(')
+    for sl in SLICES:
+        original, updated = before[sl.target].decode(), after[sl.target].decode()
+        for marker in must_have[sl.pr]:
+            demand(marker in updated, "ART_BUDGET_MARKER_" + str(sl.pr))
+        for marker in no_new_authority:
+            demand(updated.count(marker) == original.count(marker),
+                   "ART_BUDGET_AUTHORITY_" + str(sl.pr))
+        demand(updated.count('Instance.new(') - original.count('Instance.new(')
+               == additional_sites[sl.pr], "ART_BUDGET_CONSTRUCTOR_" + str(sl.pr))
+    chosen = {sl.pr: after[sl.target].decode() for sl in SLICES}
+    demand('RunService.RenderStepped:Connect' not in chosen[926],
+           "ART_FOREST_RENDER_LOOP")
+    demand(chosen[925].count('part("PhotoRoof_') == 3,
+           "ART_PLAZA_ROOF_PARTS")
+    demand(chosen[928].count('Instance.new("WedgePart")') == 1 and
+           'ring.Material=Enum.Material.Neon' not in chosen[928],
+           "ART_KO_FIN_BUDGET")
+    demand(chosen[930].count('Instance.new("WedgePart")') >= 2,
+           "ART_BOSS_WEDGE_BUDGET")
+    demand(chosen[929].count('Instance.new("WedgePart")') == 1,
+           "ART_WEAPON_WEDGE_BUDGET")
+    demand('ui.Text=id..' not in chosen[924],
+           "ART_BOT_INTERNAL_ID")
+    return {"status": "SOURCE_ONLY_PASS", "routes": 6, "bot_tag_studs": 22,
+            "plaza_tag_studs": 25, "canopy_max": 160,
+            "canopy_period_seconds": 0.16, "ko_bursts_per_second": 6,
+            "boss_added_cosmetic_wedges": 4,
+            "weapon_parts_per_avatar_cap": 8,
+            "studio": "NOT_TESTED", "android": "NOT_TESTED",
+            "owner_accepted": False}
+
+def art_budget_self_test() -> None:
+    sample = {
+        924: 'label.Size=UDim2.fromOffset(104,24) label.MaxDistance=22 HealthDisplayDistance=18 text.TextStrokeTransparency=.45',
+        926: 'local MAX_CANOPIES=160 local MAX_TRACKED_PARTS=1800 local function blocksAvatar( clipAxis( task.wait(.16)',
+        925: 'b.Size=UDim2.fromOffset(136,38) b.MaxDistance=25 part("PhotoRoof_Left" part("PhotoRoof_Right" part("PhotoRoof_Ridge"',
+        928: 'local MAX_KO_BURSTS_PER_SEC=6 for side=-1,1,2 do Instance.new("WedgePart") Debris:AddItem(fin,.30)',
+        930: 'BasaltShoulder_ BasaltCrown_ for side=-1,1,2 do shoulder.CanCollide=false crown.CanCollide=false Instance.new("WedgePart") Instance.new("WedgePart")',
+        929: 'PART_BUDGET_PER_AVATAR=8 TAPERED_WEAPONS Instance.new("WedgePart") role=="NINJA"',
+    }
+    after = {sl.target: sample[sl.pr].encode() for sl in SLICES}
+    before = dict(after)
+    for sl in SLICES:
+        if sl.pr in (929, 930):
+            before[sl.target] = after[sl.target].decode().replace(
+                'Instance.new("WedgePart")', '').encode()
+    demand(art_budget_gate(before, after)["routes"] == 6, "ART_BUDGET_FIXTURE")
+    for pr, old, new in ((924, 'label.MaxDistance=22', 'label.MaxDistance=222'),
+                         (926, 'task.wait(.16)', 'RunService.RenderStepped:Connect'),
+                         (925, 'b.MaxDistance=25', 'b.MaxDistance=125'),
+                         (928, 'MAX_KO_BURSTS_PER_SEC=6', 'MAX_KO_BURSTS_PER_SEC=60'),
+                         (930, 'BasaltCrown_', 'RemoteEvent'),
+                         (929, 'PART_BUDGET_PER_AVATAR=8', 'PART_BUDGET_PER_AVATAR=99')):
+        route = next(sl.target for sl in SLICES if sl.pr == pr)
+        broken = dict(after)
+        broken[route] = broken[route].replace(old.encode(), new.encode())
+        try:
+            art_budget_gate(before, broken)
+        except ValueError:
+            continue
+        raise AssertionError("RED_ART_BUDGET_MUTANT_" + str(pr))
+    print("GQ470_ART6_6_REAL_SOURCE_BUDGET_NEGATIVES_PASS")
+
+
 def verify_formal(root: Path) -> tuple[dict, dict[str, bytes]]:
     receipt = json.loads((root / RECEIPT).read_text(encoding="utf-8"))
     files = data_map(root)
@@ -227,6 +316,7 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
             })
 
     composed = data_map(output)
+    visual_budget = art_budget_gate(originals, composed)
     expected = {s.target for s in SLICES}
     changed_routes(originals, composed, expected)
     demand((formal / PROJECT).read_bytes() == (output / PROJECT).read_bytes(),
@@ -241,6 +331,7 @@ def compose(formal: Path, patchers: Path, output: Path) -> None:
     # Keep formal BUILD identity distinct: this receipt is not an official release.
     receipt["canonical_build"] = False
     receipt["build_head"] = "A_PREP_ART6_FROM_" + BASE
+    receipt["gq470_art6_visual_source_budget"] = visual_budget
     receipt["gq470_art6_composite"] = {
         "source_only": True, "formal_parent": BASE,
         "formal_rc_unchanged": True, "candidate_only": True,
@@ -332,12 +423,15 @@ def verify_candidate(output: Path) -> None:
         demand(receipt["source_hashes"][route] == digest(raw),
                "CANDIDATE_SOURCE_HASH")
     verify_attestation(receipt, before, after)
+    demand(receipt.get("gq470_art6_visual_source_budget") ==
+           art_budget_gate(before, after), "ART_BUDGET_RECEIPT")
     verify_place_provenance(output, receipt)
     demand((output / PROJECT).read_bytes() ==
            (output / OFF / PROJECT).read_bytes(), "CANDIDATE_PROJECT")
     print("GQ470_ART6_69_SOURCE_LOCK_6_DELTA_63_EXACT_ATTESTED_PASS")
 
 def self_test() -> None:
+    art_budget_self_test()
     original = {"r" + str(i): b"A" for i in range(ROUTES)}
     altered = dict(original)
     targets = {"r1", "r2", "r3", "r4", "r7", "r8"}
