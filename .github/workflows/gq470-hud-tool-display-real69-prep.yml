@@ -47,3 +47,69 @@ jobs:
           assert (root/'off69_hud_labels/sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau').is_file()
           print('GQ470_REAL69_TWO_SOURCE_67_EXACT_QA_PASS_NOT_STUDIO')
           PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile all 69 REAL69 selected LuaU sources
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-hud-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-hud-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq470_hud_labels_real69_20261120')
+          from patch_hud_labels import selected_map
+          root=Path(os.environ['RUNNER_TEMP'])/'gq470-hud-labels'
+          paths=selected_map(root)
+          assert len(paths)==69
+          for path in paths.values():
+            subprocess.run(['/tmp/gq470-hud-luau/luau-compile','--text',str(path)],stdout=subprocess.DEVNULL,check=True)
+          print('GQ470_REAL69_HUD_69_SELECTED_NATIVE_LUAU_COMPILE_PASS')
+          PY
+      - name: Build REAL69 ON and source-exact OFF69 with pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-hud-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-hud-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/gq470-hud-rojo.zip') as z:
+            names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(names)==1
+            p=Path('/tmp/gq470-hud-rojo')
+            p.write_bytes(z.read(names[0]))
+            p.chmod(0o755)
+          PY
+          ROOT="$RUNNER_TEMP/gq470-hud-labels"
+          /tmp/gq470-hud-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import hashlib,json,os,shutil,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq470_hud_labels_real69_20261120')
+          from patch_hud_labels import selected_map,COMBAT,HUD,PROJECT
+          root=Path(os.environ['RUNNER_TEMP'])/'gq470-hud-labels'
+          off=root/'off69_hud_rollback_69'
+          shutil.copytree(root/'sources',off/'sources')
+          shutil.copy2(root/PROJECT,off/PROJECT)
+          modified=selected_map(off)
+          for key in (COMBAT,HUD):
+            src=(root/'off69_hud_labels'/modified[key].relative_to(off))
+            assert src.is_file()
+            shutil.copy2(src,modified[key])
+          assert len(modified)==69
+          on=selected_map(root)
+          assert all(on[k].read_bytes()==modified[k].read_bytes() for k in on if k not in (COMBAT,HUD))
+          assert all(on[k].read_bytes()!=modified[k].read_bytes() for k in (COMBAT,HUD))
+          for k in (COMBAT,HUD):
+            assert (root/'off69_hud_labels'/modified[k].relative_to(off)).read_bytes()==modified[k].read_bytes()
+          print('GQ470_HUD_REAL69_OFF_TWO_ORIGINAL_SOURCE_EXACT_67_UNCHANGED_PASS')
+          PY
+          /tmp/gq470-hud-rojo build "$ROOT/off69_hud_rollback_69/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx
+          test -s /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx
+          test -s /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx
+          echo GQ470_HUD_REAL69_NATIVE_ROJO_ON69_OFF69_PASS_NOT_STUDIO_ACCEPTED
