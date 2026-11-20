@@ -59,6 +59,14 @@ jobs:
                 'studio':'NOT_TESTED','android':'NOT_TESTED','human_art':'NOT_TESTED'}
           (p/'packet/SOURCE_SELECT_MANIFEST.json').write_text(json.dumps(meta,indent=2))
           PY
+      - name: Seven-role #420 source-only art visual and 6 fail-closed negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_guardian_shapes_real69_20261121/art_gate_guardian.py \
+            --original "$RUNNER_TEMP/off69/sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau" \
+            --candidate "$RUNNER_TEMP/on69/sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau" \
+            --report "$RUNNER_TEMP/packet/ART_CHECK_REPORT.json"
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
