@@ -1,0 +1,147 @@
+name: P0D GQ8 Realm Compact Touch HUD 36 Native Rojo
+on:
+  push:
+    branches: ['quality/gq8-realm-compact-touch-hud-20261118-1931']
+    paths:
+      - 'quality_gameplay/gq8_realm_compact_touch_20261118/**'
+      - '.github/workflows/p0d-gq8-realm-compact-touch.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_realm_compact_touch_20261118/**'
+      - '.github/workflows/p0d-gq8-realm-compact-touch.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compact-36:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - name: Source-locked original client and mutation tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_realm_compact_touch_20261118 -p 'test_*.py'
+      - name: Real original31 artifact pin and formal branch HEAD observation
+        run: |
+          set -euo pipefail
+          PIN=f77b4d4393d9e9b19b65566413432a7a9f13962b
+          RUN=44232589258
+          ACTUAL="$(gh run view "$RUN" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$ACTUAL" = "$PIN success" || { echo RED_OFFICIAL31_ARTIFACT_NOT_ON_PIN; exit 1; }
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$NOW" != "$PIN" ]; then
+            echo "YELLOW_OFFICIAL_RC_MOVED_SOURCE_REBASE_REQUIRED new=$NOW"
+          fi
+          mkdir -p artifacts/official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Rehydrate true31, compose author Realm34 + Regen33 = real36 and compact only client
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/combined36/COMBINED36.project.json
+          python3 quality_gameplay/gq8_realm_compact_touch_20261118/verify_compact.py \
+            --project artifacts/combined36/COMBINED36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/combined36/COMPACT36.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Genuine all36 native Luau syntax and original31 OFF
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-compact-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-compact-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,'quality_gameplay/gq8_realm_compact_touch_20261118')
+          from verify_compact import flatten
+          for project,count in [('artifacts/combined36/COMPACT36.project.json',36),
+                                ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
+              scripts=flatten(Path(project))
+              assert len(scripts)==count,(project,len(scripts))
+              for path in scripts.values():
+                  subprocess.run(['/tmp/gq8-compact-native/luau-compile','--text',str(path)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_COMPACT_REAL_NATIVE_EXACT',count)
+          PY
+      - name: Pinned Rojo 7.7.1 Source/Class ON36 OFF31 proof
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              p=Path('/tmp/gq8-rojo')
+              p.write_bytes(z.read(found[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-rojo build artifacts/combined36/COMPACT36.project.json -o artifacts/combined36/COMPACT36.rbxlx
+          /tmp/gq8-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/combined36/COMPACT36.project.json \
+            --place artifacts/combined36/COMPACT36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --place artifacts/combined36/OFF31.rbxlx --count 31
+          echo GQ8_REALM_COMPACT_NATIVE_ROJO36_AND_OFF31_EXACT_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REALM-COMPACT-PRIVATE36-NOT-PUBLISHED
+          path: |
+            artifacts/combined36/COMPACT36.rbxlx
+            artifacts/combined36/OFF31.rbxlx
+            artifacts/combined36/COMPACT36.receipt.json
+          retention-days: 3
+          if-no-files-found: error
