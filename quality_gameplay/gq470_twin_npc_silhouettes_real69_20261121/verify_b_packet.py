@@ -18,7 +18,7 @@ PLACE_SHA = "fc63171149a86f6b39779ba6ebe7e18fcb7099fbde98ad2ec33a7cb92b3a9934"
 FEATURE = "GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121"
 ROUTE = "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
 SELECTED = "selected_sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau"
-EXPECTED_PACKET_FILES = {
+BASE_PACKET_FILES = {
     "QA_SOURCE_EXACT.json", "SOURCE_SELECT_MANIFEST.json",
     "REAL69_48FLAG_TRUTH.json", SELECTED,
 }
@@ -112,6 +112,48 @@ def adversarial_tests(manifest: dict, qa: dict, flags: dict, changed: bytes,
             continue
         raise AssertionError("MUTANT_NOT_REJECTED_" + key)
 
+def verify_optional_art_report(report: dict, manifest: dict, on: bytes) -> None:
+    require(report.get("schema")=="P0D_GQ470_REAL69_TWIN_NPC_ART_SOURCE_REPORT_V1",
+            "ART_SCHEMA")
+    require(report.get("candidate_head")==manifest["candidate_head"],"ART_HEAD")
+    require(report.get("actual_candidate_place_bytes")==len(on) and
+            report.get("actual_candidate_place_sha256")==digest(on),
+            "ART_ACTUAL_PLACE_IDENTITY")
+    require(report.get("source_gate",{}).get("status")=="PASS_SOURCE_ONLY" and
+            report.get("source_gate",{}).get("source_count_changed")==1 and
+            report.get("source_gate",{}).get("unchanged_other_sources")==68,
+            "ART_SOURCE_ONLY")
+    verify_optional_art_report_core(report,manifest,on)
+    for bad in ("screenshots_received","owner_accepted","art_gate"):
+        poisoned=json.loads(json.dumps(report))
+        if bad=="screenshots_received":
+            poisoned["visual_evidence_gate"]["screenshots_received"]=32
+        elif bad=="owner_accepted":
+            poisoned["owner_accepted"]=True
+        else:
+            poisoned["art_gate"]="ART_GO"
+        try:
+            verify_optional_art_report_core(poisoned,manifest,on)
+        except ValueError:
+            continue
+        raise AssertionError("ART_REPORT_POISON_ACCEPTED_"+bad)
+
+def verify_optional_art_report_core(report: dict, manifest: dict, on: bytes) -> None:
+    require(report.get("candidate_head")==manifest["candidate_head"],"ART_HEAD")
+    require(report.get("actual_candidate_place_sha256")==digest(on),"ART_PLACE")
+    require(report.get("visual_evidence_gate",{}).get("screenshots_required")==32 and
+            report.get("visual_evidence_gate",{}).get("screenshots_received")==0,
+            "ART_MISSING_PHOTOS")
+    require(report.get("owner_accepted") is False,"ART_NOT_OWNER")
+    require(report.get("human_art",{}).get("status")=="NOT_TESTED" and
+            report.get("mobile_runtime",{}).get("status")=="NOT_TESTED" and
+            report.get("kid_first3min_fun",{}).get("status")=="NOT_TESTED",
+            "ART_HUMAN_MOBILE")
+    require(all(report.get(k)==v for k,v in (
+                ("art_gate","ART_NO_GO"),("mobile_gate","MOBILE_NO_GO"),
+                ("fun_gate","FUN_NO_GO"),("product_gate","PRODUCT_NO_GO"))),
+            "ART_NOT_GO")
+
 def main() -> None:
     p=argparse.ArgumentParser()
     p.add_argument("--root",type=Path,required=True)
@@ -122,7 +164,8 @@ def main() -> None:
     args=p.parse_args()
     allfiles={path.relative_to(args.packet).as_posix()
               for path in args.packet.rglob("*") if path.is_file()}
-    require(allfiles==EXPECTED_PACKET_FILES, "UNEXPECTED_PACKET_FILES")
+    require(allfiles==BASE_PACKET_FILES or allfiles==BASE_PACKET_FILES|{"ART_CHECK_REPORT.json"},
+            "UNEXPECTED_PACKET_FILES")
     def load(name):
         return json.loads((args.packet/name).read_text(encoding="utf-8"))
     manifest=load("SOURCE_SELECT_MANIFEST.json")
@@ -135,6 +178,9 @@ def main() -> None:
     _ORIGINAL_PLACE=(args.root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").read_bytes()
     r=verify(manifest,qa,flags,changed,old,on,off,args.expected_head)
     adversarial_tests(manifest,qa,flags,changed,old,on,off,args.expected_head)
+    if "ART_CHECK_REPORT.json" in allfiles:
+        verify_optional_art_report(load("ART_CHECK_REPORT.json"), manifest, on)
+        r["art_report_three_negative_mutations_rejected"]=3
     print(json.dumps(r,sort_keys=True))
 
 if __name__=="__main__":
