@@ -1,0 +1,40 @@
+{
+  "schema": "GQ815_LATEST_LINEAGE_REAL42_SOURCE_LOCK_V1",
+  "canonical_rc_branch": "rc/p0d-s1-kids-rc01",
+  "baseline_formal_rc": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+  "upstream_latest_dri_pr": 796,
+  "upstream_real41_head": "33f22323f720659ae52628a6025a62eb1394fd24",
+  "upstream_immutable_actions_run": 44317388329,
+  "upstream_immutable_artifact_id": 14433915697,
+  "upstream_portable41_place_sha256": "1cd5ee40fbee8a9c7f5874689c2a9da44c9cb6f6fa87136c771d7cf87f521384",
+  "original41_count": 41,
+  "new42_count": 42,
+  "original_modified_routes": [
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+    "ServerScriptService/EGGRUMBLE_CastleSiegeBridge"
+  ],
+  "new_route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime",
+  "pinned_repo_blobs": {
+    "quality_gameplay/gq8_guardian_runtime_20261118/EGGRUMBLE_CastleGuardianRuntime.luau": "cf0e6a6b980cd40e670a30cb0f7ddbc24c2c449e",
+    "quality_gameplay/gq8_guardian_runtime_20261118/compose_real42_guardians.py": "eb8a7f0a96087a9e9e4a2ed19fbd6210b0421c4e",
+    "quality_gameplay/gq8_guardian_runtime_20261118/package_real42_guardians.py": "fdd5d8528892a5fa221e05012d90af282a0e8ced",
+    "quality_gameplay/gq8_guardian_runtime_20261118/test_compose_real42_guardians.py": "76ba01fb28c5648fd1b939247d5d399f5b49b019"
+  },
+  "original_castle_rules": "unchanged byte exact",
+  "original_human_combat_writer_count": 1,
+  "current_original_siege_writer_count": 1,
+  "source_rollback": "Select immutable original41 source and OFF41 byte/class exact; leaves official Core36 unchanged",
+  "formal_rc_updated": false,
+  "studio_2client": "NOT_TESTED",
+  "android15": "NOT_TESTED",
+  "art_gate": "NO_GO",
+  "purchase_receipts_enabled": false,
+  "upstream_guardian_gate_rolling5s": {
+    "source_author_pr": 809,
+    "pinned_head": "a5b6b17d96886b797eef4d85073159a182b71693",
+    "per_attacker_seconds": 1,
+    "total_damage_per_rolling_5s": 72,
+    "requires_original_castle_rules": true
+  }
+}

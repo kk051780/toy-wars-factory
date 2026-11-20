@@ -1,0 +1,168 @@
+name: GQ8 latest 42 guardians seeded weather source/native/Rojo ON-OFF
+on:
+  push:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_seeded_weather_bridge_20261118/**'
+      - '.github/workflows/gq8-dri42-seeded-weather-real.yml'
+  pull_request:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_seeded_weather_bridge_20261118/**'
+      - '.github/workflows/gq8-dri42-seeded-weather-real.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  weather-on-real42:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Original source contract plus samehead regression
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_seeded_weather_bridge_20261118 -p test_weather_bridge.py
+          FORMAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$FORMAL" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_HEAD_MOVED; exit 1; }
+      - name: Reuse exact last-success guardian42 place + source receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/original
+          gh run download 44318289343 --repo "$GITHUB_REPOSITORY" \
+            --name GQ815-REAL42-GUARDIAN-PRIVATE-SOURCE-NOT-OFFICIAL --dir artifacts/original
+          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json
+          test -s artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          test -s artifacts/original/portable42/GQ815_PORTABLE42_RECEIPT.json
+          python3 quality_gameplay/gq8_seeded_weather_bridge_20261118/compose_weather42.py \
+            --real42 artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --receipt artifacts/original/portable42/GQ815_PORTABLE42_RECEIPT.json \
+            --place artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx \
+            --out artifacts/weather42/WEATHER42.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_gq8_luau
+          persist-credentials: false
+      - name: Pinned native original42 plus seeded42 exact source and malicious mutation
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_gq8_luau -B /tmp/gq8-weather42-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-weather42-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from quality_gameplay.gq8_seeded_weather_bridge_20261118.patch_weather41 import flatten
+          for project in ('artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json',
+                          'artifacts/weather42/WEATHER42.project.json'):
+              _,scripts=flatten(Path(project))
+              assert len(scripts)==42
+              for path in scripts.values():
+                  subprocess.run(['/tmp/gq8-weather42-native/luau-compile','--text',str(path)],check=True,stdout=subprocess.DEVNULL)
+              print("GQ8_GUARDIAN_WEATHER_NATIVE42_FULL_SOURCE_PASS",len(scripts))
+          PY
+          DIR=quality_gameplay/gq8_seeded_weather_bridge_20261118
+          python3 -B "$DIR/make_weather_native.py" \
+            --project artifacts/weather42/WEATHER42.project.json \
+            --out /tmp/gq8-g42-good.luau --mutant /tmp/gq8-g42-mutant.luau
+          /tmp/gq8-weather42-native/luau /tmp/gq8-g42-good.luau \
+            | grep -qx GQ8_STAGE_WEATHER_REAL41_REAL_HELPER_16_CASES_PASS
+          if /tmp/gq8-weather42-native/luau /tmp/gq8-g42-mutant.luau >/tmp/gq8-g42-mutant.log 2>&1; then
+            echo RED_SEEDED_WEATHER42_MUTANT_PASSED; exit 1
+          fi
+          grep -q RED_STORM_THEME_ALIASES /tmp/gq8-g42-mutant.log
+          echo GQ8_GUARDIAN42_WEATHER_REAL_NATIVE_GOOD_MUTANT_RED_PASS
+      - name: Verified original Rojo build output and byte-identical OFF42
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-weather42-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-weather42-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-weather42-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/gq8-weather42-rojo')
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-weather42-rojo build artifacts/weather42/WEATHER42.project.json -o artifacts/weather42/WEATHER42.rbxlx
+          /tmp/gq8-weather42-rojo build artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json -o artifacts/weather42/OFF42.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/weather42/WEATHER42.project.json \
+            --place artifacts/weather42/WEATHER42.rbxlx --count 42
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --place artifacts/weather42/OFF42.rbxlx --count 42
+          cmp artifacts/weather42/OFF42.rbxlx artifacts/original/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import tree_scripts
+          base=Path('artifacts/weather42')
+          old=tree_scripts(ET.parse(base/'OFF42.rbxlx').getroot())
+          new=tree_scripts(ET.parse(base/'WEATHER42.rbxlx').getroot())
+          altered={r for r in old if old[r]!=new[r]}
+          expected={
+              ('ServerScriptService','GQ802_StageTileVisualRenderer'),
+              ('ServerScriptService','EGGRUMBLE_RealmBattleCore')}
+          assert len(new)==len(old)==42 and altered==expected,('RED_WEATHER42_OVERTOP_AUTHOR',altered)
+          receipt=base/'WEATHER42.project.receipt.json'
+          info=json.loads(receipt.read_text())
+          for label,fn in [('on42','WEATHER42.rbxlx'),('off42','OFF42.rbxlx')]:
+              p=base/fn
+              info[label+'_place_bytes']=p.stat().st_size
+              info[label+'_place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          info['samehead_rojo_source_class42']=True
+          info['off42_guardian_source_class_exact']=True
+          receipt.write_text(json.dumps(info,sort_keys=True,indent=2)+'\n')
+          print('GQ8_REAL42_SEEDED_WEATHER_WITH_GUARDIAN_SAMEHEAD_ROJO_OFF_PASS',
+                 info['on42_place_bytes'],info['on42_place_sha256'])
+          PY
+      - name: Repackage complete self-contained Real42 source handoff for authenticated B
+        run: |
+          set -euo pipefail
+          DIR=quality_gameplay/gq8_seeded_weather_bridge_20261118
+          python3 -B "$DIR/package_portable_weather42.py" \
+            --selected artifacts/weather42/WEATHER42.project.json \
+            --original artifacts/original/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --out artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json
+          /tmp/gq8-weather42-rojo build artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            -o artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.project.json \
+            --place artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx --count 42
+          cmp artifacts/weather42/portable42/EGGRUMBLE_SOURCE42_WEATHER.rbxlx artifacts/weather42/WEATHER42.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('artifacts/weather42')
+          f=root/'portable42/B_PORTABLE42_WEATHER_SOURCE_RECEIPT.json'
+          r=json.loads(f.read_text())
+          assert r['script_count']==42 and r['untouched_original_scripts']==40
+          assert len(r['sources'])==42
+          assert sorted(r['modified_original_scripts'])==[
+              'ServerScriptService/EGGRUMBLE_RealmBattleCore',
+              'ServerScriptService/GQ802_StageTileVisualRenderer'
+          ]
+          p=root/'WEATHER42.rbxlx'
+          r['place_bytes']=p.stat().st_size
+          r['place_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          r['portable42_rojo_exact_original41_plus_guardian_weather']=True
+          f.write_text(json.dumps(r,sort_keys=True,indent=2)+'\n')
+          print('GQ8_PORTABLE_42_COMPLETE_B_WRITER_PACKET_SOURCE_ROJO_BYTE_EXACT_PASS',
+                r['place_bytes'],r['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL42-GUARDIAN-WEATHER-ON-OFF-NOT-RC
+          path: artifacts/weather42/
+          retention-days: 3
+          if-no-files-found: error

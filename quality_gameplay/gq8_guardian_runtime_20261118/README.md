@@ -1,0 +1,10 @@
+# GQ815 real guardian AI on latest DRI Real41 → private Real42
+
+**Nonoverlap**: existing latest DRI PR #796 (Real41) already includes #809 siege bridge/180 gate, #811 stage, #812 items, Realm, and Regen. This extension does not recreate them. It adds an original-character 7-role guardian defender actor to real battle:
+- 7 basic role-specific **FREE MATCH STARTER** guardians as mobile models with distinct silhouettes, HP gauge, weapons, names and 7 tactical profiles. Role selection from existing server-owned lobby chosenRole; no assumption of purchased guardians. Premium catalogue #805 and the actual persistent shop remain separate/unwired.
+- Original GQ804 policy is reused for confirmed 700/400/200 castle thresholds, max 2 living & 3 per castle/round, >=40s gap, <=45s actor lifespan. New global max12 per server across TEAM/BR, identity and match guards.
+- No independent Game/Remote/Store/Score/CastleRules. Already original Host calls a new session-owned runtime once and supplies existing GQ804 State (shared bridge). Existing server 7Role Combat has one extra defender damage hook, with owner/TEAM/BR, LOS and AoE cap; guardian attack targets only valid nearby living enemy humanoids and uses bounded 5-9 damage per 1.6-2.8 seconds. No chase off own castle; no zombie/neutral duplicate spawn. Original neutral Swarm untouched.
+- Original server session.closeRound destroys the guardian actors immediately; death and expiry also release existing GQ804 active unit count. Shop has not been connected, so **DO NOT claim purchased guardians work**, actual Robux OFF, no permanent wallet.
+- Character art is a **stylized low-detail proof-of-play NPC**, NOT final 4.5/5 art acceptance. No pretrained IP asset. Actual Studio 2client/Android15min and 8-domain FUN still NO_GO.
+
+Acceptance: Native Luau all42, Rojo Source/Class42, REAL41 OFF41 byte exact, original CastleRules invariant, original31/Core36 proof preserved; future B #220 authenticated latest head nonforce expectedSHA CAS only. The newer DRI on #796 owns continuation; no parallel castle/hit authority or old author ACK.

@@ -1,0 +1,167 @@
+name: GQ815 Real41 to Guardian42 canonical private source/native/Rojo
+on:
+  push:
+    branches: [quality/gq8-subsea-melee-los-20261118]
+    paths:
+      - 'quality_gameplay/gq8_guardian_runtime_20261118/**'
+      - '.github/workflows/gq815-guardian-real42.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_guardian_runtime_20261118/**'
+      - '.github/workflows/gq815-guardian-real42.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  true-guardian42:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Revalidate latest formal RC and immutable original current DRI Real41 source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_FORMAL_HEAD_CHANGED_REBASE; exit 1; }
+          mkdir -p artifacts/original
+          gh run download 44317388329 --repo "$GITHUB_REPOSITORY" \
+            --name GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL \
+            --dir artifacts/original
+          test -s artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json
+          test -s artifacts/original/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          test -s artifacts/original/portable41/B_PORTABLE41_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("artifacts/original/portable41")
+          j=json.loads((p/"B_PORTABLE41_SOURCE_RECEIPT.json").read_text())
+          assert isinstance(j["candidate_sha"],str) and len(j["candidate_sha"])==40  # PullRequest Actions GITHUB_SHA may be synthetic merge SHA
+          assert j["source_count"]==41
+          assert hashlib.sha256((p/"EGGRUMBLE_SOURCE41.rbxlx").read_bytes()).hexdigest()=="1cd5ee40fbee8a9c7f5874689c2a9da44c9cb6f6fa87136c771d7cf87f521384"
+          import subprocess
+          lock=json.loads(Path("quality_gameplay/gq8_guardian_runtime_20261118/SOURCE_LOCK.json").read_text())
+          assert lock["baseline_formal_rc"]=="f77b4d4393d9e9b19b65566413432a7a9f13962b"
+          assert lock["original41_count"]==41 and lock["new42_count"]==42
+          for file,expected in lock["pinned_repo_blobs"].items():
+              actual=subprocess.check_output(["git","hash-object",file],text=True).strip()
+              assert expected==actual,("RED_SOURCE_BLOB_DRIFT",file,expected,actual)
+          print("GQ815_ORIGINAL_AND_NEW_AUTHOR_SOURCE_BLOB_LOCK_PASS")
+          print("GQ815_IMMUTABLE_OWNER_REAL41_SOURCE_RECEIPT_PASS")
+          PY
+      - name: Test strict original-source attachment with hostile-anchor mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_guardian_runtime_20261118 \
+            -p 'test_compose_real42_guardians.py'
+      - name: Compose real original existing41 to unique Guardian42
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_guardian_runtime_20261118/compose_real42_guardians.py \
+            --real41 artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --out artifacts/real42/REAL42.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq815_luau
+          persist-credentials: false
+      - name: Native compile actual real41 and real42 source+client and prohibit second owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq815_luau -B /tmp/gq815_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq815_luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_guardian_runtime_20261118")
+          from compose_real42_guardians import flatten,H,C,G,R,N
+          projects=[
+           ("artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json",41),
+           ("artifacts/real42/REAL42.project.json",42)]
+          for proj,n in projects:
+              _,src=flatten(Path(proj))
+              assert len(src)==n
+              for path in src.values():
+                  subprocess.run(["/tmp/gq815_luau/luau-compile","--text",str(path)],
+                    check=True,stdout=subprocess.DEVNULL)
+              print("GQ815_ACTUAL_NATIVE_ALL_SOURCE_PASS",n)
+          _,before=flatten(Path(projects[0][0]))
+          _,after=flatten(Path(projects[1][0]))
+          assert before[R].read_bytes()==after[R].read_bytes()
+          assert all(before[k].read_bytes()==after[k].read_bytes()
+                     for k in before if k not in {H,C,G})
+          body=after[N].read_text()
+          assert "MarketplaceService" not in body and "DataStoreService" not in body
+          assert "RemoteEvent" not in body
+          print("GQ815_NO_DUPLICATE_GAME_STORE_RULES_OR_COMBAT_OWNER_PASS")
+          PY
+      - name: Rojo 7.7.1 exact actual real42 Source and Roblox Class / unchanged Real41 OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq815-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq815-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq815-rojo.zip") as z:
+              found=[s for s in z.namelist() if s.split("/")[-1]=="rojo"]
+              assert len(found)==1
+              path=Path("/tmp/gq815-rojo")
+              path.write_bytes(z.read(found[0]));path.chmod(0o755)
+          PY
+          /tmp/gq815-rojo build artifacts/real42/REAL42.project.json -o artifacts/real42/REAL42.rbxlx
+          /tmp/gq815-rojo build artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json -o artifacts/real42/OFF41.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real42/REAL42.project.json \
+            --place artifacts/real42/REAL42.rbxlx --count 42
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --place artifacts/real42/OFF41.rbxlx --count 41
+          python3 -B quality_gameplay/gq8_guardian_runtime_20261118/package_real42_guardians.py \
+            --real42 artifacts/real42/REAL42.project.json \
+            --real41 artifacts/original/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --out artifacts/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --candidate-head "$GITHUB_SHA"
+          /tmp/gq815-rojo build artifacts/portable42/EGGRUMBLE_SOURCE42.project.json \
+            -o artifacts/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable42/EGGRUMBLE_SOURCE42.project.json \
+            --place artifacts/portable42/EGGRUMBLE_SOURCE42.rbxlx --count 42
+          cmp artifacts/real42/REAL42.rbxlx artifacts/portable42/EGGRUMBLE_SOURCE42.rbxlx
+          cmp artifacts/real42/OFF41.rbxlx artifacts/original/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          file=Path("artifacts/real42/REAL42.rbxlx")
+          m={"candidate_head":os.environ["GITHUB_SHA"],
+           "original_lineage":"PR796 verified Real41 33f22323f720659ae52628a6025a62eb1394fd24 (rolling gate source)",
+           "original_formal_rc":"f77b4d4393d9e9b19b65566413432a7a9f13962b",
+           "native42":True,"rojo42_class_source":True,"rollback_off41":True,
+           "place_bytes":file.stat().st_size,"place_sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
+           "gameplay_guardian_actor_source":True,"shop_receipts_unwired":True,
+           "official_rc_adopted":False,"studio":"NOT_TESTED","android":"NOT_TESTED"}
+          Path("artifacts/real42/GQ815_42_BUILD_RECEIPT.json").write_text(json.dumps(m,indent=2)+"\n")
+          print("GQ815_TRUE_PORTABLE42_ROJO_OFF41_FULL_PASS",m["place_bytes"],m["place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ815-REAL42-GUARDIAN-PRIVATE-SOURCE-NOT-OFFICIAL
+          path: |
+            artifacts/real42/REAL42.rbxlx
+            artifacts/real42/GQ815_42_BUILD_RECEIPT.json
+            artifacts/real42/REAL42.project.receipt.json
+            artifacts/real42/OFF41.rbxlx
+            artifacts/portable42/
+          if-no-files-found: error
+          retention-days: 3

@@ -1,0 +1,359 @@
+name: GQ8 REAL41 original siege and stage 5-lane Native Rojo OFF39/36/31
+on:
+  push:
+    branches: ['quality/gq8-subsea-melee-los-20261118']
+    paths:
+      - 'quality_gameplay/gq8_subsea_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-subsea-combined36.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_subsea_melee_los_20261118/**'
+      - '.github/workflows/p0d-gq8-subsea-combined36.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  genuine41-composition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 4f741a5901506337cb43a58ff8450210ec9507e3
+          path: _station792
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 458d726fd0e335827e5c64d2c02c0f51fd37e512
+          path: _storm797
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0db4493e11c328707495647ead446cd97b665f6b
+          path: _compact795
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: be1dbb2f9707d53d7f5ecd5e25e0ce5ef31ac2a8
+          path: _item812
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb862f6ed206f1bc082274689a7f47cbc500d5a6
+          path: _stage811
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d6080df13d07792160a52b4c7025e0ae7950379c
+          path: _manifest803
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: a5b6b17d96886b797eef4d85073159a182b71693
+          path: _siege809
+          persist-credentials: false
+      - name: Immutable original source mutation and exact inverse
+        shell: bash
+        env:
+          GQ8_SUBSEA_REALM_ORIGINAL: _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_subsea_melee_los_20261118 -p 'test_*.py'
+          git -C _station792 rev-parse HEAD | grep -Fx 4f741a5901506337cb43a58ff8450210ec9507e3
+          git -C _realm764 rev-parse HEAD | grep -Fx c51de1ed4feb7a7500ada95d21282402053ef988
+      - name: Source lock to genuine official RC31 artifact and frozen original head
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN=f77b4d4393d9e9b19b65566413432a7a9f13962b
+          RUN=44232589258
+          ACTUAL="$(gh run view "$RUN" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$ACTUAL" = "$PIN success" || { echo RED_ORIGINAL31_PIN_MISSING; exit 1; }
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$NOW" != "$PIN" ]; then
+            echo "YELLOW_NEWER_RC_HEAD_REBASE_REQUIRED:$NOW"
+          fi
+          mkdir -p artifacts/official
+          gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Genuine original31 + pinned original Realm34 Regen33 Core36
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract             --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx             --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json             --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json             --out artifacts/current31 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py             --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau             --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py             --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py             --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --regen33 artifacts/regen33/REGEN33.project.json             --realm34 artifacts/realm34/REALM34.project.json             --out artifacts/combined36/COMBINED36.project.json
+          python3 _station792/quality_gameplay/gq8_realm_station_los_20261118/compose_real36.py             --project artifacts/combined36/COMBINED36.project.json             --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --out artifacts/combined36/REALM_STATION_LOS36.project.json
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/compose_station_and_melee36.py             --original _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau             --station-library _station792/quality_gameplay/gq8_realm_station_los_20261118             --station-project artifacts/combined36/REALM_STATION_LOS36.project.json             --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --out artifacts/combined36/STATION_SUBSEA_MELEE_LOS36.project.json
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/compose_realm_fourlane36.py \
+            --project36 artifacts/combined36/STATION_SUBSEA_MELEE_LOS36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --original-server _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau \
+            --original-client _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleControls.client.luau \
+            --station-module _station792/quality_gameplay/gq8_realm_station_los_20261118/patch_realm_station_los.py \
+            --storm-module _storm797/quality_gameplay/gq8_realm_storm_phase_fence_20261118/apply.py \
+            --compact-module _compact795/quality_gameplay/gq8_realm_compact_touch_20261118/verify_compact.py \
+            --compact-candidate _compact795/quality_gameplay/gq8_realm_compact_touch_20261118/EGGRUMBLE_RealmBattleControls.client.luau \
+            --out artifacts/combined36/REALM_FOURLANE36.project.json
+          python3 _item812/quality_gameplay/gq802_item_sculptures_20261118/compose_real36.py \
+            --project36 artifacts/combined36/REALM_FOURLANE36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
+          from compose_real36 import flatten
+          original=flatten(Path('artifacts/combined36/COMBINED36.project.json'))
+          candidate=flatten(Path('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json'))
+          assert len(original)==len(candidate)==36 and set(original)==set(candidate)
+          changed=[p for p in original if original[p].read_bytes()!=candidate[p].read_bytes()]
+          expected={('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+                    ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+                    ('ServerScriptService','EGGRUMBLE_FieldItemPickups')}
+          assert set(changed)==expected,(changed,expected)
+          print('GQ8_REALM_FOUR_AND_ITEM_SOURCE_SELECT_3_ORIGINAL_33_IDENTICAL_PASS')
+          PY
+          mkdir -p artifacts/stage_modules
+          cp _manifest803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau artifacts/stage_modules/
+          cp _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileBlueprintPolicy.luau artifacts/stage_modules/
+          cp _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileVisualRenderer.luau artifacts/stage_modules/
+          python3 _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/compose_visual39.py \
+            --core36 artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json \
+            --source-dir artifacts/stage_modules \
+            --out artifacts/visual39/VISUAL39.project.json
+          python3 _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118/wire_actual_host39.py \
+            --project artifacts/visual39/VISUAL39.project.json \
+            --out artifacts/wired39/WIRED39.project.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'_stage811/quality_gameplay/gq802_stage_visual_tiles_20261118')
+          from compose_visual39 import flatten,ADDITIONS
+          base=flatten(Path('artifacts/combined36/COMBINED36.project.json'))[1]
+          selected=flatten(Path('artifacts/wired39/WIRED39.project.json'))[1]
+          assert len(base)==36 and len(selected)==39
+          assert set(selected)==set(base)|set(ADDITIONS)
+          changed=[key for key in base if base[key].read_bytes()!=selected[key].read_bytes()]
+          expected={('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+                    ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+                    ('ServerScriptService','EGGRUMBLE_FieldItemPickups'),
+                    ('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')}
+          assert set(changed)==expected,(changed,expected)
+          unmodified=[key for key in base if key not in expected]
+          assert len(unmodified)==32
+          print('GQ8_REAL39_ORIGINAL_OWNER_FOUR_CHANGED_32_EXACT_3_STAGE_MODULES_PASS')
+          PY
+          python3 _siege809/quality_gameplay/gq804_castle_siege_guardians_20261118/compose_core38.py \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --out artifacts/siege38/SIEGE38.project.json
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/compose_siege41.py \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --wired39 artifacts/wired39/WIRED39.project.json \
+            --siege38 artifacts/siege38/SIEGE38.project.json \
+            --stage-author-dir _stage811/quality_gameplay/gq802_stage_visual_tiles_20261118 \
+            --out artifacts/siege41/REAL41.project.json
+          echo GQ8_TRUE_REAL41_ORIGINAL_SIEGE_AND_STAGE_SINGLE_HOST_SOURCE_READY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: True real41 ON + 39/38/36/31 OFF Native syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-subsea-combined-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-subsea-combined-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,'_station792/quality_gameplay/gq8_realm_station_los_20261118')
+          from compose_real36 import flatten
+          for project,n in [('artifacts/siege41/REAL41.project.json',41),
+                            ('artifacts/siege38/SIEGE38.project.json',38),
+                            ('artifacts/wired39/WIRED39.project.json',39),
+                            ('artifacts/combined36/REALM_FOUR_PLUS_ITEM36.project.json',36),
+                            ('artifacts/combined36/COMBINED36.project.json',36),
+                            ('artifacts/current31/CURRENT31_REAL_SOURCE.project.json',31)]:
+              files=flatten(Path(project))
+              assert len(files)==n
+              for path in files.values():
+                  subprocess.run(['/tmp/gq8-subsea-combined-native/luau-compile','--text',str(path)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_STATION_SUBSEA_TRUE_NATIVE',n)
+          PY
+      - name: Pinned Rojo real41 and original 39/38/36/31 Source Class exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-subsea36-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-subsea36-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-subsea36-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              p=Path('/tmp/gq8-subsea36-rojo')
+              p.write_bytes(z.read(found[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-subsea36-rojo build artifacts/siege41/REAL41.project.json -o artifacts/siege41/REAL41.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/siege38/SIEGE38.project.json -o artifacts/siege38/SIEGE38.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/wired39/WIRED39.project.json -o artifacts/wired39/WIRED39.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/wired39/CORE36_OFF.rbxlx
+          /tmp/gq8-subsea36-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/siege41/REAL41.project.json \
+            --place artifacts/siege41/REAL41.rbxlx --count 41
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/siege38/SIEGE38.project.json \
+            --place artifacts/siege38/SIEGE38.rbxlx --count 38
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/wired39/WIRED39.project.json             --place artifacts/wired39/WIRED39.rbxlx --count 39
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/combined36/COMBINED36.project.json             --place artifacts/wired39/CORE36_OFF.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json             --place artifacts/combined36/OFF31.rbxlx --count 31
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,'_stage811/quality_gameplay/gq802_stage_visual_tiles_20261118')
+          from compose_visual39 import flatten
+          place=Path('artifacts/wired39/WIRED39.rbxlx')
+          stage=Path('artifacts/wired39/WIRED39.project.json')
+          original=Path('artifacts/combined36/COMBINED36.project.json')
+          before=flatten(original)[1]
+          after=flatten(stage)[1]
+          new=set(after)-set(before)
+          changed={r for r in before if before[r].read_bytes()!=after[r].read_bytes()}
+          expected_new={
+              ('ServerScriptService','GQ802_StageManifestPolicy'),
+              ('ServerScriptService','GQ802_StageTileBlueprintPolicy'),
+              ('ServerScriptService','GQ802_StageTileVisualRenderer')}
+          expected_changed={
+              ('ServerScriptService','EGGRUMBLE_RealmBattleCore'),
+              ('StarterPlayer','StarterPlayerScripts','EGGRUMBLE_RealmBattleControls'),
+              ('ServerScriptService','EGGRUMBLE_FieldItemPickups'),
+              ('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')}
+          assert len(before)==36 and len(after)==39
+          assert new==expected_new and changed==expected_changed
+          assert len(set(before)-changed)==32
+          receipt={
+              'candidate_head':os.environ['GITHUB_SHA'],
+              'candidate_not_formal_rc':True,
+              'formal_rc_baseline':'f77b4d4393d9e9b19b65566413432a7a9f13962b',
+              'source_author_prs':[792,796,797,795,812,803,811],
+              'original36_source_count':36,
+              'selected39_source_count':39,
+              'added_optional_stage_modules':['/'.join(r) for r in sorted(new)],
+              'modified_original_scripts':['/'.join(r) for r in sorted(changed)],
+              'other32_original_scripts_byte_exact':True,
+              'off36_original_exact':True,
+              'off31_original_exact':True,
+              'native39_rojo39_source_and_class':'PASS',
+              'candidate_place_rbxlx_bytes':place.stat().st_size,
+              'candidate_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'studio_2client':'NOT_TESTED',
+              'android_15min':'NOT_TESTED',
+              'fun_owner':'NO_GO',
+              'same_head_real_rc_cas':'NOT_PERFORMED',
+              'rollback':'Select original 36-source Core36 project and original31 OFF; rich51 default unchanged'
+          }
+          out=Path('artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json')
+          out.write_text(json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2))
+          print('GQ8_WIRED39_CANDIDATE_PLACE_BYTES',place.stat().st_size)
+          print('GQ8_WIRED39_CANDIDATE_PLACE_SHA256',receipt['candidate_place_sha256'])
+          print('GQ8_WIRED39_4_ORIGINAL_PATCHED_3_NEW_32_EXACT_OFF36_OFF31_PASS')
+          PY
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/package_real39.py \
+            --project39 artifacts/wired39/WIRED39.project.json \
+            --official36 artifacts/combined36/COMBINED36.project.json \
+            --off31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --candidate-head "$GITHUB_SHA" \
+            --out artifacts/portable39/EGGRUMBLE_SOURCE39.project.json
+          /tmp/gq8-subsea36-rojo build artifacts/portable39/EGGRUMBLE_SOURCE39.project.json \
+            -o artifacts/portable39/EGGRUMBLE_SOURCE39.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable39/EGGRUMBLE_SOURCE39.project.json \
+            --place artifacts/portable39/EGGRUMBLE_SOURCE39.rbxlx --count 39
+          python3 quality_gameplay/gq8_subsea_melee_los_20261118/package_real41.py \
+            --real41 artifacts/siege41/REAL41.project.json \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --candidate-head "$GITHUB_SHA" \
+            --out artifacts/portable41/EGGRUMBLE_SOURCE41.project.json
+          /tmp/gq8-subsea36-rojo build artifacts/portable41/EGGRUMBLE_SOURCE41.project.json \
+            -o artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable41/EGGRUMBLE_SOURCE41.project.json \
+            --place artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx --count 41
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          siege=Path('artifacts/siege41/REAL41.rbxlx').read_bytes()
+          portable=Path('artifacts/portable41/EGGRUMBLE_SOURCE41.rbxlx').read_bytes()
+          assert hashlib.sha256(siege).digest()==hashlib.sha256(portable).digest(),"RED_PORTABLE41_PLACE_NOT_EXACT"
+          receipt=json.loads(Path('artifacts/siege41/REAL41.project.receipt.json').read_text())
+          receipt.update({
+            "candidate_place_rbxlx_bytes":len(siege),
+            "candidate_place_sha256":hashlib.sha256(siege).hexdigest(),
+            "portable41_rebuild_same_place_sha":True,
+            "native41":True,"rojo41_source_class":True,
+            "off39":True,"off36":True,"off31":True})
+          Path('artifacts/siege41/REAL41_INTEGRATION_RECEIPT.json').write_text(json.dumps(receipt,sort_keys=True,indent=2))
+          print('GQ8_REAL41_CANDIDATE_PLACE_BYTES',len(siege))
+          print('GQ8_REAL41_CANDIDATE_PLACE_SHA256',receipt["candidate_place_sha256"])
+          PY
+          echo GQ8_REAL41_SIEGE_STAGE_ITEM_REALM_NATIVE_ROJO_OFF39_36_31_PASS
+          echo GQ8_B_HANDOFF_PORTABLE39_ROJO_SOURCE_CLASS_PASSED
+          echo GQ8_REALM_ITEM_STAGE_WIRED39_NATIVE_ROJO_OFF36_OFF31_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: GQ8-REAL41-SIEGE-STAGE-BUNDLE-PREP-NOT-OFFICIAL
+          path: |
+            artifacts/wired39/WIRED39.rbxlx
+            artifacts/wired39/WIRED39.project.receipt.json
+            artifacts/wired39/WIRED39_INTEGRATION_RECEIPT.json
+            artifacts/portable39/
+            artifacts/portable41/
+            artifacts/siege41/REAL41.rbxlx
+            artifacts/siege41/REAL41_INTEGRATION_RECEIPT.json
+            artifacts/siege41/REAL41.project.receipt.json
+            artifacts/siege38/SIEGE38.rbxlx
+            artifacts/wired39/CORE36_OFF.rbxlx
+            artifacts/combined36/OFF31.rbxlx
+            artifacts/combined36/REALM_FOUR_PLUS_ITEM36.receipt.json
+          if-no-files-found: error
+          retention-days: 5
