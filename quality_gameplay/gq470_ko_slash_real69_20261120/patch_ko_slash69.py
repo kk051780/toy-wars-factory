@@ -100,7 +100,7 @@ def transform(source: str) -> str:
     must(source.count(OLD) == 1, "ORIGINAL_KO_ANCHOR")
     must(FEATURE not in source, "DOUBLE_PATCH")
     must('local Debris=game:GetService("Debris")' in source, "SERVICE_ANCHOR")
-    for lock in ("local MAX_KO_BURSTS_PER_SEC=6", "local MAX_FEEDBACK_PER_SEC=18",
+    for lock in ("local MAX_KO_BURSTS_PER_SEC=6\n", "local MAX_FEEDBACK_PER_SEC=18",
                  "function Feedback.hit(", "function Feedback.attacker(",
                  "function Feedback.clear(", "if not budget(false)", "or not budget(true)"):
         must(lock in source, "ORIGINAL_CONTRACT")
@@ -109,7 +109,7 @@ def transform(source: str) -> str:
                          'local Debris=game:GetService("Debris")\nlocal TweenService=game:GetService("TweenService")', 1)
     out = out.replace(OLD, NEW, 1)
     must(out.count(FEATURE) == 1 and out.count('Instance.new("WedgePart")') == 1, "TWO_FIN_SCULPT")
-    must('local MAX_KO_BURSTS_PER_SEC=6' in out, "RATE_LIMIT")
+    must('local MAX_KO_BURSTS_PER_SEC=6\n' in out, "RATE_LIMIT")
     must(source[source.index("function Feedback.attacker("):] ==
          out[out.index("function Feedback.attacker("):], "TAIL_BYTE_EXACT")
     return out
