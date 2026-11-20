@@ -127,24 +127,27 @@ FEATURE_EVIDENCE = {
  "TEAM_FIELD_ITEM_RIDGE_FOREST_CLEARANCE_520": ("EGGRUMBLE_LobbyCastleModesPreview", (
   "CentralRidgeRight",
   "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)")),
- "FIELD_CARRIER_OFFARENA_DROP_515": ("EGGRUMBLE_LobbyCastleModesPreview",
-  "DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,"),
- "ZOMBIE_COMMAND_SQUAD_582": ("EGGRUMBLE_SevenRoleCombat",
-  "local ZombieCommander="),
- "DEPOSIT_CURRENT_SESSION_586": ("EGGRUMBLE_LobbyCastleModesPreview",
-  "GQ_DEPOSIT_CURRENT_MATCH_586"),
+ "FIELD_CARRIER_OFFARENA_DROP_515": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "function Drop.recover(",
+  "DropBounds.recover(mode,root.X,root.Z,at.X,at.Z,")),
+ "ZOMBIE_COMMAND_SQUAD_582": ("EGGRUMBLE_SevenRoleCombat", (
+  "local ZombieCommander=",
+  "ZombieCommander.begin(p,")),
+ "DEPOSIT_CURRENT_SESSION_586": ("EGGRUMBLE_LobbyCastleModesPreview", (
+  "GQ_DEPOSIT_CURRENT_MATCH_586",
+  "joined[p.UserId]~=session.mode",
+  "sessions[session.mode]~=session")),
  "ZOMBIE_NEUTRAL_STABLE_ID_V3": ("EGGRUMBLE_SevenRoleCombat", (
   'local neutralIds=setmetatable({}, {__mode="k"})',
   "local function neutralTargetId(enemy:Model):string",
   'id=neutralTargetId(enemy),kind="NEUTRAL"')),
- "ITEM_CURRENT_SESSION_525": ("EGGRUMBLE_FieldItemPickups",
-  "pcall(authorize,player)"),
  "SERVER_PROMPT_CONFIG_REACH_611": ("EGGRUMBLE_InteractionGuard", (
   "local reach=configuredReach(part,verb)",
   "if selected then return nil end",
   "reach+EXCESS_RADIUS")),
  "BEAST_REAL_ESCORT_618": ("EGGRUMBLE_SevenRoleCombat", (
   "function BeastEscort.begin(session:any, player:Player",
+  "if BeastEscort.begin(session,p,char,root,h,owner,function(",
   "hum:MoveTo(targetRoot.Position)",
   "neutralAndBotHit(session,p,petRoot,pet,at,3.5,6,def.color,spec.shape)")),
 
@@ -336,6 +339,21 @@ FEATURE_EVIDENCE = {
 
 }
 
+# This security contract spans existing authoritative Host and Item scripts.
+# One-side-only marker is not enough to certify item session isolation.
+CROSS_SCRIPT_FEATURE_EVIDENCE = {
+ "ITEM_CURRENT_SESSION_525": {
+  "EGGRUMBLE_LobbyCastleModesPreview": (
+   "session.canCollectWorldItem=function(actor:Player):boolean",
+   "sessions[mode]==session",
+   "joined[actor.UserId]==mode"),
+  "EGGRUMBLE_FieldItemPickups": (
+   "local authorize=session.canCollectWorldItem",
+   "pcall(authorize,player)",
+   "if not ok or allowed~=true then return false end"),
+ },
+}
+
 class RedGate(ValueError):
     pass
 
@@ -421,6 +439,12 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         require(bool(required),"FEATURE_SOURCE_EMPTY_"+flag)
         for anchor in required:
             require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+    for flag,owners in CROSS_SCRIPT_FEATURE_EVIDENCE.items():
+        require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
+        for script,anchors in owners.items():
+            require(script in scripts,"FEATURE_FALSE_ON_"+flag+"_"+script)
+            for anchor in anchors:
+                require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag+"_"+script)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
@@ -428,8 +452,8 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         "official_rc_head":expected_head,"studio_place_bytes":len(place),
         "studio_place_sha256":placehash,"script_count":len(scripts),
         "domains":by_domain,
-        "verified_flag_count":len(FEATURE_EVIDENCE),
-        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)),
+        "verified_flag_count":len(FEATURE_EVIDENCE)+len(CROSS_SCRIPT_FEATURE_EVIDENCE),
+        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)-set(CROSS_SCRIPT_FEATURE_EVIDENCE)),
         "legacy_s1_default":"rich51",
         "real_studio_2client":"NOT_TESTED",
         "android_15min":"NOT_TESTED","owner_fun":"NOT_TESTED",
