@@ -26,7 +26,7 @@
   local record=active[uid]
   if record then resetPose(record);active[uid]=nil end
   sequences[uid]=nil
-@@ -105,9 +108,30 @@
+@@ -105,9 +108,35 @@
  for _,p in ipairs(Players:GetPlayers()) do watch(p) end
  Players.PlayerAdded:Connect(watch)
  Players.PlayerRemoving:Connect(unwatch)
@@ -38,28 +38,33 @@
 + local x=math.clamp(t,0,1)
 + return x*x*(3-2*x)
 +end
-+local function motionProfile(t:number):(number,number)
++local function motionProfile(t:number,slot:string):(number,number)
 + local u=math.clamp(t,0,1)
++ -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.
++ -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).
++ -- Longer B/C skills keep their previous pacing without changing server timing.
++ local strikeEnd=(slot=="A") and .36 or .42
++ local holdEnd=(slot=="A") and .62 or .54
 + if u<.18 then
 +  return -.20*smoothstep(u/.18),0
-+ elseif u<.42 then
-+  local strike=smoothstep((u-.18)/.24)
++ elseif u<strikeEnd then
++  local strike=smoothstep((u-.18)/(strikeEnd-.18))
 +  return -.20+1.20*strike,strike
-+ elseif u<.54 then
++ elseif u<holdEnd then
 +  return 1,1
 + else
-+  local recover=1-smoothstep((u-.54)/.46)
++  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))
 +  return recover,recover
 + end
 +end
  local function rotate(role:string,slot:string,t:number):(CFrame,CFrame,CFrame)
 - local pulse=math.sin(math.pi*math.clamp(t,0,1))
 - local snap=math.sin(math.pi*math.min(1,t*1.8))
-+ local pulse,snap=motionProfile(t)
++ local pulse,snap=motionProfile(t,slot)
   local left=CFrame.new();local right=CFrame.new();local waist=CFrame.new()
   if role=="WARRIOR" then
    right=CFrame.Angles(-1.35*pulse,.3*snap,-.7*pulse)
-@@ -136,10 +160,24 @@
+@@ -136,10 +165,24 @@
    waist=CFrame.Angles(0,-.16*pulse,0)
   end
   if slot=="B" then
@@ -85,7 +90,7 @@
   end
   return right,left,waist
  end
-@@ -166,6 +204,10 @@
+@@ -166,6 +209,10 @@
     additive(record,js.right,r)
     additive(record,js.left,l)
     additive(record,js.waist,w)
