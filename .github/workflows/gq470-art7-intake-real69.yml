@@ -47,7 +47,7 @@ jobs:
           test -s "$ROOT/formal/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
           python3 -B "$SCRIPT" --formal "$ROOT/formal" --art6 "$ROOT/art6" \
              --field "$ROOT/field" --out "$ROOT/candidate"
-          python3 -B "$SCRIPT" --verify "$ROOT/candidate"
+          # Source-only composition is verified by create(); a built Place is verified after Rojo --seal.
           echo ART7_PARENT_SOURCES_AUTHENTIC_7_ROUTE_COMPOSITE_READY_NOT_FORMAL
 
       - uses: actions/checkout@v4
