@@ -27,10 +27,10 @@ def png_chunk(name: bytes, data: bytes) -> bytes:
 def synthetic_png(index: int, width: int = 1280, height: int = 720) -> bytes:
     """Deliberately synthetic PNG fixture; never claim Studio evidence."""
     hdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
-    row = b"\\x00" + (bytes([index % 256, 10, 30]) * width)
+    row = bytes([0]) + (bytes([index % 256, 10, 30]) * width)
     image_data = zlib.compress(row * height)
     filler = ("UNIT_TEST_FIXTURE_NOT_STUDIO_%d" % index).encode() + b"z" * 1100
-    return (b"\\x89PNG\\r\\n\\x1a\\n" +
+    return (bytes([137,80,78,71,13,10,26,10]) +
             png_chunk(b"IHDR", hdr) +
             png_chunk(b"tEXt", filler) +
             png_chunk(b"IDAT", image_data) + png_chunk(b"IEND", b""))
