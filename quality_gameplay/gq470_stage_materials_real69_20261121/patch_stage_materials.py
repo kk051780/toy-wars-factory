@@ -80,11 +80,11 @@ def validate_design(blueprint_text,manifest_text):
        "BLUEPRINT_BUDGET_OR_CELLS")
  details=blueprint_text.split("local details={",1)
  check(len(details)==2,"BLUEPRINT_DETAILS_MISSING")
- six=details[1].split("\\n  }",1)[0]
- check(len(re.findall(r'\\bpart\\("',six))==6,"SIX_DETAILS_PER_CELL")
+ six=details[1].split("\n  }",1)[0]
+ check(len(re.findall(r'\bpart\("',six))==6,"SIX_DETAILS_PER_CELL")
  check("plan.partCount+=#details" in blueprint_text,"SOURCE_BUDGET_COUNTS")
- themes=set(re.findall(r'\\{"[A-Z0-9_]+","([A-Z]+)"',manifest_text))
- candidate=set(re.findall(r'(?m)^ ([A-Z]+)=\\{Enum\\.Material\\.',MATERIALS))
+ themes=set(re.findall(r'\{"[A-Z0-9_]+","([A-Z]+)"',manifest_text))
+ candidate=set(re.findall(r'(?m)^ ([A-Z]+)=\{Enum\.Material\.',MATERIALS))
  check(themes==candidate and len(themes)==10,"ACTUAL_MANIFEST_THEME_COVERAGE")
  check("Enum.Material.Neon" not in MATERIALS and
        "Instance.new" not in MATERIALS,"LOW_GLARE_INERT_MATERIALS")
@@ -101,7 +101,7 @@ def selftest():
   try: transform(mutation)
   except ValueError: pass
   else: raise AssertionError("RED_STAGE_MUTANT_NOT_CAUGHT")
- blueprint='M.MAX_PARTS=42\\nM.CELL_COUNT=6\\nlocal details={\\n'+(' part("a",nil)\\n'*6)+'  }\\nplan.partCount+=#details'
+ blueprint='M.MAX_PARTS=42\nM.CELL_COUNT=6\nlocal details={\n'+(' part("a",nil)\n'*6)+'  }\nplan.partCount+=#details'
  manifest=''.join('{"PREFAB_'+str(i)+'","'+theme+'",1},' for i,theme in enumerate(
   ["REGAL","COSMOS","TIME","DREAM","HEAVEN","SKY","ICE","UNDERWORLD","FOREST","SEA"]))
  # This synthetic input exercises fail-closed contract, not real Studio evidence.
@@ -111,7 +111,7 @@ def selftest():
  try: validate_design(blueprint,manifest.replace('"REGAL"','"INVALID"'))
  except ValueError: pass
  else: raise AssertionError("RED_UNKNOWN_THEME_NOT_REJECTED")
- try: validate_design(blueprint.replace(' part("a",nil)\\n','',1),manifest)
+ try: validate_design(blueprint.replace(' part("a",nil)\n','',1),manifest)
  except ValueError: pass
  else: raise AssertionError("RED_FIVE_PART_BLUEPRINT_NOT_REJECTED")
  print("GQ470_STAGE_THEME_SELFTEST_7_NEGATIVES_PASS")
