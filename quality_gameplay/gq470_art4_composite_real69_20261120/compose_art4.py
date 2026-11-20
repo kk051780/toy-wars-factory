@@ -64,13 +64,13 @@ SLICES = (
           "a040fa3e031930fae7304e404235bb79c8dd219c",
           "ServerScriptService/EGGRUMBLE_NeutralStoneGiant",
           "gq470_stone_giant_silhouette", True),
-    Slice(929, "4255940b975bfb8481c964838f494ee08f80b753",
+    Slice(929, "b6417df54b2c1805a21e257489e54a4a1454e923",
           "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py",
-          "2c2fe3bd14c70954a58e74e9c73bec8d6a12f0b7",
+          "7586eb6084fb953407c0b017102eddeb8da36a86",
           "ServerScriptService/EGGRUMBLE_WeaponSilhouettes",
           "gq470_fb015_weapon_sculpt", False,
           "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau",
-          "e3392e031795b786311d57bf8fca05a931246260"),
+          "5d576b4d60c0ab9f61e6f1d5ceb8bc268c008385"),
 )
 
 def digest(data: bytes) -> str:
