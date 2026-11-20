@@ -163,12 +163,14 @@ jobs:
           print('CANDIDATE_PLACE_SHA256',report['candidate_place_sha256'])
           PY
       - name: 17 family source markers and one-source B220 package
+        env:
+          VERIFIED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 - <<'PY'
-          import json,shutil,sys
+          import json,shutil,sys,hashlib,os
           from pathlib import Path
           sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
           from verify_nonloss import project_scan
@@ -186,8 +188,37 @@ jobs:
           dst.mkdir(parents=True)
           shutil.copyfile(on/'sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau',
               dst/'EGGRUMBLE_LandSeaSkyTraversal.server.luau')
+          qa=json.loads((on/'GQ470_SHOREFOAM_SOURCE_QA.json').read_text())
           shutil.copyfile(on/'GQ470_SHOREFOAM_SOURCE_QA.json',dst.parent.parent/'GQ470_SHOREFOAM_SOURCE_QA.json')
-          print('GQ470_B220_LSS_ART_ONE_SOURCE_PACKAGE_SOURCE_PASS')
+          selected=(dst/'EGGRUMBLE_LandSeaSkyTraversal.server.luau').read_bytes()
+          assert hashlib.sha256(selected).hexdigest()==qa['source_sha_after']
+          assert qa['changed_selected_routes']==['ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal']
+          assert qa['unchanged_selected_routes']==68 and qa['rollback_byte_exact']
+          head=os.environ['VERIFIED_PR_HEAD']
+          assert len(head)==40 and all(x in '0123456789abcdef' for x in head)
+          manifest={
+              'schema':'GQ470_SHOREFOAM_B220_SINGLE_ORIGINAL_SOURCE_HANDOFF_V1',
+              'candidate_head_exact':head,
+              'formal_base_head':qa['formal_base_head'],
+              'feature_id':'GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121',
+              'fb_ids':['FB-011','FB-015'],
+              'source_select_route':'ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal',
+              'selected_source_class':'Script',
+              'selected_source_path':'selected_sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau',
+              'original_selected_sha256':qa['source_sha_before'],
+              'candidate_selected_sha256':qa['source_sha_after'],
+              'total_selected_source_count':69,'other_sources_byte_exact':68,
+              'original_artifact_id':14610422120,
+              'preconditions':'B MUST reGET official SHA, route/class/hash and P0 #910 priority',
+              'rollback':'Restore original selected Luau source bytes (OFF69_ORIGINAL_LSS.server.luau) before Rojo',
+              'no_pr_whole_merge':True,'no_formal_rc_write_by_A':True,
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_accepted':False,
+              'source_only_if_run_green':True,'art_gate':'ART_NO_GO',
+          }
+          (dst.parent.parent/'B220_SHOREFACET_MANIFEST.json').write_text(
+              json.dumps(manifest,ensure_ascii=False,indent=2,sort_keys=True)+'\\n')
+          assert sum(p.is_file() for p in dst.parent.parent.rglob('*'))==3
+          print('GQ470_B220_LSS_ART_ONE_SOURCE_PACKAGE_SOURCE_PASS',head)
           PY
       - name: Upload actual Luau source B handoff
         uses: actions/upload-artifact@v4
