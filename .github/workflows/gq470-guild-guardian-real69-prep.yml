@@ -162,6 +162,14 @@ jobs:
           print('GQ470_GUILD_CANDIDATE_PLACE_BYTES',len(place))
           print('GQ470_GUILD_ART_AND_MOBILE_NOT_TESTED')
           PY
+      - name: B220 actual three-file packet rejects forged source and false GO (20 mutants)
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_guild_sculpt_real69_20261121/verify_b_handoff.py \
+            --bundle /tmp/gq470-guild-on69/B220_GUILD_ONE_SELECTED_SOURCE \
+            --candidate-head "$EXPECTED_HEAD"
       - name: Upload source-only B220 selected route manifest (NOT official)
         uses: actions/upload-artifact@v4
         with:
