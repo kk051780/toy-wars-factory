@@ -94,8 +94,12 @@ jobs:
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           test "$CURRENT" = "c8f59a3d5815276ed71f9f62edd7e568e61911e3" || { echo RED_STALE_REAL69_PARENT; exit 1; }
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
-            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
-            test "$PR_BASE" = "$CURRENT" || { echo RED_STALE_PR_BASE; exit 1; }
+            # GitHub pull_request.base.sha can lag the live canonical ref.
+            # Trust fresh ref + actual commit graph, never a stale event snapshot.
+            PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_HEAD" && test "$PR_HEAD" = "$GITHUB_SHA" || { echo RED_PR_HEAD_MISMATCH; exit 1; }
+            LINEAGE="$(gh api "repos/$GITHUB_REPOSITORY/compare/$CURRENT...$PR_HEAD" --jq .status)"
+            test "$LINEAGE" = ahead || { echo RED_PR_HEAD_NOT_CURRENT_RC_DESCENDANT; exit 1; }
           fi
           python3 - <<'PY'
           import hashlib,json,os
