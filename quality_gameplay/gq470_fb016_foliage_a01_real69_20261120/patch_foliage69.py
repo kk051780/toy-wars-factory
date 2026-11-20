@@ -38,10 +38,11 @@ local function blocksAvatar(part:BasePart,eye:Vector3,avatar:Vector3):boolean
   tMax=math.min(tMax,leave)
   return tMin<=tMax
  end
+ -- The slab interval already starts at [0,1]. A percentage cutoff would
+ -- miss leaves next to either endpoint as the camera zooms out.
  return clipAxis(start.X,delta.X,part.Size.X*.5+.5)
   and clipAxis(start.Y,delta.Y,part.Size.Y*.5+.5)
   and clipAxis(start.Z,delta.Z,part.Size.Z*.5+.5)
-  and tMax>.02 and tMin<.98
 end
 task.spawn(function()
  while script.Parent and live do
