@@ -106,6 +106,30 @@ jobs:
           print("GQ470_CANYON_ART_PRIVATE_CANDIDATE_BYTES",p.stat().st_size)
           PY
           echo GQ470_CANYON_NATIVE_ROJO_OFF_LEGACY48_PASS_NOT_ART_PASS
+      - name: Existing #420 REAL69 ART source-only audit, never visual PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 art_quality/gq470_real69_source_gate.py --self-test
+          python3 art_quality/gq470_real69_source_gate.py \
+            --root /tmp/gq470-canyon \
+            --head e80973c354f14a0d0088577f3cc1a875454f0f8f \
+            --out /tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json").read_text())
+          assert r["source_gate"]["status"]=="PASS_SOURCE_ONLY"
+          assert r["source_gate"]["actual_place_scripts"]==69
+          assert r["source_gate"]["selected_routes_source_class_hash_exact"]==69
+          assert r["visual_evidence_gate"]["screenshots_received"]==0
+          assert r["visual_evidence_gate"]["screenshots_required"]==32
+          assert r["human_art"]["status"]=="NOT_TESTED"
+          assert r["mobile_runtime"]["status"]=="NOT_TESTED"
+          assert r["owner_accepted"] is False
+          assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
+          print("GQ470_CANYON_420_ART_SOURCE_PASS_RUNTIME_AND_OWNER_NOT_TESTED")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-CANYON-FACETS-ART-PREP-NOT-FORMAL
@@ -116,5 +140,6 @@ jobs:
             /tmp/gq470-canyon/sources/**
             /tmp/gq470-canyon/OFF69_CANYON_FACETS_REBUILT.rbxlx
             /tmp/gq470-canyon/CANYON_FACET_LEGACY48_AUDIT.json
+            /tmp/gq470-canyon/CANYON_ART_GATE_SOURCE_ONLY.json
           if-no-files-found: error
           retention-days: 7
