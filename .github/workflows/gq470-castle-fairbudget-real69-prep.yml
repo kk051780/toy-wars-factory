@@ -123,6 +123,12 @@ jobs:
           meta_path.write_text(json.dumps(meta,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           print('GQ470_CASTLE_REAL69_17_FAMILIES_48_INVENTORY_PASS_NOT_ENGINE')
           PY
+      - name: Export B220 authentic single selected Lua source bytes and 8 negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_fortress_fairbudget_real69_20261121/export_b_single.py --base "$GQ470_REAL69_BASE"
+          echo "B220_ONE_SOURCE_ONLY_NOT_FORMAL_NO_AUTOMERGE"
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-CASTLE-FAIRBUDGET-REAL69-PREP-NOT-FORMAL
@@ -133,5 +139,6 @@ jobs:
             /tmp/gq470-castle-base/sources/**
             /tmp/gq470-castle-base/CASTLE_FAIRBUDGET_LEGACY17.json
             /tmp/gq470-castle-base/CASTLE_FAIRBUDGET_LEGACY48.json
+            /tmp/gq470-castle-base/B220_CASTLE_ONE_SELECTED_SOURCE_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
