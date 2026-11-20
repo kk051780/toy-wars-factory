@@ -116,8 +116,10 @@ def self_test() -> None:
     check_visual(source)
     # The known-good source must reject intentional visual/authority regressions.
     mutations = (
-        ('p.CanCollide=false', 'p.CanCollide=true'),
-        ('p.CanQuery=false', 'p.CanQuery=true'),
+        ('p.Anchored=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false\n p.CastShadow=false',
+         'p.Anchored=true;p.CanCollide=true;p.CanTouch=false;p.CanQuery=false\n p.CastShadow=false'),
+        ('p.Anchored=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false\n p.CastShadow=false',
+         'p.Anchored=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=true\n p.CastShadow=false'),
         ('p.CastShadow=false', 'p.CastShadow=true'),
         ('Instance.new("WedgePart")', 'Instance.new("Part")'),
         ('makeFacet(id.."_Relief",', 'makePart(id.."_Relief",'),
