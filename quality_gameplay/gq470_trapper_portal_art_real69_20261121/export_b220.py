@@ -104,7 +104,7 @@ def validate_b_manifest(meta: dict) -> None:
          meta.get("official_branch") == BRANCH and
          meta.get("expected_parent_head") == BASE and
          meta.get("source_route") == ROUTE and
-         meta.get("source_class") == "Script",
+         meta.get("source_class") == "ModuleScript",
          "MANIFEST_SOURCE_IDENTITY")
     for key in ("expected_original_source_sha256", "candidate_source_sha256",
                 "candidate_private_place_sha256"):
@@ -174,7 +174,7 @@ def selftest():
     valid = {
         "feature_id": FEATURE, "official_branch": BRANCH,
         "expected_parent_head": BASE, "source_route": ROUTE,
-        "source_class": "Script",
+        "source_class": "ModuleScript",
         "expected_original_source_sha256": "a" * 64,
         "candidate_source_sha256": "b" * 64,
         "candidate_private_place_sha256": "c" * 64,
@@ -193,7 +193,7 @@ def selftest():
     validate_b_manifest(valid)
     mutants = [
         ("expected_parent_head", "deadbeef"),
-        ("source_class", "LocalScript"),
+        ("source_class", "Script"),
         ("expected_original_source_sha256", "deadbeef"),
         ("candidate_source_sha256", valid["expected_original_source_sha256"]),
         ("requires_certified_b220_writer", False),
