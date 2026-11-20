@@ -32,7 +32,7 @@ jobs:
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44835421480" --jq '.head_sha+" "+.conclusion')" = "$PR952 success"
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44834993878" --jq '.head_sha+" "+.conclusion')" = "$PR949 success"
           ROOT=/tmp/gq470-composite
-          mkdir -p "$ROOT"/{official,reticle,candidate,parent_patch}
+          mkdir -p "$ROOT"/{official,reticle,parent_patch}
           gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/official"
           gh run download 44835421480 --repo "$GITHUB_REPOSITORY" \
