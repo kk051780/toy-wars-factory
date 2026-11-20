@@ -596,7 +596,7 @@ def self_test() -> None:
             except ValueError:
                 continue
             raise AssertionError("RED_ART6_PLACE_MUTANT_" + kind)
-    print("GQ470_ART6_38_MUTATION_NEGATIVES_PASS")
+    print("GQ470_ART6_46_MUTATION_NEGATIVES_PASS")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
