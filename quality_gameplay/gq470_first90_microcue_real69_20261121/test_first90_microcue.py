@@ -91,6 +91,34 @@ class First90MicrocueSourceTests(unittest.TestCase):
         self.assertFalse(tick(68.5, "deliver", False))
         self.assertFalse(tick(89, "deliver", False))
 
+    def test_delayed_avatar_head_and_respawn_rearm_once(self):
+        """Pure timer logic edge cases, not an engine render assertion."""
+        src=p.transform(self.original)
+        self.assertIn("local lastBoundHead:BasePart?=nil",src)
+        self.assertIn("if head~=lastBoundHead then",src)
+        self.assertIn("if head then cueShownAt=now end",src)
+        self.assertIn("if head~=lastBoundHead then\n   lastBoundHead=head",src)
+        cue_time=0.0
+        previous_head=None
+        def visible(now, head, has_message=True):
+            nonlocal cue_time, previous_head
+            if head is not previous_head:
+                previous_head=head
+                if head is not None:
+                    cue_time=now
+            return has_message and head is not None and now-cue_time<4.5
+        head1=object()
+        head2=object()
+        self.assertFalse(visible(0,None))
+        self.assertFalse(visible(9,None))
+        self.assertTrue(visible(10,head1))  # late spawn gets a fresh cue
+        self.assertFalse(visible(14.5,head1))
+        self.assertFalse(visible(30,head1))  # same head cannot perpetually rearm
+        self.assertFalse(visible(31,None))
+        self.assertTrue(visible(34,head2))  # respawn binding has a new window
+        self.assertFalse(visible(39,head2))
+        self.assertFalse(visible(40,head2,has_message=False))
+
     def test_mutation_rejection_is_source_exact(self):
         mutants = [
             self.original + "\n-- unrelated code change\n",
