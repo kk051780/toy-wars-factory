@@ -80,13 +80,19 @@ attach(player.Character)
 ancestryConnection=player.AncestryChanged:Connect(function(_,parent)
  if not parent then alive=false end
 end)
+-- GQ8_FB014_CANONICAL_ROLE_MODE_V3_20261120
+-- Use the server's actual role stand acknowledgement during lobby and its
+-- canonical BATTLE_ROYALE mode. Combat role is a fallback after deployment.
 local function cue(now:number):string
- local role=player:GetAttribute("EGGRUMBLE_Role")
+ local role=player:GetAttribute("EGGRUMBLE_SelectedRole")
+ if type(role)~="string" or role=="" then
+  role=player:GetAttribute("EGGRUMBLE_Role")
+ end
  local mode=player:GetAttribute("EGGRUMBLE_QueuedMode")
  if player:GetAttribute("EGGRUMBLE_Eliminated")==true then
   return ""
  end
- if type(mode)~="string" or (mode~="TEAM" and mode~="BR") then
+ if type(mode)~="string" or (mode~="TEAM" and mode~="BATTLE_ROYALE") then
   return "1/3  役職と対戦モードを選ぼう"
  end
  if type(role)~="string" or role=="" then
