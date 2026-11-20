@@ -130,6 +130,18 @@ jobs:
           assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
           print("GQ470_EXPLORE_RELIC_420_ART_SOURCE_PASS_RUNTIME_AND_OWNER_NOT_TESTED")
           PY
+      - name: B220 source-only one-script handoff; verify no hidden files
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPORT=quality_gameplay/gq470_explore_relic_art_real69_20261121/export_b1.py
+          python3 -m py_compile "$EXPORT"
+          python3 -B "$EXPORT" --self-test
+          python3 -B "$EXPORT" --candidate /tmp/gq470-explore \
+            --out /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL
+          python3 -B "$EXPORT" --candidate /tmp/gq470-explore \
+            --out /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL --check
+          echo GQ470_EXPLORE_RELIC_B220_REAL_SELECTED_BYTES_NOT_OFFICIAL
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-EXPLORE-RELIC-ART-PREP-NOT-FORMAL
@@ -141,5 +153,6 @@ jobs:
             /tmp/gq470-explore/OFF69_EXPLORE_RELIC_REBUILT.rbxlx
             /tmp/gq470-explore/EXPLORE_RELIC_LEGACY48_AUDIT.json
             /tmp/gq470-explore/ART_CHECK_REPORT.json
+            /tmp/gq470-explore/B220_EXPLORE_RELIC_ONE_SOURCE_ONLY_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
