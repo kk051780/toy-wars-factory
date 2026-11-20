@@ -49,6 +49,7 @@ jobs:
     timeout-minutes: 14
     env:
       GH_TOKEN: ${{ github.token }}
+      A_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -119,7 +120,7 @@ jobs:
               "studio_android_human_art":"NOT_TESTED","owner_accepted":False}
           (root/"REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(json.dumps(r,indent=2,ensure_ascii=False)+"\n")
           manifest={"feature_id":q["feature_id"],"parent_rc_head":r["build_head"],
-              "candidate_head":os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME"),
+              "candidate_head":os.environ["A_HEAD"],
               "source_class":"Script","selected_route":target,
               "old_source_sha256":old[target]["sha256"],
               "new_source_sha256":on[target]["sha256"],"selected_source_count":69,
