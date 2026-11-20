@@ -28,6 +28,19 @@ local function makePart(name:string,size:Vector3,pos:CFrame,color:Color3,mat:Enu
  p.Parent=parent
  return p
 end
+-- GQ470_FB015_EXPLORATION_FACETS_REAL69_20261121
+-- Shared by 4 Realm stones and 6 shards: two matte faceted silhouettes each.
+-- Nonphysical visual-only, with exactly the original 3 parts per objective.
+local function makeFacet(name:string,size:Vector3,pos:CFrame,color:Color3,
+ mat:Enum.Material,parent:Instance):WedgePart
+ local p=Instance.new("WedgePart")
+ p.Name=name;p.Size=size;p.CFrame=pos;p.Color=color;p.Material=mat
+ p.Anchored=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false
+ p.CastShadow=false
+ p.TopSurface=Enum.SurfaceType.Smooth;p.BottomSurface=Enum.SurfaceType.Smooth
+ p.Parent=parent
+ return p
+end
 local function install(arena:Instance,mode:string)
  if installed[arena] or arena.Parent~=origin or arena.Name~=mode.."_Arena" then return end
  local floor=arena:FindFirstChild("TacticalBattlefield")
@@ -46,12 +59,23 @@ local function install(arena:Instance,mode:string)
   local point=floor.CFrame:PointToWorldSpace(Vector3.new(spec[4]::number,floor.Size.Y/2+3.1,spec[5]::number))
   makePart(id.."_Pedestal",Vector3.new(3.8,.45,3.8),CFrame.new(point-Vector3.new(0,1.3,0)),
    Color3.fromRGB(65,78,99),Enum.Material.Slate,folder)
-  local core=makePart(id.."_Artifact",Vector3.new(2.2,2.2,2.2),
-   CFrame.new(point)*CFrame.Angles(math.rad(22),math.rad(45),math.rad(20)),
-   spec[6]::Color3,Enum.Material.SmoothPlastic,folder)
-  makePart(id.."_Relief",Vector3.new(.28,1.9,.28),
-   CFrame.new(point+Vector3.new(0,.05,-1.4))*CFrame.Angles(0,0,math.rad(45)),
-   Color3.fromRGB(245,237,205),Enum.Material.Metal,folder)
+  -- Four big asymmetric matte realm monoliths versus six smaller jewel shards.
+  -- Existing pedestal + two existing visual forms = 3 parts per objective.
+  -- The original IDs, discovery prompt and raycast target remain unchanged.
+  local isRealm=kind=="REALM"
+  local tilt=if (spec[4]::number)>0 then -8 else 8
+  local core=makeFacet(id.."_Artifact",
+   if isRealm then Vector3.new(2.7,3.25,2.2) else Vector3.new(1.55,2.5,1.4),
+   CFrame.new(point+Vector3.new(0,if isRealm then .35 else .16,0))
+    *CFrame.Angles(0,math.rad(45),math.rad(tilt)),
+   spec[6]::Color3,
+   if isRealm then Enum.Material.Slate else Enum.Material.SmoothPlastic,folder)
+  makeFacet(id.."_Relief",
+   if isRealm then Vector3.new(1.05,2.15,1.2) else Vector3.new(.72,1.65,.8),
+   CFrame.new(point+Vector3.new(if isRealm then .72 else .45,.08,-.53))
+    *CFrame.Angles(0,math.rad(-38),math.rad(-tilt)),
+   if isRealm then Color3.fromRGB(223,229,221) else Color3.fromRGB(255,239,188),
+   Enum.Material.SmoothPlastic,folder)
   local prompt=Instance.new("ProximityPrompt")
   prompt.Name="LegacyExplorePrompt";prompt.ActionText="発見する";prompt.ObjectText=spec[2]::string
   prompt.HoldDuration=.35;prompt.MaxActivationDistance=8;prompt.RequiresLineOfSight=true
