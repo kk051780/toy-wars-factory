@@ -83,7 +83,7 @@ def transform(source: str) -> str:
     require("p.CanCollide = collide == true" in source and "p.CanQuery = collide == true" in source, "PHYSICS_HELPER")
     require('local function awardPractice(player, info, npc, crest)' in source, "PRACTICE_OWNER")
     new = source.replace(OLD_CORAL, NEW_CORAL, 1).replace(OLD_SIGN, NEW_SIGN, 1)
-    require(new.count(MARK) == 1 and "Enum.Material.Neon, false, reef)" not in new, "BALL_NEON_REMOVED")
+    require(new.count(MARK) == 1 and "reefStem.Shape = Enum.PartType.Ball" not in new, "BALL_NEON_REMOVED")
     require(new.count("SculptedCoralFork_") == 1 and new.count("gui.MaxDistance = 38") == 1, "NEW_GEOMETRY_SIGN")
     return new
 
