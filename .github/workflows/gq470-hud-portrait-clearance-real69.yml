@@ -30,13 +30,14 @@ jobs:
           mkdir -p "$RUNNER_TEMP/gq470-portrait"
           gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/gq470-portrait"
           python3 - <<'PY'
-          import os,sys,hashlib
+          import os,sys,hashlib,json
           from pathlib import Path
           sys.path.insert(0,"quality_gameplay/gq470_hud_portrait_clearance_real69_20261121")
           from prepare import selected_map,TARGET
           root=Path(os.environ["RUNNER_TEMP"])/"gq470-portrait"
           policy=selected_map(root)[TARGET].read_text()
           print("SOURCE_ORIGINAL_REAL69_POLICY_SHA256",hashlib.sha256(policy.encode()).hexdigest())
+          print("OFFICIAL_REAL69_POLICY_JSON",json.dumps(policy,ensure_ascii=False))
           for i,line in enumerate(policy.splitlines(),1):
             if any(term in line for term in ("menuY","INVUL = at","ITEM = at","MUSOU = at","function M.layout")):
               print("ORIGINAL_SELECTED_REAL69_LINE",i,repr(line))
