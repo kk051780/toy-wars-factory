@@ -1273,6 +1273,7 @@ jobs:
           else
             PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
             test -n "$PR_BASE" && test "$CURRENT" = "$PR_BASE" || { echo RED_GQ470_PR_BASE_STALE; exit 1; }
+          fi
       - name: Final REAL69 69-route/17-family RC85+RC86 on REAL65 nonloss gate
         shell: bash
         run: |
