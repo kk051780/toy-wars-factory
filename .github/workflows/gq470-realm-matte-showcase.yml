@@ -1,0 +1,27 @@
+name: GQ470 Realm Matte Showcase Source Gate
+on:
+  push:
+    branches:
+      - prep/gq470-fb015-realm-landmarks-20261121-a01
+  pull_request:
+    paths:
+      - rc_fastlane/features/realm_hunt/**
+      - quality_gameplay/gq470_realm_matte_showcase_20261121/**
+      - .github/workflows/gq470-realm-matte-showcase.yml
+permissions:
+  contents: read
+jobs:
+  fail_closed_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate bounded 4-realm art and temporary discovery HUD
+        run: python3 quality_gameplay/gq470_realm_matte_showcase_20261121/test_source_gate.py
+      - name: Explicit proof boundary
+        run: |
+          echo "SOURCE_ONLY_GATE=PASS"
+          echo "REAL69_SELECTED_SOURCE_DELTA=0"
+          echo "STUDIO_RENDER=NOT_TESTED"
+          echo "ANDROID_15MIN=NOT_TESTED"
+          echo "OWNER_ART=NO_GO"
