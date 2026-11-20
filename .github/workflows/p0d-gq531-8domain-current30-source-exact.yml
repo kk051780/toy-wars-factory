@@ -1,0 +1,227 @@
+name: P0D GQ531 source-select original #517 8-domain30 with #484 Host+AI and human fence
+on:
+  pull_request:
+    paths:
+      - quality_gameplay/v3_bot_human_match_membership_20261116/**
+      - .github/workflows/p0d-gq531-8domain-current30-source-exact.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-author-30-with-current-ai-fence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      GQ_DIR: quality_gameplay/v3_bot_human_match_membership_20261116
+      BASE: artifacts/GQ517_ITEM_COMBO_BOSS30.project.json
+      SELECTED: artifacts/GQ531_CURRENT_8DOMAIN30.project.json
+      RECEIPT: artifacts/GQ531_CURRENT_8DOMAIN30_SOURCE_LOCK.json
+      PRIVATE_PLACE: artifacts/GQ531_8DOMAIN30_PRIVATE_NO_RC.rbxlx
+      GAME_ROOT: handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _game_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _item_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
+          path: _heal_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          path: _combo_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0d1be13be6d895bea460ba54aaa91ef346684d7f
+          path: _boss_original
+          persist-credentials: false
+      - name: Pinned author HEAD and original source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _game_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality_original rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _art_original rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score_original rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _item_original rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _heal_original rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
+          test "$(git -C _combo_original rev-parse HEAD)" = e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          test "$(git -C _boss_original rev-parse HEAD)" = 0d1be13be6d895bea460ba54aaa91ef346684d7f
+          python3 -m unittest discover -s "$GQ_DIR" -p 'test_*.py' -q
+          mkdir -p artifacts
+      - name: Reuse original artist plus #484 exact 26-source composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project "_game_original/$GAME_ROOT/EGGRUMBLE_V3_STUDIO.project.json" \
+            --out artifacts/GQ531_ART.project.json
+          python3 _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _game_original --quality _quality_original --art _art_original --score _score_original \
+            --art-project artifacts/GQ531_ART.project.json \
+            --out artifacts/GQ531_BASE26.project.json
+      - name: Select the existing #517 original field-item HEAL hunk
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --source "_item_original/$GAME_ROOT/EGGRUMBLE_FieldItemPickups.luau" \
+            --out artifacts/EGGRUMBLE_FieldItemPickups.luau
+          python3 "_item_original/$GAME_ROOT/tools/compose_item26_overlay.py" prepare \
+            --project artifacts/GQ531_BASE26.project.json \
+            --out artifacts/GQ531_ITEM26.project.json \
+            --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --receipt artifacts/SOURCE_RECEIPT.json \
+            --item-head c8a324ad7bb40648d82a5828cbf54e217585fefd \
+            --quality-head 6b52eaf1f2725496277998fe0c5532b7a8fcaab5 \
+            --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+      - name: Reuse original two-author combo28 and boss28 without duplicate counters
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/tools/compose_private28.py \
+            --base26 artifacts/GQ531_ITEM26.project.json \
+            --root _combo_original/quality_gameplay/v3_round_attribute_fence_20261116 \
+            --out artifacts/GQ531_COMBO28.project.json
+          python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/compose_current28.py \
+            --original artifacts/GQ531_ITEM26.project.json \
+            --out artifacts/GQ531_BOSS28.project.json
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py compose \
+            --combo artifacts/GQ531_COMBO28.project.json \
+            --boss artifacts/GQ531_BOSS28.project.json \
+            --out "$BASE" \
+            --receipt artifacts/GQ517_UNMODIFIED_ORIGINAL30_RECEIPT.json
+      - name: Select exactly two GQ531 server human-membership patches on 30 authors' unchanged source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/cross_author30.py" prepare \
+            --base "$BASE" \
+            --out "$SELECTED" \
+            --receipt "$RECEIPT" \
+            --original-host "_game_original/$GAME_ROOT/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --ai-host "_quality_original/$GAME_ROOT/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --ai-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Build pinned native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq531luau -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq531luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Native compile all 30 selected sources and test real #484 bot Human and AI duels
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/v3_bot_human_match_membership_20261116")
+          from cross_author30 import mapped
+          _,sources,_=mapped(Path("artifacts/GQ531_CURRENT_8DOMAIN30.project.json"))
+          assert len(sources)==30
+          for key,entry in sources.items():
+            subprocess.run(["/tmp/gq531luau/luau-compile","--text",str(entry["source"])],
+                 stdout=subprocess.DEVNULL,check=True)
+          print("GQ531_ALL8DOMAINS_SOURCE30_NATIVE_LUAU_PASS",len(sources))
+          PY
+          python3 "$GQ_DIR/make_native_membership_harness.py" \
+            --patched-host artifacts/GQ531_AuthorCurrentHost.server.luau \
+            --out artifacts/GQ531_CURRENT_HOST_MEMBERSHIP.native.luau
+          /tmp/gq531luau/luau artifacts/GQ531_CURRENT_HOST_MEMBERSHIP.native.luau | tee artifacts/HOST_MEMBERSHIP.log
+          python3 "$GQ_DIR/make_native_bot_hit_harness.py" \
+            --patched-host artifacts/GQ531_AuthorCurrentHost.server.luau \
+            --patched-bot artifacts/GQ531_AuthorCurrentBot.luau \
+            --out artifacts/GQ531_CURRENT_BOT_REAL_HIT.native.luau
+          /tmp/gq531luau/luau artifacts/GQ531_CURRENT_BOT_REAL_HIT.native.luau | tee artifacts/BOT_ACTUAL_HIT.log
+          grep -q 'PASS 14/14' artifacts/BOT_ACTUAL_HIT.log
+          python3 "$GQ_DIR/make_native_bot_hit_harness.py" \
+            --patched-host artifacts/GQ531_AuthorCurrentHost.server.luau \
+            --patched-bot artifacts/GQ531_AuthorCurrentBot.luau \
+            --out artifacts/GQ531_UNGUARDED_MUTANT.native.luau --mutant
+          if /tmp/gq531luau/luau artifacts/GQ531_UNGUARDED_MUTANT.native.luau > artifacts/MUTANT_NEGATIVE.log 2>&1; then
+            echo "RED: expected wrong-mode mutant to fail" >&2
+            exit 1
+          fi
+          echo "GQ531_UNGUARDED_HUMAN_MUTANT_REJECTED"
+      - name: Check checksum-pinned Rojo and build one private 30-script Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq531_rojo_771.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq531_rojo_771.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq531_rojo_771.zip") as z:
+            n=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+            assert len(n)==1
+            out=Path("/tmp/gq531_rojo_771")
+            out.write_bytes(z.read(n[0]));out.chmod(0o755)
+          PY
+          /tmp/gq531_rojo_771 build "$SELECTED" -o "$PRIVATE_PLACE"
+          python3 "$GQ_DIR/cross_author30.py" verify \
+            --base "$BASE" --out "$SELECTED" --receipt "$RECEIPT" --place "$PRIVATE_PLACE" \
+            --original-host "_game_original/$GAME_ROOT/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --ai-host "_quality_original/$GAME_ROOT/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --ai-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py
+          echo "SOURCE_EXACT_PRIVATE30_NO_FORMAL_RC_CAS_NO_STUDIO_ANDROID_OWNER"
+      - name: Preserve 30-source selective handoff with SHA and rollback
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: GQ531-EIGHT-DOMAIN-CURRENT-AI-PRIVATE30-ONLY
+          path: |
+            artifacts/GQ531_CURRENT_8DOMAIN30.project.json
+            artifacts/GQ531_CURRENT_8DOMAIN30_SOURCE_LOCK.json
+            artifacts/GQ531_8DOMAIN30_PRIVATE_NO_RC.rbxlx
+            artifacts/GQ531_AuthorCurrentHost.server.luau
+            artifacts/GQ531_AuthorCurrentBot.luau
+            artifacts/BOT_ACTUAL_HIT.log
+            artifacts/HOST_MEMBERSHIP.log
+            artifacts/MUTANT_NEGATIVE.log
+          if-no-files-found: warn
