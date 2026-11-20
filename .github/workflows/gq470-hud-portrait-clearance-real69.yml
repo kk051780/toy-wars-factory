@@ -16,14 +16,17 @@ jobs:
     timeout-minutes: 15
     env:
       GH_TOKEN: ${{ github.token }}
+      A_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Immutable official 69-source artifact and patch
         shell: bash
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$A_HEAD" || { echo RED_SYNTHETIC_PR_MERGE_NOT_EXACT_HEAD; exit 1; }
           SCRIPT=quality_gameplay/gq470_hud_portrait_clearance_real69_20261121/prepare.py
           python3 -B "$SCRIPT" --self-test
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
@@ -153,7 +156,7 @@ jobs:
           receipt["candidate_private_place_bytes"]=place.stat().st_size
           receipt["candidate_private_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt["original_private_place_bytes"]=original.stat().st_size
-          receipt["source_only_head"]=os.environ["GITHUB_SHA"]
+          receipt["source_only_head"]=os.environ["A_HEAD"]
           rfile.write_text(json.dumps(receipt,indent=2,sort_keys=True,ensure_ascii=False)+"\n")
           bundle=root/"B220_HUD_PORTRAIT_SOURCE_ONLY"
           bundle.mkdir()
@@ -162,7 +165,7 @@ jobs:
           dst.parent.mkdir(parents=True)
           shutil.copy2(paths[TARGET],dst)
           manifest={"kind":"ONE_SELECTED_SOURCE_ONLY_NOT_FORMAL",
-            "source_only_head":os.environ["GITHUB_SHA"],"base_official_sha":BASE,
+            "source_only_head":os.environ["A_HEAD"],"base_official_sha":BASE,
             "feature_id":MARK,"selected_route":TARGET,"class":"ModuleScript",
             "source_count":69,"other_sources_exact":68,
             "original_sha256":off[TARGET]["sha256"],
@@ -185,6 +188,7 @@ jobs:
           PY
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/GQ470_HUD_PORTRAIT_LEGACY48.json"
+          test "$(git rev-parse HEAD)" = "$A_HEAD" || { echo RED_WRONG_PR_HEAD_AT_B_PACKET; exit 1; }
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo STALE_FORMAL_RC_NO_ADMISSION; exit 1; }
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
