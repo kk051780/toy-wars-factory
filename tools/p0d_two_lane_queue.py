@@ -11,7 +11,10 @@ from typing import Any, Callable
 
 REPO = "kk051780/toy-wars-factory"
 OFFICIAL = "rc/p0d-s1-kids-rc01"
-RUN_NAME = "P0D canonical RC fast-lane Studio build"
+RUN_NAME = "GQ8 single formal RC source selected REAL66 legacy exploration OFF65"
+# The workflow display name is historical, but its PR run builds current REAL69.
+# Do not accept the old rich51 fast-lane job as proof of the current V3 candidate.
+REAL69_ARTIFACT = "GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL"
 PIN = re.compile(r"^[0-9a-f]{40}$")
 FEATURE = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
 
@@ -110,13 +113,24 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
             item["reason"] = "NOT_A_FAST_FORWARD_FROM_OFFICIAL"
             continue
         runs = api(f"/repos/{repo}/actions/runs?head_sha={sha}&per_page=100").get("workflow_runs", [])
-        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == RUN_NAME]
+        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == RUN_NAME and x.get("event") == "pull_request"]
         matching.sort(key=lambda x: (x.get("created_at", ""), x.get("id", 0)), reverse=True)
         if not matching or matching[0].get("status") != "completed" or matching[0].get("conclusion") != "success":
             item["reason"] = "LATEST_SAME_HEAD_FULL_RC_CI_NOT_GREEN"
             continue
+        # Require the actual REAL69 source-composite artifact from this *same PR-head* CI.
+        # A green legacy rich51 job, no artifact, an expired artifact, or a duplicate is NOT READY.
+        artifacts = api(f"/repos/{repo}/actions/runs/{matching[0]['id']}/artifacts?per_page=100").get("artifacts", [])
+        eligible = [a for a in artifacts if a.get("name") == REAL69_ARTIFACT
+                    and a.get("expired") is False
+                    and type(a.get("size_in_bytes")) is int and a["size_in_bytes"] > 0]
+        if len(eligible) != 1:
+            item["reason"] = "REAL69_CANDIDATE_ARTIFACT_MISSING_OR_DUPLICATE"
+            continue
+        item["candidate_artifact_id"] = eligible[0]["id"]
+        item["candidate_artifact_zip_bytes"] = eligible[0]["size_in_bytes"]
         item["status"] = "READY_FOR_SOLE_WRITER_REVIEW"
-        item["reason"] = "EXACT_HEAD_FF_AND_BUILD_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED"
+        item["reason"] = "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED"
         commit = api(f"/repos/{repo}/commits/{sha}")
         stamp = ((commit.get("commit") or {}).get("committer") or {}).get("date", "")
         if not stamp:
