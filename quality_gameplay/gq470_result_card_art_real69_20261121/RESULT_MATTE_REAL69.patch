@@ -1,0 +1,48 @@
+--- a/sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau
++++ b/sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau
+@@ -110,7 +110,7 @@
+  frame.AnchorPoint=Vector2.new(.5,1)
+  frame.Position=UDim2.new(.5,0,1,-22)
+  frame.Size=UDim2.new(.82,0,0,94)
+- frame.BackgroundColor3=Color3.fromRGB(23,34,48)
++ frame.BackgroundColor3=Color3.fromRGB(255,255,255)
+  frame.BackgroundTransparency=.06
+  frame.BorderSizePixel=0
+  frame.Parent=gui
+@@ -121,6 +121,36 @@
+  local corner=Instance.new("UICorner")
+  corner.CornerRadius=UDim.new(0,14)
+  corner.Parent=frame
++
++ -- GQ470_FB015_MATTE_RESULT_CARD_REAL69_20261121
++ -- Fixed 94px compact card: matte depth, one fine border and one thin result-tinted rail.
++ -- Tint is derived ONLY from the actual server-computed result text/win flag.
++ local accent=if won then Color3.fromRGB(245,199,100)
++  elseif title:find("引き分け",1,true) then Color3.fromRGB(158,185,204)
++  else Color3.fromRGB(130,169,199)
++ local matte=Instance.new("UIGradient")
++ matte.Name="MatteDepth"
++ matte.Color=ColorSequence.new({
++  ColorSequenceKeypoint.new(0,Color3.fromRGB(22,38,53)),
++  ColorSequenceKeypoint.new(1,Color3.fromRGB(35,49,67)),
++ })
++ matte.Rotation=90
++ matte.Parent=frame
++ local outline=Instance.new("UIStroke")
++ outline.Name="ResultOutline"
++ outline.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
++ outline.Color=accent
++ outline.Thickness=1
++ outline.Transparency=.52
++ outline.Parent=frame
++ local rail=Instance.new("Frame")
++ rail.Name="TruthAccent"
++ rail.BorderSizePixel=0
++ rail.BackgroundColor3=accent
++ rail.BackgroundTransparency=.07
++ rail.Position=UDim2.fromOffset(7,20)
++ rail.Size=UDim2.fromOffset(3,54)
++ rail.Parent=frame
+ 
+  local titleLabel=Instance.new("TextLabel")
+  titleLabel.Name="ResultTitle"
