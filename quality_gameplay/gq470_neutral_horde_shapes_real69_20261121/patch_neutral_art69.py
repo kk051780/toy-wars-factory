@@ -39,7 +39,11 @@ NEW_VISUAL = """ -- GQ470_FB015_NEUTRAL_HORDE_8_SPECIES_MATTE_FACETS_REAL69_2026
  local sc=visual.scale
  local root=piece(m,"HumanoidRootPart",at+Vector3.new(0,2*sc,0),Vector3.new(1.7,2.5,1.5)*sc,visual.color)
  root.CanTouch=false
- root.Material=Enum.Material.Slate;root.CastShadow=false
+ root.Material=if speciesId=="ICE_SLIME" then Enum.Material.SmoothPlastic
+  elseif speciesId=="ACORN_IMP" then Enum.Material.Wood
+  elseif speciesId=="SHY_WRAITH" then Enum.Material.Fabric
+  else Enum.Material.Slate
+ root.CastShadow=false
  local head=piece(m,"Head",root.Position+Vector3.new(0,1.85*sc,0),Vector3.new(1.3,1.3,1.3)*sc,visual.accent)
  head.Shape=Enum.PartType.Ball;head.CanTouch=false
  head.Material=Enum.Material.SmoothPlastic;head.CastShadow=false
@@ -64,7 +68,7 @@ NEW_VISUAL = """ -- GQ470_FB015_NEUTRAL_HORDE_8_SPECIES_MATTE_FACETS_REAL69_2026
   facet.Color=visual.accent;facet.Parent=m
   accent=facet
  end
- accent.Material=if speciesId=="SHY_WRAITH" then Enum.Material.Fabric else Enum.Material.Slate
+ accent.Material=if speciesId=="SHY_WRAITH" or speciesId=="BANNER_KNIGHT" then Enum.Material.Fabric else Enum.Material.Slate
  accent.CastShadow=false
 """
 
@@ -112,6 +116,8 @@ def transform(source: str) -> str:
            NEW_VISUAL.count('piece(m,"Head"') == 1 and
            NEW_VISUAL.count('piece(m,"SpeciesAccent"') == 1 and
            'CFrame.Angles(0,math.rad(tilt),0)' in NEW_VISUAL and
+           'Enum.Material.Wood' in NEW_VISUAL and
+           'Enum.Material.Fabric' in NEW_VISUAL and
            'local accent:BasePart' in NEW_VISUAL,
            "THREE_PART_ACCURATE_SOURCE_COUNT")
     forbidden = ('RemoteEvent', 'DataStoreService', 'MarketplaceService',
