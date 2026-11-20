@@ -233,7 +233,8 @@ def patch(root: Path) -> None:
     need((off / PROJECT).read_bytes() == (root / PROJECT).read_bytes(),
          "PROJECT_CLASS_ROUTE_DRIFT")
     meta["source_hashes"][ROUTE] = sha(after_bytes)
-    meta["build_head"] = "PREP_FROM_" + BASE
+    # Keep the official baseline HEAD in the receipt; the separate feature
+    # receipt records that this is only an A PREP candidate, not a formal RC.
     meta["gq470_trapper_portal_art"] = {
         "feature_id": FEATURE, "parent_rc_head": BASE,
         "selected_route": ROUTE, "changed_source_routes": 1,
