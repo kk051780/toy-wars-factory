@@ -183,6 +183,10 @@ def art_budget_gate(before: dict[str, bytes], after: dict[str, bytes]) -> dict:
         original, updated = before[sl.target].decode(), after[sl.target].decode()
         for marker in must_have[sl.pr]:
             demand(marker in updated, "ART_BUDGET_MARKER_" + str(sl.pr))
+            if marker[-1].isdigit():
+                end = updated.index(marker) + len(marker)
+                demand(end == len(updated) or not updated[end].isdigit(),
+                       "ART_BUDGET_NUMERIC_SUFFIX_" + str(sl.pr))
         for marker in no_new_authority:
             demand(updated.count(marker) == original.count(marker),
                    "ART_BUDGET_AUTHORITY_" + str(sl.pr))
