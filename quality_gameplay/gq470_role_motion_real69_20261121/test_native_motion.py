@@ -54,7 +54,8 @@ for _,role in ipairs(roles) do
   assert(magnitude(amid)+magnitude(bmid)+magnitude(cmid)>.25,"NO_VISIBLE_STRIKE")
   local aanti,banti,canti=sample(role,slot,.18)
   assert(magnitude(aanti)+magnitude(banti)+magnitude(canti)>.02,"NO_ANTICIPATION")
-  for _,edge in ipairs({.18,.42,.54}) do
+  local edges=(slot=="A") and {.18,.36,.62} or {.18,.42,.54}
+  for _,edge in ipairs(edges) do
    local la,lb,lc=sample(role,slot,edge-.00001)
    local ra,rb,rc=sample(role,slot,edge+.00001)
    assert(distance(la,ra)+distance(lb,rb)+distance(lc,rc)<.01,"MOTION_PHASE_DISCONTINUITY")
@@ -69,11 +70,18 @@ for _,role in ipairs(roles) do
  assert(distance(aA,aC)+distance(bA,bC)+distance(cA,cC)>.01,"SLOT_C_SAME_AS_A")
 end
 assert(cases==21,"ROLE_SLOT_21")
-local anticipation,preflash=motionProfile(.18)
-local strike,flash=motionProfile(.42)
-local recovery,last=motionProfile(1)
+local anticipation,preflash=motionProfile(.18,"A")
+local strike,flash=motionProfile(.36,"A")
+local recovery,last=motionProfile(1,"A")
+local bhit,bflash=motionProfile(.42,"B")
+local chit,cflash=motionProfile(.42,"C")
+local aminHoldSeconds=.26*(.62-.36)
 assert(anticipation<0 and preflash==0 and strike==1 and flash==1
- and recovery==0 and last==0,"PHASE_CONTRACT")
+ and recovery==0 and last==0 and bhit==1 and bflash==1
+ and chit==1 and cflash==1,"PHASE_CONTRACT")
+-- On p10 25fps (40ms/frame), 67.6ms display hold spans >1 refresh period.
+-- This numeric source test does NOT prove real render or visual perceived quality.
+assert(aminHoldSeconds>.06 and aminHoldSeconds<.08,"A_25FPS_HIT_HOLD_TOO_SHORT")
 print("GQ470_ROLE_MOTION_LUAU_RUNTIME21_7ROLES_3SLOTS_100SAMPLES_PHASE_PASS_NOT_STUDIO")
 '''
 
