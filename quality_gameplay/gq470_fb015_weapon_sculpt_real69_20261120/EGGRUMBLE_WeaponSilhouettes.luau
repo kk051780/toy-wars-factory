@@ -18,6 +18,11 @@ local CONFIG={
 local TAPERED_WEAPONS={
  OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,
  TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,
+ -- Distinct matte faceted tips for staffs, psi fins and rail barrels.
+ PrismProngLeft=true,PrismProngRight=true,
+ PsiOrbitLeft=true,PsiOrbitRight=true,
+ RailGunBarrelLeft=true,RailGunBarrelRight=true,
+ SoulProngLeft=true,SoulProngRight=true,
 }
 local function part(root:Model,grip:BasePart,name:string,
  size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart
@@ -31,7 +36,7 @@ local function part(root:Model,grip:BasePart,name:string,
  end
  p.Name=name;p.Size=size;p.Color=color;p.Material=material
  p.Reflectance=if material==Enum.Material.Metal then .08 else 0
- p.Transparency=if material==Enum.Material.Neon then .12 else 0
+ p.Transparency=if material==Enum.Material.Neon then .32 else 0
  p.Anchored=false;p.Massless=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false
  p.CastShadow=false;p.CFrame=grip.CFrame*offset;p.Parent=root
  local weld=Instance.new("WeldConstraint")
