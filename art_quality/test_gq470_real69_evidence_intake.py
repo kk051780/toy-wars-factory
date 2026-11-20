@@ -25,12 +25,41 @@ def png_chunk(name: bytes, data: bytes) -> bytes:
 
 
 def synthetic_png(index: int, width: int = 1280, height: int = 720,
-                  compression_level: int = 6, broken_zlib: bool = False) -> bytes:
+                  compression_level: int = 6, broken_zlib: bool = False,
+                  filter_mode: int = 0) -> bytes:
     """Deliberately synthetic PNG fixture; never claim Studio evidence."""
     hdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
-    row = bytes([0]) + (bytes([index % 256, 10, 30]) * width)
+    pixels = bytes([index % 256, 10, 30]) * width
+    if filter_mode == 0:
+        encoded = (b"\x00" + pixels) * height
+    else:
+        if filter_mode not in (1, 2, 3, 4):
+            raise ValueError("INVALID_SYNTHETIC_FILTER")
+        rows = []
+        previous = bytes(len(pixels))
+        for _ in range(height):
+            line = bytearray(len(pixels))
+            for j, value in enumerate(pixels):
+                a = pixels[j - 3] if j >= 3 else 0
+                b = previous[j]
+                c = previous[j - 3] if j >= 3 else 0
+                if filter_mode == 1:  # Sub
+                    predictor = a
+                elif filter_mode == 2:  # Up
+                    predictor = b
+                elif filter_mode == 3:  # Average
+                    predictor = (a + b) // 2
+                else:  # Paeth
+                    p = a + b - c
+                    da, db, dc = abs(p - a), abs(p - b), abs(p - c)
+                    predictor = a if da <= db and da <= dc else (
+                        b if db <= dc else c)
+                line[j] = (value - predictor) & 255
+            rows.append(bytes([filter_mode]) + bytes(line))
+            previous = pixels
+        encoded = b"".join(rows)
     image_data = (b"NOT_A_ZLIB_STREAM" if broken_zlib else
-                  zlib.compress(row * height, level=compression_level))
+                  zlib.compress(encoded, level=compression_level))
     filler = ("UNIT_TEST_FIXTURE_NOT_STUDIO_%d" % index).encode() + b"z" * 1100
     return (bytes([137,80,78,71,13,10,26,10]) +
             png_chunk(b"IHDR", hdr) +
@@ -293,6 +322,29 @@ class Real69EvidenceIntakeTests(unittest.TestCase):
         }), encoding="utf-8")
         self.assertEqual(actual_png_count(manifest, self.root), 1)
         high.write_bytes(synthetic_png(123, compression_level=9))
+        self.assertEqual(actual_png_count(manifest, self.root), 2)
+
+    def test_png_reversible_filter_reencoding_cannot_inflate_capture_count(self):
+        # Five different CRC-valid PNG encodings of the SAME RGB pixels must
+        # occupy only one camera-evidence slot. This was previously 5/5.
+        files = []
+        for filter_mode in range(5):
+            path = self.root / ("filter_%s.png" % filter_mode)
+            path.write_bytes(synthetic_png(141, filter_mode=filter_mode))
+            files.append(path)
+        self.assertEqual(len({hashlib.sha256(p.read_bytes()).hexdigest()
+                              for p in files}), 5)
+        manifest = self.root / "filtered_reencodings.json"
+        manifest.write_text(json.dumps({
+            "shots": [
+                {"scene": SCENES[i], "device": "pc", "version": "before",
+                 "file": path.name}
+                for i, path in enumerate(files)
+            ]
+        }), encoding="utf-8")
+        self.assertEqual(actual_png_count(manifest, self.root), 1)
+        # A genuinely different synthetic pixel raster is still distinct.
+        files[-1].write_bytes(synthetic_png(142, filter_mode=4))
         self.assertEqual(actual_png_count(manifest, self.root), 2)
 
     def test_pc_rating_4_does_not_meet_4_point_5_target(self):
