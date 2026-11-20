@@ -1,0 +1,37 @@
+name: GQ8 Core36 post-CAS append-only historical receipt
+on:
+  push:
+    branches:
+      - quality/gq8-core36-postcas-truth-20261118
+    paths:
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36_POSTCAS_RECEIPT_20261118.json'
+      - 'quality_gameplay/gq8_core36_postcas_receipt_20261118/**'
+      - '.github/workflows/p0d-gq8-core36-receipt.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36_POSTCAS_RECEIPT_20261118.json'
+      - 'quality_gameplay/gq8_core36_postcas_receipt_20261118/**'
+      - '.github/workflows/p0d-gq8-core36-receipt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  append-only-receipt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Verify immutability of original selection manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object rc_fastlane/ACTIVE.json)" = "34ce2f8fdb67815d62cbba635e1bb1637e6cf496"
+          test "$(git hash-object rc_fastlane/EGGRUMBLE_V3_CORE36.json)" = "42d8dd205a520264f945cee943e6921e5e44c87b"
+      - name: Source-verified historical receipt and negative mutations
+        run: python3 -B -m unittest discover -v -s quality_gameplay/gq8_core36_postcas_receipt_20261118 -p 'validate_receipt.py'
+      - name: Classify evidence without assuming engine/FUN
+        run: |
+          echo 'PASS=HISTORICAL_CORE36_SOURCE_RECEIPT_ONLY'
+          echo 'STUDIO=NOT_TESTED ANDROID=NOT_TESTED FUN=NOT_TESTED'
