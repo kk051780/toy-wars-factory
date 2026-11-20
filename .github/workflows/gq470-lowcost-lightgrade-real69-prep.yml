@@ -111,6 +111,60 @@ jobs:
             --project /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69.project.json \
             --place /tmp/gq470-realm-grade-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
           echo "GQ470_REALM_ROJO_ON69_OFF69_REAL_PLACE_PASS_SOURCE_ONLY"
+      - name: Cross-check 17 existing feature families and 48 historical flag inventory
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 - <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120")
+          from verify_real69 import marker_check
+          target="StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls"
+          on=Path("/tmp/gq470-realm-grade-on69")
+          off=Path("/tmp/gq470-realm-grade-off69")
+          report=json.loads((on/"REALM_GRADE_PREP_REPORT.json").read_text())
+          original=json.loads((on/"ORIGINAL_REAL69_RECEIPT.json").read_text())
+          candidate=json.loads(json.dumps(original))
+          candidate["source_hashes"][target]=report["candidate_source_sha256"]
+          candidate["candidate_type"]="GQ470_REALM_GRADE_A_SOURCE_NOT_FORMAL"
+          candidate["canonical_formal_head_unchanged"]=report["formal_base_sha"]
+          (on/"REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(
+              json.dumps(candidate,sort_keys=True,indent=2)+"\n")
+          (off/"REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(
+              json.dumps(original,sort_keys=True,indent=2)+"\n")
+          a=project_scan(on,"EGGRUMBLE_REAL69.project.json")
+          b=project_scan(off,"EGGRUMBLE_REAL69.project.json")
+          assert len(a)==len(b)==69
+          assert {k for k in a if a[k]["sha256"]!=b[k]["sha256"]}=={target}
+          am,bm=marker_check(a),marker_check(b)
+          assert len(am)==len(bm)==17 and am==bm
+          print("GQ470_REALM_SOURCE_FAMILIES_17_ON_OFF_UNCHANGED_PASS")
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base /tmp/gq470-realm-grade-on69 \
+            --report /tmp/gq470-realm-grade-on69/REALM_GRADE_LEGACY48_ON.json
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base /tmp/gq470-realm-grade-off69 \
+            --report /tmp/gq470-realm-grade-on69/REALM_GRADE_LEGACY48_OFF.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("/tmp/gq470-realm-grade-on69")
+          a=json.loads((p/"REALM_GRADE_LEGACY48_ON.json").read_text())
+          b=json.loads((p/"REALM_GRADE_LEGACY48_OFF.json").read_text())
+          assert a["summary"]==b["summary"]=={
+              "MARKER_SOURCE_PRESENT":15,
+              "SOURCE_ANALOGUE_ONLY":27,
+              "EVIDENCE_GAP":4,
+              "NON_RUNTIME_LEGACY_FLAG":2,
+          }
+          assert a["all_48_semantic_parity"]==b["all_48_semantic_parity"]=="NOT_PROVEN"
+          print("GQ470_REALM_LEGACY48_SOURCE_ON_OFF_ACCOUNTING_PASS_SEMANTICS_NOT_PROVEN")
+          PY
       - name: Upload exact candidate sources for authenticated B review
         uses: actions/upload-artifact@v4
         with:
@@ -121,8 +175,9 @@ jobs:
       - name: Print evidence truth boundary
         run: |
           echo "A_REAL69_SOURCE_AND_ROLLBACK_CANDIDATE=YES_IF_GREEN"
-          echo "NATIVE_LUAU=NOT_TESTED"
-          echo "ROJO_ON_OFF=NOT_TESTED"
+          echo "NATIVE_LUAU_ON69_OFF69=PASS_SOURCE_ONLY_IF_GREEN"
+          echo "ROJO_ON_OFF_PLACE_ROLLBACK=PASS_SOURCE_ONLY_IF_GREEN"
           echo "STUDIO_SOLO_2CLIENT=NOT_TESTED"
           echo "ANDROID_15MIN_HUMAN_ART=NOT_TESTED"
+          echo "LEGACY17_48_SOURCE=PASS_SOURCE_ONLY_IF_GREEN; SEMANTICS=NOT_PROVEN"
           echo "OFFICIAL_RC_ADOPTED=NO"
