@@ -85,7 +85,7 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
     # CRC alone does not prove valid image pixels: an attacker can recompute a
     # chunk CRC around a corrupt or truncated zlib stream. Bound inflation by
     # the IHDR's exact scanline budget (also handles Adam7 interlace), require
-    # the zlib checksum/end marker, and hash *decoded scanlines* so merely
+    # the zlib checksum/end marker, and hash *unfiltered pixel scanlines* so merely
     # recompressing the same screenshot cannot count as a second camera view.
     depth, color, compression, filtering, interlace = data[24:29]
     channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(color)
@@ -117,13 +117,46 @@ def verified_png_integrity(path: Path) -> tuple[int, int, str, str]:
     if (len(raw) != expected or not decoder.eof or
             decoder.unused_data or decoder.unconsumed_tail):
         raise ValueError("PNG_INVALID_IDAT_SCANLINES")
+    # PNG filtering is reversible. Two files with identical pixels can use
+    # different row filters (None/Sub/Up/Average/Paeth), producing different
+    # CRC-valid zlib scanlines. Hash the *unfiltered* data to prevent those
+    # encodings from masquerading as different camera captures. This is still
+    # only pixel-data deduplication, NOT proof that Roblox Studio made the PNG.
     cursor = 0
+    bpp = max(1, (channels * depth + 7) // 8)
+    decoded_hash = hashlib.sha256()
+    decoded_hash.update(struct.pack(">IIBBB", width, height, depth, color, interlace))
     for rows, row_length in scanlines:
+        previous = bytearray(row_length - 1)
         for _ in range(rows):
-            if raw[cursor] > 4:
+            filter_type = raw[cursor]
+            line = bytearray(raw[cursor + 1:cursor + row_length])
+            if filter_type > 4:
                 raise ValueError("PNG_INVALID_SCANLINE_FILTER")
+            if filter_type == 1:  # Sub
+                for j in range(len(line)):
+                    line[j] = (line[j] + (line[j - bpp] if j >= bpp else 0)) & 255
+            elif filter_type == 2:  # Up
+                for j in range(len(line)):
+                    line[j] = (line[j] + previous[j]) & 255
+            elif filter_type == 3:  # Average
+                for j in range(len(line)):
+                    left = line[j - bpp] if j >= bpp else 0
+                    line[j] = (line[j] + ((left + previous[j]) // 2)) & 255
+            elif filter_type == 4:  # Paeth
+                for j in range(len(line)):
+                    a = line[j - bpp] if j >= bpp else 0
+                    b = previous[j]
+                    c = previous[j - bpp] if j >= bpp else 0
+                    p = a + b - c
+                    da, db, dc = abs(p - a), abs(p - b), abs(p - c)
+                    predictor = a if da <= db and da <= dc else (
+                        b if db <= dc else c)
+                    line[j] = (line[j] + predictor) & 255
+            decoded_hash.update(line)
+            previous = line
             cursor += row_length
-    return width, height, sha, hashlib.sha256(raw).hexdigest()
+    return width, height, sha, decoded_hash.hexdigest()
 
 
 def actual_png_count(manifest_path: Path | None, screenshots: Path | None,
