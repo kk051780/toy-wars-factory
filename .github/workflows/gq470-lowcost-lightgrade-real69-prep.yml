@@ -1,4 +1,4 @@
-name: GQ470 low-cost scene grade REAL69 isolated PREP source QA
+name: GQ470 low-cost realm color art REAL69 source PREP QA
 on:
   pull_request:
     branches:
@@ -9,27 +9,54 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
-  static-source-safety-only:
-    name: Static source contract (NOT Studio / NOT final ART pass)
+  pinned-real69-source-safety:
+    name: Official 69 source-exact + rollback + mutations (NOT Studio)
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 12
     steps:
-      - name: Checkout fixed candidate SHA
+      - name: Checkout candidate commit
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Verify real candidate code and negative mutations
+      - name: Download genuine formal same-head official artifact #14610422120
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          python3 -B -m unittest -v quality_gameplay/gq470_lightgrade_real69_20261121/test_scene_grade.py
-      - name: Artifact boundary
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14610422120/zip" \
+            -o /tmp/gq470-real69-official.zip
+          unzip -t /tmp/gq470-real69-official.zip >/dev/null
+          echo "BASE_ARTIFACT_BYTES=$(stat -c %s /tmp/gq470-real69-official.zip)"
+      - name: Build one-client source candidate from authentic 69 sources
         run: |
-          echo "A_SOURCE_STATIC_ONLY=true"
-          echo "REAL69_SELECTED_GAME_SCRIPTS_CHANGED=0"
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_lightgrade_real69_20261121/patch_realm_color69.py \
+            --artifact /tmp/gq470-real69-official.zip \
+            --out /tmp/gq470-realm-grade-on69
+      - name: Strict 69-route + OFF rollback + adversarial negative QA
+        env:
+          REAL69_ARTIFACT: /tmp/gq470-real69-official.zip
+        run: |
+          python3 -B -m unittest discover \
+            -s quality_gameplay/gq470_lightgrade_real69_20261121 \
+            -p "test_*.py" -v
+      - name: Upload exact candidate sources for authenticated B review
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-REALM-GRADE-SOURCE-ONLY
+          path: /tmp/gq470-realm-grade-on69/
+          retention-days: 3
+          if-no-files-found: error
+      - name: Print evidence truth boundary
+        run: |
+          echo "A_REAL69_SOURCE_AND_ROLLBACK_CANDIDATE=YES_IF_GREEN"
           echo "NATIVE_LUAU=NOT_TESTED"
           echo "ROJO_ON_OFF=NOT_TESTED"
-          echo "STUDIO_SOLO=NOT_TESTED"
-          echo "STUDIO_2CLIENT=NOT_TESTED"
-          echo "ANDROID_15MIN=NOT_TESTED"
-          echo "HUMAN_ART=NOT_TESTED"
+          echo "STUDIO_SOLO_2CLIENT=NOT_TESTED"
+          echo "ANDROID_15MIN_HUMAN_ART=NOT_TESTED"
           echo "OFFICIAL_RC_ADOPTED=NO"
