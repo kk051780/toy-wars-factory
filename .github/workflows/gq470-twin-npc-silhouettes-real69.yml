@@ -1,0 +1,43 @@
+name: GQ470 REAL69 twin NPC silhouette A source QA
+on:
+  push:
+    branches:
+      - feature/gq470-twin-npc-silhouettes-real69-20261121
+  pull_request:
+    paths:
+      - "quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/**"
+      - ".github/workflows/gq470-twin-npc-silhouettes-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-fixture-negative-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Python patch script
+        run: python3 -m py_compile quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py
+      - name: Run authored source patch and negative mutation rejection
+        run: |
+          python3 quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py \
+            --fixture quality_gameplay/gq8_rc85_twin_biomes_real68_20261119/EGGRUMBLE_LegacyTwinBiomes.server.luau \
+            --output "$RUNNER_TEMP/twin_npc_candidate.luau" \
+            --report "$RUNNER_TEMP/qa.json"
+      - name: Fail closed on missing visual integrity or false engine claims
+        run: |
+          python3 - "$RUNNER_TEMP/qa.json" "$RUNNER_TEMP/twin_npc_candidate.luau" <<'PY'
+          import json, pathlib, sys
+          report=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          source=pathlib.Path(sys.argv[2]).read_text()
+          assert report["mutations_rejected"] >= 9
+          assert report["formal_source_gate"] == "FIXTURE_ONLY_NOT_FORMAL"
+          assert report["native_rojo_off69"] == "NOT_TESTED"
+          assert report["studio_android_human_art_owner"] == "NOT_TESTED"
+          assert source.count("ArtSilhouette") == 1
+          assert source.count('Instance.new("Part")') == 1
+          assert 'prompt.Parent = body' in source
+          assert 'table.insert(animate,{model=npc' in source
+          assert 'Enum.Material.Neon,false,npc)' not in source
+          print("GQ470_TWIN_NPC_SOURCE_FIXTURE_NEGATIVE_PASS_NOT_FORMAL")
+          PY
