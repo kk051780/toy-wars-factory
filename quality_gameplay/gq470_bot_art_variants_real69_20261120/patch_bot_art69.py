@@ -25,7 +25,10 @@ local MAX_BOT_ARMOR_PIECES=7
 local function botArmorVariant(id:any):number
  local value=tostring(id)
  local signature=0
- for i=1,#value do signature=(signature+string.byte(value,i)*i)%3 end
+ -- Position-weighted IDs collapse to one archetype if the changing digit
+ -- occupies a character index divisible by 3. A rolling hash keeps adjacent
+ -- numeric BotIds spread across all three appearances, with stable identity.
+ for i=1,#value do signature=(signature*31+string.byte(value,i))%3 end
  return signature
 end
 
@@ -152,6 +155,28 @@ def selftest():
             "THREE_ARCHETYPES")
     require("model.Destroying:Connect" in new and "MAX_BOT_ARMOR_PIECES=7" in new,
             "CLEANUP_BUDGET")
+    require("signature=(signature*31+string.byte(value,i))%3" in new,
+            "VARIANT_HASH_REACHABLE")
+    def current_variant(value: str) -> int:
+        sig = 0
+        for character in value:
+            sig = (sig * 31 + ord(character)) % 3
+        return sig
+    def previous_variant(value: str) -> int:
+        sig = 0
+        for i, character in enumerate(value, 1):
+            sig = (sig + ord(character) * i) % 3
+        return sig
+    # Six-character BotIds demonstrate the real original regression:
+    # changing only the last digit at position six used to alter nothing.
+    ids = ["BOTID" + str(i) for i in (1, 2, 3)]
+    require(len({previous_variant(v) for v in ids}) == 1,
+            "REPRO_LEGACY_SAME_APPEARANCE")
+    require(len({current_variant(v) for v in ids}) == 3,
+            "THREE_IDENTITY_SILHOUETTES")
+    for prefix in ("AI_BOT_", "TEAM_BOT00", "B_2026_"):
+        require(len({current_variant(prefix + str(i)) for i in (1, 2, 3)}) == 3,
+                "NUMERIC_SUFFIX_DIVERSITY")
     for mutant in (new,old.replace(START,""),old.replace(END,""),
                    old.replace("p.CanQuery=false","p.CanQuery=true")):
         try: transform(mutant)
