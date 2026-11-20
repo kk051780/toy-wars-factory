@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """REAL69 native-art-source candidate negative tests; source not engine proof."""
 import hashlib
+import json
 import os
 import pathlib
 import tempfile
@@ -8,7 +9,7 @@ import unittest
 import zipfile
 
 from patch_realm_color69 import (
-    BASE_HEAD, BEFORE_SHA, MARK, TARGET, TARGET_FILE,
+    BASE_HEAD, BEFORE_SHA, AFTER_SHA, MARK, TARGET, TARGET_FILE,
     build, patch, sha, unpatch,
 )
 
@@ -53,6 +54,18 @@ class SourcePatchTests(unittest.TestCase):
                              report["candidate_source_sha256"])
             with self.assertRaisesRegex(ValueError, "RED_REALM_GRADE_OUT_ALREADY_EXISTS"):
                 build(self.artifact, dest)
+
+    def test_manifest_pins_exact_candidate_and_cannot_relabel_formal(self):
+        manifest = json.loads(pathlib.Path(__file__).with_name("SOURCE_SELECT_MANIFEST.json").read_text())
+        self.assertEqual(manifest["selected_existing_route"], TARGET)
+        self.assertEqual(manifest["selected_source_sha256"], AFTER_SHA)
+        self.assertEqual(manifest["original_source_sha256"], BEFORE_SHA)
+        self.assertEqual(manifest["formal_base_head"], BASE_HEAD)
+        self.assertEqual(manifest["untouched_selected_source_count"], 68)
+        self.assertEqual(manifest["additional_renderstep_connections"], 0)
+        self.assertEqual(manifest["additional_parts"], 0)
+        self.assertFalse(manifest["approved_for_formal_rc_write"])
+        self.assertTrue(manifest["no_whole_pr_merge"])
 
     def test_negative_source_mutations_fail_closed(self):
         old = self.original.decode("utf-8")
