@@ -83,6 +83,33 @@ jobs:
           (t/"packet/B220_ONE_SOURCE_NOT_FORMAL.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
           print("SOURCE_LOCK_EXACT_1_OF_69_AND_9_MUTANTS_PASS")
           PY
+      - name: Audit all original 48 legacy flags and 17 source families (source != engine)
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base "$RUNNER_TEMP/on69" \
+            --report "$RUNNER_TEMP/packet/REAL69_48FLAG_TRUTH.json"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120")
+          from verify_real69 import marker_check
+          temp=Path(os.environ["RUNNER_TEMP"])
+          on=project_scan(temp/"on69","EGGRUMBLE_REAL69.project.json")
+          off=project_scan(temp/"off69","EGGRUMBLE_REAL69.project.json")
+          assert len(on)==len(off)==69
+          assert len(marker_check(on))==len(marker_check(off))==17
+          audit=json.loads((temp/"packet/REAL69_48FLAG_TRUTH.json").read_text())
+          assert audit["source_count"]==69
+          assert audit["original_legacy_flags"]==48
+          assert audit["flag_inventory_verified"] is True
+          assert sum(audit["summary"].values())==48
+          assert audit["all_48_semantic_parity"]=="NOT_PROVEN"
+          print("REAL69_17_FAMILIES_AND_48_SOURCE_FLAG_INVENTORY_PASS_ENGINE_NOT_TESTED")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
