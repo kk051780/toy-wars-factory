@@ -1,0 +1,50 @@
+name: P0D GQ8 Level and World Pickup Access Native
+on:
+  push:
+    branches: ['feature/gq8-battle-level-pickups-20261118-lane4']
+    paths:
+      - 'handoffs/EGGRUMBLE-LEVEL-PICKUPS-20261118/**'
+      - '.github/workflows/p0d-gq8-level-pickups.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-LEVEL-PICKUPS-20261118/**'
+      - '.github/workflows/p0d-gq8-level-pickups.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  level-pickups-luau:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Source-derived tests
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-LEVEL-PICKUPS-20261118/make_native_tests.py --out /tmp/level-pickups
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile actual Luau and require intentional expiry mutant RED
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/level-pickups-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/level-pickups-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/level-pickups-native/luau
+          CC=/tmp/level-pickups-native/luau-compile
+          "$CC" --text handoffs/EGGRUMBLE-LEVEL-PICKUPS-20261118/ElementAccessPolicy.luau >/dev/null
+          "$CC" --text /tmp/level-pickups/good.luau >/dev/null
+          "$CC" --text /tmp/level-pickups/mutant.luau >/dev/null
+          "$CLI" /tmp/level-pickups/good.luau | tee /tmp/level-pickups-good.log
+          grep -qx GQ8_LEVEL_PICKUP_7ROLE_SOURCE_NATIVE_PASS /tmp/level-pickups-good.log
+          if "$CLI" /tmp/level-pickups/mutant.luau >/tmp/level-pickups-mutant.log 2>&1; then
+            echo RED_EXPIRED_PICKUP_MUTANT_ACCEPTED
+            exit 1
+          fi
+          grep -q RED_EXACT_EXPIRY /tmp/level-pickups-mutant.log
+          echo GQ8_LEVEL_PICKUP_NATIVE_GOOD_AND_MUTANT_RED_PASS
