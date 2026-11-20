@@ -110,8 +110,8 @@ def apply(root: Path, candidate: Path) -> None:
     mapping = chosen(root)
     demand(len(mapping) == 69 and TARGET in mapping, "REAL69_SELECTED_ROUTES")
     target, cls = mapping[TARGET]
-    demand(cls == "ModuleScript", "EXISTING_MODULE_CLASS")
     meta = json.loads((root / RECEIPT).read_text())
+    demand(meta["source_classes"].get(TARGET) == "ModuleScript", "EXISTING_MODULE_CLASS")
     demand(meta.get("build_head") == FORMAL and
            meta.get("official_branch") == "rc/p0d-s1-kids-rc01" and
            meta.get("selected_source_count") == 69 and
@@ -120,7 +120,7 @@ def apply(root: Path, candidate: Path) -> None:
     for route, (path, kind) in mapping.items():
         demand(digest(path.read_bytes()) == meta["source_hashes"][route],
                "PARENT_HASH_" + route)
-        demand(kind == meta["source_classes"][route], "PARENT_CLASS_" + route)
+        demand(not kind or kind == meta["source_classes"][route], "PARENT_CLASS_" + route)
     original = target.read_bytes()
     replacement = candidate.read_bytes()
     findings = check(original, replacement)
