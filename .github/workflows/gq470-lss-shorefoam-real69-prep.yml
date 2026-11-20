@@ -17,7 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Verify exact candidate HEAD, not PR synthetic merge
+        env:
+          EXPECTED_PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          HEAD_NOW="$(git rev-parse HEAD)"
+          test "$HEAD_NOW" = "$EXPECTED_PR_HEAD"
+          echo "GQ470_EXACT_A_HEAD=$HEAD_NOW"
       - name: Source/negative/rollback unittest
         run: python3 -B -m unittest discover -s quality_gameplay/gq470_lss_shorefoam_real69_20261121 -p 'test_*.py' -v
       - name: Pin genuine original REAL69 artifact
