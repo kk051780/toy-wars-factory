@@ -59,6 +59,11 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
    local h=contour.height+(if side>0 then 3 else 0)
    local turn=side*contour.yaw
    local lean=side*contour.lean
+   -- Use existing matte stone palette for subtle depth and directional
+   -- contrast. These Color3 blends run once when an arena is built, not
+   -- during combat frames; zero new instances or texture fetches.
+   local baseTint=darkStone:Lerp(limestone,.07*(index-1))
+   local crownTint=limestone:Lerp(darkStone,.08*(3-index))
    -- Reserve both pieces before sculpting a complete profile. If the 320
    -- scene cap is almost full, skip this pair rather than leave a bare wedge.
    if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then
@@ -66,14 +71,14 @@ local function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,numb
      Vector3.new(18,h,contour.depth),
      CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))
       *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),
-     darkStone,Enum.Material.Slate)
+     baseTint,Enum.Material.Slate)
     if basePart then
      -- Matched limestone cap penetrates the base: no detached floating crown.
      local crownPart=createVisual(arena,art,"HorizonCliffCrown_"..side.."_"..index,"Wedge",
       Vector3.new(11,4,contour.depth-6),
       CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))
        *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),
-      limestone,Enum.Material.Limestone)
+      crownTint,Enum.Material.Limestone)
      if crownPart then
       table.insert(bucket,basePart)
       table.insert(bucket,crownPart)
@@ -259,6 +264,9 @@ def selftest() -> None:
             pass
         else:
             raise AssertionError("RIDGE_GEOMETRY_MUTANT_ACCEPTED")
+    need("local baseTint=darkStone:Lerp(limestone,.07*(index-1))" in result and
+         "local crownTint=limestone:Lerp(darkStone,.08*(3-index))" in result,
+         "MATTE_COLOR_DEPTH_NO_ADDED_PARTS")
     need("contour.depth-6" in result and "math.rad(-lean*1.4)" in result
          and "CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))" in result,
          "SCULPTED_CAP_AND_BASE_MISSING")
