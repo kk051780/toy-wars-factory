@@ -130,6 +130,24 @@ jobs:
           (packet/"SOURCE_SELECT_MANIFEST.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
           print("REAL69_EXACT_CHANGED_ONE_OF_69_OTHERS_68_BYTE_EXACT_PASS")
           PY
+      - name: Re-audit original 48 RC85/86 feature flags against candidate 69 source
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base "$RUNNER_TEMP/twin69" \
+            --report "$RUNNER_TEMP/B220_TWIN_NPC_SOURCE_ONLY/REAL69_48FLAG_TRUTH.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"B220_TWIN_NPC_SOURCE_ONLY/REAL69_48FLAG_TRUTH.json"
+          audit=json.loads(p.read_text())
+          assert audit["source_count"]==69 and audit["original_legacy_flags"]==48
+          assert audit["flag_inventory_verified"] is True
+          assert audit["all_48_semantic_parity"]=="NOT_PROVEN"
+          assert sum(audit["summary"].values())==48
+          print("REAL69_CANDIDATE_LEGACY48_TRACE_PASS_NOT_SEMANTIC_ENGINE")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
