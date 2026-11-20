@@ -52,7 +52,12 @@ def check(ok,reason):
 
 def selected(root):
  base=root/"sources"
- return {p.relative_to(base).as_posix()[:-5]:p for p in base.rglob("*.luau")}
+ return {canonical_route(p.relative_to(base).as_posix()[:-5]):p for p in base.rglob("*.luau")}
+
+def canonical_route(route):
+ for suffix in (".server",".client"):
+  if route.endswith(suffix): return route[:-len(suffix)]
+ return route
 
 def transform(text):
  check(MARK not in text,"SECOND_APPLICATION")
