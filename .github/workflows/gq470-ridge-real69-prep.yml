@@ -25,9 +25,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py
           python3 -B quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py --self-test
-          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44673605213 --jq '.head_sha+" "+.conclusion')" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2 success"
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44686473297 --jq '.head_sha+" "+.conclusion')" = "c226c63eeb235503f9292503b61f2173550337ec success"
           mkdir -p /tmp/gq470-ridge
-          gh run download 44673605213 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ridge
+          gh run download 44686473297 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ridge
           test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69.project.json
           test -s /tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json
           test -s /tmp/gq470-ridge/EGGRUMBLE_REAL69_PRIVATE.rbxlx
@@ -94,7 +94,7 @@ jobs:
           python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-ridge/off69_ridge/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-ridge/OFF69_RIDGE_REBUILT.rbxlx --count 69
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
           PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
-          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo RED_RIDGE_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
+          test "$CURRENT" = "c226c63eeb235503f9292503b61f2173550337ec" || { echo RED_RIDGE_PARENT_OFFICIAL_HEAD_MOVED; exit 1; }
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             test "$PR_BASE" = "$CURRENT" || { echo RED_RIDGE_STALE_PR_BASE; exit 1; }
           fi
@@ -126,7 +126,7 @@ jobs:
           import json,os,pathlib
           p=pathlib.Path('/tmp/gq470-ridge/REAL69_LEGACY_INTAKE_RECEIPT.json')
           r=json.loads(p.read_text())
-          assert r['gq470_fb015_ridge_visual']['original_formal_sha']=='6c2338b44db1c772bab0d688b2aece2e3aa8aae2'
+          assert r['gq470_fb015_ridge_visual']['original_formal_sha']=='c226c63eeb235503f9292503b61f2173550337ec'
           r['build_head']=os.environ['GITHUB_SHA']
           p.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
           PY
