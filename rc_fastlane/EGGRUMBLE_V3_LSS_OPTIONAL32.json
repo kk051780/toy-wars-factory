@@ -7,7 +7,7 @@
   "source_branch_sha": "7d4bba95a3d78c65afa6ced4aed346e9258bd1f3",
   "integrator_parent_rc_sha": "30673c9db684f8b084e51b01e739937910cbe5ba",
   "added_script": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
-  "added_source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+  "added_source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
   "source_author_prs": [
     714,
     737,
@@ -23,7 +23,9 @@
     "GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118",
     "GQ8_LSS_PROMPT_SERVER_SIGHT_20261118",
     "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118",
-    "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118"
+    "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118",
+    "GQ8_LSS_IDLE_CRAFT_LEASE_20261118",
+    "GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118"
   ],
   "integration": "Studio-only optional profile, does not replace primary rich51 or canonical V3 31; selected script builds only through dedicated real31->32 sameHEAD workflow",
   "rollback": "Omit the optional one ServerScript to recover exact official31 selected scripts",
@@ -53,7 +55,7 @@
   "gq8_craft_expiry_offshore_rescue": {
     "feature_id": "GQ8_LSS_CRAFT_EXPIRY_OFFSHORE_RESCUE_20261118",
     "source_scope": "one_existing_optional_32nd_LSS_Script",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "only_offshore_living_current_seated_pilot": true,
     "current_match_and_avatar_gate": true,
     "dock_collision_exclusion": true,
@@ -66,7 +68,7 @@
   },
   "gq8_orphan_craft_owner": {
     "feature_id": "GQ8_LSS_ORPHAN_CRAFT_OWNER_LIFECYCLE_20261118",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "source_scope": "one existing optional32 Studio-only LSS script",
     "native_cases": 8,
     "mutants": 4,
@@ -91,7 +93,7 @@
   },
   "gq8_trap_spatial_slots": {
     "feature_id": "GQ8_LSS_TRAP_SPATIAL_SLOTS_20261118",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "max_live_traps": 2,
     "separate_centers_studs": 30,
     "trap_width_studs": 15,
@@ -107,7 +109,7 @@
     "scope": "one existing optional32 Script's shared prompt() server guard",
     "max_activation_distance": "q.MaxActivationDistance + 1 stud tolerance",
     "visibility": "Server Workspace:Raycast from current avatar Head or Root against collidable solids; cockpit self-craft exception with existing seat.Occupant rule",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "spatial_trap_slot_feature_retained": true,
     "original31_byte_exact": true,
     "studio_android_fun": "NOT_TESTED",
@@ -116,7 +118,7 @@
   },
   "gq8_air_expiry_safe_landing": {
     "feature_id": "GQ8_LSS_FLIGHT_EXPIRY_SAFE_LANDING_20261118",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "base_formal_head": "6868a9bbf634f569f901c6e682ee77a4abb3fecd",
     "source_scope": "one existing optional Studio32 Script; no alteration to canonical31",
     "conditions": "active same-world living original seated owner, not stale avatar, within 28 studs, high altitude",
@@ -133,7 +135,7 @@
   "gq8_craft_full_footprint": {
     "feature_id": "GQ8_LSS_FULL_CRAFT_SWEEP_20261118",
     "prior_source_git_blob": "f784c4960e3acd95914817cbc1a1863838aa035a",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "source_scope": "only existing Studio-only optional 32nd LSS script",
     "boat_sweep_xyz": [
       18,
@@ -158,7 +160,7 @@
   },
   "gq8_public_travel_pacing": {
     "feature_id": "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118",
-    "source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
     "scope": "1 optional32 script; original31 byte exact",
     "cooldown_seconds": 2.5,
     "emergency_rescue_cooldown": 0,
@@ -166,5 +168,30 @@
     "mutation": "cooldown disabled must fail",
     "rollback": "omit optional32 script",
     "status": "PENDING_SAME_HEAD_CI"
+  },
+  "gq8_idle_craft_lease": {
+    "feature_id": "GQ8_LSS_IDLE_CRAFT_LEASE_20261118",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
+    "historical_source_git_blob": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "scope": "optional Studio32 single existing LSS Script only",
+    "empty_seat_grace_seconds": 25,
+    "legitimate_pilot_resets_timer": true,
+    "inactive_owner_reaper_preserved": true,
+    "offshore_dismount_rescue_preserved": true,
+    "current31_byte_exact": true,
+    "native_positive_10_mutant_red": "PENDING_SAME_HEAD_CI",
+    "real31_rojo32_off31": "PENDING_SAME_HEAD_CI",
+    "studio_android_fun": "NOT_TESTED",
+    "rollback": "omit optional 32nd Script, restore exact canonical31"
+  },
+  "gq8_air_dismount_grounded_rescue": {
+    "feature_id": "GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118",
+    "source_git_blob": "440bf7fb00b4a67d565603d973d1e84de5c30f4d",
+    "previous_source_blob": "f9ea61cc1ed4a4ec5edbc7078a619790b3181f61",
+    "scope": "one existing LSS32 author module; no new authority; no canonical31 change",
+    "guard": "current living original pilot + same avatar + <=28 studs + high craft/avatar + no collidable ground within 12 studs",
+    "rollback": "Omit optional32 to original31 or restore prior LSS blob",
+    "native_cases": "PENDING_CURRENT_HEAD",
+    "studio_android_fun": "NOT_TESTED"
   }
 }

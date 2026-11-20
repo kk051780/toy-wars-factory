@@ -20,6 +20,7 @@ local PUBLIC_TRAVEL_COOLDOWN = 2.5 -- voluntary shortcut cooldown
 local MOVE_INTERVAL = 0.10
 local TRAP_LIFETIME = 24
 local VEHICLE_LIFETIME = 180
+local EMPTY_CRAFT_GRACE_SECONDS = 25 -- keep reboarding possible, then free global craft slot
 -- Studio-only stepped altitude controls: server-owned, no free client CFrame.
 local FLIGHT_STEP = 18
 local FLIGHT_VERTICAL_SPEED = 22
@@ -107,6 +108,25 @@ local function currentCraftOwner(owner,mode,world,role)
  local hum=ch and ch:FindFirstChildOfClass("Humanoid")
  return hum~=nil and hum.Health>0
 end
+
+-- GQ8_LSS_IDLE_CRAFT_LEASE_20261118_BEGIN
+-- Pure, monotonic server-time decision: reboarding resets the timer.
+-- No damage, team, score, inventory or remote-control authority added.
+local function emptyCraftLease(ownedPilot:boolean, emptySince:number?, now:number)
+ if ownedPilot then return false,nil end
+ if emptySince==nil then return false,now end
+ return now-emptySince>=EMPTY_CRAFT_GRACE_SECONDS,emptySince
+end
+-- GQ8_LSS_IDLE_CRAFT_LEASE_20261118_END
+
+-- GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118_BEGIN
+-- Fail-closed airborne decision; engine provides authoritative avatar and collision checks.
+local function flightDismountNeedsRescue(flying,currentHuman,sameAvatar,nearCraft,
+ highCraft,highAvatar,solidBelow)
+ return flying and currentHuman and sameAvatar and nearCraft
+  and highCraft and highAvatar and not solidBelow
+end
+-- GQ8_LSS_AIR_DISMOUNT_GROUNDED_RESCUE_20261118_END
 
 local function safeMove(player,at,mode,world)
  if not matchHuman(player,mode,world,nil) then return false end
@@ -687,6 +707,9 @@ local function install(world)
    else
     local hum=v.seat.Occupant
     local driver=hum and Players:GetPlayerFromCharacter(hum.Parent)
+    local activePilot=hum~=nil and driver==v.owner and hum.Health>0
+    local idleExpired,emptySince=emptyCraftLease(activePilot,v.emptySince,os.clock())
+    v.emptySince=emptySince
     if not hum and v.lastPilot then
      local departed=v.lastPilot
      v.lastPilot=nil
@@ -711,9 +734,34 @@ local function install(world)
       -- A sea pilot who dismounts offshore is rescued, never dropped into void.
       safeMove(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world)
       craft:Destroy()
+     elseif v.flying and ch and departed.Parent==ch and departed.Health>0 and root then
+      -- A jump from a flying craft is not a Debris expiry. Rescue the current
+      -- pilot only when airborne with no actual supporting platform underneath.
+      local pivot=craft:GetPivot().Position
+      local groundParams=RaycastParams.new()
+      groundParams.FilterType=Enum.RaycastFilterType.Exclude
+      groundParams.FilterDescendantsInstances={ch,craft}
+      groundParams.RespectCanCollide=true
+      local solidBelow=Workspace:Raycast(root.Position,Vector3.new(0,-12,0),
+       groundParams)~=nil
+      if flightDismountNeedsRescue(v.flying,
+       matchHuman(v.owner,mode,world,v.role),
+       v.owner.Character==ch and departed.Parent==ch and departed.Health>0,
+       (root.Position-pivot).Magnitude<28,
+       pivot.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4,
+       root.Position.Y>y+18,solidBelow)
+       and safeMove(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world) then
+       -- Existing destruction cleanup releases perUser/global craft capacity.
+       craft:Destroy()
+      end
      end
     end
-    if hum and (driver~=v.owner or not matchHuman(v.owner,mode,world,v.role)
+    if idleExpired then
+     -- After a 25s empty-seat grace, reclaim capacity even for a living owner.
+     -- This differs from the existing dead/disconnected-owner cleanup.
+     v.lastPilot=nil
+     craft:Destroy()
+    elseif hum and (driver~=v.owner or not matchHuman(v.owner,mode,world,v.role)
       or hum.Health<=0) then
      hum.Sit=false
     elseif hum and driver==v.owner then
