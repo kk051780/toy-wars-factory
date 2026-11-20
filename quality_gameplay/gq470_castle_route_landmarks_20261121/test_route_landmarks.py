@@ -85,7 +85,7 @@ class RouteLandmarkSourceTests(unittest.TestCase):
                 audit(self.source.replace(fragment, "false", 1))
 
     def test_distinct_profiles_and_no_eggs_or_castle_damage(self):
-        self.assertEqual(len(re.findall(r'\{Vector3\.new\(', self.source)), 3)
+        self.assertEqual(len(re.findall(r'\{size=Vector3\.new\(', self.source)), 3)
         self.assertNotIn("eggScore", self.source)
         self.assertNotIn("castleHealth", self.source)
 
