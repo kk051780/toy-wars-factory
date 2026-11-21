@@ -21,6 +21,7 @@ PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette"
+COMPETING_CREST_ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest"
 TARGET = "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette.client.luau"
 FEATURE = "GQ470_FB015_ALLY_SILHOUETTE_REAL69_20261121"
 THIS = Path(__file__).resolve().parent
@@ -52,6 +53,7 @@ def compose(original: Path, destination: Path) -> dict:
             receipt.get("selected_source_count") == 69,
             "AUTHENTIC_OFFICIAL_RECEIPT")
     original_map = project_scan(original, PROJECT)
+    require(COMPETING_CREST_ROUTE not in original_map, "COMPETING_PR976_AVATAR_CREST_ROUTE")
     require(len(original_map) == 69 and
             set(original_map) == set(receipt["source_hashes"]) ==
             set(receipt["source_classes"]) and ROUTE not in original_map,
@@ -162,6 +164,8 @@ def export_b(candidate: Path, built_place: Path) -> dict:
         "formal_base_sha": BASE,
         "source_profile": "PRIVATE_COMPANION_REAL69_TO_70_A_ONLY",
         "new_script_route": ROUTE,
+        "exclusive_alternative_route": COMPETING_CREST_ROUTE,
+        "exclusive_alternative_pr": 976,
         "new_script_class": "LocalScript",
         "new_source_path": "selected_sources/" + TARGET.removeprefix("sources/"),
         "new_source_sha256": hash256(raw),
@@ -197,6 +201,8 @@ def verify_b(candidate: Path, built_place: Path) -> None:
             manifest["schema"] == "GQ470_ALLY_SILHOUETTE_B220_SOURCE_SELECT_V1" and
             manifest["formal_base_sha"] == BASE and
             manifest["new_script_route"] == ROUTE and
+            manifest["exclusive_alternative_route"] == COMPETING_CREST_ROUTE and
+            manifest["exclusive_alternative_pr"] == 976 and
             manifest["new_script_class"] == "LocalScript" and
             manifest["new_source_sha256"] == hash256(raw) and
             manifest["new_source_bytes"] == len(raw) and
