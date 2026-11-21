@@ -68,6 +68,8 @@ def patch(src:str)->str:
 def verify_subject_runtime(src:str)->None:
  # A humanoid in Viewer mode delegates its overhead display distances to the observer.
  # Subject owns the zero-name / 18-stud health limits, preventing duplicate native nameplates.
+ need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;")==1,
+      "SUBJECT_SINGLE_ASSIGNMENT")
  need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,
       "SUBJECT_OVERHEAD_GUARD")
  need("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Viewer" not in src,
