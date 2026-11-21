@@ -193,7 +193,8 @@ player.CharacterAdded:Connect(function()
     task.delay(.5, refresh)
 end)
 player.CharacterRemoving:Connect(function()
-    task.defer(refresh)
+    -- Do not leave a ghost castle trail while the avatar respawns.
+    for core in active do clear(core) end
 end)
 refresh()
 task.spawn(function()
