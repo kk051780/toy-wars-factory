@@ -48,10 +48,12 @@ REQUIRED = (
     'MAX_REMOTE_CRESTS = if UserInputService.TouchEnabled then 2 else 3',
     'for index = 1, math.min(MAX_REMOTE_CRESTS, #nearby) do',
     'local distance = cameraDistance(player, character, cameraPosition)',
-    'return if distance <= LOD_STUDS then distance else nil',
+    'if distance > LOD_STUDS then return nil end',
+    'if isConcealed(player, character) then return nil end',
+    'return distance',
     'if player == localPlayer or not cameraPosition or not character or visualsDisabled() then return nil end',
     'if not mounted[player] then attach(player, character) end',
-    'if not root.Parent or not teamColor(player) or isConcealed(player, character) then return nil end',
+    'if not root.Parent or not teamColor(player) then return nil end',
     'or isConcealed(player, rec.character)',
     'for _, connection in ipairs(rec.watchers or {}) do connection:Disconnect() end',
     'player:GetAttribute(flag) == true or character:GetAttribute(flag) == true',
@@ -92,6 +94,11 @@ def source_errors(text):
         errors.append("wrong_left_count")
     if text.count('makeCrest(folder, torso, color, 1, isRed)') != 1:
         errors.append("wrong_right_count")
+    camera_section = text.split("local function cameraDistance(", 1)[-1].split("local function makeCrest(", 1)[0]
+    distance_gate = camera_section.find("if distance > LOD_STUDS then return nil end")
+    concealment_gate = camera_section.find("if isConcealed(player, character) then return nil end")
+    if distance_gate < 0 or concealment_gate < 0 or distance_gate > concealment_gate:
+        errors.append("distant_avatar_scanned_before_66_stud_cull")
     if text.count('Instance.new("WedgePart")') != 1:
         errors.append("extra_part_constructors")
     if 'piece.Transparency = near and 0.04 or 1' in executable:
@@ -118,7 +125,8 @@ class AvatarTeamCrestSourceGate(unittest.TestCase):
         self.assertEqual(self.text.count('makeCrest(folder, torso, color, 1, isRed)'), 1)
         self.assertIn('MAX_REMOTE_CRESTS = if UserInputService.TouchEnabled then 2 else 3', self.text)
         self.assertIn('if isRed then 0.22 else -0.22', self.text)
-        self.assertIn('return if distance <= LOD_STUDS then distance else nil', self.text)
+        self.assertIn('if distance > LOD_STUDS then return nil end', self.text)
+        self.assertIn('if isConcealed(player, character) then return nil end', self.text)
 
     def test_stealth_6_15_and_immediate_cleanup(self):
         self.assertIn('GetDescendants()', self.text)
@@ -165,8 +173,10 @@ class AvatarTeamCrestSourceGate(unittest.TestCase):
              '-- leaked concealment watchers'),
             ('if player == localPlayer or not cameraPosition or not character or visualsDisabled() then return nil end',
              'if not cameraPosition then return nil end'),
-            ('return if distance <= LOD_STUDS then distance else nil',
-             'return distance'),
+            ('if distance > LOD_STUDS then return nil end',
+             '-- no distance filter'),
+            ('if isConcealed(player, character) then return nil end',
+             '-- no stealth filter'),
             ('or isConcealed(player, rec.character)', 'or false'),
             ('if not mounted[player] then attach(player, character) end',
              'if mounted[player] then attach(player, character) end'),

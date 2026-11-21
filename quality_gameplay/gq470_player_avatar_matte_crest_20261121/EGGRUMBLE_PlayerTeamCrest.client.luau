@@ -73,9 +73,13 @@ local function cameraDistance(player, character, cameraPosition)
     if not root or not root:IsA("BasePart") or not humanoid or humanoid.Health <= 0 then
         return nil
     end
-    if not root.Parent or not teamColor(player) or isConcealed(player, character) then return nil end
+    if not root.Parent or not teamColor(player) then return nil end
     local distance = (cameraPosition - root.Position).Magnitude
-    return if distance <= LOD_STUDS then distance else nil
+    -- Check camera distance before scanning the remote avatar's entire body.
+    -- Stealth still fails closed before any WedgePart allocation.
+    if distance > LOD_STUDS then return nil end
+    if isConcealed(player, character) then return nil end
+    return distance
 end
 
 local function makeCrest(folder, torso, color, side, isRed)
