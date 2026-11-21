@@ -13,6 +13,7 @@ local TOUCH_MAX_ALLIES = 2
 local MAX_DISTANCE = 45
 local SCAN_INTERVAL = 0.75
 local OUTLINE_TRANSPARENCY = 0.68
+local FADE_START_DISTANCE = 32 -- Invisible by 45 studs, without a hard outline pop
 local EFFECT_NAME = "GQ470_AllySilhouette"
 local REDUCED_EFFECTS_ATTRIBUTE = "EGGRUMBLE_ReducedEffects"
 local DISABLE_ATTRIBUTE = "GQ470_DisableAllyOutline"
@@ -156,6 +157,10 @@ local function present(candidate)
     end
     -- Retain team hue but desaturate the rim; avoid saturated neon overlays.
     effect.OutlineColor = player.TeamColor.Color:Lerp(Color3.fromRGB(202, 218, 219), 0.48)
+    -- Gradually dissolve the low-glare rim before the 45-stud cull.
+    -- Same 0.75s scan: zero additional Highlight/Part/raycast/RenderStepped.
+    local fade = math.clamp((candidate.distance - FADE_START_DISTANCE) / (MAX_DISTANCE - FADE_START_DISTANCE), 0, 1)
+    effect.OutlineTransparency = OUTLINE_TRANSPARENCY + (1 - OUTLINE_TRANSPARENCY) * fade
     effect.Enabled = true
 end
 
