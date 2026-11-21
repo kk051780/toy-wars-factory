@@ -123,15 +123,42 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 art_quality/gq470_real69_source_gate.py --root "$ROOT/candidate" --head "$FORMAL" --out "$ROOT/candidate/ART16_ART_SOURCE_REPORT.json"
+          # The stock GQ470 source gate deliberately accepts *only* the pristine
+          # formal canonical_build receipt. Never pretend this A candidate is formal.
+          python3 art_quality/gq470_real69_source_gate.py --self-test
+          python3 art_quality/gq470_real69_source_gate.py --root "$ROOT/formal" --head "$FORMAL" --out "$ROOT/candidate/ART16_FORMAL_BASE_ART_SOURCE_REPORT.json"
+          python3 -B "$SCRIPT" --verify "$ROOT/candidate"
           python3 - <<'PY'
-          import os,json
+          import os,json,hashlib
           from pathlib import Path
-          j=json.loads((Path(os.environ["ROOT"])/"candidate/ART16_ART_SOURCE_REPORT.json").read_text())
+          root=Path(os.environ["ROOT"])
+          c=root/"candidate"
+          j=json.loads((c/"ART16_FORMAL_BASE_ART_SOURCE_REPORT.json").read_text())
           assert j["source_gate"]["selected_routes_source_class_hash_exact"] == 69
           assert j["visual_evidence_gate"]["screenshots_received"] == 0
           assert j["art_gate"]=="ART_NO_GO" and j["owner_accepted"] is False
-          print("ART16_ART_SOURCE_ONLY_NO_STUDIO_OR_OWNER_ACCEPTANCE")
+          r=json.loads((c/"REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          note=r["gq470_art16_source_bridge"]
+          assert r["canonical_build"] is False and r["build_head"]=="ART16_A_SOURCE_BRIDGE_NOT_FORMAL"
+          assert note["selected_changed"]==16 and note["untouched_original"]==53
+          assert note["native_69_on_off"]=="PASS_SOURCE_ONLY" and note["rojo_69_on_off"]=="PASS_SOURCE_ONLY"
+          assert note["officially_integrated"] is False and note["owner_accepted"] is False
+          assert note["real_old_new_screenshots"]=="0/32" and note["art_gate"]=="ART_NO_GO"
+          p=(c/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").read_bytes()
+          digest=hashlib.sha256(p).hexdigest()
+          assert digest==r["private_place_sha256"] and len(p)==r["private_place_bytes"]
+          report={
+            "schema":"GQ470_ART16_REAL69_A_SOURCE_ONLY_NOT_FORMAL",
+            "baseline_source_art_gate":"PASS_SOURCE_ONLY_69",
+            "candidate_source_attestation":"16_CHANGED_53_SOURCE_EXACT_69_NATIVE_ROJO",
+            "candidate_private_place_sha256":digest,"candidate_private_place_bytes":len(p),
+            "formal_rc_adopted":False,"studio_solo":"NOT_TESTED","studio_two_client":"NOT_TESTED",
+            "android_15min":"NOT_TESTED","human_art":"NOT_TESTED","old_new_images":"0/32",
+            "art_gate":"ART_NO_GO","product_gate":"PRODUCT_NO_GO","owner_accepted":False,
+            "note":"Formal baseline #420 gate and independently verified A candidate; neither proves gameplay or visual merit"
+          }
+          (c/"ART16_ART_CANDIDATE_REPORT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("ART16_A_CANDIDATE_69_SOURCE_16_DIFF_ART_NO_GO_NOT_FORMAL",len(p),digest)
           PY
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED_BEFORE_EXPORT; exit 1; }
           python3 -B "$SCRIPT" --export-b "$ROOT/candidate"
@@ -144,7 +171,8 @@ jobs:
             /tmp/gq470-art16/candidate/REAL69_LEGACY_INTAKE_RECEIPT.json
             /tmp/gq470-art16/candidate/sources/**
             /tmp/gq470-art16/candidate/B220_ART16_SELECTED_BYTES_ONLY_NOT_FORMAL/**
-            /tmp/gq470-art16/candidate/ART16_ART_SOURCE_REPORT.json
+            /tmp/gq470-art16/candidate/ART16_FORMAL_BASE_ART_SOURCE_REPORT.json
+            /tmp/gq470-art16/candidate/ART16_ART_CANDIDATE_REPORT.json
             /tmp/gq470-art16/candidate/ART16_LEGACY48_AUDIT.json
             /tmp/gq470-art16/OFF69_REBUILT.rbxlx
           if-no-files-found: error
