@@ -17,7 +17,7 @@ def validate(s):
         "if player.Character then onCharacter(player.Character) end",
     ]
     for p in markers:
-        found = (len(re.findall(r"(?m)^" + re.escape(p) + r"\\s*$", s))
+        found = (len(re.findall(r"(?m)^" + re.escape(p) + r"\s*$", s))
                  if p.startswith("local ") else s.count(p))
         if found != 1:
             raise ValueError("RED_SPAWN_ART_CONTRACT_" + p)
