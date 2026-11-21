@@ -13,6 +13,6 @@
 
 ## 2026-11-21 combined source-author repairs (not formal adoption)
 - Rectangular castle defect discovered in stacked #990: independently calculate the X and Z face offsets; adopt its reviewed per-face geometry and nine rectangular/rotated test shapes into **this original PR #988**, without selecting a duplicate second client script. #990 stacked branch must not be separately source-selected.
-- Actual ground alignment: every 2.5 seconds cast at most 16 Touch / 24 desktop short nonmutating ground rays. Ignore castle models and own avatar; skip steep/unsampled/missing/water-adjacent ground instead of showing floating/embedded stones. This is an offline policy, not a human-tested appearance or mobile performance result.
+- Actual ground alignment: every 2.5 seconds cast at most 16 Touch / 24 desktop short nonmutating ground rays. Exclude only the core Part and own avatar (the castle floor must remain queryable); skip steep/unsampled/missing/water-adjacent ground instead of showing floating/embedded stones. This is an offline policy, not a human-tested appearance or mobile performance result.
 - Clear all local visual Parts immediately when `CharacterRemoving` fires. If the actual field is streamed back later, one bounded refresh recreates only nearby valid art. Core anchors over X/Z 126 or Y 150 studs are rejected before allocation.
 - Re-run **exact final HEAD** Native Luau, Rojo OFF69/ON70 Source/Class and tamper B220 checks after these changes. Prior source passes do not cover later HEADs.
