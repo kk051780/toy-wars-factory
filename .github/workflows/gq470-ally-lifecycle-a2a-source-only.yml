@@ -1,0 +1,77 @@
+name: GQ470 ally lifecycle A-to-A source tests (no private artifact)
+on:
+  pull_request:
+    branches:
+      - feature/gq470-ally-silhouette-real69-20261121
+    paths:
+      - 'quality_gameplay/gq470_ally_silhouette_20261121/**'
+      - '.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml'
+  push:
+    branches:
+      - quality/gq470-ally-outline-teardown-20261121-a01
+    paths:
+      - 'quality_gameplay/gq470_ally_silhouette_20261121/**'
+      - '.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml'
+permissions:
+  contents: read
+jobs:
+  local-source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout without persisting credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Compile Python source gate and execute actual negative-mutation suite
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_ally_silhouette_20261121/test_ally_silhouette_source.py
+          python3 -m unittest discover -s quality_gameplay/gq470_ally_silhouette_20261121 -p 'test_ally_silhouette_source.py' -v
+      - name: Confirm no formal game files were touched
+        run: |
+          set -euo pipefail
+          BASE="$(git merge-base HEAD origin/feature/gq470-ally-silhouette-real69-20261121)"
+          test -n "$BASE"
+          git diff --name-only "$BASE" HEAD > /tmp/gq470_actual_changed
+          test -s /tmp/gq470_actual_changed
+          if grep -v -E '^quality_gameplay/gq470_ally_silhouette_20261121/|^\.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml$' /tmp/gq470_actual_changed > /tmp/gq470_unexpected; then
+            echo RED_OUT_OF_SCOPE_CHANGES; cat /tmp/gq470_unexpected; exit 1
+          fi
+          echo TRUE_A_TO_A_ONLY_CHANGED_PATHS
+          cat /tmp/gq470_actual_changed
+          echo A_TO_A_SOURCE_ONLY_NOT_NATIVE_NOT_ROJO_NOT_STUDIO
+
+  native-luau-selected-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout A-only selected source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout immutable upstream Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_luau
+          persist-credentials: false
+      - name: Compile pinned native Luau syntax for the actual player visual
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_luau -B /tmp/gq470_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470_luau_build --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          /tmp/gq470_luau_build/luau-compile --text quality_gameplay/gq470_ally_silhouette_20261121/EGGRUMBLE_AllySilhouette.client.luau >/dev/null
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py > /tmp/gq470_positive_shutdown.luau
+          /tmp/gq470_luau_build/luau /tmp/gq470_positive_shutdown.luau
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py --negative-drop-disconnect > /tmp/gq470_negative_shutdown.luau
+          if /tmp/gq470_luau_build/luau /tmp/gq470_negative_shutdown.luau; then
+            echo RED_NEGATIVE_CANDIDATE_PASSED; exit 1
+          fi
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py --negative-disable-fade > /tmp/gq470_negative_fade.luau
+          if /tmp/gq470_luau_build/luau /tmp/gq470_negative_fade.luau; then
+            echo RED_NEGATIVE_FADE_PASSED; exit 1
+          fi
+          echo GQ470_SELECTED_LUAU_NATIVE_COMPILE_AND_EXTRACTED_RUNTIME_GUARD_PASS_NOT_STUDIO

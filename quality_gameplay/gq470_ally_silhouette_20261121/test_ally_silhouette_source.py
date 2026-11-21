@@ -67,6 +67,18 @@ def validate(source: str) -> None:
         'LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()',
         'LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()',
         'effect:Destroy()',
+        'local FADE_START_DISTANCE = 32',
+        'math.clamp((candidate.distance - FADE_START_DISTANCE) / (MAX_DISTANCE - FADE_START_DISTANCE), 0, 1)',
+        'effect.OutlineTransparency = OUTLINE_TRANSPARENCY + (1 - OUTLINE_TRANSPARENCY) * fade',
+        'local stopped = false',
+        'local globalWatches = {}',
+        'local function shutdown()',
+        'stopped = true',
+        'for _, connection in ipairs(globalWatches) do',
+        'connection:Disconnect()',
+        'table.clear(globalWatches)',
+        'script.Destroying:Connect(shutdown)',
+        'while not stopped do',
         'task.wait(SCAN_INTERVAL)',
         'math.min(UserInputService.TouchEnabled and TOUCH_MAX_ALLIES or MAX_ALLIES, #candidates)',
         'if not keep[player] then',
@@ -75,6 +87,33 @@ def validate(source: str) -> None:
     for item in required:
         if item not in code:
             raise ValueError("RED_ALLY_SILHOUETTE_MISSING_" + item)
+    # Old hard 45-stud cull must be visually invisible before removal.
+    if not re.search(r"(?m)^local FADE_START_DISTANCE = 32(?:\s|$)", code):
+        raise ValueError("RED_OUTLINE_NO_DISTANCE_FADE")
+    if not (code.index("local fade = math.clamp(") <
+            code.index("effect.OutlineTransparency = OUTLINE_TRANSPARENCY +") <
+            code.index("effect.Enabled = true", code.index("local fade = math.clamp("))):
+        raise ValueError("RED_OUTLINE_FADE_ORDER")
+    # Destroying must revoke global Player listeners and terminate the scan.
+    if code.count("track(") != 7 or "while true do" in code:
+        raise ValueError("RED_UNTRACKED_GLOBAL_LISTENERS")
+    for event in (
+        "Players.PlayerRemoving:Connect(clear)",
+        "LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)",
+        'LOCAL_PLAYER:GetPropertyChangedSignal("Team"):Connect(clearAll)',
+        'LOCAL_PLAYER:GetPropertyChangedSignal("Neutral"):Connect(clearAll)',
+        "LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()",
+        "LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()",
+    ):
+        if "track(" + event not in code:
+            raise ValueError("RED_UNTRACKED_EVENT_" + event)
+    if not re.search(r"while not stopped do\s+task.wait\(SCAN_INTERVAL\)\s+if stopped then\s+break", code):
+        raise ValueError("RED_POST_DESTROY_SCAN")
+    if not re.search(r"if LOCAL_PLAYER.Parent ~= Players then\s+shutdown\(\)\s+break", code):
+        raise ValueError("RED_ORPHANED_PLAYER_STOP")
+    shutdown = code.split("local function shutdown()", 1)[1].split("local function isVisibleAlly", 1)[0]
+    if not (shutdown.index("stopped = true") < shutdown.index("connection:Disconnect()") < shutdown.index("clearAll()")):
+        raise ValueError("RED_BAD_DESTROY_ORDER")
     forbidden = (
         "FireServer", "InvokeServer", "RemoteEvent", "RemoteFunction",
         "DataStoreService", "MarketplaceService", "TakeDamage",
@@ -117,6 +156,24 @@ def validate(source: str) -> None:
 class SourceGate(unittest.TestCase):
     def test_author_source(self):
         validate(SOURCE.read_text(encoding="utf-8"))
+
+    def test_destroy_lifecycle_mutations(self):
+        source = SOURCE.read_text(encoding="utf-8")
+        mutations = [
+            ("script.Destroying:Connect(shutdown)", "script.Destroying:Connect(function() end)"),
+            ("while not stopped do", "while true do"),
+            ("local FADE_START_DISTANCE = 32", "local FADE_START_DISTANCE = 50"),
+            ("(MAX_DISTANCE - FADE_START_DISTANCE), 0, 1", "(MAX_DISTANCE - FADE_START_DISTANCE), 0, 0"),
+            ("effect.OutlineTransparency = OUTLINE_TRANSPARENCY + (1 - OUTLINE_TRANSPARENCY) * fade", "effect.OutlineTransparency = OUTLINE_TRANSPARENCY"),
+            ("connection:Disconnect()", "connection:Destroy()"),
+            ("table.clear(globalWatches)", "globalWatches = {}"),
+            ("track(Players.PlayerRemoving:Connect(clear))", "Players.PlayerRemoving:Connect(clear)"),
+            ("shutdown()\n        break", "clearAll()\n        break"),
+        ]
+        for old, bad in mutations:
+            self.assertIn(old, source)
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                validate(source.replace(old, bad, 1))
 
     def test_exact_feature_and_sole_runtime_route(self):
         from compose_official70 import BASE, FEATURE, ROUTE, B_PACKET, TARGET, COMPETING_CREST_ROUTE
