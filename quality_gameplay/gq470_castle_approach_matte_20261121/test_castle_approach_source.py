@@ -107,6 +107,8 @@ def validate(s):
             raise ValueError("RED_FORBIDDEN_" + term)
     # Both no-ground and nonwalkable-water/decor branches must hide the Part.
     # One mutated hide must not be masked by the second surviving hide.
+    if stripped.count('if disposed then return end') != 2:
+        raise ValueError("RED_MISSING_IDEMPOTENT_SHUTDOWN")
     if stripped.count('piece.Transparency = 1') != 2:
         raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
     if stripped.count('Instance.new("WedgePart")') != 1:
@@ -180,7 +182,7 @@ class TestApproachSource(unittest.TestCase):
     def test_teardown_mutants_fail_closed(self):
         s = SRC.read_text(encoding="utf-8")
         mutants = (
-            ('script.Destroying:Connect(function()', 'script:WaitForChild("Destroyed")'),
+            ('script.Destroying:Connect(shutdown)', 'script:WaitForChild("Destroyed")'),
             ('disposed = true', 'disposed = false'),
             ('connection:Disconnect()', 'connection:Connect()'),
             ('table.clear(trackedConnections)', '-- listener connections leaked'),
