@@ -135,6 +135,21 @@ def compose(original: Path, destination: Path) -> dict:
             reduced_flag in SOURCE.read_text(encoding="utf-8"),
             "MUST_REUSE_ORIGINAL_REAL69_REDUCED_EFFECTS_FLAG")
 
+    # Bind this cosmetic to the actual immutable selected LSS world generator,
+    # not merely a misleading name from another visual candidate.
+    lss_route = "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
+    require(lss_route in original_map, "AUTHENTIC_SEA_DOCK_OWNER_ROUTE")
+    lss_source = (original / original_map[lss_route]["path"]).read_text(encoding="utf-8")
+    require(all(marker in lss_source for marker in (
+        'local NAME = "EGGRUMBLE_LAND_SEA_SKY_20261117"',
+        'local scene=Instance.new("Folder")',
+        "scene.Name=NAME",
+        'local landDock=put(scene,"PublicSeaDock"',
+    )), "AUTHENTIC_LSS_DOCK_AND_SCENE_SOURCE")
+    require('parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"' in
+            SOURCE.read_text(encoding="utf-8"),
+            "NEW_ART_MUST_MATCH_AUTHENTIC_LSS_SCENE")
+
     shutil.copytree(original, destination)
     project = json.loads((destination / PROJECT).read_text(encoding="utf-8"))
     starter = project["tree"].get("StarterPlayer")
