@@ -58,6 +58,10 @@ def check_art_source(source: str) -> None:
         "CastShadow = false", "Enum.Material.Water", "CameraSubject",
         "Enum.HumanoidStateType.Freefall", "MIN_FALL_SPEED",
         "FilterDescendantsInstances = {character, effects}", "hide()",
+        "EGGRUMBLE_ReducedEffects", "ReducedEffects",
+        "EGGRUMBLE_LandingShadowOff", "visualDisabled(character)",
+        "GetAttributeChangedSignal(flag)", "clearCharacterConnections()",
+        "script.Destroying:Connect", "effects:Destroy()",
     )
     for text in required:
         demand(text in source, "MISSING_GUARD_" + text.split()[0])
@@ -161,6 +165,12 @@ def self_test(source: Path) -> None:
         good + "\nlocal extra = Workspace:Raycast(Vector3.zero, Vector3.yAxis)\n",
         good.replace("Enum.HumanoidStateType.Freefall", "Enum.HumanoidStateType.Running"),
         good.replace("CameraSubject", "CameraTarget"),
+        good.replace('"EGGRUMBLE_LandingShadowOff",', '"EGGRUMBLE_LandingShadowDisabled",'),
+        good.replace('"EGGRUMBLE_ReducedEffects",', '"EGGRUMBLE_ReducedFXX",'),
+        good.replace('visualDisabled(character)', 'false'),
+        good.replace('script.Destroying:Connect', 'script.Removing:Connect'),
+        good.replace('effects:Destroy()', 'effects:ClearAllChildren()'),
+        good.replace('clearCharacterConnections()', 'clearCharacterSignals()'),
     ]
     for i, mutant in enumerate(mutants, start=1):
         try:
@@ -195,7 +205,7 @@ def self_test(source: Path) -> None:
             except (ValueError, FileNotFoundError):
                 continue
             raise AssertionError(f"bad baseline accepted: {bad}")
-    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 14 mutations RED, 69 originals exact, 70 ON / 69 OFF")
+    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 20 mutations RED, 69 originals exact, 70 ON / 69 OFF")
 
 
 def main() -> None:

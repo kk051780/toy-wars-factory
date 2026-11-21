@@ -1,7 +1,7 @@
 name: GQ470 Landing Matte 3D A source only (NO ART GO)
 on:
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, prep/gq470-fb015-landing-matte-3d-20261121-1540]
     paths:
       - 'quality_gameplay/gq470_landing_shadow_20261121/**'
       - '.github/workflows/gq470-landing-matte-source.yml'
@@ -15,6 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Python source mutation and reversible REAL69/70 contract
         run: |
