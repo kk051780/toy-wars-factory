@@ -10,13 +10,15 @@ local player = Players.LocalPlayer
 local FEATURE_ID = "GQ470_FB015_CASTLE_BANNER_MATTE_20261121"
 local MAX_PER_TEAM = if UserInputService.TouchEnabled then 2 else 3
 local MAX_PARTS_PER_TOWER = 4
-local MAX_TOTAL_EXTRA_PARTS = MAX_PER_TEAM * 2 * MAX_PARTS_PER_TOWER
+local MAX_NEUTRAL_CASTLES = 2
+local MAX_TOTAL_EXTRA_PARTS = (MAX_PER_TEAM * 2 + MAX_NEUTRAL_CASTLES) * MAX_PARTS_PER_TOWER
 local PALETTE = {
     RED = Color3.fromRGB(166, 69, 75),
     BLUE = Color3.fromRGB(60, 113, 164),
+    NEUTRAL = Color3.fromRGB(165, 148, 113),
 }
 local trim = Color3.fromRGB(194, 173, 137)
-local counts = { RED = 0, BLUE = 0 }
+local counts = { RED = 0, BLUE = 0, NEUTRAL = 0 }
 type Entry = { root: Folder, connections: {RBXScriptConnection}, tweens: {Tween}, team: string }
 local tracked: {[BasePart]: Entry} = {}
 
@@ -24,11 +26,23 @@ local function castleTeam(tower: Instance): string?
     if not tower:IsA("BasePart") or not tower.Anchored then return nil end
     local name = tower.Name
     local team = if name == "RED_TOWER" then "RED" elseif name == "BLUE_TOWER" then "BLUE" else nil
-    if not team then return nil end
     local ancestor = tower.Parent
-    while ancestor and ancestor ~= Workspace do
-        if ancestor.Name == team .. "_CASTLE" then return team end
-        ancestor = ancestor.Parent
+    if team then
+        while ancestor and ancestor ~= Workspace do
+            if ancestor.Name == team .. "_CASTLE" then return team end
+            ancestor = ancestor.Parent
+        end
+        return nil
+    end
+    -- REAL69's genuine 16-castle battlefield uses StandardCore under a castle Model.
+    -- Do not invent a RED/BLUE allegiance when the server has not supplied one:
+    -- the neutral stone pennant is aesthetic only.
+    if name == "StandardCore" and ancestor and ancestor:IsA("Model") then
+        local parent = ancestor.Parent
+        while parent and parent ~= Workspace do
+            if parent.Name == "TacticalBattlefield" then return "NEUTRAL" end
+            parent = parent.Parent
+        end
     end
     return nil
 end
@@ -63,7 +77,8 @@ end
 local function attach(tower: Instance)
     local team = castleTeam(tower)
     if not team or not tower:IsA("BasePart") or tracked[tower] then return end
-    if counts[team] >= MAX_PER_TEAM then return end
+    local limit = if team == "NEUTRAL" then MAX_NEUTRAL_CASTLES else MAX_PER_TEAM
+    if counts[team] >= limit then return end
     counts[team] += 1
     local folder = Instance.new("Folder")
     folder.Name = "EGGRUMBLE_CastleBanner_Local"
@@ -86,7 +101,7 @@ local function attach(tower: Instance)
             PALETTE.RED, true))
     else
         table.insert(fly, part(folder, "SinglePointTail", Vector3.new(1.65, 2.1, 0.15),
-            clothBase * CFrame.new(2.83, 0, 0), PALETTE.BLUE, true))
+            clothBase * CFrame.new(2.83, 0, 0), PALETTE[team], true))
     end
     local entry: Entry = {root = folder, connections = {}, tweens = {}, team = team}
     tracked[tower] = entry
