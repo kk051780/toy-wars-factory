@@ -15,7 +15,7 @@ def validate(s: str) -> None:
         "local MAX_TOTAL_EXTRA_PARTS = (MAX_PER_TEAM * 2 + MAX_NEUTRAL_CASTLES) * MAX_PARTS_PER_TOWER",
         'name == "RED_TOWER"', 'name == "BLUE_TOWER"',
         'ancestor.Name == team .. "_CASTLE"',
-        'counts[team] >= limit',
+        'if counts[team] >= limit then return end',
         'local limit = if team == "NEUTRAL" then MAX_NEUTRAL_CASTLES else MAX_PER_TEAM',
         'name == "StandardCore"',
         'parent.Name == "TacticalBattlefield"',
