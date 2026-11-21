@@ -43,8 +43,8 @@ def verify(field_src: str, client_src: str) -> None:
     assert "part.Material == Enum.Material.Neon" in client_src
     assert "RunService.Heartbeat:Connect" in client_src
     assert "if UserInputService.TouchEnabled then 0.32 else 0.18" in client_src
-    assert "MAX_BANNERS = 20" in client_src
-    assert "RANGE_STUDS = 110" in client_src
+    assert re.search(r"(?m)^local MAX_BANNERS\\s*=\\s*20\\b",client_src)
+    assert re.search(r"(?m)^local RANGE_STUDS\\s*=\\s*110\\b",client_src)
 
 def main(root: Path) -> None:
     source = root / FIELD
