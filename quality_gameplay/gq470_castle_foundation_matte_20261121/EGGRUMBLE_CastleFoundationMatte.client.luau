@@ -213,7 +213,7 @@ end)
 -- Destroying is not guaranteed for every unparent/reload path. Keep teardown
 -- idempotent and also release original own objects on nil ancestry.
 local function teardown()
-    if disposed then return end
+    if disposed == true then return end
     disposed = true
     for _, connection in ipairs(connections) do
         connection:Disconnect()
