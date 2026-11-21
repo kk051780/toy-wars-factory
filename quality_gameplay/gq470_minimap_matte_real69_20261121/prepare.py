@@ -190,9 +190,10 @@ local function redraw()
     mutants = [
         good,
         body.replace(PATCHES[0][0], PATCHES[0][0].replace(".08", ".09")),
-        body.replace(PATCHES[2][0], PATCHES[2][0].replace(".1 or .06", ".1 or .07")),
-        body.replace(PATCHES[3][0], PATCHES[3][0].replace("166,76,89", "166,76,90")),
-        body.replace(PATCHES[4][0], "    pin.TextSize=mapExpanded and 13 or 12"),
+        body.replace(PATCHES[1][0], PATCHES[1][0].replace('"MAP"', '"MINIMAP"')),
+        body.replace(PATCHES[3][0], PATCHES[3][0].replace(".1 or .06", ".1 or .07")),
+        body.replace(PATCHES[4][0], PATCHES[4][0].replace("166,76,89", "166,76,90")),
+        body.replace(PATCHES[5][0], "    pin.TextSize=mapExpanded and 13 or 12"),
         body.replace("GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120", "MISSING_ATTACK"),
         body.replace("s.explored or {}", "no_fog"),
         body.replace("EGGRUMBLE_MapIntelUpdate_V1", "MISSING_REMOTE"),
@@ -203,7 +204,7 @@ local function redraw()
         except ValueError:
             continue
         raise AssertionError("RED_MUTATION_WAS_ACCEPTED_" + str(i))
-    print("GQ470_MINIMAP_PATCH_8_NEGATIVE_MUTATIONS_PASS")
+    print("GQ470_MINIMAP_PATCH_9_NEGATIVE_MUTATIONS_PASS")
 
 def apply(root: Path) -> None:
     routes = selected(root)
