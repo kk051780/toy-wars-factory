@@ -119,6 +119,13 @@ jobs:
               for route,info in found.items():
                   subprocess.run([str(root/"luau/luau-compile"),"--text",str(source_root/info["path"])],
                                  check=True,stdout=subprocess.DEVNULL)
+          studio_only=Path(os.environ["TARGET"])/"StudioPlayerSpawnInspector.client.luau"
+          assert studio_only.is_file()
+          subprocess.run([str(root/"luau/luau-compile"),"--text",str(studio_only)],
+                         check=True,stdout=subprocess.DEVNULL)
+          candidate=project_scan(root/"on70","EGGRUMBLE_REAL69.project.json")
+          assert len(candidate)==70 and all("StudioPlayerSpawnInspector" not in route for route in candidate)
+          print("GQ470_STUDIO_ONLY_DIAGNOSTIC_NATIVE_PASS_AND_NOT_SELECTED_IN_RUNTIME")
           print("GQ470_CREST_ALL69_OFF_AND70_ON_NATIVE_LUAU_COMPILE_PASS")
           PY
       - name: Pinned Rojo 7.7.1 exact OFF69 and independent ON70 Place source class
