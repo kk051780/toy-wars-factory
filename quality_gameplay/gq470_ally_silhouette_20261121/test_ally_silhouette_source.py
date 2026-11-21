@@ -88,7 +88,7 @@ def validate(source: str) -> None:
         if item not in code:
             raise ValueError("RED_ALLY_SILHOUETTE_MISSING_" + item)
     # Old hard 45-stud cull must be visually invisible before removal.
-    if not re.search(r"(?m)^local FADE_START_DISTANCE = 32(?:\\s|$)", code):
+    if not re.search(r"(?m)^local FADE_START_DISTANCE = 32(?:\s|$)", code):
         raise ValueError("RED_OUTLINE_NO_DISTANCE_FADE")
     if not (code.index("local fade = math.clamp(") <
             code.index("effect.OutlineTransparency = OUTLINE_TRANSPARENCY +") <
