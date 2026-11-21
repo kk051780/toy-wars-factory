@@ -30,6 +30,17 @@ def fade_at(distance):
     return min(1.0, max(0.0, (distance-125)/(155-125)))
 
 class TestApproachGeometry(unittest.TestCase):
+    def test_hidden_prefetch_for_normal_running(self):
+        luau = LUA.read_text(encoding="utf-8")
+        self.assertIn("local PREFETCH_DISTANCE = 195", luau)
+        self.assertIn("if distance <= PREFETCH_DISTANCE then", luau)
+        self.assertIn("local MAX_DISTANCE = 155", luau)
+        # For a 16stud/s on-foot player, the one-tick invisibility
+        # lead (40studs) can hide a full 2.5s geometry refresh delay.
+        self.assertEqual(195 - 155, 16 * 2.5)
+        self.assertEqual(fade_at(155), 1.0)
+        self.assertEqual(fade_at(195), 1.0)
+
     def test_fade_has_no_distance_pop(self):
         luau = LUA.read_text(encoding="utf-8")
         self.assertIn("FADE_START = 125", luau)
