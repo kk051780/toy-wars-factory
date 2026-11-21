@@ -42,3 +42,26 @@ jobs:
           echo TRUE_A_TO_A_ONLY_CHANGED_PATHS
           cat /tmp/gq470_actual_changed
           echo A_TO_A_SOURCE_ONLY_NOT_NATIVE_NOT_ROJO_NOT_STUDIO
+
+  native-luau-selected-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout A-only selected source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout immutable upstream Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_luau
+          persist-credentials: false
+      - name: Compile pinned native Luau syntax for the actual player visual
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_luau -B /tmp/gq470_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470_luau_build --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470_luau_build/luau-compile --text quality_gameplay/gq470_ally_silhouette_20261121/EGGRUMBLE_AllySilhouette.client.luau >/dev/null
+          echo GQ470_ALLY_SELECTED_LUAU_NATIVE_COMPILE_PASS_NOT_STUDIO
