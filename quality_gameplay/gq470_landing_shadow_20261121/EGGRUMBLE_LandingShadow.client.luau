@@ -176,11 +176,23 @@ heartbeatConnection = RunService.Heartbeat:Connect(function(dt: number)
         hide()
         return
     end
+    -- A standing player or humanoid NPC is not ground. Nested accessories
+    -- may be several Models deep, so check the complete ancestry locally.
+    local ancestor: Instance? = hit.Instance.Parent
+    while ancestor do
+        if ancestor:IsA("Model") and ancestor:FindFirstChildOfClass("Humanoid") then
+            hide()
+            return
+        end
+        ancestor = ancestor.Parent
+    end
+
     -- Only show a real landing surface. Noncolliding decor and synthetic
     -- translucent Glass seas may be queryable but cannot carry an avatar.
     if hit.Instance:IsA("BasePart") then
         if not hit.Instance.CanCollide
             or hit.Instance.Transparency >= 0.95
+            or hit.Instance.LocalTransparencyModifier >= 0.95
             or (hit.Instance.Material == Enum.Material.Glass and hit.Instance.Transparency >= 0.35)
         then
             hide()

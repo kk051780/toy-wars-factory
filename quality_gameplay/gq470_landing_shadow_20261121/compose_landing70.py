@@ -65,6 +65,8 @@ def check_art_source(source: str) -> None:
         "not hit.Instance.CanCollide",
         "hit.Instance.Transparency >= 0.95",
         "hit.Instance.Material == Enum.Material.Glass",
+        "hit.Instance.LocalTransparencyModifier >= 0.95",
+        'ancestor:FindFirstChildOfClass("Humanoid")',
     )
     for text in required:
         demand(text in source, "MISSING_GUARD_" + text.split()[0])
@@ -184,6 +186,8 @@ def self_test(source: Path) -> None:
         good.replace("not hit.Instance.CanCollide", "hit.Instance.CanCollide"),
         good.replace("hit.Instance.Transparency >= 0.95", "hit.Instance.Transparency >= 1"),
         good.replace("hit.Instance.Material == Enum.Material.Glass", "hit.Instance.Material == Enum.Material.Slate"),
+        good.replace("hit.Instance.LocalTransparencyModifier >= 0.95", "hit.Instance.LocalTransparencyModifier >= 1"),
+        good.replace('ancestor:FindFirstChildOfClass("Humanoid")', 'ancestor:FindFirstChildOfClass("Animator")'),
     ]
     for i, mutant in enumerate(mutants, start=1):
         try:
@@ -218,7 +222,7 @@ def self_test(source: Path) -> None:
             except (ValueError, FileNotFoundError):
                 continue
             raise AssertionError(f"bad baseline accepted: {bad}")
-    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 23 mutations RED, 69 originals exact, 70 ON / 69 OFF")
+    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 25 mutations RED, 69 originals exact, 70 ON / 69 OFF")
 
 
 def main() -> None:
