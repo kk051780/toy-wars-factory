@@ -11,6 +11,8 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PARTS_PER_CASTLE = 8
 local MAX_TOTAL_EXTRA_PARTS = MAX_CASTLES * PARTS_PER_CASTLE
 local MAX_DISTANCE_STUDS = 190
+-- Fade the final 40 studs to avoid eight stones popping into view.
+local LOD_FADE_START = 150
 local REFRESH_INTERVAL = 2.5
 local STONE = Color3.fromRGB(103, 102, 99)
 local EDGE = Color3.fromRGB(171, 151, 118)
@@ -73,6 +75,10 @@ local function clear(core: BasePart)
     local current = active[core]
     if not current then return end
     active[core] = nil
+    -- Removed/reparented children are still ours; never leave orphan Wedges.
+    for _, stone in ipairs(current.parts) do
+        stone:Destroy()
+    end
     current.folder:Destroy()
 end
 
@@ -116,6 +122,15 @@ local function makeFoundation(core: BasePart)
     updatePoses(core, decoration)
 end
 
+-- Partially streamed/removed decorations must be rebuilt before use.
+local function decorIntact(core: BasePart, decoration: Decor): boolean
+    if decoration.folder.Parent ~= core or #decoration.parts ~= PARTS_PER_CASTLE then return false end
+    for _, stone in ipairs(decoration.parts) do
+        if stone.Parent ~= decoration.folder then return false end
+    end
+    return true
+end
+
 local function refresh()
     if disposed then return end
     local eye = eyePosition()
@@ -134,19 +149,29 @@ local function refresh()
         if a.distance == b.distance then return a.core.Name < b.core.Name end
         return a.distance < b.distance
     end)
-    local wanted: {[BasePart]: boolean} = {}
+    local wanted: {[BasePart]: number} = {}
     for i = 1, math.min(MAX_CASTLES, #ranked) do
-        wanted[ranked[i].core] = true
+        wanted[ranked[i].core] = ranked[i].distance
     end
     for core in active do
         if not wanted[core] or not validCore(core) then clear(core) end
     end
     for core in wanted do
+        local existing = active[core]
+        if existing and not decorIntact(core, existing) then clear(core) end
         if not active[core] then makeFoundation(core) end
         local decoration = active[core]
-        if decoration and (decoration.lastPose ~= core.CFrame or
-            decoration.lastSize ~= core.Size or #decoration.parts ~= PARTS_PER_CASTLE) then
-            updatePoses(core, decoration)
+        if decoration then
+            if decoration.lastPose ~= core.CFrame or decoration.lastSize ~= core.Size then
+                updatePoses(core, decoration)
+            end
+            -- Reuse the eight existing stones; no extra Part/timer/RenderStepped.
+            local distance = wanted[core]
+            local fade = math.clamp((distance - LOD_FADE_START) /
+                (MAX_DISTANCE_STUDS - LOD_FADE_START), 0, 1)
+            for _, stone in ipairs(decoration.parts) do
+                stone.Transparency = fade
+            end
         end
     end
     -- Directly enforced touch/desktop budget; no per-frame update hook.
@@ -185,7 +210,10 @@ task.spawn(function()
     end
 end)
 
-script.Destroying:Connect(function()
+-- Destroying is not guaranteed for every unparent/reload path. Keep teardown
+-- idempotent and also release original own objects on nil ancestry.
+local function teardown()
+    if disposed == true then return end
     disposed = true
     for _, connection in ipairs(connections) do
         connection:Disconnect()
@@ -195,4 +223,13 @@ script.Destroying:Connect(function()
         clear(core)
     end
     table.clear(candidates)
+end
+
+script.Destroying:Connect(function()
+    teardown()
+end)
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then
+        teardown()
+    end
 end)

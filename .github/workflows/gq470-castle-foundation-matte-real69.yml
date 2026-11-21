@@ -3,8 +3,9 @@ on:
   push:
     branches:
       - quality/gq470-castle-foundation-camera-lod-20261121-a02
+      - quality/gq470-castle-foundation-fade-repair-20261121-a2a
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-castle-foundation-matte-20261121-a01]
     paths:
       - "quality_gameplay/gq470_castle_foundation_matte_20261121/**"
       - ".github/workflows/gq470-castle-foundation-matte-real69.yml"

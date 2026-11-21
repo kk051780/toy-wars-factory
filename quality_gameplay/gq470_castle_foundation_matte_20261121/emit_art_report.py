@@ -28,6 +28,52 @@ SCENES = [
 ]
 DEVICES = ["PC", "ANDROID_LOW_2_TO_4_GB_RAM"]
 PHASES = ["BEFORE", "AFTER"]
+# User-visible fade starts at 150 and reaches invisible at 190 studs.
+# At >190 the foundation is removed by the ordinary camera LOD.
+LOD_TRIAL_DISTANCES = [130, 150, 160, 175, 189, 195]
+
+
+def planned_fade_alpha(distance: int) -> float | None:
+    if distance > 190:
+        return None  # decor absent; not a rendered object with transparency=1
+    return round(min(1.0, max(0.0, (distance - 150) / 40)), 3)
+
+
+def foundation_lod_evidence() -> dict:
+    """Describe real tests still owed; never turn source math into art proof."""
+    return {
+        "same_camera_distance_trials": [
+            {
+                "camera_to_core_studs": distance,
+                "expected_present": distance <= 190,
+                "source_expected_transparency": planned_fade_alpha(distance),
+                "actual_studio_capture": None,
+                "actual_rendered_visibility": None,
+                "actual_device_fps": None,
+                "status": "NOT_TESTED",
+            }
+            for distance in LOD_TRIAL_DISTANCES
+        ],
+        "streaming_cases": {
+            "one_stone_removed_then_rebuilt": "NOT_TESTED",
+            "stone_reparented_and_old_orphan_destroyed": "NOT_TESTED",
+            "whole_folder_removed_then_rebuilt": "NOT_TESTED",
+            "round_exit_all_stones_removed": "NOT_TESTED",
+        },
+        # Source-only upper bounds from TWO independent optional proposals,
+        # not a combined Studio measurement or blanket authorization.
+        "source_budget_parts": {
+            "foundation_982_touch": 16,
+            "foundation_982_pc": 24,
+            "approach_988_touch": 16,
+            "approach_988_pc": 24,
+            "both_optional_touch": 32,
+            "both_optional_pc": 48,
+        },
+        "approve_dual_adoption_without_mobile_runtime_evidence": False,
+        "studio_2client_verified": False,
+        "gate": "ART_NO_GO_NOT_TESTED",
+    }
 
 
 def require(ok: bool, failure: str):
@@ -102,6 +148,7 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
             "gate": "FUN_NO_GO_NOT_TESTED",
         },
         "comparison_images": shots,
+        "foundation_lod_evidence": foundation_lod_evidence(),
         "comparison_image_count": 0,
         "expected_comparison_image_count": 32,
         "pc_android_comparison_images": "0/32",
@@ -113,6 +160,12 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
         "product_gate": "PRODUCT_NO_GO",
         "b_admission": "DEFER_P0_910_FIRST_PENDING_CLAIM_AND_250",
     }
+    require(len(report["foundation_lod_evidence"]["same_camera_distance_trials"]) == 6
+            and not report["foundation_lod_evidence"]["approve_dual_adoption_without_mobile_runtime_evidence"]
+            and all(x["status"] == "NOT_TESTED"
+                    and x["actual_studio_capture"] is None
+                    for x in report["foundation_lod_evidence"]["same_camera_distance_trials"]),
+            "FAKE_DISTANCE_OR_STREAMING_PROOF")
     require(report["comparison_image_count"] == 0 and
             report["art_gate"] == "ART_NO_GO" and
             report["product_gate"] == "PRODUCT_NO_GO",
