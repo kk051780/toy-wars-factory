@@ -14,10 +14,11 @@ local MAX_DISTANCE = 155
 -- Matte stones gradually disappear at the outer LOD edge.
 local FADE_START = 125
 local REFRESH_SECONDS = 2.5
+local OPACITY_SECONDS = 0.2 -- cheap local alpha only; no new raycasts
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
 
-type Decor = { folder: Folder, pieces: {BasePart} }
+type Decor = { folder: Folder, pieces: {BasePart}, grounded: {[BasePart]: boolean} }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
@@ -87,14 +88,14 @@ local function decorIntact(core: BasePart, decor: Decor): boolean
     return true
 end
 
-local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams)
+local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams): boolean
     -- Never place floating/underwater ornaments on streamed or absent floors.
     local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
         Vector3.new(0, -14, 0), filter)
     if not hit or hit.Material == Enum.Material.Water or hit.Normal.Y < .7
         or math.abs(hit.Position.Y - pose.Position.Y) > 2.75 then
         piece.Transparency = 1
-        return
+        return false
     end
     local surface = hit.Instance
     -- A moving NPC/player is not the ground, even if its body is collidable.
@@ -114,11 +115,12 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
         or (surface.Material == Enum.Material.Glass and surface.Transparency >= .35)
     )) then
         piece.Transparency = 1
-        return
+        return false
     end
     piece.CFrame = pose + Vector3.new(0,
         hit.Position.Y + piece.Size.Y * .5 - pose.Position.Y, 0)
     piece.Transparency = 0
+    return true
 end
 
 local function updatePieces(core: BasePart, decor: Decor, distance: number)
@@ -138,17 +140,33 @@ local function updatePieces(core: BasePart, decor: Decor, distance: number)
         local toward = base * CFrame.new(math.sin(angle) * offsetX, 0, math.cos(angle) * offsetZ)
             * CFrame.Angles(0, angle, 0)
         local first = side * 2 + 1
-        placeOnGround(decor.pieces[first],
+        decor.grounded[decor.pieces[first]] = placeOnGround(decor.pieces[first],
             toward * CFrame.new(-1.12, 0, 0) * CFrame.Angles(0, math.rad(28), 0),
             filter)
-        placeOnGround(decor.pieces[first + 1],
+        decor.grounded[decor.pieces[first + 1]] = placeOnGround(decor.pieces[first + 1],
             toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0),
             filter)
     end
     -- Rejected ground remains invisible; accepted stone edges blend in.
     local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
     for _, stone in ipairs(decor.pieces) do
-        if stone.Transparency < 1 then stone.Transparency = fade end
+        stone.Transparency = if decor.grounded[stone] then fade else 1
+    end
+end
+
+-- 5Hz alpha-only visibility refresh: walking speed crosses the 30-stud LOD
+-- zone in under the 2.5s ground-ray period. Do not re-raycast here.
+local function refreshOpacity()
+    if disposed then return end
+    local pos = playerPosition()
+    for core, decor in active do
+        local distance = if pos then (core.Position - pos).Magnitude else MAX_DISTANCE
+        local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
+        for _, stone in ipairs(decor.pieces) do
+            if stone.Parent == decor.folder then
+                stone.Transparency = if decor.grounded[stone] then fade else 1
+            end
+        end
     end
 end
 
@@ -164,7 +182,7 @@ local function makeApproach(core: BasePart)
         table.insert(pieces, makePiece(folder, "SandstonePathEdge_" .. side, SANDSTONE))
     end
     assert(#pieces == PIECES_PER_CASTLE)
-    local decor: Decor = { folder = folder, pieces = pieces }
+    local decor: Decor = { folder = folder, pieces = pieces, grounded = {} }
     active[core] = decor
 end
 
@@ -246,6 +264,12 @@ task.spawn(function()
     while not disposed and script.Parent do
         task.wait(REFRESH_SECONDS)
         refresh()
+    end
+end)
+task.spawn(function()
+    while not disposed and script.Parent do
+        task.wait(OPACITY_SECONDS)
+        refreshOpacity()
     end
 end)
 
