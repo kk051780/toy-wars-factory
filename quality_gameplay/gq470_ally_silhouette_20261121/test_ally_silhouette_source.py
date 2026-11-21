@@ -97,6 +97,15 @@ class SourceGate(unittest.TestCase):
         self.assertEqual(m["low_end_android_15min"], "NOT_TESTED")
         self.assertFalse(m["owner_accepted"])
         self.assertEqual(m["art_gate"], "ART_NO_GO")
+        alt = m["visual_alternative_selection"]
+        self.assertEqual(alt["rule"], "EXCLUSIVE_ONE_OR_NEITHER_AFTER_HUMAN_STUDIO_ANDROID_ART_GATE")
+        self.assertEqual(alt["option_975"]["pr"], 975)
+        self.assertEqual(alt["option_976"]["pr"], 976)
+        self.assertEqual(alt["option_975"]["status"], "NOT_TESTED")
+        self.assertEqual(alt["option_976"]["status"], "NOT_TESTED")
+        self.assertIsNone(alt["winner"])
+        self.assertIsNone(alt["option_975"]["median_fps"])
+        self.assertIsNone(alt["option_976"]["median_fps"])
         self.assertEqual(len(m["runtime_scenarios"]), 10)
         self.assertTrue(all(s["status"] == "NOT_TESTED" for s in m["runtime_scenarios"]))
 
