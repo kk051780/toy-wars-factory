@@ -1,0 +1,35 @@
+name: GQ470 coastal dune grass A source native compile (not Studio)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_coastal_dune_grass_20261121/**"
+      - ".github/workflows/gq470-coastal-dune-grass-a.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source regression / twenty independent safety budget checks
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/gq470_coastal_dune_grass_20261121 -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_native_luau
+          persist-credentials: false
+      - name: Pinned native Luau compilation of actual optional LocalScript
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_native_luau -B /tmp/gq470_dune_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470_dune_native --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470_dune_native/luau-compile --text quality_gameplay/gq470_coastal_dune_grass_20261121/EGGRUMBLE_CoastalDuneGrass.client.luau >/dev/null
+          echo GQ470_DUNE_GRASS_A_ONLY_NATIVE_SOURCE_PASS_NOT_STUDIO_NOT_FORMAL
