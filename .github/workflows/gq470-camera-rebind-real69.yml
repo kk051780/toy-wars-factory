@@ -1,0 +1,238 @@
+name: GQ470 matte castle pennant REAL70 A source gate (not official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_camera_rebind_20261121/**"
+      - ".github/workflows/gq470-camera-rebind-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real70-source-only:
+    # Fork-authored scripts cannot access the authenticated private baseline.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET: quality_gameplay/gq470_camera_rebind_20261121
+      ROOT: /tmp/gq470-camera-rebind
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Static safety and castle banner lifecycle/mobile budget mutation negatives
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_camera_rebind_source.py" "$TARGET/emit_art_report.py"
+          python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
+      - name: Retrieve immutable official REAL69 baseline (no PR Python in credential step)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$FORMAL success"
+          mkdir -p "$ROOT/off69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
+            --dir "$ROOT/off69"
+      - name: Compose 69+1 source candidate without any GitHub credential
+        run: |
+          set -euo pipefail
+          test -z "${GH_TOKEN:-}" || { echo RED_PR_CODE_HAS_GH_TOKEN; exit 1; }
+          python3 "$TARGET/compose_official70.py" --official "$ROOT/off69" --out "$ROOT/on70"
+          echo A_REAL70_69_SOURCE_BYTES_UNCHANGED_ONE_NEW_CLIENT_ONLY_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_banner_luau
+          persist-credentials: false
+      - name: Pinned Native Luau compile original69 and candidate70
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_banner_luau -B "$ROOT/luau" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,sys,subprocess
+          sys.path.insert(0, "quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["ROOT"])
+          for name,count in (("off69",69),("on70",70)):
+              location=root/name
+              scanned=project_scan(location,"EGGRUMBLE_REAL69.project.json")
+              assert len(scanned)==count
+              for script in scanned.values():
+                  subprocess.run([str(root/"luau/luau-compile"),"--text",str(location/script["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_CAMERA_REBIND_NATIVE_ORIGINAL69_PLUS_CANDIDATE70_PASS")
+          PY
+      - name: Pinned true Rojo OFF69 exact-byte and ON70 Source/Class
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ["ROOT"])
+          with ZipFile(root/"rojo.zip") as archive:
+              names=[x for x in archive.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              output=root/"rojo"
+              output.write_bytes(archive.read(names[0]))
+              output.chmod(0o755)
+          PY
+          "$ROOT/rojo" build "$ROOT/off69/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_REBUILT.rbxlx"
+          "$ROOT/rojo" build "$ROOT/on70/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$ROOT/off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$ROOT/off69/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/OFF69_REBUILT.rbxlx" --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$ROOT/on70/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx" --count 70
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import os,hashlib,json
+          root=Path(os.environ["ROOT"])
+          a=ET.parse(root/"OFF69_REBUILT.rbxlx").getroot()
+          b=ET.parse(root/"GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx").getroot()
+          original=list(a.iter("Item"));candidate=list(b.iter("Item"))
+          assert len(candidate)==len(original)+1
+          hits=[]
+          for item in candidate:
+              name=item.find('./Properties/string[@name="Name"]')
+              if name is not None and name.text=="EGGRUMBLE_CameraRebind":
+                  hits.append(item)
+          assert len(hits)==1 and hits[0].get("class")=="LocalScript"
+          src=hits[0].find('./Properties/ProtectedString[@name="Source"]')
+          if src is None:
+              src=hits[0].find('./Properties/string[@name="Source"]')
+          expected=Path(os.environ["TARGET"]+"/EGGRUMBLE_CameraRebind.client.luau").read_text()
+          assert src is not None and src.text is not None and src.text.strip()==expected.strip()
+          receipt=json.loads((root/"on70/GQ470_CAMERA_REBIND_SOURCE_RECEIPT.json").read_text())
+          assert receipt["candidate_source_count"]==70 and receipt["original_sources_preserved"]==69
+          assert receipt["art_gate"]=="ART_NO_GO" and receipt["formal_integrated"] is False
+          print("GQ470_CAMERA_REBIND_ROJO_OFF69_EXACT_ON70_SOURCE_CLASS_PASS")
+          print("CANDIDATE_PRIVATE_PLACE_BYTES", (root/"GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx").stat().st_size)
+          PY
+      - name: Verify one-source B220 and 12 fail-closed manifest, original-source and Place mutants
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/compose_official70.py" --export-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx"
+          python3 "$TARGET/compose_official70.py" --verify-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0, os.environ["TARGET"])
+          from compose_official70 import B_MANIFEST,B_PACKET,verify_b,PROJECT,ROUTE
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["ROOT"])
+          candidate=root/"on70"
+          place=root/"GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx"
+          container=candidate/B_PACKET
+          manifest=container/B_MANIFEST
+          original=manifest.read_bytes()
+          tests=[
+            ("formal_integrated",True),
+            ("art_status","ART_GO"),
+            ("new_source_sha256","bad-sha"),
+            ("original_selected_sources_preserved",1),
+            ("formal_branch","forged-branch"),
+            ("source_profile","forged-profile"),
+            ("b_admission","READY_FOR_AUTO_MERGE"),
+            ("new_source_path","selected_sources/forged.luau"),
+            ("source_only",False),
+          ]
+          for field,value in tests:
+              try:
+                  altered=json.loads(original)
+                  altered[field]=value
+                  manifest.write_text(json.dumps(altered))
+                  try: verify_b(candidate,place)
+                  except ValueError: pass
+                  else: raise AssertionError("MUTANT_NOT_BLOCKED_"+field)
+              finally: manifest.write_bytes(original)
+          extra=container/"UNEXPECTED_JUNK.txt"
+          extra.write_text("should never be packaged")
+          try:
+              try: verify_b(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_UNEXPECTED_PACKET_FILE")
+          finally: extra.unlink()
+          # Mutating any existing original must reject the 69/69 preservation claim.
+          originals=project_scan(candidate,PROJECT)
+          route=next(k for k in originals if k!=ROUTE)
+          source=candidate/originals[route]["path"]
+          true_bytes=source.read_bytes()
+          try:
+              source.write_bytes(true_bytes+b"\\n-- expected negative drift")
+              try: verify_b(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_ORIGINAL_69_NOT_BLOCKED")
+          finally: source.write_bytes(true_bytes)
+          # A well-formed unrelated Place with altered new Luau Source is not proof.
+          altered_place=root/"TAMPERED_UNRELATED_SOURCE_PLACE.rbxlx"
+          actual=place.read_bytes()
+          assert b"RECOVERY_WINDOW_SECONDS" in actual
+          altered_place.write_bytes(actual.replace(b"RECOVERY_WINDOW_SECONDS",b"TAMPERED_RECOVERY_WINDOW_SECONDS",1))
+          try:
+              try: verify_b(candidate,altered_place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_UNRELATED_PLACE_NOT_BLOCKED")
+          finally: altered_place.unlink()
+          verify_b(candidate,place)
+          print("GQ470_CAMERA_REBIND_B220_TWELVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
+          PY
+      - name: "ART #420 honest PC/Android 32 screenshot and FUN source-only audit"
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/emit_art_report.py" --candidate "$ROOT/on70" \
+            --place "$ROOT/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx" \
+            --out "$ROOT/ART_CHECK_REPORT.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["ROOT"])/"ART_CHECK_REPORT.json"
+          x=json.loads(p.read_text(encoding="utf-8"))
+          assert len(x["comparison_images"])==32
+          assert x["comparison_image_count"]==0
+          assert all(v["exists"] is False and v["human_score"] is None for v in x["comparison_images"])
+          assert x["studio_solo"]=="NOT_TESTED" and x["studio_2client"]=="NOT_TESTED"
+          assert x["art_gate"]=="ART_NO_GO" and x["product_gate"]=="PRODUCT_NO_GO"
+          assert x["owner_accepted"] is False and x["formal_rc_integrated"] is False
+          print("GQ470_CAMERA_REBIND_REPORT_32_REAL_IMAGE_GAPS_NOT_ART_GO_PASS")
+          PY
+      - name: Confirm formal RC unchanged (B220 only writer)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" || { echo RED_HEAD_DRIFT; exit 1; }
+          fi
+          echo A_SOURCE_ONLY_NATIVE_ROJO_B_PACKET_GREEN_NOT_ENGINE_NOT_ART_GO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-CASTLE-CAMERA-REAL70-A-CANDIDATE-NOT-FORMAL
+          path: |
+            /tmp/gq470-camera-rebind/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx
+            /tmp/gq470-camera-rebind/on70/GQ470_CAMERA_REBIND_SOURCE_RECEIPT.json
+            /tmp/gq470-camera-rebind/on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CameraRebind.client.luau
+            /tmp/gq470-camera-rebind/on70/B220_CAMERA_REBIND_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
+            /tmp/gq470-camera-rebind/ART_CHECK_REPORT.json
+          if-no-files-found: error
+          retention-days: 7
