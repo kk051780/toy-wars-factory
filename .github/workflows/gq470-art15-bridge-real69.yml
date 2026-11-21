@@ -23,7 +23,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Source-lock original RC and exact green A parents ART7+ART6B+CASTLE2
+      - name: Source-lock original RC and exact green A parents ART13+CASTLE2
         shell: bash
         run: |
           set -euo pipefail
@@ -39,7 +39,7 @@ jobs:
           from compose_art15 import PARENTS
           for p in PARENTS: print(p['pr'],p['head'],p['run'],p['artifact'])
           PY
-          test "$(wc -l < "$ROOT/parents.list")" -eq 3
+          test "$(wc -l < "$ROOT/parents.list")" -eq 2
           while read -r PR HEAD RUN ARTIFACT; do
             test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .head.sha)" = "$HEAD" || { echo "RED_PARENT_PR_HEAD_MOVED_$PR"; exit 1; }
             test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq '.head_sha+" "+.conclusion')" = "$HEAD success" || { echo "RED_PARENT_CI_NOT_EXACT_GREEN_$PR"; exit 1; }
