@@ -106,6 +106,10 @@ class SourceGate(unittest.TestCase):
         self.assertIsNone(alt["winner"])
         self.assertIsNone(alt["option_975"]["median_fps"])
         self.assertIsNone(alt["option_976"]["median_fps"])
+        for variant in ("option_975", "option_976"):
+            self.assertIsNone(alt[variant]["pc_human_score"])
+            self.assertIsNone(alt[variant]["android_human_score"])
+            self.assertIsNone(alt[variant]["artifact"])
         self.assertEqual(len(m["runtime_scenarios"]), 10)
         self.assertTrue(all(s["status"] == "NOT_TESTED" for s in m["runtime_scenarios"]))
 
