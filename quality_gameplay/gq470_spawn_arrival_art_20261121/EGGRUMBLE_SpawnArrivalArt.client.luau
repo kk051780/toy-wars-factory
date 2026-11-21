@@ -30,7 +30,7 @@ local function onCharacter(character: Model)
         if generation ~= token or player.Character ~= character then return end
         if not root or not root:IsA("BasePart") then return end
         if not human or not human:IsA("Humanoid") or human.Health <= 0 then return end
-        if player:GetAttribute("ReducedEffects") == true then return end
+        if player:GetAttribute("EGGRUMBLE_ReducedEffects") == true then return end
 
         local tint = if player.Neutral then Color3.fromRGB(175, 190, 193)
             else player.TeamColor.Color
