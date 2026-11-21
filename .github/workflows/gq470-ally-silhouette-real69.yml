@@ -181,6 +181,12 @@ jobs:
           assert x["studio_solo"]=="NOT_TESTED" and x["studio_2client"]=="NOT_TESTED"
           assert x["art_gate"]=="ART_NO_GO" and x["product_gate"]=="PRODUCT_NO_GO"
           assert x["owner_accepted"] is False and x["formal_rc_integrated"] is False
+          choice=x["visual_alternative_selection"]
+          assert choice["rule"]=="EXCLUSIVE_ONE_OR_NEITHER_AFTER_HUMAN_STUDIO_ANDROID_ART_GATE"
+          assert choice["winner"] is None
+          assert {choice["option_975"]["pr"],choice["option_976"]["pr"]}=={975,976}
+          assert choice["option_975"]["median_fps"] is None and choice["option_976"]["median_fps"] is None
+          assert x["owner_player_spawn_p0"]=="OPEN_NOT_RETESTED"
           print("GQ470_ALLY_REPORT_32_REAL_IMAGE_GAPS_NOT_ART_GO_PASS")
           PY
       - name: Confirm formal RC unchanged (B220 only writer)
