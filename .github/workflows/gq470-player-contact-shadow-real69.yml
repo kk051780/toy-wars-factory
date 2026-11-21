@@ -202,3 +202,39 @@ jobs:
             /tmp/gq470-player-contact-shadow/ART_CHECK_REPORT.json
           if-no-files-found: error
           retention-days: 7
+
+
+  postupload-independent:
+    name: Re-download real A artifact and verify source exactness (not Studio)
+    needs: real70-source-only
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Read back current PR commit and fail on stale checkout
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -m py_compile quality_gameplay/gq470_player_contact_shadow_20261121/verify_postupload.py
+      - name: Download exact current-run A ZIP and immutable original formal69
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470_replay/on /tmp/gq470_replay/off
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name GQ470-PLAYER_CONTACT_SHADOW-REAL70-A-CANDIDATE-NOT-FORMAL --dir /tmp/gq470_replay/on
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470_replay/off
+      - name: Check uploaded candidate vs original actual Place, source, scope and no fake art evidence
+        run: |
+          set -euo pipefail
+          test -z "${GH_TOKEN:-}"
+          python3 -B quality_gameplay/gq470_player_contact_shadow_20261121/verify_postupload.py \
+            --artifact /tmp/gq470_replay/on \
+            --original /tmp/gq470_replay/off \
+            --current quality_gameplay/gq470_player_contact_shadow_20261121/EGGRUMBLE_PlayerContactShadow.client.luau
+          echo GQ470_PLAYER_CONTACT_SHADOW_TRUE_POSTUPLOAD_A_SOURCE_READY_NOT_FORMAL_NOT_STUDIO
