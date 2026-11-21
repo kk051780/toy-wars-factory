@@ -134,10 +134,8 @@ def readback(formal: Path, uploaded: Path, rojo: Path, report_path: Path) -> dic
         # Three independent B-tamper negatives on the downloaded, real artifact.
         original_manifest = (reconstruction / B_PACKET / B_MANIFEST).read_bytes()
         for field, bad in (("formal_integrated", True),
-                           ("max_part_budget_hint", 999999),
+                           ("owner_accepted", True),
                            ("new_source_sha256", "forged")):
-            # Unknown fields must fail closed because B manifest must contain
-            # exactly the approved schema, not silent additional metadata.
             manifest_path = reconstruction / B_PACKET / B_MANIFEST
             altered = json.loads(original_manifest)
             altered[field] = bad
@@ -148,7 +146,7 @@ def readback(formal: Path, uploaded: Path, rojo: Path, report_path: Path) -> dic
                 except (ValueError, KeyError):
                     pass
                 else:
-                    require(field == "max_part_budget_hint", "POSTUPLOAD_MANIFEST_TAMPER_ACCEPTED_" + field)
+                    raise ValueError("RED_GQ470_SEA_GULLS_POSTUPLOAD_MANIFEST_TAMPER_ACCEPTED_" + field)
             finally:
                 manifest_path.write_bytes(original_manifest)
         bad_place = tmp_dir / "tampered_place.rbxlx"
