@@ -99,6 +99,8 @@ def validate(source: str) -> None:
             raise ValueError("RED_UNTRACKED_EVENT_" + event)
     if not re.search(r"while not stopped do\s+task.wait\(SCAN_INTERVAL\)\s+if stopped then\s+break", code):
         raise ValueError("RED_POST_DESTROY_SCAN")
+    if not re.search(r"if LOCAL_PLAYER.Parent ~= Players then\s+shutdown\(\)\s+break", code):
+        raise ValueError("RED_ORPHANED_PLAYER_STOP")
     shutdown = code.split("local function shutdown()", 1)[1].split("local function isVisibleAlly", 1)[0]
     if not (shutdown.index("stopped = true") < shutdown.index("connection:Disconnect()") < shutdown.index("clearAll()")):
         raise ValueError("RED_BAD_DESTROY_ORDER")
