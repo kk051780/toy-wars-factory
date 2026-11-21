@@ -88,8 +88,9 @@ local function updatePieces(core: BasePart, decor: Decor)
     -- Four pairs of split, shallow path-edge keystones, NOT foundation blocks.
     -- The inset is farther away than #982 foundation (core face + >=8 studs).
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
-    local faceRadius = math.max(core.Size.X, core.Size.Z) * .5
-    local offset = math.clamp(faceRadius + 9, 12, 72)
+    -- #990 correction: a long rectangular keep must retain its short side.
+    local offsetX = math.clamp(core.Size.X * .5 + 9, 12, 72)
+    local offsetZ = math.clamp(core.Size.Z * .5 + 9, 12, 72)
     local filter = RaycastParams.new()
     filter.FilterType = Enum.RaycastFilterType.Exclude
     filter.IgnoreWater = true
@@ -99,7 +100,7 @@ local function updatePieces(core: BasePart, decor: Decor)
     filter.FilterDescendantsInstances = ignore
     for side = 0, 3 do
         local angle = side * math.pi * .5
-        local toward = base * CFrame.new(math.sin(angle) * offset, 0, math.cos(angle) * offset)
+        local toward = base * CFrame.new(math.sin(angle) * offsetX, 0, math.cos(angle) * offsetZ)
             * CFrame.Angles(0, angle, 0)
         local first = side * 2 + 1
         placeOnGround(decor.pieces[first],
