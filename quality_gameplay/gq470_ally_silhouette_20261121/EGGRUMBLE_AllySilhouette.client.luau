@@ -60,8 +60,16 @@ local function isVisibleAlly(player, localRoot, localTeam)
     local root = character:FindFirstChild("HumanoidRootPart")
     local head = character:FindFirstChild("Head")
     local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
-    if not humanoid or humanoid.Health <= 0 or not root or not head or not torso
-        or head.Transparency >= 0.35
+    if not humanoid or humanoid.Health <= 0 or not root or not head or not torso then
+        return nil
+    end
+    -- Do cheap distance rejection before enumerating R6/R15 body parts.
+    -- This avoids per-limb transparency scans for remote players >45 studs.
+    local distance = (root.Position - localRoot.Position).Magnitude
+    if distance > MAX_DISTANCE then
+        return nil
+    end
+    if head.Transparency >= 0.35
         or head.LocalTransparencyModifier >= 0.35
         or torso.Transparency >= 0.35
         or torso.LocalTransparencyModifier >= 0.35 then
@@ -75,10 +83,6 @@ local function isVisibleAlly(player, localRoot, localTeam)
             and (bodyPart.Transparency >= 0.35 or bodyPart.LocalTransparencyModifier >= 0.35) then
             return nil
         end
-    end
-    local distance = (root.Position - localRoot.Position).Magnitude
-    if distance > MAX_DISTANCE then
-        return nil
     end
     return {player = player, character = character, distance = distance}
 end
