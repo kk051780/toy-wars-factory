@@ -269,7 +269,7 @@ def export(root: Path) -> None:
     print("ART16_P0_B220_17_SOURCE_BYTES_READY_A_ONLY_NOT_FORMAL")
 
 def self_test() -> None:
-    old = {str(i): b"original" for i in range(69)}
+    old = {str(i): b"original" for i in range(68)}
     authors = {"art16_970": [str(i) for i in range(16)],
                "early_lobby_980": [HOST]}
     old[HOST] = b"original"
