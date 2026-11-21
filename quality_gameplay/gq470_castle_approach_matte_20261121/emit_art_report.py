@@ -32,7 +32,7 @@ PHASES = ["BEFORE", "AFTER"]
 
 def require(ok: bool, failure: str):
     if not ok:
-        raise ValueError("RED_GQ470_FOUNDATION_ART_REPORT_" + failure)
+        raise ValueError("RED_GQ470_CASTLE_APPROACH_ART_REPORT_" + failure)
 
 
 def digest(contents: bytes) -> str:
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     ap.add_argument("--out", type=Path, required=True)
     opt = ap.parse_args()
     result = emit(opt.candidate, opt.place, opt.out)
-    print("GQ470_FOUNDATION_ART_REPORT_0_OF_32_HONEST_SOURCE_ONLY_PASS",
+    print("GQ470_CASTLE_APPROACH_ART_REPORT_0_OF_32_HONEST_SOURCE_ONLY_PASS",
           result["candidate_place_bytes"], result["candidate_place_sha256"])
