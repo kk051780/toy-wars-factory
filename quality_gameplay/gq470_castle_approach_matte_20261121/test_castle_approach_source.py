@@ -42,6 +42,7 @@ REQUIRED = (
     'Workspace.DescendantRemoving:Connect',
     'player.CharacterAdded:Connect',
     'player.CharacterRemoving:Connect',
+    'for core in active do clear(core) end',
     'task.wait(REFRESH_SECONDS)',
     'assert(actual * PIECES_PER_CASTLE <= MAX_PARTS)',
 )
@@ -110,6 +111,7 @@ class TestApproachSource(unittest.TestCase):
             ('Enum.Material.Slate', 'Enum.Material.Neon'),
             ('GetAttribute("EGGRUMBLE_ReducedEffects") ~= true', 'GetAttribute("EGGRUMBLE_ReducedEffects") == true'),
             ('GetAttribute("EGGRUMBLE_CastleApproachOff") ~= true', 'GetAttribute("EGGRUMBLE_CastleApproachOff") == true'),
+            ('for core in active do clear(core) end', 'task.defer(refresh)'),
             ('task.wait(REFRESH_SECONDS)', 'task.wait(.01)'),
             ('assert(actual * PIECES_PER_CASTLE <= MAX_PARTS)', 'assert(true)'),
         )
