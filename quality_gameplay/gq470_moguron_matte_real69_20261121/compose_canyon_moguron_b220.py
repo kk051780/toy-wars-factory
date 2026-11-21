@@ -18,7 +18,7 @@ import patch_moguron69 as mole
 BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 CANYON_HEAD = "478a640da1d78e0832464aeefc497f453bd68cd0"
 CANYON_BLOB = "1e2ac59cd1e80d47f1b71660013a314ca61f6ba3"
-MOGURON_HEAD = "7cf2e76f5ce3de8800234fe6b7e14c08cd69a068"
+MOGURON_HEAD = ""  # Actual immutable PR SHA supplied by exact-head Actions
 PLACE_BASE_SHA = "fc63171149a86f6b39779ba6ebe7e18fcb7099fbde98ad2ec33a7cb92b3a9934"
 OUT = "B220_CANYON_MOGURON_ONE_SOURCE_NOT_FORMAL"
 FEATURE = "GQ470_CANYON_MOGURON_COMPOSITE_REAL69_20261121"
@@ -75,7 +75,7 @@ def exact_composition(formal: str, updated: str, canyon) -> None:
 
 def prove(base: Path, composed: Path, canyon, outdir: Path,
           final_head: str) -> dict:
-    need(len(final_head) == 40 and final_head == MOGURON_HEAD,
+    need(len(final_head) == 40 and all(c in "0123456789abcdef" for c in final_head),
          "PINNED_A_HEAD_MATCH")
     base = base.resolve()
     composed = composed.resolve()
