@@ -11,6 +11,8 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PIECES_PER_CASTLE = 8
 local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE
 local MAX_DISTANCE = 155
+-- Invisible prefetch covers one 2.5s geometry tick at normal 16stud/s.
+local PREFETCH_DISTANCE = 195
 -- Matte stones gradually disappear at the outer LOD edge.
 local FADE_START = 125
 local REFRESH_SECONDS = 2.5
@@ -200,7 +202,7 @@ local function refresh()
         for core in candidates do
             if validCore(core) and core:IsDescendantOf(Workspace) then
                 local distance = (core.Position - pos).Magnitude
-                if distance <= MAX_DISTANCE then
+                if distance <= PREFETCH_DISTANCE then
                     table.insert(ranked, {core = core, distance = distance})
                 end
             end
