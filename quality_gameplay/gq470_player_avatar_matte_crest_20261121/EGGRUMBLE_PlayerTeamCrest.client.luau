@@ -152,6 +152,17 @@ local function watchActiveVisibility(player, rec)
                 limb:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(dropIfHidden))
         end
     end
+    -- Streaming a new limb in/out must never leave a stale unobserved crest.
+    table.insert(rec.watchers, rec.character.ChildAdded:Connect(function(child)
+        if child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" then
+            clearPieces(rec)
+        end
+    end))
+    table.insert(rec.watchers, rec.character.ChildRemoved:Connect(function(child)
+        if child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" then
+            clearPieces(rec)
+        end
+    end))
     dropIfHidden() -- close the tiny gap between eligibility test and listeners
 end
 
