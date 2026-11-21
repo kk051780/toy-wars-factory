@@ -49,7 +49,8 @@ def safe_code(code: str) -> bool:
             and all(token not in code for token in forbidden)
             and code.count('Instance.new("WedgePart")') == 1
             and code.count('stone.Parent = folder') == 1
-            and bool(re.search(r'^\\s*stone\\.Reflectance = 0\\s*
+            and any(line.strip() == 'stone.Reflectance = 0' for line in code.splitlines())
+            and code.count('local FEATURE_ID = ') == 1
             and code.count('GQ470_FB015_LOBBY_EDGE_MASONRY_20261121') == 1)
 
 
