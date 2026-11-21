@@ -1,0 +1,356 @@
+name: GQ470 Moguron REAL69 native/Rojo art PREP (not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**"
+      - "quality_gameplay/gq470_moguron_matte_real69_20261121/**"
+      - ".github/workflows/gq470-moguron-art-source-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  moguron-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact A candidate (not merge SHA)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact candidate SHA
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Original WCS owner and route regression
+        run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_runtime_contract.py
+      - name: New art anatomy, part budget and no-gameplay-mutation regression
+        run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_moguron_matte_real69.py
+      - name: Seven fail-closed visual mutations and selected69 patch sanity
+        run: |
+          python3 -m py_compile quality_gameplay/gq470_moguron_matte_real69_20261121/patch_moguron69.py
+          python3 quality_gameplay/gq470_moguron_matte_real69_20261121/patch_moguron69.py --self-test
+      - name: Preserve real gate outcome distinction
+        run: echo "SOURCE_PREP_GATE only; Native/Rojo69 and Studio/ART/FUN are separate"
+  moguron-real69-source-build:
+    needs: moguron-source-only
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout exact A branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify sole official RC and exact prior REAL69 success
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_RC; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+      - name: Download official REAL69 true artifact; do not mutate official
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq470-moguron
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-moguron
+          test -s /tmp/gq470-moguron/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          test -s /tmp/gq470-moguron/REAL69_LEGACY_INTAKE_RECEIPT.json
+          test -s /tmp/gq470-moguron/EGGRUMBLE_REAL69.project.json
+      - name: Apply exact 1/69 art source transformation with rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_moguron_matte_real69_20261121/patch_moguron69.py --base /tmp/gq470-moguron
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-moguron/REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          x=r["gq470_moguron_matte"]
+          assert x["changed_routes"]==1 and x["other68_byte_exact"] is True
+          assert x["part_count_per_moguron_old_new"]==[2,8]
+          assert x["max_mogurons_two_modes"]==4 and x["extra_parts_total_two_modes"]==24
+          assert x["same_route_requires_b220_composition"] is True
+          assert x["engine"]=="NOT_TESTED" and x["owner_accepted"] is False
+          print("GQ470_MOGURON_REAL69_EXACT_SOURCE_1_OF_69_PASS")
+          PY
+      - name: Checkout pinned Luau compiler (independent toolchain)
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile actual selected69 ON and byte-exact OFF69 Luaus
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-moguron-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-moguron-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_moguron_matte_real69_20261121")
+          from patch_moguron69 import selected,ROUTE
+          root=Path("/tmp/gq470-moguron")
+          on=selected(root);off=selected(root/"OFF69_MOGURON_MATTE")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {k for k in on if on[k].read_bytes()!=off[k].read_bytes()}=={ROUTE}
+          for sources in (on,off):
+              for src in sources.values():
+                  subprocess.run(["/tmp/gq470-moguron-luau/luau-compile","--text",str(src)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_MOGURON_NATIVE_ON69_OFF69_PASS")
+          PY
+      - name: Pinned Rojo 7.7.1 actual ON/OFF69 Place rebuild and source truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-moguron-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-moguron-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq470-moguron-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq470-moguron-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-moguron-rojo build /tmp/gq470-moguron/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-moguron-rojo build /tmp/gq470-moguron/OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron/OFF69_MOGURON_MATTE_REBUILT.rbxlx
+          cmp /tmp/gq470-moguron/OFF69_MOGURON_MATTE_REBUILT.rbxlx /tmp/gq470-moguron/OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-moguron/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-moguron/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-moguron/OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-moguron/OFF69_MOGURON_MATTE_REBUILT.rbxlx --count 69
+          python3 quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-moguron --report /tmp/gq470-moguron/MOGURON_LEGACY48_AUDIT.json
+      - name: Actual 69-source #420 gate and candidate receipt (ART NO_GO)
+        shell: bash
+        env:
+          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path("/tmp/gq470-moguron")
+          p=root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          rpath=root/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          r=json.loads(rpath.read_text())
+          r["gq470_moguron_matte"]["native_rojo_off69"]="PASS_SOURCE_ONLY"
+          r["gq470_moguron_matte"]["candidate_head"]=os.environ["CANDIDATE_HEAD"]
+          r["private_place_bytes"]=p.stat().st_size
+          r["private_place_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
+          rpath.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ470_MOGURON_PRIVATE_CANDIDATE_PLACE_BYTES",p.stat().st_size)
+          PY
+          python3 art_quality/gq470_real69_source_gate.py --self-test
+          python3 art_quality/gq470_real69_source_gate.py --root /tmp/gq470-moguron --head e80973c354f14a0d0088577f3cc1a875454f0f8f --out /tmp/gq470-moguron/MOGURON_ART_SOURCE_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gq470-moguron/MOGURON_ART_SOURCE_REPORT.json").read_text())
+          assert r["source_gate"]["selected_routes_source_class_hash_exact"]==69
+          assert r["visual_evidence_gate"]["screenshots_received"]==0
+          assert r["art_gate"]=="ART_NO_GO" and r["product_gate"]=="PRODUCT_NO_GO"
+          assert r["owner_accepted"] is False
+          print("GQ470_MOGURON_ART_SOURCE_ONLY_PASS_OWNER_NOT_TESTED")
+          PY
+      - name: Candidate summary, not formal RC source adoption
+        shell: bash
+        env:
+          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path("/tmp/gq470-moguron")
+          now=(root/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").stat().st_size
+          old=(root/"OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69_PRIVATE.rbxlx").stat().st_size
+          report={"kind":"A_PREP_NOT_FORMAL_RC","candidate_head":os.environ["CANDIDATE_HEAD"],"official_base":"e80973c354f14a0d0088577f3cc1a875454f0f8f","profile":"REAL69_PRIVATE_COMPANION","source_count":69,"changed_selected_routes":1,"other68_byte_exact":True,"candidate_place_bytes":now,"official_old_place_bytes":old,"place_byte_delta":now-old,"engine_studio":"NOT_TESTED","android":"NOT_TESTED","art":"ART_NO_GO","fun":"FUN_NO_GO","owner_accepted":False,"same_route_composite_pr":933,"formal_adopted":False}
+          (root/"MOGURON_A_PREP_REPORT.json").write_text(json.dumps(report,sort_keys=True,indent=2)+"\n")
+          print(json.dumps(report,sort_keys=True))
+          PY
+      - name: Upload real source+Place+OFF proof for sole B220 writer
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-MOGURON-MATTE-A-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-moguron/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-moguron/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-moguron/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-moguron/sources/**
+            /tmp/gq470-moguron/OFF69_MOGURON_MATTE_REBUILT.rbxlx
+            /tmp/gq470-moguron/MOGURON_LEGACY48_AUDIT.json
+            /tmp/gq470-moguron/MOGURON_ART_SOURCE_REPORT.json
+            /tmp/gq470-moguron/MOGURON_A_PREP_REPORT.json
+          if-no-files-found: error
+          retention-days: 7
+
+  moguron-canyon-source-composite:
+    needs: moguron-real69-source-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout exact #967 candidate; retain author's branch as A only
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin successful #933 other-owner ART candidate, original base and source blob
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          test "$EXACT_HEAD" = "b27662e478b95e8fc8de4dc372995da5c751ff66" && {
+            echo "RED_INTERMEDIATE_HEAD_CANNOT_USE_AS_FINAL"; exit 1;
+          } || true
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_FORMAL_HEAD_CHANGED; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44815303403 --jq '.head_sha+" "+.conclusion')" = "478a640da1d78e0832464aeefc497f453bd68cd0 success"
+          gh api repos/$GITHUB_REPOSITORY/git/blobs/1e2ac59cd1e80d47f1b71660013a314ca61f6ba3 --jq '.content' | base64 --decode > /tmp/gq470-canyon-original933.py
+          test -s /tmp/gq470-canyon-original933.py
+          mkdir -p /tmp/gq470-moguron-933-967/formal
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-moguron-933-967/formal
+          test -s /tmp/gq470-moguron-933-967/formal/REAL69_LEGACY_INTAKE_RECEIPT.json
+          cp -a /tmp/gq470-moguron-933-967/formal /tmp/gq470-moguron-933-967/candidate
+          python3 -B quality_gameplay/gq470_moguron_matte_real69_20261121/compose_canyon_moguron_b220.py --canyon-py /tmp/gq470-canyon-original933.py --self-test
+      - name: Pin Rojo and build #933 intermediate once before #967 art
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-composite-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-composite-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq470-composite-rojo.zip") as z:
+              n=[q for q in z.namelist() if q.split("/")[-1]=="rojo"]
+              assert len(n)==1
+              p=Path("/tmp/gq470-composite-rojo")
+              p.write_bytes(z.read(n[0])); p.chmod(0o755)
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import importlib.util
+          p="/tmp/gq470-canyon-original933.py"
+          spec=importlib.util.spec_from_file_location("pinned_canyon_933",p)
+          c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
+          c.patch(Path("/tmp/gq470-moguron-933-967/candidate"))
+          PY
+          /tmp/gq470-composite-rojo build /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("/tmp/gq470-moguron-933-967/candidate")
+          q=p/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          f=p/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          j=json.loads(f.read_text())
+          j["private_place_bytes"]=q.stat().st_size
+          j["private_place_sha256"]=hashlib.sha256(q.read_bytes()).hexdigest()
+          j["gq470_canyon_facet_shoreline"]["native_rojo_off69"]="PASS_SOURCE_ONLY"
+          f.write_text(json.dumps(j,ensure_ascii=False,sort_keys=True,indent=2)+"\n")
+          PY
+      - name: Apply #967 only to same source's original Moguron hunk, preserving #933
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_moguron_matte_real69_20261121/patch_moguron69.py --base /tmp/gq470-moguron-933-967/candidate
+          /tmp/gq470-composite-rojo build /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-composite-rojo build /tmp/gq470-moguron-933-967/candidate/OFF69_CANYON_FACETS/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron-933-967/OFF69_ORIGINAL_REBUILT.rbxlx
+          /tmp/gq470-composite-rojo build /tmp/gq470-moguron-933-967/candidate/OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-moguron-933-967/OFF69_CANYON_ONLY_REBUILT.rbxlx
+          cmp /tmp/gq470-moguron-933-967/OFF69_ORIGINAL_REBUILT.rbxlx /tmp/gq470-moguron-933-967/formal/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          cmp /tmp/gq470-moguron-933-967/OFF69_CANYON_ONLY_REBUILT.rbxlx /tmp/gq470-moguron-933-967/candidate/OFF69_MOGURON_MATTE/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-moguron-933-967/candidate/OFF69_CANYON_FACETS/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-moguron-933-967/OFF69_ORIGINAL_REBUILT.rbxlx --count 69
+          python3 quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-moguron-933-967/candidate --report /tmp/gq470-moguron-933-967/CAN_MOLE_LEGACY48_AUDIT.json
+      - name: Recompile all69 combined and official-original Source without physics authority growth
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau 69+69 compilation of combined source and exact OFF original
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-composite-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-composite-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq470_moguron_matte_real69_20261121")
+          from patch_moguron69 import selected,ROUTE
+          root=Path("/tmp/gq470-moguron-933-967")
+          on=selected(root/"candidate");off=selected(root/"formal")
+          assert len(on)==len(off)==69 and set(on)==set(off)
+          assert {key for key in on if on[key].read_bytes()!=off[key].read_bytes()}=={ROUTE}
+          for srcs in (on,off):
+              for p in srcs.values():
+                  subprocess.run(["/tmp/gq470-composite-luau/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_CANYON_MOGURON_NATIVE69_ON_OFF_PASS")
+          PY
+      - name: Art source 69 hash/Place/owner gate remains NO_GO
+        shell: bash
+        env:
+          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path("/tmp/gq470-moguron-933-967/candidate")
+          f=d/"REAL69_LEGACY_INTAKE_RECEIPT.json"
+          p=d/"EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          r=json.loads(f.read_text())
+          r["private_place_bytes"]=p.stat().st_size
+          r["private_place_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
+          r["gq470_moguron_matte"]["native_rojo_off69"]="PASS_SOURCE_ONLY"
+          r["gq470_moguron_matte"]["candidate_head"]=os.environ["CANDIDATE_HEAD"]
+          f.write_text(json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+"\n")
+          PY
+          python3 art_quality/gq470_real69_source_gate.py --root /tmp/gq470-moguron-933-967/candidate --head e80973c354f14a0d0088577f3cc1a875454f0f8f --out /tmp/gq470-moguron-933-967/COMPOSITE_ART_SOURCE_ONLY.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path("/tmp/gq470-moguron-933-967/COMPOSITE_ART_SOURCE_ONLY.json").read_text())
+          assert j["source_gate"]["selected_routes_source_class_hash_exact"]==69
+          assert j["art_gate"]=="ART_NO_GO" and j["owner_accepted"] is False
+          print("COMPOSITE_ART_SOURCE_69_PASS_STUDIO_ART_NO_GO")
+          PY
+      - name: Compare both disjoint authors byte-for-byte and export ONE B220 source
+        shell: bash
+        env:
+          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_moguron_matte_real69_20261121/compose_canyon_moguron_b220.py --canyon-py /tmp/gq470-canyon-original933.py --formal /tmp/gq470-moguron-933-967/formal --candidate /tmp/gq470-moguron-933-967/candidate --out /tmp/gq470-moguron-933-967/B220_CANYON_MOGURON_ONE_SOURCE_NOT_FORMAL --head "$CANDIDATE_HEAD"
+      - name: Upload actual combined private Place, original OFF and one-source B220 source packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-CANYON-MOGURON-933-967-B220-PACKET-NOT-FORMAL
+          path: |
+            /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-moguron-933-967/candidate/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-moguron-933-967/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-moguron-933-967/candidate/sources/**
+            /tmp/gq470-moguron-933-967/OFF69_ORIGINAL_REBUILT.rbxlx
+            /tmp/gq470-moguron-933-967/OFF69_CANYON_ONLY_REBUILT.rbxlx
+            /tmp/gq470-moguron-933-967/B220_CANYON_MOGURON_ONE_SOURCE_NOT_FORMAL/**
+            /tmp/gq470-moguron-933-967/CAN_MOLE_LEGACY48_AUDIT.json
+            /tmp/gq470-moguron-933-967/COMPOSITE_ART_SOURCE_ONLY.json
+          if-no-files-found: error
+          retention-days: 7
