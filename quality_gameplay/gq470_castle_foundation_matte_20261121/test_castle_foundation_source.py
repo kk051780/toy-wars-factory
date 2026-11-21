@@ -42,7 +42,8 @@ def validate(source: str):
             count = len(matches)
         else:
             count = source.count(text)
-        if count != 1:
+        expected = 2 if text == 'if obj:IsA("BasePart") and obj.Name == "StandardCore" then' else 1
+        if count != expected:
             raise ValueError("RED_FOUNDATION_REQUIRED_" + text)
     for declaration in ("MAX_CASTLES", "PARTS_PER_CASTLE", "MAX_TOTAL_EXTRA_PARTS",
                         "MAX_DISTANCE_STUDS", "REFRESH_INTERVAL"):
