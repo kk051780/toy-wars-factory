@@ -1,0 +1,169 @@
+name: GQ470 far sky faceted banks A source QA
+on:
+  push:
+    branches:
+      - quality/gq470-farcloud-sky-depth-real69-20261121
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "quality_gameplay/gq470_far_sky_real69_20261121/**"
+      - ".github/workflows/gq470-far-sky-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-gate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_sky_luau
+          persist-credentials: false
+      - name: Native Luau compile the exact candidate source
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_sky_luau -B /tmp/gq470-sky-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-sky-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470-sky-luau/luau-compile --text quality_gameplay/gq470_far_sky_real69_20261121/EGGRUMBLE_FarSkyFacets.client.luau >/dev/null
+          echo "NATIVE_SINGLE_CANDIDATE_PASS_NOT_70_SOURCE_ENGINE"
+      - name: Pinned Rojo standalone candidate class and Source identity
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-sky-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-sky-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-sky-rojo.zip") as z:
+              matches=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(matches)==1
+              p=Path("/tmp/gq470-sky-rojo")
+              p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-sky-rojo build quality_gameplay/gq470_far_sky_real69_20261121/candidate.project.json -o "$RUNNER_TEMP/GQ470_FAR_SKY_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          f=Path(os.environ["RUNNER_TEMP"])/"GQ470_FAR_SKY_NOT_FORMAL.rbxlx"
+          root=ET.parse(f).getroot()
+          matches=[]
+          for item in root.iter("Item"):
+              name=item.find('./Properties/string[@name="Name"]')
+              if name is not None and name.text=="EGGRUMBLE_FarSkyFacets":
+                  matches.append(item)
+          assert len(matches)==1
+          assert matches[0].get("class")=="LocalScript"
+          source=matches[0].find('./Properties/string[@name="Source"]')
+          if source is None:
+              source=matches[0].find('./Properties/ProtectedString[@name="Source"]')
+          original=Path("quality_gameplay/gq470_far_sky_real69_20261121/EGGRUMBLE_FarSkyFacets.client.luau").read_text()
+          assert source is not None and source.text is not None and source.text.strip()==original.strip()
+          print("ROJO_STANDALONE_ONE_LOCAL_SCRIPT_SOURCE_EXACT_PASS",f.stat().st_size)
+          PY
+      - name: Pin official REAL69 evidence and download same-head original
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          EXPECTED="e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$EXPECTED"
+          mkdir -p "$RUNNER_TEMP/sky-off69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
+            --dir "$RUNNER_TEMP/sky-off69"
+          test -s "$RUNNER_TEMP/sky-off69/REAL69_LEGACY_INTAKE_RECEIPT.json"
+      - name: Compose exact REAL69 plus one local art script (A candidate only)
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/compose_official70.py \
+            --official "$RUNNER_TEMP/sky-off69" --out "$RUNNER_TEMP/sky-on70"
+      - name: Native compile 69 OFF plus 70 ON without source authority loss
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          for label,number in (("sky-off69",69),("sky-on70",70)):
+              root=Path(os.environ["RUNNER_TEMP"])/label
+              found=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+              assert len(found)==number
+              for info in found.values():
+                  subprocess.run(["/tmp/gq470-sky-luau/luau-compile","--text",str(root/info["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("NATIVE_OFF69_ON70_139_TOTAL_PASSED")
+          PY
+      - name: Real Rojo OFF69 byte-exact and ON70 source/class plus scene item
+        run: |
+          set -euo pipefail
+          /tmp/gq470-sky-rojo build "$RUNNER_TEMP/sky-off69/EGGRUMBLE_REAL69.project.json" -o "$RUNNER_TEMP/GQ470_SKY_OFF69.rbxlx"
+          /tmp/gq470-sky-rojo build "$RUNNER_TEMP/sky-on70/EGGRUMBLE_REAL69.project.json" -o "$RUNNER_TEMP/GQ470_SKY_ON70_NOT_FORMAL.rbxlx"
+          cmp "$RUNNER_TEMP/GQ470_SKY_OFF69.rbxlx" "$RUNNER_TEMP/sky-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          base=Path(os.environ["RUNNER_TEMP"])
+          old=ET.parse(base/"GQ470_SKY_OFF69.rbxlx").getroot()
+          new=ET.parse(base/"GQ470_SKY_ON70_NOT_FORMAL.rbxlx").getroot()
+          olditems=list(old.iter("Item"));newitems=list(new.iter("Item"))
+          assert len(newitems)==len(olditems)+1
+          found=[]
+          for node in newitems:
+              name=node.find('./Properties/string[@name="Name"]')
+              if name is not None and name.text=="EGGRUMBLE_FarSkyFacets":
+                  found.append(node)
+          assert len(found)==1 and found[0].get("class")=="LocalScript"
+          source=found[0].find('./Properties/string[@name="Source"]')
+          if source is None:
+              source=found[0].find('./Properties/ProtectedString[@name="Source"]')
+          expected=Path("quality_gameplay/gq470_far_sky_real69_20261121/EGGRUMBLE_FarSkyFacets.client.luau").read_text()
+          assert source is not None and source.text and source.text.strip()==expected.strip()
+          report=json.loads((base/"sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json").read_text())
+          assert report["candidate_source_count"]==70 and report["formal_rc_integrated"] is False
+          print("REAL_ROJO_OFF69_EXACT_ON70_70SOURCE_ONE_ADDED",len(newitems),len(olditems))
+          print("CANDIDATE_PLACE_BYTES", (base/"GQ470_SKY_ON70_NOT_FORMAL.rbxlx").stat().st_size)
+          PY
+      - name: Deterministic cloud-bank geometry budget and path clearance
+        run: |
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/verify_geometry.py \
+            --out "$RUNNER_TEMP/SKY_GEOMETRY_SOURCE_GATE.json"
+      - name: Verify isolated source safety and negative regressions
+        run: |
+          python3 -m unittest discover -s quality_gameplay/gq470_far_sky_real69_20261121 -p 'test_*.py' -v
+      - name: Package candidate without official RC mutation
+        run: |
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/pack_candidate.py --out "$RUNNER_TEMP/sky-source-only"
+          test -s "$RUNNER_TEMP/sky-source-only/selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau"
+          echo "A_SOURCE_ONLY: no Luau Native, Rojo, Studio or ART GO claimed"
+      - name: Emit honest ART_CHECK_REPORT with all 32 missing PC Android images
+        run: |
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/emit_art_report.py \
+            --place "$RUNNER_TEMP/GQ470_SKY_ON70_NOT_FORMAL.rbxlx" \
+            --receipt "$RUNNER_TEMP/sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json" \
+            --geometry "$RUNNER_TEMP/SKY_GEOMETRY_SOURCE_GATE.json" \
+            --out "$RUNNER_TEMP/ART_CHECK_REPORT.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-SKY-70SOURCE-A-CANDIDATE-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/GQ470_SKY_ON70_NOT_FORMAL.rbxlx
+            ${{ runner.temp }}/sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json
+            ${{ runner.temp }}/SKY_GEOMETRY_SOURCE_GATE.json
+            ${{ runner.temp }}/ART_CHECK_REPORT.json
+            ${{ runner.temp }}/sky-on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau
+          retention-days: 7
+          if-no-files-found: error
