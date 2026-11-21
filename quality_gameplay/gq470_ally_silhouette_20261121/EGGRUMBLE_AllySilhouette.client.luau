@@ -52,6 +52,8 @@ local function isVisibleAlly(player, localRoot, localTeam)
         or character:GetAttribute("IsInvisible") == true
         or character:GetAttribute("AssassinCloaked") == true
         or character:GetAttribute("EGGRUMBLE_Stealthed") == true
+        or player:GetAttribute("Stealthed") == true
+        or player:GetAttribute("IsInvisible") == true
         or player:GetAttribute("AssassinCloaked") == true
         or player:GetAttribute("EGGRUMBLE_Stealthed") == true then
         return nil
@@ -88,14 +90,14 @@ local function isVisibleAlly(player, localRoot, localTeam)
 end
 
 -- Act immediately when an already-visible ally enters stealth, changes team,
--- or streams out. At most 9 connections for each of three desktop allies.
+-- or streams out. At most 11 connections for each of three desktop allies.
 local function watchVisibility(player, character)
     local watchers = {}
     local function revoke() clear(player) end
     for _, flag in ipairs({"Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed"}) do
         table.insert(watchers, character:GetAttributeChangedSignal(flag):Connect(revoke))
     end
-    for _, flag in ipairs({"AssassinCloaked", "EGGRUMBLE_Stealthed"}) do
+    for _, flag in ipairs({"Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed"}) do
         table.insert(watchers, player:GetAttributeChangedSignal(flag):Connect(revoke))
     end
     table.insert(watchers, player:GetPropertyChangedSignal("Team"):Connect(revoke))
