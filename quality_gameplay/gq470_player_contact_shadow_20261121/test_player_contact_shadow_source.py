@@ -104,7 +104,7 @@ class LocalAvatarContactShadow(unittest.TestCase):
             ('script.Destroying:Connect(function()', 'script.Changed:Connect(function()'),
             ('task.delay(INTERVAL, update)', 'update()'),
             ('local function ensureDisc(): Part', 'local function ensureDisc(): Part\n    local hack = Instance.new("Part")'),
-            ('-- A-only optional visual:', 'local FakeRemote = game:GetService("ReplicatedStorage"):FindFirstChild("Fake")\n-- A-only optional visual:'),
+            ('-- A-only optional visual:', 'local unsafe = Instance.new("RemoteEvent")\n-- A-only optional visual:'),
         ]
         for old, new in mutations:
             with self.subTest(old=old):
