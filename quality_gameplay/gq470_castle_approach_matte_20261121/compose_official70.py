@@ -159,7 +159,7 @@ def compose(original: Path, destination: Path) -> dict:
             candidate[ROUTE]["sha256"] == hash256(SOURCE.read_bytes()),
             "NEW_LOCAL_SOURCE_IDENTITY")
     report = {
-        "schema": "GQ470_FOUNDATION_MOTION_FX_SOURCE_CANDIDATE_V1",
+        "schema": "GQ470_CASTLE_APPROACH_MOTION_FX_SOURCE_CANDIDATE_V1",
         "feature_id": FEATURE,
         "stage": "A_SOURCE_CANDIDATE_NOT_FORMAL",
         "canonical_branch": "rc/p0d-s1-kids-rc01",
@@ -320,7 +320,7 @@ if __name__ == "__main__":
     elif opt.verify_b is not None:
         require(opt.built_place is not None, "B_MISSING_BUILT_PLACE")
         verify_b(opt.verify_b, opt.built_place)
-        print("GQ470_FOUNDATION_B220_EXACT_ONE_LOCAL_SOURCE_PACKET_PASS")
+        print("GQ470_CASTLE_APPROACH_B220_EXACT_ONE_LOCAL_SOURCE_PACKET_PASS")
     else:
         require(opt.official is not None and opt.out is not None,
                 "MISSING_OFFICIAL_AND_OUT")
