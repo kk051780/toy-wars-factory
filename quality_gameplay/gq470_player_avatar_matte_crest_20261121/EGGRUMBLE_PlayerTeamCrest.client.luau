@@ -34,6 +34,11 @@ local function teamColor(player)
     return OFFICIAL_TEAM_COLORS[team.Name]
 end
 
+local function visualsDisabled()
+    return localPlayer:GetAttribute("ReducedEffects") == true
+        or localPlayer:GetAttribute("EGGRUMBLE_TeamCrestsOff") == true
+end
+
 local function removeMounted(player)
     local rec = mounted[player]
     mounted[player] = nil
@@ -61,9 +66,7 @@ local function isConcealed(player, character)
 end
 
 local function cameraDistance(player, character, cameraPosition)
-    -- A live user choice must suppress optional cosmetic geometry without a restart.
-    if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then return nil end
-    if player == localPlayer or not cameraPosition or not character then return nil end
+    if player == localPlayer or not cameraPosition or not character or visualsDisabled() then return nil end
     local root = character:FindFirstChild("HumanoidRootPart")
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if not root or not root:IsA("BasePart") or not humanoid or humanoid.Health <= 0 then
@@ -147,8 +150,8 @@ local function attach(player, character)
             watchers[#watchers + 1] = part:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(rejectConcealment)
         end
     end
-    -- Streaming/late R6/R15 body topology invalidates previously attached
-    -- watchers. Remove immediately and let the next bounded LOD sweep rebuild.
+    -- Only active near-avatar crests have watchers. A streamed R6/R15 limb
+    -- invalidates the old part listener set and is removed immediately.
     watchers[#watchers + 1] = character.DescendantAdded:Connect(function(part)
         if part:IsA("BasePart") and BODY_PARTS[part.Name]
             and generations[player] == token then
@@ -203,15 +206,17 @@ end
 
 Players.PlayerAdded:Connect(register)
 Players.PlayerRemoving:Connect(unregister)
+-- Local accessibility and fast rollback: tear down instantly, without waiting for the LOD scan.
+for _, attr in ipairs({ "ReducedEffects", "EGGRUMBLE_TeamCrestsOff" }) do
+    localPlayer:GetAttributeChangedSignal(attr):Connect(function()
+        if visualsDisabled() then
+            for player in pairs(mounted) do removeMounted(player) end
+        end
+    end)
+end
 for _, player in ipairs(Players:GetPlayers()) do
     register(player)
 end
-
-localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
-    if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then
-        for player in pairs(mounted) do removeMounted(player) end
-    end
-end)
 
 -- Low-frequency, actual-part budget: closest remote avatars only.
 -- A distant/hidden/streamed-out avatar owns ZERO crest parts.
@@ -220,7 +225,7 @@ task.spawn(function()
         local camera = workspace.CurrentCamera
         local cameraPosition = camera and camera.CFrame.Position
         local nearby = {}
-        if cameraPosition then
+        if cameraPosition and not visualsDisabled() then
             for _, player in ipairs(Players:GetPlayers()) do
                 local character = player.Character
                 local distance = cameraDistance(player, character, cameraPosition)
