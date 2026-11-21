@@ -40,7 +40,7 @@ def validate(code: str) -> None:
     for marker in forbidden:
         assert marker not in code, f"forbidden authority, HUD or spawn API: {marker}"
     assert code.count("Workspace:GetDescendants()") == 1, "map scan must be one-shot"
-    assert code.count("part.CFrame =") == 2, "animation and one rollback only"
+    assert code.count("part.CFrame =") == 2, "animation and one rollback only"\n    assert code.count("trackedCount = math.max(0, trackedCount - 1)") == 2, "both removal paths must be bounded"
 
 class Gate(unittest.TestCase):
     def test_actual_candidate(self):
