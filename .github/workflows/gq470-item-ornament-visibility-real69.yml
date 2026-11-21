@@ -1,5 +1,11 @@
 name: GQ470 REAL69 item ornament visibility A source prep NOT formal
 on:
+  push:
+    branches:
+      - quality/gq470-real69-item-ornament-visibility-20261122-a01
+    paths:
+      - 'quality_gameplay/gq470_item_visibility_real69_20261122/**'
+      - '.github/workflows/gq470-item-ornament-visibility-real69.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
