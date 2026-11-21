@@ -5,7 +5,7 @@
   "source_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest",
   "source_class": "LocalScript",
   "source_repo_path": "quality_gameplay/gq470_player_avatar_matte_crest_20261121/EGGRUMBLE_PlayerTeamCrest.client.luau",
-  "source_blob_sha": "d066527ca682978779e993dfcc5b7b8647fb4f5c",
+  "source_blob_sha": "0c52edcd8f5e8ab37c259edb4798b60033840027",
   "base_official_rc": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
   "base_selected_source_count": 69,
   "candidate_added_optional_source_count": 1,
@@ -32,7 +32,10 @@
     "stealth_flags_checked_on_player_and_character": 4,
     "r6_r15_partial_body_concealment_filter": true,
     "instant_stealth_attribute_and_body_alpha_cleanup": true,
-    "r6_spaced_limb_names_verified": true
+    "r6_spaced_limb_names_verified": true,
+    "reduced_effects_attribute": "ReducedEffects",
+    "runtime_rollback_attribute": "EGGRUMBLE_TeamCrestsOff",
+    "immediate_local_off_teardown": true
   },
   "player_bug_364": "NOT_FIXED_BY_THIS_VISUAL",
   "source_qa": "PENDING_GITHUB_ACTIONS",
@@ -44,7 +47,7 @@
   "human_art": "NOT_TESTED",
   "owner_acceptance": false,
   "decision": "REWORKED_SOURCE_ONLY_DEFER_UNTIL_910_P0_AND_HUMAN_ART",
-  "rollback": "Omit this one optional LocalScript route; original selected REAL69 unchanged.",
+  "rollback": "Set LocalPlayer attribute EGGRUMBLE_TeamCrestsOff=true, or omit optional LocalScript route; all original REAL69 sources remain unchanged.",
   "forbidden": [
     "Formal RC direct write",
     "Roblox publishing",
