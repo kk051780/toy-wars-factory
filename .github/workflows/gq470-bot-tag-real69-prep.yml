@@ -74,7 +74,7 @@ jobs:
           diagnostic=Path('quality_gameplay/gq470_bot_objective_tag_real69_20261120/STUDIO_READ_ONLY_BOT_LABEL_PROBE.luau')
           diagnostic_text=diagnostic.read_text(encoding='utf8')
           assert 'GQ470_FB015_BOTACTORS_SUBJECT_STUDIO_PROBE_20261121' in diagnostic_text
-          for item in ('BotObjective','NameDisplayDistance == 0','HealthDisplayDistance == 18','HumanoidDisplayDistanceType.Subject','MaxDistance == 22','pc_android_32_images = 0','formal_adoption_claim = false'):
+          for item in ('BotObjective','NameDisplayDistance == 0','HealthDisplayDistance == 18','HumanoidDisplayDistanceType.Subject','MaxDistance == 22','pc_android_32_images = 0','formal_adoption_claim = false','DUPLICATE_BOT_OBJECTIVE_ON_HEAD'):
               assert item in diagnostic_text, 'RED_STUDIO_DIAGNOSTIC_MISSING_GUARD_'+item
           for dangerous in ('FireServer(', 'InvokeServer(', 'Instance.new(', 'SetAttribute(', 'Publish(', ':Destroy(', 'MarketplaceService', 'DataStoreService', 'TeleportService'):
               assert dangerous not in diagnostic_text, 'RED_STUDIO_DIAGNOSTIC_SIDE_EFFECT_'+dangerous
