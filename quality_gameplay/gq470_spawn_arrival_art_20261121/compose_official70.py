@@ -61,6 +61,15 @@ def compose(original: Path, destination: Path) -> dict:
                 for k in original_map),
             "ORIGINAL_69_SOURCE_LOCK")
 
+    # Do not invent a second accessibility preference: the original REAL69
+    # CombatFeel owns EGGRUMBLE_ReducedEffects. Check its actual selected source.
+    combat_route = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+    reduced_flag = 'player:GetAttribute("EGGRUMBLE_ReducedEffects")'
+    require(combat_route in original_map and
+            reduced_flag in (original / original_map[combat_route]["path"]).read_text(encoding="utf-8") and
+            reduced_flag in SOURCE.read_text(encoding="utf-8"),
+            "MUST_REUSE_ORIGINAL_REAL69_REDUCED_EFFECTS_FLAG")
+
     shutil.copytree(original, destination)
     project = json.loads((destination / PROJECT).read_text(encoding="utf-8"))
     starter = project["tree"].get("StarterPlayer")
