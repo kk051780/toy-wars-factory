@@ -100,6 +100,17 @@ def validate(source: str) -> None:
     if not (code.index('if distance > MAX_DISTANCE then') <
             code.index('for _, bodyPart in ipairs(character:GetChildren()) do')):
         raise ValueError("RED_ALLY_SILHOUETTE_DISTANCE_BEFORE_LIMB_SCAN")
+    # Exactly 14 bounded watchers for each actively highlighted teammate:
+    # Character4 + Player4 stealth flags, Team/Neutral2, respawn2,
+    # Humanoid.Died1, streaming.AncestryChanged1. No per-frame listeners.
+    block = code.split('local function watchVisibility(player, character)', 1)[1].split('local function present(candidate)', 1)[0]
+    flags = '{"Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed"}'
+    if block.count(flags) != 2 or block.count("table.insert(watchers,") != 8:
+        raise ValueError("RED_ALLY_SILHOUETTE_WATCHER_BUDGET_14")
+    if not (code.index("visibilityWatches[player] = nil") <
+            code.index("watcher:Disconnect()") <
+            code.index("effect:Destroy()")):
+        raise ValueError("RED_ALLY_SILHOUETTE_WATCHER_CLEANUP_ORDER")
     if len(source.encode("utf-8")) > 9000:
         raise ValueError("RED_ALLY_SILHOUETTE_SOURCE_SIZE")
 
