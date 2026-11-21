@@ -27,6 +27,8 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
+      - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -64,6 +66,8 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
+      - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -88,6 +92,7 @@ jobs:
           python3 -m py_compile quality_gameplay/gq8_real63_intake_20261119/compose_real63.py quality_gameplay/gq8_real63_intake_20261119/compose_real65.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_real63.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_fb014_firstplay.py
+          python3 tests/test_gq470_real69_event_provenance_20261121.py
           python3 -m py_compile quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py
           python3 quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py
@@ -1565,7 +1570,18 @@ jobs:
           origin=selected(root)
           r=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
           assert len(origin)==len(r['source_hashes'])==69
-          assert r['build_head']==os.environ['GITHUB_SHA'] and r['canonical_build'] is True
+          # PR checkouts are synthetic merges and deliberately NON_CANONICAL.
+          # Do not confuse passing source QA with an authenticated formal RC push.
+          from quality_gameplay.gq470_art_pr_provenance_20261121.guard import verify_receipt
+          import subprocess
+          live_sha=subprocess.check_output([
+           'gh','api',
+           f"repos/{os.environ['GITHUB_REPOSITORY']}/git/ref/heads/rc/p0d-s1-kids-rc01",
+           '--jq','.object.sha'],text=True).strip()
+          event_path=os.environ.get('GITHUB_EVENT_PATH','')
+          event=json.loads(pathlib.Path(event_path).read_text()) if event_path else {}
+          proof=verify_receipt(r,os.environ,event,live_sha)
+          print('GQ470_REAL69_ART_EVENT_PROVENANCE_SOURCE_ONLY_PASS',proof)
           assert r['source_hashes'][TARGET]==EXPECTED_SHA
           assert {k:hashlib.sha256(v.read_bytes()).hexdigest() for k,v in origin.items()}==r['source_hashes']
           assert r['gq470_bot_art_variants']['changed_source_sha256']=='1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424'
