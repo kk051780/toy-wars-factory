@@ -137,16 +137,6 @@ jobs:
           print("REAL_ROJO_OFF69_EXACT_ON70_70SOURCE_ONE_ADDED",len(newitems),len(olditems))
           print("CANDIDATE_PLACE_BYTES", (base/"GQ470_SKY_ON70_NOT_FORMAL.rbxlx").stat().st_size)
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GQ470-SKY-70SOURCE-A-CANDIDATE-NOT-FORMAL
-          path: |
-            ${{ runner.temp }}/GQ470_SKY_ON70_NOT_FORMAL.rbxlx
-            ${{ runner.temp }}/sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json
-            ${{ runner.temp }}/SKY_GEOMETRY_SOURCE_GATE.json
-            ${{ runner.temp }}/sky-on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau
-          retention-days: 7
-          if-no-files-found: error
       - name: Deterministic cloud-bank geometry budget and path clearance
         run: |
           python3 quality_gameplay/gq470_far_sky_real69_20261121/verify_geometry.py \
@@ -159,3 +149,13 @@ jobs:
           python3 quality_gameplay/gq470_far_sky_real69_20261121/pack_candidate.py --out "$RUNNER_TEMP/sky-source-only"
           test -s "$RUNNER_TEMP/sky-source-only/selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau"
           echo "A_SOURCE_ONLY: no Luau Native, Rojo, Studio or ART GO claimed"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-SKY-70SOURCE-A-CANDIDATE-NOT-FORMAL
+          path: |
+            ${{ runner.temp }}/GQ470_SKY_ON70_NOT_FORMAL.rbxlx
+            ${{ runner.temp }}/sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json
+            ${{ runner.temp }}/SKY_GEOMETRY_SOURCE_GATE.json
+            ${{ runner.temp }}/sky-on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau
+          retention-days: 7
+          if-no-files-found: error
