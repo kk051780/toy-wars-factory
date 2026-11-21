@@ -18,7 +18,7 @@ OLD_HOST_SHA = "8d8f6a63db5dd24740f787437b7aa88edfbaaa9c2aae062b07a884e59c06ad85
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 FEATURE = "GQ470_P0_EARLY_EXISTING_LOBBY_SPAWN_REAL69_20261121"
-START = 'if not RunService:IsStudio() then return end\n'
+START = 'local Debris=game:GetService("Debris")\nif not RunService:IsStudio() then return end\n'
 OLD_ROOT = '''local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
