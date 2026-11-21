@@ -132,7 +132,7 @@ def validate(s):
         raise ValueError("RED_UNBOUNDED_CASTLE_LOD")
     if s.count('keep(') != 7:  # Six event listeners plus the helper definition.
         raise ValueError("RED_UNTRACKED_EVENT_LISTENER")
-    if s.count('for core in active do') != 4:  # pruning, opacity, respawn and destroy
+    if s.count('for core in active do') != 3 or s.count('for core, decor in active do') != 1:  # pruning, opacity, respawn and destroy
         raise ValueError("RED_STALE_CASTLE_DECOR")
     if len(s.encode()) > 12500:
         raise ValueError("RED_OVERSIZED_SOURCE")
