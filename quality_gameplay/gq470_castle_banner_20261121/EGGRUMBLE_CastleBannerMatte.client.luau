@@ -162,6 +162,27 @@ local function attach(tower: Instance)
             end
         end)
     end
+    -- Castle streaming/repositioning must not leave anchored cloth floating.
+    -- Coalesce CFrame changes to at most four updates/second, not every frame.
+    local lastTowerPose = tower.CFrame
+    local followQueued = false
+    table.insert(entry.connections, tower:GetPropertyChangedSignal("CFrame"):Connect(function()
+        if followQueued then return end
+        followQueued = true
+        task.delay(0.25, function()
+            followQueued = false
+            if tracked[tower] ~= entry then return end
+            local nextPose = tower.CFrame
+            if nextPose == lastTowerPose then return end
+            local deltaPose = nextPose * lastTowerPose:Inverse()
+            lastTowerPose = nextPose
+            pole.CFrame = deltaPose * pole.CFrame
+            for _, panel in fly do
+                restingPose[panel] = deltaPose * restingPose[panel]
+            end
+            refreshMotion()
+        end)
+    end))
     table.insert(entry.connections, player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refreshMotion))
     table.insert(entry.connections, tower.Destroying:Connect(function()
         stop(tower)
