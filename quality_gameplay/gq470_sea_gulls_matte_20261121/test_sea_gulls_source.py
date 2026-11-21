@@ -38,6 +38,7 @@ def gate(s: str) -> None:
         'local function shutdown()',
         'if destroyed then return end'
         'local destroyed = false', 'local externalConnections: {RBXScriptConnection} = {}',
+        'if destroyed then return end -- delayed tasks cannot resurrect geometry after teardown.',
         'if destroyed then return end', 'if destroyed then break end',
         'while not destroyed and script.Parent ~= nil do',
         'for _, connection in externalConnections do connection:Disconnect() end',
