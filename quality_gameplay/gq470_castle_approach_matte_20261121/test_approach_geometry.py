@@ -26,7 +26,19 @@ def approach_positions(core_x, core_z, yaw, width, depth):
         points.append((world_x, world_z))
     return (offset_x, offset_z), points
 
+def fade_at(distance):
+    return min(1.0, max(0.0, (distance-125)/(155-125)))
+
 class TestApproachGeometry(unittest.TestCase):
+    def test_fade_has_no_distance_pop(self):
+        luau = LUA.read_text(encoding="utf-8")
+        self.assertIn("FADE_START = 125", luau)
+        self.assertIn("(distance - FADE_START) / (MAX_DISTANCE - FADE_START)", luau)
+        self.assertEqual([fade_at(x) for x in (0, 125, 140, 155, 200)],
+                         [0.0, 0.0, 0.5, 1.0, 1.0])
+        self.assertTrue(all(fade_at(x) <= fade_at(x+1) for x in range(0, 200)))
+
+
     def test_source_math_matches_local_axes(self):
         luau = LUA.read_text(encoding="utf-8")
         for token in (
