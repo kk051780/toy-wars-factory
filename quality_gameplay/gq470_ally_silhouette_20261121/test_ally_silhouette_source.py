@@ -156,7 +156,14 @@ class SourceGate(unittest.TestCase):
             self.assertIsNone(alt[variant]["pc_human_score"])
             self.assertIsNone(alt[variant]["android_human_score"])
             self.assertIsNone(alt[variant]["artifact"])
-        self.assertEqual(len(m["runtime_scenarios"]), 10)
+        self.assertEqual(len(m["runtime_scenarios"]), 13)
+        scenario_ids = {x["id"] for x in m["runtime_scenarios"]}
+        self.assertTrue({
+            "15min_low_android_touch_2_pc_3_highlight_cap",
+            "partial_r6_r15_limb_invisibility_blocks_outline",
+            "player_attribute_stealth_instant_revoke",
+            "streamed_or_replaced_character_releases_watches",
+        }.issubset(scenario_ids))
         self.assertTrue(all(s["status"] == "NOT_TESTED" for s in m["runtime_scenarios"]))
 
     def test_fail_closed_mutations(self):
