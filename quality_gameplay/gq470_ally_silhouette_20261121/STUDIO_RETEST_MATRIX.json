@@ -70,5 +70,30 @@
       "status": "NOT_TESTED",
       "evidence_url": null
     }
-  ]
+  ],
+  "visual_alternative_selection": {
+    "rule": "EXCLUSIVE_ONE_OR_NEITHER_AFTER_HUMAN_STUDIO_ANDROID_ART_GATE",
+    "option_975": {
+      "pr": 975,
+      "visual": "occluded_soft_team_outline_0_parts_max3_highlights",
+      "runtime_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette",
+      "pc_human_score": null,
+      "android_human_score": null,
+      "median_fps": null,
+      "artifact": null,
+      "status": "NOT_TESTED"
+    },
+    "option_976": {
+      "pr": 976,
+      "visual": "welded_matte_two_part_team_shoulder_crests",
+      "runtime_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest",
+      "pc_human_score": null,
+      "android_human_score": null,
+      "median_fps": null,
+      "artifact": null,
+      "status": "NOT_TESTED"
+    },
+    "required": "Same map/camera/team sizes/role/match phase on PC and low Android; visible enemy vs stealth negative; 15min performance; choose at most one after P0 spawn fixed",
+    "winner": null
+  }
 }
