@@ -236,3 +236,32 @@ jobs:
             /tmp/gq470-castle-approach/ART_CHECK_REPORT.json
           if-no-files-found: error
           retention-days: 7
+  verify-uploaded-artifact:
+    needs: real70-approach-source
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Download immutable artifact from the exact current Actions run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq470-postupload
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name GQ470-CASTLE-APPROACH-REAL70-A-CANDIDATE-NOT-FORMAL --dir /tmp/gq470-postupload
+      - name: Reinspect original uploaded B220 packet, Rojo Place and 8 tamper negatives
+        run: |
+          set -euo pipefail
+          test -z "${GH_TOKEN:-}" || { echo RED_CREDENTIALS_IN_PR_CODE; exit 1; }
+          python3 -m py_compile quality_gameplay/gq470_castle_approach_matte_20261121/verify_uploaded_packet.py
+          python3 quality_gameplay/gq470_castle_approach_matte_20261121/verify_uploaded_packet.py --artifact /tmp/gq470-postupload --source quality_gameplay/gq470_castle_approach_matte_20261121/EGGRUMBLE_CastleApproachMatte.client.luau --out /tmp/gq470-postupload-replay.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-CASTLE-APPROACH-POSTUPLOAD-EXACT-REPLAY-NOT-ART-GO
+          path: /tmp/gq470-postupload-replay.json
+          if-no-files-found: error
+          retention-days: 7
