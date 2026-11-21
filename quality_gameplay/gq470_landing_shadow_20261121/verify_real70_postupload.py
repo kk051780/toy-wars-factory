@@ -14,8 +14,8 @@ from recover_real69_from_place import source_from_place
 from compose_landing70 import SOURCE_ROUTE, check_art_source
 
 SHA69 = '443914a672f4f535fe4c6313b0dec524892a0afeb4684a8d935e4eebb1458305'
-SHA70 = '99335d511903684863b3a850733b96058fcf51b9fb530fec5d20a781af1395d4'
-SHA_NEW_SOURCE = 'b08baeac56a836358f3f1a65c5b3276bb7330c8871255f3249dc1accf1ba4716'
+SHA70 = '1243d25d090b435aeccdffffc3207d688add00830a927c9a77744a55756fde28'
+SHA_NEW_SOURCE = '0060ae58d9ebf76fbea96315c9341ff4cf87ae661ff245bd905f3548a6c7e294'
 NAME70 = 'gq470-landing-real70/on70/GQ470_LANDING_REAL70_SOURCE_ONLY.rbxlx'
 NAME69 = 'gq470-landing-real70/off69/GQ470_LANDING_OFF69_EXACT_SOURCE.rbxlx'
 NAME_PROOF = 'gq470-art17/on/GQ470_REHYDRATED_ART17_SOURCE_PROOF.json'
@@ -40,7 +40,7 @@ def validate(root: Path, *, ondata: bytes | None = None, offdata: bytes | None =
     qa = qa if qa is not None else json.loads((root / NAME_QA).read_text())
     source = source if source is not None else Path(__file__).with_name('EGGRUMBLE_LandingShadow.client.luau').read_bytes()
 
-    demand(len(ondata) == 830857 and sha(ondata) == SHA70, 'ON70_PLACE_BYTES_OR_HASH')
+    demand(len(ondata) == 831122 and sha(ondata) == SHA70, 'ON70_PLACE_BYTES_OR_HASH')
     demand(len(offdata) == 822713 and sha(offdata) == SHA69, 'OFF69_PLACE_BYTES_OR_HASH')
     demand(len(source) > 0 and sha(source) == SHA_NEW_SOURCE, 'NEW_SOURCE_HASH')
     check_art_source(source.decode('utf-8'))
