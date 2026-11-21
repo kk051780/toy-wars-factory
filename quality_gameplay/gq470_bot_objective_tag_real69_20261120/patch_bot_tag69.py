@@ -5,7 +5,7 @@ Source-locked A PREP only. No change to AI decisions, egg, damage or scoring.
 Studio/Android/art remain NOT_TESTED regardless of source and build QA.
 """
 from __future__ import annotations
-import argparse, hashlib, json, shutil
+import argparse, hashlib, json, shutil, re
 from pathlib import Path
 
 BASE="e80973c354f14a0d0088577f3cc1a875454f0f8f"
@@ -58,7 +58,7 @@ def patch(src:str)->str:
  need(src.count(MARK)==1 and "label.MaxDistance=22" in src,"NEAR_ONLY")
  need("ui.Text=id.." not in src and 'text.Text=id.."\\n' not in src,"NO_INTERNAL_IDS")
  need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;")==1, "SUBJECT_SINGLE_ASSIGNMENT")
- need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,"SUBJECT_NAME_HEALTH_BUDGET")
+ need(len(re.findall(r"hum\.DisplayDistanceType=Enum\.HumanoidDisplayDistanceType\.Subject;hum\.NameDisplayDistance=0;hum\.HealthDisplayDistance=18(?![0-9])",src))==1,"SUBJECT_NAME_HEALTH_BUDGET")
  need("text.TextStrokeTransparency=.45" in src and
       "text.TextStrokeColor3=Color3.fromRGB(5,12,20)" in src,"TRANSPARENT_TAG_TEXT_EDGE")
  verify_subject_runtime(src)
@@ -70,7 +70,7 @@ def verify_subject_runtime(src:str)->None:
  # Subject owns the zero-name / 18-stud health limits, preventing duplicate native nameplates.
  need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;")==1,
       "SUBJECT_SINGLE_ASSIGNMENT")
- need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,
+ need(len(re.findall(r"hum\.DisplayDistanceType=Enum\.HumanoidDisplayDistanceType\.Subject;hum\.NameDisplayDistance=0;hum\.HealthDisplayDistance=18(?![0-9])",src))==1,
       "SUBJECT_OVERHEAD_GUARD")
  need("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Viewer" not in src,
       "VIEWER_NAME_LEAK")
