@@ -210,7 +210,10 @@ task.spawn(function()
     end
 end)
 
-script.Destroying:Connect(function()
+-- Destroying is not guaranteed for every unparent/reload path. Keep teardown
+-- idempotent and also release original own objects on nil ancestry.
+local function teardown()
+    if disposed then return end
     disposed = true
     for _, connection in ipairs(connections) do
         connection:Disconnect()
@@ -220,4 +223,13 @@ script.Destroying:Connect(function()
         clear(core)
     end
     table.clear(candidates)
+end
+
+script.Destroying:Connect(function()
+    teardown()
+end)
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then
+        teardown()
+    end
 end)
