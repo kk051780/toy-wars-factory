@@ -74,7 +74,7 @@ local function positionStones(floor: BasePart, decor: Decor)
             local stone = decor.parts[index]
             stone.Size = Vector3.new(span, .85, .7)
             stone.CFrame = floor.CFrame * CFrame.Angles(0, yaw, 0)
-                * CFrame.new(lateral, floor.Size.Y * .5 - .36, edge)
+                * CFrame.new(lateral, floor.Size.Y * .5 - .46, edge)
             stone.Color = if (side + section) % 2 == 0 then STONE_A else STONE_B
         end
     end
