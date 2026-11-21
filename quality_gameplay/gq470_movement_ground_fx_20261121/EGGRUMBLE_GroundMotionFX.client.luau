@@ -161,6 +161,7 @@ end
 PLAYER.CharacterRemoving:Connect(function()
     generation += 1 -- invalidates every pending callback without running a loop.
     if runningConnection then runningConnection:Disconnect() end
+    if swimmingConnection then swimmingConnection:Disconnect() end
     if diedConnection then diedConnection:Disconnect() end
 end)
 PLAYER.CharacterAdded:Connect(bindCharacter)
