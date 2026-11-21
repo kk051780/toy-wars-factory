@@ -94,8 +94,9 @@ local function updatePieces(core: BasePart, decor: Decor)
     local filter = RaycastParams.new()
     filter.FilterType = Enum.RaycastFilterType.Exclude
     filter.IgnoreWater = true
-    local ignore: {Instance} = {}
-    if core.Parent then table.insert(ignore, core.Parent) end
+    -- Exclude the core, NOT its entire castle Model: some real floors share
+    -- that Model and must stay raycastable for ground anchoring.
+    local ignore: {Instance} = {core}
     if player.Character then table.insert(ignore, player.Character) end
     filter.FilterDescendantsInstances = ignore
     for side = 0, 3 do
