@@ -62,6 +62,12 @@ jobs:
         run: |
           set -euo pipefail
           cmake -S _gq470_luau -B /tmp/gq470_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470_luau_build --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq470_luau_build --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           /tmp/gq470_luau_build/luau-compile --text quality_gameplay/gq470_ally_silhouette_20261121/EGGRUMBLE_AllySilhouette.client.luau >/dev/null
-          echo GQ470_ALLY_SELECTED_LUAU_NATIVE_COMPILE_PASS_NOT_STUDIO
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py > /tmp/gq470_positive_shutdown.luau
+          /tmp/gq470_luau_build/luau /tmp/gq470_positive_shutdown.luau
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py --negative-drop-disconnect > /tmp/gq470_negative_shutdown.luau
+          if /tmp/gq470_luau_build/luau /tmp/gq470_negative_shutdown.luau; then
+            echo RED_NEGATIVE_CANDIDATE_PASSED; exit 1
+          fi
+          echo GQ470_SELECTED_LUAU_NATIVE_COMPILE_AND_EXTRACTED_RUNTIME_GUARD_PASS_NOT_STUDIO
