@@ -1,6 +1,7 @@
 """Local-only spawn arrival source guard: fail closed on budget/authority/lifecycle changes."""
 from pathlib import Path
 import unittest
+import re
 SRC = Path(__file__).with_name("EGGRUMBLE_SpawnArrivalArt.client.luau")
 def validate(s):
     markers = [
@@ -16,7 +17,9 @@ def validate(s):
         "if player.Character then onCharacter(player.Character) end",
     ]
     for p in markers:
-        if s.count(p) != 1:
+        found = (len(re.findall(r"(?m)^" + re.escape(p) + r"\\s*$", s))
+                 if p.startswith("local ") else s.count(p))
+        if found != 1:
             raise ValueError("RED_SPAWN_ART_CONTRACT_" + p)
     for forbidden in ("RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
                       "DataStore", "TakeDamage", "RenderStepped", "Heartbeat",
