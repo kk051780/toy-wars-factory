@@ -16,6 +16,10 @@ def validate(source: str):
         'obj.Name ~= "StandardCore"',
         'ancestor.Name == "TacticalBattlefield"',
         'Instance.new("WedgePart")',
+        "for side = 1, 4 do",
+        "assert(#stones == PARTS_PER_CASTLE)",
+        "if dist <= MAX_DISTANCE_STUDS then",
+        'if obj:IsA("BasePart") and obj.Name == "StandardCore" then',
         'Enum.Material.Slate', 'Enum.Material.SmoothPlastic',
         "stone.Anchored = true",
         "stone.CanCollide = false",
@@ -55,6 +59,10 @@ def validate(source: str):
             raise ValueError("RED_FOUNDATION_FORBIDDEN_" + marker)
     if stripped.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_FOUNDATION_UNBOUNDED_PART_CREATORS")
+    if stripped.count("table.insert(stones, makeStone(") != 2:
+        raise ValueError("RED_FOUNDATION_STONE_SLOT_OVERFLOW")
+    if stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 2:
+        raise ValueError("RED_FOUNDATION_UNSTABLE_LATE_STREAMING_DISCOVERY")
     if not (len(source.encode("utf-8")) < 11000):
         raise ValueError("RED_FOUNDATION_SOURCE_TOO_LARGE")
     if not re.search(r"for i = 1, math.min\(MAX_CASTLES, #ranked\) do", source):
@@ -70,6 +78,9 @@ class FoundationTests(unittest.TestCase):
         mutations = [
             ("then 2 else 3", "then 200 else 300"),
             ("PARTS_PER_CASTLE = 8", "PARTS_PER_CASTLE = 80"),
+            ("for side = 1, 4 do", "for side = 1, 40 do"),
+            ("assert(#stones == PARTS_PER_CASTLE)", "assert(true)"),
+            ("if dist <= MAX_DISTANCE_STUDS then", "if true then"),
             ("MAX_DISTANCE_STUDS = 190", "MAX_DISTANCE_STUDS = 19000"),
             ("REFRESH_INTERVAL = 2.5", "REFRESH_INTERVAL = 0.01"),
             ('obj.Name ~= "StandardCore"', 'obj.Name ~= "NoSuchCore"'),
