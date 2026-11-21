@@ -82,8 +82,20 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
     -- suspended or submerged ground ornaments; no speculative y=0 fallback.
     local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
         Vector3.new(0, -14, 0), filter)
-    if not hit or hit.Normal.Y < .7
+    if not hit or hit.Material == Enum.Material.Water or hit.Normal.Y < .7
         or math.abs(hit.Position.Y - pose.Position.Y) > 2.75 then
+        piece.Transparency = 1
+        return
+    end
+    -- Cosmetic water sheets/ghost floors can still be raycast targets when
+    -- noncollidable. Never pretend such a surface is a walkable approach.
+    local surface = hit.Instance
+    if surface:IsA("BasePart") and (
+        not surface.CanCollide
+        or surface.Transparency >= .95
+        or surface.LocalTransparencyModifier >= .95
+        or (surface.Material == Enum.Material.Glass and surface.Transparency >= .35)
+    ) then
         piece.Transparency = 1
         return
     end
@@ -101,7 +113,8 @@ local function updatePieces(core: BasePart, decor: Decor)
     local offsetZ = math.clamp(core.Size.Z * .5 + 9, 12, 72)
     local filter = RaycastParams.new()
     filter.FilterType = Enum.RaycastFilterType.Exclude
-    filter.IgnoreWater = true
+    -- Do not look through Terrain water and place stones on submerged seabeds.
+    filter.IgnoreWater = false
     -- Exclude the core, NOT its entire castle Model: some real floors share
     -- that Model and must stay raycastable for ground anchoring.
     local ignore: {Instance} = {core}
