@@ -165,15 +165,27 @@ local function tick()
     task.delay(UPDATE_SECONDS, tick)
 end
 
+-- Attribute listeners belong to this LocalScript, not the long-lived Player.
+-- Explicitly disconnect them during Studio reload/script destruction.
+local featureOffConnection: RBXScriptConnection? = nil
+local reducedEffectsConnection: RBXScriptConnection? = nil
+featureOffConnection = PLAYER:GetAttributeChangedSignal(FEATURE_OFF):Connect(function()
+    if effectsDisabled() then clearAll() end
+end)
+reducedEffectsConnection = PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS):Connect(function()
+    if effectsDisabled() then clearAll() end
+end)
 script.Destroying:Connect(function()
     running = false
+    if featureOffConnection then
+        featureOffConnection:Disconnect()
+        featureOffConnection = nil
+    end
+    if reducedEffectsConnection then
+        reducedEffectsConnection:Disconnect()
+        reducedEffectsConnection = nil
+    end
     clearAll()
     folder:Destroy()
-end)
-PLAYER:GetAttributeChangedSignal(FEATURE_OFF):Connect(function()
-    if effectsDisabled() then clearAll() end
-end)
-PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS):Connect(function()
-    if effectsDisabled() then clearAll() end
 end)
 task.defer(tick)
