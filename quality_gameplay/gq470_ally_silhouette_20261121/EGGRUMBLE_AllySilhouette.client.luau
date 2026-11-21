@@ -18,6 +18,12 @@ local REDUCED_EFFECTS_ATTRIBUTE = "EGGRUMBLE_ReducedEffects"
 local DISABLE_ATTRIBUTE = "GQ470_DisableAllyOutline"
 local active = {}
 local visibilityWatches = {}
+local stopped = false
+local globalWatches = {}
+
+local function track(connection)
+    table.insert(globalWatches, connection)
+end
 
 local function clear(player)
     local watchers = visibilityWatches[player]
@@ -38,6 +44,20 @@ local function clearAll()
     for player in pairs(active) do
         clear(player)
     end
+end
+
+-- A LocalScript may be replaced while the Player remains alive. Disposing the
+-- script must immediately remove its Highlights and release Player listeners.
+local function shutdown()
+    if stopped then
+        return
+    end
+    stopped = true
+    for _, connection in ipairs(globalWatches) do
+        connection:Disconnect()
+    end
+    table.clear(globalWatches)
+    clearAll()
 end
 
 local function isVisibleAlly(player, localRoot, localTeam)
@@ -139,26 +159,31 @@ local function present(candidate)
     effect.Enabled = true
 end
 
-Players.PlayerRemoving:Connect(clear)
-LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)
-LOCAL_PLAYER:GetPropertyChangedSignal("Team"):Connect(clearAll)
-LOCAL_PLAYER:GetPropertyChangedSignal("Neutral"):Connect(clearAll)
+track(Players.PlayerRemoving:Connect(clear))
+track(LOCAL_PLAYER.CharacterRemoving:Connect(clearAll))
+track(LOCAL_PLAYER:GetPropertyChangedSignal("Team"):Connect(clearAll))
+track(LOCAL_PLAYER:GetPropertyChangedSignal("Neutral"):Connect(clearAll))
 -- Effect switches must remove already-visible outlines immediately, not after 0.75s.
-LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()
+track(LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()
     if LOCAL_PLAYER:GetAttribute(REDUCED_EFFECTS_ATTRIBUTE) == true then
         clearAll()
     end
-end)
-LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()
+end))
+track(LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()
     if LOCAL_PLAYER:GetAttribute(DISABLE_ATTRIBUTE) == true then
         clearAll()
     end
-end)
+end))
 
-while true do
+script.Destroying:Connect(shutdown)
+
+while not stopped do
     task.wait(SCAN_INTERVAL)
+    if stopped then
+        break
+    end
     if LOCAL_PLAYER.Parent ~= Players then
-        clearAll()
+        shutdown()
         break
     end
     local character = LOCAL_PLAYER.Character
