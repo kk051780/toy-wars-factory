@@ -26,8 +26,12 @@ local activeTweens: {Tween} = {}
 local phase = 0
 
 local function validDock(obj: Instance): boolean
+    -- Only the genuine LSS arena scene, never an unrelated similarly named part.
+    local parent = obj.Parent
     return obj:IsA("BasePart") and obj.Name == "PublicSeaDock" and
-        obj.Anchored and obj:IsDescendantOf(Workspace)
+        obj.Anchored and parent ~= nil and parent:IsA("Folder") and
+        parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117" and
+        obj:IsDescendantOf(Workspace)
 end
 
 local function localPosition(): Vector3?
