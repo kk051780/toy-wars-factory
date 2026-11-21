@@ -16,6 +16,12 @@ MARKERS = [
  'if #chosen >= MAX_SHADOWS then',
  'local MIN_GROUND_NORMAL = 0.72',
  'local SHADOW_TRANSPARENCY = 0.73',
+ 'local FADE_START_RATIO = 0.70',
+ 'GQ470_NEUTRAL_DISTANCE_FADE_V1',
+ 'local function distanceFadeTransparency(distance: number): number',
+ 'math.clamp((distance - fadeStart) / (MAX_DISTANCE - fadeStart), 0, 1)',
+ 'disc.Transparency = distanceFadeTransparency(entry.distance)',
+ 'distance = entry.distance',
  'EGGRUMBLE_NeutralSpecies',
  'EGGRUMBLE_NeutralContactShadowsOff',
  'EGGRUMBLE_ReducedEffects',
@@ -72,6 +78,15 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_PART_FACTORY")
     # Reject the transient Android Part-budget spike: retiring the old
     # selected set MUST happen before any next selected Part allocation.
+    # Distance fade is tied to the existing camera LOD and cannot introduce
+    # a per-frame callback, geometry, or a hard opaque disc at the cutoff.
+    if len(re.findall(r"^local FADE_START_RATIO = 0\.70$", source, re.MULTILINE)) != 1 or (
+        source.count("GQ470_NEUTRAL_DISTANCE_FADE_V1") != 1
+        or source.count("disc.Transparency = distanceFadeTransparency(entry.distance)") != 1
+        or source.count("distance = entry.distance") != 1
+        or source.count("math.clamp((distance - fadeStart) / (MAX_DISTANCE - fadeStart), 0, 1)") != 1
+    ):
+        raise ValueError("RED_NEUTRAL_DISTANCE_LOD_FADE")
     # Ground-only fallback may never become an unbounded Raycast storm.
     if source.count("GQ470_GROUNDED_CONTACT_BACKFILL_V3") != 1:
         raise ValueError("RED_NEUTRAL_MISSING_GROUND_BACKFILL")
@@ -97,7 +112,7 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_PEAK_ALLOCATION_OVER_CAP")
     if source.count("disc = newDisc()") != 1 or (
         "if not selected[model] then" not in scope
-        or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})" not in scope
+        or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})" not in scope
         or "local limit = math.min(MAX_GROUND_PROBES, #nearby)" not in scope
     ):
         raise ValueError("RED_NEUTRAL_SELECTION_RECLAIM_CONTRACT")
@@ -134,6 +149,18 @@ class NeutralShadowsTests(unittest.TestCase):
         self.assertEqual(select_grounded([True] * 12, 6), (6, 6))
         self.assertEqual(select_grounded([False] * 30, 6), (0, 12))
 
+    def test_distance_fade_expected_behavior_model(self):
+        # Pure math example, not a Studio visual or FPS measurement.
+        def fade(distance, lod):
+            start = lod * 0.70
+            alpha = max(0, min(1, (distance - start) / (lod - start)))
+            return 0.73 + (1 - 0.73) * alpha
+        self.assertAlmostEqual(fade(0, 55), 0.73)
+        self.assertAlmostEqual(fade(38.5, 55), 0.73)
+        self.assertAlmostEqual(fade(46.75, 55), 0.865)
+        self.assertAlmostEqual(fade(55, 55), 1.0)
+        self.assertAlmostEqual(fade(72, 72), 1.0)
+
     def test_mutants(self):
         src = SRC.read_text(encoding="utf8")
         changes = [
@@ -147,6 +174,10 @@ class NeutralShadowsTests(unittest.TestCase):
             ('humanoid.Health > 0','humanoid.Health >= 0'),
             ('math.min(MAX_GROUND_PROBES, #nearby)', '#nearby'),
             ('MAX_GROUND_PROBES = MAX_SHADOWS * 2', 'MAX_GROUND_PROBES = MAX_SHADOWS * 20'),
+            ('FADE_START_RATIO = 0.70', 'FADE_START_RATIO = 0.99'),
+            ('disc.Transparency = distanceFadeTransparency(entry.distance)', 'disc.Transparency = SHADOW_TRANSPARENCY'),
+            ('distance = entry.distance', 'distance = 0'),
+            ('math.clamp((distance - fadeStart) / (MAX_DISTANCE - fadeStart), 0, 1)', 'math.clamp((distance - fadeStart), 0, 1)'),
             ('if #chosen >= MAX_SHADOWS then', 'if #chosen > MAX_SHADOWS then'),
             ('for i = 1, limit do', 'for i = 1, #nearby do'),
             ('GQ470_GROUNDED_CONTACT_BACKFILL_V3', 'GQ470_BROKEN_BACKFILL'),
@@ -164,7 +195,7 @@ class NeutralShadowsTests(unittest.TestCase):
             ('PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)', 'PLAYER:GetAttributeChangedSignal("Bad")'),
             ('if not selected[model] then', 'if selected[model] then'),
             ('for _, entry in ipairs(chosen) do', 'for _, entry in ipairs(discovered) do'),
-            ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})', 'selected[entry.model] = false'),
+            ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})', 'selected[entry.model] = false'),
             ('GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2', 'GQ470_BROKEN_BUDGET'),
             ('featureOffConnection:Disconnect()', 'featureOffConnection = nil'),
             ('reducedEffectsConnection:Disconnect()', 'reducedEffectsConnection = nil'),
