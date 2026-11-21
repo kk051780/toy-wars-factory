@@ -58,6 +58,22 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_SOURCE_SIZE")
     if source.count('Instance.new("Part")') != 1:
         raise ValueError("RED_NEUTRAL_PART_FACTORY")
+    # Reject the transient Android Part-budget spike: retiring the old
+    # selected set MUST happen before any next selected Part allocation.
+    if source.count("GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2") != 1:
+        raise ValueError("RED_NEUTRAL_HARD_BUDGET_MARKER")
+    scope = source.split("GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2", 1)[1]
+    retire = scope.find("for model, disc in pairs(active) do")
+    allocate = scope.find("for _, entry in ipairs(chosen) do")
+    factory = scope.find("disc = newDisc()")
+    if not (0 <= retire < allocate < factory):
+        raise ValueError("RED_NEUTRAL_PEAK_ALLOCATION_OVER_CAP")
+    if source.count("disc = newDisc()") != 1 or (
+        "if not selected[model] then" not in scope
+        or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})" not in scope
+        or "local limit = math.min(MAX_SHADOWS, #nearby)" not in scope
+    ):
+        raise ValueError("RED_NEUTRAL_SELECTION_RECLAIM_CONTRACT")
     if source.count('task.delay(UPDATE_SECONDS, tick)') != 3:
         raise ValueError("RED_NEUTRAL_TASK_CHAIN")
     if source.count("clearAll()") < 5:
@@ -87,6 +103,10 @@ class NeutralShadowsTests(unittest.TestCase):
             ('script.Destroying:Connect','script.Changed:Connect'),
             ('task.delay(UPDATE_SECONDS, tick)','tick()'),
             ('PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)', 'PLAYER:GetAttributeChangedSignal("Bad")'),
+            ('if not selected[model] then', 'if selected[model] then'),
+            ('for _, entry in ipairs(chosen) do', 'for _, entry in ipairs(discovered) do'),
+            ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})', 'selected[entry.model] = false'),
+            ('GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2', 'GQ470_BROKEN_BUDGET'),
         ]
         for old, new in changes:
             self.assertIn(old, src)
