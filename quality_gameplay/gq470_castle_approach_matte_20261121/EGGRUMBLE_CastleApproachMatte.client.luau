@@ -23,6 +23,10 @@ local function validCore(core: Instance): boolean
     if not core:IsA("BasePart") or core.Name ~= "StandardCore" or not core.Anchored then
         return false
     end
+    -- Fail closed for map revisions where shallow stones would fall inside a keep.
+    if core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150 then
+        return false
+    end
     local ancestor = core.Parent
     if not ancestor or not ancestor:IsA("Model") then return false end
     while ancestor and ancestor ~= Workspace do
