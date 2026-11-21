@@ -90,12 +90,18 @@ def original(root: Path) -> tuple[dict, dict[str, bytes]]:
 def parent_candidate(parent: dict, root: Path,
                      original_receipt: dict,
                      original_sources: dict[str, bytes]) -> dict[str, bytes]:
-    require((root / PROJECT).is_file() and (root / PLACE).is_file() and
-            (root / RECEIPT).is_file(), "PARENT_ARTIFACT_INCOMPLETE")
+    # Two source-only A uploads have a shared artifact root above their
+    # candidate/ folder because the rollback Place is a sibling.
+    artifact_root = root
+    candidates = [p.parent for p in artifact_root.rglob(PROJECT)
+                  if (p.parent / PLACE).is_file() and
+                     (p.parent / RECEIPT).is_file()]
+    require(len(candidates) == 1, "PARENT_ARTIFACT_INCOMPLETE")
+    root = candidates[0]
     p = (root / PLACE).read_bytes()
     require(sha(p) == parent["place_sha"], "PARENT_PINNED_PLACE_SHA")
     require((root / PROJECT).read_bytes() ==
-            (root.parent.parent / "formal" / PROJECT).read_bytes(),
+            (artifact_root.parent.parent / "formal" / PROJECT).read_bytes(),
             "PARENT_PROJECT_DRIFT")
     candidate = bytes_map(root)
     info = json.loads((root / RECEIPT).read_text(encoding="utf-8"))
