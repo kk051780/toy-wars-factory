@@ -161,7 +161,7 @@ jobs:
           verify_b(candidate,place)
           print("GQ470_GROUND_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
           PY
-      - name: #420 honest PC Android 32 screenshot and FUN source-only audit
+      - name: "ART #420 honest PC/Android 32 screenshot and FUN source-only audit"
         run: |
           set -euo pipefail
           python3 "$TARGET/emit_art_report.py" --candidate "$ROOT/on70" \
