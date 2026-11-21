@@ -1,0 +1,101 @@
+name: GQ470 REAL69 lobby edge masonry matte PREP only
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_lobby_edge_masonry_20261121/**'
+      - '.github/workflows/gq470-lobby-edge-masonry-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-exact-lobby-masonry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+      BASE_DIR: /tmp/gq470-lobby-edge
+      SRC_DIR: quality_gameplay/gq470_lobby_edge_masonry_20261121
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Head/source contract, geometry and 12 fail-closed negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -m unittest discover -s "$SRC_DIR" -p test_lobby_edge_source.py -v
+          python3 -B "$SRC_DIR/compose_real70.py" --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "$FORMAL success" || { echo RED_FORMAL_CI_NOT_PROVEN; exit 1; }
+          mkdir -p "$BASE_DIR/original"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$BASE_DIR/original"
+          python3 -B "$SRC_DIR/compose_real70.py" --compose --original "$BASE_DIR/original" --candidate "$BASE_DIR/candidate"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Real 69 OFF plus 70 ON native Luau compile
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B "$BASE_DIR/luau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$BASE_DIR/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          base=Path(os.environ["BASE_DIR"])
+          counts=[]
+          for kind in ("original","candidate"):
+              root=base/kind
+              files=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+              counts.append(len(files))
+              for route,details in files.items():
+                  subprocess.run([str(base/"luau/luau-compile"),"--text",str(root/details["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          assert counts==[69,70],f"RED_SELECTED_COUNTS_{counts}"
+          print("GQ470_LOBBY_EDGE_TRUE_NATIVE_OFF69_ON70_PASS_NOT_STUDIO")
+          PY
+      - name: Pinned Rojo original Place byte exact plus actual candidate Place source/class
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$BASE_DIR/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $BASE_DIR/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+          base=Path(os.environ["BASE_DIR"])
+          with ZipFile(base/"rojo.zip") as z:
+              matches=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(matches)==1
+              out=base/"rojo"
+              out.write_bytes(z.read(matches[0]))
+              out.chmod(0o755)
+          PY
+          "$BASE_DIR/rojo" build "$BASE_DIR/original/EGGRUMBLE_REAL69.project.json" -o "$BASE_DIR/OFF69_REBUILT.rbxlx"
+          cmp "$BASE_DIR/OFF69_REBUILT.rbxlx" "$BASE_DIR/original/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          "$BASE_DIR/rojo" build "$BASE_DIR/candidate/EGGRUMBLE_REAL69.project.json" -o "$BASE_DIR/candidate/EGGRUMBLE_REAL70_PRIVATE.rbxlx"
+          python3 -B "$SRC_DIR/compose_real70.py" --verify --original "$BASE_DIR/original" --candidate "$BASE_DIR/candidate" --built "$BASE_DIR/candidate/EGGRUMBLE_REAL70_PRIVATE.rbxlx"
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED_AFTER_BUILD; exit 1; }
+          echo GQ470_LOBBY_EDGE_A_NATIVE_ROJO_OFF69_BPACKET_PASS_NOT_FORMAL_NOT_ART
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-LOBBY-EDGE-MASONRY-A-SOURCE-NOT-FORMAL
+          path: |
+            /tmp/gq470-lobby-edge/candidate/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-lobby-edge/candidate/EGGRUMBLE_REAL70_PRIVATE.rbxlx
+            /tmp/gq470-lobby-edge/candidate/GQ470_LOBBY_EDGE_A_SOURCE_RECEIPT.json
+            /tmp/gq470-lobby-edge/candidate/B220_LOBBY_EDGE_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
+            /tmp/gq470-lobby-edge/OFF69_REBUILT.rbxlx
+          if-no-files-found: error
+          retention-days: 7
