@@ -24,6 +24,8 @@ local function drain()
     for _, f in toRun do f() end
 end
 local Enum = {CameraType = {Custom = "CUSTOM", Scriptable = "SCRIPTABLE"}}
+local fakeClockSeconds = 0
+local os = {clock = function() return fakeClockSeconds end}
 local fakePlayer = {Character = nil, CharacterAdded = event(), CharacterRemoving = event()}
 local fakeCamera = {CameraType = Enum.CameraType.Custom, CameraSubject = nil}
 local fakeWorld = {CurrentCamera = fakeCamera}
@@ -162,4 +164,35 @@ fakePlayer.CharacterAdded:Fire(c10)
 drain()
 check(fakeCamera.CameraSubject == activeBossCameraSubject, "live_other_subject_preserved")
 
-print("GQ470_CAMERA_MOCK_NATIVE_10_POSITIVE_NEGATIVE_CASES_PASS", checks)
+-- 11: deadline expired; do not steal the camera after the four-second window.
+fakePlayer.CharacterRemoving:Fire(c10)
+local c11, h11 = makeCharacter()
+fakePlayer.Character = c11
+fakeCamera.CameraSubject = nil
+fakePlayer.CharacterAdded:Fire(c11)
+fakeClockSeconds += 4.1
+drain()
+check(fakeCamera.CameraSubject == nil, "expired_window_no_bind")
+
+-- 12: no Humanoid yet (or streaming removes it); must not enqueue a camera loop.
+fakePlayer.CharacterRemoving:Fire(c11)
+local noHumanoid = {Parent = fakeWorld}
+function noHumanoid:FindFirstChildOfClass(_) return nil end
+function noHumanoid:WaitForChild(_, _) return nil end
+fakePlayer.Character = noHumanoid
+fakeCamera.CameraSubject = nil
+fakePlayer.CharacterAdded:Fire(noHumanoid)
+check(#queued == 0, "no_humanoid_no_work")
+check(fakeCamera.CameraSubject == nil, "no_humanoid_no_camera_change")
+
+-- 13: stale callback should not resurrect an outdated character even without CharacterRemoving.
+local c13, h13 = makeCharacter()
+fakePlayer.Character = c13
+fakeCamera.CameraSubject = nil
+fakePlayer.CharacterAdded:Fire(c13)
+fakePlayer.Character = {Parent = fakeWorld}
+drain()
+check(fakeCamera.CameraSubject == nil, "changed_player_character_blocked")
+
+print("GQ470_CAMERA_MOCK_NATIVE_13_SCENARIOS_15_ASSERTIONS_PASS", checks)
+

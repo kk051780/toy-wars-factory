@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GQ470 castle banner matte art: source-exact A candidate REAL69 -> REAL70.
+"""GQ470 P0 local camera-subject recovery: source-exact A REAL69 -> REAL70.
 
 Operates ONLY in a temporary directory using the immutable official PRIVATE
 companion Place/receipt. Never pushes to the official RC, publishes or changes

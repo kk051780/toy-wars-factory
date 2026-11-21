@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict #420 source-vs-actual human ART evidence separation for #470 P0_CAMERA banner.
+"""Strict #420 source-vs-human-art evidence: P0 client camera ownership recovery.
 
 An offline/native/Rojo pass does not fill any Studio screenshots or FPS data.
 This report is for the private A candidate only; it cannot approve formal RC.
