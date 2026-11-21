@@ -26,7 +26,7 @@ EDITS=(
  (' text.Text=id.."\\n出陣";text.Parent=label',
   ' text.Text=(if team=="RED" then "赤軍" elseif team=="BLUE" then "青軍" else "AI");text.Parent=label'),
  (' hum.Name="Humanoid";hum.RequiresNeck=false;hum.MaxHealth=100;hum.Health=100',
-  ' hum.Name="Humanoid";hum.RequiresNeck=false;hum.MaxHealth=100;hum.Health=100\n hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18'),
+  ' hum.Name="Humanoid";hum.RequiresNeck=false;hum.MaxHealth=100;hum.Health=100\n hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18'),
  ('          ui.Text=id.."\\n"..(if goHome then "🥚 卵を帰還" elseif collectField then "🥚 野外卵を回収" elseif hasEgg then "🥚 敵城に潜入" else "⚔ 城攻め")',
   '          ui.Text=(if me.team=="RED" then "赤軍" elseif me.team=="BLUE" then "青軍" else "AI").."・"..\n           (if goHome then "帰還" elseif collectField then "回収" elseif hasEgg then "潜入" else "攻城")'),
 )
@@ -57,11 +57,20 @@ def patch(src:str)->str:
   src=src.replace(before,after)
  need(src.count(MARK)==1 and "label.MaxDistance=22" in src,"NEAR_ONLY")
  need("ui.Text=id.." not in src and 'text.Text=id.."\\n' not in src,"NO_INTERNAL_IDS")
- need("NameDisplayDistance=0;hum.HealthDisplayDistance=18" in src,"NAME_HEALTH_BUDGET")
+ need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,"SUBJECT_NAME_HEALTH_BUDGET")
  need("text.TextStrokeTransparency=.45" in src and
       "text.TextStrokeColor3=Color3.fromRGB(5,12,20)" in src,"TRANSPARENT_TAG_TEXT_EDGE")
+ verify_subject_runtime(src)
  need("RemoteEvent" not in "".join(y for _,y in EDITS),"NO_NEW_AUTHORITY")
  return src
+
+def verify_subject_runtime(src:str)->None:
+ # A humanoid in Viewer mode delegates its overhead display distances to the observer.
+ # Subject owns the zero-name / 18-stud health limits, preventing duplicate native nameplates.
+ need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,
+      "SUBJECT_OVERHEAD_GUARD")
+ need("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Viewer" not in src,
+      "VIEWER_NAME_LEAK")
 
 def selftest()->None:
  original='assert(RunService:IsStudio(),"preview bot actors are Studio-only")\nRouter.navigate SiegePacing.allow\n'
@@ -70,6 +79,17 @@ def selftest()->None:
  need("label.Size=UDim2.fromOffset(104,24)" in modified,"SIZE")
  need("ui.Text=(if me.team" in modified and
       "text.TextStrokeTransparency=.45" in modified,"DYNAMIC_TEAM_AND_EGG_TEXT_EDGE")
+ verify_subject_runtime(modified)
+ for mutant in (
+     modified.replace("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;", ""),
+     modified.replace("HumanoidDisplayDistanceType.Subject;", "HumanoidDisplayDistanceType.Viewer;"),
+     modified.replace("hum.HealthDisplayDistance=18", "hum.HealthDisplayDistance=180"),
+     modified.replace("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;", "hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;"),
+ ):
+  try:verify_subject_runtime(mutant)
+  except ValueError:pass
+  else:raise AssertionError("SUBJECT_MUTANT_NOT_RED")
+
  for broken in (modified,original.replace(EDITS[0][0],""),
                 original.replace(EDITS[-1][0],""),
                 original.replace("Router.navigate","ROUTER_REMOVED"),
@@ -77,7 +97,7 @@ def selftest()->None:
   try:patch(broken)
   except ValueError:pass
   else:raise AssertionError("MUTANT_NOT_RED")
- print("GQ470_BOT_TAG_P0_SOURCE_5_NEGATIVES_PASS")
+ print("GQ470_BOT_TAG_P0_SOURCE_5_ORIGINAL_AND_4_SUBJECT_NEGATIVES_PASS")
 
 def apply(root:Path)->None:
  paths=selected(root)
