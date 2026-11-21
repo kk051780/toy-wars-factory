@@ -71,7 +71,7 @@ local function waterSurface(craft: Model, sample: Vector3): Vector3?
     return nil
 end
 
-local function emitWake(seat: VehicleSeat, motion: Vector3): ()
+local function emitWake(seat: VehicleSeat, motion: Vector3, serial: number): ()
     local horizontal = Vector3.new(motion.X, 0, motion.Z)
     if horizontal.Magnitude < MIN_HORIZONTAL_SPEED then return end
     local forward = horizontal.Unit
@@ -81,37 +81,45 @@ local function emitWake(seat: VehicleSeat, motion: Vector3): ()
     end
     local craft = seat.Parent
     if not craft or not craft:IsA("Model") then return end
-    local base = waterSurface(craft, seat.Position - forward * 4)
-    if base == nil then return end
+    -- Original sea hull is 13 studs long, so a wake only four studs behind
+    -- the pilot is hidden INSIDE the boat. Sample the visible stern instead.
+    local stern = seat.Position - forward * 9.0
+    if waterSurface(craft, stern) == nil then return end
     local maxPerPulse = if TOUCH then MOBILE_PARTS_PER_PULSE else MAX_PARTS_PER_PULSE
     local allowed = math.min(maxPerPulse, MAX_LIVE_PARTS - liveParts)
     if allowed <= 0 then return end
 
     local right = Vector3.new(-forward.Z, 0, forward.X)
     for i = 1, allowed do
-        local side = if allowed == 1 then 0 else (if i == 1 then -0.95 else 0.95)
-        local position = base + right * side
-        local part = Instance.new("WedgePart")
-        part.Name = "MatteBoatWake"
-        part.Size = Vector3.new(1.7, 0.055, 0.65)
-        part.CFrame = CFrame.lookAt(position, position - forward)
-        part.Color = Color3.fromRGB(189, 217, 222)
-        part.Material = Enum.Material.SmoothPlastic
-        part.Transparency = 0.54
-        part.Anchored = true
-        part.CanCollide = false
-        part.CanTouch = false
-        part.CanQuery = false
-        part.CastShadow = false
-        liveParts += 1
-        part.Destroying:Connect(function()
-            liveParts = math.max(0, liveParts - 1)
-        end)
-        part.Parent = folder
-        TweenService:Create(part, TweenInfo.new(LIFE_SECONDS, Enum.EasingStyle.Quad),
-            {Transparency = 1, Size = Vector3.new(2.5, 0.035, 0.85)}
-        ):Play()
-        Debris:AddItem(part, LIFE_SECONDS + 0.05)
+        -- Desktop: two angled V-shaped ribbons aft of the pontoons.
+        -- Touch: alternate one flank each pulse rather than spawning two.
+        local sideSign = if allowed == 1 then (if serial % 2 == 0 then 1 else -1)
+            else (if i == 1 then -1 else 1)
+        local position = waterSurface(craft, stern + right * (sideSign * 4.1))
+        if position then
+            local part = Instance.new("WedgePart")
+            part.Name = "MatteBoatWake"
+            part.Size = Vector3.new(1.7, 0.055, 0.65)
+            part.CFrame = CFrame.lookAt(position, position - forward)
+                * CFrame.Angles(0, math.rad(sideSign * 18), 0)
+            part.Color = Color3.fromRGB(189, 217, 222)
+            part.Material = Enum.Material.SmoothPlastic
+            part.Transparency = 0.54
+            part.Anchored = true
+            part.CanCollide = false
+            part.CanTouch = false
+            part.CanQuery = false
+            part.CastShadow = false
+            liveParts += 1
+            part.Destroying:Connect(function()
+                liveParts = math.max(0, liveParts - 1)
+            end)
+            part.Parent = folder
+            TweenService:Create(part, TweenInfo.new(LIFE_SECONDS, Enum.EasingStyle.Quad),
+                {Transparency = 1, Size = Vector3.new(2.5, 0.035, 0.85)}
+            ):Play()
+            Debris:AddItem(part, LIFE_SECONDS + 0.05)
+        end
     end
 end
 
@@ -135,6 +143,7 @@ local function bindCharacter(character: Model): ()
         -- The existing LSS server moves ANCHORED craft with Model:PivotTo.
         -- AssemblyLinearVelocity may remain zero. Use real replicated displacement.
         local lastPosition = seat.Position
+        local pulseSerial = 0
         local function pulse(): ()
             if generation ~= seatToken or humanoid.Health <= 0 or not seat:IsDescendantOf(Workspace)
                 or humanoid.SeatPart ~= seat then
@@ -143,7 +152,8 @@ local function bindCharacter(character: Model): ()
             local position = seat.Position
             local moved = position - lastPosition
             lastPosition = position
-            emitWake(seat, moved / PULSE_SECONDS)
+            pulseSerial += 1
+            emitWake(seat, moved / PULSE_SECONDS, pulseSerial)
             task.delay(PULSE_SECONDS, pulse)
         end
         task.delay(PULSE_SECONDS, pulse)
