@@ -28,6 +28,8 @@ def validate(s: str) -> None:
         'p.CanQuery = false', 'p.CastShadow = false',
         'table.insert(entry.connections, tower.Destroying:Connect',
         'tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team',
+        'local function refillVacantSlots()',
+        'refillVacantSlots()',
         'local restingPose: {[BasePart]: CFrame} = {}',
         'for _, panel in fly do restingPose[panel] = panel.CFrame end',
         'local base = restingPose[panel]',
@@ -53,8 +55,8 @@ def validate(s: str) -> None:
             raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY")
     if 'part(folder, "TeamBannerBody",' in s:
         raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY_PARTNAME")
-    if s.count('Workspace:GetDescendants()') != 2:
-        raise ValueError("RED_BANNER_INITIAL_AND_RESPAWN_RESCAN")
+    if s.count('Workspace:GetDescendants()') != 3:
+        raise ValueError("RED_BANNER_INITIAL_RESPAWN_AND_SLOT_RECOVERY_RESCAN")
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
     forbidden = (
         "RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer", "DataStore",
@@ -68,7 +70,7 @@ def validate(s: str) -> None:
     for token in forbidden:
         if token in stripped:
             raise ValueError("RED_BANNER_AUTHORITY_OR_ART_" + token)
-    if len(s.encode("utf-8")) > 9000:
+    if len(s.encode("utf-8")) > 11000:
         raise ValueError("RED_BANNER_SOURCE_BUDGET")
     if len(re.findall(r'Instance.new\("(?:Part|WedgePart)"\)', stripped)) != 2:
         raise ValueError("RED_BANNER_FACTORY_COUNT")
@@ -102,6 +104,7 @@ class BannerSourceTests(unittest.TestCase):
             ("Workspace.DescendantAdded:Connect(attach)", "Workspace.DescendantAdded:Connect(function() end)"),
             ('tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team', 'tower:IsDescendantOf(Workspace)'), 
             ('local base = restingPose[panel]', 'local base = panel.CFrame'),
+            ('local function refillVacantSlots()', 'local function noRefill()'),
             ('panel.CFrame = base', 'panel.CFrame = CFrame.new()'),
             ('part(folder, "TeamClothBody",', 'part(folder, "TeamBannerBody",'),
             ('ancestor.Name == team .. "_CASTLE"', 'true'),
