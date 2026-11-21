@@ -196,12 +196,19 @@ table.insert(externalConnections, localPlayer.CharacterRemoving:Connect(clear))
 table.insert(externalConnections, localPlayer.CharacterAdded:Connect(function()
     task.delay(.6, refresh)
 end))
-script.Destroying:Connect(function()
+local function shutdown()
+    if destroyed then return end
     destroyed = true
     for _, connection in externalConnections do connection:Disconnect() end
     table.clear(externalConnections)
     clear() -- cancel Tweens and destroy all 6/9 client-only pieces synchronously.
     table.clear(docks)
+end
+script.Destroying:Connect(shutdown)
+-- An unparented LocalScript may stop executing without Destroying being called.
+-- Tear down player/workspace-owned connections in both lifecycle paths.
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then shutdown() end
 end)
 refresh()
 task.spawn(function()
