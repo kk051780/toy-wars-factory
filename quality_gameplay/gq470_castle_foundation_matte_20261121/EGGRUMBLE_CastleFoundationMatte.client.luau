@@ -19,6 +19,13 @@ type Decor = { folder: Folder, parts: {BasePart}, lastPose: CFrame, lastSize: Ve
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
+-- Local-only geometry must not outlive its LocalScript on reload or teardown.
+local disposed = false
+local connections: {RBXScriptConnection} = {}
+local function track(connection: RBXScriptConnection)
+    table.insert(connections, connection)
+end
+
 local function validCore(obj: Instance): boolean
     if not obj:IsA("BasePart") or obj.Name ~= "StandardCore" or not obj.Anchored then
         return false
@@ -110,6 +117,7 @@ local function makeFoundation(core: BasePart)
 end
 
 local function refresh()
+    if disposed then return end
     local eye = eyePosition()
     local ranked: {{core: BasePart, distance: number}} = {}
     if player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true and eye then
@@ -149,30 +157,42 @@ end
 
 -- DescendantAdded may fire while streamed castle properties/ancestry are still
 -- being assigned. Record named BaseParts first, validate after 2.5s refresh.
-Workspace.DescendantAdded:Connect(function(obj)
-    if obj:IsA("BasePart") and obj.Name == "StandardCore" then
+track(Workspace.DescendantAdded:Connect(function(obj)
+    if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
-end)
-Workspace.DescendantRemoving:Connect(function(obj)
-    if candidates[obj :: any] then
+end))
+track(Workspace.DescendantRemoving:Connect(function(obj)
+    if not disposed and candidates[obj :: any] then
         candidates[obj :: BasePart] = nil
         clear(obj :: BasePart)
     end
-end)
+end))
 for _, obj in Workspace:GetDescendants() do
     if obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
 end
-player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh)
-player.CharacterAdded:Connect(function()
+track(player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh))
+track(player.CharacterAdded:Connect(function()
     task.delay(.5, refresh)
-end)
+end))
 refresh()
 task.spawn(function()
-    while script.Parent do
+    while not disposed and script.Parent do
         task.wait(REFRESH_INTERVAL)
         refresh()
     end
+end)
+
+script.Destroying:Connect(function()
+    disposed = true
+    for _, connection in ipairs(connections) do
+        connection:Disconnect()
+    end
+    table.clear(connections)
+    for core in active do
+        clear(core)
+    end
+    table.clear(candidates)
 end)
