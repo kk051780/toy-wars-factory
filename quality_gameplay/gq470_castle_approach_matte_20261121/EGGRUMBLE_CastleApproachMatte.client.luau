@@ -11,6 +11,7 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PIECES_PER_CASTLE = 8
 local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE
 local MAX_DISTANCE = 155
+local FADE_START = 125 -- matte stones should not pop in at LOD edge
 local REFRESH_SECONDS = 2.5
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
@@ -77,6 +78,14 @@ local function clear(core: BasePart)
     old.folder:Destroy()
 end
 
+local function decorIntact(core: BasePart, decor: Decor): boolean
+    if decor.folder.Parent ~= core or #decor.pieces ~= PIECES_PER_CASTLE then return false end
+    for _, stone in ipairs(decor.pieces) do
+        if stone.Parent ~= decor.folder then return false end
+    end
+    return true
+end
+
 local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams)
     -- Never place floating/underwater ornaments on streamed or absent floors.
     local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
@@ -111,7 +120,7 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
     piece.Transparency = 0
 end
 
-local function updatePieces(core: BasePart, decor: Decor)
+local function updatePieces(core: BasePart, decor: Decor, distance: number)
     -- Four shallow split path-edge pairs, outside the foundation.
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
     local offsetX = math.clamp(core.Size.X * .5 + 9, 12, 72)
@@ -135,6 +144,11 @@ local function updatePieces(core: BasePart, decor: Decor)
             toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0),
             filter)
     end
+    -- Rejected ground remains invisible; accepted stone edges blend in.
+    local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
+    for _, stone in ipairs(decor.pieces) do
+        if stone.Transparency < 1 then stone.Transparency = fade end
+    end
 end
 
 local function makeApproach(core: BasePart)
@@ -151,7 +165,6 @@ local function makeApproach(core: BasePart)
     assert(#pieces == PIECES_PER_CASTLE)
     local decor: Decor = { folder = folder, pieces = pieces }
     active[core] = decor
-    updatePieces(core, decor)
 end
 
 local function refresh()
@@ -176,9 +189,9 @@ local function refresh()
         end
         return a.core.Position.Z < b.core.Position.Z
     end)
-    local wanted: {[BasePart]: boolean} = {}
+    local wanted: {[BasePart]: number} = {}
     for i = 1, math.min(MAX_CASTLES, #ranked) do
-        wanted[ranked[i].core] = true
+        wanted[ranked[i].core] = ranked[i].distance
     end
     for core in active do
         if not wanted[core] or not validCore(core) then clear(core) end
@@ -186,10 +199,14 @@ local function refresh()
     for core in wanted do
         if not active[core] then makeApproach(core) end
         local decor = active[core]
+        if decor and not decorIntact(core, decor) then
+            -- Streamed-away wedges must not leave a half-built path.
+            clear(core)
+            makeApproach(core)
+            decor = active[core]
+        end
         if decor then
-            -- Re-check bounded ground rays every 2.5s; StreamingEnabled can
-            -- replace terrain while the castle core itself remains still.
-            updatePieces(core, decor)
+            updatePieces(core, decor, wanted[core])
         end
     end
     local actual = 0
@@ -233,7 +250,8 @@ end)
 
 -- Script.Destroying is distinct from CharacterRemoving. Hot reload/replacement
 -- must not retain stale geometry or closures in other clients/rounds.
-script.Destroying:Connect(function()
+local function shutdown()
+    if disposed then return end
     disposed = true
     for _, connection in ipairs(trackedConnections) do
         connection:Disconnect()
@@ -243,4 +261,8 @@ script.Destroying:Connect(function()
         clear(core)
     end
     table.clear(candidates)
+end
+script.Destroying:Connect(shutdown)
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then shutdown() end
 end)
