@@ -34,8 +34,17 @@ def validate(source: str):
         "decoration.parts[first].CFrame = outward",
         "if not wanted[core] or not validCore(core) then clear(core) end",
         "Workspace.DescendantAdded:Connect",
+        'if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then',
         "Workspace.DescendantRemoving:Connect",
-        "while script.Parent do",
+        "while not disposed and script.Parent do",
+        "local disposed = false",
+        "local connections: {RBXScriptConnection} = {}",
+        "if disposed then return end",
+        "script.Destroying:Connect(function()",
+        "disposed = true",
+        "connection:Disconnect()",
+        "table.clear(connections)",
+        "table.clear(candidates)",
         "task.wait(REFRESH_INTERVAL)",
         "assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)",
         "local FEATURE_ID = \"GQ470_FB015_CASTLE_FOUNDATION_MATTE_20261121\"",
@@ -46,7 +55,7 @@ def validate(source: str):
             count = len(matches)
         else:
             count = source.count(text)
-        expected = 2 if text == 'if obj:IsA("BasePart") and obj.Name == "StandardCore" then' else 1
+        expected = 1
         if count != expected:
             raise ValueError("RED_FOUNDATION_REQUIRED_" + text)
     for declaration in ("MAX_CASTLES", "PARTS_PER_CASTLE", "MAX_TOTAL_EXTRA_PARTS",
@@ -62,11 +71,16 @@ def validate(source: str):
     for marker in forbidden:
         if marker in stripped:
             raise ValueError("RED_FOUNDATION_FORBIDDEN_" + marker)
+    if stripped.count('track(') != 5:
+        raise ValueError("RED_FOUNDATION_UNTRACKED_EVENT")
+    if stripped.count('for core in active do') != 2:
+        raise ValueError("RED_FOUNDATION_MISSING_DECOR_CLEANUP")
     if stripped.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_FOUNDATION_UNBOUNDED_PART_CREATORS")
     if stripped.count("table.insert(stones, makeStone(") != 2:
         raise ValueError("RED_FOUNDATION_STONE_SLOT_OVERFLOW")
-    if stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 2:
+    if (stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1
+            or stripped.count('if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1):
         raise ValueError("RED_FOUNDATION_UNSTABLE_LATE_STREAMING_DISCOVERY")
     if not (len(source.encode("utf-8")) < 11000):
         raise ValueError("RED_FOUNDATION_SOURCE_TOO_LARGE")
@@ -107,6 +121,13 @@ class FoundationTests(unittest.TestCase):
             ("if not wanted[core] or not validCore(core) then clear(core) end",
              "if false then clear(core) end"),
             ("task.wait(REFRESH_INTERVAL)", "task.wait(0.01)"),
+            ('disposed = true', 'disposed = false'),
+            ('connection:Disconnect()', 'connection:Connect()'),
+            ('table.clear(connections)', '-- callback leak'),
+            ('table.clear(candidates)', '-- registry leak'),
+            ('while not disposed and script.Parent do', 'while script.Parent do'),
+            ('track(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+            ('if not disposed and obj:IsA("BasePart")', 'if obj:IsA("BasePart")'),
             ("assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)",
              "assert(true)"),
         ]

@@ -11,6 +11,8 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PARTS_PER_CASTLE = 8
 local MAX_TOTAL_EXTRA_PARTS = MAX_CASTLES * PARTS_PER_CASTLE
 local MAX_DISTANCE_STUDS = 190
+-- Fade the final 40 studs to avoid eight stones popping into view.
+local LOD_FADE_START = 150
 local REFRESH_INTERVAL = 2.5
 local STONE = Color3.fromRGB(103, 102, 99)
 local EDGE = Color3.fromRGB(171, 151, 118)
@@ -18,6 +20,13 @@ local EDGE = Color3.fromRGB(171, 151, 118)
 type Decor = { folder: Folder, parts: {BasePart}, lastPose: CFrame, lastSize: Vector3 }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
+
+-- Local-only geometry must not outlive its LocalScript on reload or teardown.
+local disposed = false
+local connections: {RBXScriptConnection} = {}
+local function track(connection: RBXScriptConnection)
+    table.insert(connections, connection)
+end
 
 local function validCore(obj: Instance): boolean
     if not obj:IsA("BasePart") or obj.Name ~= "StandardCore" or not obj.Anchored then
@@ -109,7 +118,17 @@ local function makeFoundation(core: BasePart)
     updatePoses(core, decoration)
 end
 
+-- Partially streamed/removed decorations must be rebuilt before use.
+local function decorIntact(core: BasePart, decoration: Decor): boolean
+    if decoration.folder.Parent ~= core or #decoration.parts ~= PARTS_PER_CASTLE then return false end
+    for _, stone in ipairs(decoration.parts) do
+        if stone.Parent ~= decoration.folder then return false end
+    end
+    return true
+end
+
 local function refresh()
+    if disposed then return end
     local eye = eyePosition()
     local ranked: {{core: BasePart, distance: number}} = {}
     if player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true and eye then
@@ -126,19 +145,29 @@ local function refresh()
         if a.distance == b.distance then return a.core.Name < b.core.Name end
         return a.distance < b.distance
     end)
-    local wanted: {[BasePart]: boolean} = {}
+    local wanted: {[BasePart]: number} = {}
     for i = 1, math.min(MAX_CASTLES, #ranked) do
-        wanted[ranked[i].core] = true
+        wanted[ranked[i].core] = ranked[i].distance
     end
     for core in active do
         if not wanted[core] or not validCore(core) then clear(core) end
     end
     for core in wanted do
+        local existing = active[core]
+        if existing and not decorIntact(core, existing) then clear(core) end
         if not active[core] then makeFoundation(core) end
         local decoration = active[core]
-        if decoration and (decoration.lastPose ~= core.CFrame or
-            decoration.lastSize ~= core.Size or #decoration.parts ~= PARTS_PER_CASTLE) then
-            updatePoses(core, decoration)
+        if decoration then
+            if decoration.lastPose ~= core.CFrame or decoration.lastSize ~= core.Size then
+                updatePoses(core, decoration)
+            end
+            -- Reuse the eight existing stones; no extra Part/timer/RenderStepped.
+            local distance = wanted[core]
+            local fade = math.clamp((distance - LOD_FADE_START) /
+                (MAX_DISTANCE_STUDS - LOD_FADE_START), 0, 1)
+            for _, stone in ipairs(decoration.parts) do
+                stone.Transparency = fade
+            end
         end
     end
     -- Directly enforced touch/desktop budget; no per-frame update hook.
@@ -149,30 +178,42 @@ end
 
 -- DescendantAdded may fire while streamed castle properties/ancestry are still
 -- being assigned. Record named BaseParts first, validate after 2.5s refresh.
-Workspace.DescendantAdded:Connect(function(obj)
-    if obj:IsA("BasePart") and obj.Name == "StandardCore" then
+track(Workspace.DescendantAdded:Connect(function(obj)
+    if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
-end)
-Workspace.DescendantRemoving:Connect(function(obj)
-    if candidates[obj :: any] then
+end))
+track(Workspace.DescendantRemoving:Connect(function(obj)
+    if not disposed and candidates[obj :: any] then
         candidates[obj :: BasePart] = nil
         clear(obj :: BasePart)
     end
-end)
+end))
 for _, obj in Workspace:GetDescendants() do
     if obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
 end
-player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh)
-player.CharacterAdded:Connect(function()
+track(player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh))
+track(player.CharacterAdded:Connect(function()
     task.delay(.5, refresh)
-end)
+end))
 refresh()
 task.spawn(function()
-    while script.Parent do
+    while not disposed and script.Parent do
         task.wait(REFRESH_INTERVAL)
         refresh()
     end
+end)
+
+script.Destroying:Connect(function()
+    disposed = true
+    for _, connection in ipairs(connections) do
+        connection:Disconnect()
+    end
+    table.clear(connections)
+    for core in active do
+        clear(core)
+    end
+    table.clear(candidates)
 end)
