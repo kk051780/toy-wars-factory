@@ -69,8 +69,8 @@ local function updatePoses(core: BasePart, decoration: Decor)
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .6, 0)
     -- Proportions follow actual castle-core dimensions; do not assume teams
     -- or invent a gate/hitbox location. All geometry is nonblocking.
-    local radiusX = math.clamp(core.Size.X * .5 + .75, 2.0, 12.0)
-    local radiusZ = math.clamp(core.Size.Z * .5 + .75, 2.0, 12.0)
+    local radiusX = math.clamp(core.Size.X * .5 + .75, 2.0, 64.0)
+    local radiusZ = math.clamp(core.Size.Z * .5 + .75, 2.0, 64.0)
     for side = 0, 3 do
         local angle = side * math.pi * .5
         local alongX = math.sin(angle) * radiusX
