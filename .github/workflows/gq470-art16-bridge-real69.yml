@@ -51,7 +51,7 @@ jobs:
             gh run download "$RUN" --repo "$GITHUB_REPOSITORY" --name "$ART" --dir "$ROOT/parents/$PR"
           done < "$ROOT/parents.tsv"
           python3 -B "$SCRIPT" --base "$ROOT/formal" --parents "$ROOT/parents" --out "$ROOT/candidate"
-          python3 -B "$SCRIPT" --verify "$ROOT/candidate"
+          # Pre-build verification is performed inside compose(sealed=False); seal only after actual Rojo build.
           echo ART16_16_ORIGINAL_SELECTED_PATCHES_53_SOURCE_EXACT_A_PREP
       - uses: actions/checkout@v4
         with:
@@ -119,7 +119,7 @@ jobs:
           assert len(marker_check(project_scan(root,"EGGRUMBLE_REAL69.project.json")))==17
           print("ART16_17_SOURCE_FAMILIES_AND_LEGACY48_PASS")
           PY
-      - name: Strict #420 art remains NO_GO; exact B220 packet and fresh formal head
+      - name: "Strict art 420 remains NO_GO, B220 packet and fresh formal head"
         shell: bash
         run: |
           set -euo pipefail
