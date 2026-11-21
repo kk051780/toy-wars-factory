@@ -47,6 +47,16 @@ REQUIRED = (
     'player.CharacterRemoving:Connect',
     'for core in active do clear(core) end',
     'task.wait(REFRESH_SECONDS)',
+    'local disposed = false',
+    'local trackedConnections: {RBXScriptConnection} = {}',
+    'if disposed then return end',
+    'while not disposed and script.Parent do',
+    'script.Destroying:Connect(function()',
+    'disposed = true',
+    'for _, connection in ipairs(trackedConnections) do',
+    'connection:Disconnect()',
+    'table.clear(trackedConnections)',
+    'table.clear(candidates)',
     'assert(actual * PIECES_PER_CASTLE <= MAX_PARTS)',
 )
 FORBIDDEN = (
@@ -79,6 +89,10 @@ def validate(s):
         raise ValueError("RED_PARTS_PER_APPROACH")
     if not re.search(r'for i = 1, math.min\(MAX_CASTLES, #ranked\) do', s):
         raise ValueError("RED_UNBOUNDED_CASTLE_LOD")
+    if s.count('keep(') != 7:  # Six event listeners plus the helper definition.
+        raise ValueError("RED_UNTRACKED_EVENT_LISTENER")
+    if s.count('for core in active do') != 3:  # pruning, respawn and destroy
+        raise ValueError("RED_STALE_CASTLE_DECOR")
     if len(s.encode()) > 9500:
         raise ValueError("RED_OVERSIZED_SOURCE")
     return True
@@ -123,6 +137,24 @@ class TestApproachSource(unittest.TestCase):
             ('assert(actual * PIECES_PER_CASTLE <= MAX_PARTS)', 'assert(true)'),
         )
         for before, after in mutations:
+            with self.subTest(before=before):
+                self.assertIn(before, s)
+                with self.assertRaises(ValueError):
+                    validate(s.replace(before, after, 1))
+
+    def test_teardown_mutants_fail_closed(self):
+        s = SRC.read_text(encoding="utf-8")
+        mutants = (
+            ('script.Destroying:Connect(function()', 'script:WaitForChild("Destroyed")'),
+            ('disposed = true', 'disposed = false'),
+            ('connection:Disconnect()', 'connection:Connect()'),
+            ('table.clear(trackedConnections)', '-- listener connections leaked'),
+            ('table.clear(candidates)', '-- candidate registry leaked'),
+            ('while not disposed and script.Parent do', 'while script.Parent do'),
+            ('if disposed then return end', '-- no disposed guard'),
+            ('keep(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+        )
+        for before, after in mutants:
             with self.subTest(before=before):
                 self.assertIn(before, s)
                 with self.assertRaises(ValueError):

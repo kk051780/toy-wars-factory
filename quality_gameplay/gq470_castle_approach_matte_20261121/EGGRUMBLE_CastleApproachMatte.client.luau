@@ -19,6 +19,14 @@ type Decor = { folder: Folder, pieces: {BasePart} }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
+-- A-only lifecycle fence: destroy all camera-local castle visual objects on
+-- Script reload and disconnect every Workspace/Player listener we create.
+local disposed = false
+local trackedConnections: {RBXScriptConnection} = {}
+local function keep(connection: RBXScriptConnection)
+    table.insert(trackedConnections, connection)
+end
+
 local function validCore(core: Instance): boolean
     if not core:IsA("BasePart") or core.Name ~= "StandardCore" or not core.Anchored then
         return false
@@ -131,6 +139,7 @@ local function makeApproach(core: BasePart)
 end
 
 local function refresh()
+    if disposed then return end
     local pos = playerPosition()
     local ranked: {{core: BasePart, distance: number}} = {}
     if pos and player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true
@@ -173,35 +182,49 @@ local function refresh()
 end
 
 -- StreamingEnabled and round teardown remove decorations immediately.
-Workspace.DescendantAdded:Connect(function(obj)
-    if obj:IsA("BasePart") and obj.Name == "StandardCore" then
+keep(Workspace.DescendantAdded:Connect(function(obj)
+    if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
-end)
-Workspace.DescendantRemoving:Connect(function(obj)
-    if candidates[obj :: any] then
+end))
+keep(Workspace.DescendantRemoving:Connect(function(obj)
+    if not disposed and candidates[obj :: any] then
         candidates[obj :: BasePart] = nil
         clear(obj :: BasePart)
     end
-end)
+end))
 for _, obj in Workspace:GetDescendants() do
     if obj:IsA("BasePart") and obj.Name == "StandardCore" then
         candidates[obj] = true
     end
 end
-player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh)
-player:GetAttributeChangedSignal("EGGRUMBLE_CastleApproachOff"):Connect(refresh)
-player.CharacterAdded:Connect(function()
+keep(player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh))
+keep(player:GetAttributeChangedSignal("EGGRUMBLE_CastleApproachOff"):Connect(refresh))
+keep(player.CharacterAdded:Connect(function()
     task.delay(.5, refresh)
-end)
-player.CharacterRemoving:Connect(function()
+end))
+keep(player.CharacterRemoving:Connect(function()
     -- Do not leave a ghost castle trail while the avatar respawns.
     for core in active do clear(core) end
-end)
+end))
 refresh()
 task.spawn(function()
-    while script.Parent do
+    while not disposed and script.Parent do
         task.wait(REFRESH_SECONDS)
         refresh()
     end
+end)
+
+-- Script.Destroying is distinct from CharacterRemoving. Hot reload/replacement
+-- must not retain stale geometry or closures in other clients/rounds.
+script.Destroying:Connect(function()
+    disposed = true
+    for _, connection in ipairs(trackedConnections) do
+        connection:Disconnect()
+    end
+    table.clear(trackedConnections)
+    for core in active do
+        clear(core)
+    end
+    table.clear(candidates)
 end)
