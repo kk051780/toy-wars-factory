@@ -88,6 +88,7 @@ def check_art_source(source: str) -> None:
     # source is subsequently revised by other A authors.
     demand(re.search(
         r"if not hit\.Instance\.CanCollide\s+or hit\.Instance\.Transparency >= 0\.95"
+        r"\s+or hit\.Instance\.LocalTransparencyModifier >= 0\.95"
         r"\s+or \(hit\.Instance\.Material == Enum\.Material\.Glass"
         r" and hit\.Instance\.Transparency >= 0\.35\)", source) is not None,
         "SOLID_GROUND_AND_SYNTHETIC_SEA_GUARD")
