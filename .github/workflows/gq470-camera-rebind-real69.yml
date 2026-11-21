@@ -24,7 +24,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Static safety and camera lifecycle/ownership mutation negatives
+      - name: Static camera ownership/4-second budget mutation negatives
         run: |
           set -euo pipefail
           python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_camera_rebind_source.py" "$TARGET/emit_art_report.py"
@@ -73,6 +73,23 @@ jobs:
                                  check=True,stdout=subprocess.DEVNULL)
           print("GQ470_CAMERA_REBIND_NATIVE_ORIGINAL69_PLUS_CANDIDATE70_PASS")
           PY
+      - name: Native Luau mock: real CameraSubject lifecycle / 10 ownership scenarios (NOT Studio)
+        run: |
+          set -euo pipefail
+          cmake --build "$ROOT/luau" --target Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          root=Path(os.environ["ROOT"])
+          dirname=Path(os.environ["TARGET"])
+          fixture=(dirname/"test_camera_rebind_native_fixture.luau").read_text(encoding="utf-8")
+          source=(dirname/"EGGRUMBLE_CameraRebind.client.luau").read_text(encoding="utf-8")
+          assert fixture.count("-- INSERT_ACTUAL_SOURCE_HERE")==1
+          assert "camera.CameraSubject = humanoid" in source
+          (root/"GQ470_CAMERA_MOCK_NATIVE.luau").write_text(
+              fixture.replace("-- INSERT_ACTUAL_SOURCE_HERE",source),encoding="utf-8")
+          PY
+          "$ROOT/luau/luau" "$ROOT/GQ470_CAMERA_MOCK_NATIVE.luau"
       - name: Pinned true Rojo OFF69 exact-byte and ON70 Source/Class
         run: |
           set -euo pipefail
@@ -227,7 +244,7 @@ jobs:
           echo A_SOURCE_ONLY_NATIVE_ROJO_B_PACKET_GREEN_NOT_ENGINE_NOT_ART_GO
       - uses: actions/upload-artifact@v4
         with:
-          name: GQ470-CASTLE-CAMERA-REAL70-A-CANDIDATE-NOT-FORMAL
+          name: GQ470-P0-CAMERA-REAL70-A-CANDIDATE-NOT-FORMAL
           path: |
             /tmp/gq470-camera-rebind/GQ470_CAMERA_REBIND_ON70_NOT_FORMAL.rbxlx
             /tmp/gq470-camera-rebind/on70/GQ470_CAMERA_REBIND_SOURCE_RECEIPT.json
