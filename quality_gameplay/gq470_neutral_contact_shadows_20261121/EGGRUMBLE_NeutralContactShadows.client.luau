@@ -124,6 +124,10 @@ local function tick()
         end
     end
     table.sort(nearby, function(a, b) return a.distance < b.distance end)
+    -- GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2:
+    -- Decide the full surviving set BEFORE allocating new Parts. Otherwise,
+    -- replacing ten old shadows with ten new shadows briefly doubles the budget.
+    local chosen: {{model: Model, root: BasePart, hit: RaycastResult}} = {}
     local selected: {[Model]: boolean} = {}
     local limit = math.min(MAX_SHADOWS, #nearby)
     for i = 1, limit do
@@ -131,22 +135,26 @@ local function tick()
         local hit = contact(entry.model, entry.root)
         if hit then
             selected[entry.model] = true
-            local disc = active[entry.model]
-            if not disc then
-                disc = newDisc()
-                active[entry.model] = disc
-            end
-            local radius = math.clamp(math.max(entry.root.Size.X, entry.root.Size.Z) * 1.28, 1.3, 3.0)
-            disc.Size = Vector3.new(0.055, radius, radius)
-            disc.CFrame = CFrame.new(hit.Position + hit.Normal * 0.035)
-                * CFrame.Angles(0, 0, math.rad(90))
+            table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})
         end
     end
+    -- Phase 1: reclaim stale discs; phase 2: allocate only needed replacements.
     for model, disc in pairs(active) do
         if not selected[model] then
             active[model] = nil
             disc:Destroy()
         end
+    end
+    for _, entry in ipairs(chosen) do
+        local disc = active[entry.model]
+        if not disc then
+            disc = newDisc()
+            active[entry.model] = disc
+        end
+        local radius = math.clamp(math.max(entry.root.Size.X, entry.root.Size.Z) * 1.28, 1.3, 3.0)
+        disc.Size = Vector3.new(0.055, radius, radius)
+        disc.CFrame = CFrame.new(entry.hit.Position + entry.hit.Normal * 0.035)
+            * CFrame.Angles(0, 0, math.rad(90))
     end
     task.delay(UPDATE_SECONDS, tick)
 end
