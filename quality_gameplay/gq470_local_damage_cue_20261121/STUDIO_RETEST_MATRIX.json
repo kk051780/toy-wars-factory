@@ -1,0 +1,93 @@
+{
+  "schema": "GQ470_FB015_LOCAL_TRUE_DAMAGE_ART_STUDIO_RETEST_V1",
+  "feature_id": "GQ470_FB015_TRUE_LOCAL_DAMAGE_CUE_REAL69_20261121",
+  "base_formal_head": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+  "scope": "A PRIVATE REAL70 source candidate only; no formal integration, no claimed runtime completion",
+  "original_69_sources_preserved": true,
+  "source_compile": "PASS_SOURCE_ONLY",
+  "studio_solo": "NOT_TESTED",
+  "studio_two_client": "NOT_TESTED",
+  "low_end_android_15min": "NOT_TESTED",
+  "comparison_old_new_pc_android_32": "0/32",
+  "human_pc_art_score": null,
+  "human_android_art_score": null,
+  "owner_accepted": false,
+  "art_gate": "ART_NO_GO",
+  "gameplay_gate": "PRODUCT_NO_GO",
+  "runtime_scenarios": [
+    {
+      "id": "LOCAL_DMG_01",
+      "scenario": "Valid own Humanoid 100 to 90 HP replicated by server",
+      "expected": "One subtle warm tint for <=0.25s and no GUI or new Part",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_02",
+      "scenario": "Own health 90 to 100 increases (heal)",
+      "expected": "No damage tint",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_03",
+      "scenario": "Local attack misses; target damage alone; player local health unchanged",
+      "expected": "No false local damage cue",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_04",
+      "scenario": "Own health 5 to 0 and character Died event",
+      "expected": "No post-death persistent tint",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_05",
+      "scenario": "Respawn full health after death",
+      "expected": "Old health listener gone, no spawn flash",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_06",
+      "scenario": "Two real damage ticks 0.10s apart",
+      "expected": "Second tint suppressed by 0.30s cooldown",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_07",
+      "scenario": "ReducedEffects attribute becomes true while tint active",
+      "expected": "Tint disabled immediately",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_08",
+      "scenario": "Rapid 15min solo match with many attackers",
+      "expected": "At most one local color correction effect, no crash, stable mobile FPS",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_09",
+      "scenario": "Two client TEAM and BR battles",
+      "expected": "Only actual hit defender's own camera tints, never remote spectator",
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "LOCAL_DMG_10",
+      "scenario": "Camera moves while carrying enemy egg or approaching castle",
+      "expected": "No obstructive HUD, no impact on egg objective or hit input",
+      "status": "NOT_TESTED"
+    }
+  ],
+  "mobile_targets": {
+    "device_class": "Android low-end 2–4 GB; model must be recorded",
+    "continuous_minutes": 15,
+    "median_fps_min": 30,
+    "p10_fps_min": 25,
+    "thermal_fps_drop_max": 0.2,
+    "crashes_max": 0
+  },
+  "human_art_targets": {
+    "pc_score_min": 4.5,
+    "android_score_min": 4,
+    "first_three_min_fun_min": 4
+  },
+  "next_gate": "Real Studio PC/Android reproducible runtime logs + 8 scenes x 2 devices x before/after screenshot evidence; owner human accept required"
+}
