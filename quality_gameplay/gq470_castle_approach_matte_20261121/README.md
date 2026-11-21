@@ -10,3 +10,9 @@
 - **Claim**: #218 notice [7058143033](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7058143033) is SOFT only, not `CLAIM_GRANTED`. A isolated candidate only. #220 sole authenticated writer must independently re-GET latest formal HEAD and admit only after P0 player visibility/gameplay. Never merge the entire A PR into official branch/main.
 - **Rollback**: remove optional LocalScript and rebuild; 69 original source hashes unchanged. Runtime OFF via `EGGRUMBLE_CastleApproachOff=true`.
 - **Product truth**: Studio Solo/2client, Android15, FPS/heat, 32 before/after screenshots, first3min FUN, human ART and OWNER acceptance all NOT_TESTED. PRODUCT_NO_GO/ART_NO_GO/MOBILE_NO_GO/FUN_NO_GO; OWNER_ACCEPTED=0.
+
+## 2026-11-21 combined source-author repairs (not formal adoption)
+- Rectangular castle defect discovered in stacked #990: independently calculate the X and Z face offsets; adopt its reviewed per-face geometry and nine rectangular/rotated test shapes into **this original PR #988**, without selecting a duplicate second client script. #990 stacked branch must not be separately source-selected.
+- Actual ground alignment: every 2.5 seconds cast at most 16 Touch / 24 desktop short nonmutating ground rays. Ignore castle models and own avatar; skip steep/unsampled/missing/water-adjacent ground instead of showing floating/embedded stones. This is an offline policy, not a human-tested appearance or mobile performance result.
+- Clear all local visual Parts immediately when `CharacterRemoving` fires. If the actual field is streamed back later, one bounded refresh recreates only nearby valid art. Core anchors over X/Z 126 or Y 150 studs are rejected before allocation.
+- Re-run **exact final HEAD** Native Luau, Rojo OFF69/ON70 Source/Class and tamper B220 checks after these changes. Prior source passes do not cover later HEADs.
