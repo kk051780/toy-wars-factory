@@ -17,6 +17,7 @@ local MAX_LIVE_PARTS = 6
 local MAX_PARTS_PER_STEP = 2
 local MOBILE_PARTS_PER_STEP = 1
 local LIFE_SECONDS = 0.38
+local CAMERA_FX_DISTANCE = 78
 local TOUCH = UserInputService.TouchEnabled
 
 local folder = Workspace:FindFirstChild(FOLDER_NAME)
@@ -47,6 +48,10 @@ local function tint(material: Enum.Material): Color3
 end
 
 local function emit(character: Model, root: BasePart, serial: number, waterOnly: boolean): ()
+    local camera = Workspace.CurrentCamera
+    if camera and (camera.CFrame.Position - root.Position).Magnitude > CAMERA_FX_DISTANCE then
+        return -- Distant ground cues would be invisible and waste device resources.
+    end
     local rayParams = RaycastParams.new()
     rayParams.FilterType = Enum.RaycastFilterType.Exclude
     rayParams.FilterDescendantsInstances = {character, folder :: Instance}
