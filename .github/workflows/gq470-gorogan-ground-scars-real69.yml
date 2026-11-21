@@ -1,0 +1,134 @@
+name: GQ470 REAL69 Gorogan ground scars source A only (not formal)
+on:
+  push:
+    branches:
+      - prep/gq470-gorogan-ground-scars-a-20261121
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - quality_gameplay/gq470_gorogan_ground_scars_20261121/**
+      - .github/workflows/gq470-gorogan-ground-scars-real69.yml
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  exact-real69-to-private70:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Reject synthetic PR merge SHA and mutate actual Luau source checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}" || { echo RED_CANDIDATE_HEAD_MISMATCH; exit 1; }
+          python3 -m py_compile quality_gameplay/gq470_gorogan_ground_scars_20261121/*.py
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/test_ground_scars_source.py
+
+      - name: ReGET immutable official REAL69 Place at exact head
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_OFFICIAL_HEAD_ADVANCED_REBASE_REQUIRED; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470-gorogan-official
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-gorogan-official
+          test -s /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          sha256sum /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          test "$(stat -c%s /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69_PRIVATE.rbxlx)" = 798390
+          echo "fc63171149a86f6b39779ba6ebe7e18fcb7099fbde98ad2ec33a7cb92b3a9934  /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69_PRIVATE.rbxlx" | sha256sum -c
+
+      - name: Build 69 exact original + 70 new candidate source graph without official writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/compose_ground_scars.py \
+            --original /tmp/gq470-gorogan-official --output /tmp/gq470-gorogan-candidate
+
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile real 69 originals and real 70 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import pathlib,subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=pathlib.Path("/tmp/gq470-gorogan-official")
+          candidate=pathlib.Path("/tmp/gq470-gorogan-candidate")
+          selected=[(root,69),(candidate,70)]
+          for location,count in selected:
+              files=project_scan(location,"EGGRUMBLE_REAL69.project.json")
+              assert len(files)==count
+              for item in files.values():
+                  subprocess.run(["/tmp/gq470-luau/luau-compile","--text",str(location/item["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_GOROGAN_GENUINE_NATIVE_OFF69_ON70_139_COMPILED_SOURCE_ONLY")
+          PY
+
+      - name: Pinned Rojo OFF69 byte-exact and candidate ON70 real Place/class/source
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq470-rojo.zip") as z:
+              members=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(members)==1
+              p=Path("/tmp/gq470-rojo")
+              p.write_bytes(z.read(members[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq470-rojo build /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-gorogan-off69.rbxlx
+          cmp /tmp/gq470-gorogan-off69.rbxlx /tmp/gq470-gorogan-official/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-rojo build /tmp/gq470-gorogan-candidate/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-gorogan-candidate/EGGRUMBLE_GOROGAN_SCARS_A_CANDIDATE.rbxlx
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/compose_ground_scars.py --packet /tmp/gq470-gorogan-candidate
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/compose_ground_scars.py --verify-packet /tmp/gq470-gorogan-candidate
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/compose_ground_scars.py --mutations /tmp/gq470-gorogan-candidate
+
+      - name: Official truth and candidate source receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path("/tmp/gq470-gorogan-candidate")
+          r=json.loads((root/"GQ470_GOROGAN_SOURCE_REPORT.json").read_text())
+          built=root/"EGGRUMBLE_GOROGAN_SCARS_A_CANDIDATE.rbxlx"
+          assert r["formal_integrated"] is False and r["art_gate"]=="ART_NO_GO"
+          assert r["original_sources_preserved"]==69 and r["candidate_selected_sources"]==70
+          assert r["pc_android_old_new_screenshots"]=="0/32"
+          assert r["studio_1_client"]=="NOT_TESTED" and r["android_15min"]=="NOT_TESTED"
+          r["a_candidate_private_place_bytes"]=built.stat().st_size
+          r["a_candidate_private_place_sha256"]=hashlib.sha256(built.read_bytes()).hexdigest()
+          (root/"GQ470_GOROGAN_SOURCE_REPORT.json").write_text(json.dumps(r,indent=2)+"\n")
+          print("GQ470_GOROGAN_A_ONLY_SOURCE_GREEN_ENGINE_ART_MOBILE_NOT_TESTED",r["a_candidate_private_place_bytes"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-GOROGAN-GROUNDSCARS-A-PRIVATE70-NOT-FORMAL
+          path: |
+            /tmp/gq470-gorogan-candidate/EGGRUMBLE_GOROGAN_SCARS_A_CANDIDATE.rbxlx
+            /tmp/gq470-gorogan-candidate/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-gorogan-candidate/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-gorogan-candidate/GQ470_GOROGAN_SOURCE_REPORT.json
+            /tmp/gq470-gorogan-candidate/B220_GOROGAN_SCARS_ONE_NEW_SCRIPT_A_ONLY/**
+          retention-days: 7
+          if-no-files-found: error
