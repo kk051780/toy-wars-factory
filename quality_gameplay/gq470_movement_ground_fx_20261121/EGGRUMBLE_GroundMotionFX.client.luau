@@ -32,6 +32,7 @@ end
 local liveParts = 0
 local generation = 0
 local runningConnection: RBXScriptConnection? = nil
+local swimmingConnection: RBXScriptConnection? = nil
 local diedConnection: RBXScriptConnection? = nil
 
 local function tint(material: Enum.Material): Color3
@@ -45,16 +46,22 @@ local function tint(material: Enum.Material): Color3
     return Color3.fromRGB(177, 174, 169)
 end
 
-local function emit(character: Model, root: BasePart, serial: number): ()
+local function emit(character: Model, root: BasePart, serial: number, waterOnly: boolean): ()
     local rayParams = RaycastParams.new()
     rayParams.FilterType = Enum.RaycastFilterType.Exclude
     rayParams.FilterDescendantsInstances = {character, folder :: Instance}
     rayParams.IgnoreWater = false
-    rayParams.RespectCanCollide = true
-
-    local hit = Workspace:Raycast(root.Position, Vector3.new(0, -5.8, 0), rayParams)
+    rayParams.RespectCanCollide = not waterOnly
+    local origin = if waterOnly then root.Position + Vector3.new(0, 6, 0) else root.Position
+    local direction = if waterOnly then Vector3.new(0, -10.0, 0) else Vector3.new(0, -5.8, 0)
+    local hit = Workspace:Raycast(origin, direction, rayParams)
     if hit == nil or hit.Normal.Y < 0.70 then
-        return -- Never paint air, ceilings, vertical walls or gameplay collision.
+        return -- Never paint air, ceilings or steep walls.
+    end
+    if waterOnly and hit.Material ~= Enum.Material.Water then
+        return -- No splash without a real Terrain-water surface hit.
+    elseif not waterOnly and hit.Material == Enum.Material.Water then
+        return -- Running dust never paints an uncertain water surface.
     end
     local allowed = math.min(
         if TOUCH then MOBILE_PARTS_PER_STEP else MAX_PARTS_PER_STEP,
@@ -100,6 +107,7 @@ local function bindCharacter(character: Model): ()
     generation += 1
     local token = generation
     if runningConnection then runningConnection:Disconnect() end
+    if swimmingConnection then swimmingConnection:Disconnect() end
     if diedConnection then diedConnection:Disconnect() end
 
     local humanoid = character:WaitForChild("Humanoid", 6)
@@ -109,25 +117,37 @@ local function bindCharacter(character: Model): ()
         return
     end
 
-    local currentSpeed = 0
+    local groundSpeed = 0
+    local waterSpeed = 0
     local scheduled = false
     local serial = 0
     local function pulse(): ()
-        if generation ~= token or humanoid.Health <= 0 or currentSpeed < MIN_SPEED
+        local inWater = humanoid:GetState() == Enum.HumanoidStateType.Swimming
+        local fastEnough = if inWater then waterSpeed >= 6 else groundSpeed >= MIN_SPEED
+        if generation ~= token or humanoid.Health <= 0 or not fastEnough
             or humanoid.MoveDirection.Magnitude < 0.2 then
             scheduled = false
             return
         end
-        if humanoid.FloorMaterial ~= Enum.Material.Air then
+        if inWater or humanoid.FloorMaterial ~= Enum.Material.Air then
             serial += 1
-            emit(character, root, serial)
+            emit(character, root, serial, inWater)
         end
         task.delay(STEP_SECONDS, pulse)
     end
 
     runningConnection = humanoid.Running:Connect(function(speed: number)
-        currentSpeed = speed
-        if speed >= MIN_SPEED and not scheduled then
+        groundSpeed = speed
+        if speed >= MIN_SPEED and humanoid:GetState() ~= Enum.HumanoidStateType.Swimming
+            and not scheduled then
+            scheduled = true
+            pulse()
+        end
+    end)
+    swimmingConnection = humanoid.Swimming:Connect(function(speed: number)
+        waterSpeed = speed
+        if speed >= 6 and humanoid:GetState() == Enum.HumanoidStateType.Swimming
+            and not scheduled then
             scheduled = true
             pulse()
         end
