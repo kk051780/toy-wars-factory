@@ -145,10 +145,13 @@ def compose(original: Path, destination: Path) -> dict:
         'local scene=Instance.new("Folder")',
         "scene.Name=NAME",
         'local landDock=put(scene,"PublicSeaDock"',
+        'CFrame.new(x,y+0.9,shoreZ-92)',
+        'CFrame.new(x,y+0.08,shoreZ)',
     )), "AUTHENTIC_LSS_DOCK_AND_SCENE_SOURCE")
-    require('parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"' in
-            SOURCE.read_text(encoding="utf-8"),
-            "NEW_ART_MUST_MATCH_AUTHENTIC_LSS_SCENE")
+    art_source = SOURCE.read_text(encoding="utf-8")
+    require('parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"' in art_source and
+            'local seaward = 28 + 9 * slot' in art_source,
+            "NEW_ART_MUST_MATCH_AUTHENTIC_LSS_SCENE_AND_SEAWARD")
 
     shutil.copytree(original, destination)
     project = json.loads((destination / PROJECT).read_text(encoding="utf-8"))
