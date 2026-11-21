@@ -150,6 +150,20 @@ local function attach(player, character)
             watchers[#watchers + 1] = part:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(rejectConcealment)
         end
     end
+    -- Only active near-avatar crests have watchers. A streamed R6/R15 limb
+    -- invalidates the old part listener set and is removed immediately.
+    watchers[#watchers + 1] = character.DescendantAdded:Connect(function(part)
+        if part:IsA("BasePart") and BODY_PARTS[part.Name]
+            and generations[player] == token then
+            removeMounted(player)
+        end
+    end)
+    watchers[#watchers + 1] = character.DescendantRemoving:Connect(function(part)
+        if part:IsA("BasePart") and BODY_PARTS[part.Name]
+            and generations[player] == token then
+            removeMounted(player)
+        end
+    end)
     local died = humanoid.Died:Connect(function()
         if generations[player] == token then removeMounted(player) end
     end)

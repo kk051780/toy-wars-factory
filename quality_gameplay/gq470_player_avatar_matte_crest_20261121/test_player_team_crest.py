@@ -72,6 +72,8 @@ REQUIRED = (
     'makeCrest(folder, torso, color, -1, isRed)',
     'makeCrest(folder, torso, color, 1, isRed)',
     'selected[player] ~= rec.character or not rec.folder.Parent',
+    'character.DescendantAdded:Connect(function(part)',
+    'character.DescendantRemoving:Connect(function(part)',
     'table.sort(nearby, function(a, b)',
 )
 
@@ -167,6 +169,10 @@ class AvatarTeamCrestSourceGate(unittest.TestCase):
              'if mounted[player] then attach(player, character) end'),
             ('if token ~= generations[player] or player.Character ~= character then return end',
              '-- disabled generation fence'),
+            ('character.DescendantAdded:Connect(function(part)',
+             'character.DescendantAdded:Connect(function(x)'),
+            ('character.DescendantRemoving:Connect(function(part)',
+             'character.DescendantRemoving:Connect(function(x)'),
             ('table.sort(nearby, function(a, b)', '-- removed nearest ordering'),
             ('makeCrest(folder, torso, color, 1, isRed)',
              'makeCrest(folder, torso, color, -1, isRed)'),
