@@ -72,9 +72,12 @@ local function positionStones(floor: BasePart, decor: Decor)
             local lateral = (if section == 1 then -.27 else .27) * along
             local edge = across * .5 + .17
             local stone = decor.parts[index]
+            -- Opposed facets form a stone-cut seam, not eight identical ramps.
+            local facetYaw = if section == 1 then 0 else math.pi
             stone.Size = Vector3.new(span, .85, .7)
             stone.CFrame = floor.CFrame * CFrame.Angles(0, yaw, 0)
                 * CFrame.new(lateral, floor.Size.Y * .5 - .46, edge)
+                * CFrame.Angles(0, facetYaw, 0)
             stone.Color = if (side + section) % 2 == 0 then STONE_A else STONE_B
         end
     end
