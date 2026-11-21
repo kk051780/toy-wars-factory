@@ -51,6 +51,7 @@ def check(root: Path, packet_dir: Path | None = None) -> dict:
          data.get("formal_adopted") is False and
          data.get("owner_accepted") is False and
          data.get("requires_writer_220_fresh_nonforce_cas") is True and
+         data.get("quality_overlay") == rec[NOTE].get("quality_overlay") and
          data.get("studio") == "NOT_TESTED" and
          data.get("android") == "NOT_TESTED" and
          data.get("art_images") == "0/32" and
