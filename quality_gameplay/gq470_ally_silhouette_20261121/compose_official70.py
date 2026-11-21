@@ -22,7 +22,7 @@ RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette"
 TARGET = "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette.client.luau"
-FEATURE = "GQ470_FB015_TRUE_ALLY_SILHOUETTE_REAL69_20261121"
+FEATURE = "GQ470_FB015_ALLY_SILHOUETTE_REAL69_20261121"
 THIS = Path(__file__).resolve().parent
 SOURCE = THIS / "EGGRUMBLE_AllySilhouette.client.luau"
 sys.path.insert(0, str(THIS.parent / "gq8_rc85_rc86_real68_nonloss_20261120"))
