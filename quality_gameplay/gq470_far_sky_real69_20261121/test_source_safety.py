@@ -33,7 +33,7 @@ def validate(text: str) -> None:
         'Enum.Material.Neon', 'RemoteEvent', 'RemoteFunction',
         'RunService', 'Heartbeat', 'RenderStepped', '.Touched:',
         'while true', 'task.spawn', 'ParticleEmitter', 'PointLight',
-        'Lighting', 'Humanoid', 'TakeDamage', 'DataStore', 'MarketplaceService',
+        'Lighting', 'KeyboardEnabled', 'Humanoid', 'TakeDamage', 'DataStore', 'MarketplaceService',
     )
     executable = "\n".join(line.split("--", 1)[0] for line in text.splitlines())
     for word in forbidden:
