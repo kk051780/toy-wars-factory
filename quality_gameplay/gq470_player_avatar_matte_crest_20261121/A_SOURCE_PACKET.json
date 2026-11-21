@@ -1,0 +1,42 @@
+{
+  "schema": "GQ470_FB015_PLAYER_AVATAR_MATTE_TEAM_CREST_A_SOURCE_V1",
+  "scope": "A_PREP_SOURCE_ONLY_NOT_FORMAL_RC",
+  "feature_id": "GQ470_FB015_PLAYER_AVATAR_TEAM_READABILITY_20261121",
+  "source_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest",
+  "source_class": "LocalScript",
+  "source_repo_path": "quality_gameplay/gq470_player_avatar_matte_crest_20261121/EGGRUMBLE_PlayerTeamCrest.client.luau",
+  "source_blob_sha": "67b5f11dc7e09d15915b3ea6a1a06d5aa359c2da",
+  "base_official_rc": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+  "base_selected_source_count": 69,
+  "candidate_added_optional_source_count": 1,
+  "original_selected_sources_modified": 0,
+  "art_constraints": {
+    "wedge_part_per_character": 2,
+    "material": "SmoothPlastic",
+    "neon": false,
+    "particles": false,
+    "dynamic_lights": false,
+    "fully_client_owned": true,
+    "lod_studs": 66,
+    "lod_poll_seconds": 0.75,
+    "no_per_frame_heartbeat": true
+  },
+  "player_bug_364": "NOT_FIXED_BY_THIS_VISUAL",
+  "source_qa": "PENDING_GITHUB_ACTIONS",
+  "native_luau": "NOT_TESTED",
+  "rojo_place": "NOT_TESTED",
+  "studio_solo": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "human_art": "NOT_TESTED",
+  "owner_acceptance": false,
+  "decision": "DEFER_UNTIL_910_PLAYABLE_P0_AND_ART16",
+  "rollback": "Omit this one optional LocalScript route; original selected REAL69 unchanged.",
+  "forbidden": [
+    "Formal RC direct write",
+    "Roblox publishing",
+    "unapproved paid features",
+    "server CharacterAutoLoads/LoadCharacter changes",
+    "duplicate UI/Host/Score/Remote"
+  ]
+}
