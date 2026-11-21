@@ -9,6 +9,9 @@ local UserInputService = game:GetService("UserInputService")
 local PLAYER = Players.LocalPlayer
 local TOUCH = UserInputService.TouchEnabled
 local MAX_SHADOWS = if TOUCH then 6 else 10
+-- Keep the visual cap, but skip airborne/non-grounded neighbours within
+-- a separate constant raycast-probe budget.
+local MAX_GROUND_PROBES = MAX_SHADOWS * 2
 local MAX_DISTANCE = if TOUCH then 55 else 72
 local UPDATE_SECONDS = if TOUCH then 0.95 else 0.75
 local RESCAN_SECONDS = 3.8
@@ -129,8 +132,13 @@ local function tick()
     -- replacing ten old shadows with ten new shadows briefly doubles the budget.
     local chosen: {{model: Model, root: BasePart, hit: RaycastResult}} = {}
     local selected: {[Model]: boolean} = {}
-    local limit = math.min(MAX_SHADOWS, #nearby)
+    -- GQ470_GROUNDED_CONTACT_BACKFILL_V3: failed ground probes do not
+    -- consume one of six/ten slots; <=12 Touch / <=20 PC probes per tick.
+    local limit = math.min(MAX_GROUND_PROBES, #nearby)
     for i = 1, limit do
+        if #chosen >= MAX_SHADOWS then
+            break
+        end
         local entry = nearby[i]
         local hit = contact(entry.model, entry.root)
         if hit then
