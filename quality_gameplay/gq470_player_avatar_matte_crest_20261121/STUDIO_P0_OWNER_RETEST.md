@@ -34,6 +34,17 @@ P0修正は唯一の正規writer #220が最新正式HEADと権限を確認し、
 
 肩章ARTの別ゲートは `ART_32_IMAGE_RETEST_MATRIX.json`：PC/Android × R6/R15 × RED/BLUE × 20/75stud = 16条件の旧新ペア32枚、現在**0/32**。Android 15分・FPS/熱、初見3分FUN、アート競合比較・Owner受入は **NOT_TESTED / ART_NO_GO** のままです。
 
+## #976 肩章 REWORK 後の追加検査（静的修正は実機証明ではない）
+
+修正ソースは「透明化時は肩章ゼロ」「遠距離では透明なPartを残さずゼロ」「近距離の実生成個数 Touch 最大2人=4 WedgeParts / PC最大3人=6 WedgeParts」を目標とする。これらは**コードの制約値**であり、Studio/Androidで実測済みとは言わない。キャラ未表示P0が解消するまでは初回導入しない。
+
+- **2クライアント R6/R15・RED/BLUE**：敵／味方を66stud以内・外側に置き、距離外の肩章Partが実際に0、戻した時に新たに生成されることをExplorerとクライアントで確認する。赤は横幅広、青は縦に高い輪郭を画面で比較する。
+- **暗殺者ステルス**：Player・CharacterそれぞれのStealthed/IsInvisible/AssassinCloaked/EGGRUMBLE_StealthedのONで装飾が即時破棄され、敵から位置が漏れないことを確認。R6のLeft Arm/Right Arm/Left Leg/Right Leg、R15手足のTransparency・LocalTransparencyModifier 0.5以上でも同様。OFF→近距離復帰時のみ復元。
+- **最大負荷**：多数のプレイヤーを同画角に入れてTouchで2人/4Part・PCで3人/6Partを超えない。キャラ削除・死亡・チーム切替・再出現・Streaming・減員・カメラ消失時のパーツと監視接続残留がないか確認する。
+- **優先度と重複**：#975（近くの味方Highlight）と#976（両陣営肩章）は競合する代替案。実画像・可読性・Android FPSで **どちらか一方または両方却下** を#250が決める。P0不可視/卵→城→得点→勝敗が未解決なら#976はDEFER。どちらも公式RCにはまだ採用しない。
+
+RETEST記録欄：R6/R15 / Team / CameraDistance / CloakAttribute / BodyAlpha / Touch / CountClientWedges / CleanupBeforeAfter / FPS / StudioOutput / TestedPlaceSHA / EvidenceLink / OWNER_ACCEPTED。空欄は**NOT_TESTED**、0/32画像なら **ART_NO_GO**。
+
 ## 結果を記録する最小セット
 
 ```text
