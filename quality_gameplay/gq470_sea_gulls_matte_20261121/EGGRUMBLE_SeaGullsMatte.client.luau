@@ -24,6 +24,8 @@ local localFolder: Folder? = nil
 local birds: {Bird} = {}
 local activeTweens: {Tween} = {}
 local phase = 0
+local destroyed = false
+local externalConnections: {RBXScriptConnection} = {}
 
 local function validDock(obj: Instance): boolean
     -- Only the genuine LSS arena scene, never an unrelated similarly named part.
@@ -82,8 +84,10 @@ local function flightFrame(dock: BasePart, slot: number, t: number): CFrame
     -- Source-owned LSS puts PublicSeaDock at shoreZ-92 and water at shoreZ:
     -- positive local Z faces the coastal water, negative Z would be inland.
     local seaward = 28 + 9 * slot + math.sin(t * .67 + slot) * 3.1
+    -- Gentle seven-degree roll during the glide adds silhouette life without a new Part.
+    local bank = math.rad(math.sin(t * .82 + slot * 1.37) * 7)
     return dock.CFrame * CFrame.new(lateral, height, seaward)
-        * CFrame.Angles(0, math.rad((slot % 2 == 0) and -13 or 11), 0)
+        * CFrame.Angles(0, math.rad((slot % 2 == 0) and -13 or 11), bank)
 end
 
 local function makeBird(dock: BasePart, folder: Folder, slot: number): Bird
@@ -124,6 +128,7 @@ local function discoverClosestDock(): BasePart?
 end
 
 local function refresh()
+    if destroyed then return end -- delayed tasks cannot resurrect geometry after teardown.
     local dock = discoverClosestDock()
     if dock == nil then clear(); return end
     if dock ~= activeDock or localFolder == nil then
@@ -149,43 +154,67 @@ local function refresh()
         Enum.EasingDirection.InOut, 0, false, 0)
     for _, bird in birds do
         local target = flightFrame(dock, bird.slot, phase)
+        -- Mirrored wingtip glide, bounded to eight degrees, using the same three Tweens.
+        local wingGlide = math.rad(math.sin(phase * 1.35 + bird.slot * 1.75) * 8)
         for i, part in bird.parts do
-            local tween = TweenService:Create(part, style, {CFrame = target * bird.offsets[i]})
+            local offset = bird.offsets[i]
+            if i == 2 then
+                offset = offset * CFrame.Angles(0, 0, wingGlide)
+            elseif i == 3 then
+                offset = offset * CFrame.Angles(0, 0, -wingGlide)
+            end
+            local tween = TweenService:Create(part, style, {CFrame = target * offset})
             table.insert(activeTweens, tween)
             tween:Play()
         end
     end
 end
 
--- Register once; allow streaming to add/remove the actual dock later.
-Workspace.DescendantAdded:Connect(function(obj)
+-- Register once; disconnect externally owned listeners on Script.Destroying.
+-- Never recreate Parts after delayed callbacks or the slow tick wakes up.
+table.insert(externalConnections, Workspace.DescendantAdded:Connect(function(obj)
     if obj:IsA("BasePart") and obj.Name == "PublicSeaDock" then
         docks[obj] = true
     end
-end)
-Workspace.DescendantRemoving:Connect(function(obj)
+end))
+table.insert(externalConnections, Workspace.DescendantRemoving:Connect(function(obj)
     if docks[obj :: any] then
         docks[obj :: BasePart] = nil
         if activeDock == obj then clear() end
     end
-end)
+end))
 for _, obj in Workspace:GetDescendants() do
     if obj:IsA("BasePart") and obj.Name == "PublicSeaDock" then
         docks[obj] = true
     end
 end
-localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
+table.insert(externalConnections, localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
     if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then clear()
     else refresh() end
-end)
-localPlayer.CharacterRemoving:Connect(clear)
-localPlayer.CharacterAdded:Connect(function()
+end))
+table.insert(externalConnections, localPlayer.CharacterRemoving:Connect(clear))
+table.insert(externalConnections, localPlayer.CharacterAdded:Connect(function()
     task.delay(.6, refresh)
+end))
+local function shutdown()
+    if destroyed then return end
+    destroyed = true
+    for _, connection in externalConnections do connection:Disconnect() end
+    table.clear(externalConnections)
+    clear() -- cancel Tweens and destroy all 6/9 client-only pieces synchronously.
+    table.clear(docks)
+end
+script.Destroying:Connect(shutdown)
+-- An unparented LocalScript may stop executing without Destroying being called.
+-- Tear down player/workspace-owned connections in both lifecycle paths.
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then shutdown() end
 end)
 refresh()
 task.spawn(function()
-    while script.Parent ~= nil do
+    while not destroyed and script.Parent ~= nil do
         task.wait(UPDATE_SECONDS)
+        if destroyed then break end
         refresh()
     end
     clear()
