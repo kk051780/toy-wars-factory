@@ -36,7 +36,7 @@ def gate(s: str) -> None:
         'script.AncestryChanged:Connect(function(_, parent)',
         'if parent == nil then shutdown() end',
         'local function shutdown()',
-        'if destroyed then return end'
+        'if destroyed then return end',
         'local destroyed = false', 'local externalConnections: {RBXScriptConnection} = {}',
         'if destroyed then return end -- delayed tasks cannot resurrect geometry after teardown.',
         'if destroyed then return end', 'if destroyed then break end',
