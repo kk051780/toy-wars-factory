@@ -13,6 +13,11 @@ local OFFICIAL_TEAM_COLORS = {
     BLUE = Color3.fromRGB(70, 122, 176),
 }
 
+local UserInputService = game:GetService("UserInputService")
+local MAX_REMOTE_CRESTS = if UserInputService.TouchEnabled then 2 else 3
+local STEALTH_FLAGS = { "Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed" }
+local PART_TRANSPARENCY_LIMIT = 0.35
+
 local mounted = {}
 local subscriptions = {}
 local generations = {}
@@ -23,12 +28,43 @@ local function teamColor(player)
     return OFFICIAL_TEAM_COLORS[team.Name]
 end
 
+local function hiddenAvatar(player, character)
+    -- Never add an opaque shoulder silhouette to an invisible R6/R15 avatar.
+    for _, flag in ipairs(STEALTH_FLAGS) do
+        if player:GetAttribute(flag) == true or character:GetAttribute(flag) == true then
+            return true
+        end
+    end
+    local bodyCount = 0
+    for _, child in ipairs(character:GetChildren()) do
+        if child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" then
+            bodyCount += 1
+            if child.Transparency >= PART_TRANSPARENCY_LIMIT
+                or child.LocalTransparencyModifier >= PART_TRANSPARENCY_LIMIT then
+                return true
+            end
+        end
+    end
+    -- Character still streaming or a rig with no visible body: fail closed.
+    return bodyCount == 0
+end
+
+local function clearPieces(rec)
+    if rec.watchers then
+        for _, conn in ipairs(rec.watchers) do conn:Disconnect() end
+        rec.watchers = nil
+    end
+    if rec.folder then rec.folder:Destroy() end
+    rec.folder = nil
+    rec.pieces = nil
+end
+
 local function removeMounted(player)
     local rec = mounted[player]
     mounted[player] = nil
     if not rec then return end
     if rec.died then rec.died:Disconnect() end
-    if rec.folder and rec.folder.Parent then rec.folder:Destroy() end
+    clearPieces(rec)
 end
 
 local function makeCrest(folder, torso, color, side, isRed)
@@ -67,7 +103,7 @@ local function attach(player, character)
     generations[player] = token
     removeMounted(player)
 
-    -- CharacterAdded is only an observation: never call LoadCharacter or change spawn.
+    -- Observe the existing avatar; never alter spawn, camera or its Humanoid.
     local humanoid = character:WaitForChild("Humanoid", 8)
     local root = character:WaitForChild("HumanoidRootPart", 8)
     local torso
@@ -79,29 +115,61 @@ local function attach(player, character)
     if token ~= generations[player] or player.Character ~= character then return end
     if not humanoid or not root or not torso or humanoid.Health <= 0 then return end
     if not torso:IsA("BasePart") or not root:IsA("BasePart") then return end
-    local color = teamColor(player)
-    if not color then return end
-    local isRed = player.Team ~= nil and player.Team.Name == "RED"
 
+    -- Merely register the rig. No WedgePart exists until this player is
+    -- actually selected by the distance/visibility/part-budget sweep.
+    local rec = {
+        humanoid = humanoid, root = root, torso = torso,
+        character = character, folder = nil, pieces = nil, watchers = nil,
+    }
+    rec.died = humanoid.Died:Connect(function()
+        if generations[player] == token then removeMounted(player) end
+    end)
+    mounted[player] = rec
+end
+
+local function watchActiveVisibility(player, rec)
+    local function dropIfHidden()
+        if mounted[player] == rec and
+            (hiddenAvatar(player, rec.character) or not teamColor(player)) then
+            clearPieces(rec)
+        end
+    end
+    rec.watchers = {}
+    -- Only the 2/3 closest drawn remotes (plus self) have these watchers.
+    -- Character/Player flag changes remove a crest immediately, not 0.75s later.
+    for _, owner in ipairs({player, rec.character}) do
+        for _, flag in ipairs(STEALTH_FLAGS) do
+            table.insert(rec.watchers, owner:GetAttributeChangedSignal(flag):Connect(dropIfHidden))
+        end
+    end
+    -- Both R6 and R15 partial-limb invisibility must not leave crests visible.
+    for _, limb in ipairs(rec.character:GetChildren()) do
+        if limb:IsA("BasePart") and limb.Name ~= "HumanoidRootPart" then
+            table.insert(rec.watchers,
+                limb:GetPropertyChangedSignal("Transparency"):Connect(dropIfHidden))
+            table.insert(rec.watchers,
+                limb:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(dropIfHidden))
+        end
+    end
+    dropIfHidden() -- close the tiny gap between eligibility test and listeners
+end
+
+local function showPieces(player, rec)
+    if rec.pieces then return end
+    if rec.character ~= player.Character or not teamColor(player) then return end
+    if hiddenAvatar(player, rec.character) then return end
     local folder = Instance.new("Folder")
     folder.Name = CREST_NAME
-    folder.Parent = character
-    local pieces = {
-        makeCrest(folder, torso, color, -1, isRed),
-        makeCrest(folder, torso, color, 1, isRed),
+    folder.Parent = rec.character
+    local color = teamColor(player)
+    local isRed = player.Team ~= nil and player.Team.Name == "RED"
+    rec.folder = folder
+    rec.pieces = {
+        makeCrest(folder, rec.torso, color, -1, isRed),
+        makeCrest(folder, rec.torso, color, 1, isRed),
     }
-    local died = humanoid.Died:Connect(function()
-        if generations[player] == token then
-            removeMounted(player)
-        end
-    end)
-    mounted[player] = {
-        folder = folder,
-        pieces = pieces,
-        root = root,
-        character = character,
-        died = died,
-    }
+    watchActiveVisibility(player, rec)
 end
 
 local function register(player)
@@ -115,14 +183,13 @@ local function register(player)
         removeMounted(player)
     end)
     conns[#conns + 1] = player:GetPropertyChangedSignal("Team"):Connect(function()
-        -- Rebuild on actual team changes; never recolor an opponent with a stale team.
+        -- Team changes clear old colors immediately, before async reattach.
+        removeMounted(player)
         local character = player.Character
         if character then task.spawn(attach, player, character) end
     end)
     subscriptions[player] = conns
-    if player.Character then
-        task.spawn(attach, player, player.Character)
-    end
+    if player.Character then task.spawn(attach, player, player.Character) end
 end
 
 local function unregister(player)
@@ -138,26 +205,60 @@ end
 
 Players.PlayerAdded:Connect(register)
 Players.PlayerRemoving:Connect(unregister)
-for _, player in ipairs(Players:GetPlayers()) do
-    register(player)
-end
+for _, player in ipairs(Players:GetPlayers()) do register(player) end
 
--- Single low-frequency sweep; no Heartbeat/RenderStepped, particles or light sources.
+localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
+    if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then
+        for _, rec in pairs(mounted) do clearPieces(rec) end
+    end
+end)
+
+-- One throttled camera-distance sweep. Create actual Parts for no more than
+-- 2 remote avatars on touch or 3 on desktop, plus at most the local avatar.
+-- Far/stealthed characters have ZERO invisible retained WedgeParts.
 task.spawn(function()
     while true do
         local camera = workspace.CurrentCamera
         local cameraPosition = camera and camera.CFrame.Position
+        local candidates = {}
         for player, rec in pairs(mounted) do
-            if rec.character ~= player.Character or not rec.folder.Parent then
+            if rec.character ~= player.Character or not rec.character.Parent
+                or not rec.root.Parent or not rec.torso.Parent
+                or rec.humanoid.Health <= 0 then
                 removeMounted(player)
             else
-                local near = player == localPlayer
-                if not near and cameraPosition and rec.root.Parent then
-                    near = (cameraPosition - rec.root.Position).Magnitude <= LOD_STUDS
+                local valid = cameraPosition ~= nil and teamColor(player) ~= nil
+                    and localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true
+                local distance = math.huge
+                if valid then
+                    distance = (cameraPosition - rec.root.Position).Magnitude
+                    valid = distance <= LOD_STUDS
                 end
-                for _, piece in ipairs(rec.pieces) do
-                    piece.Transparency = near and 0.04 or 1
+                if valid then valid = not hiddenAvatar(player, rec.character) end
+                if valid then
+                    table.insert(candidates, {player = player, rec = rec, distance = distance})
+                else
+                    clearPieces(rec)
                 end
+            end
+        end
+        table.sort(candidates, function(a, b)
+            if (a.player == localPlayer) ~= (b.player == localPlayer) then
+                return a.player == localPlayer
+            end
+            if a.distance ~= b.distance then return a.distance < b.distance end
+            return a.player.UserId < b.player.UserId
+        end)
+        local remotesDrawn = 0
+        for _, candidate in ipairs(candidates) do
+            local player, rec = candidate.player, candidate.rec
+            if player == localPlayer then
+                showPieces(player, rec)
+            elseif remotesDrawn < MAX_REMOTE_CRESTS then
+                showPieces(player, rec)
+                if rec.pieces then remotesDrawn += 1 end
+            else
+                clearPieces(rec)
             end
         end
         task.wait(LOD_POLL_SECONDS)
