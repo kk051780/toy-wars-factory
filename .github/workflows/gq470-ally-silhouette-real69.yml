@@ -118,7 +118,7 @@ jobs:
           print("GQ470_ALLY_ROJO_OFF69_EXACT_ON70_SOURCE_CLASS_PASS")
           print("CANDIDATE_PRIVATE_PLACE_BYTES", (root/"GQ470_ALLY_ON70_NOT_FORMAL.rbxlx").stat().st_size)
           PY
-      - name: Verify exact one-client B220 source-select packet and 5 fail-closed mutants
+      - name: Verify exact one-client B220 source-select packet and 7 fail-closed mutants
         run: |
           set -euo pipefail
           python3 "$TARGET/compose_official70.py" --export-b "$ROOT/on70" \
@@ -141,6 +141,8 @@ jobs:
             ("art_status","ART_GO"),
             ("new_source_sha256","bad-sha"),
             ("original_selected_sources_preserved",1),
+            ("exclusive_alternative_route","StarterPlayer/StarterPlayerScripts/Forged"),
+            ("exclusive_alternative_pr",0),
           ]
           for field,value in tests:
               try:
@@ -159,7 +161,7 @@ jobs:
               else: raise AssertionError("MUTANT_UNEXPECTED_PACKET_FILE")
           finally: extra.unlink()
           verify_b(candidate,place)
-          print("GQ470_ALLY_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
+          print("GQ470_ALLY_B220_SEVEN_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
           PY
       - name: "ART #420 honest PC/Android 32 screenshot and FUN source-only audit"
         run: |
