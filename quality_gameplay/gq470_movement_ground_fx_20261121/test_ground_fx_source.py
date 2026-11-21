@@ -53,8 +53,8 @@ def validate(source: str) -> None:
         "LIFE_SECONDS": "0.38",
     }
     for name, value in numeric_contract.items():
-        if not re.search(r"(?m)^\\s*local " + name + r"\\s*=\\s*" +
-                         re.escape(value) + r"\\s*$", code):
+        if not re.search(r"(?m)^\s*local " + name + r"\s*=\s*" +
+                         re.escape(value) + r"\s*$", code):
             raise ValueError("RED_GROUND_FX_NUMERIC_BUDGET:" + name)
     forbidden = (
         "RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
