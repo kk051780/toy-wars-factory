@@ -14,7 +14,8 @@ local MAX_DISTANCE = 155
 -- Matte stones gradually disappear at the outer LOD edge.
 local FADE_START = 125
 local REFRESH_SECONDS = 2.5
-local OPACITY_SECONDS = 0.2 -- cheap local alpha only; no new raycasts
+-- Cheap local alpha-only refresh; no raycasts or scene allocations.
+local OPACITY_SECONDS = 0.2
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
 
