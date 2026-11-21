@@ -2,7 +2,7 @@
 
 **Purpose:** make nearby teammates identifiable in the crowded two-team egg-and-castle brawl without filling the HUD or revealing enemy/Assassin stealth through walls. A discrete, desaturated rim follows only up to three nearby, alive, visible allied *player* characters within 45 studs, with occluded depth mode. No bots, parts, damage, HP, scoring, Remote, server, Store or gameplay authority.
 
-**Non-overlap:** #970/#973 existing 16-source art composite, #960 minimap team pins, #957 castle guards, #924 bot overhead labels, #972 self-damage pulse, #968 running dust. This one new player-only LocalScript has its own selected route `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette`. It never edits those existing sources.
+**Non-overlap:** #970/#973 existing 16-source art composite, #960 minimap team pins, #957 castle guards, #924 bot overhead labels, #972 self-damage pulse, #968 running dust. **Alternative visual competitor:** PR #976 2-Part/avatar team-crests address the *same player recognition moment*. Do not deploy both; a hard conflict check rejects the #976 client runtime route in the input profile and the B220 exact source packet declares its exclusive alternative. This one new player-only LocalScript has its own selected route `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette`. It never edits those existing sources.
 
 **Limits:** `MAX_ALLIES=3`, scan every 0.75s (no RenderStepped), occluded only, fill invisible, outline 68% transparent, no added Parts or UI, cleanup on death/despawn/team change/leave and reduced-effects flag. A teammate wearing stealth/invisibility is excluded; enemies are never highlighted. ReducedEffects attribute `EGGRUMBLE_ReducedEffects` or optional `GQ470_DisableAllyOutline` disables the cue.
 
