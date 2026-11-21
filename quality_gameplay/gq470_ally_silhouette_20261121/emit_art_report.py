@@ -64,7 +64,13 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
         and choice["option_975"]["status"] == "NOT_TESTED"
         and choice["option_976"]["status"] == "NOT_TESTED"
         and choice["option_975"]["median_fps"] is None
-        and choice["option_976"]["median_fps"] is None,
+        and choice["option_976"]["median_fps"] is None
+        and choice["option_975"]["pc_human_score"] is None
+        and choice["option_976"]["pc_human_score"] is None
+        and choice["option_975"]["android_human_score"] is None
+        and choice["option_976"]["android_human_score"] is None
+        and choice["option_975"]["artifact"] is None
+        and choice["option_976"]["artifact"] is None,
         "NO_UNMEASURED_ART_ALTERNATIVE_CHOICE"
     )
     shots = [
