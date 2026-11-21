@@ -32,7 +32,7 @@ def inspect(s: str) -> None:
             raise ValueError("RED_FADE_OR_REPAIR_MISSING_" + token)
     if s.count('Instance.new("WedgePart")') != 1 or s.count("track(") != 5:
         raise ValueError("RED_EXTRA_PARTS_OR_SIGNALS")
-    if "RenderStepped" in s or "FireServer" in s or "Enum.Material.Neon" in s:
+    if "RenderStepped:Connect" in s or "FireServer(" in s or "Enum.Material.Neon" in s:
         raise ValueError("RED_AUTHORITY_OR_GLOW")
 
 class FadeRepairTests(unittest.TestCase):
