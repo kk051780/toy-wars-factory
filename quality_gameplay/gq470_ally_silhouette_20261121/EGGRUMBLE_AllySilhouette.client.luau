@@ -43,7 +43,9 @@ local function isVisibleAlly(player, localRoot, localTeam)
     if character:GetAttribute("Stealthed") == true
         or character:GetAttribute("IsInvisible") == true
         or character:GetAttribute("AssassinCloaked") == true
-        or character:GetAttribute("EGGRUMBLE_Stealthed") == true then
+        or character:GetAttribute("EGGRUMBLE_Stealthed") == true
+        or player:GetAttribute("AssassinCloaked") == true
+        or player:GetAttribute("EGGRUMBLE_Stealthed") == true then
         return nil
     end
     local humanoid = character:FindFirstChildOfClass("Humanoid")
