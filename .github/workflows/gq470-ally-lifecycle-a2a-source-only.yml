@@ -1,0 +1,36 @@
+name: GQ470 ally lifecycle A-to-A source tests (no private artifact)
+on:
+  pull_request:
+    branches:
+      - feature/gq470-ally-silhouette-real69-20261121
+    paths:
+      - 'quality_gameplay/gq470_ally_silhouette_20261121/**'
+      - '.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml'
+  push:
+    branches:
+      - quality/gq470-ally-outline-teardown-20261121-a01
+    paths:
+      - 'quality_gameplay/gq470_ally_silhouette_20261121/**'
+      - '.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml'
+permissions:
+  contents: read
+jobs:
+  local-source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout without persisting credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compile Python source gate and execute actual negative-mutation suite
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_ally_silhouette_20261121/test_ally_silhouette_source.py
+          python3 -m unittest discover -s quality_gameplay/gq470_ally_silhouette_20261121 -p 'test_ally_silhouette_source.py' -v
+      - name: Confirm no formal game files were touched
+        run: |
+          set -euo pipefail
+          git diff --name-only HEAD~1 HEAD | grep -v -E '^quality_gameplay/gq470_ally_silhouette_20261121/|^\.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml$' >/tmp/gq470_unexpected || true
+          test ! -s /tmp/gq470_unexpected
+          echo A_TO_A_SOURCE_ONLY_NOT_NATIVE_NOT_ROJO_NOT_STUDIO
