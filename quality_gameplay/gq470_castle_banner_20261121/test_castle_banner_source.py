@@ -40,7 +40,7 @@ def validate(s: str) -> None:
     for marker in markers:
         # Numeric budget declarations need whole-line matching: 4 must not accept 400.
         count = (len(re.findall(r"(?m)^" + re.escape(marker) + r"\s*$", s))
-                 if marker.startswith("local MAX_") else s.count(marker))
+                 if marker.startswith(("local MAX_", "local NEARER_")) else s.count(marker))
         if count != 1:
             raise ValueError("RED_BANNER_CONTRACT_" + marker)
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
