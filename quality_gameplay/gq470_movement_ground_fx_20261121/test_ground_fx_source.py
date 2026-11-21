@@ -79,6 +79,8 @@ def validate(source: str) -> None:
         raise ValueError("RED_GROUND_FX_UNBOUNDED_CODE")
     if source.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_GROUND_FX_MULTIPLE_FACTORY_SITES")
+    if code.count("if swimmingConnection then swimmingConnection:Disconnect() end") != 2:
+        raise ValueError("RED_GROUND_FX_SWIM_RESPAWN_CONNECTION_LEAK")
 
 
 class GroundMotionSourceGate(unittest.TestCase):
@@ -107,6 +109,8 @@ class GroundMotionSourceGate(unittest.TestCase):
             ("waterSpeed >= 6", "waterSpeed >= 0"),
             ("hit.Material ~= Enum.Material.Water",
              "hit.Material == Enum.Material.Water"),
+            ("if swimmingConnection then swimmingConnection:Disconnect() end",
+             "if swimmingConnection then swimmingConnection = nil end"),
             ("task.delay(STEP_SECONDS, pulse)", "pulse()"),
             ("generation ~= token", "false"),
         ]
