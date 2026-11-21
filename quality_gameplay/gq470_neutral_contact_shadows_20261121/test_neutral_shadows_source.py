@@ -10,6 +10,10 @@ MARKERS = [
  'local MAX_DISTANCE = if TOUCH then 55 else 72',
  'local UPDATE_SECONDS = if TOUCH then 0.95 else 0.75',
  'local RESCAN_SECONDS = 3.8',
+ 'local MAX_GROUND_PROBES = MAX_SHADOWS * 2',
+ 'GQ470_GROUNDED_CONTACT_BACKFILL_V3',
+ 'local limit = math.min(MAX_GROUND_PROBES, #nearby)',
+ 'if #chosen >= MAX_SHADOWS then',
  'local MIN_GROUND_NORMAL = 0.72',
  'local SHADOW_TRANSPARENCY = 0.73',
  'EGGRUMBLE_NeutralSpecies',
@@ -19,7 +23,7 @@ MARKERS = [
  'typeof(species) == "string"',
  'humanoid.Health > 0',
  'table.sort(nearby',
- 'math.min(MAX_SHADOWS, #nearby)',
+ 'math.min(MAX_GROUND_PROBES, #nearby)',
  'Workspace:Raycast',
  'ray.IgnoreWater = false',
  'ray.RespectCanCollide = true',
@@ -68,6 +72,21 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_PART_FACTORY")
     # Reject the transient Android Part-budget spike: retiring the old
     # selected set MUST happen before any next selected Part allocation.
+    # Ground-only fallback may never become an unbounded Raycast storm.
+    if source.count("GQ470_GROUNDED_CONTACT_BACKFILL_V3") != 1:
+        raise ValueError("RED_NEUTRAL_MISSING_GROUND_BACKFILL")
+    if source.count("local MAX_GROUND_PROBES = MAX_SHADOWS * 2") != 1 or (
+        source.count("local limit = math.min(MAX_GROUND_PROBES, #nearby)") != 1
+        or source.count("if #chosen >= MAX_SHADOWS then") != 1
+        or source.count("contact(entry.model, entry.root)") != 1
+    ):
+        raise ValueError("RED_NEUTRAL_UNBOUNDED_GROUND_PROBES")
+    selected_block = source.split("GQ470_GROUNDED_CONTACT_BACKFILL_V3", 1)[1].split("-- Phase 1:", 1)[0]
+    if not re.search(
+        r"for i = 1, limit do\s+if #chosen >= MAX_SHADOWS then\s+break\s+end\s+local entry = nearby\[i\]",
+        selected_block,
+    ):
+        raise ValueError("RED_NEUTRAL_GROUND_BACKFILL_STOP_ORDER")
     if source.count("GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2") != 1:
         raise ValueError("RED_NEUTRAL_HARD_BUDGET_MARKER")
     scope = source.split("GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2", 1)[1]
@@ -79,7 +98,7 @@ def validate(source: str):
     if source.count("disc = newDisc()") != 1 or (
         "if not selected[model] then" not in scope
         or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})" not in scope
-        or "local limit = math.min(MAX_SHADOWS, #nearby)" not in scope
+        or "local limit = math.min(MAX_GROUND_PROBES, #nearby)" not in scope
     ):
         raise ValueError("RED_NEUTRAL_SELECTION_RECLAIM_CONTRACT")
     if source.count('task.delay(UPDATE_SECONDS, tick)') != 3:
@@ -99,6 +118,22 @@ def validate(source: str):
 class NeutralShadowsTests(unittest.TestCase):
     def test_contract(self):
         validate(SRC.read_text(encoding="utf8"))
+    def test_grounded_selection_expected_behavior_model(self):
+        # Pure selection model; not a Roblox Engine/Studio test.
+        def select_grounded(contact_hits, cap):
+            selected = 0
+            attempts = 0
+            for hit in contact_hits[:2 * cap]:
+                if selected >= cap:
+                    break
+                attempts += 1
+                if hit:
+                    selected += 1
+            return selected, attempts
+        self.assertEqual(select_grounded([False] * 6 + [True] * 6, 6), (6, 12))
+        self.assertEqual(select_grounded([True] * 12, 6), (6, 6))
+        self.assertEqual(select_grounded([False] * 30, 6), (0, 12))
+
     def test_mutants(self):
         src = SRC.read_text(encoding="utf8")
         changes = [
@@ -110,7 +145,11 @@ class NeutralShadowsTests(unittest.TestCase):
             ('SHADOW_TRANSPARENCY = 0.73','SHADOW_TRANSPARENCY = 0'),
             ('typeof(species) == "string"', 'true'),
             ('humanoid.Health > 0','humanoid.Health >= 0'),
-            ('math.min(MAX_SHADOWS, #nearby)', '#nearby'),
+            ('math.min(MAX_GROUND_PROBES, #nearby)', '#nearby'),
+            ('MAX_GROUND_PROBES = MAX_SHADOWS * 2', 'MAX_GROUND_PROBES = MAX_SHADOWS * 20'),
+            ('if #chosen >= MAX_SHADOWS then', 'if #chosen > MAX_SHADOWS then'),
+            ('for i = 1, limit do', 'for i = 1, #nearby do'),
+            ('GQ470_GROUNDED_CONTACT_BACKFILL_V3', 'GQ470_BROKEN_BACKFILL'),
             ('ray.IgnoreWater = false','ray.IgnoreWater = true'),
             ('ray.RespectCanCollide = true','ray.RespectCanCollide = false'),
             ('CFrame.fromMatrix(', 'CFrame.new('),
