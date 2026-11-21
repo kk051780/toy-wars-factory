@@ -92,6 +92,19 @@ jobs:
                           shown.add(i)
                           # Source only, no runtime secrets or untrusted filesystem paths.
                           print("P0_SRC",route.rsplit("/",1)[-1],i,lines[i-1].strip()[:150])
+          for route,start,stop in (
+              ("StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD",1,97),
+              ("StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel",195,248),
+          ):
+              source=(root/selected[route]["path"]).read_text(encoding="utf-8").splitlines()
+              print("P0_FILTER_INSPECT_SCRIPT",route,start,stop)
+              for i in range(start,min(stop,len(source))+1):
+                  if any(x in source[i-1] for x in
+                         ("GetDescendants","DescendantAdded","BasePart","records","fxSecondaryNames",
+                          "fxOriginalArena","player.Character","player.Team","CollectionService",
+                          "function","Character","localPlayer","Humanoid","Accessory",
+                          "isStudio","PlayerAdded","CurrentCamera")):
+                      print("P0_FILTER",route.rsplit("/",1)[-1],i,source[i-1].strip()[:150])
           print("P0_SRC_CONTEXT_IS_STATIC_ONLY_NOT_ROOT_CAUSE_NOT_STUDIO")
           PY
       - uses: actions/checkout@v4
