@@ -58,6 +58,9 @@ def check_art_source(source: str) -> None:
         "CastShadow = false", "Enum.Material.Water", "CameraSubject",
         "Enum.HumanoidStateType.Freefall", "MIN_FALL_SPEED",
         "FilterDescendantsInstances = {character, effects}", "hide()",
+        "not hit.Instance.CanCollide",
+        "hit.Instance.Transparency >= 0.95",
+        "hit.Instance.Material == Enum.Material.Glass",
     )
     for text in required:
         demand(text in source, "MISSING_GUARD_" + text.split()[0])
@@ -75,6 +78,13 @@ def check_art_source(source: str) -> None:
     demand(source.count('visualPart("') == 3, "PART_BUDGET")
     demand(source.count("Workspace:Raycast(") == 1, "RAYCAST_BUDGET")
     demand(source.count("RunService.Heartbeat:Connect") == 1, "SINGLE_LOOP")
+    # Fail closed: a query hit is not necessarily walkable; translucent
+    # synthetic sea glass cannot become a visual landing promise.
+    demand(re.search(
+        r"if not hit\.Instance\.CanCollide\s+or hit\.Instance\.Transparency >= 0\.95"
+        r"\s+or \(hit\.Instance\.Material == Enum\.Material\.Glass"
+        r" and hit\.Instance\.Transparency >= 0\.35\)", source) is not None,
+        "SOLID_GROUND_AND_SYNTHETIC_SEA_GUARD")
 
 
 def compose(base: Path, source: Path, output: Path) -> dict:
@@ -161,6 +171,9 @@ def self_test(source: Path) -> None:
         good + "\nlocal extra = Workspace:Raycast(Vector3.zero, Vector3.yAxis)\n",
         good.replace("Enum.HumanoidStateType.Freefall", "Enum.HumanoidStateType.Running"),
         good.replace("CameraSubject", "CameraTarget"),
+        good.replace("not hit.Instance.CanCollide", "hit.Instance.CanCollide"),
+        good.replace("hit.Instance.Transparency >= 0.95", "hit.Instance.Transparency >= 1"),
+        good.replace("hit.Instance.Material == Enum.Material.Glass", "hit.Instance.Material == Enum.Material.Slate"),
     ]
     for i, mutant in enumerate(mutants, start=1):
         try:
@@ -195,7 +208,7 @@ def self_test(source: Path) -> None:
             except (ValueError, FileNotFoundError):
                 continue
             raise AssertionError(f"bad baseline accepted: {bad}")
-    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 14 mutations RED, 69 originals exact, 70 ON / 69 OFF")
+    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 17 mutations RED, 69 originals exact, 70 ON / 69 OFF")
 
 
 def main() -> None:
