@@ -34,6 +34,11 @@ local function teamColor(player)
     return OFFICIAL_TEAM_COLORS[team.Name]
 end
 
+local function visualsDisabled()
+    return localPlayer:GetAttribute("ReducedEffects") == true
+        or localPlayer:GetAttribute("EGGRUMBLE_TeamCrestsOff") == true
+end
+
 local function removeMounted(player)
     local rec = mounted[player]
     mounted[player] = nil
@@ -61,7 +66,7 @@ local function isConcealed(player, character)
 end
 
 local function cameraDistance(player, character, cameraPosition)
-    if player == localPlayer or not cameraPosition or not character then return nil end
+    if player == localPlayer or not cameraPosition or not character or visualsDisabled() then return nil end
     local root = character:FindFirstChild("HumanoidRootPart")
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if not root or not root:IsA("BasePart") or not humanoid or humanoid.Health <= 0 then
@@ -187,6 +192,14 @@ end
 
 Players.PlayerAdded:Connect(register)
 Players.PlayerRemoving:Connect(unregister)
+-- Local accessibility and fast rollback: tear down instantly, without waiting for the LOD scan.
+for _, attr in ipairs({ "ReducedEffects", "EGGRUMBLE_TeamCrestsOff" }) do
+    localPlayer:GetAttributeChangedSignal(attr):Connect(function()
+        if visualsDisabled() then
+            for player in pairs(mounted) do removeMounted(player) end
+        end
+    end)
+end
 for _, player in ipairs(Players:GetPlayers()) do
     register(player)
 end
@@ -198,7 +211,7 @@ task.spawn(function()
         local camera = workspace.CurrentCamera
         local cameraPosition = camera and camera.CFrame.Position
         local nearby = {}
-        if cameraPosition then
+        if cameraPosition and not visualsDisabled() then
             for _, player in ipairs(Players:GetPlayers()) do
                 local character = player.Character
                 local distance = cameraDistance(player, character, cameraPosition)
