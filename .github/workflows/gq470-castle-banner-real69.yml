@@ -11,10 +11,11 @@ permissions:
   actions: read
 jobs:
   real70-source-only:
+    # Fork-authored scripts cannot access the authenticated private baseline.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GH_TOKEN: ${{ github.token }}
       TARGET: quality_gameplay/gq470_castle_banner_20261121
       ROOT: /tmp/gq470-castle-banner
       FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
@@ -28,7 +29,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_castle_banner_source.py" "$TARGET/emit_art_report.py"
           python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
-      - name: Verify immutable official REAL69 head and original same-head build
+      - name: Retrieve immutable official REAL69 baseline (no PR Python in credential step)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
@@ -37,6 +40,10 @@ jobs:
           gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
             --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
             --dir "$ROOT/off69"
+      - name: Compose 69+1 source candidate without any GitHub credential
+        run: |
+          set -euo pipefail
+          test -z "${GH_TOKEN:-}" || { echo RED_PR_CODE_HAS_GH_TOKEN; exit 1; }
           python3 "$TARGET/compose_official70.py" --official "$ROOT/off69" --out "$ROOT/on70"
           echo A_REAL70_69_SOURCE_BYTES_UNCHANGED_ONE_NEW_CLIENT_ONLY_PASS
       - uses: actions/checkout@v4
@@ -181,6 +188,8 @@ jobs:
           print("GQ470_CASTLE_BANNER_REPORT_32_REAL_IMAGE_GAPS_NOT_ART_GO_PASS")
           PY
       - name: Confirm formal RC unchanged (B220 only writer)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
