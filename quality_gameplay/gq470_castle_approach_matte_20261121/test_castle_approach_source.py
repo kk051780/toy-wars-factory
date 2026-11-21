@@ -88,6 +88,10 @@ def validate(s):
     for term in FORBIDDEN:
         if term in stripped:
             raise ValueError("RED_FORBIDDEN_" + term)
+    # Both no-ground and nonwalkable-water/decor branches must hide the Part.
+    # One mutated hide must not be masked by the second surviving hide.
+    if stripped.count('piece.Transparency = 1') != 2:
+        raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
     if stripped.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_UNBOUNDED_PART_CONSTRUCTION")
     if stripped.count('table.insert(pieces, makePiece(') != 2:
