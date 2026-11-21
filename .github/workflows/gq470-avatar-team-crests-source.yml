@@ -1,10 +1,5 @@
 name: GQ470 FB015 avatar team crest A-only Native Rojo exact-source (not official RC)
 on:
-  push:
-    branches: [quality/gq470-avatar-team-crests-real69-20261121-a01]
-    paths:
-      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
-      - '.github/workflows/gq470-avatar-team-crests-source.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -68,6 +63,7 @@ jobs:
           echo GQ470_CREST70_PRESERVED_69_ORIGINAL_SOURCE_AND_ONE_OPTIONAL_CLIENT
           python3 "$TARGET/p0_spawn_visibility_trace.py" --official "$ROOT/off69" --out "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
           test -s "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
+          cp "$TARGET/ART_32_IMAGE_RETEST_MATRIX.json" "$ROOT/ART_32_IMAGE_RETEST_MATRIX.json"
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -194,6 +190,7 @@ jobs:
             /tmp/gq470-avatar-crest70/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx
             /tmp/gq470-avatar-crest70/on70/GQ470_AVATAR_CREST_A_RECEIPT.json
             /tmp/gq470-avatar-crest70/P0_PLAYER_SPAWN_SOURCE_TRACE.json
+            /tmp/gq470-avatar-crest70/ART_32_IMAGE_RETEST_MATRIX.json
             /tmp/gq470-avatar-crest70/on70/B220_AVATAR_TEAM_CREST_ONE_CLIENT_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
