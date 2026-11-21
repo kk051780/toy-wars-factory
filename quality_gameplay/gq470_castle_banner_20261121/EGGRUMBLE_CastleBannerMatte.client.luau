@@ -116,7 +116,7 @@ local function attach(tower: Instance)
     local pole = part(folder, "MatteFlagstaff", Vector3.new(0.22, 5.3, 0.22),
         rootPose * CFrame.new(0, 2.6, 0), trim, false)
     local clothBase = rootPose * CFrame.new(2.12, 3.65, 0)
-    local cloth = part(folder, "TeamBannerBody", Vector3.new(4, 2.15, 0.15),
+    local cloth = part(folder, "TeamClothBody", Vector3.new(4, 2.15, 0.15),
         clothBase, PALETTE[team], false)
     local fly: {BasePart} = {cloth}
     if team == "RED" then
