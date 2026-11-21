@@ -35,7 +35,7 @@ def demand(ok: bool, why: str) -> None:
 def digest(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
-def original_lock(root: Path) -> tuple[dict, dict]:
+def original_lock(root: Path, allow_new: bool = False) -> tuple[dict, dict]:
     place = root / REAL69_PLACE
     demand(place.is_file() and place.stat().st_size == REAL69_BYTES
            and digest(place.read_bytes()) == REAL69_SHA, "OFFICIAL_PLACE_IDENTITY")
@@ -50,9 +50,19 @@ def original_lock(root: Path) -> tuple[dict, dict]:
     demand(isinstance(hashes, dict) and isinstance(classes, dict)
            and len(hashes) == len(classes) == 69, "OFFICIAL_RECEIPT_69")
     scanned = project_scan(root, PROJECT)
-    demand(len(scanned) == 69 and set(scanned) == set(hashes) == set(classes)
-           and NEW_ROUTE not in scanned, "OFFICIAL_ORIGINAL_SCRIPT_SET")
-    for route, info in scanned.items():
+    if allow_new:
+        # The candidate contains one extra optional LocalScript. Verify all
+        # original 69 route/class/digests remain byte-identical; do NOT relax
+        # the pristine Place/receipt pin or accept arbitrary extra sources.
+        demand(len(scanned) == 70
+               and set(scanned) == (set(hashes) | {NEW_ROUTE})
+               and set(hashes) == set(classes),
+               "CANDIDATE_EXACT_69_PLUS_1_SCRIPT_SET")
+    else:
+        demand(len(scanned) == 69 and set(scanned) == set(hashes) == set(classes)
+               and NEW_ROUTE not in scanned, "OFFICIAL_ORIGINAL_SCRIPT_SET")
+    for route in hashes:
+        info = scanned[route]
         demand(info["sha256"] == hashes[route] and info["class"] == classes[route],
                "OFFICIAL_ORIGINAL_SHA_CLASS_" + route)
     # Confirm the reference world really exists in original selected source,
@@ -70,7 +80,7 @@ def original_lock(root: Path) -> tuple[dict, dict]:
            and "FilterDescendantsInstances = {floor}" in art
            and 'GetAttribute("EGGRUMBLE_ReducedEffects")' in art,
            "NEW_ART_SCENE_FLOOR_SAFETY")
-    return scanned, receipt
+    return {route: scanned[route] for route in hashes}, receipt
 
 def compose(original: Path, target: Path) -> None:
     original = original.resolve()
@@ -137,7 +147,7 @@ def place_scripts(place: Path) -> dict[str, tuple[str, str]]:
 
 def verify(candidate: Path, actual_place: Path) -> None:
     # Verify source identity of ORIGINAL Place copied into candidate.
-    original_sources, _ = original_lock(candidate)
+    original_sources, _ = original_lock(candidate, allow_new=True)
     selected = project_scan(candidate, PROJECT)
     demand(len(selected) == 70 and set(selected) == set(original_sources) | {NEW_ROUTE},
            "CANDIDATE_ROUTES_INCORRECT")
