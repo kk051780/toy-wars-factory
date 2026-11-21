@@ -17,8 +17,16 @@ local EFFECT_NAME = "GQ470_AllySilhouette"
 local REDUCED_EFFECTS_ATTRIBUTE = "EGGRUMBLE_ReducedEffects"
 local DISABLE_ATTRIBUTE = "GQ470_DisableAllyOutline"
 local active = {}
+local visibilityWatches = {}
 
 local function clear(player)
+    local watchers = visibilityWatches[player]
+    visibilityWatches[player] = nil
+    if watchers then
+        for _, watcher in ipairs(watchers) do
+            watcher:Disconnect()
+        end
+    end
     local effect = active[player]
     if effect then
         active[player] = nil
@@ -75,6 +83,25 @@ local function isVisibleAlly(player, localRoot, localTeam)
     return {player = player, character = character, distance = distance}
 end
 
+-- Act immediately when an already-visible ally enters stealth, changes team,
+-- or streams out. At most 9 connections for each of three desktop allies.
+local function watchVisibility(player, character)
+    local watchers = {}
+    local function revoke() clear(player) end
+    for _, flag in ipairs({"Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed"}) do
+        table.insert(watchers, character:GetAttributeChangedSignal(flag):Connect(revoke))
+    end
+    for _, flag in ipairs({"AssassinCloaked", "EGGRUMBLE_Stealthed"}) do
+        table.insert(watchers, player:GetAttributeChangedSignal(flag):Connect(revoke))
+    end
+    table.insert(watchers, player:GetPropertyChangedSignal("Team"):Connect(revoke))
+    table.insert(watchers, player:GetPropertyChangedSignal("Neutral"):Connect(revoke))
+    table.insert(watchers, character.AncestryChanged:Connect(function(_, parent)
+        if parent == nil then revoke() end
+    end))
+    visibilityWatches[player] = watchers
+end
+
 local function present(candidate)
     local player = candidate.player
     local effect = active[player]
@@ -93,6 +120,7 @@ local function present(candidate)
         effect.Adornee = candidate.character
         effect.Parent = candidate.character
         active[player] = effect
+        watchVisibility(player, candidate.character)
     end
     -- Retain team hue but desaturate the rim; avoid saturated neon overlays.
     effect.OutlineColor = player.TeamColor.Color:Lerp(Color3.fromRGB(202, 218, 219), 0.48)
@@ -101,6 +129,8 @@ end
 
 Players.PlayerRemoving:Connect(clear)
 LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)
+LOCAL_PLAYER:GetPropertyChangedSignal("Team"):Connect(clearAll)
+LOCAL_PLAYER:GetPropertyChangedSignal("Neutral"):Connect(clearAll)
 -- Effect switches must remove already-visible outlines immediately, not after 0.75s.
 LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()
     if LOCAL_PLAYER:GetAttribute(REDUCED_EFFECTS_ATTRIBUTE) == true then
