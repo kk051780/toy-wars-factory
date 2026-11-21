@@ -28,6 +28,16 @@ PATTERNS = {
     "player_kick": re.compile(r":\s*Kick\s*\("),
     "server_damage": re.compile(r":\s*TakeDamage\s*\("),
 }
+# Source mention counts are risk *indicators*, never rendered part count or FPS.
+VISUAL_RISK_PATTERNS = {
+    "new_basepart_constructors": re.compile(r"Instance\s*\.\s*new\s*\(\s*['\"](?:Part|WedgePart|MeshPart|UnionOperation)['\"]"),
+    "new_neon_material_mentions": re.compile(r"\bEnum\s*\.\s*Material\s*\.\s*Neon\b"),
+    "new_billboardgui_mentions": re.compile(r"['\"]BillboardGui['\"]"),
+    "new_always_on_top_true": re.compile(r"\bAlwaysOnTop\s*=\s*true\b"),
+    "new_frame_hook_mentions": re.compile(r"\b(?:RenderStepped|Heartbeat|Stepped)\b"),
+    "new_particle_emitter_mentions": re.compile(r"['\"]ParticleEmitter['\"]"),
+    "new_tween_service_mentions": re.compile(r"\bTweenService\b"),
+}
 MODES = ("insert","replace")
 
 def added_lines(before: str, after: str) -> list[str]:
@@ -90,10 +100,16 @@ def audit(formal: Path, artifact: Path) -> dict:
     stats=[]
     seen=0
     findings=[]
+    visual_risk_counts={key:0 for key in VISUAL_RISK_PATTERNS}
     for route in changed:
         added,off=check(a[route].decode("utf-8"), b[route].decode("utf-8"))
         seen+=len(added)
-        stats.append({"route":route,"added_or_replaced_source_lines":len(added)})
+        route_risks={key:sum(bool(pattern.search(line.split("--",1)[0])) for line in added)
+                     for key,pattern in VISUAL_RISK_PATTERNS.items()}
+        for key,value in route_risks.items():
+            visual_risk_counts[key]+=value
+        stats.append({"route":route,"added_or_replaced_source_lines":len(added),
+                      "visual_source_risk_indicators":route_risks})
         findings.extend({"route":route,"reason":name} for name in off)
     if findings:
         raise ValueError("RED_GQ470_ART16_NEW_FORBIDDEN_API_IN_VISUAL_DELTA:"+json.dumps(findings))
@@ -105,6 +121,8 @@ def audit(formal: Path, artifact: Path) -> dict:
         "actual_checked_changed_source_routes":len(changed),
         "actual_original_exact_unchanged_sources":verified["preserved_exact_sources"],
         "source_delta_insert_or_replace_lines":seen,
+        "source_visual_risk_indicators_not_draw_calls":visual_risk_counts,
+        "source_visual_risk_limitation":"Added source mentions only; not instantiated Part count, 3D quality, duration, Android frame time or visual score",
         "new_forbidden_api_surfaces":len(findings),
         "source_scope_result":"PASS_STATIC_API_SURFACE_ONLY",
         "limitations":"Not semantic authority or run-time call graph; look at game/Studio separately",
