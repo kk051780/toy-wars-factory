@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC="$TARGET/EGGRUMBLE_PlayerTeamCrest.client.luau"
-          test "$(git hash-object "$SRC")" = 67b5f11dc7e09d15915b3ea6a1a06d5aa359c2da
+          test "$(git hash-object "$SRC")" = b9547c8966ddcc55b27773b5c4dd78255505f924
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")"
           fi
