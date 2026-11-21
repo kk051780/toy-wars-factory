@@ -19,11 +19,18 @@ REQUIRED = (
     'updatePieces(core, decor, wanted[core])',
     'if decor and not decorIntact(core, decor) then',
     'local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)',
-    'if stone.Transparency < 1 then stone.Transparency = fade end',
+    'return true',
+    'return false',
     'script.Destroying:Connect(shutdown)',
     'script.AncestryChanged:Connect(function(_, parent)',
     'if parent == nil then shutdown() end',
     'local REFRESH_SECONDS = 2.5',
+    'local OPACITY_SECONDS = 0.2',
+    'local function refreshOpacity()',
+    'decor.grounded[decor.pieces[first]] = placeOnGround',
+    'decor.grounded[decor.pieces[first + 1]] = placeOnGround',
+    'stone.Transparency = if decor.grounded[stone] then fade else 1',
+    'task.wait(OPACITY_SECONDS)',
     'core.Name ~= "StandardCore"',
     'core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150',
     'ancestor.Name == "TacticalBattlefield"',
@@ -107,10 +114,16 @@ def validate(s):
             raise ValueError("RED_FORBIDDEN_" + term)
     # Both no-ground and nonwalkable-water/decor branches must hide the Part.
     # One mutated hide must not be masked by the second surviving hide.
-    if stripped.count('if disposed then return end') != 2:
+    if stripped.count('if disposed then return end') != 3:
         raise ValueError("RED_MISSING_IDEMPOTENT_SHUTDOWN")
+    if stripped.count('stone.Transparency = if decor.grounded[stone] then fade else 1') != 2:
+        raise ValueError('RED_BROKEN_FAST_ALPHA_GROUND_MASK')
     if stripped.count('piece.Transparency = 1') != 2:
         raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
+    if stripped.count('task.spawn(function()') != 2:
+        raise ValueError('RED_MISSING_ALPHA_ONLY_POLL')
+    if stripped.count('Workspace:Raycast') != 1:
+        raise ValueError('RED_UNBOUNDED_RAYCAST')
     if stripped.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_UNBOUNDED_PART_CONSTRUCTION")
     if stripped.count('table.insert(pieces, makePiece(') != 2:
@@ -119,9 +132,9 @@ def validate(s):
         raise ValueError("RED_UNBOUNDED_CASTLE_LOD")
     if s.count('keep(') != 7:  # Six event listeners plus the helper definition.
         raise ValueError("RED_UNTRACKED_EVENT_LISTENER")
-    if s.count('for core in active do') != 3:  # pruning, respawn and destroy
+    if s.count('for core in active do') != 4:  # pruning, opacity, respawn and destroy
         raise ValueError("RED_STALE_CASTLE_DECOR")
-    if len(s.encode()) > 11000:
+    if len(s.encode()) > 12500:
         raise ValueError("RED_OVERSIZED_SOURCE")
     return True
 
@@ -201,8 +214,11 @@ class TestApproachSource(unittest.TestCase):
         s = SRC.read_text(encoding="utf-8")
         mutants = (
             ('FADE_START = 125', 'FADE_START = 1'),
+            ('OPACITY_SECONDS = 0.2', 'OPACITY_SECONDS = 5'),
+            ('task.wait(OPACITY_SECONDS)', 'task.wait(REFRESH_SECONDS)'),
+            ('decor.grounded[decor.pieces[first]] = placeOnGround', 'placeOnGround'),
             ('wanted[ranked[i].core] = ranked[i].distance', 'wanted[ranked[i].core] = 0'),
-            ('if stone.Transparency < 1 then stone.Transparency = fade end', 'stone.Transparency = 0'),
+            ('stone.Transparency = if decor.grounded[stone] then fade else 1', 'stone.Transparency = fade'),
             ('decor.folder.Parent ~= core', 'decor.folder.Parent == core'),
             ('stone.Parent ~= decor.folder', 'stone.Parent == decor.folder'),
             ('if decor and not decorIntact(core, decor) then', 'if false then'),
