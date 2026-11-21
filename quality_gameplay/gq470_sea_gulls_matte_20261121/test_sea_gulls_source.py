@@ -38,6 +38,11 @@ def gate(s: str) -> None:
         'while not destroyed and script.Parent ~= nil do',
         'for _, connection in externalConnections do connection:Disconnect() end',
         'table.clear(externalConnections)', 'table.clear(docks)',
+        'local bank = math.rad(math.sin(t * .82 + slot * 1.37) * 7)',
+        'local wingGlide = math.rad(math.sin(phase * 1.35 + bird.slot * 1.75) * 8)',
+        'offset = offset * CFrame.Angles(0, 0, wingGlide)',
+        'offset = offset * CFrame.Angles(0, 0, -wingGlide)',
+        'CFrame = target * offset',
     )
     for mark in required:
         if mark not in s:
@@ -115,7 +120,13 @@ class SeagullSourceTests(unittest.TestCase):
             SOURCE.replace('table.insert(externalConnections, Workspace.DescendantAdded:Connect(', 'Workspace.DescendantAdded:Connect(', 1),
             SOURCE.replace('while not destroyed and script.Parent ~= nil do', 'while script.Parent ~= nil do', 1),
         ])
-        self.assertEqual(len(mutants), 29)
+        mutants.extend([
+            SOURCE.replace('slot * 1.37) * 7)', 'slot * 1.37) * 70)', 1),
+            SOURCE.replace('bird.slot * 1.75) * 8)', 'bird.slot * 1.75) * 80)', 1),
+            SOURCE.replace('CFrame.Angles(0, 0, -wingGlide)', 'CFrame.Angles(0, 0, wingGlide)', 1),
+            SOURCE.replace('CFrame = target * offset', 'CFrame = target', 1),
+        ])
+        self.assertEqual(len(mutants), 33)
         for i, variant in enumerate(mutants):
             with self.subTest(mutation=i):
                 with self.assertRaises(AssertionError):

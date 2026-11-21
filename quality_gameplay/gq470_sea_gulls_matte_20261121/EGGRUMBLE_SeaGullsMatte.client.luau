@@ -84,8 +84,10 @@ local function flightFrame(dock: BasePart, slot: number, t: number): CFrame
     -- Source-owned LSS puts PublicSeaDock at shoreZ-92 and water at shoreZ:
     -- positive local Z faces the coastal water, negative Z would be inland.
     local seaward = 28 + 9 * slot + math.sin(t * .67 + slot) * 3.1
+    -- Gentle seven-degree roll during the glide adds silhouette life without a new Part.
+    local bank = math.rad(math.sin(t * .82 + slot * 1.37) * 7)
     return dock.CFrame * CFrame.new(lateral, height, seaward)
-        * CFrame.Angles(0, math.rad((slot % 2 == 0) and -13 or 11), 0)
+        * CFrame.Angles(0, math.rad((slot % 2 == 0) and -13 or 11), bank)
 end
 
 local function makeBird(dock: BasePart, folder: Folder, slot: number): Bird
@@ -152,8 +154,16 @@ local function refresh()
         Enum.EasingDirection.InOut, 0, false, 0)
     for _, bird in birds do
         local target = flightFrame(dock, bird.slot, phase)
+        -- Mirrored wingtip glide, bounded to eight degrees, using the same three Tweens.
+        local wingGlide = math.rad(math.sin(phase * 1.35 + bird.slot * 1.75) * 8)
         for i, part in bird.parts do
-            local tween = TweenService:Create(part, style, {CFrame = target * bird.offsets[i]})
+            local offset = bird.offsets[i]
+            if i == 2 then
+                offset = offset * CFrame.Angles(0, 0, wingGlide)
+            elseif i == 3 then
+                offset = offset * CFrame.Angles(0, 0, -wingGlide)
+            end
+            local tween = TweenService:Create(part, style, {CFrame = target * offset})
             table.insert(activeTweens, tween)
             tween:Play()
         end
