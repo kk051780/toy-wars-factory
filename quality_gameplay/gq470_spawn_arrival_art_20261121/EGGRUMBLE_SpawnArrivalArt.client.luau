@@ -14,8 +14,10 @@ local ROOT_TIMEOUT_SECONDS = 5
 local generation = 0
 local activeFolder: Folder? = nil
 local activeAttachment: Attachment? = nil
+local activeDeathConnection: RBXScriptConnection? = nil
 
 local function clearTransient()
+    if activeDeathConnection then activeDeathConnection:Disconnect(); activeDeathConnection = nil end
     if activeAttachment then activeAttachment:Destroy(); activeAttachment = nil end
     if activeFolder then activeFolder:Destroy(); activeFolder = nil end
 end
@@ -39,6 +41,10 @@ local function onCharacter(character: Model)
         folder:SetAttribute("FeatureID", FEATURE_ID)
         folder.Parent = character
         activeFolder = folder
+        -- A real death can occur before the 0.82s effect times out.
+        activeDeathConnection = human.Died:Connect(function()
+            if generation == token then clearTransient() end
+        end)
 
         local glow = Instance.new("Highlight")
         glow.Name = "ArrivalSilhouette"
@@ -86,11 +92,17 @@ local function onCharacter(character: Model)
         Debris:AddItem(folder, EFFECT_SECONDS)
         task.delay(EFFECT_SECONDS + 0.05, function()
             if generation ~= token then return end
-            if activeAttachment == foot then activeAttachment = nil end
-            if activeFolder == folder then activeFolder = nil end
+            clearTransient() -- also disconnects the dead-event listener after normal expiry
         end)
     end)
 end
+
+-- Honor accessibility toggles immediately, not just at CharacterAdded.
+player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
+    if player:GetAttribute("EGGRUMBLE_ReducedEffects") == true then
+        clearTransient()
+    end
+end)
 
 player.CharacterRemoving:Connect(function()
     generation += 1
