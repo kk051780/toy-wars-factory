@@ -104,6 +104,12 @@ def validate_lss_contract(source: str) -> bool:
         '"COASTAL_WATER_VISUAL_ONLY"',
         '"OFFSHORE_NAVIGABLE_SEA_LANE"',
         'Enum.Material.Glass,false',
+        'Vector3.new(math.min(650,floor.Size.X-95),0.14,180)',
+        'local seaSpawn=Vector3.new(x-120,y+2,shoreZ+15)',
+        'local start=CFrame.new(at+Vector3.new(0,3,0))',
+        'seat.CFrame=start*CFrame.new(0,2.2,0)',
+        'Vector3.new(9,2.3,13)',
+        'start*CFrame.new(side*6,-.3,2)',
         'makeRide(p,"BUILDER","SEA_BOAT",seaSpawn)',
         'makeRide(p,"BEAST","SEA_BEAST",seaSpawn+Vector3.new(70,0,0))',
     ]
@@ -118,6 +124,25 @@ class TestBoatWake(unittest.TestCase):
 
     def test_actual_author_movement_and_water_contract(self):
         self.assertTrue(validate_lss_contract(LSS.read_text(encoding="utf-8")))
+
+    def test_offline_lss_ordinary_sea_spawn_wake_geometry(self):
+        # NUMERIC MODEL ONLY, not Studio engine evidence. Original author:
+        # 700-wide arena -> sea width=min(650,700-95)=605, depth=180;
+        # seat y=2+3+2.2, water top y=0.08+0.14/2=0.15;
+        # initial forward +Z, stern nine studs backward from z=+15.
+        sea_half_width = min(650, 700 - 95) / 2
+        sea_half_depth = 180 / 2
+        water_top_y = 0.08 + 0.14 / 2
+        seat_x, seat_z, seat_y = -120, 15, 2 + 3 + 2.2
+        stern_z = seat_z - 9.0
+        self.assertLess(seat_y - water_top_y, 12)
+        for flank in (-4.1, +4.1):
+            self.assertLess(abs(seat_x + flank), sea_half_width - 1)
+            self.assertLess(abs(stern_z), sea_half_depth - 1)
+        # A sea-adjacent airship at y+40 or a boat outside the lane
+        # is excluded by the height and local water boundary tests.
+        self.assertGreater(40 - water_top_y, 12)
+        self.assertGreater(abs(330), sea_half_width - 1)
 
     def test_negative_source_mutations_rejected(self):
         original = SOURCE.read_text(encoding="utf-8")
