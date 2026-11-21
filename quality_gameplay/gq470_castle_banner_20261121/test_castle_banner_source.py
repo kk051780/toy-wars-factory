@@ -11,6 +11,7 @@ def validate(s: str) -> None:
         "local MAX_PER_TEAM = if UserInputService.TouchEnabled then 2 else 3",
         "local MAX_PARTS_PER_TOWER = 4",
         "local MAX_NEUTRAL_CASTLES = 2",
+        "local NEARER_MARGIN_STUDS = 8",
         "local MAX_TOTAL_EXTRA_PARTS = (MAX_PER_TEAM * 2 + MAX_NEUTRAL_CASTLES) * MAX_PARTS_PER_TOWER",
         'name == "RED_TOWER"', 'name == "BLUE_TOWER"',
         'ancestor.Name == team .. "_CASTLE"',
@@ -18,6 +19,10 @@ def validate(s: str) -> None:
         'local limit = if team == "NEUTRAL" then MAX_NEUTRAL_CASTLES else MAX_PER_TEAM',
         'name == "StandardCore"',
         'parent.Name == "TacticalBattlefield"',
+        'local function cameraDistance(tower: BasePart): number',
+        'if team == "NEUTRAL" and counts[team] >= limit then',
+        'farthest and cameraDistance(tower) + NEARER_MARGIN_STUDS < farthestDistance',
+        'if descendant.Name == "StandardCore" then attach(descendant) end',
         'p.Material = Enum.Material.SmoothPlastic',
         'p.CanCollide = false', 'p.CanTouch = false',
         'p.CanQuery = false', 'p.CastShadow = false',
@@ -51,7 +56,7 @@ def validate(s: str) -> None:
     for token in forbidden:
         if token in stripped:
             raise ValueError("RED_BANNER_AUTHORITY_OR_ART_" + token)
-    if len(s.encode("utf-8")) > 7800:
+    if len(s.encode("utf-8")) > 9000:
         raise ValueError("RED_BANNER_SOURCE_BUDGET")
     if len(re.findall(r'Instance.new\("(?:Part|WedgePart)"\)', stripped)) != 2:
         raise ValueError("RED_BANNER_FACTORY_COUNT")
@@ -69,6 +74,7 @@ class BannerSourceTests(unittest.TestCase):
             ("then 2 else 3", "then 40 else 50"),
             ("MAX_PARTS_PER_TOWER = 4", "MAX_PARTS_PER_TOWER = 400"),
             ("MAX_NEUTRAL_CASTLES = 2", "MAX_NEUTRAL_CASTLES = 200"),
+            ("NEARER_MARGIN_STUDS = 8", "NEARER_MARGIN_STUDS = 800"),
             ('p.CanCollide = false', 'p.CanCollide = true'),
             ('p.CanTouch = false', 'p.CanTouch = true'),
             ('p.CanQuery = false', 'p.CanQuery = true'),
@@ -77,6 +83,8 @@ class BannerSourceTests(unittest.TestCase):
             ("counts[team] >= limit", "counts[team] > 9000"),
             ('parent.Name == "TacticalBattlefield"', 'parent.Name == "OtherWorld"'),
             ('name == "StandardCore"', 'name == "OtherCore"'),
+            ('if team == "NEUTRAL" and counts[team] >= limit then', 'if false then'),
+            ('farthest and cameraDistance(tower) + NEARER_MARGIN_STUDS < farthestDistance', 'farthest and true'),
             ("tower.Destroying:Connect", "tower.X:Connect"),
             ("Workspace.DescendantAdded:Connect(attach)", "Workspace.DescendantAdded:Connect(function() end)"),
             ('tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team', 'tower:IsDescendantOf(Workspace)'), 
