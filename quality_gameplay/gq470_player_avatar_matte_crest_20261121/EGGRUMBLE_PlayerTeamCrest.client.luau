@@ -14,7 +14,7 @@ local MAX_REMOTE_CRESTS = if UserInputService.TouchEnabled then 2 else 3
 local STEALTH_FLAGS = { "Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed" }
 local BODY_PARTS = {
     Head = true, Torso = true, UpperTorso = true, LowerTorso = true,
-    LeftArm = true, RightArm = true, LeftLeg = true, RightLeg = true,
+    ["Left Arm"] = true, ["Right Arm"] = true, ["Left Leg"] = true, ["Right Leg"] = true,
     LeftUpperArm = true, RightUpperArm = true, LeftLowerArm = true, RightLowerArm = true,
     LeftHand = true, RightHand = true, LeftUpperLeg = true, RightUpperLeg = true,
     LeftLowerLeg = true, RightLowerLeg = true, LeftFoot = true, RightFoot = true,
