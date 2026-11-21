@@ -5,7 +5,7 @@
   "source_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest",
   "source_class": "LocalScript",
   "source_repo_path": "quality_gameplay/gq470_player_avatar_matte_crest_20261121/EGGRUMBLE_PlayerTeamCrest.client.luau",
-  "source_blob_sha": "370b6c8394af46ff0071f0881ac218ce07f03a47",
+  "source_blob_sha": "01da89a0e11ea6484eec68a057f91ba715d33f1f",
   "base_official_rc": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
   "base_selected_source_count": 69,
   "candidate_added_optional_source_count": 1,
@@ -37,10 +37,11 @@
     "runtime_rollback_attribute": "EGGRUMBLE_TeamCrestsOff",
     "immediate_local_off_teardown": true,
     "r6_r15_descendant_add_remove_cleanup_immediate": true,
-    "legacy_optional_reduced_effects_attribute": "ReducedEffects"
+    "legacy_optional_reduced_effects_attribute": "ReducedEffects",
+    "distance_cull_before_body_descendants_scan": true
   },
   "player_bug_364": "NOT_FIXED_BY_THIS_VISUAL",
-  "source_qa": "PENDING_NEW_STACKED_SOURCE_CI",
+  "source_qa": "PENDING_NEW_STACKED_CI",
   "native_luau": "NOT_TESTED",
   "rojo_place": "NOT_TESTED",
   "studio_solo": "NOT_TESTED",
