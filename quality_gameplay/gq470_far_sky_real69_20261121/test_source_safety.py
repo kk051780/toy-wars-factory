@@ -70,6 +70,30 @@ class SourceGate(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(src + '\nRunService.Heartbeat:Connect(function() end)')
 
+    def test_horizon_clearance_and_mutant_negative(self):
+        import importlib.util
+        mod_path = ROOT / "verify_geometry.py"
+        spec = importlib.util.spec_from_file_location("gq470_geometry", mod_path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader
+        spec.loader.exec_module(module)
+        source = SOURCE.read_text(encoding="utf-8")
+        result = module.measure(source)
+        self.assertGreaterEqual(result["conservative_min_ground_radius_studs"], 490)
+        self.assertGreaterEqual(result["conservative_lowest_cloud_y_studs"], 145)
+        self.assertEqual(result["max_touch_parts"], 12)
+        self.assertEqual(result["max_desktop_parts"], 18)
+        mutations = [
+            ("local distance = 625", "local distance = 310"),
+            ("local altitude = 158", "local altitude = 35"),
+            ("local MAX_TOUCH_BANKS = 4", "local MAX_TOUCH_BANKS = 20"),
+            ("Vector3.new(146, 16, 20)", "Vector3.new(400, 16, 20)"),
+        ]
+        for before, after in mutations:
+            self.assertIn(before, source)
+            with self.subTest(mutant=after), self.assertRaises(ValueError):
+                module.measure(source.replace(before, after))
+
     def test_pack_candidate_isolated(self):
         spec = importlib.util.spec_from_file_location("gq470_sky_pack", PACKER)
         module = importlib.util.module_from_spec(spec)

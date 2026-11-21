@@ -143,9 +143,14 @@ jobs:
           path: |
             ${{ runner.temp }}/GQ470_SKY_ON70_NOT_FORMAL.rbxlx
             ${{ runner.temp }}/sky-on70/REAL70_ART_CANDIDATE_RECEIPT.json
+            ${{ runner.temp }}/SKY_GEOMETRY_SOURCE_GATE.json
             ${{ runner.temp }}/sky-on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_FarSkyFacets.client.luau
           retention-days: 7
           if-no-files-found: error
+      - name: Deterministic cloud-bank geometry budget and path clearance
+        run: |
+          python3 quality_gameplay/gq470_far_sky_real69_20261121/verify_geometry.py \
+            --out "$RUNNER_TEMP/SKY_GEOMETRY_SOURCE_GATE.json"
       - name: Verify isolated source safety and negative regressions
         run: |
           python3 -m unittest discover -s quality_gameplay/gq470_far_sky_real69_20261121 -p 'test_*.py' -v
