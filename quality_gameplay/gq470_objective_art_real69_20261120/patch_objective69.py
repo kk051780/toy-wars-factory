@@ -96,7 +96,9 @@ def main(root: Path, current_head: str|None = None):
         # Same strict live-ref gate as the workflow, even when called standalone.
         # This may validate a noncanonical PR candidate; it never grants RC authority.
         import os
+        import sys
         import subprocess
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
         from quality_gameplay.gq470_art_pr_provenance_20261121.guard import verify_receipt
         live = subprocess.check_output([
             'gh', 'api',
