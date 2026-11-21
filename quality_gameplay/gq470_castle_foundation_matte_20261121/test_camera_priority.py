@@ -37,7 +37,11 @@ def validate(text: str) -> None:
                    'player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true',
                    "stone.CanCollide = false", "stone.CanQuery = false",
                    "stone.CanTouch = false", "stone.CastShadow = false"):
-        if text.count(marker) != 1:
+        # Prevent prefix false positives: "= 80" must not satisfy "= 8".
+        found = (text.splitlines().count(marker)
+                 if marker == "local PARTS_PER_CASTLE = 8"
+                 else text.count(marker))
+        if found != 1:
             raise ValueError("RED_CAMERA_PATCH_SAFETY_DRIFT_" + marker)
 
 class CameraLodTests(unittest.TestCase):
