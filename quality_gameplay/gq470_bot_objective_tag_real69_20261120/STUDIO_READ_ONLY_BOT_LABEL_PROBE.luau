@@ -12,6 +12,7 @@ assert(RunService:IsStudio(), "RED_NOT_STUDIO_PRIVATE_PLAY")
 local inspected = 0
 local failed = {}
 local teamCounts = { RED = 0, BLUE = 0, AI = 0 }
+local seenHeads: {[Instance]: number} = {}
 local function requireField(ok: boolean, reason: string)
     if not ok then
         table.insert(failed, reason)
@@ -22,6 +23,10 @@ for _, candidate in ipairs(Workspace:GetDescendants()) do
     if candidate:IsA("BillboardGui") and candidate.Name == "BotObjective" then
         inspected += 1
         local head = candidate.Parent
+        if head then
+            seenHeads[head] = (seenHeads[head] or 0) + 1
+            requireField(seenHeads[head] == 1, "DUPLICATE_BOT_OBJECTIVE_ON_HEAD")
+        end
         local model = if head then head.Parent else nil
         local humanoidCandidate = if model then model:FindFirstChildOfClass("Humanoid") else nil
         local humanoid = if humanoidCandidate and humanoidCandidate:IsA("Humanoid") then humanoidCandidate else nil
