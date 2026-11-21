@@ -26,6 +26,11 @@ def inspect(s: str) -> None:
         "stone.CanTouch = false",
         "stone.CanQuery = false",
         "stone.CastShadow = false",
+        "local function teardown()",
+        "if disposed then return end\n    disposed = true",
+        "script.Destroying:Connect(function()",
+        "script.AncestryChanged:Connect(function(_, parent)",
+        "if parent == nil then",
     ]
     for token in required:
         if s.count(token) != 1:
@@ -57,6 +62,9 @@ class FadeRepairTests(unittest.TestCase):
             ("wanted[ranked[i].core] = ranked[i].distance", "wanted[ranked[i].core] = 0"),
             ("stone.Parent ~= decoration.folder", "false"),
             ("stone:Destroy()", "-- orphan leaked"),
+            ("script.AncestryChanged:Connect(function(_, parent)", "-- Removed ancestor callback"),
+            ("if parent == nil then", "if parent == script then"),
+            ("if disposed then return end\n    disposed = true", "if false then return end\n    disposed = true"),
             ("decoration.folder.Parent ~= core", "false"),
             ("if existing and not decorIntact(core, existing) then clear(core) end", "if false then clear(core) end"),
             ("stone.Transparency = fade", "stone.Transparency = 0"),
