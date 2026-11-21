@@ -11,8 +11,8 @@ MARKER = "GQ470_FB015_CASTLE_BANNER_WIND_20261121"
 
 def validate(code: str) -> None:
     expected = [
-        r"MAX_BANNERS\s*=\s*20",
-        r"RANGE_STUDS\s*=\s*110",
+        r"MAX_BANNERS\s*=\s*20\b",
+        r"RANGE_STUDS\s*=\s*110\b",
         r"MAX_SWAY_RADIANS\s*=\s*math.rad\(3\.5\)",
         r"if UserInputService.TouchEnabled then 0.32 else 0.18",
         r"not part.Anchored or part.CanCollide",
