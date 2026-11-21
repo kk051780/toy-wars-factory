@@ -1,7 +1,7 @@
 name: GQ470 ART16 + P0 early lobby exact composite (A only)
 on:
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-art16-p0-lobby-composite-20261121-a01]
     paths:
       - 'quality_gameplay/gq470_art16_p0_lobby_composite_20261121/**'
       - '.github/workflows/gq470-art16-p0-lobby-real69.yml'
@@ -30,11 +30,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m py_compile "$SCRIPT"
+          python3 -m py_compile "$SCRIPT" quality_gameplay/gq470_art16_p0_lobby_composite_20261121/neutral_name_visibility_fix.py
+          python3 -B quality_gameplay/gq470_art16_p0_lobby_composite_20261121/neutral_name_visibility_fix.py --self-test
           python3 -B "$SCRIPT" --self-test
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             test "$(git rev-parse HEAD)" = "$(jq -r '.pull_request.head.sha' "$GITHUB_EVENT_PATH")" || { echo RED_PR_SYNTHETIC_HEAD; exit 1; }
-            test "$(jq -r '.pull_request.base.ref' "$GITHUB_EVENT_PATH")" = 'rc/p0d-s1-kids-rc01' || exit 1
+            BASE_REF="$(jq -r '.pull_request.base.ref' "$GITHUB_EVENT_PATH")"
+            [[ "$BASE_REF" == 'rc/p0d-s1-kids-rc01' || "$BASE_REF" == 'quality/gq470-art16-p0-lobby-composite-20261121-a01' ]] || { echo RED_UNTRUSTED_TARGET_BRANCH; exit 1; }
           fi
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/970" --jq .head.sha)" = "$ART16_HEAD" || { echo RED_ART16_AUTHOR_MOVED; exit 1; }

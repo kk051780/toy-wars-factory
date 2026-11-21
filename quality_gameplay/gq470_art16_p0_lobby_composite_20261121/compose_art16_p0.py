@@ -12,6 +12,14 @@ import hashlib
 import json
 import shutil
 from pathlib import Path
+from neutral_name_visibility_fix import (
+    FEATURE as NEUTRAL_READABILITY_FEATURE,
+    ROUTE as NEUTRAL_SWARM_ROUTE,
+    ART16_PARENT_SWARM_SHA256,
+    patch as patch_neutral_labels,
+    verify_art16_overlay,
+    selftest as neutral_name_selftest,
+)
 
 FORMAL = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
 FORMAL_PLACE_SHA = "fc63171149a86f6b39779ba6ebe7e18fcb7099fbde98ad2ec33a7cb92b3a9934"
@@ -168,6 +176,15 @@ def compose(formal: Path, art: Path, p0: Path, dest: Path) -> None:
     sels = selected(dest)
     for route, value in updates.items():
         sels[route][0].write_bytes(value)
+    # Preserve all 16 original ART author source changes. Overlay precisely one
+    # Source property span inside their existing SwarmCombat route, no new owner.
+    need(NEUTRAL_SWARM_ROUTE in authors["art16_970"],
+         "NEUTRAL_DISPLAY_OVERLAY_OUTSIDE_ART16_OWNER")
+    npc_source_path = sels[NEUTRAL_SWARM_ROUTE][0]
+    original_art16_npc = npc_source_path.read_bytes()
+    need(sha(original_art16_npc) == ART16_PARENT_SWARM_SHA256,
+         "NEUTRAL_DISPLAY_ART16_PARENT_DRIFT")
+    npc_source_path.write_bytes(patch_neutral_labels(original_art16_npc))
     newer, newer_classes = snapshot(dest)
     composited_delta(original, newer, authors)
     need(newer_classes == classes, "CLASS_DRIFT")
@@ -176,7 +193,7 @@ def compose(formal: Path, art: Path, p0: Path, dest: Path) -> None:
     rec["build_head"] = MARK
     rec["source_hashes"] = {r: sha(b) for r, b in newer.items()}
     rec[NOTE] = {
-        "feature_ids": ["GQ470_ART16_966_967_SOURCE_BRIDGE_20261121", FEATURE],
+        "feature_ids": ["GQ470_ART16_966_967_SOURCE_BRIDGE_20261121", FEATURE, NEUTRAL_READABILITY_FEATURE],
         "formal_head": FORMAL, "art16_pr": 970, "art16_head": ART16_HEAD,
         "art16_run": 44850475985, "p0_pr": 980, "p0_head": P0_HEAD,
         "p0_run": 44862433160, "authors": authors,
@@ -187,7 +204,8 @@ def compose(formal: Path, art: Path, p0: Path, dest: Path) -> None:
         "screen_shots": "0/32", "human_art": "NOT_TESTED",
         "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "fun_gate": "FUN_NO_GO",
-        "rollback": OFF, "native_rojo": "NOT_TESTED"
+        "rollback": OFF, "native_rojo": "NOT_TESTED",
+        "quality_overlay": verify_art16_overlay(newer[NEUTRAL_SWARM_ROUTE]),
     }
     (dest / RECEIPT).write_text(json.dumps(rec, indent=2, sort_keys=True,
                                           ensure_ascii=False) + "\n", encoding="utf-8")
@@ -219,6 +237,12 @@ def verify(root: Path, sealed: bool = True) -> None:
          n.get("art_gate") == "ART_NO_GO" and
          (root / PROJECT).read_bytes() == (root / OFF / PROJECT).read_bytes(),
          "SELECTION_RECEIPT_GATE_DRIFT")
+    # Invalid or stale SwarmCombat bytes fail even if they carry a valid-looking
+    # selected-source receipt. This is an ART16 same-owner, no-new-route overlay.
+    overlay_truth = verify_art16_overlay(newer[NEUTRAL_SWARM_ROUTE])
+    need(n.get("quality_overlay") == overlay_truth and
+         NEUTRAL_SWARM_ROUTE in authors["art16_970"],
+         "SUBJECT_READABILITY_SOURCE_OR_RECEIPT_MISMATCH")
     if sealed:
         place = (root / PLACE).read_bytes()
         need(sha(place) != FORMAL_PLACE_SHA and
@@ -268,6 +292,7 @@ def export(root: Path) -> None:
               "source_only": rows, "parent_art16_head": ART16_HEAD,
               "parent_p0_head": P0_HEAD, "formal_adopted": False,
               "requires_writer_220_fresh_nonforce_cas": True,
+              "quality_overlay": rec[NOTE]["quality_overlay"],
               "studio": "NOT_TESTED", "android": "NOT_TESTED",
               "art_images": "0/32", "art_gate": "ART_NO_GO",
               "owner_accepted": False}
@@ -279,6 +304,7 @@ def export(root: Path) -> None:
     print("ART16_P0_B220_17_SOURCE_BYTES_READY_A_ONLY_NOT_FORMAL")
 
 def self_test() -> None:
+    neutral_name_selftest()
     old = {str(i): b"original" for i in range(68)}
     authors = {"art16_970": [str(i) for i in range(16)],
                "early_lobby_980": [HOST]}

@@ -130,7 +130,7 @@ def seal_and_report(formal: Path, downloaded_root: Path, rebuild: Path,
     need(expected["private_place_bytes"] == len(actual_place) and
          expected["private_place_sha256"] == sha(actual_place),
          "POST_UPLOAD_ACTUAL_PLACE_RECEIPT")
-    need(independent_negative.get("tamper_cases_rejected") == 24 and
+    need(independent_negative.get("tamper_cases_rejected") == 28 and
          result.get("validated_routes") == 17 and
          result.get("remaining_original_byte_exact") == 52,
          "POST_UPLOAD_B220_NEGATIVE_OR_NONLOSS_FAILED")
@@ -146,7 +146,7 @@ def seal_and_report(formal: Path, downloaded_root: Path, rebuild: Path,
         "native_on_off_source": "PREVIOUS_A_RUN_PASS_SOURCE_ONLY",
         "rojo_original_off_byte_exact": True,
         "rojo_candidate_on_reproduced_byte_exact": True,
-        "tamper_negatives_rechecked_from_uploaded": 24,
+        "tamper_negatives_rechecked_from_uploaded": 28,
         "formal_rc_adopted": False, "studio": "NOT_TESTED",
         "studio_spawn_fix": "NOT_PROVEN", "android_15min": "NOT_TESTED",
         "art_images": "0/32", "art_gate": "ART_NO_GO",
