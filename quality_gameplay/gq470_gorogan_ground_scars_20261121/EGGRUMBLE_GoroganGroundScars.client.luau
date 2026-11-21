@@ -27,6 +27,9 @@ type Entry = {
     destroyConnection: RBXScriptConnection?,
 }
 local tracked: {[Model]: Entry} = {}
+-- Retain only already-observed real boss rigs. DescendantAdded may precede
+-- assembly of Humanoid/Torso, and replacement can appear before old rig dies.
+local candidates: {[Model]: boolean} = {}
 local ownerModel: Model? = nil
 local folder = Instance.new("Folder")
 folder.Name = "GQ470_GoroganGroundScars_ClientOnly"
@@ -138,12 +141,20 @@ end
 
 for _, candidate in ipairs(Workspace:GetDescendants()) do
     if candidate:IsA("Model") and candidate.Name == MODEL_NAME then
+        candidates[candidate] = true
         track(candidate)
     end
 end
 local addedConnection = Workspace.DescendantAdded:Connect(function(instance)
     if instance:IsA("Model") and instance.Name == MODEL_NAME then
+        candidates[instance] = true
         task.defer(track, instance)
+    end
+end)
+local removingConnection = Workspace.DescendantRemoving:Connect(function(instance)
+    if instance:IsA("Model") and candidates[instance] then
+        candidates[instance] = nil
+        release(instance)
     end
 end)
 
@@ -151,11 +162,26 @@ local alive = true
 script.Destroying:Connect(function()
     alive = false
     addedConnection:Disconnect()
+    removingConnection:Disconnect()
     for model in pairs(tracked) do release(model) end
+    table.clear(candidates)
     folder:Destroy()
 end)
 task.spawn(function()
     while alive do
+        -- Do not scan the whole Workspace on every frame. Retry only actual
+        -- observed boss models that may have arrived before their children,
+        -- or appeared as the outgoing boss was still alive.
+        if not ownerModel then
+            for model in pairs(candidates) do
+                if model:IsDescendantOf(Workspace) then
+                    track(model)
+                    if ownerModel then break end
+                else
+                    candidates[model] = nil
+                end
+            end
+        end
         for _, entry in pairs(tracked) do update(entry) end
         task.wait(UPDATE_SECONDS)
     end
