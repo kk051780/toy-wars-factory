@@ -20,6 +20,24 @@ local MIN_AIR_HEIGHT = 4.5
 local MAX_SLOPE_COS = 0.78
 local MIN_FALL_SPEED = -2
 local MAX_VISUAL_PARTS = 3
+-- These are purely presentation flags; never grant gameplay effects.
+local VISUAL_OFF_FLAGS = {
+    "EGGRUMBLE_ReducedEffects",
+    "ReducedEffects",
+    "EGGRUMBLE_LandingShadowOff",
+}
+
+local function visualDisabled(character: Model?): boolean
+    for _, flag in ipairs(VISUAL_OFF_FLAGS) do
+        if player:GetAttribute(flag) == true then
+            return true
+        end
+        if character and character:GetAttribute(flag) == true then
+            return true
+        end
+    end
+    return false
+end
 
 local effects = Instance.new("Folder")
 effects.Name = "EGGRUMBLE_LandingShadow_LocalOnly"
@@ -59,25 +77,52 @@ local function hide()
     right.Transparency = 1
 end
 
+local globalConnections: {RBXScriptConnection} = {}
+local characterConnections: {RBXScriptConnection} = {}
+local function clearCharacterConnections()
+    for _, connection in ipairs(characterConnections) do
+        connection:Disconnect()
+    end
+    table.clear(characterConnections)
+end
+
 local function trackCharacter(character: Model)
+    clearCharacterConnections()
+    for _, flag in ipairs(VISUAL_OFF_FLAGS) do
+        table.insert(characterConnections, character:GetAttributeChangedSignal(flag):Connect(function()
+            -- Hide immediately on OFF; the regular bounded sampler handles ON.
+            if visualDisabled(character) then
+                hide()
+            end
+        end))
+    end
     -- Never wait indefinitely for an avatar. This is a visual affordance only.
     humanoid = character:FindFirstChildOfClass("Humanoid")
     root = character:FindFirstChild("HumanoidRootPart") :: BasePart?
     hide()
 end
 
-player.CharacterAdded:Connect(trackCharacter)
-player.CharacterRemoving:Connect(function()
+table.insert(globalConnections, player.CharacterAdded:Connect(trackCharacter))
+table.insert(globalConnections, player.CharacterRemoving:Connect(function()
+    clearCharacterConnections()
     humanoid = nil
     root = nil
     hide()
-end)
+end))
+for _, flag in ipairs(VISUAL_OFF_FLAGS) do
+    table.insert(globalConnections, player:GetAttributeChangedSignal(flag):Connect(function()
+        if visualDisabled(player.Character) then
+            hide()
+        end
+    end))
+end
 if player.Character then
     trackCharacter(player.Character)
 end
 
 local elapsed = 0
-RunService.Heartbeat:Connect(function(dt: number)
+local heartbeatConnection: RBXScriptConnection? = nil
+heartbeatConnection = RunService.Heartbeat:Connect(function(dt: number)
     elapsed += dt
     if elapsed < SAMPLE_INTERVAL then
         return
@@ -86,6 +131,10 @@ RunService.Heartbeat:Connect(function(dt: number)
 
     local camera = Workspace.CurrentCamera
     local character = player.Character
+    if visualDisabled(character) then
+        hide()
+        return
+    end
     if not camera or not character then
         hide()
         return
@@ -127,9 +176,8 @@ RunService.Heartbeat:Connect(function(dt: number)
         hide()
         return
     end
-    -- A raycast can hit query-enabled, NONCOLLIDING decor or synthetic sea
-    -- Glass. Those surfaces cannot hold a player, so never promise a landing.
-    -- Treat almost-invisible and translucent Glass as untrusted, even if solid.
+    -- A raycast can hit query-enabled but NONCOLLIDING scenery or synthetic
+    -- sea Glass. Neither is a reliable landing surface for the actual avatar.
     if hit.Instance:IsA("BasePart") then
         if not hit.Instance.CanCollide
             or hit.Instance.Transparency >= 0.95
@@ -167,4 +215,19 @@ RunService.Heartbeat:Connect(function(dt: number)
     right.CFrame = frame * CFrame.new(0.35, 0.045, 0.12) * CFrame.Angles(0, math.rad(37), 0)
     left.Transparency = 0.22 + 0.24 * fade
     right.Transparency = left.Transparency
+end)
+-- Prevent abandoned camera-local Parts or callbacks when a candidate script is
+-- removed/reloaded. The official 69-script game remains completely untouched.
+script.Destroying:Connect(function()
+    if heartbeatConnection then
+        heartbeatConnection:Disconnect()
+        heartbeatConnection = nil
+    end
+    clearCharacterConnections()
+    for _, connection in ipairs(globalConnections) do
+        connection:Disconnect()
+    end
+    table.clear(globalConnections)
+    hide()
+    effects:Destroy()
 end)
