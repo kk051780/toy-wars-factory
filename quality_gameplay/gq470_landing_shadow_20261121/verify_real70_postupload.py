@@ -14,12 +14,11 @@ from recover_real69_from_place import source_from_place
 from compose_landing70 import SOURCE_ROUTE, check_art_source
 
 SHA69 = '443914a672f4f535fe4c6313b0dec524892a0afeb4684a8d935e4eebb1458305'
-SHA70 = 'f6c2526a47ba090d497196c35b6347d7dff15a213ed44250df258e234e1d69c0'
-SHA_NEW_SOURCE = 'b8fe3b673605a574d9b2bee02566772cb35c9d608b43ff83c1c67814897bb39a'
 NAME70 = 'gq470-landing-real70/on70/GQ470_LANDING_REAL70_SOURCE_ONLY.rbxlx'
 NAME69 = 'gq470-landing-real70/off69/GQ470_LANDING_OFF69_EXACT_SOURCE.rbxlx'
 NAME_PROOF = 'gq470-art17/on/GQ470_REHYDRATED_ART17_SOURCE_PROOF.json'
 NAME_QA = 'gq470-landing-real70/GQ470_LANDING_REAL70_ART17_QA.json'
+NAME_RECEIPT = 'gq470-landing-real70/receipt.json'
 
 
 def sha(data: bytes) -> str:
@@ -39,10 +38,24 @@ def validate(root: Path, *, ondata: bytes | None = None, offdata: bytes | None =
     proof = proof if proof is not None else json.loads((root / NAME_PROOF).read_text())
     qa = qa if qa is not None else json.loads((root / NAME_QA).read_text())
     source = source if source is not None else Path(__file__).with_name('EGGRUMBLE_LandingShadow.client.luau').read_bytes()
-
-    demand(len(ondata) == 828695 and sha(ondata) == SHA70, 'ON70_PLACE_BYTES_OR_HASH')
+    # Pin the author ART17 baseline, but NOT the output hash of a previously
+    # authored (different) landing script. Verify this exact newly-built output
+    # against its source/receipt AND independently re-extracted Place sources.
+    receipt = json.loads((root / NAME_RECEIPT).read_text())
+    onsha = sha(ondata)
+    demand(len(ondata) > len(offdata) and
+           onsha == qa.get('profile', {}).get('on70', {}).get('place_sha256') and
+           len(ondata) == qa.get('profile', {}).get('on70', {}).get('place_bytes'),
+           'ON70_PLACE_BYTES_OR_HASH')
     demand(len(offdata) == 822713 and sha(offdata) == SHA69, 'OFF69_PLACE_BYTES_OR_HASH')
-    demand(len(source) > 0 and sha(source) == SHA_NEW_SOURCE, 'NEW_SOURCE_HASH')
+    demand(len(source) > 0 and sha(source) == receipt.get('new_luau_sha256'),
+           'NEW_SOURCE_HASH')
+    demand(receipt.get('source_route') == SOURCE_ROUTE and
+           receipt.get('source_count_on') == 70 and
+           receipt.get('source_count_off') == 69 and
+           receipt.get('original_scripts_unchanged_sha256') == 69 and
+           receipt.get('official_rc_adopted') is False,
+           'RECEIPT_SOURCE_TRUTH')
     check_art_source(source.decode('utf-8'))
     full70 = source_from_place(ondata, 70)
     full69 = source_from_place(offdata, 69)
@@ -59,7 +72,7 @@ def validate(root: Path, *, ondata: bytes | None = None, offdata: bytes | None =
     counts = qa.get('profile', {})
     demand(qa.get('formal') is False and qa.get('art_go') is False, 'FALSE_GO_ATTESTATION')
     demand(qa.get('studio') == 'NOT_TESTED' and qa.get('android') == 'NOT_TESTED', 'FALSE_ENGINE_ATTESTATION')
-    demand(counts.get('on70', {}).get('place_sha256') == SHA70 and
+    demand(counts.get('on70', {}).get('place_sha256') == onsha and
            counts.get('off69', {}).get('place_sha256') == SHA69, 'RECEIPT_PLACE_SHA')
     demand(counts['on70'].get('source_and_class_exact') == 70 and
            counts['off69'].get('source_and_class_exact') == 69, 'RECEIPT_CLASS_SOURCE_COUNT')
@@ -68,7 +81,7 @@ def validate(root: Path, *, ondata: bytes | None = None, offdata: bytes | None =
         'source_only':True, 'not_formal_rc':True, 'art_go':False,
         'source70':len(full70), 'original69_unmodified':len(full69),
         'author17_proof_validated':17,
-        'on70_sha256':SHA70, 'on70_bytes':len(ondata),
+        'on70_sha256':onsha, 'on70_bytes':len(ondata),
         'off69_sha256':SHA69, 'off69_bytes':len(offdata),
         'artifact_source_and_class_exact':True, 'new_authoritative_scripts':0,
         'studio':'NOT_TESTED','android':'NOT_TESTED','human_art':'NO_GO',
