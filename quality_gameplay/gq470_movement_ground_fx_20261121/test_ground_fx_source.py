@@ -45,6 +45,17 @@ def validate(source: str) -> None:
     for marker in markers:
         if marker not in code:
             raise ValueError("RED_GROUND_FX_MISSING:" + marker)
+    numeric_contract = {
+        "MAX_LIVE_PARTS": "6",
+        "MAX_PARTS_PER_STEP": "2",
+        "MOBILE_PARTS_PER_STEP": "1",
+        "STEP_SECONDS": "0.32",
+        "LIFE_SECONDS": "0.38",
+    }
+    for name, value in numeric_contract.items():
+        if not re.search(r"(?m)^\\s*local " + name + r"\\s*=\\s*" +
+                         re.escape(value) + r"\\s*$", code):
+            raise ValueError("RED_GROUND_FX_NUMERIC_BUDGET:" + name)
     forbidden = (
         "RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
         "TakeDamage", "DataStore", "MarketplaceService", "ReplicatedStorage",
