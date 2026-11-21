@@ -165,15 +165,22 @@ local function tick()
     task.delay(UPDATE_SECONDS, tick)
 end
 
+-- These signals belong to the long-lived Player, not to this ephemeral
+-- cosmetic script. Explicitly disconnect them when the preview is removed.
+local signalConnections: {RBXScriptConnection} = {}
 script.Destroying:Connect(function()
     running = false
+    for _, connection in ipairs(signalConnections) do
+        connection:Disconnect()
+    end
+    table.clear(signalConnections)
     clearAll()
     folder:Destroy()
 end)
-PLAYER:GetAttributeChangedSignal(FEATURE_OFF):Connect(function()
+table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(FEATURE_OFF):Connect(function()
     if effectsDisabled() then clearAll() end
-end)
-PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS):Connect(function()
+end))
+table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS):Connect(function()
     if effectsDisabled() then clearAll() end
-end)
+end))
 task.defer(tick)
