@@ -99,6 +99,8 @@ jobs:
           python3 -B "$SCRIPT" --verify "$ROOT/on"
           python3 art_quality/gq470_real69_source_gate.py --root "$ROOT/formal" --head "$FORMAL" --out "$ROOT/on/BASE_FORMAL_ART_SOURCE_REPORT.json"
           python3 -B "$SCRIPT" --export "$ROOT/on"
+          python3 -m py_compile quality_gameplay/gq470_art16_p0_lobby_composite_20261121/verify_b220_packet.py
+          python3 -B quality_gameplay/gq470_art16_p0_lobby_composite_20261121/verify_b220_packet.py --root "$ROOT/on" --negatives --report "$ROOT/on/GQ470_ART16_P0_B220_TAMPER_GATE.json"
           python3 - <<'PY'
           import os,json
           from pathlib import Path
@@ -138,6 +140,7 @@ jobs:
             /tmp/gq470-art16-p0/on/ART16_P0_CANDIDATE_TRUTH.json
             /tmp/gq470-art16-p0/on/BASE_FORMAL_ART_SOURCE_REPORT.json
             /tmp/gq470-art16-p0/on/B220_ART16_P0_SELECTED17_NOT_FORMAL/**
+            /tmp/gq470-art16-p0/on/GQ470_ART16_P0_B220_TAMPER_GATE.json
             /tmp/gq470-art16-p0/OFF69_REBUILT.rbxlx
           if-no-files-found: error
           retention-days: 7
