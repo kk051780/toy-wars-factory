@@ -133,7 +133,7 @@ def palette_contrast_test(source: str) -> float:
     backgrounds = [
         tuple(int(value) for value in group)
         for group in re.findall(
-            r"Color3\\.fromRGB\\((\\d+),(\\d+),(\\d+)\\)", marker
+            r"Color3\.fromRGB\((\d+),(\d+),(\d+)\)", marker
         )
     ]
     need(len(backgrounds) == 13, "MARKER_PALETTE_THIRTEEN_KINDS")
