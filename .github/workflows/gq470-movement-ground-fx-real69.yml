@@ -118,12 +118,57 @@ jobs:
           print("GQ470_GROUND_ROJO_OFF69_EXACT_ON70_SOURCE_CLASS_PASS")
           print("CANDIDATE_PRIVATE_PLACE_BYTES", (root/"GQ470_GROUND_ON70_NOT_FORMAL.rbxlx").stat().st_size)
           PY
+      - name: Verify exact one-client B220 source-select packet and 5 fail-closed mutants
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/compose_official70.py" --export-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_GROUND_ON70_NOT_FORMAL.rbxlx"
+          python3 "$TARGET/compose_official70.py" --verify-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_GROUND_ON70_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0, os.environ["TARGET"])
+          from compose_official70 import B_MANIFEST,B_PACKET,verify_b
+          root=Path(os.environ["ROOT"])
+          candidate=root/"on70"
+          place=root/"GQ470_GROUND_ON70_NOT_FORMAL.rbxlx"
+          container=candidate/B_PACKET
+          manifest=container/B_MANIFEST
+          original=manifest.read_bytes()
+          tests=[
+            ("formal_integrated",True),
+            ("art_status","ART_GO"),
+            ("new_source_sha256","bad-sha"),
+            ("original_selected_sources_preserved",1),
+          ]
+          for field,value in tests:
+              try:
+                  altered=json.loads(original)
+                  altered[field]=value
+                  manifest.write_text(json.dumps(altered))
+                  try: verify_b(candidate,place)
+                  except ValueError: pass
+                  else: raise AssertionError("MUTANT_NOT_BLOCKED_"+field)
+              finally: manifest.write_bytes(original)
+          extra=container/"UNEXPECTED_JUNK.txt"
+          extra.write_text("should never be packaged")
+          try:
+              try: verify_b(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_UNEXPECTED_PACKET_FILE")
+          finally: extra.unlink()
+          verify_b(candidate,place)
+          print("GQ470_GROUND_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
+          PY
       - name: Confirm formal RC unchanged (B220 only writer)
         run: |
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
-          test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" || { echo RED_HEAD_DRIFT; exit 1; }
-          echo A_SOURCE_ONLY_NATIVE_ROJO_GREEN_NOT_ENGINE_NOT_ART_GO
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" || { echo RED_HEAD_DRIFT; exit 1; }
+          fi
+          echo A_SOURCE_ONLY_NATIVE_ROJO_B_PACKET_GREEN_NOT_ENGINE_NOT_ART_GO
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-GROUND-REAL70-A-CANDIDATE-NOT-FORMAL
@@ -131,5 +176,6 @@ jobs:
             /tmp/gq470-ground-fx/GQ470_GROUND_ON70_NOT_FORMAL.rbxlx
             /tmp/gq470-ground-fx/on70/GQ470_GROUND_FX_SOURCE_RECEIPT.json
             /tmp/gq470-ground-fx/on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_GroundMotionFX.client.luau
+            /tmp/gq470-ground-fx/on70/B220_GROUND_FX_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
