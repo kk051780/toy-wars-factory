@@ -10,7 +10,32 @@ REQUIRED = (
     'local PIECES_PER_CASTLE = 8',
     'local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE',
     'local MAX_DISTANCE = 155',
+    'local PREFETCH_DISTANCE = 195',
+    'if distance <= PREFETCH_DISTANCE then',
+    'local FADE_START = 125',
+    'local function decorIntact(core: BasePart, decor: Decor): boolean',
+    'decor.folder.Parent ~= core',
+    'stone.Parent ~= decor.folder',
+    'local wanted: {[BasePart]: number} = {}',
+    'wanted[ranked[i].core] = ranked[i].distance',
+    'updatePieces(core, decor, wanted[core])',
+    'if decor and not decorIntact(core, decor) then',
+    'local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)',
+    'return true',
+    'return false',
+    'script.Destroying:Connect(shutdown)',
+    'script.AncestryChanged:Connect(function(_, parent)',
+    'if parent == nil then shutdown() end',
     'local REFRESH_SECONDS = 2.5',
+    'local OPACITY_SECONDS = 0.2',
+    'local function refreshOpacity()',
+    'decor.grounded[decor.pieces[first]] = placeOnGround',
+    'decor.grounded[decor.pieces[first + 1]] = placeOnGround',
+    'stone.Transparency = if decor.grounded[stone] then fade else 1',
+    'task.wait(OPACITY_SECONDS)',
+    'local target = if decor.grounded[stone] then fade else 1',
+    'if math.abs(stone.Transparency - target) > .01 then',
+    'stone.Transparency = target',
     'core.Name ~= "StandardCore"',
     'core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150',
     'ancestor.Name == "TacticalBattlefield"',
@@ -60,7 +85,7 @@ REQUIRED = (
     'local trackedConnections: {RBXScriptConnection} = {}',
     'if disposed then return end',
     'while not disposed and script.Parent do',
-    'script.Destroying:Connect(function()',
+    'local function shutdown()',
     'disposed = true',
     'for _, connection in ipairs(trackedConnections) do',
     'connection:Disconnect()',
@@ -94,8 +119,20 @@ def validate(s):
             raise ValueError("RED_FORBIDDEN_" + term)
     # Both no-ground and nonwalkable-water/decor branches must hide the Part.
     # One mutated hide must not be masked by the second surviving hide.
+    if stripped.count('if disposed then return end') != 3:
+        raise ValueError("RED_MISSING_IDEMPOTENT_SHUTDOWN")
+    if stripped.count('stone.Transparency = if decor.grounded[stone] then fade else 1') != 1 or stripped.count('local target = if decor.grounded[stone] then fade else 1') != 1:
+        raise ValueError('RED_BROKEN_FAST_ALPHA_GROUND_MASK')
+    if stripped.count('stone.Transparency = target') != 1:
+        raise ValueError('RED_MISSING_ALPHA_ONLY_WRITE_CAP')
     if stripped.count('piece.Transparency = 1') != 2:
         raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
+    if stripped.count('while not disposed and script.Parent do') != 2:
+        raise ValueError('RED_MISSING_DISPOSAL_ON_BOTH_POLLERS')
+    if stripped.count('task.spawn(function()') != 2:
+        raise ValueError('RED_MISSING_ALPHA_ONLY_POLL')
+    if stripped.count('Workspace:Raycast') != 1:
+        raise ValueError('RED_UNBOUNDED_RAYCAST')
     if stripped.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_UNBOUNDED_PART_CONSTRUCTION")
     if stripped.count('table.insert(pieces, makePiece(') != 2:
@@ -104,9 +141,9 @@ def validate(s):
         raise ValueError("RED_UNBOUNDED_CASTLE_LOD")
     if s.count('keep(') != 7:  # Six event listeners plus the helper definition.
         raise ValueError("RED_UNTRACKED_EVENT_LISTENER")
-    if s.count('for core in active do') != 3:  # pruning, respawn and destroy
+    if s.count('for core in active do') != 3 or s.count('for core, decor in active do') != 1:  # pruning, opacity, respawn and destroy
         raise ValueError("RED_STALE_CASTLE_DECOR")
-    if len(s.encode()) > 9500:
+    if len(s.encode()) > 12500:
         raise ValueError("RED_OVERSIZED_SOURCE")
     return True
 
@@ -121,6 +158,8 @@ class TestApproachSource(unittest.TestCase):
             ('PIECES_PER_CASTLE = 8', 'PIECES_PER_CASTLE = 80'),
             ('MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE', 'MAX_PARTS = 99999'),
             ('MAX_DISTANCE = 155', 'MAX_DISTANCE = 15500'),
+            ('PREFETCH_DISTANCE = 195', 'PREFETCH_DISTANCE = 19500'),
+            ('if distance <= PREFETCH_DISTANCE then', 'if distance <= 999999 then'),
             ('REFRESH_SECONDS = 2.5', 'REFRESH_SECONDS = .01'),
             ('core.Name ~= "StandardCore"', 'core.Name ~= "OtherCore"'),
             ('core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150', 'false'),
@@ -167,7 +206,7 @@ class TestApproachSource(unittest.TestCase):
     def test_teardown_mutants_fail_closed(self):
         s = SRC.read_text(encoding="utf-8")
         mutants = (
-            ('script.Destroying:Connect(function()', 'script:WaitForChild("Destroyed")'),
+            ('script.Destroying:Connect(shutdown)', 'script:WaitForChild("Destroyed")'),
             ('disposed = true', 'disposed = false'),
             ('connection:Disconnect()', 'connection:Connect()'),
             ('table.clear(trackedConnections)', '-- listener connections leaked'),
@@ -175,6 +214,30 @@ class TestApproachSource(unittest.TestCase):
             ('while not disposed and script.Parent do', 'while script.Parent do'),
             ('if disposed then return end', '-- no disposed guard'),
             ('keep(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+        )
+        for before, after in mutants:
+            with self.subTest(before=before):
+                self.assertIn(before, s)
+                with self.assertRaises(ValueError):
+                    validate(s.replace(before, after, 1))
+
+    def test_fade_repair_and_unparent_mutants(self):
+        s = SRC.read_text(encoding="utf-8")
+        mutants = (
+            ('FADE_START = 125', 'FADE_START = 1'),
+            ('OPACITY_SECONDS = 0.2', 'OPACITY_SECONDS = 5'),
+            ('if math.abs(stone.Transparency - target) > .01 then',
+             'if math.abs(stone.Transparency - target) > .5 then'),
+            ('stone.Transparency = target', 'stone.Transparency = 0'),
+            ('task.wait(OPACITY_SECONDS)', 'task.wait(REFRESH_SECONDS)'),
+            ('decor.grounded[decor.pieces[first]] = placeOnGround', 'placeOnGround'),
+            ('wanted[ranked[i].core] = ranked[i].distance', 'wanted[ranked[i].core] = 0'),
+            ('local target = if decor.grounded[stone] then fade else 1', 'local target = fade'),
+            ('decor.folder.Parent ~= core', 'decor.folder.Parent == core'),
+            ('stone.Parent ~= decor.folder', 'stone.Parent == decor.folder'),
+            ('if decor and not decorIntact(core, decor) then', 'if false then'),
+            ('script.AncestryChanged:Connect(function(_, parent)', 'script:FindFirstChild("Other"):Connect(function(_, parent)'),
+            ('if parent == nil then shutdown() end', 'if parent == nil then return end'),
         )
         for before, after in mutants:
             with self.subTest(before=before):

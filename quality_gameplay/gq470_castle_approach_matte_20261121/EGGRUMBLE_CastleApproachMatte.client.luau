@@ -11,11 +11,17 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PIECES_PER_CASTLE = 8
 local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE
 local MAX_DISTANCE = 155
+-- Invisible prefetch covers one 2.5s geometry tick at normal 16stud/s.
+local PREFETCH_DISTANCE = 195
+-- Matte stones gradually disappear at the outer LOD edge.
+local FADE_START = 125
 local REFRESH_SECONDS = 2.5
+-- Cheap local alpha-only refresh; no raycasts or scene allocations.
+local OPACITY_SECONDS = 0.2
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
 
-type Decor = { folder: Folder, pieces: {BasePart} }
+type Decor = { folder: Folder, pieces: {BasePart}, grounded: {[BasePart]: boolean} }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
@@ -77,14 +83,22 @@ local function clear(core: BasePart)
     old.folder:Destroy()
 end
 
-local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams)
+local function decorIntact(core: BasePart, decor: Decor): boolean
+    if decor.folder.Parent ~= core or #decor.pieces ~= PIECES_PER_CASTLE then return false end
+    for _, stone in ipairs(decor.pieces) do
+        if stone.Parent ~= decor.folder then return false end
+    end
+    return true
+end
+
+local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams): boolean
     -- Never place floating/underwater ornaments on streamed or absent floors.
     local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
         Vector3.new(0, -14, 0), filter)
     if not hit or hit.Material == Enum.Material.Water or hit.Normal.Y < .7
         or math.abs(hit.Position.Y - pose.Position.Y) > 2.75 then
         piece.Transparency = 1
-        return
+        return false
     end
     local surface = hit.Instance
     -- A moving NPC/player is not the ground, even if its body is collidable.
@@ -104,14 +118,15 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
         or (surface.Material == Enum.Material.Glass and surface.Transparency >= .35)
     )) then
         piece.Transparency = 1
-        return
+        return false
     end
     piece.CFrame = pose + Vector3.new(0,
         hit.Position.Y + piece.Size.Y * .5 - pose.Position.Y, 0)
     piece.Transparency = 0
+    return true
 end
 
-local function updatePieces(core: BasePart, decor: Decor)
+local function updatePieces(core: BasePart, decor: Decor, distance: number)
     -- Four shallow split path-edge pairs, outside the foundation.
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
     local offsetX = math.clamp(core.Size.X * .5 + 9, 12, 72)
@@ -128,12 +143,37 @@ local function updatePieces(core: BasePart, decor: Decor)
         local toward = base * CFrame.new(math.sin(angle) * offsetX, 0, math.cos(angle) * offsetZ)
             * CFrame.Angles(0, angle, 0)
         local first = side * 2 + 1
-        placeOnGround(decor.pieces[first],
+        decor.grounded[decor.pieces[first]] = placeOnGround(decor.pieces[first],
             toward * CFrame.new(-1.12, 0, 0) * CFrame.Angles(0, math.rad(28), 0),
             filter)
-        placeOnGround(decor.pieces[first + 1],
+        decor.grounded[decor.pieces[first + 1]] = placeOnGround(decor.pieces[first + 1],
             toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0),
             filter)
+    end
+    -- Rejected ground remains invisible; accepted stone edges blend in.
+    local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
+    for _, stone in ipairs(decor.pieces) do
+        stone.Transparency = if decor.grounded[stone] then fade else 1
+    end
+end
+
+-- 5Hz alpha-only visibility refresh: walking speed crosses the 30-stud LOD
+-- zone in under the 2.5s ground-ray period. Do not re-raycast here.
+local function refreshOpacity()
+    if disposed then return end
+    local pos = playerPosition()
+    for core, decor in active do
+        local distance = if pos then (core.Position - pos).Magnitude else MAX_DISTANCE
+        local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
+        for _, stone in ipairs(decor.pieces) do
+            if stone.Parent == decor.folder then
+                local target = if decor.grounded[stone] then fade else 1
+                -- Avoid redundant mobile rendering property churn at rest.
+                if math.abs(stone.Transparency - target) > .01 then
+                    stone.Transparency = target
+                end
+            end
+        end
     end
 end
 
@@ -149,9 +189,8 @@ local function makeApproach(core: BasePart)
         table.insert(pieces, makePiece(folder, "SandstonePathEdge_" .. side, SANDSTONE))
     end
     assert(#pieces == PIECES_PER_CASTLE)
-    local decor: Decor = { folder = folder, pieces = pieces }
+    local decor: Decor = { folder = folder, pieces = pieces, grounded = {} }
     active[core] = decor
-    updatePieces(core, decor)
 end
 
 local function refresh()
@@ -163,7 +202,7 @@ local function refresh()
         for core in candidates do
             if validCore(core) and core:IsDescendantOf(Workspace) then
                 local distance = (core.Position - pos).Magnitude
-                if distance <= MAX_DISTANCE then
+                if distance <= PREFETCH_DISTANCE then
                     table.insert(ranked, {core = core, distance = distance})
                 end
             end
@@ -176,9 +215,9 @@ local function refresh()
         end
         return a.core.Position.Z < b.core.Position.Z
     end)
-    local wanted: {[BasePart]: boolean} = {}
+    local wanted: {[BasePart]: number} = {}
     for i = 1, math.min(MAX_CASTLES, #ranked) do
-        wanted[ranked[i].core] = true
+        wanted[ranked[i].core] = ranked[i].distance
     end
     for core in active do
         if not wanted[core] or not validCore(core) then clear(core) end
@@ -186,10 +225,14 @@ local function refresh()
     for core in wanted do
         if not active[core] then makeApproach(core) end
         local decor = active[core]
+        if decor and not decorIntact(core, decor) then
+            -- Streamed-away wedges must not leave a half-built path.
+            clear(core)
+            makeApproach(core)
+            decor = active[core]
+        end
         if decor then
-            -- Re-check bounded ground rays every 2.5s; StreamingEnabled can
-            -- replace terrain while the castle core itself remains still.
-            updatePieces(core, decor)
+            updatePieces(core, decor, wanted[core])
         end
     end
     local actual = 0
@@ -230,10 +273,17 @@ task.spawn(function()
         refresh()
     end
 end)
+task.spawn(function()
+    while not disposed and script.Parent do
+        task.wait(OPACITY_SECONDS)
+        refreshOpacity()
+    end
+end)
 
 -- Script.Destroying is distinct from CharacterRemoving. Hot reload/replacement
 -- must not retain stale geometry or closures in other clients/rounds.
-script.Destroying:Connect(function()
+local function shutdown()
+    if disposed then return end
     disposed = true
     for _, connection in ipairs(trackedConnections) do
         connection:Disconnect()
@@ -243,4 +293,8 @@ script.Destroying:Connect(function()
         clear(core)
     end
     table.clear(candidates)
+end
+script.Destroying:Connect(shutdown)
+script.AncestryChanged:Connect(function(_, parent)
+    if parent == nil then shutdown() end
 end)

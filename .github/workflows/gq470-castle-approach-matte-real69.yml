@@ -1,7 +1,9 @@
 name: GQ470 matte castle approach REAL70 A source gate (not official RC)
 on:
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-castle-approach-matte-real69-20261121-a01]
+  push:
+    branches: [quality/gq470-castle-approach-fade-repair-20261121-a2a]
     paths:
       - "quality_gameplay/gq470_castle_approach_matte_20261121/**"
       - ".github/workflows/gq470-castle-approach-matte-real69.yml"
@@ -12,7 +14,7 @@ permissions:
 jobs:
   real70-approach-source:
     # Fork-authored scripts cannot access the authenticated private baseline.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -238,7 +240,7 @@ jobs:
           retention-days: 7
   verify-uploaded-artifact:
     needs: real70-approach-source
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
