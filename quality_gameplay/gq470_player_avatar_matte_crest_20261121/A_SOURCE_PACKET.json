@@ -5,7 +5,7 @@
   "source_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest",
   "source_class": "LocalScript",
   "source_repo_path": "quality_gameplay/gq470_player_avatar_matte_crest_20261121/EGGRUMBLE_PlayerTeamCrest.client.luau",
-  "source_blob_sha": "d066527ca682978779e993dfcc5b7b8647fb4f5c",
+  "source_blob_sha": "b7f15988abe155fd3ac3bd38bb057948a6feb407",
   "base_official_rc": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
   "base_selected_source_count": 69,
   "candidate_added_optional_source_count": 1,
@@ -32,10 +32,12 @@
     "stealth_flags_checked_on_player_and_character": 4,
     "r6_r15_partial_body_concealment_filter": true,
     "instant_stealth_attribute_and_body_alpha_cleanup": true,
-    "r6_spaced_limb_names_verified": true
+    "r6_spaced_limb_names_verified": true,
+    "reduced_effects_runtime_toggle_cleanup": true,
+    "r6_r15_descendant_add_remove_cleanup_immediate": true
   },
   "player_bug_364": "NOT_FIXED_BY_THIS_VISUAL",
-  "source_qa": "PENDING_GITHUB_ACTIONS",
+  "source_qa": "PENDING_STACKED_CI",
   "native_luau": "NOT_TESTED",
   "rojo_place": "NOT_TESTED",
   "studio_solo": "NOT_TESTED",
