@@ -23,10 +23,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Static safety and 22 fail-closed mutations (including swim/respawn/LOD)
+      - name: Static safety and arrival lifecycle/mobile budget mutation negatives
         run: |
           set -euo pipefail
-          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_spawn_fx_source.py" "$TARGET/emit_art_report.py"
+          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_spawn_arrival_source.py" "$TARGET/emit_art_report.py"
           python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
       - name: Verify immutable official REAL69 head and original same-head build
         run: |
