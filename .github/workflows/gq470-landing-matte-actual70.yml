@@ -13,7 +13,9 @@ jobs:
   landing-actual-art17-source-on70-off69:
     # This job has ART17 private source; reject generic/untrusted PRs at job entry.
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' &&
+       github.actor == 'kk051780' &&
+       github.ref == 'refs/heads/prep/gq470-fb015-landing-matte-3d-20261121-1540') ||
       (github.event_name == 'pull_request' &&
        github.event.pull_request.number == 993 &&
        github.event.pull_request.user.login == 'kk051780' &&
