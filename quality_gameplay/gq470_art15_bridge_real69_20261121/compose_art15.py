@@ -201,7 +201,7 @@ def create(formal: Path, parents: Path, output: Path) -> None:
         json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8")
     inspect(output, built=False)
-    print("GQ470_ART15_13_SELECTED_CHANGED_56_EXACT_SOURCE_BRIDGE_PREP")
+    print("GQ470_ART15_15_SELECTED_CHANGED_54_EXACT_SOURCE_BRIDGE_PREP")
 
 
 def inspect(root: Path, built: bool = True):
@@ -358,7 +358,7 @@ def selftest() -> None:
     ]
     blocked=0
     for value in negatives:
-        try: changed_routes(before, value, changed, 13)
+        try: changed_routes(before, value, changed, 15)
         except ValueError: blocked+=1
         else: raise AssertionError("RED_WRONG_15_SOURCE_PASS")
     require({x["pr"] for x in PARENTS} == {961,964,963} and
