@@ -1,5 +1,8 @@
 name: GQ470 matte castle foundation REAL70 A source gate (not official RC)
 on:
+  push:
+    branches:
+      - quality/gq470-castle-foundation-camera-lod-20261121-a02
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
