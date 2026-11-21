@@ -36,6 +36,7 @@ def validate(s: str) -> None:
         'TweenInfo.new(2.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)',
         'Workspace.DescendantAdded:Connect(attach)',
         'player.CharacterAdded:Connect(function()',
+        'part(folder, "TeamClothBody",',
     )
     for marker in markers:
         # Numeric budget declarations need whole-line matching: 4 must not accept 400.
@@ -43,6 +44,15 @@ def validate(s: str) -> None:
                  if marker.startswith(("local MAX_", "local NEARER_")) else s.count(marker))
         if count != 1:
             raise ValueError("RED_BANNER_CONTRACT_" + marker)
+    # PR #979 only targets BasePart names containing banner/pennant/castleflag.
+    # This new candidate has its own TweenService owner: never double-animate it.
+    for visual_part in ("MatteFlagstaff", "TeamClothBody", "SplitTailUpper",
+                        "SplitTailLower", "SinglePointTail"):
+        if any(token in visual_part.lower() for token in
+               ("banner", "pennant", "castleflag")):
+            raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY")
+    if 'part(folder, "TeamBannerBody",' in s:
+        raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY_PARTNAME")
     if s.count('Workspace:GetDescendants()') != 2:
         raise ValueError("RED_BANNER_INITIAL_AND_RESPAWN_RESCAN")
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
@@ -92,6 +102,7 @@ class BannerSourceTests(unittest.TestCase):
             ('tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team', 'tower:IsDescendantOf(Workspace)'), 
             ('local base = restingPose[panel]', 'local base = panel.CFrame'),
             ('panel.CFrame = base', 'panel.CFrame = CFrame.new()'),
+            ('part(folder, "TeamClothBody",', 'part(folder, "TeamBannerBody",'),
             ('ancestor.Name == team .. "_CASTLE"', 'true'),
             ('name == "RED_TOWER"', 'name == "OTHER_TOWER"'),
             ("GetAttribute(\"EGGRUMBLE_ReducedEffects\") ~= true", "GetAttribute(\"EGGRUMBLE_ReducedEffects\") == true"),
