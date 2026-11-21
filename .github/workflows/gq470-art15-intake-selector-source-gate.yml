@@ -40,13 +40,21 @@ jobs:
           assert d['studio_and_fun_not_inferred'] is True
           assert d['next_owner']=='SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY'
           if d['official_head']=='e80973c354f14a0d0088577f3cc1a875454f0f8f':
-              x=[y for y in d['all_labeled_candidates'] if y['pr']==966]
-              assert len(x)==1, 'RED_ART15_PR_NOT_IN_LIVE_QUEUE'
-              item=x[0]
-              assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
-              assert item['candidate_evidence_kind']=='ART15_SOURCE_ONLY_NOT_FORMAL'
-              assert item['candidate_artifact_id']==14682237123
-              print('GQ470_ART15_LIVE_SOURCE_PACKET_DISCOVERED_NO_RC_WRITE',item['head'])
+              selected={y['pr']:y for y in d['selected']}
+              assert not (966 in selected and 970 in selected), 'RED_DUPLICATE_ART15_ART16_IN_INBOX'
+              if 970 in selected:
+                  item=selected[970]
+                  assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
+                  assert item['candidate_evidence_kind']=='ART16_SOURCE_ONLY_NOT_FORMAL'
+                  assert item['candidate_artifact_id']==14685047060
+                  print('GQ470_ART16_NEWEST_SOURCE_PACKET_DISCOVERED_NO_RC_WRITE',item['head'])
+              else:
+                  item=selected.get(966)
+                  assert item is not None, 'RED_NO_VERIFIED_ART_SOURCE_INBOX'
+                  assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
+                  assert item['candidate_evidence_kind']=='ART15_SOURCE_ONLY_NOT_FORMAL'
+                  assert item['candidate_artifact_id']==14682237123
+                  print('GQ470_ART15_FALLBACK_PENDING_ART16_MANIFEST_NO_RC_WRITE',item['head'])
           else:
               print('GQ470_ART15_CANARY_FORMAL_MOVED_REBASE_REQUIRED',d['official_head'])
           PY
