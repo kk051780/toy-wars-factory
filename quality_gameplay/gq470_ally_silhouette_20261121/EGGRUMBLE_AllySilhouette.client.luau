@@ -47,9 +47,12 @@ local function isVisibleAlly(player, localRoot, localTeam)
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     local root = character:FindFirstChild("HumanoidRootPart")
     local head = character:FindFirstChild("Head")
-    if not humanoid or humanoid.Health <= 0 or not root or not head
+    local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+    if not humanoid or humanoid.Health <= 0 or not root or not head or not torso
         or head.Transparency >= 0.35
-        or head.LocalTransparencyModifier >= 0.35 then
+        or head.LocalTransparencyModifier >= 0.35
+        or torso.Transparency >= 0.35
+        or torso.LocalTransparencyModifier >= 0.35 then
         return nil
     end
     local distance = (root.Position - localRoot.Position).Magnitude
