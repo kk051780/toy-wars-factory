@@ -35,6 +35,8 @@ def safe_code(code: str) -> bool:
         'stone.Reflectance = 0',
         'floor.Size.Y * .5 - .46',
         'local facetYaw = if section == 1 then 0 else math.pi',
+        'if camera then return camera.CFrame.Position end',
+        'return if root and root:IsA("BasePart") then root.Position else nil',
         '* CFrame.Angles(0, facetYaw, 0)',
         'assert(floors * PARTS_PER_FLOOR <= MAX_EXTRA_PARTS)',
         'folder.Parent = floor',
@@ -100,6 +102,15 @@ class TestLobbyEdgeMasonry(unittest.TestCase):
                 self.assertLess(g["top"], g["floor_top"])
                 self.assertGreater(g["floor_top"] - g["top"], 0.03)
 
+    def test_camera_first_distance_lod(self):
+        code = SOURCE.read_text()
+        start = code.index('local function viewPosition()')
+        end = code.index('local function dispose(', start)
+        view = code[start:end]
+        self.assertLess(view.index('local camera = Workspace.CurrentCamera'),
+                        view.index('local character = player.Character'))
+        self.assertIn('if camera then return camera.CFrame.Position end', view)
+
     def test_fail_closed_negative_mutations(self):
         code = SOURCE.read_text()
         mutations = {
@@ -128,6 +139,9 @@ class TestLobbyEdgeMasonry(unittest.TestCase):
             "erase_mirrored_bevel": code.replace(
                 'local facetYaw = if section == 1 then 0 else math.pi',
                 'local facetYaw = 0', 1),
+            "wrong_lod_camera": code.replace(
+                'if camera then return camera.CFrame.Position end',
+                'if camera then return Vector3.zero end', 1),
         }
         for name, mutated in mutations.items():
             self.assertNotEqual(mutated, code, f"BAD_MUTATION_NO_OP_{name}")
