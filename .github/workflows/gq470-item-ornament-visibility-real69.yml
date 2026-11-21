@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 25
     env:
       GH_TOKEN: ${{ github.token }}
-      WORK: ${{ runner.temp }}/gq470-item-ornament-real69
+      WORK: /tmp/gq470-item-ornament-real69
       OFFICIAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
       SCRIPT: quality_gameplay/gq470_item_visibility_real69_20261122
     steps:
