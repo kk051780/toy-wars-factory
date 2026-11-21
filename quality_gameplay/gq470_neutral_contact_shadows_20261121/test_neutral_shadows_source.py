@@ -80,7 +80,7 @@ def validate(source: str):
     # selected set MUST happen before any next selected Part allocation.
     # Distance fade is tied to the existing camera LOD and cannot introduce
     # a per-frame callback, geometry, or a hard opaque disc at the cutoff.
-    if len(re.findall(r"^local FADE_START_RATIO = 0\\.70$", source, re.MULTILINE)) != 1 or (
+    if len(re.findall(r"^local FADE_START_RATIO = 0\.70$", source, re.MULTILINE)) != 1 or (
         source.count("GQ470_NEUTRAL_DISTANCE_FADE_V1") != 1
         or source.count("disc.Transparency = distanceFadeTransparency(entry.distance)") != 1
         or source.count("distance = entry.distance") != 1
@@ -112,7 +112,7 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_PEAK_ALLOCATION_OVER_CAP")
     if source.count("disc = newDisc()") != 1 or (
         "if not selected[model] then" not in scope
-        or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})" not in scope
+        or "table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})" not in scope
         or "local limit = math.min(MAX_GROUND_PROBES, #nearby)" not in scope
     ):
         raise ValueError("RED_NEUTRAL_SELECTION_RECLAIM_CONTRACT")
@@ -195,7 +195,7 @@ class NeutralShadowsTests(unittest.TestCase):
             ('PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)', 'PLAYER:GetAttributeChangedSignal("Bad")'),
             ('if not selected[model] then', 'if selected[model] then'),
             ('for _, entry in ipairs(chosen) do', 'for _, entry in ipairs(discovered) do'),
-            ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})', 'selected[entry.model] = false'),
+            ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})', 'selected[entry.model] = false'),
             ('GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2', 'GQ470_BROKEN_BUDGET'),
             ('featureOffConnection:Disconnect()', 'featureOffConnection = nil'),
             ('reducedEffectsConnection:Disconnect()', 'reducedEffectsConnection = nil'),
