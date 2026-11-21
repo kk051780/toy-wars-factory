@@ -174,9 +174,22 @@ def verify_manifest(m: dict, built_raw: bytes, source_raw: bytes) -> None:
 
 def packet(candidate: Path) -> dict:
     candidate = candidate.resolve()
-    verify_original(candidate)
+    raw_original = (candidate / ORIGINAL_PLACE).read_bytes()
+    require(len(raw_original) == ORIGINAL_PLACE_BYTES and
+            sha(raw_original) == ORIGINAL_PLACE_SHA, "CANDIDATE_OFF_PLACE")
+    receipt = json.loads((candidate / RECEIPT).read_text(encoding="utf-8"))
+    require(receipt.get("build_head") == BASE and
+            receipt.get("official_branch") == FORMAL and
+            receipt.get("canonical_build") is True and
+            receipt.get("selected_source_count") == 69, "CANDIDATE_ORIGINAL_RECEIPT")
     scanned = project_scan(candidate, PROJECT)
-    require(len(scanned) == 70 and ROUTE in scanned, "CANDIDATE_ROUTE")
+    require(len(scanned) == 70 and ROUTE in scanned and
+            set(scanned) == set(receipt["source_hashes"]) | {ROUTE},
+            "CANDIDATE_ROUTE")
+    for route, digest in receipt["source_hashes"].items():
+        require(scanned[route]["sha256"] == digest and
+                scanned[route]["class"] == receipt["source_classes"][route],
+                "CANDIDATE_OLD69_DRIFT_" + route)
     assert_place_matches(candidate, candidate / BUILT_PLACE, 70)
     built = (candidate / BUILT_PLACE).read_bytes()
     raw = (candidate / TARGET).read_bytes()
