@@ -38,6 +38,11 @@ MARKERS = [
  'disc.Parent = folder',
  'disc:Destroy()',
  'script.Destroying:Connect',
+ 'local signalConnections: {RBXScriptConnection} = {}',
+ 'connection:Disconnect()',
+ 'table.clear(signalConnections)',
+ 'table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(FEATURE_OFF)',
+ 'table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)',
  'task.delay(UPDATE_SECONDS, tick)',
  'task.defer(tick)',
  'PLAYER:GetAttributeChangedSignal(FEATURE_OFF)',
@@ -81,6 +86,16 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_TASK_CHAIN")
     if source.count("clearAll()") < 5:
         raise ValueError("RED_NEUTRAL_CLEANUP")
+    # Player signals outlive destroyed preview scripts. Release their exact
+    # RBXScriptConnections before destroying the local visual Part folder.
+    start = source.find("script.Destroying:Connect(function()")
+    end = source.find("end)", start)
+    lifetime = source[start:end]
+    if not (start >= 0 and
+            lifetime.count("connection:Disconnect()") == 1 and
+            lifetime.find("connection:Disconnect()") < lifetime.find("clearAll()") and
+            source.count("table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(") == 2):
+        raise ValueError("RED_NEUTRAL_PLAYER_SIGNAL_LEAK")
 
 class NeutralShadowsTests(unittest.TestCase):
     def test_contract(self):
@@ -107,6 +122,9 @@ class NeutralShadowsTests(unittest.TestCase):
             ('disc.CanQuery = false','disc.CanQuery = true'),
             ('disc.Transparency = SHADOW_TRANSPARENCY','disc.Transparency = 0'),
             ('script.Destroying:Connect','script.Changed:Connect'),
+            ('connection:Disconnect()', 'connection.Connected'),
+            ('table.clear(signalConnections)', 'table.clear(discovered)'),
+            ('table.insert(signalConnections, PLAYER:GetAttributeChangedSignal(FEATURE_OFF)', 'PLAYER:GetAttributeChangedSignal(FEATURE_OFF)'),
             ('task.delay(UPDATE_SECONDS, tick)','tick()'),
             ('PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)', 'PLAYER:GetAttributeChangedSignal("Bad")'),
             ('if not selected[model] then', 'if selected[model] then'),
