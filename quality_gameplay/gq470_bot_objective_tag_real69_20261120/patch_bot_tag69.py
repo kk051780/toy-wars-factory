@@ -123,6 +123,7 @@ def apply(root:Path)->None:
   "original_source_sha256":ORIGINAL_SHA,"changed_source_sha256":digest(new),
   "other_selected_routes_byte_exact":68,"source_count":69,
   "tag_pixels":[104,24],"tag_max_studs":22,"near_hp_studs":18,
+  "subject_owned_npc_labels":True,
   "transparent_text_edge_stroke_opacity":0.45,"text_edge_rgb":[5,12,20],
   "new_gameplay_authority":False,"extra_ui_instances":0,
   "rollback":"off69_bot_tag","studio":"NOT_TESTED","android":"NOT_TESTED",
