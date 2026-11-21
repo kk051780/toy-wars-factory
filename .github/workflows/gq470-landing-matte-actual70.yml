@@ -123,3 +123,31 @@ jobs:
             ${{ runner.temp }}/gq470-landing-real70/receipt.json
             ${{ runner.temp }}/gq470-landing-real70/GQ470_LANDING_REAL70_ART17_QA.json
             ${{ runner.temp }}/gq470-art17/on/GQ470_REHYDRATED_ART17_SOURCE_PROOF.json
+  landing-postupload-independent-qa:
+    needs: [landing-actual-art17-source-on70-off69]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Redownload actual just-published artifact (not job workspace)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gq470-art17-downloaded"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" \
+            --name GQ470-LANDING-REAL70-ART17-A-PACKET-NOT-FORMAL \
+            --dir "$RUNNER_TEMP/gq470-art17-downloaded"
+          test -s "$RUNNER_TEMP/gq470-art17-downloaded/gq470-landing-real70/on70/GQ470_LANDING_REAL70_SOURCE_ONLY.rbxlx"
+          test -s "$RUNNER_TEMP/gq470-art17-downloaded/gq470-landing-real70/off69/GQ470_LANDING_OFF69_EXACT_SOURCE.rbxlx"
+      - name: Full class/source/hash/17-author preservation and 12 mutated artifact rejections
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_landing_shadow_20261121/verify_real70_postupload.py \
+            --downloaded "$RUNNER_TEMP/gq470-art17-downloaded"
+          echo GQ470_POSTUPLOAD_FINAL_PASS_A_SOURCE_ONLY_NOT_FORMAL_NOT_ART_GO
