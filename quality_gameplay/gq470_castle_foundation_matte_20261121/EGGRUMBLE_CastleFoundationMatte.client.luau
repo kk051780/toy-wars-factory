@@ -75,6 +75,10 @@ local function clear(core: BasePart)
     local current = active[core]
     if not current then return end
     active[core] = nil
+    -- Removed/reparented children are still ours; never leave orphan Wedges.
+    for _, stone in ipairs(current.parts) do
+        stone:Destroy()
+    end
     current.folder:Destroy()
 end
 
