@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ART15 B220 rapid admission bridge: compose three disjoint verified *source-only* A packets.
 
-Uses #961 ART7, #964 ART6B and #963 castle2 candidate artifacts,
+Uses #965 ART13 (#961+#964) and #963 castle2 verified A artifacts,
 never their Git commits/PR merge contents. Does NOT write the canonical RC.
 """
 from __future__ import annotations
@@ -23,14 +23,11 @@ SOURCES = "selected_sources"
 MANIFEST = "SOURCE_SELECT_MANIFEST.json"
 
 PARENTS = (
-    {"pr": 961, "head": "a3a750d167a0c1042f098f63bd1802ad5cbf31e5",
-     "run": 44840200202, "artifact": "GQ470-ART7-REAL69-SELECTED-SOURCES-NOT-FORMAL",
-     "source_count": 7, "unchanged": 62, "receipt_key": "gq470_art7_intake",
-     "place_sha": "60cbd3fc3945ce04c976218fbcfff4d9aaa3c9f3a8b7310c502ee795f04a3893"},
-    {"pr": 964, "head": "ece8c4ee909cceaea870b0fff3df4983f2ee9012",
-     "run": 44840981553, "artifact": "GQ470-ART6B-REAL69-SELECTED-SOURCES-NOT-FORMAL",
-     "source_count": 6, "unchanged": 63, "receipt_key": "gq470_art6b_intake",
-     "place_sha": "05f57a56b9037234e3e9cae9079abbafe972eaf585a9585a2746902f587eb455"},
+    {"pr": 965, "head": "e6556ff31ad57151c3f97bb2c2e14549d1daf68e",
+     "run": 44841581822,
+     "artifact": "GQ470-ART13-REAL69-ONE-B220-PACKET-NOT-FORMAL",
+     "source_count": 13, "unchanged": 56, "receipt_key": "gq470_art13_fast_bridge",
+     "place_sha": "f68b12073ea5a1eddcd8938dee5e64ec89b05c40562943dd15ea4b8c3d3691e0"},
     {"pr": 963, "head": "ca577768d91bc2b611433c255230327d013e68e7",
      "run": 44840359818,
      "artifact": "GQ470-REAL69-GUARDIAN-GATEHP-TWO-SOURCES-NOT-FORMAL",
@@ -168,7 +165,7 @@ def create(formal: Path, parents: Path, output: Path) -> None:
         patches.update(art)
         by_parent[str(parent["pr"])] = sorted(art)
     require(len(patches) == 15 and
-            set(by_parent) == {"961", "964", "963"}, "EXACT_7_PLUS_6_PLUS_2")
+            set(by_parent) == {"965", "963"}, "EXACT_13_PLUS_2")
     shutil.copytree(formal, output)
     shutil.copytree(formal, output / OFF)
     files = selected(output)
@@ -210,12 +207,11 @@ def inspect(root: Path, built: bool = True):
     receipt = json.loads((root / RECEIPT).read_text(encoding="utf-8"))
     note = receipt.get("gq470_art15_fast_bridge", {})
     routes = note.get("parent_routes", {})
-    require(set(routes) == {"961", "964", "963"} and
-            len(routes["961"]) == 7 and len(routes["964"]) == 6 and
-            len(routes["963"]) == 2 and
-            len(set(routes["961"]) | set(routes["964"]) | set(routes["963"])) == 15,
+    require(set(routes) == {"965", "963"} and
+            len(routes["965"]) == 13 and len(routes["963"]) == 2 and
+            len(set(routes["965"]) | set(routes["963"])) == 15,
             "PARENT_ROUTE_NONOVERLAP")
-    expected = set(routes["961"]) | set(routes["964"]) | set(routes["963"])
+    expected = set(routes["965"]) | set(routes["963"])
     changed_routes(before, after, expected, 15)
     require(receipt.get("canonical_build") is False and
             receipt.get("build_head") == "ART15_A_SOURCE_BRIDGE_NOT_OFFICIAL" and
@@ -361,7 +357,7 @@ def selftest() -> None:
         try: changed_routes(before, value, changed, 15)
         except ValueError: blocked+=1
         else: raise AssertionError("RED_WRONG_15_SOURCE_PASS")
-    require({x["pr"] for x in PARENTS} == {961,964,963} and
+    require({x["pr"] for x in PARENTS} == {965,963} and
             all(len(x["head"]) == 40 and len(x["place_sha"]) == 64
                 for x in PARENTS), "PARENT_IDENTITY")
     print("GQ470_ART15_STATIC_" + str(blocked) + "_SOURCE_MUTANT_NEGATIVES_PASS")
