@@ -73,7 +73,7 @@ jobs:
                                  check=True,stdout=subprocess.DEVNULL)
           print("GQ470_CAMERA_REBIND_NATIVE_ORIGINAL69_PLUS_CANDIDATE70_PASS")
           PY
-      - name: Native Luau mock: real CameraSubject lifecycle / 10 ownership scenarios (NOT Studio)
+      - name: Native Luau mock - real CameraSubject lifecycle / 10 ownership scenarios (NOT Studio)
         run: |
           set -euo pipefail
           cmake --build "$ROOT/luau" --target Luau.Repl.CLI --parallel 4
