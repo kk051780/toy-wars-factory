@@ -90,6 +90,11 @@ jobs:
           "$ROOT/rojo" build "$ROOT/on70/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
           python3 -B "$SRC/compose_real70.py" --verify "$ROOT/on70" --built "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
           echo GQ470_DUNE_GRASS_ROJO_OFF69_BYTE_EXACT_ON70_CLASS_SOURCE_GREEN_NOT_ART_NOT_FORMAL
+      - name: B220 exact one source packet and 17 malicious/tampered negative fixtures
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$SRC/verify_b_packet.py"
+          python3 -B "$SRC/verify_b_packet.py" --candidate "$ROOT/on70" --built "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
       - name: Fail closed if real formal RC moved during this A-only build
         env:
           GH_TOKEN: ${{ github.token }}
