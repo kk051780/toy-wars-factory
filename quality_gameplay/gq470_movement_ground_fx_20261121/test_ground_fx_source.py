@@ -82,7 +82,7 @@ def validate(source: str) -> None:
         raise ValueError("RED_GROUND_FX_UNBOUNDED_CODE")
     if source.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_GROUND_FX_MULTIPLE_FACTORY_SITES")
-    if code.count("if swimmingConnection then swimmingConnection:Disconnect() end") != 2:
+    if code.count("if swimmingConnection then swimmingConnection:Disconnect() end") != 3:
         raise ValueError("RED_GROUND_FX_SWIM_RESPAWN_CONNECTION_LEAK")
 
 
