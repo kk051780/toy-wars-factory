@@ -11,6 +11,7 @@ local FEATURE_ID = "GQ470_FB015_CASTLE_BANNER_MATTE_20261121"
 local MAX_PER_TEAM = if UserInputService.TouchEnabled then 2 else 3
 local MAX_PARTS_PER_TOWER = 4
 local MAX_NEUTRAL_CASTLES = 2
+local NEARER_MARGIN_STUDS = 8
 local MAX_TOTAL_EXTRA_PARTS = (MAX_PER_TEAM * 2 + MAX_NEUTRAL_CASTLES) * MAX_PARTS_PER_TOWER
 local PALETTE = {
     RED = Color3.fromRGB(166, 69, 75),
@@ -21,6 +22,15 @@ local trim = Color3.fromRGB(194, 173, 137)
 local counts = { RED = 0, BLUE = 0, NEUTRAL = 0 }
 type Entry = { root: Folder, connections: {RBXScriptConnection}, tweens: {Tween}, team: string }
 local tracked: {[BasePart]: Entry} = {}
+
+local function cameraDistance(tower: BasePart): number
+    local character = player.Character
+    local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
+    local camera = Workspace.CurrentCamera
+    local viewpoint = if root and root:IsA("BasePart") then root.Position
+        elseif camera then camera.CFrame.Position else Vector3.zero
+    return (tower.Position - viewpoint).Magnitude
+end
 
 local function castleTeam(tower: Instance): string?
     if not tower:IsA("BasePart") or not tower.Anchored then return nil end
@@ -78,6 +88,23 @@ local function attach(tower: Instance)
     local team = castleTeam(tower)
     if not team or not tower:IsA("BasePart") or tracked[tower] then return end
     local limit = if team == "NEUTRAL" then MAX_NEUTRAL_CASTLES else MAX_PER_TEAM
+    if team == "NEUTRAL" and counts[team] >= limit then
+        -- Streaming/arrival order must not reserve all banners for faraway
+        -- castles. Replace only an existing farther neutral decoration.
+        local farthest: BasePart? = nil
+        local farthestDistance = -1
+        for candidate, current in tracked do
+            if current.team == "NEUTRAL" then
+                local distance = cameraDistance(candidate)
+                if distance > farthestDistance then
+                    farthest, farthestDistance = candidate, distance
+                end
+            end
+        end
+        if farthest and cameraDistance(tower) + NEARER_MARGIN_STUDS < farthestDistance then
+            stop(farthest)
+        end
+    end
     if counts[team] >= limit then return end
     counts[team] += 1
     local folder = Instance.new("Folder")
@@ -139,4 +166,14 @@ Workspace.DescendantAdded:Connect(attach)
 for _, descendant in Workspace:GetDescendants() do
     attach(descendant)
 end
+-- Re-rank the small neutral castle set once after a real player respawn.
+-- No per-frame or repeated background loop; new streamed cores use the
+-- same nearest-selection logic via DescendantAdded.
+player.CharacterAdded:Connect(function()
+    task.delay(0.8, function()
+        for _, descendant in Workspace:GetDescendants() do
+            if descendant.Name == "StandardCore" then attach(descendant) end
+        end
+    end)
+end)
 -- Maximum decorative part budget: MAX_TOTAL_EXTRA_PARTS; no per-frame Lua loop.
