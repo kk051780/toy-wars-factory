@@ -43,6 +43,8 @@ P0修正は唯一の正規writer #220が最新正式HEADと権限を確認し、
 - **最大負荷**：多数のプレイヤーを同画角に入れてTouchで2人/4Part・PCで3人/6Partを超えない。キャラ削除・死亡・チーム切替・再出現・Streaming・減員・カメラ消失時のパーツと監視接続残留がないか確認する。
 - **優先度と重複**：#975（近くの味方Highlight）と#976（両陣営肩章）は競合する代替案。実画像・可読性・Android FPSで **どちらか一方または両方却下** を#250が決める。P0不可視/卵→城→得点→勝敗が未解決なら#976はDEFER。どちらも公式RCにはまだ採用しない。
 
+- **低負荷／ストリーミング切替**：近距離で装飾を生成した状態から LocalPlayer の `EGGRUMBLE_ReducedEffects=true` に切り替え、再スキャンを待たずに肩章ゼロとなること。falseへ戻して再生成できること。R6/R15の腕・脚を既存Characterに後から追加／削除した瞬間も古い部位のWeldと肩章を破棄し、次の0.75秒の距離選別で安全に再生成できること（Studioログ・Explorerと動画を添付）。これは現時点ではNOT_TESTED。
+
 RETEST記録欄：R6/R15 / Team / CameraDistance / CloakAttribute / BodyAlpha / Touch / CountClientWedges / CleanupBeforeAfter / FPS / StudioOutput / TestedPlaceSHA / EvidenceLink / OWNER_ACCEPTED。空欄は**NOT_TESTED**、0/32画像なら **ART_NO_GO**。
 
 ## 結果を記録する最小セット
