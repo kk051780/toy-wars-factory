@@ -26,7 +26,7 @@ jobs:
       - name: Static safety and 14 fail-closed mutations
         run: |
           set -euo pipefail
-          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_ground_fx_source.py"
+          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_ground_fx_source.py" "$TARGET/emit_art_report.py"
           python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
       - name: Verify immutable official REAL69 head and original same-head build
         run: |
@@ -161,6 +161,25 @@ jobs:
           verify_b(candidate,place)
           print("GQ470_GROUND_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
           PY
+      - name: #420 honest PC Android 32 screenshot and FUN source-only audit
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/emit_art_report.py" --candidate "$ROOT/on70" \
+            --place "$ROOT/GQ470_GROUND_ON70_NOT_FORMAL.rbxlx" \
+            --out "$ROOT/ART_CHECK_REPORT.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["ROOT"])/"ART_CHECK_REPORT.json"
+          x=json.loads(p.read_text(encoding="utf-8"))
+          assert len(x["comparison_images"])==32
+          assert x["comparison_image_count"]==0
+          assert all(v["exists"] is False and v["human_score"] is None for v in x["comparison_images"])
+          assert x["studio_solo"]=="NOT_TESTED" and x["studio_2client"]=="NOT_TESTED"
+          assert x["art_gate"]=="ART_NO_GO" and x["product_gate"]=="PRODUCT_NO_GO"
+          assert x["owner_accepted"] is False and x["formal_rc_integrated"] is False
+          print("GQ470_GROUND_REPORT_32_REAL_IMAGE_GAPS_NOT_ART_GO_PASS")
+          PY
       - name: Confirm formal RC unchanged (B220 only writer)
         run: |
           set -euo pipefail
@@ -177,5 +196,6 @@ jobs:
             /tmp/gq470-ground-fx/on70/GQ470_GROUND_FX_SOURCE_RECEIPT.json
             /tmp/gq470-ground-fx/on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_GroundMotionFX.client.luau
             /tmp/gq470-ground-fx/on70/B220_GROUND_FX_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
+            /tmp/gq470-ground-fx/ART_CHECK_REPORT.json
           if-no-files-found: error
           retention-days: 7
