@@ -23,7 +23,8 @@ for _, candidate in ipairs(Workspace:GetDescendants()) do
         inspected += 1
         local head = candidate.Parent
         local model = if head then head.Parent else nil
-        local humanoid = if model then model:FindFirstChildOfClass("Humanoid") else nil
+        local humanoidCandidate = if model then model:FindFirstChildOfClass("Humanoid") else nil
+        local humanoid = if humanoidCandidate and humanoidCandidate:IsA("Humanoid") then humanoidCandidate else nil
         requireField(head ~= nil and head:IsA("BasePart"), "BOT_LABEL_NOT_ON_PART")
         requireField(humanoid ~= nil, "BOT_LABEL_MISSING_HUMANOID")
         requireField(candidate.Size.X.Offset == 104 and candidate.Size.Y.Offset == 24,
@@ -40,7 +41,8 @@ for _, candidate in ipairs(Workspace:GetDescendants()) do
             requireField(humanoid.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged,
                 "BOT_HEALTH_ALWAYS_ON")
         end
-        local text = candidate:FindFirstChildWhichIsA("TextLabel", true)
+        local textCandidate = candidate:FindFirstChildWhichIsA("TextLabel", true)
+        local text = if textCandidate and textCandidate:IsA("TextLabel") then textCandidate else nil
         requireField(text ~= nil, "BOT_TACTIC_LABEL_MISSING")
         if text then
             requireField(text.BackgroundTransparency == 1,
