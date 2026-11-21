@@ -10,6 +10,19 @@ REQUIRED = (
     'local PIECES_PER_CASTLE = 8',
     'local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE',
     'local MAX_DISTANCE = 155',
+    'local FADE_START = 125',
+    'local function decorIntact(core: BasePart, decor: Decor): boolean',
+    'decor.folder.Parent ~= core',
+    'stone.Parent ~= decor.folder',
+    'local wanted: {[BasePart]: number} = {}',
+    'wanted[ranked[i].core] = ranked[i].distance',
+    'updatePieces(core, decor, wanted[core])',
+    'if decor and not decorIntact(core, decor) then',
+    'local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)',
+    'if stone.Transparency < 1 then stone.Transparency = fade end',
+    'script.Destroying:Connect(shutdown)',
+    'script.AncestryChanged:Connect(function(_, parent)',
+    'if parent == nil then shutdown() end',
     'local REFRESH_SECONDS = 2.5',
     'core.Name ~= "StandardCore"',
     'core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150',
@@ -60,7 +73,7 @@ REQUIRED = (
     'local trackedConnections: {RBXScriptConnection} = {}',
     'if disposed then return end',
     'while not disposed and script.Parent do',
-    'script.Destroying:Connect(function()',
+    'local function shutdown()',
     'disposed = true',
     'for _, connection in ipairs(trackedConnections) do',
     'connection:Disconnect()',
@@ -106,7 +119,7 @@ def validate(s):
         raise ValueError("RED_UNTRACKED_EVENT_LISTENER")
     if s.count('for core in active do') != 3:  # pruning, respawn and destroy
         raise ValueError("RED_STALE_CASTLE_DECOR")
-    if len(s.encode()) > 9500:
+    if len(s.encode()) > 11000:
         raise ValueError("RED_OVERSIZED_SOURCE")
     return True
 
@@ -175,6 +188,24 @@ class TestApproachSource(unittest.TestCase):
             ('while not disposed and script.Parent do', 'while script.Parent do'),
             ('if disposed then return end', '-- no disposed guard'),
             ('keep(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+        )
+        for before, after in mutants:
+            with self.subTest(before=before):
+                self.assertIn(before, s)
+                with self.assertRaises(ValueError):
+                    validate(s.replace(before, after, 1))
+
+    def test_fade_repair_and_unparent_mutants(self):
+        s = SRC.read_text(encoding="utf-8")
+        mutants = (
+            ('FADE_START = 125', 'FADE_START = 1'),
+            ('wanted[ranked[i].core] = ranked[i].distance', 'wanted[ranked[i].core] = 0'),
+            ('if stone.Transparency < 1 then stone.Transparency = fade end', 'stone.Transparency = 0'),
+            ('decor.folder.Parent ~= core', 'decor.folder.Parent == core'),
+            ('stone.Parent ~= decor.folder', 'stone.Parent == decor.folder'),
+            ('if decor and not decorIntact(core, decor) then', 'if false then'),
+            ('script.AncestryChanged:Connect(function(_, parent)', 'script:FindFirstChild("Other"):Connect(function(_, parent)'),
+            ('if parent == nil then shutdown() end', 'if parent == nil then return end'),
         )
         for before, after in mutants:
             with self.subTest(before=before):
