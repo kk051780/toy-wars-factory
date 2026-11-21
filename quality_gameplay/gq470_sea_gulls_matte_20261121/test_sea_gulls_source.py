@@ -20,6 +20,7 @@ def gate(s: str) -> None:
         'BIRD_LIMIT = if UserInputService.TouchEnabled then 2 else 3',
         'PARTS_PER_BIRD = 3',
         'TOTAL_PART_BUDGET = BIRD_LIMIT * PARTS_PER_BIRD',
+        'local seaward = 28 + 9 * slot',
         'assert(created <= TOTAL_PART_BUDGET',
         'part.Anchored = true', 'part.CanCollide = false',
         'part.CanTouch = false', 'part.CanQuery = false',
@@ -89,10 +90,12 @@ class SeagullSourceTests(unittest.TestCase):
             SOURCE.replace('parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"',
                            'parent.Name == "UnrelatedWorld"', 1),
             SOURCE.replace('parent:IsA("Folder")', 'true', 1),
+            SOURCE.replace('local seaward = 28 + 9 * slot',
+                           'local seaward = -28 - 9 * slot', 1),
             SOURCE.replace('GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects")',
                            'GetAttributeChangedSignal("CosmeticValue")', 1),
         ]
-        self.assertEqual(len(mutants), 20)
+        self.assertEqual(len(mutants), 21)
         for i, variant in enumerate(mutants):
             with self.subTest(mutation=i):
                 with self.assertRaises(AssertionError):
