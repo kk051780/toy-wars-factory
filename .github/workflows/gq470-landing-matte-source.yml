@@ -1,0 +1,71 @@
+name: GQ470 Landing Matte 3D A source only (NO ART GO)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_landing_shadow_20261121/**'
+      - '.github/workflows/gq470-landing-matte-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  landing-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python source mutation and reversible REAL69/70 contract
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_landing_shadow_20261121/compose_landing70.py --self-test
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile actual unique game LocalScript
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-landing-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-landing-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470-landing-luau/luau-compile --text quality_gameplay/gq470_landing_shadow_20261121/EGGRUMBLE_LandingShadow.client.luau >/dev/null
+          echo GQ470_LANDING_NATIVE_SOURCE_COMPILE_PASS_NOT_ENGINE
+      - name: Pinned Rojo one-LocalScript Place XML source truth
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-landing-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-landing-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq470-landing-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1, names
+              p=Path('/tmp/gq470-landing-rojo')
+              p.write_bytes(z.read(names[0])); p.chmod(0o755)
+          PY
+          DIR=quality_gameplay/gq470_landing_shadow_20261121
+          /tmp/gq470-landing-rojo build "$DIR/EGGRUMBLE_LANDING_ONLY.project.json" -o /tmp/GQ470_LANDING_SOURCE_ONLY_NOT_OFFICIAL.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          root=ET.fromstring(Path('/tmp/GQ470_LANDING_SOURCE_ONLY_NOT_OFFICIAL.rbxlx').read_bytes())
+          sources=[]
+          for item in root.iter('Item'):
+              if item.attrib.get('class') in ('Script','LocalScript','ModuleScript'):
+                  prop=item.find('Properties')
+                  name=prop.find("string[@name='Name']")
+                  source=prop.find("ProtectedString[@name='Source']")
+                  if source is None:
+                      source=prop.find("string[@name='Source']")
+                  sources.append((item.attrib['class'],name.text if name is not None else '',source.text if source is not None else ''))
+          assert len(sources)==1, sources
+          cls,name,src=sources[0]
+          assert cls=='LocalScript' and name=='EGGRUMBLE_LandingShadow'
+          assert 'EGGRUMBLE_LandingShadow_LocalOnly' in src
+          assert 'Workspace:Raycast' in src
+          print('GQ470_LANDING_ROJO_ONE_REAL_LOCALSCRIPT_SOURCE_MATCH_PASS_NOT_STUDIO')
+          PY
