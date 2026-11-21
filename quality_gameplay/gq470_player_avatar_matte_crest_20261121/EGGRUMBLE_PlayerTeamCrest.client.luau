@@ -61,6 +61,8 @@ local function isConcealed(player, character)
 end
 
 local function cameraDistance(player, character, cameraPosition)
+    -- A live user choice must suppress optional cosmetic geometry without a restart.
+    if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then return nil end
     if player == localPlayer or not cameraPosition or not character then return nil end
     local root = character:FindFirstChild("HumanoidRootPart")
     local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -145,6 +147,20 @@ local function attach(player, character)
             watchers[#watchers + 1] = part:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(rejectConcealment)
         end
     end
+    -- Streaming/late R6/R15 body topology invalidates previously attached
+    -- watchers. Remove immediately and let the next bounded LOD sweep rebuild.
+    watchers[#watchers + 1] = character.DescendantAdded:Connect(function(part)
+        if part:IsA("BasePart") and BODY_PARTS[part.Name]
+            and generations[player] == token then
+            removeMounted(player)
+        end
+    end)
+    watchers[#watchers + 1] = character.DescendantRemoving:Connect(function(part)
+        if part:IsA("BasePart") and BODY_PARTS[part.Name]
+            and generations[player] == token then
+            removeMounted(player)
+        end
+    end)
     local died = humanoid.Died:Connect(function()
         if generations[player] == token then removeMounted(player) end
     end)
@@ -190,6 +206,12 @@ Players.PlayerRemoving:Connect(unregister)
 for _, player in ipairs(Players:GetPlayers()) do
     register(player)
 end
+
+localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
+    if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then
+        for player in pairs(mounted) do removeMounted(player) end
+    end
+end)
 
 -- Low-frequency, actual-part budget: closest remote avatars only.
 -- A distant/hidden/streamed-out avatar owns ZERO crest parts.
