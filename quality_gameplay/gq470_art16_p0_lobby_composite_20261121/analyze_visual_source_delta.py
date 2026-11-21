@@ -106,8 +106,9 @@ def report(root: Path) -> dict:
     for route in sorted(chosen):
         d = lexical_delta(old[route].decode("utf-8"), new[route].decode("utf-8"))
         need(old[route] != new[route] and
-             d["old_sha256"] == receipt["source_hashes"].get(route, d["old_sha256"])
-             or bool(d["new_sha256"]), "ART_BUDGET_NONEMPTY_DELTA")
+             d["old_sha256"] == sha(old[route]) and
+             d["new_sha256"] == receipt["source_hashes"][route],
+             "ART_BUDGET_NONEMPTY_SOURCE_LOCK_DELTA")
         for cls, counts in d["creation_callsites_by_class"].items():
             totals_old[cls] += counts["old_call_sites"]
             totals_new[cls] += counts["new_call_sites"]
