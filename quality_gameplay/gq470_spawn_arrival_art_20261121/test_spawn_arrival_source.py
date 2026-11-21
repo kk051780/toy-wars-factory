@@ -25,7 +25,10 @@ def validate(s):
     for forbidden in ("RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
                       "DataStore", "TakeDamage", "RenderStepped", "Heartbeat",
                       "while true", "Enum.Material.Neon", 'Instance.new("Part")',
-                      "CharacterAutoLoads", "LoadCharacter", "SpawnLocation"):
+                      "CharacterAutoLoads", "LoadCharacter", "SpawnLocation",
+                      "LocalTransparencyModifier", "CameraSubject",
+                      "character:Destroy()", "humanoid.Health =", "root.CFrame =",
+                      "character:PivotTo", "character:MoveTo"):
         if forbidden in "\n".join(line.split("--",1)[0] for line in s.splitlines()):
             raise ValueError("RED_SPAWN_ART_UNSAFE_" + forbidden)
     if s.count('Instance.new("ParticleEmitter")') != 1 or s.count('Instance.new("Highlight")') != 1 or len(s.encode())>7000:
@@ -54,7 +57,9 @@ class SpawnSourceTests(unittest.TestCase):
             self.assertIn(before,s)
             with self.subTest(before=before), self.assertRaises(ValueError):
                 validate(s.replace(before,after))
-        for bad in ('FireServer()', 'Instance.new("Part")', 'RunService.Heartbeat:Connect'):
+        for bad in ('FireServer()', 'Instance.new("Part")', 'RunService.Heartbeat:Connect',
+                    'root.CFrame = CFrame.new(0,0,0)', 'head.LocalTransparencyModifier = 1',
+                    'workspace.CurrentCamera.CameraSubject = nil', 'character:Destroy()'):
             with self.assertRaises(ValueError): validate(s+"\n"+bad)
 if __name__=="__main__":
     unittest.main()
