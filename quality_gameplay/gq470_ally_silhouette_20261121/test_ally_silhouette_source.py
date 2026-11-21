@@ -90,6 +90,11 @@ def validate(source: str) -> None:
                         ("TOUCH_MAX_ALLIES", "2")):
         if not re.search(r"(?m)^local " + name + r" = " + re.escape(value) + "$", code):
             raise ValueError("RED_ALLY_SILHOUETTE_BUDGET_" + name)
+    # Far players must leave before any R6/R15 per-body inspection. Static
+    # ordering contract only; Android/FPS needs device testing.
+    if not (code.index('if distance > MAX_DISTANCE then') <
+            code.index('for _, bodyPart in ipairs(character:GetChildren()) do')):
+        raise ValueError("RED_ALLY_SILHOUETTE_DISTANCE_BEFORE_LIMB_SCAN")
     if len(source.encode("utf-8")) > 9000:
         raise ValueError("RED_ALLY_SILHOUETTE_SOURCE_SIZE")
 
