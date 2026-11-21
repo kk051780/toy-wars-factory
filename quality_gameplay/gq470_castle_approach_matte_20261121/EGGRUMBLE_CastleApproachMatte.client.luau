@@ -69,21 +69,45 @@ local function clear(core: BasePart)
     old.folder:Destroy()
 end
 
+local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams)
+    -- The foundation may sit above a cliff or a streamed out tile. Never show
+    -- suspended or submerged ground ornaments; no speculative y=0 fallback.
+    local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
+        Vector3.new(0, -14, 0), filter)
+    if not hit or hit.Normal.Y < .7
+        or math.abs(hit.Position.Y - pose.Position.Y) > 2.75 then
+        piece.Transparency = 1
+        return
+    end
+    piece.CFrame = pose + Vector3.new(0,
+        hit.Position.Y + piece.Size.Y * .5 - pose.Position.Y, 0)
+    piece.Transparency = 0
+end
+
 local function updatePieces(core: BasePart, decor: Decor)
     -- Four pairs of split, shallow path-edge keystones, NOT foundation blocks.
     -- The inset is farther away than #982 foundation (core face + >=8 studs).
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
     local faceRadius = math.max(core.Size.X, core.Size.Z) * .5
     local offset = math.clamp(faceRadius + 9, 12, 72)
+    local filter = RaycastParams.new()
+    filter.FilterType = Enum.RaycastFilterType.Exclude
+    filter.IgnoreWater = true
+    local ignore: {Instance} = {}
+    if core.Parent then table.insert(ignore, core.Parent) end
+    if player.Character then table.insert(ignore, player.Character) end
+    filter.FilterDescendantsInstances = ignore
     for side = 0, 3 do
         local angle = side * math.pi * .5
         local toward = base * CFrame.new(math.sin(angle) * offset, 0, math.cos(angle) * offset)
             * CFrame.Angles(0, angle, 0)
         local first = side * 2 + 1
-        decor.pieces[first].CFrame =
-            toward * CFrame.new(-1.12, 0, 0) * CFrame.Angles(0, math.rad(28), 0)
-        decor.pieces[first + 1].CFrame =
-            toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0)
+        placeOnGround(decor.pieces[first],
+            toward * CFrame.new(-1.12, 0, 0) * CFrame.Angles(0, math.rad(28), 0),
+            filter)
+        placeOnGround(decor.pieces[first + 1],
+            toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0),
+            filter)
     end
     decor.lastPose = core.CFrame
     decor.lastSize = core.Size
@@ -140,7 +164,9 @@ local function refresh()
     for core in wanted do
         if not active[core] then makeApproach(core) end
         local decor = active[core]
-        if decor and (decor.lastPose ~= core.CFrame or decor.lastSize ~= core.Size) then
+        if decor then
+            -- Re-check bounded ground rays every 2.5s; StreamingEnabled can
+            -- replace terrain while the castle core itself remains still.
             updatePieces(core, decor)
         end
     end
