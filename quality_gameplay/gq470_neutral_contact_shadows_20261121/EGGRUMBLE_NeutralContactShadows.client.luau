@@ -153,8 +153,14 @@ local function tick()
         end
         local radius = math.clamp(math.max(entry.root.Size.X, entry.root.Size.Z) * 1.28, 1.3, 3.0)
         disc.Size = Vector3.new(0.055, radius, radius)
-        disc.CFrame = CFrame.new(entry.hit.Position + entry.hit.Normal * 0.035)
-            * CFrame.Angles(0, 0, math.rad(90))
+        -- A cylinder is thin along its local X axis. Align that axis with the
+        -- true solid-ground normal so the matte footprint hugs slopes, not a
+        -- horizontal plane that intersects or floats above the ground.
+        -- Normal.Y >= 0.72 makes world Z cross Normal safely non-degenerate.
+        local groundNormal = entry.hit.Normal
+        local tangent = Vector3.new(0, 0, 1):Cross(groundNormal).Unit
+        disc.CFrame = CFrame.fromMatrix(
+            entry.hit.Position + groundNormal * 0.035, groundNormal, tangent)
     end
     task.delay(UPDATE_SECONDS, tick)
 end
