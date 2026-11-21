@@ -91,7 +91,24 @@ def main(root: Path, current_head: str|None = None):
     receipt_file = root / RECEIPT
     receipt = json.loads(receipt_file.read_text())
     assert len(paths) == 69 and len(receipt['source_hashes']) == 69, 'RED_69_SOURCE_COUNT'
-    assert receipt.get('build_head') == (current_head or BASE) and receipt.get('canonical_build') is True, 'RED_STALE_BASE'
+    assert receipt.get('build_head') == (current_head or BASE), 'RED_STALE_BASE'
+    if current_head:
+        # Same strict live-ref gate as the workflow, even when called standalone.
+        # This may validate a noncanonical PR candidate; it never grants RC authority.
+        import os
+        import subprocess
+        from quality_gameplay.gq470_art_pr_provenance_20261121.guard import verify_receipt
+        live = subprocess.check_output([
+            'gh', 'api',
+            f"repos/{os.environ['GITHUB_REPOSITORY']}/git/ref/heads/rc/p0d-s1-kids-rc01",
+            '--jq', '.object.sha'], text=True).strip()
+        event_path = os.environ.get('GITHUB_EVENT_PATH', '')
+        event = json.loads(Path(event_path).read_text()) if event_path else {}
+        verify_receipt(receipt, os.environ, event, live)
+    else:
+        # Direct historical/pinned author invocation has no PR provenance.
+        # Never allow it to masquerade as a source-only nonformal adoption.
+        assert receipt.get('canonical_build') is True, 'RED_DIRECT_NONCANONICAL_BUILD'
     assert receipt.get('source_hashes', {}).get(TARGET) == EXPECTED_SHA, 'RED_TARGET_RECEIPT'
     for route, path in paths.items():
         assert digest(path.read_bytes()) == receipt['source_hashes'][route], 'RED_SOURCE_HASH_'+route
