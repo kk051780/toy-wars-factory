@@ -1,0 +1,32 @@
+name: GQ470 Moguron art source gate (REAL69 PREP)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**"
+      - ".github/workflows/gq470-moguron-art-source-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  moguron-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact A candidate (not merge SHA)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact candidate SHA
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Original WCS owner and route regression
+        run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_runtime_contract.py
+      - name: New art anatomy, part budget and no-gameplay-mutation regression
+        run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_moguron_matte_real69.py
+      - name: Preserve real gate outcome distinction
+        run: |
+          echo "SOURCE_PREP_GATE only; neither Native/Rojo/REAL69 Place nor Studio/Android/ART/FUN/OWNER was tested"
