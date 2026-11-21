@@ -152,10 +152,26 @@ local function attach(tower: Instance)
             end
         end
     end
+    -- A removed castle can leave an empty neutral/team slot with already-
+    -- present skipped castles. Rescan only after actual removal, never per frame.
+    local function refillVacantSlots()
+        task.defer(function()
+            for _, other in Workspace:GetDescendants() do
+                if other.Name == "StandardCore" or other.Name == "RED_TOWER"
+                    or other.Name == "BLUE_TOWER" then attach(other) end
+            end
+        end)
+    end
     table.insert(entry.connections, player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refreshMotion))
-    table.insert(entry.connections, tower.Destroying:Connect(function() stop(tower) end))
+    table.insert(entry.connections, tower.Destroying:Connect(function()
+        stop(tower)
+        refillVacantSlots()
+    end))
     table.insert(entry.connections, tower.AncestryChanged:Connect(function()
-        if not tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team then stop(tower) end
+        if not tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team then
+            stop(tower)
+            refillVacantSlots()
+        end
     end))
     refreshMotion()
     assert(#fly + 1 <= MAX_PARTS_PER_TOWER and pole.Parent == folder)
