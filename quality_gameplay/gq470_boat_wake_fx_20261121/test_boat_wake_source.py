@@ -3,6 +3,7 @@ This does not assert Studio/Android performance or #420 art acceptance.
 """
 from pathlib import Path
 import unittest
+import re
 SOURCE = Path(__file__).with_name("EGGRUMBLE_BoatWakeFX.client.luau")
 MANDATORY = [
     "GQ470_FB015_BOAT_WAKE_MATTE_20261121",
@@ -50,6 +51,15 @@ def validate(source):
         if marker not in code: raise ValueError("RED_MISSING:"+marker)
     for forbidden in FORBIDDEN:
         if forbidden in code: raise ValueError("RED_FORBIDDEN:"+forbidden)
+    # Prefix-based checks alone would erroneously accept "6" -> "600".
+    numeric = {"PULSE_SECONDS":"0.28", "LIFE_SECONDS":"0.56",
+        "MIN_HORIZONTAL_SPEED":"10", "MAX_LIVE_PARTS":"6",
+        "MAX_PARTS_PER_PULSE":"2", "MOBILE_PARTS_PER_PULSE":"1",
+        "CAMERA_FX_DISTANCE":"96", "WATER_RAY_LENGTH":"13"}
+    for key, value in numeric.items():
+        if not re.search(r"(?m)^\\s*local\\s+" + key + r"\\s*=\\s*" +
+                         re.escape(value) + r"\\s*$", code):
+            raise ValueError("RED_NUMERIC_BUDGET:"+key)
     if source.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_MULTIPLE_PART_SITES")
     if len(source.encode()) > 9300:
