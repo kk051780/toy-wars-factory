@@ -157,7 +157,7 @@ class SourceGate(unittest.TestCase):
             ("effect.Parent ~= candidate.character", "false"),
             ("if not effect then", "if false then"),
             ("effect:Destroy()", "effect.Enabled = false"),
-            ("math.min(MAX_ALLIES, #candidates)", "#candidates"),
+            ("math.min(UserInputService.TouchEnabled and TOUCH_MAX_ALLIES or MAX_ALLIES, #candidates)", "#candidates"),
             ("task.wait(SCAN_INTERVAL)", "task.wait()"),
             ("Players.PlayerRemoving:Connect(clear)", "Players.PlayerRemoving:Connect(function() end)"),
             ("LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)", "LOCAL_PLAYER.CharacterRemoving:Connect(function() end)"),
