@@ -23,7 +23,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Head/source contract, geometry and 13 fail-closed negative tests
+      - name: Head/source contract, geometry and 14 fail-closed negative tests
         shell: bash
         run: |
           set -euo pipefail
