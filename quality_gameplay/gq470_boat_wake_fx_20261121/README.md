@@ -1,0 +1,10 @@
+# GQ470 FB-015 — Matte Boat Wake (2026-11-21)
+A **source-only independent visual candidate** for the REAL69 PRIVATE_COMPANION. Real Luau implementation (one new LocalScript, candidate REAL70) that renders subtle, short-lived wedge-shaped foam behind **the local user's occupied VehicleSeat**, **only when a nearby raycast hits genuine Terrain Water** and the seat is moving horizontally. It never decorates airborne vehicles, remote players, land or decorative water Parts. It may remain invisible if the current craft never uses VehicleSeat or uses water Parts; this must be checked in Studio, not claimed as passed.
+
+Visual budget: 0.28 s pulses, <=1 WedgePart per pulse on touch, <=2 on PC, <=6 transient parts per local client, 0.56 s tween lifetime, camera LOD 96 studs. SmoothPlastic, matte blue-white, shadowless, no neon/particles, no physics, no GUI/Remote/damage/score/Store, no per-frame loop. Death, unseat and respawn invalidate delayed pulses. Creates no new permanent models in source; local folder only.
+
+**Nonoverlap:** Separate new client route `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_BoatWakeFX`. Not PR #942's server shoreline foam, #968's ground/water *Humanoid* footstep FX, #959's sky, #966 ART15, or any authority. All 69 original REAL69 scripts remain byte-identical in candidate. Not modifying any existing author branch.
+
+**Gates:** Source static+mutation tests, exact A-branch Native69 OFF+70 ON, pinned Rojo original OFF Place byte match, candidate 70 Source/Class and B220 selected-source packet in own Actions. Full Studio Solo/2client, 32 actual PC/Android screenshots, Android 15min/FPS/heat, first3min FUN and human ART are **NOT_TESTED**, `ART_NO_GO`, `PRODUCT_NO_GO`. No formal RC adoption, no main edits, no Publish/Robux.
+
+**Admission:** #910 playable-loop P0 first; #250 value decision; #218 unique claimant; #220 authenticated sole B writer rechecks fresh official RC, applies a new LocalScript source-select via expected-SHA nonforce CAS, then official same-head CI/Place/ZIP and rollback. If a prior claimant created the same visual, stop and defer this candidate. Never merge this entire A PR into the formal branch.
