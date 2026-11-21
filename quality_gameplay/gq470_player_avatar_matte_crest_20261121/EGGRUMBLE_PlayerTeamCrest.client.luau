@@ -31,11 +31,14 @@ local function removeMounted(player)
     if rec.folder and rec.folder.Parent then rec.folder:Destroy() end
 end
 
-local function makeCrest(folder, torso, color, side)
+local function makeCrest(folder, torso, color, side, isRed)
     -- Wedge silhouette is more legible than a neon orb or oversized billboard.
     local crest = Instance.new("WedgePart")
     crest.Name = side < 0 and "LeftShoulderMatte" or "RightShoulderMatte"
-    crest.Size = Vector3.new(0.43, 0.23, 0.56)
+    -- Red: broader horizontal spear shoulders; blue: taller vertical fins.
+    -- Different silhouette, not color alone, for color-vision accessibility.
+    crest.Size = if isRed then Vector3.new(0.52, 0.20, 0.66)
+        else Vector3.new(0.35, 0.31, 0.63)
     crest.Material = Enum.Material.SmoothPlastic
     crest.Color = color
     crest.Reflectance = 0.025
@@ -48,7 +51,8 @@ local function makeCrest(folder, torso, color, side)
     crest.CastShadow = false
     crest.CFrame = torso.CFrame
         * CFrame.new(side * 0.92, 0.48, -0.07)
-        * CFrame.Angles(0, 0, side * 0.18)
+        * CFrame.Angles(0, if isRed then 0.22 else -0.22,
+            side * (if isRed then 0.14 else -0.22))
     crest.Parent = folder
     local join = Instance.new("WeldConstraint")
     join.Name = "ClientOnlyShoulderWeld"
@@ -77,13 +81,14 @@ local function attach(player, character)
     if not torso:IsA("BasePart") or not root:IsA("BasePart") then return end
     local color = teamColor(player)
     if not color then return end
+    local isRed = player.Team ~= nil and player.Team.Name == "RED"
 
     local folder = Instance.new("Folder")
     folder.Name = CREST_NAME
     folder.Parent = character
     local pieces = {
-        makeCrest(folder, torso, color, -1),
-        makeCrest(folder, torso, color, 1),
+        makeCrest(folder, torso, color, -1, isRed),
+        makeCrest(folder, torso, color, 1, isRed),
     }
     local died = humanoid.Died:Connect(function()
         if generations[player] == token then
