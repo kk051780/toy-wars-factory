@@ -2,12 +2,14 @@
 -- Private A-only client visual. Never marks a player, score, health or team on the server.
 -- Visible nearby TEAM allies only; never enemies, neutral players, or cloaked allies.
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local LOCAL_PLAYER = Players.LocalPlayer
 if not LOCAL_PLAYER then
     return
 end
 
 local MAX_ALLIES = 3
+local TOUCH_MAX_ALLIES = 2
 local MAX_DISTANCE = 45
 local SCAN_INTERVAL = 0.75
 local OUTLINE_TRANSPARENCY = 0.68
@@ -137,7 +139,7 @@ while true do
     end)
 
     local keep = {}
-    for i = 1, math.min(MAX_ALLIES, #candidates) do
+    for i = 1, math.min(UserInputService.TouchEnabled and TOUCH_MAX_ALLIES or MAX_ALLIES, #candidates) do
         local ally = candidates[i]
         keep[ally.player] = true
         present(ally)
