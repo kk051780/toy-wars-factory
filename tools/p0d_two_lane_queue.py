@@ -23,6 +23,14 @@ ART15_FEATURE = "GQ470_FB015_ART15_965_963_REAL69_SOURCE_BRIDGE_20261121"
 ART15_SOURCE_LOCK = "B220_ART15_SELECTED_BYTES_ONLY_NOT_FORMAL/SOURCE_SELECT_MANIFEST.json"
 ART15_RUN_NAME = "GQ470 ART15 REAL69 combined B220 source-only bridge (not official RC)"
 ART15_ARTIFACT = "GQ470-ART15-REAL69-ONE-B220-PACKET-NOT-FORMAL"
+# Newest 16-source bridge #970 includes ALL #966 art and one disjoint
+# Canyon source #967. Admissible only after its author supplies the SAME
+# strict PR manifests; no relaxation for an uncontracted green source CI.
+ART16_PR = 970
+ART16_FEATURE = "GQ470_ART16_966_967_SOURCE_BRIDGE_20261121"
+ART16_SOURCE_LOCK = "B220_ART16_SELECTED_BYTES_ONLY_NOT_FORMAL/SOURCE_SELECT_MANIFEST.json"
+ART16_RUN_NAME = "GQ470 ART16 exact A-source bridge (not formal RC)"
+ART16_ARTIFACT = "GQ470-ART16-REAL69-966-967-B220-PACKET-NOT-FORMAL"
 PIN = re.compile(r"^[0-9a-f]{40}$")
 FEATURE = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
 
@@ -126,6 +134,12 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
                 continue
             expected_run_name, expected_artifact = ART15_RUN_NAME, ART15_ARTIFACT
             item["candidate_evidence_kind"] = "ART15_SOURCE_ONLY_NOT_FORMAL"
+        elif number == ART16_PR:
+            if m["features"] != [ART16_FEATURE] or m["source_lock"] != ART16_SOURCE_LOCK:
+                item["reason"] = "ART16_CONTRACT_IDENTITY_MISMATCH"
+                continue
+            expected_run_name, expected_artifact = ART16_RUN_NAME, ART16_ARTIFACT
+            item["candidate_evidence_kind"] = "ART16_SOURCE_ONLY_NOT_FORMAL"
         else:
             expected_run_name, expected_artifact = RUN_NAME, REAL69_ARTIFACT
             item["candidate_evidence_kind"] = "LEGACY_REAL69_CANDIDATE_NOT_ENGINE_PASS"
@@ -154,6 +168,9 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         item["reason"] = ("EXACT_HEAD_ART15_SOURCE_ONLY_CI_ARTIFACT_GREEN; "
                           "LIVE_SECURITY_CAS_AND_REAL_RC_CI_REVIEW_REQUIRED"
                           if number == ART15_PR else
+                          "EXACT_HEAD_ART16_SOURCE_ONLY_CI_ARTIFACT_GREEN; "
+                          "LIVE_SECURITY_CAS_AND_REAL_RC_CI_REVIEW_REQUIRED"
+                          if number == ART16_PR else
                           "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; "
                           "LIVE_SECURITY_CAS_REVIEW_REQUIRED")
         commit = api(f"/repos/{repo}/commits/{sha}")
@@ -172,11 +189,15 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
     selected, consumed = [], set()
     for item in ready:
         if set(item["features"]) & consumed:
-            item["status"] = "SUPERSEDED_SAME_FEATURE"
-            item["reason"] = "NEWER_VERIFIED_CANDIDATE_WINS"
+            item["status"] = "SUPERSEDED_SOURCE_COMPOSITE" if item["pr"] == ART15_PR else "SUPERSEDED_SAME_FEATURE"
+            item["reason"] = "LATER_EXACT_SOURCE_COMPOSITE_COVERS_PARENT" if item["pr"] == ART15_PR else "NEWER_VERIFIED_CANDIDATE_WINS"
         else:
             selected.append(item)
             consumed.update(item["features"])
+            # Explicit source ownership relation: ART16 contains all ART15
+            # plus Canyon. Never place both in B220's same-source queue.
+            if item["pr"] == ART16_PR:
+                consumed.add(ART15_FEATURE)
     examined.sort(key=lambda x: x["pr"])
     return {"schema": "P0D_TWO_LANES_V1", "official_head": official_sha,
             "ready_count": len(selected), "selected": selected, "all_labeled_candidates": examined,
