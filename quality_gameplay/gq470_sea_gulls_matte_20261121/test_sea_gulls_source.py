@@ -32,6 +32,12 @@ def gate(s: str) -> None:
         'localPlayer.CharacterRemoving:Connect(clear)',
         'GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects")',
         'task.wait(UPDATE_SECONDS)',
+        'script.Destroying:Connect(function()',
+        'local destroyed = false', 'local externalConnections: {RBXScriptConnection} = {}',
+        'if destroyed then return end', 'if destroyed then break end',
+        'while not destroyed and script.Parent ~= nil do',
+        'for _, connection in externalConnections do connection:Disconnect() end',
+        'table.clear(externalConnections)', 'table.clear(docks)',
     )
     for mark in required:
         if mark not in s:
@@ -54,8 +60,12 @@ def gate(s: str) -> None:
         raise AssertionError("RED_SEA_GULLS_BOTH_TWEEN_CLEANUP_POINTS")
     if s.count("newPiece(folder,") != 3:
         raise AssertionError("RED_SEA_GULLS_NOT_THREE_PARTS")
-    if len(re.findall(r"while\s+script\.Parent", s)) != 1:
+    if s.count("while not destroyed and script.Parent ~= nil do") != 1:
         raise AssertionError("RED_SEA_GULLS_UNBOUNDED_TICK")
+    if s.count("table.insert(externalConnections, ") != 5:
+        raise AssertionError("RED_SEA_GULLS_FIVE_EXTERNAL_CONNECTIONS_NOT_TRACKED")
+    if s.count("script.Destroying:Connect(function()") != 1:
+        raise AssertionError("RED_SEA_GULLS_MISSING_DESTROYING_HANDLER")
     if "if dock == nil then clear(); return end" not in s:
         raise AssertionError("RED_SEA_GULLS_NEEDS_RANGE_CLEANUP")
 
@@ -95,7 +105,17 @@ class SeagullSourceTests(unittest.TestCase):
             SOURCE.replace('GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects")',
                            'GetAttributeChangedSignal("CosmeticValue")', 1),
         ]
-        self.assertEqual(len(mutants), 21)
+        mutants.extend([
+            SOURCE.replace('script.Destroying:Connect(function()', '-- removed handler', 1),
+            SOURCE.replace('if destroyed then return end', 'if false then return end', 1),
+            SOURCE.replace('if destroyed then break end', 'if false then break end', 1),
+            SOURCE.replace('connection:Disconnect()', 'print(connection)', 1),
+            SOURCE.replace('table.clear(externalConnections)', 'print(externalConnections)', 1),
+            SOURCE.replace('table.clear(docks)', 'print(docks)', 1),
+            SOURCE.replace('table.insert(externalConnections, Workspace.DescendantAdded:Connect(', 'Workspace.DescendantAdded:Connect(', 1),
+            SOURCE.replace('while not destroyed and script.Parent ~= nil do', 'while script.Parent ~= nil do', 1),
+        ])
+        self.assertEqual(len(mutants), 29)
         for i, variant in enumerate(mutants):
             with self.subTest(mutation=i):
                 with self.assertRaises(AssertionError):

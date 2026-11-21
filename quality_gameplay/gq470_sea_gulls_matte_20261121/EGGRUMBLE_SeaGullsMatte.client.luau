@@ -24,6 +24,8 @@ local localFolder: Folder? = nil
 local birds: {Bird} = {}
 local activeTweens: {Tween} = {}
 local phase = 0
+local destroyed = false
+local externalConnections: {RBXScriptConnection} = {}
 
 local function validDock(obj: Instance): boolean
     -- Only the genuine LSS arena scene, never an unrelated similarly named part.
@@ -124,6 +126,7 @@ local function discoverClosestDock(): BasePart?
 end
 
 local function refresh()
+    if destroyed then return end -- delayed tasks cannot resurrect geometry after teardown.
     local dock = discoverClosestDock()
     if dock == nil then clear(); return end
     if dock ~= activeDock or localFolder == nil then
@@ -157,35 +160,44 @@ local function refresh()
     end
 end
 
--- Register once; allow streaming to add/remove the actual dock later.
-Workspace.DescendantAdded:Connect(function(obj)
+-- Register once; disconnect externally owned listeners on Script.Destroying.
+-- Never recreate Parts after delayed callbacks or the slow tick wakes up.
+table.insert(externalConnections, Workspace.DescendantAdded:Connect(function(obj)
     if obj:IsA("BasePart") and obj.Name == "PublicSeaDock" then
         docks[obj] = true
     end
-end)
-Workspace.DescendantRemoving:Connect(function(obj)
+end))
+table.insert(externalConnections, Workspace.DescendantRemoving:Connect(function(obj)
     if docks[obj :: any] then
         docks[obj :: BasePart] = nil
         if activeDock == obj then clear() end
     end
-end)
+end))
 for _, obj in Workspace:GetDescendants() do
     if obj:IsA("BasePart") and obj.Name == "PublicSeaDock" then
         docks[obj] = true
     end
 end
-localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
+table.insert(externalConnections, localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(function()
     if localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true then clear()
     else refresh() end
-end)
-localPlayer.CharacterRemoving:Connect(clear)
-localPlayer.CharacterAdded:Connect(function()
+end))
+table.insert(externalConnections, localPlayer.CharacterRemoving:Connect(clear))
+table.insert(externalConnections, localPlayer.CharacterAdded:Connect(function()
     task.delay(.6, refresh)
+end))
+script.Destroying:Connect(function()
+    destroyed = true
+    for _, connection in externalConnections do connection:Disconnect() end
+    table.clear(externalConnections)
+    clear() -- cancel Tweens and destroy all 6/9 client-only pieces synchronously.
+    table.clear(docks)
 end)
 refresh()
 task.spawn(function()
-    while script.Parent ~= nil do
+    while not destroyed and script.Parent ~= nil do
         task.wait(UPDATE_SECONDS)
+        if destroyed then break end
         refresh()
     end
     clear()
