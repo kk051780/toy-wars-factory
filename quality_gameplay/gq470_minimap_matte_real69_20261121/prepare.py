@@ -80,7 +80,7 @@ PATCHES = (
       elseif m.kind=="NEUTRAL" then Color3.fromRGB(93,83,71)
       elseif m.kind=="ENEMY_TRAIL" then Color3.fromRGB(112,78,57)
       else Color3.fromRGB(67,93,109)
-    pin.BackgroundTransparency=mapExpanded and .04 or .10""",
+    pin.BackgroundTransparency=.02 -- 98% opaque for 11px white legend in bright scenes""",
     ),
     (
         """    pin.TextSize=mapExpanded and 13 or 10""",
@@ -126,7 +126,7 @@ def palette_contrast_test(source: str) -> float:
     review is still mandatory under ART #420.
     """
     start = '    pin.BackgroundColor3=if m.precision=="SECTOR"'
-    stop = '    pin.BackgroundTransparency=mapExpanded'
+    stop = '    pin.BackgroundTransparency=.02'
     need(source.count(start) == 1 and source.count(stop) == 1,
          "MARKER_PALETTE_SCOPE")
     marker = source.split(start, 1)[1].split(stop, 1)[0]
@@ -144,8 +144,17 @@ def palette_contrast_test(source: str) -> float:
             return v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
         return sum(k * linear(c) for k, c in zip((.2126, .7152, .0722), rgb))
     label_lum = luminance(label_rgb)
+    # Conservative static composite over pure white, which is brighter than
+    # the intended slate/navy fog: 2% transparency must still be readable.
+    alpha = .02
+    bright_background = (255, 255, 255)
+    composited = [
+        tuple(round((1-alpha)*v + alpha*bright_background[i])
+              for i,v in enumerate(bg))
+        for bg in backgrounds
+    ]
     ratios = [(label_lum + .05) / (luminance(bg) + .05)
-              for bg in backgrounds]
+              for bg in composited]
     minimum = min(ratios)
     need(minimum >= 4.5, "MARKER_LABEL_CONTRAST_BELOW_4_5")
     return minimum
@@ -247,8 +256,8 @@ def apply(root: Path) -> None:
         "candidate_marker_instances": modified.count('Instance.new('),
         "new_3d_parts": 0, "new_gui_instances": 0, "new_remotes": 0,
         "new_runtime_scripts": 0,
-        "unblended_marker_label_contrast_min": round(min_contrast, 3),
-        "unblended_marker_target_ratio": 4.5,
+        "simulated_white_backdrop_marker_contrast_min": round(min_contrast, 3),
+        "static_marker_target_ratio": 4.5,
         "actual_composited_android_contrast": "NOT_TESTED",
         "preserved_fog_projection": True, "preserved_fb019_swing": True,
         "native_rojo": "NOT_TESTED", "engine": "NOT_TESTED",
