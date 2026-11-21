@@ -1,0 +1,70 @@
+name: GQ470 ART16 independent true B packet integrity after upload (not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_art16_packet_guard_20261121/**'
+      - '.github/workflows/gq470-art16-packet-guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-packet-post-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FORMAL_HEAD: e80973c354f14a0d0088577f3cc1a875454f0f8f
+      A_HEAD: 180f5067bfe71c59b8c0c59b90aa69f1cd00cb7f
+      A_RUN: '44850475985'
+      ORIGINAL_RUN: '44695199140'
+      ROOT: /tmp/gq470-art16-packet-guard
+      SCRIPT: quality_gameplay/gq470_art16_packet_guard_20261121/verify_packet.py
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact A source and one official branch; A parent same-head CI green
+        shell: bash
+        env:
+          THIS_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$THIS_HEAD"
+          python3 -m py_compile "$SCRIPT"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL_HEAD" || { echo RED_FORMAL_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/970" --jq .head.sha)" = "$A_HEAD" || { echo RED_ART16_A_HEAD_CHANGED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$A_RUN" --jq '.head_sha+" "+.conclusion')" = "$A_HEAD success" || { echo RED_FALSE_A_CI; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ORIGINAL_RUN" --jq '.head_sha+" "+.conclusion')" = "$FORMAL_HEAD success" || { echo RED_FORMAL_SOURCE_CI; exit 1; }
+          mkdir -p "$ROOT/formal" "$ROOT/art16"
+          gh run download "$ORIGINAL_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/formal"
+          gh run download "$A_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name GQ470-ART16-REAL69-966-967-B220-PACKET-NOT-FORMAL --dir "$ROOT/art16"
+          echo ART16_B_PACKET_ARTIFACTS_ACTUALLY_REDOWNLOADED
+      - name: Verify extracted post-upload B220 source bytes and 10 malicious mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$SCRIPT" --formal "$ROOT/formal" --artifact "$ROOT/art16" \
+            --out "$ROOT/ART16_POST_UPLOAD_INTEGRITY_EVIDENCE.json" --negatives
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["ROOT"])/"ART16_POST_UPLOAD_INTEGRITY_EVIDENCE.json"
+          j=json.loads(p.read_text())
+          assert j["real_packet_source_files_verified"]==16
+          assert j["preserved_exact_sources"]==53
+          assert len(j["negative_packet_mutations_rejected"])==10
+          assert j["formal_rc_adopted"] is False and j["art_gate"]=="ART_NO_GO"
+          print("ART16_POST_UPLOADED_PACKET_REAL16_AND_10_FAIL_CLOSED_PASS")
+          PY
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL_HEAD"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-ART16-INDEPENDENT-POSTUPLOAD-B220-VERIFY-NOT-FORMAL
+          path: /tmp/gq470-art16-packet-guard/ART16_POST_UPLOAD_INTEGRITY_EVIDENCE.json
+          if-no-files-found: error
+          retention-days: 7
