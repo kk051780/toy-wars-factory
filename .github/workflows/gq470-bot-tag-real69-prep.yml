@@ -1,7 +1,7 @@
 name: GQ470 P0 REAL69 compact AI hero tag source PREP (not official RC)
 on:
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-bot-objective-tag-real69-20261120]
     paths:
       - 'quality_gameplay/gq470_bot_objective_tag_real69_20261120/**'
       - '.github/workflows/gq470-bot-tag-real69-prep.yml'
@@ -39,6 +39,7 @@ jobs:
           x=r['gq470_fb015_bot_tag']
           assert x['other_selected_routes_byte_exact']==68
           assert x['tag_pixels']==[104,24] and x['tag_max_studs']==22
+          assert x['subject_owned_npc_labels'] is True
           assert x['new_gameplay_authority'] is False and x['extra_ui_instances']==0
           assert x['studio']=='NOT_TESTED' and not x['owner_accepted']
           print('BOT_TAG_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS')
