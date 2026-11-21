@@ -17,10 +17,10 @@ if actual.count("table.clear(globalWatches)") != 1:
     raise SystemExit("RED_MISSING_WATCH_RELEASE")
 if actual.count("connection:Disconnect()") != 1:
     raise SystemExit("RED_MISSING_DISCONNECT")
-mutant = len(sys.argv) == 2 and sys.argv[1] == "--negative-drop-disconnect"
-if len(sys.argv) > 2 or (len(sys.argv) == 2 and not mutant):
-    raise SystemExit("USAGE: build_lifecycle_native_spec.py [--negative-drop-disconnect]")
-if mutant:
+mode = sys.argv[1] if len(sys.argv) == 2 else None
+if len(sys.argv) > 2 or mode not in (None, "--negative-drop-disconnect", "--negative-disable-fade"):
+    raise SystemExit("USAGE: build_lifecycle_native_spec.py [--negative-drop-disconnect|--negative-disable-fade]")
+if mode == "--negative-drop-disconnect":
     actual = actual.replace("connection:Disconnect()", "-- mutated omitted disconnect")
 preamble = """-- Native-only stub harness extracted from real game LocalScript.
 local stopped = false
@@ -50,4 +50,37 @@ shutdown()
 assert(disconnected == 6 and cleared == 1, "NON_IDEMPOTENT_SHUTDOWN")
 print("GQ470_CANONICAL_SHUTDOWN_NATIVE_BEHAVIOR_PASS")
 """
-sys.stdout.write(preamble + "\n" + actual + "\n" + checks)
+# Execute the actual selected LocalScript's fade arithmetic, not a paraphrase.
+lines = text.splitlines()
+consts = ("local MAX_DISTANCE = 45", "local FADE_START_DISTANCE = 32",
+          "local OUTLINE_TRANSPARENCY = 0.68")
+for declaration in consts:
+    if lines.count(declaration) != 1 and not (
+        declaration.startswith("local FADE_START_DISTANCE") and
+        sum(line.startswith(declaration) for line in lines) == 1
+    ):
+        raise SystemExit("RED_FADE_CONSTANT_" + declaration)
+ratio = [line.strip() for line in lines if line.strip().startswith("local fade = math.clamp(")]
+alpha = [line.strip() for line in lines if line.strip().startswith("effect.OutlineTransparency = OUTLINE_TRANSPARENCY +")]
+if len(ratio) != 1 or len(alpha) != 1:
+    raise SystemExit("RED_CANONICAL_FADE_FUNCTION")
+if mode == "--negative-disable-fade":
+    alpha = ["effect.OutlineTransparency = OUTLINE_TRANSPARENCY"]
+fade_luau = """
+local MAX_DISTANCE = 45
+local FADE_START_DISTANCE = 32
+local OUTLINE_TRANSPARENCY = 0.68
+local function alphaAt(distance)
+    local candidate = {distance = distance}
+    local effect = {}
+""" + "    " + ratio[0] + "\n" + "    " + alpha[0] + """
+    return effect.OutlineTransparency
+end
+assert(math.abs(alphaAt(0) - 0.68) < 1e-6, "NEAR_ALLY_WRONG_OPACITY")
+assert(math.abs(alphaAt(32) - 0.68) < 1e-6, "FADE_START_WRONG")
+assert(alphaAt(38) > alphaAt(32) and alphaAt(38) < alphaAt(45), "NO_PROGRESSIVE_FADE")
+assert(math.abs(alphaAt(45) - 1) < 1e-6, "FADE_END_NOT_INVISIBLE")
+assert(math.abs(alphaAt(55) - 1) < 1e-6, "FADE_LIMIT_NOT_CLAMPED")
+print("GQ470_CANONICAL_FADE_NATIVE_BEHAVIOR_PASS")
+"""
+sys.stdout.write(preamble + "\n" + actual + "\n" + checks + "\n" + fade_luau)
