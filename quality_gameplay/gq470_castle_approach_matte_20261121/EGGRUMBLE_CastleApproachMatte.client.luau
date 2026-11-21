@@ -11,7 +11,8 @@ local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3
 local PIECES_PER_CASTLE = 8
 local MAX_PARTS = MAX_CASTLES * PIECES_PER_CASTLE
 local MAX_DISTANCE = 155
-local FADE_START = 125 -- matte stones should not pop in at LOD edge
+-- Matte stones gradually disappear at the outer LOD edge.
+local FADE_START = 125
 local REFRESH_SECONDS = 2.5
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
