@@ -23,7 +23,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Static safety and 14 fail-closed mutations
+      - name: Static safety and 20 fail-closed mutations (including swim/respawn)
         run: |
           set -euo pipefail
           python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_ground_fx_source.py" "$TARGET/emit_art_report.py"
