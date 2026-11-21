@@ -140,13 +140,34 @@ local function setup(arena:Instance,mode:string,lobby:Instance,floor:BasePart)
   gate.Transparency=if open then .88 else .2
   stage:SetAttribute("MoguronGateOpen",open)
  end
+ -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121:
+ -- Two original prompt owners per arena, now eight cheap anchored matte parts
+ -- each. Art only: no new AI/HP/Remote, no touched bridge geometry or physics.
+ -- Eye/ear/paw accents are non-collidable, non-queryable and cast no shadows.
  local function mole(side:string,x:number)
-  local torso=block("Moguron_"..side.."_Body",Vector3.new(4,3,4),
-   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)
+  local torso=block("Moguron_"..side.."_Body",Vector3.new(4.8,3.4,3.8),
+   Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)
   torso.Shape=Enum.PartType.Ball
-  local nose=block("Moguron_"..side.."_Nose",Vector3.new(1.5,1.2,1.5),
-   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)
+  torso.CastShadow=false
+  local nose=block("Moguron_"..side.."_Nose",Vector3.new(1.85,1.35,1.35),
+   Vector3.new(x,2.6,-17.1),Color3.fromRGB(203,159,116),Enum.Material.SmoothPlastic,false)
   nose.Shape=Enum.PartType.Ball
+  nose.CastShadow=false
+  for _,sign in ipairs({-1,1}) do
+   local eye=block("Moguron_"..side.."_Eye"..sign,Vector3.new(.32,.4,.26),
+    Vector3.new(x+sign*.9,3.14,-16.72),Color3.fromRGB(38,49,55),Enum.Material.SmoothPlastic,false)
+   eye.Shape=Enum.PartType.Ball
+   eye.CastShadow=false
+   local ear=block("Moguron_"..side.."_Ear"..sign,Vector3.new(.88,1.05,.64),
+    Vector3.new(x+sign*2.0,3.55,-14.8),Color3.fromRGB(173,119,88),Enum.Material.SmoothPlastic,false)
+   ear.Shape=Enum.PartType.Ball
+   ear.CastShadow=false
+   local paw=block("Moguron_"..side.."_Paw"..sign,Vector3.new(1.2,.6,1.15),
+    Vector3.new(x+sign*1.48,1.08,-16.38),Color3.fromRGB(111,78,64),Enum.Material.SmoothPlastic,false)
+   paw.Shape=Enum.PartType.Ball
+   paw.CastShadow=false
+  end
+  -- Keep exactly the original torso prompt: no duplicate activation surface.
   addPrompt(torso,"橋をひらく","橋掘りモグロン",function(p:Player)
    if not authorized(p,torso) or gateOpen or os.clock()<nextGate then return end
    setGate(true);gateUntil=os.clock()+14
