@@ -15,6 +15,14 @@ RUN_NAME = "GQ8 single formal RC source selected REAL66 legacy exploration OFF65
 # The workflow display name is historical, but its PR run builds current REAL69.
 # Do not accept the old rich51 fast-lane job as proof of the current V3 candidate.
 REAL69_ARTIFACT = "GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL"
+# An explicitly pinned, already-green 15-source art composite gets a source-
+# review inbox entry, not a formal-RC/Studio/ART/FUN acceptance or auto-merge.
+# Do not turn this into a generic workflow-name allowlist.
+ART15_PR = 966
+ART15_FEATURE = "GQ470_FB015_ART15_965_963_REAL69_SOURCE_BRIDGE_20261121"
+ART15_SOURCE_LOCK = "B220_ART15_SELECTED_BYTES_ONLY_NOT_FORMAL/SOURCE_SELECT_MANIFEST.json"
+ART15_RUN_NAME = "GQ470 ART15 REAL69 combined B220 source-only bridge (not official RC)"
+ART15_ARTIFACT = "GQ470-ART15-REAL69-ONE-B220-PACKET-NOT-FORMAL"
 PIN = re.compile(r"^[0-9a-f]{40}$")
 FEATURE = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
 
@@ -108,12 +116,25 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         if m["head"] != sha or m["base"] != official_sha:
             item["reason"] = "STALE_PREP_MANIFEST_SHA"
             continue
+        # #966's A PREP is a selected-source packet, NOT the legacy
+        # full candidate workflow. Its exact PR, feature and source-lock
+        # identity must match; otherwise fail closed without borrowing a
+        # different art PR's successful CI.
+        if number == ART15_PR:
+            if m["features"] != [ART15_FEATURE] or m["source_lock"] != ART15_SOURCE_LOCK:
+                item["reason"] = "ART15_CONTRACT_IDENTITY_MISMATCH"
+                continue
+            expected_run_name, expected_artifact = ART15_RUN_NAME, ART15_ARTIFACT
+            item["candidate_evidence_kind"] = "ART15_SOURCE_ONLY_NOT_FORMAL"
+        else:
+            expected_run_name, expected_artifact = RUN_NAME, REAL69_ARTIFACT
+            item["candidate_evidence_kind"] = "LEGACY_REAL69_CANDIDATE_NOT_ENGINE_PASS"
         compare = api(f"/repos/{repo}/compare/{official_sha}...{sha}")
         if compare.get("behind_by") != 0 or compare.get("ahead_by", 0) <= 0 or compare.get("status") != "ahead":
             item["reason"] = "NOT_A_FAST_FORWARD_FROM_OFFICIAL"
             continue
         runs = api(f"/repos/{repo}/actions/runs?head_sha={sha}&per_page=100").get("workflow_runs", [])
-        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == RUN_NAME and x.get("event") == "pull_request"]
+        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == expected_run_name and x.get("event") == "pull_request"]
         matching.sort(key=lambda x: (x.get("created_at", ""), x.get("id", 0)), reverse=True)
         if not matching or matching[0].get("status") != "completed" or matching[0].get("conclusion") != "success":
             item["reason"] = "LATEST_SAME_HEAD_FULL_RC_CI_NOT_GREEN"
@@ -121,7 +142,7 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         # Require the actual REAL69 source-composite artifact from this *same PR-head* CI.
         # A green legacy rich51 job, no artifact, an expired artifact, or a duplicate is NOT READY.
         artifacts = api(f"/repos/{repo}/actions/runs/{matching[0]['id']}/artifacts?per_page=100").get("artifacts", [])
-        eligible = [a for a in artifacts if a.get("name") == REAL69_ARTIFACT
+        eligible = [a for a in artifacts if a.get("name") == expected_artifact
                     and a.get("expired") is False
                     and type(a.get("size_in_bytes")) is int and a["size_in_bytes"] > 0]
         if len(eligible) != 1:
@@ -130,7 +151,11 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         item["candidate_artifact_id"] = eligible[0]["id"]
         item["candidate_artifact_zip_bytes"] = eligible[0]["size_in_bytes"]
         item["status"] = "READY_FOR_SOLE_WRITER_REVIEW"
-        item["reason"] = "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED"
+        item["reason"] = ("EXACT_HEAD_ART15_SOURCE_ONLY_CI_ARTIFACT_GREEN; "
+                          "LIVE_SECURITY_CAS_AND_REAL_RC_CI_REVIEW_REQUIRED"
+                          if number == ART15_PR else
+                          "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; "
+                          "LIVE_SECURITY_CAS_REVIEW_REQUIRED")
         commit = api(f"/repos/{repo}/commits/{sha}")
         stamp = ((commit.get("commit") or {}).get("committer") or {}).get("date", "")
         if not stamp:
