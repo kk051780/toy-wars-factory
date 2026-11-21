@@ -17,6 +17,9 @@ local UPDATE_SECONDS = if TOUCH then 0.95 else 0.75
 local RESCAN_SECONDS = 3.8
 local MIN_GROUND_NORMAL = 0.72
 local SHADOW_TRANSPARENCY = 0.73
+-- Shadows dissolve over the last 30% of the existing LOD range, avoiding
+-- a dark disc abruptly vanishing when an NPC crosses the draw boundary.
+local FADE_START_RATIO = 0.70
 local FEATURE_OFF = "EGGRUMBLE_NeutralContactShadowsOff"
 local REDUCED_EFFECTS = "EGGRUMBLE_ReducedEffects"
 local SPECIES_ATTRIBUTE = "EGGRUMBLE_NeutralSpecies"
@@ -54,6 +57,14 @@ local function rescan()
             end
         end
     end
+end
+
+-- GQ470_NEUTRAL_DISTANCE_FADE_V1: only one cheap scalar update for each
+-- existing visual; no new geometry, raycasts, or per-frame listeners.
+local function distanceFadeTransparency(distance: number): number
+    local fadeStart = MAX_DISTANCE * FADE_START_RATIO
+    local alpha = math.clamp((distance - fadeStart) / (MAX_DISTANCE - fadeStart), 0, 1)
+    return SHADOW_TRANSPARENCY + (1 - SHADOW_TRANSPARENCY) * alpha
 end
 
 local function newDisc(): Part
@@ -130,7 +141,7 @@ local function tick()
     -- GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2:
     -- Decide the full surviving set BEFORE allocating new Parts. Otherwise,
     -- replacing ten old shadows with ten new shadows briefly doubles the budget.
-    local chosen: {{model: Model, root: BasePart, hit: RaycastResult}} = {}
+    local chosen: {{model: Model, root: BasePart, hit: RaycastResult, distance: number}} = {}
     local selected: {[Model]: boolean} = {}
     -- GQ470_GROUNDED_CONTACT_BACKFILL_V3: failed ground probes do not
     -- consume one of six/ten slots; <=12 Touch / <=20 PC probes per tick.
@@ -143,7 +154,7 @@ local function tick()
         local hit = contact(entry.model, entry.root)
         if hit then
             selected[entry.model] = true
-            table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})
+            table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})
         end
     end
     -- Phase 1: reclaim stale discs; phase 2: allocate only needed replacements.
@@ -159,6 +170,7 @@ local function tick()
             disc = newDisc()
             active[entry.model] = disc
         end
+        disc.Transparency = distanceFadeTransparency(entry.distance)
         local radius = math.clamp(math.max(entry.root.Size.X, entry.root.Size.Z) * 1.28, 1.3, 3.0)
         disc.Size = Vector3.new(0.055, radius, radius)
         -- A cylinder is thin along its local X axis. Align that axis with the
