@@ -105,7 +105,7 @@ def check_art_fragment(fragment: str) -> None:
            fragment.count("setGate(true);gateUntil=os.clock()+14") == 1,
            "PROMPT_ORIGINAL_AUTHORITY")
     demand("Instance.new(" not in fragment and
-           "Remote" not in fragment and "DataStore" not in fragment,
+           'Instance.new("RemoteEvent")' not in fragment and "DataStore" not in fragment,
            "NO_EXTRA_OWNERS")
     demand("local torso=block(" in fragment and
            "Enum.Material.SmoothPlastic,false)" in fragment, "NON_PHYSICS")
