@@ -34,6 +34,7 @@ def validate(source: str):
         "decoration.parts[first].CFrame = outward",
         "if not wanted[core] or not validCore(core) then clear(core) end",
         "Workspace.DescendantAdded:Connect",
+        'if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then',
         "Workspace.DescendantRemoving:Connect",
         "while not disposed and script.Parent do",
         "local disposed = false",
@@ -54,7 +55,7 @@ def validate(source: str):
             count = len(matches)
         else:
             count = source.count(text)
-        expected = 2 if text == 'if obj:IsA("BasePart") and obj.Name == "StandardCore" then' else 1
+        expected = 1
         if count != expected:
             raise ValueError("RED_FOUNDATION_REQUIRED_" + text)
     for declaration in ("MAX_CASTLES", "PARTS_PER_CASTLE", "MAX_TOTAL_EXTRA_PARTS",
@@ -78,7 +79,8 @@ def validate(source: str):
         raise ValueError("RED_FOUNDATION_UNBOUNDED_PART_CREATORS")
     if stripped.count("table.insert(stones, makeStone(") != 2:
         raise ValueError("RED_FOUNDATION_STONE_SLOT_OVERFLOW")
-    if stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 2:
+    if (stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1
+            or stripped.count('if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1):
         raise ValueError("RED_FOUNDATION_UNSTABLE_LATE_STREAMING_DISCOVERY")
     if not (len(source.encode("utf-8")) < 11000):
         raise ValueError("RED_FOUNDATION_SOURCE_TOO_LARGE")
@@ -125,6 +127,7 @@ class FoundationTests(unittest.TestCase):
             ('table.clear(candidates)', '-- registry leak'),
             ('while not disposed and script.Parent do', 'while script.Parent do'),
             ('track(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+            ('if not disposed and obj:IsA("BasePart")', 'if obj:IsA("BasePart")'),
             ("assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)",
              "assert(true)"),
         ]
