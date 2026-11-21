@@ -1710,7 +1710,12 @@ jobs:
           import json,pathlib,os
           p=pathlib.Path('artifacts/real69/delivery/ART_CHECK_REPORT.json')
           r=json.loads(p.read_text())
-          assert r['official_build_head']==os.environ['GITHUB_SHA']
+          assert r['candidate_build_head']==os.environ['GITHUB_SHA']
+          # PR source QA must remain explicitly nonformal and ART_NO_GO.
+          is_official=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          assert r['formal_rc_adoption_proven'] is is_official
+          assert r['official_build_head']==(os.environ['GITHUB_SHA'] if is_official else None)
+          assert r['receipt_provenance']==('OFFICIAL' if is_official else 'PR_CANDIDATE')
           assert r['source_gate']['status']=='PASS_SOURCE_ONLY'
           assert r['source_gate']['actual_place_scripts']==69
           assert r['source_gate']['verified_visual_feature_sources']==3
