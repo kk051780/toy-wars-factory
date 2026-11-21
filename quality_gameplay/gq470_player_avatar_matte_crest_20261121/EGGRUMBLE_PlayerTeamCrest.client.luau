@@ -2,12 +2,23 @@
 -- Explicitly NOT a player-spawn repair. Safe to omit for exact REAL69 rollback.
 -- One client-owned decoration. No server authority, combat, GUI, Remote or persistence.
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local localPlayer = Players.LocalPlayer
 if not localPlayer then return end
 
 local CREST_NAME = "GQ470_PlayerTeamCrests"
 local LOD_STUDS = 66
 local LOD_POLL_SECONDS = 0.75
+-- Budget counts ACTUAL instantiated crests, not only transparent hidden ones.
+local MAX_REMOTE_CRESTS = if UserInputService.TouchEnabled then 2 else 3
+local STEALTH_FLAGS = { "Stealthed", "IsInvisible", "AssassinCloaked", "EGGRUMBLE_Stealthed" }
+local BODY_PARTS = {
+    Head = true, Torso = true, UpperTorso = true, LowerTorso = true,
+    LeftArm = true, RightArm = true, LeftLeg = true, RightLeg = true,
+    LeftUpperArm = true, RightUpperArm = true, LeftLowerArm = true, RightLowerArm = true,
+    LeftHand = true, RightHand = true, LeftUpperLeg = true, RightUpperLeg = true,
+    LeftLowerLeg = true, RightLowerLeg = true, LeftFoot = true, RightFoot = true,
+}
 local OFFICIAL_TEAM_COLORS = {
     RED = Color3.fromRGB(174, 79, 73),
     BLUE = Color3.fromRGB(70, 122, 176),
@@ -28,7 +39,37 @@ local function removeMounted(player)
     mounted[player] = nil
     if not rec then return end
     if rec.died then rec.died:Disconnect() end
+    for _, connection in ipairs(rec.watchers or {}) do connection:Disconnect() end
     if rec.folder and rec.folder.Parent then rec.folder:Destroy() end
+end
+
+local function isConcealed(player, character)
+    -- Cosmetic crests must not reveal Assassin/invisible players, including R6/R15 limbs.
+    for _, flag in ipairs(STEALTH_FLAGS) do
+        if player:GetAttribute(flag) == true or character:GetAttribute(flag) == true then
+            return true
+        end
+    end
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") and BODY_PARTS[part.Name] then
+            if part.Transparency >= 0.5 or part.LocalTransparencyModifier >= 0.5 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function cameraDistance(player, character, cameraPosition)
+    if player == localPlayer or not cameraPosition or not character then return nil end
+    local root = character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not root or not root:IsA("BasePart") or not humanoid or humanoid.Health <= 0 then
+        return nil
+    end
+    if not root.Parent or not teamColor(player) or isConcealed(player, character) then return nil end
+    local distance = (cameraPosition - root.Position).Magnitude
+    return if distance <= LOD_STUDS then distance else nil
 end
 
 local function makeCrest(folder, torso, color, side, isRed)
@@ -66,21 +107,17 @@ local function attach(player, character)
     local token = (generations[player] or 0) + 1
     generations[player] = token
     removeMounted(player)
-
-    -- CharacterAdded is only an observation: never call LoadCharacter or change spawn.
-    local humanoid = character:WaitForChild("Humanoid", 8)
-    local root = character:WaitForChild("HumanoidRootPart", 8)
-    local torso
-    for _ = 1, 24 do
-        torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
-        if torso then break end
-        task.wait(0.10)
-    end
+    -- No WaitForChild loops: only nearby, fully streamed-in bodies can instantiate parts.
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local root = character:FindFirstChild("HumanoidRootPart")
+    local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
     if token ~= generations[player] or player.Character ~= character then return end
     if not humanoid or not root or not torso or humanoid.Health <= 0 then return end
     if not torso:IsA("BasePart") or not root:IsA("BasePart") then return end
     local color = teamColor(player)
     if not color then return end
+    local camera = workspace.CurrentCamera
+    if not cameraDistance(player, character, camera and camera.CFrame.Position) then return end
     local isRed = player.Team ~= nil and player.Team.Name == "RED"
 
     local folder = Instance.new("Folder")
@@ -90,39 +127,51 @@ local function attach(player, character)
         makeCrest(folder, torso, color, -1, isRed),
         makeCrest(folder, torso, color, 1, isRed),
     }
-    local died = humanoid.Died:Connect(function()
-        if generations[player] == token then
+    local watchers = {}
+    local function rejectConcealment()
+        if generations[player] == token and (isConcealed(player, character)
+            or player.Character ~= character or humanoid.Health <= 0) then
             removeMounted(player)
         end
+    end
+    -- Immediate cleanup when true cloak/partial-body transparency changes.
+    for _, flag in ipairs(STEALTH_FLAGS) do
+        watchers[#watchers + 1] = player:GetAttributeChangedSignal(flag):Connect(rejectConcealment)
+        watchers[#watchers + 1] = character:GetAttributeChangedSignal(flag):Connect(rejectConcealment)
+    end
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") and BODY_PARTS[part.Name] then
+            watchers[#watchers + 1] = part:GetPropertyChangedSignal("Transparency"):Connect(rejectConcealment)
+            watchers[#watchers + 1] = part:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(rejectConcealment)
+        end
+    end
+    local died = humanoid.Died:Connect(function()
+        if generations[player] == token then removeMounted(player) end
     end)
     mounted[player] = {
-        folder = folder,
-        pieces = pieces,
-        root = root,
-        character = character,
-        died = died,
+        folder = folder, pieces = pieces, root = root, character = character,
+        died = died, watchers = watchers,
     }
+    rejectConcealment()
 end
 
 local function register(player)
     if subscriptions[player] then return end
     local conns = {}
-    conns[#conns + 1] = player.CharacterAdded:Connect(function(character)
-        task.spawn(attach, player, character)
+    conns[#conns + 1] = player.CharacterAdded:Connect(function()
+        generations[player] = (generations[player] or 0) + 1
+        removeMounted(player)
+        -- Next LOD sweep creates cosmetics only when genuinely in camera range.
     end)
     conns[#conns + 1] = player.CharacterRemoving:Connect(function()
         generations[player] = (generations[player] or 0) + 1
         removeMounted(player)
     end)
     conns[#conns + 1] = player:GetPropertyChangedSignal("Team"):Connect(function()
-        -- Rebuild on actual team changes; never recolor an opponent with a stale team.
-        local character = player.Character
-        if character then task.spawn(attach, player, character) end
+        generations[player] = (generations[player] or 0) + 1
+        removeMounted(player)
     end)
     subscriptions[player] = conns
-    if player.Character then
-        task.spawn(attach, player, player.Character)
-    end
 end
 
 local function unregister(player)
@@ -142,23 +191,39 @@ for _, player in ipairs(Players:GetPlayers()) do
     register(player)
 end
 
--- Single low-frequency sweep; no Heartbeat/RenderStepped, particles or light sources.
+-- Low-frequency, actual-part budget: closest remote avatars only.
+-- A distant/hidden/streamed-out avatar owns ZERO crest parts.
 task.spawn(function()
     while true do
         local camera = workspace.CurrentCamera
         local cameraPosition = camera and camera.CFrame.Position
-        for player, rec in pairs(mounted) do
-            if rec.character ~= player.Character or not rec.folder.Parent then
-                removeMounted(player)
-            else
-                local near = player == localPlayer
-                if not near and cameraPosition and rec.root.Parent then
-                    near = (cameraPosition - rec.root.Position).Magnitude <= LOD_STUDS
-                end
-                for _, piece in ipairs(rec.pieces) do
-                    piece.Transparency = near and 0.04 or 1
+        local nearby = {}
+        if cameraPosition then
+            for _, player in ipairs(Players:GetPlayers()) do
+                local character = player.Character
+                local distance = cameraDistance(player, character, cameraPosition)
+                if distance then
+                    nearby[#nearby + 1] = { player = player, character = character, distance = distance }
                 end
             end
+        end
+        table.sort(nearby, function(a, b)
+            if a.distance == b.distance then return a.player.UserId < b.player.UserId end
+            return a.distance < b.distance
+        end)
+        local selected = {}
+        for index = 1, math.min(MAX_REMOTE_CRESTS, #nearby) do
+            local entry = nearby[index]
+            selected[entry.player] = entry.character
+        end
+        for player, rec in pairs(mounted) do
+            if selected[player] ~= rec.character or not rec.folder.Parent
+                or isConcealed(player, rec.character) then
+                removeMounted(player)
+            end
+        end
+        for player, character in pairs(selected) do
+            if not mounted[player] then attach(player, character) end
         end
         task.wait(LOD_POLL_SECONDS)
     end
