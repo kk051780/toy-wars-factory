@@ -70,12 +70,19 @@ class SourceGate(unittest.TestCase):
         validate(SOURCE.read_text(encoding="utf-8"))
 
     def test_exact_feature_and_sole_runtime_route(self):
-        from compose_official70 import BASE, FEATURE, ROUTE, B_PACKET, TARGET
+        from compose_official70 import BASE, FEATURE, ROUTE, B_PACKET, TARGET, COMPETING_CREST_ROUTE
         self.assertEqual(BASE, "e80973c354f14a0d0088577f3cc1a875454f0f8f")
         self.assertEqual(FEATURE, "GQ470_FB015_ALLY_SILHOUETTE_REAL69_20261121")
         self.assertEqual(ROUTE, "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette")
         self.assertEqual(TARGET, "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_AllySilhouette.client.luau")
         self.assertEqual(B_PACKET, "B220_ALLY_SILHOUETTE_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL")
+        self.assertEqual(COMPETING_CREST_ROUTE, "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerTeamCrest")
+        composer = (ROOT / "compose_official70.py").read_text(encoding="utf-8")
+        self.assertIn('require(COMPETING_CREST_ROUTE not in original_map, "COMPETING_PR976_AVATAR_CREST_ROUTE")', composer)
+        self.assertIn('"exclusive_alternative_route": COMPETING_CREST_ROUTE', composer)
+        self.assertIn('"exclusive_alternative_pr": 976', composer)
+        self.assertIn('manifest["exclusive_alternative_route"] == COMPETING_CREST_ROUTE', composer)
+        self.assertIn('manifest["exclusive_alternative_pr"] == 976', composer)
         self.assertIn(FEATURE, SOURCE.read_text(encoding="utf-8"))
         
     def test_no_faked_runtime_proof(self):
