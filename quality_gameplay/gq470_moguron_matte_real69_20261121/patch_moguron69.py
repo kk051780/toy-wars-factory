@@ -31,7 +31,8 @@ OLD = ''' local function mole(side:string,x:number)
    setGate(true);gateUntil=os.clock()+14
   end)
  end'''
-NEW = ''' local function mole(side:string,x:number)
+NEW = ''' -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121
+ local function mole(side:string,x:number)
   local torso=block("Moguron_"..side.."_Body",Vector3.new(4.8,3.4,3.8),
    Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)
   torso.Shape=Enum.PartType.Ball
