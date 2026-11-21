@@ -75,7 +75,7 @@ def validate(source: str):
     # Ground-only fallback may never become an unbounded Raycast storm.
     if source.count("GQ470_GROUNDED_CONTACT_BACKFILL_V3") != 1:
         raise ValueError("RED_NEUTRAL_MISSING_GROUND_BACKFILL")
-    if len(re.findall(r"^local MAX_GROUND_PROBES = MAX_SHADOWS \\* 2$", source, re.MULTILINE)) != 1 or (
+    if len(re.findall(r"^local MAX_GROUND_PROBES = MAX_SHADOWS \* 2$", source, re.MULTILINE)) != 1 or (
         source.count("local limit = math.min(MAX_GROUND_PROBES, #nearby)") != 1
         or source.count("if #chosen >= MAX_SHADOWS then") != 1
         or source.count("contact(entry.model, entry.root)") != 1
