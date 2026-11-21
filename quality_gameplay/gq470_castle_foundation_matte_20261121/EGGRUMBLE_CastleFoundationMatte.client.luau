@@ -98,6 +98,7 @@ local function makeFoundation(core: BasePart)
         table.insert(stones, makeStone(folder, "BevelInset_" .. side,
             Vector3.new(1.55, .42, .82), CFrame.new(), EDGE, Enum.Material.SmoothPlastic))
     end
+    assert(#stones == PARTS_PER_CASTLE)
     local decoration: Decor = {folder = folder, parts = stones, lastPose = core.CFrame}
     active[core] = decoration
     updatePoses(core, decoration)
@@ -141,8 +142,12 @@ local function refresh()
     assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)
 end
 
+-- DescendantAdded may fire while streamed castle properties/ancestry are still
+-- being assigned. Record named BaseParts first, validate after 2.5s refresh.
 Workspace.DescendantAdded:Connect(function(obj)
-    if validCore(obj) then candidates[obj :: BasePart] = true end
+    if obj:IsA("BasePart") and obj.Name == "StandardCore" then
+        candidates[obj] = true
+    end
 end)
 Workspace.DescendantRemoving:Connect(function(obj)
     if candidates[obj :: any] then
@@ -151,7 +156,9 @@ Workspace.DescendantRemoving:Connect(function(obj)
     end
 end)
 for _, obj in Workspace:GetDescendants() do
-    if validCore(obj) then candidates[obj :: BasePart] = true end
+    if obj:IsA("BasePart") and obj.Name == "StandardCore" then
+        candidates[obj] = true
+    end
 end
 player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refresh)
 player.CharacterAdded:Connect(function()
