@@ -4,6 +4,7 @@ on:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - "quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/**"
+      - "quality_gameplay/gq470_moguron_matte_real69_20261121/**"
       - ".github/workflows/gq470-moguron-art-source-real69.yml"
   workflow_dispatch:
 permissions:
@@ -27,6 +28,8 @@ jobs:
         run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_runtime_contract.py
       - name: New art anatomy, part budget and no-gameplay-mutation regression
         run: python3 quality_gameplay/gq8_rc85_rc86_wcs_star_meteor_20261119/test_moguron_matte_real69.py
+      - name: Seven fail-closed visual mutations and selected69 patch sanity
+        run: python3 quality_gameplay/gq470_moguron_matte_real69_20261121/patch_moguron69.py --self-test
       - name: Preserve real gate outcome distinction
         run: |
           echo "SOURCE_PREP_GATE only; neither Native/Rojo/REAL69 Place nor Studio/Android/ART/FUN/OWNER was tested"
