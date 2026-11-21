@@ -78,8 +78,7 @@ local function clear(core: BasePart)
 end
 
 local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParams)
-    -- The foundation may sit above a cliff or a streamed out tile. Never show
-    -- suspended or submerged ground ornaments; no speculative y=0 fallback.
+    -- Never place floating/underwater ornaments on streamed or absent floors.
     local hit = Workspace:Raycast(pose.Position + Vector3.new(0, 6, 0),
         Vector3.new(0, -14, 0), filter)
     if not hit or hit.Material == Enum.Material.Water or hit.Normal.Y < .7
@@ -87,15 +86,23 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
         piece.Transparency = 1
         return
     end
-    -- Cosmetic water sheets/ghost floors can still be raycast targets when
-    -- noncollidable. Never pretend such a surface is a walkable approach.
     local surface = hit.Instance
-    if surface:IsA("BasePart") and (
+    -- A moving NPC/player is not the ground, even if its body is collidable.
+    local ancestor: Instance? = surface.Parent
+    local actorSurface = false
+    while ancestor do
+        if ancestor:IsA("Model") and ancestor:FindFirstChildOfClass("Humanoid") then
+            actorSurface = true
+            break
+        end
+        ancestor = ancestor.Parent
+    end
+    if actorSurface or (surface:IsA("BasePart") and (
         not surface.CanCollide
         or surface.Transparency >= .95
         or surface.LocalTransparencyModifier >= .95
         or (surface.Material == Enum.Material.Glass and surface.Transparency >= .35)
-    ) then
+    )) then
         piece.Transparency = 1
         return
     end
@@ -105,18 +112,14 @@ local function placeOnGround(piece: BasePart, pose: CFrame, filter: RaycastParam
 end
 
 local function updatePieces(core: BasePart, decor: Decor)
-    -- Four pairs of split, shallow path-edge keystones, NOT foundation blocks.
-    -- The inset is farther away than #982 foundation (core face + >=8 studs).
+    -- Four shallow split path-edge pairs, outside the foundation.
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
-    -- #990 correction: a long rectangular keep must retain its short side.
     local offsetX = math.clamp(core.Size.X * .5 + 9, 12, 72)
     local offsetZ = math.clamp(core.Size.Z * .5 + 9, 12, 72)
     local filter = RaycastParams.new()
     filter.FilterType = Enum.RaycastFilterType.Exclude
-    -- Do not look through Terrain water and place stones on submerged seabeds.
     filter.IgnoreWater = false
-    -- Exclude the core, NOT its entire castle Model: some real floors share
-    -- that Model and must stay raycastable for ground anchoring.
+    -- Other actual castle floor Parts remain raycastable.
     local ignore: {Instance} = {core}
     if player.Character then table.insert(ignore, player.Character) end
     filter.FilterDescendantsInstances = ignore
