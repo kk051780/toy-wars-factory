@@ -2,6 +2,7 @@
 This does not measure visual quality, Studio playback or Android FPS.
 """
 from pathlib import Path
+import json
 import re
 import unittest
 
@@ -70,6 +71,26 @@ def validate(source: str) -> None:
 class LocalTrueDamageCueSourceQA(unittest.TestCase):
     def test_real_source_gate(self):
         validate(SOURCE.read_text(encoding="utf8"))
+
+    def test_runtime_studio_matrix_stays_honest_until_actual_evidence(self):
+        m = json.loads((SOURCE.parent / "STUDIO_RETEST_MATRIX.json").read_text(encoding="utf8"))
+        self.assertEqual(m["base_formal_head"],
+                         "e80973c354f14a0d0088577f3cc1a875454f0f8f")
+        self.assertEqual(m["comparison_old_new_pc_android_32"], "0/32")
+        self.assertEqual(m["art_gate"], "ART_NO_GO")
+        self.assertEqual(m["gameplay_gate"], "PRODUCT_NO_GO")
+        self.assertFalse(m["owner_accepted"])
+        self.assertEqual(m["studio_solo"], "NOT_TESTED")
+        self.assertEqual(m["studio_two_client"], "NOT_TESTED")
+        self.assertEqual(m["low_end_android_15min"], "NOT_TESTED")
+        self.assertEqual(len(m["runtime_scenarios"]), 10)
+        self.assertEqual(len({s["id"] for s in m["runtime_scenarios"]}), 10)
+        self.assertTrue(all(s["status"] == "NOT_TESTED"
+                            for s in m["runtime_scenarios"]))
+        self.assertEqual(m["mobile_targets"]["median_fps_min"], 30)
+        self.assertEqual(m["mobile_targets"]["p10_fps_min"], 25)
+        self.assertEqual(m["human_art_targets"]["pc_score_min"], 4.5)
+        self.assertEqual(m["human_art_targets"]["android_score_min"], 4.0)
 
     def test_mutations_fail_closed(self):
         baseline = SOURCE.read_text(encoding="utf8")
