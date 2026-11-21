@@ -41,6 +41,9 @@ P0修正は唯一の正規writer #220が最新正式HEADと権限を確認し、
 - **2クライアント R6/R15・RED/BLUE**：敵／味方を66stud以内・外側に置き、距離外の肩章Partが実際に0、戻した時に新たに生成されることをExplorerとクライアントで確認する。赤は横幅広、青は縦に高い輪郭を画面で比較する。
 - **暗殺者ステルス**：Player・CharacterそれぞれのStealthed/IsInvisible/AssassinCloaked/EGGRUMBLE_StealthedのONで装飾が即時破棄され、敵から位置が漏れないことを確認。R6のLeft Arm/Right Arm/Left Leg/Right Leg、R15手足のTransparency・LocalTransparencyModifier 0.5以上でも同様。OFF→近距離復帰時のみ復元。
 - **最大負荷**：多数のプレイヤーを同画角に入れてTouchで2人/4Part・PCで3人/6Partを超えない。キャラ削除・死亡・チーム切替・再出現・Streaming・減員・カメラ消失時のパーツと監視接続残留がないか確認する。
+- **ゲーム標準の省エフェクト検証**：LocalPlayerのEGGRUMBLE_ReducedEffectsをtrueにした瞬間、出ている肩章が全て消え、その間は新規生成されないことを確認。falseに戻した後のみ近距離再生成。個別ロールバックEGGRUMBLE_TeamCrestsOff=trueと旧ReducedEffects=trueも同じ即時OFFの振る舞いであることを確認する（コード静的ゲートは成功しても実機チェックは別）。
+- **途中ロードの身体部位**：配信遅延・装着やR6/R15差によるCharacter.DescendantAdded/DescendantRemovingで胴体・四肢の監視が付け直される前に古い肩章が消えることをExplorerとカメラで確認。#994の追加監視は同一A候補に取り込まれたが、実機合格は未検証。
+
 - **優先度と重複**：#975（近くの味方Highlight）と#976（両陣営肩章）は競合する代替案。実画像・可読性・Android FPSで **どちらか一方または両方却下** を#250が決める。P0不可視/卵→城→得点→勝敗が未解決なら#976はDEFER。どちらも公式RCにはまだ採用しない。
 
 RETEST記録欄：R6/R15 / Team / CameraDistance / CloakAttribute / BodyAlpha / Touch / CountClientWedges / CleanupBeforeAfter / FPS / StudioOutput / TestedPlaceSHA / EvidenceLink / OWNER_ACCEPTED。空欄は**NOT_TESTED**、0/32画像なら **ART_NO_GO**。
