@@ -33,11 +33,15 @@ local function validCore(obj: Instance): boolean
 end
 
 local function eyePosition(): Vector3?
+    -- Visual LOD follows the camera, not the player's remote physical root.
+    -- Spectator/cutscene/locked comparison cameras must see nearby castle
+    -- architecture even if the avatar is far away or not yet spawned.
+    local camera = Workspace.CurrentCamera
+    if camera then return camera.CFrame.Position end
+    -- Before CurrentCamera exists, fall back to a real character position.
     local character = player.Character
     local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
-    if root and root:IsA("BasePart") then return root.Position end
-    local camera = Workspace.CurrentCamera
-    return if camera then camera.CFrame.Position else nil
+    return if root and root:IsA("BasePart") then root.Position else nil
 end
 
 local function makeStone(parent: Folder, name: string, size: Vector3,
