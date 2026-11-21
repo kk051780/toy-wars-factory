@@ -154,6 +154,7 @@ jobs:
             ("source_profile","forged-profile"),
             ("b_admission","READY_FOR_AUTO_MERGE"),
             ("new_source_path","selected_sources/forged.luau"),
+            ("source_only",False),
           ]
           for field,value in tests:
               try:
