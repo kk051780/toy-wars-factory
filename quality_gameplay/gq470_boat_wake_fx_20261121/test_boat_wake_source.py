@@ -57,8 +57,8 @@ def validate(source):
         "MAX_PARTS_PER_PULSE":"2", "MOBILE_PARTS_PER_PULSE":"1",
         "CAMERA_FX_DISTANCE":"96", "WATER_RAY_LENGTH":"13"}
     for key, value in numeric.items():
-        if not re.search(r"(?m)^\\s*local\\s+" + key + r"\\s*=\\s*" +
-                         re.escape(value) + r"\\s*$", code):
+        if not re.search(r"(?m)^\s*local\s+" + key + r"\s*=\s*" +
+                         re.escape(value) + r"\s*$", code):
             raise ValueError("RED_NUMERIC_BUDGET:"+key)
     if source.count('Instance.new("WedgePart")') != 1:
         raise ValueError("RED_MULTIPLE_PART_SITES")
