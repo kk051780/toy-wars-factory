@@ -10,6 +10,7 @@ local PLAYER = Players.LocalPlayer
 local INTERVAL = if UserInputService.TouchEnabled then 0.16 else 0.10
 local MAX_CAMERA_DISTANCE = if UserInputService.TouchEnabled then 55 else 75
 local MIN_GROUND_NORMAL = 0.78
+local FADE_START_FRACTION = 0.72
 local SHADOW_ALPHA = 0.76
 local FEATURE_OFF = "EGGRUMBLE_PlayerContactShadowOff"
 local REDUCED_EFFECTS = "EGGRUMBLE_ReducedEffects"
@@ -94,10 +95,12 @@ local function update()
     local camera = Workspace.CurrentCamera
     local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
     local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
+    local cameraDistance = if camera and root and root:IsA("BasePart")
+        then (camera.CFrame.Position - root.Position).Magnitude else math.huge
     if not character or not humanoid or not root or not root:IsA("BasePart")
         or not root:IsDescendantOf(Workspace) or not camera
         or not characterVisible(character, humanoid)
-        or (camera.CFrame.Position - root.Position).Magnitude > MAX_CAMERA_DISTANCE then
+        or cameraDistance > MAX_CAMERA_DISTANCE then
         clearDisc()
         task.delay(INTERVAL, update)
         return
@@ -132,6 +135,11 @@ local function update()
         return
     end
     local part = ensureDisc()
+    -- Ease toward invisible before leaving LOD. One Part, no additional raycasts.
+    local fade = math.clamp(
+        (cameraDistance / MAX_CAMERA_DISTANCE - FADE_START_FRACTION)
+            / (1 - FADE_START_FRACTION), 0, 1)
+    part.Transparency = SHADOW_ALPHA + (1 - SHADOW_ALPHA) * fade
     local radius = math.clamp(math.max(root.Size.X, root.Size.Z), 1.6, 3)
     part.Size = Vector3.new(0.05, radius * 1.46, radius * 1.19)
     local normal = hit.Normal
