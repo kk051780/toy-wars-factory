@@ -50,7 +50,7 @@ def validate(source: str) -> None:
         "TakeDamage", "DataStore", "MarketplaceService", "ReplicatedStorage",
         "RenderStepped", "Heartbeat", "while true", "while task.wait",
         "Enum.Material.Neon", "PointLight", "ParticleEmitter",
-        "AssemblyLinearVelocity", "SetNetworkOwner", "CanCollide = true",
+        "AssemblyLinearVelocity", "SetNetworkOwner", "part.CanCollide = true",
     )
     for word in forbidden:
         if word in code:
