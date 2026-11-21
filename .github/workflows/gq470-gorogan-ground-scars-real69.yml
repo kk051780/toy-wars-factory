@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - prep/gq470-gorogan-ground-scars-a-20261121
+      - quality/gq470-gorogan-late-rig-retry-20261121-a02
   pull_request:
     branches:
       - rc/p0d-s1-kids-rc01
@@ -29,6 +30,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}" || { echo RED_CANDIDATE_HEAD_MISMATCH; exit 1; }
           python3 -m py_compile quality_gameplay/gq470_gorogan_ground_scars_20261121/*.py
           python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/test_ground_scars_source.py
+          python3 -B quality_gameplay/gq470_gorogan_ground_scars_20261121/test_late_rig_retry.py
 
       - name: ReGET immutable official REAL69 Place at exact head
         shell: bash
