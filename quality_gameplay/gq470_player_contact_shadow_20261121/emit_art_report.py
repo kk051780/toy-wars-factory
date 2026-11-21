@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict #420 source-vs-actual human ART evidence separation for #968.
+"""Strict #420 source-vs-real PC/Android ART evidence separation for PR #1001.
 
 An offline/native/Rojo pass does not fill any Studio screenshots or FPS data.
 This report is for the private A candidate only; it cannot approve formal RC.
