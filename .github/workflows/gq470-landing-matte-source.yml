@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -21,7 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B quality_gameplay/gq470_landing_shadow_20261121/compose_landing70.py --self-test
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103

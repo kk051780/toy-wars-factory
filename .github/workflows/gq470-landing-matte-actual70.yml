@@ -1,7 +1,7 @@
 name: GQ470 Landing Matte ART17 actual REAL69 to 70 PREP (NOT FORMAL)
 on:
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01, prep/gq470-fb015-landing-matte-3d-20261121-1540]
+    branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'quality_gameplay/gq470_landing_shadow_20261121/**'
       - '.github/workflows/gq470-landing-matte-actual70.yml'
@@ -11,16 +11,24 @@ permissions:
   actions: read
 jobs:
   landing-actual-art17-source-on70-off69:
+    # This job has ART17 private source; reject generic/untrusted PRs at job entry.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.number == 993 &&
+       github.event.pull_request.user.login == 'kk051780' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.head.ref == 'prep/gq470-fb015-landing-matte-3d-20261121-1540')
     runs-on: ubuntu-latest
     timeout-minutes: 18
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Pin actual ART17 author packet identity, not its PR body
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -41,7 +49,7 @@ jobs:
           set -euo pipefail
           python3 -B quality_gameplay/gq470_landing_shadow_20261121/compose_landing70.py --self-test
           python3 -B quality_gameplay/gq470_landing_shadow_20261121/compose_landing70.py --base "$RUNNER_TEMP/gq470-art17/on" --out "$RUNNER_TEMP/gq470-landing-real70"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
@@ -114,7 +122,7 @@ jobs:
               'new_game_authorities':0,'profile':report},indent=2)+'\n')
           print('GQ470_LANDING_ART17_ACTUAL_REAL69_TO_REAL70_SOURCE_ROJO_GREEN_NOT_FORMAL',report)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: GQ470-LANDING-REAL70-ART17-A-PACKET-NOT-FORMAL
           retention-days: 14
@@ -131,14 +139,14 @@ jobs:
     permissions:
       contents: read
       actions: read
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Redownload actual just-published artifact (not job workspace)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/gq470-art17-downloaded"
