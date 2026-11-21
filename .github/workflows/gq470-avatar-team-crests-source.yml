@@ -1,0 +1,251 @@
+name: GQ470 FB015 avatar team crest A-only Native Rojo exact-source (not official RC)
+on:
+  push:
+    branches: [quality/gq470-crest-streaming-reducedfx-20261121-a03]
+    paths:
+      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
+      - '.github/workflows/gq470-avatar-team-crests-source.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-avatar-team-crests-real69-20261121-a01]
+    paths:
+      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
+      - '.github/workflows/gq470-avatar-team-crests-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-gate-not-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET: quality_gameplay/gq470_player_avatar_matte_crest_20261121
+      ROOT: /tmp/gq470-avatar-crest70
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify actual source blob / preview manifest / branch HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="$TARGET/EGGRUMBLE_PlayerTeamCrest.client.luau"
+          test "$(git hash-object "$SRC")" = 01da89a0e11ea6484eec68a057f91ba715d33f1f
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")"
+          fi
+          python3 - <<'PY'
+          import json,pathlib,subprocess,os
+          root=pathlib.Path(os.environ["TARGET"])
+          m=json.loads((root/'A_SOURCE_PACKET.json').read_text())
+          source=root/'EGGRUMBLE_PlayerTeamCrest.client.luau'
+          assert m['source_blob_sha']==subprocess.check_output(['git','hash-object',str(source)],text=True).strip()
+          assert m['source_class']=='LocalScript' and m['base_selected_source_count']==69
+          assert m['original_selected_sources_modified']==0
+          assert m['scope']=='A_PREP_SOURCE_ONLY_NOT_FORMAL_RC'
+          assert m['player_bug_364']=='NOT_FIXED_BY_THIS_VISUAL'
+          assert m['native_luau']==m['rojo_place']==m['studio_solo']==m['android_15min']=='NOT_TESTED'
+          assert m['owner_acceptance'] is False
+          print('GQ470_CRESTS_SOURCE_BLOB_AND_DECLARED_PRE_BUILD_GATES_PASS')
+          PY
+      - name: 5 safety contracts and 14 fail-closed Luau mutants
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$TARGET/compose_candidate70.py" "$TARGET/test_player_team_crest.py" "$TARGET/p0_spawn_visibility_trace.py" "$TARGET/test_p0_spawn_visibility_trace.py"
+          python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
+      - name: Verify unchanged official source and compose only one optional client script
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC_REBASE_REQUIRED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$FORMAL success"
+          mkdir -p "$ROOT/off69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/off69"
+          python3 "$TARGET/compose_candidate70.py" --official "$ROOT/off69" --out "$ROOT/on70"
+          echo GQ470_CREST70_PRESERVED_69_ORIGINAL_SOURCE_AND_ONE_OPTIONAL_CLIENT
+          python3 "$TARGET/p0_spawn_visibility_trace.py" --official "$ROOT/off69" --out "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
+          test -s "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
+          cp "$TARGET/ART_32_IMAGE_RETEST_MATRIX.json" "$ROOT/ART_32_IMAGE_RETEST_MATRIX.json"
+          python3 - <<'PY'
+          import os,sys
+          from pathlib import Path
+          root=Path(os.environ["ROOT"])/"off69"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,os.environ["TARGET"])
+          from p0_spawn_visibility_trace import audit_script
+          selected=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          scope={
+              "ServerScriptService/EGGRUMBLE_RoundReplay": {"explicit_load_character"},
+              "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD": {"transparency_modifier"},
+              "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel": {"transparency_modifier"},
+          }
+          for route,interesting in scope.items():
+              assert route in selected
+              lines=(root/selected[route]["path"]).read_text(encoding="utf-8").splitlines()
+              sites=[record["line"] for record in audit_script("\n".join(lines))
+                     if record["category"] in interesting]
+              assert len(sites) in (2,4), (route,len(sites))
+              print("P0_HYPOTHESIS_CONTEXT_SCRIPT",route,"SITES",sites)
+              shown=set()
+              for line_no in sites:
+                  for i in range(max(1,line_no-7),min(len(lines),line_no+6)+1):
+                      if i not in shown:
+                          shown.add(i)
+                          # Source only, no runtime secrets or untrusted filesystem paths.
+                          print("P0_SRC",route.rsplit("/",1)[-1],i,lines[i-1].strip()[:150])
+          for route,start,stop in (
+              ("StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD",1,97),
+              ("StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel",195,248),
+          ):
+              source=(root/selected[route]["path"]).read_text(encoding="utf-8").splitlines()
+              print("P0_FILTER_INSPECT_SCRIPT",route,start,stop)
+              for i in range(start,min(stop,len(source))+1):
+                  if any(x in source[i-1] for x in
+                         ("GetDescendants","DescendantAdded","BasePart","records","fxSecondaryNames",
+                          "fxOriginalArena","player.Character","player.Team","CollectionService",
+                          "function","Character","localPlayer","Humanoid","Accessory",
+                          "isStudio","PlayerAdded","CurrentCamera")):
+                      print("P0_FILTER",route.rsplit("/",1)[-1],i,source[i-1].strip()[:150])
+          print("P0_SRC_CONTEXT_IS_STATIC_ONLY_NOT_ROOT_CAUSE_NOT_STUDIO")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_crest_luau
+          persist-credentials: false
+      - name: Compile all original69 and candidate70 actual Luau sources
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_crest_luau -B "$ROOT/luau" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,sys,subprocess
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["ROOT"])
+          for name,count in (("off69",69),("on70",70)):
+              source_root=root/name
+              found=project_scan(source_root,"EGGRUMBLE_REAL69.project.json")
+              assert len(found)==count
+              for route,info in found.items():
+                  subprocess.run([str(root/"luau/luau-compile"),"--text",str(source_root/info["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          studio_only=Path(os.environ["TARGET"])/"StudioPlayerSpawnInspector.client.luau"
+          assert studio_only.is_file()
+          subprocess.run([str(root/"luau/luau-compile"),"--text",str(studio_only)],
+                         check=True,stdout=subprocess.DEVNULL)
+          candidate=project_scan(root/"on70","EGGRUMBLE_REAL69.project.json")
+          assert len(candidate)==70 and all("StudioPlayerSpawnInspector" not in route for route in candidate)
+          print("GQ470_STUDIO_ONLY_DIAGNOSTIC_NATIVE_PASS_AND_NOT_SELECTED_IN_RUNTIME")
+          print("GQ470_CREST_ALL69_OFF_AND70_ON_NATIVE_LUAU_COMPILE_PASS")
+          PY
+      - name: Pinned Rojo 7.7.1 exact OFF69 and independent ON70 Place source class
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ["ROOT"])
+          with ZipFile(root/"rojo.zip") as archive:
+              names=[n for n in archive.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              output=root/"rojo"
+              output.write_bytes(archive.read(names[0]))
+              output.chmod(0o755)
+          PY
+          "$ROOT/rojo" build "$ROOT/off69/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_REBUILT.rbxlx"
+          "$ROOT/rojo" build "$ROOT/on70/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$ROOT/off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/off69/EGGRUMBLE_REAL69.project.json" --place "$ROOT/OFF69_REBUILT.rbxlx" --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/on70/EGGRUMBLE_REAL69.project.json" --place "$ROOT/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx" --count 70
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import os
+          root=Path(os.environ["ROOT"])
+          old=list(ET.parse(root/"OFF69_REBUILT.rbxlx").getroot().iter("Item"))
+          new=list(ET.parse(root/"GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx").getroot().iter("Item"))
+          assert len(new)==len(old)+1
+          hits=[]
+          for item in new:
+              element=item.find('./Properties/string[@name="Name"]')
+              if element is not None and element.text=="EGGRUMBLE_PlayerTeamCrest":
+                  hits.append(item)
+          assert len(hits)==1 and hits[0].get("class")=="LocalScript"
+          s=hits[0].find('./Properties/ProtectedString[@name="Source"]')
+          if s is None:
+              s=hits[0].find('./Properties/string[@name="Source"]')
+          expected=Path(os.environ["TARGET"]+"/EGGRUMBLE_PlayerTeamCrest.client.luau").read_text()
+          assert s is not None and s.text is not None and s.text.strip()==expected.strip()
+          print("GQ470_CREST_OFF69_EXACT_ON70_LUAU_SOURCE_CLASS_PASS")
+          print("A_PRIVATE_PLACE_BYTES", (root/"GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx").stat().st_size)
+          PY
+      - name: B220 single-file source packet integrity with 5 corruption negatives
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/compose_candidate70.py" --export-b "$ROOT/on70" --place "$ROOT/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx"
+          python3 "$TARGET/compose_candidate70.py" --verify-b "$ROOT/on70" --place "$ROOT/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os,sys
+          sys.path.insert(0,os.environ["TARGET"])
+          from compose_candidate70 import PACK,verify_packet
+          root=Path(os.environ["ROOT"])
+          candidate=root/"on70"
+          place=root/"GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx"
+          packet=candidate/PACK
+          m=packet/"SOURCE_SELECT_MANIFEST.json"
+          original=m.read_bytes()
+          mutations=[
+              ("formal_rc_adopted",True),
+              ("art_status","ART_GO"),
+              ("source_sha256","deadbeef"),
+              ("original_unchanged",0),
+          ]
+          for key,value in mutations:
+              try:
+                  mutant=json.loads(original)
+                  mutant[key]=value
+                  m.write_text(json.dumps(mutant))
+                  try: verify_packet(candidate,place)
+                  except ValueError: pass
+                  else: raise AssertionError("RED_PACKET_ACCEPTED_"+key)
+              finally: m.write_bytes(original)
+          extra=packet/"BAD_EXTRA.txt"
+          extra.write_text("bad")
+          try:
+              try: verify_packet(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("RED_PACKET_ACCEPTED_EXTRA_FILE")
+          finally: extra.unlink()
+          verify_packet(candidate,place)
+          print("GQ470_CREST_B220_PACKET_AND_5_NEGATIVES_PASS")
+          PY
+      - name: Truthful evidence and same official SHA check
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED_REBASE; exit 1; }
+          echo 'SOURCE_A_NATIVE_ROJO=PASS_ONLY; FORMAL_RC=NO; SPAWN_P0=UNFIXED'
+          echo 'STUDIO=NOT_TESTED; ANDROID=NOT_TESTED; HUMAN_ART=NOT_TESTED; SCREENSHOTS=0/32'
+          echo 'ART_NO_GO; PRODUCT_NO_GO; OWNER_ACCEPTED=FALSE'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-FB015-AVATAR-TEAM-CREST-REAL70-SOURCE-A-NOT-FORMAL
+          path: |
+            /tmp/gq470-avatar-crest70/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx
+            /tmp/gq470-avatar-crest70/on70/GQ470_AVATAR_CREST_A_RECEIPT.json
+            /tmp/gq470-avatar-crest70/P0_PLAYER_SPAWN_SOURCE_TRACE.json
+            /tmp/gq470-avatar-crest70/ART_32_IMAGE_RETEST_MATRIX.json
+            /tmp/gq470-avatar-crest70/on70/B220_AVATAR_TEAM_CREST_ONE_CLIENT_NOT_FORMAL/**
+          if-no-files-found: error
+          retention-days: 7
