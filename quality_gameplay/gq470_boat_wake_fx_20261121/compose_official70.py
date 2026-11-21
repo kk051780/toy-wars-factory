@@ -85,7 +85,7 @@ def compose(original: Path, destination: Path) -> dict:
             candidate[ROUTE]["sha256"] == hash256(SOURCE.read_bytes()),
             "NEW_LOCAL_SOURCE_IDENTITY")
     report = {
-        "schema": "GQ470_BOAT_WAKE_MOTION_FX_SOURCE_CANDIDATE_V1",
+        "schema": "GQ470_BOAT_WAKE_FX_SOURCE_CANDIDATE_V1",
         "feature_id": FEATURE,
         "stage": "A_SOURCE_CANDIDATE_NOT_FORMAL",
         "canonical_branch": "rc/p0d-s1-kids-rc01",
