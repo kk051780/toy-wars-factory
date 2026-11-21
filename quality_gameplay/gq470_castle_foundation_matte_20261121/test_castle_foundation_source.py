@@ -1,0 +1,146 @@
+"""GQ470 castle-foundation source gate. Static/source-only, NOT Studio or ART approval."""
+from pathlib import Path
+import re
+import unittest
+
+SRC = Path(__file__).with_name("EGGRUMBLE_CastleFoundationMatte.client.luau")
+
+
+def validate(source: str):
+    required = [
+        "local MAX_CASTLES = if UserInputService.TouchEnabled then 2 else 3",
+        "local PARTS_PER_CASTLE = 8",
+        "local MAX_TOTAL_EXTRA_PARTS = MAX_CASTLES * PARTS_PER_CASTLE",
+        "local MAX_DISTANCE_STUDS = 190",
+        "local REFRESH_INTERVAL = 2.5",
+        'obj.Name ~= "StandardCore"',
+        'ancestor.Name == "TacticalBattlefield"',
+        'Instance.new("WedgePart")',
+        "for side = 1, 4 do",
+        "assert(#stones == PARTS_PER_CASTLE)",
+        "decoration.lastSize = core.Size",
+        "decoration.lastSize ~= core.Size",
+        "if dist <= MAX_DISTANCE_STUDS then",
+        "math.clamp(core.Size.X * .5 + .75, 2.0, 64.0)",
+        "math.clamp(core.Size.Z * .5 + .75, 2.0, 64.0)",
+        'if obj:IsA("BasePart") and obj.Name == "StandardCore" then',
+        'Enum.Material.Slate', 'Enum.Material.SmoothPlastic',
+        "stone.Anchored = true",
+        "stone.CanCollide = false",
+        "stone.CanTouch = false",
+        "stone.CanQuery = false",
+        "stone.CastShadow = false",
+        'player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true',
+        "decoration.parts[first].CFrame = outward",
+        "if not wanted[core] or not validCore(core) then clear(core) end",
+        "Workspace.DescendantAdded:Connect",
+        'if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then',
+        "Workspace.DescendantRemoving:Connect",
+        "while not disposed and script.Parent do",
+        "local disposed = false",
+        "local connections: {RBXScriptConnection} = {}",
+        "if disposed then return end",
+        "script.Destroying:Connect(function()",
+        "disposed = true",
+        "connection:Disconnect()",
+        "table.clear(connections)",
+        "table.clear(candidates)",
+        "task.wait(REFRESH_INTERVAL)",
+        "assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)",
+        "local FEATURE_ID = \"GQ470_FB015_CASTLE_FOUNDATION_MATTE_20261121\"",
+    ]
+    for text in required:
+        if text.startswith("local "):
+            matches = re.findall(r"(?m)^" + re.escape(text) + r"\s*$", source)
+            count = len(matches)
+        else:
+            count = source.count(text)
+        expected = 1
+        if count != expected:
+            raise ValueError("RED_FOUNDATION_REQUIRED_" + text)
+    for declaration in ("MAX_CASTLES", "PARTS_PER_CASTLE", "MAX_TOTAL_EXTRA_PARTS",
+                        "MAX_DISTANCE_STUDS", "REFRESH_INTERVAL"):
+        if not re.search(r"(?m)^local " + declaration + r" = .+$", source):
+            raise ValueError("RED_FOUNDATION_BAD_BUDGET_DECLARATION")
+    stripped = "\n".join(x.split("--", 1)[0] for x in source.splitlines())
+    forbidden = ("RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
+                 "DataStore", "TakeDamage", "Humanoid.Health =", "BillboardGui",
+                 "ScreenGui", "Highlight", "Enum.Material.Neon", "RenderStepped",
+                 "Heartbeat", "Stepped", "LoadCharacter", "SpawnLocation",
+                 "workspace.Gravity", "SetAttribute(\"Team\"", "TweenService")
+    for marker in forbidden:
+        if marker in stripped:
+            raise ValueError("RED_FOUNDATION_FORBIDDEN_" + marker)
+    if stripped.count('track(') != 5:
+        raise ValueError("RED_FOUNDATION_UNTRACKED_EVENT")
+    if stripped.count('for core in active do') != 2:
+        raise ValueError("RED_FOUNDATION_MISSING_DECOR_CLEANUP")
+    if stripped.count('Instance.new("WedgePart")') != 1:
+        raise ValueError("RED_FOUNDATION_UNBOUNDED_PART_CREATORS")
+    if stripped.count("table.insert(stones, makeStone(") != 2:
+        raise ValueError("RED_FOUNDATION_STONE_SLOT_OVERFLOW")
+    if (stripped.count('if obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1
+            or stripped.count('if not disposed and obj:IsA("BasePart") and obj.Name == "StandardCore" then') != 1):
+        raise ValueError("RED_FOUNDATION_UNSTABLE_LATE_STREAMING_DISCOVERY")
+    if not (len(source.encode("utf-8")) < 11000):
+        raise ValueError("RED_FOUNDATION_SOURCE_TOO_LARGE")
+    if not re.search(r"for i = 1, math.min\(MAX_CASTLES, #ranked\) do", source):
+        raise ValueError("RED_FOUNDATION_LOD_UNBOUNDED")
+
+
+class FoundationTests(unittest.TestCase):
+    def test_contract(self):
+        validate(SRC.read_text(encoding="utf-8"))
+
+    def test_negative_mutations(self):
+        s = SRC.read_text(encoding="utf-8")
+        mutations = [
+            ("then 2 else 3", "then 200 else 300"),
+            ("PARTS_PER_CASTLE = 8", "PARTS_PER_CASTLE = 80"),
+            ("for side = 1, 4 do", "for side = 1, 40 do"),
+            ("assert(#stones == PARTS_PER_CASTLE)", "assert(true)"),
+            ("decoration.lastSize = core.Size", "decoration.lastSize = Vector3.zero"),
+            ("decoration.lastSize ~= core.Size", "false"),
+            ("if dist <= MAX_DISTANCE_STUDS then", "if true then"),
+            ("math.clamp(core.Size.X * .5 + .75, 2.0, 64.0)",
+             "math.clamp(core.Size.X * .5 + .75, 2.0, 12.0)"),
+            ("math.clamp(core.Size.Z * .5 + .75, 2.0, 64.0)",
+             "math.clamp(core.Size.Z * .5 + .75, 2.0, 12.0)"),
+            ("MAX_DISTANCE_STUDS = 190", "MAX_DISTANCE_STUDS = 19000"),
+            ("REFRESH_INTERVAL = 2.5", "REFRESH_INTERVAL = 0.01"),
+            ('obj.Name ~= "StandardCore"', 'obj.Name ~= "NoSuchCore"'),
+            ('ancestor.Name == "TacticalBattlefield"', 'ancestor.Name == "OtherWorld"'),
+            ("stone.CanCollide = false", "stone.CanCollide = true"),
+            ("stone.CanTouch = false", "stone.CanTouch = true"),
+            ("stone.CanQuery = false", "stone.CanQuery = true"),
+            ("stone.CastShadow = false", "stone.CastShadow = true"),
+            ("Enum.Material.Slate", "Enum.Material.Neon"),
+            ("Instance.new(\"WedgePart\")", "Instance.new(\"Part\")"),
+            ("GetAttribute(\"EGGRUMBLE_ReducedEffects\") ~= true",
+             "GetAttribute(\"EGGRUMBLE_ReducedEffects\") == true"),
+            ("if not wanted[core] or not validCore(core) then clear(core) end",
+             "if false then clear(core) end"),
+            ("task.wait(REFRESH_INTERVAL)", "task.wait(0.01)"),
+            ('disposed = true', 'disposed = false'),
+            ('connection:Disconnect()', 'connection:Connect()'),
+            ('table.clear(connections)', '-- callback leak'),
+            ('table.clear(candidates)', '-- registry leak'),
+            ('while not disposed and script.Parent do', 'while script.Parent do'),
+            ('track(player.CharacterAdded:Connect', 'player.CharacterAdded:Connect'),
+            ('if not disposed and obj:IsA("BasePart")', 'if obj:IsA("BasePart")'),
+            ("assert(count * PARTS_PER_CASTLE <= MAX_TOTAL_EXTRA_PARTS)",
+             "assert(true)"),
+        ]
+        for old, new in mutations:
+            self.assertIn(old, s)
+            with self.subTest(mutant=old), self.assertRaises(ValueError):
+                validate(s.replace(old, new, 1))
+        for injection in ("FireServer(", 'Instance.new("BillboardGui")',
+                          'Enum.Material.Neon', "RenderStepped:Connect",
+                          "Humanoid.Health = 0"):
+            with self.subTest(injection=injection), self.assertRaises(ValueError):
+                validate(s + "\n" + injection)
+
+
+if __name__ == "__main__":
+    unittest.main()
