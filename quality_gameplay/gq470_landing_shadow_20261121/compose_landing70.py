@@ -62,6 +62,9 @@ def check_art_source(source: str) -> None:
         "EGGRUMBLE_LandingShadowOff", "visualDisabled(character)",
         "GetAttributeChangedSignal(flag)", "clearCharacterConnections()",
         "script.Destroying:Connect", "effects:Destroy()",
+        "not hit.Instance.CanCollide",
+        "hit.Instance.Transparency >= 0.95",
+        "hit.Instance.Material == Enum.Material.Glass",
     )
     for text in required:
         demand(text in source, "MISSING_GUARD_" + text.split()[0])
@@ -79,6 +82,13 @@ def check_art_source(source: str) -> None:
     demand(source.count('visualPart("') == 3, "PART_BUDGET")
     demand(source.count("Workspace:Raycast(") == 1, "RAYCAST_BUDGET")
     demand(source.count("RunService.Heartbeat:Connect") == 1, "SINGLE_LOOP")
+    # Protect the same real grounded material/collision semantics if this
+    # source is subsequently revised by other A authors.
+    demand(re.search(
+        r"if not hit\.Instance\.CanCollide\s+or hit\.Instance\.Transparency >= 0\.95"
+        r"\s+or \(hit\.Instance\.Material == Enum\.Material\.Glass"
+        r" and hit\.Instance\.Transparency >= 0\.35\)", source) is not None,
+        "SOLID_GROUND_AND_SYNTHETIC_SEA_GUARD")
 
 
 def compose(base: Path, source: Path, output: Path) -> dict:
@@ -171,6 +181,9 @@ def self_test(source: Path) -> None:
         good.replace('script.Destroying:Connect', 'script.Removing:Connect'),
         good.replace('effects:Destroy()', 'effects:ClearAllChildren()'),
         good.replace('clearCharacterConnections()', 'clearCharacterSignals()'),
+        good.replace("not hit.Instance.CanCollide", "hit.Instance.CanCollide"),
+        good.replace("hit.Instance.Transparency >= 0.95", "hit.Instance.Transparency >= 1"),
+        good.replace("hit.Instance.Material == Enum.Material.Glass", "hit.Instance.Material == Enum.Material.Slate"),
     ]
     for i, mutant in enumerate(mutants, start=1):
         try:
@@ -205,7 +218,7 @@ def self_test(source: Path) -> None:
             except (ValueError, FileNotFoundError):
                 continue
             raise AssertionError(f"bad baseline accepted: {bad}")
-    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 20 mutations RED, 69 originals exact, 70 ON / 69 OFF")
+    print("GQ470_LANDING_SOURCE_SELFTEST_GREEN: 23 mutations RED, 69 originals exact, 70 ON / 69 OFF")
 
 
 def main() -> None:
