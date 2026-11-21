@@ -35,7 +35,7 @@ def validate(s: str) -> None:
         'player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true',
         'TweenInfo.new(2.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)',
         'Workspace.DescendantAdded:Connect(attach)',
-        'Workspace:GetDescendants()',
+        'player.CharacterAdded:Connect(function()',
     )
     for marker in markers:
         # Numeric budget declarations need whole-line matching: 4 must not accept 400.
@@ -43,6 +43,8 @@ def validate(s: str) -> None:
                  if marker.startswith(("local MAX_", "local NEARER_")) else s.count(marker))
         if count != 1:
             raise ValueError("RED_BANNER_CONTRACT_" + marker)
+    if s.count('Workspace:GetDescendants()') != 2:
+        raise ValueError("RED_BANNER_INITIAL_AND_RESPAWN_RESCAN")
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
     forbidden = (
         "RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer", "DataStore",
