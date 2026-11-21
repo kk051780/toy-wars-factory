@@ -18,6 +18,16 @@ jobs:
           persist-credentials: false
       - name: Source-only guards and negative mutants
         run: python3 -m unittest discover -s quality_gameplay/gq470_castle_banner_wind_20261121 -p 'test_*.py' -v
+      - name: Verify immutable 69-source original castle banner geometry
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470-banner-original
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-banner-original
+          python3 -B quality_gameplay/gq470_castle_banner_wind_20261121/verify_original_banner_compat.py --official-dir /tmp/gq470-banner-original
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
