@@ -1,5 +1,8 @@
 name: GQ470 matte castle approach REAL70 A source gate (not official RC)
 on:
+  push:
+    branches:
+      - quality/gq470-castle-approach-rect-axes-20261121-a02
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -12,7 +15,7 @@ permissions:
 jobs:
   real70-approach-source:
     # Fork-authored scripts cannot access the authenticated private baseline.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
