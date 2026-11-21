@@ -64,6 +64,36 @@ jobs:
           python3 "$TARGET/p0_spawn_visibility_trace.py" --official "$ROOT/off69" --out "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
           test -s "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
           cp "$TARGET/ART_32_IMAGE_RETEST_MATRIX.json" "$ROOT/ART_32_IMAGE_RETEST_MATRIX.json"
+          python3 - <<'PY'
+          import os,sys
+          from pathlib import Path
+          root=Path(os.environ["ROOT"])/"off69"
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,os.environ["TARGET"])
+          from p0_spawn_visibility_trace import audit_script
+          selected=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+          scope={
+              "ServerScriptService/EGGRUMBLE_RoundReplay": {"explicit_load_character"},
+              "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD": {"transparency_modifier"},
+              "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel": {"transparency_modifier"},
+          }
+          for route,interesting in scope.items():
+              assert route in selected
+              lines=(root/selected[route]["path"]).read_text(encoding="utf-8").splitlines()
+              sites=[record["line"] for record in audit_script("\n".join(lines))
+                     if record["category"] in interesting]
+              assert len(sites) in (2,4), (route,len(sites))
+              print("P0_HYPOTHESIS_CONTEXT_SCRIPT",route,"SITES",sites)
+              shown=set()
+              for line_no in sites:
+                  for i in range(max(1,line_no-7),min(len(lines),line_no+6)+1):
+                      if i not in shown:
+                          shown.add(i)
+                          # Source only, no runtime secrets or untrusted filesystem paths.
+                          print("P0_SRC",route.rsplit("/",1)[-1],i,lines[i-1].strip()[:150])
+          print("P0_SRC_CONTEXT_IS_STATIC_ONLY_NOT_ROOT_CAUSE_NOT_STUDIO")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
