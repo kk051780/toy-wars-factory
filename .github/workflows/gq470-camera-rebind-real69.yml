@@ -1,4 +1,4 @@
-name: GQ470 matte castle pennant REAL70 A source gate (not official RC)
+name: GQ470 P0 camera rebind REAL70 A source gate (not official RC)
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -24,7 +24,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Static safety and castle banner lifecycle/mobile budget mutation negatives
+      - name: Static safety and camera lifecycle/ownership mutation negatives
         run: |
           set -euo pipefail
           python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_camera_rebind_source.py" "$TARGET/emit_art_report.py"
