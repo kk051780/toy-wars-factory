@@ -12,6 +12,8 @@ def gate(s: str) -> None:
     required = (
         'FEATURE_ID = "GQ470_FB015_SEA_GULLS_MATTE_20261121"',
         'return obj:IsA("BasePart") and obj.Name == "PublicSeaDock" and', "obj.Anchored",
+        'parent:IsA("Folder")',
+        'parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"',
         'obj:IsDescendantOf(Workspace)', 'localPlayer.Character',
         'humanoid.Health > 0', 'HumanoidRootPart',
         'localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true',
@@ -84,10 +86,13 @@ class SeagullSourceTests(unittest.TestCase):
             SOURCE + '\nRunService.RenderStepped:Connect(function() end)\n',
             SOURCE.replace('if dock == nil then clear(); return end', 'if dock == nil then return end', 1),
             SOURCE.replace('obj:IsDescendantOf(Workspace)', 'true', 1),
+            SOURCE.replace('parent.Name == "EGGRUMBLE_LAND_SEA_SKY_20261117"',
+                           'parent.Name == "UnrelatedWorld"', 1),
+            SOURCE.replace('parent:IsA("Folder")', 'true', 1),
             SOURCE.replace('GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects")',
                            'GetAttributeChangedSignal("CosmeticValue")', 1),
         ]
-        self.assertEqual(len(mutants), 18)
+        self.assertEqual(len(mutants), 20)
         for i, variant in enumerate(mutants):
             with self.subTest(mutation=i):
                 with self.assertRaises(AssertionError):
