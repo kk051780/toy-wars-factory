@@ -37,6 +37,9 @@ REQUIRED = (
     'Massless = true',
     'CastShadow = false',
     'Material.SmoothPlastic',
+    'local isRed = player.Team ~= nil and player.Team.Name == "RED"',
+    'crest.Size = if isRed then Vector3.new(0.52, 0.20, 0.66)',
+    'else Vector3.new(0.35, 0.31, 0.63)',
     'LOD_STUDS = 66',
     'LOD_POLL_SECONDS = 0.75',
     'task.wait(LOD_POLL_SECONDS)',
@@ -56,9 +59,9 @@ def source_errors(text):
     for token in REQUIRED:
         if token not in text:
             errors.append("missing:" + token)
-    if text.count('makeCrest(folder, torso, color, -1)') != 1:
+    if text.count('makeCrest(folder, torso, color, -1, isRed)') != 1:
         errors.append("not_one_left_crest")
-    if text.count('makeCrest(folder, torso, color, 1)') != 1:
+    if text.count('makeCrest(folder, torso, color, 1, isRed)') != 1:
         errors.append("not_one_right_crest")
     if text.count('Instance.new("WedgePart")') != 1:
         errors.append("extra_part_constructors")
@@ -89,9 +92,14 @@ class AvatarTeamCrestSourceGate(unittest.TestCase):
         self.assertNotIn("PivotTo(", self.text)
 
     def test_two_crests_each_and_lod(self):
-        self.assertEqual(self.text.count('makeCrest(folder, torso, color, -1)'), 1)
-        self.assertEqual(self.text.count('makeCrest(folder, torso, color, 1)'), 1)
+        self.assertEqual(self.text.count('makeCrest(folder, torso, color, -1, isRed)'), 1)
+        self.assertEqual(self.text.count('makeCrest(folder, torso, color, 1, isRed)'), 1)
         self.assertIn('LOD_POLL_SECONDS = 0.75', self.text)
+
+    def test_team_silhouette_works_without_color(self):
+        self.assertIn("crest.Size = if isRed then Vector3.new(0.52, 0.20, 0.66)", self.text)
+        self.assertIn("else Vector3.new(0.35, 0.31, 0.63)", self.text)
+        self.assertIn("if isRed then 0.22 else -0.22", self.text)
 
     def test_team_and_respawn_lifetime(self):
         self.assertIn('player:GetPropertyChangedSignal("Team")', self.text)
@@ -108,7 +116,7 @@ class AvatarTeamCrestSourceGate(unittest.TestCase):
             self.text.replace("if not color then return end", "if color then return end", 1),
             self.text.replace("piece.Transparency = near and 0.04 or 1", "piece.Transparency = 0", 1),
             self.text.replace("if rec.died then rec.died:Disconnect() end", "-- lost cleanup", 1),
-            self.text.replace('makeCrest(folder, torso, color, 1)', 'makeCrest(folder, torso, color, -1)', 1),
+            self.text.replace('makeCrest(folder, torso, color, 1, isRed)', 'makeCrest(folder, torso, color, -1, isRed)', 1),
             self.text.replace("if token ~= generations[player] or player.Character ~= character then return end",
                               "-- late character race", 1),
             self.text + '\nlocal x = Instance.new("RemoteEvent")',
