@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict #420 true-ally local-cue ART evidence separation.
+"""Strict #420 teammate-outline ART evidence and A/B visual choice gate.
 
 An offline/native/Rojo pass does not fill any Studio screenshots or FPS data.
 This report is for the private A candidate only; it cannot approve formal RC.
@@ -54,6 +54,19 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
             source_receipt["owner_accepted"] is False and
             source_receipt["art_gate"] == "ART_NO_GO",
             "CANDIDATE_SOURCE_RECEIPT")
+    matrix = json.loads((THIS / "STUDIO_RETEST_MATRIX.json").read_text(encoding="utf-8"))
+    choice = matrix["visual_alternative_selection"]
+    require(
+        choice["rule"] == "EXCLUSIVE_ONE_OR_NEITHER_AFTER_HUMAN_STUDIO_ANDROID_ART_GATE"
+        and choice["option_975"]["pr"] == 975
+        and choice["option_976"]["pr"] == 976
+        and choice["winner"] is None
+        and choice["option_975"]["status"] == "NOT_TESTED"
+        and choice["option_976"]["status"] == "NOT_TESTED"
+        and choice["option_975"]["median_fps"] is None
+        and choice["option_976"]["median_fps"] is None,
+        "NO_UNMEASURED_ART_ALTERNATIVE_CHOICE"
+    )
     shots = [
         {"scene": scene, "device": device, "comparison": phase,
          "exists": False, "file": None, "human_score": None}
@@ -75,8 +88,8 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
         "native_compile": "PASS_SOURCE_ONLY_AFTER_ACTIONS",
         "rojo": "PASS_SOURCE_ONLY_AFTER_ACTIONS",
         "rendering_score": "NOT_TESTED",
-        "pc_art_45of50": "NOT_TESTED_TARGET_4_5_OUT_OF_5",
-        "android_art_40of50": "NOT_TESTED_TARGET_4_0_OUT_OF_5",
+        "pc_art_4_5_of_5": "NOT_TESTED_TARGET_4_5_OUT_OF_5",
+        "android_art_4_0_of_5": "NOT_TESTED_TARGET_4_0_OUT_OF_5",
         "android_15min_low_end": {
             "hardware_model": None,
             "duration_minutes": None,
@@ -112,6 +125,8 @@ def emit(candidate: Path, place: Path, out: Path) -> dict:
         "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO",
         "b_admission": "DEFER_P0_910_FIRST_PENDING_CLAIM_AND_250",
+        "visual_alternative_selection": choice,
+        "owner_player_spawn_p0": "OPEN_NOT_RETESTED",
     }
     require(report["comparison_image_count"] == 0 and
             report["art_gate"] == "ART_NO_GO" and
