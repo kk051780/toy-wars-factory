@@ -95,6 +95,17 @@ end
 
 Players.PlayerRemoving:Connect(clear)
 LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)
+-- Effect switches must remove already-visible outlines immediately, not after 0.75s.
+LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()
+    if LOCAL_PLAYER:GetAttribute(REDUCED_EFFECTS_ATTRIBUTE) == true then
+        clearAll()
+    end
+end)
+LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()
+    if LOCAL_PLAYER:GetAttribute(DISABLE_ATTRIBUTE) == true then
+        clearAll()
+    end
+end)
 
 while true do
     task.wait(SCAN_INTERVAL)
