@@ -63,7 +63,7 @@ local function part(folder: Folder, name: string, size: Vector3, pose: CFrame, c
     p.Size = size
     p.CFrame = pose
     p.Color = color
-    p.Material = Enum.Material.SmoothPlastic
+    p.Material = if name == "MatteFlagstaff" then Enum.Material.SmoothPlastic else Enum.Material.Fabric
     p.Reflectance = 0
     p.Anchored = true
     p.CanCollide = false
