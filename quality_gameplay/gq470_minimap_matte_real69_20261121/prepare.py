@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -118,6 +119,38 @@ def patch(src: str) -> str:
          "PATCH_RESULT_SHAPE")
     return src
 
+def palette_contrast_test(source: str) -> float:
+    """Static RGB text/marker contrast, not an actual rendered Android score.
+
+    The live transparent backdrop can alter true contrast; human screenshot
+    review is still mandatory under ART #420.
+    """
+    start = '    pin.BackgroundColor3=if m.precision=="SECTOR"'
+    stop = '    pin.BackgroundTransparency=mapExpanded'
+    need(source.count(start) == 1 and source.count(stop) == 1,
+         "MARKER_PALETTE_SCOPE")
+    marker = source.split(start, 1)[1].split(stop, 1)[0]
+    backgrounds = [
+        tuple(int(value) for value in group)
+        for group in re.findall(
+            r"Color3\\.fromRGB\\((\\d+),(\\d+),(\\d+)\\)", marker
+        )
+    ]
+    need(len(backgrounds) == 13, "MARKER_PALETTE_THIRTEEN_KINDS")
+    label_rgb = (247, 250, 249)
+    def luminance(rgb: tuple[int, int, int]) -> float:
+        def linear(c: int) -> float:
+            v = c / 255
+            return v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
+        return sum(k * linear(c) for k, c in zip((.2126, .7152, .0722), rgb))
+    label_lum = luminance(label_rgb)
+    ratios = [(label_lum + .05) / (luminance(bg) + .05)
+              for bg in backgrounds]
+    minimum = min(ratios)
+    need(minimum >= 4.5, "MARKER_LABEL_CONTRAST_BELOW_4_5")
+    return minimum
+
+
 def selected(root: Path) -> dict[str, Path]:
     tree = json.loads((root / PROJECT).read_text(encoding="utf-8"))["tree"]
     result: dict[str, Path] = {}
@@ -140,6 +173,13 @@ s.markers or {}
 local function redraw()
 """ + "\n".join(old for old, _ in PATCHES)
     good = patch(body)
+    need(palette_contrast_test(good) >= 4.5, "STATIC_LABEL_CONTRAST_SELFTEST")
+    try:
+        palette_contrast_test(good.replace("43,118,148", "220,219,217", 1))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("RED_LOW_CONTRAST_ACCEPTED")
     need(good.count(MARK) == 1 and
          'm.kind=="CASTLE" and m.team=="BLUE"' in good and
          'mapExpanded and "探索地図" or "地図"' in good and
@@ -181,6 +221,7 @@ def apply(root: Path) -> None:
     original = target.read_text(encoding="utf-8")
     need(original.encode("utf-8") == target.read_bytes(), "REAL_UTF8")
     modified = patch(original)
+    min_contrast = palette_contrast_test(modified)
     for token in ('Instance.new(', 'FireServer(', ':Activate()', 'OnClientEvent',
                   'marketplace', 'TakeDamage', 'actions.ATTACK.Activated:Connect',
                   's.explored or {}', 's.markers or {}'):
@@ -205,6 +246,9 @@ def apply(root: Path) -> None:
         "candidate_marker_instances": modified.count('Instance.new('),
         "new_3d_parts": 0, "new_gui_instances": 0, "new_remotes": 0,
         "new_runtime_scripts": 0,
+        "unblended_marker_label_contrast_min": round(min_contrast, 3),
+        "unblended_marker_target_ratio": 4.5,
+        "actual_composited_android_contrast": "NOT_TESTED",
         "preserved_fog_projection": True, "preserved_fb019_swing": True,
         "native_rojo": "NOT_TESTED", "engine": "NOT_TESTED",
         "android": "NOT_TESTED", "human_art": "NOT_TESTED",
