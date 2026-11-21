@@ -83,15 +83,15 @@ def selftest()->None:
  need("ui.Text=(if me.team" in modified and
       "text.TextStrokeTransparency=.45" in modified,"DYNAMIC_TEAM_AND_EGG_TEXT_EDGE")
  verify_subject_runtime(modified)
- for mutant in (
+ for mutation_index, mutant in enumerate((
      modified.replace("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;", ""),
      modified.replace("HumanoidDisplayDistanceType.Subject;", "HumanoidDisplayDistanceType.Viewer;"),
      modified.replace("hum.HealthDisplayDistance=18", "hum.HealthDisplayDistance=180"),
      modified.replace("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;", "hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;"),
- ):
+ )):
   try:verify_subject_runtime(mutant)
   except ValueError:pass
-  else:raise AssertionError("SUBJECT_MUTANT_NOT_RED")
+  else:raise AssertionError(f"SUBJECT_MUTANT_NOT_RED_{mutation_index}: {mutant.count('HumanoidDisplayDistanceType.Subject')}")
 
  for broken in (modified,original.replace(EDITS[0][0],""),
                 original.replace(EDITS[-1][0],""),
