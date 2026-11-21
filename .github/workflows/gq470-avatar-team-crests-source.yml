@@ -1,7 +1,12 @@
 name: GQ470 FB015 avatar team crest A-only Native Rojo exact-source (not official RC)
 on:
+  push:
+    branches: [quality/gq470-crest-stealth-bounded-20261121-a02]
+    paths:
+      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
+      - '.github/workflows/gq470-avatar-team-crests-source.yml'
   pull_request:
-    branches: [rc/p0d-s1-kids-rc01]
+    branches: [rc/p0d-s1-kids-rc01, quality/gq470-avatar-team-crests-real69-20261121-a01]
     paths:
       - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
       - '.github/workflows/gq470-avatar-team-crests-source.yml'
@@ -28,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC="$TARGET/EGGRUMBLE_PlayerTeamCrest.client.luau"
-          test "$(git hash-object "$SRC")" = b9547c8966ddcc55b27773b5c4dd78255505f924
+          test "$(git hash-object "$SRC")" = 463c2889e03034d066ce9e1214a15fdb5986bfee
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")"
           fi
