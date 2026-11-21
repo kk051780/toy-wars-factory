@@ -76,11 +76,13 @@ end
 local function present(candidate)
     local player = candidate.player
     local effect = active[player]
-    if effect and effect.Adornee ~= candidate.character then
+    -- A streamed-out or reparented Highlight must be destroyed before replacement.
+    -- Avoid retaining orphaned Instances across many respawns / streaming cycles.
+    if effect and (effect.Adornee ~= candidate.character or effect.Parent ~= candidate.character) then
         clear(player)
         effect = nil
     end
-    if not effect or not effect.Parent then
+    if not effect then
         effect = Instance.new("Highlight")
         effect.Name = EFFECT_NAME
         effect.DepthMode = Enum.HighlightDepthMode.Occluded
