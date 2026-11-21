@@ -10,7 +10,7 @@ def validate(s):
         "generation ~= token or player.Character ~= character",
         'if not root or not root:IsA("BasePart") then return end',
         'human.Health <= 0 then return end',
-        'if player:GetAttribute("ReducedEffects") == true then return end', 'glow.DepthMode = Enum.HighlightDepthMode.Occluded',
+        'if player:GetAttribute("EGGRUMBLE_ReducedEffects") == true then return end', 'glow.DepthMode = Enum.HighlightDepthMode.Occluded',
         "glow.FillTransparency = 0.84", "glow.OutlineTransparency = 0.46",
         "sparks.Rate = 0", "sparks.LightEmission = 0",
         "Debris:AddItem(foot, EFFECT_SECONDS)", "Debris:AddItem(folder, EFFECT_SECONDS)",
@@ -49,7 +49,7 @@ class SpawnSourceTests(unittest.TestCase):
             ("player.CharacterRemoving:Connect","player.X:Connect"),
             ("generation ~= token or player.Character ~= character","false"),
             ("human.Health <= 0 then return end","false then return end"),
-            ('if player:GetAttribute("ReducedEffects") == true then return end', "if false then return end"),
+            ('if player:GetAttribute("EGGRUMBLE_ReducedEffects") == true then return end', "if false then return end"),
         ]:
             self.assertIn(before,s)
             with self.subTest(before=before), self.assertRaises(ValueError):
