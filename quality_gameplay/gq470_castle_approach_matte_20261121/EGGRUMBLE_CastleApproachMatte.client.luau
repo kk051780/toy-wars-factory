@@ -70,7 +70,7 @@ local function updatePieces(core: BasePart, decor: Decor)
     -- The inset is farther away than #982 foundation (core face + >=8 studs).
     local base = core.CFrame * CFrame.new(0, -core.Size.Y * .5 + .14, 0)
     local faceRadius = math.max(core.Size.X, core.Size.Z) * .5
-    local offset = math.clamp(faceRadius + 9, 12, 36)
+    local offset = math.clamp(faceRadius + 9, 12, 72)
     for side = 0, 3 do
         local angle = side * math.pi * .5
         local toward = base * CFrame.new(math.sin(angle) * offset, 0, math.cos(angle) * offset)
