@@ -1,0 +1,98 @@
+"""Static fail-closed ART source gate for ground motion A-candidate.
+
+PASS is not Roblox runtime performance, a visual score or formal RC adoption.
+"""
+from pathlib import Path
+import re
+import unittest
+
+SOURCE = Path(__file__).resolve().parent / "EGGRUMBLE_GroundMotionFX.client.luau"
+
+
+def validate(source: str) -> None:
+    code = "\n".join(line.split("--", 1)[0] for line in source.splitlines())
+    markers = [
+        "GQ470_FB015_GROUND_MOTION_MATTE_20261121",
+        "local MAX_LIVE_PARTS = 6",
+        "local MAX_PARTS_PER_STEP = 2",
+        "local MOBILE_PARTS_PER_STEP = 1",
+        "local STEP_SECONDS = 0.32",
+        "local LIFE_SECONDS = 0.38",
+        "local TOUCH = UserInputService.TouchEnabled",
+        "Workspace:Raycast",
+        "hit.Normal.Y < 0.70",
+        "humanoid.FloorMaterial ~= Enum.Material.Air",
+        "math.min(",
+        "MAX_LIVE_PARTS - liveParts",
+        "Instance.new(\"WedgePart\")",
+        "part.Material = Enum.Material.SmoothPlastic",
+        "part.Transparency = 0.42",
+        "part.Anchored = true",
+        "part.CanCollide = false",
+        "part.CanTouch = false",
+        "part.CanQuery = false",
+        "part.CastShadow = false",
+        "part.Parent = folder",
+        "Debris:AddItem(part, LIFE_SECONDS + 0.08)",
+        "task.delay(LIFE_SECONDS + 0.10",
+        "task.delay(STEP_SECONDS, pulse)",
+        "PLAYER.CharacterRemoving:Connect",
+        "PLAYER.CharacterAdded:Connect",
+        "humanoid.Died:Connect",
+        "generation ~= token",
+        "generation += 1",
+    ]
+    for marker in markers:
+        if marker not in code:
+            raise ValueError("RED_GROUND_FX_MISSING:" + marker)
+    forbidden = (
+        "RemoteEvent", "RemoteFunction", "FireServer", "InvokeServer",
+        "TakeDamage", "DataStore", "MarketplaceService", "ReplicatedStorage",
+        "RenderStepped", "Heartbeat", "while true", "while task.wait",
+        "Enum.Material.Neon", "PointLight", "ParticleEmitter",
+        "AssemblyLinearVelocity", "SetNetworkOwner", "CanCollide = true",
+    )
+    for word in forbidden:
+        if word in code:
+            raise ValueError("RED_GROUND_FX_FORBIDDEN:" + word)
+    if re.search(r"RunService\s*:", code):
+        raise ValueError("RED_GROUND_FX_PER_FRAME")
+    if len(code.encode()) > 10500:
+        raise ValueError("RED_GROUND_FX_UNBOUNDED_CODE")
+    if source.count('Instance.new("WedgePart")') != 1:
+        raise ValueError("RED_GROUND_FX_MULTIPLE_FACTORY_SITES")
+
+
+class GroundMotionSourceGate(unittest.TestCase):
+    def test_source_safety_contract(self):
+        validate(SOURCE.read_text(encoding="utf-8"))
+
+    def test_negative_mutations_are_rejected(self):
+        original = SOURCE.read_text(encoding="utf-8")
+        changes = [
+            ("local MAX_LIVE_PARTS = 6", "local MAX_LIVE_PARTS = 600"),
+            ("local MOBILE_PARTS_PER_STEP = 1", "local MOBILE_PARTS_PER_STEP = 9"),
+            ("local STEP_SECONDS = 0.32", "local STEP_SECONDS = 0"),
+            ("part.CanCollide = false", "part.CanCollide = true"),
+            ("part.CanQuery = false", "part.CanQuery = true"),
+            ("part.CastShadow = false", "part.CastShadow = true"),
+            ("part.Material = Enum.Material.SmoothPlastic",
+             "part.Material = Enum.Material.Neon"),
+            ('Instance.new("WedgePart")', 'Instance.new("Part")'),
+            ("humanoid.FloorMaterial ~= Enum.Material.Air", "true"),
+            ("hit.Normal.Y < 0.70", "hit.Normal.Y < -1.0"),
+            ("task.delay(STEP_SECONDS, pulse)", "pulse()"),
+            ("generation ~= token", "false"),
+        ]
+        for before, after in changes:
+            self.assertIn(before, original)
+            with self.subTest(change=after), self.assertRaises(ValueError):
+                validate(original.replace(before, after))
+        with self.assertRaises(ValueError):
+            validate(original + "\nRunService.Heartbeat:Connect(function() end)\n")
+        with self.assertRaises(ValueError):
+            validate(original + "\nRemoteEvent:FireServer()\n")
+
+
+if __name__ == "__main__":
+    unittest.main()
