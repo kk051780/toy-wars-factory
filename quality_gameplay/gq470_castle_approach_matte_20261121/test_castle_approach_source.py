@@ -64,7 +64,7 @@ def validate(s):
     for term in REQUIRED:
         # Prefix substrings such as "155" within "15500" must fail closed.
         if term.startswith("local "):
-            present = re.search(r"(?m)^" + re.escape(term) + r"\s*$", s) is not None
+            present = re.search(r"(?m)^[ \t]*" + re.escape(term) + r"[ \t]*$", s) is not None
         else:
             present = s.count(term) >= 1
         if not present:
