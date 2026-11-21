@@ -51,7 +51,12 @@ FORBIDDEN = (
 
 def validate(s):
     for term in REQUIRED:
-        if s.count(term) < 1:
+        # Prefix substrings such as "155" within "15500" must fail closed.
+        if term.startswith("local "):
+            present = re.search(r"(?m)^" + re.escape(term) + r"\s*$", s) is not None
+        else:
+            present = s.count(term) >= 1
+        if not present:
             raise ValueError("RED_REQUIRED_" + term)
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
     for term in FORBIDDEN:
