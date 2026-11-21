@@ -27,7 +27,7 @@ folder:SetAttribute("FeatureID", "GQ470_FB015_FAR_SKY_MATTE_CLOUD_BANKS_20261121
 folder:SetAttribute("SourceStage", "A_PREP_NOT_OFFICIAL_RC")
 folder.Parent = Workspace
 
-local isTouch = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local isTouch = UserInputService.TouchEnabled
 local bankCount = if isTouch then MAX_TOUCH_BANKS else MAX_DESKTOP_BANKS
 local colorTop = {
     Color3.fromRGB(212, 228, 231),

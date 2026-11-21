@@ -21,7 +21,7 @@ def validate(text: str) -> None:
         'part.CanQuery = false', 'part.CastShadow = false',
         'part.Material = Enum.Material.SmoothPlastic',
         'if made >= MAX_PARTS then', 'folder:SetAttribute("PartBudgetActual", made)',
-        'UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled',
+        'UserInputService.TouchEnabled',
         'if Workspace:FindFirstChild(FOLDER_NAME) then', 'for i = 1, bankCount do',
         'math.cos(theta) * distance', 'math.sin(theta) * distance',
         'GQ470_FB015_FAR_SKY_MATTE_CLOUD_BANKS_20261121',

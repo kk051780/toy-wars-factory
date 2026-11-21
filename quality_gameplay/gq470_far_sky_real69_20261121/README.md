@@ -5,7 +5,7 @@
 Create distant stylized cloud **silhouettes**, not glowing spheres, with a deterministic finite budget. Client-local WedgePart geometry gives sky depth behind the flagship battlefield while leaving castles, egg paths, gameplay authority, water and weather scripts untouched. Three shallow, overlapping faceted wedges form each bank.
 
 - 6 banks × 3 wedges = **18 local parts maximum** for keyboard/desktop.
-- 4 banks × 3 wedges = **12 local parts maximum** for touch-only clients.
+- 4 banks × 3 wedges = **12 local parts maximum** for touch-capable clients.
 - SmoothPlastic, transparency 0.36–0.52, CastShadow OFF, CanCollide/CanQuery/CanTouch OFF.
 - No Neon, particles, billboards, per-frame loops, external IDs, downloaded assets, camera overrides, Lighting edits or monetization.
 - The builder runs once, and a folder guard prevents scene duplication on re-entry.
