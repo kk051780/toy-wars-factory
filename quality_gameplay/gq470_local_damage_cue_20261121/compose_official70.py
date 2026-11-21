@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GQ470 ground motion art: source-exact A candidate REAL69 -> REAL70.
+"""GQ470 local true-health-loss visual art: source-exact A candidate REAL69 -> REAL70.
 
 Operates ONLY in a temporary directory using the immutable official PRIVATE
 companion Place/receipt. Never pushes to the official RC, publishes or changes
