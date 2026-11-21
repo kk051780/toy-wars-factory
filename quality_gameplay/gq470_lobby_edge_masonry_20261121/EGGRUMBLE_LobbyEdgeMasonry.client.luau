@@ -42,13 +42,13 @@ local function validFloor(part: Instance): boolean
 end
 
 local function viewPosition(): Vector3?
+    -- LOD follows the real viewing frustum, including spectator/cutscene
+    -- cameras. Root position is only a fallback before a Camera exists.
+    local camera = Workspace.CurrentCamera
+    if camera then return camera.CFrame.Position end
     local character = player.Character
     local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
-    if root and root:IsA("BasePart") then
-        return root.Position
-    end
-    local camera = Workspace.CurrentCamera
-    return if camera then camera.CFrame.Position else nil
+    return if root and root:IsA("BasePart") then root.Position else nil
 end
 
 local function dispose(floor: BasePart)
