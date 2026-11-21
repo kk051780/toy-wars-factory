@@ -90,7 +90,7 @@ local function isVisibleAlly(player, localRoot, localTeam)
 end
 
 -- Act immediately when an already-visible ally enters stealth, changes team,
--- or streams out. At most 11 connections for each of three desktop allies.
+-- or streams out. At most 14 connections for each of three desktop allies.
 local function watchVisibility(player, character)
     local watchers = {}
     local function revoke() clear(player) end
@@ -102,6 +102,12 @@ local function watchVisibility(player, character)
     end
     table.insert(watchers, player:GetPropertyChangedSignal("Team"):Connect(revoke))
     table.insert(watchers, player:GetPropertyChangedSignal("Neutral"):Connect(revoke))
+    table.insert(watchers, player.CharacterAdded:Connect(revoke))
+    table.insert(watchers, player.CharacterRemoving:Connect(revoke))
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        table.insert(watchers, humanoid.Died:Connect(revoke))
+    end
     table.insert(watchers, character.AncestryChanged:Connect(function(_, parent)
         if parent == nil then revoke() end
     end))
