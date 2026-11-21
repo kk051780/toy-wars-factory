@@ -29,7 +29,6 @@ def validate(s: str) -> None:
         'table.insert(entry.connections, tower.Destroying:Connect',
         'tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team',
         'local function refillVacantSlots()',
-        'refillVacantSlots()',
         'local restingPose: {[BasePart]: CFrame} = {}',
         'for _, panel in fly do restingPose[panel] = panel.CFrame end',
         'local base = restingPose[panel]',
@@ -55,6 +54,8 @@ def validate(s: str) -> None:
             raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY")
     if 'part(folder, "TeamBannerBody",' in s:
         raise ValueError("RED_BANNER_PR979_DOUBLE_SWAY_PARTNAME")
+    if s.count('refillVacantSlots()') != 3:
+        raise ValueError("RED_BANNER_REFILL_CALLED_AFTER_STOP")
     if s.count('Workspace:GetDescendants()') != 3:
         raise ValueError("RED_BANNER_INITIAL_RESPAWN_AND_SLOT_RECOVERY_RESCAN")
     stripped = "\n".join(line.split("--", 1)[0] for line in s.splitlines())
