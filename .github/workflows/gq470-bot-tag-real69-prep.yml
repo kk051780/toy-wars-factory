@@ -70,6 +70,17 @@ jobs:
               for key,p in items.items():
                   subprocess.run(['/tmp/gq470-bot-luau/luau-compile','--text',str(p)],
                                  check=True,stdout=subprocess.DEVNULL)
+          # Studio-only read-only diagnostic is compiled, never invoked on CI as Roblox engine is absent.
+          diagnostic=Path('quality_gameplay/gq470_bot_objective_tag_real69_20261120/STUDIO_READ_ONLY_BOT_LABEL_PROBE.luau')
+          diagnostic_text=diagnostic.read_text(encoding='utf8')
+          assert 'GQ470_FB015_BOTACTORS_SUBJECT_STUDIO_PROBE_20261121' in diagnostic_text
+          for item in ('BotObjective','NameDisplayDistance == 0','HealthDisplayDistance == 18','HumanoidDisplayDistanceType.Subject','MaxDistance == 22','pc_android_32_images = 0','formal_adoption_claim = false'):
+              assert item in diagnostic_text, 'RED_STUDIO_DIAGNOSTIC_MISSING_GUARD_'+item
+          for dangerous in ('FireServer(', 'InvokeServer(', 'Instance.new(', 'SetAttribute(', 'Publish(', ':Destroy(', 'MarketplaceService', 'DataStoreService', 'TeleportService'):
+              assert dangerous not in diagnostic_text, 'RED_STUDIO_DIAGNOSTIC_SIDE_EFFECT_'+dangerous
+          subprocess.run(['/tmp/gq470-bot-luau/luau-compile','--text',str(diagnostic)],
+                         check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_BOT_STUDIO_PROPERTY_PROBE_NATIVE_COMPILE_READONLY_PASS_NOT_ENGINE')
           print('GQ470_TAG_NATIVE_ON69_OFF69_PASS')
           PY
       - name: Rojo 7.7.1 ON and OFF exact Place with source-only 17 and 48 audit
@@ -148,5 +159,6 @@ jobs:
             /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx
             /tmp/gq470-bot-tag/BOT_TAG_LEGACY17_SOURCE_AUDIT.json
             /tmp/gq470-bot-tag/BOT_TAG_LEGACY48_AUDIT.json
+            quality_gameplay/gq470_bot_objective_tag_real69_20261120/STUDIO_READ_ONLY_BOT_LABEL_PROBE.luau
           if-no-files-found: error
           retention-days: 7
