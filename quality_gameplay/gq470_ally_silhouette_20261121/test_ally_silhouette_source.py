@@ -13,6 +13,8 @@ def validate(source: str) -> None:
         raise ValueError("RED_ALLY_SILHOUETTE_MISSING_FEATURE_MARKER")
     required = (
         'local MAX_ALLIES = 3',
+        'local TOUCH_MAX_ALLIES = 2',
+        'local UserInputService = game:GetService("UserInputService")',
         'local MAX_DISTANCE = 45',
         'local SCAN_INTERVAL = 0.75',
         'local OUTLINE_TRANSPARENCY = 0.68',
@@ -46,7 +48,7 @@ def validate(source: str) -> None:
         'LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()',
         'effect:Destroy()',
         'task.wait(SCAN_INTERVAL)',
-        'math.min(MAX_ALLIES, #candidates)',
+        'math.min(UserInputService.TouchEnabled and TOUCH_MAX_ALLIES or MAX_ALLIES, #candidates)',
         'if not keep[player] then',
         'clearAll()',
     )
@@ -69,7 +71,8 @@ def validate(source: str) -> None:
         raise ValueError("RED_ALLY_SILHOUETTE_MULTIPLE_FACTORIES")
     for name, value in (("MAX_ALLIES", "3"), ("MAX_DISTANCE", "45"),
                         ("SCAN_INTERVAL", "0.75"),
-                        ("OUTLINE_TRANSPARENCY", "0.68")):
+                        ("OUTLINE_TRANSPARENCY", "0.68"),
+                        ("TOUCH_MAX_ALLIES", "2")):
         if not re.search(r"(?m)^local " + name + r" = " + re.escape(value) + "$", code):
             raise ValueError("RED_ALLY_SILHOUETTE_BUDGET_" + name)
     if len(source.encode("utf-8")) > 9000:
@@ -124,6 +127,8 @@ class SourceGate(unittest.TestCase):
         source = SOURCE.read_text(encoding="utf-8")
         replacements = [
             ("MAX_ALLIES = 3", "MAX_ALLIES = 15"),
+            ("TOUCH_MAX_ALLIES = 2", "TOUCH_MAX_ALLIES = 12"),
+            ("UserInputService.TouchEnabled and TOUCH_MAX_ALLIES or MAX_ALLIES", "MAX_ALLIES"),
             ("MAX_DISTANCE = 45", "MAX_DISTANCE = 1000"),
             ("SCAN_INTERVAL = 0.75", "SCAN_INTERVAL = 0.001"),
             ("OUTLINE_TRANSPARENCY = 0.68", "OUTLINE_TRANSPARENCY = 0"),
