@@ -167,6 +167,7 @@ jobs:
           python3 "$TARGET/emit_art_report.py" --candidate "$ROOT/on70" \
             --place "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx" \
             --out "$ROOT/ART_CHECK_REPORT.json"
+          cp "$TARGET/STUDIO_RETEST_MATRIX.json" "$ROOT/STUDIO_RETEST_MATRIX.json"
           python3 - <<'PY'
           import json,os
           from pathlib import Path
@@ -197,5 +198,6 @@ jobs:
             /tmp/gq470-local-damage-cue/on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LocalDamageCue.client.luau
             /tmp/gq470-local-damage-cue/on70/B220_LOCAL_DAMAGE_CUE_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
             /tmp/gq470-local-damage-cue/ART_CHECK_REPORT.json
+            /tmp/gq470-local-damage-cue/STUDIO_RETEST_MATRIX.json
           if-no-files-found: error
           retention-days: 7
