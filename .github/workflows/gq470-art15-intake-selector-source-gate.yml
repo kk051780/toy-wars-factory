@@ -1,0 +1,39 @@
+name: GQ470 ART15 exact-source intake selector gate (A only, not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "tools/p0d_two_lane_queue.py"
+      - "tests/test_p0d_two_lane_queue.py"
+      - ".github/workflows/gq470-art15-intake-selector-source-gate.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout exact authored PR head (NOT canonical formal RC)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Native Python syntax and fail-closed regression tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/p0d_two_lane_queue.py tests/test_p0d_two_lane_queue.py
+          python3 -m unittest discover -s tests -p test_p0d_two_lane_queue.py -v
+      - name: Forbid formal/write APIs in this A selector patch
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          src = Path('tools/p0d_two_lane_queue.py').read_text(encoding='utf8')
+          assert 'def choose_latest(' in src
+          assert '"no_auto_merge": True' in src
+          assert '"SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY"' in src
+          assert 'urllib.request.Request(' in src
+          assert 'method="POST"' not in src and 'method="PATCH"' not in src
+          print('GQ470_ART15_SOURCE_REVIEW_ONLY_PASS; REAL_STUDIO_ART_NOT_TESTED')
+          PY
