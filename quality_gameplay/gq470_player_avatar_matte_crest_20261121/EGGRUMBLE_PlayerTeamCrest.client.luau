@@ -35,7 +35,8 @@ local function teamColor(player)
 end
 
 local function visualsDisabled()
-    return localPlayer:GetAttribute("ReducedEffects") == true
+    return localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true
+        or localPlayer:GetAttribute("ReducedEffects") == true
         or localPlayer:GetAttribute("EGGRUMBLE_TeamCrestsOff") == true
 end
 
@@ -207,7 +208,7 @@ end
 Players.PlayerAdded:Connect(register)
 Players.PlayerRemoving:Connect(unregister)
 -- Local accessibility and fast rollback: tear down instantly, without waiting for the LOD scan.
-for _, attr in ipairs({ "ReducedEffects", "EGGRUMBLE_TeamCrestsOff" }) do
+for _, attr in ipairs({ "EGGRUMBLE_ReducedEffects", "ReducedEffects", "EGGRUMBLE_TeamCrestsOff" }) do
     localPlayer:GetAttributeChangedSignal(attr):Connect(function()
         if visualsDisabled() then
             for player in pairs(mounted) do removeMounted(player) end
