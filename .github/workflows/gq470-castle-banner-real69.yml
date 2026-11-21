@@ -125,7 +125,7 @@ jobs:
           print("GQ470_CASTLE_BANNER_ROJO_OFF69_EXACT_ON70_SOURCE_CLASS_PASS")
           print("CANDIDATE_PRIVATE_PLACE_BYTES", (root/"GQ470_CASTLE_BANNER_ON70_NOT_FORMAL.rbxlx").stat().st_size)
           PY
-      - name: Verify exact one-client B220 source-select packet and 5 fail-closed mutants
+      - name: Verify one-source B220 and 12 fail-closed manifest, original-source and Place mutants
         run: |
           set -euo pipefail
           python3 "$TARGET/compose_official70.py" --export-b "$ROOT/on70" \
@@ -136,7 +136,9 @@ jobs:
           import json,os,sys
           from pathlib import Path
           sys.path.insert(0, os.environ["TARGET"])
-          from compose_official70 import B_MANIFEST,B_PACKET,verify_b
+          from compose_official70 import B_MANIFEST,B_PACKET,verify_b,PROJECT,ROUTE
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
           root=Path(os.environ["ROOT"])
           candidate=root/"on70"
           place=root/"GQ470_CASTLE_BANNER_ON70_NOT_FORMAL.rbxlx"
@@ -148,6 +150,10 @@ jobs:
             ("art_status","ART_GO"),
             ("new_source_sha256","bad-sha"),
             ("original_selected_sources_preserved",1),
+            ("formal_branch","forged-branch"),
+            ("source_profile","forged-profile"),
+            ("b_admission","READY_FOR_AUTO_MERGE"),
+            ("new_source_path","selected_sources/forged.luau"),
           ]
           for field,value in tests:
               try:
@@ -165,8 +171,29 @@ jobs:
               except ValueError: pass
               else: raise AssertionError("MUTANT_UNEXPECTED_PACKET_FILE")
           finally: extra.unlink()
+          # Mutating any existing original must reject the 69/69 preservation claim.
+          originals=project_scan(candidate,PROJECT)
+          route=next(k for k in originals if k!=ROUTE)
+          source=candidate/originals[route]["path"]
+          true_bytes=source.read_bytes()
+          try:
+              source.write_bytes(true_bytes+b"\\n-- expected negative drift")
+              try: verify_b(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_ORIGINAL_69_NOT_BLOCKED")
+          finally: source.write_bytes(true_bytes)
+          # A well-formed unrelated Place with altered new Luau Source is not proof.
+          altered_place=root/"TAMPERED_UNRELATED_SOURCE_PLACE.rbxlx"
+          actual=place.read_bytes()
+          assert b"MAX_PER_TEAM" in actual
+          altered_place.write_bytes(actual.replace(b"MAX_PER_TEAM",b"MAX_TAMPERED_PER_TEAM",1))
+          try:
+              try: verify_b(candidate,altered_place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_UNRELATED_PLACE_NOT_BLOCKED")
+          finally: altered_place.unlink()
           verify_b(candidate,place)
-          print("GQ470_CASTLE_BANNER_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
+          print("GQ470_CASTLE_BANNER_B220_TWELVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
           PY
       - name: "ART #420 honest PC/Android 32 screenshot and FUN source-only audit"
         run: |
