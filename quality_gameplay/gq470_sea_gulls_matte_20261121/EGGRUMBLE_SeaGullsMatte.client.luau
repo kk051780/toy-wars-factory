@@ -79,7 +79,9 @@ end
 local function flightFrame(dock: BasePart, slot: number, t: number): CFrame
     local lateral = (slot - (BIRD_LIMIT + 1) / 2) * 12 + math.sin(t + slot) * 2.7
     local height = 17 + 2.5 * slot + math.cos(t * .72 + slot) * 1.8
-    local seaward = -28 - 9 * slot + math.sin(t * .67 + slot) * 3.1
+    -- Source-owned LSS puts PublicSeaDock at shoreZ-92 and water at shoreZ:
+    -- positive local Z faces the coastal water, negative Z would be inland.
+    local seaward = 28 + 9 * slot + math.sin(t * .67 + slot) * 3.1
     return dock.CFrame * CFrame.new(lateral, height, seaward)
         * CFrame.Angles(0, math.rad((slot % 2 == 0) and -13 or 11), 0)
 end
