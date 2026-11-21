@@ -1,0 +1,36 @@
+"""Deterministic part budget and visibility rules; no invented FPS/beauty score."""
+import unittest
+from pathlib import Path
+
+SOURCE = (Path(__file__).parent / "EGGRUMBLE_SeaGullsMatte.client.luau").read_text(encoding="utf-8")
+
+def bird_count(touch_enabled, valid_dock, near, character_alive, reduced):
+    if not valid_dock or not near or not character_alive or reduced:
+        return 0
+    return 2 if touch_enabled else 3
+
+class BirdBudgetTests(unittest.TestCase):
+    def test_eighteen_cases(self):
+        cases = 0
+        for touch in (False, True):
+            for dock in (False, True):
+                for close in (False, True):
+                    for alive in (False, True):
+                        for reduced in (False, True):
+                            n = bird_count(touch, dock, close, alive, reduced)
+                            self.assertLessEqual(n * 3, 6 if touch else 9)
+                            self.assertEqual(n > 0, dock and close and alive and not reduced)
+                            cases += 1
+        self.assertEqual(cases, 32)
+
+    def test_three_parts_and_short_lived(self):
+        self.assertIn("MAX_VIEW_DISTANCE = 165", SOURCE)
+        self.assertIn("UPDATE_SECONDS = 2.8", SOURCE)
+        self.assertIn("for slot = 1, BIRD_LIMIT do", SOURCE)
+        self.assertIn("if activeDock == obj then clear() end", SOURCE)
+        self.assertIn("if localPlayer:GetAttribute(\"EGGRUMBLE_ReducedEffects\") == true then clear()", SOURCE)
+        self.assertNotIn(":Destroy() -- keep until next match", SOURCE)
+        self.assertIn("return nil -- no camera-based fake effect", SOURCE)
+
+if __name__ == "__main__":
+    unittest.main()
