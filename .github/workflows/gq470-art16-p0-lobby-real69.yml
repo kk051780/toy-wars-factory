@@ -20,11 +20,11 @@ jobs:
       ART16_HEAD: 180f5067bfe71c59b8c0c59b90aa69f1cd00cb7f
       P0_HEAD: 579cae991c609730291cdb3531c3a4cf916cd79f
       SCRIPT: quality_gameplay/gq470_art16_p0_lobby_composite_20261121/compose_art16_p0.py
-      GH_TOKEN: \${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Exact A head / actual author artifacts / fail-closed negatives
         shell: bash
