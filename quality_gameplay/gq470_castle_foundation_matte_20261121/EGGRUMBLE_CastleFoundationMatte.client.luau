@@ -15,7 +15,7 @@ local REFRESH_INTERVAL = 2.5
 local STONE = Color3.fromRGB(103, 102, 99)
 local EDGE = Color3.fromRGB(171, 151, 118)
 
-type Decor = { folder: Folder, parts: {BasePart}, lastPose: CFrame }
+type Decor = { folder: Folder, parts: {BasePart}, lastPose: CFrame, lastSize: Vector3 }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
@@ -83,6 +83,7 @@ local function updatePoses(core: BasePart, decoration: Decor)
             * CFrame.new(0, .85, -.22) * CFrame.Angles(0, math.pi, 0)
     end
     decoration.lastPose = core.CFrame
+    decoration.lastSize = core.Size
 end
 
 local function makeFoundation(core: BasePart)
@@ -99,7 +100,7 @@ local function makeFoundation(core: BasePart)
             Vector3.new(1.55, .42, .82), CFrame.new(), EDGE, Enum.Material.SmoothPlastic))
     end
     assert(#stones == PARTS_PER_CASTLE)
-    local decoration: Decor = {folder = folder, parts = stones, lastPose = core.CFrame}
+    local decoration: Decor = {folder = folder, parts = stones, lastPose = core.CFrame, lastSize = core.Size}
     active[core] = decoration
     updatePoses(core, decoration)
 end
@@ -132,7 +133,7 @@ local function refresh()
         if not active[core] then makeFoundation(core) end
         local decoration = active[core]
         if decoration and (decoration.lastPose ~= core.CFrame or
-            #decoration.parts ~= PARTS_PER_CASTLE) then
+            decoration.lastSize ~= core.Size or #decoration.parts ~= PARTS_PER_CASTLE) then
             updatePoses(core, decoration)
         end
     end
