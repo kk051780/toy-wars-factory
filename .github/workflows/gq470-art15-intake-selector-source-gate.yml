@@ -47,6 +47,9 @@ jobs:
                   assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
                   assert item['candidate_evidence_kind']=='ART16_SOURCE_ONLY_NOT_FORMAL'
                   assert item['candidate_artifact_id']==14685047060
+                  covered=[z for z in d['all_labeled_candidates'] if z['pr']==966]
+                  assert len(covered)==1 and covered[0]['status']=='SUPERSEDED_SOURCE_COMPOSITE', covered
+                  assert 966 not in selected, 'RED_ART15_DOUBLE_SELECTED_WITH_ART16'
                   print('GQ470_ART16_NEWEST_SOURCE_PACKET_DISCOVERED_NO_RC_WRITE',item['head'])
               else:
                   item=selected.get(966)
