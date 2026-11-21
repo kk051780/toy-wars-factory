@@ -20,6 +20,7 @@ PLACE_BYTES = 798390
 PROJECT = "EGGRUMBLE_REAL69.project.json"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+LSS_ROUTE = "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
 ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_BoatWakeFX"
 TARGET = "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_BoatWakeFX.client.luau"
 FEATURE = "GQ470_FB015_BOAT_WAKE_MATTE_20261121"
@@ -27,6 +28,7 @@ THIS = Path(__file__).resolve().parent
 SOURCE = THIS / "EGGRUMBLE_BoatWakeFX.client.luau"
 sys.path.insert(0, str(THIS.parent / "gq8_rc85_rc86_real68_nonloss_20261120"))
 from verify_nonloss import project_scan
+from test_boat_wake_source import validate_lss_contract
 
 
 def require(ok: bool, why: str) -> None:
@@ -60,6 +62,19 @@ def compose(original: Path, destination: Path) -> dict:
                 original_map[k]["class"] == receipt["source_classes"][k]
                 for k in original_map),
             "ORIGINAL_69_SOURCE_LOCK")
+    # A historical source file alone is not enough: prove the same actual
+    # selected LSS source from the pinned formal Place artifact uses these
+    # anchored server-pivot boats and Glass sea parts. Fail closed on drift.
+    require(LSS_ROUTE in original_map and
+            original_map[LSS_ROUTE]["class"] == "Script",
+            "ACTUAL_SELECTED_LSS_MISSING_OR_WRONG_CLASS")
+    selected_lss = (original / original_map[LSS_ROUTE]["path"]).resolve()
+    require(selected_lss.is_relative_to(original) and selected_lss.is_file(),
+            "SELECTED_LSS_PATH_ESCAPE")
+    try:
+        validate_lss_contract(selected_lss.read_text(encoding="utf-8"))
+    except ValueError as ex:
+        raise ValueError("RED_GQ470_BOAT_WAKE_FX_ACTUAL_SELECTED_LSS_" + str(ex)) from ex
 
     shutil.copytree(original, destination)
     project = json.loads((destination / PROJECT).read_text(encoding="utf-8"))
@@ -93,6 +108,9 @@ def compose(original: Path, destination: Path) -> dict:
         "source_profile": "REAL70_PRIVATE_COMPANION_A_ONLY",
         "original_sources_preserved": 69,
         "candidate_source_count": 70,
+        "actual_original_lss_route": LSS_ROUTE,
+        "actual_original_lss_sha256": original_map[LSS_ROUTE]["sha256"],
+        "lss_actual_anchored_pivot_glass_water_contract": "SOURCE_EXACT_VALIDATED",
         "added_selected_script": ROUTE,
         "added_script_class": "LocalScript",
         "added_script_sha256": candidate[ROUTE]["sha256"],
