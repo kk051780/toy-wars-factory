@@ -35,3 +35,8 @@ The packet is **not** a runnable 70-source Place. Only #220's authenticated inte
 4. If flat wedge geometry looks cheap or scene clutter reduces orientation, **REWORK/REJECT** instead of inserting simply because code compiles.
 
 Status: `A_PREP_SOURCE_ONLY / NATIVE_NOT_TESTED / ROJO_NOT_TESTED / STUDIO_NOT_TESTED / ART_NO_GO / OWNER_ACCEPTED=0`. Priority #910 playable core remains first.
+
+
+## 2026-11-21 actual CI strength
+
+Same-head Actions #44840674214 verified the *genuine pinned original* official REAL69 sources: Luau Native 69 OFF + 70 ON = 139 scripts PASS, exact 69 original Source/Class/Route conservation, Rojo original 798390-byte private Place full inverse, and constructed the 801950-byte 70-script private candidate. This does **not** assert human-visible beauty or Roblox engine success. Additional deterministic geometry model checks conservative radial scene clearance, lowest decorative cloud height, and touch/PC geometry budgets. New `ART_CHECK_REPORT.json` explicitly enumerates the 32 unprovided before/after PC/Android screenshots and all unverified runtime/device/human gates. Only a new same-HEAD CI and official #220 fresh-CAS can advance adoption.
