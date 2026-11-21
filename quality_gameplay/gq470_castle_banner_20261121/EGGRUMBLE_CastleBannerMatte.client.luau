@@ -105,12 +105,17 @@ local function attach(tower: Instance)
     end
     local entry: Entry = {root = folder, connections = {}, tweens = {}, team = team}
     tracked[tower] = entry
+    -- Keep the original panel poses. Re-toggling accessibility must not
+    -- accumulate yaw or permanently displace the pennant.
+    local restingPose: {[BasePart]: CFrame} = {}
+    for _, panel in fly do restingPose[panel] = panel.CFrame end
     local function refreshMotion()
         for _, tween in entry.tweens do tween:Cancel() end
         table.clear(entry.tweens)
         for _, panel in fly do
             if not panel.Parent then continue end
-            local base = panel.CFrame
+            local base = restingPose[panel]
+            panel.CFrame = base
             if player:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true then
                 local tween = TweenService:Create(panel,
                     TweenInfo.new(2.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
@@ -123,7 +128,7 @@ local function attach(tower: Instance)
     table.insert(entry.connections, player:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects"):Connect(refreshMotion))
     table.insert(entry.connections, tower.Destroying:Connect(function() stop(tower) end))
     table.insert(entry.connections, tower.AncestryChanged:Connect(function()
-        if not tower:IsDescendantOf(Workspace) then stop(tower) end
+        if not tower:IsDescendantOf(Workspace) or castleTeam(tower) ~= team then stop(tower) end
     end))
     refreshMotion()
     assert(#fly + 1 <= MAX_PARTS_PER_TOWER and pole.Parent == folder)
