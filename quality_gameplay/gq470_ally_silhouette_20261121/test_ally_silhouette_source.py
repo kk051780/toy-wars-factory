@@ -42,6 +42,8 @@ def validate(source: str) -> None:
         'LOCAL_PLAYER:GetAttribute(DISABLE_ATTRIBUTE) == true',
         'Players.PlayerRemoving:Connect(clear)',
         'LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)',
+        'LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()',
+        'LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()',
         'effect:Destroy()',
         'task.wait(SCAN_INTERVAL)',
         'math.min(MAX_ALLIES, #candidates)',
@@ -150,6 +152,8 @@ class SourceGate(unittest.TestCase):
             ("task.wait(SCAN_INTERVAL)", "task.wait()"),
             ("Players.PlayerRemoving:Connect(clear)", "Players.PlayerRemoving:Connect(function() end)"),
             ("LOCAL_PLAYER.CharacterRemoving:Connect(clearAll)", "LOCAL_PLAYER.CharacterRemoving:Connect(function() end)"),
+            ('LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()', 'LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Wait()'),
+            ('LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()', 'LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Wait()'),
             ("if not keep[player] then", "if false then"),
             ("clearAll()", "discardAll()"),
         ]
