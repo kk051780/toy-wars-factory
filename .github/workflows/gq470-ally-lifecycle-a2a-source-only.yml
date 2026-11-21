@@ -70,4 +70,8 @@ jobs:
           if /tmp/gq470_luau_build/luau /tmp/gq470_negative_shutdown.luau; then
             echo RED_NEGATIVE_CANDIDATE_PASSED; exit 1
           fi
+          python3 quality_gameplay/gq470_ally_silhouette_20261121/build_lifecycle_native_spec.py --negative-disable-fade > /tmp/gq470_negative_fade.luau
+          if /tmp/gq470_luau_build/luau /tmp/gq470_negative_fade.luau; then
+            echo RED_NEGATIVE_FADE_PASSED; exit 1
+          fi
           echo GQ470_SELECTED_LUAU_NATIVE_COMPILE_AND_EXTRACTED_RUNTIME_GUARD_PASS_NOT_STUDIO
