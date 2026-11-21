@@ -120,6 +120,8 @@ def validate(s):
         raise ValueError('RED_BROKEN_FAST_ALPHA_GROUND_MASK')
     if stripped.count('piece.Transparency = 1') != 2:
         raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
+    if stripped.count('while not disposed and script.Parent do') != 2:
+        raise ValueError('RED_MISSING_DISPOSAL_ON_BOTH_POLLERS')
     if stripped.count('task.spawn(function()') != 2:
         raise ValueError('RED_MISSING_ALPHA_ONLY_POLL')
     if stripped.count('Workspace:Raycast') != 1:
