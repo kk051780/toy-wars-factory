@@ -29,7 +29,8 @@ forbidden=[
 ]
 def validate(s):
     for marker in must:
-        if s.count(marker)!=1: raise ValueError("RED_CAMERA_CONTRACT_"+marker)
+        expected=2 if marker=="return not subject:IsDescendantOf(game)" else 1
+        if s.count(marker)!=expected: raise ValueError("RED_CAMERA_CONTRACT_"+marker)
     code="\n".join(line.split("--",1)[0] for line in s.splitlines())
     for marker in forbidden:
         if marker in code: raise ValueError("RED_CAMERA_SCOPE_"+marker)
