@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Compile Python source gate and execute actual negative-mutation suite
         run: |
           set -euo pipefail
@@ -31,6 +32,13 @@ jobs:
       - name: Confirm no formal game files were touched
         run: |
           set -euo pipefail
-          git diff --name-only HEAD~1 HEAD | grep -v -E '^quality_gameplay/gq470_ally_silhouette_20261121/|^\.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml$' >/tmp/gq470_unexpected || true
-          test ! -s /tmp/gq470_unexpected
+          BASE="$(git merge-base HEAD origin/feature/gq470-ally-silhouette-real69-20261121)"
+          test -n "$BASE"
+          git diff --name-only "$BASE" HEAD > /tmp/gq470_actual_changed
+          test -s /tmp/gq470_actual_changed
+          if grep -v -E '^quality_gameplay/gq470_ally_silhouette_20261121/|^\.github/workflows/gq470-ally-lifecycle-a2a-source-only.yml$' /tmp/gq470_actual_changed > /tmp/gq470_unexpected; then
+            echo RED_OUT_OF_SCOPE_CHANGES; cat /tmp/gq470_unexpected; exit 1
+          fi
+          echo TRUE_A_TO_A_ONLY_CHANGED_PATHS
+          cat /tmp/gq470_actual_changed
           echo A_TO_A_SOURCE_ONLY_NOT_NATIVE_NOT_ROJO_NOT_STUDIO
