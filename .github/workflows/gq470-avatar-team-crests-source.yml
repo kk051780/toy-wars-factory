@@ -54,7 +54,7 @@ jobs:
       - name: 5 safety contracts and 14 fail-closed Luau mutants
         run: |
           set -euo pipefail
-          python3 -m py_compile "$TARGET/compose_candidate70.py" "$TARGET/test_player_team_crest.py"
+          python3 -m py_compile "$TARGET/compose_candidate70.py" "$TARGET/test_player_team_crest.py" "$TARGET/p0_spawn_visibility_trace.py" "$TARGET/test_p0_spawn_visibility_trace.py"
           python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
       - name: Verify unchanged official source and compose only one optional client script
         run: |
@@ -66,6 +66,8 @@ jobs:
             --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/off69"
           python3 "$TARGET/compose_candidate70.py" --official "$ROOT/off69" --out "$ROOT/on70"
           echo GQ470_CREST70_PRESERVED_69_ORIGINAL_SOURCE_AND_ONE_OPTIONAL_CLIENT
+          python3 "$TARGET/p0_spawn_visibility_trace.py" --official "$ROOT/off69" --out "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
+          test -s "$ROOT/P0_PLAYER_SPAWN_SOURCE_TRACE.json"
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -191,6 +193,7 @@ jobs:
           path: |
             /tmp/gq470-avatar-crest70/GQ470_CREST70_PRIVATE_NOT_FORMAL.rbxlx
             /tmp/gq470-avatar-crest70/on70/GQ470_AVATAR_CREST_A_RECEIPT.json
+            /tmp/gq470-avatar-crest70/P0_PLAYER_SPAWN_SOURCE_TRACE.json
             /tmp/gq470-avatar-crest70/on70/B220_AVATAR_TEAM_CREST_ONE_CLIENT_NOT_FORMAL/**
           if-no-files-found: error
           retention-days: 7
