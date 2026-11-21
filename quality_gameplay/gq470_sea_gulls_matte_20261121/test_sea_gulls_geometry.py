@@ -1,4 +1,5 @@
 """Deterministic part budget and visibility rules; no invented FPS/beauty score."""
+import math
 import unittest
 from pathlib import Path
 
@@ -22,6 +23,26 @@ class BirdBudgetTests(unittest.TestCase):
                             self.assertEqual(n > 0, dock and close and alive and not reduced)
                             cases += 1
         self.assertEqual(cases, 32)
+
+    def test_mathematical_glide_envelope_source_only(self):
+        # These are deterministic design-envelope checks, NOT visual or engine QA.
+        self.assertIn("local bank = math.rad(math.sin(t * .82 + slot * 1.37) * 7)", SOURCE)
+        self.assertIn("local wingGlide = math.rad(math.sin(phase * 1.35 + bird.slot * 1.75) * 8)", SOURCE)
+        self.assertIn("CFrame.Angles(0, 0, -wingGlide)", SOURCE)
+        self.assertEqual(SOURCE.count("TweenService:Create(part, style"), 1)
+        max_roll = max_wing = 0.0
+        for slot in (1, 2, 3):
+            for tick in range(360):
+                phase = tick * .85
+                roll = math.sin(phase * .82 + slot * 1.37) * 7
+                wing = math.sin(phase * 1.35 + slot * 1.75) * 8
+                max_roll = max(max_roll, abs(roll))
+                max_wing = max(max_wing, abs(wing))
+                self.assertLessEqual(abs(roll), 7 + 1e-9)
+                self.assertLessEqual(abs(wing), 8 + 1e-9)
+                self.assertAlmostEqual(wing + (-wing), 0)
+        self.assertGreater(max_roll, 6.9)
+        self.assertGreater(max_wing, 7.9)
 
     def test_three_parts_and_short_lived(self):
         self.assertIn("MAX_VIEW_DISTANCE = 165", SOURCE)
