@@ -34,6 +34,8 @@ def safe_code(code: str) -> bool:
         'stone.Material = Enum.Material.Slate',
         'stone.Reflectance = 0',
         'floor.Size.Y * .5 - .46',
+        'local facetYaw = if section == 1 then 0 else math.pi',
+        '* CFrame.Angles(0, facetYaw, 0)',
         'assert(floors * PARTS_PER_FLOOR <= MAX_EXTRA_PARTS)',
         'folder.Parent = floor',
     ]
@@ -83,6 +85,7 @@ class TestLobbyEdgeMasonry(unittest.TestCase):
         self.assertRegex(code, r'for section = 1, 2 do')
         self.assertIn('local index = (side - 1) * 2 + section', code)
         self.assertEqual(4 * 2, 8)
+        self.assertIn('local facetYaw = if section == 1 then 0 else math.pi', code)
 
     def test_geometry_inside_edges_and_below_walkable_top(self):
         for along, across, depth in [
@@ -122,6 +125,9 @@ class TestLobbyEdgeMasonry(unittest.TestCase):
                                           'stone.Reflectance = 0.5', 1),
             "move_above_top": code.replace('floor.Size.Y * .5 - .46',
                                            'floor.Size.Y * .5 + .46', 1),
+            "erase_mirrored_bevel": code.replace(
+                'local facetYaw = if section == 1 then 0 else math.pi',
+                'local facetYaw = 0', 1),
         }
         for name, mutated in mutations.items():
             self.assertNotEqual(mutated, code, f"BAD_MUTATION_NO_OP_{name}")
