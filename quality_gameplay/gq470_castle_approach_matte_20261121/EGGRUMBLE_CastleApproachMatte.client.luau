@@ -15,7 +15,7 @@ local REFRESH_SECONDS = 2.5
 local SLATE = Color3.fromRGB(93, 105, 108)
 local SANDSTONE = Color3.fromRGB(171, 152, 120)
 
-type Decor = { folder: Folder, pieces: {BasePart}, lastPose: CFrame, lastSize: Vector3 }
+type Decor = { folder: Folder, pieces: {BasePart} }
 local candidates: {[BasePart]: boolean} = {}
 local active: {[BasePart]: Decor} = {}
 
@@ -109,8 +109,6 @@ local function updatePieces(core: BasePart, decor: Decor)
             toward * CFrame.new(1.12, 0, 0) * CFrame.Angles(0, math.rad(-28), 0),
             filter)
     end
-    decor.lastPose = core.CFrame
-    decor.lastSize = core.Size
 end
 
 local function makeApproach(core: BasePart)
@@ -125,10 +123,7 @@ local function makeApproach(core: BasePart)
         table.insert(pieces, makePiece(folder, "SandstonePathEdge_" .. side, SANDSTONE))
     end
     assert(#pieces == PIECES_PER_CASTLE)
-    local decor: Decor = {
-        folder = folder, pieces = pieces,
-        lastPose = core.CFrame, lastSize = core.Size,
-    }
+    local decor: Decor = { folder = folder, pieces = pieces }
     active[core] = decor
     updatePieces(core, decor)
 end
