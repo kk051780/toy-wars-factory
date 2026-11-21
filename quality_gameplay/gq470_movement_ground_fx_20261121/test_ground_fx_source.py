@@ -17,6 +17,8 @@ def validate(source: str) -> None:
         "local MAX_PARTS_PER_STEP = 2",
         "local MOBILE_PARTS_PER_STEP = 1",
         "local STEP_SECONDS = 0.32",
+        "local CAMERA_FX_DISTANCE = 78",
+        "(camera.CFrame.Position - root.Position).Magnitude > CAMERA_FX_DISTANCE",
         "local LIFE_SECONDS = 0.38",
         "local TOUCH = UserInputService.TouchEnabled",
         "Workspace:Raycast",
@@ -58,6 +60,7 @@ def validate(source: str) -> None:
         "MOBILE_PARTS_PER_STEP": "1",
         "STEP_SECONDS": "0.32",
         "LIFE_SECONDS": "0.38",
+        "CAMERA_FX_DISTANCE": "78",
     }
     for name, value in numeric_contract.items():
         if not re.search(r"(?m)^\s*local " + name + r"\s*=\s*" +
@@ -93,6 +96,9 @@ class GroundMotionSourceGate(unittest.TestCase):
             ("local MAX_LIVE_PARTS = 6", "local MAX_LIVE_PARTS = 600"),
             ("local MOBILE_PARTS_PER_STEP = 1", "local MOBILE_PARTS_PER_STEP = 9"),
             ("local STEP_SECONDS = 0.32", "local STEP_SECONDS = 0"),
+            ("local CAMERA_FX_DISTANCE = 78", "local CAMERA_FX_DISTANCE = 1000"),
+            ("(camera.CFrame.Position - root.Position).Magnitude > CAMERA_FX_DISTANCE",
+             "(camera.CFrame.Position - root.Position).Magnitude > 99999"),
             ("part.CanCollide = false", "part.CanCollide = true"),
             ("part.CanQuery = false", "part.CanQuery = true"),
             ("part.CastShadow = false", "part.CastShadow = true"),
