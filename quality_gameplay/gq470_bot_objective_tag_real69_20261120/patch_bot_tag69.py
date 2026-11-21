@@ -57,6 +57,7 @@ def patch(src:str)->str:
   src=src.replace(before,after)
  need(src.count(MARK)==1 and "label.MaxDistance=22" in src,"NEAR_ONLY")
  need("ui.Text=id.." not in src and 'text.Text=id.."\\n' not in src,"NO_INTERNAL_IDS")
+ need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;")==1, "SUBJECT_SINGLE_ASSIGNMENT")
  need(src.count("hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18")==1,"SUBJECT_NAME_HEALTH_BUDGET")
  need("text.TextStrokeTransparency=.45" in src and
       "text.TextStrokeColor3=Color3.fromRGB(5,12,20)" in src,"TRANSPARENT_TAG_TEXT_EDGE")
