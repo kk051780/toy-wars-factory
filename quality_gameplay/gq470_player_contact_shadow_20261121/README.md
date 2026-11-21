@@ -7,7 +7,7 @@ One optional `StarterPlayerScripts/EGGRUMBLE_PlayerContactShadow` **LocalScript*
 
 ### Runtime budgets and safety
 - Exactly **one local noncolliding Part** maximum. SmoothPlastic Cylinder, dark navy grey, ~76% transparent; no Neon, lighting, particles, on-screen GUI, shadow casting, or replicated state.
-- 1 dry-ground ray every **0.16s on touch / 0.10s on desktop** while eligible; camera distance ≤55 / ≤75 studs. No frame loop, Workspace descendant enumeration, texture asset, download, or server call.
+- 1 dry-ground ray every **0.16s on touch / 0.10s on desktop** while eligible; camera distance ≤55 / ≤75 studs with a 72%-to-100% smooth opacity LOD fade; no abrupt edge pop. No frame loop, Workspace descendant enumeration, texture asset, download, or server call.
 - Suppress on death, jump, freefall, swim, climb, sit, invisible/stealth attributes, locally hidden head (first-person), spectator camera, noncollidable ground, water, steep faces, or missing ground; immediate cleanup on feature-off / ReducedEffects / CharacterRemoving / script removal.
 - OFF rollback: omit just `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_PlayerContactShadow` from private selection; all original REAL69 are unchanged.
 
@@ -22,6 +22,6 @@ One optional `StarterPlayerScripts/EGGRUMBLE_PlayerContactShadow` **LocalScript*
 The `compose_official70.py` and dedicated workflow rehydrate the original pinned formal PRIVATE companion from the official same-head artifact; assert all 69 original Luau/class/routes/hashes; build OFF69 byte-exact and ON70 true Rojo Place; compile both with pinned Luau; export a tamper-checked single-source B220 handoff. Such evidence is **SOURCE_QA** only, not a genuine Studio pass. Only #220 authenticated B may apply a selected source to the canonical RC with fresh SHA, nonforce CAS, same-head official CI and rollback. Never merge this entire PREP PR into the official RC or main.
 
 ### ART #420 / Product #470 gates — still required
-PC old/new and Android low old/new for eight standard scenes = **0/32 observed** so far. Grounded/slope/water/first-person/stealth/spectator/respawn functional behavior requires actual Solo and 2-client Studio test. Low-end Android **15 minutes** measured FPS/heat/touch is not tested. First 3-minute child FUN and OWNER acceptance are not tested. Therefore ART_NO_GO, MOBILE_NO_GO, FUN_NO_GO, PRODUCT_NO_GO, OWNER_ACCEPTED=0. #910 full role→egg→home score→castle victory→optional replay is a higher admission priority.
+PC old/new and Android low old/new for eight standard scenes = **0/32 observed** so far. Grounded/slope/water/first-person/stealth/spectator/respawn/LOD-fade functional behavior requires actual Solo and 2-client Studio test. Low-end Android **15 minutes** measured FPS/heat/touch is not tested. First 3-minute child FUN and OWNER acceptance are not tested. Therefore ART_NO_GO, MOBILE_NO_GO, FUN_NO_GO, PRODUCT_NO_GO, OWNER_ACCEPTED=0. #910 full role→egg→home score→castle victory→optional replay is a higher admission priority.
 
 **Value decision**: ADOPT only if actual matched screenshots show improved avatar-ground readability without terrain clipping or combining badly with #968/#993/#997; otherwise REWORK or REJECT rather than increase visual part count.
