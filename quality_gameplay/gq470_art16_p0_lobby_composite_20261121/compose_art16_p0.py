@@ -86,6 +86,15 @@ def exact_formal(root: Path) -> tuple[dict, dict[str, bytes], dict[str, str]]:
          "FORMAL_HOST_LOCK")
     return rec, sources, classes
 
+def artifact_candidate_root(extracted: Path) -> Path:
+    """Actions upload-artifact preserves a parent directory when multiple roots are uploaded."""
+    possible = [p.parent for p in extracted.rglob(PROJECT)
+                if (p.parent / RECEIPT).is_file() and
+                   (p.parent / PLACE).is_file() and
+                   not any(part.startswith("OFF69_") for part in p.parts)]
+    need(len(possible) == 1, "ONE_ACTUAL_ARTIFACT_CANDIDATE_REQUIRED")
+    return possible[0]
+
 def author_deltas(formal: Path, art: Path, p0: Path) -> tuple[dict[str, bytes], dict[str, list[str]]]:
     base_rec, original, classes = exact_formal(formal)
     need((art / PROJECT).read_bytes() == (formal / PROJECT).read_bytes() and
@@ -152,7 +161,8 @@ def composited_delta(original: dict[str, bytes], candidate: dict[str, bytes],
 def compose(formal: Path, art: Path, p0: Path, dest: Path) -> None:
     need(not dest.exists(), "OUTPUT_EXISTS")
     rec, original, classes = exact_formal(formal)
-    updates, authors = author_deltas(formal, art, p0)
+    updates, authors = author_deltas(formal, artifact_candidate_root(art),
+                                     artifact_candidate_root(p0))
     shutil.copytree(formal, dest)
     shutil.copytree(formal, dest / OFF)
     sels = selected(dest)
