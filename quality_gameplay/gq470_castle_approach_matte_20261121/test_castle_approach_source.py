@@ -31,6 +31,9 @@ REQUIRED = (
     'decor.grounded[decor.pieces[first + 1]] = placeOnGround',
     'stone.Transparency = if decor.grounded[stone] then fade else 1',
     'task.wait(OPACITY_SECONDS)',
+    'local target = if decor.grounded[stone] then fade else 1',
+    'if math.abs(stone.Transparency - target) > .01 then',
+    'stone.Transparency = target',
     'core.Name ~= "StandardCore"',
     'core.Size.X > 126 or core.Size.Z > 126 or core.Size.Y > 150',
     'ancestor.Name == "TacticalBattlefield"',
@@ -116,8 +119,10 @@ def validate(s):
     # One mutated hide must not be masked by the second surviving hide.
     if stripped.count('if disposed then return end') != 3:
         raise ValueError("RED_MISSING_IDEMPOTENT_SHUTDOWN")
-    if stripped.count('stone.Transparency = if decor.grounded[stone] then fade else 1') != 2:
+    if stripped.count('stone.Transparency = if decor.grounded[stone] then fade else 1') != 1 or stripped.count('local target = if decor.grounded[stone] then fade else 1') != 1:
         raise ValueError('RED_BROKEN_FAST_ALPHA_GROUND_MASK')
+    if stripped.count('stone.Transparency = target') != 1:
+        raise ValueError('RED_MISSING_ALPHA_ONLY_WRITE_CAP')
     if stripped.count('piece.Transparency = 1') != 2:
         raise ValueError("RED_MISSING_FAIL_CLOSED_GROUND_HIDE")
     if stripped.count('while not disposed and script.Parent do') != 2:
@@ -217,10 +222,13 @@ class TestApproachSource(unittest.TestCase):
         mutants = (
             ('FADE_START = 125', 'FADE_START = 1'),
             ('OPACITY_SECONDS = 0.2', 'OPACITY_SECONDS = 5'),
+            ('if math.abs(stone.Transparency - target) > .01 then',
+             'if math.abs(stone.Transparency - target) > .5 then'),
+            ('stone.Transparency = target', 'stone.Transparency = 0'),
             ('task.wait(OPACITY_SECONDS)', 'task.wait(REFRESH_SECONDS)'),
             ('decor.grounded[decor.pieces[first]] = placeOnGround', 'placeOnGround'),
             ('wanted[ranked[i].core] = ranked[i].distance', 'wanted[ranked[i].core] = 0'),
-            ('stone.Transparency = if decor.grounded[stone] then fade else 1', 'stone.Transparency = fade'),
+            ('local target = if decor.grounded[stone] then fade else 1', 'local target = fade'),
             ('decor.folder.Parent ~= core', 'decor.folder.Parent == core'),
             ('stone.Parent ~= decor.folder', 'stone.Parent == decor.folder'),
             ('if decor and not decorIntact(core, decor) then', 'if false then'),
