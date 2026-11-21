@@ -1,0 +1,34 @@
+name: GQ470 Castle Banner Wind Source-Only Gate
+on:
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq470_castle_banner_wind_20261121/**'
+      - '.github/workflows/gq470-castle-banner-wind-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-only guards and negative mutants
+        run: python3 -m unittest discover -s quality_gameplay/gq470_castle_banner_wind_20261121 -p 'test_*.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile optional actual LocalScript using pinned native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-banner-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-banner-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq470-banner-luau/luau-compile --text quality_gameplay/gq470_castle_banner_wind_20261121/EGGRUMBLE_CastleBannerWind.client.luau >/dev/null
+          echo GQ470_BANNER_SOURCE_NATIVE_GREEN_ENGINE_NOT_TESTED_ART_NO_GO
