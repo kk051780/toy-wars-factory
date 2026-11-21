@@ -32,6 +32,8 @@ REQUIRED = (
     'owner:GetAttributeChangedSignal(flag):Connect(dropIfHidden)',
     'limb:GetPropertyChangedSignal("Transparency"):Connect(dropIfHidden)',
     'limb:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(dropIfHidden)',
+    'rec.character.ChildAdded:Connect(function(child)',
+    'rec.character.ChildRemoved:Connect(function(child)',
     'dropIfHidden()',
     'GetPropertyChangedSignal("Team")',
     'humanoid.Died:Connect',
@@ -124,7 +126,7 @@ class TeamCrestBoundedVisualGate(unittest.TestCase):
         self.assertIn('watchActiveVisibility(player, rec)', self.text)
         self.assertIn('localPlayer:GetAttributeChangedSignal("EGGRUMBLE_ReducedEffects")', self.text)
 
-    def test_18_fail_closed_source_mutants(self):
+    def test_20_fail_closed_source_mutants(self):
         old_new = [
             ('UserInputService.TouchEnabled then 2 else 3', 'UserInputService.TouchEnabled then 99 else 99'),
             ('"Stealthed", "IsInvisible"', '"Visible", "IsInvisible"'),
@@ -151,6 +153,8 @@ class TeamCrestBoundedVisualGate(unittest.TestCase):
              '-- no cloak sweep'),
             ('localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") ~= true',
              'true'),
+            ('rec.character.ChildAdded:Connect(function(child)', 'rec.character.ChildAdded:Connect(function(x)'),
+            ('rec.character.ChildRemoved:Connect(function(child)', 'rec.character.ChildRemoved:Connect(function(x)'),
             ('CanCollide = false', 'CanCollide = true'),
         ]
         for index, (old, new) in enumerate(old_new):
