@@ -56,6 +56,12 @@ def measure(text: str) -> dict:
     require(closest>=490,"CASTLE_AND_3_PATH_GROUND_CLEARANCE")
     require(lowest>=145,"PLAYER_AND_CASTLE_OVERHEAD_CLEARANCE")
     require(desk*per<=18 and touch*per<=12, "MOBILE_PART_BUDGET")
+    # At eye Y=8 facing horizontal, stylized skyline should occupy a modest
+    # portion of field-view. This is an angular source model, not camera proof.
+    elevation_deg = math.degrees(math.atan2(altitude - 8, dist))
+    width_deg = math.degrees(2 * math.atan2(146 / 2, dist))
+    require(8 <= elevation_deg <= 28, "MODELED_VIEW_VERTICAL_RANGE")
+    require(7 <= width_deg <= 18, "MODELED_VIEW_HORIZONTAL_SIZE")
     require("CanCollide = false" in text and "CanQuery = false" in text and
             "CanTouch = false" in text and "CastShadow = false" in text,
             "PHYSICS_OR_SHADOW_COST")
@@ -66,6 +72,8 @@ def measure(text: str) -> dict:
         "parts_per_bank":per,
         "max_desktop_parts":desk*per,
         "max_touch_parts":touch*per,
+        "center_eye_elevation_deg_model":round(elevation_deg,2),
+        "base_cloud_angular_width_deg_model":round(width_deg,2),
         "conservative_min_ground_radius_studs":round(closest,2),
         "conservative_lowest_cloud_y_studs":round(lowest,2),
         "castle_path_collision":"MODEL_NONE_NOT_ENGINE",

@@ -83,9 +83,15 @@ class SourceGate(unittest.TestCase):
         self.assertGreaterEqual(result["conservative_lowest_cloud_y_studs"], 145)
         self.assertEqual(result["max_touch_parts"], 12)
         self.assertEqual(result["max_desktop_parts"], 18)
+        self.assertGreaterEqual(result["center_eye_elevation_deg_model"], 8)
+        self.assertLessEqual(result["center_eye_elevation_deg_model"], 28)
+        self.assertGreaterEqual(result["base_cloud_angular_width_deg_model"], 7)
+        self.assertLessEqual(result["base_cloud_angular_width_deg_model"], 18)
         mutations = [
             ("local distance = 625", "local distance = 310"),
             ("local altitude = 158", "local altitude = 35"),
+            ("local altitude = 158", "local altitude = 500"),
+            ("local distance = 625", "local distance = 2000"),
             ("local MAX_TOUCH_BANKS = 4", "local MAX_TOUCH_BANKS = 20"),
             ("Vector3.new(146, 16, 20)", "Vector3.new(400, 16, 20)"),
         ]
