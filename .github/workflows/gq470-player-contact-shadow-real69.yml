@@ -237,4 +237,8 @@ jobs:
             --artifact /tmp/gq470_replay/on \
             --original /tmp/gq470_replay/off \
             --current quality_gameplay/gq470_player_contact_shadow_20261121/EGGRUMBLE_PlayerContactShadow.client.luau
+          python3 -B quality_gameplay/gq470_player_contact_shadow_20261121/test_postupload_mutants.py \
+            --artifact /tmp/gq470_replay/on \
+            --original /tmp/gq470_replay/off \
+            --current quality_gameplay/gq470_player_contact_shadow_20261121/EGGRUMBLE_PlayerContactShadow.client.luau
           echo GQ470_PLAYER_CONTACT_SHADOW_TRUE_POSTUPLOAD_A_SOURCE_READY_NOT_FORMAL_NOT_STUDIO
