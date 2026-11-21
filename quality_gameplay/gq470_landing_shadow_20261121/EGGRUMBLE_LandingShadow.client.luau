@@ -127,10 +127,17 @@ RunService.Heartbeat:Connect(function(dt: number)
         hide()
         return
     end
-    -- Do not draw a deceptive landing disc on an unseen platform.
-    if hit.Instance:IsA("BasePart") and hit.Instance.Transparency >= 0.95 then
-        hide()
-        return
+    -- A raycast can hit query-enabled, NONCOLLIDING decor or synthetic sea
+    -- Glass. Those surfaces cannot hold a player, so never promise a landing.
+    -- Treat almost-invisible and translucent Glass as untrusted, even if solid.
+    if hit.Instance:IsA("BasePart") then
+        if not hit.Instance.CanCollide
+            or hit.Instance.Transparency >= 0.95
+            or (hit.Instance.Material == Enum.Material.Glass and hit.Instance.Transparency >= 0.35)
+        then
+            hide()
+            return
+        end
     end
     local height = currentRoot.Position.Y - hit.Position.Y
     if height < MIN_AIR_HEIGHT or height > MAX_GROUND_DEPTH then
