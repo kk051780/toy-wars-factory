@@ -20,7 +20,7 @@ SCENES = [
     "lobby_spawn",
     "role_selection",
     "castle_gate_attack",
-    "occupied_vehicle_seat_terrain_water",
+    "occupied_pivot_seat_scene_glass_sea",
     "neutral_swarm",
     "enemy_egg_pickup",
     "egg_return_path",
