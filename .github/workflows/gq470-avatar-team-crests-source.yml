@@ -1,0 +1,55 @@
+name: GQ470 FB015 avatar team crest A-only fail-closed source check
+on:
+  push:
+    branches:
+      - quality/gq470-avatar-team-crests-real69-20261121-a01
+    paths:
+      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
+      - '.github/workflows/gq470-avatar-team-crests-source.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_player_avatar_matte_crest_20261121/**'
+      - '.github/workflows/gq470-avatar-team-crests-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-gate-not-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify actual upload source blob and optional script manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/gq470_player_avatar_matte_crest_20261121
+          SRC="$ROOT/EGGRUMBLE_PlayerTeamCrest.client.luau"
+          test "$(git hash-object "$SRC")" = 67b5f11dc7e09d15915b3ea6a1a06d5aa359c2da
+          python3 - <<'PY'
+          import json,pathlib,subprocess
+          root=pathlib.Path('quality_gameplay/gq470_player_avatar_matte_crest_20261121')
+          m=json.loads((root/'A_SOURCE_PACKET.json').read_text())
+          source=root/'EGGRUMBLE_PlayerTeamCrest.client.luau'
+          assert m['source_blob_sha']==subprocess.check_output(['git','hash-object',str(source)],text=True).strip()
+          assert m['source_class']=='LocalScript' and m['base_selected_source_count']==69
+          assert m['original_selected_sources_modified']==0
+          assert m['scope']=='A_PREP_SOURCE_ONLY_NOT_FORMAL_RC'
+          assert m['player_bug_364']=='NOT_FIXED_BY_THIS_VISUAL'
+          assert m['native_luau']==m['rojo_place']==m['studio_solo']==m['android_15min']=='NOT_TESTED'
+          assert m['owner_acceptance'] is False
+          print('GQ470_CRESTS_ACTUAL_SOURCE_BLOB_AND_NO_GO_MANIFEST_PASS')
+          PY
+      - name: Run source-contract suite and 14 adversarial mutations
+        run: python3 -m unittest discover -s quality_gameplay/gq470_player_avatar_matte_crest_20261121 -p 'test_*.py' -v
+      - name: Report truthful A-only stage
+        run: |
+          echo 'SOURCE_STATIC_GATE=PASS_ONLY'
+          echo 'ORIGINAL_REAL69_ROUTE_EDITS=0'
+          echo 'NATIVE_LUAU=NOT_TESTED ROJO=NOT_TESTED'
+          echo 'STUDIO=NOT_TESTED ANDROID=NOT_TESTED HUMAN_ART=NOT_TESTED'
+          echo 'P0_PLAYER_SPAWN=NOT_FIXED'
+          echo 'FORMAL_RC_INTEGRATED=NO'
