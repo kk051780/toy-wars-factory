@@ -47,8 +47,11 @@ REQUIRED = (
 
 def source_errors(text):
     errors = []
+    # Ignore Luau single-line comments for forbidden runtime APIs; never let a
+    # cautionary comment masquerade as a prohibited live call.
+    executable = "\n".join(line.split("--", 1)[0] for line in text.splitlines())
     for pattern in PROHIBITED_RUNTIME_APIS:
-        if re.search(pattern, text):
+        if re.search(pattern, executable):
             errors.append("prohibited:" + pattern)
     for token in REQUIRED:
         if token not in text:
