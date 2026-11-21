@@ -12,6 +12,7 @@ import hashlib
 import json
 import shutil
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
@@ -36,6 +37,70 @@ def require(ok: bool, why: str) -> None:
 
 def hash256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
+
+
+
+def place_sources(place: Path) -> dict[str, tuple[str, str]]:
+    """Read all real Rojo Place script bytes; a random .rbxlx is not proof."""
+    scripts: dict[str, tuple[str, str]] = {}
+    root = ET.parse(place).getroot()
+    for item in root.iter("Item"):
+        cls = item.attrib.get("class")
+        if cls not in ("Script", "LocalScript", "ModuleScript"):
+            continue
+        props = item.find("Properties")
+        require(props is not None, "PLACE_SCRIPT_PROPERTIES")
+        name = next((p.text for p in props if p.attrib.get("name") == "Name"), None)
+        source = next((p for p in props if p.attrib.get("name") == "Source"), None)
+        require(isinstance(name, str) and len(name) > 0 and
+                source is not None and name not in scripts,
+                "PLACE_DUPLICATE_NAME_OR_MISSING_SOURCE")
+        scripts[name] = (cls, hash256((source.text or "").encode("utf-8")))
+    return scripts
+
+
+def assert_place_selected(place: Path, scanned: dict, expected_count: int) -> None:
+    require(place.is_file(), "BUILT_PLACE_NOT_FOUND")
+    scripts = place_sources(place)
+    require(len(scripts) == expected_count and len(scanned) == expected_count,
+            "PLACE_SCRIPT_COUNT_NOT_SELECTED")
+    for route, info in scanned.items():
+        name = route.rsplit("/", 1)[-1]
+        require(scripts.get(name) == (info["class"], info["sha256"]),
+                "PLACE_SOURCE_CLASS_NOT_MATCHED_" + name)
+
+
+def assert_candidate_nonloss(candidate: Path) -> dict:
+    """Recheck the authentic original Place and every original route at B time."""
+    require((candidate / PLACE).is_file() and
+            hash256((candidate / PLACE).read_bytes()) == PLACE_SHA and
+            (candidate / PLACE).stat().st_size == PLACE_BYTES,
+            "B_ORIGINAL_PLACE_IDENTITY")
+    receipt = json.loads((candidate / RECEIPT).read_text(encoding="utf-8"))
+    require(receipt.get("official_branch") == "rc/p0d-s1-kids-rc01" and
+            receipt.get("build_head") == BASE and
+            receipt.get("canonical_build") is True and
+            receipt.get("selected_source_count") == 69,
+            "B_ORIGINAL_RECEIPT_AUTHORITY")
+    hashes = receipt.get("source_hashes")
+    classes = receipt.get("source_classes")
+    require(isinstance(hashes, dict) and isinstance(classes, dict) and
+            len(hashes) == len(classes) == 69,
+            "B_ORIGINAL_69_RECEIPT_SET")
+    scanned = project_scan(candidate, PROJECT)
+    require(len(scanned) == 70 and set(scanned) == set(hashes) | {ROUTE} and
+            set(classes) == set(hashes),
+            "B_SELECTED_ROUTE_SET_NOT_69_PLUS_1")
+    require(all(scanned[route]["sha256"] == digest and
+                scanned[route]["class"] == classes[route]
+                for route, digest in hashes.items()),
+            "B_ORIGINAL_69_SOURCE_CLASS_DRIFT")
+    original = {route: scanned[route] for route in hashes}
+    assert_place_selected(candidate / PLACE, original, 69)
+    require(scanned[ROUTE]["sha256"] == hash256(SOURCE.read_bytes()) and
+            scanned[ROUTE]["class"] == "LocalScript",
+            "B_NEW_SOURCE_CLASS_DRIFT")
+    return scanned
 
 
 def compose(original: Path, destination: Path) -> dict:
@@ -150,8 +215,9 @@ def export_b(candidate: Path, built_place: Path) -> dict:
             report.get("owner_accepted") is False and
             report.get("art_gate") == "ART_NO_GO",
             "B_RECEIPT_MUST_NOT_CLAIM_FORMAL_OR_ART_GO")
-    scanned = project_scan(candidate, PROJECT)
+    scanned = assert_candidate_nonloss(candidate)
     raw = (candidate / TARGET).read_bytes()
+    assert_place_selected(built_place, scanned, 70)
     require(len(scanned) == 70 and
             scanned[ROUTE]["sha256"] == hash256(raw) ==
             report["added_script_sha256"] and
@@ -202,12 +268,25 @@ def export_b(candidate: Path, built_place: Path) -> dict:
 def verify_b(candidate: Path, built_place: Path) -> None:
     root = candidate.resolve() / B_PACKET
     manifest = json.loads((root / B_MANIFEST).read_text(encoding="utf-8"))
+    scanned = assert_candidate_nonloss(candidate)
+    assert_place_selected(built_place, scanned, 70)
     raw = (candidate / TARGET).read_bytes()
-    actual = root / manifest["new_source_path"]
+    expected_path = "selected_sources/" + TARGET.removeprefix("sources/")
+    require(manifest.get("new_source_path") == expected_path,
+            "B_MANIFEST_SOURCE_ROUTE_PATH")
+    actual = root / expected_path
     require(actual.resolve().is_relative_to(root.resolve()) and
             actual.read_bytes() == raw and
             manifest["schema"] == "GQ470_CASTLE_BANNER_B220_SOURCE_SELECT_V1" and
             manifest["formal_base_sha"] == BASE and
+            manifest["formal_branch"] == "rc/p0d-s1-kids-rc01" and
+            manifest["source_profile"] == "PRIVATE_COMPANION_REAL69_TO_70_A_ONLY" and
+            manifest["feature_id"] == FEATURE and
+            manifest["source_only"] is True and
+            manifest["b_admission"] == "DEFER_P0_910_FIRST_PENDING_CLAIM_AND_250" and
+            manifest["studio_android_fun"] == "NOT_TESTED" and
+            manifest["original_place_sha256"] == PLACE_SHA and
+            manifest["original_place_bytes"] == PLACE_BYTES and
             manifest["new_script_route"] == ROUTE and
             manifest["new_script_class"] == "LocalScript" and
             manifest["new_source_sha256"] == hash256(raw) and
