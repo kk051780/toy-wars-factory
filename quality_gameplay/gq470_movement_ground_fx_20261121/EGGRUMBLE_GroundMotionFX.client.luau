@@ -160,6 +160,8 @@ local function bindCharacter(character: Model): ()
     diedConnection = humanoid.Died:Connect(function()
         generation += 1
         scheduled = false
+        if runningConnection then runningConnection:Disconnect() end
+        if swimmingConnection then swimmingConnection:Disconnect() end
     end)
 end
 
