@@ -165,7 +165,11 @@ local function refreshOpacity()
         local fade = math.clamp((distance - FADE_START) / (MAX_DISTANCE - FADE_START), 0, 1)
         for _, stone in ipairs(decor.pieces) do
             if stone.Parent == decor.folder then
-                stone.Transparency = if decor.grounded[stone] then fade else 1
+                local target = if decor.grounded[stone] then fade else 1
+                -- Avoid redundant mobile rendering property churn at rest.
+                if math.abs(stone.Transparency - target) > .01 then
+                    stone.Transparency = target
+                end
             end
         end
     end
