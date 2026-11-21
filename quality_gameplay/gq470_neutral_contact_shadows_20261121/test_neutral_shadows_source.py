@@ -42,6 +42,11 @@ MARKERS = [
  'task.defer(tick)',
  'PLAYER:GetAttributeChangedSignal(FEATURE_OFF)',
  'PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS)',
+ 'local featureOffConnection: RBXScriptConnection? = nil',
+ 'local reducedEffectsConnection: RBXScriptConnection? = nil',
+ 'featureOffConnection:Disconnect()',
+ 'reducedEffectsConnection:Disconnect()',
+ 'script.Destroying:Connect(function()',
 ]
 BANNED = [
  "FireServer", "InvokeServer", "RemoteEvent", "RemoteFunction",
@@ -81,6 +86,15 @@ def validate(source: str):
         raise ValueError("RED_NEUTRAL_TASK_CHAIN")
     if source.count("clearAll()") < 5:
         raise ValueError("RED_NEUTRAL_CLEANUP")
+    # Prevent stale Player attribute signals after LocalScript is destroyed.
+    if source.count("featureOffConnection:Disconnect()") != 1 or (
+        source.count("reducedEffectsConnection:Disconnect()") != 1
+        or "featureOffConnection = nil" not in source
+        or "reducedEffectsConnection = nil" not in source
+        or source.index("featureOffConnection:Disconnect()") < source.index("script.Destroying:Connect")
+        or source.index("reducedEffectsConnection:Disconnect()") < source.index("script.Destroying:Connect")
+    ):
+        raise ValueError("RED_NEUTRAL_PLAYER_SIGNAL_LIFECYCLE")
 
 class NeutralShadowsTests(unittest.TestCase):
     def test_contract(self):
@@ -113,6 +127,8 @@ class NeutralShadowsTests(unittest.TestCase):
             ('for _, entry in ipairs(chosen) do', 'for _, entry in ipairs(discovered) do'),
             ('table.insert(chosen, {model = entry.model, root = entry.root, hit = hit})', 'selected[entry.model] = false'),
             ('GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2', 'GQ470_BROKEN_BUDGET'),
+            ('featureOffConnection:Disconnect()', 'featureOffConnection = nil'),
+            ('reducedEffectsConnection:Disconnect()', 'reducedEffectsConnection = nil'),
         ]
         for old, new in changes:
             self.assertIn(old, src)
