@@ -67,6 +67,9 @@ def validate(source: str) -> None:
         'LOCAL_PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS_ATTRIBUTE):Connect(function()',
         'LOCAL_PLAYER:GetAttributeChangedSignal(DISABLE_ATTRIBUTE):Connect(function()',
         'effect:Destroy()',
+        'local FADE_START_DISTANCE = 32',
+        'math.clamp((candidate.distance - FADE_START_DISTANCE) / (MAX_DISTANCE - FADE_START_DISTANCE), 0, 1)',
+        'effect.OutlineTransparency = OUTLINE_TRANSPARENCY + (1 - OUTLINE_TRANSPARENCY) * fade',
         'local stopped = false',
         'local globalWatches = {}',
         'local function shutdown()',
@@ -84,6 +87,13 @@ def validate(source: str) -> None:
     for item in required:
         if item not in code:
             raise ValueError("RED_ALLY_SILHOUETTE_MISSING_" + item)
+    # Old hard 45-stud cull must be visually invisible before removal.
+    if not re.search(r"(?m)^local FADE_START_DISTANCE = 32(?:\\s|$)", code):
+        raise ValueError("RED_OUTLINE_NO_DISTANCE_FADE")
+    if not (code.index("local fade = math.clamp(") <
+            code.index("effect.OutlineTransparency = OUTLINE_TRANSPARENCY +") <
+            code.index("effect.Enabled = true", code.index("local fade = math.clamp("))):
+        raise ValueError("RED_OUTLINE_FADE_ORDER")
     # Destroying must revoke global Player listeners and terminate the scan.
     if code.count("track(") != 7 or "while true do" in code:
         raise ValueError("RED_UNTRACKED_GLOBAL_LISTENERS")
@@ -152,6 +162,9 @@ class SourceGate(unittest.TestCase):
         mutations = [
             ("script.Destroying:Connect(shutdown)", "script.Destroying:Connect(function() end)"),
             ("while not stopped do", "while true do"),
+            ("local FADE_START_DISTANCE = 32", "local FADE_START_DISTANCE = 50"),
+            ("(MAX_DISTANCE - FADE_START_DISTANCE), 0, 1", "(MAX_DISTANCE - FADE_START_DISTANCE), 0, 0"),
+            ("effect.OutlineTransparency = OUTLINE_TRANSPARENCY + (1 - OUTLINE_TRANSPARENCY) * fade", "effect.OutlineTransparency = OUTLINE_TRANSPARENCY"),
             ("connection:Disconnect()", "connection:Destroy()"),
             ("table.clear(globalWatches)", "globalWatches = {}"),
             ("track(Players.PlayerRemoving:Connect(clear))", "Players.PlayerRemoving:Connect(clear)"),
