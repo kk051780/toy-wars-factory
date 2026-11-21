@@ -1,0 +1,143 @@
+name: GQ470 P0 early REAL69 lobby spawn source+native+rojo (A only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_p0_early_lobby_real69_20261121/**'
+      - '.github/workflows/gq470-p0-early-lobby-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  early-lobby-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ROOT: /tmp/gq470-early-lobby
+      SCRIPT: quality_gameplay/gq470_p0_early_lobby_real69_20261121/patch_real69.py
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Real formal HEAD source lock and six fail-closed source mutants
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD" || { echo RED_AUTHOR_HEAD_DRIFT; exit 1; }
+          python3 -m py_compile "$SCRIPT"
+          python3 -B "$SCRIPT" --self-test
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test "$PR_BASE" = "$FORMAL" || { echo RED_STALE_BASE; exit 1; }
+          fi
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$FORMAL success" || { echo RED_UNPROVEN_OFFICIAL_SOURCE; exit 1; }
+          mkdir -p "$ROOT/formal" "$ROOT/on" "$ROOT/off"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/formal"
+          cp -a "$ROOT/formal/." "$ROOT/on/"
+          cp -a "$ROOT/formal/." "$ROOT/off/"
+          python3 -B "$SCRIPT" --root "$ROOT/on" --head "$FORMAL"
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_p0_early_lobby_real69_20261121")
+          from patch_real69 import selected,ROUTE,OLD_HOST_SHA,FEATURE
+          root=Path(os.environ["ROOT"])
+          before=selected(root/"off");after=selected(root/"on")
+          assert set(before)==set(after) and len(before)==69
+          diff={k for k in before if before[k][0].read_bytes()!=after[k][0].read_bytes()}
+          assert diff=={ROUTE}
+          assert hashlib.sha256(before[ROUTE][0].read_bytes()).hexdigest()==OLD_HOST_SHA
+          a=after[ROUTE][0].read_text()
+          assert a.count(FEATURE)==1
+          assert a.index('gqEarlySpawn.Parent=gqEarlyFolder')<a.index('local Rules=require')
+          assert a.count('Instance.new("SpawnLocation")')==1
+          assert a.count('Instance.new("Part")')>=1
+          assert (root/"on/EGGRUMBLE_REAL69.project.json").read_bytes()==(root/"off/EGGRUMBLE_REAL69.project.json").read_bytes()
+          assert (root/"on/REAL69_LEGACY_INTAKE_RECEIPT.json").read_bytes()==(root/"off/REAL69_LEGACY_INTAKE_RECEIPT.json").read_bytes()
+          print("GQ470_P0_ONLY_HOST_1_CHANGED_68_EXACT_PROJECT_RECEIPT_UNTOUCHED")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all actual 69 ON + 69 original OFF Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B "$ROOT/luau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq470_p0_early_lobby_real69_20261121")
+          from patch_real69 import selected
+          base=Path(os.environ["ROOT"])
+          for direction in ("off","on"):
+            files=selected(base/direction)
+            assert len(files)==69
+            for p,_ in files.values():
+              subprocess.run([str(base/"luau/luau-compile"),"--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_P0_NATIVE_LUAU_TRUE_OFF69_ON69_PASS")
+          PY
+      - name: Pinned Rojo 7.7.1 real Place, exact original rollback and false-ART gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ["ROOT"])
+          with ZipFile(root/"rojo.zip") as zip:
+            entries=[x for x in zip.namelist() if x.split("/")[-1]=="rojo"]
+            assert len(entries)==1
+            out=root/"rojo"
+            out.write_bytes(zip.read(entries[0]))
+            out.chmod(0o755)
+          PY
+          "$ROOT/rojo" build "$ROOT/off/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_REBUILT.rbxlx"
+          "$ROOT/rojo" build "$ROOT/on/EGGRUMBLE_REAL69.project.json" -o "$ROOT/on/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$ROOT/formal/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$ROOT/on/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/on/EGGRUMBLE_REAL69_PRIVATE.rbxlx" --count 69
+          python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          root=Path(os.environ["ROOT"]); on=root/"on"
+          place=(on/"EGGRUMBLE_REAL69_PRIVATE.rbxlx").read_bytes()
+          report=json.loads((on/"GQ470_P0_EARLY_LOBBY_CANDIDATE_RECEIPT.json").read_text())
+          assert report["changed_selected_routes"]==["ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"]
+          assert report["unchanged_routes"]==68 and not report["studio_player_visibility_fix_proven"]
+          assert report["new_lobby_world_instances"]==0 and report["new_script_count"]==0
+          assert report["studio"]==report["android"]=="NOT_TESTED" and report["art_gate"]=="ART_NO_GO"
+          report["candidate_place_bytes"]=len(place)
+          report["candidate_place_sha256"]=hashlib.sha256(place).hexdigest()
+          report["source_native_rojo"]="PASS_SOURCE_ONLY"
+          (on/"GQ470_P0_EARLY_LOBBY_CANDIDATE_RECEIPT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ470_P0_EARLY_LOBBY_REAL69_SOURCE_ONLY_CANDIDATE",len(place),report["candidate_place_sha256"])
+          PY
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_OFFICIAL_HEAD_MOVED_BEFORE_PACKET; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-P0-EARLY-LOBBY-REAL69-A-B220-PACKET-NOT-FORMAL
+          path: |
+            /tmp/gq470-early-lobby/on/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-early-lobby/on/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-early-lobby/on/sources/**
+            /tmp/gq470-early-lobby/on/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-early-lobby/on/GQ470_P0_EARLY_LOBBY_CANDIDATE_RECEIPT.json
+            /tmp/gq470-early-lobby/OFF69_REBUILT.rbxlx
+          if-no-files-found: error
+          retention-days: 7
