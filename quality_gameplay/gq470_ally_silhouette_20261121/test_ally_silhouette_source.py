@@ -9,8 +9,9 @@ SOURCE = ROOT / "EGGRUMBLE_AllySilhouette.client.luau"
 
 def validate(source: str) -> None:
     code = "\n".join(line.split("--", 1)[0] for line in source.splitlines())
+    if "GQ470_FB015_ALLY_SILHOUETTE_REAL69_20261121" not in source:
+        raise ValueError("RED_ALLY_SILHOUETTE_MISSING_FEATURE_MARKER")
     required = (
-        'GQ470_FB015_ALLY_SILHOUETTE_REAL69_20261121',
         'local MAX_ALLIES = 3',
         'local MAX_DISTANCE = 45',
         'local SCAN_INTERVAL = 0.75',
