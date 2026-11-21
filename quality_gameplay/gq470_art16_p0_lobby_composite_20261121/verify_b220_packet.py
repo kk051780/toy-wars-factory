@@ -117,6 +117,10 @@ def negatives(root: Path) -> dict:
         ("false_original_count", "original_untouched", 51),
         ("false_selected_count", "selected_count", 16),
         ("no_writer_cas_required", "requires_writer_220_fresh_nonforce_cas", False),
+        ("forged_neutral_parent_sha", "quality_overlay.original_art16_swarm_sha256", "0" * 64),
+        ("forged_neutral_source_sha", "quality_overlay.patched_swarm_sha256", "0" * 64),
+        ("forged_neutral_studio_pass", "quality_overlay.studio", "PASS"),
+        ("forged_neutral_formal_adoption", "quality_overlay.formal_adopted", True),
         ("false_source_owner", "source_only[0].source", 999),
         ("false_source_class", "source_only[0].class", "Folder"),
         ("forged_new_sha", "source_only[0].new_sha256", "0" * 64),
@@ -144,6 +148,8 @@ def negatives(root: Path) -> dict:
                 data["source_only"][offset][member] = value
             elif field == "source_only" and value == "REMOVE_LAST":
                 data["source_only"].pop()
+            elif field.startswith("quality_overlay."):
+                data["quality_overlay"][field.split(".", 1)[1]] = value
             else:
                 data[field] = value
             manifest.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
@@ -170,7 +176,7 @@ def negatives(root: Path) -> dict:
                 accepted.append(tag)
             else:
                 raise AssertionError("B220_TAMPER_ACCEPTED_" + tag)
-    need(len(accepted) == len(mutations) + 3 == 24, "TAMPER_CASE_COUNT")
+    need(len(accepted) == len(mutations) + 3 == 28, "TAMPER_CASE_COUNT")
     result = check(root)
     result["tamper_cases_tested"] = len(accepted)
     result["tamper_cases_rejected"] = len(accepted)
