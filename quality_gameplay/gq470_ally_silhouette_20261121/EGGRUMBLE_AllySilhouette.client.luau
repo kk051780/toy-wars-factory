@@ -55,6 +55,15 @@ local function isVisibleAlly(player, localRoot, localTeam)
         or torso.LocalTransparencyModifier >= 0.35 then
         return nil
     end
+    -- Fail closed on partial-body stealth. A cloak may fade individual R6/R15 limbs
+    -- without setting a character-wide stealth attribute or hiding Head/Torso.
+    -- Only inspect direct body parts: equipped Tool parts live in descendants.
+    for _, bodyPart in ipairs(character:GetChildren()) do
+        if bodyPart:IsA("BasePart") and bodyPart.Name ~= "HumanoidRootPart"
+            and (bodyPart.Transparency >= 0.35 or bodyPart.LocalTransparencyModifier >= 0.35) then
+            return nil
+        end
+    end
     local distance = (root.Position - localRoot.Position).Magnitude
     if distance > MAX_DISTANCE then
         return nil
