@@ -11,7 +11,7 @@ SOURCE = (Path(__file__).parent / "EGGRUMBLE_SeaGullsMatte.client.luau").read_te
 def gate(s: str) -> None:
     required = (
         'FEATURE_ID = "GQ470_FB015_SEA_GULLS_MATTE_20261121"',
-        'obj.Name == "PublicSeaDock"', "obj.Anchored",
+        'return obj:IsA("BasePart") and obj.Name == "PublicSeaDock" and', "obj.Anchored",
         'obj:IsDescendantOf(Workspace)', 'localPlayer.Character',
         'humanoid.Health > 0', 'HumanoidRootPart',
         'localPlayer:GetAttribute("EGGRUMBLE_ReducedEffects") == true',
@@ -45,6 +45,10 @@ def gate(s: str) -> None:
     for mark in forbidden:
         if mark in s:
             raise AssertionError("RED_SEA_GULLS_FORBIDDEN_" + mark)
+    if not re.search(r"(?m)^local PARTS_PER_BIRD = 3$", s):
+        raise AssertionError("RED_SEA_GULLS_EXACT_PARTS_PER_BIRD_LIMIT")
+    if s.count("tween:Cancel()") != 2:
+        raise AssertionError("RED_SEA_GULLS_BOTH_TWEEN_CLEANUP_POINTS")
     if s.count("newPiece(folder,") != 3:
         raise AssertionError("RED_SEA_GULLS_NOT_THREE_PARTS")
     if len(re.findall(r"while\s+script\.Parent", s)) != 1:
