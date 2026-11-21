@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict #420 source-vs-actual human ART evidence separation for #910.
+"""Strict #420 source-vs-actual human ART evidence separation for boat wake.
 
 An offline/native/Rojo pass does not fill any Studio screenshots or FPS data.
 This report is for the private A candidate only; it cannot approve formal RC.
@@ -20,7 +20,7 @@ SCENES = [
     "lobby_spawn",
     "role_selection",
     "castle_gate_attack",
-    "coastal_land_sea",
+    "occupied_vehicle_seat_terrain_water",
     "neutral_swarm",
     "enemy_egg_pickup",
     "egg_return_path",
