@@ -1,0 +1,50 @@
+name: P0D GQ8 HP Regen Pure Policy Native QA
+on:
+  push:
+    branches: ['feature/gq8-battle-hp-regen-20261118-0810']
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-hp-regen.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-BATTLE-HP-REGEN-20261118/**'
+      - '.github/workflows/p0d-gq8-hp-regen.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hp-regen-luau:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Build authentic source-derived test cases
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-BATTLE-HP-REGEN-20261118/make_native_tests.py --out /tmp/gq8-hp-regen
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile pinned Luau and execute good + intentional mutant
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-hp-regen-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-hp-regen-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-hp-regen-native/luau
+          CC=/tmp/gq8-hp-regen-native/luau-compile
+          "$CC" --text handoffs/EGGRUMBLE-BATTLE-HP-REGEN-20261118/PassiveRegenPolicy.luau >/dev/null
+          "$CC" --text /tmp/gq8-hp-regen/good.luau >/dev/null
+          "$CC" --text /tmp/gq8-hp-regen/mutant.luau >/dev/null
+          "$CLI" /tmp/gq8-hp-regen/good.luau | tee /tmp/gq8-hp-regen-good.log
+          grep -qx 'GQ8_HP_REGEN_7_ROLE_REAL_LUAU_PASS' /tmp/gq8-hp-regen-good.log
+          if "$CLI" /tmp/gq8-hp-regen/mutant.luau >/tmp/gq8-hp-regen-mutant.log 2>&1; then
+            echo RED_7S_REGEN_DELAY_MUTANT_ACCEPTED
+            exit 1
+          fi
+          grep -q RED_7S_DELAY /tmp/gq8-hp-regen-mutant.log
+          echo GQ8_HP_REGEN_REAL_LUAU_AND_MUTANT_RED_PASS
