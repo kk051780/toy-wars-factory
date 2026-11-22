@@ -3838,6 +3838,104 @@
       ],
       "grant_scope_version": 1,
       "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
+    },
+    {
+      "claim_id": "P0D-GQ518-INCOMING-LOS-20261123-7B6B25AE",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_7B6B25AEAA29",
+      "feature_id": "GQ_BOSS_SHOCKWAVE_WALL_OCCLUSION_20261116",
+      "sub_scope": "CURRENT69_INCOMING_LOS_FIXED_PAYLOAD_REGISTRATION",
+      "canonical_parent": 518,
+      "parent_issue": 518,
+      "integration_issue": 220,
+      "request_comment": 7086835669,
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_NEUTRALSTONEGIANT"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-gq-boss-wave-occlusion-20261116.yml",
+        "quality_gameplay/boss_wave_occlusion_20261116/README.md",
+        "quality_gameplay/boss_wave_occlusion_20261116/tests/test_source_patch.py",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/compose_private21.py",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/verify_private21.py",
+        "quality_gameplay/boss_wave_occlusion_20261116/current69/incoming_los.patch",
+        "quality_gameplay/boss_wave_occlusion_20261116/current69/INCOMING_LOS_EVIDENCE.json"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/boss_wave_occlusion_20261116/README.md",
+        "quality_gameplay/boss_wave_occlusion_20261116/current69/incoming_los.patch",
+        "quality_gameplay/boss_wave_occlusion_20261116/current69/INCOMING_LOS_EVIDENCE.json"
+      ],
+      "preserved_pr_diff_blobs": {
+        ".github/workflows/p0d-gq-boss-wave-occlusion-20261116.yml": "0f4428b4d95126084193dc040ec2c4d411ae2ef8",
+        "quality_gameplay/boss_wave_occlusion_20261116/tests/test_source_patch.py": "e1271c23790594783315767a6ca24cb1bc6584ec",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py": "850c76cc1a5abdb4a5334d8459ad930258c3f229",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/compose_private21.py": "b00aded027dec62a120bcf6127169109623d0e7c",
+        "quality_gameplay/boss_wave_occlusion_20261116/tools/verify_private21.py": "c225ee5caa17eaf5ae0db372f8bdae4ed254c0b4"
+      },
+      "prep_branch": "feature/gq-boss-wave-occlusion-20261116-01",
+      "source_head_before": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d",
+      "source_head": null,
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "pr": 518,
+      "allowed_new_prs": 0,
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "04b7d995-a87e-45e0-9bae-6ab5fe200652",
+      "issued_at": "2026-11-22T22:35:29Z",
+      "expires_at": "2026-11-23T04:35:29.000Z",
+      "author_contexts": [
+        "CODEX_ROOT_0043C64DE7ED: existing incoming patch and existing evidence lineage, preserved verbatim",
+        "/root (CODEX_ROOT_7B6B25AEAA29): evidence registration/README and sole branch writer only"
+      ],
+      "independent_reviewer_context": "/root/current_rules",
+      "independent_review_status": "SCOPE_PASS; ACTUAL_HEAD_SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "scope": "Exactly three-file evidence-registration commit within existing PR518's eight-path total delta; keep five legacy code/test/workflow blobs unchanged; append README only and copy the original patch and original local receipt without rewriting them.",
+      "scope_review": {
+        "context": "/root/current_rules",
+        "decision": "PASS_EXACT_EIGHT_PATH_SOURCE_EVIDENCE_REGISTRATION_SCOPE_ONLY",
+        "actual_candidate_head_review_completed": false,
+        "plan_receipt_path": "current_rules_review/boss_scope_plan.json",
+        "plan_sha256": "698c7b353272b7a953d9f6b66b6fa7f72db233cdeb770fd3cbfa599c01295d25"
+      },
+      "handoff": {
+        "old_payload_author": "CODEX_ROOT_0043C64DE7ED",
+        "new_registration_owner": "CODEX_ROOT_7B6B25AEAA29",
+        "request_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7085611873",
+        "pinned_existing_pr_head": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d",
+        "scope": "Existing payload registration only; no takeover or canonical producer handoff"
+      },
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "no_main_or_publish": true,
+      "forbidden_changes": [
+        "Five old code/test/workflow blobs",
+        "Any canonical UNION22 producer/profile/native path",
+        "Shared GQ8 workflow",
+        "New gameplay/producer/test/CI implementation",
+        "New PR",
+        "Self-approval or Studio/Android/FUN claim"
+      ],
+      "rollback": "For this registration commit only: remove two added files and remove the exact README append; retain the original six files, other source/claims and intervening changes. Gameplay inverse remains the unchanged original one-line patch inverse.",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 613,
+        "claim_commit": "4d7a466d3a0736badb969ca3e94e96ef8c900c5a",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "04b7d995-a87e-45e0-9bae-6ab5fe200652",
+        "expires_at": "2026-11-22T23:05:22.000Z"
+      },
+      "authority_evidence": [
+        "Actual connected GitHub kk051780/user233213370 with repository admin permission observed in this parent session.",
+        "Current user instruction and existing owner_delegation, formal AGENTS/execution policy v1.2/#1011 permit ordinary scoped coordination; real claims, exclusive leases and independent review remain required.",
+        "Existing owner0043 explicitly handed off the fixed payload in issue220 comment7085611873; this is original PR518 registration, not a new producer.",
+        "Independent exact-scope review by the real /root/current_rules context; no actual-source approval claimed.",
+        "Actually acquired manual CONTROLLER metadata lease with exact-parent nonforce CAS and full readback."
+      ]
     }
   ],
   "legacy_overlap_triage": [
