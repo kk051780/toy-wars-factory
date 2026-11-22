@@ -3538,7 +3538,7 @@
     },
     {
       "claim_id": "P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7",
-      "state": "GRANTED",
+      "state": "PREP_READY",
       "owner": "CODEX_ROOT_B8C8E7B756CD",
       "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
       "sub_scope": "CURRENT69_PICK_TARGET_CHARM_AND_STEALTH_ELIGIBILITY",
@@ -3576,7 +3576,7 @@
         "/root/triage_candidates: actual-body reproduction fixtures and bounded source-gate negative tests"
       ],
       "independent_reviewer_context": "/root/environment_audit",
-      "independent_review_status": "ACTUAL_HEAD_SOURCE_AND_CI_REVIEW_REQUIRED",
+      "independent_review_status": "PASS_FOR_ACTUAL_HEAD_AND_HOSTED_CI_SOURCE_ONLY_NOT_RC",
       "scope": "Continue original GQ618 and existing PR618, originally adopted via PR629. Add a separately named strict current69 source candidate gate. Generated current Combat changes only neutral charm exclusion and current human membership/stealth eligibility inside the existing BeastEscort.pickTarget: two exact hunks, +115 UTF-8 bytes. Reuse currentHumanMember and egg-reveal-aware humanCombatTargetable; preserve existing Swarm damage authority, lifetime, radius, cap, leash, cooldown and all other source bytes. Original21/current31 module/composers/tests remain byte-identical. Verify all69 source route/class/source identities, actual28-body baseline/ON/OFF execution, fresh pinned Luau build, original combined/objective regressions and exact inverse Rojo Place. Dedicated workflow only, actual PR head. No canonical Union22 producer/profile/shared-workflow edit under this source grant.",
       "grant_scope_version": 1,
       "generated_source_scope": [
@@ -3628,7 +3628,7 @@
         "Self-approval or claims of Studio/Android/ART/FUN completion",
         "Main promotion, Roblox publishing, spend, schedule changes"
       ],
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "no_main_or_publish": true,
@@ -3646,6 +3646,117 @@
         "work_branch": "coord/p0d-work-claims",
         "owner_id": "56f88ae6-a92a-463c-9ca2-1525073ea541",
         "expires_at": "2026-11-22T22:42:58.000Z"
+      },
+      "source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+      "prep_ready_at": "2026-11-22T22:46:53Z",
+      "source_publication": {
+        "previous_head": "131313d645d2a5a67abd117c2c3d0459ee46d210",
+        "head": "440d866832b61b8ccb077976906e61aca034acf3",
+        "actual_github_commit_delta_paths": [
+          ".github/workflows/p0d-gq-beast-escort-20261117.yml",
+          "quality_gameplay/v3_beast_escort_20261117/README.md",
+          "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
+          "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
+          "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+          "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+          "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+          "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py"
+        ],
+        "changed_path_count": 8,
+        "historical_five_files_byte_identical": true,
+        "whole_historical_donor_pr_is_not_direct_rc_intake": true,
+        "expected_head_nonforce_cas": true,
+        "actual_source_lease": {
+          "kind": "CONTROLLER",
+          "owner_id": "77d12ae2-9db0-41a3-b341-9ff7b814e229",
+          "epoch": 614,
+          "acquire_commit": "f845264ba84bcb58ea11ec343073f4de2e83b058",
+          "release_commit": "b38706256b6e707a7ce55136d922e6852a67ec5d",
+          "released_normally": true
+        }
+      },
+      "independent_actual_head_review": {
+        "context": "/root/environment_audit",
+        "decision": "SOURCE_PREP_READY_PASS",
+        "head": "440d866832b61b8ccb077976906e61aca034acf3",
+        "reviewer_authored_no_source_or_remote_mutations": true,
+        "published_source_receipt": {
+          "bytes": 3432,
+          "sha256": "cbadf44247b7fc855d55f5f44cf5fc9f8d433c87911ee43efd10e32604f0cdaa"
+        },
+        "hosted_ci_receipt": {
+          "bytes": 6989,
+          "sha256": "cd757d0487b6e9c8f9daed8750db6169c53343ab5b304796beadcc14426243f2",
+          "independent_checks": 92
+        },
+        "artifact_downloaded_and_reconstructed": true,
+        "registered_github_review_object_claimed": false
+      },
+      "hosted_ci": {
+        "run_id": 45078855774,
+        "run_attempt": 1,
+        "head_sha": "440d866832b61b8ccb077976906e61aca034acf3",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45078855774",
+        "jobs": [
+          {
+            "id": 137382156954,
+            "name": "beast-one-combat-private21",
+            "conclusion": "success"
+          },
+          {
+            "id": 137382157190,
+            "name": "beast-current69-target-selection",
+            "conclusion": "success"
+          }
+        ],
+        "artifact": {
+          "id": 14776228345,
+          "name": "GQ618-CURRENT69-SOURCE-CANDIDATE-NOT-OFFICIAL",
+          "bytes": 1874632,
+          "sha256": "65e80766f004affb66dcdcc5e394773dac5148c85e874e786f4e944d202a1873",
+          "receipt": {
+            "bytes": 80433,
+            "sha256": "ab859f48b9f65dcc64839374de9fc5d5a174cad616f51055a0b6db3b6aa4d650"
+          }
+        }
+      },
+      "verified_source_results": {
+        "normal_admission_tests": 27,
+        "optimized_admission_tests": 27,
+        "historical_tests": 21,
+        "native_full_bodies_per_suite": 28,
+        "native_case_events": 53,
+        "on_pass_cases": 29,
+        "baseline_expected_failed_cases": 3,
+        "off_expected_failed_cases": 3,
+        "on_off_compile_count": 138,
+        "rojo_build_count": 2,
+        "source_routes": 69,
+        "unchanged_sources": 68,
+        "original_case_and_fixture_bytes_preserved": true,
+        "actual_off_inverse_sources_and_place_exact": true,
+        "on_place": {
+          "bytes": 828229,
+          "sha256": "f75d735b571fedab3b009d86eee0d4b51c5acb227e18abc07e812efd269143ed"
+        },
+        "off_place": {
+          "bytes": 828114,
+          "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+        }
+      },
+      "canonical_intake_status": "NOT_GRANTED_WAIT_FOR_ACTUAL_RETENTION_HUD_BOT_PARENT_AND_SCOPED_HANDOFF",
+      "formal_rc_adopted": false,
+      "prep_ready_registration": {
+        "issuer": "kk051780",
+        "issuer_user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "operation_id": "9d0a73af-ba60-463b-addb-4ad249e991d7",
+        "actual_lease_epoch": 620,
+        "actual_lease_commit": "e90011a71b3906d41544144c8e9fd231d968b41e",
+        "at": "2026-11-22T22:46:53Z"
       }
     },
     {
