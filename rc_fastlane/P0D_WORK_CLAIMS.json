@@ -8969,7 +8969,7 @@
         }
       ],
       "grant_scope_version": 3,
-      "independent_review_status": "V2_ACTUAL_HEAD_AND_HOSTED_ARTIFACT_REVIEW_PASS;V3_LOCAL_SOURCE_AND_FUTURE_HEAD_CI_REVIEW_REQUIRED",
+      "independent_review_status": "V3_ACTUAL_SOURCE_HEAD_COMBINED_COMPONENT_CI_AND_ARTIFACT_PASS_CANONICAL_INTEGRATION_PENDING",
       "independent_reviewer_context": "/root/candidate_audit",
       "integration_issue": 220,
       "issued_at": "2026-11-22T22:17:24Z",
@@ -8978,41 +8978,94 @@
       "issuer_role": "OWNER_DELEGATED_COORDINATOR",
       "issuer_user_id": 233213370,
       "last_source_submission": {
-        "baseline_inverse_known_failure_reproduced": true,
-        "bootstrap_run": 45078474326,
-        "bootstrap_status": "SUCCESS",
-        "candidate_case_count": 76,
-        "guardian_legacy_run": 45078474355,
-        "guardian_legacy_status": "FAIL_RED_FORMAL_HEAD_CHANGED_REBASE",
-        "head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
-        "intake_run": 45078474295,
-        "intake_status": "SUCCESS_NOT_NATIVE_EXECUTION",
-        "local_native_result_sha256": "526ea01247514e492fb3789f5abb108630b9578fad7b2e4ef869e02ca3c17cfa",
-        "official_other68_unchanged": true,
-        "real41_legacy_run": 45078474317,
-        "real41_legacy_status": "FAIL_ORIGINAL31_ARTIFACT_UNAVAILABLE",
-        "source_lease_epoch": 612,
-        "source_release_commit": "8a6513f222f55cfa3eaa28607c0a9b41ca998076"
+        "head": "233684a21411afe12289b18a61d78619061ec322",
+        "parent": "14b954707a2042ecf50eac22ffd2bd03afc42924",
+        "tree": "52ee54c22d03f7cc5618ee6ce2ac00556798090d",
+        "source_lease_epoch": 630,
+        "source_release_commit": "de53ab202710efdb901a7a3fe90131755f84c8db",
+        "source_release_readback_verified": true,
+        "pr_run": 45082594910,
+        "component_job": 137393881444,
+        "component_conclusion": "success",
+        "push_run": 45082588874,
+        "push_component_job": 137393862546,
+        "push_component_conclusion": "success",
+        "whole_workflow_conclusion": "failure",
+        "legacy_old_RC_fence_preserved": true,
+        "artifact": 14778121224,
+        "artifact_zip": {
+          "bytes": 4998598,
+          "sha256": "771ed2e0ad50981333fb91aa9c9dd44861065731fb88c126cbe20368ee053800"
+        },
+        "independent_hosted_review": {
+          "context": "/root/candidate_audit",
+          "bytes": 29906,
+          "sha256": "55b6e3e8d3dc334384beaf65abdbdf3eeff1421dcc36bdd7959480ea43faa54a"
+        },
+        "source_variants": 4,
+        "suites_per_variant": 6,
+        "generated_programs": 24,
+        "combined_case_rows": 86,
+        "embedded_whole_source_ranges": 704,
+        "compile_invocations": 138,
+        "exact_source_transitions": 12,
+        "other68_unchanged": true,
+        "guardian": {
+          "bytes": 13907,
+          "sha256": "1afd38a70a27ada58ad7418768ce5c6f3b6576635aa467e14a45056af0505825"
+        },
+        "candidate_place": {
+          "bytes": 828314,
+          "sha256": "ac865512b4d0f8bd1375e3972ad46e3b284a36ebb4c2032f3cd6a222c7fa06d8"
+        },
+        "official_input_at_execution": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "official_rc_adopted": false,
+        "PREP_READY": false
       },
       "last_verified_source_submission": {
-        "artifact": 14776047937,
-        "artifact_zip": {
-          "bytes": 3408817,
-          "sha256": "47da8541cc54a3cc92b75091b148135115568a8366b2aeb9d7b9f42207d8aaad"
-        },
-        "candidate_case_count": 76,
+        "head": "233684a21411afe12289b18a61d78619061ec322",
+        "parent": "14b954707a2042ecf50eac22ffd2bd03afc42924",
+        "tree": "52ee54c22d03f7cc5618ee6ce2ac00556798090d",
+        "source_lease_epoch": 630,
+        "source_release_commit": "de53ab202710efdb901a7a3fe90131755f84c8db",
+        "source_release_readback_verified": true,
+        "pr_run": 45082594910,
+        "component_job": 137393881444,
         "component_conclusion": "success",
-        "component_job": 137383022417,
-        "head": "14b954707a2042ecf50eac22ffd2bd03afc42924",
-        "independent_hosted_review_sha256": "39586af2a5113962686fd7634fce7e200b97c1edb81fdcb59b42e1460f82f5d6",
-        "new_v3_not_published_yet": true,
-        "pr_run": 45079121418,
-        "push_component_job": 137383002531,
-        "push_run": 45079115250,
-        "source_lease_epoch": 616,
-        "source_package_head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
-        "source_release_commit": "32edc7ee4280721f9c8d84f6bbc59a9ba46748e0",
-        "whole_workflow_conclusion": "failure"
+        "push_run": 45082588874,
+        "push_component_job": 137393862546,
+        "push_component_conclusion": "success",
+        "whole_workflow_conclusion": "failure",
+        "legacy_old_RC_fence_preserved": true,
+        "artifact": 14778121224,
+        "artifact_zip": {
+          "bytes": 4998598,
+          "sha256": "771ed2e0ad50981333fb91aa9c9dd44861065731fb88c126cbe20368ee053800"
+        },
+        "independent_hosted_review": {
+          "context": "/root/candidate_audit",
+          "bytes": 29906,
+          "sha256": "55b6e3e8d3dc334384beaf65abdbdf3eeff1421dcc36bdd7959480ea43faa54a"
+        },
+        "source_variants": 4,
+        "suites_per_variant": 6,
+        "generated_programs": 24,
+        "combined_case_rows": 86,
+        "embedded_whole_source_ranges": 704,
+        "compile_invocations": 138,
+        "exact_source_transitions": 12,
+        "other68_unchanged": true,
+        "guardian": {
+          "bytes": 13907,
+          "sha256": "1afd38a70a27ada58ad7418768ce5c6f3b6576635aa467e14a45056af0505825"
+        },
+        "candidate_place": {
+          "bytes": 828314,
+          "sha256": "ac865512b4d0f8bd1375e3972ad46e3b284a36ebb4c2032f3cd6a222c7fa06d8"
+        },
+        "official_input_at_execution": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "official_rc_adopted": false,
+        "PREP_READY": false
       },
       "mutable_paths_this_amendment": [
         "quality_gameplay/gq8_guardian_runtime_20261118/role_los/apply_existing_repairs.py",
@@ -9070,18 +9123,17 @@
         "registry_commit": "109842c88ce8d85f42e17a6991814de1b0d203ac",
         "workflow_draft_sha256": "7229e7b50cbdd7b0d6956a0e4326b095a982d81035768da076d1b317ca20b44f"
       },
-      "source_head": "14b954707a2042ecf50eac22ffd2bd03afc42924",
+      "source_head": "233684a21411afe12289b18a61d78619061ec322",
       "source_head_before": "34cafed1cb9e92e08bbc8f2afa67d50ae52a083a",
       "source_head_review": {
         "context": "/root/candidate_audit",
-        "decision": "PASS_EXACT_SIX_FILE_COMMIT_BINDING_ONLY",
-        "future_workflow_head_review_completed": false,
-        "head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
-        "package_review_sha256": "befe9b9ba8a599c7299b2a8e712510cf91254dee51aa91ed82bb9867ce695ac2",
-        "receipt_sha256": "5aa3d563a56c5df6ff325c39f3e13332496f1593a908a90f0285051ba0e49e57"
+        "decision": "PASS_EXACT_IMMUTABLE_SEVEN_FILE_SOURCE_HEAD_BINDING",
+        "head": "233684a21411afe12289b18a61d78619061ec322",
+        "receipt_bytes": 9886,
+        "receipt_sha256": "a8041157e16d8100cc0b2e03b84e451971df2b630fa106be9ffbe60940a81b43"
       },
       "source_producer_parent_pr": 796,
-      "source_tree": "48333f94be0ed2337b41ad032b866102cf1337ad",
+      "source_tree": "52ee54c22d03f7cc5618ee6ce2ac00556798090d",
       "state": "SOURCE_WIP",
       "studio": "NOT_TESTED",
       "sub_scope": "SESSION_ROLE_AND_ORIGINAL_OUTGOING_LOS_COMPOSITION",
@@ -9167,9 +9219,107 @@
       },
       "workflow_engineering_review": {
         "context": "/root/candidate_audit",
-        "decision": "PASS_EXACT_APPEND_ONLY_JOB_CONTENT_ONLY",
-        "draft_sha256": "df6f777553ec6a5215ada9ecb42e207e83f3cd9db6db2bdec647c3d9e7b6f1d8",
-        "hosted_execution_verified": false
+        "decision": "PASS_FROZEN_BUILD_PLACE_AND_APPENDED_WORKFLOW_DRAFT",
+        "sha256": "7229e7b50cbdd7b0d6956a0e4326b095a982d81035768da076d1b317ca20b44f",
+        "bytes": 27807,
+        "preserved_prefix_bytes": 17951,
+        "hosted_execution_verified": true,
+        "whole_workflow_conclusion": "failure",
+        "original_receipt_result_key": "status",
+        "receipt_sha256": "b537aec5934b4d8112624b20920891d7c121061ae77515da35400179c204511a",
+        "hosted_review_decision": "PASS_ACTUAL_PR_COMBINED_JOB_AND_DOWNLOADED_ARTIFACT_ONLY",
+        "hosted_review_sha256": "55b6e3e8d3dc334384beaf65abdbdf3eeff1421dcc36bdd7959480ea43faa54a"
+      },
+      "progress_history": [
+        {
+          "observed_before_update": "2026-11-22T23:47:00Z",
+          "source_head": "14b954707a2042ecf50eac22ffd2bd03afc42924",
+          "source_tree": "48333f94be0ed2337b41ad032b866102cf1337ad",
+          "source_head_review": {
+            "context": "/root/candidate_audit",
+            "decision": "PASS_EXACT_SIX_FILE_COMMIT_BINDING_ONLY",
+            "future_workflow_head_review_completed": false,
+            "head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
+            "package_review_sha256": "befe9b9ba8a599c7299b2a8e712510cf91254dee51aa91ed82bb9867ce695ac2",
+            "receipt_sha256": "5aa3d563a56c5df6ff325c39f3e13332496f1593a908a90f0285051ba0e49e57"
+          },
+          "workflow_engineering_review": {
+            "context": "/root/candidate_audit",
+            "decision": "PASS_EXACT_APPEND_ONLY_JOB_CONTENT_ONLY",
+            "draft_sha256": "df6f777553ec6a5215ada9ecb42e207e83f3cd9db6db2bdec647c3d9e7b6f1d8",
+            "hosted_execution_verified": false
+          },
+          "independent_review_status": "V2_ACTUAL_HEAD_AND_HOSTED_ARTIFACT_REVIEW_PASS;V3_LOCAL_SOURCE_AND_FUTURE_HEAD_CI_REVIEW_REQUIRED",
+          "last_source_submission": {
+            "baseline_inverse_known_failure_reproduced": true,
+            "bootstrap_run": 45078474326,
+            "bootstrap_status": "SUCCESS",
+            "candidate_case_count": 76,
+            "guardian_legacy_run": 45078474355,
+            "guardian_legacy_status": "FAIL_RED_FORMAL_HEAD_CHANGED_REBASE",
+            "head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
+            "intake_run": 45078474295,
+            "intake_status": "SUCCESS_NOT_NATIVE_EXECUTION",
+            "local_native_result_sha256": "526ea01247514e492fb3789f5abb108630b9578fad7b2e4ef869e02ca3c17cfa",
+            "official_other68_unchanged": true,
+            "real41_legacy_run": 45078474317,
+            "real41_legacy_status": "FAIL_ORIGINAL31_ARTIFACT_UNAVAILABLE",
+            "source_lease_epoch": 612,
+            "source_release_commit": "8a6513f222f55cfa3eaa28607c0a9b41ca998076"
+          },
+          "last_verified_source_submission": {
+            "artifact": 14776047937,
+            "artifact_zip": {
+              "bytes": 3408817,
+              "sha256": "47da8541cc54a3cc92b75091b148135115568a8366b2aeb9d7b9f42207d8aaad"
+            },
+            "candidate_case_count": 76,
+            "component_conclusion": "success",
+            "component_job": 137383022417,
+            "head": "14b954707a2042ecf50eac22ffd2bd03afc42924",
+            "independent_hosted_review_sha256": "39586af2a5113962686fd7634fce7e200b97c1edb81fdcb59b42e1460f82f5d6",
+            "new_v3_not_published_yet": true,
+            "pr_run": 45079121418,
+            "push_component_job": 137383002531,
+            "push_run": 45079115250,
+            "source_lease_epoch": 616,
+            "source_package_head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
+            "source_release_commit": "32edc7ee4280721f9c8d84f6bbc59a9ba46748e0",
+            "whole_workflow_conclusion": "failure"
+          }
+        }
+      ],
+      "current_official_source_identity_observation": {
+        "head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "run": 45083333379,
+        "job": 137396216664,
+        "artifact": 14777998713,
+        "event": "push",
+        "all69_sources_class_route_project_profile_and_Place_byte_identical_to_granted_fb5_input": true,
+        "all75_nonSource_instance_projection_identical": true,
+        "zip": {
+          "bytes": 5319187,
+          "sha256": "58e53ab1bffe5de2fea9be6dc9dcff533da9d643c0569a5570c9227fa450d98d"
+        },
+        "independent_review_sha256": "2e14d5134a25e503b24f34990461daaeafe89003b1de670b122c06e68b6aec6e",
+        "guardian_remains_baseline": true,
+        "prior_component_CI_rerun_on_new_RC_claimed": false
+      },
+      "preserved_evidence_archive": {
+        "name": "eggrumble_guardian_role_quality_gate_20261123.zip",
+        "version": 3,
+        "files": 424,
+        "bytes": 27272065,
+        "sha256": "65faa5dafe57c556f46fbd45689db0d1da1b6405df57dfc8af695fc5ac6b3043",
+        "previous_archive_exactly_preserved": true
+      },
+      "progress_updated_at": "2026-11-22T23:47:00Z",
+      "progress_update_metadata_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 636,
+        "owner_id": "88881c35-a110-411f-9c42-6c8c1252c815",
+        "claim_commit": "081cca116e952e0d8b7e86629d85de0f0d880eef",
+        "expires_at": "2026-11-23T00:15:35.394Z"
       }
     },
     {
@@ -12128,6 +12278,135 @@
         "no_game_source_or_historical_receipt_rewrite": true,
         "router_peer_receipt_sha256": "49a4a71fc30be944eaa8efe2421094fd2b660adc3aa5e70bf5c4ba21b6413dc0"
       }
+    },
+    {
+      "claim_id": "P0D-GQ8-INPUT-ROLLBACK-20261123-3B3ACF42",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_3B3ACF42B01A",
+      "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
+      "canonical_parent": "EXISTING_PR1020_GQ8_IMMUTABLE_INPUT_RETENTION",
+      "parent_issue": 1020,
+      "source_producer_parent_pr": 1020,
+      "integration_issue": 220,
+      "request_comment": 7087670897,
+      "resources": [
+        "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+        "tests/test_gq8_original_inputs_20261123.py"
+      ],
+      "prep_branch": "fix/gq8-input-rollback-20261123-3b3acf42",
+      "source_branch_created": false,
+      "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "source_head_before": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "source_head": null,
+      "pr": null,
+      "allowed_new_prs": 1,
+      "followup_pr_reason": "Original PR1020 is merged. One minimal same-feature corrective follow-up is permitted; no competing retention implementation.",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_ONLY",
+      "grant_scope_version": 1,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_CODEX_CONTROLLER",
+      "issuer_operation_id": "88881c35-a110-411f-9c42-6c8c1252c815",
+      "author_contexts": [
+        "CODEX_ROOT_3A023EC81F96/root/candidate_triage (exact existing +871B helper and six cases)",
+        "/root (exact source reuse and integration; no new production hunk)",
+        "/root/source_gate_audit (independent extra I/O boundary cases)"
+      ],
+      "original_finding_context": "CODEX_ROOT_1E030E72B4F1",
+      "original_finding_comment": 7087041815,
+      "original_patch_comment": 7087695491,
+      "original_patch": {
+        "bytes": 7541,
+        "sha256": "85bb073f609978a1ad83f9ad023f9c2cf49ab4fe76d5c9701c042e46ac537b14",
+        "helper_after": {
+          "bytes": 10568,
+          "sha256": "6b35b7ff91b608d36517a533f9f9d965081f66933ab3bb9e7a367374a4a71715"
+        },
+        "tests_after": {
+          "bytes": 15265,
+          "sha256": "30b803249e1cc720c174aa449d83e47c3cae935a1a9a6f8420d3edcafec386c0"
+        }
+      },
+      "independent_reviewer_context": "/root/candidate_audit",
+      "independent_review_status": "SCOPE_ONLY_PASS_NEW_SOURCE_HEAD_CI_NOT_YET_CREATED_OR_APPROVED",
+      "scope": "Reuse the exact published two-path partial-write/close rollback proposal and its original helper10568B/SHA6b35b7ff91b608d36517a533f9f9d965081f66933ab3bb9e7a367374a4a71715, preserving attribution, original ten tests and six proposal cases. No additional production hunk. The existing fix records actual descriptor device/inode before write/close, observes only an intended prefix for an unfinished owned file and retains the original cleanup inode plus exact hash recheck. Completed-file full-hash protection remains. Add only independently justified full-write-then-close-error and descriptor/path-replacement regression cases in the same existing test file. No new loader, input repinning, workflow change, generated gameplay source, authority or canonical producer edit.",
+      "scope_review": {
+        "context": "/root/governance_access",
+        "decision": "PASS_PROSPECTIVE_TWO_PATH_RETENTION_ROLLBACK_SCOPE_ONLY",
+        "registry_commit": "ae979f2fecbce1a26c8b448fea1c15b17f17f616",
+        "registry_blob": "0248c9ad2e8831c53a330205940e209d4fc81bfa",
+        "busy_claims_checked": 7,
+        "conflicts": 0,
+        "receipt_bytes": 9978,
+        "receipt_sha256": "27764375a3255bbe4bd951cbbc7e85df23a3ee9aaf466d404bdda4c11bf86b54",
+        "actual_source_or_ci_approval": false
+      },
+      "prior_owner_return": {
+        "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
+        "registry_commit": "ae979f2fecbce1a26c8b448fea1c15b17f17f616",
+        "state": "RC_INTEGRATED",
+        "grant_scope_version": 4,
+        "current_source_authority": false,
+        "current_RC_authority": false,
+        "original_history_preserved": true
+      },
+      "acceptance": "Preserve the exact original proposal helper and all original seven ZIPs and literal LOCK, five original/two reconstructed provenance, workflows and canonical producer/profile. Verify all316 restored bytes and all original10 plus original proposal6 cases. Demonstrate original write/close failure negative controls without false PASS, then final independent full-write-close-error and xb-return-before-path-replacement behavior. Preserve foreign same-inode non-prefix bytes, foreign replacement inode even with identical prefix bytes, symlink targets, foreign nonempty directories and completed-file full-hash protection. Same output can be retried only when all remaining owned output was safely removed. Raw logs, input invariance, exact two-file and partial/full inverse, actual source HEAD and fresh required bootstrap/GQ8 CI plus independent code/head/artifact review are required. Standard BufferedIOBase.write guarantees full return or OSError; an injected short-return contract violation is not counted as an actual production defect and does not justify an added production guard. No blanket atomic filesystem or Studio/gameplay success claim.",
+      "rollback": "Invert only the reviewed two-file increment on its actual current parent while preserving unrelated accepted changes; preserve the original +871B proposal as a separately pinned intermediate and the dcb helper/test as the exact baseline.",
+      "immutable_reference": {
+        "head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "manifest_bytes": 9376,
+        "manifest_sha256": "e11a2943e5a179afa2cf1c14aa9353063edd9be0bd0caebb6c41edff0ba9e8bd",
+        "helper_before_sha256": "f3b027bf33b966d5cf0f3edfbd0e04f92ef0a1e0ae590492022812f05b8d5381",
+        "test_before_sha256": "33069cd82d66ca98f8415ef4c8f98207e8189a5ed20c52fda323c0b50f1aa1b8",
+        "lock_sha256": "abc088ed1a9addf17e98c0b874f5f9d4badf8b11287769ad07b868f15b43dc18"
+      },
+      "authority_evidence": [
+        "Actual connected user kk051780/233213370 and admin collaborator permission reverified for metadata epoch636.",
+        "Official dcb AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary scoped development, retaining independent review and all objective gates.",
+        "Prior retention V4 is non-BUSY RC_INTEGRATED with no future source/RC authority. Existing Guardian v3 scope and all other claims remain unchanged except published evidence progress.",
+        "An actually acquired metadata controller lease and nonforce expected-SHA update are required; this scope does not confer a source writer lease."
+      ],
+      "excluded": [
+        "immutable_inputs/** and LOCK.json",
+        "all workflows and shared UNION22 producer/profile/native gates",
+        "all69 gameplay sources and ACTIVE_RUNTIME",
+        "main/Roblox Publish/spending",
+        "foreign claim, source or controller takeover"
+      ],
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "issued_at": "2026-11-22T23:47:00Z",
+      "expires_at": "2026-11-23T05:47:00.000Z",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 636,
+        "claim_commit": "081cca116e952e0d8b7e86629d85de0f0d880eef",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "88881c35-a110-411f-9c42-6c8c1252c815",
+        "expires_at": "2026-11-23T00:15:35.394Z"
+      },
+      "production_source_exact": {
+        "bytes": 10568,
+        "sha256": "6b35b7ff91b608d36517a533f9f9d965081f66933ab3bb9e7a367374a4a71715",
+        "additional_production_hunks_allowed": 0
+      },
+      "api_contract_clarification": {
+        "source": "https://docs.python.org/3/library/io.html#io.BufferedIOBase.write",
+        "actual_open": "Path.open('xb') uses standard buffered binary writing; no buffering=0.",
+        "short_return": "Only a substituted writer violating the documented buffered-write contract; not a reproduced real production defect.",
+        "scope_change": "Withdraw the proposed short-return production guard before grant/source editing; reuse original helper exactly.",
+        "original_review_and_request_history_retained": true
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
@@ -12175,3 +12454,4 @@
   "role": "COORDINATOR_GRANTED_ONLY",
   "schema": "P0D_EXCLUSIVE_CLAIMS_V1"
 }
+
