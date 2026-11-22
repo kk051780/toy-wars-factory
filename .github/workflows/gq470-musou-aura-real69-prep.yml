@@ -1,0 +1,236 @@
+name: GQ470 REAL69 Musou Aura compact LOD A source QA
+on:
+  push:
+    branches:
+      - feature/gq470-musou-aura-compact-lod-real69-20261121
+  pull_request:
+    paths:
+      - "quality_gameplay/gq470_musou_aura_lod_real69_20261121/**"
+      - ".github/workflows/gq470-musou-aura-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-only-private-real69:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+      A_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      ORIG_HEAD: e80973c354f14a0d0088577f3cc1a875454f0f8f
+      ROUTE: StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin actual author HEAD, not the synthetic pull-request merge
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$A_HEAD"
+          python3 -m py_compile quality_gameplay/gq470_musou_aura_lod_real69_20261121/patch.py
+      - name: Download immutable official REAL69 private original
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$ORIG_HEAD success"
+          mkdir -p "$RUNNER_TEMP/on69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
+            --dir "$RUNNER_TEMP/on69"
+          cp -a "$RUNNER_TEMP/on69" "$RUNNER_TEMP/off69"
+      - name: Exact patch nine mutant negatives and 1 of 69 source proof
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/packet/selected_sources/StarterPlayer/StarterPlayerScripts"
+          python3 quality_gameplay/gq470_musou_aura_lod_real69_20261121/patch.py \
+            --source "$RUNNER_TEMP/off69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --output "$RUNNER_TEMP/packet/selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --report "$RUNNER_TEMP/packet/SOURCE_QA.json"
+          cp "$RUNNER_TEMP/packet/selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            "$RUNNER_TEMP/on69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          t=Path(os.environ["RUNNER_TEMP"])
+          old=project_scan(t/"off69","EGGRUMBLE_REAL69.project.json")
+          new=project_scan(t/"on69","EGGRUMBLE_REAL69.project.json")
+          route=os.environ["ROUTE"]
+          official=json.loads((t/"off69/REAL69_LEGACY_INTAKE_RECEIPT.json").read_text())
+          qa=json.loads((t/"packet/SOURCE_QA.json").read_text())
+          assert official["build_head"]==os.environ["ORIG_HEAD"]
+          assert official["selected_source_count"]==len(old)==len(new)==69
+          assert official["source_hashes"]=={k:v["sha256"] for k,v in old.items()}
+          assert official["source_classes"]=={k:v["class"] for k,v in old.items()}
+          assert route in old and old[route]["class"]=="ModuleScript"
+          assert {k for k in old if old[k]["sha256"]!=new[k]["sha256"]}=={route}
+          assert all(old[k]["path"]==new[k]["path"] and old[k]["class"]==new[k]["class"] for k in old)
+          assert qa["negative_mutations_rejected"]==9
+          assert qa["original_sha256"]==old[route]["sha256"]
+          assert qa["candidate_sha256"]==new[route]["sha256"]
+          assert (t/"off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx").stat().st_size==798390
+          # A candidate has a DIFFERENT selected source SHA than the official OFF receipt.
+          # Keep untouched OFF official receipt; update candidate receipt only for honest
+          # legacy48/17 family checks (otherwise fail closed on genuine A source drift).
+          candidate_receipt=dict(official)
+          candidate_receipt["source_hashes"]=dict(official["source_hashes"])
+          candidate_receipt["source_hashes"][route]=new[route]["sha256"]
+          (t/"on69/REAL69_LEGACY_INTAKE_RECEIPT.json").write_text(
+              json.dumps(candidate_receipt,indent=2,ensure_ascii=False)+"\n")
+          manifest=dict(feature_id=qa["feature_id"],a_head=os.environ["A_HEAD"],
+            base_rc=os.environ["ORIG_HEAD"],target_route=route,source_class="ModuleScript",
+            original_sha256=qa["original_sha256"],candidate_sha256=qa["candidate_sha256"],
+            changed_selected=1,unchanged_selected=68,script_count=69,
+            gameplay_authority_modified=False,source_gate="PASS_SOURCE_ONLY",
+            b_admission="ONLY_CERTIFIED_220_FRESH_NONFORCE_CAS",formal_rc_changed=False,
+            studio_solo="NOT_TESTED",studio_2client="NOT_TESTED",
+            human_art_png_count=0,required_png_count=32,
+            android15="NOT_TESTED",owner_accepted=False,art_gate="ART_NO_GO")
+          (t/"packet/B220_ONE_SOURCE_NOT_FORMAL.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
+          print("SOURCE_LOCK_EXACT_1_OF_69_AND_9_MUTANTS_PASS")
+          PY
+      - name: Independent seven-role visual budget and authority guard with 11 negatives
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_musou_aura_lod_real69_20261121/verify_budget_authority.py \
+            --original "$RUNNER_TEMP/off69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --candidate "$RUNNER_TEMP/on69/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau" \
+            --out "$RUNNER_TEMP/packet/VISUAL_BUDGET_AUTHORITY_QA.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"packet/VISUAL_BUDGET_AUTHORITY_QA.json"
+          r=json.loads(p.read_text())
+          assert r["negative_mutants_rejected"]==11
+          assert r["one_selected_existing_module"]
+          assert len(r["seven_roles"])==7
+          assert r["new_world_parts"]==r["new_event_or_render_loops"]==0
+          assert r["area_reduction_pct"]>50
+          assert r["studio_performance"]=="NOT_TESTED"
+          print("ART_SOURCE_BUDGET_SEVEN_ROLES_AND_11_NEGATIVES_PASS")
+          PY
+      - name: Audit all original 48 legacy flags and 17 source families (source != engine)
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base "$RUNNER_TEMP/on69" \
+            --report "$RUNNER_TEMP/packet/REAL69_48FLAG_TRUTH.json"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120")
+          from verify_real69 import marker_check
+          temp=Path(os.environ["RUNNER_TEMP"])
+          on=project_scan(temp/"on69","EGGRUMBLE_REAL69.project.json")
+          off=project_scan(temp/"off69","EGGRUMBLE_REAL69.project.json")
+          assert len(on)==len(off)==69
+          assert len(marker_check(on))==len(marker_check(off))==17
+          audit=json.loads((temp/"packet/REAL69_48FLAG_TRUTH.json").read_text())
+          assert audit["source_count"]==69
+          assert audit["original_legacy_flags"]==48
+          assert audit["flag_inventory_verified"] is True
+          assert sum(audit["summary"].values())==48
+          assert audit["all_48_semantic_parity"]=="NOT_PROVEN"
+          print("REAL69_17_FAMILIES_AND_48_SOURCE_FLAG_INVENTORY_PASS_ENGINE_NOT_TESTED")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_luau
+          persist-credentials: false
+      - name: Compile real ON69 and OFF69 Luau 138 sources
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_luau -B /tmp/gq470-aura-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-aura-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          for which in ("on69","off69"):
+              root=Path(os.environ["RUNNER_TEMP"])/which
+              sources=project_scan(root,"EGGRUMBLE_REAL69.project.json")
+              assert len(sources)==69
+              for info in sources.values():
+                  subprocess.run(["/tmp/gq470-aura-luau/luau-compile","--text",str(root/info["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("NATIVE_ON69_OFF69_138_PASS")
+          PY
+      - name: Pinned Rojo candidate Place and byte-exact OFF69 inverse
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-aura-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-aura-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("/tmp/gq470-aura-rojo.zip") as z:
+              paths=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(paths)==1
+              p=Path("/tmp/gq470-aura-rojo")
+              p.write_bytes(z.read(paths[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-aura-rojo build "$RUNNER_TEMP/on69/EGGRUMBLE_REAL69.project.json" -o "$RUNNER_TEMP/packet/GQ470_MUSOU_AURA_CANDIDATE_NOT_FORMAL.rbxlx"
+          /tmp/gq470-aura-rojo build "$RUNNER_TEMP/off69/EGGRUMBLE_REAL69.project.json" -o "$RUNNER_TEMP/packet/GQ470_MUSOU_AURA_OFF69.rbxlx"
+          cmp "$RUNNER_TEMP/packet/GQ470_MUSOU_AURA_OFF69.rbxlx" "$RUNNER_TEMP/off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          t=Path(os.environ["RUNNER_TEMP"])
+          p=t/"packet"
+          on=p/"GQ470_MUSOU_AURA_CANDIDATE_NOT_FORMAL.rbxlx"
+          off=p/"GQ470_MUSOU_AURA_OFF69.rbxlx"
+          report=dict(feature_id="GQ470_FB015_MUSOU_AURA_COMPACT_LOD_REAL69_20261121",
+              candidate_place_bytes=on.stat().st_size,candidate_place_sha256=hashlib.sha256(on.read_bytes()).hexdigest(),
+              original_off_place_bytes=off.stat().st_size,original_exact_inverse=True,
+              source_gate="NATIVE_ROJO_OFF69_PASS",art_gate="ART_NO_GO",
+              real_screenshots_collected=0,screenshots_required=32,
+              studio="NOT_TESTED",android15="NOT_TESTED",human_art="NOT_TESTED",owner_accepted=False)
+          (p/"ART_CHECK_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          assert off.stat().st_size==798390
+          # Validate the complete authentic Rojo XML hierarchy, not only source inventory.
+          # Patching the ONE selected ModuleScript's Source back to official original
+          # must reconstruct the entire original private Place XML (75 exact Items).
+          from xml.etree import ElementTree as ET
+          newxml=ET.parse(on).getroot()
+          oldxml=ET.parse(off).getroot()
+          assert len(list(newxml.iter("Item")))==len(list(oldxml.iter("Item")))==75
+          def selected_source(root):
+              matches=[]
+              for item in root.iter("Item"):
+                  name=item.find('./Properties/string[@name="Name"]')
+                  if name is not None and name.text=="EGGRUMBLE_MusouAuraClient":
+                      matches.append(item)
+              assert len(matches)==1
+              assert matches[0].get("class")=="ModuleScript"
+              source=matches[0].find('./Properties/string[@name="Source"]')
+              assert source is not None and source.text is not None
+              return source
+          candidate_source=selected_source(newxml)
+          original_source=selected_source(oldxml)
+          actual_selected=(p/"selected_sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau").read_text()
+          assert candidate_source.text==actual_selected
+          meta=json.loads((p/"B220_ONE_SOURCE_NOT_FORMAL.json").read_text())
+          assert hashlib.sha256(candidate_source.text.encode()).hexdigest()==meta["candidate_sha256"]
+          assert hashlib.sha256(original_source.text.encode()).hexdigest()==meta["original_sha256"]
+          candidate_source.text=original_source.text
+          assert ET.tostring(newxml)==ET.tostring(oldxml), "RED_PLACE_DIFF_BESIDES_ONE_SCRIPT_SOURCE"
+          report["real_place_xml_items"]=75
+          report["only_one_module_source_changed_in_real_place"]=True
+          (p/"ART_CHECK_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          print("ROJO_ON69_OFF69_ORIGINAL_BYTE_EXACT_AND_75_ITEM_XML_SINGLE_SOURCE_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-MUSOU-AURA-REAL69-A-SOURCE-ONLY-NOT-FORMAL
+          path: ${{ runner.temp }}/packet/
+          retention-days: 7
+          if-no-files-found: error
