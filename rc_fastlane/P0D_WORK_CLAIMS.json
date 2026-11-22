@@ -3736,6 +3736,108 @@
         "owner_id": "29280363-a5d7-4ce5-92f8-aba7a2b74ae5",
         "expires_at": "2026-11-22T22:47:24.000Z"
       }
+    },
+    {
+      "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_0A2BA23F0733",
+      "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
+      "resources": [
+        "REAL69_ORIGINAL_ARTIFACT_SNAPSHOTS",
+        "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip",
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip",
+        "tests/test_gq8_original_inputs_20261123.py"
+      ],
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "prep_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "related_pr": 1019,
+      "request_comment": 7086679192,
+      "role": "A_PREP",
+      "pr": null,
+      "allowed_new_prs": 1,
+      "scope": "Only ten new passive archive/lock/restore-adapter/test paths. Preserve five original artifact ZIP bytes; reconstruct two missing packets with unmodified immutable recipes and historical successful-job Place proof. No game source, existing producer, shared workflow or mounted-HUD test edits. The adapter is offline transport only and must never admit a stale/head-mismatched build or substitute a latest arbitrary artifact.",
+      "author_contexts": [
+        "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
+        "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
+      ],
+      "independent_reviewer_context": "/root/admission_review",
+      "acceptance": [
+        "Exact seven immutable packet identities and complete member/path/byte/hash inventories",
+        "Five downloaded-original ZIP digests remain byte-exact, two recovered packets explicitly RECONSTRUCTED_FROM_ORIGINAL_RECIPE",
+        "No claim that unknown historical receipt raw bytes were observed; historic pass is separate from current run",
+        "Fail closed on payload/lock/member drift, missing/extra/duplicate paths, links/traversal and preexisting output",
+        "Independent actual candidate HEAD review; helper-unit success alone never canonical CI/adoption",
+        "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained"
+      ],
+      "rollback": "Remove only these ten added paths using recorded null preimages; preserve all preexisting files and intervening commits.",
+      "forbidden_changes": [
+        ".github/workflows/gq8-real63-source-composite.yml",
+        "tests/test_gq470_union22_real69_20261122.py",
+        "quality_gameplay/gq470_union22_real69_20261122/**",
+        "Any generated gameplay source or original source producer",
+        "Any other claim row or schedule/incident-hold/security setting"
+      ],
+      "before_blobs": {
+        "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip": null,
+        "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip": null,
+        "tests/test_gq8_original_inputs_20261123.py": null
+      },
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "issued_at": "2026-11-22T22:20:42.721Z",
+      "expires_at": "2026-11-23T04:20:42.721Z",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 609,
+        "claim_commit": "554e31f970f7a965f3fe5b8af66f4588ba203874",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+        "expires_at": "2026-11-22T22:49:27.845525+00:00"
+      },
+      "scope_review": {
+        "context": "/root/admission_review",
+        "decision": "PASS_EXACT_TEN_NEW_PATH_PREP_SCOPE_ONLY_PENDING_REAL_GRANT_AND_SOURCE_LEASE",
+        "review_sha256": "04dd01cea11255f0db80e1de0d916dcfe467c5917c1f55b744532319bd0f3260",
+        "draft_sha256": "1dd9b8f3f9df29a7b7f3aaadeeb32e34c0241b8df2a85c7090c5bb23daa5ab5e",
+        "actual_candidate_head_review_completed": false
+      },
+      "authority_evidence": [
+        "Actual connected GitHub kk051780/user233213370 with repository admin permission observed by parent and independent reviewer.",
+        "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
+        "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
+      ],
+      "grant_scope_version": 1,
+      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
     }
   ],
   "legacy_overlap_triage": [
