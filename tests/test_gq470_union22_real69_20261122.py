@@ -34,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 42, "final": 9}
+INTEGRATION_COUNTS = {"core": 47, "final": 9}
 
 
 def artifact_environment(expected_stage=None):
@@ -108,6 +108,42 @@ class UnionBoundary(unittest.TestCase):
         result = verify.verify_core(self.current, self.prior, self.reports, self.context)
         self.assertEqual(len(result["current"]["sources"]), 69)
         self.assertEqual(len(result["archive_members"]), 75)
+
+    def test_hud_only_inverse_restores_current_rc_and_other68(self):
+        before = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        restored = compose.hud_current_sources(before, self.lock)
+        self.assertEqual([p for p in before if before[p] != restored[p]], [compose.HUD_SOURCE])
+        self.assertEqual(compose.identity(restored[compose.HUD_SOURCE]), self.lock["followup_repair"]["current_hud"])
+        self.assertNotEqual(self.lock["followup_repair"]["current_place"], self.lock["prior_place"])
+        verified = verify.independent_scan(self.current, self.lock, "after")
+        self.assertEqual(len(verify.verify_hud_current_rollback(self.current, self.lock, verified)), 71)
+
+    def test_hud_only_inverse_payload_mutation_rejected(self):
+        changed = copy.deepcopy(self.lock)
+        changed["followup_repair"]["inverse"][0]["new"] += "-- wrong rollback\n"
+        sources = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        with self.assertRaisesRegex(ValueError, "HUNK_PAYLOAD_IDENTITY"):
+            compose.hud_current_sources(sources, changed)
+
+    def test_hud_only_rollback_other_source_mutation_rejected(self):
+        root = self.current_copy()
+        path = root / compose.HUD_OFF / "sources" / self.first
+        path.write_bytes(path.read_bytes() + b"\n-- wrong current RC rollback\n")
+        self.reject_core(root)
+
+    def test_hud_only_rollback_archive_mutation_rejected(self):
+        root = self.current_copy()
+        # The full old BR archive is valid by itself, but is not a HUD-only inverse.
+        shutil.copyfile(root / compose.OFF_ARCHIVE, root / compose.HUD_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_followup_provenance_mutation_rejected(self):
+        root = self.current_copy()
+        receipt = verify.data(root / compose.RECEIPT)
+        receipt["followup_repair"]["claim_id"] = self.lock["claim_id"]
+        compose.write_json(root / compose.RECEIPT, receipt)
+        with self.assertRaisesRegex(ValueError, "FINAL_RECEIPT_FIELD_SET_OR_FACTS"):
+            verify.verify_core(root, self.prior, self.reports, self.context)
 
     def test_original_39_workflow_step_payloads_byte_exact(self):
         workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_text()
@@ -219,7 +255,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 140:
+            if calls == 142:
                 stage = Path(command[-1]).parent.parent
                 path = (prior if target == "input" else stage) / "sources" / self.first
                 path.write_bytes(path.read_bytes() + b"\n-- reviewer late mutation control\n")
@@ -227,7 +263,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 140)
+        self.assertEqual(calls, 142)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
@@ -601,6 +637,24 @@ class UnionOfflineContract(unittest.TestCase):
                          {name: row["after"] for name, row in self.lock["sources"].items()})
         self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full_clear_los"})
 
+    def test_followup_preserves_original_source_rows_phase_and_claim(self):
+        repair = self.lock["followup_repair"]
+        self.assertEqual(self.lock["claim_id"], "P0D-GQ470-UNION22-20261122-4B669")
+        self.assertFalse(self.lock["author_origins"]["new_lua_authored"])
+        self.assertTrue(repair["new_lua_authored"])
+        self.assertEqual(repair["claim_id"], "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F")
+        self.assertEqual(repair["grant_commit"], "b85eca5ce272daf3a63a7dba029a977a0effec79")
+        self.assertEqual(repair["prior_profile"]["sha256"], "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60")
+        self.assertEqual(sum(len(row["forward"]) for row in self.lock["sources"].values()), 171)
+        remaining = {p: r for p, r in self.lock["sources"].items() if p != compose.HUD_SOURCE}
+        encode = lambda value: (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
+        self.assertEqual(compose.identity(encode(remaining)), {'bytes': 272752, 'sha256': 'e2a6bcfd7d060f0da78b4a5971a2e887f26681b0477b1e5f70d99abbf80b6066'})
+        phase = self.lock["sources"][compose.HUD_SOURCE]["forward"][0]
+        self.assertEqual(compose.identity(encode(phase)), {'bytes': 997, 'sha256': '2ab2ddfd837f0ba1c78ebef579b54149c72c2c964730c3e1fcc36e4cc2cb17ec'})
+        self.assertEqual(repair["current_hud"], {"bytes": 24779, "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"})
+        self.assertEqual(repair["repaired_hud"], {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
+        self.assertFalse(repair["hud_behavior_evidence"]["canonical_server28_suites_execute_hud"])
+
     def test_original_fixture_and_case_bytes_remain_pinned(self):
         self.assertEqual(native.fixture_snapshot(self.native_lock), self.native_lock["fixtures"])
 
@@ -711,7 +765,7 @@ def load_tests(loader, standard_tests, pattern):
     # A module/script entry or even a partial context must request real artifacts.
     has_context = any(key.startswith("UNION22_TEST_") for key in os.environ)
     if pattern is not None and not has_context:
-        return checked_suite(loader, UnionOfflineContract, 12)
+        return checked_suite(loader, UnionOfflineContract, 13)
     return integration_suite(loader)
 
 

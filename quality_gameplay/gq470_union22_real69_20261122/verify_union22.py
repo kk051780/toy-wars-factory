@@ -151,7 +151,7 @@ def independent_inverse(raw, hunks):
     return "".join(rebuilt).encode("utf-8")
 
 
-def verify_archive(path, expected):
+def verify_archive(path, expected, prefix=compose.OFF):
     # Manual regular-file extraction: no tar extraction APIs, links or traversal.
     observed = {}
     with tempfile.TemporaryDirectory(prefix="union22-inverse-verify-") as tmp:
@@ -161,7 +161,7 @@ def verify_archive(path, expected):
             for member in members:
                 pure = PurePosixPath(member.name)
                 require(member.isfile() and not pure.is_absolute() and ".." not in pure.parts
-                        and "\\" not in member.name and pure.parts[0] == compose.OFF,
+                        and "\\" not in member.name and pure.parts[0] == prefix,
                         "UNSAFE_ARCHIVE_MEMBER")
                 require(not member.mode & 0o7000, "ARCHIVE_SPECIAL_MODE")
                 relative = PurePosixPath(*pure.parts[1:]).as_posix()
@@ -177,6 +177,36 @@ def verify_archive(path, expected):
                 observed[relative] = digest(read(destination))
         require(observed == expected and files(Path(tmp)) == expected, "ARCHIVE_EXTRACTED_IDENTITY")
     return observed
+
+
+def verify_hud_current_rollback(root, lock, current):
+    """Independently verify the one-source inverse against the frozen current RC."""
+    repair = lock["followup_repair"]
+    require(repair["source_path"] == compose.HUD_SOURCE
+            and repair["changed_sources_from_current_rc"] == 1
+            and repair["unchanged_sources_from_current_rc"] == 68,
+            "HUD_ROLLBACK_SCOPE")
+    rollback_lock = dict(lock)
+    rollback_lock["sources"] = {p: dict(row) for p, row in lock["sources"].items()}
+    rollback_lock["sources"][compose.HUD_SOURCE]["after"] = repair["current_hud"]
+    rollback_lock["final_place"] = repair["current_place"]
+    restored = independent_scan(root / compose.HUD_OFF, rollback_lock, "after")
+    require(restored["non_source"] == current["non_source"]
+            and restored["instances"] == current["instances"], "HUD_ROLLBACK_NON_SOURCE_DRIFT")
+    changes = []
+    for name, row in lock["sources"].items():
+        repaired = read(root / "sources" / name)
+        off = read(root / compose.HUD_OFF / "sources" / name)
+        expected = independent_inverse(repaired, repair["inverse"]) if name == compose.HUD_SOURCE else repaired
+        require(off == expected, "HUD_ROLLBACK_INVERSE_NOT_CURRENT")
+        if repaired != off:
+            changes.append(name)
+    require(changes == [compose.HUD_SOURCE], "HUD_ROLLBACK_CHANGE_SET")
+    expected = {"sources/" + p: row["after"] for p, row in rollback_lock["sources"].items()}
+    expected.update({compose.PROJECT: lock["project"], compose.PLACE: repair["current_place"]})
+    require(len(expected) == 71 and files(root / compose.HUD_OFF) == expected, "HUD_ROLLBACK_MEMBER_SET")
+    verify_archive(root / compose.HUD_OFF_ARCHIVE, expected, compose.HUD_OFF)
+    return expected
 
 
 def verify_core(root, base, reports, context):
@@ -201,6 +231,7 @@ def verify_core(root, base, reports, context):
     expected_off.update({p: digest(inputs["evidence"][p]) for p in lock["prior_report_names"]})
     require(len(expected_off) == 75 and files(root / compose.OFF) == expected_off, "OFF_RUNTIME_MEMBER_SET")
     archive = verify_archive(root / compose.OFF_ARCHIVE, expected_off)
+    expected_hud_off = verify_hud_current_rollback(root, lock, current)
     expected_prior = {p: digest(raw) for p, raw in inputs["evidence"].items()}
     require(files(root / "prior_boundary") == expected_prior, "PRIOR_EVIDENCE_NOT_BYTE_EXACT")
     require(len([p for p in expected_prior if p.startswith("legacy_rollbacks/")]) == 8, "OPAQUE_ROLLBACK_COUNT")
@@ -220,6 +251,8 @@ def verify_core(root, base, reports, context):
         "prior_place": lock["prior_place"], "prior_receipt": digest(inputs["receipt_raw"]),
         "profile_lock": digest(read(HERE / "profile_lock.json")), "prior_evidence": expected_prior,
         "runtime_rollback_archive": digest(read(root / compose.OFF_ARCHIVE)),
+        "followup_repair": lock["followup_repair"],
+        "hud_only_current_rc_rollback_archive": digest(read(root / compose.HUD_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -230,7 +263,11 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 22 and core.get("unchanged_sources") == 47
-            and core.get("compile_count") == 138 and core.get("rojo_build_count") == 2
+            and core.get("compile_count") == 139 and core.get("rojo_build_count") == 3
+            and core.get("historical_on_br_compile_count") == 138 and core.get("historical_on_br_rojo_build_count") == 2
+            and core.get("hud_only_compile_count") == 1 and core.get("hud_only_rojo_build_count") == 1
+            and core.get("hud_only_off_place") == lock["followup_repair"]["current_place"]
+            and core.get("changed_sources_from_current_rc") == 1 and core.get("unchanged_sources_from_current_rc") == 68
             and core.get("instances") == 75 and core.get("prior_snapshot") == inputs["snapshot"]
             and core.get("final_place") == lock["final_place"] and core.get("off_place") == lock["prior_place"]
             and core.get("non_source_property_identity") == digest(current["non_source"])
@@ -239,6 +276,8 @@ def verify_core(root, base, reports, context):
     expected_stage = {"sources/" + name: row["after"] for name, row in lock["sources"].items()}
     expected_stage.update({compose.OFF + "/" + name: pin for name, pin in expected_off.items()})
     expected_stage.update({"prior_boundary/" + name: pin for name, pin in expected_prior.items()})
+    expected_stage.update({compose.HUD_OFF + "/" + name: pin for name, pin in expected_hud_off.items()})
+    expected_stage[compose.HUD_OFF_ARCHIVE] = digest(read(root / compose.HUD_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -247,11 +286,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 140 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 142 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 138 and len(rojo_commands) == 2, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 139 and len(rojo_commands) == 3, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -259,10 +298,11 @@ def verify_core(root, base, reports, context):
             "CORE_COMMAND_NAMESPACE")
     expected_compile = {str(Path(stage) / prefix / "sources" / p)
                         for prefix in ("", compose.OFF) for p in lock["sources"]}
+    expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
-                for prefix in ("", compose.OFF)}, "CORE_ROJO_PROJECT_SET")
+                for prefix in ("", compose.OFF, compose.HUD_OFF)}, "CORE_ROJO_PROJECT_SET")
     require(core["rojo"] == {k: lock["rojo"][k] for k in ("bytes", "sha256")}, "CORE_ROJO_IDENTITY")
     return {"lock": lock, "inputs": inputs, "current": current, "receipt": receipt, "core": core,
             "archive_members": archive, "prior_evidence": expected_prior}
@@ -610,14 +650,14 @@ def admit_delivery(root, base, reports, native, context):
     require(runtime["payload"] == native_before, "NATIVE_VALIDATION_SNAPSHOT_CHANGED")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
-                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
+                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
     expected_stage.update({"native_evidence/" + name: pin for name, pin in native_before.items()})
     expected_stage["UNION22_PROFILE_LOCK.json"] = digest(profile_before)
     stage = Path(tempfile.mkdtemp(prefix=".union22-delivery-", dir=root.parent))
     try:
         for relative in ("sources", "prior_boundary"):
             shutil.copytree(root / relative, stage / relative)
-        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
+        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
             (stage / name).write_bytes(read(root / name))
         shutil.copytree(native, stage / "native_evidence")
         (stage / "UNION22_PROFILE_LOCK.json").write_bytes(read(HERE / "profile_lock.json"))
@@ -632,6 +672,12 @@ def admit_delivery(root, base, reports, native, context):
             "source_count": 69, "changed_sources": 22, "unchanged_sources": 47, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
+            "followup_repair": verified["lock"]["followup_repair"],
+            "hud_only_current_rc_inverse_place": verified["lock"]["followup_repair"]["current_place"],
+            "hud_only_current_rc_inverse_archive": digest(read(root / compose.HUD_OFF_ARCHIVE)),
+            "hud_only_current_rc_inverse_archive_members": 71,
+            "changed_sources_from_current_rc": 1, "unchanged_sources_from_current_rc": 68,
+            "server_native_suites_are_not_hud_behavior_verification": True,
             "prior_reports_are_prior_boundary_only": True, "prior_opaque_rollback_archives_preserved": 8,
             "fresh_final_marker_retention": 17, "unchanged_all48_auditor_executed_on_final": 48,
             "visual_source_retention": 3, "native_suites": runtime["results"],
