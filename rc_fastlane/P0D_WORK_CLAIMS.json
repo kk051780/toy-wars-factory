@@ -6163,7 +6163,7 @@
     },
     {
       "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "owner": "CODEX_ROOT_0A2BA23F0733",
       "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
       "resources": [
@@ -6191,10 +6191,10 @@
       "integration_issue": 220,
       "related_pr": 1019,
       "request_comment": 7086679192,
-      "role": "A_PREP",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "pr": 1020,
       "allowed_new_prs": 1,
-      "scope": "Continue the exact existing ten-path input-retention work on the same PR1020 and branch. Add only the borrowed common GQ8 workflow and existing UNION22 prefix-test paths to connect the pinned offline restore adapter in place of the old transport block, including its old mkdir. Migrate the old39-step byte contract by exact inverse substitution of this one block; preserve the other38 steps, eight original run/head/success checks, all downstream source/profile/Native/rollback gates and sole upload. Runtime delta is zero of69. Five original ZIP bytes and two truthfully classified reconstructed packets remain distinct. No new runtime, producer, profile, Native cases or ACTIVE66 ten-trigger adoption is permitted.",
+      "scope": "Continue the exact existing ten-path input-retention work on the same PR1020 and branch. Add only the borrowed common GQ8 workflow and existing UNION22 prefix-test paths to connect the pinned offline restore adapter in place of the old transport block, including its old mkdir. Migrate the old39-step byte contract by exact inverse substitution of this one block; preserve the other38 steps, eight original run/head/success checks, all downstream source/profile/Native/rollback gates and sole upload. Runtime delta is zero of69. Five original ZIP bytes and two truthfully classified reconstructed packets remain distinct. No new runtime, producer, profile, Native cases or ACTIVE66 ten-trigger adoption is permitted.\n\nAdditional conditional B integration scope only: adopt the unchanged existing PR1020 exact twelve-path candidate dcb501673d7959e4904cf360ef0119917e6aa2e0 into the sole development RC rc/p0d-s1-kids-rc01 from exact expected fb5d9b693c48d4ffcce05c3f89d490593e0cecfd, by a fresh authenticated single-writer lease and non-force CAS after actual same-H GQ8/Bootstrap/intake and independent exact-source plus actual same-run-artifact acceptance. This grants no new A source edits, no different HEAD, no owner succession, no other PR adoption, no main or Publish. If H or U changes, do not execute this fixed transaction: preserve intervening work and obtain an amended exact-head admission after affected revalidation.",
       "author_contexts": [
         "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
         "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
@@ -6240,9 +6240,9 @@
         "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip": null,
         "tests/test_gq8_original_inputs_20261123.py": null
       },
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "no_main_or_publish": true,
       "studio": "NOT_TESTED",
@@ -6275,8 +6275,8 @@
         "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
         "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
       ],
-      "grant_scope_version": 2,
-      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED",
+      "grant_scope_version": 3,
+      "independent_review_status": "PASS_ACTUAL_FIXED_HEAD_SOURCE_AND_SAME_RUN_ARTIFACT_CANDIDATE_ONLY",
       "temporary_input_transport_handoff": {
         "handoff_id": "P0D-GQ8-INPUT-RETENTION-TEMPORARY-2PATH-HANDOFF-20261123",
         "status": "GRANTED_TEMPORARY_SOURCE_SCOPE_NOT_RC_ADOPTION",
@@ -6452,9 +6452,9 @@
           }
         ]
       },
-      "source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
-      "source_tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
-      "candidate_pr_status": "DRAFT_TEN_PATH_SOURCE_FROZEN_TWO_PATH_WIRING_NOT_YET_APPLIED",
+      "source_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "source_tree": "a648b898e5dfc562b59c8f4a6085e6285e2e917d",
+      "candidate_pr_status": "PREP_READY_SAME_HEAD_SOURCE_NATIVE_ARTIFACT_ACCEPTED_NOT_RC_INTEGRATED",
       "actual_ten_path_source_history": {
         "head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
         "tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
@@ -6579,25 +6579,599 @@
             "grant_scope_version": 1,
             "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
           }
+        },
+        {
+          "version": 2,
+          "preserved_at": "2026-11-22T23:20:46.670Z",
+          "preservation": "Complete exact previous A_PREP V2 row retained before bounded integration-role amendment; no owner or source-scope transfer.",
+          "complete_previous_row": {
+            "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
+            "state": "SOURCE_WIP",
+            "owner": "CODEX_ROOT_0A2BA23F0733",
+            "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
+            "resources": [
+              "REAL69_ORIGINAL_ARTIFACT_SNAPSHOTS",
+              "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER",
+              "REAL69_CANONICAL_SOURCE_WORKFLOW"
+            ],
+            "target_paths": [
+              "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip",
+              "tests/test_gq8_original_inputs_20261123.py",
+              ".github/workflows/gq8-real63-source-composite.yml",
+              "tests/test_gq470_union22_real69_20261122.py"
+            ],
+            "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "prep_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+            "parent_issue": 470,
+            "integration_issue": 220,
+            "related_pr": 1019,
+            "request_comment": 7086679192,
+            "role": "A_PREP",
+            "pr": 1020,
+            "allowed_new_prs": 1,
+            "scope": "Continue the exact existing ten-path input-retention work on the same PR1020 and branch. Add only the borrowed common GQ8 workflow and existing UNION22 prefix-test paths to connect the pinned offline restore adapter in place of the old transport block, including its old mkdir. Migrate the old39-step byte contract by exact inverse substitution of this one block; preserve the other38 steps, eight original run/head/success checks, all downstream source/profile/Native/rollback gates and sole upload. Runtime delta is zero of69. Five original ZIP bytes and two truthfully classified reconstructed packets remain distinct. No new runtime, producer, profile, Native cases or ACTIVE66 ten-trigger adoption is permitted.",
+            "author_contexts": [
+              "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
+              "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
+            ],
+            "independent_reviewer_context": "/root/admission_review",
+            "acceptance": [
+              "Exact seven immutable packet identities and complete member/path/byte/hash inventories",
+              "Five downloaded-original ZIP digests remain byte-exact, two recovered packets explicitly RECONSTRUCTED_FROM_ORIGINAL_RECIPE",
+              "No claim that unknown historical receipt raw bytes were observed; historic pass is separate from current run",
+              "Fail closed on payload/lock/member drift, missing/extra/duplicate paths, links/traversal and preexisting output",
+              "Independent actual candidate HEAD review; helper-unit success alone never canonical CI/adoption",
+              "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained",
+              "Independent fixed exact two-path patch review and before/after pins, separate from ten-path/helper source review.",
+              "New loader block inverted to the original block must recover original39-step prefix exactly: 106837B SHA256 0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039.",
+              "Negative checks reject drift in the new loader, old restored prefix, other38 payloads/order, old8 run/head checks, unsafe/duplicate/extra archive members and input identity.",
+              "Preserve set -euo pipefail and all fourteen old nonempty file checks in the modified step; preserve pre-step liveRC and PR-base fences.",
+              "Fresh same-new-HEAD hosted GQ8/Bootstrap/intake checks, actual candidate artifact,69 source/class/routes/pins,17/48 gate, original Native28 and all rollbacks.",
+              "Independent actual source and same-run artifact review by the existing registered /root/admission_review; no borrowed review identity.",
+              "Before return, demonstrate unchanged ACTIVE66 original ten trigger-line payload applies exactly on the new workflow preimage without any loader/downstream changes.",
+              "Separate RC writer/CAS and same-new-R official push artifact required; helper unit or historical successful job is not formal acceptance.",
+              "R2 only: read workflow bytes then strict UTF-8 decode before original-prefix validation. A physical CRLF mutation must fail alongside historical-head, loader-output and duplicate-loader negatives."
+            ],
+            "rollback": "Inverse only the maintenance twelve-path delta against its exact accepted base: remove the original ten additions and inverse only the new transport block/prefix-test migration using recorded preimages, preserving intervening work. Return borrowed path/resource authority in a coordinated metadata transaction; never reset RC or another branch.",
+            "forbidden_changes": [
+              "quality_gameplay/gq470_union22_real69_20261122/**",
+              "Any generated gameplay source or original source producer",
+              "Any other claim row or schedule/incident-hold/security setting",
+              "Any edit outside the original ten paths plus the two explicitly borrowed paths",
+              "Changes to workflow outside the one immutable transport block, including branch/path filters, permissions, original run checks or downstream steps",
+              "Replacing the old39-step byte-prefix pin with a new expected hash without proving exact old-prefix recovery",
+              "Changing original consumer identities, generated gameplay source, Native cases/fixtures, source/profile locks, rollback expectations or sole artifact upload",
+              "Adopting or deleting ACTIVE66 original ten-trigger payload; it is preserved for later exact application"
+            ],
+            "before_blobs": {
+              "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip": null,
+              "tests/test_gq8_original_inputs_20261123.py": null
+            },
+            "PREP_READY": false,
+            "registered_source_approval": false,
+            "rc_write_authorized_by_this_claim": false,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "no_main_or_publish": true,
+            "studio": "NOT_TESTED",
+            "android": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "fun": "NOT_TESTED",
+            "issued_at": "2026-11-22T22:20:42.721Z",
+            "expires_at": "2026-11-23T04:20:42.721Z",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 609,
+              "claim_commit": "554e31f970f7a965f3fe5b8af66f4588ba203874",
+              "work_branch": "coord/p0d-work-claims",
+              "owner_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+              "expires_at": "2026-11-22T22:49:27.845525+00:00"
+            },
+            "scope_review": {
+              "context": "/root/admission_review",
+              "decision": "PASS_EXACT_TEN_NEW_PATH_PREP_SCOPE_ONLY_PENDING_REAL_GRANT_AND_SOURCE_LEASE",
+              "review_sha256": "04dd01cea11255f0db80e1de0d916dcfe467c5917c1f55b744532319bd0f3260",
+              "draft_sha256": "1dd9b8f3f9df29a7b7f3aaadeeb32e34c0241b8df2a85c7090c5bb23daa5ab5e",
+              "actual_candidate_head_review_completed": false
+            },
+            "authority_evidence": [
+              "Actual connected GitHub kk051780/user233213370 with repository admin permission observed by parent and independent reviewer.",
+              "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
+              "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
+            ],
+            "grant_scope_version": 2,
+            "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED",
+            "temporary_input_transport_handoff": {
+              "handoff_id": "P0D-GQ8-INPUT-RETENTION-TEMPORARY-2PATH-HANDOFF-20261123",
+              "status": "GRANTED_TEMPORARY_SOURCE_SCOPE_NOT_RC_ADOPTION",
+              "prepared_at": "2026-11-22T22:41:14.422939+00:00",
+              "reason": "Actual PR1019 GQ8 run45075843804 failed at immutable original artifact transport; existing PR1020 owns actual recovered input work.",
+              "coordination_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+              "maintenance_pr": 1020,
+              "maintenance_owner": "CODEX_ROOT_0A2BA23F0733",
+              "maintenance_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+              "maintenance_original_source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+              "scope_review": {
+                "context": "/root/rules_audit",
+                "path": "EXISTING_0A2_MAINTENANCE_RECHECK.md",
+                "sha256": "688e5a733b3ed98f5257eefe8a2b90b091f06e24e58286f6cdd524e9046c795e",
+                "decision": "B_EXISTING_MAINTENANCE_RECOMMENDED_NOT_ACTUAL_GRANT"
+              },
+              "metadata_lease": {
+                "branch": "twf-repair-coordinator",
+                "epoch": 621,
+                "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+                "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+                "work_branch": "coord/p0d-work-claims",
+                "expires_at": "2026-11-22T23:21:52+00:00"
+              },
+              "actual_grant_commit": null,
+              "actual_grant_comment": null,
+              "source_lease_required": true,
+              "rc_write_authorized": false,
+              "concrete_two_path_patch_review_required_before_grant": true,
+              "expires_or_returns": "Return by explicit coordinated metadata after maintenance integration or abandonment. Expiry never grants another writer.",
+              "return_conditions": [
+                "Maintenance must become non-BUSY and relinquish current path/resource authority in the same atomic return amendment.",
+                "Return test path to the HUD claim, preserving PR1019/H2e7 history and binding its next actual source to the newly accepted RC.",
+                "Return shared workflow/resource to the ACTIVE66 continuation with the new exact preimage and proof that the original ten trigger lines apply exactly.",
+                "Preserve original ACTIVE66 sixteen source files, H0, branch/PR1016, original54 Native assertions and all V3 history.",
+                "Never call the original ten trigger lines adopted by this loader-only maintenance.",
+                "Preserve all newer unrelated claim rows, aliases, history and source/RC changes.",
+                "The maintenance test starts at H713/U39295B. On HUD return retain its exact inverse-contract migration and explicitly rebase H2e7 six added tests and 140-to-142 correction, plus the reviewed +544/layout follow-up; never overwrite maintenance test with the old HUD image."
+              ],
+              "original_owner": "CODEX_ROOT_0A2BA23F0733",
+              "original_candidate_head": null,
+              "direction": "IN",
+              "borrowed_paths": [
+                ".github/workflows/gq8-real63-source-composite.yml",
+                "tests/test_gq470_union22_real69_20261122.py"
+              ],
+              "borrowed_resources": [
+                "REAL69_CANONICAL_SOURCE_WORKFLOW"
+              ],
+              "from_claims": [
+                {
+                  "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
+                  "owner": "CODEX_ROOT_D4D718B4F637",
+                  "pinned_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+                  "paths": [
+                    ".github/workflows/gq8-real63-source-composite.yml"
+                  ],
+                  "resources": [
+                    "REAL69_CANONICAL_SOURCE_WORKFLOW"
+                  ]
+                },
+                {
+                  "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+                  "owner": "CODEX_ROOT_79005A1F03B2",
+                  "pinned_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+                  "paths": [
+                    "tests/test_gq470_union22_real69_20261122.py"
+                  ],
+                  "resources": []
+                }
+              ],
+              "workflow_before": {
+                "bytes": 114479,
+                "sha256": "fabe181dc0f3d8576431e07602a83750b2fa8b8e7a439f44e9883c9efb92ec8f",
+                "git_blob": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+              },
+              "prefix_original_bytes": 106837,
+              "prefix_original_sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039",
+              "fixed_two_path_patch": {
+                "schema": "GQ8_WIRING_TWO_PATH_PROPOSAL_V1",
+                "status": "ISOLATED_REVIEW_PROPOSAL_NOT_GRANTED_NOT_PRODUCTION_EDIT",
+                "created_at": "2026-11-22T22:47:05.711732+00:00",
+                "base_candidate_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+                "files": {
+                  ".github/workflows/gq8-real63-source-composite.yml": {
+                    "before": {
+                      "bytes": 114479,
+                      "sha256": "fabe181dc0f3d8576431e07602a83750b2fa8b8e7a439f44e9883c9efb92ec8f",
+                      "git_blob": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+                    },
+                    "after": {
+                      "bytes": 113446,
+                      "sha256": "cf7b9770eb87450903ed3d026f237a57c498481f3a5a141674ce37cf0fb59a1f",
+                      "git_blob": "10a28414c7efa19e58bb34601ace29ccaf7bf85a"
+                    }
+                  },
+                  "tests/test_gq470_union22_real69_20261122.py": {
+                    "before": {
+                      "bytes": 39295,
+                      "sha256": "05e620f7c44947f306dd89b24a8c20fa140f923374565b6b1ff9c4dc073fd250",
+                      "git_blob": "c756e15252c878556b6c319ba09d3201d8cd8072"
+                    },
+                    "after": {
+                      "bytes": 42218,
+                      "sha256": "ba2183e0c0ea648b4cd95917f4fef4556ad58d68266c9349a1be30771a38e7f1",
+                      "git_blob": "dd0559e381559a2450191894d3889c8dda5b6fd7"
+                    }
+                  }
+                },
+                "old_transport": {
+                  "bytes": 1142,
+                  "sha256": "8b6c5450523a359f4931e20d5e33bf23d357b2aa41987e3cd14d2bb8e8388a4a",
+                  "git_blob": "101acdefa071c15e3c7c2493e4f00dbb3496789f"
+                },
+                "new_transport": {
+                  "bytes": 109,
+                  "sha256": "c01a4807e8a170e39625745c08506fd4c70a46a50d0d461d7e8030ad4deb7078",
+                  "git_blob": "16fdc61e71f33c17523d6b479c6cd16e96886cbd"
+                },
+                "patch": {
+                  "bytes": 5921,
+                  "sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+                  "git_blob": "88eebe87a545dabc0d37561f710600caa39bf7a8"
+                },
+                "entire_workflow_inverse_byte_exact": true,
+                "original_prefix_preserved_via_exact_inverse": {
+                  "bytes": 106837,
+                  "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"
+                },
+                "changed_test_methods": [
+                  "UnionBoundary.test_original_39_workflow_step_payloads_byte_exact"
+                ],
+                "source_files_in_repo_changed": false,
+                "ten_existing_candidate_paths_changed": false,
+                "canonical_ci": false,
+                "source_lease": null,
+                "rc_write": false,
+                "revision": 2,
+                "supersedes_proposal_patch_sha256": "c9f24be85f62d9f6044584c97361fa7eb4c0c73942604901f83ded6479107e21",
+                "reason": "Close independently reproduced physical CRLF normalization gap inside the same historical-prefix method.",
+                "finding_sha256": "d37dd5ea74c1c109c57fb6a626783fb4457e520f2019b34ae7a6e31d3f7f8527"
+              },
+              "runtime_source_delta": 0,
+              "source_count": 69,
+              "registered_source_review_remains": "/root/admission_review",
+              "issued_at": "2026-11-22T22:52:57Z",
+              "concrete_scope_review": {
+                "context": "/root/rules_audit",
+                "decision": "PASS_CONCRETE_THREE_ROW_SCOPE_AND_R2_WIRING_ONLY",
+                "three_row_pre_review_sha256": "4e7a99785ede4c95edc82b4443ce1210e55bda94445311c15ac4c5ed11585540",
+                "R2_wiring_review_sha256": "d84bb0dc2892c64f81c3e411828d3fcd6787ef96ff50d4ea39d652d58bf57969",
+                "R2_proposal_sha256": "e81bf78e8218ab9ddb4b68b2a0822b63d310abb637e30eb8c5b8f5baf146cae3",
+                "R2_patch_sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+                "C9_previous_wiring_status": "WITHDRAWN_HISTORICAL_NOT_GRANTED",
+                "new_source_HEAD_approval": false,
+                "PREP_READY": false,
+                "RC_adoption": false
+              },
+              "concrete_patch_review_completed": true,
+              "actual_grant_commit_resolution": "The enclosing immutable authorized registry commit is the actual grant. A commit cannot encode its own future hash; the external #218 grant record binds the realized commit.",
+              "actual_grant_comment_resolution": "The external #218 grant record is created after this single atomic registry write and quotes its realized immutable commit.",
+              "additional_coordination_evidence": [
+                "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086991850",
+                "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086916935",
+                "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086916455"
+              ],
+              "ACTIVE66_successor_owner_changed": false,
+              "withdrawn_patch_history": [
+                {
+                  "sha256": "c9f24be85f62d9f6044584c97361fa7eb4c0c73942604901f83ded6479107e21",
+                  "status": "WITHDRAWN_BEFORE_GRANT",
+                  "reason": "read_text normalized physical CRLF; R2 reads exact bytes and adds a CRLF negative."
+                }
+              ]
+            },
+            "source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+            "source_tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
+            "candidate_pr_status": "DRAFT_TEN_PATH_SOURCE_FROZEN_TWO_PATH_WIRING_NOT_YET_APPLIED",
+            "actual_ten_path_source_history": {
+              "head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+              "tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
+              "parent": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+              "pr": 1020,
+              "paths": 10,
+              "source_lease": 611,
+              "source_lease_release": "023b71f479b3b1cfdde63ec4492f38e8f3354b73",
+              "independent_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086954020",
+              "independent_review_status": "PASS_TRANSPORT_SOURCE_PREPARATION_ONLY",
+              "review_sha256": "b3486141e0b9b01412f4699233a8815b582918274cb72a16390bccbd75a20c07",
+              "GQ8_run": 45078372356,
+              "GQ8_conclusion": "failure_original_transport_before_wiring",
+              "bootstrap_run": 45078372306,
+              "bootstrap_conclusion": "success",
+              "admission_ready": false
+            },
+            "scope_history": [
+              {
+                "version": 1,
+                "preserved_at": "2026-11-22T22:52:57Z",
+                "preservation": "Exact pre-handoff row retained; only explicit temporary current authority changes below.",
+                "complete_previous_row": {
+                  "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
+                  "state": "GRANTED",
+                  "owner": "CODEX_ROOT_0A2BA23F0733",
+                  "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
+                  "resources": [
+                    "REAL69_ORIGINAL_ARTIFACT_SNAPSHOTS",
+                    "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER"
+                  ],
+                  "target_paths": [
+                    "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip",
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip",
+                    "tests/test_gq8_original_inputs_20261123.py"
+                  ],
+                  "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+                  "prep_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+                  "parent_issue": 470,
+                  "integration_issue": 220,
+                  "related_pr": 1019,
+                  "request_comment": 7086679192,
+                  "role": "A_PREP",
+                  "pr": null,
+                  "allowed_new_prs": 1,
+                  "scope": "Only ten new passive archive/lock/restore-adapter/test paths. Preserve five original artifact ZIP bytes; reconstruct two missing packets with unmodified immutable recipes and historical successful-job Place proof. No game source, existing producer, shared workflow or mounted-HUD test edits. The adapter is offline transport only and must never admit a stale/head-mismatched build or substitute a latest arbitrary artifact.",
+                  "author_contexts": [
+                    "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
+                    "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
+                  ],
+                  "independent_reviewer_context": "/root/admission_review",
+                  "acceptance": [
+                    "Exact seven immutable packet identities and complete member/path/byte/hash inventories",
+                    "Five downloaded-original ZIP digests remain byte-exact, two recovered packets explicitly RECONSTRUCTED_FROM_ORIGINAL_RECIPE",
+                    "No claim that unknown historical receipt raw bytes were observed; historic pass is separate from current run",
+                    "Fail closed on payload/lock/member drift, missing/extra/duplicate paths, links/traversal and preexisting output",
+                    "Independent actual candidate HEAD review; helper-unit success alone never canonical CI/adoption",
+                    "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained"
+                  ],
+                  "rollback": "Remove only these ten added paths using recorded null preimages; preserve all preexisting files and intervening commits.",
+                  "forbidden_changes": [
+                    ".github/workflows/gq8-real63-source-composite.yml",
+                    "tests/test_gq470_union22_real69_20261122.py",
+                    "quality_gameplay/gq470_union22_real69_20261122/**",
+                    "Any generated gameplay source or original source producer",
+                    "Any other claim row or schedule/incident-hold/security setting"
+                  ],
+                  "before_blobs": {
+                    "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip": null,
+                    "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip": null,
+                    "tests/test_gq8_original_inputs_20261123.py": null
+                  },
+                  "PREP_READY": false,
+                  "registered_source_approval": false,
+                  "rc_write_authorized_by_this_claim": false,
+                  "rc_write_requires_separate_scoped_single_writer_lease": true,
+                  "no_main_or_publish": true,
+                  "studio": "NOT_TESTED",
+                  "android": "NOT_TESTED",
+                  "art": "ART_NO_GO",
+                  "fun": "NOT_TESTED",
+                  "issued_at": "2026-11-22T22:20:42.721Z",
+                  "expires_at": "2026-11-23T04:20:42.721Z",
+                  "issuer": "kk051780",
+                  "issuer_user_id": 233213370,
+                  "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+                  "issuer_operation_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+                  "coordination_lease": {
+                    "branch": "twf-repair-coordinator",
+                    "epoch": 609,
+                    "claim_commit": "554e31f970f7a965f3fe5b8af66f4588ba203874",
+                    "work_branch": "coord/p0d-work-claims",
+                    "owner_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+                    "expires_at": "2026-11-22T22:49:27.845525+00:00"
+                  },
+                  "scope_review": {
+                    "context": "/root/admission_review",
+                    "decision": "PASS_EXACT_TEN_NEW_PATH_PREP_SCOPE_ONLY_PENDING_REAL_GRANT_AND_SOURCE_LEASE",
+                    "review_sha256": "04dd01cea11255f0db80e1de0d916dcfe467c5917c1f55b744532319bd0f3260",
+                    "draft_sha256": "1dd9b8f3f9df29a7b7f3aaadeeb32e34c0241b8df2a85c7090c5bb23daa5ab5e",
+                    "actual_candidate_head_review_completed": false
+                  },
+                  "authority_evidence": [
+                    "Actual connected GitHub kk051780/user233213370 with repository admin permission observed by parent and independent reviewer.",
+                    "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
+                    "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
+                  ],
+                  "grant_scope_version": 1,
+                  "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
+                }
+              }
+            ],
+            "amended_at": "2026-11-22T22:52:57Z",
+            "metadata_update_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 621,
+              "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+              "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+              "work_branch": "coord/p0d-work-claims",
+              "expires_at": "2026-11-22T23:21:52+00:00"
+            },
+            "amendment_issuer": {
+              "login": "kk051780",
+              "user_id": 233213370,
+              "role": "OWNER_DELEGATED_COORDINATOR",
+              "operation_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+              "context": "CODEX_ROOT_79005A1F03B2",
+              "authority": "Existing owner delegation, current execution policy v1.2/#1011, #810 and #218 V1.5; actual authenticated connected account and admin permission rechecked."
+            }
+          }
         }
       ],
-      "amended_at": "2026-11-22T22:52:57Z",
+      "amended_at": "2026-11-22T23:20:46.670Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 621,
-        "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
-        "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "epoch": 631,
+        "commit": "a6c8cb639d1bc53652a11604b744897819c0b415",
+        "owner_id": "001b306b-2860-449e-8a79-5cbed834c4fe",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T23:21:52+00:00"
+        "expires_at": "2026-11-22T23:50:04.237Z"
       },
       "amendment_issuer": {
         "login": "kk051780",
         "user_id": 233213370,
         "role": "OWNER_DELEGATED_COORDINATOR",
-        "operation_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
-        "context": "CODEX_ROOT_79005A1F03B2",
-        "authority": "Existing owner delegation, current execution policy v1.2/#1011, #810 and #218 V1.5; actual authenticated connected account and admin permission rechecked."
-      }
+        "operation_id": "001b306b-2860-449e-8a79-5cbed834c4fe",
+        "context": "CODEX_ROOT_0A2BA23F0733",
+        "authority": "Current authenticated admin permission; standing ordinary engineering delegation; execution policy v1.2/#1011; #218/#220 single-writer bounded integration and actual independent source/artifact/intake evidence."
+      },
+      "candidate_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "no_review_waiver": true,
+      "candidate_tree": "a648b898e5dfc562b59c8f4a6085e6285e2e917d",
+      "actual_candidate_evidence": {
+        "head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "tree": "a648b898e5dfc562b59c8f4a6085e6285e2e917d",
+        "base_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "pr": 1020,
+        "source_review": {
+          "context": "/root/admission_review",
+          "decision": "PASS_ACTUAL_FIXED_HEAD_SOURCE_REVIEW_ONLY",
+          "sha256": "bb0e55ad6094c3e00ab195e029fbbaa3026f4102a01177202ea4cba5cd5c4a38",
+          "bytes": 10100,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087333421"
+        },
+        "gq8": {
+          "run_id": 45081203459,
+          "job_id": 137389543545,
+          "attempt": 1,
+          "event": "pull_request",
+          "head_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "checkout_sha": "b3b664ffbe40e424f0357a820f64362d37edcce5",
+          "status": "completed",
+          "conclusion": "success",
+          "declared_steps_passed": 44,
+          "core_tests_each_normal_and_O": 42,
+          "final_tests_each_normal_and_O": 9
+        },
+        "bootstrap": {
+          "run_id": 45081203370,
+          "conclusion": "success",
+          "tests": 923
+        },
+        "artifact": {
+          "id": 14777282496,
+          "bytes": 5319522,
+          "sha256": "c4c82d9c90bcd8d55b6cbdfc410ef8b4bca97da725bc4b240593c904e9f2b9c6",
+          "members": 110
+        },
+        "place": {
+          "bytes": 828114,
+          "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+        },
+        "source_count": 69,
+        "instances": 75,
+        "source_delta_from_official": 0,
+        "native": {
+          "full_bodies_each_suite": 28,
+          "case_counts": [
+            10,
+            7
+          ],
+          "same_as_formal_program_bytes": true,
+          "local_native_reruns": 0,
+          "hosted_fresh_f46_build": true
+        },
+        "rollback": {
+          "exact_two_path_inverse_tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
+          "exact_twelve_path_inverse_tree": "48ced116e49efc31d5a19dfffd65ffa8730b2de0",
+          "unrelated_work_preserved": true,
+          "proof_sha256": "0d4960c6b2d7f7762af4f37649ad07f88ebc10c1f2f898f31c1c3ef83eb3320b"
+        },
+        "artifact_review_pending": false,
+        "formal_rc_adoption": false,
+        "ACTIVE_RUNTIME": "rich51",
+        "PRIVATE_COMPANION": "REAL69_UNION22",
+        "RUNTIME_UNIFIED": "NO",
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "art": "ART_NO_GO",
+        "fun": "NOT_TESTED",
+        "product": "PRODUCT_NO_GO",
+        "artifact_review": {
+          "context": "/root/admission_review",
+          "decision": "PASS_CANDIDATE_SOURCE_NATIVE_DELIVERY_ONLY",
+          "bytes": 16440,
+          "sha256": "be04571b20fbae18bb0fed0693ca246048af8fc7a679d6df80a8d51bfa3ca7fb",
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087435791"
+        },
+        "intake": {
+          "decision": "PASS_ACTUAL_LATEST_TRUSTED_INTAKE_SELECTED_PR1020",
+          "context": "/root/admission_review",
+          "review_bytes": 5149,
+          "review_sha256": "bb0c805ef7f36f76d614dee67bcf44db764ce2227d0e81b48f0fd85fb75390a7",
+          "latest_run": 45082310605,
+          "latest_job": 137392979361,
+          "companion_run": 45082310310,
+          "selected_pr": 1020,
+          "selected_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "observed_official": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "no_auto_merge": true,
+          "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087488113"
+        }
+      },
+      "bounded_rc_integration": {
+        "status": "CONDITIONAL_EXACT_H_U_SCOPE_REQUIRES_SEPARATE_ACTUAL_RC_LEASE",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "permitted_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "permitted_tree": "a648b898e5dfc562b59c8f4a6085e6285e2e917d",
+        "permitted_pr": 1020,
+        "source_edits_authorized_by_this_amendment": false,
+        "force_allowed": false,
+        "main_or_publish_allowed": false,
+        "separate_rc_writer_lease_required": true,
+        "source_and_artifact_review_context": "/root/admission_review",
+        "source_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087333421",
+        "artifact_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087435791",
+        "design_decision_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7087436000",
+        "conditional_scope_review": {
+          "context": "/root/admission_review",
+          "proposal_sha256": "7a9bf59471b620f9a477865a00039b3d7004c0fca7d2e71a8f03b28e64b612ba",
+          "review_sha256": "ccff20fa061d1907ad119add527b1ec4b8318ef1eac4ccb621d48b104a81d2d4",
+          "decision": "PASS_FIELD_LEVEL_BOUNDED_DESIGN_NOT_ACTUAL_GRANT"
+        },
+        "if_head_or_rc_moves": "Do not execute fixed transaction; preserve new work and rebind affected evidence in a legitimate amendment.",
+        "post_push": "Require actual same-new-R official GQ8 push success and independent canonical artifact/Place/source/Native/rollback review; candidate success alone is not formal acceptance.",
+        "scope_return": "Retain all seven existing temporary_input_transport_handoff.return_conditions unchanged; separately record adoption and return shared ownership atomically.",
+        "actual_metadata_authority": {
+          "branch": "twf-repair-coordinator",
+          "epoch": 631,
+          "commit": "a6c8cb639d1bc53652a11604b744897819c0b415",
+          "owner_id": "001b306b-2860-449e-8a79-5cbed834c4fe",
+          "work_branch": "coord/p0d-work-claims",
+          "expires_at": "2026-11-22T23:50:04.237Z"
+        },
+        "writer_handoff_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7087467340",
+        "trusted_intake_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7087488113",
+        "actual_grant_commit_resolution": "The enclosing immutable authorized registry commit is the actual grant; external #218 record binds its realized hash."
+      },
+      "metadata_updated_at": "2026-11-22T23:20:46.670Z"
     },
     {
       "claim_id": "P0D-GQ518-INCOMING-LOS-20261123-7B6B25AE",
