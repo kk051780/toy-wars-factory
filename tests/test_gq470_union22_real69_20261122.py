@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Focused fail-closed controls for the additional union boundary.
 
-Integration tests require the actual prior/current outputs from this workflow;
-there is no automatic skip or synthetic passing source fixture.
+Repository discovery without UNION22_TEST_* runs artifact-free contracts.
+Explicit core/final integration requires actual workflow outputs and runs the
+complete fixed suite; missing context never becomes a skip or an empty PASS.
 """
 from __future__ import annotations
 
@@ -29,16 +30,52 @@ native = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(native)
 
 
+ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
+                "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
+INTEGRATION_COUNTS = {"core": 38, "final": 7}
+
+
+def artifact_environment(expected_stage=None):
+    supplied = {key: value for key, value in os.environ.items() if key.startswith("UNION22_TEST_")}
+    if set(supplied) - set(ARTIFACT_ENV):
+        raise ValueError("RED_UNION22_UNKNOWN_TEST_ENVIRONMENT")
+    stage = supplied.get("UNION22_TEST_STAGE", "core")
+    if stage not in INTEGRATION_COUNTS or expected_stage is not None and stage != expected_stage:
+        raise ValueError("RED_UNION22_UNKNOWN_OR_MISMATCHED_TEST_STAGE")
+    required = ARTIFACT_ENV[:3] + (("UNION22_TEST_NATIVE",) if stage == "final" else ())
+    missing = [key for key in required if not supplied.get(key, "").strip()]
+    if missing:
+        raise ValueError("RED_UNION22_MISSING_ARTIFACT_CONTEXT:" + ",".join(missing))
+    paths = {key: Path(supplied[key]).resolve() for key in ARTIFACT_ENV[:4] if key in supplied}
+    for key, path in paths.items():
+        if not supplied[key].strip() or not path.is_dir():
+            raise ValueError("RED_UNION22_ARTIFACT_DIRECTORY_MISSING:" + key)
+    return stage, paths
+
+
+def checked_suite(loader, case, expected_count):
+    suite = loader.loadTestsFromTestCase(case)
+    if suite.countTestCases() != expected_count:
+        raise ValueError("RED_UNION22_INCOMPLETE_TEST_SELECTION")
+    return suite
+
+
 class UnionBoundary(unittest.TestCase):
+    ARTIFACT_STAGE = "core"
+
     @classmethod
     def setUpClass(cls):
-        cls.prior = Path(os.environ["UNION22_TEST_PRIOR"]).resolve()
-        cls.reports = Path(os.environ["UNION22_TEST_REPORTS"]).resolve()
-        cls.current = Path(os.environ["UNION22_TEST_ROOT"]).resolve()
+        _, paths = artifact_environment(cls.ARTIFACT_STAGE)
+        cls.prior = paths["UNION22_TEST_PRIOR"]
+        cls.reports = paths["UNION22_TEST_REPORTS"]
+        cls.current = paths["UNION22_TEST_ROOT"]
         cls.lock = compose.load_lock()
         cls.native_lock = native.load_lock()
         cls.context = verify.data(cls.current / "CORE_BUILD_REPORT.json")["context"]
         cls.first = next(iter(cls.lock["sources"]))
+        # Missing or invalid artifacts must fail before a negative test can
+        # mistake that setup failure for the particular rejection it exercises.
+        verify.verify_core(cls.current, cls.prior, cls.reports, cls.context)
 
     def temporary(self):
         context = tempfile.TemporaryDirectory(prefix="union22-negative-")
@@ -363,10 +400,14 @@ class UnionBoundary(unittest.TestCase):
 
 class FinalAdmissionBoundary(unittest.TestCase):
     """Run explicitly after actual Native completion; no fixture or gate stubs."""
+    ARTIFACT_STAGE = "final"
+
     @classmethod
     def setUpClass(cls):
         UnionBoundary.setUpClass.__func__(cls)
-        cls.native = Path(os.environ["UNION22_TEST_NATIVE"]).resolve()
+        _, paths = artifact_environment(cls.ARTIFACT_STAGE)
+        cls.native = paths["UNION22_TEST_NATIVE"]
+        verify.verify_native(cls.native, cls.current, cls.lock, cls.context)
 
     def temporary(self):
         context = tempfile.TemporaryDirectory(prefix="union22-final-negative-")
@@ -468,8 +509,63 @@ class FinalAdmissionBoundary(unittest.TestCase):
             verify.verify_native(copied, self.current, self.lock, self.context)
 
 
+class UnionOfflineContract(unittest.TestCase):
+    """Repository-only checks; no artifact or runtime acceptance is claimed."""
+    @classmethod
+    def setUpClass(cls):
+        cls.lock = compose.load_lock()
+        cls.native_lock = native.load_lock()
+
+    def test_profile_and_native_lock_share_exact69(self):
+        self.assertEqual(len(self.lock["sources"]), 69)
+        self.assertEqual(self.native_lock["sources"],
+                         {name: row["after"] for name, row in self.lock["sources"].items()})
+        self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full"})
+
+    def test_original_fixture_and_case_bytes_remain_pinned(self):
+        self.assertEqual(native.fixture_snapshot(self.native_lock), self.native_lock["fixtures"])
+
+    def test_absent_partial_and_unknown_artifact_context_rejected(self):
+        for environment in ({}, {"UNION22_TEST_PRIOR": "/missing"},
+                            {"UNION22_TEST_STAGE": "final"}, {"UNION22_TEST_STAGE": "other"},
+                            {"UNION22_TEST_UNKNOWN": "unexpected"}):
+            with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
+                artifact_environment()
+
+    test_original_39_workflow_step_payloads_byte_exact = UnionBoundary.test_original_39_workflow_step_payloads_byte_exact
+    test_clear_los_case_exact_inverse_preserves_original_assertions = UnionBoundary.test_clear_los_case_exact_inverse_preserves_original_assertions
+    test_original_vectors_exact_positive = UnionBoundary.test_original_vectors_exact_positive
+    test_empty_missing_duplicate_extra_failed_case_rejected = UnionBoundary.test_empty_missing_duplicate_extra_failed_case_rejected
+    test_duplicate_json_keys_rejected = UnionBoundary.test_duplicate_json_keys_rejected
+    test_hunk_removed_bytes_rejected = UnionBoundary.test_hunk_removed_bytes_rejected
+    test_hunk_overlap_rejected = UnionBoundary.test_hunk_overlap_rejected
+
+
+def integration_suite(loader):
+    stage, _ = artifact_environment()
+    case = FinalAdmissionBoundary if stage == "final" else UnionBoundary
+    return checked_suite(loader, case, INTEGRATION_COUNTS[stage])
+
+
+def load_tests(loader, standard_tests, pattern):
+    # Only ordinary discovery with no union-specific context selects contracts.
+    # A module/script entry or even a partial context must request real artifacts.
+    has_context = any(key.startswith("UNION22_TEST_") for key in os.environ)
+    if pattern is not None and not has_context:
+        return checked_suite(loader, UnionOfflineContract, 10)
+    return integration_suite(loader)
+
+
+def main():
+    if len(sys.argv) != 1:
+        raise ValueError("RED_UNION22_COMPLETE_INTEGRATION_ENTRY_ONLY")
+    stage, _ = artifact_environment()
+    suite = integration_suite(unittest.defaultTestLoader)
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    if result.testsRun != INTEGRATION_COUNTS[stage] or result.skipped:
+        raise ValueError("RED_UNION22_INCOMPLETE_INTEGRATION_EXECUTION")
+    return 0 if result.wasSuccessful() else 1
+
+
 if __name__ == "__main__":
-    stage = os.environ.get("UNION22_TEST_STAGE", "core")
-    if stage not in ("core", "final"):
-        raise ValueError("RED_UNION22_UNKNOWN_TEST_STAGE")
-    unittest.main(verbosity=2, defaultTest="FinalAdmissionBoundary" if stage == "final" else "UnionBoundary")
+    raise SystemExit(main())
