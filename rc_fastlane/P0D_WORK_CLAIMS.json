@@ -14,13 +14,114 @@
     "FOREST_BLOCKED": "FB_016_FOREST_COLLISION",
     "ATTACK_BUTTON": "FB_019_ATTACK_INPUT"
   },
-  "claims": [],
+  "claims": [
+    {
+      "claim_id": "P0D-GQ905-BR-GUARD-20261122-4B669",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_4B669C01C8AC",
+      "feature_id": "GQ905_DISCOVERY_CANONICAL_BR_GUARD",
+      "resources": [
+        "HUD_INTEL_DISCOVERY_TOAST",
+        "HUD_INTEL_RUNTIME"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py"
+      ],
+      "issued_at": "2026-11-22T11:55:11.000Z",
+      "expires_at": "2026-11-22T17:55:11.000Z",
+      "parent_issue": 470,
+      "canonical_parent": 905,
+      "source_producer_parent_pr": 919,
+      "integration_issue": 220,
+      "pr": null,
+      "candidate_pr_status": "FOLLOWUP_REVIEW_PR_NOT_CREATED_YET",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 574,
+        "claim_commit": "755923644e56b6bf29f0aa4414e506b393aec2c2",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T12:16:40.137460+00:00"
+      },
+      "authority_evidence": [
+        "Authenticated GitHub get_user_login kk051780/233213370 and repository permission admin, independently confirmed.",
+        "Existing coordinator owner_delegation: ordinary game/system engineering approvals delegated; objective QA unchanged.",
+        "Current RC18e4 AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2/#1011: current Codex parent owns exclusive handoff and RC integration.",
+        "#218 comment6886441650: single authorized coordinator, unique scope, current-blob CAS; not a worker request promoted by assertion."
+      ],
+      "request_comment": 7076966914,
+      "scope": "Reuse existing #905 canonical BATTLE_ROYALE discovery-toast fix as one replace_once at the end of #919 patch_hud; one producer file +220 bytes; generated existing HUD guard +26 bytes. No other gameplay or authority change.",
+      "base_rc_sha": "18e4b04eb550ebf5195c3e287f97076dd9c92b6e",
+      "producer_before": {
+        "bytes": 8402,
+        "sha256": "021e2ea484b0d832f5314c85d17e11ccaf54904ed93e6868c3d3d9d6209979b2",
+        "git_blob": "37d30fec9fa5dbfd266993f2a8334ca188b9f9e4"
+      },
+      "producer_after": {
+        "bytes": 8622,
+        "sha256": "d3c1ee8272b580446042922755798878152a430c1542963080b8d4bb4a73e476"
+      },
+      "independent_reviewer_context": "/root/intake_300 (not the fix author; separate current review context)",
+      "independent_review_status": "SOURCE_BYTES_PASS_REMOTE_HEAD_NOT_CREATED_OR_APPROVED",
+      "acceptance": "Exact one-file diff, independent review of actual candidate SHA, unchanged canonical pipeline, same-head CI and final source/Place/ZIP verification, same-SHA Studio gate kept separate.",
+      "rollback": "Remove only the added replace_once statement to restore producer before SHA and original 69-source Place exactly.",
+      "excluded_paths": [
+        "quality_gameplay/gq8_rc85_explore_toast_real69_20261120/port_explore_toast69.py",
+        ".github/workflows/gq8-real63-source-composite.yml"
+      ],
+      "no_main_or_publish": true,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "independent_review_evidence": {
+        "context": "/root/intake_300",
+        "reviewed_producer_sha256": "d3c1ee8272b580446042922755798878152a430c1542963080b8d4bb4a73e476",
+        "manifest_sha256": "a886899fca9bae016a5537ca65c274f0bcad6b9839810572c761da0e245ddc38",
+        "semantic_review_sha256": "5f03cb040d409fc26c3887bba270f5dac926cf0350b6af6b9e649c2fac382ff2",
+        "evidence_review_sha256": "9989bd3824c9bf40b20dd4c9b24f929ca779cb8117de827c127e4ec7257999b9",
+        "reviewed_git_head": null
+      }
+    }
+  ],
   "legacy_overlap_triage": [
-    {"canonical_resource": "ART_CASTLE", "candidate_prs": [366, 368], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
-    {"canonical_resource": "ART_SEA", "candidate_prs": [369, 370], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
-    {"canonical_resource": "ART_MINION", "candidate_prs": [373, 374], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
-    {"canonical_resource": "FB_016_FOREST_COLLISION", "candidate_prs": [421], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
-    {"canonical_resource": "FB_019_ATTACK_INPUT", "source_issue": 406, "state": "REUSE_EXISTING_DO_NOT_REMAKE"}
+    {
+      "canonical_resource": "ART_CASTLE",
+      "candidate_prs": [
+        366,
+        368
+      ],
+      "state": "REUSE_EXISTING_DO_NOT_REMAKE"
+    },
+    {
+      "canonical_resource": "ART_SEA",
+      "candidate_prs": [
+        369,
+        370
+      ],
+      "state": "REUSE_EXISTING_DO_NOT_REMAKE"
+    },
+    {
+      "canonical_resource": "ART_MINION",
+      "candidate_prs": [
+        373,
+        374
+      ],
+      "state": "REUSE_EXISTING_DO_NOT_REMAKE"
+    },
+    {
+      "canonical_resource": "FB_016_FOREST_COLLISION",
+      "candidate_prs": [
+        421
+      ],
+      "state": "REUSE_EXISTING_DO_NOT_REMAKE"
+    },
+    {
+      "canonical_resource": "FB_019_ATTACK_INPUT",
+      "source_issue": 406,
+      "state": "REUSE_EXISTING_DO_NOT_REMAKE"
+    }
   ],
   "note": "No grants at bootstrap. Existing PRs are not cancelled; coordinators first audit/reuse originals. Changes require current contents blob SHA compare-and-swap and single authorized coordinator. JSON alone does not authenticate OWNER."
 }
