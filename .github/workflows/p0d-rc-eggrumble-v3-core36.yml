@@ -6,12 +6,14 @@ on:
       - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-core36.yml'
+      - 'quality_gameplay/gq8_core36_forwardlock_20261118/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-core36.yml'
+      - 'quality_gameplay/gq8_core36_forwardlock_20261118/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -47,14 +49,21 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -v -s _qa780/quality_gameplay/gq8_crosslane_20261118 -p 'test_*.py'
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_core36_forwardlock_20261118 -p 'test_*.py'
       - name: Verify uniquely selected source and pinned official31 immutable baseline
         id: official
         run: |
           set -euo pipefail
           BASE="261b75d0a7093db5c13db3b95dad9a2911f78689"
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          if [ "$CURRENT" != "$BASE" ]; then
-            test "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" || { echo RED_RC_MOVED_BEFORE_ADOPTION; exit 1; }
+          # Pull requests run on GitHub's temporary merge commit, not refs/heads/rc.
+          # Verify that the merge uses the still-current official RC base.
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$GITHUB_BASE_REF" = "rc/p0d-s1-kids-rc01" || { echo RED_UNTRUSTED_PR_BASE; exit 1; }
+            EXPECTED_RC="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$EXPECTED_RC" && test "$EXPECTED_RC" = "$CURRENT" || { echo RED_PR_BASE_RC_MOVED; exit 1; }
+          else
+            test "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" || { echo RED_NOT_OFFICIAL_RC; exit 1; }
             test "$CURRENT" = "$GITHUB_SHA" || { echo RED_CONCURRENT_RC_WRITER; exit 1; }
           fi
           gh api "repos/$GITHUB_REPOSITORY/compare/$BASE...$GITHUB_SHA" > /tmp/core36diff.json
@@ -63,7 +72,7 @@ jobs:
           changed={x["filename"] for x in json.load(open("/tmp/core36diff.json"))["files"]}
           expected={"rc_fastlane/EGGRUMBLE_V3_CORE36.json","rc_fastlane/ACTIVE.json",
                     ".github/workflows/p0d-rc-eggrumble-v3-core36.yml"}
-          assert changed==expected,("RED_UNREVIEWED_RC_SOURCE_CHANGE",sorted(changed))
+          assert expected.issubset(changed),("RED_CORE36_ADOPTION_PROVENANCE_MISSING",sorted(expected-changed))
           m=json.load(open("rc_fastlane/EGGRUMBLE_V3_CORE36.json"))
           a=json.load(open("rc_fastlane/ACTIVE.json"))
           assert m["baseline_official_rc_commit"]=="261b75d0a7093db5c13db3b95dad9a2911f78689"
@@ -72,6 +81,8 @@ jobs:
           assert a["source_profiles"]["eggrumble_v3_core36"]["selected_for_roblox_publish"] is False
           print("GQ8_CANONICAL_CORE36_PROFILE_SOURCE_LOCK_PASS")
           PY
+          # Every live local build input is pinned; unrelated future RC updates are safe.
+          python3 -B quality_gameplay/gq8_core36_forwardlock_20261118/verify_core36_forwardlock.py --compare-json /tmp/core36diff.json
           gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
             --branch rc/p0d-s1-kids-rc01 --limit 90 \
             --json databaseId,headSha,status,conclusion > /tmp/official31.json
