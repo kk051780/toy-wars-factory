@@ -1,0 +1,43 @@
+name: P0D 3-route castle world PREP source-contract
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "rc_fastlane/apply_world_upgrade.py"
+      - "rc_fastlane/test_world_upgrade.py"
+      - "rc_fastlane/features/p0_world_upgrade/**"
+      - ".github/workflows/p0d-world-upgrade-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source and reversible original66 preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_world_upgrade.py -v
+          python3 -B -m py_compile rc_fastlane/apply_world_upgrade.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0_luau
+          persist-credentials: false
+      - name: Compile real castle world Luau from exact PR head
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _p0_luau -B /tmp/p0_world_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0_world_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0_world_luau/luau-compile rc_fastlane/features/p0_world_upgrade/CastleWorldUpgrade.server.luau > /dev/null
+          echo "WORLD_CANDIDATE_LUAU_REAL_COMPILE_SUCCESS_NOT_STUDIO"
+      - name: Report physics/visual/FUN still pending
+        run: echo "WORLD_PREP_SOURCE_ONLY_NOT_STUDIO_OR_OFFICIAL_RC_VERIFIED"
