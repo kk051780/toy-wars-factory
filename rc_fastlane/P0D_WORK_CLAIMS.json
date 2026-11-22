@@ -3386,7 +3386,7 @@
     },
     {
       "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "owner": "CODEX_ROOT_79005A1F03B2",
       "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
       "sub_scope": "MOUNTED_REALM_CONTEXT_EXISTING_HUD_ONE_HUNK",
@@ -3410,9 +3410,9 @@
       ],
       "prep_branch": "fix/gq828-mounted-hud-20261123-79005a1f",
       "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
-      "pr": null,
+      "pr": 1019,
       "allowed_new_prs": 1,
-      "candidate_pr_status": "ONE_SCOPED_FOLLOWUP_REPAIR_PR_ALLOWED_AFTER_REAL_GRANT",
+      "candidate_pr_status": "DRAFT_PR_CREATED_CI_BLOCKED_AT_UNCHANGED_UPSTREAM_ARTIFACT_DOWNLOAD",
       "role": "A_PREP",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -3423,7 +3423,7 @@
         "/root/candidate_audit: sole implementer of the six producer/lock/verifier/test files under the parent's separately acquired source lease"
       ],
       "independent_reviewer_context": "/root/rules_audit",
-      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED",
+      "independent_review_status": "ACTUAL_SOURCE_HEAD_REVIEW_IN_PROGRESS_HOSTED_GQ8_NOT_PASSED",
       "scope": "Preserve the existing canonical UNION22 producer and all original changes, 69 source routes/classes, changed22/unchanged47 membership, 17/48 checks, protected metadata and true prior-BR rollback. Add exactly the independently reviewed +559-byte mounted-HUD visibility hunk to the existing HUD forward list and its inverse, with final HUD 24779/3bf0d958... -> 25338/d794669e...; final RC-relative source delta one of 69 only. Update the six listed existing producer/profile/verifier/test/native-lock/runner files to maintain strict pins, truthful follow-up authorship/claim provenance and current-RC partial inverse. Existing Native server28 bodies, both actual suites, cases and fixtures remain byte-exact. Do not edit the shared GQ8 workflow or any ACTIVE66-owned path/resource. No portrait/min55/Builder/Compass feature adoption in this scope.",
       "grant_scope_version": 1,
       "generated_source_scope": [
@@ -3513,6 +3513,27 @@
         "receipt_sha256": "19da17c574135472662ec8677262c8a7859282fc8193960b362c155e9c8ed3db",
         "template_sha256": "8ff9e572c115a3afdf1c63aac2a4bf1dc3e7a95ffef7890e7b652bac6a929403",
         "actual_candidate_head_review_completed": false
+      },
+      "source_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+      "source_tree": "81dbb70cea1b8d7571f933c20a283a9f43a6b476",
+      "created_pr_count": 1,
+      "last_source_submission": {
+        "observed_at": "2026-11-22T22:11:03Z",
+        "pr": 1019,
+        "source_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+        "base_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "source_lease_epoch": 605,
+        "source_lease_release_commit": "4d6db4e3275c57414facc6e12950ac1fbc3c6d1b",
+        "local_freeze_sha256": "8396229881fe6af8abb0a5ee2ee33d42f311b5b87197013729f0489e47923bbe",
+        "local_implementation_receipt_sha256": "b59d50e04b0a144e625df63618e6d2337a853857824dad5a53db93be8be61cca",
+        "local_output_audit_sha256": "0d0f34a6b0da4d71f8f62f9158ea6671677932c36c188ab26dcd2f0c15cc1810",
+        "gq8_run": 45075843804,
+        "gq8_status": "FAILURE_UPSTREAM_DOWNLOAD_NO_UNION22_EXECUTION",
+        "bootstrap_run": 45075843791,
+        "bootstrap_status": "SUCCESS",
+        "PREP_READY": false,
+        "metadata_operation_id": "dbb863c0-f6bc-40fb-85a6-3f3ccbe941c1",
+        "metadata_lease_epoch": 606
       }
     }
   ],
