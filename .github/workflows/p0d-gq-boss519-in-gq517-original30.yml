@@ -1,0 +1,673 @@
+name: P0D GQ 5 original fixes 31-source + 32 rollback combinations
+on:
+  push:
+    branches:
+      - quality/gq519-original30-intake-only-20261116
+    paths:
+      - 'quality_gameplay/boss_los_30source_intake_20261116/**'
+      - '.github/workflows/p0d-gq-boss519-in-gq517-original30.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/boss_los_30source_intake_20261116/**'
+      - '.github/workflows/p0d-gq-boss519-in-gq517-original30.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-item26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original 7-domain Game 21 source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _game_original
+          persist-credentials: false
+      - name: Reuse existing #484 AI + 26-source composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _quality_original
+          persist-credentials: false
+      - name: Original ART author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _art_original
+          persist-credentials: false
+      - name: Original SCORE author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _score_original
+          persist-credentials: false
+      - name: Item author #489 with cargo/LOS/speed-epoch fixes
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _item_original
+          persist-credentials: false
+      - name: Reuse original quality writer #512 combo-only round exit source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          path: _combo_original
+          persist-credentials: false
+      - name: Reuse original quality writer #514 BOSS-credit two-source observer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0d1be13be6d895bea460ba54aaa91ef346684d7f
+          path: _boss_original
+          persist-credentials: false
+      - name: Reuse original #517 cross-author30 / heal repair source unchanged
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
+          path: _heal_original
+          persist-credentials: false
+      - name: Reuse sole selected canonical #518 original boss wall LOS generated overlay
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
+          path: _los_original
+          persist-credentials: false
+      - name: Reuse independent original #520 ridge author (no own terrain code)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          path: _ridge_original
+          persist-credentials: false
+      - name: Reuse original #523 field egg author (no new egg code)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 7447761aee570f54d57d125e79d21c9cb05bc889
+          path: _egg_original
+          persist-credentials: false
+      - name: Original #524 sole Combat movement safety author (reuse exactly)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f90875e14446ba86b1c668ba43efa37fbc74be20
+          path: _warp_original
+          persist-credentials: false
+      - name: Original #516 delayed hero status damage author source + pure policy
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f0275692c54874f823d66748d470fb849607df5
+          path: _status_original
+          persist-credentials: false
+      - name: Pin original writer HEADs and only make a local ITEM copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _game_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _quality_original rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _art_original rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _score_original rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _item_original rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          mkdir -p artifacts
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --source _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/EGGRUMBLE_FieldItemPickups.luau
+          python3 -B -m unittest discover -v -s _heal_original/quality_gameplay/v3_heal_no_waste_20261116/tests
+      - name: Art author original selective project, then #484 original 26 compositor
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/ITEM_GQ_ART.project.json
+          python3 _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _game_original --quality _quality_original --art _art_original --score _score_original \
+            --art-project artifacts/ITEM_GQ_ART.project.json \
+            --out artifacts/ITEM_GQ_BASE26.project.json
+      - name: Reuse ITEM author's exact one-source overlay and receipt verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool=_item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py
+          python3 "$tool" prepare \
+            --project artifacts/ITEM_GQ_BASE26.project.json \
+            --out artifacts/ITEM_GQ_HEAL26.project.json \
+            --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --receipt artifacts/SOURCE_RECEIPT.json \
+            --item-head c8a324ad7bb40648d82a5828cbf54e217585fefd \
+            --quality-head 6b52eaf1f2725496277998fe0c5532b7a8fcaab5 \
+            --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text())
+          assert r["script_count"]==26 and r["item_overrides_only"]==["EGGRUMBLE_FieldItemPickups"]
+          assert r["other_twenty_five_byte_unchanged"]
+          print("GQ_ONLY_ITEM_DIFF_ON_FULL_26_SOURCE_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pin
+          persist-credentials: false
+      - name: Pin native Luau and run real helper / compile all 26 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pin rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pin -B /tmp/gq_heal_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_heal_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/make_native_test.py \
+            artifacts/EGGRUMBLE_FieldItemPickups.luau artifacts/HEAL_REAL_POLICY.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/HEAL_REAL_POLICY.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/HEAL_REAL_POLICY.native.luau | tee artifacts/HEAL_NATIVE.log
+          grep -q GQ_HEAL_NATIVE_REAL_POLICY_PASS artifacts/HEAL_NATIVE.log
+          # Run the ORIGINAL #489 ITEM + ORIGINAL InteractionGuard together.
+          # This supplements the pure helper test without a second gameplay owner.
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/make_original_item_vm.py \
+            --author-harness _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --guard _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_InteractionGuard.luau \
+            --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau | tee artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
+          grep -q GQ_HEAL_ORIGINAL_FULL_ITEM_GUARD_VM_PASS artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
+          python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py compile \
+            --project artifacts/ITEM_GQ_HEAL26.project.json \
+            --compiler /tmp/gq_heal_native/luau-compile
+      - name: Preserve original 8-domain game source tests across 7-roles field castle battle neutral item lobby
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -q
+          for pair in "make_native_rules_harness.py:castle_eggs_modes" "make_native_combat_harness.py:seven_roles" "make_native_round_replay_harness.py:round_replay_lobby" "make_native_raid_item_harness.py:raid_item" "make_native_boss_session_harness.py:neutral_boss"; do
+            generator="${pair%%:*}"
+            label="${pair##*:}"
+            python3 "_game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/$generator" \
+              --out "artifacts/ORIGINAL_GAME_${label}.native.luau"
+            /tmp/gq_heal_native/luau-compile --text "artifacts/ORIGINAL_GAME_${label}.native.luau" >/dev/null
+            /tmp/gq_heal_native/luau "artifacts/ORIGINAL_GAME_${label}.native.luau" | tee "artifacts/ORIGINAL_GAME_${label}.log"
+          done
+          echo GQ_8_DOMAIN_ORIGINAL_AUTHOR_VM_AND_CONTRACT_PASS
+      - name: Pin Rojo 7.7.1 binary and build actual unpublished 26-source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_heal_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_heal_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_heal_rojo.zip") as z:
+            names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(names)==1
+            out=Path("/tmp/gq_heal_rojo");out.write_bytes(z.read(names[0]));out.chmod(0o755)
+          PY
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL26.project.json -o artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx
+          python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py verify \
+            --project artifacts/ITEM_GQ_HEAL26.project.json \
+            --place artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text())
+          assert r["source_exact"]=="26/26"
+          assert r["item_overrides_only"]==["EGGRUMBLE_FieldItemPickups"]
+          print("GQ_HEAL_REAL_ITEM_PLUS_8_DOMAINS_PRIVATE26_SOURCE_EXACT_PASS")
+          PY
+      - name: Existing #512 pure combo module + exact ITEM private26 cross-composition
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _combo_original rev-parse HEAD)" = e232b9a8411879c2c1a945c0a8ed09233ca73fff
+          python3 _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/tools/compose_private28.py \
+            --base26 artifacts/ITEM_GQ_HEAL26.project.json \
+            --root _combo_original/quality_gameplay/v3_round_attribute_fence_20261116 \
+            --out artifacts/ITEM_GQ_HEAL_COMBO28.project.json
+          python3 - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/ITEM_GQ_HEAL_COMBO28.project.json")
+          data=json.loads(project.read_text(encoding="utf-8"))
+          compiled=[]
+          def walk(node):
+              if not isinstance(node,dict): return
+              if "$path" in node:
+                  loc=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(loc)],
+                      check=True,stdout=subprocess.DEVNULL)
+                  compiled.append(loc)
+              else:
+                  for name,entry in node.items():
+                      if not name.startswith("$"): walk(entry)
+          walk(data["tree"])
+          assert len(compiled)==28 and len(set(compiled))==28, "not unique 28"
+          assert len([p for p in compiled if p.name=="EGGRUMBLE_FieldItemPickups.luau"])==1, "duplicate item"
+          item=next(p for p in compiled if p.name=="EGGRUMBLE_FieldItemPickups.luau")
+          assert hashlib.sha256(item.read_bytes()).hexdigest()=="55f7cce975c05a263047192043d20b8b6c1de869d5c44c8c5b76d7d70dfe582c"
+          author=Path("_combo_original/quality_gameplay/v3_round_attribute_fence_20261116")
+          for n in ["EGGRUMBLE_RoundAttributeFence.luau","EGGRUMBLE_RoundAttributeFence.server.luau"]:
+              assert len([p for p in compiled if p.name==n])==1 and next(p for p in compiled if p.name==n).read_bytes()==(author/n).read_bytes()
+          receipt=Path("artifacts/GQ_COMBO28_SOURCE_RECEIPT.json")
+          r=json.loads(receipt.read_text())
+          assert r["mapped_sources"]==28 and r["original_count"]==26 and r["added_count"]==2
+          r["cross_candidate_kind"]="SOURCE_EXACT_ONLY_GQ517_ITEM_PLUS_ORIGINAL_GQ512_COMBO"
+          r["gq517_fixed_sha"]="8b5b3567494e81ce95f1acef5fc66fb4be3ced63"
+          r["gq512_original_sha"]="e232b9a8411879c2c1a945c0a8ed09233ca73fff"
+          r["item_original_author_sha"]="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
+          r["official_rc_adopted"]=False
+          receipt.write_text(json.dumps(r,indent=2,ensure_ascii=False)+"\n")
+          print("GQ_HEAL_ITEM_COMBO28_NATIVE_PARSE_AND_UNIQUE_SOURCE_PASS",len(compiled))
+          PY
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_COMBO28.project.json -o artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+          python3 _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/tools/verify_private28.py \
+            artifacts/ITEM_GQ_HEAL_COMBO28.project.json artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          r=json.loads(Path("artifacts/GQ_COMBO28_SOURCE_RECEIPT.json").read_text())
+          assert r["mapped_sources"]==28 and r["changed_original_source_paths"]==0
+          assert r["official_rc_integrated"] is False
+          print("GQ_517_ITEM_PLUS_512_COMBO_PRIVATE28_EXACT_PASS",r["place_bytes"],r["place_sha256"])
+          PY
+      - name: Reuse original #514 author BOSS composer and native source-exact verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _boss_original rev-parse HEAD)" = 0d1be13be6d895bea460ba54aaa91ef346684d7f
+          python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/compose_current28.py \
+            --original artifacts/ITEM_GQ_HEAL26.project.json --out artifacts/ITEM_GQ_HEAL_BOSS28.project.json
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_BOSS28.project.json -o artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx
+          python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/verify_current28.py \
+            --original artifacts/ITEM_GQ_HEAL26.project.json \
+            --project artifacts/ITEM_GQ_HEAL_BOSS28.project.json \
+            --place artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
+          # Reuse the #514 owner's newest native source-exact original GAME replay harness
+          # for both simulated Studio and simulated live-server, not Roblox engine.
+          for simulated in studio live-server; do
+            python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/make_native_author_replay_harness.py \
+              "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" "$simulated"
+            /tmp/gq_heal_native/luau-compile --text "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" >/dev/null
+            /tmp/gq_heal_native/luau "artifacts/BOSS_ORIGINAL_REPLAY_${simulated}.native.luau" | tee "artifacts/BOSS_REPLAY_${simulated}.log"
+          done
+          grep -q 'BOSS_CREDIT_ORIGINAL_AUTHOR_REPLAY_STUDIO: 16/16 PASS' artifacts/BOSS_REPLAY_studio.log
+          grep -q 'BOSS_CREDIT_ORIGINAL_AUTHOR_REPLAY_LIVE_SERVER_LIKE: 16/16 PASS' artifacts/BOSS_REPLAY_live-server.log
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py policy \
+            --combo _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/EGGRUMBLE_RoundAttributeFence.luau \
+            --boss _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/EGGRUMBLE_BossCreditPolicy.luau \
+            --out artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau | tee artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+          grep -q GQ_517_512_514_REAL_AUTHOR_POLICY_BOUNDARY_PASS artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+      - name: Real combined 30-source ITEM COMBO BOSS Place with strict dual-author mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py compose \
+            --combo artifacts/ITEM_GQ_HEAL_COMBO28.project.json \
+            --boss artifacts/ITEM_GQ_HEAL_BOSS28.project.json \
+            --out artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --receipt artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            -o artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx
+          python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py verify \
+            --project artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --place artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json \
+            --compiler /tmp/gq_heal_native/luau-compile
+      - name: Select ONE canonical #518 boss into complete original #517 30 and run actual patched-native + Rojo QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _heal_original rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
+          test "$(git -C _los_original rev-parse HEAD)" = f31081d5cb2bea86d01c76c53bb60cd2f9a8355d
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/intake.py prepare \
+            --base artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --out artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json \
+            --boss artifacts/EGGRUMBLE_NeutralStoneGiant.luau \
+            --author-tool _los_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py
+          python3 quality_gameplay/boss_los_30source_intake_20261116/make_native_518.py \
+            --patched artifacts/EGGRUMBLE_NeutralStoneGiant.luau \
+            --out artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau
+          /tmp/gq_heal_native/luau-compile artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_GQ519_BOSS_LOS.native.luau | tee artifacts/GQ518_NATIVE_LOS.log
+          grep -q GQ518_ACTUAL_AUTHORED_LUAU_BOSS_OCCLUSION_5_CASES_PASS artifacts/GQ518_NATIVE_LOS.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ518_SELECTED_ORIGINAL30.project.json")
+          tree=json.loads(project.read_text())["tree"]
+          names=set()
+          def visit(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  assert p.name not in names,("duplicate source",p.name)
+                  names.add(p.name)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile",str(p)],
+                      check=True,stdout=subprocess.DEVNULL)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):visit(v)
+          visit(tree)
+          assert len(names)==30,len(names)
+          print("GQ518_PLUS_GQ517_ACTUAL_NATIVE30_ALL_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            -o artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/intake.py verify \
+            --project artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --place artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json
+          echo "GQ_SELECTED_SINGLE_ORIGINAL_BOSS_ONLY NOT_FORMAL_RC"
+      - name: Reuse original ridge #520 + field-egg #523 in canonical #518 boss original30 single-game place
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _ridge_original rev-parse HEAD)" = f53162f4dc1d0f1832942a28bf89df7114ae4f3d
+          test "$(git -C _egg_original rev-parse HEAD)" = 7447761aee570f54d57d125e79d21c9cb05bc889
+          python3 -B -m unittest discover -q -s _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/tests
+          python3 -B -m unittest discover -q -s _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116 -p 'test_*.py'
+          original=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/compose_8domain.py prepare \
+            --base artifacts/GQ518_SELECTED_ORIGINAL30.project.json \
+            --base-receipt artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json \
+            --author-host "_game_original/$original/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --quality-host "_quality_original/$original/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --raid-item "_game_original/$original/EGGRUMBLE_RaidItemIntake.luau" \
+            --quality-composer _quality_original/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --ridge-composer _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/augment_current26.py \
+            --ridge-patch _ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116/patch_ridge.py \
+            --egg-patch _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/patch_field_eggs.py \
+            --outdir artifacts/GQ521_BOSS_FIELD30
+          python3 _egg_original/quality_gameplay/v3_field_egg_clearance_20261116/make_native_geometry_test.py \
+            --patched artifacts/GQ521_BOSS_FIELD30/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --out artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau
+          /tmp/gq_heal_native/luau-compile artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/GQ521_ORIGINAL_EGG_GEOMETRY.native.luau | tee artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+          grep -q GQ_FIELD_EGG_ACTUAL_LUAU_SOURCE_TEAM8_BR4_TO_ZERO_4_CASES_PASS artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json")
+          raw=json.loads(project.read_text())["tree"]
+          names=[]
+          def walk(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile",str(p)],
+                      check=True,stdout=subprocess.DEVNULL)
+                  names.append(p.name)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):walk(v)
+          walk(raw)
+          assert len(names)==30 and len(set(names))==30,("duplicate/absent script",names)
+          print("GQ521_518_BOSS_520_RIDGE_523_EGGS_NATIVE30_ALL_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            -o artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/compose_8domain.py verify \
+            --project artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            --place artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+      - name: Source-select original #524 safeMove into existing #518+#520+#523 30 source, no additional script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _warp_original rev-parse HEAD)" = f90875e14446ba86b1c668ba43efa37fbc74be20
+          test "$(git -C _game_original hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau)" = 66e666418b7c23d41f87faa5d61eb6e2770a463e
+          python3 -B -m unittest discover -q -s _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/tests
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/extend_warp.py prepare \
+            --base artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json \
+            --receipt artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL8DOMAIN30_RECEIPT.json \
+            --author-tool _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/patch_safe_warp.py \
+            --outdir artifacts/GQ521_BOSS_FIELD_WARP30
+          python3 _warp_original/quality_gameplay/v3_safe_warp_landing_20261116/make_native_warp_harness.py \
+            --patched artifacts/GQ521_BOSS_FIELD_WARP30/EGGRUMBLE_SevenRoleCombat.luau \
+            --out artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/GQ521_ORIGINAL524_WARP_NATIVE.spec.luau | tee artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+          grep -q GQ_SAFE_WARP_ORIGINAL_PATCHED_LUAU_11_SCENARIOS_PASS artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json")
+          tree=json.loads(project.read_text())["tree"]
+          names=set()
+          def visit(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(p)],
+                                check=True,stdout=subprocess.DEVNULL)
+                  name=p.name
+                  assert name not in names,("duplicate source filename",name)
+                  names.add(name)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):visit(v)
+          visit(tree)
+          assert len(names)==30
+          print("GQ521_518_520_523_524_ORIGINAL_30_LUAU_ALL_COMPILE_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json \
+            -o artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/extend_warp.py verify \
+            --project artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json \
+            --place artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+      - name: Reconcile ORIGINAL #516 status DOT with ORIGINAL #524 movement in ONE Combat + existing 31 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _status_original rev-parse HEAD)" = 8f0275692c54874f823d66748d470fb849607df5
+          status_root=_status_original/quality_gameplay/v3_status_tick_fence_20261116
+          warp_root=_warp_original/quality_gameplay/v3_safe_warp_landing_20261116
+          original=_game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau
+          python3 -B -m unittest discover -q -s "$status_root/tests" -p 'test_*.py'
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/combine_status_warp.py prepare \
+            --base artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json \
+            --prior-receipt artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_4_AUTHORS30_RECEIPT.json \
+            --original-combat "$original" \
+            --author-status "$status_root/EGGRUMBLE_SevenRoleCombat.patched.luau" \
+            --author-fence "$status_root/EGGRUMBLE_StatusTickFence.luau" \
+            --warp-tool "$warp_root/patch_safe_warp.py" \
+            --outdir artifacts/GQ521_STATUS_WARP31
+          mkdir -p artifacts/GQ521_STATUS_NATIVE
+          cp "$status_root/EGGRUMBLE_StatusTickFence.luau" artifacts/GQ521_STATUS_NATIVE/StatusFence.luau
+          cp "$status_root/tests/StatusFenceNative.spec.luau" artifacts/GQ521_STATUS_NATIVE/Spec.luau
+          (cd artifacts/GQ521_STATUS_NATIVE && /tmp/gq_heal_native/luau ./Spec.luau) | tee artifacts/GQ521_STATUS_POLICY_NATIVE.log
+          grep -q GQ_V3_STATUS_TICK_FENCE_NATIVE_13_CASES_PASS artifacts/GQ521_STATUS_POLICY_NATIVE.log
+          python3 "$status_root/tools/make_actual_status_callback_native.py" \
+            --source artifacts/GQ521_STATUS_WARP31/EGGRUMBLE_SevenRoleCombat.luau \
+            --out artifacts/GQ521_STATUS_NATIVE/Actual.spec.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/GQ521_STATUS_NATIVE/Actual.spec.luau >/dev/null
+          (cd artifacts/GQ521_STATUS_NATIVE && /tmp/gq_heal_native/luau ./Actual.spec.luau) | tee artifacts/GQ521_STATUS_ACTUAL_CALLBACK_NATIVE.log
+          grep -q GQ_V3_ACTUAL_SERVER_STATUS_CALLBACK_NATIVE_18_SCENARIOS_PASS artifacts/GQ521_STATUS_ACTUAL_CALLBACK_NATIVE.log
+          # Confirm the 524 owner's ACTUAL patched safeMove body still executes 11/11 after combining #516.
+          python3 "$warp_root/make_native_warp_harness.py" \
+            --patched artifacts/GQ521_STATUS_WARP31/EGGRUMBLE_SevenRoleCombat.luau \
+            --out artifacts/GQ521_STATUS_WARP_NATIVE.spec.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/GQ521_STATUS_WARP_NATIVE.spec.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/GQ521_STATUS_WARP_NATIVE.spec.luau | tee artifacts/GQ521_STATUS_WARP_NATIVE.log
+          grep -q GQ_SAFE_WARP_ORIGINAL_PATCHED_LUAU_11_SCENARIOS_PASS artifacts/GQ521_STATUS_WARP_NATIVE.log
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json")
+          tree=json.loads(project.read_text())["tree"]
+          names=set()
+          def visit(node):
+              if not isinstance(node,dict):return
+              if "$path" in node:
+                  p=(project.parent/node["$path"]).resolve(strict=True)
+                  subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(p)],
+                     check=True,stdout=subprocess.DEVNULL)
+                  assert p.name not in names
+                  names.add(p.name)
+              else:
+                  for k,v in node.items():
+                      if not k.startswith("$"):visit(v)
+          visit(tree)
+          assert len(names)==31
+          print("GQ521_516_DOT_524_WARP_ORIGINAL31_ALL_LUAU_COMPILE_PASS")
+          PY
+          /tmp/gq_heal_rojo build artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json \
+            -o artifacts/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/combine_status_warp.py verify \
+            --project artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json \
+            --place artifacts/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31_NOT_RC.rbxlx
+      - name: All 32 original-author five-feature ON OFF rollback states (no new game Lua)
+        shell: bash
+        run: |
+          set -euo pipefail
+          original_status=_status_original/quality_gameplay/v3_status_tick_fence_20261116
+          original_warp=_warp_original/quality_gameplay/v3_safe_warp_landing_20261116
+          original_ridge=_ridge_original/quality_gameplay/v3_central_ridge_clearance_20261116
+          original_egg=_egg_original/quality_gameplay/v3_field_egg_clearance_20261116
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/rollback_matrix.py prepare \
+            --original-project artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --current-project artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json \
+            --current-receipt artifacts/GQ521_STATUS_WARP31/GQ521_516_524_COMBINED31_RECEIPT.json \
+            --owner-status "$original_status/EGGRUMBLE_SevenRoleCombat.patched.luau" \
+            --owner-helper "$original_status/EGGRUMBLE_StatusTickFence.luau" \
+            --ridge-patch "$original_ridge/patch_ridge.py" \
+            --egg-patch "$original_egg/patch_field_eggs.py" \
+            --warp-patch "$original_warp/patch_safe_warp.py" \
+            --outdir artifacts/GQ521_ROLLBACK_MATRIX
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          path=Path("artifacts/GQ521_ROLLBACK_MATRIX/MATRIX_RECEIPT.json")
+          receipt=json.loads(path.read_text(encoding="utf-8"))
+          assert receipt["total"]==32
+          all_luau=0
+          for entry in receipt["private_cases"]:
+              project=Path(entry["project"])
+              tree=json.loads(project.read_text())["tree"]
+              names=set()
+              def walk(node):
+                  if not isinstance(node,dict):return
+                  if "$path" in node:
+                      p=(project.parent/node["$path"]).resolve(strict=True)
+                      subprocess.run(["/tmp/gq_heal_native/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+                      assert p.name not in names
+                      names.add(p.name)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith("$"):walk(v)
+              walk(tree)
+              assert len(names)==entry["source_count"]
+              subprocess.run(["/tmp/gq_heal_rojo","build",str(project),"-o",
+                  str(project.parent/("ROLLBACK_"+entry["code"]+".rbxlx"))],check=True,stdout=subprocess.DEVNULL)
+              all_luau+=len(names)
+          assert all_luau==32*30+16
+          print("GQ521_ORIGINAL_OWNER_32_ROLLBACK_NATIVE_SOURCE_COMPILE_PASS",all_luau)
+          PY
+          python3 -B quality_gameplay/boss_los_30source_intake_20261116/rollback_matrix.py verify \
+            --outdir artifacts/GQ521_ROLLBACK_MATRIX
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-FIVE-ORIGINAL-FIXES-ALL-32-ROLLBACK-ROJO-NATIVE-PRIVATE-QA
+          path: |
+            artifacts/GQ521_ROLLBACK_MATRIX/MATRIX_RECEIPT.json
+            artifacts/GQ521_ROLLBACK_MATRIX/00000/ROLLBACK_00000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/11111/ROLLBACK_11111.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/10000/ROLLBACK_10000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/01000/ROLLBACK_01000.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00100/ROLLBACK_00100.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00010/ROLLBACK_00010.rbxlx
+            artifacts/GQ521_ROLLBACK_MATRIX/00001/ROLLBACK_00001.rbxlx
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-ORIGINAL-516-524-COMBAT-PLUS-518-520-523-SINGLE-GAME31-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31_NOT_RC.rbxlx
+            artifacts/GQ521_STATUS_WARP31/GQ521_ORIGINAL_516_518_520_523_524_PRIVATE31.project.json
+            artifacts/GQ521_STATUS_WARP31/GQ521_516_524_COMBINED31_RECEIPT.json
+            artifacts/GQ521_STATUS_POLICY_NATIVE.log
+            artifacts/GQ521_STATUS_ACTUAL_CALLBACK_NATIVE.log
+            artifacts/GQ521_STATUS_WARP_NATIVE.log
+            artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-ORIGINAL-518-520-523-524-SINGLE-GAME30-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ521_ORIGINAL_518_520_523_524_PRIVATE30_NOT_RC.rbxlx
+            artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_ORIGINAL_518_520_523_524_PRIVATE30.project.json
+            artifacts/GQ521_BOSS_FIELD_WARP30/GQ521_4_AUTHORS30_RECEIPT.json
+            artifacts/GQ521_ORIGINAL524_WARP_NATIVE.log
+            artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ521-ORIGINAL-518-520-523-SINGLE-GAME30-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ521_ORIGINAL_518_520_523_PRIVATE30_NOT_RC.rbxlx
+            artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL_BOSS_FIELD_EGGS_RIDGE30.project.json
+            artifacts/GQ521_BOSS_FIELD30/GQ521_ORIGINAL8DOMAIN30_RECEIPT.json
+            artifacts/GQ521_ORIGINAL_EGG_GEOMETRY_NATIVE.log
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ518-ORIGINAL-LOS-IN-GQ517-30-SOURCE-PRIVATE-NOT-RC
+          path: |
+            artifacts/GQ518_SELECTED_ORIGINAL30_PRIVATE_NOT_RC.rbxlx
+            artifacts/GQ518_SELECTED_ORIGINAL30.project.json
+            artifacts/GQ518_SELECTED_ORIGINAL30_RECEIPT.json
+            artifacts/GQ518_NATIVE_LOS.log
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-517-512-514-PRIVATE30-SOURCE-EXACT-NOT-OFFICIAL-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json
+            artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
+            artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+            artifacts/BOSS_REPLAY_studio.log
+            artifacts/BOSS_REPLAY_live-server.log
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-HEAL-ITEM-PLUS-ORIGINAL-COMBO-PRIVATE28-NOT-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL_COMBO28_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL_COMBO28.project.json
+            artifacts/GQ_COMBO28_SOURCE_RECEIPT.json
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-HEAL-NO-WASTE-PRIVATE26-SOURCE-ONLY-NOT-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL26_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL26.project.json
+            artifacts/SOURCE_RECEIPT.json
+            artifacts/HEAL_NATIVE.log
+            artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
+          retention-days: 2
