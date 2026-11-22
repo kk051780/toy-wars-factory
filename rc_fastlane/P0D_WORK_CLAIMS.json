@@ -5235,7 +5235,7 @@
     },
     {
       "claim_id": "P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7",
-      "state": "PREP_READY",
+      "state": "RELEASED",
       "owner": "CODEX_ROOT_B8C8E7B756CD",
       "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
       "sub_scope": "CURRENT69_PICK_TARGET_CHARM_AND_STEALTH_ELIGIBILITY",
@@ -5561,7 +5561,18 @@
           "bytes": 4770,
           "sha256": "7a7833a4c2a7337c1a6feee489c9ff5f8d36575b7ce6298d95b8eb22c97d3f7c"
         },
-        "new_actual_full_pr_check": "PENDING_ACTUAL_REGISTRY_PUBLICATION",
+        "new_actual_full_pr_check": {
+          "schema": "P0D_CLAIM_GATE_V1",
+          "result": "CLAIM_SCOPE_PASS_NOT_RC_ADOPTION",
+          "claim_id": "P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7",
+          "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
+          "owner": "CODEX_ROOT_B8C8E7B756CD",
+          "source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+          "official_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "changed_files": 13,
+          "no_merge": true,
+          "art_mobile_fun_verified": false
+        },
         "reason": "Correct complete PR admission accounting without changing source or widening its eight mutable paths.",
         "registration": {
           "actual_registry_parent": "a6db13ee292d3bbb269c5e26dc6ce1cc4dd9143a",
@@ -5579,7 +5590,52 @@
             "sha256": "ba67449da84f06b7331a6acd98cb519da9802bc9061e55555b654aa7d9b11a97"
           },
           "owner_consent_comment": 7087262280
-        }
+        },
+        "actual_amendment_commit": "34059c0c5d57051d8615e9e069b89ff4d41f4f6b",
+        "actual_full_pr_check_at": "2026-11-22T23:12:03Z",
+        "immutable_five_check": "PASS_ACTUAL_GITHUB_PR_BLOBS_AND_INDEPENDENT_FULL_BYTES_AT_PINNED_H0_AND_440D"
+      },
+      "source_preparation_closed": true,
+      "source_writes_permitted": false,
+      "source_reservation_release": {
+        "kind": "NORMAL_COMPLETED_FROZEN_SOURCE_SCOPE_CLOSURE",
+        "owner": "CODEX_ROOT_B8C8E7B756CD",
+        "at": "2026-11-22T23:12:03Z",
+        "source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+        "source_quality_fact_preserved": "PREP_READY_AT_FROZEN_440D_ONLY",
+        "previous_state": "PREP_READY",
+        "actual_admission_registry": "34059c0c5d57051d8615e9e069b89ff4d41f4f6b",
+        "actual_full_pr_scope_result": {
+          "schema": "P0D_CLAIM_GATE_V1",
+          "result": "CLAIM_SCOPE_PASS_NOT_RC_ADOPTION",
+          "claim_id": "P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7",
+          "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
+          "owner": "CODEX_ROOT_B8C8E7B756CD",
+          "source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+          "official_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "changed_files": 13,
+          "no_merge": true,
+          "art_mobile_fun_verified": false
+        },
+        "paths_preserved": 13,
+        "mutable_path_definition_preserved": 8,
+        "immutable_donor_files_preserved": 5,
+        "all_resource_names_preserved": true,
+        "new_source_edits_authorized": false,
+        "canonical_queue_comment": 7087131021,
+        "owner_consent_comment": 7087262280,
+        "successor_grant_issued": false,
+        "scope_release_does_not_grant_rc_intake": true,
+        "requires_new_scoped_handoff_before_future_writes": true,
+        "coordinator": {
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "role": "OWNER_DELEGATED_COORDINATOR",
+          "operation_id": "78ce8c7a-90ac-47ff-92b5-6715f619b582",
+          "epoch": 627,
+          "acquire_commit": "d4941299c5d017dd50f39833f31311682b41d722"
+        },
+        "reason": "Source preparation completed at immutable independently reviewed hosted HEAD. Release the entire reservation without deleting history or renaming resources; retain separate canonical intake responsibility and all pending device gates."
       }
     },
     {
