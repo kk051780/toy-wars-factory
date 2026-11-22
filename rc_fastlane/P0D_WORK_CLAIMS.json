@@ -586,8 +586,8 @@
       "canonical_parent": 470,
       "integration_issue": 220,
       "request_comment": 7078511695,
-      "pr": 1015,
-      "candidate_pr_status": "RC_ADOPTED_POST_PUSH_NATIVE_FAILURE_REPAIR_IN_SAME_SCOPE",
+      "pr": 1018,
+      "candidate_pr_status": "FOLLOW_UP_REPAIR_LOCAL_SOURCE_REVIEW_PASS_WAIT_ACTUAL_SAME_HEAD_CI",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1166,113 +1166,87 @@
         }
       },
       "amended_at": "2026-11-22T15:33:36Z",
-      "candidate_head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
-      "candidate_tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
+      "candidate_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "candidate_tree": "48ced116e49efc31d5a19dfffd65ffa8730b2de0",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T15:33:36Z",
+      "metadata_updated_at": "2026-11-22T15:50:51Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 594,
-        "claim_commit": "06328d3edcd9b0506a3a49eccff33060e71d7414",
+        "epoch": 597,
+        "claim_commit": "3b029835319fdeb855d0577f0de82b93cfd77a70",
+        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T15:57:56.215000+00:00",
-        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b"
+        "expires_at": "2026-11-22T16:20:07+00:00"
       },
       "actual_candidate_evidence": {
-        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
-        "head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
-        "tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
-        "parent": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
-        "base_rc": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
-        "ci_checkout": "7abaa6cad02364a3adf229e6481802f7e5fd0e89",
-        "paths_changed": 15,
-        "added": 14,
-        "modified": 1,
-        "full_file_count": 920,
-        "unchanged_base_files": 905,
-        "delta_from_initial_candidate": "Only tests/test_gq470_union22_real69_20261122.py; remaining919 files and original45 test method bodies preserved.",
+        "pr": 1018,
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/1018",
+        "head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "tree": "48ced116e49efc31d5a19dfffd65ffa8730b2de0",
+        "base": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "parent": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "commits": 1,
+        "changed_files": 6,
+        "modified": 5,
+        "added": 1,
+        "total_repository_files": 921,
+        "unchanged_old_files": 915,
+        "actual_six_file_blobs_verified": true,
+        "source_writer_lease": {
+          "epoch": 596,
+          "acquire": "e3bfad7aed43c3f89ded7cb50670e8cfcccea176",
+          "release": "dc5e53940f459922563eccd36cfd991792ad9d66"
+        },
+        "source_checkpoint_v2": {
+          "bytes": 2806,
+          "sha256": "02b18b167e57792097547ea0094f79bf5ba893ab25c92793a878e76f867c2c64"
+        },
+        "complete_checkpoint_v2": {
+          "bytes": 5351,
+          "sha256": "103257dbbd66e251bde3ac53f08ad2e7b4672cf87667a5e2bd31d910830ace8e"
+        },
         "independent_source_review": {
-          "reviewer": "/root/governance_300",
-          "bytes": 9709,
-          "sha256": "7ecdc14380cff1cc3a7fcd822651a31dcd4b2f631cd31f7fb43de760d91c5cde"
+          "bytes": 9039,
+          "sha256": "a454a90d6c5f53471ff9cb65fb19601346f1c0ceb22532e827211ab667776a45",
+          "reviewer": "/root/governance_300"
         },
-        "independent_test_entry_review": {
-          "reviewer": "/root/governance_300",
-          "bytes": 8440,
-          "sha256": "51c0ab3480066331aedbc349ca5cdd62ec315fafe833d3614cae874d28c7db17"
-        },
-        "independent_actual_head_review": {
-          "reviewer": "/root/governance_300",
-          "bytes": 4327,
-          "sha256": "465de1215e69991f64a7a142fcd65b0947a3115ee362c548df0c53445fc52625"
-        },
-        "ci": {
-          "source_composite": {
-            "run": 45034614583,
-            "job": 137245461749,
-            "status": "SUCCESS",
-            "core_tests": 38,
-            "final_tests": 7,
-            "normal_and_optimized": true
+        "local_complete_tests": {
+          "core": 42,
+          "final": 9,
+          "offline": 12,
+          "modes": [
+            "normal",
+            "optimized"
+          ],
+          "core_and_author_offline_evidence": "Source checkpoint v1; v2 main success print literal only, outside these test functions. Independent offline12 rerun on v2.",
+          "new_native_both_suites_v3": {
+            "combined_clear_los": 10,
+            "objective_full_clear_los": 7,
+            "whole_source_bodies": 28,
+            "fresh_build_seconds": 60.118407037,
+            "output_files": 17,
+            "scope": "LOCAL_SOURCE_REVIEW_NOT_OFFICIAL_CI"
           },
-          "bootstrap_offline": {
-            "run": 45034614573,
-            "job": 137245461668,
-            "status": "SUCCESS",
-            "tests": 911
-          },
-          "compile_hold": {
-            "run": 45034614573,
-            "job": 137245461862,
-            "status": "SUCCESS_NOT_ENGINE_ACCEPTANCE"
-          },
-          "prep_inbox": {
-            "run": 45034614578,
-            "job": 137245461560,
-            "status": "SUCCESS"
+          "delivery": {
+            "files": 110,
+            "admission": {
+              "bytes": 2364,
+              "sha256": "0942aeba05559b655787c973295ae931eb5e25eb8ac8151dec379a4da113dcd0"
+            },
+            "place": {
+              "bytes": 828114,
+              "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+            }
           }
         },
-        "artifact": {
-          "id": 14759660643,
-          "zip": {
-            "bytes": 5318758,
-            "sha256": "fb101916924f8c5b4a2d29088bd5d780ef6184426016868cf346cb5f79a2492a"
-          },
-          "place": {
-            "bytes": 828114,
-            "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
-          },
-          "files": 110,
-          "canonical": false,
-          "provenance": "PR_CANDIDATE",
-          "root_content_measurement": {
-            "bytes": 2291,
-            "sha256": "ae3a371f73c964199fbaa6b32bcb8625ff9eb0680d9de1a643eeef627570b317"
-          }
-        },
-        "source_scope_unchanged": true,
-        "same_head_ci_pass": true,
-        "formal_rc_adoption": true,
+        "actual_same_head_ci": "RUNNING",
+        "official_post_push_artifact": null,
+        "source_build_accepted": false,
         "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "fun": "NOT_TESTED",
         "art": "ART_NO_GO",
-        "product": "PRODUCT_NO_GO",
-        "formal_source_acceptance": false,
-        "post_push": {
-          "run": 45035384920,
-          "job": 137247865657,
-          "status": "FAILURE",
-          "observed_step": 43,
-          "core_tests": "38 PASS normal and optimized",
-          "combined_clear_los": "10/10 PASS",
-          "objective_full": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
-          "failed_conjunction": "returncode == 0 AND exact case vector AND source inputs unchanged",
-          "individual_failed_assertion": "UNKNOWN_STDOUT_CAPTURED_BUT_NOT_UPLOADED",
-          "final_admission": "SKIPPED",
-          "upload": "SKIPPED",
-          "artifacts": [],
-          "failure_log": "OFFICIAL_EB43702_SOURCE_FAILED_45035384920.log",
-          "diagnostic_retries_cannot_establish_acceptance": true
-        }
+        "product": "PRODUCT_NO_GO"
       },
       "candidate_history": [
         {
@@ -1330,6 +1304,122 @@
             "old_offline_ci": "FAILURE_RETAINED",
             "reason": "Ordinary discovery required unavailable integration artifact context; strict independent context-free contracts added without changing 45 integration case bodies."
           }
+        },
+        {
+          "recorded_at": "2026-11-22T15:50:51Z",
+          "pr": 1015,
+          "head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+          "tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
+          "status": "RC_ADOPTED_POST_PUSH_NATIVE_FAILURE_REPAIR_IN_SAME_SCOPE",
+          "evidence": {
+            "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
+            "head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+            "tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
+            "parent": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
+            "base_rc": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "ci_checkout": "7abaa6cad02364a3adf229e6481802f7e5fd0e89",
+            "paths_changed": 15,
+            "added": 14,
+            "modified": 1,
+            "full_file_count": 920,
+            "unchanged_base_files": 905,
+            "delta_from_initial_candidate": "Only tests/test_gq470_union22_real69_20261122.py; remaining919 files and original45 test method bodies preserved.",
+            "independent_source_review": {
+              "reviewer": "/root/governance_300",
+              "bytes": 9709,
+              "sha256": "7ecdc14380cff1cc3a7fcd822651a31dcd4b2f631cd31f7fb43de760d91c5cde"
+            },
+            "independent_test_entry_review": {
+              "reviewer": "/root/governance_300",
+              "bytes": 8440,
+              "sha256": "51c0ab3480066331aedbc349ca5cdd62ec315fafe833d3614cae874d28c7db17"
+            },
+            "independent_actual_head_review": {
+              "reviewer": "/root/governance_300",
+              "bytes": 4327,
+              "sha256": "465de1215e69991f64a7a142fcd65b0947a3115ee362c548df0c53445fc52625"
+            },
+            "ci": {
+              "source_composite": {
+                "run": 45034614583,
+                "job": 137245461749,
+                "status": "SUCCESS",
+                "core_tests": 38,
+                "final_tests": 7,
+                "normal_and_optimized": true
+              },
+              "bootstrap_offline": {
+                "run": 45034614573,
+                "job": 137245461668,
+                "status": "SUCCESS",
+                "tests": 911
+              },
+              "compile_hold": {
+                "run": 45034614573,
+                "job": 137245461862,
+                "status": "SUCCESS_NOT_ENGINE_ACCEPTANCE"
+              },
+              "prep_inbox": {
+                "run": 45034614578,
+                "job": 137245461560,
+                "status": "SUCCESS"
+              }
+            },
+            "artifact": {
+              "id": 14759660643,
+              "zip": {
+                "bytes": 5318758,
+                "sha256": "fb101916924f8c5b4a2d29088bd5d780ef6184426016868cf346cb5f79a2492a"
+              },
+              "place": {
+                "bytes": 828114,
+                "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+              },
+              "files": 110,
+              "canonical": false,
+              "provenance": "PR_CANDIDATE",
+              "root_content_measurement": {
+                "bytes": 2291,
+                "sha256": "ae3a371f73c964199fbaa6b32bcb8625ff9eb0680d9de1a643eeef627570b317"
+              }
+            },
+            "source_scope_unchanged": true,
+            "same_head_ci_pass": true,
+            "formal_rc_adoption": true,
+            "studio": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "product": "PRODUCT_NO_GO",
+            "formal_source_acceptance": false,
+            "post_push": {
+              "run": 45035384920,
+              "job": 137247865657,
+              "status": "FAILURE",
+              "observed_step": 43,
+              "core_tests": "38 PASS normal and optimized",
+              "combined_clear_los": "10/10 PASS",
+              "objective_full": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
+              "failed_conjunction": "returncode == 0 AND exact case vector AND source inputs unchanged",
+              "individual_failed_assertion": "UNKNOWN_STDOUT_CAPTURED_BUT_NOT_UPLOADED",
+              "final_admission": "SKIPPED",
+              "upload": "SKIPPED",
+              "artifacts": [],
+              "failure_log": "OFFICIAL_EB43702_SOURCE_FAILED_45035384920.log",
+              "diagnostic_retries_cannot_establish_acceptance": true
+            }
+          },
+          "retained_official_failure": {
+            "rc_before": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "rc_after": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+            "at": "2026-11-22T14:54:52Z",
+            "pr": 1015,
+            "merged": true,
+            "force": false,
+            "expected_sha_matched": true,
+            "lease_epoch": 591,
+            "lease_acquire": "687be046fb94d53ceba3403356624233b3fee020",
+            "lease_release": "11f66fd94052e60a492db908ebf523d077effbca",
+            "status": "ADOPTED_SOURCE_REOPENED_POST_PUSH_FAILURE"
+          }
         }
       ],
       "base_rc_history": [
@@ -1367,7 +1457,7 @@
         "source_count": 69,
         "runtime_source_change_count": 0,
         "original_merged_pr": 1015,
-        "follow_up_pr": "NOT_CREATED",
+        "follow_up_pr": 1018,
         "original_case_preserved": true,
         "grant_status": "GRANTED_SCOPE_ONLY",
         "total_granted_paths": 16
