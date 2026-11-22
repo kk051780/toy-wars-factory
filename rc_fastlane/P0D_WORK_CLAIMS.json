@@ -3647,6 +3647,95 @@
         "owner_id": "56f88ae6-a92a-463c-9ca2-1525073ea541",
         "expires_at": "2026-11-22T22:42:58.000Z"
       }
+    },
+    {
+      "claim_id": "P0D-GQ815-GUARDIAN-ROLE-20261123-3B3ACF42",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_3B3ACF42B01A",
+      "feature_id": "GQ815_GUARDIAN_ACTUAL_MATCH_AI",
+      "sub_scope": "SESSION_CASTLE_ROLE_SNAPSHOT",
+      "canonical_parent": 804,
+      "parent_issue": 804,
+      "source_producer_parent_pr": 796,
+      "integration_issue": 220,
+      "request_comment": 7086698599,
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/apply_role_snapshot.py",
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/INPUT_LOCK.json",
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/case.luau",
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/fixture_boundary.luau",
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/run.py",
+        "quality_gameplay/gq8_guardian_runtime_20261118/role_session/README.md"
+      ],
+      "prep_branch": "quality/gq8-subsea-melee-los-20261118",
+      "source_head_before": "34cafed1cb9e92e08bbc8f2afa67d50ae52a083a",
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "pr": 796,
+      "allowed_new_prs": 0,
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "29280363-a5d7-4ce5-92f8-aba7a2b74ae5",
+      "author_contexts": [
+        "/root in workspace3b3acf42b01a: role snapshot adapter/runner and sole GitHub writer",
+        "/root/source_gate_audit: independent whole-Host lifecycle tests, no source fix"
+      ],
+      "independent_reviewer_context": "/root/candidate_audit",
+      "independent_review_status": "ACTUAL_CANDIDATE_SOURCE_HEAD_AND_EVIDENCE_REVIEW_REQUIRED",
+      "scope": "Continue original Guardian feature and existing PR796. Six-file isolated adapter/lock/Native regression package against current official69. Snapshot validated castle role once at Guardian.attach; refresh uses that per-session value. Preserve CONFIG/WARRIOR fallback, combat/policy/Host/authority and every other68 source body. Do not replay historical42 producer or introduce another canonical69 producer. No workflow edits.",
+      "generated_source_scope": [
+        {
+          "path": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 13707,
+            "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+          }
+        }
+      ],
+      "scope_review": {
+        "context": "/root/governance_access in workspace3b3acf42b01a",
+        "decision": "PASS_EXACT_SIX_PATH_EXISTING_GUARDIAN_ROLE_SESSION_PROPOSAL_ONLY",
+        "record": "Independent scope reviewer used actual claim canonicalization/path-overlap guard against registry blob de615c92b51244a68b9082217403a65fedad7024; no overlaps. Parent publishes scope decision; not a GitHub identity impersonation.",
+        "actual_candidate_head_review_completed": false
+      },
+      "acceptance": "Baseline actual whole32 Host quit/same-ID rejoin must fail old-session role preservation; candidate must pass role/actor/HP/gear assertions and cleanup with other68 byte-exact. All7 initial roles and invalid/absent role fallback preserved, inverse exact. Independent candidate bytes/head review required. Local Native evidence is not GitHub CI success or RC adoption. Historical42 workflow can remain RED_FORMAL_HEAD_CHANGED_REBASE; do not weaken its predicate.",
+      "rollback": "Inverse only the two bounded role-snapshot hunks to exact Guardian13707B/9455e263 hash. No reset of official RC or earlier UNION22 source selections.",
+      "authority_evidence": [
+        "Authenticated GitHub kk051780 user233213370 with admin/push permission verified in parent session.",
+        "Current user request plus standing ordinary engineering delegation; official AGENTS / execution policy v1.2 / #1011.",
+        "Original #804 comment6980507767 authorizes same-feature/same-PR successor without prior author ACK.",
+        "Fresh CONTROLLER metadata lease with readback, independently scoped claim and expected-parent nonforce CAS."
+      ],
+      "excluded": [
+        "Canonical UNION22 producer/profile/native six paths owned by HUD; BotActors successor queue preserved",
+        "Existing Guardian outgoing +30B LOS request7077957972",
+        "Host, Policy, Combat and other68 sources; all workflows",
+        "New PR/feature, main/Publish/spend/schedules"
+      ],
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "issued_at": "2026-11-22T22:17:24Z",
+      "expires_at": "2026-11-23T04:17:24.000Z",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 608,
+        "claim_commit": "ff0fff06887887259e2c2c4ba3d4f3fcf5b0eecf",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "29280363-a5d7-4ce5-92f8-aba7a2b74ae5",
+        "expires_at": "2026-11-22T22:47:24.000Z"
+      }
     }
   ],
   "legacy_overlap_triage": [
