@@ -1,4 +1,4 @@
-name: P0D GQ BEAST real companion exact-source private21
+name: P0D GQ BEAST original21 and current69 target source
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -8,13 +8,16 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   beast-one-combat-private21:
     runs-on: ubuntu-latest
     timeout-minutes: 17
     steps:
       - uses: actions/checkout@v4
-        with: {persist-credentials: false}
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
@@ -133,3 +136,95 @@ jobs:
             artifacts/gq_beast21/GQ_BEAST_PRIVATE21.rbxlx
             artifacts/gq_beast21/GQ_BEAST_SOURCE_RECEIPT.json
           retention-days: 3
+
+  beast-current69-target-selection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fb5d9b693c48d4ffcce05c3f89d490593e0cecfd
+          path: _gq_formal_repo
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau69
+          persist-credentials: false
+      - name: Download exact formal69 source artifact and pinned Rojo
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/kk051780/toy-wars-factory/actions/artifacts/14761404772 > _gq_artifact69_metadata.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('_gq_artifact69_metadata.json').read_bytes())
+          if not (m['id']==14761404772 and m['expired'] is False
+                  and m['name']=='P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO'
+                  and m['workflow_run']['id']==45041527167
+                  and m['workflow_run']['head_sha']=='fb5d9b693c48d4ffcce05c3f89d490593e0cecfd'):
+              raise RuntimeError('RED_GQ618_FORMAL_ARTIFACT_METADATA')
+          PY
+          gh api repos/kk051780/toy-wars-factory/actions/artifacts/14761404772/zip > _gq_artifact69.zip
+          python3 - <<'PY'
+          import hashlib,stat,zipfile
+          from pathlib import Path,PurePosixPath
+          raw=Path('_gq_artifact69.zip').read_bytes()
+          if len(raw)!=5325025 or hashlib.sha256(raw).hexdigest()!='6e1c7cecb39b88a33f9c68b7698eaf21a178461852331c98e7583cbf47ab1793':
+              raise RuntimeError('RED_GQ618_FORMAL_ARTIFACT_BYTES')
+          root=Path('_gq_formal69');root.mkdir(exist_ok=False)
+          with zipfile.ZipFile('_gq_artifact69.zip') as z:
+              names=set()
+              for item in z.infolist():
+                  path=PurePosixPath(item.filename)
+                  if (path.is_absolute() or '..' in path.parts or '\\' in item.filename
+                      or item.filename in names or stat.S_ISLNK(item.external_attr>>16)):
+                      raise RuntimeError('RED_GQ618_UNSAFE_ARTIFACT_PATH')
+                  names.add(item.filename)
+              z.extractall(root)
+          PY
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq618_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq618_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq618_rojo.zip') as z:
+              bins=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              if len(bins)!=1:raise RuntimeError('RED_GQ618_ROJO_ARCHIVE')
+              p=Path('/tmp/gq618_rojo');p.write_bytes(z.read(bins[0]));p.chmod(0o755)
+          PY
+      - name: Fail-closed current69 source admission negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py --artifact-dir _gq_formal69 --baseline-repo _gq_formal_repo
+          python3 -O -B quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py --artifact-dir _gq_formal69 --baseline-repo _gq_formal_repo
+      - name: Fresh Luau build, full28 behavior, all69 ON/OFF compile and Rojo
+        shell: bash
+        env:
+          GQ618_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/v3_beast_escort_20261117/native/run_current69.py \
+            --artifact-dir _gq_formal69 --baseline-repo _gq_formal_repo \
+            --luau-source _gq_luau69 --build-dir "$RUNNER_TEMP/gq618-native69" \
+            --out artifacts/gq618_current69 --rojo /tmp/gq618_rojo \
+            --ci --expected-head "$GQ618_EXPECTED_HEAD"
+      - name: Retain source gate and negative reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ618-CURRENT69-SOURCE-CANDIDATE-NOT-OFFICIAL
+          path: |
+            artifacts/gq618_current69/
+            _gq_artifact69_metadata.json
+          retention-days: 7

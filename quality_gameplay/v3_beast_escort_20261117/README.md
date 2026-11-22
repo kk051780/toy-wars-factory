@@ -1,5 +1,93 @@
 # GQ BEAST-ESCORT real unit — distinct source-quality slice (2026-11-17)
 
+## Current69 targeting continuation (2026-11-23)
+
+The original GQ618 source was adopted through PR #629 at RC
+`82cd7b5b7be2cb326959f9b1d7a66e7ac6f49949`. The original21/current31
+documentation below is retained as historical source-contract context. This
+follow-up continues the same feature and PR #618; it does not introduce another
+Beast implementation or damage authority.
+
+Claim: `P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7`, registered at
+`d10214caf6d24eda42cd89e9e9f844993071b37d` in `coord/p0d-work-claims`.
+It permits the eight enumerated source preparation paths only. Canonical
+Union22 producer changes and formal RC writes require a subsequent scoped
+handoff and independent acceptance.
+
+### Reproduced problem and bounded repair
+
+In the frozen formal69 build `fb5d9b693c48d4ffcce05c3f89d490593e0cecfd`,
+the existing Beast picker can follow a nearer charmed neutral or hidden human
+that the existing damage path refuses to attack. That target occupies the
+nearest slot and prevents pursuit of a farther eligible enemy. Following a
+hidden human also exposes its position through the pet's movement command.
+
+`patch_current69.py` changes only two anchors in inline `BeastEscort.pickTarget`:
+
+- Exclude every neutral whose existing server-owned
+  `EGGRUMBLE_NeutralFriendlyOwnerId` marker is present. This matches actual
+  Swarm damage eligibility for all charm owners, including the interval before
+  the existing release routine clears the marker.
+- Reuse `currentHumanMember` and `humanCombatTargetable` for human selection.
+  The latter preserves the authoritative held-egg exception to NINJA stealth.
+
+Combat changes from 73,774 bytes / SHA-256
+`1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76`
+to 73,889 bytes /
+`ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a`.
+The delta is +115 bytes. Pet lifetime, leash, radius, scan cap, cooldown, one-pet
+limit, damage callback, geometry and every other source body remain unchanged.
+The OFF transform restores the exact prior Combat.
+
+### Separate current69 evidence contract
+
+`native/INPUT_LOCK.json` pins the complete 69-route source profile, project,
+baseline Place, frozen formal helper/fixture files, new Beast fixtures and
+historical21/31 files. It consumes the exact formal run `45041527167`, artifact
+`14761404772`, ZIP 5,325,025 bytes / SHA-256
+`6e1c7cecb39b88a33f9c68b7698eaf21a178461852331c98e7583cbf47ab1793`.
+Input drift or an unavailable/expired artifact fails closed; do not silently
+replace this baseline with another run.
+
+The dedicated current69 job checks out the actual PR head, verifies that the
+eight reviewed files match that Git commit, builds Luau Repl and Compile from
+the pinned clean source commit, then performs:
+
+1. All 69 sources compiled and compared by full route, class and embedded
+   source for ON and OFF Places; 68 source bodies remain byte-identical.
+2. An actual inverse whose 69 sources and full OFF Place exactly equal the
+   baseline. The baseline and OFF generated native programs are also identical.
+3. Twelve Beast cases using 28 complete selected server bodies, including real
+   Host TEAM entry, real ZOMBIE Tool conversion, real NINJA Tool stealth,
+   authoritative egg transfer, charm release, stale membership and caster death.
+   Baseline/OFF must reproduce exactly the three recorded failures; ON must
+   pass all twelve. An arbitrary nonzero exit does not count as reproduction.
+4. The unchanged frozen combined10 and objective7 clear-LOS suites against
+   the ON source. Their original assertions, inputs and game bodies remain
+   intact.
+5. Negative admission tests for source/route/identity drift, duplicate inputs,
+   unsafe output placement and incomplete or falsified native case vectors.
+
+Local invocation, with the formal artifact unpacked and a checkout of the
+frozen formal repository and clean pinned Luau source available:
+
+```sh
+python3 -B quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py \
+  --artifact-dir /absolute/formal69 --baseline-repo /absolute/formal-repo
+python3 -B quality_gameplay/v3_beast_escort_20261117/native/run_current69.py \
+  --artifact-dir /absolute/formal69 --baseline-repo /absolute/formal-repo \
+  --luau-source /absolute/clean-luau-source --build-dir /absolute/new-build \
+  --out /absolute/new-evidence --rojo /absolute/pinned-rojo
+```
+
+These are source-quality gates. The frozen API fixtures approximate scheduling,
+geometry and players. `Humanoid:MoveTo` records a command and does not simulate
+Roblox physics or pathfinding. The other41 source bodies are compiled and
+embedded, not all behaviorally executed. Studio, Android, ART/FUN and formal
+RC acceptance remain separate. ACTIVE rich51 and private REAL69 remain distinct.
+
+## Historical original21/current31 contract
+
 **FEATURE_ID:** GQ_BEAST_ESCORT_REAL_UNIT_20261117
 **SOURCE_WIP / PRIVATE21 source candidate; NOT formal RC or Studio proof.**
 
