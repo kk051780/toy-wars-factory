@@ -2207,17 +2207,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 635,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "ebd15c7b-1142-4e4f-8a1c-f3cd85817341",
-    "task_id": null,
-    "epoch": 635,
-    "acquired_at": "2026-11-22T23:43:29Z",
-    "expires_at": "2026-11-23T00:13:29.000Z",
-    "base_main_sha": null,
-    "work_branch": "coord/p0d-work-claims",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3862,9 +3852,13 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "68d8e51c-ecc1-4c81-9949-11c77141ca90",
-    "epoch": 634,
-    "released_at": "2026-11-22T23:42:42Z"
+    "owner_id": "ebd15c7b-1142-4e4f-8a1c-f3cd85817341",
+    "epoch": 635,
+    "released_at": "2026-11-22T23:44:45Z",
+    "result": "PASS_EXACT_SCOPE_ART1010_ROUTER536_PASSIVE_REGISTRATION_GRANTS",
+    "claims_commit": "bbd45ae5655ec4f24cde4160530b020fe59f68ae",
+    "source_writes": 0,
+    "rc_adoption": false
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
