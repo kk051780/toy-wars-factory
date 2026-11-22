@@ -1,0 +1,47 @@
+name: GQ8 prompt reach exact author source and native Luau
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_prompt_reach_20261117/**'
+      - '.github/workflows/gq8-prompt-reach-20261117.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unique-prompt-reach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _pinned_gq8_author
+          persist-credentials: false
+      - name: Exact locked original and reversible only-Guard patch
+        run: |
+          set -euo pipefail
+          test "$(git -C _pinned_gq8_author rev-parse HEAD)" = "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9"
+          python3 quality_gameplay/gq8_prompt_reach_20261117/verify.py \
+            --original _pinned_gq8_author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_InteractionGuard.luau \
+            --selected quality_gameplay/gq8_prompt_reach_20261117/EGGRUMBLE_InteractionGuard.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_luau
+          persist-credentials: false
+      - name: Compile actual patched Luau; fail RED on syntax
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_luau -B /tmp/gq8_guard_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8_guard_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          /tmp/gq8_guard_native/luau-compile --text quality_gameplay/gq8_prompt_reach_20261117/EGGRUMBLE_InteractionGuard.luau > /dev/null
+          python3 quality_gameplay/gq8_prompt_reach_20261117/native_reach_test.py \
+            --selected quality_gameplay/gq8_prompt_reach_20261117/EGGRUMBLE_InteractionGuard.luau \
+            --out /tmp/gq8_prompt_reach_real_module_native.luau
+          /tmp/gq8_guard_native/luau /tmp/gq8_prompt_reach_real_module_native.luau
+          echo "GQ8_REAL_LUAU_NATIVE_GUARD_AND_RUNTIME_PASS"
