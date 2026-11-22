@@ -531,7 +531,7 @@
     },
     {
       "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "owner": "CODEX_ROOT_4B669C01C8AC",
       "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
       "resources": [
@@ -587,7 +587,7 @@
       "integration_issue": 220,
       "request_comment": 7078511695,
       "pr": 1018,
-      "candidate_pr_status": "FOLLOW_UP_REPAIR_LOCAL_SOURCE_REVIEW_PASS_WAIT_ACTUAL_SAME_HEAD_CI",
+      "candidate_pr_status": "ACTUAL_SAME_HEAD_CI_AND_ARTIFACT_INDEPENDENT_PASS_WAIT_SEPARATE_RC_WRITE",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1169,14 +1169,14 @@
       "candidate_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
       "candidate_tree": "48ced116e49efc31d5a19dfffd65ffa8730b2de0",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T15:50:51Z",
+      "metadata_updated_at": "2026-11-22T15:59:14Z",
       "metadata_update_lease": {
+        "epoch": 600,
+        "claim_commit": "ca9d2b38b6c4227a52e9d793c72b77d2d5679746",
         "branch": "twf-repair-coordinator",
-        "epoch": 597,
-        "claim_commit": "3b029835319fdeb855d0577f0de82b93cfd77a70",
-        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T16:20:07+00:00"
+        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+        "expires_at": "2026-11-22T16:28:39+00:00"
       },
       "actual_candidate_evidence": {
         "pr": 1018,
@@ -1239,14 +1239,86 @@
             }
           }
         },
-        "actual_same_head_ci": "RUNNING",
+        "actual_same_head_ci": {
+          "all_success": true,
+          "runs": [
+            {
+              "id": 45040388033,
+              "name": "P0D two-lane latest verified intake (read-only)",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 45040371382,
+              "name": "P0D two-lane latest verified intake (read-only)",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 45040371494,
+              "name": "Toy Wars bootstrap offline QA",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 45040371397,
+              "name": "GQ8 single formal RC source selected REAL66 legacy exploration OFF65",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "source_job": 137263236688,
+          "offline_job": 137263236826,
+          "compile_job": 137263237004,
+          "offline_tests": 913,
+          "core_tests_each_mode": 42,
+          "final_tests_each_mode": 9,
+          "native_cases": {
+            "combined_clear_los": 10,
+            "objective_full_clear_los": 7
+          },
+          "actual_pr_checkout": "cf01851277be649aa92f631bc532bd083a6a5263"
+        },
         "official_post_push_artifact": null,
         "source_build_accepted": false,
         "studio": "NOT_TESTED",
         "android": "NOT_TESTED",
         "fun": "NOT_TESTED",
         "art": "ART_NO_GO",
-        "product": "PRODUCT_NO_GO"
+        "product": "PRODUCT_NO_GO",
+        "artifact": {
+          "id": 14760768789,
+          "run": 45040371397,
+          "zip": {
+            "bytes": 5319573,
+            "sha256": "8301bddbb4e4f19932bce9205b013e736bb341ca2bbc7643a2f5381ff1e17575"
+          },
+          "place": {
+            "bytes": 828114,
+            "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+          },
+          "delivery_files": 110,
+          "native_files": 17,
+          "whole_bodies_per_suite": 28,
+          "source_tree_entries": 2336,
+          "canonical_build": false,
+          "receipt_provenance": "PR_CANDIDATE",
+          "root_measurement": {
+            "bytes": 2511,
+            "sha256": "70e156d3463702e2bfc2dff23b63d64473b0198093169efbea72b3a04213426b"
+          },
+          "independent_measurement": {
+            "bytes": 2511,
+            "sha256": "e0983cf50624fc90a280c0806517f60969f4cd53528dac60e4f132b93aa3e12e"
+          }
+        },
+        "adoption_readiness": {
+          "reviewer": "/root/governance_300",
+          "bytes": 5437,
+          "sha256": "ea4291832e53f0ab1e458a22f18b9d1a3e483c0340d9afef796fd303b707cb37",
+          "result": "PASS_CANDIDATE_ONLY_FRESH_SEPARATE_RC_LEASE_AND_POST_PUSH_REQUIRED"
+        },
+        "candidate_source_accepted": true
       },
       "candidate_history": [
         {
