@@ -1,0 +1,203 @@
+name: GQ470 local true damage cue REAL70 A source gate (not official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_local_damage_cue_20261121/**"
+      - ".github/workflows/gq470-local-damage-cue-real69.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real70-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET: quality_gameplay/gq470_local_damage_cue_20261121
+      ROOT: /tmp/gq470-local-damage-cue
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Static true-health-loss safety and fail-closed damage cue mutations
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$TARGET/compose_official70.py" "$TARGET/test_local_damage_cue_source.py" "$TARGET/emit_art_report.py"
+          python3 -m unittest discover -s "$TARGET" -p 'test_*.py' -v
+      - name: Verify immutable official REAL69 head and original same-head build
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$FORMAL success"
+          mkdir -p "$ROOT/off69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO \
+            --dir "$ROOT/off69"
+          python3 "$TARGET/compose_official70.py" --official "$ROOT/off69" --out "$ROOT/on70"
+          echo A_REAL70_69_SOURCE_BYTES_UNCHANGED_ONE_NEW_CLIENT_ONLY_PASS
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_damage_luau
+          persist-credentials: false
+      - name: Pinned Native Luau compile original69 and candidate70
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_damage_luau -B "$ROOT/luau" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,sys,subprocess
+          sys.path.insert(0, "quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120")
+          from verify_nonloss import project_scan
+          root=Path(os.environ["ROOT"])
+          for name,count in (("off69",69),("on70",70)):
+              location=root/name
+              scanned=project_scan(location,"EGGRUMBLE_REAL69.project.json")
+              assert len(scanned)==count
+              for script in scanned.values():
+                  subprocess.run([str(root/"luau/luau-compile"),"--text",str(location/script["path"])],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_DAMAGE_NATIVE_ORIGINAL69_PLUS_CANDIDATE70_PASS")
+          PY
+      - name: Pinned true Rojo OFF69 exact-byte and ON70 Source/Class
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ["ROOT"])
+          with ZipFile(root/"rojo.zip") as archive:
+              names=[x for x in archive.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              output=root/"rojo"
+              output.write_bytes(archive.read(names[0]))
+              output.chmod(0o755)
+          PY
+          "$ROOT/rojo" build "$ROOT/off69/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_REBUILT.rbxlx"
+          "$ROOT/rojo" build "$ROOT/on70/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$ROOT/off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$ROOT/off69/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/OFF69_REBUILT.rbxlx" --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$ROOT/on70/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx" --count 70
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import os,hashlib,json
+          root=Path(os.environ["ROOT"])
+          a=ET.parse(root/"OFF69_REBUILT.rbxlx").getroot()
+          b=ET.parse(root/"GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx").getroot()
+          original=list(a.iter("Item"));candidate=list(b.iter("Item"))
+          assert len(candidate)==len(original)+1
+          hits=[]
+          for item in candidate:
+              name=item.find('./Properties/string[@name="Name"]')
+              if name is not None and name.text=="EGGRUMBLE_LocalDamageCue":
+                  hits.append(item)
+          assert len(hits)==1 and hits[0].get("class")=="LocalScript"
+          src=hits[0].find('./Properties/ProtectedString[@name="Source"]')
+          if src is None:
+              src=hits[0].find('./Properties/string[@name="Source"]')
+          expected=Path(os.environ["TARGET"]+"/EGGRUMBLE_LocalDamageCue.client.luau").read_text()
+          assert src is not None and src.text is not None and src.text.strip()==expected.strip()
+          receipt=json.loads((root/"on70/GQ470_LOCAL_DAMAGE_CUE_SOURCE_RECEIPT.json").read_text())
+          assert receipt["candidate_source_count"]==70 and receipt["original_sources_preserved"]==69
+          assert receipt["art_gate"]=="ART_NO_GO" and receipt["formal_integrated"] is False
+          print("GQ470_DAMAGE_ROJO_OFF69_EXACT_ON70_SOURCE_CLASS_PASS")
+          print("CANDIDATE_PRIVATE_PLACE_BYTES", (root/"GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx").stat().st_size)
+          PY
+      - name: Verify exact one-client B220 source-select packet and 5 fail-closed mutants
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/compose_official70.py" --export-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx"
+          python3 "$TARGET/compose_official70.py" --verify-b "$ROOT/on70" \
+            --built-place "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx"
+          python3 - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0, os.environ["TARGET"])
+          from compose_official70 import B_MANIFEST,B_PACKET,verify_b
+          root=Path(os.environ["ROOT"])
+          candidate=root/"on70"
+          place=root/"GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx"
+          container=candidate/B_PACKET
+          manifest=container/B_MANIFEST
+          original=manifest.read_bytes()
+          tests=[
+            ("formal_integrated",True),
+            ("art_status","ART_GO"),
+            ("new_source_sha256","bad-sha"),
+            ("original_selected_sources_preserved",1),
+          ]
+          for field,value in tests:
+              try:
+                  altered=json.loads(original)
+                  altered[field]=value
+                  manifest.write_text(json.dumps(altered))
+                  try: verify_b(candidate,place)
+                  except ValueError: pass
+                  else: raise AssertionError("MUTANT_NOT_BLOCKED_"+field)
+              finally: manifest.write_bytes(original)
+          extra=container/"UNEXPECTED_JUNK.txt"
+          extra.write_text("should never be packaged")
+          try:
+              try: verify_b(candidate,place)
+              except ValueError: pass
+              else: raise AssertionError("MUTANT_UNEXPECTED_PACKET_FILE")
+          finally: extra.unlink()
+          verify_b(candidate,place)
+          print("GQ470_DAMAGE_B220_FIVE_NEGATIVES_AND_REAL_SOURCE_PACKET_PASS")
+          PY
+      - name: "ART #420 honest PC/Android 32 screenshot and FUN source-only audit"
+        run: |
+          set -euo pipefail
+          python3 "$TARGET/emit_art_report.py" --candidate "$ROOT/on70" \
+            --place "$ROOT/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx" \
+            --out "$ROOT/ART_CHECK_REPORT.json"
+          cp "$TARGET/STUDIO_RETEST_MATRIX.json" "$ROOT/STUDIO_RETEST_MATRIX.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["ROOT"])/"ART_CHECK_REPORT.json"
+          x=json.loads(p.read_text(encoding="utf-8"))
+          assert len(x["comparison_images"])==32
+          assert x["comparison_image_count"]==0
+          assert all(v["exists"] is False and v["human_score"] is None for v in x["comparison_images"])
+          assert x["studio_solo"]=="NOT_TESTED" and x["studio_2client"]=="NOT_TESTED"
+          assert x["art_gate"]=="ART_NO_GO" and x["product_gate"]=="PRODUCT_NO_GO"
+          assert x["owner_accepted"] is False and x["formal_rc_integrated"] is False
+          print("GQ470_DAMAGE_REPORT_32_REAL_IMAGE_GAPS_NOT_ART_GO_PASS")
+          PY
+      - name: Confirm formal RC unchanged (B220 only writer)
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_MOVED_FORMAL_RC; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" || { echo RED_HEAD_DRIFT; exit 1; }
+          fi
+          echo A_SOURCE_ONLY_NATIVE_ROJO_B_PACKET_GREEN_NOT_ENGINE_NOT_ART_GO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-LOCAL-DAMAGE-REAL70-A-CANDIDATE-NOT-FORMAL
+          path: |
+            /tmp/gq470-local-damage-cue/GQ470_DAMAGE_ON70_NOT_FORMAL.rbxlx
+            /tmp/gq470-local-damage-cue/on70/GQ470_LOCAL_DAMAGE_CUE_SOURCE_RECEIPT.json
+            /tmp/gq470-local-damage-cue/on70/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LocalDamageCue.client.luau
+            /tmp/gq470-local-damage-cue/on70/B220_LOCAL_DAMAGE_CUE_ONE_NEW_CLIENT_SOURCE_NOT_FORMAL/**
+            /tmp/gq470-local-damage-cue/ART_CHECK_REPORT.json
+            /tmp/gq470-local-damage-cue/STUDIO_RETEST_MATRIX.json
+          if-no-files-found: error
+          retention-days: 7
