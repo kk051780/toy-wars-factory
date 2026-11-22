@@ -1282,6 +1282,155 @@
           "RC_adopted": false
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ487-SCORE-RELAY-PREP-20261122-DF856",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_DF856F1C3420",
+      "feature_id": "SCORE_BALANCE",
+      "sub_scope": "EXISTING_711_RELAY_ACCOUNTING_PREP_TRANSPORT",
+      "canonical_parent": 487,
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "request_comment": 7071970736,
+      "scope_finalization_comment": 7080001340,
+      "product_contract_comment": 7079854695,
+      "resources": [
+        "SCORE_BALANCE",
+        "REAL69_SOURCE_EGGRUMBLE_SCOREBALANCE"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
+        "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau",
+        "tests/test_gq487_relay_score_real69_20261122.py"
+      ],
+      "issued_at": "2026-11-22T14:01:53Z",
+      "expires_at": "2026-11-22T20:01:53.000Z",
+      "pr": null,
+      "candidate_pr_status": "NOT_CREATED",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_ONLY",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "24001e01-44fe-4613-a7fa-1afca68ff653",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 583,
+        "claim_commit": "a16a2315ebd4ea07657fa2224df88d327e3f432c",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T14:31:37+00:00"
+      },
+      "authority_evidence": [
+        "Actual kk051780/233213370/admin checked for this manual operation; current AGENTS/#1011 v1.2/config delegate ordinary development without gate waiver.",
+        "Previous CONTROLLER582 b9996010 explicitly released at13:58:08.831745Z; no expiry takeover.",
+        "Unchanged tools/repair_control.py planned this real manual CONTROLLER; exact-parent expected-SHA nonforce CAS plus full readback.",
+        "Existing request7071970736 and supplement7080001340 reused; no duplicate SCORE_BALANCE author or feature."
+      ],
+      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+      "prep_branch": "feature/p0d-prep-score-relay-20261122-df856",
+      "author_context": "/root (workspace df856f1c3420) with bounded /root/p0_triage",
+      "independent_reviewer_context": "/root/native_environment (separate existing actual context; no production authorship)",
+      "independent_review_status": "CONTEXT_BOUND_FOR_FUTURE_ACTUAL_HEAD_REVIEW_NOT_CODE_APPROVED",
+      "scope": "Six new PREP files only. Reuse public711 on current rare-preserving8030 to exact8741; producer/source_lock, separate Native runner, byteexact public relay spec, minimally adapted original score spec and pure unittest. No shared workflow or other owner file changes.",
+      "generated_source_count": 1,
+      "generated_source_scope": [
+        {
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+          "generated_route": "ServerScriptService/EGGRUMBLE_ScoreBalance",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 8030,
+            "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+          },
+          "after": {
+            "bytes": 8741,
+            "sha256": "67c76c12cc4d311847fb1cf794988b2f164053690660f6b55f4e590f93824136"
+          },
+          "existing_fragment": {
+            "bytes": 711,
+            "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+          }
+        }
+      ],
+      "source_count_preserved": 69,
+      "instances_preserved": 75,
+      "other_sources_preserved": 68,
+      "intended_parent": {
+        "status": "FROZEN_UNADOPTED_UNION22_NOT_PRODUCTION_ENVELOPE",
+        "source_manifest_sha256": "13000a809f2cf0c091af94d8f1dadbdf0ed972f2303bb85e0d5be2db04078e28",
+        "place": {
+          "bytes": 828114,
+          "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+        },
+        "actual_parent_inspection_receipt": "f889d903e99cccd1c800632d9ebea2431f6835fa9f13c8fa85540cb3c928ae4f"
+      },
+      "transport_authorization": "Exactly one Draft transport PR for canonical487, six additions against currentRC. Preserve old487438a406/oldfeaturebase/7files, bidirectional links and single owner. No old branch rebase/force/whole import. Real PR number recorded only after creation.",
+      "acceptance": "PREP only; no PREP_READY until exact candidate source/Native/inverse, registered independent current-head code review, actual same-head CI and real union production contract/workflow binding. Bootstrap green alone does not run this composer or canonical artifact.",
+      "integration_order": "After actual union22 intake; RC adoption priority not assigned. Preserve union22V2 fifteen paths/26resources and Dojo onepath/PR1014. Reject any parent drift, then coordinate exact real-input rebind and necessary scope amendment before READY/adoption.",
+      "rollback": "Validate actual ON69, remove exact711 once from actual Score, restore8030 hash and other68/project/non-Source XML; actual inverse OFF rebuild must equal real current parent. No stale whole-tree restoration.",
+      "fixture_scope": {
+        "public_relay_bytes": 3518,
+        "public_relay_sha256": "e8b2c88e8d1b29bec7ce148edece60a0da0f410313fbf891fa7b0ea566f56754",
+        "original_author_sha256": "a849860ce4ccca97faa40e0973644b14a366e5bc1ed7c48049d193078054b46a",
+        "permitted_adaptations": [
+          "tie-only FIELD6..10 keeping score1400",
+          "existing FIELD4 followup score670 assertion",
+          "minimum rare4/5 and same/cross-owner duplicate reducer negatives"
+        ],
+        "planned_assertions": 123,
+        "planned_build_evaluations": 55,
+        "counts_not_executed": true
+      },
+      "scope_review": {
+        "context": "/root/authority_audit",
+        "decision": "CONDITIONAL_PASS_PREP_SCOPE_DESIGN_ONLY_NO_GRANT",
+        "receipt_sha256": "12bda196c958389bceb8669973d78bf65a566fe86934f8cde97654860f2a342c",
+        "proposal_sha256": "a274442d7512389604dc8a36fad0b68321a48bf86129c54d98b070305201cfb7",
+        "architecture_review_sha256": "fc6340a30f822cb17d6a702fac4833b3139d8ab26ae7b81def9d900a13b5b3e2",
+        "v2_recheck": "Fifteenth union-only Native case adds no overlap with six Score paths; runtime22 pins and resources unchanged, fresh registry checked."
+      },
+      "preserved_claims": [
+        {
+          "claim_id": "P0D-GQ905-BR-GUARD-20261122-4B669",
+          "owner": "CODEX_ROOT_4B669C01C8AC",
+          "state": "RC_INTEGRATED",
+          "pr": 1013,
+          "target_path_count": 14,
+          "unchanged": true
+        },
+        {
+          "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
+          "owner": "CODEX_ROOT_4B669C01C8AC",
+          "state": "GRANTED",
+          "pr": null,
+          "target_path_count": 15,
+          "unchanged": true
+        },
+        {
+          "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
+          "owner": "CODEX_ROOT_29C4B0F731F5",
+          "state": "PREP_READY",
+          "pr": 1014,
+          "target_path_count": 1,
+          "unchanged": true
+        }
+      ],
+      "forbidden_changes": [
+        "shared workflows in initial scope",
+        "union22 paths/locks/generated22 pins",
+        "Dojo source/ownership",
+        "alternate scoring variant/new Source authority",
+        "invented envelope/canonical/runtime-unified/READY/engine acceptance",
+        "main/RobloxPublish/monetization/spending/five schedules"
+      ],
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "grant_scope_version": 1
     }
   ],
   "legacy_overlap_triage": [
