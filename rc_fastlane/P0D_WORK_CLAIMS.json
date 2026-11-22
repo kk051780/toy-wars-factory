@@ -11834,7 +11834,7 @@
       "source_head": "4f3af6121d1f489edcb484310ec99978e6884621",
       "source_head_before": "c51de1ed4feb7a7500ada95d21282402053ef988",
       "source_scope_granted": true,
-      "state": "PREP_READY",
+      "state": "RELEASED",
       "studio": "NOT_TESTED",
       "sub_scope": "CURRENT69_BOMB_OCCLUSION_QUALITY_PROPOSAL",
       "target_paths": [
@@ -12212,7 +12212,47 @@
       },
       "canonical_intake_status": "NEW_SCOPED_CURRENT_PARENT_UNION22_INTAKE_REQUIRED",
       "formal_rc_adopted": false,
-      "canonical_union22_intake_ready": false
+      "canonical_union22_intake_ready": false,
+      "source_preparation_closed": true,
+      "source_writes_permitted": false,
+      "source_reservation_release": {
+        "kind": "NORMAL_COMPLETED_FROZEN_SOURCE_SCOPE_CLOSURE",
+        "owner": "CODEX_ROOT_9E584AF98A13",
+        "at": "2026-11-22T23:56:47Z",
+        "source_head": "4f3af6121d1f489edcb484310ec99978e6884621",
+        "source_quality_fact_preserved": "PREP_READY_AT_FIXED_SOURCE_AND_FROZEN_FB5_RUNTIME_INPUT_ONLY",
+        "previous_state": "PREP_READY",
+        "actual_prep_ready_registry": "d598efcf35b24c900897f4ce5a3ed93a4f3211a8",
+        "actual_full_pr_scope_result": {
+          "schema": "P0D_CLAIM_GATE_V1",
+          "result": "CLAIM_SCOPE_PASS_NOT_RC_ADOPTION",
+          "claim_id": "P0D-GQ764-BOMB-OCCLUSION-20261123-9E584AF9",
+          "feature_id": "GQ8_REALM_PERMANENT_LAND_SEA_AIR_SUBSEA_20261118",
+          "owner": "CODEX_ROOT_9E584AF98A13",
+          "source_head": "4f3af6121d1f489edcb484310ec99978e6884621",
+          "official_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "changed_files": 20,
+          "no_merge": true,
+          "art_mobile_fun_verified": false
+        },
+        "paths_preserved": 20,
+        "mutable_path_definition_preserved": 11,
+        "immutable_pr_blobs_preserved": 9,
+        "all_resource_names_preserved": true,
+        "new_source_edits_authorized": false,
+        "successor_grant_issued": false,
+        "scope_release_does_not_grant_rc_intake": true,
+        "requires_new_scoped_handoff_before_future_writes": true,
+        "coordinator": {
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "role": "OWNER_DELEGATED_COORDINATOR",
+          "operation_id": "68d8e51c-ecc1-4c81-9949-11c77141ca90",
+          "epoch": 638,
+          "acquire_commit": "5f0d21a5638e9681e9cc4cfe1a84270784b126ae"
+        },
+        "reason": "Frozen source preparation and real same-HEAD QA completed with pre-registered separate context review. Preserve all evidence and canonical intake responsibility while releasing the completed source reservation."
+      }
     },
     {
       "PREP_READY": false,
