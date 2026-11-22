@@ -531,7 +531,7 @@
     },
     {
       "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
-      "state": "PREP_READY",
+      "state": "RC_INTEGRATED",
       "owner": "CODEX_ROOT_4B669C01C8AC",
       "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
       "resources": [
@@ -587,7 +587,7 @@
       "integration_issue": 220,
       "request_comment": 7078511695,
       "pr": 1018,
-      "candidate_pr_status": "ACTUAL_SAME_HEAD_CI_AND_ARTIFACT_INDEPENDENT_PASS_WAIT_SEPARATE_RC_WRITE",
+      "candidate_pr_status": "MERGED_OFFICIAL_SAME_SHA_SOURCE_BUILD_AND_ARTIFACT_ACCEPTED",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1169,14 +1169,14 @@
       "candidate_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
       "candidate_tree": "48ced116e49efc31d5a19dfffd65ffa8730b2de0",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T15:59:14Z",
+      "metadata_updated_at": "2026-11-22T16:08:33Z",
       "metadata_update_lease": {
-        "epoch": 600,
-        "claim_commit": "ca9d2b38b6c4227a52e9d793c72b77d2d5679746",
+        "epoch": 602,
+        "claim_commit": "267ece606949f0431e331ba9c4bb3a178338d8d7",
         "branch": "twf-repair-coordinator",
         "work_branch": "coord/p0d-work-claims",
         "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
-        "expires_at": "2026-11-22T16:28:39+00:00"
+        "expires_at": "2026-11-22T16:37:45+00:00"
       },
       "actual_candidate_evidence": {
         "pr": 1018,
@@ -1279,8 +1279,52 @@
           },
           "actual_pr_checkout": "cf01851277be649aa92f631bc532bd083a6a5263"
         },
-        "official_post_push_artifact": null,
-        "source_build_accepted": false,
+        "official_post_push_artifact": {
+          "run": 45041527167,
+          "job": 137266824227,
+          "attempt": 1,
+          "event": "push",
+          "branch": "rc/p0d-s1-kids-rc01",
+          "head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "status": "completed",
+          "conclusion": "success",
+          "artifact": 14761404772,
+          "zip": {
+            "bytes": 5325025,
+            "sha256": "6e1c7cecb39b88a33f9c68b7698eaf21a178461852331c98e7583cbf47ab1793"
+          },
+          "place": {
+            "bytes": 828114,
+            "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+          },
+          "canonical_build": true,
+          "receipt_provenance": "OFFICIAL",
+          "all_execution_head_fields": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "delivery_files": 110,
+          "source_files": 69,
+          "changed_sources": 22,
+          "unchanged_sources": 47,
+          "native_files": 17,
+          "native_cases": {
+            "combined_clear_los": 10,
+            "objective_full_clear_los": 7
+          },
+          "core_tests_per_mode": 42,
+          "final_tests_per_mode": 9,
+          "root_measurement": {
+            "bytes": 2535,
+            "sha256": "9432fa25baca2c59157d3f7ecb9506c439201d73eaa6148ec6c80f8d711fe604"
+          },
+          "independent_measurement": {
+            "bytes": 2535,
+            "sha256": "0df61fcc30d1f5ebcccc3e8a0e7e64aa8141835becccf9ea0aef8aa531263d04"
+          },
+          "raw_source_log": {
+            "bytes": 261735,
+            "sha256": "91635f6362491ba57afbdb47dedd72cc9c0d8fc47a17f7640c20fdac33dbc404"
+          }
+        },
+        "source_build_accepted": true,
         "studio": "NOT_TESTED",
         "android": "NOT_TESTED",
         "fun": "NOT_TESTED",
@@ -1318,7 +1362,13 @@
           "sha256": "ea4291832e53f0ab1e458a22f18b9d1a3e483c0340d9afef796fd303b707cb37",
           "result": "PASS_CANDIDATE_ONLY_FRESH_SEPARATE_RC_LEASE_AND_POST_PUSH_REQUIRED"
         },
-        "candidate_source_accepted": true
+        "candidate_source_accepted": true,
+        "official_closure_review": {
+          "reviewer": "/root/governance_300",
+          "bytes": 5293,
+          "sha256": "cf8ce3ef2e055cc459f05e72e49fa99d005f766e933f60d87e590d39cdb3836b",
+          "decision": "PASS_FORMAL_RC_SOURCE_BUILD_AND_CANONICAL_ARTIFACT_UNION_SCOPE_MAY_CLOSE"
+        }
       },
       "candidate_history": [
         {
@@ -1503,17 +1553,25 @@
         }
       ],
       "adoption_observation": {
-        "rc_before": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
-        "rc_after": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
-        "at": "2026-11-22T14:54:52Z",
-        "pr": 1015,
+        "previous_rc": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "actual_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "pr": 1018,
         "merged": true,
-        "force": false,
-        "expected_sha_matched": true,
-        "lease_epoch": 591,
-        "lease_acquire": "687be046fb94d53ceba3403356624233b3fee020",
-        "lease_release": "11f66fd94052e60a492db908ebf523d077effbca",
-        "status": "ADOPTED_SOURCE_REOPENED_POST_PUSH_FAILURE"
+        "merged_at": "2026-11-22T16:01:51Z",
+        "rc_epoch": 601,
+        "rc_acquire": "9ce1abda7b1e6f3439f1042d9e28026dc0ff1c76",
+        "rc_release": "782e0ce2ee421da62a6e20646bf78aa8ed0290b6",
+        "non_force_expected_sha_cas_and_readback": true,
+        "official_source_accepted": true,
+        "old_failed_run": 45035384920,
+        "old_individual_case_rng": "UNKNOWN_NOT_EMITTED_RETAINED",
+        "studio_solo": "NOT_TESTED",
+        "studio_two_client": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "fun": "NOT_TESTED",
+        "art": "ART_NO_GO",
+        "product": "PRODUCT_NO_GO",
+        "runtime_unified": "NO"
       },
       "current_repair_scope": {
         "base_rc": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
@@ -1532,7 +1590,8 @@
         "follow_up_pr": 1018,
         "original_case_preserved": true,
         "grant_status": "GRANTED_SCOPE_ONLY",
-        "total_granted_paths": 16
+        "total_granted_paths": 16,
+        "completion": "FORMAL_SAME_SHA_SOURCE_BUILD_AND_CANONICAL_ARTIFACT_ACCEPTED"
       },
       "objective_case_amendment": {
         "status": "GRANTED_SCOPE_ONLY",
@@ -1659,7 +1718,23 @@
           },
           "reason": "Original 15-path runtime union adoption rollback retained unchanged as historical boundary."
         }
-      ]
+      ],
+      "adoption_history": [
+        {
+          "rc_before": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+          "rc_after": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+          "at": "2026-11-22T14:54:52Z",
+          "pr": 1015,
+          "merged": true,
+          "force": false,
+          "expected_sha_matched": true,
+          "lease_epoch": 591,
+          "lease_acquire": "687be046fb94d53ceba3403356624233b3fee020",
+          "lease_release": "11f66fd94052e60a492db908ebf523d077effbca",
+          "status": "ADOPTED_SOURCE_REOPENED_POST_PUSH_FAILURE"
+        }
+      ],
+      "closed_at": "2026-11-22T16:08:33Z"
     },
     {
       "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
