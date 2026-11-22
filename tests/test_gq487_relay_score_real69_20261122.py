@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -129,6 +130,100 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
             self.assertFalse(record["local_toolchain_gate_ready"])
             self.assertFalse(record["provider_attestation_verified"])
             self.assertEqual(record["binaries"]["luau"], self.native.file_info(luau))
+
+
+    def test_orchestration_rejects_drift_in_executed_and_archived_copies(self):
+        """Actual runner and file I/O, mocked stage gate/processes; zero artifact/VM.
+
+        The control proves fake successful process returns can reach PASS. Five
+        drift cases reproduce the independent review gap at the orchestration
+        boundary; none is a Native execution or gameplay assertion count.
+        """
+        after = self.producer.transform_score(self.baseline, "on")
+        scenarios = (
+            ("unchanged_control", None, 8, 2),
+            ("results_during_compile", "after compile score_v2/Results.luau", 1, 0),
+            ("cases_during_compile", "after compile score_v2/Results.luau", 1, 0),
+            ("runner_during_native", "after Native score_v2", 4, 1),
+            ("archive_after_last_native", "final execution_inputs archive", 8, 2),
+            ("receipt_after_last_native", "final provided_toolchain_receipt copy", 8, 2),
+        )
+        for scenario, failure_boundary, expected_calls, expected_native_calls in scenarios:
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                stage, output = root / "mocked-stage", root / "mocked-output"
+                score_path = stage / "sources" / self.native.SCORE_PATH
+                score_path.parent.mkdir(parents=True)
+                score_path.write_bytes(after)
+                luau, compiler = root / "mock-luau", root / "mock-compiler"
+                luau.write_bytes(b"Non-executable fixture; mocked subprocess only")
+                compiler.write_bytes(b"Non-executable compiler fixture; mocked subprocess only")
+                provided = root / "mock-build-receipt.json"
+                provided.write_text(json.dumps({
+                    "luau_source_commit": self.native.PINNED_LUAU_COMMIT,
+                    "tool_sha256": {
+                        "luau": self.native.file_info(luau)["sha256"],
+                        "luau-compile": self.native.file_info(compiler)["sha256"],
+                    },
+                    "boundary": "MOCKED_BOOTSTRAP_NOT_A_BUILD_RECEIPT",
+                }))
+                identity = {"source_count": 69, "sources": copy.deepcopy(self.lock["input_sources"])}
+                identity["sources"][self.native.SCORE_PATH].update(self.native.SCORE_AFTER)
+                mocked_producer = SimpleNamespace(
+                    load_lock=lambda: self.lock,
+                    verify_stage=lambda *_: {"boundary": "MOCKED_GATE_NO_GENERATED_ARTIFACT"},
+                    validate_sources=lambda *_: identity,
+                )
+
+                def fake_process(argv, *, cwd, capture_output, timeout, check):
+                    self.assertTrue(capture_output)
+                    self.assertEqual(timeout, 30)
+                    self.assertFalse(check)
+                    is_native = "--null" not in argv
+                    variant = Path(cwd).name
+                    target = None
+                    if variant == "score_v2" and not is_native and argv[-1] == "Results.luau":
+                        if scenario == "results_during_compile":
+                            target = Path(cwd) / "Results.luau"
+                        elif scenario == "cases_during_compile":
+                            target = Path(cwd) / "Cases.luau"
+                    if variant == "score_v2" and is_native and scenario == "runner_during_native":
+                        target = Path(cwd) / "Runner.luau"
+                    if variant == "relay_original" and is_native:
+                        if scenario == "archive_after_last_native":
+                            target = output / "execution_inputs/native/run_regressions.py"
+                        elif scenario == "receipt_after_last_native":
+                            target = output / "provided_toolchain_receipt.json"
+                    if target is not None:
+                        # Whitespace leaves Lua/Python/JSON meaning intact but
+                        # invalidates the exact bytes claimed by the receipt.
+                        target.write_bytes(target.read_bytes() + b"\n ")
+                    stdout = b""
+                    if is_native:
+                        stdout = ("MOCKED PROCESS; NO NATIVE EXECUTION\n" +
+                                  self.native.SPEC_CONTRACTS[variant]["marker"] + "\n" +
+                                  self.native.ENTRY_MARKER + "\n").encode()
+                    return self.native.subprocess.CompletedProcess(argv, 0, stdout, b"")
+
+                with mock.patch.object(self.native, "load_producer", return_value=mocked_producer):
+                    with mock.patch.object(self.native.subprocess, "run", side_effect=fake_process) as process:
+                        receipt = self.native.run_regressions(stage, luau, compiler, output, provided)
+                self.assertEqual(process.call_count, expected_calls)
+                self.assertEqual(receipt["native_invocations"], expected_native_calls)
+                self.assertTrue(receipt["stage_files_unchanged"])
+                self.assertTrue(receipt["code_and_lock_unchanged"])
+                self.assertTrue(receipt["tool_binaries_unchanged"])
+                if failure_boundary is None:
+                    self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_PASS")
+                    self.assertTrue(receipt["native_pass"])
+                    self.assertTrue(receipt["local_native_gate_ready"])
+                else:
+                    self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_FAIL")
+                    self.assertFalse(receipt["native_pass"])
+                    self.assertFalse(receipt["local_native_gate_ready"])
+                    error = receipt.get("error", receipt.get("postflight_error", {}))
+                    self.assertIn("Copy integrity failure", error.get("message", ""))
+                    self.assertIn(failure_boundary, error["message"])
 
 
 if __name__ == "__main__":

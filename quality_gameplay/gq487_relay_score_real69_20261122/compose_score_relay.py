@@ -2,7 +2,7 @@
 """Prepare canonical #487's existing 711-byte repair on one fixed union69 input.
 
 This stage verifies source identity and an actual inverse. It does not certify
-the unpublished upstream production envelope, execute Native, or build a Place.
+the upstream production envelope, execute Native, or build a Place.
 """
 from __future__ import annotations
 
@@ -25,6 +25,8 @@ PROJECT = "EGGRUMBLE_REAL69.project.json"
 PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 MANIFEST = "SCORE_RELAY_PREP_SOURCE_MANIFEST.json"
 RECEIPT = "SCORE_RELAY_PREP_RECEIPT.json"
+INVERSE_INPUT_MANIFEST = "SCORE_RELAY_INVERSE_INPUT_MANIFEST.json"
+INVERSE_INPUT_RECEIPT = "SCORE_RELAY_INVERSE_INPUT_RECEIPT.json"
 PARENT_MANIFEST = "SCORE_RELAY_PARENT_SOURCE_MANIFEST.json"
 BASE_SHA = "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
 AFTER_SHA = "67c76c12cc4d311847fb1cf794988b2f164053690660f6b55f4e590f93824136"
@@ -253,15 +255,17 @@ def verify_place(root: Path, place_path: Path, profile: str) -> dict:
             "profile": profile, "place_built_by_this_verifier": False}
 
 
-def verify_stage(root: Path, profile: str = "after") -> dict:
-    root = Path(root)
-    snapshot = validate_sources(root, profile)
-    parent = parent_manifest_bytes(root)
-    manifest_raw, receipt_raw = regular_file(root / MANIFEST), regular_file(root / RECEIPT)
-    manifest, receipt = parse(manifest_raw), parse(receipt_raw)
+def verify_receipt_metadata(receipt: dict, snapshot: dict, manifest_raw: bytes, parent: bytes) -> dict:
+    """Bind a receipt to actual bytes and both exact source profiles.
+
+    The inverse uses this same check for the preserved raw ON receipt. This is
+    local execution evidence; it does not establish provider attestation.
+    """
+    profile = snapshot["profile"]
+    manifest = parse(manifest_raw)
     require(manifest == {"schema": "SCORE_RELAY_PREP_SOURCE_MANIFEST_V1", "status": STATUS, **snapshot},
             "STAGE_MANIFEST_BINDING")
-    require(receipt.get("schema") == "SCORE_RELAY_PREP_RECEIPT_V1" and receipt.get("status") == STATUS,
+    require(receipt.get("schema") == "SCORE_RELAY_PREP_RECEIPT_V2" and receipt.get("status") == STATUS,
             "STAGE_RECEIPT_SCHEMA_STATUS")
     require(receipt.get("output_profile") == profile and receipt.get("output_snapshot") == snapshot,
             "STAGE_RECEIPT_OUTPUT")
@@ -281,17 +285,33 @@ def verify_stage(root: Path, profile: str = "after") -> dict:
             and receipt.get("RC_adopted_by_composer") is False
             and receipt.get("Studio_Android_ART_FUN") == "NOT_VERIFIED", "STAGE_RECEIPT_UNEARNED_EVIDENCE")
     if direction == "on":
-        require(receipt.get("parent_stage_receipt") is None, "STAGE_RECEIPT_PARENT")
-    else:
-        predecessor = receipt.get("parent_stage_receipt")
-        require(isinstance(predecessor, dict) and set(predecessor) == {"bytes", "sha256"}
-                and type(predecessor["bytes"]) is int and predecessor["bytes"] > 0
-                and re.fullmatch(r"[a-f0-9]{64}", predecessor["sha256"]) is not None, "STAGE_RECEIPT_PARENT")
+        require(receipt.get("parent_stage_receipt") is None and
+                receipt.get("parent_stage_manifest") is None, "STAGE_RECEIPT_PARENT")
     require(receipt.get("source_lock_sha256") == load_lock()["_lock_sha256"] and
             receipt.get("manifest") == info(manifest_raw) and receipt.get("parent_manifest") == info(parent),
             "STAGE_RECEIPT_PIN")
     require(receipt.get("final_union_contract_bound") is False and receipt.get("canonical_build") is False
             and receipt.get("official_build_head") is None, "STAGE_UNEARNED_PROVENANCE")
+    return expected_input
+
+
+def verify_stage(root: Path, profile: str = "after") -> dict:
+    root = Path(root)
+    snapshot = validate_sources(root, profile)
+    parent = parent_manifest_bytes(root)
+    manifest_raw, receipt_raw = regular_file(root / MANIFEST), regular_file(root / RECEIPT)
+    receipt = parse(receipt_raw)
+    expected_input = verify_receipt_metadata(receipt, snapshot, manifest_raw, parent)
+    if profile == "before":
+        on_receipt_raw = regular_file(root / INVERSE_INPUT_RECEIPT)
+        on_manifest_raw = regular_file(root / INVERSE_INPUT_MANIFEST)
+        require(receipt.get("parent_stage_receipt") == info(on_receipt_raw) and
+                receipt.get("parent_stage_manifest") == info(on_manifest_raw), "INVERSE_INPUT_EVIDENCE_PIN")
+        verify_receipt_metadata(parse(on_receipt_raw), expected_input, on_manifest_raw, parent)
+    else:
+        require(not any((root / name).exists() or (root / name).is_symlink()
+                        for name in (INVERSE_INPUT_RECEIPT, INVERSE_INPUT_MANIFEST)),
+                "ON_STAGE_HAS_INVERSE_EVIDENCE")
     result = {"status": STATUS, "profile": profile, "snapshot": snapshot,
               "manifest": info(manifest_raw), "receipt": info(receipt_raw), "parent_manifest": info(parent),
               "final_union_contract_bound": False, "canonical_build": False, "official_build_head": None}
@@ -313,6 +333,14 @@ def compose(input_root: Path, output_root: Path, direction: str = "on") -> dict:
     original, contents, project = capture_sources(input_root, before_profile)
     parent = parent_manifest_bytes(input_root)
     input_stage = verify_stage(input_root, "after") if direction == "off" else None
+    on_evidence = {}
+    if input_stage is not None:
+        for original_name, copy_name, pin_name in (
+                (RECEIPT, INVERSE_INPUT_RECEIPT, "receipt"),
+                (MANIFEST, INVERSE_INPUT_MANIFEST, "manifest")):
+            raw = regular_file(input_root / original_name)
+            require(info(raw) == input_stage[pin_name], "ON_EVIDENCE_DRIFT_BEFORE_COPY")
+            on_evidence[copy_name] = raw
     transformed = dict(contents)
     transformed[TARGET] = transform_score(contents[TARGET], direction)
     require([k for k in contents if contents[k] != transformed[k]] == [TARGET], "ONE_SELECTED_SOURCE_CHANGE")
@@ -328,6 +356,8 @@ def compose(input_root: Path, output_root: Path, direction: str = "on") -> dict:
     (output_root / PROJECT).write_bytes(project)
     (output_root / PROJECT).chmod(original["project_mode"])
     (output_root / PARENT_MANIFEST).write_bytes(parent)
+    for name, raw in on_evidence.items():
+        (output_root / name).write_bytes(raw)
     final = validate_sources(output_root, after_profile)
     require(validate_sources(input_root, before_profile) == original and
             parent_manifest_bytes(input_root) == parent, "INPUT_DRIFT_DURING_COMPOSITION")
@@ -337,7 +367,7 @@ def compose(input_root: Path, output_root: Path, direction: str = "on") -> dict:
     manifest = {"schema": "SCORE_RELAY_PREP_SOURCE_MANIFEST_V1", "status": STATUS, **final}
     manifest_raw = (json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
     (output_root / MANIFEST).write_bytes(manifest_raw)
-    receipt = {"schema": "SCORE_RELAY_PREP_RECEIPT_V1", "status": STATUS,
+    receipt = {"schema": "SCORE_RELAY_PREP_RECEIPT_V2", "status": STATUS,
                "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                "direction": direction, "input_profile": before_profile, "output_profile": after_profile,
                "input_snapshot": original, "output_snapshot": final,
@@ -345,6 +375,7 @@ def compose(input_root: Path, output_root: Path, direction: str = "on") -> dict:
                "source_lock_sha256": final["source_lock_sha256"], "parent_manifest": info(parent),
                "manifest": info(manifest_raw), "inverse_reads_actual_on_source": direction == "off",
                "parent_stage_receipt": input_stage["receipt"] if input_stage else None,
+               "parent_stage_manifest": input_stage["manifest"] if input_stage else None,
                "canonical_build": False, "official_build_head": None, "final_union_contract_bound": False,
                "Native_executed_by_composer": False, "Place_built_by_composer": False,
                "Studio_Android_ART_FUN": "NOT_VERIFIED", "RC_adopted_by_composer": False}

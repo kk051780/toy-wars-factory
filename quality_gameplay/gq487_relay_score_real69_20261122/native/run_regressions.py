@@ -57,6 +57,20 @@ def file_info(path: Path) -> dict[str, Any]:
     return byte_info(path.read_bytes())
 
 
+def verify_copies(pins: dict[str, dict[str, Any]], boundary: str) -> dict[str, Any]:
+    """Re-read copies actually used or preserved, never just their source pins."""
+    observed = {}
+    for filename, expected in pins.items():
+        path = Path(filename)
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"Copy integrity failure ({boundary}): missing or symbolic-link file {path}")
+        actual = file_info(path)
+        if actual != expected:
+            raise ValueError(f"Copy integrity failure ({boundary}): {path}; expected {expected}; observed {actual}")
+        observed[filename] = actual
+    return {"boundary": boundary, "passed": True, "files": observed}
+
+
 def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -205,6 +219,9 @@ def run_regressions(
     producer = None
     before = None
     code_pins = None
+    archive_pins: dict[str, dict[str, Any]] = {}
+    execution_pins: dict[str, dict[str, Any]] = {}
+    provided_receipt_pins: dict[str, dict[str, Any]] = {}
     try:
         producer = load_producer()
         lock = producer.load_lock()
@@ -231,6 +248,7 @@ def run_regressions(
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
             archived[path.relative_to(PACKAGE_ROOT).as_posix()] = {"path": str(target), **byte_info(data)}
+            archive_pins[str(target)] = byte_info(data)
         receipt["archived_execution_inputs"] = archived
         receipt["all69_project_identity"] = identity
         receipt["stage_files_before"] = before
@@ -244,7 +262,10 @@ def run_regressions(
             pin = receipt["toolchain"]["provided_build_receipt"]
             if byte_info(supplied_bytes) != {key: pin[key] for key in ("bytes", "sha256")}:
                 raise ValueError("Toolchain receipt changed after its hash validation")
-            (output / "provided_toolchain_receipt.json").write_bytes(supplied_bytes)
+            copy_path = output / "provided_toolchain_receipt.json"
+            copy_path.write_bytes(supplied_bytes)
+            provided_receipt_pins[str(copy_path)] = byte_info(supplied_bytes)
+            receipt["provided_toolchain_receipt_copy"] = {"path": str(copy_path), **byte_info(supplied_bytes)}
         receipt["status"] = "SOURCE_ONLY_NATIVE_RUNNING"
         write_json(output / "native_receipt.json", receipt)
 
@@ -254,26 +275,33 @@ def run_regressions(
             files = {"Results.luau": score, "Cases.luau": specs[name], "Runner.luau": entry}
             for filename, data in files.items():
                 (directory / filename).write_bytes(data)
+            variant_pins = {str(directory / filename): byte_info(data) for filename, data in files.items()}
+            execution_pins.update(variant_pins)
             variant: dict[str, Any] = {
                 "name": name,
                 "files": {filename: byte_info(data) for filename, data in files.items()},
                 "expected_assertions": contract["assertions"],
                 "expected_Score_build_evaluations_static": contract["score_build_evaluations"],
                 "compile": [],
+                "execution_copy_checks": [],
                 "native": {"executed": False},
                 "passed": False,
             }
             receipt["variants"].append(variant)
             for filename in files:
+                variant["execution_copy_checks"].append(verify_copies(variant_pins, f"before compile {name}/{filename}"))
                 result = run_process([str(compiler), "--null", filename], directory, directory / (filename + ".compile"))
                 variant["compile"].append(result)
+                variant["execution_copy_checks"].append(verify_copies(variant_pins, f"after compile {name}/{filename}"))
                 write_json(output / "native_receipt.json", receipt)
                 if result["returncode"] != 0:
                     raise ValueError(f"Native fixture compilation failed: {name}/{filename}")
+            variant["execution_copy_checks"].append(verify_copies(variant_pins, f"before Native {name}"))
             receipt["native_invocations"] += 1
             result = run_process([str(luau), "Runner.luau"], directory, directory / "native")
             receipt["native_processes_started"] += int(result["process_started"])
             variant["native"] = {"attempted": True, "executed": result["process_started"], **result}
+            variant["execution_copy_checks"].append(verify_copies(variant_pins, f"after Native {name}"))
             lines = Path(result["stdout"]["path"]).read_text(encoding="utf-8").splitlines()
             variant["spec_marker_count"] = lines.count(contract["marker"])
             variant["entry_marker_count"] = lines.count(ENTRY_MARKER)
@@ -303,6 +331,12 @@ def run_regressions(
                     )
                     if not receipt["tool_binaries_unchanged"]:
                         raise ValueError("Tool binary changed during Native execution")
+                receipt["execution_copies_postflight"] = verify_copies(execution_pins, "final execution copies")
+                receipt["archived_execution_inputs_postflight"] = verify_copies(archive_pins, "final execution_inputs archive")
+                if provided_receipt_pins:
+                    receipt["provided_toolchain_receipt_copy_postflight"] = verify_copies(
+                        provided_receipt_pins, "final provided_toolchain_receipt copy"
+                    )
             except Exception as error:
                 receipt["postflight_error"] = {"type": type(error).__name__, "message": str(error)}
                 receipt["native_pass"] = False
