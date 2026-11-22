@@ -1738,14 +1738,14 @@
     },
     {
       "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
-      "state": "PREP_READY",
-      "owner": "CODEX_ROOT_29C4B0F731F5",
+      "state": "SOURCE_WIP",
+      "owner": "CODEX_ROOT_3A023EC81F96",
       "feature_id": "P0D-047",
       "adoption_id": "P0D-LOBBY-TRAINING-001",
       "canonical_parent": 878,
       "parent_issue": 470,
       "integration_issue": 220,
-      "request_comment": 7077224987,
+      "request_comment": 7086820201,
       "resources": [
         "FB007_LOBBY_DOJO_PHYSICAL_V1",
         "REAL69_SOURCE_GQ8_LOBBYSOCIALPLAZA"
@@ -1753,34 +1753,34 @@
       "target_paths": [
         "quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_realm_shards_dojo65.py"
       ],
-      "issued_at": "2026-11-22T13:14:13Z",
-      "expires_at": "2026-11-22T19:14:13.000Z",
+      "issued_at": "2026-11-22T22:58:42+00:00",
+      "expires_at": "2026-11-23T04:58:42.000Z",
       "pr": 1014,
-      "candidate_pr_status": "OPEN_NON_DRAFT_PREP_READY_FIXED_HEAD_RC_WRITER_AND_UNION22_PROFILE_COORDINATION_PENDING",
+      "candidate_pr_status": "EXISTING_PR1014_SUCCESSOR_REGISTERED_CURRENT_RC_ADMISSION_PENDING",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_ONLY",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
       "issuer_role": "OWNER_DELEGATED_COORDINATOR",
-      "issuer_operation_id": "f48b50a7-f748-42bd-92d6-21f0142aab7d",
+      "issuer_operation_id": "4174251c-7a70-4ebb-bb66-1618afa91a6c",
       "coordination_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 579,
-        "claim_commit": "b09ead29da11db1e72eaf1b1b9620637f29c63d1",
+        "epoch": 622,
+        "claim_commit": "0e4d76943d86f432addad96bc9f5babea14bcfbe",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T13:34:14+00:00"
+        "owner_id": "4174251c-7a70-4ebb-bb66-1618afa91a6c",
+        "expires_at": "2026-11-22T23:28:31+00:00"
       },
       "authority_evidence": [
-        "Authenticated GitHub get_user_login kk051780/233213370 and repository permission admin rechecked in this operation.",
-        "Existing owner_delegation authorizes ordinary game/system development decisions; no routine OWNER reply and no objective-gate waiver.",
-        "Current official fa5f AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2/#1011; #218 comment6886441650 single coordinator and exact ownership.",
-        "Previous coordination owner explicitly completed and released epoch578 at12:51:03, commit49eb8f3f59e3a7c9d1e0d0398cb5b3a641039d35, #2207079294042; no expiry takeover.",
-        "Actual manual coordination579 expected-SHA nonforce CAS and exact state/ref readback; only epoch/holder changed."
+        "Actual connected GitHub kk051780/user233213370 and repository admin/push permission re-read in this transaction.",
+        "Current user game-quality continuation, standing ordinary engineering delegation and AGENTS/#1011 v1.2 authorize explicit same-feature/same-PR managed succession; original-author ACK and original actor terminal status are not asserted.",
+        "Actual normally acquired CONTROLLER metadata lease, independent exact populated registry review, expected-parent force=false CAS and full readback. This operation does not grant source or RC writer authority.",
+        "No WORKER/META/REVIEWER service identity or service completion is invented."
       ],
-      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
       "prep_branch": "feature/p0d-prep-dojo-friendship-20261122-29c4",
       "author_context": "/root (workspace29c4b0f731f5)",
-      "independent_reviewer_context": "/root/egg_lifecycle (separate existing actual context, not repair author)",
-      "independent_review_status": "SOURCE_QA_PASS_AT_FIXED_HEAD",
+      "independent_reviewer_context": "/root/candidate_triage (workspace /workspace/scratch/3a023ec81f96; separate from original author and successor source writer)",
+      "independent_review_status": "PENDING_ACTUAL_CURRENT_BASE_CANDIDATE_HEAD_AND_CI_ADMISSION",
       "scope": "Reuse the already published #878 friendship-yield lifecycle repair only: two hunks inside SOCIAL_BODY in one existing producer, +817 bytes, no other AST/source/workflow change. Exact current selected GQ8_LobbySocialPlaza Script only. Existing two BEAST/WEAPON session-only skill slice within P0D-LOBBY-TRAINING-001 / P0D-047; no expansion to six skills or persistence.",
       "producer_before": {
         "bytes": 10651,
@@ -1817,7 +1817,7 @@
         "owner": "CODEX_ROOT_4B669C01C8AC",
         "all_paths_resources_grant_and_originals_preserved": true
       },
-      "integration_order": "NOT_ASSIGNED. Existing union22/P0 owner and #220 adoption coordination remain in force. Dojo PREP does not transfer RC writer ownership, prioritize Dojo, or authorize changes to union22's frozen complete69 locks. If official/profile changes, recheck exact pins and coordinate any additional necessary scope before READY/adoption.",
+      "integration_order": "Existing producer one-path successor only. Additional five composition paths (six total) from PR1014 comment7086820201 remain REQUEST_NOT_GRANTED. Preserve mounted HUD and input-retention workflow/test handoff; fresh concrete scope and review are required.",
       "forbidden_changes": [
         "union22 fourteen paths and profile/source locks",
         "workflows or tests outside this one-path grant",
@@ -1830,24 +1830,25 @@
       "no_review_waiver": true,
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
-      "grant_scope_version": 1,
+      "grant_scope_version": 2,
       "scope_review": {
-        "context": "/root/governance",
-        "decision": "PASS_SCOPE_PROPOSAL_ONLY_NOT_CODE_APPROVAL",
-        "receipt_sha256": "69cace7b306c4aeae91d4ee1d287fbb15951050eb8dca9d9d4e4c2f90b8a98b3",
-        "manifest_sha256": "7d3618e2944e02312ff742ed807bce96d7f51e3f73d0802b919d7a661168c873",
-        "inspections": 8,
-        "offline_scope_model_only": true
+        "context": "/root/local_recon (workspace /workspace/scratch/3a023ec81f96)",
+        "decision": "PASS_EXACT_ONE_PATH_SUCCESSOR_METADATA_SCOPE_ONLY",
+        "record": "/workspace/scratch/3a023ec81f96/dojo_transaction_v3/INDEPENDENT_REVIEW.json",
+        "prior_draft_review_receipt_sha256": "17ad950cf58e1c29359c94d1dec6ef0044da3cb83c0f035cd2b08961ed139134",
+        "actual_candidate_head_review_completed": false,
+        "source_or_rc_adoption_approved": false
       },
       "candidate_head": "aa6e0d7fc3576bed0ca335d6f8844eff655cb858",
       "candidate_tree": "a9a90e61dc96255b6e25f5c14858d8c4e8cdacf5",
-      "amended_at": "2026-11-22T13:47:27Z",
+      "amended_at": "2026-11-22T22:58:42+00:00",
       "metadata_update_lease": {
-        "epoch": 581,
-        "owner_operation_id": "f48b50a7-f748-42bd-92d6-21f0142aab7d",
+        "branch": "twf-repair-coordinator",
+        "epoch": 622,
+        "claim_commit": "0e4d76943d86f432addad96bc9f5babea14bcfbe",
         "work_branch": "coord/p0d-work-claims",
-        "acquire_commit": "97d978b3684460623bce70e93f30dadf00e4a003",
-        "no_scope_extension": true
+        "owner_id": "4174251c-7a70-4ebb-bb66-1618afa91a6c",
+        "expires_at": "2026-11-22T23:28:31+00:00"
       },
       "actual_candidate_evidence": {
         "source_run": 45026775037,
@@ -1912,6 +1913,240 @@
           "queue_no_auto_merge": true,
           "RC_adopted": false
         }
+      },
+      "successor_context": "/root (workspace /workspace/scratch/3a023ec81f96)",
+      "successor_role": "Existing PR/source custodian; original code authorship retained",
+      "PREP_READY": false,
+      "candidate_head_interpretation": "Original unchanged PR1014 fixed head only; not a current-RC admission or new CI claim",
+      "actual_candidate_evidence_interpretation": "Historical fa5f-base PREP evidence retained verbatim; not current official-RC validation",
+      "draft_only_not_issued": false,
+      "handoff_history": [
+        {
+          "status": "HISTORICAL_ORIGINAL_ROW_PRESERVED_DURING_MANAGED_SUCCESSOR",
+          "registry_commit": "b85eca5ce272daf3a63a7dba029a977a0effec79",
+          "registry_blob": "ff538a83c84076688bc880b3d805c8b87c54fef5",
+          "original_record": {
+            "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
+            "state": "PREP_READY",
+            "owner": "CODEX_ROOT_29C4B0F731F5",
+            "feature_id": "P0D-047",
+            "adoption_id": "P0D-LOBBY-TRAINING-001",
+            "canonical_parent": 878,
+            "parent_issue": 470,
+            "integration_issue": 220,
+            "request_comment": 7077224987,
+            "resources": [
+              "FB007_LOBBY_DOJO_PHYSICAL_V1",
+              "REAL69_SOURCE_GQ8_LOBBYSOCIALPLAZA"
+            ],
+            "target_paths": [
+              "quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_realm_shards_dojo65.py"
+            ],
+            "issued_at": "2026-11-22T13:14:13Z",
+            "expires_at": "2026-11-22T19:14:13.000Z",
+            "pr": 1014,
+            "candidate_pr_status": "OPEN_NON_DRAFT_PREP_READY_FIXED_HEAD_RC_WRITER_AND_UNION22_PROFILE_COORDINATION_PENDING",
+            "role": "CODEX_PARENT_EXISTING_FIX_PREP_ONLY",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "f48b50a7-f748-42bd-92d6-21f0142aab7d",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 579,
+              "claim_commit": "b09ead29da11db1e72eaf1b1b9620637f29c63d1",
+              "work_branch": "coord/p0d-work-claims",
+              "expires_at": "2026-11-22T13:34:14+00:00"
+            },
+            "authority_evidence": [
+              "Authenticated GitHub get_user_login kk051780/233213370 and repository permission admin rechecked in this operation.",
+              "Existing owner_delegation authorizes ordinary game/system development decisions; no routine OWNER reply and no objective-gate waiver.",
+              "Current official fa5f AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2/#1011; #218 comment6886441650 single coordinator and exact ownership.",
+              "Previous coordination owner explicitly completed and released epoch578 at12:51:03, commit49eb8f3f59e3a7c9d1e0d0398cb5b3a641039d35, #2207079294042; no expiry takeover.",
+              "Actual manual coordination579 expected-SHA nonforce CAS and exact state/ref readback; only epoch/holder changed."
+            ],
+            "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "prep_branch": "feature/p0d-prep-dojo-friendship-20261122-29c4",
+            "author_context": "/root (workspace29c4b0f731f5)",
+            "independent_reviewer_context": "/root/egg_lifecycle (separate existing actual context, not repair author)",
+            "independent_review_status": "SOURCE_QA_PASS_AT_FIXED_HEAD",
+            "scope": "Reuse the already published #878 friendship-yield lifecycle repair only: two hunks inside SOCIAL_BODY in one existing producer, +817 bytes, no other AST/source/workflow change. Exact current selected GQ8_LobbySocialPlaza Script only. Existing two BEAST/WEAPON session-only skill slice within P0D-LOBBY-TRAINING-001 / P0D-047; no expansion to six skills or persistence.",
+            "producer_before": {
+              "bytes": 10651,
+              "sha256": "af08e45cd573f55e8e06334c172d637d84d1593c3c5565c392be8e7e721a8402",
+              "git_blob": "1eab490c9b7f72a972a2a2e2cd8b27555ed3ad14"
+            },
+            "producer_after": {
+              "bytes": 11468,
+              "sha256": "0557fd1dd8d77f8c58070ab9b7e3aacdcd0513fdaa3888b26de8ae2cfd2e6b5c",
+              "git_blob": "fdcb213f95810444e83f5d495a4e2cce9e63778c"
+            },
+            "generated_source": {
+              "relative_path": "sources/ServerScriptService/GQ8_LobbySocialPlaza.server.luau",
+              "route": "ServerScriptService/GQ8_LobbySocialPlaza",
+              "class": "Script",
+              "before": {
+                "bytes": 12930,
+                "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+              },
+              "after": {
+                "bytes": 13747,
+                "sha256": "168fc6ebb020efc520dd775c1370ef304c81e5267a939756b60f944257c7112b"
+              }
+            },
+            "acceptance": "Independent actual candidate HEAD/base/tree/diff review; same-head real hosted CI with required checks successful; actual generated Source/Class/route receipt and artifact identity; source-exact Native17/18 evidence; ON69/Rojo and actual inverseOFF preserving other68 and existing HUD. No PREP_READY before actual same-head CI, #250 existing repair decision and source-lock binding. No formal RC or Studio/ART/FUN/Android acceptance inferred.",
+            "rollback": "Inverse the two existing producer hunks only, restoring exact current before blob and selected Social. Compile/build actual inverseON back to same current input source/class/project/Place; do not reset the whole RC or remove intervening work.",
+            "existing_evidence": {
+              "source_review_receipt": "0527f83e1e31383d8536c20d777f250005d69e7bad68bf6f5f4031e3330878ad",
+              "actual_pr_intake_review_receipt": "028bfb9e4a89c550bcb4dea4d54d05b214b836c6674091a144b8c7cd17a8996a",
+              "actual_formal_input_review_receipt": "12643ab531c828c71e5c6588ef0566e1f35ece1b9a684632f0fc1134c5fe6fd2"
+            },
+            "preserved_owner_scope": {
+              "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
+              "owner": "CODEX_ROOT_4B669C01C8AC",
+              "all_paths_resources_grant_and_originals_preserved": true
+            },
+            "integration_order": "NOT_ASSIGNED. Existing union22/P0 owner and #220 adoption coordination remain in force. Dojo PREP does not transfer RC writer ownership, prioritize Dojo, or authorize changes to union22's frozen complete69 locks. If official/profile changes, recheck exact pins and coordinate any additional necessary scope before READY/adoption.",
+            "forbidden_changes": [
+              "union22 fourteen paths and profile/source locks",
+              "workflows or tests outside this one-path grant",
+              "other six private repairs or nine-source composite",
+              "new authority/runtime or six-skill/persistence expansion",
+              "other owner branches or grants",
+              "main/Roblox Publish/monetization/spending/schedules"
+            ],
+            "no_main_or_publish": true,
+            "no_review_waiver": true,
+            "rc_write_authorized_by_this_claim": false,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "grant_scope_version": 1,
+            "scope_review": {
+              "context": "/root/governance",
+              "decision": "PASS_SCOPE_PROPOSAL_ONLY_NOT_CODE_APPROVAL",
+              "receipt_sha256": "69cace7b306c4aeae91d4ee1d287fbb15951050eb8dca9d9d4e4c2f90b8a98b3",
+              "manifest_sha256": "7d3618e2944e02312ff742ed807bce96d7f51e3f73d0802b919d7a661168c873",
+              "inspections": 8,
+              "offline_scope_model_only": true
+            },
+            "candidate_head": "aa6e0d7fc3576bed0ca335d6f8844eff655cb858",
+            "candidate_tree": "a9a90e61dc96255b6e25f5c14858d8c4e8cdacf5",
+            "amended_at": "2026-11-22T13:47:27Z",
+            "metadata_update_lease": {
+              "epoch": 581,
+              "owner_operation_id": "f48b50a7-f748-42bd-92d6-21f0142aab7d",
+              "work_branch": "coord/p0d-work-claims",
+              "acquire_commit": "97d978b3684460623bce70e93f30dadf00e4a003",
+              "no_scope_extension": true
+            },
+            "actual_candidate_evidence": {
+              "source_run": 45026775037,
+              "source_run_event": "pull_request",
+              "source_run_head": "aa6e0d7fc3576bed0ca335d6f8844eff655cb858",
+              "source_run_conclusion": "success",
+              "bootstrap_run": 45026774900,
+              "successful_head_checks": 5,
+              "synthetic_build_head": "af34faa13bf69b15d1b091d9c1cf94075a9b0baa",
+              "synthetic_parents": [
+                "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                "aa6e0d7fc3576bed0ca335d6f8844eff655cb858"
+              ],
+              "artifact_id": 14756246364,
+              "zip_bytes": 4336939,
+              "zip_sha256": "c5ff4d4b58999aabb118b761cc443ffd6c5c7a8f52a15638b5cd4fd5c4d2f506",
+              "source_lock_path": "artifacts/real69/REAL69_LEGACY_INTAKE_RECEIPT.json",
+              "source_lock_bytes": 21482,
+              "source_lock_sha256": "7f9e94c6261069d90737a4fabcc12b5a8b90411cd75d2d34d71f858048bd0ba7",
+              "canonical_build": false,
+              "receipt_provenance": "PR_CANDIDATE",
+              "official_build_head": null,
+              "source_count": 69,
+              "changed_sources": 1,
+              "unchanged_sources": 68,
+              "on_place_bytes": 799233,
+              "on_place_sha256": "62ad0d09c128f1b26a5e1577f770abfb2ebe400a7da1fe830621376b52bf4ac3",
+              "actual_inverse_off_bytes": 798416,
+              "actual_inverse_off_sha256": "d2d685377eba115a64fd7996f7f4a8d934bcce5e535e462ee22ed23678d14265",
+              "independent_head_source_ci_context": "/root/egg_lifecycle",
+              "independent_head_source_ci_receipt": "83dac0fb0cec0deb3074d29374a5f6e9ee39ce4dd6b3cc254c50542e9468fa1a",
+              "artifact_binding_context": "/root/neutral_lifecycle",
+              "artifact_binding_receipt": "8227ac34a09a9cc06f737d55c41aebf6ae6532eff0d289bbb188a508fbe12197",
+              "artifact_binding_manifest": "41136d17429892d09d973a2b85e927c072a52b53b14ca3e20cb2893dbf9fd37e",
+              "actual_adoption_value_decision": {
+                "issue": 250,
+                "comment": 7079805031,
+                "decision": "ADOPT_LIMITED_REPAIR_VALUE_ONLY",
+                "code_self_approval": false,
+                "RC_adoption": false,
+                "product_or_FUN_approval": false
+              },
+              "independent_final_review": {
+                "context": "/root/egg_lifecycle",
+                "decision": "SOURCE_QA_PASS_AT_FIXED_HEAD",
+                "receipt_bytes": 15153,
+                "receipt_sha256": "3346c96c86e1804440795c0735d6891270e503bba9722a9b2d68f9ec1066ceab",
+                "manifest_bytes": 11271,
+                "manifest_sha256": "2ba3738524083b90bf100cf3566a5288a2cf3a6ec2f0a641b1c32bcf80202452",
+                "public_comment": 7080047729,
+                "GitHub_APPROVE_not_claimed": true
+              },
+              "prep_ready_record": {
+                "pr": 1014,
+                "head": "aa6e0d7fc3576bed0ca335d6f8844eff655cb858",
+                "base": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                "draft": false,
+                "contract": "P0D_PREP_READY_V1",
+                "admission": "OWNER_FAST_ADMISSION_V2",
+                "decision": "ADOPT",
+                "actual_pr_updated_at": "2026-11-22T13:47:04Z",
+                "queue_no_auto_merge": true,
+                "RC_adopted": false
+              }
+            }
+          },
+          "fresh_registry_commit": "87166748e4b2db78022fd91a7e31d9c68a2820ac",
+          "fresh_registry_blob": "7658ecff307c113693ba133b53dcc8df4537b8f7",
+          "handoff_basis": "Explicit owner-delegated managed continuation, preserving original code/PR/branch/evidence; not expiry-only takeover or original actor terminal-state attestation."
+        },
+        {
+          "status": "HISTORICAL_UNISSUED_DRAFT_ONLY",
+          "meaning": "Prior proposal and its old pending conditions are history only; current effective registration requires this populated row's actual successful CAS.",
+          "prior_proposed_handoff": {
+            "status": "DRAFT_NOT_ISSUED",
+            "old_owner": "CODEX_ROOT_29C4B0F731F5",
+            "new_owner": "CODEX_ROOT_3A023EC81F96",
+            "pinned_existing_head": "aa6e0d7fc3576bed0ca335d6f8844eff655cb858",
+            "existing_pr": 1014,
+            "existing_branch": "feature/p0d-prep-dojo-friendship-20261122-29c4",
+            "files": [
+              "quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_realm_shards_dojo65.py"
+            ],
+            "tests": "Original exact-source 18/17 conditions and fa5f PR CI retained as historical; current-base producer/native/build/CI admission remains pending.",
+            "blockers": [
+              "Fresh metadata lease and explicit successor registration not performed",
+              "Current mounted-HUD writer must not be overtaken",
+              "Four-path canonical identity-binding amendment is only requested and not included in this row",
+              "Same-HEAD current-base independent review, CI and actual OFF proof pending"
+            ],
+            "original_author_ack_required": false,
+            "original_owner_release_asserted": false,
+            "original_owner_terminal_asserted": false,
+            "expiry_used_as_automatic_takeover": false,
+            "reason": "Managed succession of preserved existing work under standing OWNER continuation/delegation; not an expiry-only takeover",
+            "recorded_at": null,
+            "actual_metadata_lease": null,
+            "actual_registry_commit": null,
+            "actual_registry_blob": null
+          }
+        }
+      ],
+      "local_review_evidence": {
+        "status": "PASS_SOURCE_AND_NATIVE_ONLY_LOCAL_REVIEW",
+        "checkout_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "pipeline_receipt_sha256": "fb9e91fc9000e508a3aa4132de21a02ccd53dbc5546fa2a51c135fb2d225d353",
+        "same_head_hosted_ci": false,
+        "formal_rc_adoption": false,
+        "studio": "NOT_TESTED",
+        "comment": 7086820201
       }
     },
     {
