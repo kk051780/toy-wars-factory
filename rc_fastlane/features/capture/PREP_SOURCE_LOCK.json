@@ -1,0 +1,22 @@
+{
+  "schema": "P0D_CAPTURE_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0D-018",
+  "official_base": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
+  "phase": "SOURCE_ONLY_NOT_READY",
+  "game_wired": false,
+  "module_source": "rc_fastlane/features/capture/CapturePolicy.luau",
+  "module_blob": "a96d32e91f211f9d00fa9fa87830e199f4799a46",
+  "native_fixture": "rc_fastlane/features/capture/CaptureNative.luau",
+  "native_blob": "eb10e3fa0387644c8402ebf3bf4cac7df4685740",
+  "cases": 18,
+  "native_status": "NOT_YET_RUN",
+  "rollback": "no original Game, Remote, Store, Project or canonical RC files changed",
+  "requires_ready": [
+    "Original single-Game server binding",
+    "tested role/speed restore on all exits",
+    "real first-party Native-Luau Game integration tests",
+    "same-source Rojo build",
+    "Sourcery P0/P1 triage",
+    "latest official base and source lock"
+  ]
+}
