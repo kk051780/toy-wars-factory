@@ -22,10 +22,17 @@
       "feature_id": "GQ905_DISCOVERY_CANONICAL_BR_GUARD",
       "resources": [
         "HUD_INTEL_DISCOVERY_TOAST",
-        "HUD_INTEL_RUNTIME"
+        "HUD_INTEL_RUNTIME",
+        "REAL69_CANONICAL_SOURCE_WORKFLOW",
+        "REAL69_ART_RECEIPT_PROVENANCE"
       ],
       "target_paths": [
-        "quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py"
+        "quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py",
+        ".github/workflows/gq8-real63-source-composite.yml",
+        "art_quality/gq470_real69_source_gate.py",
+        "quality_gameplay/gq470_art_pr_provenance_20261121/guard.py",
+        "quality_gameplay/gq470_objective_art_real69_20261120/patch_objective69.py",
+        "tests/test_gq470_real69_event_provenance_20261121.py"
       ],
       "issued_at": "2026-11-22T11:55:11.000Z",
       "expires_at": "2026-11-22T17:55:11.000Z",
@@ -54,7 +61,7 @@
         "#218 comment6886441650: single authorized coordinator, unique scope, current-blob CAS; not a worker request promoted by assertion."
       ],
       "request_comment": 7076966914,
-      "scope": "Reuse existing #905 canonical BATTLE_ROYALE discovery-toast fix as one replace_once at the end of #919 patch_hud; one producer file +220 bytes; generated existing HUD guard +26 bytes. No other gameplay or authority change.",
+      "scope": "Reuse existing #905 canonical BATTLE_ROYALE discovery-toast fix as one replace_once at the end of #919 patch_hud; one producer file +220 bytes; generated existing HUD guard +26 bytes. No other gameplay or authority change. Prerequisite reuse only: import the five exact original PR #977 blobs at d672f5e5ab4264a42c46be8054a282d72cba4f9e so noncanonical PR CI can truthfully validate this candidate; no additional changes to those five files.",
       "base_rc_sha": "18e4b04eb550ebf5195c3e287f97076dd9c92b6e",
       "producer_before": {
         "bytes": 8402,
@@ -67,11 +74,22 @@
       },
       "independent_reviewer_context": "/root/intake_300 (not the fix author; separate current review context)",
       "independent_review_status": "SOURCE_BYTES_PASS_REMOTE_HEAD_NOT_CREATED_OR_APPROVED",
-      "acceptance": "Exact one-file diff, independent review of actual candidate SHA, unchanged canonical pipeline, same-head CI and final source/Place/ZIP verification, same-SHA Studio gate kept separate.",
-      "rollback": "Remove only the added replace_once statement to restore producer before SHA and original 69-source Place exactly.",
+      "acceptance": "Exact six-file candidate: one gameplay producer plus five exact original PR #977 prerequisite files. Preserve original gameplay/source hash/class/route/OFF/17-feature/48-item and ART_NO_GO gates. Independent review of the actual candidate SHA and every changed file; real PR CI remains nonformal. Formal RC adoption requires a fresh single-writer lease, expected-SHA nonforce update, its own same-SHA CI and measured source/Place/ZIP. Same-SHA Studio remains separate and NOT_TESTED without an available engine.",
+      "rollback": {
+        "gameplay_only": "Remove only the added replace_once statement from patch_hud_labels.py; restore producer before SHA and original 69-source Place. Preserve the five CI prerequisite files.",
+        "all_six_files": "Restore four modified files to their exact base18e4 blobs and remove the two files added by PR977. No other files or prior-owner work is changed.",
+        "base_rc_sha": "18e4b04eb550ebf5195c3e287f97076dd9c92b6e",
+        "before_blobs": {
+          ".github/workflows/gq8-real63-source-composite.yml": "34a42ca913ccce7f991ec8b3ba16026a04c13148",
+          "art_quality/gq470_real69_source_gate.py": "b1d075595f53ce046af69c0e35de6098ab00307f",
+          "quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py": "37d30fec9fa5dbfd266993f2a8334ca188b9f9e4",
+          "quality_gameplay/gq470_objective_art_real69_20261120/patch_objective69.py": "7e4190fcbd473b5f08f795f6f280261d556430ad",
+          "quality_gameplay/gq470_art_pr_provenance_20261121/guard.py": null,
+          "tests/test_gq470_real69_event_provenance_20261121.py": null
+        }
+      },
       "excluded_paths": [
-        "quality_gameplay/gq8_rc85_explore_toast_real69_20261120/port_explore_toast69.py",
-        ".github/workflows/gq8-real63-source-composite.yml"
+        "quality_gameplay/gq8_rc85_explore_toast_real69_20261120/port_explore_toast69.py"
       ],
       "no_main_or_publish": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
@@ -82,7 +100,131 @@
         "semantic_review_sha256": "5f03cb040d409fc26c3887bba270f5dac926cf0350b6af6b9e649c2fac382ff2",
         "evidence_review_sha256": "9989bd3824c9bf40b20dd4c9b24f929ca779cb8117de827c127e4ec7257999b9",
         "reviewed_git_head": null
-      }
+      },
+      "grant_scope_version": 2,
+      "amendment_history": [
+        {
+          "version": 1,
+          "registry_commit": "017896341b79d2be1bb53a53636856e68b7c5f7a",
+          "registry_blob": "e795c8948ce6aa9c0d8c0c746ed361ebce19b0ec",
+          "grant_comment": 7078761000,
+          "record": {
+            "claim_id": "P0D-GQ905-BR-GUARD-20261122-4B669",
+            "state": "GRANTED",
+            "owner": "CODEX_ROOT_4B669C01C8AC",
+            "feature_id": "GQ905_DISCOVERY_CANONICAL_BR_GUARD",
+            "resources": [
+              "HUD_INTEL_DISCOVERY_TOAST",
+              "HUD_INTEL_RUNTIME"
+            ],
+            "target_paths": [
+              "quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py"
+            ],
+            "issued_at": "2026-11-22T11:55:11.000Z",
+            "expires_at": "2026-11-22T17:55:11.000Z",
+            "parent_issue": 470,
+            "canonical_parent": 905,
+            "source_producer_parent_pr": 919,
+            "integration_issue": 220,
+            "pr": null,
+            "candidate_pr_status": "FOLLOWUP_REVIEW_PR_NOT_CREATED_YET",
+            "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 574,
+              "claim_commit": "755923644e56b6bf29f0aa4414e506b393aec2c2",
+              "work_branch": "coord/p0d-work-claims",
+              "expires_at": "2026-11-22T12:16:40.137460+00:00"
+            },
+            "authority_evidence": [
+              "Authenticated GitHub get_user_login kk051780/233213370 and repository permission admin, independently confirmed.",
+              "Existing coordinator owner_delegation: ordinary game/system engineering approvals delegated; objective QA unchanged.",
+              "Current RC18e4 AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2/#1011: current Codex parent owns exclusive handoff and RC integration.",
+              "#218 comment6886441650: single authorized coordinator, unique scope, current-blob CAS; not a worker request promoted by assertion."
+            ],
+            "request_comment": 7076966914,
+            "scope": "Reuse existing #905 canonical BATTLE_ROYALE discovery-toast fix as one replace_once at the end of #919 patch_hud; one producer file +220 bytes; generated existing HUD guard +26 bytes. No other gameplay or authority change.",
+            "base_rc_sha": "18e4b04eb550ebf5195c3e287f97076dd9c92b6e",
+            "producer_before": {
+              "bytes": 8402,
+              "sha256": "021e2ea484b0d832f5314c85d17e11ccaf54904ed93e6868c3d3d9d6209979b2",
+              "git_blob": "37d30fec9fa5dbfd266993f2a8334ca188b9f9e4"
+            },
+            "producer_after": {
+              "bytes": 8622,
+              "sha256": "d3c1ee8272b580446042922755798878152a430c1542963080b8d4bb4a73e476"
+            },
+            "independent_reviewer_context": "/root/intake_300 (not the fix author; separate current review context)",
+            "independent_review_status": "SOURCE_BYTES_PASS_REMOTE_HEAD_NOT_CREATED_OR_APPROVED",
+            "acceptance": "Exact one-file diff, independent review of actual candidate SHA, unchanged canonical pipeline, same-head CI and final source/Place/ZIP verification, same-SHA Studio gate kept separate.",
+            "rollback": "Remove only the added replace_once statement to restore producer before SHA and original 69-source Place exactly.",
+            "excluded_paths": [
+              "quality_gameplay/gq8_rc85_explore_toast_real69_20261120/port_explore_toast69.py",
+              ".github/workflows/gq8-real63-source-composite.yml"
+            ],
+            "no_main_or_publish": true,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "independent_review_evidence": {
+              "context": "/root/intake_300",
+              "reviewed_producer_sha256": "d3c1ee8272b580446042922755798878152a430c1542963080b8d4bb4a73e476",
+              "manifest_sha256": "a886899fca9bae016a5537ca65c274f0bcad6b9839810572c761da0e245ddc38",
+              "semantic_review_sha256": "5f03cb040d409fc26c3887bba270f5dac926cf0350b6af6b9e649c2fac382ff2",
+              "evidence_review_sha256": "9989bd3824c9bf40b20dd4c9b24f929ca779cb8117de827c127e4ec7257999b9",
+              "reviewed_git_head": null
+            }
+          }
+        }
+      ],
+      "prerequisites": [
+        {
+          "pr": 977,
+          "head": "d672f5e5ab4264a42c46be8054a282d72cba4f9e",
+          "files": [
+            {
+              "path": ".github/workflows/gq8-real63-source-composite.yml",
+              "git_blob": "333a4e247fe198e27452619a322628e602aa661c",
+              "status": "modified"
+            },
+            {
+              "path": "art_quality/gq470_real69_source_gate.py",
+              "git_blob": "c9386ccaec61d7fdf21742caa8651a26e405d479",
+              "status": "modified"
+            },
+            {
+              "path": "quality_gameplay/gq470_art_pr_provenance_20261121/guard.py",
+              "git_blob": "f760b879005279882956eaa49e5e9347a899e237",
+              "status": "added"
+            },
+            {
+              "path": "quality_gameplay/gq470_objective_art_real69_20261120/patch_objective69.py",
+              "git_blob": "8c3cdfdc0beddc1960d0fdf0ee1716b48ebae7ac",
+              "status": "modified"
+            },
+            {
+              "path": "tests/test_gq470_real69_event_provenance_20261121.py",
+              "git_blob": "7a97e1792aae1eee14ee2ea2de1d331c754912de",
+              "status": "added"
+            }
+          ],
+          "reuse_only": true,
+          "original_branch_unchanged": true,
+          "independent_review": {
+            "reviewer_context": "/root/intake_300",
+            "status": "TECHNICAL_REUSE_SUPPORTED_FOR_PR_AND_CANONICAL_RC_WITH_DECLARED_LIMIT",
+            "reviewed_head": "d672f5e5ab4264a42c46be8054a282d72cba4f9e",
+            "receipt_bytes": 10910,
+            "receipt_sha256": "8f4cd97e3efb81c699159b8b2aa29ee994a598ea9c0e4ae9a6503ae59feba0cb",
+            "scope": "Original 14 tests, independent 11 ART provenance cases, actual objective patcher source and OFF identity, exact five Git blobs; no original transform/pin relaxation.",
+            "limitation": "Legacy branch end-to-end final report classification is not accepted. Requested PR/canonical RC paths reviewed."
+          },
+          "legacy_branch_end_to_end_not_accepted": true
+        }
+      ],
+      "amended_at": "2026-11-22T12:01:57.000Z"
     }
   ],
   "legacy_overlap_triage": [
