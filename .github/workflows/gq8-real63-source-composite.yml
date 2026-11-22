@@ -28,6 +28,8 @@ on:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'quality_gameplay/gq470_union22_real69_20261122/**'
+      - 'tests/test_gq470_union22_real69_20261122.py'
       - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -67,6 +69,8 @@ on:
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
       - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'quality_gameplay/gq470_union22_real69_20261122/**'
+      - 'tests/test_gq470_union22_real69_20261122.py'
       - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
@@ -1729,9 +1733,55 @@ jobs:
           assert len(list(p.parent.glob('*.rbxlx')))==1
           print('ART_CHECK_REPORT_REAL69_69_SELECTED_3_FEATURES_32_IMAGES_MISSING_NO_GO_PASS')
           PY
+      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/compose_union22.py \
+            --base artifacts/real69 --prior-reports artifacts/real69/delivery \
+            --out artifacts/real69_union22 --head "$GITHUB_SHA" \
+            --luau-compile /tmp/gq863-luau/luau-compile --rojo /tmp/gq863-rojo
+      - name: "Union22: reject source, rollback, provenance and premature delivery drift"
+        shell: bash
+        env:
+          UNION22_TEST_PRIOR: artifacts/real69
+          UNION22_TEST_REPORTS: artifacts/real69/delivery
+          UNION22_TEST_ROOT: artifacts/real69_union22
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq470_union22_real69_20261122.py
+          python3 -B -O tests/test_gq470_union22_real69_20261122.py
+      - name: "Union22: fresh f46 Repl build, clear-LOS combined input and unchanged objective suite"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py \
+            --source-root artifacts/real69_union22/sources --luau-source _pinned_luau \
+            --build-dir "$RUNNER_TEMP/union22-repl-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --out artifacts/real69_union22_native --head "$GITHUB_SHA" \
+            --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
+            --git "$(command -v git)" --cc "$(command -v cc)" --cxx "$(command -v c++)"
+      - name: "Union22: independently admit final 69 source and Native delivery, ART and product remain NO_GO"
+        shell: bash
+        env:
+          UNION22_TEST_PRIOR: artifacts/real69
+          UNION22_TEST_REPORTS: artifacts/real69/delivery
+          UNION22_TEST_ROOT: artifacts/real69_union22
+          UNION22_TEST_NATIVE: artifacts/real69_union22_native
+          UNION22_TEST_STAGE: final
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq470_union22_real69_20261122.py
+          python3 -B -O tests/test_gq470_union22_real69_20261122.py
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/verify_union22.py \
+            --root artifacts/real69_union22 --base artifacts/real69 \
+            --prior-reports artifacts/real69/delivery --native-results artifacts/real69_union22_native \
+            --head "$GITHUB_SHA"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real69/delivery/
+          path: artifacts/real69_union22/delivery/
           retention-days: 30
           if-no-files-found: error
