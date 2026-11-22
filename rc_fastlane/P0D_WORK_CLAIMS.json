@@ -1487,6 +1487,177 @@
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "grant_scope_version": 1
+    },
+    {
+      "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_D4D718B4F637",
+      "feature_id": "ACTIVE66_PERSISTENCE_LIFECYCLE_20261122",
+      "canonical_parent": 282,
+      "existing_dependency_parent": 287,
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "request_comment": 7080435107,
+      "resources": [
+        "ACTIVE66_PRIMARY_REPAIR_SELECTION",
+        "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+        "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+        "ACTIVE66_REPAIR_NATIVE_AND_ARTIFACT_GATE"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+        "rc_fastlane/apply_active_runtime_repairs.py",
+        "rc_fastlane/features/active_runtime_repairs/MANIFEST.json",
+        "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch",
+        "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch",
+        "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch",
+        "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau",
+        "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau",
+        "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau",
+        "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json",
+        "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau",
+        "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
+        "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
+        "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
+        "rc_fastlane/test_active_runtime_repairs.py"
+      ],
+      "issued_at": "2026-11-22T14:38:40.472744+00:00",
+      "expires_at": "2026-11-22T20:38:40.472744+00:00",
+      "pr": null,
+      "candidate_pr_status": "DRAFT_PREP_ONLY_NOT_CREATED",
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "2c444a1b-c4ab-402e-9538-7d8250847e83",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 586,
+        "claim_commit": "cc7378285aa37e4e6193e5bfeab8cc4cbf4fb8c5",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T15:06:41.321582+00:00"
+      },
+      "authority_evidence": [
+        "Actual authenticated GitHub profile kk051780 / 233213370 and repository admin permission observed in this parent session; no service identity or registered approval asserted.",
+        "Current formal fa5f AGENTS.md and AI development system v1.2/#1011 delegate ordinary engineering decisions while preserving objective QA and real exclusive writer conditions.",
+        "Previous CONTROLLER585 b9996010 explicitly released at 2026-11-22T14:28:37.194718Z, actual ref3f0e20c24376d706d8154a84654e68ef2d063ef2; no expiry takeover.",
+        "Unmodified repair_control.acquire planned manual CONTROLLER586; exact-parent expected-SHA force=false CAS and full state/ref/commit readback confirmed."
+      ],
+      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+      "prep_branch": "feature/p0d-active66-persistence-20261122-d4d718",
+      "author_contexts": [
+        "/root/active66_v2",
+        "/root/gameplay_v2"
+      ],
+      "independent_reviewer_context": "/root/admission_v2",
+      "independent_review_status": "LOCAL_SOURCE_AND_SCOPE_REVIEW_ONLY_REMOTE_HEAD_REVIEW_PENDING",
+      "grant_scope_version": 1,
+      "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
+      "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
+      "candidate_head": null,
+      "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
+      "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
+      "all_on_configuration_sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5",
+      "generated_source_scope": [
+        {
+          "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+          "path": "server/Game.server.luau",
+          "route": "ServerScriptService/TrapRaidersS1/Game",
+          "class": "Script",
+          "before": {
+            "bytes": 128902,
+            "sha256": "924a0a7f5418f4a1897f36e9d23b9c899614fe05d64c043b9c86d2b5ea0742e1"
+          },
+          "after": {
+            "bytes": 130620,
+            "sha256": "e9d02785a806375d52202566da3a2ec7b0e650526e41ae7cca805f81ac4cb72e"
+          }
+        },
+        {
+          "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+          "path": "server/PersistentHatchStore.luau",
+          "route": "ServerScriptService/TrapRaidersS1/PersistentHatchStore",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 22456,
+            "sha256": "c9e1c4d7a527939568127cdc7e3cee0ae2312580239b7b5bbe6bac4c657c39bf"
+          },
+          "after": {
+            "bytes": 22552,
+            "sha256": "07129c211f25d62b399e6f125be4d7c7649a12e7dd313d98701a6bf89007b241"
+          }
+        }
+      ],
+      "generated_source_count": 2,
+      "source_count_preserved": 66,
+      "other_sources_preserved": 64,
+      "on_place": {
+        "bytes": 604050,
+        "sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe"
+      },
+      "off_place": {
+        "bytes": 602236,
+        "sha256": "466a30ed10760bc26c2fb6e93d4850fe5d2a4b508410650b6e8355fb602c58c6"
+      },
+      "place_non_source_anchor": "8fe1a9681381b5aa4cfeb25658d713625bd1eb714f195283d04c2e3588f56bc0",
+      "scope_review": {
+        "context": "/root/admission_v2",
+        "decision": "RECOMMEND_DRAFT_PREP_ONLY",
+        "decision_sha256": "59c5648d75f266b0a2bcd276503a0c6dd213986ae70d874a2b39fd69fd3df44a",
+        "receipt_sha256": "8045f49e1b13585a27bb4e18a454010d6953a6fd228de85ff72d4b4676dbc3f6",
+        "technical_V3_receipt_sha256": "be1fab9a0e51037faf0981840d2586635bde6fa017815c268ec9313b97cc24fa",
+        "current_registry_shape_rechecked": true,
+        "source_authors_are_not_final_reviewers": true
+      },
+      "quality_issue_comment": 7080546111,
+      "limited_value_issue_comment": 7080583715,
+      "acceptance": "Draft-only. Actual complete remote HEAD/parent/tree/16paths independently checked, fresh same-HEAD primary CI and real artifact/source/project/non-Source/metadata identity required. Existing 54 selected Native cases and 58 prior cases are separate evidence. Current GQ8 pull_request trigger gap remains unresolved: primary success or workflow_dispatch must not substitute for the existing same-HEAD GQ8 success/artifact requirement. No PREP_READY or RC admission until separately authorized prerequisite and acceptance are fulfilled.",
+      "rollback": {
+        "selection": "All three flags false and rebuild through the same producer; true inverse OFF66 equals exact official original66 Place. Recovery ON without game fixes is rejected. Recheck new actual HEAD and CI before adoption.",
+        "repository": "Revert only these sixteen paths using exact stored preimages; remove the fifteen new files and inverse only this workflow diff while preserving intervening work.",
+        "before_blobs": {
+          ".github/workflows/p0d-rc-fastlane.yml": "0be1f732aaa12ae3c7b3d78cb2247a9f6a588862",
+          "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json": null,
+          "rc_fastlane/apply_active_runtime_repairs.py": null,
+          "rc_fastlane/features/active_runtime_repairs/MANIFEST.json": null,
+          "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch": null,
+          "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch": null,
+          "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py": null,
+          "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau": null,
+          "rc_fastlane/test_active_runtime_repairs.py": null
+        }
+      },
+      "preserved": [
+        "Formal ACTIVE.json bytes",
+        "Original66 rollback and original PRIVATE70+ inputs",
+        "PRIVATE_COMPANION and all existing REAL69 owners",
+        "All fixture expectations, runtime provenance, old source pipelines and objective gates",
+        "Other four registry rows, aliases and history"
+      ],
+      "forbidden_changes": [
+        "GQ8/private workflow or queue changes",
+        "Other owners branches, grants or generated source pins",
+        "Production DataStore activation, new durable queue/session lock or payment features",
+        "PREP_READY or formal RC adoption by primary success alone",
+        "main/Roblox Publish/monetization/new spending/schedules"
+      ],
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED"
     }
   ],
   "legacy_overlap_triage": [
