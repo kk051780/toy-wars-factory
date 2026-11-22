@@ -81,6 +81,7 @@ local function toolWith(prefix)''','HUD_HELPER')
    end''','HUD_DRAWER')
     require(src.count(MARK)==1 and 'GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120' in src,
             'HUD_FB019_PRESERVATION')
+    src=replace_once(src, ' if mode~="TEAM" and mode~="BR" then hideLegacyToast();return end', ' if mode~="TEAM" and mode~="BR" and mode~="BATTLE_ROYALE" then hideLegacyToast();return end', 'HUD_DISCOVERY_CANONICAL_BR')
     return src
 
 def selected_map(root: Path) -> dict[str,Path]:
