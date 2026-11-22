@@ -5249,14 +5249,19 @@
         "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT"
       ],
       "target_paths": [
-        "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
-        "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+        ".github/workflows/p0d-gq-beast-escort-20261117.yml",
+        "quality_gameplay/v3_beast_escort_20261117/EGGRUMBLE_BeastEscort.luau",
         "quality_gameplay/v3_beast_escort_20261117/README.md",
+        "quality_gameplay/v3_beast_escort_20261117/compose_single_combat.py",
         "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
-        "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
-        "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
         "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
-        ".github/workflows/p0d-gq-beast-escort-20261117.yml"
+        "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+        "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/select_current31.py",
+        "quality_gameplay/v3_beast_escort_20261117/test_compose.py",
+        "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/test_select_current31.py"
       ],
       "prep_branch": "quality/gq-beast-escort-unique-v3-20261117",
       "source_head_before": "131313d645d2a5a67abd117c2c3d0459ee46d210",
@@ -5275,7 +5280,7 @@
       "independent_reviewer_context": "/root/environment_audit",
       "independent_review_status": "PASS_FOR_ACTUAL_HEAD_AND_HOSTED_CI_SOURCE_ONLY_NOT_RC",
       "scope": "Continue original GQ618 and existing PR618, originally adopted via PR629. Add a separately named strict current69 source candidate gate. Generated current Combat changes only neutral charm exclusion and current human membership/stealth eligibility inside the existing BeastEscort.pickTarget: two exact hunks, +115 UTF-8 bytes. Reuse currentHumanMember and egg-reveal-aware humanCombatTargetable; preserve existing Swarm damage authority, lifetime, radius, cap, leash, cooldown and all other source bytes. Original21/current31 module/composers/tests remain byte-identical. Verify all69 source route/class/source identities, actual28-body baseline/ON/OFF execution, fresh pinned Luau build, original combined/objective regressions and exact inverse Rojo Place. Dedicated workflow only, actual PR head. No canonical Union22 producer/profile/shared-workflow edit under this source grant.",
-      "grant_scope_version": 1,
+      "grant_scope_version": 2,
       "generated_source_scope": [
         {
           "path": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
@@ -5454,6 +5459,127 @@
         "actual_lease_epoch": 620,
         "actual_lease_commit": "e90011a71b3906d41544144c8e9fd231d968b41e",
         "at": "2026-11-22T22:46:53Z"
+      },
+      "scope_history": [
+        {
+          "grant_scope_version": 1,
+          "target_paths": [
+            "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+            "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+            "quality_gameplay/v3_beast_escort_20261117/README.md",
+            "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
+            "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+            "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+            "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
+            ".github/workflows/p0d-gq-beast-escort-20261117.yml"
+          ],
+          "resources": [
+            "BEAST_ESCORT_TARGET_ELIGIBILITY",
+            "BEAST_PRIVATE_CURRENT69_GATE",
+            "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT"
+          ],
+          "registry_commit": "87166748e4b2db78022fd91a7e31d9c68a2820ac",
+          "source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+          "state": "PREP_READY",
+          "note": "Original eight-file write grant and PREP_READY evidence retained. The actual H0-to-H1 write delta was exactly these eight; full donor PR contains five additional immutable historical files."
+        }
+      ],
+      "mutable_target_paths": [
+        "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/README.md",
+        "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
+        "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+        "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
+        ".github/workflows/p0d-gq-beast-escort-20261117.yml"
+      ],
+      "immutable_historical_files": {
+        "quality_gameplay/v3_beast_escort_20261117/EGGRUMBLE_BeastEscort.luau": {
+          "bytes": 6383,
+          "sha256": "8e05e501961a64e046edc43bf87bbca8bd8928bf61ee8f005dc7de3c4dd69e83",
+          "git_blob_sha": "ba564434055b44a406151267899126a92ed8ded0",
+          "same_as_prepublication_parent": true
+        },
+        "quality_gameplay/v3_beast_escort_20261117/compose_single_combat.py": {
+          "bytes": 4944,
+          "sha256": "836dd2db472e993f57af4441811c66de57b53d02159ee6d1c483a04ca50ba890",
+          "git_blob_sha": "5df155207df86514498cae887a34ae67d8e6ac3d",
+          "same_as_prepublication_parent": true
+        },
+        "quality_gameplay/v3_beast_escort_20261117/select_current31.py": {
+          "bytes": 7735,
+          "sha256": "eae472cebf6da0f123d1f740d33048fa56416514d7603945d37ab16cb2633f04",
+          "git_blob_sha": "68a6e486335cb3d363c5ca35362d1fd471e375eb",
+          "same_as_prepublication_parent": true
+        },
+        "quality_gameplay/v3_beast_escort_20261117/test_compose.py": {
+          "bytes": 4051,
+          "sha256": "1bcbef76d8a2de6529ee1c55773eb348ec34b3e6b15972383348accece2ede3b",
+          "git_blob_sha": "117cd773ea70b580ddb78780ae4f3bedc48626c5",
+          "same_as_prepublication_parent": true
+        },
+        "quality_gameplay/v3_beast_escort_20261117/test_select_current31.py": {
+          "bytes": 4691,
+          "sha256": "ed5bee6b43805207bddb9e0a25e5d9c22800e9a155cfe3957078abcf61e0e827",
+          "git_blob_sha": "12637aded9d894ddd12fb63c3eefe1ff2f19d996",
+          "same_as_prepublication_parent": true
+        }
+      },
+      "admission_scope_accounting": {
+        "kind": "WHOLE_PR_THIRTEEN_EQUALS_MUTABLE_EIGHT_PLUS_IMMUTABLE_HISTORICAL_FIVE",
+        "previous_registry_commit": "87166748e4b2db78022fd91a7e31d9c68a2820ac",
+        "actual_pr": 618,
+        "actual_source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+        "source_parent": "131313d645d2a5a67abd117c2c3d0459ee46d210",
+        "actual_whole_pr_paths": [
+          ".github/workflows/p0d-gq-beast-escort-20261117.yml",
+          "quality_gameplay/v3_beast_escort_20261117/EGGRUMBLE_BeastEscort.luau",
+          "quality_gameplay/v3_beast_escort_20261117/README.md",
+          "quality_gameplay/v3_beast_escort_20261117/compose_single_combat.py",
+          "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
+          "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
+          "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+          "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+          "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+          "quality_gameplay/v3_beast_escort_20261117/select_current31.py",
+          "quality_gameplay/v3_beast_escort_20261117/test_compose.py",
+          "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+          "quality_gameplay/v3_beast_escort_20261117/test_select_current31.py"
+        ],
+        "mutable_write_path_count": 8,
+        "immutable_historical_file_count": 5,
+        "total_pr_path_count": 13,
+        "previous_eight_path_write_check": "PASS_COMMIT_DELTA_ONLY",
+        "previous_thirteen_path_check": "CHANGED_FILES_EXCEED_GRANT",
+        "unchanged_historical_blobs_must_match": true,
+        "new_source_edits_authorized": false,
+        "old_donor_files_claimed_current_rc_adopted": false,
+        "whole_donor_pr_direct_rc_merge_allowed": false,
+        "independent_context": "/root/environment_audit",
+        "review_receipt": {
+          "bytes": 4770,
+          "sha256": "7a7833a4c2a7337c1a6feee489c9ff5f8d36575b7ce6298d95b8eb22c97d3f7c"
+        },
+        "new_actual_full_pr_check": "PENDING_ACTUAL_REGISTRY_PUBLICATION",
+        "reason": "Correct complete PR admission accounting without changing source or widening its eight mutable paths.",
+        "registration": {
+          "actual_registry_parent": "a6db13ee292d3bbb269c5e26dc6ce1cc4dd9143a",
+          "operation_id": "78ce8c7a-90ac-47ff-92b5-6715f619b582",
+          "lease_epoch": 627,
+          "lease_acquire_commit": "d4941299c5d017dd50f39833f31311682b41d722",
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+          "recorded_at": "2026-11-22T23:10:40Z",
+          "proposal_review": {
+            "context": "/root/environment_audit",
+            "checks": 26,
+            "bytes": 2950,
+            "sha256": "ba67449da84f06b7331a6acd98cb519da9802bc9061e55555b654aa7d9b11a97"
+          },
+          "owner_consent_comment": 7087262280
+        }
       }
     },
     {
