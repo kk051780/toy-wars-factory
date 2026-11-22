@@ -577,7 +577,8 @@
         "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau",
         "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau",
         "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json",
-        "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau"
+        "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases_clear_los.luau"
       ],
       "issued_at": "2026-11-22T12:50:02Z",
       "expires_at": "2026-11-22T18:50:02.000Z",
@@ -594,10 +595,10 @@
       "issuer_operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
       "coordination_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 582,
-        "claim_commit": "717fe39de04bb1332388dfbb00da6852f5588069",
+        "epoch": 594,
+        "claim_commit": "06328d3edcd9b0506a3a49eccff33060e71d7414",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T14:26:09.494406+00:00",
+        "expires_at": "2026-11-22T15:57:56.215000+00:00",
         "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b"
       },
       "authority_evidence": [
@@ -611,8 +612,8 @@
       "dependency_adoption_comment": 7079294042,
       "author_context": "/root/intake_300",
       "independent_reviewer_context": "/root/governance_300 and /root for code authored by intake; independent whole-candidate review required",
-      "grant_scope_version": 2,
-      "scope": "Reuse only the already frozen 22-source union as a strict post-stage of the unchanged historical BR-only pipeline. Preserve all seven original Native fixture/case files byte-exact. Add one separate combined_cases_clear_los.luau test case whose original ten assertions and names remain unchanged and whose sole behavior change is a bounded, genuine same-Swarm-LOS approach-position input. Execute it as a new combined_clear_los suite, distinct from the original unmodified suite. Keep objective_full unchanged. No gameplay source, expected damage/score/phase/timing, geometry, wall rule, original binary allow-list, or ownership change. Existing 14 paths may bind this explicit new case and suite in adapter/lock/verifier/tests/workflow; only the listed fifteenth path is added.",
+      "grant_scope_version": 3,
+      "scope": "Retain the existing 22-source union and all 15 previously scoped files. Add exactly one separately pinned objective_full_cases_clear_los.luau test input. Preserve objective_full_cases.luau byte-exact (7882 B /27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a), all seven original assertions and case names, all original fixtures, combined_clear_los, gameplay Source69, source/class/project/75 non-Source structures, original39 workflow payloads and source inverse. Replace only the invalid +X2 approach setup with a fixed four-direction candidate selection that queries genuine melee LOS with the same filter, height and collision rule as SwarmCombat; choose first clear, fail if none, exclude setup queries from real Swarm execution evidence. No timing, health, damage, role, phase, scoring or geometry changes. Bind the explicitly new objective_full_clear_los suite in existing Native lock/runner/verifier/tests/workflow; include the independently reviewed strict failure-observation correction without altering acceptance predicates.",
       "generated_source_scope": [
         {
           "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_BASICMOBILITYPOLICY",
@@ -945,37 +946,33 @@
         "removed_plus_added_utf8_bytes": 54942,
         "design_erratum": "Original 54726 value was Unicode character count; fixed design retained, review erratum records54942 UTF8 bytes."
       },
-      "acceptance": "Strict complete69 before/final route,class,Source hash,project,75instance non-Source identity; frozen22 hunks and true inverse only. Current-run prior receipt must pass unchanged #977 provenance and remain byte-exact; ON69/OFF69 compile/Rojo; original39 step payloads unchanged; final17-marker/all48/3visual retention with explicit provenance. New f46 clean-source freshly-built Native full28 runs combined_clear_los (ten original assertions and names, changed approach input explicitly classified) plus unchanged objective_full seven. Retain immutable original case and all seven original inputs, original unmodified Native failures, 14578-call failure replay, and actual collidable-wall rejection; require independent same-failure-prefix corrected-input replay and all-directions-blocked rejection. No passing seed selection, automatic retry acceptance, Raycast success stub, geometry/HP mutation, or lowered expectations. Independent code and complete actual HEAD review, all negative late-data/provenance/rollback checks, same-head real CI and separate fresh scoped RC writer lease/CAS remain mandatory. SOURCE success does not imply Studio/Android/ART/FUN acceptance.",
-      "native_contract": "New production adapter: exact Luau source commit/clean checkout/build recipe proof plus actual binary identity before/after each run. Existing local9c binary-lock packet remains immutable. Scope V2 adds exactly one separately pinned case file and names the revised input suite combined_clear_los. The original combined_cases.luau remains preserved and its previous failure remains evidence; it is not renamed as an unchanged passing suite. Preserve every original assertion and four engine fixtures. Actual fresh build/context/binary/program/fixture verification applies to both current suites.",
+      "acceptance": "All existing complete69, frozen22 hunk, exact inverse, current-run provenance, 138 compile/2 Rojo, full17/all48/visual retention, Native f46 clean-source/fresh-build/context/binary/program/exact vector and final admission invariance gates remain mandatory. Native must run combined_clear_los10 and objective_full_clear_los7 once under its actual new candidate context, retain and verify both original case files, explicitly classify both changed inputs, and accept exactly two suites/17 evidence files/110 final files. Verify the proposed objective case inverse recovers all original7882 bytes and original assertions/names/timing/expected values, the real same-failure inputs now reach actual Swarm damage, and real walls blocking all four approaches still fail. Preserve five seeded original failures and independent replay, the unmodified16/seeded64 diagnostic results, the official unclassified conjunction failure and environment limits; do not equate local causal evidence with unrecorded official RNG/CASE trace. Same-head actual CI and independent full candidate review, fresh RC lease/nonforce CAS and new official same-SHA actual artifact remain required. No retry-to-green or passing-seed selection, no original-case unchanged PASS claim, no Studio/ART/Android/FUN inference.",
+      "native_contract": "Fresh f46 clean-source build and actual binary identity, original seven fixture files byte-exact. Accepted suites are separately named combined_clear_los (original ten assertions) and objective_full_clear_los (original seven assertions) with explicitly changed physical approach inputs. Original combined_cases.luau and objective_full_cases.luau remain separately pinned and preserved, and their known failures remain evidence. Failure-only diagnostic output preserves the existing nonzero/exception and does not create PASS receipts. All source/program/fixture/runtime gates remain strict.",
       "forbidden_changes": [
         "existing full17/all48/ART accepted hashes, fixtures and gate logic",
         "original author pipelines and frozen packets",
-        "optional14, Map +288, later LSS changes or new gameplay Lua logic; scope V2 permits only the separately named, pinned Native test-input case",
+        "optional14, Map +288, later LSS changes or new gameplay Lua logic; scope V3 permits only the two separately named and pinned clear-LOS Native test-input variants",
         "labeling prior reports as final union PASS",
         "rewriting prior receipt provenance to a historical head",
-        "main or Roblox publication"
+        "main or Roblox publication",
+        "Original objective_full_cases.luau bytes, seven expected assertions/names or physical wall/damage/timing semantics",
+        "Changing seed or repeating a suite until success as an acceptance path",
+        "Claiming the original official failure's missing CASE/RNG trace has been recovered"
       ],
       "rollback": {
-        "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
         "before_blobs": {
-          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": null,
-          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": null,
-          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": null,
-          "tests/test_gq470_union22_real69_20261122.py": null,
-          ".github/workflows/gq8-real63-source-composite.yml": "333a4e247fe198e27452619a322628e602aa661c",
-          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json": null,
-          "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau": null
+          ".github/workflows/gq8-real63-source-composite.yml": "8ffc7b55621779d774bc96193d6b05f89a44f068",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "c412b7cc731c0837e1590c098c06b0ac0cd8d1e5",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "91aace23e98e806caa5c8410145065857786112c",
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "daf958f0c56a379287fd9a0253ccba1406364208",
+          "tests/test_gq470_union22_real69_20261122.py": "ad2d6c13141a7d1ebdb24e3f02de47f0b254109e",
+          "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases_clear_los.luau": null
         },
-        "source_inverse": "Reapply explicit inverse to final sources; source/Place/project exact current BR-only prior, with actual current-run prior receipt preserved byte-exact. Repository rollback restores the exact approved workflow before blob and removes only the fourteen newly added files.",
-        "repository": "Revert only the fifteen scoped repository paths; restore the exact base workflow blob and remove only this claim's added fourteen files. Preserve all unrelated changes and prior source stages. Source OFF69 restores the measured BR-only parent byte-exact."
+        "repository": "Revert only this repair's five changed existing paths to their exact current eb43702 blobs and remove only the one new objective_full_cases_clear_los.luau. Preserve all 69 adopted runtime sources, original cases, every other scoped file and unrelated changes. No branch reset or force update.",
+        "source_inverse": "No generated gameplay Source changes in this repair. Existing union22 inverse and original BR-only 798416B/d2d685 restoration remain byte-exact and required; the separate historical full union rollback is preserved above.",
+        "original_case": "objective_full_cases.luau remains byte-exact 7882B/27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a. New case inverse removes only the reviewed helper and restores its exact setup block.",
+        "return_quality": "The exact repository rollback target eb43702 has a known failed official objective Native run45035384920. Reverting this repair is not evidence of a GREEN official build and does not erase that failure."
       },
       "profile_truth": {
         "active_runtime": "rich51",
@@ -1041,6 +1038,71 @@
           ],
           "rollback_repository": "Restore the one workflow before blob and remove only the thirteen added files. No other owner/source changes.",
           "rollback_source_inverse": "Reapply explicit inverse to final sources; source/Place/project exact current BR-only prior, with actual current-run prior receipt preserved byte-exact. Repository rollback restores the exact future workflow before blob and removes only the thirteen new files."
+        },
+        {
+          "grant_scope_version": 2,
+          "issued_at": "2026-11-22T12:50:02Z",
+          "amended_at": "2026-11-22T13:57:00Z",
+          "expires_at": "2026-11-22T18:50:02.000Z",
+          "coordination_lease": {
+            "branch": "twf-repair-coordinator",
+            "epoch": 582,
+            "claim_commit": "717fe39de04bb1332388dfbb00da6852f5588069",
+            "work_branch": "coord/p0d-work-claims",
+            "expires_at": "2026-11-22T14:26:09.494406+00:00",
+            "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b"
+          },
+          "target_paths": [
+            "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "tests/test_gq470_union22_real69_20261122.py",
+            ".github/workflows/gq8-real63-source-composite.yml",
+            "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau",
+            "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json",
+            "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau"
+          ],
+          "scope": "Reuse only the already frozen 22-source union as a strict post-stage of the unchanged historical BR-only pipeline. Preserve all seven original Native fixture/case files byte-exact. Add one separate combined_cases_clear_los.luau test case whose original ten assertions and names remain unchanged and whose sole behavior change is a bounded, genuine same-Swarm-LOS approach-position input. Execute it as a new combined_clear_los suite, distinct from the original unmodified suite. Keep objective_full unchanged. No gameplay source, expected damage/score/phase/timing, geometry, wall rule, original binary allow-list, or ownership change. Existing 14 paths may bind this explicit new case and suite in adapter/lock/verifier/tests/workflow; only the listed fifteenth path is added.",
+          "acceptance": "Strict complete69 before/final route,class,Source hash,project,75instance non-Source identity; frozen22 hunks and true inverse only. Current-run prior receipt must pass unchanged #977 provenance and remain byte-exact; ON69/OFF69 compile/Rojo; original39 step payloads unchanged; final17-marker/all48/3visual retention with explicit provenance. New f46 clean-source freshly-built Native full28 runs combined_clear_los (ten original assertions and names, changed approach input explicitly classified) plus unchanged objective_full seven. Retain immutable original case and all seven original inputs, original unmodified Native failures, 14578-call failure replay, and actual collidable-wall rejection; require independent same-failure-prefix corrected-input replay and all-directions-blocked rejection. No passing seed selection, automatic retry acceptance, Raycast success stub, geometry/HP mutation, or lowered expectations. Independent code and complete actual HEAD review, all negative late-data/provenance/rollback checks, same-head real CI and separate fresh scoped RC writer lease/CAS remain mandatory. SOURCE success does not imply Studio/Android/ART/FUN acceptance.",
+          "native_contract": "New production adapter: exact Luau source commit/clean checkout/build recipe proof plus actual binary identity before/after each run. Existing local9c binary-lock packet remains immutable. Scope V2 adds exactly one separately pinned case file and names the revised input suite combined_clear_los. The original combined_cases.luau remains preserved and its previous failure remains evidence; it is not renamed as an unchanged passing suite. Preserve every original assertion and four engine fixtures. Actual fresh build/context/binary/program/fixture verification applies to both current suites.",
+          "forbidden_changes": [
+            "existing full17/all48/ART accepted hashes, fixtures and gate logic",
+            "original author pipelines and frozen packets",
+            "optional14, Map +288, later LSS changes or new gameplay Lua logic; scope V2 permits only the separately named, pinned Native test-input case",
+            "labeling prior reports as final union PASS",
+            "rewriting prior receipt provenance to a historical head",
+            "main or Roblox publication"
+          ],
+          "rollback": {
+            "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "before_blobs": {
+              "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": null,
+              "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": null,
+              "tests/test_gq470_union22_real69_20261122.py": null,
+              ".github/workflows/gq8-real63-source-composite.yml": "333a4e247fe198e27452619a322628e602aa661c",
+              "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau": null
+            },
+            "source_inverse": "Reapply explicit inverse to final sources; source/Place/project exact current BR-only prior, with actual current-run prior receipt preserved byte-exact. Repository rollback restores the exact approved workflow before blob and removes only the fourteen newly added files.",
+            "repository": "Revert only the fifteen scoped repository paths; restore the exact base workflow blob and remove only this claim's added fourteen files. Preserve all unrelated changes and prior source stages. Source OFF69 restores the measured BR-only parent byte-exact."
+          },
+          "reason_for_amendment": "Preserve original objective case and demonstrated failure while admitting a separately named bounded clear-melee-LOS test input; preserve all gameplay Source and expected results."
         }
       ],
       "native_case_amendment": {
@@ -1103,18 +1165,18 @@
           "scope": "Fresh four-run prefix/replay/original-negative/all-blocked execution with immutable inputs; not candidate HEAD, CI, RC or product approval."
         }
       },
-      "amended_at": "2026-11-22T13:57:00Z",
+      "amended_at": "2026-11-22T15:33:36Z",
       "candidate_head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
       "candidate_tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T15:01:23.232Z",
+      "metadata_updated_at": "2026-11-22T15:33:36Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 592,
-        "commit": "4ea8378400b8bdf1aa9b01a11e1422f9e5648993",
-        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+        "epoch": 594,
+        "claim_commit": "06328d3edcd9b0506a3a49eccff33060e71d7414",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T15:30:41.514000+00:00"
+        "expires_at": "2026-11-22T15:57:56.215000+00:00",
+        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b"
       },
       "actual_candidate_evidence": {
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
@@ -1294,18 +1356,148 @@
       "current_repair_scope": {
         "base_rc": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
         "paths": [
+          ".github/workflows/gq8-real63-source-composite.yml",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
           "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
-          "tests/test_gq470_union22_real69_20261122.py"
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "tests/test_gq470_union22_real69_20261122.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases_clear_los.luau"
         ],
-        "existing_scope_only": true,
-        "allowed": "Preserve and emit exact captured failure evidence and focused negative controls without changing existing cases, fixtures, gameplay Source, thresholds, original expected vectors or acceptance logic. Investigate the actual objective failure; any altered runtime case requires a separately reviewed explicit scope amendment before production edit.",
-        "new_source_or_case_authorized": false,
-        "no_automatic_retry_acceptance": true,
-        "original_15_scope_preserved": true,
-        "follow_up_pr": "NOT_CREATED",
+        "existing5_added1": true,
+        "source_count": 69,
+        "runtime_source_change_count": 0,
         "original_merged_pr": 1015,
-        "rollback": "Revert only the reviewed diagnostic repair delta against actual current official eb43702; preserve adopted source union and every unrelated change."
-      }
+        "follow_up_pr": "NOT_CREATED",
+        "original_case_preserved": true,
+        "grant_status": "GRANTED_SCOPE_ONLY",
+        "total_granted_paths": 16
+      },
+      "objective_case_amendment": {
+        "status": "GRANTED_SCOPE_ONLY",
+        "original_case": {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau",
+          "bytes": 7882,
+          "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a",
+          "byte_exact_preservation_required": true
+        },
+        "added_case": {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases_clear_los.luau",
+          "bytes": 8662,
+          "sha256": "82febdf03b28fdf1094cbce7fced4e7c9cb5b683beb6531ac8971117536cafb0"
+        },
+        "suite": "objective_full_clear_los",
+        "input_variant": "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT",
+        "directions": [
+          "+X2",
+          "-X2",
+          "+Z2",
+          "-Z2"
+        ],
+        "source_scope_unchanged": true,
+        "resources_added": 0,
+        "local_failed_seeds": [
+          448,
+          596,
+          599,
+          723,
+          830
+        ],
+        "causal_receipt": {
+          "bytes": 19387,
+          "sha256": "f3fa1f3b2a1f7a7721a6f36722ef5f8f27f14093b77c320b678ad6ff5937fff0"
+        },
+        "independent_seed448_replay": {
+          "bytes": 2700,
+          "sha256": "b43869bb0135abfdf23aea2bb98029410aa9712d2e427594acb816160cc0a3ff"
+        },
+        "diagnostic_source_review": {
+          "bytes": 4343,
+          "sha256": "5781fefc0dbcd463ba35a36cd02cc044ed8d20c2b7841ac6f129a49106449b6f"
+        },
+        "official_original_assertion": "UNKNOWN_NOT_EMITTED",
+        "scope_and_case_reviews": "INDEPENDENT_PASS_PROPOSAL_AND_SEPARATE_CASE_ONLY",
+        "grant_commit": null,
+        "grant_comment": 7079387605,
+        "independent_causal_basis": {
+          "bytes": 7729,
+          "sha256": "0d427934001654adee2bbe1b7bba677bbb9519253334571fabd126cf0b1b892d"
+        },
+        "test_preservation": "Preserve the meanings of all original38 core and7 final methods. Only necessary objective suite-key, evidence-folder and explicit input-variant mappings may change those bodies. No original gameplay assertion, expected seven CASE names, damage/timing/geometry behavior or rejection condition is weakened. Add focused4core/2final and1offline inverse alias; with failure diagnostic method the exact complete counts are planned42/9/12 and must be mechanically confirmed.",
+        "proposal_qa": {
+          "manifest": {
+            "bytes": 1892,
+            "sha256": "b15fa050886f7ff28827eba1805d8b88528ab6d4ec53e48d328edccc8dd0301d"
+          },
+          "inverse_proof": {
+            "bytes": 3147,
+            "sha256": "85736859446d513cad3582b1e68fdba77d1d8d88c752134c6e22451b4f985fbd"
+          },
+          "results": {
+            "bytes": 57829,
+            "sha256": "f5f3182bf6b0b4eefb4d40be1f4f8cb357393f52008e020a3453fe84faec2125"
+          },
+          "verification": {
+            "bytes": 22931,
+            "sha256": "10937d9fa99f47a52938918c1eb2b5dfbcb12bcc5d499e70fe471c719dd3e521"
+          },
+          "runs": 6,
+          "positive_same_failed_seeds": 5,
+          "negative_real_solid_all_four_approaches": 1,
+          "expected_native_exits": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "no_gameplay_source_changes": true,
+          "no_passing_seed_selection": true
+        },
+        "independent_case_review": {
+          "bytes": 10656,
+          "sha256": "07e62d9a252a880e59e12c6d2045b0cbf002ccc9a56352186981ec083124d0d7",
+          "result": "PASS_SEPARATE_BOUNDED_CLEAR_MELEE_LOS_CASE_NATIVE_FIXTURE_ONLY",
+          "reviewer": "/root/governance_300",
+          "independent_runs": 2
+        },
+        "grant_commit_resolution": "Actual immutable registry commit is recorded by the Contents API response, readback receipt and grant comment; this field does not attempt to self-reference the commit containing it.",
+        "independent_scope_review": {
+          "bytes": 4632,
+          "sha256": "8a825fe75489bdd26c196037a36d27d67ec0df16f8a450b20c85db932e49e416",
+          "reviewer": "/root/governance_300",
+          "result": "PASS_PROPOSAL_SCOPE_ONLY"
+        }
+      },
+      "rollback_history": [
+        {
+          "grant_scope_version": 2,
+          "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+          "rollback": {
+            "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "before_blobs": {
+              "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": null,
+              "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": null,
+              "tests/test_gq470_union22_real69_20261122.py": null,
+              ".github/workflows/gq8-real63-source-composite.yml": "333a4e247fe198e27452619a322628e602aa661c",
+              "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json": null,
+              "quality_gameplay/gq470_union22_real69_20261122/native/combined_cases_clear_los.luau": null
+            },
+            "source_inverse": "Reapply explicit inverse to final sources; source/Place/project exact current BR-only prior, with actual current-run prior receipt preserved byte-exact. Repository rollback restores the exact approved workflow before blob and removes only the fourteen newly added files.",
+            "repository": "Revert only the fifteen scoped repository paths; restore the exact base workflow blob and remove only this claim's added fourteen files. Preserve all unrelated changes and prior source stages. Source OFF69 restores the measured BR-only parent byte-exact."
+          },
+          "reason": "Original 15-path runtime union adoption rollback retained unchanged as historical boundary."
+        }
+      ]
     },
     {
       "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
