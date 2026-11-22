@@ -1,0 +1,43 @@
+{
+  "schema": "P0D_WCS_F01_C01_SOURCE_HANDOFF_RC57_SAFECLOSE_V1",
+  "status": "SOURCE_ONLY_OFFICIAL_RC_NOT_MODIFIED",
+  "date_jst": "2026-11-14",
+  "feature_id": "WCS_F01_C01_FLOATING_CANYON",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "canonical_head_at_source_authoring": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+  "canonical_exact_head_ci_run": 43508562967,
+  "canonical_code_original_head": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+  "canonical_code_native_compiled": "57/57_PASS",
+  "canonical_code_place_sha256": "15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8b1a8",
+  "author_script_path": "handoffs/P0D-WCS-F01-RC57-SAFE-HANDOFF-20261114-01/src/WCS_CrystalCanyon.server.luau",
+  "author_script_git_blob": "9b891ae8b0dd579ccf1cd477b8b012e03415c0b0",
+  "author_295_repaired_body_blob": "3edcb19d91de509afd3de227cbfbca5d75125ec2",
+  "original_integrated_input_blob": "5eb76749414c33c11eb70310b2d1c59c1f945c21",
+  "older_integrated_input_commit": "de60f7024077d4b3135693a4ca5a87ddcd4ee4a7",
+  "repair_source_commit": "dc8f1e038224d1d2d0d64fd9efb0a9c0b1c89303",
+  "source_qa": "JS_ACTUAL_SOURCE_16_OF_16_AND_REMOTE_REFETCH_13_OF_13_PASS",
+  "python_unittest": "AUTHORED_NOT_EXECUTED",
+  "native_luau_for_this_new_source": "NOT_TESTED",
+  "new_rojo_build_58": "NOT_BUILT",
+  "studio_engine": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "pending_rc_script_count": 58,
+  "pr_authority": "SOFT_CLAIM_ONLY_NOT_OFFICIAL_RC_WRITER",
+  "required_integration": "sole #220 writer: pin current RC, install only this server source under existing TrapRaidersS1 folder; add reversible feature flag and source-lock, execute same-head native 58/58 + Rojo SourceExact + negative QA, then record adoption",
+  "dependencies": [
+    "H1_FUN_WORLD.SKY_WALKWAY",
+    "original Game world bounds"
+  ],
+  "rollback": "omit WCS Script from official RC build or set ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=false before Studio start",
+  "forbidden": [
+    "RC directly modified by handoff",
+    "main merge",
+    "Roblox publish",
+    "paid",
+    "new Game/Remote/Store/XP/score/HP authority",
+    "new Automations"
+  ],
+  "historical_release_progress": 75,
+  "historical_fun": "FUN_NO_GO"
+}
