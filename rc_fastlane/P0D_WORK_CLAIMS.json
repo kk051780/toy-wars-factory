@@ -2162,7 +2162,7 @@
       "issued_at": "2026-11-22T14:38:40.472744+00:00",
       "expires_at": "2026-11-22T20:38:40.472744+00:00",
       "pr": 1016,
-      "candidate_pr_status": "DRAFT_SOURCE_QA_PASS_REBASE_AND_GQ8_PR_INTAKE_PENDING",
+      "candidate_pr_status": "DRAFT_SAME_SCOPE_DIAGNOSTICS_AND_FRESH_FORMAL_BASE_UPDATE_PENDING",
       "role": "A_PREP",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -2181,20 +2181,20 @@
         "Previous CONTROLLER585 b9996010 explicitly released at 2026-11-22T14:28:37.194718Z, actual ref3f0e20c24376d706d8154a84654e68ef2d063ef2; no expiry takeover.",
         "Unmodified repair_control.acquire planned manual CONTROLLER586; exact-parent expected-SHA force=false CAS and full state/ref/commit readback confirmed."
       ],
-      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+      "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
       "prep_branch": "feature/p0d-active66-persistence-20261122-d4d718",
       "author_contexts": [
         "/root/active66_v2",
         "/root/gameplay_v2"
       ],
       "independent_reviewer_context": "/root/admission_v2",
-      "independent_review_status": "LOCAL_SOURCE_AND_SCOPE_REVIEW_ONLY_REMOTE_HEAD_REVIEW_PENDING",
-      "grant_scope_version": 1,
-      "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
-      "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
+      "independent_review_status": "INDEPENDENT_FIXED_LOCAL_DIAGNOSTIC_AND_FULL_TREE_PROPOSAL_PASS_NEW_REMOTE_HEAD_PENDING",
+      "grant_scope_version": 2,
+      "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only. Revision2 retains the exact same sixteen paths and four resources, rebinds planned source base to actual formal eb43702, and changes only run_selected.py and its existing Python test path for failure-only observation. Preserve all source patches, original54 Native expectations, fixtures, selected flags, original17 helpers, original16 selector tests, process argv/timeouts, acceptance predicates, success receipts and OFF rollback. No workflow/upload/GQ8/queue change. Update the existing draft using non-force history-preserving parents [90a60c, eb43702].",
+      "candidate_tree_proposal": "d12926271b84a97381aac10e9e2db718d8fbf879",
       "candidate_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
-      "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
-      "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
+      "exact_file_manifest_sha256": "f2a6bcb59dfee8741dbfc7a575831975726e2e50131bda96c6bf88e567232d0a",
+      "candidate_patch_sha256": "dfac79f866d4424a8e64679036e01d2b47279cec23668abb44f15c04db9cb84d",
       "all_on_configuration_sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5",
       "generated_source_scope": [
         {
@@ -2240,12 +2240,18 @@
       "place_non_source_anchor": "8fe1a9681381b5aa4cfeb25658d713625bd1eb714f195283d04c2e3588f56bc0",
       "scope_review": {
         "context": "/root/admission_v2",
-        "decision": "RECOMMEND_DRAFT_PREP_ONLY",
-        "decision_sha256": "59c5648d75f266b0a2bcd276503a0c6dd213986ae70d874a2b39fd69fd3df44a",
-        "receipt_sha256": "8045f49e1b13585a27bb4e18a454010d6953a6fd228de85ff72d4b4676dbc3f6",
-        "technical_V3_receipt_sha256": "be1fab9a0e51037faf0981840d2586635bde6fa017815c268ec9313b97cc24fa",
-        "current_registry_shape_rechecked": true,
-        "source_authors_are_not_final_reviewers": true
+        "decision": "INDEPENDENT_DIAGNOSTIC_SOURCE_PROPOSAL_PASS_DRAFT_ONLY",
+        "receipt_sha256": "a91fa50df332402612b4cf4ff95458375325000775406332003d6d7f85449899",
+        "freeze_sha256": "5f222e60e5c18fd01fa1400de764b656034f57638d6b866af45b008466a5b7a6",
+        "root_plan_sha256": "77b7709f685b7e22ab5933f63f7b6fcc05b30f7bf9a969bd3ac0dff2907bf302",
+        "same16_paths_same4_resources": true,
+        "preserved_other_formal_files": 919,
+        "preserved_intervening_union_paths": 15,
+        "author_protocol_independently_run_once": 10,
+        "independent_additional_IO_helper_probes": 4,
+        "real_native_runs": 0,
+        "remote_APPROVE": false,
+        "PREP_READY": false
       },
       "quality_issue_comment": 7080546111,
       "limited_value_issue_comment": 7080583715,
@@ -2296,15 +2302,15 @@
       "art": "ART_NO_GO",
       "fun": "NOT_TESTED",
       "candidate_tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
-      "metadata_updated_at": "2026-11-22T15:08:09Z",
+      "metadata_updated_at": "2026-11-22T15:53:34.316739+00:00",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 593,
-        "commit": "3a1f828171faae417bfbc1364a74e6f36d2f58f8",
+        "epoch": 598,
+        "commit": "9a6370740585fb1d176d98257147a69d101f1154",
         "owner_id": "2c444a1b-c4ab-402e-9538-7d8250847e83",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T15:37:04.869660+00:00",
-        "no_scope_extension": true
+        "expires_at": "2026-11-22T16:22:19.770926+00:00",
+        "no_path_or_resource_scope_extension": true
       },
       "actual_candidate_evidence": {
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
@@ -2377,7 +2383,8 @@
         "Studio": "NOT_TESTED",
         "Android": "NOT_TESTED",
         "ART": "ART_NO_GO",
-        "FUN": "NOT_TESTED"
+        "FUN": "NOT_TESTED",
+        "revision2_usage": "Historical HEAD90a60c only; cannot substitute for not-yet-created diagnostic candidate CI/artifact."
       },
       "continuation_conditions": {
         "new_formal_rc_observed": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
@@ -2399,7 +2406,123 @@
           "Genuine GQ8 trigger prerequisite scope or authorized handoff; current 16path grant excludes this workflow",
           "Actual same-new-HEAD pull_request GQ8 success/artifact and primary/required checks",
           "Separate final RC writer handoff and fresh lease/CAS; no permission inferred from this metadata update"
-        ]
+        ],
+        "proposed_base_rebind": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "reason": "Actual remote candidate remains90a60c until a separate source lease updates it. Planned claim base is eb43702, not evidence of adoption."
+      },
+      "scope_history": [
+        {
+          "version": 1,
+          "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+          "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
+          "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
+          "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
+          "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
+          "scope_review": {
+            "context": "/root/admission_v2",
+            "decision": "RECOMMEND_DRAFT_PREP_ONLY",
+            "decision_sha256": "59c5648d75f266b0a2bcd276503a0c6dd213986ae70d874a2b39fd69fd3df44a",
+            "receipt_sha256": "8045f49e1b13585a27bb4e18a454010d6953a6fd228de85ff72d4b4676dbc3f6",
+            "technical_V3_receipt_sha256": "be1fab9a0e51037faf0981840d2586635bde6fa017815c268ec9313b97cc24fa",
+            "current_registry_shape_rechecked": true,
+            "source_authors_are_not_final_reviewers": true
+          },
+          "preserved_at": "2026-11-22T15:53:34.316739+00:00"
+        }
+      ],
+      "candidate_history": [
+        {
+          "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+          "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+          "source_base": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+          "status": "HISTORICAL_ACTUAL_FIXED_HEAD_SOURCE_QA_PASS_NOT_NEW_CODE_ACCEPTANCE",
+          "actual_candidate_evidence": {
+            "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+            "pr_comment": 7080885611,
+            "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+            "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+            "diff_files": 16,
+            "added": 15,
+            "modified": 1,
+            "unchanged_base_files": 905,
+            "independent_head_review": {
+              "context": "/root/admission_v2",
+              "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+              "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+              "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+              "registered_GitHub_APPROVE": false
+            },
+            "primary_ci": {
+              "run": 45034273535,
+              "job": 137244415461,
+              "event": "pull_request",
+              "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+              "conclusion": "success",
+              "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+              "candidate_and_checkout_tree_equal": true
+            },
+            "bootstrap_ci": {
+              "pull_request": 45034273503,
+              "push": 45034267136,
+              "conclusion": "success"
+            },
+            "artifact": {
+              "id": 14758893231,
+              "zip_bytes": 284362,
+              "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+              "payload_files": 33,
+              "source_count": 66,
+              "changed_sources": 2,
+              "unchanged_sources": 64,
+              "place_bytes": 604050,
+              "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+              "canonical_rc_source_adopted": false,
+              "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+              "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+            },
+            "independent_artifact_review": {
+              "context": "/root (not repair code author)",
+              "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+              "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+              "new_native_runs": 0
+            },
+            "hosted_selected_native": {
+              "spawn": 12,
+              "equip": 9,
+              "evolution": 19,
+              "recovery": 14,
+              "total": 54,
+              "failed": 0,
+              "selector_methods": 16,
+              "selected_source_compile_count": 66,
+              "prior_selected_Game_relay": 31,
+              "prior_selected_Game_bond": 27,
+              "whole_Game_bootstrap": false,
+              "live_DataStore_calls": 0
+            },
+            "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+            "PREP_READY": false,
+            "formal_RC_adopted": false,
+            "Studio": "NOT_TESTED",
+            "Android": "NOT_TESTED",
+            "ART": "ART_NO_GO",
+            "FUN": "NOT_TESTED"
+          }
+        }
+      ],
+      "source_update_plan": {
+        "old_actual_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+        "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "ordered_parents": [
+          "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+          "eb43702de8db32550d9a3ee78041ad6c104f46c0"
+        ],
+        "tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+        "actual_new_head": null,
+        "actual_new_CI": null,
+        "new_head_acceptance": false,
+        "new_source_lease_required": true
       }
     }
   ],
