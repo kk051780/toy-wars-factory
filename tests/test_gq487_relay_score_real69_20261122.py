@@ -183,6 +183,100 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
             )
             process.assert_not_called()
 
+    def test_stage_sidecar_drift_after_semantic_validation_cannot_set_a_new_pin(self):
+        """Real sidecar files/JSON/receipt checks; payload and parent proof mocked.
+
+        This is the independent timing-specific counterexample: change a checked
+        sidecar and its receipt link immediately after semantic validation. The
+        original validated raw bytes must remain the receipt's expected pins.
+        No real69/110 artifact, native runtime, or production source is needed.
+        """
+        p = self.producer
+        context = synthetic_parent_context()
+        snapshot = {
+            "profile": "after", "source_count": 69,
+            "sources": {name: {**row, "mode": 0o644}
+                        for name, row in p.expected_sources(self.lock, "after").items()},
+            "project": copy.deepcopy(self.lock["fixed_input"]["project"]),
+            "project_mode": 0o644, "source_lock_sha256": self.lock["_lock_sha256"],
+        }
+        before_snapshot = copy.deepcopy(snapshot)
+        before_snapshot["profile"] = "before"
+        before_snapshot["sources"][p.TARGET].update(bytes=8030, sha256=p.BASE_SHA)
+        packet = {"raw": {"bootstrap-only.txt": b"MOCKED_PARENT_PAYLOAD"},
+                  "modes": {"bootstrap-only.txt": 0o644}}
+        binding = {"payload": p.union_payload_identity(packet),
+                   "expected_execution_context": copy.deepcopy(context),
+                   "boundary": "MOCKED_PARENT_CONTENT_PROOF_NOT_REAL_DELIVERY"}
+        real_parent_check = p.verify_stage_parent
+        real_receipt_check = p.verify_receipt_metadata
+        for fault in (None, "expectation", "binding"):
+            with self.subTest(sidecar=fault or "unchanged_control"), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                binding_raw = p.json_bytes(binding)
+                expectation_raw = p.json_bytes({
+                    "schema": "SCORE_RELAY_EXTERNAL_PARENT_EXPECTATION_V1",
+                    "expected_execution_context": context,
+                })
+                manifest_raw = p.json_bytes({"schema": "SCORE_RELAY_PREP_SOURCE_MANIFEST_V1",
+                                             "status": p.STATUS, **snapshot})
+                (root / p.PARENT_BINDING).write_bytes(binding_raw)
+                (root / p.PARENT_EXPECTATION).write_bytes(expectation_raw)
+                (root / p.MANIFEST).write_bytes(manifest_raw)
+                receipt = {
+                    "schema": "SCORE_RELAY_PREP_RECEIPT_V3", "status": p.STATUS,
+                    "created_at_utc": "2026-11-22T00:00:00+00:00", "direction": "on",
+                    "input_profile": "before", "output_profile": "after",
+                    "input_snapshot": before_snapshot, "output_snapshot": snapshot,
+                    "only_changed_source": p.TARGET, "source_count": 69, "other_sources_preserved": 68,
+                    "source_lock_sha256": self.lock["_lock_sha256"], "parent_manifest": None,
+                    "parent_kind": "UNION22_DELIVERY", "expected_parent_context": context,
+                    "parent_binding": p.info(binding_raw), "parent_expectation": p.info(expectation_raw),
+                    "parent_contract_verified": True, "manifest": p.info(manifest_raw),
+                    "inverse_reads_actual_on_source": False,
+                    "parent_stage_receipt": None, "parent_stage_manifest": None,
+                    "Native_executed_by_composer": False, "Place_built_by_composer": False,
+                    "RC_adopted_by_composer": False, "Studio_Android_ART_FUN": "NOT_VERIFIED",
+                    **p.OWN_UNPROVEN,
+                }
+                (root / p.RECEIPT).write_bytes(p.json_bytes(receipt))
+                crossed_semantic_boundary = []
+
+                def after_semantic_check(actual_root, parent_kind, expected_context):
+                    # Run actual JSON parsing, strict context equality and raw
+                    # sidecar binding checks before injecting the filesystem drift.
+                    validated = real_parent_check(actual_root, parent_kind, expected_context)
+                    crossed_semantic_boundary.append(True)
+                    if fault is not None:
+                        name = p.PARENT_EXPECTATION if fault == "expectation" else p.PARENT_BINDING
+                        sidecar = actual_root / name
+                        changed = json.loads(sidecar.read_bytes())
+                        changed["expected_execution_context"]["run_id"] = "1"
+                        sidecar.write_bytes(p.json_bytes(changed))
+                        own_receipt = json.loads((actual_root / p.RECEIPT).read_bytes())
+                        own_receipt["parent_" + fault] = p.info(sidecar.read_bytes())
+                        (actual_root / p.RECEIPT).write_bytes(p.json_bytes(own_receipt))
+                    return validated
+
+                with mock.patch.object(p, "validate_sources", return_value=snapshot), \
+                     mock.patch.object(p, "snapshot_union_delivery", return_value=packet), \
+                     mock.patch.object(p, "verify_union_parent", return_value=binding), \
+                     mock.patch.object(p, "verify_stage_parent", side_effect=after_semantic_check) as boundary, \
+                     mock.patch.object(p, "verify_receipt_metadata", wraps=real_receipt_check) as receipt_check:
+                    if fault is None:
+                        result = p.verify_stage(root, "after", parent_kind="UNION22_DELIVERY",
+                                                expected_parent_context=context)
+                        self.assertTrue(result["parent_contract_verified"])
+                        self.assertEqual(result["parent_binding"], p.info(binding_raw))
+                        self.assertEqual(result["parent_expectation"], p.info(expectation_raw))
+                    else:
+                        with self.assertRaisesRegex(p.ScoreRelayError, "STAGE_PARENT_BINDING_OR_UNEARNED_CLAIM"):
+                            p.verify_stage(root, "after", parent_kind="UNION22_DELIVERY",
+                                           expected_parent_context=context)
+                    boundary.assert_called_once()
+                    receipt_check.assert_called_once()
+                self.assertEqual(crossed_semantic_boundary, [True])
+
     def test_orchestration_rejects_drift_in_executed_and_archived_copies(self):
         """Actual runner and file I/O, mocked stage gate/processes; zero artifact/VM.
 

@@ -168,13 +168,17 @@ def validate_parent_context(value: dict) -> dict:
     return value
 
 
-def read_parent_expectation(path: Path) -> dict:
-    data = parse(regular_file(Path(path)))
+def parse_parent_expectation(raw: bytes) -> dict:
+    data = parse(raw)
     if type(data) is dict and data.get("schema") == "SCORE_RELAY_EXTERNAL_PARENT_EXPECTATION_V1":
         require(set(data) <= {"schema", "expected_execution_context", "origin_observation"},
                 "EXTERNAL_PARENT_EXPECTATION_WRAPPER_FIELDS")
         data = data.get("expected_execution_context")
     return validate_parent_context(data)
+
+
+def read_parent_expectation(path: Path) -> dict:
+    return parse_parent_expectation(regular_file(Path(path)))
 
 
 def parent_arguments(parent_kind: str, expected_parent_context: dict | None) -> dict | None:
@@ -491,19 +495,25 @@ def copy_union_packet(packet: dict, output: Path) -> None:
         target.chmod(packet["modes"][relative])
 
 
-def verify_stage_parent(root: Path, parent_kind: str, context: dict | None) -> tuple[bytes | None, dict | None]:
+def verify_stage_parent(root: Path, parent_kind: str, context: dict | None) -> tuple[bytes | None, dict | None, dict]:
     if parent_kind == "FROZEN_LOCAL":
         require(not any((root / n).exists() or (root / n).is_symlink() for n in
                         (PARENT_PACKET, PARENT_BINDING, PARENT_EXPECTATION)), "MIXED_PARENT_MODES")
-        return parent_manifest_bytes(root), None
+        return parent_manifest_bytes(root), None, {}
     require(not any((root / n).exists() or (root / n).is_symlink() for n in
                     (PARENT_MANIFEST, "frozen_union22_source_manifest.json", "source_manifest.json")), "MIXED_PARENT_MODES")
     packet = snapshot_union_delivery(root / PARENT_PACKET)
     binding = verify_union_parent(packet, context)
-    require(typed_equal(parse(regular_file(root / PARENT_BINDING)), binding), "PARENT_BINDING_SIDECAR")
-    require(read_parent_expectation(root / PARENT_EXPECTATION) == context, "PARENT_EXPECTATION_SIDECAR")
+    # Keep the exact bytes whose meaning was checked. A later read must never
+    # become a new baseline for receipt pins after this validation boundary.
+    binding_raw = regular_file(root / PARENT_BINDING)
+    expectation_raw = regular_file(root / PARENT_EXPECTATION)
+    require(typed_equal(parse(binding_raw), binding), "PARENT_BINDING_SIDECAR")
+    require(parse_parent_expectation(expectation_raw) == context, "PARENT_EXPECTATION_SIDECAR")
     require(snapshot_union_delivery(root / PARENT_PACKET) == packet, "PARENT_COPY_DRIFT")
-    return None, binding
+    require(regular_file(root / PARENT_BINDING) == binding_raw and
+            regular_file(root / PARENT_EXPECTATION) == expectation_raw, "PARENT_SIDECAR_READ_DRIFT")
+    return None, binding, {"binding": binding_raw, "expectation": expectation_raw}
 
 
 def transform_score(raw: bytes, direction: str) -> bytes:
@@ -704,9 +714,9 @@ def verify_stage(root: Path, profile: str = "after", *, parent_kind: str = "FROZ
     context = parent_arguments(parent_kind, expected_parent_context)
     root = Path(root)
     snapshot = validate_sources(root, profile)
-    parent, binding = verify_stage_parent(root, parent_kind, context)
-    binding_raw = regular_file(root / PARENT_BINDING) if binding is not None else None
-    expectation_raw = regular_file(root / PARENT_EXPECTATION) if binding is not None else None
+    parent, binding, checked_raw = verify_stage_parent(root, parent_kind, context)
+    binding_raw = checked_raw.get("binding")
+    expectation_raw = checked_raw.get("expectation")
     binding_pin = info(binding_raw) if binding_raw is not None else None
     expectation_pin = info(expectation_raw) if expectation_raw is not None else None
     manifest_raw, receipt_raw = regular_file(root / MANIFEST), regular_file(root / RECEIPT)
@@ -765,7 +775,7 @@ def compose(input_root: Path, output_root: Path, direction: str = "on", *,
         binding = verify_union_parent(packet, context)
     original, contents, project = capture_sources(input_root, before_profile)
     if parent_kind == "FROZEN_LOCAL":
-        parent, _ = verify_stage_parent(input_root, parent_kind, context)
+        parent, _, _ = verify_stage_parent(input_root, parent_kind, context)
     elif direction == "on":
         require(project == packet["raw"][PROJECT] and
                 all(value == packet["raw"]["sources/" + n] for n, value in contents.items()),
