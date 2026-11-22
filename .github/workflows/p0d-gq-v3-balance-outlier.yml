@@ -1,0 +1,67 @@
+name: P0D GQ V3 balance-outlier pinned source/native gate
+on:
+  push:
+    branches: [quality/gq-v3-balance-outlier-20261116]
+    paths:
+      - 'quality_gameplay/v3_balance_outlier_20261116/**'
+      - '.github/workflows/p0d-gq-v3-balance-outlier.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_balance_outlier_20261116/**'
+      - '.github/workflows/p0d-gq-v3-balance-outlier.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Checkout immutable existing #487 SCORE author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _original_score
+          persist-credentials: false
+      - name: Exact-source select and mutation/rollback tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=quality_gameplay/v3_balance_outlier_20261116
+          source=_original_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BalanceMetrics.luau
+          test "$(git hash-object "$source")" = 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
+          export P0D_ORIGINAL_BALANCE="$source"
+          python3 -B -m unittest discover -s "$root" -p test_select.py -v
+          python3 "$root/select_balance.py" --input "$source" --output /tmp/p0d_tail/EGGRUMBLE_BalanceMetrics.luau --off-output /tmp/p0d_tail_off/EGGRUMBLE_BalanceMetrics.luau
+          cmp -s "$source" /tmp/p0d_tail_off/EGGRUMBLE_BalanceMetrics.luau
+          test "$(git hash-object /tmp/p0d_tail_off/EGGRUMBLE_BalanceMetrics.luau)" = 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
+          test "$(git hash-object /tmp/p0d_tail/EGGRUMBLE_BalanceMetrics.luau)" != 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Pinned native Luau compile and true behavior tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _pinned_luau -B /tmp/gq_balance_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_balance_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          src=quality_gameplay/v3_balance_outlier_20261116
+          orig=_original_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_BalanceMetrics.spec.luau
+          mkdir -p /tmp/p0d_tail/tests
+          cp "$orig" /tmp/p0d_tail/tests/EGGRUMBLE_BalanceMetrics.spec.luau
+          cp "$src/RoundTailNative.spec.luau" /tmp/p0d_tail/
+          /tmp/gq_balance_luau/luau-compile /tmp/p0d_tail/EGGRUMBLE_BalanceMetrics.luau >/dev/null
+          /tmp/gq_balance_luau/luau-compile "$src/RoundTailNative.spec.luau" >/dev/null
+          (cd /tmp/p0d_tail/tests && /tmp/gq_balance_luau/luau EGGRUMBLE_BalanceMetrics.spec.luau) | tee /tmp/gq_original_balance_test.log
+          grep -q EGGRUMBLE_BALANCE_NATIVE_SOURCE_PASS /tmp/gq_original_balance_test.log
+          (cd /tmp/p0d_tail && /tmp/gq_balance_luau/luau RoundTailNative.spec.luau) | tee /tmp/gq_balance_outlier_test.log
+          grep -q GQ_V3_BALANCE_OUTLIER_NATIVE_PASS /tmp/gq_balance_outlier_test.log
+          echo 'SOURCE_NATIVE_PASS; RC_31_COMPOSITION_NOT_TESTED; STUDIO_ANDROID_OWNER=NO_GO'
