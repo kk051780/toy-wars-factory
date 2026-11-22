@@ -110,12 +110,49 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(result["archive_members"]), 75)
 
     def test_original_39_workflow_step_payloads_byte_exact(self):
-        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_text()
-        prefix = workflow.split("    steps:\n", 1)[1].split(
-            '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
-        self.assertEqual(compose.identity(prefix.encode()), {
-            "bytes": 106837, "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"})
+        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_bytes().decode("utf-8")
+        # Only the reviewed original-input transport changes; invert it before
+        # checking the unchanged historical 39-step contract.
+        old_transport = (
+            '          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}\n'
+            '          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55\n'
+            '          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59\n'
+            '          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62\n'
+            '          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62\n'
+            '          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63\n'
+            '          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56\n'
+            '          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56\n'
+        )
+        new_transport = '          python3 -B quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py --out /tmp/gq863\n'
+        original = {"bytes": 106837,
+                    "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"}
+
+        def check_original_prefix(candidate):
+            self.assertEqual(candidate.count(new_transport), 1)
+            self.assertNotIn(old_transport, candidate)
+            prefix = candidate.split("    steps:\n", 1)[1].split(
+                '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
+            self.assertEqual(prefix.count(new_transport), 1)
+            restored = prefix.replace(new_transport, old_transport, 1)
+            self.assertEqual(compose.identity(restored.encode()), original)
+
+        check_original_prefix(workflow)
         self.assertEqual(workflow.count("path: artifacts/real69_union22/delivery/"), 1)
+        # Historical bytes, loader commands and multiplicity are exact; even a
+        # physical LF-to-CRLF change must fail the inverse contract.
+        mutations = {
+            "historical_head": workflow.replace(
+                "44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e",
+                "44393525211:b6020867fac80fa3b2ca47478625873fc6f3678e", 1),
+            "loader_output": workflow.replace("--out /tmp/gq863\n", "--out /tmp/gq863x\n", 1),
+            "duplicate_loader": workflow.replace(new_transport, new_transport * 2, 1),
+            "prefix_crlf": workflow.replace("          set -euo pipefail\n", "          set -euo pipefail\r\n", 1),
+        }
+        for label, mutated in mutations.items():
+            with self.subTest(mutation=label):
+                self.assertNotEqual(mutated, workflow)
+                with self.assertRaises(AssertionError):
+                    check_original_prefix(mutated)
 
     def test_actual_final_retention(self):
         result = verify.verify_core(self.current, self.prior, self.reports, self.context)
