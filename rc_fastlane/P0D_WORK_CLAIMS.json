@@ -3383,6 +3383,137 @@
         "amended_at": "2026-11-22T16:15:19Z"
       },
       "scope_review_usage": "Historical diagnostic-only v2 source review retained verbatim; scope17_review records the current limited trigger-scope review."
+    },
+    {
+      "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_79005A1F03B2",
+      "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
+      "sub_scope": "MOUNTED_REALM_CONTEXT_EXISTING_HUD_ONE_HUNK",
+      "canonical_parent": 828,
+      "parent_issue": 828,
+      "integration_issue": 220,
+      "request_comment": 7085857481,
+      "resources": [
+        "HUD_INTEL_RUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py"
+      ],
+      "prep_branch": "fix/gq828-mounted-hud-20261123-79005a1f",
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "pr": null,
+      "allowed_new_prs": 1,
+      "candidate_pr_status": "ONE_SCOPED_FOLLOWUP_REPAIR_PR_ALLOWED_AFTER_REAL_GRANT",
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "8cdaa024-2ab6-41c4-96eb-da550037b008",
+      "author_contexts": [
+        "/root (CODEX_ROOT_79005A1F03B2): reviewed HUD patch and accountable parent",
+        "/root/candidate_audit: sole implementer of the six producer/lock/verifier/test files under the parent's separately acquired source lease"
+      ],
+      "independent_reviewer_context": "/root/rules_audit",
+      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED",
+      "scope": "Preserve the existing canonical UNION22 producer and all original changes, 69 source routes/classes, changed22/unchanged47 membership, 17/48 checks, protected metadata and true prior-BR rollback. Add exactly the independently reviewed +559-byte mounted-HUD visibility hunk to the existing HUD forward list and its inverse, with final HUD 24779/3bf0d958... -> 25338/d794669e...; final RC-relative source delta one of 69 only. Update the six listed existing producer/profile/verifier/test/native-lock/runner files to maintain strict pins, truthful follow-up authorship/claim provenance and current-RC partial inverse. Existing Native server28 bodies, both actual suites, cases and fixtures remain byte-exact. Do not edit the shared GQ8 workflow or any ACTIVE66-owned path/resource. No portrait/min55/Builder/Compass feature adoption in this scope.",
+      "grant_scope_version": 1,
+      "generated_source_scope": [
+        {
+          "resource": "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+          "path": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+          "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+          "class": "LocalScript",
+          "before": {
+            "bytes": 24779,
+            "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+          },
+          "after": {
+            "bytes": 25338,
+            "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+          }
+        }
+      ],
+      "original_hud_pr": 829,
+      "prior_canonical_union_pr": 1018,
+      "other_existing_candidates_preserved": [
+        947,
+        775,
+        1014,
+        1016,
+        1017
+      ],
+      "on_place": {
+        "bytes": 828673,
+        "sha256": "c2b480c22137877973d77cff21c858a16d99bd01cb65903477802e654d78bb89"
+      },
+      "hud_only_off_place": {
+        "bytes": 828114,
+        "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+      },
+      "rollback": "Keep the complete original UNION22 OFF-to-prior-BR rollback unchanged. Additionally reverse only the new HUD hunk to current RC HUD 3bf0d958... and exact 828114B Place. Repository rollback must inverse only the six-path follow-up delta while preserving any intervening work; never reset whole RC.",
+      "preserved": [
+        "Other five claim rows, aliases and history",
+        "Existing UNION22 source fixes, original author provenance and rollback",
+        "Current RC phase/BR HUD guards and all other 68 complete bodies",
+        "Native28 original bodies, two suites, cases, fixtures and assertion predicates",
+        "All workflows, ACTIVE66 and other owners' branches/source scopes",
+        "Actual authentication, fixed-HEAD independent review, CI and separate RC writer"
+      ],
+      "authority_evidence": [
+        "Actual connected GitHub profile kk051780 / user233213370 and repository admin/push permission observed in this parent session.",
+        "Existing owner delegation and current AGENTS/execution policy v1.2/#1011 authorize ordinary engineering coordination while preserving actual scopes, independent review and exclusive writers.",
+        "Original expired CONTROLLER602 was administratively fenced under standing delegation in immutable3a8a6eb8290b70ee02209b7e84fd2f4ff9f288e2; this row requires a separate actual metadata lease and is not granted by that revocation."
+      ],
+      "forbidden_changes": [
+        "New game/producer/FEATURE authority or duplicate candidate",
+        "Any common workflow, ACTIVE66, Dojo or Score source/claim changes",
+        "Any change to native original acceptance predicates or server28 bodies",
+        "Claim that prior union reuse authored the new HUD hunk",
+        "Self-approval, main promotion, Roblox publication, spend, schedule or incident-hold changes"
+      ],
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "profile_hunk_encoding": {
+        "prior_hud_forward_hunks": 1,
+        "next_hud_forward_hunks": 4,
+        "prior_total_forward_hunks": 168,
+        "next_total_forward_hunks": 171,
+        "note": "The one reviewed unified HUD diff is represented by three additional exact no-context profile hunks; preserve the original phase hunk payload and coordinates."
+      },
+      "issued_at": "2026-11-22T21:51:42Z",
+      "expires_at": "2026-11-23T03:51:42.000Z",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 604,
+        "claim_commit": "ba5255c8157378f70bf922214a52d410ee156d64",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "8cdaa024-2ab6-41c4-96eb-da550037b008",
+        "expires_at": "2026-11-22T22:21:31+00:00"
+      },
+      "scope_review": {
+        "context": "/root/rules_audit",
+        "decision": "SCOPE_REVIEW_PASS_FOR_EXACT_SIX_PATH_PROPOSAL",
+        "review_sha256": "edadcd1a9f1883aa1d9c88ae870ec37e4d41945465e31a9c6028715ddb37c33e",
+        "receipt_sha256": "19da17c574135472662ec8677262c8a7859282fc8193960b362c155e9c8ed3db",
+        "template_sha256": "8ff9e572c115a3afdf1c63aac2a4bf1dc3e7a95ffef7890e7b652bac6a929403",
+        "actual_candidate_head_review_completed": false
+      }
     }
   ],
   "legacy_overlap_triage": [
