@@ -531,7 +531,7 @@
     },
     {
       "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
-      "state": "GRANTED",
+      "state": "PREP_READY",
       "owner": "CODEX_ROOT_4B669C01C8AC",
       "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
       "resources": [
@@ -586,7 +586,7 @@
       "integration_issue": 220,
       "request_comment": 7078511695,
       "pr": 1015,
-      "candidate_pr_status": "DRAFT_CREATED_CI_FIX_IN_PROGRESS",
+      "candidate_pr_status": "DRAFT_PREP_READY_ALL_CURRENT_HEAD_CI_SUCCESS",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1104,62 +1104,155 @@
         }
       },
       "amended_at": "2026-11-22T13:57:00Z",
-      "candidate_head": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
-      "candidate_tree": "aa0aa1cedfd9bdad6ca0393f983e3f7e77453892",
+      "candidate_head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+      "candidate_tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T14:28:00Z",
+      "metadata_updated_at": "2026-11-22T14:50:26.698Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 585,
-        "commit": "259a225d82c26c6a328b86bc8bf4058013110fe9",
+        "epoch": 590,
+        "commit": "a45343ae0dc2f3a52901118bf6b2575a208f69cb",
         "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T14:57:03.935960+00:00"
+        "expires_at": "2026-11-22T15:19:04.762000+00:00"
       },
       "actual_candidate_evidence": {
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
-        "parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
-        "head": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
-        "tree": "aa0aa1cedfd9bdad6ca0393f983e3f7e77453892",
+        "head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
+        "parent": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
+        "base_rc": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "ci_checkout": "7abaa6cad02364a3adf229e6481802f7e5fd0e89",
         "paths_changed": 15,
         "added": 14,
         "modified": 1,
         "full_file_count": 920,
         "unchanged_base_files": 905,
+        "delta_from_initial_candidate": "Only tests/test_gq470_union22_real69_20261122.py; remaining919 files and original45 test method bodies preserved.",
         "independent_source_review": {
           "reviewer": "/root/governance_300",
           "bytes": 9709,
           "sha256": "7ecdc14380cff1cc3a7fcd822651a31dcd4b2f631cd31f7fb43de760d91c5cde"
         },
-        "independent_initial_actual_head_review": {
+        "independent_test_entry_review": {
           "reviewer": "/root/governance_300",
-          "bytes": 4084,
-          "sha256": "5045e1a0f6b3f49e9beed5e8a8bc135bc246ab13a598b420bb656ff0de7aaf77"
+          "bytes": 8440,
+          "sha256": "51c0ab3480066331aedbc349ca5cdd62ec315fafe833d3614cae874d28c7db17"
+        },
+        "independent_actual_head_review": {
+          "reviewer": "/root/governance_300",
+          "bytes": 4327,
+          "sha256": "465de1215e69991f64a7a142fcd65b0947a3115ee362c548df0c53445fc52625"
         },
         "ci": {
           "source_composite": {
-            "run": 45032532608,
-            "status": "IN_PROGRESS_AT_OBSERVATION"
+            "run": 45034614583,
+            "job": 137245461749,
+            "status": "SUCCESS",
+            "core_tests": 38,
+            "final_tests": 7,
+            "normal_and_optimized": true
           },
           "bootstrap_offline": {
-            "run": 45032532587,
-            "job": 137239037952,
-            "status": "FAILURE",
-            "cause": "Global unittest discovery loads artifact-dependent classes without UNION22_TEST_PRIOR. Fix in same granted test path pending; no gate threshold waiver."
+            "run": 45034614573,
+            "job": 137245461668,
+            "status": "SUCCESS",
+            "tests": 911
           },
-          "compile_hold": "SUCCESS_NOT_ENGINE_ACCEPTANCE",
+          "compile_hold": {
+            "run": 45034614573,
+            "job": 137245461862,
+            "status": "SUCCESS_NOT_ENGINE_ACCEPTANCE"
+          },
           "prep_inbox": {
-            "run": 45032532649,
+            "run": 45034614578,
+            "job": 137245461560,
             "status": "SUCCESS"
           }
         },
+        "artifact": {
+          "id": 14759660643,
+          "zip": {
+            "bytes": 5318758,
+            "sha256": "fb101916924f8c5b4a2d29088bd5d780ef6184426016868cf346cb5f79a2492a"
+          },
+          "place": {
+            "bytes": 828114,
+            "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+          },
+          "files": 110,
+          "canonical": false,
+          "provenance": "PR_CANDIDATE",
+          "root_content_measurement": {
+            "bytes": 2291,
+            "sha256": "ae3a371f73c964199fbaa6b32bcb8625ff9eb0680d9de1a643eeef627570b317"
+          }
+        },
         "source_scope_unchanged": true,
-        "same_head_ci_pass": false,
+        "same_head_ci_pass": true,
         "formal_rc_adoption": false,
         "studio": "NOT_TESTED",
         "art": "ART_NO_GO",
         "product": "PRODUCT_NO_GO"
-      }
+      },
+      "candidate_history": [
+        {
+          "head": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
+          "tree": "aa0aa1cedfd9bdad6ca0393f983e3f7e77453892",
+          "status": "DRAFT_CREATED_CI_FIX_IN_PROGRESS",
+          "evidence": {
+            "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
+            "parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+            "head": "5e8fa53a5b33c02e26298302a70aed6a488f5528",
+            "tree": "aa0aa1cedfd9bdad6ca0393f983e3f7e77453892",
+            "paths_changed": 15,
+            "added": 14,
+            "modified": 1,
+            "full_file_count": 920,
+            "unchanged_base_files": 905,
+            "independent_source_review": {
+              "reviewer": "/root/governance_300",
+              "bytes": 9709,
+              "sha256": "7ecdc14380cff1cc3a7fcd822651a31dcd4b2f631cd31f7fb43de760d91c5cde"
+            },
+            "independent_initial_actual_head_review": {
+              "reviewer": "/root/governance_300",
+              "bytes": 4084,
+              "sha256": "5045e1a0f6b3f49e9beed5e8a8bc135bc246ab13a598b420bb656ff0de7aaf77"
+            },
+            "ci": {
+              "source_composite": {
+                "run": 45032532608,
+                "status": "IN_PROGRESS_AT_OBSERVATION"
+              },
+              "bootstrap_offline": {
+                "run": 45032532587,
+                "job": 137239037952,
+                "status": "FAILURE",
+                "cause": "Global unittest discovery loads artifact-dependent classes without UNION22_TEST_PRIOR. Fix in same granted test path pending; no gate threshold waiver."
+              },
+              "compile_hold": "SUCCESS_NOT_ENGINE_ACCEPTANCE",
+              "prep_inbox": {
+                "run": 45032532649,
+                "status": "SUCCESS"
+              }
+            },
+            "source_scope_unchanged": true,
+            "same_head_ci_pass": false,
+            "formal_rc_adoption": false,
+            "studio": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "product": "PRODUCT_NO_GO"
+          },
+          "resolution": {
+            "new_head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+            "test_only_repair": true,
+            "old_source_ci": "SUCCESS",
+            "old_offline_ci": "FAILURE_RETAINED",
+            "reason": "Ordinary discovery required unavailable integration artifact context; strict independent context-free contracts added without changing 45 integration case bodies."
+          }
+        }
+      ]
     },
     {
       "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
