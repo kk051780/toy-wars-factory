@@ -524,6 +524,84 @@
         "postwrite_readback_required": true,
         "one_shot": true
       }
+    },
+    {
+      "schema": 1,
+      "case_id": "GQ828_MANUAL_CONTROLLER_EPOCH602_BOUNDED_MAINTENANCE_20261123",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "actor_context": "CODEX_ROOT_79005A1F03B2",
+      "actor_operation_id": "3734f4ef-7471-494e-a185-e0ab10fcf108",
+      "authenticated_github_actor": {
+        "login": "kk051780",
+        "user_id": "233213370"
+      },
+      "previous_epoch": 602,
+      "next_epoch": 603,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+        "task_id": null,
+        "epoch": 602,
+        "acquired_at": "2026-11-22T16:07:45+00:00",
+        "expires_at": "2026-11-22T16:37:45+00:00",
+        "base_main_sha": null,
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller"
+      },
+      "observed_ref": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+      "observed_state_blob": "d165200acc041a36cfda26fb508a6fd2f4a07e2b",
+      "recorded_at": "2026-11-22T21:34:53Z",
+      "authorization": {
+        "type": "STANDING_OWNER_DELEGATION_APPLIED_TO_ONE_BOUNDED_MAINTENANCE_DECISION",
+        "source": "Current owner request on 2026-11-23 JST to continue game quality improvements under GitHub rules; existing owner_delegation observed 2026-10-25 and docs/AUTONOMOUS_INTEGRATION.md; current AGENTS and execution policy v1.2 at official fb5d9b693c48d4ffcce05c3f89d490593e0cecfd.",
+        "current_request": "ゲーム品質ゲート。githubルールに則って改善を進めて。残課題や企画室案の取り入れ余地が残ってる限り1回の作業時間は最低300分以上で進めて。",
+        "scope": "Fence only the identical manual CONTROLLER epoch602 to resume legitimate scoped work. No source, PR, claim registry, RC, main, service schedule, credentials, incident hold, quality gate, spending or publication changes.",
+        "new_user_consent_inferred_from_empty_permission_response": false,
+        "prior_epoch_specific_approvals_reused": false,
+        "new_general_expiry_takeover_rule_created": false
+      },
+      "evidence": {
+        "normal_acquire": "WAIT_RECOVERY; write=false; unchanged state",
+        "normal_release_requires_original_owner": true,
+        "normal_recover_supports_manual_controller": false,
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "last_completed_epoch": 601,
+        "last_completed_is_not_epoch602_release": true,
+        "github_repository_permissions": {
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "pull": true
+        },
+        "existing_recovery_request": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7084785212",
+        "independent_authority_recheck_context": "/root/rules_audit",
+        "administrative_process_precedents_only": [
+          245,
+          251,
+          284,
+          296,
+          302
+        ]
+      },
+      "service_completion_asserted": false,
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "last_completed_unchanged": true,
+        "prior_revocations_unchanged": true,
+        "all_other_nested_values_unchanged": true,
+        "single_parent": true,
+        "expected_sha": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+        "force": false,
+        "one_cas_attempt_only": true,
+        "fresh_exact_ref_blob_holder_required": true,
+        "postwrite_full_state_readback_required": true,
+        "independent_postwrite_audit_required": true,
+        "no_automatic_claim_or_source_permission": true
+      }
     }
   ],
   "approval_packet": {
@@ -2128,18 +2206,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 602,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
-    "task_id": null,
-    "epoch": 602,
-    "acquired_at": "2026-11-22T16:07:45+00:00",
-    "expires_at": "2026-11-22T16:37:45+00:00",
-    "base_main_sha": null,
-    "work_branch": "coord/p0d-work-claims",
-    "origin": "controller"
-  },
+  "epoch": 603,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
