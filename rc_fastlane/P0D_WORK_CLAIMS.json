@@ -3535,6 +3535,118 @@
         "metadata_operation_id": "dbb863c0-f6bc-40fb-85a6-3f3ccbe941c1",
         "metadata_lease_epoch": 606
       }
+    },
+    {
+      "claim_id": "P0D-GQ618-BEAST-TARGET-20261123-B8C8E7B7",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_B8C8E7B756CD",
+      "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
+      "sub_scope": "CURRENT69_PICK_TARGET_CHARM_AND_STEALTH_ELIGIBILITY",
+      "canonical_parent": 618,
+      "parent_issue": 618,
+      "integration_issue": 220,
+      "request_comment": 7086517343,
+      "resources": [
+        "BEAST_ESCORT_TARGET_ELIGIBILITY",
+        "BEAST_PRIVATE_CURRENT69_GATE",
+        "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT"
+      ],
+      "target_paths": [
+        "quality_gameplay/v3_beast_escort_20261117/patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/test_patch_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/README.md",
+        "quality_gameplay/v3_beast_escort_20261117/native/INPUT_LOCK.json",
+        "quality_gameplay/v3_beast_escort_20261117/native/run_current69.py",
+        "quality_gameplay/v3_beast_escort_20261117/native/beast_fixture.luau",
+        "quality_gameplay/v3_beast_escort_20261117/native/beast_cases.luau",
+        ".github/workflows/p0d-gq-beast-escort-20261117.yml"
+      ],
+      "prep_branch": "quality/gq-beast-escort-unique-v3-20261117",
+      "source_head_before": "131313d645d2a5a67abd117c2c3d0459ee46d210",
+      "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "pr": 618,
+      "allowed_new_prs": 0,
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "56f88ae6-a92a-463c-9ca2-1525073ea541",
+      "author_contexts": [
+        "/root (CODEX_ROOT_B8C8E7B756CD): accountable parent, exact current69 adapter and runner/workflow; sole GitHub writer",
+        "/root/triage_candidates: actual-body reproduction fixtures and bounded source-gate negative tests"
+      ],
+      "independent_reviewer_context": "/root/environment_audit",
+      "independent_review_status": "ACTUAL_HEAD_SOURCE_AND_CI_REVIEW_REQUIRED",
+      "scope": "Continue original GQ618 and existing PR618, originally adopted via PR629. Add a separately named strict current69 source candidate gate. Generated current Combat changes only neutral charm exclusion and current human membership/stealth eligibility inside the existing BeastEscort.pickTarget: two exact hunks, +115 UTF-8 bytes. Reuse currentHumanMember and egg-reveal-aware humanCombatTargetable; preserve existing Swarm damage authority, lifetime, radius, cap, leash, cooldown and all other source bytes. Original21/current31 module/composers/tests remain byte-identical. Verify all69 source route/class/source identities, actual28-body baseline/ON/OFF execution, fresh pinned Luau build, original combined/objective regressions and exact inverse Rojo Place. Dedicated workflow only, actual PR head. No canonical Union22 producer/profile/shared-workflow edit under this source grant.",
+      "grant_scope_version": 1,
+      "generated_source_scope": [
+        {
+          "path": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+          "route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 73774,
+            "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+          },
+          "after": {
+            "bytes": 73889,
+            "sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a"
+          },
+          "hunk_count": 2
+        }
+      ],
+      "scope_review": {
+        "context": "/root/review_coordination",
+        "decision": "PASS_EXACT_EIGHT_PATH_CURRENT69_CONTINUATION_SCOPE_ONLY",
+        "record": "Independent child-agent scope review delivered to accountable parent in this task; parent publishes the record. No GitHub review impersonation.",
+        "actual_candidate_head_review_completed": false
+      },
+      "source_semantic_review": {
+        "context": "/root/environment_audit",
+        "decision": "PASS_EXACT_GENERATED_COMBAT_SOURCE_ONLY",
+        "candidate_combat_sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a",
+        "full_gate_review_completed": false
+      },
+      "rollback": "Inverse only the two target-selection hunks to exact73774B current Combat; all other68 byte-identical. A later separate canonical handoff must preserve preceding HUD/Bot and original UNION22 OFF layers. Never reset RC wholesale.",
+      "authority_evidence": [
+        "Authenticated GitHub kk051780 user233213370 with repository admin/push permission observed in this parent session.",
+        "Current user instruction to continue game quality improvements under GitHub rules, standing ordinary engineering delegation, formal AGENTS/v1.2/#1011; no old author individual ACK required.",
+        "Real manual CONTROLLER metadata lease and exact expected-parent nonforce CAS; scope review separate from source approval."
+      ],
+      "preserved": [
+        "All existing claim rows and historical aliases",
+        "Original GQ61821/31 code and adopted original lineage",
+        "All other68 current sources",
+        "HUD/ACTIVE66/Score/Dojo/Mage/down/Trapper/BotActors/Invul/Regen branches and candidate ownership",
+        "Swarm charm policy and ZOMBIE original feature lane"
+      ],
+      "forbidden_changes": [
+        "New Beast feature or duplicate candidate PR",
+        "Shared GQ8 workflow or canonical UNION22 producer/profile/native-input mutation",
+        "ZOMBIE commanderSnapshot or charm-policy rewrite",
+        "New damage/KO/score/Remote authority",
+        "Self-approval or claims of Studio/Android/ART/FUN completion",
+        "Main promotion, Roblox publishing, spend, schedule changes"
+      ],
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "issued_at": "2026-11-22T22:13:45Z",
+      "expires_at": "2026-11-23T04:13:45.000Z",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 607,
+        "claim_commit": "a89a4cd2f6e96bf1870ef3b8dec281681183e80c",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "56f88ae6-a92a-463c-9ca2-1525073ea541",
+        "expires_at": "2026-11-22T22:42:58.000Z"
+      }
     }
   ],
   "legacy_overlap_triage": [
