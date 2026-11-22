@@ -6142,7 +6142,7 @@
     },
     {
       "claim_id": "P0D-GQ518-INCOMING-LOS-20261123-7B6B25AE",
-      "state": "GRANTED",
+      "state": "RELEASED",
       "owner": "CODEX_ROOT_7B6B25AEAA29",
       "feature_id": "GQ_BOSS_SHOCKWAVE_WALL_OCCLUSION_20261116",
       "sub_scope": "CURRENT69_INCOMING_LOS_FIXED_PAYLOAD_REGISTRATION",
@@ -6177,7 +6177,7 @@
       },
       "prep_branch": "feature/gq-boss-wave-occlusion-20261116-01",
       "source_head_before": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d",
-      "source_head": null,
+      "source_head": "817651a1267bafa0a8677b47ca6bf4c9a6496053",
       "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
       "pr": 518,
       "allowed_new_prs": 0,
@@ -6193,7 +6193,7 @@
         "/root (CODEX_ROOT_7B6B25AEAA29): evidence registration/README and sole branch writer only"
       ],
       "independent_reviewer_context": "/root/current_rules",
-      "independent_review_status": "SCOPE_PASS; ACTUAL_HEAD_SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "independent_review_status": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
       "scope": "Exactly three-file evidence-registration commit within existing PR518's eight-path total delta; keep five legacy code/test/workflow blobs unchanged; append README only and copy the original patch and original local receipt without rewriting them.",
       "scope_review": {
         "context": "/root/current_rules",
@@ -6236,6 +6236,68 @@
         "Existing owner0043 explicitly handed off the fixed payload in issue220 comment7085611873; this is original PR518 registration, not a new producer.",
         "Independent exact-scope review by the real /root/current_rules context; no actual-source approval claimed.",
         "Actually acquired manual CONTROLLER metadata lease with exact-parent nonforce CAS and full readback."
+      ],
+      "source_evidence_review": {
+        "context": "/root/current_rules",
+        "head": "817651a1267bafa0a8677b47ca6bf4c9a6496053",
+        "decision": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
+        "unresolved_findings": 0,
+        "receipt_sha256": "5fd4a5aaff17f00a324835050b0ce520f6378d517dff151f2614ae93fc14de04",
+        "receipt_bytes": 12814,
+        "summary_sha256": "607dfbe57bc478deec4eb0d6dd6fec748c1d3fc52541d76bc14c8264db6aa6b6",
+        "published_review_url": "https://github.com/kk051780/toy-wars-factory/pull/518#issuecomment-7087125974",
+        "registered_scope": "CURRENT69_INCOMING_LOS_FIXED_PAYLOAD_REGISTRATION",
+        "source_implementation_by_reviewer": false,
+        "native_runs": 0,
+        "studio_runs": 0,
+        "github_approve": false
+      },
+      "registration_completion": {
+        "status": "FIXED_PAYLOAD_REGISTERED_AND_INDEPENDENTLY_REVIEWED",
+        "source_parent": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d",
+        "source_head": "817651a1267bafa0a8677b47ca6bf4c9a6496053",
+        "source_tree": "3c8962b0ebf18a45b95151aabaebfde538273255",
+        "source_lease_epoch": 617,
+        "source_lease_acquire": "c073cd20ce35ffd07d8378fb7885d0a5fe109bd5",
+        "source_lease_release": "3098f744d1b9103caa950a91174837cb7275a194",
+        "commit_changed_paths": 3,
+        "pr_cumulative_paths": 8,
+        "immutable_existing_paths": 5,
+        "legacy_ci_success_runs": [
+          45079293759,
+          45079298699
+        ],
+        "legacy_ci_scope": "Original outgoing/private21 only; no current69 incoming functional CI claim",
+        "formal_adoption": false,
+        "canonical_intake": "REQUIRES_SEPARATE_ACTUAL_SHARED_PATH_HANDOFF_AND_NEW_SCOPE",
+        "canonical_remaining_paths": [
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py"
+        ]
+      },
+      "RC_adoption": false,
+      "released_at": "2026-11-22T23:05:49Z",
+      "released_by": "CODEX_ROOT_7B6B25AEAA29",
+      "release_reason": "Completed the bounded three-path fixed-payload registration and registered independent evidence-only review; free the Boss resource. Canonical adoption was excluded and still needs a new scoped handoff. This is not RC integration or gameplay source approval.",
+      "metadata_update_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 625,
+        "owner_id": "ccc5e65d-0851-443c-990a-d4ad06e2a72b",
+        "acquire_commit": "3cc5c4a74752ca3c369c85380c8917c0f335479c",
+        "work_branch": "coord/p0d-work-claims"
+      },
+      "state_history": [
+        {
+          "from": "GRANTED",
+          "to": "RELEASED",
+          "at": "2026-11-22T23:05:49Z",
+          "owner": "CODEX_ROOT_7B6B25AEAA29",
+          "reason": "FIXED_PAYLOAD_REGISTRATION_COMPLETE",
+          "source_head": "817651a1267bafa0a8677b47ca6bf4c9a6496053",
+          "review_url": "https://github.com/kk051780/toy-wars-factory/pull/518#issuecomment-7087125974"
+        }
       ]
     },
     {
