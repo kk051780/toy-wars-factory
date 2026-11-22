@@ -531,7 +531,7 @@
     },
     {
       "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
-      "state": "PREP_READY",
+      "state": "SOURCE_WIP",
       "owner": "CODEX_ROOT_4B669C01C8AC",
       "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
       "resources": [
@@ -586,7 +586,7 @@
       "integration_issue": 220,
       "request_comment": 7078511695,
       "pr": 1015,
-      "candidate_pr_status": "DRAFT_PREP_READY_ALL_CURRENT_HEAD_CI_SUCCESS",
+      "candidate_pr_status": "RC_ADOPTED_POST_PUSH_NATIVE_FAILURE_REPAIR_IN_SAME_SCOPE",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -606,8 +606,8 @@
         "Policy v1.2 first formally adopted at18e4; same AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md bytes independently verified at current RCfa5f. #1011: current Codex parent owns exclusive handoff and RC integration.",
         "#218 comment6886441650: single authorized coordinator, unique scope, current-blob CAS; not a worker request promoted by assertion."
       ],
-      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
-      "dependency_pr": 1013,
+      "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+      "dependency_pr": 1015,
       "dependency_adoption_comment": 7079294042,
       "author_context": "/root/intake_300",
       "independent_reviewer_context": "/root/governance_300 and /root for code authored by intake; independent whole-candidate review required",
@@ -1107,14 +1107,14 @@
       "candidate_head": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
       "candidate_tree": "a19cdc87ab4f44732c23791dd0ce41e9a970ab41",
       "prep_branch": "quality/gq470-union22-canonical-4b669-20261122",
-      "metadata_updated_at": "2026-11-22T14:50:26.698Z",
+      "metadata_updated_at": "2026-11-22T15:01:23.232Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 590,
-        "commit": "a45343ae0dc2f3a52901118bf6b2575a208f69cb",
+        "epoch": 592,
+        "commit": "4ea8378400b8bdf1aa9b01a11e1422f9e5648993",
         "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
         "work_branch": "coord/p0d-work-claims",
-        "expires_at": "2026-11-22T15:19:04.762000+00:00"
+        "expires_at": "2026-11-22T15:30:41.514000+00:00"
       },
       "actual_candidate_evidence": {
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1015",
@@ -1190,10 +1190,27 @@
         },
         "source_scope_unchanged": true,
         "same_head_ci_pass": true,
-        "formal_rc_adoption": false,
+        "formal_rc_adoption": true,
         "studio": "NOT_TESTED",
         "art": "ART_NO_GO",
-        "product": "PRODUCT_NO_GO"
+        "product": "PRODUCT_NO_GO",
+        "formal_source_acceptance": false,
+        "post_push": {
+          "run": 45035384920,
+          "job": 137247865657,
+          "status": "FAILURE",
+          "observed_step": 43,
+          "core_tests": "38 PASS normal and optimized",
+          "combined_clear_los": "10/10 PASS",
+          "objective_full": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
+          "failed_conjunction": "returncode == 0 AND exact case vector AND source inputs unchanged",
+          "individual_failed_assertion": "UNKNOWN_STDOUT_CAPTURED_BUT_NOT_UPLOADED",
+          "final_admission": "SKIPPED",
+          "upload": "SKIPPED",
+          "artifacts": [],
+          "failure_log": "OFFICIAL_EB43702_SOURCE_FAILED_45035384920.log",
+          "diagnostic_retries_cannot_establish_acceptance": true
+        }
       },
       "candidate_history": [
         {
@@ -1252,7 +1269,43 @@
             "reason": "Ordinary discovery required unavailable integration artifact context; strict independent context-free contracts added without changing 45 integration case bodies."
           }
         }
-      ]
+      ],
+      "base_rc_history": [
+        {
+          "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+          "dependency_pr": 1013,
+          "observed_at": "2026-11-22T14:50:26.698Z",
+          "reason": "Initial union candidate adopted into official RC; new post-push repair must use current official HEAD."
+        }
+      ],
+      "adoption_observation": {
+        "rc_before": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "rc_after": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "at": "2026-11-22T14:54:52Z",
+        "pr": 1015,
+        "merged": true,
+        "force": false,
+        "expected_sha_matched": true,
+        "lease_epoch": 591,
+        "lease_acquire": "687be046fb94d53ceba3403356624233b3fee020",
+        "lease_release": "11f66fd94052e60a492db908ebf523d077effbca",
+        "status": "ADOPTED_SOURCE_REOPENED_POST_PUSH_FAILURE"
+      },
+      "current_repair_scope": {
+        "base_rc": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "paths": [
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "tests/test_gq470_union22_real69_20261122.py"
+        ],
+        "existing_scope_only": true,
+        "allowed": "Preserve and emit exact captured failure evidence and focused negative controls without changing existing cases, fixtures, gameplay Source, thresholds, original expected vectors or acceptance logic. Investigate the actual objective failure; any altered runtime case requires a separately reviewed explicit scope amendment before production edit.",
+        "new_source_or_case_authorized": false,
+        "no_automatic_retry_acceptance": true,
+        "original_15_scope_preserved": true,
+        "follow_up_pr": "NOT_CREATED",
+        "original_merged_pr": 1015,
+        "rollback": "Revert only the reviewed diagnostic repair delta against actual current official eb43702; preserve adopted source union and every unrelated change."
+      }
     },
     {
       "claim_id": "P0D-047-DOJO-LIFECYCLE-20261122-29C4",
