@@ -1,0 +1,292 @@
+{
+  "existing_pr": 796,
+  "frozen_role_package": {
+    "INPUT_LOCK.json": {
+      "bytes": 21122,
+      "sha256": "85fa1b71d003cfdac2161958d4a7c32cad4614de7299f12497126df86e12e442"
+    },
+    "README.md": {
+      "bytes": 7367,
+      "sha256": "2ef2f21e363d93020738bee6bf4340acc6c71f0ab04c6bad41a30cd44c245f51"
+    },
+    "apply_role_snapshot.py": {
+      "bytes": 2545,
+      "sha256": "96d2343fe6ab0427d14931235b2389e817e120c857cbcc42fde7dd58466d70ba"
+    },
+    "case.luau": {
+      "bytes": 15844,
+      "sha256": "859b4cab8f6615b50ee21871c3eb0dc9ced88089774a1ac8a95d1c913ed21537"
+    },
+    "fixture_boundary.luau": {
+      "bytes": 1716,
+      "sha256": "da17496f05bb3274896893cedfdfa1492f4ca9d997a22f28ec38c95bcaea5fff"
+    },
+    "run.py": {
+      "bytes": 13133,
+      "sha256": "1644d5bf0b04a62b64cb19e91ebd6e418a510211720b000ba5d28c1d17686d50"
+    }
+  },
+  "frozen_role_source_head": "8710eb04d55109f22c122bc9805101ed73e6a35c",
+  "guardian": {
+    "path": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+    "variants": {
+      "baseline": {
+        "bytes": 13707,
+        "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+      },
+      "combined": {
+        "bytes": 13907,
+        "sha256": "1afd38a70a27ada58ad7418768ce5c6f3b6576635aa467e14a45056af0505825"
+      },
+      "los_only": {
+        "bytes": 13737,
+        "sha256": "cbf71c44c7e6cf055127ba7e20b317bfce22c58da7998b33ac95081d3f2f6199"
+      },
+      "role_only": {
+        "bytes": 13877,
+        "sha256": "9885dd14eee029d95a1e32e504870aeb84ccc1d0fa64b799aba89822abebdb9a"
+      }
+    }
+  },
+  "limitations": [
+    "Native fixtures, not Roblox Studio, physics, replication, navigation or rendering.",
+    "Original LOS scenarios use their unchanged 28 full production bodies and explicit non-executing NaturalRegen/BotActors dependencies.",
+    "Role scenarios preserve their unchanged 32-body diagnostic and parked Bot/Swarm movement jobs.",
+    "No canonical producer selection, RC adoption, Studio/Android/ART/FUN or whole legacy workflow success is claimed."
+  ],
+  "los_test_inputs": {
+    "assembly_instruction": "For each LOS scenario append LF + common_setup bytes + LF + selected gate_case/wall_case bytes extracted from verified ranges. This preserves the original one-footer program and existing strict negative protocol. The container selector wrapper need not execute.",
+    "assertion_line_anchor": " assert(type(value)=='number'and math.abs(value-wanted)<1e-6,",
+    "case_container": {
+      "bytes": 13266,
+      "sha256": "0be1d1995065e9de338f76d533abd3b302e4b3c0cdadea73912daac66367b9ad"
+    },
+    "comments": [
+      "Existing original test cases only; no new feature case claimed.",
+      "The full32 role tests remain unchanged in role_session.",
+      "No source patch authored by this test author."
+    ],
+    "current_manifest": {
+      "bytes": 10195,
+      "sha256": "2fb3cac220eb22f269a4558d7ff82c6f4a511e29f85946ffd80885e1cad49905"
+    },
+    "embedded_case_ranges": {
+      "common_setup.luau": {
+        "bytes": 4777,
+        "end": 4979,
+        "sha256": "0d8aa3c5d02a8904ad40db0d400e259e34b2a82ffb34aa186ae84210adc86956",
+        "start": 202
+      },
+      "gate_case.luau": {
+        "bytes": 4141,
+        "end": 9149,
+        "sha256": "f6b0323babdfad99d05c0f7528331ffb6f8754c72240eba65b9ff3be262b9503",
+        "start": 5008
+      },
+      "wall_case.luau": {
+        "bytes": 4095,
+        "end": 13257,
+        "sha256": "970ec4e806035216d600afba9ec42d23130fddc2695c26ab4b4934ab2c759cd8",
+        "start": 9162
+      }
+    },
+    "error_footer_anchor": "if not ok then error(result,0)end",
+    "expected_cases": {
+      "gate_positive": [
+        [
+          "HOST_READY",
+          "PASS"
+        ],
+        [
+          "OUT_OF_RANGE_CONTROL",
+          "PASS"
+        ],
+        [
+          "OPEN_GATE_OUTGOING_DAMAGE",
+          "PASS"
+        ],
+        [
+          "OPEN_GATE_INCOMING_PRESERVED",
+          "PASS"
+        ],
+        [
+          "GATE_OUTGOING",
+          "PASS"
+        ]
+      ],
+      "gate_without_los": [
+        [
+          "HOST_READY",
+          "PASS"
+        ],
+        [
+          "OUT_OF_RANGE_CONTROL",
+          "PASS"
+        ],
+        [
+          "GATE_OUTGOING",
+          "FAIL"
+        ]
+      ],
+      "wall_all_variants": [
+        [
+          "HOST_READY",
+          "PASS"
+        ],
+        [
+          "OUT_OF_RANGE_CONTROL",
+          "PASS"
+        ],
+        [
+          "COLLIDABLE_WALL_OUTGOING_REJECTED",
+          "PASS"
+        ],
+        [
+          "COLLIDABLE_WALL_INCOMING_PRESERVED",
+          "PASS"
+        ],
+        [
+          "WALL_OUTGOING",
+          "PASS"
+        ]
+      ]
+    },
+    "expected_variant_outcomes": {
+      "baseline": {
+        "gate": "known_negative",
+        "wall": "pass"
+      },
+      "combined": {
+        "gate": "pass",
+        "wall": "pass"
+      },
+      "los_only": {
+        "gate": "pass",
+        "wall": "pass"
+      },
+      "role_only": {
+        "gate": "known_negative",
+        "wall": "pass"
+      }
+    },
+    "first_three_fixture_pins": {
+      "fixture_additions.luau": {
+        "bytes": 9164,
+        "sha256": "35cb13f894170cd07084c5cc34117d8ea5c7d5dcbfd0cc7c8f8dcd2cca081eb4"
+      },
+      "native_prefix.luau": {
+        "bytes": 7111,
+        "sha256": "4b0ca7971a97fc7b304cddcbc8d4a9ee39c3133ce91cb523239406bee614130d"
+      },
+      "speed_fixture_additions.luau": {
+        "bytes": 4012,
+        "sha256": "b61b6e58067ae19f9b527b30847116350279c6853b05dfd670ff9cbd8a7048d1"
+      }
+    },
+    "fixture_boundary": {
+      "bytes": 9041,
+      "sha256": "8650af84ee20070946a5bcf2a651b08dcc1eab67d0a0ce713286e606e815c104"
+    },
+    "fixture_order": [
+      "native_prefix.luau",
+      "fixture_additions.luau",
+      "speed_fixture_additions.luau",
+      "fixture_boundary.luau"
+    ],
+    "full_body_count": 28,
+    "geometry_validation": "Require same first gate ray time/origin/target for four variants; require 10 wall rays over >2.7sec with identical coordinates/time. Reuse original independent plane_crossing for13segments.",
+    "host_loaded_last": "LobbyCastleModesPreview.server",
+    "known_gate_failure": "OPEN_GATE_OUTGOING_DAMAGE_MISSING actual=100 expected=94",
+    "known_negative_exit": 1,
+    "modules_in_load_order": [
+      "BasicMobilityPolicy",
+      "CombatBalance",
+      "AttackGeometry",
+      "StatusTickFence",
+      "CastleMatchRules",
+      "CastleSiegeGuardianPolicy",
+      "CastleSiegeBridge",
+      "InteractionGuard",
+      "RoundReplay",
+      "ScoreBalance",
+      "MatchResultService",
+      "BossSessionFence",
+      "DualModeNeutralBudget",
+      "InvulnerabilityPolicy",
+      "InvulCounterNeutral",
+      "InvulRuntime",
+      "NeutralFinisherPolicy",
+      "MusouFeverPolicy",
+      "CurseConversionPolicy",
+      "NeutralMeleePolicy",
+      "NeutralSpawnPacing",
+      "NeutralEncounterFairness",
+      "FieldItemPickups",
+      "RaidItemIntake",
+      "CastleGuardianRuntime",
+      "SwarmCombat",
+      "SevenRoleCombat"
+    ],
+    "original_reviewer": {
+      "bytes": 17719,
+      "sha256": "ff97ca186aa0a6948a4c3af545857ed90ed61b8ca12bcd15872346c5456c3d0a"
+    },
+    "original_runner": {
+      "bytes": 5226,
+      "sha256": "d416647465ad9ae98553d650bf8f30af4adfc7ef7d1e7924d0de136a6a74ebae"
+    },
+    "original_seven_fixture_pins": {
+      "combined_fixture_additions.luau": {
+        "bytes": 9041,
+        "sha256": "8650af84ee20070946a5bcf2a651b08dcc1eab67d0a0ce713286e606e815c104"
+      },
+      "common_setup.luau": {
+        "bytes": 4777,
+        "sha256": "0d8aa3c5d02a8904ad40db0d400e259e34b2a82ffb34aa186ae84210adc86956"
+      },
+      "fixture_additions.luau": {
+        "bytes": 9164,
+        "sha256": "35cb13f894170cd07084c5cc34117d8ea5c7d5dcbfd0cc7c8f8dcd2cca081eb4"
+      },
+      "gate_case.luau": {
+        "bytes": 4141,
+        "sha256": "f6b0323babdfad99d05c0f7528331ffb6f8754c72240eba65b9ff3be262b9503"
+      },
+      "native_prefix.luau": {
+        "bytes": 7111,
+        "sha256": "4b0ca7971a97fc7b304cddcbc8d4a9ee39c3133ce91cb523239406bee614130d"
+      },
+      "speed_fixture_additions.luau": {
+        "bytes": 4012,
+        "sha256": "b61b6e58067ae19f9b527b30847116350279c6853b05dfd670ff9cbd8a7048d1"
+      },
+      "wall_case.luau": {
+        "bytes": 4095,
+        "sha256": "970ec4e806035216d600afba9ec42d23130fddc2695c26ab4b4934ab2c759cd8"
+      }
+    },
+    "positive_exit": 0,
+    "schema": "EXISTING_LOS_TEST_AUTHOR_HANDOFF_V1",
+    "strict_negative_stderr_template": "{absolute_generated_path}:{assertion_line}: OPEN_GATE_OUTGOING_DAMAGE_MISSING actual=100 expected=94\nstacktrace:\n[C] function error\n{absolute_generated_path}:{footer_line}\n"
+  },
+  "official_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+  "original_outgoing_los_provenance": {
+    "author_context": "ca1ffba54bf0",
+    "current_packet": {
+      "bytes": 30744310,
+      "sha256": "5e3b127dd49e216e8399680963bac6a5471eedf91471cff20e1f62e3404fb0e9"
+    },
+    "current_rc_revalidation": "https://github.com/kk051780/toy-wars-factory/pull/796#issuecomment-7085610778",
+    "exact_patch": "https://github.com/kk051780/toy-wars-factory/pull/796#issuecomment-7078362242",
+    "incoming_repair_already_in_official_input": true,
+    "independent_qa": "https://github.com/kk051780/toy-wars-factory/pull/796#issuecomment-7079427679",
+    "original_packet": {
+      "bytes": 9458870,
+      "sha256": "00b30b4c69340e66db5bf076b458fab98ed8de56ad4c331aaa2d58f346f60fb6"
+    },
+    "request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077957972"
+  },
+  "schema": "GQ815_EXISTING_ROLE170_LOS30_COMBINED_V1",
+  "scope_amendment_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7087309051",
+  "source_feature": "GQ815_GUARDIAN_ACTUAL_MATCH_AI"
+}
