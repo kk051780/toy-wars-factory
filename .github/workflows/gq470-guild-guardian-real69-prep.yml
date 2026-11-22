@@ -1,0 +1,186 @@
+name: GQ470 REAL69 Guild Guardian ART source PREP (not Studio)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_guild_sculpt_real69_20261121/**"
+      - ".github/workflows/gq470-guild-guardian-real69-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  guild-real69-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Prove exact authored head not synthetic PR merge
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Source/negative fixture and 69 source rollback regression
+        run: python3 -B -m unittest discover -s quality_gameplay/gq470_guild_sculpt_real69_20261121 -p 'test_*.py' -v
+      - name: Retrieve fixed genuine official source69 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14610422120/zip             -o /tmp/gq470-real69.zip
+          unzip -t /tmp/gq470-real69.zip > /dev/null
+      - name: Build one REAL69 shop source selection, original OFF inverse
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_guild_sculpt_real69_20261121/patch_guild69.py             --artifact /tmp/gq470-real69.zip --out /tmp/gq470-guild-on69
+          cp -a /tmp/gq470-guild-on69 /tmp/gq470-guild-off69
+          cp /tmp/gq470-guild-on69/OFF69_ORIGINAL_GUILD.server.luau             /tmp/gq470-guild-off69/sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau
+      - name: Checkout pinned Luau native compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile all69 ON+OFF with exact selected route
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-guild-luau -G Ninja             -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-guild-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,json
+          a=Path('/tmp/gq470-guild-on69/sources')
+          b=Path('/tmp/gq470-guild-off69/sources')
+          original={str(p.relative_to(a)):p for p in a.rglob('*.luau')}
+          inverse={str(p.relative_to(b)):p for p in b.rglob('*.luau')}
+          target='ServerScriptService/GQ805_LobbyGuildShop.server.luau'
+          assert len(original)==len(inverse)==69 and set(original)==set(inverse)
+          assert {p for p in original if original[p].read_bytes()!=inverse[p].read_bytes()}=={target}
+          for sources in (original,inverse):
+              for file in sources.values():
+                  subprocess.run(['/tmp/gq470-guild-luau/luau-compile','--text',str(file)],
+                      check=True,stdout=subprocess.DEVNULL)
+          qa=json.loads(Path('/tmp/gq470-guild-on69/GQ470_GUILD_SOURCE_QA.json').read_text())
+          assert qa['extra_decorative_parts']==1 and qa['other_selected_byte_exact']==68
+          assert qa['new_scripts']==0 and qa['rollback_byte_exact']
+          assert qa['art_gate']=='ART_NO_GO' and qa['official_rc_adopted'] is False
+          print('GQ470_GUILD_REAL69_ALL_NATIVE_ON_OFF_PASS')
+          PY
+      - name: Pinned Rojo7.7.1 exact genuine .rbxlx ON/OFF inverse
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3             https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip             -o /tmp/gq470-guild-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-guild-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-guild-rojo.zip') as z:
+              paths=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(paths)==1
+              p=Path('/tmp/gq470-guild-rojo')
+              p.write_bytes(z.read(paths[0]));p.chmod(0o755)
+          with ZipFile('/tmp/gq470-real69.zip') as z:
+              Path('/tmp/gq470-guild-original.rbxlx').write_bytes(
+                  z.read('EGGRUMBLE_REAL69_PRIVATE.rbxlx'))
+          PY
+          /tmp/gq470-guild-rojo build /tmp/gq470-guild-on69/EGGRUMBLE_REAL69.project.json             -o /tmp/gq470-guild-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-guild-rojo build /tmp/gq470-guild-off69/EGGRUMBLE_REAL69.project.json             -o /tmp/gq470-guild-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          cmp /tmp/gq470-guild-off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx             /tmp/gq470-guild-original.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify             --project /tmp/gq470-guild-on69/EGGRUMBLE_REAL69.project.json             --place /tmp/gq470-guild-on69/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+      - name: Publish honest ART420 and nonoverlapping B220 source-only bundle
+        env:
+          HEAD_VERIFIED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 - <<'PY'
+          import json,hashlib,shutil,os
+          from pathlib import Path
+          from zipfile import ZipFile
+          root=Path('/tmp/gq470-guild-on69')
+          qa=json.loads((root/'GQ470_GUILD_SOURCE_QA.json').read_text())
+          with ZipFile('/tmp/gq470-real69.zip') as z:
+              base=json.loads(z.read('ART_CHECK_REPORT.json'))
+          assert base['official_build_head']==qa['formal_base_head']
+          assert base['art_gate']=='ART_NO_GO'
+          assert base['visual_evidence_gate']['screenshots_received']==0
+          place=(root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx').read_bytes()
+          report={
+            'schema':'GQ470_GUILD_REAL69_ART420_SOURCE_ONLY_V1',
+            'official_head_not_changed':qa['formal_base_head'],
+            'source_gate':'PASS_ONLY_IF_SAME_HEAD_ACTIONS_GREEN',
+            'source_delta_one_of_69':True,
+            'actual_candidate_place_bytes':len(place),
+            'actual_candidate_place_sha256':hashlib.sha256(place).hexdigest(),
+            'scene':'lobby','human_32_screenshots':{'required':32,'received':0},
+            'studio_solo':'NOT_TESTED','studio_two_client':'NOT_TESTED',
+            'android15':'NOT_TESTED','first3min_fun':'NOT_TESTED',
+            'art_gate':'ART_NO_GO','mobile_gate':'MOBILE_NO_GO',
+            'fun_gate':'FUN_NO_GO','product_gate':'PRODUCT_NO_GO',
+            'owner_accepted':False,'official_rc_adopted':False,
+            'visual_hypothesis':'14 role-variant silhouettes and matte pitched 3D roof',
+          }
+          (root/'GQ470_GUILD_ART_CHECK_REPORT.json').write_text(
+              json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          dst=root/'B220_GUILD_ONE_SELECTED_SOURCE'
+          src=dst/'selected_sources/ServerScriptService'
+          src.mkdir(parents=True)
+          shutil.copy2(root/'sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau',
+                       src/'GQ805_LobbyGuildShop.server.luau')
+          shutil.copy2(root/'GQ470_GUILD_SOURCE_QA.json',dst/'GQ470_GUILD_SOURCE_QA.json')
+          head=os.environ['HEAD_VERIFIED']
+          assert len(head)==40 and all(c in '0123456789abcdef' for c in head)
+          manifest={
+            'schema':'GQ470_GUILD_REAL69_B220_ONE_SELECTED_SOURCE_V1',
+            'feature_id':qa['feature_id'],'candidate_head_exact':head,
+            'formal_base_head':qa['formal_base_head'],
+            'source_route':qa['candidate_route'],'class':'Script',
+            'selected_source_path':'selected_sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau',
+            'source_before_sha256':qa['source_sha_before'],
+            'source_after_sha256':qa['source_sha_after'],
+            'other_selected_routes_byte_exact':68,
+            'candidate_source_count':69,'original_artifact_id':14610422120,
+            'new_part_count':1,'new_gameplay_authority':False,
+            'B_writer_must_reget_formal_sha_and_class':True,
+            'whole_pr_merge_forbidden':True,'A_no_formal_rc_write':True,
+            'source_only_if_same_head_success':True,
+            'studio':'NOT_TESTED','android':'NOT_TESTED',
+            'art_gate':'ART_NO_GO','owner_accepted':False,
+            'rollback':'restore exact OFF69_ORIGINAL_GUILD.server.luau'
+          }
+          (dst/'B220_GUILD_MANIFEST.json').write_text(
+              json.dumps(manifest,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          assert hashlib.sha256((src/'GQ805_LobbyGuildShop.server.luau').read_bytes()).hexdigest()==qa['source_sha_after']
+          assert len([p for p in dst.rglob('*') if p.is_file()])==3
+          print('GQ470_GUILD_B220_ONE_SELECTED_SOURCE_HANDOFF',head)
+          print('GQ470_GUILD_CANDIDATE_PLACE_BYTES',len(place))
+          print('GQ470_GUILD_ART_AND_MOBILE_NOT_TESTED')
+          PY
+      - name: B220 actual three-file packet rejects forged source and false GO (20 mutants)
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_guild_sculpt_real69_20261121/verify_b_handoff.py \
+            --bundle /tmp/gq470-guild-on69/B220_GUILD_ONE_SELECTED_SOURCE \
+            --candidate-head "$EXPECTED_HEAD"
+      - name: Upload source-only B220 selected route manifest (NOT official)
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-GUILD-REAL69-B220-ONE-SOURCE-NOT-FORMAL
+          path: /tmp/gq470-guild-on69/B220_GUILD_ONE_SELECTED_SOURCE/
+          retention-days: 3
+          if-no-files-found: error
+      - name: Upload full REAL69 ON candidate source plus generated Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-GUILD-REAL69-ON-PRIVATE-NOT-APPROVED
+          path: /tmp/gq470-guild-on69/
+          retention-days: 3
+          if-no-files-found: error
