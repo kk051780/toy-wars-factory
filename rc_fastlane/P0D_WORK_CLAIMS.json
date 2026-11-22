@@ -2286,8 +2286,7 @@
         "ACTIVE66_PRIMARY_REPAIR_SELECTION",
         "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
         "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
-        "ACTIVE66_REPAIR_NATIVE_AND_ARTIFACT_GATE",
-        "REAL69_CANONICAL_SOURCE_WORKFLOW"
+        "ACTIVE66_REPAIR_NATIVE_AND_ARTIFACT_GATE"
       ],
       "target_paths": [
         ".github/workflows/p0d-rc-fastlane.yml",
@@ -2305,8 +2304,7 @@
         "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
         "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
         "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
-        "rc_fastlane/test_active_runtime_repairs.py",
-        ".github/workflows/gq8-real63-source-composite.yml"
+        "rc_fastlane/test_active_runtime_repairs.py"
       ],
       "issued_at": "2026-11-22T14:38:40.472744+00:00",
       "expires_at": "2026-11-22T20:38:40.472744+00:00",
@@ -2339,8 +2337,8 @@
       ],
       "independent_reviewer_context": "/root/admission_v2",
       "independent_review_status": "INDEPENDENT_SCOPE_V3_GRANT_ONLY_H0_SOURCE_READBACK_FUTURE_H_REVIEW_AND_CI_REQUIRED",
-      "grant_scope_version": 3,
-      "scope": "Preserve the original owner's complete sixteen-path v2 scope and all reviewed Game/PersistentHatchStore repairs, diagnostic-only runner/test revision, 54 Native assertions, fixtures, selected flags, 17 original helpers, 16 original selector methods, runtime provenance and OFF rollback. Add exactly one existing GQ8 workflow path. On the actual accepted official U fb5d9b693c48d4ffcce05c3f89d490593e0cecfd, insert the five explicitly pinned ACTIVE66 path patterns once under push.paths and once under pull_request.paths: exactly ten added lines, no deletions. Every other workflow byte, job, branch filter, permission, upload, PRIVATE source/body/pin and queue contract stays unchanged. Original owner and PR1016/branch continue. Preserve source H0=9669734a6c8e9c66334e49a6cc7ad3034084c7b0 and normally merge U as an ancestor before new H. This scope grant does not approve source H, PREP_READY, formal RC adoption or engine quality.",
+      "grant_scope_version": 4,
+      "scope": "Temporary revision: retain the original sixteen-path Game/PersistentHatchStore/diagnostic scope and all V3 evidence. Current shared GQ8 workflow/resource authority is loaned only to existing input-retention PR1020 until explicit return. No ACTIVE66 source writer may edit the loaned path while the loan is active. Original ten trigger lines remain reserved in the unchanged trigger_integration_plan as a future continuation, not adopted by maintenance.",
       "candidate_tree_proposal": "d12926271b84a97381aac10e9e2db718d8fbf879",
       "candidate_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
       "exact_file_manifest_sha256": "2f7b847370f084e6e36121a5e3b16ec3857ce23d333a8b0debd7112b8a9f2621",
@@ -2457,11 +2455,11 @@
       "metadata_updated_at": "2026-11-22T16:15:19Z",
       "metadata_update_lease": {
         "branch": "twf-repair-coordinator",
-        "epoch": 602,
-        "claim_commit": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+        "epoch": 621,
+        "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+        "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
         "work_branch": "coord/p0d-work-claims",
-        "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
-        "expires_at": "2026-11-22T16:37:45+00:00"
+        "expires_at": "2026-11-22T23:21:52+00:00"
       },
       "actual_candidate_evidence": {
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
@@ -2950,6 +2948,1123 @@
             }
           },
           "preservation": "Complete original-owner v2 scope, diagnostics, source_update_plan and all previous history retained before the separately reviewed one-path amendment."
+        },
+        {
+          "version": 3,
+          "preserved_at": "2026-11-22T22:52:57Z",
+          "preservation": "Exact pre-handoff row retained; only explicit temporary current authority changes below.",
+          "complete_previous_row": {
+            "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
+            "state": "SOURCE_WIP",
+            "owner": "CODEX_ROOT_D4D718B4F637",
+            "feature_id": "ACTIVE66_PERSISTENCE_LIFECYCLE_20261122",
+            "canonical_parent": 282,
+            "existing_dependency_parent": 287,
+            "parent_issue": 470,
+            "integration_issue": 220,
+            "request_comment": 7080435107,
+            "resources": [
+              "ACTIVE66_PRIMARY_REPAIR_SELECTION",
+              "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+              "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+              "ACTIVE66_REPAIR_NATIVE_AND_ARTIFACT_GATE",
+              "REAL69_CANONICAL_SOURCE_WORKFLOW"
+            ],
+            "target_paths": [
+              ".github/workflows/p0d-rc-fastlane.yml",
+              "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+              "rc_fastlane/apply_active_runtime_repairs.py",
+              "rc_fastlane/features/active_runtime_repairs/MANIFEST.json",
+              "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch",
+              "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch",
+              "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch",
+              "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau",
+              "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau",
+              "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau",
+              "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json",
+              "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau",
+              "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
+              "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
+              "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
+              "rc_fastlane/test_active_runtime_repairs.py",
+              ".github/workflows/gq8-real63-source-composite.yml"
+            ],
+            "issued_at": "2026-11-22T14:38:40.472744+00:00",
+            "expires_at": "2026-11-22T20:38:40.472744+00:00",
+            "pr": 1016,
+            "candidate_pr_status": "SCOPE_V3_GRANTED_WAIT_ORIGINAL_OWNER_U_MERGE_AND_FRESH_H_CI",
+            "role": "A_PREP",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 602,
+              "claim_commit": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+              "work_branch": "coord/p0d-work-claims",
+              "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+              "expires_at": "2026-11-22T16:37:45+00:00"
+            },
+            "authority_evidence": [
+              "Actual authenticated GitHub profile kk051780 / 233213370 and repository admin permission observed in this parent session; no service identity or registered approval asserted.",
+              "Current formal fa5f AGENTS.md and AI development system v1.2/#1011 delegate ordinary engineering decisions while preserving objective QA and real exclusive writer conditions.",
+              "Previous CONTROLLER585 b9996010 explicitly released at 2026-11-22T14:28:37.194718Z, actual ref3f0e20c24376d706d8154a84654e68ef2d063ef2; no expiry takeover.",
+              "Unmodified repair_control.acquire planned manual CONTROLLER586; exact-parent expected-SHA force=false CAS and full state/ref/commit readback confirmed."
+            ],
+            "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "prep_branch": "feature/p0d-active66-persistence-20261122-d4d718",
+            "author_contexts": [
+              "/root/active66_v2",
+              "/root/gameplay_v2"
+            ],
+            "independent_reviewer_context": "/root/admission_v2",
+            "independent_review_status": "INDEPENDENT_SCOPE_V3_GRANT_ONLY_H0_SOURCE_READBACK_FUTURE_H_REVIEW_AND_CI_REQUIRED",
+            "grant_scope_version": 3,
+            "scope": "Preserve the original owner's complete sixteen-path v2 scope and all reviewed Game/PersistentHatchStore repairs, diagnostic-only runner/test revision, 54 Native assertions, fixtures, selected flags, 17 original helpers, 16 original selector methods, runtime provenance and OFF rollback. Add exactly one existing GQ8 workflow path. On the actual accepted official U fb5d9b693c48d4ffcce05c3f89d490593e0cecfd, insert the five explicitly pinned ACTIVE66 path patterns once under push.paths and once under pull_request.paths: exactly ten added lines, no deletions. Every other workflow byte, job, branch filter, permission, upload, PRIVATE source/body/pin and queue contract stays unchanged. Original owner and PR1016/branch continue. Preserve source H0=9669734a6c8e9c66334e49a6cc7ad3034084c7b0 and normally merge U as an ancestor before new H. This scope grant does not approve source H, PREP_READY, formal RC adoption or engine quality.",
+            "candidate_tree_proposal": "d12926271b84a97381aac10e9e2db718d8fbf879",
+            "candidate_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+            "exact_file_manifest_sha256": "2f7b847370f084e6e36121a5e3b16ec3857ce23d333a8b0debd7112b8a9f2621",
+            "candidate_patch_sha256": "dfac79f866d4424a8e64679036e01d2b47279cec23668abb44f15c04db9cb84d",
+            "all_on_configuration_sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5",
+            "generated_source_scope": [
+              {
+                "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+                "path": "server/Game.server.luau",
+                "route": "ServerScriptService/TrapRaidersS1/Game",
+                "class": "Script",
+                "before": {
+                  "bytes": 128902,
+                  "sha256": "924a0a7f5418f4a1897f36e9d23b9c899614fe05d64c043b9c86d2b5ea0742e1"
+                },
+                "after": {
+                  "bytes": 130620,
+                  "sha256": "e9d02785a806375d52202566da3a2ec7b0e650526e41ae7cca805f81ac4cb72e"
+                }
+              },
+              {
+                "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+                "path": "server/PersistentHatchStore.luau",
+                "route": "ServerScriptService/TrapRaidersS1/PersistentHatchStore",
+                "class": "ModuleScript",
+                "before": {
+                  "bytes": 22456,
+                  "sha256": "c9e1c4d7a527939568127cdc7e3cee0ae2312580239b7b5bbe6bac4c657c39bf"
+                },
+                "after": {
+                  "bytes": 22552,
+                  "sha256": "07129c211f25d62b399e6f125be4d7c7649a12e7dd313d98701a6bf89007b241"
+                }
+              }
+            ],
+            "generated_source_count": 2,
+            "source_count_preserved": 66,
+            "other_sources_preserved": 64,
+            "on_place": {
+              "bytes": 604050,
+              "sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe"
+            },
+            "off_place": {
+              "bytes": 602236,
+              "sha256": "466a30ed10760bc26c2fb6e93d4850fe5d2a4b508410650b6e8355fb602c58c6"
+            },
+            "place_non_source_anchor": "8fe1a9681381b5aa4cfeb25658d713625bd1eb714f195283d04c2e3588f56bc0",
+            "scope_review": {
+              "context": "/root/admission_v2",
+              "decision": "INDEPENDENT_DIAGNOSTIC_SOURCE_PROPOSAL_PASS_DRAFT_ONLY",
+              "receipt_sha256": "a91fa50df332402612b4cf4ff95458375325000775406332003d6d7f85449899",
+              "freeze_sha256": "5f222e60e5c18fd01fa1400de764b656034f57638d6b866af45b008466a5b7a6",
+              "root_plan_sha256": "77b7709f685b7e22ab5933f63f7b6fcc05b30f7bf9a969bd3ac0dff2907bf302",
+              "same16_paths_same4_resources": true,
+              "preserved_other_formal_files": 919,
+              "preserved_intervening_union_paths": 15,
+              "author_protocol_independently_run_once": 10,
+              "independent_additional_IO_helper_probes": 4,
+              "real_native_runs": 0,
+              "remote_APPROVE": false,
+              "PREP_READY": false
+            },
+            "quality_issue_comment": 7080546111,
+            "limited_value_issue_comment": 7080583715,
+            "acceptance": "After the explicitly scoped trigger prerequisite is implemented by the original owner, independent complete actual new HEAD/parents/tree/17paths review and fresh same-H primary selected66 and GQ8 REAL69 pull_request success plus actual artifacts, bootstrap/offline/prep and real queue evaluation are mandatory. Require exact source/class/non-Source/metadata, original54 Native selected cases and separate old58 cases, selector, ON/OFF proof, V3 PRIVATE69 Native/input/diagnostic gates and all shared workflow jobs. H0=9669734 primary success is historical for the future H, not acceptance. PREP_READY remains false until all conditions are fulfilled. Formal RC adoption remains a separate scoped writer/CAS plus same-SHA official builds/artifacts. Studio/Android/FUN/ART remain unverified/NO_GO.",
+            "rollback": {
+              "selection": "All three flags false and rebuild through the same producer; true inverse OFF66 equals exact official original66 Place. Recovery ON without game fixes is rejected. Recheck new actual HEAD and CI before adoption.",
+              "repository": "Inverse the true seventeen-path feature delta against accepted U, preserving U and any intervening changes. Original fifteen additions can be removed and the exact primary workflow delta inversed only as scoped; no whole-RC reset to fa5/eb437.",
+              "trigger_only": "Remove exactly the ten inserted lines and restore the exact accepted-U GQ8 preimage. Preserve every UNION objective/diagnostic job and source contract.",
+              "before_blobs": {
+                ".github/workflows/p0d-rc-fastlane.yml": "0be1f732aaa12ae3c7b3d78cb2247a9f6a588862",
+                "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json": null,
+                "rc_fastlane/apply_active_runtime_repairs.py": null,
+                "rc_fastlane/features/active_runtime_repairs/MANIFEST.json": null,
+                "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch": null,
+                "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch": null,
+                "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py": null,
+                "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau": null,
+                "rc_fastlane/test_active_runtime_repairs.py": null,
+                ".github/workflows/gq8-real63-source-composite.yml": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+              }
+            },
+            "preserved": [
+              "Formal ACTIVE.json bytes",
+              "Original66 rollback and original PRIVATE70+ inputs",
+              "PRIVATE_COMPANION and all existing REAL69 owners",
+              "All fixture expectations, runtime provenance, old source pipelines and objective gates",
+              "Other four registry rows, aliases and history"
+            ],
+            "forbidden_changes": [
+              "GQ8 workflow changes beyond the exact ten trigger path lines; any job/permission/branch-filter/upload/PRIVATE source or queue change",
+              "Other owners branches, grants or generated source pins",
+              "Production DataStore activation, new durable queue/session lock or payment features",
+              "PREP_READY or formal RC adoption by primary success alone",
+              "main/Roblox Publish/monetization/new spending/schedules"
+            ],
+            "PREP_READY": false,
+            "rc_write_authorized_by_this_claim": false,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "no_main_or_publish": true,
+            "no_review_waiver": true,
+            "studio": "NOT_TESTED",
+            "android": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "fun": "NOT_TESTED",
+            "candidate_tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+            "metadata_updated_at": "2026-11-22T16:15:19Z",
+            "metadata_update_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 602,
+              "claim_commit": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+              "work_branch": "coord/p0d-work-claims",
+              "owner_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+              "expires_at": "2026-11-22T16:37:45+00:00"
+            },
+            "actual_candidate_evidence": {
+              "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+              "source_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+              "tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+              "ordered_parents": [
+                "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                "eb43702de8db32550d9a3ee78041ad6c104f46c0"
+              ],
+              "diff_files": 16,
+              "source_file_manifest": {
+                "bytes": 4935,
+                "sha256": "2f7b847370f084e6e36121a5e3b16ec3857ce23d333a8b0debd7112b8a9f2621"
+              },
+              "whole_tree_files": 935,
+              "independent_read_only_refresh": {
+                "bytes": 6484,
+                "sha256": "612fd0ca082825bf3844a1574b85cadf9933a691e0dbf0953d4b71a4255f3223"
+              },
+              "diagnostic_source_review": {
+                "bytes": 4711,
+                "sha256": "a91fa50df332402612b4cf4ff95458375325000775406332003d6d7f85449899"
+              },
+              "diagnostic_runner": {
+                "bytes": 30868,
+                "sha256": "a23eba180f670e785b097874b93abdda4fec7e6f321d1e304d7a0d0e8b6bc175"
+              },
+              "diagnostic_tests": {
+                "bytes": 27661,
+                "sha256": "c97600d990a2130b63edfe96fee45a99b4264340159f4e47c730f2fef1e0b7bf"
+              },
+              "primary_ci": {
+                "run": 45041104625,
+                "head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+                "conclusion": "success",
+                "scope": "Observed current H0 run only; not a substitute for future merged-H CI."
+              },
+              "primary_new_artifact_body_accepted_by_this_amendment": false,
+              "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+              "PREP_READY": false,
+              "formal_RC_adopted": false,
+              "Studio": "NOT_TESTED",
+              "Android": "NOT_TESTED",
+              "ART": "ART_NO_GO",
+              "FUN": "NOT_TESTED"
+            },
+            "continuation_conditions": {
+              "accepted_official_U": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+              "official_run": 45041527167,
+              "official_artifact": 14761404772,
+              "union_closed_registry": "f9d4768dd40a99435e4f2834697f2a5ae871045e",
+              "union_state": "RC_INTEGRATED",
+              "original_owner_retained": true,
+              "current_H0": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+              "current_H0_not_descendant_of_U": true,
+              "required_new_H": null,
+              "requirements": [
+                "Original owner obtains its own fresh source lease and normally merges exact U into the existing original branch, preserving H0 and U ancestry; no force/reset/new PR.",
+                "Preserve all sixteen current source files byte-exact from H0; add only the explicit GQ8 ten-line path-filter insertion against U. Any separately proposed additional source change requires fresh scope/source review.",
+                "Independent complete new-H parent/tree/17-path/mode/source review and fresh same-H primary plus GQ8 pull_request success/artifacts, bootstrap/offline/prep and actual queue evaluation.",
+                "No PREP_READY from primary-only success, old H0 evidence, workflow_dispatch or intake-green.",
+                "Separate RC writer handoff/lease and non-force expected-SHA CAS, followed by both same-new-SHA official primary/GQ8 push builds and artifact checks."
+              ],
+              "durable_Store_old_Equip_commit_ordering": "UNRESOLVED_NOT_IN_SCOPE",
+              "runtime_unified": "NO"
+            },
+            "scope_history": [
+              {
+                "version": 1,
+                "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
+                "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
+                "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
+                "scope_review": {
+                  "context": "/root/admission_v2",
+                  "decision": "RECOMMEND_DRAFT_PREP_ONLY",
+                  "decision_sha256": "59c5648d75f266b0a2bcd276503a0c6dd213986ae70d874a2b39fd69fd3df44a",
+                  "receipt_sha256": "8045f49e1b13585a27bb4e18a454010d6953a6fd228de85ff72d4b4676dbc3f6",
+                  "technical_V3_receipt_sha256": "be1fab9a0e51037faf0981840d2586635bde6fa017815c268ec9313b97cc24fa",
+                  "current_registry_shape_rechecked": true,
+                  "source_authors_are_not_final_reviewers": true
+                },
+                "preserved_at": "2026-11-22T15:53:34.316739+00:00"
+              },
+              {
+                "version": 2,
+                "complete_previous_row": {
+                  "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
+                  "state": "SOURCE_WIP",
+                  "owner": "CODEX_ROOT_D4D718B4F637",
+                  "feature_id": "ACTIVE66_PERSISTENCE_LIFECYCLE_20261122",
+                  "canonical_parent": 282,
+                  "existing_dependency_parent": 287,
+                  "parent_issue": 470,
+                  "integration_issue": 220,
+                  "request_comment": 7080435107,
+                  "resources": [
+                    "ACTIVE66_PRIMARY_REPAIR_SELECTION",
+                    "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+                    "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+                    "ACTIVE66_REPAIR_NATIVE_AND_ARTIFACT_GATE"
+                  ],
+                  "target_paths": [
+                    ".github/workflows/p0d-rc-fastlane.yml",
+                    "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+                    "rc_fastlane/apply_active_runtime_repairs.py",
+                    "rc_fastlane/features/active_runtime_repairs/MANIFEST.json",
+                    "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch",
+                    "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch",
+                    "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch",
+                    "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau",
+                    "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau",
+                    "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau",
+                    "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json",
+                    "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau",
+                    "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
+                    "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
+                    "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
+                    "rc_fastlane/test_active_runtime_repairs.py"
+                  ],
+                  "issued_at": "2026-11-22T14:38:40.472744+00:00",
+                  "expires_at": "2026-11-22T20:38:40.472744+00:00",
+                  "pr": 1016,
+                  "candidate_pr_status": "DRAFT_SAME_SCOPE_DIAGNOSTICS_AND_FRESH_FORMAL_BASE_UPDATE_PENDING",
+                  "role": "A_PREP",
+                  "issuer": "kk051780",
+                  "issuer_user_id": 233213370,
+                  "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+                  "issuer_operation_id": "2c444a1b-c4ab-402e-9538-7d8250847e83",
+                  "coordination_lease": {
+                    "branch": "twf-repair-coordinator",
+                    "epoch": 586,
+                    "claim_commit": "cc7378285aa37e4e6193e5bfeab8cc4cbf4fb8c5",
+                    "work_branch": "coord/p0d-work-claims",
+                    "expires_at": "2026-11-22T15:06:41.321582+00:00"
+                  },
+                  "authority_evidence": [
+                    "Actual authenticated GitHub profile kk051780 / 233213370 and repository admin permission observed in this parent session; no service identity or registered approval asserted.",
+                    "Current formal fa5f AGENTS.md and AI development system v1.2/#1011 delegate ordinary engineering decisions while preserving objective QA and real exclusive writer conditions.",
+                    "Previous CONTROLLER585 b9996010 explicitly released at 2026-11-22T14:28:37.194718Z, actual ref3f0e20c24376d706d8154a84654e68ef2d063ef2; no expiry takeover.",
+                    "Unmodified repair_control.acquire planned manual CONTROLLER586; exact-parent expected-SHA force=false CAS and full state/ref/commit readback confirmed."
+                  ],
+                  "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                  "prep_branch": "feature/p0d-active66-persistence-20261122-d4d718",
+                  "author_contexts": [
+                    "/root/active66_v2",
+                    "/root/gameplay_v2"
+                  ],
+                  "independent_reviewer_context": "/root/admission_v2",
+                  "independent_review_status": "INDEPENDENT_FIXED_LOCAL_DIAGNOSTIC_AND_FULL_TREE_PROPOSAL_PASS_NEW_REMOTE_HEAD_PENDING",
+                  "grant_scope_version": 2,
+                  "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only. Revision2 retains the exact same sixteen paths and four resources, rebinds planned source base to actual formal eb43702, and changes only run_selected.py and its existing Python test path for failure-only observation. Preserve all source patches, original54 Native expectations, fixtures, selected flags, original17 helpers, original16 selector tests, process argv/timeouts, acceptance predicates, success receipts and OFF rollback. No workflow/upload/GQ8/queue change. Update the existing draft using non-force history-preserving parents [90a60c, eb43702].",
+                  "candidate_tree_proposal": "d12926271b84a97381aac10e9e2db718d8fbf879",
+                  "candidate_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                  "exact_file_manifest_sha256": "f2a6bcb59dfee8741dbfc7a575831975726e2e50131bda96c6bf88e567232d0a",
+                  "candidate_patch_sha256": "dfac79f866d4424a8e64679036e01d2b47279cec23668abb44f15c04db9cb84d",
+                  "all_on_configuration_sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5",
+                  "generated_source_scope": [
+                    {
+                      "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_GAME",
+                      "path": "server/Game.server.luau",
+                      "route": "ServerScriptService/TrapRaidersS1/Game",
+                      "class": "Script",
+                      "before": {
+                        "bytes": 128902,
+                        "sha256": "924a0a7f5418f4a1897f36e9d23b9c899614fe05d64c043b9c86d2b5ea0742e1"
+                      },
+                      "after": {
+                        "bytes": 130620,
+                        "sha256": "e9d02785a806375d52202566da3a2ec7b0e650526e41ae7cca805f81ac4cb72e"
+                      }
+                    },
+                    {
+                      "resource": "ACTIVE66_SOURCE_TRAPRAIDERSS1_PERSISTENTHATCHSTORE",
+                      "path": "server/PersistentHatchStore.luau",
+                      "route": "ServerScriptService/TrapRaidersS1/PersistentHatchStore",
+                      "class": "ModuleScript",
+                      "before": {
+                        "bytes": 22456,
+                        "sha256": "c9e1c4d7a527939568127cdc7e3cee0ae2312580239b7b5bbe6bac4c657c39bf"
+                      },
+                      "after": {
+                        "bytes": 22552,
+                        "sha256": "07129c211f25d62b399e6f125be4d7c7649a12e7dd313d98701a6bf89007b241"
+                      }
+                    }
+                  ],
+                  "generated_source_count": 2,
+                  "source_count_preserved": 66,
+                  "other_sources_preserved": 64,
+                  "on_place": {
+                    "bytes": 604050,
+                    "sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe"
+                  },
+                  "off_place": {
+                    "bytes": 602236,
+                    "sha256": "466a30ed10760bc26c2fb6e93d4850fe5d2a4b508410650b6e8355fb602c58c6"
+                  },
+                  "place_non_source_anchor": "8fe1a9681381b5aa4cfeb25658d713625bd1eb714f195283d04c2e3588f56bc0",
+                  "scope_review": {
+                    "context": "/root/admission_v2",
+                    "decision": "INDEPENDENT_DIAGNOSTIC_SOURCE_PROPOSAL_PASS_DRAFT_ONLY",
+                    "receipt_sha256": "a91fa50df332402612b4cf4ff95458375325000775406332003d6d7f85449899",
+                    "freeze_sha256": "5f222e60e5c18fd01fa1400de764b656034f57638d6b866af45b008466a5b7a6",
+                    "root_plan_sha256": "77b7709f685b7e22ab5933f63f7b6fcc05b30f7bf9a969bd3ac0dff2907bf302",
+                    "same16_paths_same4_resources": true,
+                    "preserved_other_formal_files": 919,
+                    "preserved_intervening_union_paths": 15,
+                    "author_protocol_independently_run_once": 10,
+                    "independent_additional_IO_helper_probes": 4,
+                    "real_native_runs": 0,
+                    "remote_APPROVE": false,
+                    "PREP_READY": false
+                  },
+                  "quality_issue_comment": 7080546111,
+                  "limited_value_issue_comment": 7080583715,
+                  "acceptance": "Draft-only. Actual complete remote HEAD/parent/tree/16paths independently checked, fresh same-HEAD primary CI and real artifact/source/project/non-Source/metadata identity required. Existing 54 selected Native cases and 58 prior cases are separate evidence. Current GQ8 pull_request trigger gap remains unresolved: primary success or workflow_dispatch must not substitute for the existing same-HEAD GQ8 success/artifact requirement. No PREP_READY or RC admission until separately authorized prerequisite and acceptance are fulfilled.",
+                  "rollback": {
+                    "selection": "All three flags false and rebuild through the same producer; true inverse OFF66 equals exact official original66 Place. Recovery ON without game fixes is rejected. Recheck new actual HEAD and CI before adoption.",
+                    "repository": "Revert only these sixteen paths using exact stored preimages; remove the fifteen new files and inverse only this workflow diff while preserving intervening work.",
+                    "before_blobs": {
+                      ".github/workflows/p0d-rc-fastlane.yml": "0be1f732aaa12ae3c7b3d78cb2247a9f6a588862",
+                      "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json": null,
+                      "rc_fastlane/apply_active_runtime_repairs.py": null,
+                      "rc_fastlane/features/active_runtime_repairs/MANIFEST.json": null,
+                      "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch": null,
+                      "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch": null,
+                      "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py": null,
+                      "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau": null,
+                      "rc_fastlane/test_active_runtime_repairs.py": null
+                    }
+                  },
+                  "preserved": [
+                    "Formal ACTIVE.json bytes",
+                    "Original66 rollback and original PRIVATE70+ inputs",
+                    "PRIVATE_COMPANION and all existing REAL69 owners",
+                    "All fixture expectations, runtime provenance, old source pipelines and objective gates",
+                    "Other four registry rows, aliases and history"
+                  ],
+                  "forbidden_changes": [
+                    "GQ8/private workflow or queue changes",
+                    "Other owners branches, grants or generated source pins",
+                    "Production DataStore activation, new durable queue/session lock or payment features",
+                    "PREP_READY or formal RC adoption by primary success alone",
+                    "main/Roblox Publish/monetization/new spending/schedules"
+                  ],
+                  "PREP_READY": false,
+                  "rc_write_authorized_by_this_claim": false,
+                  "rc_write_requires_separate_scoped_single_writer_lease": true,
+                  "no_main_or_publish": true,
+                  "no_review_waiver": true,
+                  "studio": "NOT_TESTED",
+                  "android": "NOT_TESTED",
+                  "art": "ART_NO_GO",
+                  "fun": "NOT_TESTED",
+                  "candidate_tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                  "metadata_updated_at": "2026-11-22T15:53:34.316739+00:00",
+                  "metadata_update_lease": {
+                    "branch": "twf-repair-coordinator",
+                    "epoch": 598,
+                    "commit": "9a6370740585fb1d176d98257147a69d101f1154",
+                    "owner_id": "2c444a1b-c4ab-402e-9538-7d8250847e83",
+                    "work_branch": "coord/p0d-work-claims",
+                    "expires_at": "2026-11-22T16:22:19.770926+00:00",
+                    "no_path_or_resource_scope_extension": true
+                  },
+                  "actual_candidate_evidence": {
+                    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+                    "pr_comment": 7080885611,
+                    "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                    "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                    "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                    "diff_files": 16,
+                    "added": 15,
+                    "modified": 1,
+                    "unchanged_base_files": 905,
+                    "independent_head_review": {
+                      "context": "/root/admission_v2",
+                      "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+                      "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+                      "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+                      "registered_GitHub_APPROVE": false
+                    },
+                    "primary_ci": {
+                      "run": 45034273535,
+                      "job": 137244415461,
+                      "event": "pull_request",
+                      "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                      "conclusion": "success",
+                      "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+                      "candidate_and_checkout_tree_equal": true
+                    },
+                    "bootstrap_ci": {
+                      "pull_request": 45034273503,
+                      "push": 45034267136,
+                      "conclusion": "success"
+                    },
+                    "artifact": {
+                      "id": 14758893231,
+                      "zip_bytes": 284362,
+                      "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+                      "payload_files": 33,
+                      "source_count": 66,
+                      "changed_sources": 2,
+                      "unchanged_sources": 64,
+                      "place_bytes": 604050,
+                      "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+                      "canonical_rc_source_adopted": false,
+                      "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+                      "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+                    },
+                    "independent_artifact_review": {
+                      "context": "/root (not repair code author)",
+                      "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+                      "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+                      "new_native_runs": 0
+                    },
+                    "hosted_selected_native": {
+                      "spawn": 12,
+                      "equip": 9,
+                      "evolution": 19,
+                      "recovery": 14,
+                      "total": 54,
+                      "failed": 0,
+                      "selector_methods": 16,
+                      "selected_source_compile_count": 66,
+                      "prior_selected_Game_relay": 31,
+                      "prior_selected_Game_bond": 27,
+                      "whole_Game_bootstrap": false,
+                      "live_DataStore_calls": 0
+                    },
+                    "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+                    "PREP_READY": false,
+                    "formal_RC_adopted": false,
+                    "Studio": "NOT_TESTED",
+                    "Android": "NOT_TESTED",
+                    "ART": "ART_NO_GO",
+                    "FUN": "NOT_TESTED",
+                    "revision2_usage": "Historical HEAD90a60c only; cannot substitute for not-yet-created diagnostic candidate CI/artifact."
+                  },
+                  "continuation_conditions": {
+                    "new_formal_rc_observed": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                    "observed_at": "2026-11-22T14:59:45Z",
+                    "candidate_base_is_now_stale": true,
+                    "official_push_failure": {
+                      "run": 45035384920,
+                      "job": 137247865657,
+                      "observed_at": "2026-11-22T15:00:56Z",
+                      "status": "failure",
+                      "error": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
+                      "artifact_count": 0,
+                      "individual_false_predicate_unknown": true,
+                      "existing_owner_retains_repair_scope": true
+                    },
+                    "requirements": [
+                      "Resolve current formal UNION22 push failure through its existing owner without accepting retry luck or weakening gate",
+                      "Fresh official RC rebase/review and applicable scope amendment before ACTIVE66 acceptance",
+                      "Genuine GQ8 trigger prerequisite scope or authorized handoff; current 16path grant excludes this workflow",
+                      "Actual same-new-HEAD pull_request GQ8 success/artifact and primary/required checks",
+                      "Separate final RC writer handoff and fresh lease/CAS; no permission inferred from this metadata update"
+                    ],
+                    "proposed_base_rebind": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                    "reason": "Actual remote candidate remains90a60c until a separate source lease updates it. Planned claim base is eb43702, not evidence of adoption."
+                  },
+                  "scope_history": [
+                    {
+                      "version": 1,
+                      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                      "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
+                      "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                      "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
+                      "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
+                      "scope_review": {
+                        "context": "/root/admission_v2",
+                        "decision": "RECOMMEND_DRAFT_PREP_ONLY",
+                        "decision_sha256": "59c5648d75f266b0a2bcd276503a0c6dd213986ae70d874a2b39fd69fd3df44a",
+                        "receipt_sha256": "8045f49e1b13585a27bb4e18a454010d6953a6fd228de85ff72d4b4676dbc3f6",
+                        "technical_V3_receipt_sha256": "be1fab9a0e51037faf0981840d2586635bde6fa017815c268ec9313b97cc24fa",
+                        "current_registry_shape_rechecked": true,
+                        "source_authors_are_not_final_reviewers": true
+                      },
+                      "preserved_at": "2026-11-22T15:53:34.316739+00:00"
+                    }
+                  ],
+                  "candidate_history": [
+                    {
+                      "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                      "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                      "source_base": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                      "status": "HISTORICAL_ACTUAL_FIXED_HEAD_SOURCE_QA_PASS_NOT_NEW_CODE_ACCEPTANCE",
+                      "actual_candidate_evidence": {
+                        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+                        "pr_comment": 7080885611,
+                        "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                        "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                        "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                        "diff_files": 16,
+                        "added": 15,
+                        "modified": 1,
+                        "unchanged_base_files": 905,
+                        "independent_head_review": {
+                          "context": "/root/admission_v2",
+                          "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+                          "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+                          "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+                          "registered_GitHub_APPROVE": false
+                        },
+                        "primary_ci": {
+                          "run": 45034273535,
+                          "job": 137244415461,
+                          "event": "pull_request",
+                          "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                          "conclusion": "success",
+                          "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+                          "candidate_and_checkout_tree_equal": true
+                        },
+                        "bootstrap_ci": {
+                          "pull_request": 45034273503,
+                          "push": 45034267136,
+                          "conclusion": "success"
+                        },
+                        "artifact": {
+                          "id": 14758893231,
+                          "zip_bytes": 284362,
+                          "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+                          "payload_files": 33,
+                          "source_count": 66,
+                          "changed_sources": 2,
+                          "unchanged_sources": 64,
+                          "place_bytes": 604050,
+                          "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+                          "canonical_rc_source_adopted": false,
+                          "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+                          "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+                        },
+                        "independent_artifact_review": {
+                          "context": "/root (not repair code author)",
+                          "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+                          "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+                          "new_native_runs": 0
+                        },
+                        "hosted_selected_native": {
+                          "spawn": 12,
+                          "equip": 9,
+                          "evolution": 19,
+                          "recovery": 14,
+                          "total": 54,
+                          "failed": 0,
+                          "selector_methods": 16,
+                          "selected_source_compile_count": 66,
+                          "prior_selected_Game_relay": 31,
+                          "prior_selected_Game_bond": 27,
+                          "whole_Game_bootstrap": false,
+                          "live_DataStore_calls": 0
+                        },
+                        "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+                        "PREP_READY": false,
+                        "formal_RC_adopted": false,
+                        "Studio": "NOT_TESTED",
+                        "Android": "NOT_TESTED",
+                        "ART": "ART_NO_GO",
+                        "FUN": "NOT_TESTED"
+                      }
+                    }
+                  ],
+                  "source_update_plan": {
+                    "old_actual_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                    "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                    "ordered_parents": [
+                      "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                      "eb43702de8db32550d9a3ee78041ad6c104f46c0"
+                    ],
+                    "tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+                    "actual_new_head": null,
+                    "actual_new_CI": null,
+                    "new_head_acceptance": false,
+                    "new_source_lease_required": true
+                  }
+                },
+                "preservation": "Complete original-owner v2 scope, diagnostics, source_update_plan and all previous history retained before the separately reviewed one-path amendment."
+              }
+            ],
+            "candidate_history": [
+              {
+                "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                "source_base": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                "status": "HISTORICAL_ACTUAL_FIXED_HEAD_SOURCE_QA_PASS_NOT_NEW_CODE_ACCEPTANCE",
+                "actual_candidate_evidence": {
+                  "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+                  "pr_comment": 7080885611,
+                  "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                  "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                  "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                  "diff_files": 16,
+                  "added": 15,
+                  "modified": 1,
+                  "unchanged_base_files": 905,
+                  "independent_head_review": {
+                    "context": "/root/admission_v2",
+                    "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+                    "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+                    "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+                    "registered_GitHub_APPROVE": false
+                  },
+                  "primary_ci": {
+                    "run": 45034273535,
+                    "job": 137244415461,
+                    "event": "pull_request",
+                    "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                    "conclusion": "success",
+                    "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+                    "candidate_and_checkout_tree_equal": true
+                  },
+                  "bootstrap_ci": {
+                    "pull_request": 45034273503,
+                    "push": 45034267136,
+                    "conclusion": "success"
+                  },
+                  "artifact": {
+                    "id": 14758893231,
+                    "zip_bytes": 284362,
+                    "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+                    "payload_files": 33,
+                    "source_count": 66,
+                    "changed_sources": 2,
+                    "unchanged_sources": 64,
+                    "place_bytes": 604050,
+                    "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+                    "canonical_rc_source_adopted": false,
+                    "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+                    "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+                  },
+                  "independent_artifact_review": {
+                    "context": "/root (not repair code author)",
+                    "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+                    "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+                    "new_native_runs": 0
+                  },
+                  "hosted_selected_native": {
+                    "spawn": 12,
+                    "equip": 9,
+                    "evolution": 19,
+                    "recovery": 14,
+                    "total": 54,
+                    "failed": 0,
+                    "selector_methods": 16,
+                    "selected_source_compile_count": 66,
+                    "prior_selected_Game_relay": 31,
+                    "prior_selected_Game_bond": 27,
+                    "whole_Game_bootstrap": false,
+                    "live_DataStore_calls": 0
+                  },
+                  "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+                  "PREP_READY": false,
+                  "formal_RC_adopted": false,
+                  "Studio": "NOT_TESTED",
+                  "Android": "NOT_TESTED",
+                  "ART": "ART_NO_GO",
+                  "FUN": "NOT_TESTED"
+                }
+              },
+              {
+                "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                "exact_file_manifest_sha256": "f2a6bcb59dfee8741dbfc7a575831975726e2e50131bda96c6bf88e567232d0a",
+                "evidence": {
+                  "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+                  "pr_comment": 7080885611,
+                  "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                  "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+                  "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+                  "diff_files": 16,
+                  "added": 15,
+                  "modified": 1,
+                  "unchanged_base_files": 905,
+                  "independent_head_review": {
+                    "context": "/root/admission_v2",
+                    "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+                    "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+                    "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+                    "registered_GitHub_APPROVE": false
+                  },
+                  "primary_ci": {
+                    "run": 45034273535,
+                    "job": 137244415461,
+                    "event": "pull_request",
+                    "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                    "conclusion": "success",
+                    "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+                    "candidate_and_checkout_tree_equal": true
+                  },
+                  "bootstrap_ci": {
+                    "pull_request": 45034273503,
+                    "push": 45034267136,
+                    "conclusion": "success"
+                  },
+                  "artifact": {
+                    "id": 14758893231,
+                    "zip_bytes": 284362,
+                    "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+                    "payload_files": 33,
+                    "source_count": 66,
+                    "changed_sources": 2,
+                    "unchanged_sources": 64,
+                    "place_bytes": 604050,
+                    "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+                    "canonical_rc_source_adopted": false,
+                    "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+                    "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+                  },
+                  "independent_artifact_review": {
+                    "context": "/root (not repair code author)",
+                    "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+                    "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+                    "new_native_runs": 0
+                  },
+                  "hosted_selected_native": {
+                    "spawn": 12,
+                    "equip": 9,
+                    "evolution": 19,
+                    "recovery": 14,
+                    "total": 54,
+                    "failed": 0,
+                    "selector_methods": 16,
+                    "selected_source_compile_count": 66,
+                    "prior_selected_Game_relay": 31,
+                    "prior_selected_Game_bond": 27,
+                    "whole_Game_bootstrap": false,
+                    "live_DataStore_calls": 0
+                  },
+                  "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+                  "PREP_READY": false,
+                  "formal_RC_adopted": false,
+                  "Studio": "NOT_TESTED",
+                  "Android": "NOT_TESTED",
+                  "ART": "ART_NO_GO",
+                  "FUN": "NOT_TESTED",
+                  "revision2_usage": "Historical HEAD90a60c only; cannot substitute for not-yet-created diagnostic candidate CI/artifact."
+                },
+                "source_update_plan": {
+                  "old_actual_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                  "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                  "ordered_parents": [
+                    "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                    "eb43702de8db32550d9a3ee78041ad6c104f46c0"
+                  ],
+                  "tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+                  "actual_new_head": null,
+                  "actual_new_CI": null,
+                  "new_head_acceptance": false,
+                  "new_source_lease_required": true
+                },
+                "reason": "Preserve pre-diagnostic public baseline and the original v2 plan. New observed H0 is separately pinned below."
+              }
+            ],
+            "source_update_plan": {
+              "old_actual_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+              "base_rc_sha": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+              "ordered_parents": [
+                "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+                "eb43702de8db32550d9a3ee78041ad6c104f46c0"
+              ],
+              "tree": "d12926271b84a97381aac10e9e2db718d8fbf879",
+              "actual_new_head": null,
+              "actual_new_CI": null,
+              "new_head_acceptance": false,
+              "new_source_lease_required": true
+            },
+            "continuation_history": [
+              {
+                "new_formal_rc_observed": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                "observed_at": "2026-11-22T14:59:45Z",
+                "candidate_base_is_now_stale": true,
+                "official_push_failure": {
+                  "run": 45035384920,
+                  "job": 137247865657,
+                  "observed_at": "2026-11-22T15:00:56Z",
+                  "status": "failure",
+                  "error": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
+                  "artifact_count": 0,
+                  "individual_false_predicate_unknown": true,
+                  "existing_owner_retains_repair_scope": true
+                },
+                "requirements": [
+                  "Resolve current formal UNION22 push failure through its existing owner without accepting retry luck or weakening gate",
+                  "Fresh official RC rebase/review and applicable scope amendment before ACTIVE66 acceptance",
+                  "Genuine GQ8 trigger prerequisite scope or authorized handoff; current 16path grant excludes this workflow",
+                  "Actual same-new-HEAD pull_request GQ8 success/artifact and primary/required checks",
+                  "Separate final RC writer handoff and fresh lease/CAS; no permission inferred from this metadata update"
+                ],
+                "proposed_base_rebind": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+                "reason": "Actual remote candidate remains90a60c until a separate source lease updates it. Planned claim base is eb43702, not evidence of adoption."
+              }
+            ],
+            "rollback_history": [
+              {
+                "selection": "All three flags false and rebuild through the same producer; true inverse OFF66 equals exact official original66 Place. Recovery ON without game fixes is rejected. Recheck new actual HEAD and CI before adoption.",
+                "repository": "Revert only these sixteen paths using exact stored preimages; remove the fifteen new files and inverse only this workflow diff while preserving intervening work.",
+                "before_blobs": {
+                  ".github/workflows/p0d-rc-fastlane.yml": "0be1f732aaa12ae3c7b3d78cb2247a9f6a588862",
+                  "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json": null,
+                  "rc_fastlane/apply_active_runtime_repairs.py": null,
+                  "rc_fastlane/features/active_runtime_repairs/MANIFEST.json": null,
+                  "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch": null,
+                  "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch": null,
+                  "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py": null,
+                  "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau": null,
+                  "rc_fastlane/test_active_runtime_repairs.py": null
+                }
+              }
+            ],
+            "source_update_plan_usage": "Historical original v2 plan retained verbatim; actual diagnostic H0 publication is recorded above. The separate trigger_integration_plan governs only this new amendment.",
+            "trigger_integration_plan": {
+              "status": "GRANTED_SCOPE_ONLY",
+              "U": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+              "H0": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+              "required_ancestry": [
+                "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+                "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd"
+              ],
+              "new_H": null,
+              "source_lease_required": true,
+              "target_path": ".github/workflows/gq8-real63-source-composite.yml",
+              "patterns_each_event": [
+                "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+                "rc_fastlane/apply_active_runtime_repairs.py",
+                "rc_fastlane/features/active_runtime_repairs/**",
+                "rc_fastlane/test_active_runtime_repairs.py",
+                ".github/workflows/p0d-rc-fastlane.yml"
+              ],
+              "events": [
+                "push.paths",
+                "pull_request.paths"
+              ],
+              "added_lines": 10,
+              "removed_lines": 0,
+              "workflow_before": {
+                "bytes": 114479,
+                "sha256": "fabe181dc0f3d8576431e07602a83750b2fa8b8e7a439f44e9883c9efb92ec8f",
+                "git_blob": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+              },
+              "workflow_exact_after": {
+                "bytes": 115003,
+                "sha256": "8cf786a52310841171c84434b902460f0c4fe0b0c9691810b5aa17cffe001bc3",
+                "git_blob": "21b0638b28cb371c18c6d384b590c0fa84daec8b"
+              },
+              "current_H0_16files": [
+                {
+                  "bytes": 208177,
+                  "git_blob_sha1": "0b3a57a129012856c6f60cf1a2aa364a5138f255",
+                  "mode": "0o644",
+                  "path": ".github/workflows/p0d-rc-fastlane.yml",
+                  "sha256": "86dcc718a960f3eca40585bb1367c584e3b65256ed570adbfaa1a02164f12204"
+                },
+                {
+                  "bytes": 501,
+                  "git_blob_sha1": "b05dace1acbb5905a7948440c86ec0987691b2c2",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+                  "sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5"
+                },
+                {
+                  "bytes": 18866,
+                  "git_blob_sha1": "62dcc273ab25d3260f928aad7020ce9d04098cf5",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/apply_active_runtime_repairs.py",
+                  "sha256": "ae9d0a4b2f0dd4dfae7f0143bbac74d9aa1628812fec7424584712890d2e52c9"
+                },
+                {
+                  "bytes": 10308,
+                  "git_blob_sha1": "009692574d9da3d9c62b0546380578505381b88c",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/MANIFEST.json",
+                  "sha256": "9584b9fddf3a0ec13f918f356d0380eeed61084ab90ad811f77c19a21b787e9f"
+                },
+                {
+                  "bytes": 4277,
+                  "git_blob_sha1": "dfa19b467aa74d68226e83a6df281309c6761170",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch",
+                  "sha256": "e36e185a0ebdf275ac84e9f5a08b2a5976720ec383eb37611e7b9202883b7f88"
+                },
+                {
+                  "bytes": 582,
+                  "git_blob_sha1": "56b5c9586b19e029709a2333d2626439b4668546",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch",
+                  "sha256": "5e7031cfe654b6b8dad278a07c50932167199ea3def1581319b43ef5f428dcfa"
+                },
+                {
+                  "bytes": 3100,
+                  "git_blob_sha1": "c1523347d41f6813827ac93d18f86cdc84b7a935",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch",
+                  "sha256": "57cff3b26b630b98cba83979ea4d4344c7f59b1dcd27fa4f4140907d63e7b41c"
+                },
+                {
+                  "bytes": 7546,
+                  "git_blob_sha1": "453b59be27c1edfc7a98e7431f6596bf6983eddb",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau",
+                  "sha256": "f51c0312fef7e0de75f5c6b1fc6417ede135eacd8d4551c31a31fba9109b2efa"
+                },
+                {
+                  "bytes": 8802,
+                  "git_blob_sha1": "ea2dc8515e1573a96951407fffa6ca218fe81043",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau",
+                  "sha256": "1c7bb9c202bbc320cb2d15d2917a9c14e081e05bd2f5f8a51b92226893e13fd6"
+                },
+                {
+                  "bytes": 7697,
+                  "git_blob_sha1": "6f4991fc493620be9af8993971f34ec5f69ef463",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau",
+                  "sha256": "7e86123f2de8346699fb805cad97b0a23b4e6d1617609d7857d25a88a228a232"
+                },
+                {
+                  "bytes": 18459,
+                  "git_blob_sha1": "640b84ae52b7b490e570be0e0a57d8f6bf9a949e",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json",
+                  "sha256": "9e8cdcd5ac9b956e31ac8e1586dd5a549f646c8f49802b16f46ed27c865ed4ce"
+                },
+                {
+                  "bytes": 7037,
+                  "git_blob_sha1": "1095ae833181db298a8a505e9cdb70c02467e449",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau",
+                  "sha256": "f4564db216e1ad362742c63803608269adaa2e052eb7d825be551692c482fef0"
+                },
+                {
+                  "bytes": 7620,
+                  "git_blob_sha1": "5df826639ed4e8f785467ad728c37cf90551e007",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
+                  "sha256": "3ad57c48be309a8f752e1f6c7310c0c0368887a35c82fb90a22f3ac5f274fa3c"
+                },
+                {
+                  "bytes": 30868,
+                  "git_blob_sha1": "173348f9cf39261d775cb84ad3475e13f949cc11",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
+                  "sha256": "a23eba180f670e785b097874b93abdda4fec7e6f321d1e304d7a0d0e8b6bc175"
+                },
+                {
+                  "bytes": 7066,
+                  "git_blob_sha1": "aeedc6ddf7bb83da8f5848c0069a7c7cfa1593ab",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
+                  "sha256": "489cff1b20f313fdbeae674f6e526b82497ec650272444b5dff6e31b86a31d70"
+                },
+                {
+                  "bytes": 27661,
+                  "git_blob_sha1": "f56fd4a3f1c72e42f2acdd188c450245c8b603f3",
+                  "mode": "0o644",
+                  "path": "rc_fastlane/test_active_runtime_repairs.py",
+                  "sha256": "c97600d990a2130b63edfe96fee45a99b4264340159f4e47c730f2fef1e0b7bf"
+                }
+              ],
+              "reference_patch": {
+                "bytes": 1096,
+                "sha256": "840c2c51ac66bb03eb50cb8702a2739d025f17970942b9d048fa8d6e472ac02b",
+                "git_blob": "83e09cd4c8683fc4f65a87f81cde025c165acd57"
+              },
+              "source_runtime_delta_added_by_amendment": 0,
+              "grant_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7081987012",
+              "grant_registry_commit": "24e1a2d6fba3202152134ea4be995e64f1509b54",
+              "grant_registry_commit_resolution": "First immutable V3 grant 24e1a2d6fba3202152134ea4be995e64f1509b54 and actual #218 comment 7081987012 independently read back; this sequential write only binds these two realized references."
+            },
+            "scope17_review": {
+              "proposal_manifest": {
+                "bytes": 1681,
+                "sha256": "8af06f651c166540ea719c119759d6e7948e0201d7fcf3c563a95ca954afde75"
+              },
+              "independent_design_review": {
+                "bytes": 6268,
+                "sha256": "3e9c383cd5e8a3b57feed1323e1c766e63b4bef39b260ad713fd0b94ad7454dc",
+                "reviewer": "/root/intake_300"
+              },
+              "old_draft_v1_to_v2_not_issued": true,
+              "actual_v2_to_v3_proposal_review": {
+                "reviewer": "/root/intake_300",
+                "bytes": 5552,
+                "sha256": "464162711e83dc95fa07539ec415210b3090f39c8cb696d57b40aec9be930c16",
+                "decision": "PASS_CONCRETE_SCOPE_ONLY",
+                "mechanical_checks": 46
+              },
+              "official_closure_review": {
+                "bytes": 5293,
+                "sha256": "cf8ce3ef2e055cc459f05e72e49fa99d005f766e933f60d87e590d39cdb3836b"
+              }
+            },
+            "amended_at": "2026-11-22T16:15:19Z",
+            "scope17_issuer": {
+              "issuer": "kk051780",
+              "issuer_user_id": 233213370,
+              "role": "OWNER_DELEGATED_COORDINATOR",
+              "operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+              "actual_lease_epoch": 602,
+              "actual_lease_commit": "267ece606949f0431e331ba9c4bb3a178338d8d7",
+              "grant_status": "GRANTED_SCOPE_ONLY",
+              "amended_at": "2026-11-22T16:15:19Z"
+            },
+            "scope_review_usage": "Historical diagnostic-only v2 source review retained verbatim; scope17_review records the current limited trigger-scope review."
+          }
         }
       ],
       "candidate_history": [
@@ -3371,7 +4486,7 @@
           "sha256": "cf8ce3ef2e055cc459f05e72e49fa99d005f766e933f60d87e590d39cdb3836b"
         }
       },
-      "amended_at": "2026-11-22T16:15:19Z",
+      "amended_at": "2026-11-22T22:52:57Z",
       "scope17_issuer": {
         "issuer": "kk051780",
         "issuer_user_id": 233213370,
@@ -3382,7 +4497,107 @@
         "grant_status": "GRANTED_SCOPE_ONLY",
         "amended_at": "2026-11-22T16:15:19Z"
       },
-      "scope_review_usage": "Historical diagnostic-only v2 source review retained verbatim; scope17_review records the current limited trigger-scope review."
+      "scope_review_usage": "Historical diagnostic-only v2 source review retained verbatim; scope17_review records the current limited trigger-scope review.",
+      "temporary_input_transport_handoff": {
+        "handoff_id": "P0D-GQ8-INPUT-RETENTION-TEMPORARY-2PATH-HANDOFF-20261123",
+        "status": "GRANTED_TEMPORARY_SOURCE_SCOPE_NOT_RC_ADOPTION",
+        "prepared_at": "2026-11-22T22:41:14.422939+00:00",
+        "reason": "Actual PR1019 GQ8 run45075843804 failed at immutable original artifact transport; existing PR1020 owns actual recovered input work.",
+        "coordination_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "maintenance_pr": 1020,
+        "maintenance_owner": "CODEX_ROOT_0A2BA23F0733",
+        "maintenance_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+        "maintenance_original_source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+        "scope_review": {
+          "context": "/root/rules_audit",
+          "path": "EXISTING_0A2_MAINTENANCE_RECHECK.md",
+          "sha256": "688e5a733b3ed98f5257eefe8a2b90b091f06e24e58286f6cdd524e9046c795e",
+          "decision": "B_EXISTING_MAINTENANCE_RECOMMENDED_NOT_ACTUAL_GRANT"
+        },
+        "metadata_lease": {
+          "branch": "twf-repair-coordinator",
+          "epoch": 621,
+          "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+          "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+          "work_branch": "coord/p0d-work-claims",
+          "expires_at": "2026-11-22T23:21:52+00:00"
+        },
+        "actual_grant_commit": null,
+        "actual_grant_comment": null,
+        "source_lease_required": true,
+        "rc_write_authorized": false,
+        "concrete_two_path_patch_review_required_before_grant": true,
+        "expires_or_returns": "Return by explicit coordinated metadata after maintenance integration or abandonment. Expiry never grants another writer.",
+        "return_conditions": [
+          "Maintenance must become non-BUSY and relinquish current path/resource authority in the same atomic return amendment.",
+          "Return test path to the HUD claim, preserving PR1019/H2e7 history and binding its next actual source to the newly accepted RC.",
+          "Return shared workflow/resource to the ACTIVE66 continuation with the new exact preimage and proof that the original ten trigger lines apply exactly.",
+          "Preserve original ACTIVE66 sixteen source files, H0, branch/PR1016, original54 Native assertions and all V3 history.",
+          "Never call the original ten trigger lines adopted by this loader-only maintenance.",
+          "Preserve all newer unrelated claim rows, aliases, history and source/RC changes.",
+          "The maintenance test starts at H713/U39295B. On HUD return retain its exact inverse-contract migration and explicitly rebase H2e7 six added tests and 140-to-142 correction, plus the reviewed +544/layout follow-up; never overwrite maintenance test with the old HUD image."
+        ],
+        "original_owner": "CODEX_ROOT_D4D718B4F637",
+        "original_candidate_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+        "direction": "OUT",
+        "loaned_paths": [
+          ".github/workflows/gq8-real63-source-composite.yml"
+        ],
+        "loaned_resources": [
+          "REAL69_CANONICAL_SOURCE_WORKFLOW"
+        ],
+        "preserved_original_scope_version": 3,
+        "original_trigger_integration_plan_sha256": "d1ad660f218ce4921ee62947037b286ed3b079aaede832477e407bf090851b0e",
+        "remaining_sixteen_source_paths": [
+          ".github/workflows/p0d-rc-fastlane.yml",
+          "rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json",
+          "rc_fastlane/apply_active_runtime_repairs.py",
+          "rc_fastlane/features/active_runtime_repairs/MANIFEST.json",
+          "rc_fastlane/features/active_runtime_repairs/equip_failure_recovery.patch",
+          "rc_fastlane/features/active_runtime_repairs/evolution_retry.patch",
+          "rc_fastlane/features/active_runtime_repairs/game_lifecycle.patch",
+          "rc_fastlane/features/active_runtime_repairs/regression/equip.cases.luau",
+          "rc_fastlane/features/active_runtime_repairs/regression/equip.template.luau",
+          "rc_fastlane/features/active_runtime_repairs/regression/evolution.cases.luau",
+          "rc_fastlane/features/active_runtime_repairs/regression/fixtures.lock.json",
+          "rc_fastlane/features/active_runtime_repairs/regression/recovery.cases.luau",
+          "rc_fastlane/features/active_runtime_repairs/regression/recovery.fixture.luau",
+          "rc_fastlane/features/active_runtime_repairs/regression/run_selected.py",
+          "rc_fastlane/features/active_runtime_repairs/regression/spawn.template.luau",
+          "rc_fastlane/test_active_runtime_repairs.py"
+        ],
+        "source_acceptance_suspended_until_shared_workflow_return": true,
+        "issued_at": "2026-11-22T22:52:57Z",
+        "concrete_scope_review": {
+          "context": "/root/rules_audit",
+          "decision": "PASS_CONCRETE_THREE_ROW_SCOPE_AND_R2_WIRING_ONLY",
+          "three_row_pre_review_sha256": "4e7a99785ede4c95edc82b4443ce1210e55bda94445311c15ac4c5ed11585540",
+          "R2_wiring_review_sha256": "d84bb0dc2892c64f81c3e411828d3fcd6787ef96ff50d4ea39d652d58bf57969",
+          "R2_proposal_sha256": "e81bf78e8218ab9ddb4b68b2a0822b63d310abb637e30eb8c5b8f5baf146cae3",
+          "R2_patch_sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+          "C9_previous_wiring_status": "WITHDRAWN_HISTORICAL_NOT_GRANTED",
+          "new_source_HEAD_approval": false,
+          "PREP_READY": false,
+          "RC_adoption": false
+        },
+        "concrete_patch_review_completed": true,
+        "actual_grant_commit_resolution": "The enclosing immutable authorized registry commit is the actual grant. A commit cannot encode its own future hash; the external #218 grant record binds the realized commit.",
+        "actual_grant_comment_resolution": "The external #218 grant record is created after this single atomic registry write and quotes its realized immutable commit.",
+        "additional_coordination_evidence": [
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086991850",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086916935",
+          "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086916455"
+        ],
+        "ACTIVE66_successor_owner_changed": false
+      },
+      "amendment_issuer": {
+        "login": "kk051780",
+        "user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "operation_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "context": "CODEX_ROOT_79005A1F03B2",
+        "authority": "Existing owner delegation, current execution policy v1.2/#1011, #810 and #218 V1.5; actual authenticated connected account and admin permission rechecked."
+      }
     },
     {
       "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
@@ -3404,7 +4619,6 @@
         "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
         "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
-        "tests/test_gq470_union22_real69_20261122.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py"
       ],
@@ -3424,8 +4638,8 @@
       ],
       "independent_reviewer_context": "/root/rules_audit",
       "independent_review_status": "ACTUAL_SOURCE_HEAD_REVIEW_IN_PROGRESS_HOSTED_GQ8_NOT_PASSED",
-      "scope": "Preserve the existing canonical UNION22 producer and all original changes, 69 source routes/classes, changed22/unchanged47 membership, 17/48 checks, protected metadata and true prior-BR rollback. Add exactly the independently reviewed +559-byte mounted-HUD visibility hunk to the existing HUD forward list and its inverse, with final HUD 24779/3bf0d958... -> 25338/d794669e...; final RC-relative source delta one of 69 only. Update the six listed existing producer/profile/verifier/test/native-lock/runner files to maintain strict pins, truthful follow-up authorship/claim provenance and current-RC partial inverse. Existing Native server28 bodies, both actual suites, cases and fixtures remain byte-exact. Do not edit the shared GQ8 workflow or any ACTIVE66-owned path/resource. No portrait/min55/Builder/Compass feature adoption in this scope.",
-      "grant_scope_version": 1,
+      "scope": "Temporary revision: retain five producer/profile/verifier/Native paths and all four resources, but loan the existing UNION22 prefix-test path only to input-retention PR1020. Original six-path +559 scope, actual H2e7 and all reviews/failures remain history; full six-path new source/admission is suspended until the test path is explicitly returned and the +544/layout-gate revision receives its own scope. No new HUD source semantics are granted here.",
+      "grant_scope_version": 2,
       "generated_source_scope": [
         {
           "resource": "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
@@ -3534,6 +4748,254 @@
         "PREP_READY": false,
         "metadata_operation_id": "dbb863c0-f6bc-40fb-85a6-3f3ccbe941c1",
         "metadata_lease_epoch": 606
+      },
+      "temporary_input_transport_handoff": {
+        "handoff_id": "P0D-GQ8-INPUT-RETENTION-TEMPORARY-2PATH-HANDOFF-20261123",
+        "status": "GRANTED_TEMPORARY_SOURCE_SCOPE_NOT_RC_ADOPTION",
+        "prepared_at": "2026-11-22T22:41:14.422939+00:00",
+        "reason": "Actual PR1019 GQ8 run45075843804 failed at immutable original artifact transport; existing PR1020 owns actual recovered input work.",
+        "coordination_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "maintenance_pr": 1020,
+        "maintenance_owner": "CODEX_ROOT_0A2BA23F0733",
+        "maintenance_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+        "maintenance_original_source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+        "scope_review": {
+          "context": "/root/rules_audit",
+          "path": "EXISTING_0A2_MAINTENANCE_RECHECK.md",
+          "sha256": "688e5a733b3ed98f5257eefe8a2b90b091f06e24e58286f6cdd524e9046c795e",
+          "decision": "B_EXISTING_MAINTENANCE_RECOMMENDED_NOT_ACTUAL_GRANT"
+        },
+        "metadata_lease": {
+          "branch": "twf-repair-coordinator",
+          "epoch": 621,
+          "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+          "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+          "work_branch": "coord/p0d-work-claims",
+          "expires_at": "2026-11-22T23:21:52+00:00"
+        },
+        "actual_grant_commit": null,
+        "actual_grant_comment": null,
+        "source_lease_required": true,
+        "rc_write_authorized": false,
+        "concrete_two_path_patch_review_required_before_grant": true,
+        "expires_or_returns": "Return by explicit coordinated metadata after maintenance integration or abandonment. Expiry never grants another writer.",
+        "return_conditions": [
+          "Maintenance must become non-BUSY and relinquish current path/resource authority in the same atomic return amendment.",
+          "Return test path to the HUD claim, preserving PR1019/H2e7 history and binding its next actual source to the newly accepted RC.",
+          "Return shared workflow/resource to the ACTIVE66 continuation with the new exact preimage and proof that the original ten trigger lines apply exactly.",
+          "Preserve original ACTIVE66 sixteen source files, H0, branch/PR1016, original54 Native assertions and all V3 history.",
+          "Never call the original ten trigger lines adopted by this loader-only maintenance.",
+          "Preserve all newer unrelated claim rows, aliases, history and source/RC changes.",
+          "The maintenance test starts at H713/U39295B. On HUD return retain its exact inverse-contract migration and explicitly rebase H2e7 six added tests and 140-to-142 correction, plus the reviewed +544/layout follow-up; never overwrite maintenance test with the old HUD image."
+        ],
+        "original_owner": "CODEX_ROOT_79005A1F03B2",
+        "original_candidate_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+        "direction": "OUT",
+        "loaned_paths": [
+          "tests/test_gq470_union22_real69_20261122.py"
+        ],
+        "loaned_resources": [],
+        "owner_consent_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086916455",
+        "preserved_original_scope_version": 1,
+        "full_six_path_source_and_admission_suspended": true,
+        "issued_at": "2026-11-22T22:52:57Z",
+        "concrete_scope_review": {
+          "context": "/root/rules_audit",
+          "decision": "PASS_CONCRETE_THREE_ROW_SCOPE_AND_R2_WIRING_ONLY",
+          "three_row_pre_review_sha256": "4e7a99785ede4c95edc82b4443ce1210e55bda94445311c15ac4c5ed11585540",
+          "R2_wiring_review_sha256": "d84bb0dc2892c64f81c3e411828d3fcd6787ef96ff50d4ea39d652d58bf57969",
+          "R2_proposal_sha256": "e81bf78e8218ab9ddb4b68b2a0822b63d310abb637e30eb8c5b8f5baf146cae3",
+          "R2_patch_sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+          "C9_previous_wiring_status": "WITHDRAWN_HISTORICAL_NOT_GRANTED",
+          "new_source_HEAD_approval": false,
+          "PREP_READY": false,
+          "RC_adoption": false
+        },
+        "concrete_patch_review_completed": true,
+        "actual_grant_commit_resolution": "The enclosing immutable authorized registry commit is the actual grant. A commit cannot encode its own future hash; the external #218 grant record binds the realized commit.",
+        "actual_grant_comment_resolution": "The external #218 grant record is created after this single atomic registry write and quotes its realized immutable commit.",
+        "additional_coordination_evidence": [
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086991850",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086916935",
+          "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086916455"
+        ],
+        "ACTIVE66_successor_owner_changed": false
+      },
+      "scope_history": [
+        {
+          "version": 1,
+          "preserved_at": "2026-11-22T22:52:57Z",
+          "preservation": "Exact pre-handoff row retained; only explicit temporary current authority changes below.",
+          "complete_previous_row": {
+            "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+            "state": "SOURCE_WIP",
+            "owner": "CODEX_ROOT_79005A1F03B2",
+            "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
+            "sub_scope": "MOUNTED_REALM_CONTEXT_EXISTING_HUD_ONE_HUNK",
+            "canonical_parent": 828,
+            "parent_issue": 828,
+            "integration_issue": 220,
+            "request_comment": 7085857481,
+            "resources": [
+              "HUD_INTEL_RUNTIME",
+              "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+              "REAL69_UNION22_FINAL_RECEIPT",
+              "REAL69_NATIVE_FULL28_PROFILE"
+            ],
+            "target_paths": [
+              "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+              "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+              "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+              "tests/test_gq470_union22_real69_20261122.py",
+              "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+              "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py"
+            ],
+            "prep_branch": "fix/gq828-mounted-hud-20261123-79005a1f",
+            "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "pr": 1019,
+            "allowed_new_prs": 1,
+            "candidate_pr_status": "DRAFT_PR_CREATED_CI_BLOCKED_AT_UNCHANGED_UPSTREAM_ARTIFACT_DOWNLOAD",
+            "role": "A_PREP",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "8cdaa024-2ab6-41c4-96eb-da550037b008",
+            "author_contexts": [
+              "/root (CODEX_ROOT_79005A1F03B2): reviewed HUD patch and accountable parent",
+              "/root/candidate_audit: sole implementer of the six producer/lock/verifier/test files under the parent's separately acquired source lease"
+            ],
+            "independent_reviewer_context": "/root/rules_audit",
+            "independent_review_status": "ACTUAL_SOURCE_HEAD_REVIEW_IN_PROGRESS_HOSTED_GQ8_NOT_PASSED",
+            "scope": "Preserve the existing canonical UNION22 producer and all original changes, 69 source routes/classes, changed22/unchanged47 membership, 17/48 checks, protected metadata and true prior-BR rollback. Add exactly the independently reviewed +559-byte mounted-HUD visibility hunk to the existing HUD forward list and its inverse, with final HUD 24779/3bf0d958... -> 25338/d794669e...; final RC-relative source delta one of 69 only. Update the six listed existing producer/profile/verifier/test/native-lock/runner files to maintain strict pins, truthful follow-up authorship/claim provenance and current-RC partial inverse. Existing Native server28 bodies, both actual suites, cases and fixtures remain byte-exact. Do not edit the shared GQ8 workflow or any ACTIVE66-owned path/resource. No portrait/min55/Builder/Compass feature adoption in this scope.",
+            "grant_scope_version": 1,
+            "generated_source_scope": [
+              {
+                "resource": "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+                "path": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+                "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+                "class": "LocalScript",
+                "before": {
+                  "bytes": 24779,
+                  "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+                },
+                "after": {
+                  "bytes": 25338,
+                  "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+                }
+              }
+            ],
+            "original_hud_pr": 829,
+            "prior_canonical_union_pr": 1018,
+            "other_existing_candidates_preserved": [
+              947,
+              775,
+              1014,
+              1016,
+              1017
+            ],
+            "on_place": {
+              "bytes": 828673,
+              "sha256": "c2b480c22137877973d77cff21c858a16d99bd01cb65903477802e654d78bb89"
+            },
+            "hud_only_off_place": {
+              "bytes": 828114,
+              "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+            },
+            "rollback": "Keep the complete original UNION22 OFF-to-prior-BR rollback unchanged. Additionally reverse only the new HUD hunk to current RC HUD 3bf0d958... and exact 828114B Place. Repository rollback must inverse only the six-path follow-up delta while preserving any intervening work; never reset whole RC.",
+            "preserved": [
+              "Other five claim rows, aliases and history",
+              "Existing UNION22 source fixes, original author provenance and rollback",
+              "Current RC phase/BR HUD guards and all other 68 complete bodies",
+              "Native28 original bodies, two suites, cases, fixtures and assertion predicates",
+              "All workflows, ACTIVE66 and other owners' branches/source scopes",
+              "Actual authentication, fixed-HEAD independent review, CI and separate RC writer"
+            ],
+            "authority_evidence": [
+              "Actual connected GitHub profile kk051780 / user233213370 and repository admin/push permission observed in this parent session.",
+              "Existing owner delegation and current AGENTS/execution policy v1.2/#1011 authorize ordinary engineering coordination while preserving actual scopes, independent review and exclusive writers.",
+              "Original expired CONTROLLER602 was administratively fenced under standing delegation in immutable3a8a6eb8290b70ee02209b7e84fd2f4ff9f288e2; this row requires a separate actual metadata lease and is not granted by that revocation."
+            ],
+            "forbidden_changes": [
+              "New game/producer/FEATURE authority or duplicate candidate",
+              "Any common workflow, ACTIVE66, Dojo or Score source/claim changes",
+              "Any change to native original acceptance predicates or server28 bodies",
+              "Claim that prior union reuse authored the new HUD hunk",
+              "Self-approval, main promotion, Roblox publication, spend, schedule or incident-hold changes"
+            ],
+            "PREP_READY": false,
+            "rc_write_authorized_by_this_claim": false,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "no_main_or_publish": true,
+            "no_review_waiver": true,
+            "studio": "NOT_TESTED",
+            "android": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "fun": "NOT_TESTED",
+            "profile_hunk_encoding": {
+              "prior_hud_forward_hunks": 1,
+              "next_hud_forward_hunks": 4,
+              "prior_total_forward_hunks": 168,
+              "next_total_forward_hunks": 171,
+              "note": "The one reviewed unified HUD diff is represented by three additional exact no-context profile hunks; preserve the original phase hunk payload and coordinates."
+            },
+            "issued_at": "2026-11-22T21:51:42Z",
+            "expires_at": "2026-11-23T03:51:42.000Z",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 604,
+              "claim_commit": "ba5255c8157378f70bf922214a52d410ee156d64",
+              "work_branch": "coord/p0d-work-claims",
+              "owner_id": "8cdaa024-2ab6-41c4-96eb-da550037b008",
+              "expires_at": "2026-11-22T22:21:31+00:00"
+            },
+            "scope_review": {
+              "context": "/root/rules_audit",
+              "decision": "SCOPE_REVIEW_PASS_FOR_EXACT_SIX_PATH_PROPOSAL",
+              "review_sha256": "edadcd1a9f1883aa1d9c88ae870ec37e4d41945465e31a9c6028715ddb37c33e",
+              "receipt_sha256": "19da17c574135472662ec8677262c8a7859282fc8193960b362c155e9c8ed3db",
+              "template_sha256": "8ff9e572c115a3afdf1c63aac2a4bf1dc3e7a95ffef7890e7b652bac6a929403",
+              "actual_candidate_head_review_completed": false
+            },
+            "source_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+            "source_tree": "81dbb70cea1b8d7571f933c20a283a9f43a6b476",
+            "created_pr_count": 1,
+            "last_source_submission": {
+              "observed_at": "2026-11-22T22:11:03Z",
+              "pr": 1019,
+              "source_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+              "base_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+              "source_lease_epoch": 605,
+              "source_lease_release_commit": "4d6db4e3275c57414facc6e12950ac1fbc3c6d1b",
+              "local_freeze_sha256": "8396229881fe6af8abb0a5ee2ee33d42f311b5b87197013729f0489e47923bbe",
+              "local_implementation_receipt_sha256": "b59d50e04b0a144e625df63618e6d2337a853857824dad5a53db93be8be61cca",
+              "local_output_audit_sha256": "0d0f34a6b0da4d71f8f62f9158ea6671677932c36c188ab26dcd2f0c15cc1810",
+              "gq8_run": 45075843804,
+              "gq8_status": "FAILURE_UPSTREAM_DOWNLOAD_NO_UNION22_EXECUTION",
+              "bootstrap_run": 45075843791,
+              "bootstrap_status": "SUCCESS",
+              "PREP_READY": false,
+              "metadata_operation_id": "dbb863c0-f6bc-40fb-85a6-3f3ccbe941c1",
+              "metadata_lease_epoch": 606
+            }
+          }
+        }
+      ],
+      "amended_at": "2026-11-22T22:52:57Z",
+      "metadata_update_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 621,
+        "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+        "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T23:21:52+00:00"
+      },
+      "amendment_issuer": {
+        "login": "kk051780",
+        "user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "operation_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "context": "CODEX_ROOT_79005A1F03B2",
+        "authority": "Existing owner delegation, current execution policy v1.2/#1011, #810 and #218 V1.5; actual authenticated connected account and admin permission rechecked."
       }
     },
     {
@@ -4007,12 +5469,13 @@
     },
     {
       "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "owner": "CODEX_ROOT_0A2BA23F0733",
       "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
       "resources": [
         "REAL69_ORIGINAL_ARTIFACT_SNAPSHOTS",
-        "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER"
+        "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER",
+        "REAL69_CANONICAL_SOURCE_WORKFLOW"
       ],
       "target_paths": [
         "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
@@ -4024,7 +5487,9 @@
         "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip",
         "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip",
         "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip",
-        "tests/test_gq8_original_inputs_20261123.py"
+        "tests/test_gq8_original_inputs_20261123.py",
+        ".github/workflows/gq8-real63-source-composite.yml",
+        "tests/test_gq470_union22_real69_20261122.py"
       ],
       "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
       "prep_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
@@ -4033,9 +5498,9 @@
       "related_pr": 1019,
       "request_comment": 7086679192,
       "role": "A_PREP",
-      "pr": null,
+      "pr": 1020,
       "allowed_new_prs": 1,
-      "scope": "Only ten new passive archive/lock/restore-adapter/test paths. Preserve five original artifact ZIP bytes; reconstruct two missing packets with unmodified immutable recipes and historical successful-job Place proof. No game source, existing producer, shared workflow or mounted-HUD test edits. The adapter is offline transport only and must never admit a stale/head-mismatched build or substitute a latest arbitrary artifact.",
+      "scope": "Continue the exact existing ten-path input-retention work on the same PR1020 and branch. Add only the borrowed common GQ8 workflow and existing UNION22 prefix-test paths to connect the pinned offline restore adapter in place of the old transport block, including its old mkdir. Migrate the old39-step byte contract by exact inverse substitution of this one block; preserve the other38 steps, eight original run/head/success checks, all downstream source/profile/Native/rollback gates and sole upload. Runtime delta is zero of69. Five original ZIP bytes and two truthfully classified reconstructed packets remain distinct. No new runtime, producer, profile, Native cases or ACTIVE66 ten-trigger adoption is permitted.",
       "author_contexts": [
         "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
         "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
@@ -4047,15 +5512,27 @@
         "No claim that unknown historical receipt raw bytes were observed; historic pass is separate from current run",
         "Fail closed on payload/lock/member drift, missing/extra/duplicate paths, links/traversal and preexisting output",
         "Independent actual candidate HEAD review; helper-unit success alone never canonical CI/adoption",
-        "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained"
+        "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained",
+        "Independent fixed exact two-path patch review and before/after pins, separate from ten-path/helper source review.",
+        "New loader block inverted to the original block must recover original39-step prefix exactly: 106837B SHA256 0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039.",
+        "Negative checks reject drift in the new loader, old restored prefix, other38 payloads/order, old8 run/head checks, unsafe/duplicate/extra archive members and input identity.",
+        "Preserve set -euo pipefail and all fourteen old nonempty file checks in the modified step; preserve pre-step liveRC and PR-base fences.",
+        "Fresh same-new-HEAD hosted GQ8/Bootstrap/intake checks, actual candidate artifact,69 source/class/routes/pins,17/48 gate, original Native28 and all rollbacks.",
+        "Independent actual source and same-run artifact review by the existing registered /root/admission_review; no borrowed review identity.",
+        "Before return, demonstrate unchanged ACTIVE66 original ten trigger-line payload applies exactly on the new workflow preimage without any loader/downstream changes.",
+        "Separate RC writer/CAS and same-new-R official push artifact required; helper unit or historical successful job is not formal acceptance.",
+        "R2 only: read workflow bytes then strict UTF-8 decode before original-prefix validation. A physical CRLF mutation must fail alongside historical-head, loader-output and duplicate-loader negatives."
       ],
-      "rollback": "Remove only these ten added paths using recorded null preimages; preserve all preexisting files and intervening commits.",
+      "rollback": "Inverse only the maintenance twelve-path delta against its exact accepted base: remove the original ten additions and inverse only the new transport block/prefix-test migration using recorded preimages, preserving intervening work. Return borrowed path/resource authority in a coordinated metadata transaction; never reset RC or another branch.",
       "forbidden_changes": [
-        ".github/workflows/gq8-real63-source-composite.yml",
-        "tests/test_gq470_union22_real69_20261122.py",
         "quality_gameplay/gq470_union22_real69_20261122/**",
         "Any generated gameplay source or original source producer",
-        "Any other claim row or schedule/incident-hold/security setting"
+        "Any other claim row or schedule/incident-hold/security setting",
+        "Any edit outside the original ten paths plus the two explicitly borrowed paths",
+        "Changes to workflow outside the one immutable transport block, including branch/path filters, permissions, original run checks or downstream steps",
+        "Replacing the old39-step byte-prefix pin with a new expected hash without proving exact old-prefix recovery",
+        "Changing original consumer identities, generated gameplay source, Native cases/fixtures, source/profile locks, rollback expectations or sole artifact upload",
+        "Adopting or deleting ACTIVE66 original ten-trigger payload; it is preserved for later exact application"
       ],
       "before_blobs": {
         "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py": null,
@@ -4104,8 +5581,329 @@
         "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
         "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
       ],
-      "grant_scope_version": 1,
-      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
+      "grant_scope_version": 2,
+      "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED",
+      "temporary_input_transport_handoff": {
+        "handoff_id": "P0D-GQ8-INPUT-RETENTION-TEMPORARY-2PATH-HANDOFF-20261123",
+        "status": "GRANTED_TEMPORARY_SOURCE_SCOPE_NOT_RC_ADOPTION",
+        "prepared_at": "2026-11-22T22:41:14.422939+00:00",
+        "reason": "Actual PR1019 GQ8 run45075843804 failed at immutable original artifact transport; existing PR1020 owns actual recovered input work.",
+        "coordination_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "maintenance_pr": 1020,
+        "maintenance_owner": "CODEX_ROOT_0A2BA23F0733",
+        "maintenance_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+        "maintenance_original_source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+        "scope_review": {
+          "context": "/root/rules_audit",
+          "path": "EXISTING_0A2_MAINTENANCE_RECHECK.md",
+          "sha256": "688e5a733b3ed98f5257eefe8a2b90b091f06e24e58286f6cdd524e9046c795e",
+          "decision": "B_EXISTING_MAINTENANCE_RECOMMENDED_NOT_ACTUAL_GRANT"
+        },
+        "metadata_lease": {
+          "branch": "twf-repair-coordinator",
+          "epoch": 621,
+          "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+          "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+          "work_branch": "coord/p0d-work-claims",
+          "expires_at": "2026-11-22T23:21:52+00:00"
+        },
+        "actual_grant_commit": null,
+        "actual_grant_comment": null,
+        "source_lease_required": true,
+        "rc_write_authorized": false,
+        "concrete_two_path_patch_review_required_before_grant": true,
+        "expires_or_returns": "Return by explicit coordinated metadata after maintenance integration or abandonment. Expiry never grants another writer.",
+        "return_conditions": [
+          "Maintenance must become non-BUSY and relinquish current path/resource authority in the same atomic return amendment.",
+          "Return test path to the HUD claim, preserving PR1019/H2e7 history and binding its next actual source to the newly accepted RC.",
+          "Return shared workflow/resource to the ACTIVE66 continuation with the new exact preimage and proof that the original ten trigger lines apply exactly.",
+          "Preserve original ACTIVE66 sixteen source files, H0, branch/PR1016, original54 Native assertions and all V3 history.",
+          "Never call the original ten trigger lines adopted by this loader-only maintenance.",
+          "Preserve all newer unrelated claim rows, aliases, history and source/RC changes.",
+          "The maintenance test starts at H713/U39295B. On HUD return retain its exact inverse-contract migration and explicitly rebase H2e7 six added tests and 140-to-142 correction, plus the reviewed +544/layout follow-up; never overwrite maintenance test with the old HUD image."
+        ],
+        "original_owner": "CODEX_ROOT_0A2BA23F0733",
+        "original_candidate_head": null,
+        "direction": "IN",
+        "borrowed_paths": [
+          ".github/workflows/gq8-real63-source-composite.yml",
+          "tests/test_gq470_union22_real69_20261122.py"
+        ],
+        "borrowed_resources": [
+          "REAL69_CANONICAL_SOURCE_WORKFLOW"
+        ],
+        "from_claims": [
+          {
+            "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
+            "owner": "CODEX_ROOT_D4D718B4F637",
+            "pinned_head": "9669734a6c8e9c66334e49a6cc7ad3034084c7b0",
+            "paths": [
+              ".github/workflows/gq8-real63-source-composite.yml"
+            ],
+            "resources": [
+              "REAL69_CANONICAL_SOURCE_WORKFLOW"
+            ]
+          },
+          {
+            "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+            "owner": "CODEX_ROOT_79005A1F03B2",
+            "pinned_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+            "paths": [
+              "tests/test_gq470_union22_real69_20261122.py"
+            ],
+            "resources": []
+          }
+        ],
+        "workflow_before": {
+          "bytes": 114479,
+          "sha256": "fabe181dc0f3d8576431e07602a83750b2fa8b8e7a439f44e9883c9efb92ec8f",
+          "git_blob": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+        },
+        "prefix_original_bytes": 106837,
+        "prefix_original_sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039",
+        "fixed_two_path_patch": {
+          "schema": "GQ8_WIRING_TWO_PATH_PROPOSAL_V1",
+          "status": "ISOLATED_REVIEW_PROPOSAL_NOT_GRANTED_NOT_PRODUCTION_EDIT",
+          "created_at": "2026-11-22T22:47:05.711732+00:00",
+          "base_candidate_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+          "files": {
+            ".github/workflows/gq8-real63-source-composite.yml": {
+              "before": {
+                "bytes": 114479,
+                "sha256": "fabe181dc0f3d8576431e07602a83750b2fa8b8e7a439f44e9883c9efb92ec8f",
+                "git_blob": "90ff85f461a18fa9d40f3e1b1139ab12ef61cd38"
+              },
+              "after": {
+                "bytes": 113446,
+                "sha256": "cf7b9770eb87450903ed3d026f237a57c498481f3a5a141674ce37cf0fb59a1f",
+                "git_blob": "10a28414c7efa19e58bb34601ace29ccaf7bf85a"
+              }
+            },
+            "tests/test_gq470_union22_real69_20261122.py": {
+              "before": {
+                "bytes": 39295,
+                "sha256": "05e620f7c44947f306dd89b24a8c20fa140f923374565b6b1ff9c4dc073fd250",
+                "git_blob": "c756e15252c878556b6c319ba09d3201d8cd8072"
+              },
+              "after": {
+                "bytes": 42218,
+                "sha256": "ba2183e0c0ea648b4cd95917f4fef4556ad58d68266c9349a1be30771a38e7f1",
+                "git_blob": "dd0559e381559a2450191894d3889c8dda5b6fd7"
+              }
+            }
+          },
+          "old_transport": {
+            "bytes": 1142,
+            "sha256": "8b6c5450523a359f4931e20d5e33bf23d357b2aa41987e3cd14d2bb8e8388a4a",
+            "git_blob": "101acdefa071c15e3c7c2493e4f00dbb3496789f"
+          },
+          "new_transport": {
+            "bytes": 109,
+            "sha256": "c01a4807e8a170e39625745c08506fd4c70a46a50d0d461d7e8030ad4deb7078",
+            "git_blob": "16fdc61e71f33c17523d6b479c6cd16e96886cbd"
+          },
+          "patch": {
+            "bytes": 5921,
+            "sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+            "git_blob": "88eebe87a545dabc0d37561f710600caa39bf7a8"
+          },
+          "entire_workflow_inverse_byte_exact": true,
+          "original_prefix_preserved_via_exact_inverse": {
+            "bytes": 106837,
+            "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"
+          },
+          "changed_test_methods": [
+            "UnionBoundary.test_original_39_workflow_step_payloads_byte_exact"
+          ],
+          "source_files_in_repo_changed": false,
+          "ten_existing_candidate_paths_changed": false,
+          "canonical_ci": false,
+          "source_lease": null,
+          "rc_write": false,
+          "revision": 2,
+          "supersedes_proposal_patch_sha256": "c9f24be85f62d9f6044584c97361fa7eb4c0c73942604901f83ded6479107e21",
+          "reason": "Close independently reproduced physical CRLF normalization gap inside the same historical-prefix method.",
+          "finding_sha256": "d37dd5ea74c1c109c57fb6a626783fb4457e520f2019b34ae7a6e31d3f7f8527"
+        },
+        "runtime_source_delta": 0,
+        "source_count": 69,
+        "registered_source_review_remains": "/root/admission_review",
+        "issued_at": "2026-11-22T22:52:57Z",
+        "concrete_scope_review": {
+          "context": "/root/rules_audit",
+          "decision": "PASS_CONCRETE_THREE_ROW_SCOPE_AND_R2_WIRING_ONLY",
+          "three_row_pre_review_sha256": "4e7a99785ede4c95edc82b4443ce1210e55bda94445311c15ac4c5ed11585540",
+          "R2_wiring_review_sha256": "d84bb0dc2892c64f81c3e411828d3fcd6787ef96ff50d4ea39d652d58bf57969",
+          "R2_proposal_sha256": "e81bf78e8218ab9ddb4b68b2a0822b63d310abb637e30eb8c5b8f5baf146cae3",
+          "R2_patch_sha256": "11cf25e6aa971e10b42cf67ed0036fb45b77e101d633ab935d5993591e6d5230",
+          "C9_previous_wiring_status": "WITHDRAWN_HISTORICAL_NOT_GRANTED",
+          "new_source_HEAD_approval": false,
+          "PREP_READY": false,
+          "RC_adoption": false
+        },
+        "concrete_patch_review_completed": true,
+        "actual_grant_commit_resolution": "The enclosing immutable authorized registry commit is the actual grant. A commit cannot encode its own future hash; the external #218 grant record binds the realized commit.",
+        "actual_grant_comment_resolution": "The external #218 grant record is created after this single atomic registry write and quotes its realized immutable commit.",
+        "additional_coordination_evidence": [
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086991850",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086916935",
+          "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086916455"
+        ],
+        "ACTIVE66_successor_owner_changed": false,
+        "withdrawn_patch_history": [
+          {
+            "sha256": "c9f24be85f62d9f6044584c97361fa7eb4c0c73942604901f83ded6479107e21",
+            "status": "WITHDRAWN_BEFORE_GRANT",
+            "reason": "read_text normalized physical CRLF; R2 reads exact bytes and adds a CRLF negative."
+          }
+        ]
+      },
+      "source_head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+      "source_tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
+      "candidate_pr_status": "DRAFT_TEN_PATH_SOURCE_FROZEN_TWO_PATH_WIRING_NOT_YET_APPLIED",
+      "actual_ten_path_source_history": {
+        "head": "713d4ac61409e5abe3f8d3d5d4de9a563f829cf3",
+        "tree": "c7e81b0b8e9970bd59a528699ce2452ff6b956e7",
+        "parent": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "pr": 1020,
+        "paths": 10,
+        "source_lease": 611,
+        "source_lease_release": "023b71f479b3b1cfdde63ec4492f38e8f3354b73",
+        "independent_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1020#issuecomment-7086954020",
+        "independent_review_status": "PASS_TRANSPORT_SOURCE_PREPARATION_ONLY",
+        "review_sha256": "b3486141e0b9b01412f4699233a8815b582918274cb72a16390bccbd75a20c07",
+        "GQ8_run": 45078372356,
+        "GQ8_conclusion": "failure_original_transport_before_wiring",
+        "bootstrap_run": 45078372306,
+        "bootstrap_conclusion": "success",
+        "admission_ready": false
+      },
+      "scope_history": [
+        {
+          "version": 1,
+          "preserved_at": "2026-11-22T22:52:57Z",
+          "preservation": "Exact pre-handoff row retained; only explicit temporary current authority changes below.",
+          "complete_previous_row": {
+            "claim_id": "P0D-GQ8-INPUT-RETENTION-20261123-0A2BA23F",
+            "state": "GRANTED",
+            "owner": "CODEX_ROOT_0A2BA23F0733",
+            "feature_id": "GQ8_IMMUTABLE_INPUT_RETENTION",
+            "resources": [
+              "REAL69_ORIGINAL_ARTIFACT_SNAPSHOTS",
+              "REAL69_ORIGINAL_INPUT_RESTORE_ADAPTER"
+            ],
+            "target_paths": [
+              "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip",
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip",
+              "tests/test_gq8_original_inputs_20261123.py"
+            ],
+            "base_rc_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "prep_branch": "fix/gq8-original-input-retention-20261123-0a2ba23f",
+            "parent_issue": 470,
+            "integration_issue": 220,
+            "related_pr": 1019,
+            "request_comment": 7086679192,
+            "role": "A_PREP",
+            "pr": null,
+            "allowed_new_prs": 1,
+            "scope": "Only ten new passive archive/lock/restore-adapter/test paths. Preserve five original artifact ZIP bytes; reconstruct two missing packets with unmodified immutable recipes and historical successful-job Place proof. No game source, existing producer, shared workflow or mounted-HUD test edits. The adapter is offline transport only and must never admit a stale/head-mismatched build or substitute a latest arbitrary artifact.",
+            "author_contexts": [
+              "/root (CODEX_ROOT_0A2BA23F0733): restore adapter, immutable input manifest/archive packaging and accountable writer",
+              "/root/runtime_review: original HUD59 recipe replay evidence only (not independent source approval)"
+            ],
+            "independent_reviewer_context": "/root/admission_review",
+            "acceptance": [
+              "Exact seven immutable packet identities and complete member/path/byte/hash inventories",
+              "Five downloaded-original ZIP digests remain byte-exact, two recovered packets explicitly RECONSTRUCTED_FROM_ORIGINAL_RECIPE",
+              "No claim that unknown historical receipt raw bytes were observed; historic pass is separate from current run",
+              "Fail closed on payload/lock/member drift, missing/extra/duplicate paths, links/traversal and preexisting output",
+              "Independent actual candidate HEAD review; helper-unit success alone never canonical CI/adoption",
+              "Shared transport wiring requires separate actual workflow and mounted-HUD prefix-test handoff; eight original run/head/success checks and all downstream source/rollback gates retained"
+            ],
+            "rollback": "Remove only these ten added paths using recorded null preimages; preserve all preexisting files and intervening commits.",
+            "forbidden_changes": [
+              ".github/workflows/gq8-real63-source-composite.yml",
+              "tests/test_gq470_union22_real69_20261122.py",
+              "quality_gameplay/gq470_union22_real69_20261122/**",
+              "Any generated gameplay source or original source producer",
+              "Any other claim row or schedule/incident-hold/security setting"
+            ],
+            "before_blobs": {
+              "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/LOCK.json": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/base55.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/hud59.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/trade62.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal62.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/formal63.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/viral56.zip": null,
+              "quality_gameplay/gq8_real63_intake_20261119/immutable_inputs/counter56.zip": null,
+              "tests/test_gq8_original_inputs_20261123.py": null
+            },
+            "PREP_READY": false,
+            "registered_source_approval": false,
+            "rc_write_authorized_by_this_claim": false,
+            "rc_write_requires_separate_scoped_single_writer_lease": true,
+            "no_main_or_publish": true,
+            "studio": "NOT_TESTED",
+            "android": "NOT_TESTED",
+            "art": "ART_NO_GO",
+            "fun": "NOT_TESTED",
+            "issued_at": "2026-11-22T22:20:42.721Z",
+            "expires_at": "2026-11-23T04:20:42.721Z",
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+            "coordination_lease": {
+              "branch": "twf-repair-coordinator",
+              "epoch": 609,
+              "claim_commit": "554e31f970f7a965f3fe5b8af66f4588ba203874",
+              "work_branch": "coord/p0d-work-claims",
+              "owner_id": "b714e2ff-00b9-4d5b-88b0-09903f6f6e80",
+              "expires_at": "2026-11-22T22:49:27.845525+00:00"
+            },
+            "scope_review": {
+              "context": "/root/admission_review",
+              "decision": "PASS_EXACT_TEN_NEW_PATH_PREP_SCOPE_ONLY_PENDING_REAL_GRANT_AND_SOURCE_LEASE",
+              "review_sha256": "04dd01cea11255f0db80e1de0d916dcfe467c5917c1f55b744532319bd0f3260",
+              "draft_sha256": "1dd9b8f3f9df29a7b7f3aaadeeb32e34c0241b8df2a85c7090c5bb23daa5ab5e",
+              "actual_candidate_head_review_completed": false
+            },
+            "authority_evidence": [
+              "Actual connected GitHub kk051780/user233213370 with repository admin permission observed by parent and independent reviewer.",
+              "Current official AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary engineering coordination; objective gates, real scopes and independent review remain mandatory.",
+              "Fresh eight-row registry independently reviewed for exact ten new paths and disjoint feature/resources; this registration uses an actually acquired metadata lease and expected-SHA nonforce update."
+            ],
+            "grant_scope_version": 1,
+            "independent_review_status": "SCOPE_ONLY_FUTURE_ACTUAL_HEAD_REVIEW_AND_CI_REQUIRED"
+          }
+        }
+      ],
+      "amended_at": "2026-11-22T22:52:57Z",
+      "metadata_update_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 621,
+        "commit": "b4fbd27e7b2e472640455aeddd55e4fde36c2068",
+        "owner_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T23:21:52+00:00"
+      },
+      "amendment_issuer": {
+        "login": "kk051780",
+        "user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "operation_id": "950135dd-130d-4fa5-ae11-c23783ad270c",
+        "context": "CODEX_ROOT_79005A1F03B2",
+        "authority": "Existing owner delegation, current execution policy v1.2/#1011, #810 and #218 V1.5; actual authenticated connected account and admin permission rechecked."
+      }
     },
     {
       "claim_id": "P0D-GQ518-INCOMING-LOS-20261123-7B6B25AE",
