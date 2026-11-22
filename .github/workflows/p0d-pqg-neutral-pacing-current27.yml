@@ -1,0 +1,164 @@
+name: P0D GQ existing ART SCORE AI 26 plus neutral pacing 27 private
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_pacing/**'
+      - '.github/workflows/p0d-pqg-neutral-pacing-current27.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  current-27-source-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read-only checkout of original 7-role author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Read-only checkout of existing #484 AI/26-composer owner
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 81088f99b2ea60bbffc0eaa860c46338203f0808
+          path: _v3_quality
+          persist-credentials: false
+      - name: Read-only checkout of original #485 ART source/composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Read-only checkout of original #487 SCORE/RESULT source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Verify all 4 author HEADs unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 81088f99b2ea60bbffc0eaa860c46338203f0808
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          echo "FOUR_REAL_ORIGINAL_AUTHOR_REFS_PINNED"
+      - name: Author quality and ART regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v -s _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_*quality.py'
+          P0D_V3_AUTHOR_CHECKOUT=_v3_original \
+          P0D_V3_AUTHOR_ROOT=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+          python3 -B -m unittest discover -v -s quality_gameplay/neutral_pacing/tests -p 'test_*.py'
+      - name: Compose 26 scripts with original #485 ART builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE26_AUTHOR_ART.project.json
+      - name: Compose 26 scripts by executing #484 author's actual unchanged composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality \
+            --art _v3_art --score _v3_score \
+            --art-project artifacts/EGGRUMBLE26_AUTHOR_ART.project.json \
+            --out artifacts/EGGRUMBLE26_PRIVATE.project.json
+      - name: 26 to 27 source-selective neutral-only patch and deterministic rollback manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_pacing/tools/compose_latest27.py \
+            --base26 artifacts/EGGRUMBLE26_PRIVATE.project.json \
+            --out artifacts/neutral27
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Native compile all exact 27 Luau sources plus 27 pure planner cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _luau_fixed -B /tmp/gq_neutral27_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq_neutral27_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          manifest=Path("artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27.project.json").resolve()
+          tree=json.loads(manifest.read_text(encoding="utf-8"))["tree"]
+          def mapped(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (manifest.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for name,child in node.items():
+                          if not name.startswith("$"):yield from mapped(child)
+          sources=list(mapped(tree))
+          assert len(sources)==27,len(sources)
+          for f in sources:
+              subprocess.run(["/tmp/gq_neutral27_luau/luau-compile","--text",str(f)],check=True,stdout=subprocess.DEVNULL)
+          print("CURRENT_COMPOSITE_27_NATIVE_COMPILE_PASS",len(sources))
+          PY
+          python3 quality_gameplay/neutral_pacing/tools/build_native_harness.py --out /tmp/gq_neutral27_spec.luau
+          /tmp/gq_neutral27_luau/luau /tmp/gq_neutral27_spec.luau | tee artifacts/NEUTRAL27_NATIVE.log
+          grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' artifacts/NEUTRAL27_NATIVE.log
+      - name: Build pinned Rojo CLI and actual private V3 27 Studio XML Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_neutral27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_neutral27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_neutral27_rojo.zip") as z:
+              entries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(entries)==1
+              p=Path("/tmp/gq_neutral27_rojo")
+              p.write_bytes(z.read(entries[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq_neutral27_rojo build artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27.project.json \
+            -o artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27_PRIVATE.rbxlx
+      - name: Independently confirm real 27 code bodies, classes, preserved 25 authors, no duplicate Game
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/neutral_pacing/tools/verify_latest27.py \
+            --stage artifacts/neutral27 \
+            --original26 artifacts/EGGRUMBLE26_PRIVATE.project.json \
+            --place artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27_PRIVATE.rbxlx
+      - name: Upload private source and machine-readable receipts (not official RC)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ-NEUTRAL27-FROM-AUTHOR26-SOURCE-NOT-RELEASE
+          retention-days: 3
+          path: |
+            artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27_PRIVATE.rbxlx
+            artifacts/neutral27/EGGRUMBLE_GQ_NEUTRAL27.project.json
+            artifacts/neutral27/SOURCE27_RECEIPT.json
+            artifacts/neutral27/PLACE27_RECEIPT.json
+            artifacts/NEUTRAL27_NATIVE.log
+      - name: Keep correct acceptance state
+        shell: bash
+        run: |
+          echo 'PRIVATE_27_SOURCE_ART_AI_SCORE_GAME_BUILD; OFFICIAL_RC_CAS=NOT_DONE; STUDIO_ANDROID_FUN=NOT_TESTED'

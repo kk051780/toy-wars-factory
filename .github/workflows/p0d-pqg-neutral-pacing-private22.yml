@@ -1,0 +1,105 @@
+name: P0D GQ genuine 22-source neutral pacing private Place
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/neutral_pacing/**'
+      - '.github/workflows/p0d-pqg-neutral-pacing-private22.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-22-source-private-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - name: Checkout source-only quality candidate (never RC writer)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout exact original #482 21-source author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _author_v3_pinned
+          persist-credentials: false
+      - name: Source-original pin and fail-closed Python composer tests
+        env:
+          P0D_V3_AUTHOR_CHECKOUT: _author_v3_pinned
+          P0D_V3_AUTHOR_ROOT: _author_v3_pinned/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+        run: |
+          set -euo pipefail
+          test "$(git -C _author_v3_pinned rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          python3 -m unittest discover -s quality_gameplay/neutral_pacing/tests -p 'test_*.py' -v
+      - name: Assemble actual original V3 21-sources + original Swarm single-splice + planner
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --author-checkout _author_v3_pinned \
+            --author-root _author_v3_pinned/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --stage artifacts/neutral_private22
+      - name: Checkout checksum-pinned native Luau compiler/VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pinned
+          persist-credentials: false
+      - name: Native Luau actual source 22/22 compilation and budget VM
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pinned rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pinned -B /tmp/p0d_neutral22_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d_neutral22_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          COUNT=0
+          while IFS= read -r -d '' source; do
+            /tmp/p0d_neutral22_luau/luau-compile --text "$source" >/dev/null
+            COUNT=$((COUNT+1))
+          done < <(find artifacts/neutral_private22/source -name '*.luau' -type f -print0)
+          test "$COUNT" -eq 22
+          echo "ACTUAL_22_NATIVE_COMPILATION_PASS=$COUNT"
+          python3 quality_gameplay/neutral_pacing/tools/build_native_harness.py --out /tmp/p0d_neutral22_spec.luau
+          /tmp/p0d_neutral22_luau/luau-compile /tmp/p0d_neutral22_spec.luau >/dev/null
+          /tmp/p0d_neutral22_luau/luau /tmp/p0d_neutral22_spec.luau | tee artifacts/NEUTRAL_PACING_VM.log
+          grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' artifacts/NEUTRAL_PACING_VM.log
+      - name: Download and verify pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_neutral22_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_neutral22_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_neutral22_rojo.zip") as archive:
+              files=[n for n in archive.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(files)==1
+              tool=Path("/tmp/p0d_neutral22_rojo")
+              tool.write_bytes(archive.read(files[0]))
+              tool.chmod(0o755)
+          PY
+      - name: Build real 22-source unpublished Roblox Studio Place
+        run: |
+          set -euo pipefail
+          /tmp/p0d_neutral22_rojo build artifacts/neutral_private22/EGGRUMBLE_V3_NEUTRAL_PACING.project.json \
+            -o artifacts/neutral_private22/EGGRUMBLE_V3_NEUTRAL_PACING_22_PRIVATE.rbxlx
+          python3 quality_gameplay/neutral_pacing/tools/verify_private_place.py \
+            --stage artifacts/neutral_private22 \
+            --place artifacts/neutral_private22/EGGRUMBLE_V3_NEUTRAL_PACING_22_PRIVATE.rbxlx
+      - name: Upload source-exact private candidate and original-author receipt
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: EGGRUMBLE-GQ-NEUTRAL-PACING-22SOURCE-PRIVATE-NOT-RC
+          retention-days: 3
+          path: |
+            artifacts/neutral_private22/EGGRUMBLE_V3_NEUTRAL_PACING_22_PRIVATE.rbxlx
+            artifacts/neutral_private22/EGGRUMBLE_V3_NEUTRAL_PACING.project.json
+            artifacts/neutral_private22/SOURCE_LOCK_RECEIPT.json
+            artifacts/neutral_private22/PRIVATE_PLACE_RECEIPT.json
+            artifacts/NEUTRAL_PACING_VM.log
+      - name: Distinguish source build from playable and release approval
+        run: |
+          echo 'PRIVATE_22_SOURCE_PLACE_BUILT_ONLY'
+          echo 'AUTHENTICATED_RC_ADOPTION=0 / STUDIO_NOT_RUN / ANDROID_NOT_RUN / FUN_NO_GO'
