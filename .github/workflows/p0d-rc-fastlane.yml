@@ -11,6 +11,7 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - '.github/workflows/p0d-art-quality-gate.yml'
       - 'art_quality/**'
   pull_request:
     branches:
@@ -18,6 +19,7 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - '.github/workflows/p0d-art-quality-gate.yml'
       - 'art_quality/**'
   workflow_dispatch:
     inputs:

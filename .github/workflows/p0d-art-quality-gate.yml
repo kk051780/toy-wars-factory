@@ -8,14 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       artifact_run_id:
-        description: 'Actions run containing candidate or official actual Studio Place ZIP'
+        description: 'Exact successful Actions run containing the compatible actual Studio Place (manual only)'
         required: true
-        default: '43637955662'
         type: string
       artifact_name:
         description: 'EXACT artifact name from the selected run'
         required: true
-        default: 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2'
         type: string
       strict_evidence:
         description: 'Require actual PC+Android before/after images and review data'
@@ -24,6 +22,7 @@ on:
 permissions:
   contents: read
   actions: read
+  pull-requests: read
 
 jobs:
   art-quality:
@@ -35,6 +34,8 @@ jobs:
           persist-credentials: false
       - name: Native stdlib unit and negative tests (no synthetic beauty claims)
         run: python3 -B -m unittest discover -s art_quality -p 'test_art_quality.py' -v
+      - name: Exact PR artifact selection and tampered provenance negative tests
+        run: python3 -B -m unittest discover -s art_quality -p 'test_artifact_selection.py' -v
       - name: Benchmark provenance, real-mobile and children-first-play safety QA
         env:
           ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
@@ -53,20 +54,28 @@ jobs:
             FUN_ARGS+=(--strict)
           fi
           python3 -B art_quality/check_mobile_fun.py "${FUN_ARGS[@]}"
-      - name: Download selected authentic RC Studio Place (never guess latest)
-        uses: actions/download-artifact@v4
-        with:
-          repository: kk051780/toy-wars-factory
-          run-id: ${{ inputs.artifact_run_id || '43637955662' }}
-          name: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
-          github-token: ${{ github.token }}
-          path: /tmp/p0d_art_real_place
+      - name: Verify current PR producer or explicit manual artifact, then download exact IDs
+        id: source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ART_MANUAL_RUN: ${{ inputs.artifact_run_id || '' }}
+          ART_MANUAL_NAME: ${{ inputs.artifact_name || '' }}
+        run: |
+          set -euo pipefail
+          python3 -B art_quality/resolve_artifact.py \
+            --event "$GITHUB_EVENT_NAME" --event-file "$GITHUB_EVENT_PATH" \
+            --head "$GITHUB_SHA" --run "$ART_MANUAL_RUN" --name "$ART_MANUAL_NAME" \
+            --wait-seconds 600 --directory /tmp/p0d_art_real_place \
+            --report /tmp/p0d_art_report/ART_ARTIFACT_SELECTION.json \
+            --github-output "$GITHUB_OUTPUT"
       - name: Audit real embedded source and submitted Studio picture evidence
         shell: bash
         env:
           ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
-          ART_RUN_ID: ${{ inputs.artifact_run_id || '43637955662' }}
-          ART_NAME: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
+          ART_RUN_ID: ${{ steps.source.outputs.run_id }}
+          ART_NAME: ${{ steps.source.outputs.artifact_name }}
+          ART_INPUT_MODE: ${{ steps.source.outputs.mode }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/p0d_art_report
@@ -85,6 +94,7 @@ jobs:
           import json,os
           report=json.loads(Path('/tmp/p0d_art_report/ART_CHECK_REPORT.json').read_text())
           summary=(f"## P0D art gate\n"
+                   f"Input selection: {os.environ['ART_INPUT_MODE']} (legacy-compatible source audit, not REAL69 or Studio approval)\n\n"
                    f"Selected run: {os.environ['ART_RUN_ID']}\n\n"
                    f"Selected artifact: {os.environ['ART_NAME']}\n\n"
                    f"Source gate: {report.get('source',{}).get('source_gate','FAIL')}\n\n"

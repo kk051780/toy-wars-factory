@@ -5,6 +5,7 @@ on:
     paths:
       - 'quality_gameplay/gq470_hud_labels_real69_20261120/**'
       - '.github/workflows/gq470-hud-tool-display-real69-prep.yml'
+      - 'tests/test_gq470_hud_candidate_lineage_20261122.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -25,6 +26,7 @@ jobs:
           SCRIPT=quality_gameplay/gq470_hud_labels_real69_20261120/patch_hud_labels.py
           python3 -m py_compile "$SCRIPT"
           python3 -B "$SCRIPT" --self-test
+          python3 -B tests/test_gq470_hud_candidate_lineage_20261122.py
           test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44673605213 --jq '.head_sha+" "+.conclusion')" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2 success"
           mkdir -p "$RUNNER_TEMP/gq470-hud-labels"
           gh run download 44673605213 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/gq470-hud-labels"
@@ -158,12 +160,9 @@ jobs:
           cmp /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
           python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/HUD_REAL69_LEGACY48_FEATURE_AUDIT.json"
-          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "6c2338b44db1c772bab0d688b2aece2e3aa8aae2" || { echo STALE_PARENT_NO_ADMISSION; exit 1; }
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            PR_BASE="$(jq -r '.pull_request.base.sha // empty' "$GITHUB_EVENT_PATH")"
-            test "$PR_BASE" = "$CURRENT" || { echo STALE_PR_BASE_NO_ADMISSION; exit 1; }
-          fi
+          # Keep the immutable author input, but bind preparation to the live PR/RC lineage.
+          python3 -B quality_gameplay/gq470_hud_labels_real69_20261120/verify_candidate_lineage.py \
+            --out "$ROOT/HUD_CANDIDATE_LINEAGE_RECEIPT.json"
           echo GQ470_HUD_COMPLETE_SOURCE_ONLY_GATE_PASS_NOT_STUDIO
       - uses: actions/upload-artifact@v4
         with:
@@ -173,6 +172,7 @@ jobs:
             ${{ runner.temp }}/gq470-hud-labels/REAL69_LEGACY_INTAKE_RECEIPT.json
             ${{ runner.temp }}/gq470-hud-labels/HUD_REAL69_LEGACY17_NONLOSS_AUDIT.json
             ${{ runner.temp }}/gq470-hud-labels/HUD_REAL69_LEGACY48_FEATURE_AUDIT.json
+            ${{ runner.temp }}/gq470-hud-labels/HUD_CANDIDATE_LINEAGE_RECEIPT.json
             /tmp/GQ470_HUD_REAL69_CANDIDATE_PRIVATE.rbxlx
             /tmp/GQ470_HUD_OFF69_ROLLBACK_PRIVATE.rbxlx
           if-no-files-found: error
