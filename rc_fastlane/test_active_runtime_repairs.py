@@ -4,13 +4,19 @@ Set P0D_ACTIVE66_TEST_DIST to the existing producer's locked original66 dist.
 Only temporary copies are mutated. Native gameplay fixtures remain separate.
 """
 import importlib.util
+import base64
+from contextlib import redirect_stdout,redirect_stderr
+import io
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import Mock,patch
 
 HERE=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('active_runtime_repairs',HERE/'apply_active_runtime_repairs.py')
@@ -198,5 +204,221 @@ class Actual66SelectionTests(unittest.TestCase):
         self.assertEqual({p for p in self.sources if self.sources[p]!=sources[p]},{'server/Game.server.luau','server/PersistentHatchStore.luau'})
         self.assertEqual(result['selection']['source_delta_bytes'],1814)
         self.assertEqual(result['selection']['selected_repairs'],['game_lifecycle','evolution_retry','equip_failure_recovery'])
+
+class RepairFailureProtocolTests(unittest.TestCase):
+    """Python failure protocol only: no native/gameplay/CI admission evidence."""
+    @classmethod
+    def setUpClass(cls):
+        spec=importlib.util.spec_from_file_location('active66_failure_protocol',HERE/'features/active_runtime_repairs/regression/run_selected.py')
+        cls.runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(cls.runner)
+        cls.lock,_=cls.runner.read_fixtures()
+
+    def setUp(self):
+        self.temporary=tempfile.TemporaryDirectory(prefix='active66-failure-protocol-')
+        self.addCleanup(self.temporary.cleanup)
+        self.root=Path(self.temporary.name)
+
+    def passed_output(self,suite):
+        return ''.join('CASE\t'+row['name']+'\t'+row['status']+'\tprotocol-only 雪\r\n'
+                       for row in self.lock['vectors'][suite]['candidate']).encode('utf-8')
+
+    def scenario(self,name,response=None,source_changed=False,ci=False,diagnostic_write_error=False,
+                 runtime_changed=False,existing_output=False):
+        runner=self.runner;root=self.root/name;root.mkdir();dist=root/'dist';dist.mkdir();out=root/'out'
+        binary=root/'never-executed-luau';binary.write_bytes(b'protocol-only mock; not an ELF')
+        if existing_output:out.mkdir();(out/'sentinel').write_bytes(b'caller-owned output')
+        flags={'game_fixes':True,'evolution_retry':True,'equip_recovery':True}
+        snapshot={'protocol-input':b'unchanged'}
+        source_read=Mock(return_value={'protocol-input':b'changed'} if source_changed else snapshot)
+        selector=SimpleNamespace(file_map=source_read)
+        sources={'server/Game.server.luau':b'protocol Game','server/PersistentHatchStore.luau':b'protocol Store'}
+        profile='ci-pinned-source-build' if ci else 'local-pinned-binary'
+        runtime={'profile':profile,'runtime_sha256':'protocol-runtime','build_dir':str(root/'build'),
+                 'CMakeCache_sha256':'protocol-cache'}
+        calls=[dict(runtime) for _ in range(3 if ci else 2)]
+        if runtime_changed:calls[-1]['runtime_sha256']='different-protocol-runtime'
+        required=runner.required_suites(flags)
+        responses=[subprocess.CompletedProcess([],0,self.passed_output(suite),b'') for suite in required]
+        if ci:responses.insert(0,subprocess.CompletedProcess([],0,b'protocol build\r\n',b''))
+        if response is not None:responses[0]=response
+        argv=['run_selected.py','--dist',str(dist),'--out',str(out),'--luau',str(binary),
+              '--runtime-profile',profile]
+        if ci:argv+=['--luau-source-dir',str(root/'source'),'--luau-build-dir',runtime['build_dir']]
+        binding={'complete_modules':{},'literal_Game_excerpts':{},'superseded_observations':[]}
+        console=io.StringIO();errors=io.StringIO();original_write=runner.write_json
+        def write_json(path,value):
+            if diagnostic_write_error and path.name=='FAILURE_DIAGNOSTIC.json':
+                raise OSError('injected diagnostic disk failure')
+            return original_write(path,value)
+        with patch.object(sys,'argv',argv), \
+             patch.object(runner,'selected_input',return_value=(selector,snapshot,sources,flags,'protocol-manifest')) as selected, \
+             patch.object(runner,'runtime_provenance',side_effect=calls), \
+             patch.object(runner,'render',side_effect=lambda suite,*_: (('-- protocol '+suite+'\n').encode(),dict(binding))), \
+             patch.object(runner.subprocess,'run',side_effect=responses) as native, \
+             patch.object(runner,'write_json',side_effect=write_json), \
+             redirect_stdout(console),redirect_stderr(errors):
+            exit_code=runner.cli()
+        return {'exit':exit_code,'out':out,'console':console.getvalue(),'errors':errors.getvalue(),
+                'calls':native.call_args_list,'required':required,'sources':sources,'runtime':runtime,
+                'source_read':source_read,'selected_calls':selected.call_count}
+
+    def diagnostic(self,result):
+        prefix='ACTIVE66_REPAIR_FAILURE '
+        rows=[json.loads(line[len(prefix):]) for line in result['console'].splitlines() if line.startswith(prefix)]
+        self.assertEqual(len(rows),1)
+        value=rows[0];self.assertEqual(value['status'],'FAIL_DIAGNOSTIC_ONLY');self.assertFalse(value['native_admission'])
+        self.assertEqual(value['runner_exit'],result['exit'])
+        if result['selected_calls'] and 'diagnostic_file_error' not in value:
+            self.assertEqual(json.loads((result['out']/'FAILURE_DIAGNOSTIC.json').read_bytes()),value)
+        streams={}
+        prefix='ACTIVE66_REPAIR_FAILURE_STREAM '
+        for line in result['console'].splitlines():
+            if not line.startswith(prefix):continue
+            stream=json.loads(line[len(prefix):]);raw=base64.b64decode(stream['base64'],validate=True)
+            self.assertEqual(self.runner.ident(raw),{key:stream[key] for key in ('bytes','sha256')})
+            self.assertEqual(stream['utf8_display'],raw.decode('utf-8',errors='backslashreplace'))
+            stored=result['out']/value['processes'][stream['process_index']][stream['stream']]['file']
+            self.assertEqual(stored.read_bytes(),raw)
+            streams[(stream['process_index'],stream['stream'])]=raw
+        return value,streams
+
+    def assert_single_process_stop(self,result,error_type):
+        self.assertEqual(result['exit'],2);self.assertEqual(len(result['calls']),1)
+        diagnostic,streams=self.diagnostic(result)
+        self.assertEqual(diagnostic['exception_type'],error_type)
+        self.assertIsNone(diagnostic['source_inputs_unchanged'])
+        self.assertFalse((result['out']/'receipt.json').exists())
+        for suite in result['required'][1:]:self.assertFalse((result['out']/suite).exists())
+        return diagnostic,streams
+
+    def test_success_keeps_receipts_output_files_and_no_failure_diagnostic(self):
+        for ci in (False,True):
+            with self.subTest(ci=ci):
+                result=self.scenario('success-'+str(ci),ci=ci)
+                self.assertEqual(result['exit'],0);self.assertEqual(result['errors'],'')
+                self.assertNotIn('ACTIVE66_REPAIR_FAILURE',result['console'])
+                receipt=json.loads((result['out']/'receipt.json').read_bytes())
+                self.assertEqual(receipt['status'],'PASS');self.assertEqual(receipt['passed'],54);self.assertEqual(receipt['failed'],0)
+                self.assertTrue(receipt['selected_distribution_bytes_unchanged'])
+                self.assertEqual(list(receipt['suites']),result['required'])
+                self.assertEqual(result['console'],json.dumps({'status':'PASS','passed':54,'failed':0,
+                    'suites':{'spawn12':12,'equip9':9,'evolution19':19,'recovery14':14},
+                    'runtime_profile':'ci-pinned-source-build' if ci else 'local-pinned-binary'},indent=2)+'\n')
+                files={'receipt.json',*result['required']}
+                if ci:files.update({'runtime_build.stdout.txt','runtime_build.stderr.txt'})
+                self.assertEqual({p.name for p in result['out'].iterdir()},files)
+                for index,suite in enumerate(result['required']):
+                    folder=result['out']/suite
+                    self.assertEqual({p.name for p in folder.iterdir()},{'generated.luau','stdout.txt','stderr.txt','receipt.json'})
+                    self.assertEqual((folder/'stdout.txt').read_bytes(),self.passed_output(suite).replace(b'\r\n',b'\n'))
+                    call=result['calls'][index+int(ci)]
+                    self.assertEqual(call.args[0],[str((self.root/('success-'+str(ci))/'never-executed-luau').resolve()),str(folder/'generated.luau')])
+                    self.assertEqual(call.kwargs,{'capture_output':True,'timeout':40})
+                if ci:self.assertEqual(result['calls'][0].kwargs,{'capture_output':True,'timeout':180})
+
+    def test_completed_failures_keep_all_suite_order_and_explain_predicates(self):
+        passed=self.passed_output('spawn12');lines=passed.splitlines(keepends=True)
+        controls={
+            'process':(subprocess.CompletedProcess([],7,passed,b'native failed\n'),'native_exit_zero'),
+            'vector':(subprocess.CompletedProcess([],0,b''.join([lines[1],lines[0],*lines[2:]]),b''),'expected_vector_exact'),
+            'duplicate':(subprocess.CompletedProcess([],0,b''.join([lines[0],lines[0],*lines[2:]]),b''),'case_names_unique'),
+            'observation':(subprocess.CompletedProcess([],0,passed+b'OBSERVATION|unexpected|PASS|protocol\n',b''),'observations_valid')}
+        for name,(response,predicate) in controls.items():
+            with self.subTest(name=name):
+                result=self.scenario(name,response=response)
+                self.assertEqual(result['exit'],1);self.assertEqual(len(result['calls']),4)
+                diagnostic,streams=self.diagnostic(result)
+                self.assertTrue(diagnostic['source_inputs_unchanged'])
+                self.assertFalse(diagnostic['suite_predicates']['spawn12'][predicate])
+                self.assertEqual(diagnostic['processes'][0]['exit_code'],response.returncode)
+                self.assertEqual(streams[(0,'stdout')],response.stdout);self.assertEqual(streams[(0,'stderr')],response.stderr)
+                self.assertEqual([row['suite'] for row in diagnostic['processes']],result['required'])
+                self.assertEqual(json.loads((result['out']/'receipt.json').read_bytes())['status'],'FAIL')
+
+    def test_source_change_is_explicit_even_when_all_54_cases_pass(self):
+        result=self.scenario('source',source_changed=True)
+        self.assertEqual(result['exit'],1);self.assertEqual(len(result['calls']),4)
+        diagnostic,_=self.diagnostic(result)
+        self.assertFalse(diagnostic['source_inputs_unchanged']);self.assertIsNone(diagnostic['suite'])
+        self.assertTrue(all(all(row.values()) for row in diagnostic['suite_predicates'].values()))
+        receipt=json.loads((result['out']/'receipt.json').read_bytes())
+        self.assertEqual(receipt['passed'],54);self.assertEqual(receipt['failed'],0);self.assertEqual(receipt['status'],'FAIL')
+
+    def test_timeout_keeps_partial_bytes_and_stops_at_original_suite(self):
+        stdout=b'partial\n::error::inert bytes\n\xff';stderr=b'partial error\n'
+        result=self.scenario('timeout',response=subprocess.TimeoutExpired(['protocol'],40,output=stdout,stderr=stderr))
+        diagnostic,streams=self.assert_single_process_stop(result,'TimeoutExpired')
+        self.assertTrue(diagnostic['processes'][0]['timed_out']);self.assertIsNone(diagnostic['processes'][0]['exit_code'])
+        self.assertEqual(streams[(0,'stdout')],stdout);self.assertEqual(streams[(0,'stderr')],stderr)
+        self.assertEqual((result['out']/'FAILURE_PROCESS_00_STDOUT.bin').read_bytes(),stdout)
+        self.assertFalse((result['out']/'spawn12/stdout.txt').exists())
+        self.assertFalse(any(line.startswith('::error::') for line in result['console'].splitlines()))
+        missing=self.scenario('timeout-unavailable',response=subprocess.TimeoutExpired(['protocol'],40))
+        diagnostic,streams=self.assert_single_process_stop(missing,'TimeoutExpired')
+        self.assertEqual(streams,{})
+        for channel in ('stdout','stderr'):
+            self.assertEqual(diagnostic['processes'][0][channel],{'available':False,'bytes':None,'sha256':None,'file':None})
+
+    def test_invalid_encoding_keeps_both_raw_streams_without_retry(self):
+        for channel in ('stdout','stderr'):
+            with self.subTest(channel=channel):
+                stdout=b'\xff' if channel=='stdout' else self.passed_output('spawn12')
+                stderr=b'\xff' if channel=='stderr' else b'known error stream\n'
+                result=self.scenario('invalid-'+channel,response=subprocess.CompletedProcess([],0,stdout,stderr))
+                diagnostic,streams=self.assert_single_process_stop(result,'UnicodeDecodeError')
+                self.assertEqual(diagnostic['processes'][0]['exit_code'],0)
+                self.assertEqual(diagnostic['processes'][0]['phase'],channel.upper()+'_DECODE')
+                self.assertEqual(streams[(0,'stdout')],stdout);self.assertEqual(streams[(0,'stderr')],stderr)
+                self.assertFalse((result['out']/'spawn12/stdout.txt').exists())
+
+    def test_malformed_case_keeps_written_text_and_raw_evidence(self):
+        raw=b'CASE\tmissing fields\n'
+        result=self.scenario('malformed',response=subprocess.CompletedProcess([],0,raw,b''))
+        diagnostic,streams=self.assert_single_process_stop(result,'ValueError')
+        self.assertEqual(diagnostic['phase'],'SUITE_PARSE');self.assertEqual(streams[(0,'stdout')],raw)
+        self.assertEqual((result['out']/'spawn12/stdout.txt').read_bytes(),raw)
+        self.assertFalse((result['out']/'spawn12/receipt.json').exists())
+
+    def test_build_failures_keep_evidence_and_do_not_start_native_suites(self):
+        controls={'nonzero':subprocess.CompletedProcess([],9,b'build log\n',b'build error\n'),
+                  'timeout':subprocess.TimeoutExpired(['protocol'],180,output=b'partial build\n',stderr=b'partial build error\n'),
+                  'encoding':subprocess.CompletedProcess([],0,b'\xff',b'build error\n')}
+        for name,response in controls.items():
+            with self.subTest(name=name):
+                result=self.scenario('build-'+name,response=response,ci=True)
+                self.assertEqual(result['exit'],2);self.assertEqual(len(result['calls']),1)
+                diagnostic,streams=self.diagnostic(result)
+                self.assertEqual(diagnostic['processes'][0]['kind'],'RUNTIME_BUILD')
+                self.assertEqual(result['calls'][0].kwargs,{'capture_output':True,'timeout':180})
+                self.assertEqual(streams[(0,'stdout')],response.stdout);self.assertEqual(streams[(0,'stderr')],response.stderr)
+                self.assertTrue(all(not (result['out']/suite).exists() for suite in result['required']))
+
+    def test_diagnostic_disk_failure_cannot_change_original_failure_exit(self):
+        controls={'nonzero':(subprocess.CompletedProcess([],8,self.passed_output('spawn12'),b'error'),1,4),
+                  'timeout':(subprocess.TimeoutExpired(['protocol'],40,output=b'partial',stderr=b'error'),2,1)}
+        for name,(response,exit_code,count) in controls.items():
+            with self.subTest(name=name):
+                result=self.scenario('disk-'+name,response=response,diagnostic_write_error=True)
+                self.assertEqual(result['exit'],exit_code);self.assertEqual(len(result['calls']),count)
+                diagnostic,streams=self.diagnostic(result)
+                self.assertEqual(diagnostic['diagnostic_file_error']['type'],'OSError')
+                self.assertEqual(streams[(0,'stdout')],response.stdout);self.assertEqual(streams[(0,'stderr')],response.stderr)
+
+    def test_post_runtime_refusal_retains_completed_evidence_and_original_exit(self):
+        result=self.scenario('runtime',runtime_changed=True)
+        self.assertEqual(result['exit'],2);self.assertEqual(len(result['calls']),4)
+        diagnostic,_=self.diagnostic(result)
+        self.assertEqual(diagnostic['exception'],'RUNTIME_CHANGED_DURING_TESTS')
+        self.assertTrue(diagnostic['source_inputs_unchanged'])
+        self.assertFalse((result['out']/'receipt.json').exists())
+        self.assertTrue(all((result['out']/suite/'receipt.json').is_file() for suite in result['required']))
+
+    def test_existing_output_refusal_does_not_write_diagnostics_into_callers_files(self):
+        result=self.scenario('existing',existing_output=True)
+        self.assertEqual(result['exit'],2);self.assertEqual(len(result['calls']),0);self.assertEqual(result['selected_calls'],0)
+        diagnostic,streams=self.diagnostic(result)
+        self.assertEqual(diagnostic['exception'],'FRESH_OUTPUT_OUTSIDE_DIST_REQUIRED');self.assertEqual(streams,{})
+        self.assertEqual({p.name for p in result['out'].iterdir()},{'sentinel'})
+        self.assertEqual((result['out']/'sentinel').read_bytes(),b'caller-owned output')
 
 if __name__=='__main__': unittest.main()

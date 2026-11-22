@@ -7,8 +7,11 @@ approval, a complete Game bootstrap, or a Roblox engine test.
 """
 from __future__ import annotations
 import argparse
+import base64
+from contextlib import contextmanager
 import hashlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import shutil
@@ -51,6 +54,69 @@ def sha(raw):return hashlib.sha256(raw).hexdigest()
 def ident(raw):return {'bytes':len(raw),'sha256':sha(raw)}
 def encoded(value):return (json.dumps(value,indent=2)+'\n').encode()
 def write_json(path,value):path.write_bytes(encoded(value))
+
+def new_observation():
+    return {'phase':'ARGUMENTS','owned_output':False,'processes':[],
+            'source_inputs_unchanged':None,'suite_predicates':{},'suites':{}}
+
+@contextmanager
+def observe_process(observation,argv,timeout,kind,suite=None):
+    record={'kind':kind,'suite':suite,'actual_argv':argv,'timeout_seconds':timeout,
+            'exit_code':None,'timed_out':False,'phase':'RUNNING','stdout':None,'stderr':None}
+    observation['processes'].append(record)
+    try:
+        yield record
+    except subprocess.TimeoutExpired as error:
+        record.update(timed_out=True,phase='TIMED_OUT',stdout=error.stdout,stderr=error.stderr)
+        raise
+
+def decoded_process(process,record):
+    # Capture exact bytes first. TextIOWrapper retains the prior text=True
+    # default encoding, strict errors and universal-newline behavior on success.
+    record.update(exit_code=process.returncode,stdout=process.stdout,stderr=process.stderr,phase='STDOUT_DECODE')
+    with io.TextIOWrapper(io.BytesIO(process.stdout)) as stream:stdout=stream.read()
+    record['phase']='STDERR_DECODE'
+    with io.TextIOWrapper(io.BytesIO(process.stderr)) as stream:stderr=stream.read()
+    record['phase']='OUTPUT_CAPTURED'
+    return subprocess.CompletedProcess(process.args,process.returncode,stdout,stderr)
+
+def emit_failure(observation,exit_code,error=None):
+    """Best-effort evidence only; never changes a gate result or retries work."""
+    try:
+        processes=[];streams=[]
+        for index,record in enumerate(observation['processes']):
+            item={key:value for key,value in record.items() if key not in ('stdout','stderr')}
+            for channel in ('stdout','stderr'):
+                raw=record[channel]
+                filename=f'FAILURE_PROCESS_{index:02d}_{channel.upper()}.bin'
+                item[channel]={'available':raw is not None,
+                               **(ident(raw) if raw is not None else {'bytes':None,'sha256':None}),
+                               'file':filename if raw is not None else None}
+                if raw is not None:
+                    streams.append((filename,raw,{'process_index':index,'kind':record['kind'],
+                        'suite':record['suite'],'stream':channel,**ident(raw),
+                        'base64':base64.b64encode(raw).decode('ascii'),
+                        'utf8_display':raw.decode('utf-8',errors='backslashreplace')}))
+            processes.append(item)
+        diagnostic={key:value for key,value in observation.items() if key not in ('processes','owned_output')}
+        diagnostic.update(schema='ACTIVE66_REPAIR_FAILURE_DIAGNOSTIC_V1',status='FAIL_DIAGNOSTIC_ONLY',
+                          runner_exit=exit_code,exception_type=type(error).__name__ if error else None,
+                          exception=str(error) if error else None,processes=processes,native_admission=False)
+        if observation['owned_output']:
+            try:
+                output=Path(observation['output'])
+                for filename,raw,_ in streams:(output/filename).write_bytes(raw)
+                write_json(output/'FAILURE_DIAGNOSTIC.json',diagnostic)
+            except Exception as diagnostic_error:
+                diagnostic['diagnostic_file_error']={'type':type(diagnostic_error).__name__,'reason':str(diagnostic_error)}
+        # Inert JSON lines retain recoverable bytes even if CI skips artifacts.
+        print('ACTIVE66_REPAIR_FAILURE '+json.dumps(diagnostic,ensure_ascii=True),flush=True)
+        for _,_,stream in streams:
+            print('ACTIVE66_REPAIR_FAILURE_STREAM '+json.dumps(stream,ensure_ascii=True),flush=True)
+    except Exception as diagnostic_error:
+        try:print('ACTIVE66_REPAIR_DIAGNOSTIC_OUTPUT_ERROR '+repr(diagnostic_error),file=sys.stderr,flush=True)
+        except Exception:pass
+
 def piece(text,start,end):
     check(text.count(start)==1,'SOURCE_START_NOT_UNIQUE:'+start)
     tail=text.split(start,1)[1]
@@ -286,21 +352,28 @@ def artifact_binding(dist,folder):
             'fixture_reuse_not_new_independent_approval':True,
             'runtime_trust':'Workflow-controlled build; not cryptographic source-to-binary attestation.'}
 
-def main():
+def main(observation=None):
+    if observation is None:observation=new_observation()
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dist',type=Path,required=True);parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--luau',type=Path,required=True)
     parser.add_argument('--runtime-profile',choices=('local-pinned-binary','ci-pinned-source-build'),required=True)
     parser.add_argument('--luau-source-dir',type=Path);parser.add_argument('--luau-build-dir',type=Path)
     args=parser.parse_args();dist=args.dist.resolve();out=args.out.resolve()
+    observation.update(phase='INPUT_VALIDATION',output=str(out),dist=str(dist))
     check(not out.exists() and not out.is_symlink() and not out.is_relative_to(dist),'FRESH_OUTPUT_OUTSIDE_DIST_REQUIRED')
     lock,fixtures=read_fixtures();selector,snapshot,sources,flags,manifest_sha=selected_input(dist)
+    observation.update(phase='INITIAL_RUNTIME_PROVENANCE',selected_flags=flags,selected_source_manifest_sha256=manifest_sha)
     before_runtime=runtime_provenance(args,lock)
     out.mkdir(parents=True)
+    observation['owned_output']=True
     runtime=before_runtime
     if args.runtime_profile=='ci-pinned-source-build':
         argv=['cmake','--build',before_runtime['build_dir'],'--target','Luau.Repl.CLI','--parallel','4']
-        built=subprocess.run(argv,capture_output=True,text=True,timeout=180)
+        observation['phase']='RUNTIME_BUILD'
+        with observe_process(observation,argv,180,'RUNTIME_BUILD') as process_record:
+            built=subprocess.run(argv,capture_output=True,timeout=180)
+            built=decoded_process(built,process_record)
         (out/'runtime_build.stdout.txt').write_text(built.stdout);(out/'runtime_build.stderr.txt').write_text(built.stderr)
         check(built.returncode==0,'EXISTING_RUNTIME_BUILD_FAILED')
         runtime=runtime_provenance(args,lock)
@@ -308,24 +381,36 @@ def main():
                                  'before_runtime_sha256':before_runtime['runtime_sha256'],'before_CMakeCache_sha256':before_runtime['CMakeCache_sha256']}
     required=required_suites(flags)
     results={}
+    observation.update(required_suites=required,suites=results)
     for suite in required:
+        observation.update(phase='SUITE_RENDER',suite=suite)
         program,binding=render(suite,sources,flags,lock,fixtures)
         folder=out/suite;folder.mkdir();file=folder/'generated.luau';file.write_bytes(program)
         argv=[str(args.luau.resolve()),str(file)]
-        process=subprocess.run(argv,capture_output=True,text=True,timeout=40)
+        observation['phase']='NATIVE_PROCESS'
+        with observe_process(observation,argv,40,'NATIVE',suite) as process_record:
+            process=subprocess.run(argv,capture_output=True,timeout=40)
+            process=decoded_process(process,process_record)
         (folder/'stdout.txt').write_text(process.stdout);(folder/'stderr.txt').write_text(process.stderr)
+        observation['phase']='SUITE_PARSE'
         cases,observations=parse(process.stdout);vector=[{k:r[k] for k in ('name','status')} for r in cases]
         expected=lock['vectors'][suite]['candidate']
         valid=process.returncode==0 and vector==expected and len(cases)==len({r['name'] for r in cases})
         if suite=='equip9' and not flags['equip_recovery']:
             valid=valid and [{k:r[k] for k in ('name','status')} for r in observations]==lock['vectors']['equip9']['historical_observations']
         else:valid=valid and not observations
+        observation['suite_predicates'][suite]={'native_exit_zero':process.returncode==0,
+            'expected_vector_exact':vector==expected,'case_names_unique':len(cases)==len({r['name'] for r in cases}),
+            'observations_valid':([{k:r[k] for k in ('name','status')} for r in observations]==lock['vectors']['equip9']['historical_observations']
+                                  if suite=='equip9' and not flags['equip_recovery'] else not observations)}
         result={'status':'PASS' if valid else 'FAIL','actual_argv':argv,'native_exit':process.returncode,
                 'passed':sum(r['status']=='PASS' for r in cases),'failed':sum(r['status']!='PASS' for r in cases),
                 'expected_vector_exact':vector==expected,'cases':cases,'observations':observations,
                 'program_sha256':sha(program),**binding}
         write_json(folder/'receipt.json',result);results[suite]=result
+    observation.update(phase='SOURCE_IMMUTABILITY',suite=None)
     unchanged=selector.file_map(dist)==snapshot
+    observation.update(source_inputs_unchanged=unchanged,phase='FINAL_RUNTIME_PROVENANCE')
     after_runtime=runtime_provenance(args,lock)
     check(after_runtime['runtime_sha256']==runtime['runtime_sha256'],'RUNTIME_CHANGED_DURING_TESTS')
     if args.runtime_profile=='ci-pinned-source-build':check(after_runtime['CMakeCache_sha256']==runtime['CMakeCache_sha256'],'CMAKE_CACHE_CHANGED_DURING_TESTS')
@@ -341,10 +426,16 @@ def main():
              'conditional_Parent_retained_order':'Fixture condition only; no Roblox engine event-order claim.',
              'full_Game_bootstrap_executed':False,'live_DataStore_calls':0,'Studio':'NOT_TESTED','formal_RC_adopted':False}
     write_json(out/'receipt.json',receipt)
+    observation['phase']='AGGREGATE_COMPLETE'
+    if not valid:emit_failure(observation,1)
     print(json.dumps({'status':receipt['status'],'passed':receipt['passed'],'failed':receipt['failed'],'suites':{k:r['passed'] for k,r in results.items()},'runtime_profile':args.runtime_profile},indent=2))
     return 0 if valid else 1
 
-if __name__=='__main__':
-    try:raise SystemExit(main())
+def cli():
+    observation=new_observation()
+    try:return main(observation)
     except (ValueError,OSError,subprocess.SubprocessError) as error:
-        print(json.dumps({'status':'ERROR','reason':str(error)}));raise SystemExit(2)
+        emit_failure(observation,2,error)
+        print(json.dumps({'status':'ERROR','reason':str(error)}));return 2
+
+if __name__=='__main__':raise SystemExit(cli())
