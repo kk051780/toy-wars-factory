@@ -650,6 +650,38 @@ jobs:
           mkdir -p /tmp/p0d_rc_out
           if [ "$PROFILE" = rich51 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            export ORIGINAL_DIST="$DIST"
+            read -r GAME_FIXES EVOLUTION_RETRY EQUIP_RECOVERY < <(python3 -c "import json; x=json.load(open('rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json')); assert x['schema']=='ACTIVE_RUNTIME_REPAIR_SWITCHES_V1' and x['source_profile']=='rich51'; flags=[x[k] for k in ('game_fixes','evolution_retry','equip_recovery')]; assert all(type(flag) is bool for flag in flags); assert not x['equip_recovery'] or x['game_fixes']; print(*(str(flag).lower() for flag in flags))")
+            if [ "$GAME_FIXES" = true ] || [ "$EVOLUTION_RETRY" = true ] || [ "$EQUIP_RECOVERY" = true ]; then
+              P0D_ACTIVE66_TEST_DIST="$ORIGINAL_DIST" python3 -B -m unittest discover -s rc_fastlane -p test_active_runtime_repairs.py -v
+            fi
+            python3 -B rc_fastlane/apply_active_runtime_repairs.py \
+              --dist "$ORIGINAL_DIST" --out /tmp/p0d_rc_active66_selected --profile "$PROFILE" \
+              --game-fixes "$GAME_FIXES" --evolution-retry "$EVOLUTION_RETRY" --equip-recovery "$EQUIP_RECOVERY" \
+              > /tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json
+            export DIST="$(python3 -c "import json; print(json.load(open('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'))['selected_dist'])")"
+            if [ "$DIST" != "$ORIGINAL_DIST" ]; then
+              n=0
+              while IFS= read -r -d '' file; do
+                /tmp/p0d_new_luau/luau-compile "$file" >/tmp/p0d_active_selected_compile.log 2>&1 || { cat /tmp/p0d_active_selected_compile.log; exit 1; }
+                n=$((n+1))
+              done < <(find "$DIST/src" -name '*.luau' -type f -print0)
+              test "$n" = 66
+              python3 -B rc_fastlane/features/active_runtime_repairs/regression/run_selected.py \
+                --dist "$DIST" --out /tmp/p0d_rc_out/ACTIVE_RUNTIME_REPAIR_REGRESSIONS \
+                --luau /tmp/p0d_new_luau/luau --runtime-profile ci-pinned-source-build \
+                --luau-source-dir _p0d_rc_luau --luau-build-dir /tmp/p0d_new_luau
+              python3 -B rc_fastlane/features/egg_relay_classic/tools/generate_native_game_harness.py \
+                --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/EggRelayPolicy.luau" --out /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau
+              /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau >/dev/null
+              /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
+              grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
+              python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
+                --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/TwinBondPolicy.luau" --out /tmp/P0D_ACTIVE_SELECTED_BOND27.luau
+              /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_BOND27.luau >/dev/null
+              /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_BOND27.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
+              grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
+            fi
           elif [ "$PROFILE" = rich47 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
           else
@@ -966,6 +998,15 @@ jobs:
             'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
+          if p=='rich51':
+              from rc_fastlane.apply_active_runtime_repairs import emit_artifact_metadata
+              identity=emit_artifact_metadata(base,target,pathlib.Path('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'),pathlib.Path('rc_fastlane/ACTIVE.json'))
+              receipt['active_runtime_identity']=identity
+              receipt['source_overlays'] += ['ACTIVE66_'+name.upper() for name in identity['selected_repairs']]
+              receipt['selected_source_compile_count']=66 if identity['selected_repairs'] else None
+              receipt['selected_Game_relay_cases']=31 if identity['selected_repairs'] else None
+              receipt['selected_Game_bond_cases']=27 if identity['selected_repairs'] else None
+              receipt['selected_repair_regressions']=identity['repair_regressions']
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
@@ -974,7 +1015,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$PROFILE" = rich51 ]; then
-            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            DIST="$(python3 -c "import json; print(json.load(open('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'))['selected_dist'])")"
             python3 -B rc_fastlane/verify_private63.py \
               --dist "$DIST" --place /tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx
           fi
