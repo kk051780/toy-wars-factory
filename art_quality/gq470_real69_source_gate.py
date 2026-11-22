@@ -9,7 +9,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import pathlib
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
 
 FORMAL = "rc/p0d-s1-kids-rc01"
@@ -103,9 +106,27 @@ def audit(root: pathlib.Path, head: str) -> dict:
     checksum = sha(place_data)
     demand(receipt.get("official_branch") == FORMAL and
            receipt.get("source_profile") == PROFILE and
-           receipt.get("canonical_build") is True and
            receipt.get("build_head") == head,
-           "NOT_CURRENT_OFFICIAL_REAL69")
+           "NOT_CURRENT_REAL69_RECEIPT")
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        # This is a real authenticated CI context: prove whether the 69 scripts
+        # belong to the official push or a nonformal synthetic PR merge.
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+        from quality_gameplay.gq470_art_pr_provenance_20261121.guard import verify_receipt
+        live = subprocess.check_output([
+            "gh", "api",
+            f"repos/{os.environ['GITHUB_REPOSITORY']}/git/ref/heads/{FORMAL}",
+            "--jq", ".object.sha"], text=True).strip()
+        event_path = os.environ.get("GITHUB_EVENT_PATH", "")
+        event = json.loads(pathlib.Path(event_path).read_text()) if event_path else {}
+        provenance = verify_receipt(receipt, os.environ, event, live)
+    else:
+        # An offline read of an original formal-source snapshot is possible, but
+        # never claim it has current live HEAD or verified CI provenance.
+        demand(receipt.get("canonical_build") is True,
+               "OFFLINE_SOURCE_ONLY_MUST_HAVE_ORIGINAL_FORMAL_RECEIPT")
+        provenance = "OFFLINE_FORMAL_SOURCE_SNAPSHOT_NOT_LIVE"
+    is_live_formal = provenance == "OFFICIAL"
     demand(receipt.get("private_place_sha256") == checksum and
            receipt.get("private_place_bytes") == len(place_data),
            "PLACE_RECEIPT_NOT_EXACT")
@@ -154,12 +175,17 @@ def audit(root: pathlib.Path, head: str) -> dict:
     texts = [item["source"] for item in scripts.values()]
     return {
         "schema": "P0D_REAL69_GQ470_ART_CHECK_REPORT_V1",
-        "only_formal_branch": FORMAL, "official_build_head": head,
+        "only_formal_branch": FORMAL,
+        "official_build_head": head if is_live_formal else None,
+        "candidate_build_head": head,
+        "receipt_provenance": provenance,
+        "formal_rc_adoption_proven": is_live_formal,
         "selected_profile": "REAL69_PRIVATE_COMPANION",
         "active_s1_rich51_same_runtime": False,
         "private_place_sha256": checksum, "private_place_bytes": len(place_data),
         "source_gate": {
             "status": "PASS_SOURCE_ONLY", "actual_place_scripts": len(scripts),
+            "PR_source_pass_does_not_certify_formal_RC": not is_live_formal,
             "selected_routes_source_class_hash_exact": 69,
             "verified_visual_feature_sources": len(FEATURES),
             "source_gate_is_not_roblox_engine_or_beauty_proof": True,
