@@ -1,0 +1,46 @@
+name: GQ8 Realm storm phase source fence
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_realm_storm_phase_fence_20261118/**'
+      - '.github/workflows/p0d-gq8-realm-storm-fence.yml'
+  push:
+    branches: [quality/gq8-realm-storm-phase-fence-20261118-2006]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-blob-native-phase-fence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - name: Exact author + mutation + Core36 35/36 preservation
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s quality_gameplay/gq8_realm_storm_phase_fence_20261118 -p 'test_*.py'
+          python3 quality_gameplay/gq8_realm_storm_phase_fence_20261118/apply.py \
+            --origin _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau \
+            --out /tmp/EGGRUMBLE_RealmBattleCore.StormPhaseFence.server.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pinned
+          persist-credentials: false
+      - name: Native Luau compiler must accept actual patched server
+        run: |
+          set -euo pipefail
+          cmake -S _luau_pinned -B /tmp/gq8-storm-compiler -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-storm-compiler --target Luau.Compile.CLI --parallel 4
+          /tmp/gq8-storm-compiler/luau-compile --text /tmp/EGGRUMBLE_RealmBattleCore.StormPhaseFence.server.luau > /dev/null
+          echo "GQ8_REALM_STORM_NATIVE_SOURCE_PASS"
