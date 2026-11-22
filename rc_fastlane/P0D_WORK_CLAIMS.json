@@ -17,7 +17,7 @@
   "claims": [
     {
       "claim_id": "P0D-GQ905-BR-GUARD-20261122-4B669",
-      "state": "GRANTED",
+      "state": "RC_INTEGRATED",
       "owner": "CODEX_ROOT_4B669C01C8AC",
       "feature_id": "GQ905_DISCOVERY_CANONICAL_BR_GUARD",
       "resources": [
@@ -51,7 +51,7 @@
       "source_producer_parent_pr": 919,
       "integration_issue": 220,
       "pr": 1013,
-      "candidate_pr_status": "ACTUAL_PR_OPEN_CI_RED_MAINTENANCE_REQUIRED",
+      "candidate_pr_status": "MERGED_SOURCE_ONLY",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -83,7 +83,7 @@
         "sha256": "d3c1ee8272b580446042922755798878152a430c1542963080b8d4bb4a73e476"
       },
       "independent_reviewer_context": "/root/intake_300 (not the fix author; separate current review context)",
-      "independent_review_status": "SIX_FILE_894CAD_TECHNICAL_PASS_NEW_CI_MAINTENANCE_REQUIRES_NEW_REVIEW",
+      "independent_review_status": "PASS_ACTUAL_COMPLETE_CANDIDATE_SOURCE_REVIEW",
       "acceptance": "Exactly fourteen paths, with six existing candidate paths retaining their reviewed content. New maintenance must fail closed for stale/missing/divergent/wrong-PR/wrong-workflow/wrong-head/expired/multiple/mismatched-receipt artifact selection; retain old immutable input provenance and every actual source/build/rollback gate. Independent review of new maintenance, current complete candidate and actual same-head CI required before fresh owned RC lease and expected-SHA nonforce adoption. Official RC build/Place/ZIP and Studio stay distinct.",
       "rollback": {
         "gameplay_only": "Remove only the added replace_once statement from patch_hud_labels.py; restore producer before SHA and original 69-source Place. Preserve the five CI prerequisite files.",
@@ -467,7 +467,7 @@
         }
       ],
       "amended_at": "2026-11-22T12:12:43.000Z",
-      "candidate_head": "894cad8b50db4ddfb43e83ec6e53b00297ad681a",
+      "candidate_head": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
       "maintenance_evidence": {
         "pr": 1013,
         "head": "894cad8b50db4ddfb43e83ec6e53b00297ad681a",
@@ -485,6 +485,516 @@
         "legacy_reusable_provenance_artifact_id": 14753681293,
         "observation_comment": 7078918912
       },
+      "no_review_waiver": true,
+      "source_scope_closed_at": "2026-11-22T12:50:02Z",
+      "source_adoption": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "before": "18e4b04eb550ebf5195c3e287f97076dd9c92b6e",
+        "head": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "merged_at": "2026-11-22T12:41:47Z",
+        "pr": 1013,
+        "comment": 7079294042,
+        "force": false,
+        "writer_epoch": 577,
+        "reviewer_context": "/root/intake_300",
+        "review_receipt_sha256": "45c17317640440b477d5680580a17161b12b818da59c65b7442d8b84e21d888c",
+        "official_push_runs": [
+          {
+            "id": 45023615195,
+            "kind": "REAL69",
+            "conclusion": "success"
+          },
+          {
+            "id": 45023615194,
+            "kind": "LEGACY",
+            "conclusion": "success"
+          }
+        ],
+        "artifact_id": 14754911442,
+        "zip_bytes": 4337480,
+        "zip_sha256": "6a2f6898db27797a4eb38a9dfb69ce86a8b4ef0e2910a9ab2c19254cd55261f1",
+        "place_bytes": 798416,
+        "place_sha256": "d2d685377eba115a64fd7996f7f4a8d934bcce5e535e462ee22ed23678d14265",
+        "source_files": 69,
+        "actual_source_matches_reviewed_candidate": true
+      },
+      "acceptance_remaining": {
+        "studio_solo": "NOT_TESTED_ENVIRONMENT_UNAVAILABLE",
+        "studio_two_client": "NOT_TESTED_ENVIRONMENT_UNAVAILABLE",
+        "android_15min": "NOT_TESTED",
+        "art": "ART_NO_GO",
+        "fun": "NOT_TESTED",
+        "owner_accepted": false,
+        "runtime_unified": false,
+        "source_scope_closure_is_not_product_completion": true
+      }
+    },
+    {
+      "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_4B669C01C8AC",
+      "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
+      "resources": [
+        "REAL69_CANONICAL_SOURCE_WORKFLOW",
+        "HUD_INTEL_RUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_BASICMOBILITYPOLICY",
+        "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_CASTLEMATCHRULES",
+        "REAL69_SOURCE_EGGRUMBLE_CASTLESIEGEBRIDGE",
+        "REAL69_SOURCE_EGGRUMBLE_CASTLESIEGEGUARDIANPOLICY",
+        "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+        "REAL69_SOURCE_EGGRUMBLE_FIELDITEMPICKUPS",
+        "REAL69_SOURCE_EGGRUMBLE_INVULCOUNTERNEUTRAL",
+        "REAL69_SOURCE_EGGRUMBLE_INVULRUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_LANDSEASKYTRAVERSAL",
+        "REAL69_SOURCE_EGGRUMBLE_LEGACYCANYONROUTES",
+        "REAL69_SOURCE_EGGRUMBLE_LEGACYTWINBIOMES",
+        "REAL69_SOURCE_EGGRUMBLE_LOBBYCASTLEMODESPREVIEW",
+        "REAL69_SOURCE_EGGRUMBLE_MAPINTELBRIDGE",
+        "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE",
+        "REAL69_SOURCE_EGGRUMBLE_NEUTRALSTONEGIANT",
+        "REAL69_SOURCE_EGGRUMBLE_REALMBATTLECORE",
+        "REAL69_SOURCE_EGGRUMBLE_ROUNDREPLAY",
+        "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT",
+        "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+        "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_LEGACYFIRST90",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py",
+        ".github/workflows/gq8-real63-source-composite.yml",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json"
+      ],
+      "issued_at": "2026-11-22T12:50:02Z",
+      "expires_at": "2026-11-22T18:50:02.000Z",
+      "parent_issue": 470,
+      "canonical_parent": 470,
+      "integration_issue": 220,
+      "request_comment": 7078511695,
+      "pr": null,
+      "candidate_pr_status": "NOT_CREATED",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "b9996010-730d-49b7-9dbd-c9409cf73a8b",
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 578,
+        "claim_commit": "97fc666219f83f05ff6c4cd7ded42d62e3c859c2",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T13:14:23+00:00"
+      },
+      "authority_evidence": [
+        "Authenticated GitHub get_user_login kk051780/233213370 and repository permission admin, independently confirmed.",
+        "Existing coordinator owner_delegation: ordinary game/system engineering approvals delegated; objective QA unchanged.",
+        "Policy v1.2 first formally adopted at18e4; same AGENTS.md and docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md bytes independently verified at current RCfa5f. #1011: current Codex parent owns exclusive handoff and RC integration.",
+        "#218 comment6886441650: single authorized coordinator, unique scope, current-blob CAS; not a worker request promoted by assertion."
+      ],
+      "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+      "dependency_pr": 1013,
+      "dependency_adoption_comment": 7079294042,
+      "author_context": "/root/intake_300",
+      "independent_reviewer_context": "/root/governance_300 and /root for code authored by intake; independent whole-candidate review required",
+      "grant_scope_version": 1,
+      "scope": "Reuse only the frozen 22-source union as a strict post-stage of the unchanged historical BR-only pipeline. Add exact prior/final69/hunk/inverse profile, small producer, final verifier, rejection tests and portable full28 Native adapter. Preserve exact existing case/fixture bytes. Build Native Repl.CLI from the existing verified f46d879 checkout under a new explicit source/build-provenance contract; record actual binary identity. No old accepted SHA list or fixture changes.",
+      "generated_source_scope": [
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_BASICMOBILITYPOLICY",
+          "generated_route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 3502,
+            "sha256": "eb1e557bbb3c13b945c6115fd694e90651ce15b70862b122b5a7b680a27ec57a"
+          },
+          "after": {
+            "bytes": 6729,
+            "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+          "generated_route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 13076,
+            "sha256": "3b8cf7e9b939213633fde964d81bb5e9508e4fe467ef932ddad0bfbe270bd96b"
+          },
+          "after": {
+            "bytes": 13707,
+            "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_CASTLEMATCHRULES",
+          "generated_route": "ServerScriptService/EGGRUMBLE_CastleMatchRules",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 14586,
+            "sha256": "2291b10f3da7629ed4629d706e411974b3d95cddfc79a65173d0eeca61a08806"
+          },
+          "after": {
+            "bytes": 16609,
+            "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_CASTLESIEGEBRIDGE",
+          "generated_route": "ServerScriptService/EGGRUMBLE_CastleSiegeBridge",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 4796,
+            "sha256": "14f0f291ae9e8d14d525be0c1626e964aff52398b002c2ef1051c5bd1e4f72c5"
+          },
+          "after": {
+            "bytes": 5861,
+            "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_CASTLESIEGEGUARDIANPOLICY",
+          "generated_route": "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 8340,
+            "sha256": "8a3d484f7849610ddefc475e65805d54a1e43fb379976e1543bcd628dcb96b58"
+          },
+          "after": {
+            "bytes": 9786,
+            "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+          "generated_route": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 21027,
+            "sha256": "9ec9982ed0d6e68457712e4e5dd10e7fb608c666adfe2e6904a209f5692a50c9"
+          },
+          "after": {
+            "bytes": 22046,
+            "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_FIELDITEMPICKUPS",
+          "generated_route": "ServerScriptService/EGGRUMBLE_FieldItemPickups",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 14656,
+            "sha256": "8fbf9187267df800c5c4a6379b1e2e3db0de4c363854a805c40c378bd0bb9658"
+          },
+          "after": {
+            "bytes": 15602,
+            "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_INVULCOUNTERNEUTRAL",
+          "generated_route": "ServerScriptService/EGGRUMBLE_InvulCounterNeutral",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 7406,
+            "sha256": "10d2184a635ac19b80b9456029e029aa32c65ff20ffc7da12415937ec42508a2"
+          },
+          "after": {
+            "bytes": 7498,
+            "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_INVULRUNTIME",
+          "generated_route": "ServerScriptService/EGGRUMBLE_InvulRuntime",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 8912,
+            "sha256": "bf9eb4fa62a0a7f90ddaee0fef84347ba86a77da29a01ca3086b0c7704766b01"
+          },
+          "after": {
+            "bytes": 11264,
+            "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_LANDSEASKYTRAVERSAL",
+          "generated_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 34811,
+            "sha256": "0119d26e27e09a46390679e3207c22871aa3886cc04bc09d0cc0bbe701680092"
+          },
+          "after": {
+            "bytes": 37578,
+            "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_LEGACYCANYONROUTES",
+          "generated_route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 9829,
+            "sha256": "7139110080ff6aec1cabc2acf8a722ba2efb3b26c5ab4fcd596ce167bd80ffc3"
+          },
+          "after": {
+            "bytes": 10202,
+            "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_LEGACYTWINBIOMES",
+          "generated_route": "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 31308,
+            "sha256": "c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+          },
+          "after": {
+            "bytes": 31784,
+            "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_LOBBYCASTLEMODESPREVIEW",
+          "generated_route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 91635,
+            "sha256": "8d8f6a63db5dd24740f787437b7aa88edfbaaa9c2aae062b07a884e59c06ad85"
+          },
+          "after": {
+            "bytes": 94590,
+            "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_MAPINTELBRIDGE",
+          "generated_route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 12410,
+            "sha256": "8c61b789f4bc2df3b378457571d606ec393e4867bdfa428514ef3db736493adc"
+          },
+          "after": {
+            "bytes": 15584,
+            "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE",
+          "generated_route": "ServerScriptService/EGGRUMBLE_MatchResultService",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 7410,
+            "sha256": "5fbb6a5017363bb8ef2a9793e279a1cb8a76480f6b2e74758ec35188508ce1a4"
+          },
+          "after": {
+            "bytes": 7410,
+            "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_NEUTRALSTONEGIANT",
+          "generated_route": "ServerScriptService/EGGRUMBLE_NeutralStoneGiant",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 7023,
+            "sha256": "c6a30beeeb2c9484870624ddc8f56a5437146c168cc6044ad8e942c1136b0240"
+          },
+          "after": {
+            "bytes": 7075,
+            "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_REALMBATTLECORE",
+          "generated_route": "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
+          "class": "Script",
+          "before": {
+            "bytes": 33443,
+            "sha256": "e9716febc5046ffc81707cb7cd0ef1332d992e813a6bbe2bdd1678b77a9de6ed"
+          },
+          "after": {
+            "bytes": 35282,
+            "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_ROUNDREPLAY",
+          "generated_route": "ServerScriptService/EGGRUMBLE_RoundReplay",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 6894,
+            "sha256": "824e699216ff95d5e7ed50538435cf21122e450f698ae398069cb265c48819b9"
+          },
+          "after": {
+            "bytes": 7083,
+            "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT",
+          "generated_route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 71356,
+            "sha256": "2b5f7a5889ab2994b54517cd522050c2569d827b65ea5ec0e76a5d8f94e3ddfa"
+          },
+          "after": {
+            "bytes": 73774,
+            "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+          "generated_route": "ServerScriptService/EGGRUMBLE_SwarmCombat",
+          "generated_relative_path": "sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+          "class": "ModuleScript",
+          "before": {
+            "bytes": 38508,
+            "sha256": "cc40d9902834b63db15bc8ff63a0be0f092cdc17e5a962d9669784f4e15dd75a"
+          },
+          "after": {
+            "bytes": 38973,
+            "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+          "generated_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+          "generated_relative_path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+          "class": "LocalScript",
+          "before": {
+            "bytes": 24182,
+            "sha256": "fef035395ef803a74bedb95deace210a40ea5ab4b191a36422ea3acab192fbe8"
+          },
+          "after": {
+            "bytes": 24779,
+            "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+          }
+        },
+        {
+          "candidate_resource_token": "REAL69_SOURCE_EGGRUMBLE_LEGACYFIRST90",
+          "generated_route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90",
+          "generated_relative_path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+          "class": "LocalScript",
+          "before": {
+            "bytes": 4448,
+            "sha256": "cd346ca76f8c215219a7c31e0795b3e113a146eaab9c003cd5559eaf46919d5d"
+          },
+          "after": {
+            "bytes": 6040,
+            "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+          }
+        }
+      ],
+      "generated_source_count": 22,
+      "unchanged_source_count": 47,
+      "source_count": 69,
+      "generated_paths_are_repository_change_paths": false,
+      "original_pipeline_preservation": "Existing indices0-38 (39 step payloads), including original full17/all48/ART on prior BR-only profile, remain unchanged; sibling final delivery is independently verified.",
+      "frozen_prior": {
+        "bytes": 798416,
+        "sha256": "d2d685377eba115a64fd7996f7f4a8d934bcce5e535e462ee22ed23678d14265"
+      },
+      "frozen_final": {
+        "bytes": 828114,
+        "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+      },
+      "project_pin": {
+        "bytes": 9564,
+        "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+      },
+      "hunks": {
+        "count": 168,
+        "removed_plus_added_utf8_bytes": 54942,
+        "design_erratum": "Original 54726 value was Unicode character count; fixed design retained, review erratum records54942 UTF8 bytes."
+      },
+      "acceptance": "Strict complete69 before/final route,class,Source hash,project,75instance non-Source identity; only frozen22 hunk union, no novel Lua. Real current-run prior receipt must pass unchanged #977 provenance guard and remain byte-exact. Compile/Rojo ON69 and inverse OFF69 restoring actual BR-only parent; final17-marker/all48 inventory/3visual-source retention with explicit new final event envelope. Original full17/ART prior reports cannot certify final union. Portable Native full28 runs original10+objective7 exact case/fixture bodies under new f46d clean-source/build-provenance plus actual binary before/after contract. All original local9c pins/fixtures immutable. Negative input/output/provenance/rollback tests, independent code and actual complete HEAD review, same-head real CI; fresh RC writer lease/CAS for adoption. No source-only report implies Studio/ART/FUN/Android approval.",
+      "native_contract": "New production adapter: exact Luau source commit/clean checkout/build recipe proof plus actual binary identity before/after each run. Existing local9c binary-lock packet remains immutable.",
+      "forbidden_changes": [
+        "existing full17/all48/ART accepted hashes, fixtures and gate logic",
+        "original author pipelines and frozen packets",
+        "optional14, Map +288, later LSS changes or new Lua logic",
+        "labeling prior reports as final union PASS",
+        "rewriting prior receipt provenance to a historical head",
+        "main or Roblox publication"
+      ],
+      "rollback": {
+        "base_rc_sha": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "before_blobs": {
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": null,
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": null,
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": null,
+          "tests/test_gq470_union22_real69_20261122.py": null,
+          ".github/workflows/gq8-real63-source-composite.yml": "333a4e247fe198e27452619a322628e602aa661c",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/objective_full_cases.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/native_prefix.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/fixture_additions.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/speed_fixture_additions.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_fixture_additions.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/combined_cases.luau": null,
+          "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/INPUT_MANIFEST.json": null
+        },
+        "source_inverse": "Reapply explicit inverse to final sources; source/Place/project exact current BR-only prior, with actual current-run prior receipt preserved byte-exact. Repository rollback restores the exact future workflow before blob and removes only the thirteen new files.",
+        "repository": "Restore the one workflow before blob and remove only the thirteen added files. No other owner/source changes."
+      },
+      "profile_truth": {
+        "active_runtime": "rich51",
+        "private_companion": "REAL69_UNION22",
+        "runtime_unified": false,
+        "studio_solo": "NOT_TESTED",
+        "studio_two_client": "NOT_TESTED",
+        "art": "ART_NO_GO",
+        "product": "PRODUCT_NO_GO",
+        "android": "NOT_TESTED",
+        "fun": "NOT_TESTED"
+      },
+      "design_review": {
+        "context": "/root/governance_300",
+        "decision": "CONDITIONAL_PASS_DESIGN_ONLY",
+        "receipt_sha256": "823be41c8730518b41674ea2bd6e5b36d330b88ffb28ccc134f3795159e667cc",
+        "code_not_approved": true
+      },
+      "resource_semantics": "Preserve shared REAL69_CANONICAL_SOURCE_WORKFLOW and HUD_INTEL_RUNTIME tokens. Additional route tokens identify exact generated source bytes, not permission to bypass existing owner claims. Original frozen owner packets and branches are unchanged.",
+      "no_main_or_publish": true,
+      "no_new_lua_authority": true,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
       "no_review_waiver": true
     }
   ],
