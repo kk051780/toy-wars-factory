@@ -515,5 +515,949 @@
     "original_score_spec_bytes": 16424,
     "original_score_spec_sha256": "a849860ce4ccca97faa40e0973644b14a366e5bc1ed7c48049d193078054b46a",
     "public_relay_spec_unchanged": true
+  },
+  "upstream_parent_contract": {
+    "admission_schema": "UNION22_FINAL_DELIVERY_ADMISSION_V1",
+    "admission_status": "PASS_SOURCE_AND_NATIVE_ONLY",
+    "changed_by_parent": 22,
+    "class_counts": {
+      "LocalScript": 10,
+      "ModuleScript": 47,
+      "Script": 12
+    },
+    "context_policy": {
+      "LOCAL_SOURCE_REVIEW_rejected_for_production_envelope_mode": true,
+      "allowed_kinds": [
+        "PR_CANDIDATE",
+        "OFFICIAL"
+      ],
+      "expected_from": "Mandatory external caller argument, never incoming receipt default",
+      "fields": [
+        "kind",
+        "build_head",
+        "checkout_sha",
+        "canonical_build",
+        "official_build_head",
+        "observed_live_rc",
+        "event",
+        "run_id",
+        "run_attempt"
+      ],
+      "native_aggregate_formal_rc_adoption_proven_always_false_even_when_parent_context_OFFICIAL": true,
+      "parent_KIND_OFFICIAL_does_not_make_Score_canonical": true
+    },
+    "contract_code": {
+      "composer": {
+        "bytes": 26156,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "sha256": "758c4a937778bcff82b73687bc131bd7b5427292ff43b13e5b4101139ecb0914"
+      },
+      "native_lock": {
+        "bytes": 18217,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "sha256": "7bf3cdc53952f039239f7c736b25356e5f399a0c150f0153ff9844ff470b5dd4"
+      },
+      "native_runner": {
+        "bytes": 21743,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "sha256": "82c4bca7a79bea32253e8a1a4d66f4537cd87a8c97ebfa4d4f8d152b955accd6"
+      },
+      "profile": {
+        "bytes": 289381,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "sha256": "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60"
+      },
+      "verifier": {
+        "bytes": 44152,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "sha256": "110a4a68b2fa31cd70c5e934cb9391d7357bb3f23f458c92eeb65670a0fdf5f8"
+      },
+      "workflow": {
+        "bytes": 114477,
+        "path": ".github/workflows/gq8-real63-source-composite.yml",
+        "sha256": "c4dab5b9b3ea89d3ab15d64259a7457339cd2d3e9f3535832b64d1e2398f053a"
+      }
+    },
+    "delivery_manifest_schema": "UNION22_DELIVERY_FILES_V1",
+    "instance_count": 75,
+    "inventory": {
+      "counts": {
+        "current_sources": 69,
+        "delivery": 110,
+        "manifest": 109,
+        "manifest_root_files_excluding_self": 11,
+        "native_evidence": 17,
+        "prior_boundary": 12
+      },
+      "delivery_members": [
+        "CORE_BUILD_REPORT.json",
+        "EGGRUMBLE_REAL69.project.json",
+        "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+        "OFF69_UNION22_PRIOR_BR_ROLLBACK.tar.gz",
+        "REAL69_LEGACY_INTAKE_RECEIPT.json",
+        "UNION22_DELIVERY_MANIFEST.json",
+        "UNION22_FINAL_17_MARKER_RETENTION.json",
+        "UNION22_FINAL_ADMISSION.json",
+        "UNION22_FINAL_ALL48_ENVELOPE.json",
+        "UNION22_FINAL_ALL48_RAW.json",
+        "UNION22_FINAL_ART_SOURCE_RETENTION.json",
+        "UNION22_PROFILE_LOCK.json",
+        "native_evidence/CMakeCache.txt",
+        "native_evidence/build.ninja",
+        "native_evidence/build.stderr.log",
+        "native_evidence/build.stdout.log",
+        "native_evidence/build_receipt.json",
+        "native_evidence/combined_clear_los/generated.luau",
+        "native_evidence/combined_clear_los/receipt.json",
+        "native_evidence/combined_clear_los/stderr.log",
+        "native_evidence/combined_clear_los/stdout.log",
+        "native_evidence/configure.stderr.log",
+        "native_evidence/configure.stdout.log",
+        "native_evidence/objective_full/generated.luau",
+        "native_evidence/objective_full/receipt.json",
+        "native_evidence/objective_full/stderr.log",
+        "native_evidence/objective_full/stdout.log",
+        "native_evidence/receipt.json",
+        "native_evidence/source_tree_manifest.json",
+        "prior_boundary/ART_CHECK_REPORT.json",
+        "prior_boundary/RC85_RC86_REAL69_ALL48_FEATURE_TRUTH.json",
+        "prior_boundary/REAL69_LEGACY17_NONLOSS_AUDIT.json",
+        "prior_boundary/REAL69_LEGACY_INTAKE_RECEIPT.json",
+        "prior_boundary/legacy_rollbacks/OFF69_BOT_ART_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_DISCOVERY_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_FB019_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_FORTRESS_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_GQ470_P0_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_HUD_DISPLAY_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_OBJECTIVE_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_REEF_SCULPT_ROLLBACK.tar.gz",
+        "sources/ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau",
+        "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau",
+        "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau",
+        "sources/ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BotActors.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BotPathRouter.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_DivineMantle.luau",
+        "sources/ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau",
+        "sources/ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau",
+        "sources/ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_ImpactFeedback.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NaturalRegen.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+        "sources/ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RaidItemIntake.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+        "sources/ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SkillFX.luau",
+        "sources/ServerScriptService/EGGRUMBLE_StatusTickFence.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+        "sources/ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau",
+        "sources/ServerScriptService/GQ802_StageManifestPolicy.luau",
+        "sources/ServerScriptService/GQ802_StageTileBlueprintPolicy.luau",
+        "sources/ServerScriptService/GQ802_StageTileVisualRenderer.luau",
+        "sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau",
+        "sources/ServerScriptService/GQ8_LobbySocialPlaza.server.luau",
+        "sources/ServerScriptService/GQ8_TradeEscrowReducer.luau",
+        "sources/ServerScriptService/GQ8_TradeJournalContract.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau"
+      ],
+      "manifest_members": [
+        "CORE_BUILD_REPORT.json",
+        "EGGRUMBLE_REAL69.project.json",
+        "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+        "OFF69_UNION22_PRIOR_BR_ROLLBACK.tar.gz",
+        "REAL69_LEGACY_INTAKE_RECEIPT.json",
+        "UNION22_FINAL_17_MARKER_RETENTION.json",
+        "UNION22_FINAL_ADMISSION.json",
+        "UNION22_FINAL_ALL48_ENVELOPE.json",
+        "UNION22_FINAL_ALL48_RAW.json",
+        "UNION22_FINAL_ART_SOURCE_RETENTION.json",
+        "UNION22_PROFILE_LOCK.json",
+        "native_evidence/CMakeCache.txt",
+        "native_evidence/build.ninja",
+        "native_evidence/build.stderr.log",
+        "native_evidence/build.stdout.log",
+        "native_evidence/build_receipt.json",
+        "native_evidence/combined_clear_los/generated.luau",
+        "native_evidence/combined_clear_los/receipt.json",
+        "native_evidence/combined_clear_los/stderr.log",
+        "native_evidence/combined_clear_los/stdout.log",
+        "native_evidence/configure.stderr.log",
+        "native_evidence/configure.stdout.log",
+        "native_evidence/objective_full/generated.luau",
+        "native_evidence/objective_full/receipt.json",
+        "native_evidence/objective_full/stderr.log",
+        "native_evidence/objective_full/stdout.log",
+        "native_evidence/receipt.json",
+        "native_evidence/source_tree_manifest.json",
+        "prior_boundary/ART_CHECK_REPORT.json",
+        "prior_boundary/RC85_RC86_REAL69_ALL48_FEATURE_TRUTH.json",
+        "prior_boundary/REAL69_LEGACY17_NONLOSS_AUDIT.json",
+        "prior_boundary/REAL69_LEGACY_INTAKE_RECEIPT.json",
+        "prior_boundary/legacy_rollbacks/OFF69_BOT_ART_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_DISCOVERY_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_FB019_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_FORTRESS_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_GQ470_P0_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_HUD_DISPLAY_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_OBJECTIVE_ROLLBACK.tar.gz",
+        "prior_boundary/legacy_rollbacks/OFF69_REEF_SCULPT_ROLLBACK.tar.gz",
+        "sources/ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau",
+        "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau",
+        "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau",
+        "sources/ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BotActors.luau",
+        "sources/ServerScriptService/EGGRUMBLE_BotPathRouter.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+        "sources/ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_DivineMantle.luau",
+        "sources/ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau",
+        "sources/ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau",
+        "sources/ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_ImpactFeedback.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+        "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+        "sources/ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NaturalRegen.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau",
+        "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+        "sources/ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RaidItemIntake.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
+        "sources/ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+        "sources/ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SkillFX.luau",
+        "sources/ServerScriptService/EGGRUMBLE_StatusTickFence.luau",
+        "sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+        "sources/ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau",
+        "sources/ServerScriptService/GQ802_StageManifestPolicy.luau",
+        "sources/ServerScriptService/GQ802_StageTileBlueprintPolicy.luau",
+        "sources/ServerScriptService/GQ802_StageTileVisualRenderer.luau",
+        "sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau",
+        "sources/ServerScriptService/GQ8_LobbySocialPlaza.server.luau",
+        "sources/ServerScriptService/GQ8_TradeEscrowReducer.luau",
+        "sources/ServerScriptService/GQ8_TradeJournalContract.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau",
+        "sources/StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau"
+      ],
+      "manifest_self_excluded": true
+    },
+    "native": {
+      "archives_verified_as_parent_content_not_local_native_rerun": true,
+      "fixture_pins": {
+        "INPUT_MANIFEST.json": {
+          "bytes": 10445,
+          "sha256": "70e398daf4f05284ab735a8a6f8850427ac1a44ce299b611bf20a19bb4b5801f"
+        },
+        "combined_cases.luau": {
+          "bytes": 15083,
+          "sha256": "e819701847a32d4aa73215ecde37d3dbfd5ced03c7c80940143270a595944604"
+        },
+        "combined_fixture_additions.luau": {
+          "bytes": 8134,
+          "sha256": "03b6f27bab53a1b2dbb0748b18a11fbe74e6d091de46295c2aa1e8f920da82c3"
+        },
+        "fixture_additions.luau": {
+          "bytes": 9164,
+          "sha256": "35cb13f894170cd07084c5cc34117d8ea5c7d5dcbfd0cc7c8f8dcd2cca081eb4"
+        },
+        "native_prefix.luau": {
+          "bytes": 7111,
+          "sha256": "4b0ca7971a97fc7b304cddcbc8d4a9ee39c3133ce91cb523239406bee614130d"
+        },
+        "speed_fixture_additions.luau": {
+          "bytes": 4012,
+          "sha256": "b61b6e58067ae19f9b527b30847116350279c6853b05dfd670ff9cbd8a7048d1"
+        }
+      },
+      "full_body_count": 28,
+      "input_lock_sha256": "7bf3cdc53952f039239f7c736b25356e5f399a0c150f0153ff9844ff470b5dd4",
+      "modules_in_load_order": [
+        "BasicMobilityPolicy",
+        "CombatBalance",
+        "AttackGeometry",
+        "StatusTickFence",
+        "CastleMatchRules",
+        "CastleSiegeGuardianPolicy",
+        "CastleSiegeBridge",
+        "InteractionGuard",
+        "RoundReplay",
+        "ScoreBalance",
+        "MatchResultService",
+        "BossSessionFence",
+        "DualModeNeutralBudget",
+        "InvulnerabilityPolicy",
+        "InvulCounterNeutral",
+        "InvulRuntime",
+        "NeutralFinisherPolicy",
+        "MusouFeverPolicy",
+        "CurseConversionPolicy",
+        "NeutralMeleePolicy",
+        "NeutralSpawnPacing",
+        "NeutralEncounterFairness",
+        "FieldItemPickups",
+        "RaidItemIntake",
+        "CastleGuardianRuntime",
+        "SwarmCombat",
+        "SevenRoleCombat",
+        "LobbyCastleModesPreview.server"
+      ],
+      "programs": {
+        "combined_clear_los": {
+          "bytes": 419751,
+          "sha256": "e3be8f1b8cd3ce95a5cdf428322fe0d06e065bdd762ebf57ab2efac1d9de656b"
+        },
+        "objective_full": {
+          "bytes": 411660,
+          "sha256": "5ed36f74fb187d147fdaea67b689216c87e49fcddebe80730508337748a7e9e2"
+        }
+      },
+      "raw_log_policy": "Do not force old full-stdout hash across runs. Actual two programs and all CASE10/7 lines were identical, but TRACE/METRIC varied. Bind every complete raw log to its current receipt/manifest; apply original ordered CASE names/PASS/vector-count/stderr gates, preserve all traces without normalization.",
+      "runner_sha256": "82c4bca7a79bea32253e8a1a4d66f4537cd87a8c97ebfa4d4f8d152b955accd6",
+      "source_count_pinned": 69,
+      "source_tree_manifest": {
+        "bytes": 621903,
+        "sha256": "ddec48ca3b2e65464d2a45c9677a7c9c60de33de8dc31934ea81c1e24d7e7ca8"
+      },
+      "suites": {
+        "combined_clear_los": {
+          "case": {
+            "bytes": 15973,
+            "sha256": "dbe90332faf3f9e71838f043d2e484ada46896ad35eaaf0586b8e6e9f9a6b209"
+          },
+          "case_path": "combined_cases_clear_los.luau",
+          "expected_case_names": [
+            "SHARED_MODULES",
+            "FIRST_READY",
+            "FIRST_GUARDIAN_INCOMING",
+            "FIRST_SWARM_KO",
+            "FINISH_AND_CLOSE",
+            "NEXT_READY",
+            "OLD_GENERATION_RETIRED",
+            "SECOND_GUARDIAN_INCOMING",
+            "SECOND_SWARM_KO",
+            "COMBINED_HOST_RUNTIME"
+          ],
+          "input_variant": "BOUNDED_CLEAR_LOS_APPROACH_INPUT",
+          "observed_case_lines_same_in_both_artifacts": [
+            "CASE\tSHARED_MODULES\tPASS\t28 full actual Sources; cached Invul/Geometry/Mobility and Host module require identities",
+            "CASE\tFIRST_READY\tPASS\tactual prompts and 12-second READY; actual Guardian/Swarm attach; two human membership",
+            "CASE\tFIRST_GUARDIAN_INCOMING\tPASS\t10 real siege prompts -> actual Guardian spawn -> actual MAGE Tool A -> 30 HP incoming damage",
+            "CASE\tFIRST_SWARM_KO\tPASS\tactual SpawnPacing/Fairness/clearance/Swarm spawn; actual Tool B -> Died -> current human KO",
+            "CASE\tFINISH_AND_CLOSE\tPASS\tactual 900-second deadline; Replay 10-second close; Guardian shutdown; Horde/world destroy; budget retirement",
+            "CASE\tNEXT_READY\tPASS\tactual prompts and 12-second READY; actual Guardian/Swarm attach; two human membership",
+            "CASE\tOLD_GENERATION_RETIRED\tPASS\ttwo exact old Swarm jobs resumed after same-avatar READY with live new tickets, terminated without HP/KO/budget writes; stale APIs cannot hit fresh neutral",
+            "CASE\tSECOND_GUARDIAN_INCOMING\tPASS\t10 real siege prompts -> actual Guardian spawn -> actual MAGE Tool A -> 30 HP incoming damage",
+            "CASE\tSECOND_SWARM_KO\tPASS\tactual SpawnPacing/Fairness/clearance/Swarm spawn; actual Tool B -> Died -> current human KO",
+            "CASE\tCOMBINED_HOST_RUNTIME\tPASS\treal Host Guardian and Swarm attach, real human prompts/Tools, actual cleanup, explicit same-avatar replay, late old jobs and fresh KO"
+          ]
+        },
+        "objective_full": {
+          "case": {
+            "bytes": 7882,
+            "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"
+          },
+          "case_path": "objective_full_cases.luau",
+          "expected_case_names": [
+            "WHOLE_HOST_READY",
+            "REAL_TOOL_REAL_SWARM_AWAKEN",
+            "AWAKENED_SIEGE_DENIED",
+            "AWAKENED_VAULT_DENIED",
+            "AWAKENED_FIELD_DENIED",
+            "EXPIRY_PICKUP_DEPOSIT_RESTORED",
+            "WHOLE_HOST_OBJECTIVE_CROSS"
+          ],
+          "input_variant": "ORIGINAL_UNCHANGED",
+          "observed_case_lines_same_in_both_artifacts": [
+            "CASE\tWHOLE_HOST_READY\tPASS\t28 actual complete modules, original 12 second READY and two current humans",
+            "CASE\tREAL_TOOL_REAL_SWARM_AWAKEN\tPASS\treal Tool arm and actual hostile Swarm melee, no direct Runtime or Policy test invocation",
+            "CASE\tAWAKENED_SIEGE_DENIED\tPASS\tactual Host door prompt preserves gate and core HP",
+            "CASE\tAWAKENED_VAULT_DENIED\tPASS\tactual Host vault prompt preserves actual carried egg ledger",
+            "CASE\tAWAKENED_FIELD_DENIED\tPASS\tactual Host field prompt preserves physical egg and inventory while real policy remains awake",
+            "CASE\tEXPIRY_PICKUP_DEPOSIT_RESTORED\tPASS\treal expiry restores Host field pickup, physical consumption and server ledger deposit",
+            "CASE\tWHOLE_HOST_OBJECTIVE_CROSS\tPASS\twhole Host connects real Tool -> real Swarm damage -> actual defense -> real objective denial -> expiry -> pickup/deposit"
+          ]
+        }
+      },
+      "toolchain": {
+        "recipe": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "LUAU_BUILD_CLI": "ON",
+          "LUAU_BUILD_TESTS": "OFF",
+          "binary_relative_path": "luau",
+          "build_parallel": 2,
+          "dedicated_directory_must_be_new": true,
+          "generator": "Ninja",
+          "target": "Luau.Repl.CLI"
+        },
+        "source_commit": "f46d879e28302a430029304f7f6a162aed66f103",
+        "source_tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746",
+        "tracked_file_count": 2336
+      },
+      "unchanged_union_verify_native_cannot_be_replayed_from_zip_alone": "It requires actual upstream physical source/build directories, binaries, tool files, mtime and git tree. Do not stub or weaken it."
+    },
+    "non_source_normalizations": {
+      "do_not_compare_different_normalization_hashes_as_one_algorithm": true,
+      "score_existing": {
+        "placeholder": "SOURCE_BODY_OMITTED",
+        "sha256": "ccc79611b3704a4c5eb274c51c5364b26b1cb9d116007d220c2284b81cd46be7"
+      },
+      "union_parent": {
+        "bytes": 18378,
+        "placeholder": "__SOURCE_OMITTED_FOR_NON_SOURCE_COMPARISON__",
+        "sha256": "e5c655969b70c32fc0a6158f4ffe84ae4b3e39f0e2669326d7c3a6b49a0d93cb"
+      }
+    },
+    "origin_records_not_runtime_head_allowlist": "5e8/c1f44 and eb437/7abaa are separately saved observations; do not hardcode a single old HEAD or accept a head read from the incoming receipt as its expected value.",
+    "own_flags_must_remain": {
+      "canonical_build": false,
+      "final_score_workflow_bound": false,
+      "final_union_contract_bound": false,
+      "official_build_head": null,
+      "parent_native_reexecuted_by_score": false,
+      "parent_origin_attestation_verified": false,
+      "parent_retention_reexecuted_by_score": false,
+      "score_same_head_ci_proven": false
+    },
+    "place": {
+      "bytes": 828114,
+      "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+    },
+    "profile_schema": "GQ470_UNION22_PRODUCTION_PROFILE_V1",
+    "project": {
+      "bytes": 9564,
+      "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+    },
+    "receipt_schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
+    "retention_records": {
+      "UNION22_FINAL_17_MARKER_RETENTION.json": {
+        "body_sha256": "37cf9cebe6ad18b051b26b35d0ccae870e4c985bd63dbad64ac1ef6bc2a89d87",
+        "context_fields": [
+          "candidate_build_head",
+          "receipt_provenance",
+          "official_build_head",
+          "formal_rc_adoption_proven"
+        ],
+        "evidence_scope": "FIXED_PARENT_ARCHIVED_REPORT_CONTENT_NOT_REEXECUTED_AUDITOR"
+      },
+      "UNION22_FINAL_ALL48_ENVELOPE.json": {
+        "body_sha256": "7805a60cb523c9c34e1791efabcba738f9c650a51f68ee0ee03112a5672042bf",
+        "context_fields": [
+          "candidate_build_head",
+          "receipt_provenance",
+          "official_build_head",
+          "formal_rc_adoption_proven"
+        ],
+        "evidence_scope": "FIXED_PARENT_ARCHIVED_REPORT_CONTENT_NOT_REEXECUTED_AUDITOR"
+      },
+      "UNION22_FINAL_ALL48_RAW.json": {
+        "body_sha256": "cbeacd98a7ccce90d5e7341869fe11eb86eebb4b57aae1a6396a18fa298e02ae",
+        "context_fields": [
+          "official_head"
+        ],
+        "evidence_scope": "FIXED_PARENT_ARCHIVED_REPORT_CONTENT_NOT_REEXECUTED_AUDITOR"
+      },
+      "UNION22_FINAL_ART_SOURCE_RETENTION.json": {
+        "body_sha256": "75b932873d75d92a2ca1c91b5c9409173b65c609c3dd9381a5e3522b365faf68",
+        "context_fields": [
+          "candidate_build_head",
+          "receipt_provenance",
+          "official_build_head",
+          "formal_rc_adoption_proven"
+        ],
+        "evidence_scope": "FIXED_PARENT_ARCHIVED_REPORT_CONTENT_NOT_REEXECUTED_AUDITOR"
+      }
+    },
+    "schema": "SCORE_UNION22_PARENT_INPUT_CONTRACT_V1",
+    "source_count": 69,
+    "source_rows": {
+      "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
+        "bytes": 7596,
+        "class": "ModuleScript",
+        "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
+        "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+      },
+      "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau": {
+        "bytes": 4506,
+        "class": "ModuleScript",
+        "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog",
+        "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+      },
+      "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
+        "bytes": 6116,
+        "class": "ModuleScript",
+        "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView",
+        "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+      },
+      "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau": {
+        "bytes": 5716,
+        "class": "ModuleScript",
+        "route": "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy",
+        "sha256": "b3a22982365ebf5e10e81a412f09162700e089780fd236dd2863843ea95ca55f"
+      },
+      "ServerScriptService/EGGRUMBLE_AttackGeometry.luau": {
+        "bytes": 1639,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_AttackGeometry",
+        "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+      },
+      "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau": {
+        "bytes": 6729,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+        "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+      },
+      "ServerScriptService/EGGRUMBLE_BossSessionFence.luau": {
+        "bytes": 776,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_BossSessionFence",
+        "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+      },
+      "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+        "bytes": 19070,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_BotActors",
+        "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+      },
+      "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
+        "bytes": 7614,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_BotPathRouter",
+        "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+        "bytes": 13707,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime",
+        "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau": {
+        "bytes": 16609,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CastleMatchRules",
+        "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau": {
+        "bytes": 5861,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CastleSiegeBridge",
+        "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": {
+        "bytes": 9786,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy",
+        "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+      },
+      "ServerScriptService/EGGRUMBLE_CombatBalance.luau": {
+        "bytes": 4123,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CombatBalance",
+        "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+      },
+      "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau": {
+        "bytes": 5471,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_CurseConversionPolicy",
+        "sha256": "4e9a0035744d750feccf0c51ebc8afe52272436fb31a532cab149a34c31a1954"
+      },
+      "ServerScriptService/EGGRUMBLE_DivineMantle.luau": {
+        "bytes": 4302,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_DivineMantle",
+        "sha256": "e6019aea60ac7ba214b44468302e6945093e3f73111857042982cf58451a2ef1"
+      },
+      "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau": {
+        "bytes": 3174,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget",
+        "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+      },
+      "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau": {
+        "bytes": 22046,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt",
+        "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+      },
+      "ServerScriptService/EGGRUMBLE_FieldItemPickups.luau": {
+        "bytes": 15602,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_FieldItemPickups",
+        "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+      },
+      "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+        "bytes": 13624,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_FlagshipFieldArt",
+        "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+      },
+      "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": {
+        "bytes": 20363,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt",
+        "sha256": "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+      },
+      "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+        "bytes": 3704,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_ImpactFeedback",
+        "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+      },
+      "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
+        "bytes": 3612,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_InteractionGuard",
+        "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau": {
+        "bytes": 7498,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_InvulCounterNeutral",
+        "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulRuntime.luau": {
+        "bytes": 11264,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_InvulRuntime",
+        "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau": {
+        "bytes": 12330,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy",
+        "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+      },
+      "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
+        "bytes": 37578,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+        "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+      },
+      "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+        "bytes": 10202,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes",
+        "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+      },
+      "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau": {
+        "bytes": 6534,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
+        "sha256": "08737dda08863dd83b13ed54753e83ffaf0aaa1cfa0d99d96b6eca97f58fc72d"
+      },
+      "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+        "bytes": 31784,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes",
+        "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+      },
+      "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+        "bytes": 94590,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+      },
+      "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau": {
+        "bytes": 15584,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+        "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+      },
+      "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau": {
+        "bytes": 6609,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy",
+        "sha256": "5de4c351d17910c67cf67e8ed5add9625f29cbb95d6e3b504c99aa5f54b3672e"
+      },
+      "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+        "bytes": 7410,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_MatchResultService",
+        "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+      },
+      "ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau": {
+        "bytes": 8984,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_MusouFeverPolicy",
+        "sha256": "2e83c376f9082bbab88c687888e23f0fe489828c9eb92684fa9752065a0312fb"
+      },
+      "ServerScriptService/EGGRUMBLE_NaturalRegen.luau": {
+        "bytes": 4467,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NaturalRegen",
+        "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau": {
+        "bytes": 2069,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness",
+        "sha256": "cf64237fd3a03c44c175d5cf859f06539cd45f8f96e75faf8efb11777c576842"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau": {
+        "bytes": 4325,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy",
+        "sha256": "55afec1c766be2fbcd5fff82c1c5124fce34596c6c0b7e699276a4cb85243feb"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau": {
+        "bytes": 1178,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy",
+        "sha256": "c389fd3b15df106bbf0aa23f07573433cc0031dd8a13197294a4ce373fbc491e"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau": {
+        "bytes": 2630,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing",
+        "sha256": "55db684fbf0ba0772b2dca641670d0cca27b23aa36324870fa32ff21e8ffc3ab"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+        "bytes": 7075,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_NeutralStoneGiant",
+        "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+      },
+      "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau": {
+        "bytes": 2686,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy",
+        "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+      },
+      "ServerScriptService/EGGRUMBLE_RaidItemIntake.luau": {
+        "bytes": 3116,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_RaidItemIntake",
+        "sha256": "6ad8e2b9d83e41fbcb6744bf2a26b67c6314a9844d4751fc402f0b32414d7bf0"
+      },
+      "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+        "bytes": 35282,
+        "class": "Script",
+        "route": "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+        "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+      },
+      "ServerScriptService/EGGRUMBLE_RoundReplay.luau": {
+        "bytes": 7083,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_RoundReplay",
+        "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+      },
+      "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
+        "bytes": 8030,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_ScoreBalance",
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      },
+      "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
+        "bytes": 73774,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+        "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+      },
+      "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+        "bytes": 10369,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_SkillFX",
+        "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+      },
+      "ServerScriptService/EGGRUMBLE_StatusTickFence.luau": {
+        "bytes": 779,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_StatusTickFence",
+        "sha256": "32ee5dae5262777812042fab06b0ad926d30c67d9c12749196b7ecb8b232c36b"
+      },
+      "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+        "bytes": 38973,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_SwarmCombat",
+        "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+      },
+      "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
+        "bytes": 5814,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/EGGRUMBLE_WeaponSilhouettes",
+        "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+      },
+      "ServerScriptService/GQ802_StageManifestPolicy.luau": {
+        "bytes": 8246,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/GQ802_StageManifestPolicy",
+        "sha256": "039d3b4d14dc39f765ce0d8916efe8668a40b7e494f37dc6ad7fed372893accf"
+      },
+      "ServerScriptService/GQ802_StageTileBlueprintPolicy.luau": {
+        "bytes": 4479,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/GQ802_StageTileBlueprintPolicy",
+        "sha256": "8a4e1ec46537130542143dc2ae5b95673550a29fa0562ac356fe43d160e8261b"
+      },
+      "ServerScriptService/GQ802_StageTileVisualRenderer.luau": {
+        "bytes": 4214,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/GQ802_StageTileVisualRenderer",
+        "sha256": "e5b28bc8c418b93e1d5fdea2d047962aebcb6ea11dfa1dc6e96064b6a77e173a"
+      },
+      "ServerScriptService/GQ805_LobbyGuildShop.server.luau": {
+        "bytes": 5192,
+        "class": "Script",
+        "route": "ServerScriptService/GQ805_LobbyGuildShop",
+        "sha256": "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
+      },
+      "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
+        "bytes": 12930,
+        "class": "Script",
+        "route": "ServerScriptService/GQ8_LobbySocialPlaza",
+        "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+      },
+      "ServerScriptService/GQ8_TradeEscrowReducer.luau": {
+        "bytes": 11476,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/GQ8_TradeEscrowReducer",
+        "sha256": "d6ba09ad28c313910004881b114f44ab5ee5bcf455df19f8863528bacd12577f"
+      },
+      "ServerScriptService/GQ8_TradeJournalContract.luau": {
+        "bytes": 5096,
+        "class": "ModuleScript",
+        "route": "ServerScriptService/GQ8_TradeJournalContract",
+        "sha256": "f32bc7ad70f0f68170293b09dfbda151b0cab2ad215f61ff98b2bbd39cbc99ba"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
+        "bytes": 7937,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD",
+        "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau": {
+        "bytes": 26226,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel",
+        "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+        "bytes": 24779,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+        "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau": {
+        "bytes": 6040,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90",
+        "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau": {
+        "bytes": 6205,
+        "class": "ModuleScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient",
+        "sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau": {
+        "bytes": 1881,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController",
+        "sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
+        "bytes": 6764,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills",
+        "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau": {
+        "bytes": 6897,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls",
+        "sha256": "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+      },
+      "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
+        "bytes": 2170,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient",
+        "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+      },
+      "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau": {
+        "bytes": 5149,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview",
+        "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+      },
+      "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau": {
+        "bytes": 6425,
+        "class": "LocalScript",
+        "route": "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture",
+        "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+      }
+    },
+    "unchanged_by_parent": 47
   }
 }

@@ -8,6 +8,7 @@ This proves local source behavior only, never official adoption or Studio play.
 from __future__ import annotations
 
 import argparse
+import copy
 import datetime
 import hashlib
 import importlib.util
@@ -46,6 +47,10 @@ SPEC_CONTRACTS = {
         "marker": "EGGRUMBLE_RELAY_SCORE_NATIVE_REGRESSION_PASS assertions=16",
         "score_build_evaluations": 8,
     },
+}
+PARENT_CONTEXT_FIELDS = {
+    "kind", "build_head", "checkout_sha", "canonical_build", "official_build_head",
+    "observed_live_rc", "event", "run_id", "run_attempt",
 }
 
 
@@ -185,6 +190,9 @@ def run_regressions(
     compiler: Path,
     output: Path,
     toolchain_receipt: Path | None = None,
+    *,
+    parent_kind: str = "FROZEN_LOCAL",
+    expected_parent_context: dict[str, Any] | Path | None = None,
 ) -> dict[str, Any]:
     if root.is_symlink() or output.is_symlink():
         raise ValueError("Input stage and Native output must not be symbolic links")
@@ -215,6 +223,10 @@ def run_regressions(
         "remote_writes": 0,
         "scope": "One exact current Score module; all69 stage inputs verified, not all69 modules executed.",
         "count_boundary": "Assertion counters are measured; Score.build evaluations are expected static counts, not instrumented calls or independent gameplay cases.",
+        "parent_kind": parent_kind,
+        "expected_parent_context": None,
+        "parent_expectation_source": "NOT_SUPPLIED",
+        "parent_origin_attestation_verified": False,
     }
     producer = None
     before = None
@@ -222,11 +234,51 @@ def run_regressions(
     archive_pins: dict[str, dict[str, Any]] = {}
     execution_pins: dict[str, dict[str, Any]] = {}
     provided_receipt_pins: dict[str, dict[str, Any]] = {}
+    parent_context_input_pins: dict[str, dict[str, Any]] = {}
+    archived: dict[str, dict[str, Any]] = {}
+    context = None
     try:
+        if parent_kind not in ("FROZEN_LOCAL", "UNION22_DELIVERY"):
+            raise ValueError("Unknown parent_kind; expected FROZEN_LOCAL or UNION22_DELIVERY")
+        if parent_kind == "FROZEN_LOCAL" and expected_parent_context is not None:
+            raise ValueError("FROZEN_LOCAL forbids expected_parent_context")
+        if parent_kind == "UNION22_DELIVERY" and expected_parent_context is None:
+            raise ValueError("UNION22_DELIVERY requires external expected_parent_context")
         producer = load_producer()
+        if isinstance(expected_parent_context, Path):
+            # Keep the caller's path identity for the final raw-byte readback.
+            context_path = expected_parent_context.absolute()
+            if context_path.is_symlink() or not context_path.is_file():
+                raise ValueError("External parent expectation must be a regular non-symlink file")
+            raw_context = context_path.read_bytes()
+            parent_context_input_pins[str(context_path)] = byte_info(raw_context)
+            target = output / "execution_inputs" / "external_parent_context.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw_context)
+            archive_pins[str(target)] = byte_info(raw_context)
+            archived["external_parent_context.json"] = {"path": str(target), **byte_info(raw_context)}
+            receipt["archived_execution_inputs"] = archived
+            receipt["external_parent_context_input"] = {"path": str(context_path), **byte_info(raw_context)}
+            context = copy.deepcopy(producer.read_parent_expectation(context_path))
+            receipt["parent_context_input_preflight"] = verify_copies(
+                parent_context_input_pins, "after external parent expectation parsing"
+            )
+            receipt["parent_expectation_source"] = "EXTERNAL_CALLER_FILE"
+        elif expected_parent_context is not None:
+            if not isinstance(expected_parent_context, dict):
+                raise ValueError("Expected parent context must be an explicit dict or Path")
+            context = copy.deepcopy(expected_parent_context)
+            receipt["parent_expectation_source"] = "EXTERNAL_CALLER_DICT"
+        if context is not None:
+            if not isinstance(context, dict) or set(context) != PARENT_CONTEXT_FIELDS:
+                raise ValueError("Expected parent context must contain exactly the nine upstream fields")
+            json.dumps(context, allow_nan=False)
+            receipt["expected_parent_context"] = copy.deepcopy(context)
         lock = producer.load_lock()
         entry, specs = native_inputs(lock)
-        receipt["stage_preflight"] = producer.verify_stage(root, "after")
+        receipt["stage_preflight"] = producer.verify_stage(
+            root, "after", parent_kind=parent_kind, expected_parent_context=copy.deepcopy(context)
+        )
         identity = producer.validate_sources(root, "after")
         score_row = identity["sources"][SCORE_PATH]
         if identity["source_count"] != 69 or {key: score_row[key] for key in SCORE_AFTER} != SCORE_AFTER:
@@ -239,7 +291,6 @@ def run_regressions(
         code_paths.extend(PACKAGE_ROOT / row["path"] for row in lock["native"]["specs"].values())
         code_pins = {str(path): file_info(path) for path in code_paths}
         receipt["code_and_lock_pins"] = code_pins
-        archived = {}
         for path in code_paths:
             data = path.read_bytes()
             if byte_info(data) != code_pins[str(path)]:
@@ -319,7 +370,9 @@ def run_regressions(
     finally:
         if producer is not None and before is not None:
             try:
-                receipt["stage_postflight"] = producer.verify_stage(root, "after")
+                receipt["stage_postflight"] = producer.verify_stage(
+                    root, "after", parent_kind=parent_kind, expected_parent_context=copy.deepcopy(context)
+                )
                 receipt["stage_files_unchanged"] = stage_fingerprint(root) == before
                 receipt["code_and_lock_unchanged"] = all(file_info(Path(path)) == pin for path, pin in (code_pins or {}).items())
                 if not receipt["stage_files_unchanged"] or not receipt["code_and_lock_unchanged"]:
@@ -331,17 +384,28 @@ def run_regressions(
                     )
                     if not receipt["tool_binaries_unchanged"]:
                         raise ValueError("Tool binary changed during Native execution")
-                receipt["execution_copies_postflight"] = verify_copies(execution_pins, "final execution copies")
-                receipt["archived_execution_inputs_postflight"] = verify_copies(archive_pins, "final execution_inputs archive")
-                if provided_receipt_pins:
-                    receipt["provided_toolchain_receipt_copy_postflight"] = verify_copies(
-                        provided_receipt_pins, "final provided_toolchain_receipt copy"
-                    )
             except Exception as error:
                 receipt["postflight_error"] = {"type": type(error).__name__, "message": str(error)}
                 receipt["native_pass"] = False
                 receipt["status"] = "SOURCE_ONLY_NATIVE_FAIL"
-        if receipt["native_pass"] and "error" not in receipt and "postflight_error" not in receipt:
+        try:
+            if execution_pins:
+                receipt["execution_copies_postflight"] = verify_copies(execution_pins, "final execution copies")
+            if archive_pins:
+                receipt["archived_execution_inputs_postflight"] = verify_copies(archive_pins, "final execution_inputs archive")
+            if provided_receipt_pins:
+                receipt["provided_toolchain_receipt_copy_postflight"] = verify_copies(
+                    provided_receipt_pins, "final provided_toolchain_receipt copy"
+                )
+            if parent_context_input_pins:
+                receipt["parent_context_input_postflight"] = verify_copies(
+                    parent_context_input_pins, "final external parent expectation input"
+                )
+        except Exception as error:
+            receipt["copy_postflight_error"] = {"type": type(error).__name__, "message": str(error)}
+            receipt["native_pass"] = False
+            receipt["status"] = "SOURCE_ONLY_NATIVE_FAIL"
+        if receipt["native_pass"] and not any(key in receipt for key in ("error", "postflight_error", "copy_postflight_error")):
             receipt["measured_counted_assertions_total"] = sum(v["measured_counted_assertions"] for v in receipt["variants"])
             receipt["expected_Score_build_evaluations_static_total"] = sum(v["expected_Score_build_evaluations_static"] for v in receipt["variants"])
             receipt["local_native_gate_ready"] = receipt["toolchain"]["local_toolchain_gate_ready"]
@@ -358,9 +422,15 @@ def main() -> int:
     parser.add_argument("--luau-compile", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True, help="Fresh directory outside the immutable input stage")
     parser.add_argument("--toolchain-receipt", type=Path, help="Local build receipt; missing receipt leaves source commit UNKNOWN and exits2 after otherwise passing")
+    parser.add_argument("--parent-kind", choices=("frozen-local", "union22-delivery"), default="frozen-local")
+    parser.add_argument("--expected-parent-context", type=Path, help="Independent caller's nine-field context JSON or SCORE_RELAY_EXTERNAL_PARENT_EXPECTATION_V1 wrapper")
     args = parser.parse_args()
     try:
-        receipt = run_regressions(args.root, args.luau, args.luau_compile, args.output, args.toolchain_receipt)
+        receipt = run_regressions(
+            args.root, args.luau, args.luau_compile, args.output, args.toolchain_receipt,
+            parent_kind=args.parent_kind.replace("-", "_").upper(),
+            expected_parent_context=args.expected_parent_context,
+        )
     except Exception as error:
         print(f"SOURCE_ONLY_NATIVE_PREFLIGHT_REJECTED: {error}", file=sys.stderr)
         return 1
@@ -372,6 +442,8 @@ def main() -> int:
         "expected_Score_build_evaluations_static": receipt.get("expected_Score_build_evaluations_static_total"),
         "stage_unchanged": receipt.get("stage_files_unchanged"),
         "local_native_gate_ready": receipt["local_native_gate_ready"],
+        "parent_kind": receipt["parent_kind"],
+        "parent_expectation_source": receipt["parent_expectation_source"],
     }))
     if not receipt["native_pass"]:
         return 1

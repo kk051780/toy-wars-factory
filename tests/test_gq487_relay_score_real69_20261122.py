@@ -27,6 +27,16 @@ def load_module(name: str, path: Path):
     return module
 
 
+def synthetic_parent_context():
+    """Typed caller input, not an observed GitHub run or artifact dependency."""
+    return {
+        "kind": "PR_CANDIDATE", "build_head": "a" * 40, "checkout_sha": "a" * 40,
+        "canonical_build": False, "official_build_head": None,
+        "observed_live_rc": "b" * 40, "event": "pull_request",
+        "run_id": "12345", "run_attempt": "1",
+    }
+
+
 class ScoreRelayBootstrapTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -132,12 +142,53 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
             self.assertEqual(record["binaries"]["luau"], self.native.file_info(luau))
 
 
+    def test_native_parent_mode_errors_do_not_start_artifact_or_process_work(self):
+        for kind, context, message in (
+            ("UNION22_DELIVERY", None, "requires external expected_parent_context"),
+            ("FROZEN_LOCAL", synthetic_parent_context(), "forbids expected_parent_context"),
+            ("UNKNOWN", None, "Unknown parent_kind"),
+        ):
+            with self.subTest(parent_kind=kind), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                with mock.patch.object(self.native, "load_producer", side_effect=AssertionError("mode error must precede artifact work")) as loader:
+                    with mock.patch.object(self.native.subprocess, "run", side_effect=AssertionError("bootstrap subprocess forbidden")) as process:
+                        receipt = self.native.run_regressions(
+                            root / "absent-stage", root / "absent-vm", root / "absent-compiler", root / "output",
+                            parent_kind=kind, expected_parent_context=context,
+                        )
+                self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_FAIL")
+                self.assertEqual(receipt["native_invocations"], 0)
+                self.assertIn(message, receipt["error"]["message"])
+                loader.assert_not_called()
+                process.assert_not_called()
+
+    def test_union_stage_rejection_never_retries_as_frozen(self):
+        context = synthetic_parent_context()
+        rejected = mock.Mock(side_effect=ValueError("UNION_ADMISSION_REJECTED_BY_TEST_BOUNDARY"))
+        boundary = SimpleNamespace(load_lock=lambda: self.lock, verify_stage=rejected)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with mock.patch.object(self.native, "load_producer", return_value=boundary):
+                with mock.patch.object(self.native.subprocess, "run", side_effect=AssertionError("bootstrap subprocess forbidden")) as process:
+                    receipt = self.native.run_regressions(
+                        root / "absent-stage", root / "absent-vm", root / "absent-compiler", root / "output",
+                        parent_kind="UNION22_DELIVERY", expected_parent_context=context,
+                    )
+            self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_FAIL")
+            self.assertEqual(receipt["native_invocations"], 0)
+            self.assertIn("UNION_ADMISSION_REJECTED_BY_TEST_BOUNDARY", receipt["error"]["message"])
+            rejected.assert_called_once_with(
+                (root / "absent-stage").resolve(), "after", parent_kind="UNION22_DELIVERY",
+                expected_parent_context=context,
+            )
+            process.assert_not_called()
+
     def test_orchestration_rejects_drift_in_executed_and_archived_copies(self):
         """Actual runner and file I/O, mocked stage gate/processes; zero artifact/VM.
 
-        The control proves fake successful process returns can reach PASS. Five
-        drift cases reproduce the independent review gap at the orchestration
-        boundary; none is a Native execution or gameplay assertion count.
+        Controls prove fake successful process returns can reach PASS. Drift
+        cases exercise actual copy checks. Union cases also verify both explicit
+        parent-context handoffs; these are not Native/gameplay execution counts.
         """
         after = self.producer.transform_score(self.baseline, "on")
         scenarios = (
@@ -147,6 +198,10 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
             ("runner_during_native", "after Native score_v2", 4, 1),
             ("archive_after_last_native", "final execution_inputs archive", 8, 2),
             ("receipt_after_last_native", "final provided_toolchain_receipt copy", 8, 2),
+            ("union_dict_control", None, 8, 2),
+            ("union_wrapper_file_control", None, 8, 2),
+            ("union_context_input_drift", "final external parent expectation input", 8, 2),
+            ("union_context_copy_drift", "final execution_inputs archive", 8, 2),
         )
         for scenario, failure_boundary, expected_calls, expected_native_calls in scenarios:
             with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as directory:
@@ -169,10 +224,37 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
                 }))
                 identity = {"source_count": 69, "sources": copy.deepcopy(self.lock["input_sources"])}
                 identity["sources"][self.native.SCORE_PATH].update(self.native.SCORE_AFTER)
+                is_union = scenario.startswith("union_")
+                kind = "UNION22_DELIVERY" if is_union else "FROZEN_LOCAL"
+                expected_context = synthetic_parent_context() if is_union else None
+                caller_context = copy.deepcopy(expected_context)
+                context_path = root / "external-parent-context.json"
+                context_raw = None
+                if is_union and scenario != "union_dict_control":
+                    payload = expected_context
+                    if scenario == "union_wrapper_file_control":
+                        payload = {
+                            "schema": "SCORE_RELAY_EXTERNAL_PARENT_EXPECTATION_V1",
+                            "expected_execution_context": expected_context,
+                            "origin_observation": {"note": "SYNTHETIC_DIAGNOSTIC_ONLY"},
+                        }
+                    context_raw = (json.dumps(payload, indent=2) + "\n").encode()
+                    context_path.write_bytes(context_raw)
+                    caller_context = context_path
+                verify_calls = []
+
+                def verify_boundary(actual_root, profile, *, parent_kind, expected_parent_context):
+                    verify_calls.append((actual_root, profile, parent_kind, copy.deepcopy(expected_parent_context)))
+                    if scenario == "union_dict_control":
+                        # A callee cannot mutate the runner's saved expectation.
+                        expected_parent_context["run_id"] = "99999"
+                    return {"boundary": "MOCKED_GATE_NO_GENERATED_ARTIFACT"}
+
                 mocked_producer = SimpleNamespace(
                     load_lock=lambda: self.lock,
-                    verify_stage=lambda *_: {"boundary": "MOCKED_GATE_NO_GENERATED_ARTIFACT"},
+                    verify_stage=verify_boundary,
                     validate_sources=lambda *_: identity,
+                    read_parent_expectation=lambda path: self.producer.read_parent_expectation(path),
                 )
 
                 def fake_process(argv, *, cwd, capture_output, timeout, check):
@@ -187,6 +269,10 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
                             target = Path(cwd) / "Results.luau"
                         elif scenario == "cases_during_compile":
                             target = Path(cwd) / "Cases.luau"
+                        elif scenario == "union_dict_control":
+                            # Caller mutation after admission must not replace
+                            # the expectation used by the final stage verifier.
+                            caller_context["run_id"] = "77777"
                     if variant == "score_v2" and is_native and scenario == "runner_during_native":
                         target = Path(cwd) / "Runner.luau"
                     if variant == "relay_original" and is_native:
@@ -194,6 +280,10 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
                             target = output / "execution_inputs/native/run_regressions.py"
                         elif scenario == "receipt_after_last_native":
                             target = output / "provided_toolchain_receipt.json"
+                        elif scenario == "union_context_input_drift":
+                            target = context_path
+                        elif scenario == "union_context_copy_drift":
+                            target = output / "execution_inputs/external_parent_context.json"
                     if target is not None:
                         # Whitespace leaves Lua/Python/JSON meaning intact but
                         # invalidates the exact bytes claimed by the receipt.
@@ -207,12 +297,28 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
 
                 with mock.patch.object(self.native, "load_producer", return_value=mocked_producer):
                     with mock.patch.object(self.native.subprocess, "run", side_effect=fake_process) as process:
-                        receipt = self.native.run_regressions(stage, luau, compiler, output, provided)
+                        receipt = self.native.run_regressions(
+                            stage, luau, compiler, output, provided,
+                            parent_kind=kind, expected_parent_context=caller_context,
+                        )
                 self.assertEqual(process.call_count, expected_calls)
                 self.assertEqual(receipt["native_invocations"], expected_native_calls)
                 self.assertTrue(receipt["stage_files_unchanged"])
                 self.assertTrue(receipt["code_and_lock_unchanged"])
                 self.assertTrue(receipt["tool_binaries_unchanged"])
+                self.assertEqual(verify_calls, [(stage.resolve(), "after", kind, expected_context)] * 2)
+                self.assertEqual(receipt["parent_kind"], kind)
+                self.assertEqual(receipt["expected_parent_context"], expected_context)
+                self.assertFalse(receipt["parent_origin_attestation_verified"])
+                if context_raw is not None:
+                    self.assertEqual(
+                        {key: receipt["external_parent_context_input"][key] for key in ("bytes", "sha256")},
+                        self.native.byte_info(context_raw),
+                    )
+                    if scenario != "union_context_copy_drift":
+                        self.assertEqual((output / "execution_inputs/external_parent_context.json").read_bytes(), context_raw)
+                if scenario == "union_dict_control":
+                    self.assertEqual(caller_context["run_id"], "77777")
                 if failure_boundary is None:
                     self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_PASS")
                     self.assertTrue(receipt["native_pass"])
@@ -221,7 +327,7 @@ class ScoreRelayBootstrapTests(unittest.TestCase):
                     self.assertEqual(receipt["status"], "SOURCE_ONLY_NATIVE_FAIL")
                     self.assertFalse(receipt["native_pass"])
                     self.assertFalse(receipt["local_native_gate_ready"])
-                    error = receipt.get("error", receipt.get("postflight_error", {}))
+                    error = receipt.get("error", receipt.get("postflight_error", receipt.get("copy_postflight_error", {})))
                     self.assertIn("Copy integrity failure", error.get("message", ""))
                     self.assertIn(failure_boundary, error["message"])
 
