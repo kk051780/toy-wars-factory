@@ -1704,7 +1704,7 @@
       "issued_at": "2026-11-22T14:01:53Z",
       "expires_at": "2026-11-22T20:01:53.000Z",
       "pr": 1017,
-      "candidate_pr_status": "DRAFT_TRANSPORT_SOURCE_ONLY",
+      "candidate_pr_status": "DRAFT_TRANSPORT_PARENT_CONTENT_BOUND_FINAL_WORKFLOW_UNBOUND",
       "role": "CODEX_PARENT_EXISTING_FIX_PREP_ONLY",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1727,7 +1727,7 @@
       "prep_branch": "feature/p0d-prep-score-relay-20261122-df856",
       "author_context": "/root (workspace df856f1c3420) with bounded /root/p0_triage",
       "independent_reviewer_context": "/root/native_environment (separate existing actual context; no production authorship)",
-      "independent_review_status": "LOCAL_SIX_FILE_REVIEW_PASS_ACTUAL_REMOTE_HEAD_AND_CI_PENDING",
+      "independent_review_status": "LOCAL_V3_SOURCE_REVIEW_PASS_ACTUAL_REMOTE_HEAD_AND_CI_PENDING",
       "scope": "Six new PREP files only. Reuse public711 on current rare-preserving8030 to exact8741; producer/source_lock, separate Native runner, byteexact public relay spec, minimally adapted original score spec and pure unittest. No shared workflow or other owner file changes.",
       "generated_source_count": 1,
       "generated_source_scope": [
@@ -1825,8 +1825,8 @@
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "grant_scope_version": 1,
-      "candidate_head": "9c777cfd8009b1937e7f76d9af33b030b62730d2",
-      "candidate_tree": "99bcccbf450ce14097c55496e14b766f7f25365a",
+      "candidate_head": "547fd7d56ef0c1e0a688135e789df0f79e0358c6",
+      "candidate_tree": "909047a24e751bb4951c72fb47aa5a1de7489ad4",
       "candidate_created_at": "2026-11-22T14:47:41Z",
       "candidate_creation": {
         "operation_id": "1ac62a87-8ee7-43f4-aa28-9ac500609204",
@@ -1838,77 +1838,201 @@
         "source_paths": 6
       },
       "independent_local_review": {
-        "status": "PASS_SOURCE_ONLY_REVISION02_REPAIR_VERIFICATION",
-        "at_utc": "2026-11-22T14:45:41.288108+00:00",
-        "reviewer": "/root/native_environment",
-        "basis": {
-          "six_file_freeze": {
-            "bytes": 3772,
-            "sha256": "204b3d5944f7cd123e68e0914181b3510cef53608e3fd52446c11dd74f76f9f8"
-          },
-          "content_set": "607495b065357a7094ab415a70c870a1d1aa2facd98e21f49c5616d15590db10",
-          "actual_files": {
-            "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py": {
-              "bytes": 21521,
-              "sha256": "23b2b77b5ce3fa4d2b40a9fcd6ddd1589b94745b6db916cec041eb9edbe77a46"
-            },
-            "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau": {
-              "bytes": 3518,
-              "sha256": "e8b2c88e8d1b29bec7ce148edece60a0da0f410313fbf891fa7b0ea566f56754"
-            },
-            "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau": {
-              "bytes": 18694,
-              "sha256": "3ee00c7481f967009198f70afc30fadd7f915a452561bd2e663c15ef9045086c"
-            },
-            "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py": {
-              "bytes": 19688,
-              "sha256": "33fd67345e7f5bc83c2af5852025824a4e8129631ea8b9dce7fb2f6524f7e087"
-            },
-            "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json": {
-              "bytes": 33458,
-              "sha256": "2ecee3023bfa994aff6d4a484072554087eef8477afbbe012fe2cf147f6958fa"
-            },
-            "tests/test_gq487_relay_score_real69_20261122.py": {
-              "bytes": 13032,
-              "sha256": "dc1f35e90c0f1c47624c9cae297b9ef8b5997e946cf5decf4c6c9e430fa921a3"
-            }
-          },
-          "candidate_git_HEAD_reviewed": null,
-          "source_only_frozen_profile": true
+        "schema": "SCORE_V3_FINAL_INDEPENDENT_REVIEW_V1",
+        "status": "PASS_SOURCE_ONLY_V3_CODE_AT_FREEZE02",
+        "at_utc": "2026-11-22T15:33:15.445692+00:00",
+        "reviewer_context": "/root/native_environment",
+        "production_authorship": false,
+        "authority_claim": "P0D-GQ487-SCORE-RELAY-PREP-20261122-DF856",
+        "remote_base": "9c777cfd8009b1937e7f76d9af33b030b62730d2",
+        "actual_new_V3_candidate_HEAD_reviewed": null,
+        "freeze": {
+          "bytes": 1908,
+          "sha256": "df42f2769413e47c642c355ddee3e919c0c0bb185dd0690c580a535ee97e0e84"
         },
-        "preserved": {
-          "six_author_files": true,
-          "parent_ON_OFF": true,
-          "original_review_01": true,
-          "author_Native02_tree": true,
-          "author48file_manifest": true
+        "six_files": {
+          "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py": {
+            "bytes": 55534,
+            "git_blob_sha1": "ab7896afb48c683518c93e56e8f60c56a9674f02",
+            "sha256": "b2894469355cee29c4f0f5f7c2d6dc880790d0395794503b4d09765b383fa829"
+          },
+          "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau": {
+            "bytes": 3518,
+            "git_blob_sha1": "366e254408030afea3a002a20070a15c38a8c8c2",
+            "sha256": "e8b2c88e8d1b29bec7ce148edece60a0da0f410313fbf891fa7b0ea566f56754"
+          },
+          "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau": {
+            "bytes": 18694,
+            "git_blob_sha1": "5056a296e88f96393c60b24c1b971bff0e534c3d",
+            "sha256": "3ee00c7481f967009198f70afc30fadd7f915a452561bd2e663c15ef9045086c"
+          },
+          "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py": {
+            "bytes": 24117,
+            "git_blob_sha1": "f568c359cee1b3479b2df4f83d1bab9ccbf993cb",
+            "sha256": "c3d7883e7fceebfceb0ee7b2ad7e7026bd03f2160e0268ccf97a57968337f7a9"
+          },
+          "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json": {
+            "bytes": 81690,
+            "git_blob_sha1": "685b9ae878e4ff34a046e0d8be45a954b8ca05a1",
+            "sha256": "45e7b57ea41a3a56ff5f6baa7858c4a171efd4716497f5e83199f3c094501965"
+          },
+          "tests/test_gq487_relay_score_real69_20261122.py": {
+            "bytes": 26126,
+            "git_blob_sha1": "92d714e899be25aa23817cfd149ca17c94d3b622",
+            "sha256": "903b7542641225fa59cfcb5d5ef2949c8a57ed10c6c5650b4f24aa8746eabd60"
+          }
         },
-        "not_approved": [
-          "PREP_READY",
-          "actual candidate Git HEAD",
-          "final union production contract binding",
-          "shared workflow",
-          "same-head CI",
-          "RC adoption",
-          "Studio/Android/ART/FUN"
+        "closed_findings": [
+          {
+            "id": "V3-R1",
+            "prior_status": "BLOCKING_FALSE_ACCEPT_REPRODUCED",
+            "fix": "Preserve the exact semantically validated binding and expectation raw bytes across the helper boundary; never use a later read as new pin baseline.",
+            "independent_actual_stage_closure": "Both expectation and binding run_id mutation plus own receipt relink reject after actual semantic validation.",
+            "expected_error": "RED_SCORE_RELAY_STAGE_PARENT_BINDING_OR_UNEARNED_CLAIM"
+          }
         ],
-        "fresh_six_file_hashes_match": true,
-        "receipt_sha256": "b83e551d53d6fd22df20390fa74ff74aa3c0604e6838155f929e8098a1c04ada",
-        "six_file_freeze_sha256": "204b3d5944f7cd123e68e0914181b3510cef53608e3fd52446c11dd74f76f9f8",
-        "content_set_sha256": "607495b065357a7094ab415a70c870a1d1aa2facd98e21f49c5616d15590db10"
+        "blocking_defects": [],
+        "code_scope": {
+          "same_granted_six_paths": true,
+          "modified_vs_remote_V2": 4,
+          "Luau_specs_unchanged": 2,
+          "runtime_fragment_changed": false,
+          "shared_workflows_changed": false,
+          "parent8030_evidence_not_reused_for_Score8741": true
+        },
+        "independent_counts": {
+          "negative_scenarios": 2,
+          "unchanged_control": 1,
+          "actual_verifier_calls": 3,
+          "semantic_result_stubbed": false,
+          "VM": 0,
+          "compile": 0,
+          "Rojo": 0,
+          "remote_writes": 0,
+          "production_edits": 0
+        },
+        "preservation": {
+          "six_author_files": true,
+          "author_actual_ON_all_files": true,
+          "initial_review_evidence": true,
+          "each_private_parent110_and_own69": true
+        },
+        "final_author_evidence": {
+          "actual_forward": 1,
+          "actual_ON_derived_inverse": 1,
+          "source69_and_project_and_actualPlace_byte_exact_reviewed_builds": true,
+          "parent_payload_files": 110,
+          "Native_stage_files": 185,
+          "root_negative_records_read_not_rerun": 25,
+          "unit_methods": 15,
+          "actual_VM": 2,
+          "fixture_compiles": 6,
+          "Native_counter_total": 123,
+          "static_expected_Score_build_calls": 55,
+          "static_count_instrumented": false,
+          "new_gameplay_scenarios": 0,
+          "child_frozen_files_checked": 111
+        },
+        "limits": {
+          "parent_archived_content_contract_verified": true,
+          "provider_origin_attestation_verified": false,
+          "parent_VM_reexecuted_by_Score": false,
+          "final_score_workflow_bound": false,
+          "score_same_head_final_CI_proven": false,
+          "final_union_contract_bound": false,
+          "canonical_build": false,
+          "official_build_head": null,
+          "PREP_READY": false,
+          "RC_adopted": false,
+          "Studio_Android_ART_FUN": false,
+          "GitHub_review_submitted": false
+        },
+        "evidence": {
+          "parent_binding_v3_root/six_file_freeze_02.json": {
+            "bytes": 1908,
+            "sha256": "df42f2769413e47c642c355ddee3e919c0c0bb185dd0690c580a535ee97e0e84"
+          },
+          "parent_binding_v3_root/validation_attempt_02.json": {
+            "bytes": 177811,
+            "sha256": "5c25578038c5cdf95ad5a6e49bb7bc0530c9128e8e6863f117407199b0164d54"
+          },
+          "parent_binding_v3_root/external_parent_context_eb437.json": {
+            "bytes": 1040,
+            "sha256": "a5f1b8ad34aaf12d3057cb324056423c447fbc4dc83a8e36bd657afaf7e56e55"
+          },
+          "parent_binding_v3_child/native_attempt02/native_receipt.json": {
+            "bytes": 142227,
+            "sha256": "13f4f4eff0604daa186f14b2809986a634bc06d47f3cafb0b078950c5171860f"
+          },
+          "parent_binding_v3_child/unit_attempt02/receipt.json": {
+            "bytes": 5525,
+            "sha256": "5b4e949304acabe2f3eaa3f6cb1f423112c8197feec1ad6ba5b1e46a19631000"
+          },
+          "parent_binding_v3_child/native_cli_attempt02/receipt.json": {
+            "bytes": 6473,
+            "sha256": "088ef97daa29121b2718f8b1249e81a22ea19a75fe1857b84fd7dc4d5639aa97"
+          },
+          "parent_binding_v3_child/final_acceptance_02/evidence_manifest.json": {
+            "bytes": 19709,
+            "sha256": "7ee074c7c37cd92183919c8b11dd0d2b42b91592908680eaca0677176601acad"
+          },
+          "parent_binding_v3_independent_01/review_receipt.json": {
+            "bytes": 3941,
+            "sha256": "006d5044c75ee8322ea6e6687bddce59bd8575f853d0db6786f727aa89755c64"
+          },
+          "parent_binding_v3_independent_01/sidecar_read_boundary_probe_receipt.json": {
+            "bytes": 2968,
+            "sha256": "e56b5988e44135e8cec5d23b972259b3b34cc94923b03abf9fd4a23ca11f3ff3"
+          },
+          "parent_binding_v3_independent_02/sidecar_closure_probe_receipt.json": {
+            "bytes": 4674,
+            "sha256": "714d1f45f7e589267a724f5336b74327c34f387fc11eeb44ce6983e82be76b5b"
+          },
+          "parent_binding_v3_independent_02/final_author_evidence_readback.json": {
+            "bytes": 4886,
+            "sha256": "bace4be603180d93e3af6161daec74f82017c88bb7777bc621d69388c5ae2659"
+          },
+          "parent_binding_v3_independent_02/child_manifest_readback.json": {
+            "bytes": 513,
+            "sha256": "c0df00464a713d577dc4bf9b811fc9ed7997a77d30d38ffa393f5156bf92a4a0"
+          }
+        },
+        "report": {
+          "bytes": 10430,
+          "sha256": "710a6538bdd18813ecf970e685044618a1dfb6c03c830a39e71b3876abca6f1a"
+        },
+        "receipt_sha256": "20a106756a11c4b7bd569f531e7cf990c294948edbe4f039ec16311ddba887d1"
       },
       "source_only_evidence": {
         "source_only": true,
-        "unit_tests": 12,
+        "parent_contract_verified": true,
+        "parent_origin_attestation_verified": false,
+        "unit_tests": 15,
         "native_assertions": 123,
         "native_runs_current_revision": 2,
         "static_Score_build_evaluations": 55,
-        "metadata_receipt_sha256": "1a0b2f238653203dc9c18fbfef9081ddd1b5764880280dc455588f745144ab4b",
-        "native_receipt_sha256": "85c1310fde50dc51d76d09255236429938fd72b81d99f5addc3bc9c3b40fdb47",
-        "first_build_receipt_sha256": "c65bd6354699955c6aeab75e7a358d092c38a96155a98478d0f293e22e8a1672",
-        "game_source_changed_by_revision02": false,
+        "producer_forward": 1,
+        "producer_actual_inverse": 1,
+        "negative_parent_checks": 25,
+        "independent_sidecar_negative_checks": 2,
+        "source_lock_sha256": "45e7b57ea41a3a56ff5f6baa7858c4a171efd4716497f5e83199f3c094501965",
+        "six_file_freeze_sha256": "df42f2769413e47c642c355ddee3e919c0c0bb185dd0690c580a535ee97e0e84",
+        "native_receipt_sha256": "13f4f4eff0604daa186f14b2809986a634bc06d47f3cafb0b078950c5171860f",
+        "producer_receipt_sha256": "5c25578038c5cdf95ad5a6e49bb7bc0530c9128e8e6863f117407199b0164d54",
+        "final_score_workflow_bound": false,
         "final_union_contract_bound": false,
-        "studio_android_not_verified": true
+        "canonical_build": false,
+        "official_build_head": null
+      },
+      "candidate_updated_at": "2026-11-22T15:44:56Z",
+      "candidate_update": {
+        "operation_id": "62b03046-0e71-4fd8-8bcf-874d2f3bd189",
+        "epoch": 595,
+        "coordinator_commit": "a50e389da226b6154b567c0295cddb7bac3560b9",
+        "nonforce_expected_sha": "9c777cfd8009b1937e7f76d9af33b030b62730d2",
+        "initial_v3_commit": "2c47c619a97dfbed44411d2796cd420687530488",
+        "observed_rc": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "source_paths": 6
       }
     },
     {
