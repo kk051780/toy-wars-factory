@@ -1,0 +1,60 @@
+name: P0D Sourcery QA Intake (read-only, non-blocking)
+
+on:
+  push:
+    branches:
+      - feature/p0d-sourcery-quality-intake-20261114
+    paths:
+      - 'tools/p0d_sourcery_intake.py'
+      - 'tests/test_p0d_sourcery_intake.py'
+      - '.github/workflows/p0d-sourcery-quality-intake.yml'
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'tools/p0d_sourcery_intake.py'
+      - 'tests/test_p0d_sourcery_intake.py'
+      - '.github/workflows/p0d-sourcery-quality-intake.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  checks: read
+
+jobs:
+  read-only-sourcery-triage:
+    name: source-intake
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source without credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run 15 offline Sourcery signal regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s tests -p test_p0d_sourcery_intake.py -v
+      - name: Read latest Sourcery guide, inline findings and check on exact PR HEAD
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_sourcery
+          python3 -B tools/p0d_sourcery_intake.py \
+            --repo "$GITHUB_REPOSITORY" --pr "$PR_NUMBER" \
+            --json /tmp/p0d_sourcery/SOURCERY_QA_TRIAGE.json \
+            --md /tmp/p0d_sourcery/SOURCERY_QA_TRIAGE.md
+          cat /tmp/p0d_sourcery/SOURCERY_QA_TRIAGE.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Archive read-only QA receipts for authorized RC integrator
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-SOURCERY-READONLY-TRIAGE
+          path: /tmp/p0d_sourcery/*
+          retention-days: 7
+          if-no-files-found: error
