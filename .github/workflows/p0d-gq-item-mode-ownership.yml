@@ -1,0 +1,80 @@
+name: P0D GQ ITEM TEAM BR live ownership source-locked QA
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_item_mode_ownership_20261116/**'
+      - '.github/workflows/p0d-gq-item-mode-ownership.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-lock-and-native-compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Negative source tests
+        run: |
+          set -euo pipefail
+          PYTHONPATH=quality_gameplay/v3_item_mode_ownership_20261116 \
+            python3 -B -m unittest discover \
+            -s quality_gameplay/v3_item_mode_ownership_20261116 \
+            -p 'test_patch_sources.py' -v
+      - name: Fetch exact original authors into isolated runner temp
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d-mode-original
+          base=https://raw.githubusercontent.com/kk051780/toy-wars-factory
+          path=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          curl --fail --location --silent --show-error --retry 3 \
+            "$base/fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9/$path/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            -o /tmp/p0d-mode-original/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+          curl --fail --location --silent --show-error --retry 3 \
+            "$base/03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd/$path/EGGRUMBLE_FieldItemPickups.luau" \
+            -o /tmp/p0d-mode-original/EGGRUMBLE_FieldItemPickups.luau
+          test "$(git hash-object /tmp/p0d-mode-original/EGGRUMBLE_LobbyCastleModesPreview.server.luau)" = \
+            7162b209bf67b74a71553217f3f744e072a0365d
+          test "$(git hash-object /tmp/p0d-mode-original/EGGRUMBLE_FieldItemPickups.luau)" = \
+            107046cb0bf81fed9e3cba1699ada31571e44a22
+      - name: Generate exactly two author-selectable patch candidate scripts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/patch_sources.py \
+            --host /tmp/p0d-mode-original/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --item /tmp/p0d-mode-original/EGGRUMBLE_FieldItemPickups.luau \
+            --out /tmp/p0d-mode-patched
+          test "$(find /tmp/p0d-mode-patched -maxdepth 1 -name '*.luau' | wc -l)" -eq 2
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "quality_gameplay/v3_item_mode_ownership_20261116")
+          import patch_sources as p
+          root=Path("/tmp/p0d-mode-patched")
+          host=(root/p.HOST_NAME).read_text()
+          item=(root/p.ITEM_NAME).read_text()
+          assert host.count(p.MARKER)==1 and item.count(p.MARKER)==1
+          assert "joined[actor.UserId]==mode" in host
+          assert "pcall(authorize,player)" in item
+          print("Source exact two-blob authority fence: generated, matched")
+          PY
+      - name: Compile actual patched original Luau (not Roblox engine)
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-mode-luau
+          cmake -S /tmp/p0d-mode-luau -B /tmp/p0d-mode-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-mode-luau/build --target Luau.Compile.CLI Luau.Repl.CLI -j 4
+          /tmp/p0d-mode-luau/build/luau-compile \
+            /tmp/p0d-mode-patched/EGGRUMBLE_LobbyCastleModesPreview.server.luau >/dev/null
+          /tmp/p0d-mode-luau/build/luau-compile \
+            /tmp/p0d-mode-patched/EGGRUMBLE_FieldItemPickups.luau >/dev/null
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate /tmp/p0d-mode-patched \
+            --out /tmp/p0d-item-mode-native.luau
+          /tmp/p0d-mode-luau/build/luau-compile /tmp/p0d-item-mode-native.luau >/dev/null
+          /tmp/p0d-mode-luau/build/luau /tmp/p0d-item-mode-native.luau
+      - name: Non-release conclusion
+        run: |
+          echo "No game source changed in original authors/official RC/main."
+          echo "SOURCE and native parser only: NOT Studio/Android/2-client."
+          echo "CLAIM_GRANTED, #220 authenticated CAS, RC Place/ZIP and OWNER = NOT VERIFIED."

@@ -1,0 +1,355 @@
+name: P0D GQ525 original26 plus source-selected full author34 QA
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_item_mode_ownership_20261116/**'
+      - '.github/workflows/p0d-gq525-original26-source-exact.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gq525-private26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
+          path: _v3_heal
+          persist-credentials: false
+      - name: Exact author SHA and no-main/RC-writes contract
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _v3_heal rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
+          PYTHONPATH=quality_gameplay/v3_item_mode_ownership_20261116 \
+            python3 -B -m unittest discover \
+            -s quality_gameplay/v3_item_mode_ownership_20261116 \
+            -p 'test_patch_sources.py' -v
+      - name: Original artist and original #484 26-source composite (no new owner)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_ART.project.json \
+            --out artifacts/GQ_V3_AUTHOR26.project.json
+      - name: Select existing ITEM #489 + HEAL #517 + original ownership #525 as exactly two scripts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/compose_author26.py compose \
+            --base-project artifacts/GQ_V3_AUTHOR26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --item-author _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --heal-patch _v3_heal/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --out-project artifacts/GQ525_PRIVATE26.project.json \
+            --out-receipt artifacts/GQ525_SOURCE_RECEIPT.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Real patched 26 Luau native parse plus cross-mode authorization native VM
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq525_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq525_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate artifacts/gq525_source_selected_only --out /tmp/gq525_item_mode_native.luau
+          /tmp/gq525_luau/luau-compile /tmp/gq525_item_mode_native.luau >/dev/null
+          /tmp/gq525_luau/luau /tmp/gq525_item_mode_native.luau | tee artifacts/GQ525_ITEM_VM.log
+          grep -q 'NATIVE_LUAU_ITEM_MODE_GUARD' artifacts/GQ525_ITEM_VM.log
+          # Actual original #489 ProximityPrompt/Guard/HEAL/DASH/SHIELD plus
+          # original #517 HEAL and our exact #525 extracted Lobby hook.
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_item_effect_vm.py \
+            --project artifacts/GQ525_PRIVATE26.project.json \
+            --receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --author-harness _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq525_real_item_effect_vm.luau
+          /tmp/gq525_luau/luau-compile /tmp/gq525_real_item_effect_vm.luau >/dev/null
+          /tmp/gq525_luau/luau /tmp/gq525_real_item_effect_vm.luau | tee artifacts/GQ525_ITEM_EFFECT_VM.log
+          grep -q 'GQ525_REAL_ITEM_PROMPT_EFFECT_INTEGRATION' artifacts/GQ525_ITEM_EFFECT_VM.log
+          # The same real source without #525 guard MUST fail the cross-mode suite.
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_item_effect_vm.py \
+            --project artifacts/GQ525_PRIVATE26.project.json \
+            --receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --author-harness _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq525_item_mutant_vm.luau --mutant
+          if /tmp/gq525_luau/luau /tmp/gq525_item_mutant_vm.luau >artifacts/GQ525_MUTANT_NEGATIVE.log 2>&1; then
+            echo 'ERROR unguarded mutant unexpectedly passes';exit 1
+          fi
+          grep -q 'stale TEAM player in BR' artifacts/GQ525_MUTANT_NEGATIVE.log
+          echo 'GQ525_UNGUARDED_CROSSMODE_MUTANT_REJECTED'
+      - name: Checksum-pinned Rojo private Place only (NEVER publish)
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq525_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq525_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq525_rojo.zip") as z:
+              names=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              path=Path("/tmp/gq525_rojo")
+              path.write_bytes(z.read(names[0]))
+              path.chmod(0o755)
+          PY
+          /tmp/gq525_rojo build artifacts/GQ525_PRIVATE26.project.json \
+            -o artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx
+      - name: Check actual compiled native 26 scripts and 26 Rojo Source/Class exact receipts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/compose_author26.py verify \
+            --out-project artifacts/GQ525_PRIVATE26.project.json \
+            --out-receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --place artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx \
+            --compiler /tmp/gq525_luau/luau-compile
+          echo "Private source-exact only; no real Studio/Android/OWNER pass"
+      # The ORIGINAL #504 composer owns source34; here we source-select only
+      # our already-owned 2 existing modules, without making a second game.
+      - name: Read immutable original audio + 34-script composer #504
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 385d3242cbc8d0a3008ee818d8dc30040170fce6
+          path: _v3_audio
+          persist-credentials: false
+      - name: Read immutable original #496 objective compass
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 7005fe0916ff157d770b638ac70efaef9396e0f5
+          path: _v3_objective
+          persist-credentials: false
+      - name: Read immutable original #503 FX source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9f9202988fdb3e983d6ae42ea4cf7de0a501c699
+          path: _v3_fx
+          persist-credentials: false
+      - name: Read immutable original #500 castle defense
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: abc4bd0edad4a07b159ee08d867dbdd6977f37ee
+          path: _v3_castle
+          persist-credentials: false
+      - name: Read immutable original #494 neutral pacing
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: af8cd79f4217d187429270d29e6d44eb01725ff2
+          path: _v3_pacing
+          persist-credentials: false
+      - name: Read immutable original #501 neutral fairness
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 880e89baa428006699f1e6d6d95468473acaf866
+          path: _v3_neutral
+          persist-credentials: false
+      - name: Pin all 34-source cross-chat author HEADs and exact 26-source base
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_audio rev-parse HEAD)" = 385d3242cbc8d0a3008ee818d8dc30040170fce6
+          test "$(git -C _v3_objective rev-parse HEAD)" = 7005fe0916ff157d770b638ac70efaef9396e0f5
+          test "$(git -C _v3_fx rev-parse HEAD)" = 9f9202988fdb3e983d6ae42ea4cf7de0a501c699
+          test "$(git -C _v3_castle rev-parse HEAD)" = abc4bd0edad4a07b159ee08d867dbdd6977f37ee
+          test "$(git -C _v3_pacing rev-parse HEAD)" = af8cd79f4217d187429270d29e6d44eb01725ff2
+          test "$(git -C _v3_neutral rev-parse HEAD)" = 880e89baa428006699f1e6d6d95468473acaf866
+          test -f artifacts/GQ_V3_AUTHOR26.project.json
+          test -f artifacts/SOURCE_RECEIPT.json
+      - name: Reuse existing #496 objective and #504 audio 26 to 28 unmodified composer chain
+        run: |
+          set -euo pipefail
+          python3 _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tools/overlay_current26.py \
+            --base-project artifacts/GQ_V3_AUTHOR26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --new-script _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_ObjectiveCompass.client.luau \
+            --out artifacts/GQ525_AUTHOR27.project.json
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/overlay_composed27.py \
+            --base-project artifacts/GQ525_AUTHOR27.project.json \
+            --base-receipt artifacts/GQ_OBJECTIVE_27_RECEIPT.json \
+            --audio-script _v3_audio/quality/eggrumble_hit_audio_20261116/EGGRUMBLE_RealHitAudio.client.luau \
+            --out artifacts/GQ525_AUTHOR28.project.json
+      - name: Reuse existing #503 FX + #500 real castle defense 28 to 32 author chain
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_fx30.py \
+            --base-project artifacts/GQ525_AUTHOR28.project.json \
+            --base-receipt artifacts/GQ_OBJECTIVE_AUDIO_28_RECEIPT.json \
+            --budget-script _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/EGGRUMBLE_CombatFXBudget.luau \
+            --client-script _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/EGGRUMBLE_CombatFXClarity.client.luau \
+            --output artifacts/GQ525_AUTHOR30.project.json
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_castle32.py \
+            --base-project artifacts/GQ525_AUTHOR30.project.json \
+            --base-receipt artifacts/GQ_AUDIO_FX30_RECEIPT.json \
+            --castle-composer _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/compose_private28.py \
+            --castle-live _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/EGGRUMBLE_CastleDefenseLive.luau \
+            --castle-policy _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/EGGRUMBLE_CastleDefensePolicy.luau \
+            --out artifacts/GQ525_AUTHOR32.project.json
+      - name: Reuse original #494+501 single neutral Swarm and policy compositor 26 to 28
+        run: |
+          set -euo pipefail
+          python3 _v3_neutral/quality_gameplay/neutral_encounters/tools/compose_dual28.py \
+            --base26 artifacts/GQ_V3_AUTHOR26.project.json \
+            --original-swarm _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SwarmCombat.luau \
+            --pacing-composer _v3_pacing/quality_gameplay/neutral_pacing/tools/compose_private_v3.py \
+            --pacing-policy _v3_pacing/quality_gameplay/neutral_pacing/EGGRUMBLE_NeutralSpawnPacing.luau \
+            --fair-policy _v3_neutral/quality_gameplay/neutral_encounters/EGGRUMBLE_NeutralEncounterFairness.luau \
+            --out artifacts/GQ525_NEUTRAL28.project.json
+      - name: Reuse original #504 sole 34-script full game ART SCORE audio FX castle neutral composer
+        run: |
+          set -euo pipefail
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/compose_neutral34.py \
+            --base-project artifacts/GQ525_AUTHOR32.project.json \
+            --base-receipt artifacts/GQ_AUDIO_FX_CASTLE32_RECEIPT.json \
+            --neutral-project artifacts/GQ525_NEUTRAL28.project.json \
+            --neutral-receipt artifacts/DUAL28_SOURCE_RECEIPT.json \
+            --out artifacts/GQ525_AUTHOR34.project.json
+      - name: Overlay ONLY original Lobby + existing #489 and #517 ITEM into exact original 34
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/overlay_author34.py prepare \
+            --project artifacts/GQ525_AUTHOR34.project.json \
+            --receipt-file artifacts/GQ_GAME34_NEUTRAL_RECEIPT.json \
+            --item-author _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --heal-patch _v3_heal/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --out artifacts/GQ525_PRIVATE34.project.json \
+            --out-receipt artifacts/GQ525_PRIVATE34_RECEIPT.json
+      - name: Original game 7-role field castle neutral ITEM lobby and ART author contract regression
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_quality/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_*quality.py'
+          python3 -B -m unittest discover -v \
+            -s _v3_audio/quality/eggrumble_hit_audio_20261116/tests -p 'test_*.py'
+          echo 'GQ525_34_ORIGINAL_GAME_CHARACTER_FIELD_BATTLE_CASTLE_NEUTRAL_LOBBY_ART_TESTS_PASS'
+      - name: Reuse original #487 SCORE author native Luau VM exactly
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq525_score_original
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau \
+            /tmp/gq525_score_original/Results.luau
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_ScoreBalance.spec.luau \
+            /tmp/gq525_score_original/Cases.luau
+          cp _v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/run_score_balance_native.luau \
+            /tmp/gq525_score_original/Runner.luau
+          (cd /tmp/gq525_score_original && /tmp/gq525_luau/luau Runner.luau) \
+            | tee artifacts/GQ525_SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/GQ525_SCORE_NATIVE.log
+      - name: Run original 8-domain author runtime policy suites against same pinned inputs
+        run: |
+          set -euo pipefail
+          (cd _v3_castle/handoffs/P0D-PQG-CASTLE-DEFENSE-20261116 && \
+            /tmp/gq525_luau/luau tests/EGGRUMBLE_CastleDefensePolicy.spec.luau) | tee artifacts/GQ525_CASTLE_NATIVE.log
+          /tmp/gq525_luau/luau _v3_fx/handoffs/P0D-GQ-COMBAT-FX-CLARITY-20261116/tests/EGGRUMBLE_CombatFXBudget.spec.luau \
+            | tee artifacts/GQ525_FX_NATIVE.log
+          python3 _v3_pacing/quality_gameplay/neutral_pacing/tools/build_native_harness.py \
+            --out /tmp/gq525_neutral_pacing_vm.luau
+          python3 _v3_neutral/quality_gameplay/neutral_encounters/tools/build_native_harness.py \
+            --out /tmp/gq525_neutral_fair_vm.luau
+          /tmp/gq525_luau/luau /tmp/gq525_neutral_pacing_vm.luau | tee artifacts/GQ525_NEUTRAL_PACING.log
+          /tmp/gq525_luau/luau /tmp/gq525_neutral_fair_vm.luau | tee artifacts/GQ525_NEUTRAL_FAIR.log
+          python3 _v3_objective/handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests/make_native_objective_harness.py \
+            --out /tmp/gq525_objective_vm.luau
+          /tmp/gq525_luau/luau /tmp/gq525_objective_vm.luau | tee artifacts/GQ525_OBJECTIVE_NATIVE.log
+          python3 _v3_audio/quality/eggrumble_hit_audio_20261116/tools/make_native_hit_audio_harness.py \
+            --out /tmp/gq525_audio_vm.luau
+          /tmp/gq525_luau/luau /tmp/gq525_audio_vm.luau | tee artifacts/GQ525_AUDIO_NATIVE.log
+      - name: Run exact GQ525 TEAM BR source callback on composed 34 real original host
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate artifacts/gq525_original34_source_selected \
+            --out /tmp/gq525_34_mode_native.luau
+          /tmp/gq525_luau/luau /tmp/gq525_34_mode_native.luau | tee artifacts/GQ525_MODE34_NATIVE.log
+          grep -q 'NATIVE_LUAU_ITEM_MODE_GUARD' artifacts/GQ525_MODE34_NATIVE.log
+      - name: Actual private Rojo Place 34 original authors with only two selected GQ525 overlays
+        run: |
+          set -euo pipefail
+          /tmp/gq525_rojo build artifacts/GQ525_PRIVATE34.project.json \
+            -o artifacts/GQ525_PRIVATE34_NOT_OFFICIAL_RC.rbxlx
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/overlay_author34.py verify \
+            --out artifacts/GQ525_PRIVATE34.project.json \
+            --out-receipt artifacts/GQ525_PRIVATE34_RECEIPT.json \
+            --place artifacts/GQ525_PRIVATE34_NOT_OFFICIAL_RC.rbxlx \
+            --compiler /tmp/gq525_luau/luau-compile
+          echo 'GQ525_34_NOT_OFFICIAL_RC_PRIVATE_SUCCESS_STUDIO_ANDROID_OWNER_UNTESTED'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ525_ORIGINAL26_34_PRIVATE_NOT_OFFICIAL_RC
+          path: |
+            artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx
+            artifacts/GQ525_PRIVATE26.project.json
+            artifacts/GQ525_SOURCE_RECEIPT.json
+            artifacts/GQ525_ITEM_VM.log
+            artifacts/GQ525_ITEM_EFFECT_VM.log
+            artifacts/GQ525_MUTANT_NEGATIVE.log
+            artifacts/GQ525_PRIVATE34_NOT_OFFICIAL_RC.rbxlx
+            artifacts/GQ525_PRIVATE34.project.json
+            artifacts/GQ525_PRIVATE34_RECEIPT.json
+            artifacts/GQ525_CASTLE_NATIVE.log
+            artifacts/GQ525_FX_NATIVE.log
+            artifacts/GQ525_NEUTRAL_PACING.log
+            artifacts/GQ525_NEUTRAL_FAIR.log
+            artifacts/GQ525_OBJECTIVE_NATIVE.log
+            artifacts/GQ525_AUDIO_NATIVE.log
+            artifacts/GQ525_MODE34_NATIVE.log
+            artifacts/GQ525_SCORE_NATIVE.log
+          retention-days: 1
