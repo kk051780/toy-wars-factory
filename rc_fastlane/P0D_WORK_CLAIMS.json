@@ -1721,7 +1721,7 @@
     },
     {
       "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "owner": "CODEX_ROOT_D4D718B4F637",
       "feature_id": "ACTIVE66_PERSISTENCE_LIFECYCLE_20261122",
       "canonical_parent": 282,
@@ -1755,8 +1755,8 @@
       ],
       "issued_at": "2026-11-22T14:38:40.472744+00:00",
       "expires_at": "2026-11-22T20:38:40.472744+00:00",
-      "pr": null,
-      "candidate_pr_status": "DRAFT_PREP_ONLY_NOT_CREATED",
+      "pr": 1016,
+      "candidate_pr_status": "DRAFT_SOURCE_QA_PASS_REBASE_AND_GQ8_PR_INTAKE_PENDING",
       "role": "A_PREP",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -1786,7 +1786,7 @@
       "grant_scope_version": 1,
       "scope": "Exactly 16 repository paths: one existing primary workflow and fifteen new repair selection, patch, fixture and verification files. Select all three already reviewed repairs in the existing rich51 actual66 Game/PersistentHatchStore. No changes to formal ACTIVE.json, PRIVATE69/70+ producers, queue or GQ8 triggers. This grant permits one isolated draft candidate and real primary same-HEAD CI/artifact QA only.",
       "candidate_tree_proposal": "399929b277ccf7626fcd58502281eee0f2fd6911",
-      "candidate_head": null,
+      "candidate_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
       "exact_file_manifest_sha256": "267dc369f7bcb98bcf939c047d20716bb83e533aa0908fd6bcd956d6c927e6d6",
       "candidate_patch_sha256": "7836a93a6b7bbe343be3bb535d7f60f3335b9a622309815575c2176349ffb575",
       "all_on_configuration_sha256": "4bd657db5d3c633c820e6e4c4ffa35e5cbbc11e5f35f9d5e8f0693b47e5339c5",
@@ -1888,7 +1888,113 @@
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "art": "ART_NO_GO",
-      "fun": "NOT_TESTED"
+      "fun": "NOT_TESTED",
+      "candidate_tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+      "metadata_updated_at": "2026-11-22T15:08:09Z",
+      "metadata_update_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 593,
+        "commit": "3a1f828171faae417bfbc1364a74e6f36d2f58f8",
+        "owner_id": "2c444a1b-c4ab-402e-9538-7d8250847e83",
+        "work_branch": "coord/p0d-work-claims",
+        "expires_at": "2026-11-22T15:37:04.869660+00:00",
+        "no_scope_extension": true
+      },
+      "actual_candidate_evidence": {
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1016",
+        "pr_comment": 7080885611,
+        "source_head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+        "source_parent": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
+        "tree": "399929b277ccf7626fcd58502281eee0f2fd6911",
+        "diff_files": 16,
+        "added": 15,
+        "modified": 1,
+        "unchanged_base_files": 905,
+        "independent_head_review": {
+          "context": "/root/admission_v2",
+          "status": "SOURCE_FIXED_HEAD_PASS_DRAFT_ONLY",
+          "receipt_sha256": "b142d0c79d1e566b8ae1e8c21a3f9fc8e34735f83dd3bf8571374f6a68e1667b",
+          "freeze_sha256": "25524ac54eaabc0d9afec906db030516283d4d75c300e69c5d9cf09486f41360",
+          "registered_GitHub_APPROVE": false
+        },
+        "primary_ci": {
+          "run": 45034273535,
+          "job": 137244415461,
+          "event": "pull_request",
+          "head": "90a60c08752543d77bbc3306c99b1d8bc6a3815f",
+          "conclusion": "success",
+          "checkout_merge": "9b943fd1fdf435fa37fa4e7240132670d9f946fd",
+          "candidate_and_checkout_tree_equal": true
+        },
+        "bootstrap_ci": {
+          "pull_request": 45034273503,
+          "push": 45034267136,
+          "conclusion": "success"
+        },
+        "artifact": {
+          "id": 14758893231,
+          "zip_bytes": 284362,
+          "zip_sha256": "ef4f11e5b65c8f626bc9842c19ed9dabc7910c79b52b8f4337390a4dbc5c7496",
+          "payload_files": 33,
+          "source_count": 66,
+          "changed_sources": 2,
+          "unchanged_sources": 64,
+          "place_bytes": 604050,
+          "place_sha256": "de7ca60e34d8461558b97c4e8513bc298bde9c5dd8510694aa6c21e904e60dfe",
+          "canonical_rc_source_adopted": false,
+          "historical_artifact_name": "P0D-RC66-ROLLBACK-rich51",
+          "actual_selected_configuration": "ALL_THREE_ON_NOT_OFF_ROLLBACK"
+        },
+        "independent_artifact_review": {
+          "context": "/root (not repair code author)",
+          "receipt_sha256": "17b79708cc11666cdc7c4252b1e3538da4e6463a570c6172aa9be7afd6537a82",
+          "freeze_sha256": "2c67733ba54ea360308bde1aefc545b2a8aa8b2b3b4165294d7ddaacd14cbc81",
+          "new_native_runs": 0
+        },
+        "hosted_selected_native": {
+          "spawn": 12,
+          "equip": 9,
+          "evolution": 19,
+          "recovery": 14,
+          "total": 54,
+          "failed": 0,
+          "selector_methods": 16,
+          "selected_source_compile_count": 66,
+          "prior_selected_Game_relay": 31,
+          "prior_selected_Game_bond": 27,
+          "whole_Game_bootstrap": false,
+          "live_DataStore_calls": 0
+        },
+        "GQ8_same_head_PR_run": "NOT_PRESENT_NOT_WAIVED",
+        "PREP_READY": false,
+        "formal_RC_adopted": false,
+        "Studio": "NOT_TESTED",
+        "Android": "NOT_TESTED",
+        "ART": "ART_NO_GO",
+        "FUN": "NOT_TESTED"
+      },
+      "continuation_conditions": {
+        "new_formal_rc_observed": "eb43702de8db32550d9a3ee78041ad6c104f46c0",
+        "observed_at": "2026-11-22T14:59:45Z",
+        "candidate_base_is_now_stale": true,
+        "official_push_failure": {
+          "run": 45035384920,
+          "job": 137247865657,
+          "observed_at": "2026-11-22T15:00:56Z",
+          "status": "failure",
+          "error": "RED_UNION22_NATIVE_SUITE_FAILED_OR_SOURCE_MUTATED:objective_full",
+          "artifact_count": 0,
+          "individual_false_predicate_unknown": true,
+          "existing_owner_retains_repair_scope": true
+        },
+        "requirements": [
+          "Resolve current formal UNION22 push failure through its existing owner without accepting retry luck or weakening gate",
+          "Fresh official RC rebase/review and applicable scope amendment before ACTIVE66 acceptance",
+          "Genuine GQ8 trigger prerequisite scope or authorized handoff; current 16path grant excludes this workflow",
+          "Actual same-new-HEAD pull_request GQ8 success/artifact and primary/required checks",
+          "Separate final RC writer handoff and fresh lease/CAS; no permission inferred from this metadata update"
+        ]
+      }
     }
   ],
   "legacy_overlap_triage": [
