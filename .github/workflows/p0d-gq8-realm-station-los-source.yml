@@ -1,0 +1,110 @@
+name: GQ8 Realm station server LOS — original source/native/rollback
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_realm_station_los_20261118/**'
+      - '.github/workflows/p0d-gq8-realm-station-los-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-author-lua-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout immutable original Realm #764
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - name: Real source, malicious mutation and rollback tests
+        env:
+          GQ8_REALM_SOURCE: _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v \
+            -s quality_gameplay/gq8_realm_station_los_20261118 -p 'test_*.py'
+          mkdir -p artifacts/gq8-realm-los/ON artifacts/gq8-realm-los/OFF
+          python3 quality_gameplay/gq8_realm_station_los_20261118/patch_realm_station_los.py \
+            --source "$GQ8_REALM_SOURCE" \
+            --out artifacts/gq8-realm-los/ON/RealmStationLOS.server.luau
+          python3 quality_gameplay/gq8_realm_station_los_20261118/patch_realm_station_los.py \
+            --rollback --source artifacts/gq8-realm-los/ON/RealmStationLOS.server.luau \
+            --out artifacts/gq8-realm-los/OFF/RealmStationLOS.server.luau
+          cmp "$GQ8_REALM_SOURCE" artifacts/gq8-realm-los/OFF/RealmStationLOS.server.luau
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('artifacts/gq8-realm-los')
+          for variant in ('ON','OFF'):
+              project={
+                "name":"GQ8RealmStationLOS_"+variant,
+                "tree":{"$className":"DataModel",
+                 "ServerScriptService":{"$className":"ServerScriptService",
+                  "RealmStationLOS":{"$path":variant+"/RealmStationLOS.server.luau"}}}
+              }
+              (root/(variant+'.project.json')).write_text(json.dumps(project))
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile original / on / off
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-realm-los-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-realm-los-luau --target Luau.Compile.CLI --parallel 4
+          for path in \
+            _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/EGGRUMBLE_RealmBattleCore.server.luau \
+            artifacts/gq8-realm-los/ON/RealmStationLOS.server.luau \
+            artifacts/gq8-realm-los/OFF/RealmStationLOS.server.luau; do
+            /tmp/gq8-realm-los-luau/luau-compile --text "$path" >/dev/null
+          done
+      - name: Pinned Rojo Source and Script Class ON/OFF exact
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              f=Path("/tmp/gq8-rojo"); f.write_bytes(z.read(names[0])); f.chmod(0o755)
+          PY
+          cd artifacts/gq8-realm-los
+          /tmp/gq8-rojo build ON.project.json -o ON.rbxlx
+          /tmp/gq8-rojo build OFF.project.json -o OFF.rbxlx
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          for v in ('ON','OFF'):
+              root=ET.parse(v+'.rbxlx').getroot()
+              scripts=[x for x in root.iter('Item') if x.attrib.get('class')=='Script']
+              assert len(scripts)==1,(v,len(scripts))
+              # Match the canonical V3 verifier: Rojo 7.7.1 can emit
+              # Source as <string> while an empty ProtectedString also exists.
+              props=scripts[0].find('Properties')
+              assert props is not None,v
+              source=props.findtext("string[@name='Source']")
+              if source is None:
+                  source=props.findtext("ProtectedString[@name='Source']")
+              raw=Path(v+'/RealmStationLOS.server.luau').read_text()
+              assert source is not None and source.replace("\r\n","\n")==raw,v
+          print('GQ8_REALM_STATION_LOS_ROJO_SOURCE_CLASS_ON_OFF_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8_REALM_STATION_LOS_PINNED_SOURCE_ONLY
+          path: artifacts/gq8-realm-los/
+          retention-days: 7
