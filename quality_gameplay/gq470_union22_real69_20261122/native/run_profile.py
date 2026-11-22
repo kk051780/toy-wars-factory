@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute the clear-LOS input variant and original objective suite with 28 bodies.
+"""Execute separately named combined and objective clear-LOS inputs with 28 bodies.
 
 This is a new, separate source-build contract. It does not relax or edit the
 historical adapter's exact 9c68 binary pin. No supplied/prebuilt Repl is accepted.
@@ -18,9 +18,9 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "7bf3cdc53952f039239f7c736b25356e5f399a0c150f0153ff9844ff470b5dd4"
+INPUT_LOCK_SHA256 = "999ef08d3c0215bd33066f47ab482e0cec1c9624b270294282c0ecda47a30787"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
-              "objective_full": "objective_full_cases.luau"}
+              "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
 
 
 def require(value, reason):
@@ -57,7 +57,7 @@ def load_lock():
     raw = read(HERE / "INPUT_LOCK.json")
     require(identity(raw)["sha256"] == INPUT_LOCK_SHA256, "INPUT_LOCK_MISMATCH")
     lock = strict_json(raw)
-    require(lock["schema"] == "UNION22_NATIVE_CLEAR_LOS_SOURCE_BUILD_INPUTS_V2"
+    require(lock["schema"] == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
             and len(lock["sources"]) == 69 and len(lock["modules_in_load_order"]) == 27
             and len(set(lock["modules_in_load_order"])) == 27
             and set(lock["suites"]) == set(CASE_FILES) and lock["case_files"] == CASE_FILES,
@@ -94,6 +94,11 @@ def fixture_snapshot(lock):
     require(original["path"] == "fixtures/combined_cases.luau"
             and identity(read(HERE / original["path"])) == {k: original[k] for k in ("bytes", "sha256")},
             "ORIGINAL_COMBINED_CASE_NOT_PRESERVED")
+    objective = lock["objective_case_amendment"]["original_case"]
+    require(objective == {"path": "objective_full_cases.luau", "bytes": 7882,
+                          "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"}
+            and identity(read(HERE / objective["path"])) == {k: objective[k] for k in ("bytes", "sha256")},
+            "ORIGINAL_OBJECTIVE_CASE_NOT_PRESERVED")
     return result
 
 
@@ -278,22 +283,84 @@ def exact_vector(stdout, expected):
     return okay, lines
 
 
+def vector_parse_reason(lines, expected):
+    """Describe the existing vector predicate without changing its acceptance."""
+    parts = [line.split("\t", 3) for line in lines]
+    reasons = []
+    if len(parts) != len(expected):
+        reasons.append("CASE_COUNT_MISMATCH")
+    if any(len(row) != 4 for row in parts):
+        reasons.append("MALFORMED_CASE_ROW")
+    if [row[1] for row in parts if len(row) == 4] != expected:
+        reasons.append("CASE_NAME_OR_ORDER_MISMATCH")
+    if any(len(row) == 4 and row[2] != "PASS" for row in parts):
+        reasons.append("NON_PASS_CASE")
+    return "+".join(reasons) if reasons else "EXACT_PASS_VECTOR"
+
+
+def emit_suite_failure(output, diagnostic, stdout, stderr, error):
+    """Failure evidence only; callers always re-raise the original exception."""
+    diagnostic.update(exception_type=type(error).__name__, exception=str(error),
+                      stdout=identity(stdout), stderr=identity(stderr))
+    try:
+        (output / "stdout.log").write_bytes(stdout)
+        (output / "stderr.log").write_bytes(stderr)
+        write_json(output / "FAILED.json", diagnostic)
+    finally:
+        # JSON escaping keeps complete output on inert log lines, including
+        # invalid UTF-8 display escapes, even if diagnostic disk writes failed.
+        print("UNION22_NATIVE_FAILURE " + json.dumps(diagnostic, ensure_ascii=True, sort_keys=True), flush=True)
+        print("UNION22_NATIVE_FAILURE_STDOUT " + json.dumps(stdout.decode("utf-8", errors="backslashreplace")), flush=True)
+        print("UNION22_NATIVE_FAILURE_STDERR " + json.dumps(stderr.decode("utf-8", errors="backslashreplace")), flush=True)
+
+
 def run_suite(root, output, binary, lock, suite_name, source_before, binary_pin, context, source_receipt, runner_pin):
     output.mkdir(exist_ok=False)
     generated, line_ranges, byte_ranges = assemble(root, lock, suite_name)
     (output / "generated.luau").write_bytes(generated)
     require(identity(read(binary)) == binary_pin, "BINARY_CHANGED_BEFORE_SUITE")
-    result = subprocess.run([str(binary), str(output / "generated.luau")], env=clean_environment(),
-                            capture_output=True, timeout=60)
-    (output / "stdout.log").write_bytes(result.stdout)
-    (output / "stderr.log").write_bytes(result.stderr)
     expected = lock["suites"][suite_name]["expected_case_names"]
-    vector, lines = exact_vector(result.stdout.decode("utf-8"), expected)
-    unchanged = source_snapshot(root) == source_before
-    require(result.returncode == 0 and vector and unchanged, "SUITE_FAILED_OR_SOURCE_MUTATED:" + suite_name)
-    require(read(output / "generated.luau") == generated and identity(read(binary)) == binary_pin,
-            "GENERATED_OR_NATIVE_CHANGED_DURING_SUITE")
-    fixture_snapshot(lock)
+    stdout, stderr = b"", b""
+    diagnostic = {"schema": "UNION22_NATIVE_SUITE_FAILURE_DIAGNOSTIC_V1", "status": "FAIL_DIAGNOSTIC_ONLY",
+                  "suite": suite_name, "execution_context": context, "source_receipt": source_receipt,
+                  "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "runner": runner_pin,
+                  "native": binary_pin, "generated": identity(generated), "case_file": lock["suites"][suite_name]["case"],
+                  "expected_case_names": expected, "cases": [], "native_exit": None, "timed_out": False,
+                  "exact_complete_pass_vector": None, "source_inputs_unchanged": None,
+                  "phase": "NATIVE_PROCESS", "parse_reason": "NOT_PARSED", "native_admission": False}
+    try:
+        result = subprocess.run([str(binary), str(output / "generated.luau")], env=clean_environment(),
+                                capture_output=True, timeout=60)
+        stdout, stderr = result.stdout, result.stderr
+        diagnostic.update(native_exit=result.returncode, phase="STDOUT_UTF8_PARSE")
+        (output / "stdout.log").write_bytes(stdout)
+        (output / "stderr.log").write_bytes(stderr)
+        vector, lines = exact_vector(result.stdout.decode("utf-8"), expected)
+        diagnostic.update(cases=lines, exact_complete_pass_vector=vector,
+                          parse_reason=vector_parse_reason(lines, expected), phase="SOURCE_SNAPSHOT")
+        unchanged = source_snapshot(root) == source_before
+        diagnostic.update(source_inputs_unchanged=unchanged, phase="SUITE_ACCEPTANCE_PREDICATE")
+        require(result.returncode == 0 and vector and unchanged, "SUITE_FAILED_OR_SOURCE_MUTATED:" + suite_name)
+        diagnostic["phase"] = "GENERATED_AND_BINARY_RECHECK"
+        require(read(output / "generated.luau") == generated and identity(read(binary)) == binary_pin,
+                "GENERATED_OR_NATIVE_CHANGED_DURING_SUITE")
+        diagnostic["phase"] = "FIXTURE_RECHECK"
+        fixture_snapshot(lock)
+    except Exception as error:
+        if isinstance(error, subprocess.TimeoutExpired):
+            stdout, stderr = error.stdout or b"", error.stderr or b""
+            diagnostic.update(timed_out=True, parse_reason="NOT_PARSED_TIMEOUT")
+        elif isinstance(error, UnicodeDecodeError):
+            diagnostic["parse_reason"] = "INVALID_UTF8"
+        try:
+            emit_suite_failure(output, diagnostic, stdout, stderr, error)
+        except Exception as diagnostic_error:
+            # A diagnostic I/O error must not replace the original failing gate.
+            try:
+                print("UNION22_NATIVE_DIAGNOSTIC_OUTPUT_ERROR " + repr(diagnostic_error), file=sys.stderr, flush=True)
+            except Exception:
+                pass
+        raise
     receipt = {"schema": "UNION22_FULL_RUNTIME_SUITE_V2", "status": "PASS", "profile": "union22", "suite": suite_name,
         "input_variant": lock["suites"][suite_name]["input_variant"], "case_path": CASE_FILES[suite_name],
         "execution_context": context, "source_receipt": source_receipt,
@@ -339,7 +406,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         built["input_lock"] = identity(lock_before)
         built["runner"] = identity(runner_before)
         pin = built["binary_before_suites"]
-        for suite in ("combined_clear_los", "objective_full"):
+        for suite in ("combined_clear_los", "objective_full_clear_los"):
             run_suite(root, output / suite, binary, lock, suite, before, pin, context,
                       identity(source_receipt_raw), identity(runner_before))
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
@@ -356,9 +423,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         built["binary_after_suites"] = identity(read(binary))
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         write_json(output / "build_receipt.json", built)
-        receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V2", "status": "PASS", "profile": "union22",
+        receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
+                   "original_objective_case_preserved_not_claimed_as_unchanged_pass": True,
                    "execution_context": context, "source_receipt": identity(source_receipt_raw),
                    "source_inputs_unchanged": True, "source_profile": before,
                    "source_count_pinned": 69, "source_count_executed_full_body": 28,
@@ -385,7 +453,7 @@ def main():
     context = compose.live_context(source_receipt, args.head)
     run_profile(args.source_root, args.luau_source, args.build_dir, args.out,
                 args.cmake, args.ninja, args.git, args.cc, args.cxx, context)
-    print("UNION22_NATIVE_FULL_28_BODIES_CLEAR_LOS_INPUT_AND_ORIGINAL_OBJECTIVE_PASS_SOURCE_ONLY")
+    print("UNION22_NATIVE_FULL_28_BODIES_DUAL_CLEAR_LOS_INPUTS_PASS_SOURCE_ONLY")
     return 0
 
 

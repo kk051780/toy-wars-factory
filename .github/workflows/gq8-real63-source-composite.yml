@@ -1752,7 +1752,7 @@ jobs:
           set -euo pipefail
           python3 -B tests/test_gq470_union22_real69_20261122.py
           python3 -B -O tests/test_gq470_union22_real69_20261122.py
-      - name: "Union22: fresh f46 Repl build, clear-LOS combined input and unchanged objective suite"
+      - name: "Union22: fresh f46 Repl build, separately named combined and objective clear-LOS inputs"
         shell: bash
         run: |
           set -euo pipefail
