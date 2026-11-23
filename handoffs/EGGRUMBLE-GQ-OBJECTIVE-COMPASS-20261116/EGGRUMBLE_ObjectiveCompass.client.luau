@@ -118,6 +118,19 @@ local function nearestActiveItem(arena:Instance, at:Vector3):(BasePart?,number)
  return nearest,best
 end
 
+local liveCoreColor=Color3.fromRGB(172,166,147)
+local function hasRaidableEgg(castle:Model):boolean
+ local core=castle:FindFirstChild("StandardCore")
+ if not core or not core:IsA("BasePart") or core.Color~=liveCoreColor then return false end
+ local board=core:FindFirstChildOfClass("BillboardGui")
+ local label=board and board:FindFirstChildOfClass("TextLabel")
+ if not label then return false end
+ -- The Host uses different stock labels at spawn and on subsequent updates.
+ local status=label.Text
+ return string.match(status,"\nHP%d+ / 卵[1-9]%d*$")~=nil
+     or string.match(status,"\n卵×[1-9]%d* / HP%d+$")~=nil
+end
+
 local function pickObjective(mode:string,arena:Instance,own:Model,at:Vector3,homeSelected:boolean):(BasePart?,string)
  if homeSelected then
   local home=own:FindFirstChild("OwnEggDeposit",true)
@@ -139,7 +152,7 @@ local function pickObjective(mode:string,arena:Instance,own:Model,at:Vector3,hom
   if model:IsA("Model") and model.Name:sub(1,7)=="Castle_"
       and isEnemy(mode,own,model,arena) then
    local vault=model:FindFirstChild("EggVault",true)
-   if vault and vault:IsA("BasePart") then
+   if vault and vault:IsA("BasePart") and hasRaidableEgg(model) then
     local dist=(vault.Position-at).Magnitude
     if dist<best then best=dist;closest=vault end
    end
@@ -148,7 +161,7 @@ local function pickObjective(mode:string,arena:Instance,own:Model,at:Vector3,hom
  if closest then return closest,"敵城の卵を奪う → 自城へ納入" end
  local deposit=own:FindFirstChild("OwnEggDeposit",true)
  if deposit and deposit:IsA("BasePart") then return deposit,"自城を防衛・卵を納入" end
- return nil,"敵城の卵を奪って自城へ戻る"
+ return nil,"自城を防衛"
 end
 
 local function directionTo(from:Vector3,to:Vector3):string
@@ -194,7 +207,8 @@ local function refresh()
   local dz=math.abs(root.Position.Z-battlefield.Position.Z)
   inArena=dx<=battlefield.Size.X/2+25 and dz<=battlefield.Size.Z/2+25
  end
- if not inArena or not own or not own:IsA("Model")
+ local phase=arena and arena:GetAttribute("EGGRUMBLE_MatchPhase")
+ if not inArena or (phase~=nil and phase~="ACTIVE") or not own or not own:IsA("Model")
    or not h or h.Health<=0 or player:GetAttribute("EGGRUMBLE_Eliminated")==true then
   toggle.Visible=false;bar.Visible=false;returnHome.Visible=false;marker.Enabled=false;marker.Adornee=nil
   currentTarget=nil;lastMode="";manuallyReturning=false

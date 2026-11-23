@@ -41,6 +41,17 @@ local own=model("Castle_owner",{EggVault=part("EggVault",-50,0),
 local ally=model("Castle_ally",{EggVault=part("EggVault",-70,0)})
 local enemy=model("Castle_enemy",{EggVault=part("EggVault",60,0)})
 local farEnemy=model("Castle_far_enemy",{EggVault=part("EggVault",160,0)})
+-- Color3 values in Studio compare by RGB components.
+local Color3={fromRGB=function(r,g,b) return r*65536+g*256+b end}
+local function setStatus(castle,status,alive)
+ local core=part("StandardCore",0,0)
+ core.Color=if alive then Color3.fromRGB(172,166,147) else Color3.fromRGB(59,54,55)
+ local label={Text=castle.Name.."\n"..status}
+ local board={FindFirstChildOfClass=function(_,kind) return if kind=="TextLabel" then label else nil end}
+ function core:FindFirstChildOfClass(kind) return if kind=="BillboardGui" then board else nil end
+ castle.parts.StandardCore=core
+end
+for _,castle in ipairs({own,ally,enemy,farEnemy}) do setStatus(castle,"卵×3 / HP1000",true) end
 local arena={}
 local castleList={own,ally,enemy,farEnemy}
 local extras={TacticalBattlefield=floor}
@@ -82,6 +93,19 @@ check(target==giantCore and string.find(label,"巨人",1,true)~=nil,"near giant 
 giantCore.Position=vec(250,0)
 target,label=pickObjective("TEAM",arena,own,at,false)
 check(target==enemy.parts.EggVault,"far giant overriding real enemy")
+-- A closer empty, fallen or incompletely replicated castle must not mask a valid enemy.
+setStatus(enemy,"HP180 / 卵0",true)
+check(pickObjective("TEAM",arena,own,at,false)==farEnemy.parts.EggVault,"empty vault")
+setStatus(enemy,"HP180 / 卵3",false)
+check(pickObjective("TEAM",arena,own,at,false)==farEnemy.parts.EggVault,"fallen castle with stale stock")
+setStatus(enemy,"HP180 / 卵3x",true)
+check(pickObjective("TEAM",arena,own,at,false)==farEnemy.parts.EggVault,"unreadable stock")
+enemy.parts.StandardCore=nil
+check(pickObjective("TEAM",arena,own,at,false)==farEnemy.parts.EggVault,"waiting for replication")
+setStatus(farEnemy,"HP0 / 卵0",false)
+check(pickObjective("TEAM",arena,own,at,false)==own.parts.OwnEggDeposit,"all enemy vaults unavailable")
+setStatus(enemy,"HP0 / 卵12",true)
+check(pickObjective("TEAM",arena,own,at,false)==enemy.parts.EggVault,"live fractional HP and restocked vault")
 -- With no enemy, fallback is the own deposit, never invented cargo.
 local originalList=castleList
 castleList={own}
