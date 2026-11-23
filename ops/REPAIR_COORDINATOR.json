@@ -602,6 +602,96 @@
       },
       "schema": 1,
       "service_completion_asserted": false
+    },
+    {
+      "schema": 1,
+      "case_id": "GQ_MANUAL_CONTROLLER_EPOCH656_BOUNDED_MAINTENANCE_20261123_BD769DA1",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "actor_context": "CODEX_ROOT_BD769DA1E937",
+      "actor_operation_id": "b989dfac-24dc-444e-835c-95db531fd2c2",
+      "authenticated_github_actor": {
+        "login": "kk051780",
+        "user_id": 233213370
+      },
+      "recorded_at": "2026-11-23T02:01:04.721508+00:00",
+      "observed_ref": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+      "observed_state_blob": "c05540c62441c6267637f39f9ec0b6a690935740",
+      "previous_epoch": 656,
+      "next_epoch": 657,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "62791882-7bf8-42ca-b384-4bf73320f558",
+        "task_id": null,
+        "epoch": 656,
+        "acquired_at": "2026-11-23T01:17:13.539028+00:00",
+        "expires_at": "2026-11-23T01:47:13.539028+00:00",
+        "base_main_sha": null,
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller"
+      },
+      "authorization": {
+        "type": "STANDING_OWNER_DELEGATION_APPLIED_TO_ONE_BOUNDED_MAINTENANCE_DECISION",
+        "current_request": "ゲーム品質ゲート。githubルールに則って改善を進めて。残課題や企画室案の取り入れ余地が残ってる限り1回の作業時間は最低600分以上で進めて。",
+        "source": "Current OWNER task; existing owner_delegation dated 2026-10-25; actual official dcb501673d7959e4904cf360ef0119917e6aa2e0 AGENTS.md and docs/AUTONOMOUS_INTEGRATION.md; latest #1011 v1.2.",
+        "scope": "Fence only the exact expired manual CONTROLLER epoch656. Preserve HUD PR1019 and all claims. No source, PR, claim-registry, RC, main, service-schedule, credentials, quality-gate, incident-hold, spending or publication writes.",
+        "expiry_alone_is_authority": false,
+        "new_general_expiry_takeover_rule_created": false,
+        "prior_epoch_specific_approvals_reused": false,
+        "new_user_consent_inferred_from_empty_permission_response": false
+      },
+      "evidence": {
+        "administrative_process_precedents_only": [
+          245,
+          251,
+          284,
+          296,
+          302,
+          602
+        ],
+        "latest_actual_precedent": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086256437",
+        "existing_handoff_record": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088360708",
+        "original_owner_handoff": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "normal_release_requires_original_owner": true,
+        "normal_release_implementation_permits_expired_exact_owner": true,
+        "normal_recover_supports_manual_controller": false,
+        "last_completed_epoch": 655,
+        "last_completed_is_not_epoch656_release": true,
+        "github_repository_permissions": {
+          "admin": true,
+          "maintain": true,
+          "pull": true,
+          "push": true
+        },
+        "independent_prewrite_authority_review_required": true,
+        "authority_observation": {
+          "bytes": 636,
+          "sha256": "3f8e3e557d89a735be3cd37b23b6572eca1e02ad317880758bfce1ef1f803e59",
+          "git_blob": "19f892f4aee30dab97da2571edd3605c2732726d"
+        }
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "all_other_nested_values_unchanged": true,
+        "last_completed_unchanged": true,
+        "prior_revocations_unchanged": true,
+        "raw_existing_history_preserved": true,
+        "fresh_exact_ref_blob_holder_required": true,
+        "single_parent": true,
+        "expected_sha": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+        "force": false,
+        "one_cas_attempt_only": true,
+        "postwrite_full_state_readback_required": true,
+        "independent_postwrite_audit_required": true,
+        "no_automatic_claim_or_source_permission": true,
+        "no_new_lease_acquired": true,
+        "changed_state_requires_stop_not_retry": true
+      },
+      "service_completion_asserted": false
     }
   ],
   "approval_packet": {
@@ -2206,18 +2296,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 656,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "62791882-7bf8-42ca-b384-4bf73320f558",
-    "task_id": null,
-    "epoch": 656,
-    "acquired_at": "2026-11-23T01:17:13.539028+00:00",
-    "expires_at": "2026-11-23T01:47:13.539028+00:00",
-    "base_main_sha": null,
-    "work_branch": "coord/p0d-work-claims",
-    "origin": "controller"
-  },
+  "epoch": 657,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
