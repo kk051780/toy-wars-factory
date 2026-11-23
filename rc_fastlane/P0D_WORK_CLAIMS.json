@@ -27071,6 +27071,179 @@
         "full_readback_required": true,
         "all_29_existing_rows_and_unrelated_raw_bytes_preserved": true
       }
+    },
+    {
+      "claim_id": "P0D-GQ838-TRADE-LIFECYCLE-20261123-82F2BEB2",
+      "feature_id": "GQ8_TRADE_UX_JOURNAL_20261119",
+      "sub_scope": "CURRENT69_STUDIO_TRADE_PREVIEW_ACTIVE_PHASE_CHARACTER_LIFECYCLE",
+      "owner": "CODEX_ROOT_82F2BEB2AB16",
+      "role": "A_PREP",
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/838",
+      "original_source_pr": 838,
+      "source_adoption_pr": 842,
+      "original_source_head": "ce50610f8f3b775fc4064a2f44b696ae539fc909",
+      "original_trade_blob": "a96d9bde201c6bdbb8fe185c81650f99368a9544",
+      "coordination_issue": 218,
+      "integration_issue": 220,
+      "quality_issue": 470,
+      "request_comment": 7092370776,
+      "request_url": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7092370776",
+      "pr": null,
+      "allowed_new_prs": 1,
+      "prep_branch": "quality/gq838-trade-lifecycle-82f2beb2-20261123",
+      "source_branch_created": false,
+      "base_rc_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+      "source_head_before": null,
+      "source_head": null,
+      "candidate_head": null,
+      "candidate_pr_status": "NOT_CREATED",
+      "resources": [
+        "GQ8_TRADE_REVIEW_CLIENT"
+      ],
+      "resource_semantics": "Exactly the existing generated LocalScript StarterPlayer/StarterPlayerScripts/GQ8_TradeReview. Compare by this route/effect, original feature GQ8_TRADE_UX_JOURNAL_20261119, and any equivalent REAL69_SOURCE_GQ8_TRADEREVIEW name; this token must not evade another same-source owner. It grants no TradePolicy/Journal/Escrow/settlement scope.",
+      "target_paths": [
+        "quality_gameplay/gq838_trade_lifecycle_20261123/README.md",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/trade_lifecycle_patch.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/apply_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/trade_lifecycle.spec.luau",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/run_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq838_trade_lifecycle_20261123.py",
+        ".github/workflows/gq838-trade-lifecycle.yml"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq838_trade_lifecycle_20261123/README.md",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/trade_lifecycle_patch.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/apply_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/trade_lifecycle.spec.luau",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/run_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq838_trade_lifecycle_20261123.py",
+        ".github/workflows/gq838-trade-lifecycle.yml"
+      ],
+      "new_paths": [
+        "quality_gameplay/gq838_trade_lifecycle_20261123/README.md",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/trade_lifecycle_patch.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/apply_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/trade_lifecycle.spec.luau",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/run_trade_lifecycle.py",
+        "quality_gameplay/gq838_trade_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq838_trade_lifecycle_20261123.py",
+        ".github/workflows/gq838-trade-lifecycle.yml"
+      ],
+      "target_paths_semantics": "Exactly nine new isolated PREP repository paths, no wildcard. No original #838 source branch or canonical shared producer/workflow/profile path may be edited.",
+      "author_contexts": [
+        "CODEX_ROOT_82F2BEB2AB16:/root",
+        "CODEX_ROOT_82F2BEB2AB16:/root/p0_gap"
+      ],
+      "source_author_contexts": [
+        "CODEX_ROOT_82F2BEB2AB16:/root",
+        "CODEX_ROOT_82F2BEB2AB16:/root/p0_gap"
+      ],
+      "test_author_contexts": [
+        "CODEX_ROOT_82F2BEB2AB16:/root",
+        "CODEX_ROOT_82F2BEB2AB16:/root/p0_gap"
+      ],
+      "source_publisher_context": "CODEX_ROOT_82F2BEB2AB16:/root",
+      "scope_review_context": "CODEX_ROOT_82F2BEB2AB16:/root/planning_gap",
+      "independent_reviewer_context": "CODEX_ROOT_82F2BEB2AB16:/root/planning_gap",
+      "reviewer_is_source_or_test_author": false,
+      "scope_review_is_code_approval": false,
+      "scope": "Repair only the existing Studio-only explanatory TradeReview preview lifecycle on official PRIVATE REAL69. Preserve the leading RunService:IsStudio early-return guard before GUI construction and subscriptions, DisplayOrder18, initially disabled single startup GUI, category behavior, manual close/hide and valid prompt reopen. Close/reject only this owned preview for the player's matching TEAM/BATTLE_ROYALE ACTIVE arena and stale/replaced/dead/eliminated character or owned GUI teardown. Read existing Host-published mode/arena/phase only. Preserve ordinary lobby and queued WAITING browsing, unrelated-arena noninterference, existing self/prompt-name/ancestor/workspace/current-root/proximity controls. Nonnil QueuedMode alone and walking away after opening alone must not prohibit/close browsing. Bound added observers; no yielding open callback, require dependency, new pending-request pipeline, replacement renderer or transaction authority.",
+      "generated_source_count": 69,
+      "generated_source_change_count": 1,
+      "other_sources_preserved": 68,
+      "instances_preserved": 75,
+      "generated_source_scope": [
+        {
+          "resource": "GQ8_TRADE_REVIEW_CLIENT",
+          "route": "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview",
+          "class": "LocalScript",
+          "generated_relative_path": "sources/StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau",
+          "before": {
+            "bytes": 5149,
+            "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+          },
+          "after": {
+            "bytes": 7767,
+            "sha256": "30422803898baa8ccdac74b0af4bcc05ab7008f57f9a43c38d33e0cdbaedee12"
+          }
+        }
+      ],
+      "official_input": {
+        "head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "profile": "PRIVATE_COMPANION_REAL69",
+        "run_id": 45132949073,
+        "artifact_id": 14798134590,
+        "zip_bytes": 7144237,
+        "zip_sha256": "d178f62489f275831da86eaceda8b8ce1fba6a8ccf86366bd86cb8c5507a926b",
+        "place_bytes": 829213,
+        "place_sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5"
+      },
+      "acceptance": [
+        "Read and execute the exact complete original5149B source once in controlled Native fixtures, then the complete candidate against fixed meaningful expectations. Preserve the original20 controls and classify original TEAM/BR ACTIVE and character-replacement retained GUI as baseline observations, not Studio evidence.",
+        "Non-Studio path must return at the original leading IsStudio guard before GUI creation or Prompt/character/arena observers. Retain DisplayOrder18; make no native claim of covering mainHUD20 or winning an equal18 order.",
+        "Ordinary lobby and queued TEAM/BR WAITING browsing remains usable. Only the player's supported matching ACTIVE arena closes the owned GUI and rejects reopen; an unrelated ACTIVE arena must not close it. No new Host field writer or game/phase authority.",
+        "Current-character replacement/removal, death/elimination and invalid current-avatar lifecycle cannot retain/reopen the prior preview. Original HP0/Eliminated/missing-Humanoid acceptance observations are not mislabeled as original rejection controls; any newly enforced rejection is disclosed and independently reviewed.",
+        "Manual close hides the single original startup GUI; valid subsequent prompt reopens that same GUI and restores original category selection behavior. Existing prompt/self/ancestor/workspace/root/distance checks remain meaningful. Walking away alone is not a mandatory close condition.",
+        "Owned GUI teardown must stop its added callbacks safely. Repeated open/close and transitions must not grow GUI or Prompt/other observer counts; no stale callback may reopen or mutate a retired owned GUI. No Shop-style yielding request/mount pipeline is introduced.",
+        "Exchange button remains explicitly inactive with no transaction handler. No Remote, inventory, Store, wallet, entitlement, paid exchange, Policy/Journal/Escrow behavior or other UI is added or modified.",
+        "Exactly one of69 existing source bodies changes, other68 remain byte-exact, all69 routes/classes and75 instances/project/non-source structure are preserved. Compile69 ON and69 inverse OFF, run pinned actual Rojo, and restore original source/project/Place byte-exactly with the inverse.",
+        "Dedicated actual source-HEAD CI and registered nonauthor review of exact code/tests/receipts/artifact remain required. Preserve existing assertions; do not substitute historical H93 or another feature's green CI for this candidate. Formal RC and same-RC Studio/2client/Android/ART/FUN remain separate gates."
+      ],
+      "rollback": "Inverse only TradeReview lifecycle changes to the exact official5149B/459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61 body. Restore other68 sources, project/classes/routes/75 instances and H72 Place including the accepted BotActors change byte-exactly. This preparation scope does not authorize any RC/main/shared-state rollback.",
+      "forbidden_changes": [
+        "Removal, weakening or relocation past observable initialization of the leading Studio-only guard; enabling a published-game Trade UI.",
+        "DisplayOrder18, renderer/layout/category/content redesign, new GUI route, single-source69 to70 or a Shop-like asynchronous pending-open subsystem.",
+        "SocialPlaza/Dojo, TradePolicy, TradeJournalContract, TradeEscrowReducer, Game/Host/Combat/HUD/Score and every source except existing TradeReview.",
+        "ShopCatalog/View/Kiosk or the separate frozen Shop request7091284176; no implicit combined Shop+Trade scope.",
+        "Store/Wallet/Remote/inventory/entitlement/purchase/paid operations, a new phase authority or live item exchange.",
+        "Blocking WAITING browsing solely because QueuedMode is nonnil; making unrelated ACTIVE arenas control this player's preview.",
+        "Canonical shared producer/profile/workflow/native/test gates, original #838 author branch, feature catalogs or another feature's paths.",
+        "Official RC/main ref writes, merge, force update, Roblox Publish, spending or automation changes."
+      ],
+      "state": "GRANTED",
+      "source_scope_granted": true,
+      "source_writes_permitted_at_issuance": false,
+      "remote_source_writes_permitted_at_issuance": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "source_lease": null,
+      "local_preparation_boundary": "Parent-authorized isolated, unconnected local repair/fixture preparation may proceed under current NO-STALL; it is not registered source publication or RC authority.",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "5b78c183-8b14-47c9-ab4c-0e61fe68a594",
+      "service_run_id": null,
+      "service_task_id": null,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "5b78c183-8b14-47c9-ab4c-0e61fe68a594",
+        "epoch": 698,
+        "acquire_commit": "b14ee74ddeb4685edc4e2e4ea36bf496c534f6e9",
+        "acquired_at": "2026-11-23T09:15:37+00:00",
+        "expires_at": "2026-11-23T09:45:37+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "issued_at": "2026-11-23T09:16:01+00:00",
+      "expires_at": "2026-11-23T15:16:01+00:00",
+      "grant_scope_version": 1,
+      "draft_only_not_issued": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "NOT_TESTED",
+      "fun": "NOT_TESTED",
+      "RUNTIME_UNIFIED": "NO"
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
