@@ -94,7 +94,8 @@ jobs:
             --official-zip "$P0D033_OFFICIAL_ZIP" --donor-zip "$P0D033_DONOR_ZIP" \
             --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/p0d033-evidence/native" \
             --luau-source "$RUNNER_TEMP/p0d033-luau-source" --build-dir "$RUNNER_TEMP/p0d033-build" \
-            --cmake /usr/bin/cmake --ninja /usr/bin/ninja --git /usr/bin/git --cc /usr/bin/cc --cxx /usr/bin/c++
+            --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
+            --git "$(command -v git)" --cc "$(command -v cc)" --cxx "$(command -v c++)"
           python3 -B - <<'PY'
           import json,os
           from pathlib import Path

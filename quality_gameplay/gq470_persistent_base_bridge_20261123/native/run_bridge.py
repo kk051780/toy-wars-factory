@@ -17,7 +17,7 @@ sys.dont_write_bytecode = True
 HERE = Path(__file__).absolute().parent
 PACKAGE = HERE.parent
 ROOT = HERE.parents[2]
-LOCK_SHA256 = "be6dcffd88e041a5ab51e1591e7c2151c8d4d6b212fee01f9ce71eba59f1eb10"
+LOCK_SHA256 = "7be112d96a95dd6e91a3968c9319cfc2858fb56633d2d5c4b831ba7e8cd04e01"
 
 # Explicit Engine boundary, never a claim to execute a real Roblox Player/Studio.
 BOUNDARY = '''-- Native boundary only; fake Instances and Host predicates are not Studio evidence.
