@@ -1342,7 +1342,10 @@ local function requireTag(actor,stage,kos)
  equal(#tags,1,'exactly one production growth tag under this concrete human character')
  local tag=tags[1];local head=actor.Character:FindFirstChild('Head')
  check(tag:IsA('BillboardGui') and tagVisible(tag),'active head tag is enabled BillboardGui')
- check(head and (tag.Adornee==head or tag.Parent==head),'tag belongs to current concrete Head')
+ local target=if tag.Adornee~=nil then tag.Adornee else tag.Parent
+ local hum=actor.Character:FindFirstChildOfClass('Humanoid')
+ check(head and head:IsA('BasePart') and head.Parent==actor.Character
+  and hum and hum.Health>0 and target==head,'effective Adornee is the current living concrete Head')
  check(tag.AlwaysOnTop==false,'head tag must not render through occluders')
  check(type(tag.MaxDistance)=='number' and tag.MaxDistance>0 and tag.MaxDistance<=UIContract.maxTagDistance,
   'nearby tag MaxDistance is positive and bounded at 80 studs')
@@ -1370,6 +1373,9 @@ local function requireFooter(gui,stage,xp)
  for _,object in ipairs(gui:GetDescendants())do if object.Name==UIContract.footer then count+=1 end end
  equal(count,1,'one footer only')
  check(f.Visible,'active footer is visible')
+ check(f.Parent==gui and gui:IsA('ScreenGui') and gui.Enabled==true,
+  'direct footer and its actual ScreenGui are visible')
+ check(gui.Parent==playerGui and playerGui.Parent==player,'footer uses the current client GUI ancestry')
  check(f.Text==string.format('覚醒B%d XP%d/80',stage,xp),'footer uses truthful B/XP label')
  local rect=UIAudit.rect(f);local status=UIAudit.rect(gui:FindFirstChild('CompactStatus'))
  equal(rect.y,43,'footer begins at y43')
@@ -1484,6 +1490,398 @@ local function replaceCharacter(session,label,deferred,includeHead,hadTag)
  return old,new
 end
 
+-- These probes use the same full31 execution. Missing growth UI gates only its
+-- own observation; real combat and role callbacks remain reachable on H93.
+local function naturalNinjaFollowup(session,hadTag)
+ local deadline,castAt,avatar,head,heroBefore,hudBefore,heroCast,hudCast
+ local monitor=nil;local changes={};local attempts=0
+ local castOK,castDetail=pcall(function()
+  advanceTo(now+dependencies.EGGRUMBLE_CombatBalance.skill('NINJA','B').cooldown+.01)
+  avatar=player.Character;head=avatar and avatar:FindFirstChild('Head')
+  check(avatar and head and humanoid.Health>0 and session.isCurrentHuman(player)
+   and session.rules.phase=='ACTIVE' and player:GetAttribute('EGGRUMBLE_Role')=='NINJA',
+   'second real NINJA B uses the current living ACTIVE human')
+  heroBefore=liveSource('HeroSilhouetteArt');hudBefore=liveSource('HudIntelRuntime')
+  monitor=player:GetAttributeChangedSignal('EGGRUMBLE_StealthUntil'):Connect(function()
+   table.insert(changes,{at=now,value=player:GetAttribute('EGGRUMBLE_StealthUntil')})
+  end)
+  local floor=session.world:FindFirstChild('TacticalBattlefield')
+  for index,offset in ipairs({{0,0},{0,-80},{-120,0},{120,0}})do
+   attempts=index
+   if index>1 then advanceTo(now+dependencies.EGGRUMBLE_CombatBalance.skill('NINJA','B').cooldown+.01)end
+   local at=floor.Position+Vector3.new(offset[1],floor.Size.Y*.5+3,offset[2])
+   rootPart.CFrame=CFrame.new(at,at+Vector3.new(0,0,-1))
+   castAt=now;activate(player,'B')
+   deadline=player:GetAttribute('EGGRUMBLE_StealthUntil')
+   if type(deadline)=='number' and deadline>now and deadline<math.huge then break end
+  end
+  check(type(deadline)=='number' and deadline>now and deadline<math.huge,'real second B publishes a finite deadline')
+  equal(deadline-castAt,3,'original three-second stealth duration')
+  equal(#changes,1,'exactly one actual B attribute publication')
+  equal(changes[1].value,deadline,'actual observed second B deadline')
+  heroCast=liveSource('HeroSilhouetteArt');hudCast=liveSource('HudIntelRuntime')
+ end)
+ expectation('UI_FOLLOWUP_NINJA_SECOND_REAL_B',function()check(castOK,tostring(castDetail))end)
+ expectation('UI_FOLLOWUP_NINJA_SECOND_CAST_HIDDEN',function()hiddenTag(player)end,castOK and hadTag)
+ local beforeOK,beforeDetail=false,'second B was not admitted'
+ if castOK then
+  beforeOK,beforeDetail=pcall(function()
+   advanceTo(deadline-.001)
+   check(player.Character==avatar and avatar:FindFirstChild('Head')==head
+    and humanoid.Health>0 and session.isCurrentHuman(player),'same living avatar before natural deadline')
+   equal(player:GetAttribute('EGGRUMBLE_StealthUntil'),deadline,'deadline unchanged before expiry')
+   equal(#changes,1,'no attribute event before natural expiry')
+  end)
+ end
+ expectation('UI_FOLLOWUP_NINJA_PRE_DEADLINE_HIDDEN',function()
+  check(beforeOK,tostring(beforeDetail));hiddenTag(player)
+ end,castOK and hadTag)
+ local afterOK,afterDetail=false,'second B was not admitted'
+ if castOK then
+  afterOK,afterDetail=pcall(function()
+   advanceTo(deadline+.02)
+   check(player.Character==avatar and avatar:FindFirstChild('Head')==head
+    and humanoid.Health>0 and session.isCurrentHuman(player),'same living avatar after natural deadline')
+  end)
+ end
+ expectation('UI_FOLLOWUP_NINJA_NATURAL_DEADLINE_TAG',function()
+  check(afterOK,tostring(afterDetail));requireTag(player,3,4)
+ end,castOK and hadTag)
+ expectation('UI_FOLLOWUP_NINJA_DEADLINE_VALUE_UNCHANGED',function()
+  check(beforeOK,tostring(beforeDetail));check(afterOK,tostring(afterDetail))
+  equal(player:GetAttribute('EGGRUMBLE_StealthUntil'),deadline,'expired numeric deadline is not rewritten')
+  equal(#changes,1,'only the real B publication changed StealthUntil')
+  equal(changes[1].value,deadline,'the original deadline value survives')
+ end,castOK)
+ if monitor then monitor:Disconnect()end
+ expectation('UI_FOLLOWUP_NINJA_CONNECTIONS_BOUNDED',function()
+  equal(heroCast,heroBefore,'second cast adds no live Hero connection')
+  equal(hudCast,hudBefore,'second cast adds no live HUD connection')
+  equal(liveSource('HeroSilhouetteArt'),heroBefore,'natural expiry adds no live Hero connection')
+  equal(liveSource('HudIntelRuntime'),hudBefore,'natural expiry adds no live HUD connection')
+  check(monitor and not monitor.Connected,'test-only attribute observer is disconnected')
+  requireHudConnectionContract();requireNoExtraFramePolling()
+ end,castOK)
+ observeUI('FOLLOWUP_NINJA_NATURAL','secondRealB='..tostring(castOK)..';attempts='..attempts
+  ..';deadline='..tostring(deadline)..';attributeEvents='..#changes
+  ..';frameDrivesAfterCast=0;fixtureStealthWrites=0')
+end
+
+local function rolePendingFollowup()
+ local audit={tasks={},errors={},origin=nil,callLines={}}
+ local originalDefer,originalDelay=task.defer,task.delay
+ local span=fullSourceRanges.HeroSilhouetteArt
+ local auxiliary={};local live,new=nil,nil
+ local liveArt,newArt,liveOwned,newOwned
+ local liveErrors,newErrors={},{}
+ local function remember(errors,fn)
+  local ok,detail=pcall(fn);if not ok then table.insert(errors,tostring(detail))end
+ end
+ local function observeTask(kind,line,fn,args,beforeSerial,at,seconds,returns)
+  if not audit.origin or line<span.first or line>span.last then return end
+  local callbackLine=debug.info(fn,'l')
+  check(callbackLine>=span.first and callbackLine<=span.last,'original callback belongs to the full Hero body')
+  if audit.callLines[kind]then check(audit.callLines[kind]==line,'same actual role-task callsite across input origins')
+  else audit.callLines[kind]=line end
+  local appended={}
+  for _,entry in ipairs(pending)do if entry.serial>beforeSerial then table.insert(appended,entry)end end
+  equal(#appended,1,'pass-through leaves exactly the original scheduler entry')
+  local entry=appended[1]
+  equal(entry.at,at+seconds,'original due time is unchanged')
+  equal(args.n,0,'original role closure takes no arguments')
+  equal(entry.args.n,args.n,'original argument count is unchanged')
+  for i=1,args.n do check(entry.args[i]==args[i],'original argument identity is unchanged')end
+  equal(returns.n,0,'frozen original task return count is unchanged')
+  table.insert(audit.tasks,{kind=kind,line=line,fn=fn,origin=audit.origin,
+   thread=entry.thread,serial=entry.serial,at=entry.at,scheduledAt=at})
+  observeUI('FOLLOWUP_ROLE_TASK_SCHEDULED','origin='..audit.origin..';kind='..kind
+   ..';rawLine='..(line-span.first+1)..';serial='..entry.serial..';due='..entry.at
+   ..';callbackWrapped=false;args=0;returns=0')
+ end
+ task.defer=function(fn,...)
+  local line=debug.info(2,'l');local args=table.pack(...);local beforeSerial=serial;local at=now
+  local returns=table.pack(originalDefer(fn,table.unpack(args,1,args.n)))
+  remember(audit.errors,function()observeTask('defer',line,fn,args,beforeSerial,at,0,returns)end)
+  return table.unpack(returns,1,returns.n)
+ end
+ task.delay=function(seconds,fn,...)
+  local line=debug.info(2,'l');local args=table.pack(...);local beforeSerial=serial;local at=now
+  local returns=table.pack(originalDelay(seconds,fn,table.unpack(args,1,args.n)))
+  remember(audit.errors,function()observeTask('delay',line,fn,args,beforeSerial,at,seconds,returns)end)
+  return table.unpack(returns,1,returns.n)
+ end
+ local function originInput(name,fn)
+  check(audit.origin==nil,'non-nested explicit role input')
+  audit.origin=name;local ok,detail=pcall(fn);audit.origin=nil
+  if not ok then error(detail,0)end
+ end
+ local function pairFor(origin,at)
+  local pair={};local count=0
+  for _,entry in ipairs(audit.tasks)do if entry.origin==origin then
+   check(pair[entry.kind]==nil,'one original task of each kind per origin')
+   pair[entry.kind]=entry;count+=1
+  end end
+  equal(count,2,'two original role tasks per origin')
+  equal(pair.defer.scheduledAt,at,'defer schedule instant')
+  equal(pair.delay.scheduledAt,at,'delay schedule instant')
+  equal(pair.defer.at,at,'original defer deadline')
+  equal(pair.delay.at,at+.35,'original .35 deadline')
+  check(pair.defer.fn~=pair.delay.fn,'distinct original source closures')
+  return pair
+ end
+ local function taskState(entry,dead)
+  check(coroutine.status(entry.thread)==(if dead then 'dead' else 'suspended'),'original thread delivery state')
+  local found=0
+  for _,row in ipairs(pending)do if row.thread==entry.thread then found+=1 end end
+  equal(found,if dead then 0 else 1,'one pending entry before delivery, none after')
+  if dead then entry.deadObserved=true else entry.pendingObserved=true end
+ end
+ local function makeActor(name,id)
+  local actor=Instance.new('Player');actor.Name=name;actor.UserId=id;actor.Parent=Players
+  local gui=Instance.new('PlayerGui');gui.Parent=actor
+  local backpack=Instance.new('Backpack');backpack.Parent=actor
+  local row={actor=actor,removed=false};table.insert(auxiliary,row)
+  return row
+ end
+ local function makeAvatar(name,torso)
+  local avatar=Instance.new('Model');avatar.Name=name;avatar.Parent=workspace
+  local hum=Instance.new('Humanoid');hum.Health=100;hum.MaxHealth=100;hum.Parent=avatar
+  local root=Instance.new('Part');root.Name='HumanoidRootPart';root.CFrame=CFrame.new(0,5,0);root.Parent=avatar
+  local head=Instance.new('Part');head.Name='Head';head.CFrame=CFrame.new(0,7,0);head.Parent=avatar
+  if torso then
+   local part=Instance.new('Part');part.Name='UpperTorso';part.CFrame=CFrame.new(0,6,0);part.Parent=avatar
+  end
+  avatar.PrimaryPart=root;return avatar
+ end
+ local function addActor(row,origin)
+  table.insert(currentPlayers,row.actor)
+  originInput(origin,function()Players.PlayerAdded:Fire(row.actor)end)
+  check(Players:GetPlayerByUserId(row.actor.UserId)==row.actor,'actual current lookup is the concrete actor')
+ end
+ local function choose(row,role)
+  trigger(row.actor,scenes:FindFirstChild('ROLE_'..role),'職業選択')
+  check(row.actor:GetAttribute('EGGRUMBLE_SelectedRole')==role,'real Host role prompt selected the role')
+  check(row.actor:GetAttribute('EGGRUMBLE_Role')==nil,'lobby uses SelectedRole fallback')
+ end
+ local function removeActor(row,retainParent)
+  Players.PlayerRemoving:Fire(row.actor);row.removed=true
+  for i=#currentPlayers,1,-1 do if currentPlayers[i]==row.actor then table.remove(currentPlayers,i)end end
+  if not retainParent then row.actor.Parent=nil end
+ end
+ local function art(row)return row.avatar:FindFirstChild('EGGRUMBLE_RoleVisuals')end
+ local function inspectArt(row,role)
+  local folder=art(row);check(folder and folder:IsA('Folder'),'actual source-created role Folder')
+  check(folder:GetAttribute('EGGRUMBLE_VisualRole')==role,'exact source visual role')
+  local anchor=row.avatar:FindFirstChild('UpperTorso') or row.avatar:FindFirstChild('Torso')
+  check(anchor and folder:GetAttribute('EGGRUMBLE_VisualAnchor')==anchor.Name,'current concrete art anchor')
+  local parts,welds={},{};local partCount,weldCount=0,0
+  for _,object in ipairs(folder:GetDescendants())do
+   if object:IsA('BasePart')then
+    check(parts[object.Name]==nil,'unique cosmetic Part name');parts[object.Name]=object;partCount+=1
+    check(object.Parent==folder and object.Anchored==false and object.Massless==true,'live Part attachment flags')
+    check(object.CanCollide==false and object.CanQuery==false and object.CanTouch==false,'cosmetic collision flags')
+   elseif object:IsA('WeldConstraint')then
+    check(object.Parent and object.Parent:IsA('BasePart'),'Weld parent is the cosmetic Part')
+    check(object.Part0==anchor and object.Part1==object.Parent,'live Weld connects the concrete Torso and Part')
+    check(welds[object.Parent.Name]==nil,'one Weld per Part');welds[object.Parent.Name]=object;weldCount+=1
+   else error('unexpected role decoration descendant '..object.ClassName,0)end
+  end
+  equal(partCount,8,'bounded MAGE/WARRIOR eight-part silhouette')
+  equal(weldCount,8,'one live Weld per Part');check(partCount<=13,'original 13-part cap')
+  return {folder=folder,parts=parts,welds=welds,anchor=anchor}
+ end
+ local function unchanged(row,role,before,owned)
+  local after=inspectArt(row,role)
+  check(after.folder==before.folder and after.anchor==before.anchor,'Folder and anchor identities survive')
+  for name,object in pairs(before.parts)do check(after.parts[name]==object,'Part identity survives '..name)end
+  for name,object in pairs(before.welds)do check(after.welds[name]==object,'Weld identity survives '..name)end
+  local current=heroPlayerOwned(row.actor,row.avatar)
+  equal(#current,#owned,'live actor connection count is unchanged')
+  local currentSet={};for _,entry in ipairs(current)do currentSet[entry]=true end
+  for _,entry in ipairs(owned)do check(entry.connected and currentSet[entry],'same concrete live connection survives')end
+ end
+ local function clearOld(row,label)
+  local folder=art(row)
+  if folder then folder:Destroy()end
+  check(art(row)==nil,'explicit test-only clear isolates the next reserved task')
+  observeUI('FOLLOWUP_TEST_ONLY_OLD_VISUAL_CLEAR','boundary='..label..';productCleanupClaim=false')
+ end
+ local function checkLive()
+  if liveArt then remember(liveErrors,function()unchanged(live,'MAGE',liveArt,liveOwned)end)end
+ end
+ local liveOK,liveDetail=pcall(function()
+  local at=now
+  live=makeActor('UIFollowupLiveLateTorso',7317);addActor(live,'LIVE_NO_AVATAR')
+  live.avatar=makeAvatar('UIFollowupLiveAvatar',false);live.actor.Character=live.avatar
+  originInput('LIVE_CHARACTER_ADDED',function()live.actor.CharacterAdded:Fire(live.avatar)end)
+  choose(live,'MAGE')
+  check(art(live)==nil,'no Torso means no inline art')
+  local pair=pairFor('LIVE_CHARACTER_ADDED',at)
+  taskState(pair.defer,false);taskState(pair.delay,false)
+  advanceTo(at);taskState(pair.defer,true);taskState(pair.delay,false)
+  check(art(live)==nil,'original defer before Torso creates no art')
+  advanceTo(at+.20)
+  local torso=Instance.new('Part');torso.Name='UpperTorso';torso.CFrame=CFrame.new(0,6,0);torso.Parent=live.avatar
+  check(art(live)==nil,'Torso insertion alone does not decorate')
+  advanceTo(at+.349);taskState(pair.delay,false)
+  check(art(live)==nil,'reserved .35 callback is not delivered early')
+  advanceTo(pair.delay.at);taskState(pair.delay,true)
+  liveArt=inspectArt(live,'MAGE');liveOwned=heroPlayerOwned(live.actor,live.avatar)
+ end)
+ expectation('UI_FOLLOWUP_LIVE_LATE_TORSO',function()check(liveOK,tostring(liveDetail))end)
+
+ local nilActor,nilPair,nilOwned,nilAt,nilImmediately,nilAfterDefer,nilAfterDelay
+ local nilOK,nilDetail=pcall(function()
+  nilAt=now;nilActor=makeActor('UIFollowupRetiredNil',7326);addActor(nilActor,'NIL_NO_AVATAR')
+  nilActor.avatar=makeAvatar('UIFollowupRetiredNilAvatar',true);nilActor.actor.Character=nilActor.avatar
+  originInput('NIL_CHARACTER_ADDED',function()nilActor.actor.CharacterAdded:Fire(nilActor.avatar)end)
+  choose(nilActor,'WARRIOR');inspectArt(nilActor,'WARRIOR')
+  nilPair=pairFor('NIL_CHARACTER_ADDED',nilAt)
+  taskState(nilPair.defer,false);taskState(nilPair.delay,false)
+  nilOwned=heroPlayerOwned(nilActor.actor,nilActor.avatar)
+  removeActor(nilActor,false);nilImmediately=#heroPlayerOwned(nilActor.actor,nilActor.avatar)
+  clearOld(nilActor,'nil_before_defer')
+ end)
+ local nilDeferOK,nilDeferDetail=false,'nil actor setup failed'
+ if nilOK then
+  nilDeferOK,nilDeferDetail=pcall(function()
+   advanceTo(nilAt);taskState(nilPair.defer,true);taskState(nilPair.delay,false)
+   nilAfterDefer=#heroPlayerOwned(nilActor.actor,nilActor.avatar)
+  end)
+ end
+ expectation('UI_FOLLOWUP_RETIRED_NIL_DEFER',function()
+  check(nilOK,tostring(nilDetail));check(nilDeferOK,tostring(nilDeferDetail))
+  check(nilActor.actor.Parent==nil and art(nilActor)==nil,'retired Parent-nil defer cannot redraw old art')
+ end)
+ local nilDelayOK,nilDelayDetail=false,'nil actor setup failed'
+ if nilOK then
+  nilDelayOK,nilDelayDetail=pcall(function()
+   clearOld(nilActor,'nil_between_defer_and_delay')
+   advanceTo(nilPair.delay.at-.001);taskState(nilPair.delay,false)
+   check(art(nilActor)==nil,'nil old avatar remains clear before original .35')
+   advanceTo(nilPair.delay.at);taskState(nilPair.delay,true)
+   nilAfterDelay=#heroPlayerOwned(nilActor.actor,nilActor.avatar)
+  end)
+ end
+ expectation('UI_FOLLOWUP_RETIRED_NIL_DELAY',function()
+  check(nilDelayOK,tostring(nilDelayDetail))
+  check(nilActor.actor.Parent==nil and art(nilActor)==nil,'retired Parent-nil .35 cannot redraw old art')
+ end,nilOK)
+ expectation('UI_FOLLOWUP_RETIRED_NIL_OWNERS_ZERO',function()
+  equal(nilImmediately,0,'nil retired ownership is zero immediately after Removing')
+  equal(nilAfterDefer,0,'nil retired ownership stays zero after defer')
+  equal(nilAfterDelay,0,'nil retired ownership stays zero after .35')
+  requireDisconnected(nilOwned,'nil retired original Hero subscriptions')
+ end,nilOK)
+ checkLive()
+
+ local retired,pair,newPair,retiredAt,retiredOwned,retiredImmediately,retiredAfterDefer,retiredAfterDelay
+ local retainedOK,retainedDetail=pcall(function()
+  retiredAt=now;retired=makeActor('UIFollowupRetiredRetained',7327)
+  retired.avatar=makeAvatar('UIFollowupRetiredRetainedAvatar',true);retired.actor.Character=retired.avatar
+  addActor(retired,'RETAINED_EXISTING_AVATAR');choose(retired,'WARRIOR');inspectArt(retired,'WARRIOR')
+  pair=pairFor('RETAINED_EXISTING_AVATAR',retiredAt)
+  taskState(pair.defer,false);taskState(pair.delay,false)
+  retiredOwned=heroPlayerOwned(retired.actor,retired.avatar)
+  removeActor(retired,true);retiredImmediately=#heroPlayerOwned(retired.actor,retired.avatar)
+  clearOld(retired,'retained_before_defer')
+  new=makeActor('UIFollowupNewSameUIDMage',7327)
+  new.avatar=makeAvatar('UIFollowupNewSameUIDMageAvatar',true);new.actor.Character=new.avatar
+  check(retired.actor~=new.actor and retired.avatar~=new.avatar,'sameUID has distinct concrete Players and avatars')
+  addActor(new,'NEW_EXISTING_AVATAR');choose(new,'MAGE')
+  newPair=pairFor('NEW_EXISTING_AVATAR',retiredAt)
+  taskState(newPair.defer,false);taskState(newPair.delay,false)
+  newArt=inspectArt(new,'MAGE');newOwned=heroPlayerOwned(new.actor,new.avatar)
+  check(retired.actor.Parent==Players and retired.actor.Character==retired.avatar
+   and retired.avatar.Parent==workspace,'explicit retired old Parent/Character retention')
+ end)
+ local function preserveNew()
+  if newArt then remember(newErrors,function()
+   check(retired.actor~=new.actor and retired.avatar~=new.avatar,'old/new identities remain distinct')
+   check(Players:GetPlayerByUserId(7327)==new.actor,'actual lookup stays on the new sameUID Player')
+   unchanged(new,'MAGE',newArt,newOwned)
+  end)end
+  checkLive()
+ end
+ local retainedDeferOK,retainedDeferDetail=false,'retained actor setup failed'
+ if retainedOK then
+  retainedDeferOK,retainedDeferDetail=pcall(function()
+   advanceTo(retiredAt);taskState(pair.defer,true);taskState(newPair.defer,true)
+   taskState(pair.delay,false);taskState(newPair.delay,false)
+   retiredAfterDefer=#heroPlayerOwned(retired.actor,retired.avatar)
+  end)
+  preserveNew()
+ end
+ expectation('UI_FOLLOWUP_RETIRED_RETAINED_DEFER',function()
+  check(retainedOK,tostring(retainedDetail));check(retainedDeferOK,tostring(retainedDeferDetail))
+  check(retired.actor.Parent==Players and retired.actor.Character==retired.avatar
+   and art(retired)==nil,'retired retained-Parent defer cannot redraw its old avatar')
+ end)
+ local retainedDelayOK,retainedDelayDetail=false,'retained actor setup failed'
+ if retainedOK then
+  retainedDelayOK,retainedDelayDetail=pcall(function()
+   clearOld(retired,'retained_between_defer_and_delay')
+   advanceTo(pair.delay.at-.001);taskState(pair.delay,false);taskState(newPair.delay,false)
+   check(art(retired)==nil,'retained old avatar remains clear before original .35')
+   preserveNew()
+   advanceTo(pair.delay.at);taskState(pair.delay,true);taskState(newPair.delay,true)
+   retiredAfterDelay=#heroPlayerOwned(retired.actor,retired.avatar)
+  end)
+  preserveNew()
+ end
+ expectation('UI_FOLLOWUP_RETIRED_RETAINED_DELAY',function()
+  check(retainedDelayOK,tostring(retainedDelayDetail))
+  check(retired.actor.Parent==Players and retired.actor.Character==retired.avatar
+   and art(retired)==nil,'retired retained-Parent .35 cannot redraw its old avatar')
+ end,retainedOK)
+ expectation('UI_FOLLOWUP_RETIRED_RETAINED_OWNERS_ZERO',function()
+  equal(retiredImmediately,0,'retained retired ownership is zero immediately after Removing')
+  equal(retiredAfterDefer,0,'retained retired ownership stays zero after defer')
+  equal(retiredAfterDelay,0,'retained retired ownership stays zero after .35')
+  requireDisconnected(retiredOwned,'retained retired original Hero subscriptions')
+ end,retainedOK)
+ expectation('UI_FOLLOWUP_SAME_UID_NEW_MAGE_IDENTITIES',function()
+  equal(#newErrors,0,'new MAGE art/connections must survive every old/new delivery: '..table.concat(newErrors,' | '))
+  check(retainedDeferOK and retainedDelayOK,'both old and new original task pairs were delivered')
+  check(Players:GetPlayerByUserId(7327)==new.actor,'lookup still names the new concrete Player')
+  unchanged(new,'MAGE',newArt,newOwned)
+ end,retainedOK)
+ expectation('UI_FOLLOWUP_LIVE_CURRENT_IDENTITIES',function()
+  equal(#liveErrors,0,'live late-Torso MAGE survives both retired inputs: '..table.concat(liveErrors,' | '))
+  check(nilDeferOK and nilDelayOK and retainedDeferOK and retainedDelayOK,'both retired task pairs were delivered')
+  check(Players:GetPlayerByUserId(7317)==live.actor,'live current lookup is preserved')
+  unchanged(live,'MAGE',liveArt,liveOwned)
+ end,liveOK)
+ task.defer,task.delay=originalDefer,originalDelay
+ expectation('UI_FOLLOWUP_ROLE_TASK_DELIVERY_BOUNDARY',function()
+  check(task.defer==originalDefer and task.delay==originalDelay,'task APIs are restored')
+  equal(#audit.errors,0,'pass-through observations succeeded: '..table.concat(audit.errors,' | '))
+  equal(#audit.tasks,8,'exactly four origins times the original defer/.35 pair')
+  local threads,serials={},{}
+  for _,entry in ipairs(audit.tasks)do
+   check(not threads[entry.thread] and not serials[entry.serial],'all original threads/serials are distinct')
+   threads[entry.thread]=true;serials[entry.serial]=true
+   check(entry.pendingObserved and entry.deadObserved,'each original thread was pending and then genuinely delivered')
+   taskState(entry,true)
+  end
+  requireNoExtraFramePolling()
+ end)
+ local cleanupOK,cleanupDetail=pcall(function()
+  for _,row in ipairs(auxiliary)do
+   if not row.removed then removeActor(row,false)else row.actor.Parent=nil end
+  end
+ end)
+ expectation('UI_FOLLOWUP_AUXILIARY_HERO_CLEANUP',function()
+  check(cleanupOK,tostring(cleanupDetail))
+  for _,row in ipairs(auxiliary)do
+   equal(#heroPlayerOwned(row.actor,row.avatar),0,'every auxiliary Hero-owned connection retires without destroying the Player')
+  end
+  check(audit.origin==nil and task.defer==originalDefer and task.delay==originalDelay,'no task observer remains')
+  check(UIAcceptanceEngine.holdDepth==0 and #UIAcceptanceEngine.queue==0,'no deferred hold/queue remains')
+ end)
+end
+
+
 local ok,result=pcall(function()
  advanceTo(now);sharedRequires()
  equal(#UIAudit.renderCallbacks,1,'one existing HUD frame callback before acceptance run')
@@ -1543,8 +1941,10 @@ local ok,result=pcall(function()
   requireHudConnectionContract();requireNoExtraFramePolling()
   local held=parkOldSwarm(session)
 
-  if roleIndex==1 then
-   -- An explicit existing-attribute ordering input models Role disappearing
+   if roleIndex==1 then
+    expectation('UI_FOLLOWUP_TAG_EFFECTIVE_ADORNEE',function()requireTag(player,3,8)end,hadTag)
+    expectation('UI_FOLLOWUP_FOOTER_VISIBLE_ANCESTRY',function()requireFooter(gui,3,80)end,hadFooter)
+    -- An explicit existing-attribute ordering input models Role disappearing
    -- while the current match's growth publication has not yet changed. The
    -- role was genuinely selected/equipped above; no new B attribute is forged.
    player:SetAttribute('EGGRUMBLE_Role',nil)
@@ -1711,9 +2111,10 @@ local ok,result=pcall(function()
    expectation('NINJA_HEAD_CONNECTIONS_CLEANUP',function()
     requireDisconnected(oldHeadConnections,'stealth-era retired Head subscription')
     equal(liveSource('HeroSilhouetteArt'),ninjaHeroCount,'early clear and old timer do not accumulate live Hero subscriptions')
-   end,hadTag)
-   outsideField(session)
-   observeUI('STEALTH_CLOCK','actualNinjaB=true;osClock='..now..';serverEpoch='..workspace:GetServerTimeNow()
+    end,hadTag)
+    naturalNinjaFollowup(session,hadTag)
+    outsideField(session)
+    observeUI('STEALTH_CLOCK','actualNinjaB=true;osClock='..now..';serverEpoch='..workspace:GetServerTimeNow()
     ..';earlyClear=EXPLICIT_EXISTING_ATTRIBUTE_INPUT;oldDeadlineDelivered=true')
   end
 
@@ -1785,7 +2186,9 @@ local ok,result=pcall(function()
   pass('REAL_ROLE_'..role,'real prompt/equip; genuine neutral KOs; real finish/Replay; current role name='..row[2])
  end
 
- expectation('NEW_ATTRIBUTE_WRITER_ORIGIN',function()
+  rolePendingFollowup()
+
+  expectation('NEW_ATTRIBUTE_WRITER_ORIGIN',function()
   check(#UIAcceptanceEngine.writes>0,'H93 has no new B/XP/GrowthActive writer')
   for _,entry in ipairs(UIAcceptanceEngine.writes)do
    check(entry.source=='SwarmCombat','new attributes are written only by actual Swarm source, saw '..entry.source)

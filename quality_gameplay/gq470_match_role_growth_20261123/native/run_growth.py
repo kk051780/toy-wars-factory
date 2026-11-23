@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 REPO = PACKAGE.parents[1]
 FROZEN = REPO / 'quality_gameplay/gq470_union22_real69_20261122/native'
-INPUT_LOCK_SHA256 = '9d842a8ec23b48b00e0065f7789458180fd252005bfcb7fbca7ab851eeb1f20b'
+INPUT_LOCK_SHA256 = '6bc50fec69e1250e64d6d6be873077205adff38773866278bc57b9f0cf93f4fa'
 PACKAGE_PREFIX = 'quality_gameplay/gq470_match_role_growth_20261123/'
 NEW_PATHS = [PACKAGE_PREFIX + path for path in (
     'README.md', 'growth_patch.json', 'source_lock.json', 'apply_growth.py',

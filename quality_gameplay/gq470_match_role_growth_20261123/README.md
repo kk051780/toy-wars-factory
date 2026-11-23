@@ -14,7 +14,7 @@
 唯一の加算元は既存Swarmの `kills` です。追加のKO/XP台帳やRemote、保存処理はありません。死亡では累積値を保持し、終了・退役時にその試合が所有する一時公開値を解除します。旧 `BattleLevel=min(50,1+floor(KO/25))`、Combo、MUSOU、ダメージ計算、移動、順位と得点は保持します。
 
 - Swarmは具体的なPlayer、現在のmembership、試合固有の公開tokenを確認します。重複Diedを消費済みとして拒否し、FINISHED後や旧試合の遅延通知からcredit・新試合の属性を書き換えません。純読取りgetterは属性解除後も既存の最終KOを返します。
-- Heroは `この試合 B3｜中立KO4` の単一タグを表示します。距離上限72、AlwaysOnTop=falseです。死亡・隠密・終了・退出・帰還前は非表示とし、実Hostが現在のアバターを実arenaへ戻したことを確認します。Head交換・旧callback・古い隠密timerを世代で遮断し、旧5接続と新しい所有接続を退出時に解除します。役職の装飾と部品数は変更しません。
+- Heroは `この試合 B3｜中立KO4` の単一タグを表示します。距離上限72、AlwaysOnTop=falseです。死亡・隠密・終了・退出・帰還前は非表示とし、実Hostが現在のアバターを実arenaへ戻したことを確認します。Head交換・旧callback・古い隠密timerを世代で遮断し、旧5接続と新しい所有接続を退出時に解除します。役職の装飾と部品数は変更しません。既存deferと0.35秒delayは、同じ登録record・Players配下・現在Characterの3条件を満たす場合だけ装飾を作り、退出後の予約から復活させません。
 - HUDは既存status幅、y43–55に `覚醒B2 XP10/80` を追加します。既存の0.16秒更新処理を使い、新規購読は0です。拡大map・探索toast中は追加行だけを隠し、HP/Buffs・MUSOU・mounted544・既存LegacyExploreの3接続を保存します。
 - 結果は既存の2行・94px・8秒表示を維持してBを追記します。順位・報酬・再表示retry・KOスナップショットは変更しません。
 
@@ -43,8 +43,8 @@ python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py \
 | 既存回帰 | 元の固定combined10件とobjective7件を、H93の元4fixtureで2実行し、追加SERVER_ENGINE境界のH93/ON/OFFで6実行する。計8プログラム・68 CASE。追加境界でも元case全文と実28 bodyを使い、旧fixture・case・lockは編集しない |
 | server | 28個の完全な実body。16固定経路でKO閾値・25KO旧Lv・重複Died・真の致死通知の終了後配送・旧Player/旧試合・実Host respawn・Immediate/DeferredのDestroy/detach/reattach/abandon・偽Player/観戦者を検証 |
 | AI補助 | ONだけ30個の完全な実body。BotPathRouter/BotActorsを追加し、実初期AI・実退出takeover・元loopからの中立KOと元得点、同UserId新Playerへの書込み0を確認。seed11を実body読込前に固定し、製品と同じLOS条件で4方向×3studの接近候補を調べる。全候補blockedは失敗する |
-| UI | 31個の完全な実body。固定194期待値・12 CASEのID/順序/statusとNative exitをすべて照合。7役職、14画面、Head交換、隠密、帰還、退出、結果、callback数を確認 |
-| 負例 | H93とOFFも同じcandidate-green UI条件で実行。82 RED /106 NOT_REACHED /6既存PASS、最終CASE FAIL、Native exit1と正確な失敗理由が必要。serverはON16経路、H93/OFFは各1経路で実開始時の欠落を確認。H93/OFFの残り15経路は同じ初期欠落で停止するため本CIの実行対象・合格件数へ含めない |
+| UI | 31個の完全な実body。固定213期待値・12 CASEのID/順序/statusとNative exitをすべて照合。元194のID/順序/status投影を保持し、実効Adornee、footerの可視祖先、第二の実NINJA Bの自然期限、退出後のdefer/delay、同UserIdの別Player、遅着Torsoと所有接続の後片付けを19項目追加。7役職、14画面、帰還、結果も確認 |
+| 負例 | H93とOFFも同じcandidate-green UI条件で実行。88 RED /111 NOT_REACHED /14 PASS（元194は82 RED /106 NOT_REACHED /6 PASSを保持）、最終CASE FAIL、Native exit1と正確な失敗理由が必要。serverはON16経路、H93/OFFは各1経路で実開始時の欠落を確認。H93/OFFの残り15経路は同じ初期欠落で停止するため本CIの実行対象・合格件数へ含めない |
 | compile・Rojo | H93/ON/OFFの69本を各compile。固定Rojo7.7.1で3 Placeを構築し、69 embedded source bytesと75 instanceの非Source構造を検査。OFF/H93 Placeは元artifactの828,658 bytesとSHAまで完全一致 |
 
 固定実行数は旧回帰8＋server19（H93=1、ON=17、OFF=1）＋UI3の計30 Nativeプログラムです。Replの新規buildが成功した直後にbuild receiptを保存するため、後続の失敗時にもビルド成功と試験失敗を別々に追跡できます。全試験後のbinary不変確認は、全必須検査が終わった場合だけ記録します。
@@ -53,13 +53,19 @@ python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py \
 
 ## 保守修正の来歴と試験起動
 
-同PR #1028の保守取込みは、registry `ba990f45b28d2a03f5b56a185f1aeb48ae99f743` で元9 paths／4 resourcesの範囲に登録しました。metadata688は本人正常返却済みで、実装には別SOURCE689を取得しています。この記録はその実作業の来歴であり、期限後の書込み権限ではありません。H93を固定入力とする候補で、進行中の正式RCへの再結合・採用を示しません。
+同PR #1028の保守取込みは、registry `ba990f45b28d2a03f5b56a185f1aeb48ae99f743` で元9 paths／4 resourcesの範囲に登録しました。metadata688は本人正常返却済みで、C1の実装には別SOURCE689、C2の2guardとUI受入拡張には別SOURCE692を取得しています。この記録はその実作業の来歴であり、期限後の書込み権限ではありません。H93を固定入力とする候補で、進行中の正式RCへの再結合・採用を示しません。
 
 - [3BEの提案7093566582](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093566582)から、既存safe_root呼出し1行と2拒否試験を再利用しました。実作者は `CODEX_ROOT_3BE5DD5649C8:/root/planning_candidate` です。
 - [9DBCの提案7093568289](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093568289)から有限LOS helperと呼出し置換を再利用しました。公開提案者は `CODEX_ROOT_9DBC77FA535A`、実コード作者のcontextは未明示です。seed11の固定は当817の追加で、元提案の作者へ帰属させていません。
 - unittest discoveryで `GQ470_H93_ARTIFACT` が存在しない場合だけ、実artifact未提供を明示する `NOT_RUN` skipにします。空文字・空白・不正なpath・改変入力は失敗です。ファイルの直接実行では未指定も失敗し、専用workflowでは実artifactを指定して全10試験を実行します。
 
-この段階はCI起動・入力保護・再現性の修復です。既知の退場後の役職装飾再生成は、[3575の2guard提案7093711079](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093711079)とUI受入の次段で修復します。[19943の札配置案7093537940](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093537940)は75°/Combo条件で重なりが悪化したためREWORKとし、今回のsource配置を変えていません。
+C1 `fe13d7e6e3bd5d35b72c5aa69b969c3cd9099a8c` は専用run45135503785で新規build・固定30 Native・207 compile・3 Placeを通過しました。これはそのHEADの履歴であり、後続C2の合格へは流用しません。
+
+C2は[3575の2guard提案7093711079](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093711079)を取り込みます。実作者は `CODEX_ROOT_3575F3C03022:/root` で、原904 Bのsource差分と一致する2条件更新です。Heroは31183→31285 B、他3生成sourceは不変です。新しいtimer・購読・装飾部品は追加しません。
+
+新19項目は実行前に列挙し、元194項目のIDと相対順序を保持します。実効Adorneeとfooterの祖先条件は共通helperを厳密化するため、旧predicateの意味まで不変とは主張しません。NINJAは元early-clear検査に加え、実Bをもう一度実行し、属性の手動書換えやframe入力なしで自然期限を確認します。役職予約は実defer/delayの引数・thread・時刻を保持する観測だけを挟み、callbackを包む・手動呼出し・再予約することなく、元schedulerによる8予約の実配送を確認します。
+
+[19943の札配置案7093537940](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093537940)は75°/Combo条件で重なりが悪化したためREWORKとし、元cameraY2.6・178×24の配置を保持します。C2は配置修復やStudioでの描画合格を含みません。
 
 ## 残る確認と非対象
 

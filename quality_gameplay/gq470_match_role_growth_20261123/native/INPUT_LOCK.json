@@ -1,8 +1,8 @@
 {
   "schema": "GQ470_S1A_FIXED_NATIVE_ON_H93_OFF_V1",
   "case_pack": {
-    "bytes": 104915,
-    "sha256": "2bb7f41f92dfac8b724707008d57b4e1e33528de40abafbf94c54ee507405747"
+    "bytes": 128366,
+    "sha256": "5c2487677719af031f950e0964c9c0659f9cbdd5166589f8820cfe30d885073c"
   },
   "sections": {
     "SERVER_ENGINE": {
@@ -30,8 +30,8 @@
       "sha256": "15935cd6c7a66d077c8abbb591584adb22bdac16a6520d862250930b1df6d8fa"
     },
     "UI_CASES": {
-      "bytes": 37160,
-      "sha256": "8ba1243bd88a38f6786ed07ac5df5cc77bc387e9475013c42a6f2b434b8aa28c"
+      "bytes": 60611,
+      "sha256": "8053f2d3d2c27f8ecdcafefbb3d95376a151f8f079e44469b7ecc896fdbcb054"
     },
     "AI_ENGINE": {
       "bytes": 1574,
@@ -45,15 +45,15 @@
   "repository_inputs": {
     "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py": {
       "bytes": 8382,
-      "sha256": "d32f24c000cfd13d7cedae85aa0d40aaf9b4aefd6909634a27658354cb12bde7"
+      "sha256": "26b3867a2a5fa6aa1a71a3d668a9ef90b2519f7a511e8c96c01857a0880c8146"
     },
     "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json": {
-      "bytes": 24688,
-      "sha256": "782812c007ada21898fd75b17104c8f34d6125920c5c08ec11eded3bafb844d9"
+      "bytes": 24790,
+      "sha256": "c0e05f89f3579059180cb4852088bbbba69ee20ba2dc7306f90a462020bff4f5"
     },
     "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json": {
       "bytes": 26506,
-      "sha256": "cf951563908f46e167b17c7c285de7bd28cdd2d82cc6a03a1045aa3bda55a55b"
+      "sha256": "e965a36c2ef10e82e64378af89f7d610a4bad29988800611b18351fca8f52630"
     },
     "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": {
       "bytes": 31483,
@@ -508,6 +508,14 @@
           "PASS"
         ],
         [
+          "UI_FOLLOWUP_TAG_EFFECTIVE_ADORNEE",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_FOOTER_VISIBLE_ANCESTRY",
+          "PASS"
+        ],
+        [
           "NO_ACTUAL_ROLE_TAG_HIDDEN",
           "PASS"
         ],
@@ -924,6 +932,30 @@
           "PASS"
         ],
         [
+          "UI_FOLLOWUP_NINJA_SECOND_REAL_B",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_SECOND_CAST_HIDDEN",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_PRE_DEADLINE_HIDDEN",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_NATURAL_DEADLINE_TAG",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_DEADLINE_VALUE_UNCHANGED",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_CONNECTIONS_BOUNDED",
+          "PASS"
+        ],
+        [
           "NINJA_FINISH_TAG_HIDDEN",
           "PASS"
         ],
@@ -1225,6 +1257,50 @@
         ],
         [
           "ZOMBIE_LOBBY_FOOTER_HIDDEN",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_LIVE_LATE_TORSO",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_DEFER",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_DELAY",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_OWNERS_ZERO",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_DEFER",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_DELAY",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_OWNERS_ZERO",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_SAME_UID_NEW_MAGE_IDENTITIES",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_LIVE_CURRENT_IDENTITIES",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_ROLE_TASK_DELIVERY_BOUNDARY",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_AUXILIARY_HERO_CLEANUP",
           "PASS"
         ],
         [
@@ -1339,6 +1415,14 @@
           "NOT_REACHED"
         ],
         [
+          "UI_FOLLOWUP_TAG_EFFECTIVE_ADORNEE",
+          "NOT_REACHED"
+        ],
+        [
+          "UI_FOLLOWUP_FOOTER_VISIBLE_ANCESTRY",
+          "NOT_REACHED"
+        ],
+        [
           "NO_ACTUAL_ROLE_TAG_HIDDEN",
           "NOT_REACHED"
         ],
@@ -1755,6 +1839,30 @@
           "NOT_REACHED"
         ],
         [
+          "UI_FOLLOWUP_NINJA_SECOND_REAL_B",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_SECOND_CAST_HIDDEN",
+          "NOT_REACHED"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_PRE_DEADLINE_HIDDEN",
+          "NOT_REACHED"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_NATURAL_DEADLINE_TAG",
+          "NOT_REACHED"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_DEADLINE_VALUE_UNCHANGED",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_NINJA_CONNECTIONS_BOUNDED",
+          "PASS"
+        ],
+        [
           "NINJA_FINISH_TAG_HIDDEN",
           "NOT_REACHED"
         ],
@@ -2059,6 +2167,50 @@
           "NOT_REACHED"
         ],
         [
+          "UI_FOLLOWUP_LIVE_LATE_TORSO",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_DEFER",
+          "RED"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_DELAY",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_NIL_OWNERS_ZERO",
+          "RED"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_DEFER",
+          "RED"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_DELAY",
+          "RED"
+        ],
+        [
+          "UI_FOLLOWUP_RETIRED_RETAINED_OWNERS_ZERO",
+          "RED"
+        ],
+        [
+          "UI_FOLLOWUP_SAME_UID_NEW_MAGE_IDENTITIES",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_LIVE_CURRENT_IDENTITIES",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_ROLE_TASK_DELIVERY_BOUNDARY",
+          "PASS"
+        ],
+        [
+          "UI_FOLLOWUP_AUXILIARY_HERO_CLEANUP",
+          "RED"
+        ],
+        [
           "NEW_ATTRIBUTE_WRITER_ORIGIN",
           "RED"
         ]
@@ -2088,9 +2240,11 @@
     "Historical UNION22 locks/fixtures are unchanged; candidate passes this separate S1A contract, not the historical unchanged-source profile.",
     "Passing source/Native/Rojo does not grant PREP_READY, canonical intake, RC writes, Studio approval, Android approval, ART_GO or FUN acceptance.",
     "Active runtime remains rich51; private companionREAL69_UNION22; RUNTIME_UNIFIED=NO.",
-    "The fixed core server matrix is ON16 plus a separate ON AI30 supplement, H93 one start-missing-B negative, OFF the same one negative. Later H93/OFF server routes stop at that same missing start publication and are not separately claimed by this CI gate. UI194 executes on each of all three profiles. The unchanged combined10/objective7 cases execute in H93 original fixtures and H93/ON/OFF extended SERVER_ENGINE boundaries:8 distinct programs and68 CASE executions.",
+    "The fixed core server matrix is ON16 plus a separate ON AI30 supplement, H93 one start-missing-B negative, OFF the same one negative. Later H93/OFF server routes stop at that same missing start publication and are not separately claimed by this CI gate. UI213 executes on each of all three profiles, preserving the original194 ID/order/status projection and original12 CASE order. The19 additional expectations were authored before execution. The unchanged combined10/objective7 cases execute in H93 original fixtures and H93/ON/OFF extended SERVER_ENGINE boundaries:8 distinct programs and68 CASE executions.",
     "Separate ON AI supplement executes30 full bodies, adding original BotPathRouter and BotActors before Host. Real start/takeover/loop/damageFromBot/neutralDied/ScoreBalance are exercised. PathfindingService is explicitly unavailable; actual bot loop is parked/resumed at scheduler boundary one tick at a time. An observer forwards the actual API unchanged. This does not establish live AI navigation/physics/network performance.",
-    "AI_ENGINE fixes seed11 before actual production bodies. The AI approach checks four finite three-stud offsets with the unchanged production LOS query semantics; all blocked is a hard failure. This does not make fixture movement evidence of live navigation."
+    "AI_ENGINE fixes seed11 before actual production bodies. The AI approach checks four finite three-stud offsets with the unchanged production LOS query semantics; all blocked is a hard failure. This does not make fixture movement evidence of live navigation.",
+    "The UI common tag/footer predicates are stricter: effective Adornee must be the current living Head, and the visible footer must belong to the enabled current ScreenGui. Preserving the original194 projection does not mean these helper predicates are semantically unchanged.",
+    "The role-task observer passes original callbacks/arguments/returns through the existing task APIs and observes actual scheduler threads. Retired-avatar visuals are explicitly cleared between defer and delay deliveries to isolate redraw, not to claim automatic product art cleanup. No callback wrapping, manual delivery, new fixture API or extra Native process is introduced."
   ],
   "server_profiles": {
     "H93": [
