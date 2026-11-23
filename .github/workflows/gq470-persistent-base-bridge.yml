@@ -1,0 +1,112 @@
+name: GQ470 P0D033 persistent-base dependency Native gate (not RC)
+on:
+  push:
+    branches: [quality/gq470-persistent-base-support-03a0fba0-20261123]
+    paths:
+      - 'quality_gameplay/gq470_persistent_base_bridge_20261123/**'
+      - 'tests/test_gq470_persistent_base_bridge_20261123.py'
+      - '.github/workflows/gq470-persistent-base-bridge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: p0d033-persistent-base-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  seven-body-source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: '1'
+      P0D033_OFFICIAL_ZIP: ${{ runner.temp }}/p0d033-inputs/official.zip
+      P0D033_DONOR_ZIP: ${{ runner.temp }}/p0d033-inputs/donor.zip
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind exact HEAD and download two immutable artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          def need(ok, reason):
+              if not ok: raise ValueError(reason)
+          def api(path):
+              return json.loads(subprocess.check_output(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/'+path]))
+          lock=json.loads(Path('quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json').read_text())
+          head=subprocess.check_output(['git','rev-parse','HEAD']).decode().strip()
+          need(head==os.environ['GITHUB_SHA'], 'ACTUAL_CHECKOUT_HEAD')
+          need(api('git/ref/heads/rc/p0d-s1-kids-rc01')['object']['sha']==lock['official']['head'], 'FRESH_OFFICIAL_RC_CHANGED')
+          root=Path(os.environ['RUNNER_TEMP'])/'p0d033-inputs';root.mkdir(exist_ok=False)
+          evidence=Path(os.environ['RUNNER_TEMP'])/'p0d033-evidence';evidence.mkdir(exist_ok=False)
+          context={'candidate_head':head,'workflow_run':os.environ['GITHUB_RUN_ID'],
+                   'run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],'event':os.environ['GITHUB_EVENT_NAME'],
+                   'source_only':True,'RC_adopted':False,'inputs':{}}
+          for label in ('official','donor'):
+              row=lock[label];run=api('actions/runs/'+str(row['run_id']))
+              listing=api('actions/runs/'+str(row['run_id'])+'/artifacts?per_page=100')
+              matches=[a for a in listing['artifacts'] if a['id']==row['artifact_id']]
+              need(len(matches)==1, 'EXACT_ARTIFACT_ID');artifact=matches[0]
+              need(run['head_sha']==row['head'] and run['conclusion']=='success' and run['status']=='completed', 'INPUT_RUN_LINEAGE')
+              need(artifact['expired'] is False and artifact['workflow_run']['id']==row['run_id']
+                   and artifact['workflow_run']['head_sha']==row['head']
+                   and artifact['digest']=='sha256:'+row['zip']['sha256'], 'INPUT_ARTIFACT_LINEAGE')
+              target=root/(label+'.zip')
+              with target.open('xb') as stream:
+                  subprocess.run(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/actions/artifacts/'+str(row['artifact_id'])+'/zip'],stdout=stream,check=True)
+              raw=target.read_bytes();actual={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+              need(actual==row['zip'], 'INPUT_ZIP_IDENTITY')
+              context['inputs'][label]={'run':run,'artifact':artifact,'actual_zip':actual}
+          (evidence/'DOWNLOAD_AND_HEAD_BINDING.json').write_text(json.dumps(context,indent=2)+'\n')
+          PY
+      - name: Artifact and refusal tests in normal and optimized Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq470_persistent_base_bridge_20261123.py -v 2>&1 | tee "$RUNNER_TEMP/p0d033-evidence/unit.log"
+          python3 -B -O tests/test_gq470_persistent_base_bridge_20261123.py -v 2>&1 | tee "$RUNNER_TEMP/p0d033-evidence/unit_optimized.log"
+          python3 -B - <<'PY'
+          import os
+          from pathlib import Path
+          for name in ('unit.log','unit_optimized.log'):
+              raw=(Path(os.environ['RUNNER_TEMP'])/'p0d033-evidence'/name).read_text()
+              if 'Ran 11 tests' not in raw or '\nOK\n' not in raw or 'skipped' in raw:
+                  raise ValueError('ALL_11_REAL_ARTIFACT_TESTS_REQUIRED_WITH_ZERO_SKIPS')
+          PY
+      - name: Obtain exact clean F46 toolchain source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none --no-checkout https://github.com/luau-lang/luau.git "$RUNNER_TEMP/p0d033-luau-source"
+          git -C "$RUNNER_TEMP/p0d033-luau-source" checkout --detach f46d879e28302a430029304f7f6a162aed66f103
+      - name: Fresh source build and full seven-body Native execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py \
+            --official-zip "$P0D033_OFFICIAL_ZIP" --donor-zip "$P0D033_DONOR_ZIP" \
+            --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/p0d033-evidence/native" \
+            --luau-source "$RUNNER_TEMP/p0d033-luau-source" --build-dir "$RUNNER_TEMP/p0d033-build" \
+            --cmake /usr/bin/cmake --ninja /usr/bin/ninja --git /usr/bin/git --cc /usr/bin/cc --cxx /usr/bin/c++
+          python3 -B - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=json.loads((Path(os.environ['RUNNER_TEMP'])/'p0d033-evidence/native/RECEIPT.json').read_text())
+          if r['status']!='PASS_FIXED_HEAD_NATIVE_SOURCE_GATE' or r['head_binding']['head']!=os.environ['GITHUB_SHA']:
+              raise ValueError('FRESH_ACTUAL_HEAD_GATE_REQUIRED')
+          if r['native']!={'cases':14,'checks':92,'metrics':{'GetAsync':42,'SavingWrites':0},'all_pass':True}:
+              raise ValueError('FIXED_NATIVE_VECTOR')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: P0D033-PERSISTENT-BASE-DEPENDENCY-SOURCE-EVIDENCE
+          path: ${{ runner.temp }}/p0d033-evidence/
+          if-no-files-found: error
+          retention-days: 7
