@@ -1,7 +1,7 @@
-# EGGRUMBLE — Codex 一気通貫・継続実行規約 v1.2
+# EGGRUMBLE — Codex 一気通貫・継続実行規約 v1.3 (2026-11-23 NO-STALL追補)
 
 > **適用:** EGGRUMBLE / `kk051780/toy-wars-factory`  
-> **制定・改訂:** 2026-11-22（OWNERの「CodexでRC統合まで」「GitHubに保管していつでも対応」を反映）  
+> **制定・改訂:** 2026-11-23（2026-11-22 v1.2にOWNERの「並列作業を未開放で止めず課題の終結まで追う」指示を追補）  
 > **OWNER正本:** [#1011](https://github.com/kk051780/toy-wars-factory/issues/1011)  
 > **関連:** #839（全体）、#218（権限/CLAIM）、#219/#250（企画）、#364（試遊FB）、#470（ゲーム品質）、#420（ART/MOBILE/FUN）、#220（既存RC統合記録・担当引継ぎ）、#910（P0優先順位）
 >
@@ -12,6 +12,17 @@
 最終目標は **本物のRoblox Studioで遊べる一戦の完成・子どもの楽しさ・高品質な3D・Androidの快適動作・将来の継続率**。PR数、Luau本数、CIの緑表示、生成資料数、REAL69という名称は完成率ではない。
 
 最初のP0は **Join → 安全ロビー → 本人READY → 7職選択 → 出撃 → 敵卵奪取 → 自陣へ持帰り → サーバ権威の得点 → 城の陥落/勝敗 → 本人選択で再戦**。同時に敵味方AI/7職固有能力/無双/旗艦ワールドを非重複範囲で改善。次が初見3分/Android、最後に適正な収益設計。新機能量産より現在の一戦不成立・実機FBを優先。
+
+## 0-A. 全並列担当に適用する「NO-STALL / ISSUE_SHEPHERD」追補（OWNER 2026-11-23）
+
+詳細・必須チェックポイント： [docs/EGGRUMBLE_PARALLEL_NO_STALL_V1.md](EGGRUMBLE_PARALLEL_NO_STALL_V1.md)。
+
+- **すべてのChat/Codex/並列ワーカーに適用。** 企画室・ゲーム品質・ART・戦闘・キャラ・世界・城・中立兵・アイテム・ロビー・UI・バランス・Codex G1〜G4・AUTHOR/REVIEWER/INTEGRATORの各担当は、発見した課題を同一FEATURE_ID/FB_IDで引受け、実修正→独立QA→正式RC受入→同SHA Studio/Android/FUN再試験→OWNER受入または根拠あるREJECT/DEFERまで責任を保持する。単なるPR作成・問題発見・他担当への依頼では完了ではない。
+- **未開放は仕事全体の停止理由ではない。** CLAIM/認証/Studio/他担当writer/CI/レビュー等のため保護操作を実行できない場合、実際に不足している資格・スコープ・サービス操作とエラーを特定して**その操作だけを停止**。並行して許可済みの既存PR修復・隔離コード/テスト・負例・source-lock/rollback・実装ギャップ解消を進める。
+- **重複と越権を防ぐ。** 既存の原作者・CLAIM・source pathを照合し、同じ問題の別PR・別Game/Combat/Store/Remote/HP/XP権威を増やさない。正式RC writerは一時に1者。真正grant/独立レビュー/fresh expected_SHA+nonforce CASの例外はない。Studio排他と全PID終了ゲートも維持。
+- **適法な残作業がなくなったら正確に停止する。** EXTERNAL_BLOCKED_NO_AUTHORIZED_WORK として同一Issueに実際の失敗操作・不足フィールド・次に動ける正規主体・次の具体操作・再開checkpointを残し、未解決のまま引き継ぐ。「裏で続けている」「次のChatに自動伝達された」「未解放を解除した」等の虚偽報告はしない。
+- **毎回の進捗は実物で示す。** 実source/テスト・最新RC HEAD・候補/正式採用区分・同HEAD CI・Studio/Android/FUN/OWNERの状態をそれぞれ記録する。同じ未解決文だけの反復報告や、資料数/PR数を完成率とする行為を禁止。#910 P0プレイアブルループの修復を通常新案より優先。
+- **将来の全新規セッションは再GET。** AGENTS.md、#1011、本規約と同一Issueの最新checkpointを自ら読み込む。GitHubの保存やコメントを、既に走るChat/Codexへ自動反映・新規自動実行の開始とみなさない。既存5定期タスク・モデル・追加費用を変更しない。
 
 ## 1. 正本、初動、旧規約の扱い
 
