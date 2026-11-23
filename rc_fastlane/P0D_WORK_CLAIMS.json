@@ -19500,7 +19500,7 @@
       "parent_issue": 470,
       "coordination_issue": 218,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1024,
       "allowed_new_prs": 1,
       "request_comment": 7088238238,
       "value_decision_comment": 7088238024,
@@ -19571,7 +19571,7 @@
         ]
       },
       "independent_reviewer_context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
-      "independent_review_status": "CONTEXT_REGISTERED_FOR_FUTURE_ACTUAL_HEAD_REVIEW_NO_SOURCE_APPROVAL",
+      "independent_review_status": "APPROVE_SOURCE_ONLY_AT_EXACT_HEAD",
       "scope_review": {
         "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
         "receipt_sha256": "db5864d8e4d8afd9fb3f3c67ed20141c9d116fa5d78e908411895871c2786383",
@@ -19629,15 +19629,15 @@
         "Formal RC under this source grant"
       ],
       "source_grant": true,
-      "registered_source_approval": false,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "new_game_feature_count": 0,
       "engine_mobile_fun_owner_acceptance": false,
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "work_kind": "SYSTEM_QUALITY_GATE_METADATA_MAINTENANCE",
-      "source_head": null,
-      "candidate_head": null,
-      "source_branch_published": false,
+      "source_head": "0c0e9da3b24a0e0cbaac7f32738c8d005529e88d",
+      "candidate_head": "0c0e9da3b24a0e0cbaac7f32738c8d005529e88d",
+      "source_branch_published": true,
       "grant_scope_version": 2,
       "source_scope_granted": true,
       "PREP_READY": false,
@@ -19681,7 +19681,7 @@
       "no_main_or_publish": true,
       "no_review_waiver": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
-      "formal_intake_status": "PENDING_ACTUAL_THREE_PATH_HEAD_RC78_AND_REAL69_PR_CI_AND_NONAUTHOR_SOURCE_LOCK_REVIEW_NO_READY_CONTRACT",
+      "formal_intake_status": "ACTUAL_SOURCE_APPROVED_SAME_HEAD_PR_CI_COMPLETE_DRAFT_NO_READY_CONTRACT",
       "formal_intake_boundary": "RC78 is report evidence and does not substitute for REAL69 full PR-event CI/artifact. The named metadata SourceLock is an actual B/non-author PREP input, not a CI semantic certificate or game/profile/final-receipt consumer change. Exactly three paths are allowed; workflow edits, other locks, queue changes, RC adoption and policy exceptions remain outside this grant.",
       "existing_same_file_candidate": {
         "pr": 302,
@@ -19753,7 +19753,77 @@
           },
           "formal_source_and_RC_acceptance": false
         }
-      ]
+      ],
+      "draft": true,
+      "current_source_update": {
+        "kind": "FACTUAL_SOURCE_PROGRESS_ONLY_NO_READY_OR_RC_AUTHORITY",
+        "source_head": "0c0e9da3b24a0e0cbaac7f32738c8d005529e88d",
+        "actual_source_base": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "source_tree": "9fab5f913e6ab2e1688b9340231afea069459f51",
+        "pr": 1024,
+        "draft": true,
+        "registered_actual_head_review": {
+          "reviewer_context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+          "decision": "APPROVE_SOURCE_ONLY_AT_EXACT_HEAD",
+          "receipt": {
+            "bytes": 11377,
+            "sha256": "17767343d75895958f47696641c4bd798b0f90284deda9fbb4fb81634e467d74"
+          },
+          "public_record": "https://github.com/kk051780/toy-wars-factory/pull/1024#issuecomment-7090189849",
+          "public_record_created_at": "2026-11-23T02:45:37Z",
+          "scope": "Only the three metadata source paths at this immutable HEAD; no seven-role implementation, engine, FUN or OWNER acceptance."
+        },
+        "same_head_PR_CI": [
+          {
+            "id": 45100416691,
+            "name": "GQ8 single formal RC source selected REAL66 legacy exploration OFF65",
+            "path": ".github/workflows/gq8-real63-source-composite.yml",
+            "head_sha": "0c0e9da3b24a0e0cbaac7f32738c8d005529e88d",
+            "event": "pull_request",
+            "run_attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 45100416702,
+            "name": "P0D RC78 author-pinned source-exact unified Studio build",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "head_sha": "0c0e9da3b24a0e0cbaac7f32738c8d005529e88d",
+            "event": "pull_request",
+            "run_attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "PREP_READY": false,
+        "rc_write_authorized": false,
+        "formal_RC_adoption": false,
+        "queue_boundary": "Preserve existing HUD -> original Bot -> BEAST precedence and the current 0A2 bounded HUD handoff. This factual update selects no new READY candidate and assigns no RC writer or integration position.",
+        "metadata_transaction": {
+          "updated_at": "2026-11-23T03:08:06.611958+00:00",
+          "actor": "kk051780",
+          "actor_user_id": 233213370,
+          "actor_context": "CODEX_ROOT_E659B2512947",
+          "actor_role": "OWNER_DELEGATED_COORDINATOR",
+          "operation_id": "5799ec99-96b3-4ff1-bd56-4002648ab318",
+          "coordination_lease": {
+            "kind": "CONTROLLER",
+            "epoch": 663,
+            "owner_id": "5799ec99-96b3-4ff1-bd56-4002648ab318",
+            "acquire_commit": "a3df09e70e5f968a97c3e5b5e970bda133f631fe",
+            "acquired_at": "2026-11-23T03:07:05.644019+00:00",
+            "expires_at": "2026-11-23T03:37:05.644019+00:00",
+            "scope": "FACTUAL_SOURCE_STATE_METADATA_ONLY_NOT_NEW_SCOPE_SOURCE_OR_RC_LEASE"
+          },
+          "registry_preimage": {
+            "ref": "1b22b5f4bf0092bf99bea1a18ee995aace1cfe13",
+            "blob": "9a3e46fdc81b79528f7f153303eadb027b6bed27"
+          },
+          "formal_rc_at_preflight": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "scope_version_and_original_grant_times_unchanged": true,
+          "new_scope_or_queue_position_assigned": false
+        }
+      }
     },
     {
       "claim_id": "P0D-GQ866-PRIMARY-BINDING-20261123-0A2BA23F",
