@@ -1,0 +1,54 @@
+name: P0D GQ8 LSS idle craft 25s lease native QA
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-idle-craft.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  idle-craft-real-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Actual server source and focused regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_idle_craft.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_optional32.py
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p test_air_dismount.py
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_idle_craft_native.py --out /tmp/gq8-idle-good.luau --mutant /tmp/gq8-idle-mutant.luau
+          python3 -B handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_air_dismount_native.py --out /tmp/gq8-air-good.luau --mutant /tmp/gq8-air-mutant.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_idle_luau
+          persist-credentials: false
+      - name: Compile real server Luau and run actual extracted lease + expected RED mutant
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_idle_luau -B /tmp/gq8-idle-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-idle-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq8-idle-native/luau-compile --text handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau >/dev/null
+          /tmp/gq8-idle-native/luau /tmp/gq8-idle-good.luau | grep -q 'GQ8_LSS_IDLE_CRAFT_REAL_SOURCE_LUAU_10_CASES_PASS'
+          if /tmp/gq8-idle-native/luau /tmp/gq8-idle-mutant.luau > /tmp/gq8-idle-mutant.log 2>&1; then
+            echo RED_IDLE_CRAFT_MUTANT_UNEXPECTED_PASS
+            exit 1
+          fi
+          grep -q 'SECOND_GRACE\|REBOARDING_GRACE' /tmp/gq8-idle-mutant.log
+          echo GQ8_LSS_IDLE_CRAFT_SOURCE_NATIVE_GOOD_MUTANT_RED
+          /tmp/gq8-idle-native/luau /tmp/gq8-air-good.luau | grep -q 'GQ8_LSS_AIR_DISMOUNT_REAL_SOURCE_NATIVE_9_CASES_PASS'
+          if /tmp/gq8-idle-native/luau /tmp/gq8-air-mutant.luau > /tmp/gq8-air-mutant.log 2>&1; then
+            echo RED_AIR_DISMOUNT_MUTANT_UNEXPECTED_PASS
+            exit 1
+          fi
+          grep -q 'SOLID_PLATFORM' /tmp/gq8-air-mutant.log
+          echo GQ8_LSS_AIR_DISMOUNT_NATIVE_GOOD_MUTANT_RED
