@@ -1,0 +1,65 @@
+name: GQ8 REAL65 formal nine-domain source integrity audit
+on:
+  push:
+    branches: [quality/gq8-9domain-intake-audit-20261119]
+    paths:
+      - "quality_gameplay/gq8_9domain_source_gate_20261119/**"
+      - ".github/workflows/gq8-nine-domain-real53-audit.yml"
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq8_9domain_source_gate_20261119/**"
+      - ".github/workflows/gq8-nine-domain-real53-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  nine-domain-official-real65:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: 53 55 65 independent adversarial source regressions
+        run: python3 -B quality_gameplay/gq8_9domain_source_gate_20261119/test_audit.py
+      - name: Recheck live formal SHA and same SHA successful genuine Real65 build
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          echo "CURRENT_RC=$CURRENT" >> "$GITHUB_ENV"
+          RUN_ID="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/gq8-real63-source-composite.yml/runs?branch=rc%2Fp0d-s1-kids-rc01&head_sha=$CURRENT&status=completed&per_page=30" --jq '[.workflow_runs[] | select(.conclusion=="success") | .id] | first // empty')"
+          test -n "$RUN_ID" || { echo RED_SAME_HEAD_REAL65_BUILD_MISSING; exit 1; }
+          echo "CURRENT_BUILD_RUN=$RUN_ID" >> "$GITHUB_ENV"
+          mkdir -p artifacts/official65 artifacts/report
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO --dir artifacts/official65
+          test -s artifacts/official65/EGGRUMBLE_REAL65.project.json
+          test -s artifacts/official65/REAL65_INTAKE_RECEIPT.json
+          test -s artifacts/official65/EGGRUMBLE_REAL65_PRIVATE.rbxlx
+      - name: Audit actual 65 game scripts and nine domain coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_9domain_source_gate_20261119/audit.py --project artifacts/official65/EGGRUMBLE_REAL65.project.json --receipt artifacts/official65/REAL65_INTAKE_RECEIPT.json --count 65 --out artifacts/report/GQ8_OFFICIAL_REAL65_NINE_DOMAIN_AUDIT.json
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$LIVE" = "$CURRENT_RC" || { echo RED_OFFICIAL_HEAD_MOVED; exit 1; }
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          v=json.loads(Path("artifacts/report/GQ8_OFFICIAL_REAL65_NINE_DOMAIN_AUDIT.json").read_text())
+          assert v["source_count"]==65 and v["source_coverage_count"]==9
+          p=Path("artifacts/official65/EGGRUMBLE_REAL65_PRIVATE.rbxlx")
+          report={"official_head":os.environ["CURRENT_RC"],"official_same_head_run":int(os.environ["CURRENT_BUILD_RUN"]),"profile":"REAL65 PRIVATE_COMPANION","source_integrity":"PASS","domain_source_presence":"9/9","damage_source_guard":"13 wrapped + 1 specifically-owned combat counter","studio_place_bytes":p.stat().st_size,"studio_place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"studio_solo":"NOT_TESTED","studio_2client":"NOT_TESTED","android_15min":"NOT_TESTED","fun":"NO_GO","visual":"NO_GO","publish":False,"paid_trade":False,"scope":"SOURCE-ONLY AUDIT; NOT GAMEPLAY TEST","rollback":"No game Luau source modified"}
+          Path("artifacts/report/GQ8_OFFICIAL_REAL65_HANDOFF.json").write_text(json.dumps(report,ensure_ascii=False,indent=2,sort_keys=True)+"\\n")
+          print("GQ8_OFFICIAL_REAL65_9_DOMAIN_SOURCE_AUDIT_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-9DOMAIN-OFFICIAL-REAL65-AUDIT
+          path: artifacts/report/
+          retention-days: 30
+          if-no-files-found: error

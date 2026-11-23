@@ -73,20 +73,6 @@ function M.create(deps:any):any
    teamB=if plan.mode=="TEAM" then plan.teamB else nil,
    freeForAll=plan.mode=="BR",
   }
-  local map=deps.claimMap
-  local claimed
-  local okClaim=pcall(function()
-   claimed=map:UpdateAsync("m:"..id,function(previous:any)
-    if previous~=nil then return previous end
-    return ticket
-   end,TTL_SECONDS)
-  end)
-  if not okClaim or type(claimed)~="table" or claimed.matchId~=id
-    or claimed.originJobId~=deps.jobId or claimed.epoch~=epoch then
-   return {status="FALLBACK_NORMAL_LOBBY",reason="CLAIM_FAILED"} end
-  local stillValid,stillActive=pcall(deps.isEpochCurrent,epoch)
-  if not stillValid or stillActive~=true then
-   return {status="FALLBACK_NORMAL_LOBBY",reason="EPOCH_CHANGED_DURING_CLAIM"} end
   -- Do not instantiate a second server or teleport controller. One Roblox
   -- service call owns the entire LOCAL cohort. Results can be partial/late.
   local options=deps.optionsFactory()
@@ -102,16 +88,57 @@ function M.create(deps:any):any
   })
   local pending={
    matchId=id,epoch=epoch,options=options,players=roster,createdAt=deps.now(),
-   attempt=0,placeId=placeId,seed=seed
+   attempt=0,placeId=placeId,seed=seed,phase="CLAIMING"
   }
+  -- Reserve this same pending record before the yielding MemoryStore call.
+  -- The second check also fences a yielding custom options factory.
+  for index,userId in ipairs(ids) do
+   if self.byUser[userId] then
+    return {status="FALLBACK_NORMAL_LOBBY",reason="ALREADY_DISPATCHING"} end
+   local player=roster[index]
+   if player.Parent~=deps.players or deps.players:GetPlayerByUserId(userId)~=player then
+    return {status="FALLBACK_NORMAL_LOBBY",reason="COHORT_NOT_LOCAL"} end
+  end
   self.byMatch[id]=pending
   for _,player in ipairs(roster) do self.byUser[player.UserId]=pending end
+  local function releasePending()
+   for _,userId in ipairs(ids) do
+    if self.byUser[userId]==pending then self.byUser[userId]=nil end
+   end
+   if self.byMatch[id]==pending then self.byMatch[id]=nil end
+  end
+  local map=deps.claimMap
+  local claimed
+  local okClaim=pcall(function()
+   claimed=map:UpdateAsync("m:"..id,function(previous:any)
+    if previous~=nil then return previous end
+    return ticket
+   end,TTL_SECONDS)
+  end)
+  if not okClaim or type(claimed)~="table" or claimed.matchId~=id
+    or claimed.originJobId~=deps.jobId or claimed.epoch~=epoch then
+   releasePending()
+   return {status="FALLBACK_NORMAL_LOBBY",reason="CLAIM_FAILED"} end
+  local stillValid,stillActive=pcall(deps.isEpochCurrent,epoch)
+  if not stillValid or stillActive~=true then
+   releasePending()
+   return {status="FALLBACK_NORMAL_LOBBY",reason="EPOCH_CHANGED_DURING_CLAIM"} end
+  if deps.now()-pending.createdAt>=90 then
+   releasePending()
+   return {status="FALLBACK_NORMAL_LOBBY",reason="CLAIM_EXPIRED"} end
+  for index,userId in ipairs(ids) do
+   local player=roster[index]
+   if self.byMatch[id]~=pending or self.byUser[userId]~=pending
+    or player.Parent~=deps.players or deps.players:GetPlayerByUserId(userId)~=player then
+    releasePending()
+    return {status="FALLBACK_NORMAL_LOBBY",reason="COHORT_CHANGED_DURING_CLAIM"} end
+  end
+  pending.phase="TELEPORTING"
   local ok,err=pcall(function()
    return deps.teleport:TeleportAsync(placeId,roster,options)
   end)
   if not ok then
-   for _,player in ipairs(roster) do self.byUser[player.UserId]=nil end
-   self.byMatch[id]=nil
+   releasePending()
    return {status="FALLBACK_NORMAL_LOBBY",reason="TELEPORT_THROW",detail=tostring(err)}
   end
   return {status="TELEPORT_INITIATED",matchId=id,players=#roster,
@@ -121,7 +148,7 @@ function M.create(deps:any):any
   if not player or not validInt(player.UserId,1,999999999999)
     then return {status="IGNORED"} end
   local pending=self.byUser[player.UserId]
-  if not pending then return {status="IGNORED"} end
+  if not pending or pending.phase~="TELEPORTING" then return {status="IGNORED"} end
   local epochOk,active=pcall(function()
    return type(deps.isEpochCurrent)=="function" and deps.isEpochCurrent(pending.epoch)
   end)

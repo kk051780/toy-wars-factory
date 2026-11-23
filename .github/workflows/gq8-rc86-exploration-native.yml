@@ -1,0 +1,40 @@
+name: GQ8 legacy RC86 exploration Studio-only native source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - '.github/workflows/gq8-rc86-exploration-native.yml'
+  push:
+    branches: [quality/gq8-rc86-v3-exploration-bridge-20261119]
+    paths:
+      - 'quality_gameplay/gq8_rc85_rc86_exploration_20261119/**'
+      - '.github/workflows/gq8-rc86-exploration-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fail-closed script-only and no duplicate authority source gates
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_rc85_rc86_exploration_20261119/test_bridge.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile actual V3 exploration bridge with pinned native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/legacy-explore-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/legacy-explore-luau --target Luau.Compile.CLI --parallel 4
+          /tmp/legacy-explore-luau/luau-compile --text quality_gameplay/gq8_rc85_rc86_exploration_20261119/EGGRUMBLE_LegacyExplorationBridge.server.luau >/dev/null
+          echo LEGACY_RC86_TO_V3_NATIVE_SOURCE_PASS

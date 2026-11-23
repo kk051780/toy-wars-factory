@@ -1,5 +1,8 @@
 # P0D 2部隊並列開発・最新版受入契約 V1（2026-11-14）
 
+> **OWNER 2026-11-20 最上位高速積上契約**： [唯一正式RC・企画室→品質ゲート→逐次採用規則](ONE_RC_FAST_ADMISSION_20261120.md) および [#839](https://github.com/kk051780/toy-wars-factory/issues/839) を優先。REAL65は正統V3起点、現在の採用済み後継REAL69を巻き戻さない。Aの新規PREPは下記旧契約に `OWNER_FAST_ADMISSION_V2`（ADOPT・企画源・品質証拠・改善の仮説）を追加。形式確認は実機品質の保証ではなく、B #220のみが同HEAD CIとnonforce CASで唯一RCに反映。Work/Codexへ移行しない。
+
+
 OWNER指示: 「RC統合と統合前までの状態を作る2部隊制にする。並列作業。RC統合役は最新版を取り込む仕組みにして」
 
 ## 役割

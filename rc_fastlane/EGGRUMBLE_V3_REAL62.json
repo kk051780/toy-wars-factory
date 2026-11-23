@@ -1,0 +1,38 @@
+{
+  "schema": "EGGRUMBLE_V3_REAL62_AFTER_FORMAL_REAL59_V1",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "parent_official_head": "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca",
+  "parent_official_run": 44403496549,
+  "parent_selected_profile": "eggrumble_v3_real59_host_active",
+  "parent_source_count": 59,
+  "candidate_profile": "eggrumble_v3_real62_hud_trade",
+  "candidate_source_count": 62,
+  "source_prs": [
+    829,
+    838
+  ],
+  "added_feature_ids": [
+    "GQ8_TRADE_UX_JOURNAL_20261119",
+    "GQ8_TRADE_ESCROW_REDUCER_20261119"
+  ],
+  "source_locks": {
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeJournalContract.luau": "c3d6ca4ebc518592bddefbb5942f4d60ab5179a9",
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeReview.client.luau": "a96d9bde201c6bdbb8fe185c81650f99368a9544",
+    "quality_gameplay/gq8_trade_ux_journal_20261119/GQ8_TradeEscrowReducer.luau": "d070554bee9317e538a183052fba882361b65ac4"
+  },
+  "authority": "One existing Game/Host/Combat/Swarm unchanged",
+  "trade_live": false,
+  "paid_settlement": false,
+  "rollback": "Exact FORMAL RUN44403496549 Host-active Real59 OFF59, not older inert Real59",
+  "official_rc_adoption": "NO: B #220 authenticated nonforce CAS and same NEW HEAD proof",
+  "studio": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "fun": "NOT_TESTED",
+  "pending_overlays": [
+    "#840 Viral Host",
+    "PR #841 Counter Combat/Invul",
+    "#844 HostAutoStart merged at 5a47e96 (preserve in all downstream profiles)"
+  ],
+  "host_source_class": "Script",
+  "host_source_bytes_unchanged": true
+}

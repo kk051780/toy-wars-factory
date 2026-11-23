@@ -1,0 +1,60 @@
+{
+  "schema": "P0D_EGGRUMBLE_V3_REAL55_CANONICAL_PRIVATE_COMPANION_V1",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "source_profile": "eggrumble_v3_real55",
+  "source_count": 55,
+  "rollback_source_count": 53,
+  "previous_private_profile": "eggrumble_v3_core36",
+  "prior_official_sha": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+  "previous_official_source_count": 36,
+  "actual_selection_build_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real55.yml",
+  "original_immutable_source_refs": {
+    "real53": {
+      "pr": 826,
+      "head": "96ac3b4caa2f649f98c9e093c864c39555f3616a",
+      "successful_run": 44390823718,
+      "artifact_id": 14467851388
+    },
+    "social55": {
+      "pr": 831,
+      "head": "383677dc9eedb102a9de09b301088e0811203289",
+      "successful_run": 44392255956,
+      "artifact_id": 14467707679
+    }
+  },
+  "source_locks": {
+    "quality_gameplay/gq8_social_lobby_20261119/GQ8_LobbySocialPlaza.server.luau": "0df22b7b5a38012f6f3fb005734307cd9d94bb3a",
+    "quality_gameplay/gq8_social_lobby_20261119/GQ8_TradePolicy.luau": "f654f56f9aa7f00d4920809317c35acb652a54e0"
+  },
+  "areas": {
+    "characters": "existing 7 role source selected through immutable Real53; no re-authoring",
+    "field": "land sea air/weather/stage originals selected through Real53; no new authority",
+    "combat": "Musou + Invul V2 in verified original 13 pre-hit routes; physics and CC exclusions remain",
+    "castles": "existing gate/guardian system selected through original Real53",
+    "neutrals": "existing neutral 8 / curse conversion selected through original Real53",
+    "items": "existing HEAL DASH SHIELD items selected; paid item transactions disabled",
+    "lobby": "read-only shop + social meeting spaces added; transactions not connected",
+    "ui": "existing shop client and battle display only; new Fog/HUD candidate #829 not selected",
+    "balance": "source mutation + PvP/knockout/role policy coverage only; real multiplayer unverified"
+  },
+  "authority_constraints": {
+    "duplicate_combat": false,
+    "duplicate_swarm": false,
+    "duplicate_host": false,
+    "new_store_owner": 0,
+    "new_remote_owner": 0,
+    "paid_purchase_enabled": false,
+    "trade_settlement_enabled": false
+  },
+  "rollback": "Disable this companion profile, use original canonical Core36 or immutable original53 OFF53 without modifying rich51",
+  "non_goals": [
+    "do not modify main",
+    "do not publish Roblox",
+    "do not process Robux",
+    "do not claim Studio/Android/visual/fun verification"
+  ],
+  "acceptance": "only successful GitHub Actions run at exact NEW official branch HEAD can establish source-selected",
+  "source_dependency_warning": "this build downloads immutable but short-retention source artifacts; long-term reproducibility requires durable source snapshot before public release",
+  "formal_rc_adopted_at_manifest_creation": false
+}

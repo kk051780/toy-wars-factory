@@ -12,7 +12,6 @@ on:
       - 'quality_gameplay/gq8_lss_real31_20261117/**'
       - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
-      - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -40,31 +39,25 @@ jobs:
           python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rehydrate_real31.py'
           python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rc_auto_follow.py'
           python3 -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
-      - name: Resolve exact official HEAD and successful V3 run
+      - name: Verify current RC descends from historically proven original 31-source build
         id: official
         run: |
           set -euo pipefail
           H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           [[ "$H" =~ ^[a-f0-9]{40}$ ]]
           echo "sha=$H" >> "$GITHUB_OUTPUT"
-          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
-            --branch rc/p0d-s1-kids-rc01 --limit 20 \
-            --json databaseId,headSha,status,conclusion > /tmp/current-runs.json
-          RUN=""
-          for attempt in $(seq 1 30); do
-            gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
-              --branch rc/p0d-s1-kids-rc01 --limit 50 \
-              --json databaseId,headSha,status,conclusion > /tmp/current-runs.json
-            RUN="$(jq -r --arg h "$H" \
-              '[.[]|select(.headSha==$h and .status=="completed" and .conclusion=="success")][0].databaseId // empty' \
-              /tmp/current-runs.json)"
-            if [ -n "$RUN" ]; then break; fi
-            sleep 15
-          done
-          test -n "$RUN"
-          echo "run=$RUN" >> "$GITHUB_OUTPUT"
-          echo "GQ8_SAMEHEAD_OFFICIAL=$H RUN=$RUN"
-      - name: Download exact 31 source Place and receipt
+          # Historical 31-source optional LSS QA only; never pass this as current Real65.
+          BASE31_SHA=f77b4d4393d9e9b19b65566413432a7a9f13962b
+          BASE31_RUN=44232589258
+          FOUND="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${BASE31_RUN}" --jq '.head_sha+" "+.status+" "+.conclusion')"
+          test "$FOUND" = "$BASE31_SHA completed success" || { echo RED_HISTORICAL31_RUN_NOT_PROVEN; exit 1; }
+          ANCESTRY="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE31_SHA}...${H}" --jq .status)"
+          { test "$ANCESTRY" = "ahead" || test "$ANCESTRY" = "identical"; } || { echo RED_FORMAL_RC_NOT_DESCENDANT_OF_PROVEN31; exit 1; }
+          echo "run=$BASE31_RUN" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$BASE31_SHA" >> "$GITHUB_OUTPUT"
+          echo "GQ8_HISTORICAL_REAL31_BASE=$BASE31_SHA RUN=$BASE31_RUN CURRENT_RC=$H; LSS32_NOT_CURRENT_RC_ACCEPTANCE"
+
+      - name: Download historically proven 31 source Place and receipt
         run: |
           set -euo pipefail
           mkdir -p artifacts/official
@@ -81,7 +74,7 @@ jobs:
             --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
             --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
             --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
-            --out artifacts/real31 --head "${{ steps.official.outputs.sha }}"
+            --out artifacts/real31 --head "${{ steps.official.outputs.source_sha }}"
           python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
             --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
             --out artifacts/real32/ON32.project.json
@@ -183,10 +176,10 @@ jobs:
             --place artifacts/real32/LSS_OFF31_STUDIO.rbxlx --count 31
           H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
           test "$H" = "${{ steps.official.outputs.sha }}"
-          echo GQ8_LSS_REAL31_TO32_NATIVE_ROJO_OFF_EXACT_SAMEHEAD_SUCCESS
+          echo GQ8_LSS_HISTORICAL31_TO32_NATIVE_ROJO_OFF_EXACT_FROZEN_BASE_SUCCESS_NOT_CURRENT_REAL65
       - uses: actions/upload-artifact@v4
         with:
-          name: EGGRUMBLE-LSS-REAL31-TO32-STUDIO-CANDIDATE-NOT-RC
+          name: EGGRUMBLE-LSS-HISTORICAL31-TO32-CANDIDATE-NOT-CURRENT-RC
           path: |
             artifacts/real32/
             artifacts/real31/CURRENT31_REAL_SOURCE_RECEIPT.json

@@ -1,0 +1,92 @@
+{
+  "schema": "GQ8_REAL65_CANONICAL_PRIVATE_COMPANION_SOURCE_PROFILE_V1",
+  "feature_id": "GQ8_REAL65_RECONCILE_BASIC_DODGE_VIRAL_COUNTER_20261119",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "source_profile": "eggrumble_v3_real65",
+  "source_count": 65,
+  "pre_adoption_official_head": "d52f2060dda81f0af6d1b143eee25fb416141602",
+  "official_parent_profile": "REAL63_BASIC_DODGE",
+  "official_parent_run": 44413796990,
+  "parent_sources": 63,
+  "existing_unchanged_real63": 58,
+  "new_sources": 2,
+  "modified_existing_routes": [
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+    "ServerScriptService/EGGRUMBLE_InvulRuntime",
+    "ServerScriptService/GQ805_LobbyGuildShop",
+    "ServerScriptService/GQ8_LobbySocialPlaza"
+  ],
+  "preserved_routes": [
+    "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
+  ],
+  "original_authors": [
+    {
+      "pr": 840,
+      "feature": "opt-in viral capture"
+    },
+    {
+      "pr": 841,
+      "feature": "seven-role counter"
+    },
+    {
+      "pr": 847,
+      "feature": "free normal attack and grounded dodge"
+    },
+    {
+      "pr": 850,
+      "feature": "14 viewport handed HUD presentation source preservation"
+    },
+    {
+      "pr": 848,
+      "feature": "unique per-session round epoch for basic/dodge cooldown"
+    }
+  ],
+  "single_game_owner": true,
+  "single_combat_owner": true,
+  "single_swarm_owner": true,
+  "host_class": "Script",
+  "paid_trade_enabled": false,
+  "roblox_published": false,
+  "stage": "FORMAL_RC_REAL65_SOURCE_SELECTED_ENGINE_NOT_TESTED__LOBBY_BOOTSTRAP_RETEST_REQUIRED",
+  "source_composer": "quality_gameplay/gq8_real63_intake_20261119/compose_real65.py",
+  "workflow": ".github/workflows/gq8-real63-source-composite.yml",
+  "rollback": "OFF63 exact current official Place from formal run 44413796990; S1 rich51 unchanged",
+  "studio_2client": "NOT_TESTED",
+  "android15min": "NOT_TESTED",
+  "visual_art": "NO_GO",
+  "fun": "NO_GO",
+  "official_parent_event": "push",
+  "official_parent_artifact_id": 14477823162,
+  "real63_parent_original62_unchanged": 59,
+  "storm_phase_fence_intake": {
+    "feature_id": "GQ8_REALM_STORM_PHASE_FENCE_20261118",
+    "source_pr": 797,
+    "helper_git_blob": "e8665138825488256aaa0875c55b1c623d9887b8",
+    "existing_original_script": "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+    "existing_script_count": 65,
+    "other_real65_source_exact": 64,
+    "original_real63_unchanged_after_patch": 59,
+    "author_ack_required": false,
+    "stage": "CANDIDATE_NOT_FORMAL_RC_UNTIL_SAMEHEAD_NATIVE_ROJO_AND_NONFORCE_CAS",
+    "rollback": "prior canonical Real65 Place, OFF63 remains unchanged",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "fun": "NO_GO"
+  },
+  "lobby_bootstrap_fix": {
+    "feature_id": "GQ8_REAL65_LOBBY_CANONICAL_SPAWN_WAIT_20261119",
+    "scope": "Two existing showroom Scripts only; no additional writers or Luau routes",
+    "guard": "Wait for Host-owned GQ646 lobby spawn instead of arbitrary existing spawn",
+    "source_preparation": "PATCH_IN_SAME_COMPOSER",
+    "product_studio": "NOT_TESTED",
+    "rollback": "Disable two startup patches preserving upstream viral scope fix and storm profile",
+    "upstream_nonloss_required": [
+      "#858 viral-capture Host lexical-scope fix",
+      "#859 storm/Realm executable-Script + thunder phase fence",
+      "REAL65 65 existing selected original routes"
+    ]
+  }
+}
