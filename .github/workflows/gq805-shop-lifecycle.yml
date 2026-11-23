@@ -1,0 +1,193 @@
+name: GQ805 existing shop lifecycle source Native Rojo OFF69
+on:
+  push:
+    branches: [quality/gq805-shop-lifecycle-82f2beb2-20261123]
+    paths:
+      - 'quality_gameplay/gq805_shop_lifecycle_20261123/**'
+      - 'tests/test_gq805_shop_lifecycle_20261123.py'
+      - '.github/workflows/gq805-shop-lifecycle.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq805_shop_lifecycle_20261123/**'
+      - 'tests/test_gq805_shop_lifecycle_20261123.py'
+      - '.github/workflows/gq805-shop-lifecycle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact checkout and actual official parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
+          mkdir -p artifacts/gq805-input
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" > artifacts/gq805-input/rc_before.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45132949073" > artifacts/gq805-input/parent_run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14798134590" > artifacts/gq805-input/parent_artifact.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('artifacts/gq805-input')
+          lock=json.loads(Path('quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json').read_text())
+          rc=json.loads((root/'rc_before.json').read_text())
+          run=json.loads((root/'parent_run.json').read_text())
+          artifact=json.loads((root/'parent_artifact.json').read_text())
+          assert rc['object']['sha']==lock['base_rc'], 'STALE_RC_REBIND_REQUIRED'
+          assert run['id']==lock['official_artifact']['run_id'] and run['head_sha']==lock['base_rc']
+          assert run['conclusion']=='success' and run['event']=='push'
+          assert artifact['id']==lock['official_artifact']['artifact_id'] and artifact['expired'] is False
+          assert artifact['name']==lock['official_artifact']['name']
+          assert artifact['workflow_run']['head_sha']==lock['base_rc']
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14798134590/zip" > artifacts/gq805-input/parent.zip
+          python3 - <<'PY'
+          import hashlib,json,stat,zipfile
+          from pathlib import Path,PurePosixPath
+          root=Path('artifacts/gq805-input')
+          lock=json.loads(Path('quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json').read_text())
+          raw=(root/'parent.zip').read_bytes()
+          assert {'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}==lock['official_artifact']['archive']
+          parent=root/'parent';parent.mkdir()
+          with zipfile.ZipFile(root/'parent.zip') as archive:
+              seen=set()
+              for info in archive.infolist():
+                  path=PurePosixPath(info.filename)
+                  assert not path.is_absolute() and '..' not in path.parts and '\\' not in info.filename
+                  assert info.filename not in seen and not stat.S_ISLNK(info.external_attr >> 16)
+                  seen.add(info.filename)
+                  target=parent.joinpath(*path.parts)
+                  if info.is_dir(): target.mkdir(parents=True,exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      target.write_bytes(archive.read(info))
+          PY
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq805_luau
+          persist-credentials: false
+      - name: Build the pinned Luau source and verify pinned Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq805_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          test "$(git -C _gq805_luau rev-parse HEAD^{tree})" = 2432c996fc9fa73680b5e2cfe172d36114fe3746
+          test -z "$(git -C _gq805_luau status --porcelain --untracked-files=no)"
+          cmake -S _gq805_luau -B /tmp/gq805-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq805-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 3
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq805-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq805-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/gq805-rojo.zip') as archive:
+              names=[n for n in archive.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              path=Path('/tmp/gq805-rojo');path.write_bytes(archive.read(names[0]));path.chmod(0o755)
+          PY
+      - name: Materialize the immutable H93 inventory helper dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/contents/quality_gameplay/gq470_union22_real69_20261122/compose_union22.py?ref=93a1147561a531610ac1609ebc68cc0ecf546623" > artifacts/gq805-input/inventory_helper_source.json
+          python3 - <<'PY'
+          import base64,hashlib,json
+          from pathlib import Path
+          root=Path('artifacts/gq805-input')
+          lock=json.loads(Path('quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json').read_text())
+          record=json.loads((root/'inventory_helper_source.json').read_text())
+          origin='93a1147561a531610ac1609ebc68cc0ecf546623'
+          relative='quality_gameplay/gq470_union22_real69_20261122/compose_union22.py'
+          git_blob='1381f6aeca421f1b28a9c3710177cee56ade6120'
+          expected={'bytes':28443,'sha256':'8d5efc7072ee61c331873cda9e642bf8034fdd8bf0e74d97d718af38f1f5e073'}
+          assert lock['inventory_helper']==expected, 'INVENTORY_DEPENDENCY_LOCK_DRIFT'
+          assert record['sha']==git_blob and record['encoding']=='base64', 'INVENTORY_DEPENDENCY_GIT_BLOB'
+          assert isinstance(record['content'],str), 'INVENTORY_DEPENDENCY_CONTENT_TYPE'
+          raw=base64.b64decode(''.join(record['content'].split()),validate=True)
+          actual={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+          assert actual==expected, 'INVENTORY_DEPENDENCY_BYTES'
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==git_blob, 'INVENTORY_DEPENDENCY_GIT_HASH'
+          snapshot=root/'inventory-helper'
+          assert not snapshot.exists() and not snapshot.is_symlink(), 'INVENTORY_DEPENDENCY_SNAPSHOT_EXISTS'
+          for ancestor in [root,*root.parents]:
+              assert not ancestor.is_symlink(), 'INVENTORY_DEPENDENCY_PARENT_SYMLINK'
+          snapshot.mkdir()
+          target=snapshot/relative
+          target.parent.mkdir(parents=True)
+          with target.open('xb') as output:
+              output.write(raw)
+          target.chmod(0o444)
+          assert target.read_bytes()==raw, 'INVENTORY_DEPENDENCY_READBACK'
+          receipt={'kind':'PINNED_READ_ONLY_INVENTORY_DEPENDENCY','source_commit':origin,
+                   'source_path':relative,'git_blob':git_blob,**actual,
+                   'snapshot_root':str(snapshot),'snapshot_path':str(target),
+                   'is_current_game_parent':False,
+                   'current_game_parent_is_separately_bound_by_source_lock_and_official_artifact':True}
+          with (root/'inventory_helper_provenance.json').open('x') as output:
+              output.write(json.dumps(receipt,indent=2)+'\n')
+          print('GQ805_PINNED_INVENTORY_HELPER_SNAPSHOT_READY')
+          PY
+      - name: Reject drift and build exact one-source ON and inverse OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq805_shop_lifecycle_20261123.py -v
+          python3 -B quality_gameplay/gq805_shop_lifecycle_20261123/apply_shop_lifecycle.py \
+            --base artifacts/gq805-input/parent --out artifacts/gq805-build --repo-root artifacts/gq805-input/inventory-helper \
+            --luau-compile /tmp/gq805-luau/luau-compile --rojo /tmp/gq805-rojo \
+            --parent-archive artifacts/gq805-input/parent.zip --source-head "$SOURCE_HEAD"
+      - name: Run full original and candidate bodies through the same locked cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq805_shop_lifecycle_20261123/native/run_shop_lifecycle.py \
+            --source-dir artifacts/gq805-input/parent/sources \
+            --candidate-source artifacts/gq805-build/ON69/sources/StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau \
+            --luau /tmp/gq805-luau/luau --luau-compile /tmp/gq805-luau/luau-compile \
+            --out artifacts/gq805-native --source-head "$SOURCE_HEAD"
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" > artifacts/gq805-input/rc_after.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path('artifacts')
+          lock=json.loads(Path('quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json').read_text())
+          assert json.loads((root/'gq805-input/rc_after.json').read_text())['object']['sha']==lock['base_rc'], 'RC_MOVED_DURING_QA'
+          build=json.loads((root/'gq805-build/BUILD_RECEIPT.json').read_text())
+          assert build['source_head']==os.environ['SOURCE_HEAD'] and build['RC_adopted'] is False
+          native=json.loads((root/'gq805-native/RECEIPT.json').read_text())
+          assert native['source_head']==os.environ['SOURCE_HEAD'] and native['input_invariance'] is True
+          assert native['status']=='PASS_LOCAL_NATIVE_BASELINE_AND_CANDIDATE_NOT_STUDIO'
+          assert native['variants']['candidate']['summary']=={'total':38,'passed':38,'failed':0}
+          print('GQ805_SOURCE_NATIVE_ROJO_OFF69_PASS_NOT_STUDIO_NOT_RC')
+          PY
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: GQ805-SHOP-LIFECYCLE-SOURCE-NOT-OFFICIAL
+          path: |
+            artifacts/gq805-build/
+            artifacts/gq805-native/
+            artifacts/gq805-input/rc_before.json
+            artifacts/gq805-input/rc_after.json
+            artifacts/gq805-input/parent_run.json
+            artifacts/gq805-input/parent_artifact.json
+            artifacts/gq805-input/inventory_helper_source.json
+            artifacts/gq805-input/inventory_helper_provenance.json
+            artifacts/gq805-input/inventory-helper/
+          retention-days: 14
+          if-no-files-found: error
