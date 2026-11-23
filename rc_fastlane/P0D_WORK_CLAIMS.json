@@ -22965,6 +22965,205 @@
         "sha256": "706a8de0ac4a7cc914b56809e6a6fb30203cbe2c2e470c2fc292c8f157fa7fba",
         "scope_only_not_source_approval": true
       }
+    },
+    {
+      "claim_id": "P0D-GQ033-MATCH-GROWTH-20261123-817BC984",
+      "feature_id": "P0D-033-MATCH-GROWTH-V1",
+      "owner": "CODEX_ROOT_817BC9841838",
+      "role": "A_PREP",
+      "state": "GRANTED",
+      "parent_issue": 470,
+      "canonical_parent": "P0D-033 / PR1025 design / Issue250 accepted isolated MVP",
+      "request_comment": 7091103479,
+      "duplicate_routing_comment": 7091211764,
+      "pr": null,
+      "allowed_new_prs": 1,
+      "created_pr_count": 0,
+      "prep_branch": "quality/gq470-match-growth-817bc984-20261123",
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "design_pr": 1025,
+      "design_head": "c09670984f8f1f418f4dce3fc1a68018cc55bc37",
+      "design_adoption_comment": 7091010154,
+      "author_contexts": [
+        "CODEX_ROOT_817BC9841838:/root",
+        "CODEX_ROOT_817BC9841838:/root/growth_source_audit",
+        "CODEX_ROOT_817BC9841838:/root/backlog_review"
+      ],
+      "independent_reviewer_context": "CODEX_ROOT_817BC9841838:/root/coordination_review",
+      "scope_review_is_code_approval": false,
+      "source_scope_granted": true,
+      "registered_source_approval": false,
+      "PREP_READY": false,
+      "source_writes_permitted_at_issuance": false,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "source_write_requires_separate_live_source_lease": true,
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+        "REAL69_SOURCE_EGGRUMBLE_HEROSILHOUETTEART",
+        "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+        "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_match_role_growth_20261123/README.md",
+        "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_match_role_growth_20261123.py",
+        ".github/workflows/gq470-match-role-growth.yml"
+      ],
+      "scope": "One isolated reversible four-source S1A match-only awakening visibility candidate, not the complete two-layer S1 MVP. Preserve existing BattleLevel 25-KO/cap50 calculation and all persistent Lv/XP/equipment/entitlements/base combat authorities. Derive new EGGRUMBLE_BattleStage B1/B2/B3 and BattleXP min(80,KO*10) from existing authoritative neutral KO ledger (KO1 B2, KO4 B3), publish GrowthActive only for actual current humans. Initialize new B1/XP0 plus known match-only NeutralKO0 on actual start, retain on death, reject new credit/publication synchronously when rules/current world/current human are invalid; retire new B/XP/visibility and existing match-only NeutralKO at the first delivery of the owned phase/Destroying/AncestryChanged lifecycle event, preserving the internal final KO snapshot. Bounded existing compact HUD and one nearby nameplate are read-only consumers. No added gameplay/XP/Store authority or permanent-level fiction. Existing Hero role-watch listeners may join the same bounded lifecycle cleanup without changing role decoration.",
+      "generated_source_scope": {
+        "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": "Existing start/credit/consumed-Died/end/teardown derived B/XP/active and existing match-only NeutralKO publication only; one authoritative KO ledger, concrete current-human and retired-session fencing. Preserve existing BattleLevel formula, Combo, movement/body sweep/skill/MUSOU/token/Combat/Store semantics.",
+        "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": "One bounded nearby per-human match awakening B/neutralKO tag from server-published attributes; active/current avatar only, hidden while dead, eliminated, stealth, lobby, finished or retired. Never label the new stage as character Lv or invent a permanent Lv. No physical scale/collision/stats/part count changes. Track and disconnect the existing five per-player role-watch listeners only for lifecycle cleanup on PlayerRemoving, retaining their exact role-decoration behavior; no broader art rewrite.",
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": "Bounded read-only match awakening B/XP in existing compact status presentation; preserve HP and buffs visibility, existing mounted544 behavior, drawers, layout policy, compass and First90, no added polling loop.",
+        "ServerScriptService/EGGRUMBLE_MatchResultService.luau": "Source-true final neutral-KO and match awakening B text using existing immutable session KO snapshot. Preserve existing result layout, score/ranking/reward/authority. Do not invent permanent Lv."
+      },
+      "duplicate_resolution": {
+        "later_request_comment": 7091164304,
+        "later_owner": "CODEX_ROOT_B13F7C8198A3",
+        "routing": "DUPLICATE_REUSE confirmed by later author: one 817 candidate; B13 read-only independent QA/requirements comparison, no parallel producer/grant or automatic author permission.",
+        "single_source_authority": true,
+        "later_request_status": "WITHDRAWN_DUPLICATE_REUSE revision3 2026-11-23T04:05Z; actual later author withdrew its separate grant/PR"
+      },
+      "sequential_swarm_window": {
+        "scope": "Existing credit/start-end lifecycle and consumed Died only during the separately owned live source lease for this exact PREP branch.",
+        "preserved_owners": [
+          "PR815 CODEX_ROOT_9E584AF98A13 movement/body sweep",
+          "PR825 CODEX_ROOT_D5F15C074B2E MUSOU/avatar-token"
+        ],
+        "ownership_transfer": false,
+        "parallel_overlapping_writes": false,
+        "on_new_busy_or_owner_movement": "Stop overlapping source writes and reschedule under current coordinator; expiry never grants takeover.",
+        "composition_acceptance": "Before producer integration, prove composition with preserved current PR815/825 exact candidates without dropping any prior hunk."
+      },
+      "forbidden_changes": [
+        "Host/Replay/Combat/Score source or existing author branches",
+        "canonical UNION22 producers/profile locks/shared workflow without separate exact grant",
+        "New XP/KO/Score authority, Remote, Store, permanent progression writer or entitlement mutation; existing legitimate permanent XP/Lv/equipment/rewards must remain intact.",
+        "PvP/castle HP/score/buffs/physical scale/role skill evolution",
+        "relabel existing four-second Combo as a death-until streak",
+        "main, Publish, paid services or broad RC writes",
+        "Existing BattleLevel 25KO/cap50 changed or silently reinterpreted as permanent Lv or new B stage"
+      ],
+      "acceptance": "Pin exact H93 official ZIP and all69 sources; full production bodies and original immutable fixture/binary lineage; baseline-red/ON-green/OFF-red for new B behavior, original control retained. Cover 7roles, KO1/4/XP80/B3cap, consumed Died, false/fake/spectator/stale/current human and concrete-player replacement, death retention, FINISHED/teardown rejection before lifecycle dispatch and B1/XP0/known match-only NeutralKO0 with hidden display after first dispatch, separately for Immediate and selected Deferred delivery, next-round isolation, snapshot result. Preserve original BattleLevel formula/Combo and all existing base combat/equipment/Dojo/TwinBond and legitimate authority properties without claiming nonexistent permanent backend. Tag count/visibility/stealth/connection cleanup and HP/buffs retention. Native/compile69/Rojo ON69/OFF69 and exact source/project/Place rollback. Same-head PR CI and separate registered independent review. Actual two-layer permanent Lv5/20 source/Studio/Android/FUN remain unfulfilled until genuinely wired and executed.",
+      "rollback": "Reverse only the four precisely pinned S1 source patches and remove the added nine PREP paths; generated OFF69 sources/project/Place must exactly equal input H93. Preserve original immutable source profile and existing tests.",
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "runtime_unified": false,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "authority_evidence": [
+        "Actual authenticated GitHub id233213370 and actual repository collaborator admin permission.",
+        "Existing unchanged coordinator owner_delegation grants routine game/system engineering decisions; no objective evidence or spending gate waived.",
+        "H93 AGENTS.md / AI_DEVELOPMENT_SYSTEM v1.2 / Issue1011: current Codex parent owns scoped authoring, independent review and exclusive RC integration.",
+        "Issue218 comment6886441650 single actual coordinator registry and exact-resource duplicate-reuse policy. Request/proposal alone never grants source writes."
+      ],
+      "actual_metadata_authority": {
+        "status": "ACTUAL_METADATA_LEASE_READBACK",
+        "owner": "eaf3a49f-464e-41e7-843e-4e5f688ff28f",
+        "epoch": 677,
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "eaf3a49f-464e-41e7-843e-4e5f688ff28f",
+          "task_id": null,
+          "epoch": 677,
+          "acquired_at": "2026-11-23T05:03:04.717898+00:00",
+          "expires_at": "2026-11-23T05:33:04.717898+00:00",
+          "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        },
+        "claim_commit": "78e79b54b8e0c9a1e27ea310bbcfd7adda64355c",
+        "state_blob": "763ef516a98d8e62c1e50cb45c9c75aa9e5f1912",
+        "actual_readback": true,
+        "authenticated_actor": {
+          "login": "kk051780",
+          "id": "233213370"
+        },
+        "repo_permission": "admin",
+        "before_ref": "59f6674dd5f9ff97885679fbf3e676b1daf0a9ec",
+        "before_blob": "f272689f51c5bdb3e64f4a2c1951c8740a0cc91e",
+        "readback_at_utc": "2026-11-23T05:06:51Z",
+        "authority_kind": "REAL_AUTHENTICATED_OWNER_DELEGATED_METADATA_COORDINATOR",
+        "full_helper_equivalence_proof": "metadata_677_fullhelper_receipt.json; raw before/readback equality independently reviewable"
+      },
+      "issued_at": "2026-11-23T05:08:12.461550+00:00",
+      "expires_at": "2026-11-23T11:08:12.461550+00:00",
+      "proposal_only_until_actual_registration": false,
+      "implementation_boundary": {
+        "slice": "S1A_MATCH_B_DERIVED_PUBLICATION_AND_VISIBILITY_ONLY",
+        "full_S1_MVP_complete": false,
+        "persistent_Lv5_Lv20_acceptance": "BLOCKED_NOT_WIRED_IN_SELECTED_REAL69",
+        "persistent_audit": "Exact selected69 has no PersistentHatchStore/DataStore/player permanentLv-XP writer; P0D040/041/045 catalog SOURCE, P0D051/056/057 legacy active RC receipts cannot establish REAL69 wiring. Reuse current existing persistence owners; no duplicate Store or fabricated levels.",
+        "BattleLevel_legacy": "Preserve existing 25KO/cap50 field and existing Replay reset; do not expose it as permanent level or B.",
+        "permanent_concept_preserved": true,
+        "permanent_source_mutations": false,
+        "pvp_skill_buffs_giant_stage_B4_B5": "DEFERRED"
+      },
+      "author_context_notes": {
+        "CODEX_ROOT_817BC9841838:/root": "Result source, strict four-source patch packaging, frozen input contract and CI",
+        "CODEX_ROOT_817BC9841838:/root/growth_source_audit": "Swarm source and exact-source server/lifecycle cases",
+        "CODEX_ROOT_817BC9841838:/root/backlog_review": "UI exact-source fixtures and bounded Hero/HUD implementation"
+      },
+      "lifecycle_dispatch_contract": {
+        "publication_fence": "Reject new neutral credit/B/XP publication as soon as rules are non-ACTIVE, this session is retired, or exact world/current-human ownership is invalid.",
+        "cleanup": "Own bounded connections, independent of Host lifeConnections; first applicable phase/Destroying/AncestryChanged delivery performs idempotent clear, with no Replay10-second wait or arbitrary cleanup timer.",
+        "deferred_truth": "Deferred cleanup is at the next engine dispatch, not claimed within the same Host.SetAttribute call stack. Explicit Disconnect cancels queued deliveries, while implicit Destroy disconnect preserves already queued deliveries.",
+        "result": "Side-effect-free original-kills getter returns the same final snapshot before and after clear.",
+        "stale_callback": "Old callbacks cannot publish to or clear a newer round lease or a replacement concrete Player with the same UserId."
+      },
+      "scope_review_mode": "Concrete before/after independent review before registry CAS, bound separately in Issue218 to this row and resulting registry commit; not source approval.",
+      "issuer_operation_id": "eaf3a49f-464e-41e7-843e-4e5f688ff28f",
+      "service_run_id": null,
+      "service_task_id": null,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "eaf3a49f-464e-41e7-843e-4e5f688ff28f",
+        "task_id": null,
+        "epoch": 677,
+        "acquired_at": "2026-11-23T05:03:04.717898+00:00",
+        "expires_at": "2026-11-23T05:33:04.717898+00:00",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller",
+        "acquire_commit": "78e79b54b8e0c9a1e27ea310bbcfd7adda64355c",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "expiry_policy": "Six hours from actual metadata transaction timestamp; expiration alone never grants takeover.",
+      "draft_only_not_issued": false,
+      "prep_ready": false,
+      "no_review_waiver": true,
+      "new_paths": [
+        "quality_gameplay/gq470_match_role_growth_20261123/README.md",
+        "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_match_role_growth_20261123.py",
+        ".github/workflows/gq470-match-role-growth.yml"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq470_match_role_growth_20261123/README.md",
+        "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json",
+        "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
+        "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_match_role_growth_20261123.py",
+        ".github/workflows/gq470-match-role-growth.yml"
+      ]
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
