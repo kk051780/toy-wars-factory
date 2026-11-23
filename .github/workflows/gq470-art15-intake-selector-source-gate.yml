@@ -1,0 +1,76 @@
+name: GQ470 ART15 exact-source intake selector gate (A only, not formal RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "tools/p0d_two_lane_queue.py"
+      - "tests/test_p0d_two_lane_queue.py"
+      - ".github/workflows/gq470-art15-intake-selector-source-gate.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+jobs:
+  source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout exact authored PR head (NOT canonical formal RC)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Native Python syntax and fail-closed regression tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/p0d_two_lane_queue.py tests/test_p0d_two_lane_queue.py
+          python3 -m unittest discover -s tests -p test_p0d_two_lane_queue.py -v
+      - name: Live READ-ONLY PR #966 ART15 source intake canary (no adoption)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -B tools/p0d_two_lane_queue.py --out /tmp/gq470_art15_real_queue.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path('/tmp/gq470_art15_real_queue.json').read_text())
+          assert d['no_auto_merge'] is True
+          assert d['studio_and_fun_not_inferred'] is True
+          assert d['next_owner']=='SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY'
+          if d['official_head']=='e80973c354f14a0d0088577f3cc1a875454f0f8f':
+              selected={y['pr']:y for y in d['selected']}
+              assert not (966 in selected and 970 in selected), 'RED_DUPLICATE_ART15_ART16_IN_INBOX'
+              if 970 in selected:
+                  item=selected[970]
+                  assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
+                  assert item['candidate_evidence_kind']=='ART16_SOURCE_ONLY_NOT_FORMAL'
+                  assert item['candidate_artifact_id']==14685047060
+                  covered=[z for z in d['all_labeled_candidates'] if z['pr']==966]
+                  assert len(covered)==1 and covered[0]['status']=='SUPERSEDED_SOURCE_COMPOSITE', covered
+                  assert 966 not in selected, 'RED_ART15_DOUBLE_SELECTED_WITH_ART16'
+                  print('GQ470_ART16_NEWEST_SOURCE_PACKET_DISCOVERED_NO_RC_WRITE',item['head'])
+              else:
+                  item=selected.get(966)
+                  assert item is not None, 'RED_NO_VERIFIED_ART_SOURCE_INBOX'
+                  assert item['status']=='READY_FOR_SOLE_WRITER_REVIEW', item
+                  assert item['candidate_evidence_kind']=='ART15_SOURCE_ONLY_NOT_FORMAL'
+                  assert item['candidate_artifact_id']==14682237123
+                  print('GQ470_ART15_FALLBACK_PENDING_ART16_MANIFEST_NO_RC_WRITE',item['head'])
+          else:
+              print('GQ470_ART15_CANARY_FORMAL_MOVED_REBASE_REQUIRED',d['official_head'])
+          PY
+      - name: Forbid formal/write APIs in this A selector patch
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          src = Path('tools/p0d_two_lane_queue.py').read_text(encoding='utf8')
+          assert 'def choose_latest(' in src
+          assert '"no_auto_merge": True' in src
+          assert '"SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY"' in src
+          assert 'urllib.request.Request(' in src
+          assert 'method="POST"' not in src and 'method="PATCH"' not in src
+          print('GQ470_ART15_SOURCE_REVIEW_ONLY_PASS; REAL_STUDIO_ART_NOT_TESTED')
+          PY
