@@ -20567,6 +20567,276 @@
       "rc_write_authorized_by_this_claim": false,
       "RC_adoption": false,
       "no_main_or_publish": true
+    },
+    {
+      "PREP_READY": false,
+      "acceptance": {
+        "SOURCE_PREP_only": true,
+        "actual_fixed_candidate_source_and_test_review_by_registered_context": true,
+        "bounded_same_cohort_yield_regression_required": true,
+        "engine_test_status": "NOT_TESTED unless separately executed and recorded",
+        "official_gameplay_adoption": false,
+        "preserve_original_repro_RED_and_existing_case_assertions": true,
+        "relevant_cleanup_epoch_roster_failure_boundaries_required": true,
+        "same_new_HEAD_CI_required": true
+      },
+      "allowed_new_prs": 0,
+      "android": "NOT_TESTED",
+      "art": "NO_GO",
+      "author_contexts": [
+        "CODEX_ROOT_BD769DA1E937:/root",
+        "CODEX_ROOT_BD769DA1E937:/root/planning_gap_audit"
+      ],
+      "authority_evidence": [
+        "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6886441650",
+        "https://github.com/kk051780/toy-wars-factory/issues/810",
+        "https://github.com/kk051780/toy-wars-factory/pull/807#issuecomment-6978214998",
+        "https://github.com/kk051780/toy-wars-factory/issues/802#issuecomment-6980357207",
+        "https://github.com/kk051780/toy-wars-factory/issues/1011"
+      ],
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "base_rc_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+      "baseline_synchronization": {
+        "after_source_write": "Read back both commit parents, source ancestry, complete tree delta versus fresh formal RC, mutable3 versus original7, frozen4 and complete actual PR changed-file list including old/renamed paths.",
+        "before_source_write": "Actual scope registration/readback and a distinct authentic source-branch lease are required.",
+        "cumulative_PR_delta_against_second_parent": "Exactly seven added regular files, all original paths; no other tree change.",
+        "first_parent": "Actual existing PR807 head, preserving all nineteen original source commits as ancestry.",
+        "first_parent_full_diff_note": "The first-parent diff may include upstream RC synchronization outside the seven paths. Those entries must exactly equal the second parent and are not additional authoring authority.",
+        "if_source_or_formal_ref_changes": "Stop publication, preserve intervening work, refresh preimages/scope base and independent review; never force-update an old source head.",
+        "no_force_rebase_or_history_rewrite": true,
+        "no_ours_merge_or_old_tree_overlay_outside_seven": true,
+        "nonforce_expected_source_HEAD_required": true,
+        "proposed_parent_order": [
+          "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68",
+          "93a1147561a531610ac1609ebc68cc0ecf546623"
+        ],
+        "second_parent": "Fresh official RC for exact source-base synchronization only; no official ref update.",
+        "semantic_delta_within_original_seven": "Exactly the three mutable paths or a reviewed subset; all original file types/modes preserved, four immutable files byte/Git-blob exact.",
+        "source_and_formal_refs_must_be_fresh_at_publication": true,
+        "tree_formula": "fresh official tree + original seven PR807 paths; only mutable3 may differ from original fe65; all other path/type/mode/blob entries equal the fresh official tree."
+      },
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/807",
+      "claim_id": "P0D-GQ802-DISPATCH-YIELD-20261123-BD769DA1",
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "b5d11129-6693-4487-b4fb-f2a547fcd62f",
+        "epoch": 666,
+        "acquire_commit": "15af4a86dca3716e4ed5d29aab5a0d8b54ad347c",
+        "acquired_at": "2026-11-23T03:34:34.100865+00:00",
+        "expires_at": "2026-11-23T04:04:34.100865+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "draft_only_not_issued": false,
+      "existing_feature_ids_preserved": [
+        "GQ802_MATCH_ROUTE_V1",
+        "GQ802_SKILL_MATCH_POLICY_V1"
+      ],
+      "expires_at": "2026-11-23T09:34:47.310000+00:00",
+      "feature_id": "GQ802_MATCH_ROUTE_V1",
+      "forbidden_changes": [
+        "New PR or parallel matchmaking/teleport producer",
+        "Canonical shared6 or Game/Host/Lobby/Combat/Realm/HP/Score/Store/Remote/runtime-selection wiring",
+        "Semantic changes outside the exact mutable3",
+        "Changes to the four frozen original files, including the dedicated CI workflow",
+        "RC/main ref write, Roblox Publish, spending, production or live Teleport operation"
+      ],
+      "fun": "NOT_TESTED",
+      "if_matching_BUSY_owner_appears": "Join or explicit coordinated handoff only; expiry or absent row never grants takeover.",
+      "immutable_historical_files": {
+        ".github/workflows/gq802-skill-match.yml": {
+          "bytes": 2784,
+          "git_blob": "453259db92ef198de068459f3d5478d3f8a38b96",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "eb823a6202e917f912adb3e00820a6ec6e6d97f236df1f9dee0ea05715658d3a",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau": {
+          "bytes": 5725,
+          "git_blob": "4e4171006ac5982958841417817bfb56b40d3e2f",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "4004480d07658019be2666b563d8ab3bd49fa7c84f13fd70d9b6c4dbdbb05ec7",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/README.md": {
+          "bytes": 1910,
+          "git_blob": "d38f1df2119ac8c2ff3e4edb3232710e0b8915f8",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "474bd445f68cd5aadf4c9aa11768bca25cb4fd0eceddd891fcc106a9f327ca42",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/test_skill_match_native.luau": {
+          "bytes": 2864,
+          "git_blob": "6570ed387584d235dae9d8bdf43385b0ddc6f8a1",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "5c2461b39db52284298ca9bdd2ba8b2d11535c9724893ebee96231c48381b9bc",
+          "type": "blob"
+        }
+      },
+      "independent_review_status": "LOCAL_SOURCE_AND_TEST_REVIEW_EXISTS; REGISTERED_FIXED_HEAD_SOURCE_APPROVAL_PENDING",
+      "independent_reviewer_context": "CODEX_ROOT_BD769DA1E937:/root/integration_route",
+      "integration_issue": 220,
+      "issued_at": "2026-11-23T03:34:47.310000+00:00",
+      "issuer": "kk051780",
+      "issuer_operation_id": "b5d11129-6693-4487-b4fb-f2a547fcd62f",
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_user_id": 233213370,
+      "local_candidate_independent_review_reference": {
+        "bytes": 3567,
+        "path": "/workspace/scratch/bd769da1e937/p0_audit/pr807_scope_prep/LOCAL_CANDIDATE_REVIEW_REFERENCE.json",
+        "sha256": "9e95a6fdf5496ffa61dc34dd0734b78c415872cd371137ae5edf3e30ade107c5"
+      },
+      "mutable_paths": [
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau",
+        "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau",
+        "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md"
+      ],
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "original_lineage": {
+        "all_original_history_preserved": true,
+        "handoff": "https://github.com/kk051780/toy-wars-factory/issues/802#issuecomment-6980357207",
+        "head": "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68",
+        "no_ACK_text_is_grant": false,
+        "no_personal_author_ACK_wait": true,
+        "original_pr_commits": 19,
+        "published_account": "kk051780",
+        "specific_original_chat_context": "UNKNOWN_FROM_SHARED_ACCOUNT_HISTORY",
+        "tree": "54f0e699e675c8105a0bbae21516dec99b49b054"
+      },
+      "owner": "CODEX_ROOT_BD769DA1E937",
+      "parent_issue": 802,
+      "pr": 807,
+      "prep_branch": "quality/gq802-skill-match-policy-20261118",
+      "preserved": [
+        "Original policy and original Native case predicates",
+        "Default OFF, optional same-lobby scope and unconnected current Host boundary",
+        "Mandatory Host epoch validation and server-owned arrival-ticket checks",
+        "Same reserved-ID retry and bounded fallback",
+        "Current official tree outside original7, including canonical UNION22 shared6 and both runtime profiles"
+      ],
+      "preserved_pr_diff_preimages": {
+        ".github/workflows/gq802-skill-match.yml": {
+          "bytes": 2784,
+          "git_blob": "453259db92ef198de068459f3d5478d3f8a38b96",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "eb823a6202e917f912adb3e00820a6ec6e6d97f236df1f9dee0ea05715658d3a",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau": {
+          "bytes": 10381,
+          "git_blob": "3d508bef4052ac4f363dab39cc3a0b5afacbb0b7",
+          "mode": "100644",
+          "scope": "MUTABLE_SEMANTIC_REPAIR",
+          "sha256": "dd6aef72ca260031ddd203df6a2a72346306e767df34d5b86b5eca0e01562530",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau": {
+          "bytes": 5725,
+          "git_blob": "4e4171006ac5982958841417817bfb56b40d3e2f",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "4004480d07658019be2666b563d8ab3bd49fa7c84f13fd70d9b6c4dbdbb05ec7",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md": {
+          "bytes": 1768,
+          "git_blob": "607fc661f53d160797fd88ed8d8f128776d021d9",
+          "mode": "100644",
+          "scope": "MUTABLE_SEMANTIC_REPAIR",
+          "sha256": "9af3b025745d9729a14b432c661e6a9413a19a59cebf27304da038ceaff4b0a5",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/README.md": {
+          "bytes": 1910,
+          "git_blob": "d38f1df2119ac8c2ff3e4edb3232710e0b8915f8",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "474bd445f68cd5aadf4c9aa11768bca25cb4fd0eceddd891fcc106a9f327ca42",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau": {
+          "bytes": 6459,
+          "git_blob": "91028632fceec2c05076797fdd230c1ccd2112fc",
+          "mode": "100644",
+          "scope": "MUTABLE_SEMANTIC_REPAIR",
+          "sha256": "f327d38c24d8d2d135e714a6685b341aaf6b1c2e778ca98b7a0dbed25222b955",
+          "type": "blob"
+        },
+        "quality_gameplay/gq802_skill_match_20261118/test_skill_match_native.luau": {
+          "bytes": 2864,
+          "git_blob": "6570ed387584d235dae9d8bdf43385b0ddc6f8a1",
+          "mode": "100644",
+          "scope": "IMMUTABLE_CARRY_FROM_FE65",
+          "sha256": "5c2461b39db52284298ca9bdd2ba8b2d11535c9724893ebee96231c48381b9bc",
+          "type": "blob"
+        }
+      },
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "registered_source_approval": false,
+      "request_comment": 7088282430,
+      "resources": [
+        "GQ802_MATCH_ROUTE_V1",
+        "GQ802_SKILL_MATCH_POLICY_V1"
+      ],
+      "role": "A_PREP",
+      "rollback": "A subsequent nonforce inverse source commit restores only the three semantic files to the original fe65 blobs while retaining the synchronized official tree and frozen4. Do not reset/rewrite source history. The optional bridge remains unwired/OFF; no official runtime is changed by this scope.",
+      "scope": "Continue the original PR807 and branch. Repair the existing Bridge pending-cohort race across service yields, extend the original teleport Native test without weakening original assertions, and update only MATCH_TELEPORT_LIVE_README for the concrete repair and truthful API/test limitations. Preserve the original matching policy, skill test, generic README and dedicated workflow exactly. No new producer or Host/RC wiring.",
+      "scope_review_context": "CODEX_ROOT_BD769DA1E937:/root/p0_reuse_audit",
+      "scope_review_is_code_approval": false,
+      "source_author_context": "CODEX_ROOT_BD769DA1E937:/root",
+      "source_head": null,
+      "source_head_before": "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68",
+      "source_increment_validation": {
+        "actual_new_HEAD_native_CI_and_independent_review_required": true,
+        "all_seven_original_path_type_mode_preserved": true,
+        "allowed_semantic_changed_paths": [
+          "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau",
+          "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau",
+          "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md"
+        ],
+        "changed_paths_API_must_include_previous_filename": true,
+        "complete_formal_comparison_base": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "cumulative_pr_changed_paths": [
+          ".github/workflows/gq802-skill-match.yml",
+          "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau",
+          "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau",
+          "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md",
+          "quality_gameplay/gq802_skill_match_20261118/README.md",
+          "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau",
+          "quality_gameplay/gq802_skill_match_20261118/test_skill_match_native.luau"
+        ],
+        "frozen_four_path_type_mode_blob_exact": true,
+        "no_add_delete_rename_copy_or_type_mode_change_within_original_seven": true,
+        "old_fe65_CI_is_history_not_new_HEAD_acceptance": true,
+        "original_seven_comparison_base": "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68"
+      },
+      "source_scope_granted": true,
+      "source_tree": null,
+      "state": "GRANTED",
+      "studio": "NOT_TESTED",
+      "sub_scope": "Existing PR807 same-lobby same-cohort exclusion across a yielding MemoryStore claim; optional standalone source PREP only.",
+      "target_paths": [
+        ".github/workflows/gq802-skill-match.yml",
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau",
+        "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau",
+        "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md",
+        "quality_gameplay/gq802_skill_match_20261118/README.md",
+        "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau",
+        "quality_gameplay/gq802_skill_match_20261118/test_skill_match_native.luau"
+      ],
+      "target_paths_semantics": "Cumulative existing PR envelope7 after base synchronization. Only mutable_paths3 receive semantic edits. Frozen4 are exact immutable carry, not four extra mutable authoring paths. No wildcard permissions.",
+      "test_author_context": "CODEX_ROOT_BD769DA1E937:/root/planning_gap_audit",
+      "grant_scope_version": 1,
+      "expiry_policy": "Actual issued_at +6h; expired reservation is not automatic handoff.",
+      "source_writes_permitted_at_issuance": false,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "source_write_requires_separate_live_source_lease": true
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
