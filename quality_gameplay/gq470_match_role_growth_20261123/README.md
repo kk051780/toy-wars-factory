@@ -20,7 +20,7 @@
 
 ## 入力・差分・権限の境界
 
-正式入力はRC `93a1147561a531610ac1609ebc68cc0ecf546623`、成功run `45106580546`、artifact `14787568439` です。ZIP、project、69ソース全体を固定しています。変更はSwarmCombat、HeroSilhouetteArt、HudIntelRuntime、MatchResultServiceの4本、残り65本はバイト一致します。
+固定する過去の正式入力はRC `93a1147561a531610ac1609ebc68cc0ecf546623`、成功run `45106580546`、artifact `14787568439` です。ZIP、project、69ソース全体を固定しています。変更はSwarmCombat、HeroSilhouetteArt、HudIntelRuntime、MatchResultServiceの4本、残り65本はバイト一致します。
 
 登録claimは `P0D-GQ033-MATCH-GROWTH-20261123-817BC984`、registry commit `30baf9dcad1eb86b34a06a3eb050eba9a0e11c8e` です。9個の追加repository pathと4個の生成sourceだけが対象です。作者は別の実SOURCE lease epoch679を取得して作成しています。これらの記録は作成時の来歴であり、期限後の書込み権限を与えません。登録・lease・ローカル試験は独立SOURCE承認やRC書込み許可の代わりにはなりません。
 
@@ -39,15 +39,27 @@ python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py \
 
 | 検証 | 実行内容と合格条件 |
 |---|---|
-| 入力の拒否・復元 | 実H93を使う8試験。同classのInstance間でSourceを交換したPlaceも拒否する。改変Host、改変対象source、余分なsource、symlink、既存出力、重なり、改変project、二重適用を拒否し、全文逆適用を確認 |
-| 既存回帰 | 元の固定combined10件とobjective7件をH93・ON・OFFで全実行。旧fixture、旧case、旧lockは編集しない |
+| 入力の拒否・復元 | 実H93を使う10試験。source root自体のsymlinkと、入力sourceの別名へ向けた出力も、書込み前に拒否する。同classのInstance間でSourceを交換したPlaceも拒否する。改変Host、改変対象source、余分なsource、symlink、既存出力、重なり、改変project、二重適用を拒否し、全文逆適用を確認 |
+| 既存回帰 | 元の固定combined10件とobjective7件を、H93の元4fixtureで2実行し、追加SERVER_ENGINE境界のH93/ON/OFFで6実行する。計8プログラム・68 CASE。追加境界でも元case全文と実28 bodyを使い、旧fixture・case・lockは編集しない |
 | server | 28個の完全な実body。16固定経路でKO閾値・25KO旧Lv・重複Died・真の致死通知の終了後配送・旧Player/旧試合・実Host respawn・Immediate/DeferredのDestroy/detach/reattach/abandon・偽Player/観戦者を検証 |
-| AI補助 | ONだけ30個の完全な実body。BotPathRouter/BotActorsを追加し、実初期AI・実退出takeover・元loopからの中立KOと元得点、同UserId新Playerへの書込み0を確認 |
+| AI補助 | ONだけ30個の完全な実body。BotPathRouter/BotActorsを追加し、実初期AI・実退出takeover・元loopからの中立KOと元得点、同UserId新Playerへの書込み0を確認。seed11を実body読込前に固定し、製品と同じLOS条件で4方向×3studの接近候補を調べる。全候補blockedは失敗する |
 | UI | 31個の完全な実body。固定194期待値・12 CASEのID/順序/statusとNative exitをすべて照合。7役職、14画面、Head交換、隠密、帰還、退出、結果、callback数を確認 |
 | 負例 | H93とOFFも同じcandidate-green UI条件で実行。82 RED /106 NOT_REACHED /6既存PASS、最終CASE FAIL、Native exit1と正確な失敗理由が必要。serverはON16経路、H93/OFFは各1経路で実開始時の欠落を確認。H93/OFFの残り15経路は同じ初期欠落で停止するため本CIの実行対象・合格件数へ含めない |
 | compile・Rojo | H93/ON/OFFの69本を各compile。固定Rojo7.7.1で3 Placeを構築し、69 embedded source bytesと75 instanceの非Source構造を検査。OFF/H93 Placeは元artifactの828,658 bytesとSHAまで完全一致 |
 
+固定実行数は旧回帰8＋server19（H93=1、ON=17、OFF=1）＋UI3の計30 Nativeプログラムです。Replの新規buildが成功した直後にbuild receiptを保存するため、後続の失敗時にもビルド成功と試験失敗を別々に追跡できます。全試験後のbinary不変確認は、全必須検査が終わった場合だけ記録します。
+
 各Nativeプログラムのbody全byte範囲、実行binary、全source、固定case、stdout/stderr、終了コードと最終HEADをreceiptへ記録します。実repositoryがcleanかつ指定HEADと一致することを開始前と終了後に検査します。候補は新S1A契約で審査し、改変したsourceが過去の未変更source契約を通ったとは記録しません。
+
+## 保守修正の来歴と試験起動
+
+同PR #1028の保守取込みは、registry `ba990f45b28d2a03f5b56a185f1aeb48ae99f743` で元9 paths／4 resourcesの範囲に登録しました。metadata688は本人正常返却済みで、実装には別SOURCE689を取得しています。この記録はその実作業の来歴であり、期限後の書込み権限ではありません。H93を固定入力とする候補で、進行中の正式RCへの再結合・採用を示しません。
+
+- [3BEの提案7093566582](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093566582)から、既存safe_root呼出し1行と2拒否試験を再利用しました。実作者は `CODEX_ROOT_3BE5DD5649C8:/root/planning_candidate` です。
+- [9DBCの提案7093568289](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093568289)から有限LOS helperと呼出し置換を再利用しました。公開提案者は `CODEX_ROOT_9DBC77FA535A`、実コード作者のcontextは未明示です。seed11の固定は当817の追加で、元提案の作者へ帰属させていません。
+- unittest discoveryで `GQ470_H93_ARTIFACT` が存在しない場合だけ、実artifact未提供を明示する `NOT_RUN` skipにします。空文字・空白・不正なpath・改変入力は失敗です。ファイルの直接実行では未指定も失敗し、専用workflowでは実artifactを指定して全10試験を実行します。
+
+この段階はCI起動・入力保護・再現性の修復です。既知の退場後の役職装飾再生成は、[3575の2guard提案7093711079](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093711079)とUI受入の次段で修復します。[19943の札配置案7093537940](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093537940)は75°/Combo条件で重なりが悪化したためREWORKとし、今回のsource配置を変えていません。
 
 ## 残る確認と非対象
 

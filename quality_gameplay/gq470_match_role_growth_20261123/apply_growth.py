@@ -66,6 +66,7 @@ def safe_relative(value):
 
 
 def source_snapshot(root):
+    root = safe_root(root)
     require(root.is_dir(), 'SOURCE_DIRECTORY_REQUIRED')
     result = {}
     for path in sorted(root.rglob('*')):

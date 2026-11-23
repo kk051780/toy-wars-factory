@@ -19,7 +19,9 @@ class ExactCandidateInput(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         value = os.environ.get('GQ470_H93_ARTIFACT')
-        if not value:
+        if value is None:
+            raise unittest.SkipTest('NOT_RUN: GQ470_H93_ARTIFACT is unset; genuine H93 artifact tests were not run')
+        if not value.strip():
             raise RuntimeError('GQ470_H93_ARTIFACT must name the actual pinned H93 artifact; no synthetic fallback')
         cls.baseline = Path(value).resolve()
         cls.lock, cls.patch = patcher.load_contract()
@@ -88,6 +90,47 @@ class ExactCandidateInput(unittest.TestCase):
             patcher.apply(source, self.root / 'output')
         self.assertFalse((self.root / 'output').exists())
 
+    def test_sources_root_symlink_rejected_before_output(self):
+        source = self.root / 'input'
+        source.mkdir()
+        donor = self.root / 'donor_sources'
+        shutil.copytree(self.baseline / 'sources', donor)
+        (source / 'sources').symlink_to(donor, target_is_directory=True)
+        shutil.copyfile(self.baseline / patcher.PROJECT, source / patcher.PROJECT)
+        before = patcher.source_snapshot(donor)
+        output = self.root / 'output'
+        error = None
+        try:
+            patcher.apply(source, output)
+        except ValueError as exc:
+            error = str(exc)
+        self.assertEqual(patcher.source_snapshot(donor), before)
+        self.assertFalse(output.exists(), 'linked sources root must be rejected before writes')
+        self.assertIsNotNone(error)
+        self.assertIn('SYMLINK_ROOT', error)
+
+    def test_sources_alias_output_overlap_rejected_before_input_mutation(self):
+        source = self.root / 'input'
+        source.mkdir()
+        donor = self.root / 'donor_sources'
+        shutil.copytree(self.baseline / 'sources', donor)
+        (source / 'sources').symlink_to(donor, target_is_directory=True)
+        shutil.copyfile(self.baseline / patcher.PROJECT, source / patcher.PROJECT)
+        def raw_snapshot():
+            return {path.relative_to(donor).as_posix(): path.read_bytes()
+                    for path in donor.rglob('*') if path.is_file()}
+        before = raw_snapshot()
+        output = donor / 'nested_output'
+        error = None
+        try:
+            patcher.apply(source, output)
+        except ValueError as exc:
+            error = str(exc)
+        self.assertTrue(raw_snapshot() == before, 'read-only input tree was changed')
+        self.assertFalse(output.exists(), 'aliased overlap must be rejected before writes')
+        self.assertIsNotNone(error)
+        self.assertIn('SYMLINK_ROOT', error)
+
     def test_nested_output_and_changed_project_are_rejected(self):
         source = self.copy_input()
         with self.assertRaisesRegex(ValueError, 'OVERLAPPING_INPUT_OUTPUT'):
@@ -124,4 +167,7 @@ class ExactCandidateInput(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    value = os.environ.get('GQ470_H93_ARTIFACT')
+    if value is None or not value.strip():
+        raise RuntimeError('GQ470_H93_ARTIFACT must name the actual pinned H93 artifact; no synthetic fallback')
     unittest.main(verbosity=2)

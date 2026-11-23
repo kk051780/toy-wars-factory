@@ -1,8 +1,8 @@
 {
   "schema": "GQ470_S1A_FIXED_NATIVE_ON_H93_OFF_V1",
   "case_pack": {
-    "bytes": 103941,
-    "sha256": "ee412134933d2e2e130b35d10b305191c2813a3f4830cd08214629732d378472"
+    "bytes": 104915,
+    "sha256": "2bb7f41f92dfac8b724707008d57b4e1e33528de40abafbf94c54ee507405747"
   },
   "sections": {
     "SERVER_ENGINE": {
@@ -34,18 +34,18 @@
       "sha256": "8ba1243bd88a38f6786ed07ac5df5cc77bc387e9475013c42a6f2b434b8aa28c"
     },
     "AI_ENGINE": {
-      "bytes": 1465,
-      "sha256": "4886890b9bd0b2e583f4e13921ee8ba3d38a6a3c7dcaaac242b5cb229eea9021"
+      "bytes": 1574,
+      "sha256": "5531f9af7bb14f5385b9c88f908fc23bb6d9d391204e560333acdabe3ec9bbc1"
     },
     "AI_CASES": {
-      "bytes": 6850,
-      "sha256": "436776c8f1a9e9d071871b7c2a152086f0ccac031b2e398df6530db48881a3e2"
+      "bytes": 7715,
+      "sha256": "1d031a44c587a07d8e6c52e5db8e2c52d0b08f264b787d07edceabf743b1b8d0"
     }
   },
   "repository_inputs": {
     "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py": {
-      "bytes": 8355,
-      "sha256": "654b9ea9cd456a2be621335cb35cbae634a0f3d7f7151a34d4aa229cc5619553"
+      "bytes": 8382,
+      "sha256": "d32f24c000cfd13d7cedae85aa0d40aaf9b4aefd6909634a27658354cb12bde7"
     },
     "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json": {
       "bytes": 24688,
@@ -2088,8 +2088,9 @@
     "Historical UNION22 locks/fixtures are unchanged; candidate passes this separate S1A contract, not the historical unchanged-source profile.",
     "Passing source/Native/Rojo does not grant PREP_READY, canonical intake, RC writes, Studio approval, Android approval, ART_GO or FUN acceptance.",
     "Active runtime remains rich51; private companionREAL69_UNION22; RUNTIME_UNIFIED=NO.",
-    "The fixed core server matrix is ON16 plus a separate ON AI30 supplement, H93 one start-missing-B negative, OFF the same one negative. Later H93/OFF server routes stop at that same missing start publication and are not separately claimed by this CI gate. UI194 and legacy17 execute on each of all three profiles.",
-    "Separate ON AI supplement executes30 full bodies, adding original BotPathRouter and BotActors before Host. Real start/takeover/loop/damageFromBot/neutralDied/ScoreBalance are exercised. PathfindingService is explicitly unavailable; actual bot loop is parked/resumed at scheduler boundary one tick at a time. An observer forwards the actual API unchanged. This does not establish live AI navigation/physics/network performance."
+    "The fixed core server matrix is ON16 plus a separate ON AI30 supplement, H93 one start-missing-B negative, OFF the same one negative. Later H93/OFF server routes stop at that same missing start publication and are not separately claimed by this CI gate. UI194 executes on each of all three profiles. The unchanged combined10/objective7 cases execute in H93 original fixtures and H93/ON/OFF extended SERVER_ENGINE boundaries:8 distinct programs and68 CASE executions.",
+    "Separate ON AI supplement executes30 full bodies, adding original BotPathRouter and BotActors before Host. Real start/takeover/loop/damageFromBot/neutralDied/ScoreBalance are exercised. PathfindingService is explicitly unavailable; actual bot loop is parked/resumed at scheduler boundary one tick at a time. An observer forwards the actual API unchanged. This does not establish live AI navigation/physics/network performance.",
+    "AI_ENGINE fixes seed11 before actual production bodies. The AI approach checks four finite three-stud offsets with the unchanged production LOS query semantics; all blocked is a hard failure. This does not make fixture movement evidence of live navigation."
   ],
   "server_profiles": {
     "H93": [
@@ -2116,6 +2117,18 @@
     ],
     "OFF": [
       "progression_and_legacy"
+    ]
+  },
+  "legacy_profiles": {
+    "H93": [
+      "original_fixtures",
+      "extended_engine"
+    ],
+    "ON": [
+      "extended_engine"
+    ],
+    "OFF": [
+      "extended_engine"
     ]
   }
 }

@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 REPO = PACKAGE.parents[1]
 FROZEN = REPO / 'quality_gameplay/gq470_union22_real69_20261122/native'
-INPUT_LOCK_SHA256 = 'b4157db7865fdc68756d64e58393be0c7c2ed2f88159026fa39a8664eaa5f533'
+INPUT_LOCK_SHA256 = '9d842a8ec23b48b00e0065f7789458180fd252005bfcb7fbca7ab851eeb1f20b'
 PACKAGE_PREFIX = 'quality_gameplay/gq470_match_role_growth_20261123/'
 NEW_PATHS = [PACKAGE_PREFIX + path for path in (
     'README.md', 'growth_patch.json', 'source_lock.json', 'apply_growth.py',
@@ -64,6 +64,10 @@ def load_inputs():
     require(identity(raw)['sha256'] == INPUT_LOCK_SHA256, 'NATIVE_LOCK_CHANGED')
     contract = apply_source.unique_json(raw)
     require(contract['schema'] == 'GQ470_S1A_FIXED_NATIVE_ON_H93_OFF_V1', 'NATIVE_SCHEMA')
+    require(contract['legacy_profiles'] == {
+        'H93': ['original_fixtures', 'extended_engine'],
+        'ON': ['extended_engine'], 'OFF': ['extended_engine'],
+    }, 'EXACT_LEGACY_ENGINE_MATRIX')
     for relative, pin in contract['repository_inputs'].items():
         apply_source.safe_relative(relative)
         require(identity(read(REPO / relative)) == pin, 'REPOSITORY_INPUT_CHANGED:' + relative)
@@ -402,15 +406,24 @@ def main():
     try:
         binary, built, toolchain_tree = frozen.build_repl(args.luau_source, args.build_dir, args.out, old,
             args.cmake, args.ninja, args.git, args.cc, args.cxx)
+        built['execution_context'] = {'source_candidate_head': args.head, 'formal_rc': apply_source.BASE_RC, 'candidate_only': True}
+        write_json(args.out / 'build_receipt.json', built)
         pin = built['binary_before_suites']
         suites = {}
         for label, root in inputs.items():
             sources = root / 'sources'
-            for old_name, spec in old['suites'].items():
-                program, ranges, bodies = frozen.assemble(sources, old, old_name)
-                name = label + '_legacy_' + old_name
-                expected = {'exit': 0, 'cases': [[case, 'PASS'] for case in spec['expected_case_names']]}
-                suites[name] = run_fixed(name, program, ranges, bodies, binary, pin, sources, expected, args.out, frozen, old, before[label])
+            for boundary in contract['legacy_profiles'][label]:
+                for old_name, spec in old['suites'].items():
+                    if boundary == 'original_fixtures':
+                        program, ranges, bodies = frozen.assemble(sources, old, old_name)
+                    else:
+                        legacy_sections = dict(sections)
+                        legacy_sections['LEGACY_CASES'] = read(FROZEN / old['case_files'][old_name])
+                        program, ranges, bodies = server_program(frozen, old, legacy_sections, b'',
+                            sources, 'legacy_' + old_name, case_section='LEGACY_CASES')
+                    name = label + '_legacy_' + boundary + '_' + old_name
+                    expected = {'exit': 0, 'cases': [[case, 'PASS'] for case in spec['expected_case_names']]}
+                    suites[name] = run_fixed(name, program, ranges, bodies, binary, pin, sources, expected, args.out, frozen, old, before[label])
             for variant in contract['server_profiles'][label]:
                 spec = contract['server_variants'][variant]
                 program, ranges, bodies = server_program(frozen, old, sections, helpers, sources, variant,
@@ -458,7 +471,6 @@ def main():
         load_inputs()
         require(repository_snapshot(frozen, args.git, args.head, contract) == repository_before, 'REPO_CHANGED_DURING_GATE')
         built['binary_after_suites'] = pin
-        built['execution_context'] = {'source_candidate_head': args.head, 'formal_rc': apply_source.BASE_RC, 'candidate_only': True}
         write_json(args.out / 'build_receipt.json', built)
         write_json(args.out / 'compile_receipt.json', {'compiler': compiler_pin, 'build': compile_command, 'profiles': compilation})
         receipt = {
@@ -472,6 +484,7 @@ def main():
             'source_profiles': before, 'source_inputs_unchanged': True,
             'repository_files_bound_to_head': repository_before,
             'server_execution_matrix': contract['server_profiles'],
+            'legacy_execution_matrix': contract['legacy_profiles'],
             'original_contracts_modified': False, 'new_candidate_contract': True,
             'active_runtime': 'rich51', 'private_companion': 'REAL69_UNION22', 'runtime_unified': False,
             'PREP_READY': False, 'rc_write_authorized': False, 'formal_rc_adoption': False,

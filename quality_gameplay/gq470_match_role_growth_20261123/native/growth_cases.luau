@@ -1821,6 +1821,8 @@ print('METRIC\tretired_player_hero_connections\t'..UIExpect.retiredHeroLive)
 if not ok then error(result,0)end
 -- GQ470_SECTION_END UI_CASES
 -- GQ470_SECTION_BEGIN AI_ENGINE
+-- Fixed seed 11 preserves the known original -Z LOS failure; no passing-seed selection.
+math.randomseed(11)
 -- Supplementary declared 30-body suite only; not part of frozen server28/UI31.
 -- Real BotActors/Router load. Pathfinding engine availability is explicitly absent.
 local growthAi={jobs={},hits={}}
@@ -1868,6 +1870,28 @@ local function aiRow(session,id,kills)
  end
  error('actual score row absent '..id,0)
 end
+local function botNeutralApproach(actor,target,position)
+ -- This positive KO case requires a clear, three-stud attack approach.
+ -- Use the same collision query as the unchanged Swarm source; a blocked
+ -- ray remains blocked, and all four blocked directions fail the fixture.
+ local params=RaycastParams.new()
+ params.FilterType=Enum.RaycastFilterType.Exclude
+ params.FilterDescendantsInstances={actor,target}
+ params.RespectCanCollide=true
+ for index,offset in ipairs({
+  Vector3.new(0,0,-3),Vector3.new(0,0,3),
+  Vector3.new(-3,0,0),Vector3.new(3,0,0),
+ })do
+  local at=position+offset
+  local origin=at+Vector3.new(0,1,0)
+  local delta=(position+Vector3.new(0,1,0))-origin
+  if workspace:Raycast(origin,delta,params)==nil then
+   print('TRACE\tBOT_NEUTRAL_APPROACH\t'..index)
+   return CFrame.lookAt(at,position)
+  end
+ end
+ error('NO_CLEAR_BOT_NEUTRAL_APPROACH',0)
+end
 local function botOneKO(session,id,job)
  local target=spawnCurrentNeutral(session)
  local human=target:FindFirstChildOfClass('Humanoid')
@@ -1893,7 +1917,7 @@ local function botOneKO(session,id,job)
    other:PivotTo(CFrame.new(floor.Position+Vector3.new(floor.Size.X+2000+serial*10,20,floor.Size.Z+2000)))
   end
  end
- actor:PivotTo(CFrame.lookAt(position-Vector3.new(0,0,3),position))
+ actor:PivotTo(botNeutralApproach(actor,target,position))
  growthAi.tick(job)
  equal(human.Health,0,'actual BotActors loop -> full Swarm damage -> real neutral death')
  local genuineVictims=0
