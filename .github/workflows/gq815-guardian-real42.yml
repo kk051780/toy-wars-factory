@@ -444,3 +444,187 @@ jobs:
             artifacts/guardian_role_los_rojo/
           if-no-files-found: error
           retention-days: 7
+  current69-role-los-stealth-target:
+    name: Pinned H93 Guardian role200 plus stealth294 source validation (not RC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify candidate, immutable H93 artifact, and preserved prior workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          mkdir -p artifacts/guardian_stealth_input
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" > artifacts/guardian_stealth_input/latest_rc.json
+          test "$(gh run view 45106580546 --repo "$GITHUB_REPOSITORY" --json headSha,status,conclusion --jq '.headSha+" "+.status+" "+.conclusion')" = '93a1147561a531610ac1609ebc68cc0ecf546623 completed success'
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439" > artifacts/guardian_stealth_input/artifact.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439/zip" > artifacts/guardian_stealth_input/input.zip
+          python3 - <<'PY'
+          import hashlib,json,stat
+          from pathlib import Path,PurePosixPath
+          from zipfile import ZipFile
+          root=Path('artifacts/guardian_stealth_input')
+          meta=json.loads((root/'artifact.json').read_text())
+          assert meta['id']==14787568439 and meta['expired'] is False
+          assert meta['name']=='P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO'
+          assert meta['workflow_run']['id']==45106580546
+          assert meta['workflow_run']['head_sha']=='93a1147561a531610ac1609ebc68cc0ecf546623'
+          raw=(root/'input.zip').read_bytes()
+          assert len(raw)==5840240 and hashlib.sha256(raw).hexdigest()=='1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d'
+          workflow=Path('.github/workflows/gq815-guardian-real42.yml').read_bytes()
+          assert hashlib.sha256(workflow[:27807]).hexdigest()=='7229e7b50cbdd7b0d6956a0e4326b095a982d81035768da076d1b317ca20b44f'
+          destination=root/'original';destination.mkdir()
+          with ZipFile(root/'input.zip') as archive:
+              names=archive.namelist();assert len(names)==len(set(names))
+              for entry in archive.infolist():
+                  path=PurePosixPath(entry.filename)
+                  assert not path.is_absolute() and '..' not in path.parts and '\\' not in entry.filename
+                  assert not stat.S_ISLNK(entry.external_attr>>16)
+              assert archive.testzip() is None
+              archive.extractall(destination)
+          print('PINNED_H93_INPUT_VERIFIED_NOT_A_LIVE_RC_ACCEPTANCE')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: 93a1147561a531610ac1609ebc68cc0ecf546623
+          path: _guardian_stealth_h93
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _guardian_stealth_luau
+          persist-credentials: false
+      - name: Fresh F46 build and frozen thirteen-scenario source matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          LATEST_RC="$(python3 -c 'import json;print(json.load(open("artifacts/guardian_stealth_input/latest_rc.json"))["object"]["sha"])')"
+          python3 -B quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/run.py \
+            --sources "$GITHUB_WORKSPACE/artifacts/guardian_stealth_input/original/sources" \
+            --rc-root "$GITHUB_WORKSPACE/_guardian_stealth_h93" \
+            --luau-source "$GITHUB_WORKSPACE/_guardian_stealth_luau" \
+            --build-dir "$RUNNER_TEMP/gq815-stealth-f46" \
+            --output "$RUNNER_TEMP/gq815-stealth-native" \
+            --latest-rc-head "$LATEST_RC" \
+            --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
+            --git "$(command -v git)" --cc "$(command -v cc)" --cxx "$(command -v c++)"
+      - name: Preserve Native success or failure evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d "$RUNNER_TEMP/gq815-stealth-native" ]; then
+            cp -a "$RUNNER_TEMP/gq815-stealth-native" "$GITHUB_WORKSPACE/artifacts/guardian_stealth_native"
+          fi
+      - name: Compile all sixty-nine input sources and three distinct Guardian variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build "$RUNNER_TEMP/gq815-stealth-f46" --target Luau.Compile.CLI --parallel 2
+          python3 - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          native=Path('artifacts/guardian_stealth_native')
+          compiler=Path(os.environ['RUNNER_TEMP'])/'gq815-stealth-f46/luau-compile'
+          source=Path('artifacts/guardian_stealth_input/original/sources')
+          files=[(p.relative_to(source).as_posix(),p) for p in sorted(source.rglob('*.luau'))]
+          assert len(files)==69
+          files += [(name,native/name) for name in ('candidate_h93_guardian.luau','candidate_pr796_guardian.luau','restored_pr796_guardian.luau')]
+          logs=native/'compile_logs';logs.mkdir()
+          records=[]
+          for index,(label,path) in enumerate(files):
+              raw=path.read_bytes()
+              result=subprocess.run([str(compiler),'--null',str(path)],capture_output=True,timeout=60)
+              (logs/(str(index)+'.stdout')).write_bytes(result.stdout)
+              (logs/(str(index)+'.stderr')).write_bytes(result.stderr)
+              records.append({'path':label,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'exit':result.returncode})
+          receipt={'physical_compile_invocations':len(records),'input_source_count':69,'additional_distinct_guardian_bodies':3,
+            'compiler_sha256':hashlib.sha256(compiler.read_bytes()).hexdigest(),'results':records}
+          (native/'COMPILE.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          assert len(records)==72 and all(row['exit']==0 for row in records)
+          print('BASELINE69_PLUS_THREE_DISTINCT_GUARDIAN_COMPILES_PASS')
+          PY
+      - name: Rojo exact69 source and class with both historical inverses
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$RUNNER_TEMP/gq815-stealth-rojo.zip"
+          python3 - <<'PY'
+          import hashlib,json,os,shutil,subprocess
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          from zipfile import ZipFile
+          temporary=Path(os.environ['RUNNER_TEMP'])
+          archive_path=temporary/'gq815-stealth-rojo.zip'
+          assert hashlib.sha256(archive_path.read_bytes()).hexdigest()=='00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4'
+          with ZipFile(archive_path) as archive:
+              names=[n for n in archive.namelist() if n.split('/')[-1]=='rojo'];assert len(names)==1
+              rojo=temporary/'gq815-stealth-rojo';rojo.write_bytes(archive.read(names[0]));rojo.chmod(0o755)
+          original=Path('artifacts/guardian_stealth_input/original')
+          native=Path('artifacts/guardian_stealth_native')
+          output=Path('artifacts/guardian_stealth_rojo');output.mkdir()
+          rel='ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau'
+          expected={
+            'baseline':(None,13707,'9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096'),
+            'candidate_h93':('candidate_h93_guardian.luau',14001,'2c6f53526cb54b1a929db295ca189e7642b0c98c89c20df470642895a118f698'),
+            'candidate_pr796':('candidate_pr796_guardian.luau',14201,'a6a4433966ba52212d42e12dc69e8bca7a63424fe31c25ade89724928d417ef2'),
+            'restored_pr796':('restored_pr796_guardian.luau',13907,'1afd38a70a27ada58ad7418768ce5c6f3b6576635aa467e14a45056af0505825'),
+            'restored_h93':('restored_h93_guardian.luau',13707,'9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096')}
+          def identity(raw):return {'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+          def structure(raw):
+              tree=ET.fromstring(raw)
+              sources=tree.findall('.//ProtectedString[@name="Source"]')+tree.findall('.//string[@name="Source"]')
+              assert len(sources)==69
+              for node in sources:node.text=''
+              return ET.tostring(tree)
+          source_before={p.relative_to(original/'sources').as_posix():identity(p.read_bytes()) for p in (original/'sources').rglob('*.luau')}
+          assert len(source_before)==69
+          official_place=(original/'EGGRUMBLE_REAL69_PRIVATE.rbxlx').read_bytes()
+          assert identity(official_place)=={'bytes':828658,'sha256':'9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899'}
+          identities={}
+          for variant,(replacement,size,digest) in expected.items():
+              target=output/variant;target.mkdir();shutil.copytree(original/'sources',target/'sources')
+              project=target/'EGGRUMBLE_REAL69.project.json'
+              shutil.copyfile(original/'EGGRUMBLE_REAL69.project.json',project)
+              if replacement:shutil.copyfile(native/replacement,target/'sources'/rel)
+              body=(target/'sources'/rel).read_bytes();assert len(body)==size and hashlib.sha256(body).hexdigest()==digest
+              wanted=dict(source_before);wanted[rel]=identity(body)
+              actual={p.relative_to(target/'sources').as_posix():identity(p.read_bytes()) for p in (target/'sources').rglob('*.luau')}
+              assert actual==wanted
+              place=target/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+              subprocess.run([str(rojo),'build',str(project),'-o',str(place)],check=True)
+              subprocess.run(['python3','_guardian_stealth_h93/quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py','verify','--project',str(project),'--place',str(place),'--count','69'],check=True)
+              raw=place.read_bytes();assert structure(raw)==structure(official_place)
+              if variant in ('baseline','restored_h93'):assert raw==official_place
+              identities[variant]=identity(raw)
+          assert source_before=={p.relative_to(original/'sources').as_posix():identity(p.read_bytes()) for p in (original/'sources').rglob('*.luau')}
+          context={'candidate_head':os.environ['CANDIDATE_HEAD'],'github_event_sha':os.environ['GITHUB_SHA'],
+            'run_id':os.environ['GITHUB_RUN_ID'],'job':os.environ['GITHUB_JOB'],
+            'input_rc':'93a1147561a531610ac1609ebc68cc0ecf546623','input_artifact_id':14787568439,
+            'latest_rc_observed':json.loads(Path('artifacts/guardian_stealth_input/latest_rc.json').read_text())['object']['sha'],
+            'status':'PINNED_H93_SOURCE_CANDIDATE_ONLY','place_identities':identities,
+            'native_result':identity((native/'RESULT.json').read_bytes()),
+            'official_rc_adopted':False,'whole_legacy_workflow_success_claimed':False,
+            'source_input_is_permanent_latest':False,'studio':'NOT_TESTED','android':'NOT_TESTED','fun':'NOT_TESTED','art':'NOT_TESTED'}
+          (output/'CONTEXT.json').write_text(json.dumps(context,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(context,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: GQ815-H93-GUARDIAN-ROLE200-STEALTH294-SOURCE-NATIVE-NOT-RC
+          path: |
+            artifacts/guardian_stealth_input/artifact.json
+            artifacts/guardian_stealth_input/latest_rc.json
+            artifacts/guardian_stealth_native/
+            artifacts/guardian_stealth_rojo/
+          if-no-files-found: error
+          retention-days: 7
