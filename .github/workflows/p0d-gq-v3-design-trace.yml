@@ -1,0 +1,46 @@
+name: P0D GQ unique 67 feature eight-domain source evidence gate
+on:
+  push:
+    branches:
+      - quality/gq-v3-concept-trace-20261116-01
+    paths:
+      - 'quality_gameplay/v3_design_trace_20261116/**'
+      - '.github/workflows/p0d-gq-v3-design-trace.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_design_trace_20261116/**'
+      - '.github/workflows/p0d-gq-v3-design-trace.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only-concept-trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify pinned catalogue maps all 67 features without RC adoption inflation
+        run: python3 quality_gameplay/v3_design_trace_20261116/check_trace.py
+      - name: Verify official RC live HEAD and exact successful Actions run (read only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 quality_gameplay/v3_design_trace_20261116/check_rc_freshness.py
+      - name: Download only five pinned original V3 Luau source files (no GitHub write)
+        env:
+          AUTHOR_COMMIT: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          SOURCE_DIR: ${{ runner.temp }}/eggrumble-v3-original-482
+        run: |
+          set -euo pipefail
+          mkdir -p "$SOURCE_DIR"
+          ROOT="https://raw.githubusercontent.com/kk051780/toy-wars-factory/$AUTHOR_COMMIT/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116"
+          for name in EGGRUMBLE_SevenRoleCombat.luau EGGRUMBLE_LobbyCastleModesPreview.server.luau EGGRUMBLE_CastleMatchRules.luau EGGRUMBLE_FieldItemPickups.luau EGGRUMBLE_SwarmCombat.luau; do
+            curl --fail --silent --show-error --location --retry 3 "$ROOT/$name" --output "$SOURCE_DIR/$name"
+          done
+          echo "GQ_V3_SOURCE_DIR=$SOURCE_DIR" >> "$GITHUB_ENV"
+      - name: Probe ACTUAL author V3 five Git blobs / source anchors / seven-role gaps
+        run: |
+          python3 quality_gameplay/v3_design_trace_20261116/probe_v3_author_source.py --source-dir "$GQ_V3_SOURCE_DIR"
+      - name: Execute trace plus source-falsification regression tests
+        run: python3 -m unittest discover -s quality_gameplay/v3_design_trace_20261116 -p 'test_*.py' -v
