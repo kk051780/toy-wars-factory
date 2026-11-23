@@ -101,3 +101,105 @@
    end
   end
  end)
+--- a/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau
++++ b/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau
+@@ -63,2 +63,32 @@
+ end
++-- BASIC has its own server-owned serial; never synthesize a skill signature.
++-- Per-character observer tokens invalidate already queued local callbacks.
++-- The numeric attribute has no server character/match epoch: this is not proof
++-- against arbitrary old network values arriving after a new character binds.
++local basicObservers:{[number]:any}={}
++local BASIC_ROLES={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,
++ BUILDER=true,BEAST=true,ZOMBIE=true}
++local function basicSerial(player:Player):number?
++ local value=player:GetAttribute("EGGRUMBLE_BasicCastSerial")
++ if type(value)~="number" or value~=value or value<=0
++  or value==math.huge or value%1~=0 then return nil end
++ return value
++end
++local function startCast(player:Player,role:string,slot:string,origin:string)
++ local c=player.Character
++ local hum=c and c:FindFirstChildOfClass("Humanoid")
++ if not c or not hum or hum.Health<=0 then return end
++ local previous=active[player.UserId]
++ if origin=="BASIC" and previous and previous.origin=="SKILL"
++  and previous.char==c and os.clock()-previous.start<previous.duration then return end
++ local count=0
++ for _ in pairs(active) do count+=1 end
++ if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end
++ if active[player.UserId] then resetPose(active[player.UserId]) end
++ active[player.UserId]={
++  player=player,char=c,role=role,slot=slot,start=os.clock(),origin=origin,
++  duration=DURATION[slot] or .3,joints=joints(c),
++  lastApplied={},lastDelta={},
++ }
++end
+ local function readCast(player:Player)
+@@ -71,14 +101,44 @@
+  sequences[player.UserId]=seq
+- local c=player.Character
+- local hum=c and c:FindFirstChildOfClass("Humanoid")
+- if not c or not hum or hum.Health<=0 then return end
+- local count=0
+- for _ in pairs(active) do count+=1 end
+- if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end
+- if active[player.UserId] then resetPose(active[player.UserId]) end
+- active[player.UserId]={
+-  player=player,char=c,role=role,slot=slot,start=os.clock(),
+-  duration=DURATION[slot] or .3,joints=joints(c),
+-  lastApplied={},lastDelta={},
+- }
++ startCast(player,role,slot,"SKILL")
++end
++local function watchBasic(player:Player)
++ local uid=player.UserId
++ local binding:any={player=player,sequence=0}
++ basicObservers[uid]=binding
++ local function bind(character:Model?)
++  if basicObservers[uid]~=binding then return end
++  if binding.changed then binding.changed:Disconnect() end
++  local token={}
++  binding.token=token;binding.character=character
++  -- A present serial is a baseline, including on respawn; do not replay it.
++  binding.sequence=basicSerial(player) or 0
++  binding.changed=player:GetAttributeChangedSignal("EGGRUMBLE_BasicCastSerial"):Connect(function()
++   if basicObservers[uid]~=binding or binding.token~=token
++    or player.Parent~=Players then return end
++   local serial=basicSerial(player)
++   if not serial or serial<=binding.sequence then return end
++   binding.sequence=serial -- consume drops as well as displayed attacks
++   local c=player.Character
++   if not c or c~=character or not c.Parent then return end
++   local role=player:GetAttribute("EGGRUMBLE_Role")
++   if type(role)~="string" or not BASIC_ROLES[role] then return end
++   startCast(player,role,"A","BASIC")
++  end)
++ end
++ binding.added=player.CharacterAdded:Connect(function(character)
++  if basicObservers[uid]==binding and player.Character==character then bind(character) end
++ end)
++ binding.bind=bind
++ bind(player.Character)
++end
++local function removeBasicCharacter(player:Player,character:Model)
++ local binding=basicObservers[player.UserId]
++ if binding and binding.player==player and binding.character==character then binding.bind(nil) end
++end
++local function unwatchBasic(player:Player)
++ local binding=basicObservers[player.UserId]
++ if not binding or binding.player~=player then return end
++ basicObservers[player.UserId]=nil;binding.token=nil
++ if binding.changed then binding.changed:Disconnect() end
++ binding.added:Disconnect()
+ end
+@@ -95,3 +155,5 @@
+   end
++  removeBasicCharacter(p,character)
+  end)
++ watchBasic(p)
+ end
+@@ -106,2 +168,3 @@
+  sequences[uid]=nil
++ unwatchBasic(p)
+ end

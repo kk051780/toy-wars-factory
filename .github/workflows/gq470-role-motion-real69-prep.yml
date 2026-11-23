@@ -1,4 +1,4 @@
-name: GQ470 REAL69 7-role gesture ART source-only PREP (not official RC)
+name: GQ470 REAL69 role motion and BASIC source-only PREP
 on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
@@ -15,105 +15,104 @@ jobs:
     timeout-minutes: 16
     env:
       GH_TOKEN: ${{ github.token }}
+      CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Fetch pinned genuine formal REAL69 and apply exactly one visual-source patch
+      - name: Download exact successful formal parent with raw API provenance
         shell: bash
         run: |
           set -euo pipefail
-          OFFICIAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
-          test "$OFFICIAL" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo STALE_FORMAL_RC_NO_ADMISSION; exit 1; }
-          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
-          mkdir -p "$RUNNER_TEMP/real69-original"
-          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$RUNNER_TEMP/real69-original"
-          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/gate.py --base "$RUNNER_TEMP/real69-original" --out "$RUNNER_TEMP/real69-motion"
-          python3 - <<'PY'
-          import json,os,pathlib
-          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"real69-motion"
-          r=json.loads((root/"ART_CHECK_REPORT_ROLE_MOTION.json").read_text())
-          assert r["on_sources"]==r["off_sources"]==69 and r["unchanged"]==68
-          assert r["negative_tests"]==4 and r["added_parts"]==r["added_remotes"]==0
-          assert r["art_gate"]=="NO_GO" and r["owner_accepted"] is False
-          print("GQ470_ROLE_MOTION_EXACT_ONE_REAL_SOURCE_ART_SOURCE_PASS_NO_STUDIO")
+          test "$GITHUB_REPOSITORY" = kk051780/toy-wars-factory
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          META="$RUNNER_TEMP/role-parent-api"
+          mkdir -p "$META"
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" > "$META/ref.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45106580546" > "$META/run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45106580546/artifacts?per_page=100" > "$META/artifacts.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45106580546/jobs?per_page=100" > "$META/jobs.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439/zip" > "$RUNNER_TEMP/role-parent.zip"
+          python3 -B - <<'PY'
+          import hashlib,json,os,stat
+          from pathlib import Path,PurePosixPath
+          from zipfile import ZipFile
+          lock=json.loads(Path("quality_gameplay/gq470_role_motion_real69_20261121/source_lock.json").read_text())
+          archive=Path(os.environ["RUNNER_TEMP"])/"role-parent.zip"
+          raw=archive.read_bytes()
+          assert {"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()}==lock["official_parent"]["artifact"]["zip"]
+          target=Path(os.environ["RUNNER_TEMP"])/"real69-original"
+          target.mkdir()
+          with ZipFile(archive) as z:
+              assert len(z.namelist())==len(set(z.namelist()))
+              for item in z.infolist():
+                  p=PurePosixPath(item.filename)
+                  assert not p.is_absolute() and ".." not in p.parts
+                  assert not stat.S_ISLNK(item.external_attr>>16)
+              z.extractall(target)
           PY
+          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/gate.py --self-test
+          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/gate.py \
+            --base "$RUNNER_TEMP/real69-original" --out "$RUNNER_TEMP/real69-motion" \
+            --archive "$RUNNER_TEMP/role-parent.zip" --api-dir "$META"
+          cp -R "$META" "$RUNNER_TEMP/real69-motion/PARENT_API_EVIDENCE"
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
-      - name: Native Luau compile original and candidate 69/69
+      - name: Build pinned Native Luau and verify pinned Rojo
         shell: bash
         run: |
           set -euo pipefail
-          cmake -S _pinned_luau -B /tmp/gq470-role-motion-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470-role-motion-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
-          python3 - <<'PY'
-          import os,subprocess,sys
+          cmake -S _pinned_luau -B "$RUNNER_TEMP/role-native-build" -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$RUNNER_TEMP/role-native-build" --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$RUNNER_TEMP/role-rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/role-rojo.zip" | sha256sum -c
+          python3 -B - <<'PY'
+          import os
           from pathlib import Path
-          sys.path.insert(0,"quality_gameplay/gq470_role_motion_real69_20261121")
-          from gate import selected
-          candidate=Path(os.environ["RUNNER_TEMP"])/"real69-motion"
-          for root in (candidate,candidate/"OFF69_SOURCE_EXACT"):
-            scripts=selected(root)
-            for source in scripts.values():
-              subprocess.run(["/tmp/gq470-role-motion-luau/luau-compile","--text",str(source)],
-                             check=True,stdout=subprocess.DEVNULL)
-          print("GQ470_ROLE_MOTION_NATIVE_LUAU_ON69_OFF69_PASS")
-          PY
-          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py --root "$RUNNER_TEMP/real69-motion" --out /tmp/gq470-role-motion-native-test.luau
-          /tmp/gq470-role-motion-luau/luau /tmp/gq470-role-motion-native-test.luau
-      - name: Pinned Rojo ON69 / OFF69 / exact original rollback
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-role-rojo.zip
-          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-role-rojo.zip' | sha256sum -c
-          python3 - <<'PY'
           from zipfile import ZipFile
-          from pathlib import Path
-          with ZipFile("/tmp/gq470-role-rojo.zip") as z:
-            names=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
-            assert len(names)==1
-            dst=Path("/tmp/gq470-role-rojo");dst.write_bytes(z.read(names[0]));dst.chmod(0o755)
+          root=Path(os.environ["RUNNER_TEMP"])
+          with ZipFile(root/"role-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              dst=root/"role-rojo";dst.write_bytes(z.read(names[0]));dst.chmod(0o755)
           PY
-          ROOT="$RUNNER_TEMP/real69-motion"
-          /tmp/gq470-role-rojo build "$ROOT/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_ROLE_MOTION_ON69_PRIVATE.rbxlx
-          /tmp/gq470-role-rojo build "$ROOT/OFF69_SOURCE_EXACT/EGGRUMBLE_REAL69.project.json" -o /tmp/GQ470_ROLE_MOTION_OFF69_PRIVATE.rbxlx
-          cmp "/tmp/GQ470_ROLE_MOTION_OFF69_PRIVATE.rbxlx" "$ROOT/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
-          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/EGGRUMBLE_REAL69.project.json" --place /tmp/GQ470_ROLE_MOTION_ON69_PRIVATE.rbxlx --count 69
-          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$ROOT/OFF69_SOURCE_EXACT/EGGRUMBLE_REAL69.project.json" --place /tmp/GQ470_ROLE_MOTION_OFF69_PRIVATE.rbxlx --count 69
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
-          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base "$ROOT" --report "$ROOT/LEGACY48_FEATURE_AUDIT.json"
-          echo GQ470_ROLE_MOTION_NATIVE_ROJO69_AND_OFF69_BYTE_EXACT_PASS
-      - name: Final A-only report and authenticated-B input truth
+      - name: Execute original21 and full-client20, baseline RED, compile138 and Rojo rollback
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import hashlib,json,os
+          python3 -B quality_gameplay/gq470_role_motion_real69_20261121/gate.py \
+            --verify "$RUNNER_TEMP/real69-motion" \
+            --luau "$RUNNER_TEMP/role-native-build/luau" \
+            --compiler "$RUNNER_TEMP/role-native-build/luau-compile" \
+            --luau-source _pinned_luau --rojo "$RUNNER_TEMP/role-rojo"
+      - name: Recheck current formal head and record actual candidate CI identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = 93a1147561a531610ac1609ebc68cc0ecf546623
+          python3 -B - <<'PY'
+          import json,os
           from pathlib import Path
           root=Path(os.environ["RUNNER_TEMP"])/"real69-motion"
-          report=root/"ART_CHECK_REPORT_ROLE_MOTION.json"
-          data=json.loads(report.read_text())
-          place=Path("/tmp/GQ470_ROLE_MOTION_ON69_PRIVATE.rbxlx")
-          data.update(native_luau="SOURCE_PASS_69_ON_OFF",rojo_on_off="SOURCE_PASS",
-            candidate_private_place_bytes=place.stat().st_size,
-            candidate_private_place_sha256=hashlib.sha256(place.read_bytes()).hexdigest(),
-            candidate_head=os.environ["GITHUB_SHA"])
-          report.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n")
-          print("GQ470_ROLE_MOTION_B_PACKET_SOURCE_ONLY_PASS_ART_NO_GO")
+          report=json.loads((root/"ART_CHECK_REPORT_ROLE_MOTION.json").read_text())
+          assert report["source_gate"]=="SOURCE_QA_PASS_NOT_ENGINE"
+          assert report["formal_rc_adopted"] is False and report["art_gate"]=="NO_GO"
+          report["candidate_ci"]={"repository":os.environ["GITHUB_REPOSITORY"],
+              "head_sha":os.environ["CANDIDATE_HEAD"],"trigger_sha":os.environ["GITHUB_SHA"],
+              "run_id":int(os.environ["GITHUB_RUN_ID"]),"run_attempt":int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "job_key":os.environ["GITHUB_JOB"],"status_at_report":"RUNNING_EXTERNAL_CONCLUSION_REQUIRED"}
+          for path in (root/"ART_CHECK_REPORT_ROLE_MOTION.json",root/"B220_ONE_SOURCE_NOT_FORMAL/SOURCE_SELECT_MANIFEST.json"):
+              path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
           PY
       - uses: actions/upload-artifact@v4
         with:
           name: GQ470-REAL69-ROLE-MOTION-SOURCE-ONLY-NOT-FORMAL
-          path: |
-            ${{ runner.temp }}/real69-motion/B220_ONE_SOURCE_NOT_FORMAL/
-            ${{ runner.temp }}/real69-motion/ART_CHECK_REPORT_ROLE_MOTION.json
-            ${{ runner.temp }}/real69-motion/LEGACY48_FEATURE_AUDIT.json
-            /tmp/GQ470_ROLE_MOTION_ON69_PRIVATE.rbxlx
-            /tmp/GQ470_ROLE_MOTION_OFF69_PRIVATE.rbxlx
+          path: ${{ runner.temp }}/real69-motion/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14

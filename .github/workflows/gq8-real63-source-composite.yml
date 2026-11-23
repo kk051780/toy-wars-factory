@@ -27,6 +27,10 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
+      - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'quality_gameplay/gq470_union22_real69_20261122/**'
+      - 'tests/test_gq470_union22_real69_20261122.py'
+      - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
       # Repeat canonical65 build after nine-domain audit and legacy historical QA maintenance.
@@ -64,6 +68,10 @@ on:
       - 'quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/**'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL66.json'
       - 'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120/**'
+      - 'quality_gameplay/gq470_art_pr_provenance_20261121/**'
+      - 'quality_gameplay/gq470_union22_real69_20261122/**'
+      - 'tests/test_gq470_union22_real69_20261122.py'
+      - 'tests/test_gq470_real69_event_provenance_20261121.py'
       - '.github/workflows/gq8-real63-source-composite.yml'
       - 'rc_fastlane/EGGRUMBLE_V3_REAL65.json'
   workflow_dispatch:
@@ -88,6 +96,7 @@ jobs:
           python3 -m py_compile quality_gameplay/gq8_real63_intake_20261119/compose_real63.py quality_gameplay/gq8_real63_intake_20261119/compose_real65.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_real63.py
           python3 quality_gameplay/gq8_real63_intake_20261119/test_fb014_firstplay.py
+          python3 tests/test_gq470_real69_event_provenance_20261121.py
           python3 -m py_compile quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py
           python3 quality_gameplay/gq8_real65_storm_port_20261119/patch_late_host_watch65.py --self-test
           python3 -m py_compile quality_gameplay/gq8_rc85_rc86_reconcile_20261119/port_rc86_wind65.py
@@ -154,14 +163,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}
-          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55
-          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59
-          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62
-          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62
-          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63
-          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56
-          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56
+          python3 -B quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py --out /tmp/gq863
           for file in \
             /tmp/gq863/base55/EGGRUMBLE_REAL55.project.json \
             /tmp/gq863/base55/B_REAL55_RECEIPT.json \
@@ -1565,7 +1567,18 @@ jobs:
           origin=selected(root)
           r=json.loads((root/'REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
           assert len(origin)==len(r['source_hashes'])==69
-          assert r['build_head']==os.environ['GITHUB_SHA'] and r['canonical_build'] is True
+          # PR checkouts are synthetic merges and deliberately NON_CANONICAL.
+          # Do not confuse passing source QA with an authenticated formal RC push.
+          from quality_gameplay.gq470_art_pr_provenance_20261121.guard import verify_receipt
+          import subprocess
+          live_sha=subprocess.check_output([
+           'gh','api',
+           f"repos/{os.environ['GITHUB_REPOSITORY']}/git/ref/heads/rc/p0d-s1-kids-rc01",
+           '--jq','.object.sha'],text=True).strip()
+          event_path=os.environ.get('GITHUB_EVENT_PATH','')
+          event=json.loads(pathlib.Path(event_path).read_text()) if event_path else {}
+          proof=verify_receipt(r,os.environ,event,live_sha)
+          print('GQ470_REAL69_ART_EVENT_PROVENANCE_SOURCE_ONLY_PASS',proof)
           assert r['source_hashes'][TARGET]==EXPECTED_SHA
           assert {k:hashlib.sha256(v.read_bytes()).hexdigest() for k,v in origin.items()}==r['source_hashes']
           assert r['gq470_bot_art_variants']['changed_source_sha256']=='1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424'
@@ -1694,7 +1707,12 @@ jobs:
           import json,pathlib,os
           p=pathlib.Path('artifacts/real69/delivery/ART_CHECK_REPORT.json')
           r=json.loads(p.read_text())
-          assert r['official_build_head']==os.environ['GITHUB_SHA']
+          assert r['candidate_build_head']==os.environ['GITHUB_SHA']
+          # PR source QA must remain explicitly nonformal and ART_NO_GO.
+          is_official=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          assert r['formal_rc_adoption_proven'] is is_official
+          assert r['official_build_head']==(os.environ['GITHUB_SHA'] if is_official else None)
+          assert r['receipt_provenance']==('OFFICIAL' if is_official else 'PR_CANDIDATE')
           assert r['source_gate']['status']=='PASS_SOURCE_ONLY'
           assert r['source_gate']['actual_place_scripts']==69
           assert r['source_gate']['verified_visual_feature_sources']==3
@@ -1708,9 +1726,55 @@ jobs:
           assert len(list(p.parent.glob('*.rbxlx')))==1
           print('ART_CHECK_REPORT_REAL69_69_SELECTED_3_FEATURES_32_IMAGES_MISSING_NO_GO_PASS')
           PY
+      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/compose_union22.py \
+            --base artifacts/real69 --prior-reports artifacts/real69/delivery \
+            --out artifacts/real69_union22 --head "$GITHUB_SHA" \
+            --luau-compile /tmp/gq863-luau/luau-compile --rojo /tmp/gq863-rojo
+      - name: "Union22: reject source, rollback, provenance and premature delivery drift"
+        shell: bash
+        env:
+          UNION22_TEST_PRIOR: artifacts/real69
+          UNION22_TEST_REPORTS: artifacts/real69/delivery
+          UNION22_TEST_ROOT: artifacts/real69_union22
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq470_union22_real69_20261122.py
+          python3 -B -O tests/test_gq470_union22_real69_20261122.py
+      - name: "Union22: fresh f46 Repl build, separately named combined and objective clear-LOS inputs"
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py \
+            --source-root artifacts/real69_union22/sources --luau-source _pinned_luau \
+            --build-dir "$RUNNER_TEMP/union22-repl-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --out artifacts/real69_union22_native --head "$GITHUB_SHA" \
+            --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
+            --git "$(command -v git)" --cc "$(command -v cc)" --cxx "$(command -v c++)"
+      - name: "Union22: independently admit final 69 source and Native delivery, ART and product remain NO_GO"
+        shell: bash
+        env:
+          UNION22_TEST_PRIOR: artifacts/real69
+          UNION22_TEST_REPORTS: artifacts/real69/delivery
+          UNION22_TEST_ROOT: artifacts/real69_union22
+          UNION22_TEST_NATIVE: artifacts/real69_union22_native
+          UNION22_TEST_STAGE: final
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 -B tests/test_gq470_union22_real69_20261122.py
+          python3 -B -O tests/test_gq470_union22_real69_20261122.py
+          PYTHONDONTWRITEBYTECODE=1 python3 -B quality_gameplay/gq470_union22_real69_20261122/verify_union22.py \
+            --root artifacts/real69_union22 --base artifacts/real69 \
+            --prior-reports artifacts/real69/delivery --native-results artifacts/real69_union22_native \
+            --head "$GITHUB_SHA"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && 'P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO' || 'GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL' }}
-          path: artifacts/real69/delivery/
+          path: artifacts/real69_union22/delivery/
           retention-days: 30
           if-no-files-found: error

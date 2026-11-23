@@ -1,0 +1,542 @@
+#!/usr/bin/env python3
+"""Execute separately named combined and objective clear-LOS inputs with 28 bodies.
+
+This is a new, separate source-build contract. It does not relax or edit the
+historical adapter's exact 9c68 binary pin. No supplied/prebuilt Repl is accepted.
+"""
+from __future__ import annotations
+
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import stat
+import subprocess
+import sys
+import time
+
+HERE = Path(__file__).resolve().parent
+INPUT_LOCK_SHA256 = "57f5c526549e19209f92bf0d770ca00c06e468ad8a80f32f3e511dcb04eaa71a"
+CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
+              "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
+
+
+def require(value, reason):
+    if not value:
+        raise ValueError("RED_UNION22_NATIVE_" + reason)
+
+
+def identity(raw):
+    return {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+
+
+def read(path):
+    path = Path(path)
+    require(not path.is_symlink() and path.is_file() and stat.S_ISREG(path.stat().st_mode),
+            "REGULAR_FILE_REQUIRED:" + str(path))
+    return path.read_bytes()
+
+
+def strict_json(raw):
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "DUPLICATE_JSON_KEY")
+            result[key] = value
+        return result
+    return json.loads(raw, object_pairs_hook=unique)
+
+
+def write_json(path, data):
+    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+
+
+def load_lock():
+    raw = read(HERE / "INPUT_LOCK.json")
+    require(identity(raw)["sha256"] == INPUT_LOCK_SHA256, "INPUT_LOCK_MISMATCH")
+    lock = strict_json(raw)
+    require(lock["schema"] == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
+            and len(lock["sources"]) == 69 and len(lock["modules_in_load_order"]) == 27
+            and len(set(lock["modules_in_load_order"])) == 27
+            and set(lock["suites"]) == set(CASE_FILES) and lock["case_files"] == CASE_FILES,
+            "LOCK_CONTRACT")
+    return lock
+
+
+def safe_root(path):
+    path = Path(path).absolute()
+    require(not any(p.is_symlink() for p in [path, *path.parents]), "SYMLINK_ROOT")
+    return path.resolve()
+
+
+def source_snapshot(root):
+    require(root.is_dir(), "SOURCE_DIRECTORY")
+    result = {}
+    for path in sorted(root.rglob("*")):
+        require(not path.is_symlink(), "SOURCE_SYMLINK")
+        if path.is_file():
+            require(path.suffix == ".luau", "EXTRA_SOURCE_FILE")
+            result[path.relative_to(root).as_posix()] = identity(read(path))
+        else:
+            require(path.is_dir(), "SPECIAL_SOURCE_FILE")
+    return result
+
+
+def fixture_snapshot(lock):
+    require({p.name for p in (HERE / "fixtures").iterdir()} == set(lock["fixtures"]), "FIXTURE_FILE_SET")
+    result = {name: identity(read(HERE / "fixtures" / name)) for name in lock["fixtures"]}
+    require(result == lock["fixtures"], "EXACT_FROZEN_FIXTURE_MISMATCH")
+    for suite, filename in CASE_FILES.items():
+        require(identity(read(HERE / filename)) == lock["suites"][suite]["case"], "CASE_MISMATCH:" + suite)
+    original = lock["case_amendment"]["original_case"]
+    require(original["path"] == "fixtures/combined_cases.luau"
+            and identity(read(HERE / original["path"])) == {k: original[k] for k in ("bytes", "sha256")},
+            "ORIGINAL_COMBINED_CASE_NOT_PRESERVED")
+    objective = lock["objective_case_amendment"]["original_case"]
+    require(objective == {"path": "objective_full_cases.luau", "bytes": 7882,
+                          "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"}
+            and identity(read(HERE / objective["path"])) == {k: objective[k] for k in ("bytes", "sha256")},
+            "ORIGINAL_OBJECTIVE_CASE_NOT_PRESERVED")
+    return result
+
+
+def clean_environment():
+    # CMake receives explicit compiler/Ninja paths. Strip recipe injection and
+    # build launchers while keeping the platform runtime search path available.
+    keep = ("PATH", "HOME", "TMPDIR", "SYSTEMROOT", "LD_LIBRARY_PATH")
+    env = {name: os.environ[name] for name in keep if name in os.environ}
+    env.update({"LC_ALL": "C", "LANG": "C", "GIT_OPTIONAL_LOCKS": "0", "GIT_NO_REPLACE_OBJECTS": "1"})
+    return env
+
+
+def executable(path):
+    path = Path(path).resolve()
+    raw = read(path)
+    require(os.access(path, os.X_OK), "TOOL_NOT_EXECUTABLE")
+    return path, identity(raw)
+
+
+def git_output(git, source, *args):
+    command = [str(git), "-c", "core.fsmonitor=false", "-c", "core.hooksPath=/dev/null", "-C", str(source), *args]
+    result = subprocess.run(command, env=clean_environment(), capture_output=True, timeout=60)
+    require(result.returncode == 0, "GIT_COMMAND_FAILED:" + " ".join(args))
+    return result.stdout
+
+
+def verify_clean_source(source, git, toolchain):
+    require(source.is_dir() and (source / ".git").exists(), "ACTUAL_GIT_SOURCE_REQUIRED")
+    head = git_output(git, source, "rev-parse", "HEAD").decode().strip()
+    tree = git_output(git, source, "rev-parse", "HEAD^{tree}").decode().strip()
+    require(head == toolchain["source_commit"] and tree == toolchain["source_tree"], "SOURCE_COMMIT_OR_TREE")
+    require(not git_output(git, source, "status", "--porcelain=v1", "--untracked-files=all", "--ignored"),
+            "SOURCE_NOT_CLEAN")
+    rows = git_output(git, source, "ls-tree", "-r", "-z", "HEAD").split(b"\0")
+    manifest = {}
+    for row in rows:
+        if not row:
+            continue
+        metadata, raw_path = row.split(b"\t", 1)
+        mode, kind, oid = metadata.decode().split()
+        name = raw_path.decode("utf-8")
+        path = PurePosixPath(name)
+        require(not path.is_absolute() and ".." not in path.parts and "\\" not in name
+                and name not in manifest and kind == "blob" and mode in ("100644", "100755"), "SOURCE_TREE_ENTRY")
+        raw = read(source / name)
+        actual_oid = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        actual_mode = "100755" if (source / name).stat().st_mode & 0o111 else "100644"
+        require(actual_oid == oid and actual_mode == mode, "PHYSICAL_SOURCE_BLOB_OR_MODE:" + name)
+        manifest[name] = {"git_blob": oid, "mode": mode, **identity(raw)}
+    require(len(manifest) == toolchain["tracked_file_count"] == 2336, "SOURCE_TREE_FILE_COUNT")
+    return manifest
+
+
+def cache_values(raw):
+    result = {}
+    for line in raw.decode("utf-8").splitlines():
+        if not line or line.startswith(("#", "//")):
+            continue
+        key_type, value = line.split("=", 1)
+        key, kind = key_type.rsplit(":", 1)
+        require(key not in result, "CMAKE_CACHE_DUPLICATE")
+        result[key] = {"type": kind, "value": value}
+    return result
+
+
+def validate_cache(raw, source, build, cmake, ninja, cc, cxx, recipe):
+    cache = cache_values(raw)
+    expected = {"CMAKE_HOME_DIRECTORY": str(source), "CMAKE_CACHEFILE_DIR": str(build),
+                "CMAKE_GENERATOR": recipe["generator"], "CMAKE_BUILD_TYPE": recipe["CMAKE_BUILD_TYPE"],
+                "LUAU_BUILD_TESTS": recipe["LUAU_BUILD_TESTS"], "LUAU_BUILD_CLI": recipe["LUAU_BUILD_CLI"],
+                "CMAKE_MAKE_PROGRAM": str(ninja), "CMAKE_C_COMPILER": str(cc), "CMAKE_CXX_COMPILER": str(cxx),
+                "CMAKE_COMMAND": str(cmake), "CMAKE_PROJECT_NAME": "Luau"}
+    require(all(cache.get(k, {}).get("value") == v for k, v in expected.items()), "CMAKE_SOURCE_RECIPE_OR_COMPILER")
+    forbidden = ("CMAKE_TOOLCHAIN_FILE", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER",
+                 "CMAKE_PROJECT_INCLUDE", "CMAKE_PROJECT_INCLUDE_BEFORE", "CMAKE_PROJECT_TOP_LEVEL_INCLUDES")
+    require(all(not cache.get(k, {}).get("value") for k in forbidden), "CMAKE_EXTERNAL_RECIPE_INJECTION")
+    require(cache.get("LUAU_BUILD_SHARED", {}).get("value") == "OFF"
+            and cache.get("LUAU_BUILD_WEB", {}).get("value") == "OFF"
+            and cache.get("CMAKE_C_FLAGS", {}).get("value") == ""
+            and cache.get("CMAKE_CXX_FLAGS", {}).get("value") == "", "CMAKE_UNEXPECTED_BUILD_OPTIONS")
+    return expected
+
+
+def command_log(command, output, prefix, timeout):
+    started = datetime.now(timezone.utc).isoformat()
+    result = subprocess.run([str(x) for x in command], env=clean_environment(), capture_output=True, timeout=timeout)
+    (output / (prefix + ".stdout.log")).write_bytes(result.stdout)
+    (output / (prefix + ".stderr.log")).write_bytes(result.stderr)
+    require(result.returncode == 0, prefix.upper() + "_FAILED:" + result.stderr.decode(errors="replace")[-1000:])
+    return {"argv": [str(x) for x in command], "started_at_utc": started, "exit_code": result.returncode,
+            "stdout": identity(result.stdout), "stderr": identity(result.stderr)}
+
+
+def prepare_selected_hud_layout(root, output, lock):
+    """Run the unchanged REAL63 generator main on the actual final two sources."""
+    contract = lock["selected_hud_layout"]
+    relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
+    generator = HERE.parents[2] / relative
+    generator_pin = {"bytes": 3097, "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"}
+    flat = {
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau":
+            "EGGRUMBLE_HudIntelRuntime.client.luau",
+        "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau":
+            "EGGRUMBLE_HudPresentationPolicy.luau",
+    }
+    require(contract["schema"] == "GQ828_SELECTED_HUD_LAYOUT_GATE_V1"
+            and contract["generator"] == {"path": relative, **generator_pin}
+            and identity(read(generator)) == generator_pin
+            and contract["flat_sources"] == flat
+            and contract["viewport_shapes"] == [[320, 260], [393, 851], [375, 667],
+                                               [600, 300], [851, 393], [1280, 720], [1024, 768]]
+            and contract["hands"] == ["RIGHT", "LEFT"] and contract["condition_count"] == 14
+            and contract["expected_generator_stdout"] == "GQ8_REAL63_SELECTED_SOURCE_MODAL_LAYOUT_PROOFS_PASS\n"
+            and contract["expected_native_stdout"] == "GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS\n"
+            and contract["generator_python_optimization"] == 0
+            and contract["hud_runtime_executed"] is False
+            and contract["policy_full_body_executed"] is True, "SELECTED_LAYOUT_CONTRACT")
+    output.mkdir(exist_ok=False)
+    (output / "sources").mkdir()
+    (output / "native_layout.py").write_bytes(read(generator))
+    selected = {}
+    for relative_source, name in flat.items():
+        raw = read(root / relative_source)
+        require(identity(raw) == lock["sources"][relative_source], "SELECTED_LAYOUT_SOURCE_PIN")
+        (output / "sources" / name).write_bytes(raw)
+        selected[relative_source] = identity(raw)
+    python, python_pin = executable(sys.executable)
+    # clean_environment excludes PYTHONOPTIMIZE; the child argv deliberately
+    # does not inherit a parent's -O. The original generator uses assertions.
+    command = command_log([python, "-B", output / "native_layout.py", "--sources",
+                           output / "sources", "--out", output / "generated.luau"],
+                          output, "generator", 60)
+    require(read(output / "generator.stdout.log").decode("utf-8") == contract["expected_generator_stdout"]
+            and read(output / "generator.stderr.log") == b"", "SELECTED_LAYOUT_GENERATOR_LOG")
+    require(read(output / "native_layout.py") == read(generator)
+            and all(read(output / "sources" / name) == read(root / path)
+                    for path, name in flat.items()), "SELECTED_LAYOUT_INPUT_CHANGED")
+    return {"contract": contract, "selected_sources": selected, "generator_command": command,
+            "python": {"path": str(python), **python_pin}}
+
+
+def run_selected_hud_layout(root, output, binary, lock, binary_pin, context, source_receipt, runner_pin):
+    prepared = prepare_selected_hud_layout(root, output, lock)
+    generated = read(output / "generated.luau")
+    require(identity(read(binary)) == binary_pin, "SELECTED_LAYOUT_BINARY_BEFORE")
+    native_command = command_log([binary, output / "generated.luau"], output, "native", 60)
+    require(read(output / "native.stdout.log").decode("utf-8") == prepared["contract"]["expected_native_stdout"]
+            and read(output / "native.stderr.log") == b"", "SELECTED_LAYOUT_NATIVE_LOG")
+    require(read(output / "generated.luau") == generated and identity(read(binary)) == binary_pin,
+            "SELECTED_LAYOUT_PROGRAM_OR_BINARY_CHANGED")
+    for path, name in prepared["contract"]["flat_sources"].items():
+        require(identity(read(root / path)) == prepared["selected_sources"][path]
+                and read(root / path) == read(output / "sources" / name), "SELECTED_LAYOUT_FINAL_INPUT_CHANGED")
+    receipt = {
+        "schema": "UNION22_SELECTED_HUD_LAYOUT_EXECUTION_V1", "status": "PASS_SOURCE_LAYOUT_ONLY",
+        "execution_context": context, "source_receipt": source_receipt,
+        "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "runner": runner_pin,
+        "contract": prepared["contract"], "selected_sources": prepared["selected_sources"],
+        "source_root": str(root), "execution_directory": str(output),
+        "generator": identity(read(output / "native_layout.py")),
+        "generated": identity(generated), "python": prepared["python"], "native": binary_pin,
+        "commands": {"generator": prepared["generator_command"], "native": native_command},
+        "condition_count": 14, "completion_marker_count": 1,
+        "hud_runtime_executed": False, "policy_full_body_executed": True,
+        "separate_from_server28_suites": True, "source_inputs_unchanged": True,
+    }
+    write_json(output / "receipt.json", receipt)
+    print("selected_hud_layout: original main and 14 fixed Policy conditions PASS; HUD runtime not executed", flush=True)
+    return receipt
+
+
+def build_repl(source, build, output, lock, cmake, ninja, git, cc, cxx):
+    source, build = safe_root(source), safe_root(build)
+    require(not build.exists(), "BUILD_DIRECTORY_MUST_BE_NEW")
+    require(not build.is_relative_to(source) and not source.is_relative_to(build), "BUILD_OVERLAPS_SOURCE")
+    tools = {}
+    for name, path in (("cmake", cmake), ("ninja", ninja), ("git", git), ("cc", cc), ("cxx", cxx)):
+        actual, pin = executable(path)
+        tools[name] = {"path": str(actual), **pin}
+    cmake, ninja, git, cc, cxx = [Path(tools[name]["path"]) for name in ("cmake", "ninja", "git", "cc", "cxx")]
+    tree_before = verify_clean_source(source, git, lock["toolchain"])
+    recipe = lock["toolchain"]["recipe"]
+    binary = build / recipe["binary_relative_path"]
+    require(not binary.exists(), "PREBUILT_BINARY_FORBIDDEN")
+    configure = command_log([cmake, "-S", source, "-B", build, "-G", recipe["generator"],
+        "-DCMAKE_BUILD_TYPE=" + recipe["CMAKE_BUILD_TYPE"], "-DLUAU_BUILD_TESTS=" + recipe["LUAU_BUILD_TESTS"],
+        "-DLUAU_BUILD_CLI=" + recipe["LUAU_BUILD_CLI"], "-DCMAKE_MAKE_PROGRAM=" + str(ninja),
+        "-DCMAKE_C_COMPILER=" + str(cc), "-DCMAKE_CXX_COMPILER=" + str(cxx)], output, "configure", 180)
+    cache = read(build / "CMakeCache.txt")
+    cache_contract = validate_cache(cache, source, build, cmake, ninja, cc, cxx, recipe)
+    require(not binary.exists(), "BINARY_CREATED_BEFORE_TARGET_BUILD")
+    build_started_ns = time.time_ns()
+    built = command_log([cmake, "--build", build, "--target", recipe["target"], "--parallel", str(recipe["build_parallel"])],
+                        output, "build", 900)
+    raw = read(binary)
+    require(os.access(binary, os.X_OK) and binary.stat().st_mtime_ns >= build_started_ns
+            and b"Linking CXX executable luau" in read(output / "build.stdout.log"), "FRESH_TARGET_BINARY_NOT_PROVEN")
+    require(read(build / "CMakeCache.txt") == cache, "CMAKE_CACHE_CHANGED_DURING_BUILD")
+    tree_after = verify_clean_source(source, git, lock["toolchain"])
+    require(tree_before == tree_after, "SOURCE_CHANGED_DURING_BUILD")
+    (output / "CMakeCache.txt").write_bytes(cache)
+    (output / "build.ninja").write_bytes(read(build / "build.ninja"))
+    write_json(output / "source_tree_manifest.json", {"source_commit": lock["toolchain"]["source_commit"],
+        "source_tree": lock["toolchain"]["source_tree"], "files": tree_before})
+    evidence_names = ("configure.stdout.log", "configure.stderr.log", "build.stdout.log", "build.stderr.log",
+                      "CMakeCache.txt", "build.ninja", "source_tree_manifest.json")
+    receipt = {"schema": "UNION22_F46_REPL_BUILD_V1", "status": "PASS_NEW_BUILD",
+        "contract": "NEW_SOURCE_BUILD_CONTRACT_OLD_9C_BINARY_CONTRACT_UNCHANGED",
+        "source_path": str(source), "source_commit": lock["toolchain"]["source_commit"],
+        "source_tree": lock["toolchain"]["source_tree"], "tracked_file_count": len(tree_before),
+        "source_tree_clean_before_after": True, "build_directory": str(build),
+        "build_directory_absent_initially": True, "binary_absent_before_build": True,
+        "binary_path": str(binary), "binary_mtime_ns": binary.stat().st_mtime_ns,
+        "target_build_started_ns": build_started_ns, "recipe": recipe, "cache_contract": cache_contract,
+        "configure_exit": 0, "build_exit": 0, "commands": {"configure": configure, "build": built},
+        "tools": tools, "binary_before_suites": identity(raw), "binary_after_suites": None,
+        "evidence_files": {name: identity(read(output / name)) for name in evidence_names}}
+    return binary, receipt, tree_before
+
+
+def assemble(root, lock, suite_name):
+    require(suite_name in CASE_FILES and lock["case_files"] == CASE_FILES, "UNKNOWN_CASE_VARIANT")
+    case = HERE / CASE_FILES[suite_name]
+    require(identity(read(case)) == lock["suites"][suite_name]["case"], "EXACT_CASE_FILE")
+    code = "".join(read(HERE / "fixtures" / name).decode("utf-8") + "\n" for name in lock["fixture_order"])
+    ranges, byte_ranges = {}, {}
+    order = lock["modules_in_load_order"] + ["LobbyCastleModesPreview.server"]
+    for name in order:
+        rel = "ServerScriptService/EGGRUMBLE_" + name + ".luau"
+        raw = read(root / rel)
+        if name == "LobbyCastleModesPreview.server":
+            code += "\ninstallApiObservers()\nloadingModule='Host'\ndo local _=(function()\n"
+            label, start = "Host", code.count("\n") + 1
+        else:
+            label = name
+            code += "\nloadingModule='" + name + "'\n"
+            start = code.count("\n") + 3
+            code += f"fullSourceRanges.{name}={{first={start},last={start+raw.count(bytes([10]))}}}\n"
+            code += "dependencies.EGGRUMBLE_" + name + "=(function()\n"
+            require(code.count("\n") + 1 == start, "WRAPPER_SOURCE_LINE_RANGE")
+        first_byte = len(code.encode("utf-8"))
+        code += raw.decode("utf-8")
+        last_byte = len(code.encode("utf-8"))
+        byte_ranges[rel] = {"start": first_byte, "end": last_byte, **identity(raw)}
+        code += "\nend)()end\n" if label == "Host" else "\nend)()\n"
+        ranges[label] = {"first": start, "last": start + raw.count(b"\n")}
+    code += "\n" + read(case).decode("utf-8")
+    generated = code.encode("utf-8")
+    for rel, row in byte_ranges.items():
+        require(generated[row["start"]:row["end"]] == read(root / rel), "FULL_BODY_CHANGED")
+    require(len(byte_ranges) == 28, "FULL_BODY_COUNT")
+    return generated, ranges, byte_ranges
+
+
+def exact_vector(stdout, expected):
+    lines = [line for line in stdout.splitlines() if line.startswith("CASE\t")]
+    parts = [line.split("\t", 3) for line in lines]
+    okay = (len(parts) == len(expected) and [p[1] for p in parts if len(p) == 4] == expected
+            and all(len(p) == 4 and p[2] == "PASS" for p in parts))
+    return okay, lines
+
+
+def vector_parse_reason(lines, expected):
+    """Describe the existing vector predicate without changing its acceptance."""
+    parts = [line.split("\t", 3) for line in lines]
+    reasons = []
+    if len(parts) != len(expected):
+        reasons.append("CASE_COUNT_MISMATCH")
+    if any(len(row) != 4 for row in parts):
+        reasons.append("MALFORMED_CASE_ROW")
+    if [row[1] for row in parts if len(row) == 4] != expected:
+        reasons.append("CASE_NAME_OR_ORDER_MISMATCH")
+    if any(len(row) == 4 and row[2] != "PASS" for row in parts):
+        reasons.append("NON_PASS_CASE")
+    return "+".join(reasons) if reasons else "EXACT_PASS_VECTOR"
+
+
+def emit_suite_failure(output, diagnostic, stdout, stderr, error):
+    """Failure evidence only; callers always re-raise the original exception."""
+    diagnostic.update(exception_type=type(error).__name__, exception=str(error),
+                      stdout=identity(stdout), stderr=identity(stderr))
+    try:
+        (output / "stdout.log").write_bytes(stdout)
+        (output / "stderr.log").write_bytes(stderr)
+        write_json(output / "FAILED.json", diagnostic)
+    finally:
+        # JSON escaping keeps complete output on inert log lines, including
+        # invalid UTF-8 display escapes, even if diagnostic disk writes failed.
+        print("UNION22_NATIVE_FAILURE " + json.dumps(diagnostic, ensure_ascii=True, sort_keys=True), flush=True)
+        print("UNION22_NATIVE_FAILURE_STDOUT " + json.dumps(stdout.decode("utf-8", errors="backslashreplace")), flush=True)
+        print("UNION22_NATIVE_FAILURE_STDERR " + json.dumps(stderr.decode("utf-8", errors="backslashreplace")), flush=True)
+
+
+def run_suite(root, output, binary, lock, suite_name, source_before, binary_pin, context, source_receipt, runner_pin):
+    output.mkdir(exist_ok=False)
+    generated, line_ranges, byte_ranges = assemble(root, lock, suite_name)
+    (output / "generated.luau").write_bytes(generated)
+    require(identity(read(binary)) == binary_pin, "BINARY_CHANGED_BEFORE_SUITE")
+    expected = lock["suites"][suite_name]["expected_case_names"]
+    stdout, stderr = b"", b""
+    diagnostic = {"schema": "UNION22_NATIVE_SUITE_FAILURE_DIAGNOSTIC_V1", "status": "FAIL_DIAGNOSTIC_ONLY",
+                  "suite": suite_name, "execution_context": context, "source_receipt": source_receipt,
+                  "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "runner": runner_pin,
+                  "native": binary_pin, "generated": identity(generated), "case_file": lock["suites"][suite_name]["case"],
+                  "expected_case_names": expected, "cases": [], "native_exit": None, "timed_out": False,
+                  "exact_complete_pass_vector": None, "source_inputs_unchanged": None,
+                  "phase": "NATIVE_PROCESS", "parse_reason": "NOT_PARSED", "native_admission": False}
+    try:
+        result = subprocess.run([str(binary), str(output / "generated.luau")], env=clean_environment(),
+                                capture_output=True, timeout=60)
+        stdout, stderr = result.stdout, result.stderr
+        diagnostic.update(native_exit=result.returncode, phase="STDOUT_UTF8_PARSE")
+        (output / "stdout.log").write_bytes(stdout)
+        (output / "stderr.log").write_bytes(stderr)
+        vector, lines = exact_vector(result.stdout.decode("utf-8"), expected)
+        diagnostic.update(cases=lines, exact_complete_pass_vector=vector,
+                          parse_reason=vector_parse_reason(lines, expected), phase="SOURCE_SNAPSHOT")
+        unchanged = source_snapshot(root) == source_before
+        diagnostic.update(source_inputs_unchanged=unchanged, phase="SUITE_ACCEPTANCE_PREDICATE")
+        require(result.returncode == 0 and vector and unchanged, "SUITE_FAILED_OR_SOURCE_MUTATED:" + suite_name)
+        diagnostic["phase"] = "GENERATED_AND_BINARY_RECHECK"
+        require(read(output / "generated.luau") == generated and identity(read(binary)) == binary_pin,
+                "GENERATED_OR_NATIVE_CHANGED_DURING_SUITE")
+        diagnostic["phase"] = "FIXTURE_RECHECK"
+        fixture_snapshot(lock)
+    except Exception as error:
+        if isinstance(error, subprocess.TimeoutExpired):
+            stdout, stderr = error.stdout or b"", error.stderr or b""
+            diagnostic.update(timed_out=True, parse_reason="NOT_PARSED_TIMEOUT")
+        elif isinstance(error, UnicodeDecodeError):
+            diagnostic["parse_reason"] = "INVALID_UTF8"
+        try:
+            emit_suite_failure(output, diagnostic, stdout, stderr, error)
+        except Exception as diagnostic_error:
+            # A diagnostic I/O error must not replace the original failing gate.
+            try:
+                print("UNION22_NATIVE_DIAGNOSTIC_OUTPUT_ERROR " + repr(diagnostic_error), file=sys.stderr, flush=True)
+            except Exception:
+                pass
+        raise
+    receipt = {"schema": "UNION22_FULL_RUNTIME_SUITE_V2", "status": "PASS", "profile": "union22", "suite": suite_name,
+        "input_variant": lock["suites"][suite_name]["input_variant"], "case_path": CASE_FILES[suite_name],
+        "execution_context": context, "source_receipt": source_receipt,
+        "source_count_pinned": 69, "source_count_executed_full_body": 28, "source_profile": source_before,
+        "source_root": str(root), "full_body_byte_ranges": byte_ranges, "source_line_ranges": line_ranges,
+        "fixture_pins": lock["fixtures"], "runner": runner_pin,
+        "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "case_file": lock["suites"][suite_name]["case"],
+        "generated": identity(generated), "stdout": identity(result.stdout), "stderr": identity(result.stderr),
+        "native": binary_pin, "exit_code": result.returncode, "cases": lines,
+        "expected_case_names": expected, "exact_complete_pass_vector": True, "source_inputs_unchanged": True,
+        "traces": [line for line in result.stdout.decode().splitlines() if line.startswith(("TRACE\t", "METRIC\t"))],
+        "limitations": lock["limitations"]}
+    write_json(output / "receipt.json", receipt)
+    print(suite_name + ": " + str(len(lines)) + "/" + str(len(expected)) + " exact PASS cases", flush=True)
+    return receipt
+
+
+def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, cc, cxx, context):
+    lock = load_lock()
+    runner_before = read(Path(__file__))
+    lock_before = read(HERE / "INPUT_LOCK.json")
+    root, source, build, output = [safe_root(p) for p in (source_root, luau_source, build_dir, output)]
+    require(not output.exists() and not build.exists(), "OUTPUT_AND_BUILD_MUST_BE_NEW")
+    roots = [root, source, build, output]
+    require(all(not a.is_relative_to(b) and not b.is_relative_to(a)
+                for i, a in enumerate(roots) for b in roots[i+1:]), "DIRECTORY_OVERLAP")
+    sys.path.insert(0, str(HERE.parent))
+    import compose_union22 as compose
+    source_receipt_raw = read(root.parent / compose.RECEIPT)
+    source_receipt = strict_json(source_receipt_raw)
+    core = strict_json(read(root.parent / "CORE_BUILD_REPORT.json"))
+    compose.validate_context(context, source_receipt)
+    require(core.get("context") == context and source_receipt.get("execution_context") == context
+            and core.get("status") == "PASS_SOURCE_BUILD_ONLY", "CURRENT_SOURCE_EXECUTION_CONTEXT")
+    before = source_snapshot(root)
+    require(before == lock["sources"] and len(before) == 69, "SOURCE_PROFILE_MISMATCH")
+    fixture_snapshot(lock)
+    output.mkdir(parents=True, exist_ok=False)
+    try:
+        binary, built, tree_before = build_repl(source, build, output, lock, cmake, ninja, git, cc, cxx)
+        built["execution_context"] = context
+        built["source_receipt"] = identity(source_receipt_raw)
+        built["input_lock"] = identity(lock_before)
+        built["runner"] = identity(runner_before)
+        pin = built["binary_before_suites"]
+        for suite in ("combined_clear_los", "objective_full_clear_los"):
+            run_suite(root, output / suite, binary, lock, suite, before, pin, context,
+                      identity(source_receipt_raw), identity(runner_before))
+        run_selected_hud_layout(root, output / "selected_hud_layout", binary, lock, pin, context,
+                                identity(source_receipt_raw), identity(runner_before))
+        require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
+        require(read(root.parent / compose.RECEIPT) == source_receipt_raw
+                and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
+                "SOURCE_RECEIPT_OR_CONTEXT_CHANGED_DURING_NATIVE")
+        require(read(Path(__file__)) == runner_before and read(HERE / "INPUT_LOCK.json") == lock_before,
+                "RUNNER_OR_LOCK_CHANGED_DURING_NATIVE")
+        fixture_snapshot(lock)
+        require(verify_clean_source(source, Path(built["tools"]["git"]["path"]), lock["toolchain"]) == tree_before,
+                "TOOLCHAIN_SOURCE_CHANGED_AFTER_SUITES")
+        for tool in built["tools"].values():
+            require(identity(read(Path(tool["path"]))) == {k: tool[k] for k in ("bytes", "sha256")}, "BUILD_TOOL_CHANGED")
+        built["binary_after_suites"] = identity(read(binary))
+        require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
+        write_json(output / "build_receipt.json", built)
+        receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
+                   "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
+                   "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
+                   "original_objective_case_preserved_not_claimed_as_unchanged_pass": True,
+                   "execution_context": context, "source_receipt": identity(source_receipt_raw),
+                   "source_inputs_unchanged": True, "source_profile": before,
+                   "source_count_pinned": 69, "source_count_executed_full_body": 28,
+                   "input_lock": identity(lock_before), "runner": identity(runner_before),
+                   "build_receipt": identity(read(output / "build_receipt.json")),
+                   "suites": {name: identity(read(output / name / "receipt.json")) for name in lock["suites"]},
+                   "selected_hud_layout": identity(read(output / "selected_hud_layout/receipt.json")),
+                   "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
+        write_json(output / "receipt.json", receipt)
+        return receipt
+    except Exception as error:
+        write_json(output / "FAILED.json", {"status": "FAIL_NO_NATIVE_ADMISSION", "reason": str(error)})
+        raise
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("source-root", "luau-source", "build-dir", "out", "cmake", "ninja", "git", "cc", "cxx"):
+        parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--head", required=True)
+    args = parser.parse_args()
+    sys.path.insert(0, str(HERE.parent))
+    import compose_union22 as compose
+    source_receipt = strict_json(read(args.source_root.parent / compose.RECEIPT))
+    context = compose.live_context(source_receipt, args.head)
+    run_profile(args.source_root, args.luau_source, args.build_dir, args.out,
+                args.cmake, args.ninja, args.git, args.cc, args.cxx, context)
+    print("UNION22_NATIVE_FULL_28_BODIES_DUAL_CLEAR_LOS_INPUTS_PASS_SOURCE_ONLY")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
