@@ -171,6 +171,58 @@
     "sha256": "5432a82b86b1faf2de65ea63026ddd54c46d292511b15f660fa8b577b9d31a9c"
   },
   "schema": "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3",
+  "selected_hud_layout": {
+    "condition_count": 14,
+    "expected_generator_stdout": "GQ8_REAL63_SELECTED_SOURCE_MODAL_LAYOUT_PROOFS_PASS\n",
+    "expected_native_stdout": "GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS\n",
+    "flat_sources": {
+      "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": "EGGRUMBLE_HudPresentationPolicy.luau",
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": "EGGRUMBLE_HudIntelRuntime.client.luau"
+    },
+    "generator": {
+      "bytes": 3097,
+      "path": "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py",
+      "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"
+    },
+    "generator_python_optimization": 0,
+    "hands": [
+      "RIGHT",
+      "LEFT"
+    ],
+    "hud_runtime_executed": false,
+    "policy_full_body_executed": true,
+    "schema": "GQ828_SELECTED_HUD_LAYOUT_GATE_V1",
+    "viewport_shapes": [
+      [
+        320,
+        260
+      ],
+      [
+        393,
+        851
+      ],
+      [
+        375,
+        667
+      ],
+      [
+        600,
+        300
+      ],
+      [
+        851,
+        393
+      ],
+      [
+        1280,
+        720
+      ],
+      [
+        1024,
+        768
+      ]
+    ]
+  },
   "separate_from_historical_9c_binary_contract": true,
   "sources": {
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
@@ -414,8 +466,8 @@
       "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
-      "bytes": 25338,
-      "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+      "bytes": 25323,
+      "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau": {
       "bytes": 6040,

@@ -34,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 47, "final": 9}
+INTEGRATION_COUNTS = {"core": 48, "final": 11}
 
 
 def artifact_environment(expected_stage=None):
@@ -146,12 +146,49 @@ class UnionBoundary(unittest.TestCase):
             verify.verify_core(root, self.prior, self.reports, self.context)
 
     def test_original_39_workflow_step_payloads_byte_exact(self):
-        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_text()
-        prefix = workflow.split("    steps:\n", 1)[1].split(
-            '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
-        self.assertEqual(compose.identity(prefix.encode()), {
-            "bytes": 106837, "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"})
+        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_bytes().decode("utf-8")
+        # Only the reviewed original-input transport changes; invert it before
+        # checking the unchanged historical 39-step contract.
+        old_transport = (
+            '          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}\n'
+            '          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55\n'
+            '          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59\n'
+            '          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62\n'
+            '          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62\n'
+            '          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63\n'
+            '          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56\n'
+            '          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56\n'
+        )
+        new_transport = '          python3 -B quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py --out /tmp/gq863\n'
+        original = {"bytes": 106837,
+                    "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"}
+
+        def check_original_prefix(candidate):
+            self.assertEqual(candidate.count(new_transport), 1)
+            self.assertNotIn(old_transport, candidate)
+            prefix = candidate.split("    steps:\n", 1)[1].split(
+                '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
+            self.assertEqual(prefix.count(new_transport), 1)
+            restored = prefix.replace(new_transport, old_transport, 1)
+            self.assertEqual(compose.identity(restored.encode()), original)
+
+        check_original_prefix(workflow)
         self.assertEqual(workflow.count("path: artifacts/real69_union22/delivery/"), 1)
+        # Historical bytes, loader commands and multiplicity are exact; even a
+        # physical LF-to-CRLF change must fail the inverse contract.
+        mutations = {
+            "historical_head": workflow.replace(
+                "44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e",
+                "44393525211:b6020867fac80fa3b2ca47478625873fc6f3678e", 1),
+            "loader_output": workflow.replace("--out /tmp/gq863\n", "--out /tmp/gq863x\n", 1),
+            "duplicate_loader": workflow.replace(new_transport, new_transport * 2, 1),
+            "prefix_crlf": workflow.replace("          set -euo pipefail\n", "          set -euo pipefail\r\n", 1),
+        }
+        for label, mutated in mutations.items():
+            with self.subTest(mutation=label):
+                self.assertNotEqual(mutated, workflow)
+                with self.assertRaises(AssertionError):
+                    check_original_prefix(mutated)
 
     def test_actual_final_retention(self):
         result = verify.verify_core(self.current, self.prior, self.reports, self.context)
@@ -485,6 +522,32 @@ class UnionBoundary(unittest.TestCase):
             verify.verify_native(copied / "missing-native-results", self.current, self.lock, self.context)
 
 
+    def test_final_selected_hud_original_main_rejects_lost_anchor(self):
+        good = self.temporary() / "good-layout"
+        prepared = native.prepare_selected_hud_layout(
+            self.current / "sources", good, self.native_lock)
+        self.assertEqual(prepared["contract"]["condition_count"], 14)
+        self.assertEqual((good / "generator.stderr.log").read_bytes(), b"")
+        self.assertIn(b"GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS",
+                      (good / "generated.luau").read_bytes())
+        copied = self.temporary() / "sources"
+        shutil.copytree(self.current / "sources", copied)
+        hud = copied / compose.HUD_SOURCE
+        anchor = b"actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting"
+        original = hud.read_bytes()
+        self.assertEqual(original.count(anchor), 1)
+        changed = original.replace(anchor, anchor.replace(b"inMatch", b"combatVisible"))
+        hud.write_bytes(changed)
+        revised = copy.deepcopy(self.native_lock)
+        revised["sources"][compose.HUD_SOURCE] = compose.identity(changed)
+        rejected = self.temporary() / "rejected-layout"
+        with self.assertRaisesRegex(ValueError, "GENERATOR_FAILED"):
+            native.prepare_selected_hud_layout(copied, rejected, revised)
+        self.assertFalse((rejected / "generated.luau").exists())
+        self.assertIn(b"RED_REAL63_RUNTIME_LAYOUT_GATE",
+                      (rejected / "generator.stderr.log").read_bytes())
+
+
 class FinalAdmissionBoundary(unittest.TestCase):
     """Run explicitly after actual Native completion; no fixture or gate stubs."""
     ARTIFACT_STAGE = "final"
@@ -623,6 +686,57 @@ class FinalAdmissionBoundary(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "NATIVE_AGGREGATE_SUITE_SET"):
             verify.verify_native(copied, self.current, self.lock, self.context)
 
+    def test_selected_layout_program_cannot_be_replaced_by_pass_marker(self):
+        copied = self.temporary() / "native"
+        shutil.copytree(self.native, copied)
+        folder = copied / "selected_hud_layout"
+        fake = b'print("GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS")\n'
+        (folder / "generated.luau").write_bytes(fake)
+        receipt = verify.data(folder / "receipt.json")
+        receipt["generated"] = compose.identity(fake)
+        compose.write_json(folder / "receipt.json", receipt)
+        aggregate = verify.data(copied / "receipt.json")
+        aggregate["selected_hud_layout"] = compose.identity((folder / "receipt.json").read_bytes())
+        compose.write_json(copied / "receipt.json", aggregate)
+        with self.assertRaisesRegex(ValueError, "NATIVE_SELECTED_LAYOUT_GENERATED_PROGRAM"):
+            verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_selected_layout_source_and_execution_forgery_rejected(self):
+        for mutation, reason in [
+            ("generator", "NATIVE_SELECTED_LAYOUT_GENERATOR_IDENTITY"),
+            ("selected_hud", "NATIVE_SELECTED_LAYOUT_FINAL_SOURCE"),
+            ("optimized_python", "NATIVE_SELECTED_LAYOUT_EXECUTED_COMMAND"),
+            ("nonzero_native", "NATIVE_SELECTED_LAYOUT_EXECUTED_COMMAND"),
+            ("missing_aggregate", "NATIVE_SELECTED_LAYOUT_AGGREGATE_BINDING"),
+        ]:
+            with self.subTest(mutation=mutation):
+                copied = self.temporary() / "native"
+                shutil.copytree(self.native, copied)
+                folder = copied / "selected_hud_layout"
+                receipt = verify.data(folder / "receipt.json")
+                if mutation == "generator":
+                    p = folder / "native_layout.py"
+                    p.write_bytes(p.read_bytes() + b"\n# changed original gate\n")
+                    receipt["generator"] = compose.identity(p.read_bytes())
+                elif mutation == "selected_hud":
+                    p = folder / "sources/EGGRUMBLE_HudIntelRuntime.client.luau"
+                    p.write_bytes(p.read_bytes() + b"\n-- changed selected body\n")
+                    receipt["selected_sources"][compose.HUD_SOURCE] = compose.identity(p.read_bytes())
+                elif mutation == "optimized_python":
+                    receipt["commands"]["generator"]["argv"].insert(1, "-O")
+                elif mutation == "nonzero_native":
+                    receipt["commands"]["native"]["exit_code"] = 1
+                compose.write_json(folder / "receipt.json", receipt)
+                aggregate = verify.data(copied / "receipt.json")
+                aggregate["selected_hud_layout"] = compose.identity((folder / "receipt.json").read_bytes())
+                if mutation == "missing_aggregate":
+                    del aggregate["selected_hud_layout"]
+                compose.write_json(copied / "receipt.json", aggregate)
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify.verify_selected_hud_layout(
+                        copied, self.current, self.native_lock,
+                        verify.data(copied / "build_receipt.json"), aggregate, self.context)
+
 
 class UnionOfflineContract(unittest.TestCase):
     """Repository-only checks; no artifact or runtime acceptance is claimed."""
@@ -643,17 +757,33 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertFalse(self.lock["author_origins"]["new_lua_authored"])
         self.assertTrue(repair["new_lua_authored"])
         self.assertEqual(repair["claim_id"], "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F")
-        self.assertEqual(repair["grant_commit"], "b85eca5ce272daf3a63a7dba029a977a0effec79")
+        self.assertEqual(repair["base_rc_head"], "dcb501673d7959e4904cf360ef0119917e6aa2e0")
+        self.assertEqual(repair["grant_commit"], "9ed7b2af97de4ce32be89f6cf91450095188fcea")
+        self.assertEqual(repair["grant_registry_blob"], "e0065fba728c65ab745edc0f4a5df0215f793484")
+        self.assertEqual(repair["grant_comment"], 7088004228)
+        self.assertEqual(repair["grant_status"], "GRANTED_SCOPE_4_NOT_ADOPTED")
+        self.assertEqual(repair["grant_scope_version"], 4)
+        self.assertEqual(repair["grant_expires_at"], "2026-11-23T03:51:42.000Z")
+        self.assertEqual(repair["grant_independent_reviewer_context"], "/root/rules_audit")
+        previous = repair["superseded_revision"]["followup_repair"]
+        self.assertEqual(previous["grant_commit"], "b85eca5ce272daf3a63a7dba029a977a0effec79")
+        self.assertEqual(repair["superseded_revision"]["published_head"],
+                         "2e7d18df9102a7272caefe83e718cfa91c06fe12")
+        self.assertEqual(previous["repaired_hud"],
+                         {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
         self.assertEqual(repair["prior_profile"]["sha256"], "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60")
-        self.assertEqual(sum(len(row["forward"]) for row in self.lock["sources"].values()), 171)
+        self.assertEqual(sum(len(row["forward"]) for row in self.lock["sources"].values()), 169)
         remaining = {p: r for p, r in self.lock["sources"].items() if p != compose.HUD_SOURCE}
         encode = lambda value: (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
         self.assertEqual(compose.identity(encode(remaining)), {'bytes': 272752, 'sha256': 'e2a6bcfd7d060f0da78b4a5971a2e887f26681b0477b1e5f70d99abbf80b6066'})
         phase = self.lock["sources"][compose.HUD_SOURCE]["forward"][0]
         self.assertEqual(compose.identity(encode(phase)), {'bytes': 997, 'sha256': '2ab2ddfd837f0ba1c78ebef579b54149c72c2c964730c3e1fcc36e4cc2cb17ec'})
         self.assertEqual(repair["current_hud"], {"bytes": 24779, "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"})
-        self.assertEqual(repair["repaired_hud"], {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
+        self.assertEqual(repair["repaired_hud"], {"bytes": 25323, "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"})
         self.assertFalse(repair["hud_behavior_evidence"]["canonical_server28_suites_execute_hud"])
+        self.assertFalse(self.native_lock["selected_hud_layout"]["hud_runtime_executed"])
+        self.assertTrue(self.native_lock["selected_hud_layout"]["policy_full_body_executed"])
+        self.assertEqual(self.native_lock["selected_hud_layout"]["condition_count"], 14)
 
     def test_original_fixture_and_case_bytes_remain_pinned(self):
         self.assertEqual(native.fixture_snapshot(self.native_lock), self.native_lock["fixtures"])

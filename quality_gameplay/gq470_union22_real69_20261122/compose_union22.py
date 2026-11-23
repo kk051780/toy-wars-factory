@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "9df051874e6afacdfe0f267a4c80dd02238a05bac8913b55184a736c642232ae"
+LOCK_SHA256 = "2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"

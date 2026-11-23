@@ -18,7 +18,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "4a18aa836d120f99c3b6d22ac2909dce8e8b3ab3b178ebe1966a45ae9bdee239"
+INPUT_LOCK_SHA256 = "57f5c526549e19209f92bf0d770ca00c06e468ad8a80f32f3e511dcb04eaa71a"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
 
@@ -190,6 +190,84 @@ def command_log(command, output, prefix, timeout):
     require(result.returncode == 0, prefix.upper() + "_FAILED:" + result.stderr.decode(errors="replace")[-1000:])
     return {"argv": [str(x) for x in command], "started_at_utc": started, "exit_code": result.returncode,
             "stdout": identity(result.stdout), "stderr": identity(result.stderr)}
+
+
+def prepare_selected_hud_layout(root, output, lock):
+    """Run the unchanged REAL63 generator main on the actual final two sources."""
+    contract = lock["selected_hud_layout"]
+    relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
+    generator = HERE.parents[2] / relative
+    generator_pin = {"bytes": 3097, "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"}
+    flat = {
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau":
+            "EGGRUMBLE_HudIntelRuntime.client.luau",
+        "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau":
+            "EGGRUMBLE_HudPresentationPolicy.luau",
+    }
+    require(contract["schema"] == "GQ828_SELECTED_HUD_LAYOUT_GATE_V1"
+            and contract["generator"] == {"path": relative, **generator_pin}
+            and identity(read(generator)) == generator_pin
+            and contract["flat_sources"] == flat
+            and contract["viewport_shapes"] == [[320, 260], [393, 851], [375, 667],
+                                               [600, 300], [851, 393], [1280, 720], [1024, 768]]
+            and contract["hands"] == ["RIGHT", "LEFT"] and contract["condition_count"] == 14
+            and contract["expected_generator_stdout"] == "GQ8_REAL63_SELECTED_SOURCE_MODAL_LAYOUT_PROOFS_PASS\n"
+            and contract["expected_native_stdout"] == "GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS\n"
+            and contract["generator_python_optimization"] == 0
+            and contract["hud_runtime_executed"] is False
+            and contract["policy_full_body_executed"] is True, "SELECTED_LAYOUT_CONTRACT")
+    output.mkdir(exist_ok=False)
+    (output / "sources").mkdir()
+    (output / "native_layout.py").write_bytes(read(generator))
+    selected = {}
+    for relative_source, name in flat.items():
+        raw = read(root / relative_source)
+        require(identity(raw) == lock["sources"][relative_source], "SELECTED_LAYOUT_SOURCE_PIN")
+        (output / "sources" / name).write_bytes(raw)
+        selected[relative_source] = identity(raw)
+    python, python_pin = executable(sys.executable)
+    # clean_environment excludes PYTHONOPTIMIZE; the child argv deliberately
+    # does not inherit a parent's -O. The original generator uses assertions.
+    command = command_log([python, "-B", output / "native_layout.py", "--sources",
+                           output / "sources", "--out", output / "generated.luau"],
+                          output, "generator", 60)
+    require(read(output / "generator.stdout.log").decode("utf-8") == contract["expected_generator_stdout"]
+            and read(output / "generator.stderr.log") == b"", "SELECTED_LAYOUT_GENERATOR_LOG")
+    require(read(output / "native_layout.py") == read(generator)
+            and all(read(output / "sources" / name) == read(root / path)
+                    for path, name in flat.items()), "SELECTED_LAYOUT_INPUT_CHANGED")
+    return {"contract": contract, "selected_sources": selected, "generator_command": command,
+            "python": {"path": str(python), **python_pin}}
+
+
+def run_selected_hud_layout(root, output, binary, lock, binary_pin, context, source_receipt, runner_pin):
+    prepared = prepare_selected_hud_layout(root, output, lock)
+    generated = read(output / "generated.luau")
+    require(identity(read(binary)) == binary_pin, "SELECTED_LAYOUT_BINARY_BEFORE")
+    native_command = command_log([binary, output / "generated.luau"], output, "native", 60)
+    require(read(output / "native.stdout.log").decode("utf-8") == prepared["contract"]["expected_native_stdout"]
+            and read(output / "native.stderr.log") == b"", "SELECTED_LAYOUT_NATIVE_LOG")
+    require(read(output / "generated.luau") == generated and identity(read(binary)) == binary_pin,
+            "SELECTED_LAYOUT_PROGRAM_OR_BINARY_CHANGED")
+    for path, name in prepared["contract"]["flat_sources"].items():
+        require(identity(read(root / path)) == prepared["selected_sources"][path]
+                and read(root / path) == read(output / "sources" / name), "SELECTED_LAYOUT_FINAL_INPUT_CHANGED")
+    receipt = {
+        "schema": "UNION22_SELECTED_HUD_LAYOUT_EXECUTION_V1", "status": "PASS_SOURCE_LAYOUT_ONLY",
+        "execution_context": context, "source_receipt": source_receipt,
+        "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "runner": runner_pin,
+        "contract": prepared["contract"], "selected_sources": prepared["selected_sources"],
+        "source_root": str(root), "execution_directory": str(output),
+        "generator": identity(read(output / "native_layout.py")),
+        "generated": identity(generated), "python": prepared["python"], "native": binary_pin,
+        "commands": {"generator": prepared["generator_command"], "native": native_command},
+        "condition_count": 14, "completion_marker_count": 1,
+        "hud_runtime_executed": False, "policy_full_body_executed": True,
+        "separate_from_server28_suites": True, "source_inputs_unchanged": True,
+    }
+    write_json(output / "receipt.json", receipt)
+    print("selected_hud_layout: original main and 14 fixed Policy conditions PASS; HUD runtime not executed", flush=True)
+    return receipt
 
 
 def build_repl(source, build, output, lock, cmake, ninja, git, cc, cxx):
@@ -409,6 +487,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         for suite in ("combined_clear_los", "objective_full_clear_los"):
             run_suite(root, output / suite, binary, lock, suite, before, pin, context,
                       identity(source_receipt_raw), identity(runner_before))
+        run_selected_hud_layout(root, output / "selected_hud_layout", binary, lock, pin, context,
+                                identity(source_receipt_raw), identity(runner_before))
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -433,6 +513,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "input_lock": identity(lock_before), "runner": identity(runner_before),
                    "build_receipt": identity(read(output / "build_receipt.json")),
                    "suites": {name: identity(read(output / name / "receipt.json")) for name in lock["suites"]},
+                   "selected_hud_layout": identity(read(output / "selected_hud_layout/receipt.json")),
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         return receipt

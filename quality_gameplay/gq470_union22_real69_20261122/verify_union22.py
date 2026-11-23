@@ -8,6 +8,7 @@ Their prior reports remain explicitly prior evidence, not final execution proof.
 from __future__ import annotations
 
 import argparse
+import ast
 from collections import Counter
 import hashlib
 import importlib.util
@@ -506,6 +507,100 @@ def independent_build_evidence(native, build, pins, context, root):
             and not git("status", "--porcelain=v1", "--untracked-files=all", "--ignored"), "NATIVE_ACTUAL_CLEAN_SOURCE")
 
 
+def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
+    """Independently bind original main, selected final bodies, generated code and execution."""
+    folder = native / "selected_hud_layout"
+    result = data(folder / "receipt.json")
+    contract = pins["selected_hud_layout"]
+    relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
+    expected_generator = {"bytes": 3097, "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"}
+    flat = {
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau":
+            "EGGRUMBLE_HudIntelRuntime.client.luau",
+        "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau":
+            "EGGRUMBLE_HudPresentationPolicy.luau",
+    }
+    require(contract["schema"] == "GQ828_SELECTED_HUD_LAYOUT_GATE_V1"
+            and contract["generator"] == {"path": relative, **expected_generator}
+            and contract["flat_sources"] == flat and contract["condition_count"] == 14
+            and contract["viewport_shapes"] == [[320, 260], [393, 851], [375, 667],
+                                               [600, 300], [851, 393], [1280, 720], [1024, 768]]
+            and contract["hands"] == ["RIGHT", "LEFT"]
+            and contract["generator_python_optimization"] == 0
+            and contract["hud_runtime_executed"] is False
+            and contract["policy_full_body_executed"] is True, "NATIVE_SELECTED_LAYOUT_CONTRACT")
+    generator = read(folder / "native_layout.py")
+    require(digest(generator) == expected_generator and generator == read(REPO / relative),
+            "NATIVE_SELECTED_LAYOUT_GENERATOR_IDENTITY")
+    selected = {}
+    for path, name in flat.items():
+        raw = read(root / "sources" / path)
+        require(raw == read(folder / "sources" / name) and digest(raw) == pins["sources"][path],
+                "NATIVE_SELECTED_LAYOUT_FINAL_SOURCE")
+        selected[path] = digest(raw)
+    tree = ast.parse(generator.decode("utf-8"))
+    values = [ast.literal_eval(node.value) for node in tree.body
+              if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "TEST"
+                                                     for t in node.targets)]
+    require(len(values) == 1 and isinstance(values[0], str) and values[0].count("__SOURCE__") == 1,
+            "NATIVE_SELECTED_LAYOUT_TEST_TEMPLATE")
+    policy = read(root / "sources/ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau")
+    expected_program = values[0].replace("__SOURCE__", policy.decode("utf-8")).encode("utf-8")
+    generated = read(folder / "generated.luau")
+    require(generated == expected_program and generated.count(policy) == 1,
+            "NATIVE_SELECTED_LAYOUT_GENERATED_PROGRAM")
+    execution = Path(result["execution_directory"])
+    require(execution.is_absolute() and execution.name == "selected_hud_layout"
+            and ".." not in execution.parts, "NATIVE_SELECTED_LAYOUT_EXECUTION_PATH")
+    python = result["python"]
+    require(Path(python["path"]).is_absolute()
+            and digest(read(python["path"])) == {k: python[k] for k in ("bytes", "sha256")},
+            "NATIVE_SELECTED_LAYOUT_PYTHON_IDENTITY")
+    expected_argv = {
+        "generator": [python["path"], "-B", str(execution / "native_layout.py"), "--sources",
+                      str(execution / "sources"), "--out", str(execution / "generated.luau")],
+        "native": [build["binary_path"], str(execution / "generated.luau")],
+    }
+    require(set(result.get("commands", {})) == set(expected_argv), "NATIVE_SELECTED_LAYOUT_COMMAND_SET")
+    expected_stdout = {
+        "generator": b"GQ8_REAL63_SELECTED_SOURCE_MODAL_LAYOUT_PROOFS_PASS\n",
+        "native": b"GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS\n",
+    }
+    for name, argv in expected_argv.items():
+        command = result["commands"][name]
+        stdout, stderr = read(folder / (name + ".stdout.log")), read(folder / (name + ".stderr.log"))
+        require(command["argv"] == argv and command["exit_code"] == 0
+                and command["stdout"] == digest(stdout) and command["stderr"] == digest(stderr)
+                and stdout == expected_stdout[name] and stderr == b"",
+                "NATIVE_SELECTED_LAYOUT_EXECUTED_COMMAND:" + name)
+    require(contract["expected_generator_stdout"].encode() == expected_stdout["generator"]
+            and contract["expected_native_stdout"].encode() == expected_stdout["native"],
+            "NATIVE_SELECTED_LAYOUT_LOCK_MARKERS")
+    require(result.get("schema") == "UNION22_SELECTED_HUD_LAYOUT_EXECUTION_V1"
+            and result.get("status") == "PASS_SOURCE_LAYOUT_ONLY"
+            and result.get("execution_context") == context
+            and result.get("source_receipt") == digest(read(root / compose.RECEIPT))
+            and result.get("input_lock") == digest(read(HERE / "native/INPUT_LOCK.json"))
+            and result.get("runner") == digest(read(HERE / "native/run_profile.py"))
+            and result.get("contract") == contract and result.get("selected_sources") == selected
+            and result.get("generator") == expected_generator and result.get("generated") == digest(generated)
+            and result.get("native") == build["binary_before_suites"]
+            and result.get("condition_count") == 14 and result.get("completion_marker_count") == 1
+            and result.get("hud_runtime_executed") is False and result.get("policy_full_body_executed") is True
+            and result.get("separate_from_server28_suites") is True
+            and result.get("source_inputs_unchanged") is True, "NATIVE_SELECTED_LAYOUT_RECEIPT_FACTS")
+    require(aggregate.get("selected_hud_layout") == digest(read(folder / "receipt.json")),
+            "NATIVE_SELECTED_LAYOUT_AGGREGATE_BINDING")
+    expected_files = {"native_layout.py", "generated.luau", "receipt.json",
+                      "generator.stdout.log", "generator.stderr.log", "native.stdout.log", "native.stderr.log"}
+    expected_files |= {"sources/" + name for name in flat.values()}
+    require(set(files(folder)) == expected_files, "NATIVE_SELECTED_LAYOUT_FILE_SET")
+    return {"condition_count": 14, "completion_marker_count": 1,
+            "receipt": digest(read(folder / "receipt.json")), "selected_sources": selected,
+            "hud_runtime_executed": False, "policy_full_body_executed": True,
+            "files": expected_files}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -616,11 +711,14 @@ def verify_native(native, root, lock, context):
         results[suite_name] = {"case_count": len(parts), "receipt": digest(read(folder / "receipt.json"))}
     require(set(results) == {"combined_clear_los", "objective_full_clear_los"} and len(results) == 2,
             "NATIVE_BOTH_SUITES")
+    layout = verify_selected_hud_layout(native, root, pins, build, aggregate, context)
     expected_files = set(build["evidence_files"]) | {"build_receipt.json", "receipt.json"}
     expected_files |= {suite + "/" + name for suite in pins["suites"]
                        for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
+    expected_files |= {"selected_hud_layout/" + name for name in layout["files"]}
     require(set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
-    return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate}
+    return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
+            "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"}}
 
 
 def admit_delivery(root, base, reports, native, context):
@@ -681,6 +779,7 @@ def admit_delivery(root, base, reports, native, context):
             "prior_reports_are_prior_boundary_only": True, "prior_opaque_rollback_archives_preserved": 8,
             "fresh_final_marker_retention": 17, "unchanged_all48_auditor_executed_on_final": 48,
             "visual_source_retention": 3, "native_suites": runtime["results"],
+            "selected_hud_layout": runtime["selected_hud_layout"],
             "native_suite_input_variants": runtime["aggregate"]["suite_input_variants"],
             "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
             "original_objective_case_preserved_not_claimed_as_unchanged_pass": True,

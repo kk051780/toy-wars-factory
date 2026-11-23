@@ -25,15 +25,16 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 828673,
-    "sha256": "c2b480c22137877973d77cff21c858a16d99bd01cb65903477802e654d78bb89"
+    "bytes": 828658,
+    "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
   },
   "followup_repair": {
     "author_contexts": [
-      "/root (CODEX_ROOT_79005A1F03B2): HUD patch author and accountable parent",
-      "/root/candidate_audit: six-file producer/lock/verifier/test implementer"
+      "7a4b9b0b26d0 /root/planning_gap: existing exact +544 HUD Lua author, reused unchanged",
+      "79005a1f03b2 /root: accountable parent, independent KO and GUI-boundary reviewer",
+      "79005a1f03b2 /root/candidate_audit: six-file V2 transport and final selected layout-gate implementer"
     ],
-    "base_rc_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+    "base_rc_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
     "changed_sources_from_current_rc": 1,
     "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
     "current_hud": {
@@ -47,109 +48,90 @@
     "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
     "forward": [
       {
-        "new": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+        "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
         "new_identity": {
-          "bytes": 590,
-          "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+          "bytes": 544,
+          "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
         },
-        "old": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+        "old": "",
         "old_identity": {
-          "bytes": 61,
-          "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
-        "start": 584,
-        "stop": 586
-      },
-      {
-        "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
-        "new_identity": {
-          "bytes": 235,
-          "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
-        },
-        "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
-        "old_identity": {
-          "bytes": 217,
-          "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
-        },
-        "start": 589,
-        "stop": 592
-      },
-      {
-        "new": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
-        "new_identity": {
-          "bytes": 120,
-          "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
-        },
-        "old": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
-        "old_identity": {
-          "bytes": 108,
-          "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
-        },
-        "start": 593,
-        "stop": 595
+        "start": 596,
+        "stop": 596
       }
     ],
-    "grant_comment": 7086384728,
-    "grant_commit": "b85eca5ce272daf3a63a7dba029a977a0effec79",
-    "grant_registry_blob": "ff538a83c84076688bc880b3d805c8b87c54fef5",
+    "grant_comment": 7088004228,
+    "grant_commit": "9ed7b2af97de4ce32be89f6cf91450095188fcea",
+    "grant_expires_at": "2026-11-23T03:51:42.000Z",
+    "grant_independent_reviewer_context": "/root/rules_audit",
+    "grant_registry_blob": "e0065fba728c65ab745edc0f4a5df0215f793484",
+    "grant_scope_version": 4,
+    "grant_status": "GRANTED_SCOPE_4_NOT_ADOPTED",
     "historical_author_origins_apply_to_original_union_only": true,
     "hud_behavior_evidence": {
+      "canonical_selected_hud_layout_executes_hud": false,
       "canonical_server28_suites_execute_hud": false,
       "engine_verified": false,
-      "kind": "SEPARATE_PREVIOUS_LOCAL_FIXED_SOURCE_NATIVE_EVIDENCE",
-      "packet": {
-        "bytes": 512924,
-        "path": "hud_repro_handoff.tar.gz",
-        "sha256": "66aeb98cabcaaad05981fe9658877444b6682a5788f5be9718cda367b4a96e6c"
+      "existing_layout_gate": {
+        "bytes": 12519,
+        "generator544_exit": 0,
+        "generator559_exit": 1,
+        "native_layout_conditions": 14,
+        "not_a_full_hud_execution": true,
+        "receipt_name": "RECEIPT.json",
+        "sha256": "880a16eb13fbfa94f1df5324f5e8c06dd9debfb2c08d4f8adfa3aa33a5b098c6"
       },
+      "full40_six_contexts": {
+        "all_six_stdout_exact_prior_559": true,
+        "bytes": 10318,
+        "fixtures_unchanged": true,
+        "native_processes": 6,
+        "observations": 54,
+        "other39_fixed": true,
+        "receipt_name": "full40_544/RUN_RECEIPT.json",
+        "sha256": "c8da5f939eb1ed2f95a277b43af2e3eb4252c21e236c4ee08c4b06656e49ec28"
+      },
+      "independent_ko_and_gui_boundary": {
+        "bytes": 4657,
+        "native_processes": 3,
+        "observations": 20,
+        "receipt_name": "root_boundary_544/READBACK.json",
+        "sha256": "df354e8fe504a6c27cb57a7db93f56b18febf3d094064eca1b73cee44868e098"
+      },
+      "kind": "SEPARATE_LOCAL_EXACT_544_FULL40_REUSE_AND_GATE_EVIDENCE",
+      "local_reuse_binary": {
+        "fresh_build": false,
+        "sha256": "b000dfd72e3d9c4d4484a72034446cc951c506516a12b8e46a4dfc7aa02060a5"
+      },
+      "not_claimed": [
+        "hosted CI",
+        "Studio",
+        "Android",
+        "same-frame seat response",
+        "all gameplay branches"
+      ],
       "reuse_requires_same_body_suite_and_environment": true,
       "source": {
-        "bytes": 25338,
-        "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+        "bytes": 25323,
+        "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
       }
     },
     "inverse": [
       {
-        "new": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+        "new": "",
         "new_identity": {
-          "bytes": 61,
-          "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
-        "old": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+        "old": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
         "old_identity": {
-          "bytes": 590,
-          "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+          "bytes": 544,
+          "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
         },
-        "start": 584,
-        "stop": 594
-      },
-      {
-        "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
-        "new_identity": {
-          "bytes": 217,
-          "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
-        },
-        "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
-        "old_identity": {
-          "bytes": 235,
-          "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
-        },
-        "start": 597,
-        "stop": 600
-      },
-      {
-        "new": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
-        "new_identity": {
-          "bytes": 108,
-          "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
-        },
-        "old": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
-        "old_identity": {
-          "bytes": 120,
-          "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
-        },
-        "start": 601,
-        "stop": 603
+        "start": 596,
+        "stop": 606
       }
     ],
     "new_lua_authored": true,
@@ -164,20 +146,191 @@
     },
     "prior_union_claim_id": "P0D-GQ470-UNION22-20261122-4B669",
     "repaired_hud": {
-      "bytes": 25338,
-      "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+      "bytes": 25323,
+      "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
     },
     "repaired_place": {
-      "bytes": 828673,
-      "sha256": "c2b480c22137877973d77cff21c858a16d99bd01cb65903477802e654d78bb89"
+      "bytes": 828658,
+      "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
     },
-    "schema": "GQ828_MOUNTED_HUD_FOLLOWUP_V1",
+    "revision": "REUSE_7A4_544_PRESERVE_ORIGINAL_LAYOUT_GATE",
+    "schema": "GQ828_MOUNTED_HUD_FOLLOWUP_V2",
+    "source_candidate_origin": {
+      "author_context": "/root/planning_gap",
+      "author_workspace": "7a4b9b0b26d0",
+      "kind": "EXACT_EXISTING_LOCAL_CANDIDATE_REUSE",
+      "new_game_logic_authored_by_79005_for_v2": false,
+      "original_relative_path": "planning_gap/hud_context/proposal/EGGRUMBLE_HudIntelRuntime.client.luau",
+      "public_reference": "https://github.com/kk051780/toy-wars-factory/pull/829#issuecomment-7086301990",
+      "source": {
+        "bytes": 25323,
+        "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
+      }
+    },
     "source_path": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+    "superseded_revision": {
+      "actual_unchanged_generator_exit": 1,
+      "followup_repair": {
+        "author_contexts": [
+          "/root (CODEX_ROOT_79005A1F03B2): HUD patch author and accountable parent",
+          "/root/candidate_audit: six-file producer/lock/verifier/test implementer"
+        ],
+        "base_rc_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+        "changed_sources_from_current_rc": 1,
+        "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+        "current_hud": {
+          "bytes": 24779,
+          "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+        },
+        "current_place": {
+          "bytes": 828114,
+          "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+        },
+        "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
+        "forward": [
+          {
+            "new": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+            "new_identity": {
+              "bytes": 590,
+              "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+            },
+            "old": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+            "old_identity": {
+              "bytes": 61,
+              "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+            },
+            "start": 584,
+            "stop": 586
+          },
+          {
+            "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
+            "new_identity": {
+              "bytes": 235,
+              "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
+            },
+            "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
+            "old_identity": {
+              "bytes": 217,
+              "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
+            },
+            "start": 589,
+            "stop": 592
+          },
+          {
+            "new": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
+            "new_identity": {
+              "bytes": 120,
+              "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
+            },
+            "old": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
+            "old_identity": {
+              "bytes": 108,
+              "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
+            },
+            "start": 593,
+            "stop": 595
+          }
+        ],
+        "grant_comment": 7086384728,
+        "grant_commit": "b85eca5ce272daf3a63a7dba029a977a0effec79",
+        "grant_registry_blob": "ff538a83c84076688bc880b3d805c8b87c54fef5",
+        "historical_author_origins_apply_to_original_union_only": true,
+        "hud_behavior_evidence": {
+          "canonical_server28_suites_execute_hud": false,
+          "engine_verified": false,
+          "kind": "SEPARATE_PREVIOUS_LOCAL_FIXED_SOURCE_NATIVE_EVIDENCE",
+          "packet": {
+            "bytes": 512924,
+            "path": "hud_repro_handoff.tar.gz",
+            "sha256": "66aeb98cabcaaad05981fe9658877444b6682a5788f5be9718cda367b4a96e6c"
+          },
+          "reuse_requires_same_body_suite_and_environment": true,
+          "source": {
+            "bytes": 25338,
+            "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+          }
+        },
+        "inverse": [
+          {
+            "new": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+            "new_identity": {
+              "bytes": 61,
+              "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+            },
+            "old": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+            "old_identity": {
+              "bytes": 590,
+              "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+            },
+            "start": 584,
+            "stop": 594
+          },
+          {
+            "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
+            "new_identity": {
+              "bytes": 217,
+              "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
+            },
+            "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
+            "old_identity": {
+              "bytes": 235,
+              "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
+            },
+            "start": 597,
+            "stop": 600
+          },
+          {
+            "new": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
+            "new_identity": {
+              "bytes": 108,
+              "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
+            },
+            "old": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
+            "old_identity": {
+              "bytes": 120,
+              "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
+            },
+            "start": 601,
+            "stop": 603
+          }
+        ],
+        "new_lua_authored": true,
+        "parent_issue": 828,
+        "preserved_other68_rows": {
+          "bytes": 272752,
+          "sha256": "e2a6bcfd7d060f0da78b4a5971a2e887f26681b0477b1e5f70d99abbf80b6066"
+        },
+        "prior_profile": {
+          "bytes": 289381,
+          "sha256": "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60"
+        },
+        "prior_union_claim_id": "P0D-GQ470-UNION22-20261122-4B669",
+        "repaired_hud": {
+          "bytes": 25338,
+          "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+        },
+        "repaired_place": {
+          "bytes": 828673,
+          "sha256": "c2b480c22137877973d77cff21c858a16d99bd01cb65903477802e654d78bb89"
+        },
+        "schema": "GQ828_MOUNTED_HUD_FOLLOWUP_V1",
+        "source_path": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+        "unchanged_sources_from_current_rc": 68
+      },
+      "missing_source_anchor_count": 4,
+      "published_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
+      "published_pr": 1019,
+      "published_profile": {
+        "bytes": 302120,
+        "sha256": "9df051874e6afacdfe0f267a4c80dd02238a05bac8913b55184a736c642232ae"
+      },
+      "reason": "The +559 HUD changed four existing native_layout.py main source anchors. Runtime-only evidence remains historical; it was not a full-generator PASS."
+    },
     "unchanged_sources_from_current_rc": 68
   },
   "formal_branch": "rc/p0d-s1-kids-rc01",
-  "forward_hunk_count": 171,
-  "forward_removed_plus_added_utf8_bytes": 56273,
+  "forward_hunk_count": 169,
+  "forward_removed_plus_added_utf8_bytes": 55486,
   "instance_count": 75,
   "luau_source": {
     "commit": "f46d879e28302a430029304f7f6a162aed66f103",
@@ -5319,8 +5472,8 @@
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
       "after": {
-        "bytes": 25338,
-        "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"
+        "bytes": 25323,
+        "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
       },
       "before": {
         "bytes": 24182,
@@ -5343,46 +5496,18 @@
           "stop": 573
         },
         {
-          "new": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+          "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
           "new_identity": {
-            "bytes": 590,
-            "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+            "bytes": 544,
+            "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
           },
-          "old": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+          "old": "",
           "old_identity": {
-            "bytes": 61,
-            "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 575,
-          "stop": 577
-        },
-        {
-          "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
-          "new_identity": {
-            "bytes": 235,
-            "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
-          },
-          "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
-          "old_identity": {
-            "bytes": 217,
-            "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
-          },
-          "start": 580,
-          "stop": 583
-        },
-        {
-          "new": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
-          "new_identity": {
-            "bytes": 120,
-            "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
-          },
-          "old": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
-          "old_identity": {
-            "bytes": 108,
-            "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
-          },
-          "start": 584,
-          "stop": 586
+          "start": 587,
+          "stop": 587
         }
       ],
       "inverse": [
@@ -5401,46 +5526,18 @@
           "stop": 582
         },
         {
-          "new": " actions.ITEM.Visible=inMatch\n actions.SKILL.Visible=inMatch\n",
+          "new": "",
           "new_identity": {
-            "bytes": 61,
-            "sha256": "d63a8210aadf2e7d26206293fbd853d3b7388cdaf77b293d9e5ea40a049130b2"
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": " -- The existing Realm panel owns its piloting UI. Read its visibility\n -- rather than duplicating seat/pilot rules or hiding HP and the map.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n local piloting=realmGui~=nil and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel~=nil and realmPanel:IsA(\"GuiObject\") and realmPanel.Visible\n if piloting then closeDrawer() end\n local combatVisible=inMatch and not piloting\n actions.ITEM.Visible=combatVisible\n actions.SKILL.Visible=combatVisible\n",
+          "old": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
           "old_identity": {
-            "bytes": 590,
-            "sha256": "e7de1d1a8479d7e0b57ef2411dd70cf6de1b2fdff493f1d0b0d298fd9e3b26a0"
+            "bytes": 544,
+            "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
           },
-          "start": 584,
-          "stop": 594
-        },
-        {
-          "new": " actions.ATTACK.Visible=actions.ATTACK.Visible and inMatch and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and inMatch and not selecting\n skillUse.Visible=skillUse.Visible and inMatch and not selecting\n",
-          "new_identity": {
-            "bytes": 217,
-            "sha256": "2b6df0a12ec50fea2570c559bf0bdb55e4aa0f131c439cd012583c0254b61f7c"
-          },
-          "old": " actions.ATTACK.Visible=actions.ATTACK.Visible and combatVisible and not selecting\n actions.DODGE.Visible=actions.DODGE.Visible and combatVisible and not selecting\n skillUse.Visible=skillUse.Visible and combatVisible and not selecting\n",
-          "old_identity": {
-            "bytes": 235,
-            "sha256": "64c6d7e6fa0c68726b6b763135cc32950d48cb547e256b6d2bd24997c13dbdd5"
-          },
-          "start": 597,
-          "stop": 600
-        },
-        {
-          "new": " actions.INVUL.Visible=inMatch and not drawer.Visible\n actions.MUSOU.Visible=inMatch and not drawer.Visible\n",
-          "new_identity": {
-            "bytes": 108,
-            "sha256": "42776ddacb7d7fc7faee1e5faddda377ac52343fde7629fd9f2d7349e88a72e4"
-          },
-          "old": " actions.INVUL.Visible=combatVisible and not drawer.Visible\n actions.MUSOU.Visible=combatVisible and not drawer.Visible\n",
-          "old_identity": {
-            "bytes": 120,
-            "sha256": "141a20a3bd159a0e67f65a68ab357a0aaf12d34261c1ceafee494668a44f686b"
-          },
-          "start": 601,
-          "stop": 603
+          "start": 596,
+          "stop": 606
         }
       ],
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
