@@ -12546,14 +12546,14 @@
     {
       "PREP_READY": true,
       "allowed_new_prs": 1,
-      "amended_at": "2026-11-23T01:18:14.966117+00:00",
+      "amended_at": "2026-11-23T02:19:39.691154+00:00",
       "amendment_issuer": {
-        "authority": "Actual current delegated coordinator authority, existing execution policy and registered independent review; no new main/publish/spend rights.",
-        "context": "CODEX_ROOT_79005A1F03B2",
+        "authority": "Current delegated coordinator authority and existing #1011/ONE_RC_FAST_ADMISSION rules; one fixed executor handoff, no source expansion or gate waiver.",
+        "context": "CODEX_ROOT_0A2BA23F0733",
         "login": "kk051780",
-        "operation_id": "62791882-7bf8-42ca-b384-4bf73320f558",
-        "role": "OWNER_DELEGATED_COORDINATOR",
-        "user_id": 233213370
+        "user_id": 233213370,
+        "operation_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+        "role": "OWNER_DELEGATED_COORDINATOR"
       },
       "android": "NOT_TESTED",
       "art": "ART_NO_GO",
@@ -12686,7 +12686,7 @@
           "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
         }
       ],
-      "grant_scope_version": 5,
+      "grant_scope_version": 6,
       "hud_only_off_place": {
         "bytes": 828114,
         "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
@@ -12718,17 +12718,21 @@
         "source_lease_release_commit": "4d6db4e3275c57414facc6e12950ac1fbc3c6d1b"
       },
       "metadata_update_lease": {
-        "branch": "twf-repair-coordinator",
-        "commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
-        "acquire_commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
-        "epoch": 656,
-        "owner_id": "62791882-7bf8-42ca-b384-4bf73320f558",
+        "kind": "CONTROLLER",
+        "owner_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+        "task_id": null,
+        "epoch": 660,
+        "acquired_at": "2026-11-23T02:18:32.127519+00:00",
+        "expires_at": "2026-11-23T02:48:32.127519+00:00",
+        "base_main_sha": null,
         "work_branch": "coord/p0d-work-claims",
-        "acquired_at": "2026-11-23T01:17:13.539028+00:00",
-        "expires_at": "2026-11-23T01:47:13.539028+00:00",
+        "origin": "controller",
+        "branch": "twf-repair-coordinator",
+        "commit": "233bd14d848d7bd9db4e5daca2a9b9b05427f352",
+        "acquire_commit": "233bd14d848d7bd9db4e5daca2a9b9b05427f352",
         "actual_full_readback": true
       },
-      "metadata_updated_at": "2026-11-23T01:18:14.966117+00:00",
+      "metadata_updated_at": "2026-11-23T02:19:39.691154+00:00",
       "no_main_or_publish": true,
       "no_review_waiver": true,
       "on_place": {
@@ -12803,9 +12807,9 @@
           "sha256": "ba2183e0c0ea648b4cd95917f4fef4556ad58d68266c9349a1be30771a38e7f1"
         }
       },
-      "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
+      "role": "SOURCE_OWNER_WITH_NAMED_SINGLE_WRITER_INTEGRATION",
       "rollback": "Keep the complete original UNION22 OFF-to-prior-BR rollback unchanged. Additionally reverse only the new HUD hunk to current RC HUD 3bf0d958... and exact 828114B Place. Repository rollback must inverse only the six-path follow-up delta while preserving any intervening work; never reset whole RC.",
-      "scope": "Existing exact 7a4 +544 HUD reuse with final selected old-layout-generator main and Policy14 gate in the same six paths. Preserve original Native28 bodies, two suites, fixtures, assertions, maintenance R2 inverse-prefix method and every other source. No min55 or other feature. This explicit amendment supersedes only the old +559 candidate semantics. Reuse exact +544 from existing7a4 and final original selected-layout generator main plus Policy14 gate. Preserve transport R2 on accepted dcb and all intervening accepted maintenance source. New actual HEAD, hosted CI/artifact, independent source/admission review and a separately scoped RC writer remain required. Adoption-only V5 amendment: conditional single-writer integration of existing PR1019 exact H 93a1147561a531610ac1609ebc68cc0ecf546623 / tree ca7a6b532ff325ebf125423484dde1ee57ce219b into rc/p0d-s1-kids-rc01 from exact expected R dcb501673d7959e4904cf360ef0119917e6aa2e0. Only after actual same-H CI, registered independent exact-source and same-run candidate-artifact acceptance, genuine PREP_READY/intake and writer handoff, actual repository permissions and a separately acquired live RC writer lease; update exact R to H with expected_sha=R and force=false, respecting real protection. This amendment authorizes no further source edits, no different H/R, no new producer/FEATURE/PR, no other integration and no main/Publish/spend. Preserve immutable source grant9ed/V4 inside profile. If H or R changes, stop this fixed transaction and obtain a legitimate amended exact-head acceptance; do not erase intervening work. Formal acceptance additionally requires the same-new-R official GQ8 push success and independent canonical artifact/Place/source/Native/rollback verification. The permission is consumed by this one exact adoption only.",
+      "scope": "Existing exact 7a4 +544 HUD reuse with final selected old-layout-generator main and Policy14 gate in the same six paths. Preserve original Native28 bodies, two suites, fixtures, assertions, maintenance R2 inverse-prefix method and every other source. No min55 or other feature. This explicit amendment supersedes only the old +559 candidate semantics. Reuse exact +544 from existing7a4 and final original selected-layout generator main plus Policy14 gate. Preserve transport R2 on accepted dcb and all intervening accepted maintenance source. New actual HEAD, hosted CI/artifact, independent source/admission review and a separately scoped RC writer remain required. Adoption-only V5 amendment: conditional single-writer integration of existing PR1019 exact H 93a1147561a531610ac1609ebc68cc0ecf546623 / tree ca7a6b532ff325ebf125423484dde1ee57ce219b into rc/p0d-s1-kids-rc01 from exact expected R dcb501673d7959e4904cf360ef0119917e6aa2e0. Only after actual same-H CI, registered independent exact-source and same-run candidate-artifact acceptance, genuine PREP_READY/intake and writer handoff, actual repository permissions and a separately acquired live RC writer lease; update exact R to H with expected_sha=R and force=false, respecting real protection. This amendment authorizes no further source edits, no different H/R, no new producer/FEATURE/PR, no other integration and no main/Publish/spend. Preserve immutable source grant9ed/V4 inside profile. If H or R changes, stop this fixed transaction and obtain a legitimate amended exact-head acceptance; do not erase intervening work. Formal acceptance additionally requires the same-new-R official GQ8 push success and independent canonical artifact/Place/source/Native/rollback verification. The permission is consumed by this one exact adoption only. V6 executor-only handoff: source owner CODEX_ROOT_79005A1F03B2 and existing /root/rules_audit source/candidate review are unchanged. For this fixed dcb501-to-93a1147 transaction only, CODEX_ROOT_0A2BA23F0733 is the sole current B integration executor; the original79005 B execution permission for the same transaction is superseded, so there are never two authorized concurrent executors. Register /root/admission_review additionally for actual same-new-R official push/artifact acceptance only. Keep exact six paths/four resources, expiry, H/tree/PR and immutable V4 source provenance. No source edits. Separate live metadata then RC leases, fresh gates/permissions/nonforce CAS and later separate metadata consumption/return are required.",
       "scope_history": [
         {
           "complete_previous_row": {
@@ -13393,6 +13397,19 @@
           "preservation": "Keep all three existing history entries, their values/evidence and every unrelated current field. This immutable reference retains the full pre-amendment V4 row including all nested history. Use only if the fresh target-row canonical hash still equals the reference; otherwise preserve the actual current row by a fresh immutable reference and re-review the exact amendment.",
           "preserved_at": "2026-11-23T01:18:14.966117+00:00",
           "version": 4
+        },
+        {
+          "previous_scope_version": 5,
+          "amended_at": "2026-11-23T02:19:39.691154+00:00",
+          "reason": "One exact adoption executor handoff only; original source owner and source/candidate reviewer retained.",
+          "complete_previous_row_reference": {
+            "registry_commit": "f36f96c70178a2441ffeda8b0fd69f93637ba66b",
+            "registry_blob": "232bf5022d2ac61a2bbd32a649b441f0011cd5ee",
+            "path": "rc_fastlane/P0D_WORK_CLAIMS.json",
+            "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+            "canonical_serialization": "UTF-8 JSON ensure_ascii=false sort_keys=true separators=(',',':') no trailing newline",
+            "row_sha256": "0177de1f59900dbaea453f4df87acc3e046f780066c7330a55042cb87dfc9911"
+          }
         }
       ],
       "scope_review": {
@@ -13719,8 +13736,70 @@
         "tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b"
       },
       "bounded_rc_integration": {
-        "actual_grant_commit_resolution": "The enclosing realized immutable registry commit is the V5 grant. Bind its actual hash/blob/readback and #218 record externally after registration; do not invent a self-referential future hash.",
+        "actual_grant_commit_resolution": "The enclosing realized immutable registry commit is the V6 executor-only handoff grant. Bind its actual hash/blob/readback and #218 record externally after registration; never fabricate a self-referential future hash. Original V5 authority is retained in original_V5_* and immutable prior-row history.",
         "actual_metadata_authority": {
+          "context": "CODEX_ROOT_0A2BA23F0733",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "permission": {
+            "permission": "admin"
+          },
+          "operation_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+            "task_id": null,
+            "epoch": 660,
+            "acquired_at": "2026-11-23T02:18:32.127519+00:00",
+            "expires_at": "2026-11-23T02:48:32.127519+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "233bd14d848d7bd9db4e5daca2a9b9b05427f352",
+          "acquire_blob": "9839938b3e8eb60ca81d6b387bbb4b3544bfa32b",
+          "actual_full_coordinator_readback": true,
+          "registry_parent": "f36f96c70178a2441ffeda8b0fd69f93637ba66b",
+          "registry_blob": "232bf5022d2ac61a2bbd32a649b441f0011cd5ee",
+          "rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "source_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "source_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+          "public_current_handoff": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088249980",
+          "source_owner_preserved": "CODEX_ROOT_79005A1F03B2",
+          "original_V5_public_record": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7089757265",
+          "prior_656_end": "Administrative fence45632812; original terminal remains UNVERIFIED, not normal release"
+        },
+        "artifact_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "conditional_scope_review": {
+          "context": "/root/rules_audit",
+          "decision": "PASS_BOUNDED_FIELD_PROPOSAL_CONDITIONALLY_NOT_ACTUAL_GRANT_OR_RC_ADOPTION",
+          "proposal_sha256": "8aab1ea9f740d378629920ca3e2891ed4e291a76b58f450fce29530fd0f7617a",
+          "review_sha256": "2c0623bf8e43e95068b42c24909b859ce8776ef4977175868af0fc9f0e43e9c3"
+        },
+        "design_decision_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7087020284",
+        "expected_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "force_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "if_head_or_rc_moves": "Do not execute the fixed R-to-H transaction; preserve all newer work, rebind affected facts and obtain a legitimate exact-head amendment.",
+        "main_or_publish_allowed": false,
+        "one_exact_adoption_only": true,
+        "permitted_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "permitted_pr": 1019,
+        "permitted_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+        "post_push": "Require the actual same-new-R official GQ8 push success and registered independent canonical artifact ZIP/Place/69-source/Native28/two-suite/selected14/rollback review. A PR artifact or source-only local result is not formal acceptance.",
+        "scope_return": "Record actual official acceptance, consume this one adoption, and return the existing six paths/four resources in a separately owned metadata transaction. No implicit successor/Bot/BEAST/source grant.",
+        "separate_rc_writer_lease_required": true,
+        "source_and_artifact_review_context": "/root/rules_audit",
+        "source_edits_authorized_by_this_amendment": false,
+        "source_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+        "status": "EXACT_PR1019_ONLY_EFFECTIVE_AFTER_REAL_V5_REGISTRATION_AND_FRESH_GATES",
+        "trusted_intake_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088776925",
+        "writer_handoff_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088249980",
+        "future_RC_writes_authorized": false,
+        "original_V5_actual_metadata_authority": {
           "registry_parent": "ac7cf81602ac2f0cac32857642a2525ae23d3f4c",
           "registry_blob": "dfaaec496f7511be2f79ca887e2e8f3f9f9dec5a",
           "authenticated_actor": {
@@ -13757,36 +13836,119 @@
           "observed_at": "2026-11-23T01:18:14.966117+00:00",
           "concrete_pre_CAS_review_resolution": "Registered reviewer must approve this exact before/after and live authority before real CAS. Bind actual receipt and realized grant commit/blob externally in #218; this local afterimage is not registered authority."
         },
-        "artifact_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
-        "branch": "rc/p0d-s1-kids-rc01",
-        "conditional_scope_review": {
-          "context": "/root/rules_audit",
-          "decision": "PASS_BOUNDED_FIELD_PROPOSAL_CONDITIONALLY_NOT_ACTUAL_GRANT_OR_RC_ADOPTION",
-          "proposal_sha256": "8aab1ea9f740d378629920ca3e2891ed4e291a76b58f450fce29530fd0f7617a",
-          "review_sha256": "2c0623bf8e43e95068b42c24909b859ce8776ef4977175868af0fc9f0e43e9c3"
+        "original_V5_actual_grant_commit_resolution": "The enclosing realized immutable registry commit is the V5 grant. Bind its actual hash/blob/readback and #218 record externally after registration; do not invent a self-referential future hash.",
+        "sole_current_integration_executor": "CODEX_ROOT_0A2BA23F0733",
+        "superseded_integration_executor_for_this_transaction": "CODEX_ROOT_79005A1F03B2",
+        "parallel_old_executor_permission": false,
+        "additional_official_post_push_reviewer_context": "/root/admission_review",
+        "post_adoption_metadata_executor": "CODEX_ROOT_0A2BA23F0733",
+        "previous_writer_handoff_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "current_executor_authority": {
+          "context": "CODEX_ROOT_0A2BA23F0733",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "permission": {
+            "permission": "admin"
+          },
+          "operation_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+            "task_id": null,
+            "epoch": 660,
+            "acquired_at": "2026-11-23T02:18:32.127519+00:00",
+            "expires_at": "2026-11-23T02:48:32.127519+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "233bd14d848d7bd9db4e5daca2a9b9b05427f352",
+          "acquire_blob": "9839938b3e8eb60ca81d6b387bbb4b3544bfa32b",
+          "actual_full_coordinator_readback": true,
+          "registry_parent": "f36f96c70178a2441ffeda8b0fd69f93637ba66b",
+          "registry_blob": "232bf5022d2ac61a2bbd32a649b441f0011cd5ee",
+          "rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "source_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "source_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+          "public_current_handoff": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088249980",
+          "source_owner_preserved": "CODEX_ROOT_79005A1F03B2",
+          "original_V5_public_record": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7089757265",
+          "prior_656_end": "Administrative fence45632812; original terminal remains UNVERIFIED, not normal release"
         },
-        "design_decision_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7087020284",
-        "expected_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
-        "force_allowed": false,
-        "future_unbounded_RC_writes_authorized": false,
-        "if_head_or_rc_moves": "Do not execute the fixed R-to-H transaction; preserve all newer work, rebind affected facts and obtain a legitimate exact-head amendment.",
-        "main_or_publish_allowed": false,
-        "one_exact_adoption_only": true,
-        "permitted_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
-        "permitted_pr": 1019,
-        "permitted_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
-        "post_push": "Require the actual same-new-R official GQ8 push success and registered independent canonical artifact ZIP/Place/69-source/Native28/two-suite/selected14/rollback review. A PR artifact or source-only local result is not formal acceptance.",
-        "scope_return": "No borrowed path is being returned by this adoption. Keep exact current six paths/four resources until a separately scoped post-adoption metadata update records the result and relinquishes or continues authority under existing rules. Do not modify other claims.",
-        "separate_rc_writer_lease_required": true,
-        "source_and_artifact_review_context": "/root/rules_audit",
-        "source_edits_authorized_by_this_amendment": false,
-        "source_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
-        "status": "EXACT_PR1019_ONLY_EFFECTIVE_AFTER_REAL_V5_REGISTRATION_AND_FRESH_GATES",
-        "trusted_intake_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088776925",
-        "writer_handoff_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
-        "future_RC_writes_authorized": false
+        "current_grant_commit_resolution": "The enclosing realized V6 amendment is the current executor grant; bind actual immutable hash/blob/full readback externally. Original V5/source grant history remains intact."
       },
-      "candidate_head": "93a1147561a531610ac1609ebc68cc0ecf546623"
+      "candidate_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "integration_handoff": {
+        "status": "EFFECTIVE_ONLY_WHEN_THIS_EXACT_AMENDMENT_IS_REGISTERED",
+        "scope": "Only fixed PR1019 dcb501-to-93a1147 adoption, official result acceptance and separately scoped metadata consumption/return.",
+        "source_owner_preserved": "CODEX_ROOT_79005A1F03B2",
+        "source_and_candidate_reviewer_preserved": "/root/rules_audit",
+        "sole_current_integration_executor": "CODEX_ROOT_0A2BA23F0733",
+        "superseded_integration_executor_for_this_transaction": "CODEX_ROOT_79005A1F03B2",
+        "parallel_old_executor_permission": false,
+        "new_source_permission": false,
+        "expected_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "permitted_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "permitted_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+        "permitted_pr": 1019,
+        "expires_at": "2026-11-23T03:51:42.000Z",
+        "post_push_review": {
+          "additional_registered_independent_context": "/root/admission_review",
+          "scope": "Actual same-new-R official GQ8 push and its canonical artifact ZIP/Place/69-source/Native28/two-suite/selected14/rollback acceptance only.",
+          "existing_source_and_candidate_acceptance_replaced": false
+        },
+        "post_adoption_metadata_executor": "CODEX_ROOT_0A2BA23F0733",
+        "post_adoption_metadata_scope": "Record actual official acceptance, consume this one adoption, and return the existing six paths/four resources in a separately owned metadata transaction. No implicit successor/Bot/BEAST/source grant.",
+        "metadata_authority": {
+          "context": "CODEX_ROOT_0A2BA23F0733",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "permission": {
+            "permission": "admin"
+          },
+          "operation_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "7ddd79e5-352b-41cb-8460-3ec6103ab459",
+            "task_id": null,
+            "epoch": 660,
+            "acquired_at": "2026-11-23T02:18:32.127519+00:00",
+            "expires_at": "2026-11-23T02:48:32.127519+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "233bd14d848d7bd9db4e5daca2a9b9b05427f352",
+          "acquire_blob": "9839938b3e8eb60ca81d6b387bbb4b3544bfa32b",
+          "actual_full_coordinator_readback": true,
+          "registry_parent": "f36f96c70178a2441ffeda8b0fd69f93637ba66b",
+          "registry_blob": "232bf5022d2ac61a2bbd32a649b441f0011cd5ee",
+          "rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "source_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "source_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+          "public_current_handoff": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088249980",
+          "source_owner_preserved": "CODEX_ROOT_79005A1F03B2",
+          "original_V5_public_record": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7089757265",
+          "prior_656_end": "Administrative fence45632812; original terminal remains UNVERIFIED, not normal release"
+        },
+        "conditional_proposal_review": {
+          "context": "/root/admission_review",
+          "path": "admission_review/HUD1019_EXECUTOR_HANDOFF_V6_CONDITIONAL_REVIEW.json",
+          "bytes": 8454,
+          "sha256": "4089c9d483fc7a1a23b63904c19f408f0af18f114be30f68e469f3582f2bbb1c",
+          "git_blob": "6a1d197214377cda8215bb47f99d778ec4440193",
+          "decision": "PASS_UNISSUED_ONE_TRANSACTION_HANDOFF_DESIGN_ONLY"
+        },
+        "concrete_pre_CAS_review_resolution": "Independent reviewer must approve this exact before/after and current authority; bind actual receipt and realized grant externally in #218. No future commit/hash is fabricated here.",
+        "public_coordination_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088249980",
+        "prior_original_writer_plan_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "original_V5_grant_public_readback": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7089757265",
+        "if_any_bound_ref_or_ownership_changes": "Stop this exact transaction; preserve new work and require legitimate reevaluation. No expiry takeover, force, auto-rebase or silent substitute executor."
+      }
     },
     {
       "PREP_READY": true,
