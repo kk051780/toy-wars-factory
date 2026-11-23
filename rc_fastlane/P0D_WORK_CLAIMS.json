@@ -22488,6 +22488,224 @@
       "source_lease_status_at_issuance": "NOT_ACQUIRED",
       "expiry_policy": "Six hours from the real allocation time; no expiry-based ownership transfer.",
       "fresh_actual_all_claim_and_prior_Bot_observation_required": true
+    },
+    {
+      "claim_id": "P0D-GQ997-CONTACT-FAIRNESS-20261123-ECF54B42",
+      "state": "GRANTED",
+      "draft_only_not_issued": false,
+      "owner": "CODEX_ROOT_ECF54B423C4C",
+      "feature_id": "GQ470_FB015_NEUTRAL_CONTACT_SHADOWS_REAL69_20261121",
+      "fb_ids": [
+        "FB015"
+      ],
+      "sub_scope": "EXISTING_OPTIONAL_CLIENT_FAIR_GROUND_PROBES_AND_ACTUAL_SOURCE_NATIVE_QA",
+      "parent_issue": 470,
+      "pr": 997,
+      "integration_issue": 220,
+      "role": "A_PREP",
+      "prep_branch": "quality/gq470-neutral-contact-shadows-a-20261121",
+      "source_head_before": "dd30d02c0112fe5fad9489e00495f31febc6cb40",
+      "source_head": null,
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "base_rc_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+      "resources": [
+        "OPTIONAL_CLIENT_EGGRUMBLE_NEUTRALCONTACTSHADOWS",
+        "GQ997_CONTACT_SHADOW_NATIVE_REGRESSION"
+      ],
+      "target_paths": [
+        ".github/workflows/gq470-neutral-contact-shadows-real69.yml",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/EGGRUMBLE_NeutralContactShadows.client.luau",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/README.md",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/compose_official70.py",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/emit_art_report.py",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_source.py",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_native.luau",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/run_neutral_shadows_native.py"
+      ],
+      "mutable_paths": [
+        ".github/workflows/gq470-neutral-contact-shadows-real69.yml",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/EGGRUMBLE_NeutralContactShadows.client.luau",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/README.md",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/compose_official70.py",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_source.py",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_native.luau",
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/run_neutral_shadows_native.py"
+      ],
+      "preserved_pr_diff_preimages": {
+        ".github/workflows/gq470-neutral-contact-shadows-real69.yml": {
+          "bytes": 10776,
+          "sha256": "d0c5f673e662e5523a6fdcbb82cea4b7d8fd5ef9e2a6fff97072892b4248f010",
+          "git_blob": "2137995f8580dc76f99843432b060a26b92ce794",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "MUTABLE"
+        },
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/EGGRUMBLE_NeutralContactShadows.client.luau": {
+          "bytes": 8178,
+          "sha256": "9f37660d5a0260a1c90f074d54d4f163a96b2af4f62c4c99a40209070329ed9c",
+          "git_blob": "f5820b2ad0f9a6f1d3c0b84d782530d24a5bb965",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "MUTABLE"
+        },
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/README.md": {
+          "bytes": 3838,
+          "sha256": "0f72d07b3b91406c231e3ddd467fcdce5ed5c2cf0cc2032f2a428727da014967",
+          "git_blob": "bb864e0e37060baaec7d51379dd155e0e434e7f5",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "MUTABLE"
+        },
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/compose_official70.py": {
+          "bytes": 10942,
+          "sha256": "91d88fe5da178d22592252f4026f7c796e1d0055ff4d09ea587a5e0cd5d3aa48",
+          "git_blob": "a7131e54374606193e60066b2b083b46f2277eac",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "MUTABLE"
+        },
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/emit_art_report.py": {
+          "bytes": 5268,
+          "sha256": "928d02d5a040177f3cba910ddb5e1e097b486b092dc088f099c7f4e012675bfe",
+          "git_blob": "6bb9a10cd24abafc9f03ba0f658157c960637a77",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "IMMUTABLE"
+        },
+        "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_source.py": {
+          "bytes": 11112,
+          "sha256": "8c7c943834f9aebe82735bba0ced4d87bd23e2c4ffbb874033027d7b4c551353",
+          "git_blob": "9dfc542c655b0b7248f638e47e7bd06ddf3d1ed4",
+          "mode": "100644",
+          "type": "blob",
+          "scope": "MUTABLE"
+        }
+      },
+      "source_author_contexts": [
+        "CODEX_ROOT_ECF54B423C4C:/root",
+        "CODEX_ROOT_ECF54B423C4C:/root/growth_gap_review (Native fixture and runner only)"
+      ],
+      "source_publisher_context": "CODEX_ROOT_ECF54B423C4C:/root",
+      "scope_review_context": "CODEX_ROOT_ECF54B423C4C:/root/runtime_inventory",
+      "independent_reviewer_context": "CODEX_ROOT_ECF54B423C4C:/root/candidate_inventory",
+      "author_may_self_approve": false,
+      "scope_review_is_code_approval": false,
+      "registered_source_approval": false,
+      "PREP_READY": false,
+      "source_scope_granted": true,
+      "local_isolated_authoring_after_actual_grant": true,
+      "remote_source_publication_requires_separate_live_source_lease": true,
+      "no_personal_original_author_ack_required": true,
+      "allowed_new_prs": 0,
+      "scope": "Continue original PR997 nonforce, preserving all 14 original commits and merged1000/1002 work. Repair starvation beyond a permanently non-grounded nearest probe window using bounded persistent fair search while preserving stable valid contacts. Test complete actual LocalScript behavior, not a rewritten Python selection/fade model. Rebind only this optional candidate composer and its dedicated workflow to observed official H93 source69, artifact14787568439 and exact Place; preserve all69 original sources and every other H93 tree leaf. No official selection or authority change.",
+      "semantic_contract": {
+        "limits": {
+          "touch_parts": 6,
+          "desktop_parts": 10,
+          "touch_raycast_per_tick": 12,
+          "desktop_raycast_per_tick": 20,
+          "touch_tick_seconds": 0.95,
+          "desktop_tick_seconds": 0.75,
+          "scan_seconds": 3.8,
+          "touch_lod_studs": 55,
+          "desktop_lod_studs": 72
+        },
+        "preserve": [
+          "dry collidable ground and normal.Y>=0.72 filter",
+          "Cylinder matte color/material/sloped plane and .73-to-1 fade over final30% LOD",
+          "reclaim stale Parts before allocating replacements; peak cap",
+          "no added per-frame hook, listener, service, gameplay producer, Remote, Store, GUI or server write",
+          "death/despawn/stream-out/featureOFF/reduced-effects/camera-missing/Destroying cleanup"
+        ],
+        "repair": "Every stable eligible grounded candidate can receive a probe across bounded ticks even if nearer candidates never ground; keep existing valid nearest contacts stable while searching. Select nearest capped successes; do not let round-robin cause visual disappear/recreate churn.",
+        "source_size_gate_bytes": 9500
+      },
+      "validation_contract": [
+        "Full production LocalScript source is injected verbatim into actual pinned Native Luau executable; Roblox service doubles are identified as models, not Studio.",
+        "Baseline exact8178B SHA9f37660d5a0260a1c90f074d54d4f163a96b2af4f62c4c99a40209070329ed9c demonstrates starvation; candidate fixes same case.",
+        "Touch+desktop peakPart and per-tick ray budget, stable contact persistence, replacement set churn, eligibility changes, geometry/fade returned values, feature/reduced-effects/destruction cleanup.",
+        "Production mutants changing fade return to .73/1, chosen insertion, fairness cursor/probe bound must fail meaningful behavioral assertions.",
+        "Preserve existing safety/authority/cleanup negative contracts; change obsolete selector text-shape checks only with actual-source replacement coverage, not waive behavior.",
+        "Build pinned f46d879e28302a430029304f7f6a162aed66f103 interpreter+compiler and pinned Rojo7.7.1; exact original69+candidate70 source/class/nonloss and OFF69 rebuild.",
+        "Dedicated workflow exact-head run and independent actual code/test/evidence review. Old CI44884407833/artifact14699730617 are historical only."
+      ],
+      "baseline_artifact": {
+        "official_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "run_id": 45106580546,
+        "artifact_id": 14787568439,
+        "zip_bytes": 5840240,
+        "zip_sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d",
+        "place_bytes": 828658,
+        "place_sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899",
+        "selected_sources": 69
+      },
+      "source_increment_validation": {
+        "cumulative_pr_changed_paths": [
+          ".github/workflows/gq470-neutral-contact-shadows-real69.yml",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/EGGRUMBLE_NeutralContactShadows.client.luau",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/README.md",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/compose_official70.py",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/emit_art_report.py",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_source.py",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/test_neutral_shadows_native.luau",
+          "quality_gameplay/gq470_neutral_contact_shadows_20261121/run_neutral_shadows_native.py"
+        ],
+        "mutable_existing": 5,
+        "added": 2,
+        "frozen_existing": 1,
+        "deleted": 0,
+        "renamed": 0,
+        "preserve_all_original_ancestors": true,
+        "full_tree_outside_target_paths_equals_current_formal_rc": true,
+        "source_mode_type_preserved": true
+      },
+      "rollback": "Nonforce inverse restores the five mutable original files to dd30 preimages and removes exactly two added Native QA files; keep all other current official changes and history. Optional client omitted/OFF yields exact official69.",
+      "forbidden_changes": [
+        "main/officialRC refs or formal source selection",
+        "canonical shared producers/profile/source-lock/Native/delivery/rollback files",
+        "emit_art_report.py original blob",
+        "any existing69 Luau body or route/class",
+        "server HP/KO/score/egg/movement/XP/Store or duplicate game/Host/Remote authority",
+        "Roblox Publish/spending/new automation",
+        "promotion of DEFER/#250/Studio/ART/Android/FUN/OWNER status"
+      ],
+      "value_gate": "DEFER_P0_910_FIRST_PENDING_250; existing optional candidate repair only",
+      "rc_write_authorized_by_this_claim": false,
+      "RC_adoption": false,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "owner_accepted": false,
+      "issued_at": "2026-11-23T04:22:16.123000+00:00",
+      "expires_at": "2026-11-23T10:22:16.123000+00:00",
+      "request_comment": 7091263346,
+      "grant_scope_version": 1,
+      "scope_draft_review": {
+        "path": "/workspace/scratch/ecf54b423c4c/shadow_work/reviews/SCOPE_DRAFT_REVIEW_runtime_inventory.json",
+        "bytes": 10934,
+        "sha256": "c9d95f405b48170b85240026d7ce94d90fb473f667a6c932884af4e5278210ee",
+        "decision": "PASS_DRAFT_SCOPE_NOT_GRANTED",
+        "reviewer_context": "CODEX_ROOT_ECF54B423C4C:/root/runtime_inventory"
+      },
+      "non_overlap_note": "BUSY PR938 shares broad FB015 but owns LegacyFirst90 respawn GUI. PR997 owns only optional NeutralContactShadows; no LegacyFirst90, HUD or any current69 source changes.",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "1afb60b6-b596-4bde-8863-528071cffd33",
+      "expiry_policy": "Actual issued_at +6h; expired reservation is not automatic handoff.",
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "1afb60b6-b596-4bde-8863-528071cffd33",
+        "epoch": 673,
+        "acquire_commit": "1415c965e79c9dc664abe556b4ad81df3e8118a4",
+        "acquired_at": "2026-11-23T04:22:02.196823+00:00",
+        "expires_at": "2026-11-23T04:52:02.196823+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "remote_source_writes_permitted_at_issuance": false,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "remote_source_write_requires_separate_live_source_lease": true
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
