@@ -22706,6 +22706,265 @@
       "remote_source_writes_permitted_at_issuance": false,
       "source_lease_status_at_issuance": "NOT_ACQUIRED",
       "remote_source_write_requires_separate_live_source_lease": true
+    },
+    {
+      "schema": 1,
+      "claim_id": "P0D-GQ943-BASIC-MOTION-20261123-62AC651F",
+      "state": "GRANTED",
+      "draft_only_not_issued": false,
+      "feature_id": "GQ470_7ROLE_PROCEDURAL_MOTION_REAL69_20261121",
+      "existing_feature_ids_preserved": [
+        "GQ470_7ROLE_PROCEDURAL_MOTION_REAL69_20261121",
+        "GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121"
+      ],
+      "feature_alias_relation": "Both historical strings identify the original PR943 / PR482 one-client motion route; this continuation creates no second game feature or motion authority.",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 943,
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/943",
+      "prep_branch": "feature/gq470-role-motion-readable-real69-20261121",
+      "owner": "CODEX_ROOT_62AC651FA173",
+      "source_author_context": "CODEX_ROOT_62AC651FA173:/root",
+      "author_contexts": [
+        "CODEX_ROOT_62AC651FA173:/root",
+        "CODEX_ROOT_62AC651FA173:/root/runtime_environment (reused audit fixture only)"
+      ],
+      "scope_review_context": "CODEX_ROOT_62AC651FA173:/root/rules_and_access",
+      "independent_reviewer_context": "CODEX_ROOT_62AC651FA173:/root/candidate_triage",
+      "role": "A_PREP",
+      "target_paths": [
+        ".github/workflows/gq470-role-motion-real69-prep.yml",
+        "quality_gameplay/gq470_role_motion_real69_20261121/ROLE_MOTION_REAL69.patch",
+        "quality_gameplay/gq470_role_motion_real69_20261121/gate.py",
+        "quality_gameplay/gq470_role_motion_real69_20261121/README.md",
+        "quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py",
+        "quality_gameplay/gq470_role_motion_real69_20261121/source_lock.json",
+        "quality_gameplay/gq470_role_motion_real69_20261121/test_native_cast_wiring.py"
+      ],
+      "mutable_paths": [
+        ".github/workflows/gq470-role-motion-real69-prep.yml",
+        "quality_gameplay/gq470_role_motion_real69_20261121/ROLE_MOTION_REAL69.patch",
+        "quality_gameplay/gq470_role_motion_real69_20261121/gate.py",
+        "quality_gameplay/gq470_role_motion_real69_20261121/README.md",
+        "quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py",
+        "quality_gameplay/gq470_role_motion_real69_20261121/source_lock.json",
+        "quality_gameplay/gq470_role_motion_real69_20261121/test_native_cast_wiring.py"
+      ],
+      "resources": [
+        "GQ470_7ROLE_PROCEDURAL_MOTION_REAL69_20261121",
+        "REAL69_SOURCE_EGGRUMBLE_PROCEDURALSKILLS"
+      ],
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "base_rc_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+      "source_head_before": "b2be1131ec4ae26811dd768b9490e3729431f958",
+      "source_head": null,
+      "original_lineage": {
+        "head": "b2be1131ec4ae26811dd768b9490e3729431f958",
+        "tree": "d7bdc367cacf6d08d0ea07c2231e590af573350f",
+        "published_account": "kk051780",
+        "specific_original_chat_context": "UNKNOWN_FROM_SHARED_ACCOUNT_HISTORY",
+        "no_personal_author_ACK_wait": true,
+        "all_original_history_preserved": true,
+        "original_soft_claim": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7051834048"
+      },
+      "request_comment": 7091227757,
+      "request_url": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7091227757",
+      "preserved_pr_diff_preimages": {
+        ".github/workflows/gq470-role-motion-real69-prep.yml": {
+          "bytes": 6900,
+          "sha256": "b58b37f3704f34a3b96d6596e317c5e715286ca7cc98de91e49397ced9b1dd13",
+          "git_blob": "082216c5538372a8cb99d11e76a5ccf86c645b64",
+          "mode": "100644",
+          "type": "blob"
+        },
+        "quality_gameplay/gq470_role_motion_real69_20261121/ROLE_MOTION_REAL69.patch": {
+          "bytes": 4016,
+          "sha256": "14b52eb308fb0f4e8a14d61a3c53174d6c78683209cc6eabc29667a466be2607",
+          "git_blob": "9d702d59b6ec288c8263d11798a2dc594b30bf00",
+          "mode": "100644",
+          "type": "blob"
+        },
+        "quality_gameplay/gq470_role_motion_real69_20261121/gate.py": {
+          "bytes": 6438,
+          "sha256": "78f3c9e1a569f572da2958d332d38e18e7937b161a454ff27c0f2fa2cf210645",
+          "git_blob": "c28bda81d74b9fe0e447c8f1d291136cd8dbc6ca",
+          "mode": "100644",
+          "type": "blob"
+        },
+        "quality_gameplay/gq470_role_motion_real69_20261121/README.md": {
+          "bytes": 3126,
+          "sha256": "a7800c079d53fd2edbd826b7e9bae9f5c08f7a5e93c413cafe88a6e0c2a601df",
+          "git_blob": "574440bdb2201e3aa0238eb194773f6d5a9a7479",
+          "mode": "100644",
+          "type": "blob"
+        },
+        "quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py": {
+          "bytes": 4211,
+          "sha256": "74040ccd0062e7b506700a135d549718eff49ca97192bd23a345e6507d167930",
+          "git_blob": "3337ca293cdaf78cadf5df566a50d5c1d2547f57",
+          "mode": "100644",
+          "type": "blob"
+        }
+      },
+      "official_artifact_pin": {
+        "run_id": 45106580546,
+        "run_attempt": 1,
+        "job_id": 137469149262,
+        "artifact_id": 14787568439,
+        "name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+        "zip": {
+          "bytes": 5840240,
+          "sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d"
+        },
+        "files": {
+          "EGGRUMBLE_REAL69_PRIVATE.rbxlx": {
+            "bytes": 828658,
+            "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+          },
+          "EGGRUMBLE_REAL69.project.json": {
+            "bytes": 9564,
+            "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+          },
+          "REAL69_LEGACY_INTAKE_RECEIPT.json": {
+            "bytes": 32870,
+            "sha256": "b0fa3d7767a3816162783a309c5515533f10fb5ba1f53348cc6272c199473cb5"
+          },
+          "UNION22_DELIVERY_MANIFEST.json": {
+            "bytes": 21272,
+            "sha256": "a9ec16c632873234ff3d33007529697b692a445652e8dfb2bf4d2f959b4e4ba8"
+          },
+          "UNION22_FINAL_ADMISSION.json": {
+            "bytes": 18697,
+            "sha256": "d6d3166220fdc50b5e99f962152979cff39170f5e5c07eeb5b459668d728ff94"
+          },
+          "UNION22_PROFILE_LOCK.json": {
+            "bytes": 306439,
+            "sha256": "2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375"
+          }
+        }
+      },
+      "runtime_source": {
+        "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills",
+        "class": "LocalScript",
+        "base": {
+          "bytes": 6764,
+          "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+        },
+        "original943": {
+          "bytes": 8662,
+          "sha256": "1856594a79d2e7ab7d4f6ac386c9379a45a8647a4168f65354246e888428bffb"
+        }
+      },
+      "scope": "Limited continuation of original PR943. Preserve its original A/B/C motion and cleanup patch byte-for-byte as the first stage, then append a separately delimited BASIC wiring fragment in the same patch file. Consume the existing server-owned BasicCastSerial in the same client renderer and use its original role-specific slot-A gesture, with independent deduplication and active-skill priority. Bind the existing PREP producer/workflow to the measured current official artifact and add full selected-client Native wiring cases. No new PR, server writer, Remote or game authority.",
+      "preserved": [
+        "Original ROLE_MOTION_REAL69.patch 4016 bytes retained as an exact first-stage prefix",
+        "Original motionProfile/rotate source functions and original 21 role-slot Native CHECKS remain byte-exact",
+        "Original skill signature parsing, skill durations and skill sequence acceptance",
+        "Other 68 selected sources, project mapping, 75 instances and server authority",
+        "Existing ungranted 10236-byte slot-priority proposal is not adopted or overwritten"
+      ],
+      "acceptance": {
+        "SOURCE_PREP_only": true,
+        "unmodified_base_reproduction": "Actual entire selected client with BASIC no-write and A positive-control fixture; not an engine assertion",
+        "two_stage_source_provenance": "6764 base -> exact original943 8662 -> limited BASIC candidate, each hash locked with reversible source diff",
+        "original_native21_predicates_preserved": true,
+        "full_client_wiring_cases": [
+          "BASIC each of seven roles",
+          "independent skill/BASIC counters",
+          "no initial-value replay",
+          "finite positive-integer serial validation",
+          "duplicate/reverse serial rejection",
+          "no character/dead/leaving player handling",
+          "BASIC does not interrupt an active A/B/C skill",
+          "skills may replace BASIC",
+          "listener teardown",
+          "existing cap/distance behavior"
+        ],
+        "stale_limit": "Only the specified observable state/serial cases are asserted; the numeric Player attribute has no character/round epoch and does not prove arbitrary delayed-network rejection",
+        "native_luau_and_rojo_on_off_required": true,
+        "one_changed_route_68_unchanged_project_and_instance_equality": true,
+        "same_new_HEAD_CI_required": true,
+        "actual_fixed_candidate_source_and_test_review_by_registered_context": true,
+        "official_gameplay_adoption": false,
+        "engine_test_status": "NOT_TESTED unless separately executed and recorded"
+      },
+      "baseline_synchronization": {
+        "first_parent": "Fresh actual PR943 head, preserving its original history",
+        "second_parent": "Fresh official RC used for exact source-base synchronization only",
+        "proposed_parent_order": [
+          "b2be1131ec4ae26811dd768b9490e3729431f958",
+          "93a1147561a531610ac1609ebc68cc0ecf546623"
+        ],
+        "tree_formula": "fresh official tree + exactly the seven scoped PR943 files; all other path/type/mode/blob entries equal fresh official tree",
+        "first_parent_full_diff_note": "Upstream RC synchronization outside the seven paths must equal the second parent exactly and is not additional authoring authority",
+        "nonforce_expected_source_HEAD_required": true,
+        "no_force_rebase_or_history_rewrite": true,
+        "source_and_formal_refs_must_be_fresh_at_publication": true,
+        "if_source_or_formal_ref_changes": "Stop publication, preserve intervening changes, refresh source preimages/base and independent review; never force an old source head",
+        "before_source_write": "Actual claim registration/readback and a separate authentic source-branch CONTROLLER lease required",
+        "after_source_write": "Read back both parent identities, original ancestry, complete tree diff against fresh RC, exact seven changed paths, source/blob pins and PR changed-file list"
+      },
+      "forbidden_changes": [
+        "Any path outside the seven except exact upstream second-parent synchronization",
+        "Shared UNION22 six paths or canonical source workflow",
+        "Game/Host/Combat/Realm/HP/Score/Store/Remote/HUD/runtime-selection semantics",
+        "New PR or duplicate motion authority",
+        "Adopting unrelated ART17 or unpublished slot-priority source",
+        "RC/main ref write, Roblox Publish, spending, production operation",
+        "Fabricated service task/run, authentication, approval or engine evidence"
+      ],
+      "rollback": "Nonforce inverse source commit restores the five original PR943 files and removes only the two new scoped files while retaining synchronized upstream RC and original ancestry. Candidate OFF69 must equal exact H93 source/project/Place. The 4016-byte original visual patch remains independently replayable.",
+      "allowed_new_prs": 0,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_writes_permitted_at_issuance": false,
+      "scope_review_is_code_approval": false,
+      "registered_source_approval": false,
+      "independent_review_status": "EXACT_SCOPE_PRE_CAS_REVIEW_MUST_PASS_BEFORE_CAS; FIXED_HEAD_SOURCE_APPROVAL_PENDING",
+      "if_matching_BUSY_owner_appears": "Join or explicit coordinated handoff only; expiry or absent row never grants takeover.",
+      "expiry_policy": "Actual issued_at plus 6 hours; elapsed time is not takeover authority.",
+      "PREP_READY": false,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "NO_GO",
+      "fun": "NOT_TESTED",
+      "owner_accepted": false,
+      "authority_evidence": [
+        "Current OWNER #1011 and formal RC AGENTS/policy v1.2",
+        "Authenticated kk051780/233213370 admin connector (verify at actual grant)",
+        "Coordinator owner_delegation of ordinary engineering approvals",
+        "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6886441650",
+        "https://github.com/kk051780/toy-wars-factory/issues/810"
+      ],
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "000445db-c618-4d23-8da8-a4e41e165f64",
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "000445db-c618-4d23-8da8-a4e41e165f64",
+        "epoch": 674,
+        "acquire_commit": "1e76dde213f6dd7f9c33eb1aba96f85623bc749f",
+        "acquired_at": "2026-11-23T04:24:38.915616+00:00",
+        "expires_at": "2026-11-23T04:54:38.915616+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "issued_at": "2026-11-23T04:26:49.693643+00:00",
+      "expires_at": "2026-11-23T10:26:49.693643+00:00",
+      "test_author_contexts": [
+        "CODEX_ROOT_62AC651FA173:/root",
+        "CODEX_ROOT_62AC651FA173:/root/runtime_environment (reused audit fixture only)"
+      ],
+      "native_execution_context": "CODEX_ROOT_62AC651FA173:/root/runtime_environment",
+      "native_execution_is_independent_source_approval": false,
+      "scope_design_review_reference": {
+        "path": "audit_access/BASIC_SCOPE_PROPOSAL_REVIEW.json",
+        "sha256": "706a8de0ac4a7cc914b56809e6a6fb30203cbe2c2e470c2fc292c8f157fa7fba",
+        "scope_only_not_source_approval": true
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
