@@ -5,9 +5,11 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from datetime import datetime, timezone
+import hashlib
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import stat
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -16,8 +18,16 @@ sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 REPO = PACKAGE.parents[1]
-FROZEN = REPO / 'quality_gameplay/gq470_union22_real69_20261122/native'
-INPUT_LOCK_SHA256 = '6bc50fec69e1250e64d6d6be873077205adff38773866278bc57b9f0cf93f4fa'
+HISTORICAL_PREFIX = 'quality_gameplay/gq470_union22_real69_20261122/native'
+HISTORICAL_COMMIT = '93a1147561a531610ac1609ebc68cc0ecf546623'
+HISTORICAL_TREE = 'ca7a6b532ff325ebf125423484dde1ee57ce219b'
+HISTORICAL_PATHS = frozenset(HISTORICAL_PREFIX + '/' + name for name in (
+    'INPUT_LOCK.json', 'run_profile.py', 'combined_cases_clear_los.luau',
+    'objective_full_cases.luau', 'objective_full_cases_clear_los.luau',
+    'fixtures/INPUT_MANIFEST.json', 'fixtures/combined_cases.luau',
+    'fixtures/combined_fixture_additions.luau', 'fixtures/fixture_additions.luau',
+    'fixtures/native_prefix.luau', 'fixtures/speed_fixture_additions.luau'))
+INPUT_LOCK_SHA256 = '9c5855df3549666c45ea0dba983a05b697463595ecd5336b35bfc9c399280e98'
 PACKAGE_PREFIX = 'quality_gameplay/gq470_match_role_growth_20261123/'
 NEW_PATHS = [PACKAGE_PREFIX + path for path in (
     'README.md', 'growth_patch.json', 'source_lock.json', 'apply_growth.py',
@@ -44,7 +54,7 @@ def repository_snapshot(frozen, git, head, contract):
     require(frozen.git_output(git, REPO, 'rev-parse', 'HEAD').decode().strip() == head, 'ACTUAL_REPO_HEAD')
     require(not frozen.git_output(git, REPO, 'status', '--porcelain=v1', '--untracked-files=all'), 'REPOSITORY_NOT_CLEAN')
     result = {}
-    for relative in sorted(set(NEW_PATHS) | set(contract['repository_inputs'])):
+    for relative in sorted(NEW_PATHS):
         row = frozen.git_output(git, REPO, 'ls-tree', '-z', head, '--', relative)
         require(row.endswith(b'\0') and row.count(b'\0') == 1, 'HEAD_FILE_MISSING:' + relative)
         metadata, name = row[:-1].split(b'\t', 1)
@@ -59,7 +69,7 @@ def repository_snapshot(frozen, git, head, contract):
     return result
 
 
-def load_inputs():
+def load_native_contract():
     raw = read(HERE / 'INPUT_LOCK.json')
     require(identity(raw)['sha256'] == INPUT_LOCK_SHA256, 'NATIVE_LOCK_CHANGED')
     contract = apply_source.unique_json(raw)
@@ -68,10 +78,122 @@ def load_inputs():
         'H93': ['original_fixtures', 'extended_engine'],
         'ON': ['extended_engine'], 'OFF': ['extended_engine'],
     }, 'EXACT_LEGACY_ENGINE_MATRIX')
+    require(set(contract['repository_inputs']) == {
+        PACKAGE_PREFIX + 'apply_growth.py', PACKAGE_PREFIX + 'growth_patch.json',
+        PACKAGE_PREFIX + 'source_lock.json'}, 'EXACT_OWN_REPOSITORY_INPUTS')
     for relative, pin in contract['repository_inputs'].items():
         apply_source.safe_relative(relative)
         require(identity(read(REPO / relative)) == pin, 'REPOSITORY_INPUT_CHANGED:' + relative)
-    frozen = module('unchanged_union22_build_and_fixture_helpers', FROZEN / 'run_profile.py')
+    validate_historical_inputs(contract['historical_inputs'])
+    return contract
+
+
+def validate_historical_inputs(value):
+    """Validate every archived member before writing or importing any of it."""
+    require(type(value) is dict and set(value) == {
+        'schema', 'source_commit', 'source_tree', 'files'}
+        and value['schema'] == 'GQ470_S1A_H93_HISTORICAL_INPUT_CAPSULE_V1',
+        'HISTORICAL_SCHEMA')
+    require(value['source_commit'] == HISTORICAL_COMMIT
+            and value['source_tree'] == HISTORICAL_TREE, 'HISTORICAL_ORIGIN')
+    files = value['files']
+    require(type(files) is dict, 'HISTORICAL_MEMBER_FIELDS')
+    for relative in files:
+        require(type(relative) is str and relative and '\\' not in relative
+                and '\0' not in relative, 'HISTORICAL_MEMBER_PATH')
+        path = PurePosixPath(relative)
+        require(not path.is_absolute() and '..' not in path.parts
+                and relative == path.as_posix(), 'HISTORICAL_MEMBER_PATH:' + relative)
+    require(set(files) == HISTORICAL_PATHS, 'HISTORICAL_MEMBER_SET')
+    result = {}
+    for relative, row in sorted(files.items()):
+        require(type(row) is dict and set(row) == {
+            'bytes', 'sha256', 'git_blob', 'origin_commit', 'utf8'}
+            and type(row['bytes']) is int and row['bytes'] >= 0
+            and all(type(row[key]) is str for key in ('sha256', 'git_blob', 'origin_commit', 'utf8')),
+            'HISTORICAL_MEMBER_FIELDS:' + relative)
+        require(row['origin_commit'] == HISTORICAL_COMMIT, 'HISTORICAL_ORIGIN:' + relative)
+        try:
+            raw = row['utf8'].encode('utf-8')
+        except UnicodeError:
+            require(False, 'HISTORICAL_MEMBER_UTF8:' + relative)
+        require(len(raw) == row['bytes'], 'HISTORICAL_MEMBER_BYTES:' + relative)
+        require(identity(raw)['sha256'] == row['sha256'], 'HISTORICAL_MEMBER_SHA256:' + relative)
+        blob = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+        require(blob == row['git_blob'], 'HISTORICAL_MEMBER_GIT_BLOB:' + relative)
+        result[relative] = raw
+    return result
+
+
+def materialize_historical_inputs(value, historical_root):
+    """Create a new, explicit H93 tree only after all eleven bodies validate."""
+    payloads = validate_historical_inputs(value)
+    root = apply_source.safe_root(historical_root)
+    require(not root.exists(), 'HISTORICAL_ROOT_EXISTS')
+    root.mkdir(parents=True, exist_ok=False)
+    for relative, raw in payloads.items():
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open('xb') as stream:
+            stream.write(raw)
+    return snapshot_historical_inputs(value, root)
+
+
+def snapshot_historical_inputs(value, historical_root):
+    """Read the full physical archive, including the helper and its old lock."""
+    payloads = validate_historical_inputs(value)
+    root = apply_source.safe_root(historical_root)
+    require(root.is_dir(), 'HISTORICAL_MEMBER_TYPE:' + str(root))
+    root_stat = root.stat()
+    directories, files = {}, {}
+    for path in sorted(root.rglob('*')):
+        relative = path.relative_to(root).as_posix()
+        info = path.lstat()
+        mode = stat.S_IMODE(info.st_mode)
+        if stat.S_ISDIR(info.st_mode):
+            directories[relative] = {'kind': 'directory', 'mode': mode}
+        elif stat.S_ISREG(info.st_mode):
+            files[relative] = {'kind': 'regular_file', 'mode': mode}
+        else:
+            require(False, 'HISTORICAL_MEMBER_TYPE:' + relative)
+    require(set(files) == set(payloads), 'HISTORICAL_MEMBER_SET')
+    expected_directories = {parent.as_posix() for relative in payloads
+                            for parent in PurePosixPath(relative).parents if parent.as_posix() != '.'}
+    require(set(directories) == expected_directories, 'HISTORICAL_ENTRY_SET')
+    for relative in sorted(files):
+        raw = read(root / relative)
+        row = value['files'][relative]
+        require(len(raw) == row['bytes'], 'HISTORICAL_MEMBER_BYTES:' + relative)
+        pin = identity(raw)
+        require(pin['sha256'] == row['sha256'], 'HISTORICAL_MEMBER_SHA256:' + relative)
+        blob = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+        require(blob == row['git_blob'], 'HISTORICAL_MEMBER_GIT_BLOB:' + relative)
+        files[relative].update(pin, git_blob=blob)
+    return {
+        'root': str(root), 'native_root': str(root / HISTORICAL_PREFIX),
+        'root_identity': {'device': root_stat.st_dev, 'inode': root_stat.st_ino,
+                          'mode': stat.S_IMODE(root_stat.st_mode)},
+        'directories': directories, 'files': files,
+    }
+
+
+def revalidate_historical_inputs(value, historical_root, before_snapshot):
+    """Check the tree used before; never repair or rematerialize changed inputs."""
+    root = apply_source.safe_root(historical_root)
+    require(str(root) == before_snapshot['root'] and root.is_dir(), 'HISTORICAL_ROOT_CHANGED')
+    info = root.stat()
+    require(info.st_dev == before_snapshot['root_identity']['device']
+            and info.st_ino == before_snapshot['root_identity']['inode'], 'HISTORICAL_ROOT_CHANGED')
+    after = snapshot_historical_inputs(value, root)
+    require(after == before_snapshot, 'HISTORICAL_SNAPSHOT_CHANGED')
+    return after
+
+
+def load_inputs(historical_root):
+    contract = load_native_contract()
+    historical = snapshot_historical_inputs(contract['historical_inputs'], historical_root)
+    frozen = module('unchanged_union22_build_and_fixture_helpers',
+                    Path(historical['native_root']) / 'run_profile.py')
     old = frozen.load_lock()
     frozen.fixture_snapshot(old)
     source_lock, patch = apply_source.load_contract()
@@ -91,7 +213,7 @@ def load_inputs():
         sections[name] = body
         cursor = stop + len(end)
     require(cursor == len(packed), 'TRAILING_CASE_INPUT')
-    helpers = read(FROZEN / 'combined_cases_clear_los.luau').split(b'local ok,result=pcall(function()', 1)[0]
+    helpers = read(frozen.HERE / 'combined_cases_clear_los.luau').split(b'local ok,result=pcall(function()', 1)[0]
     require(identity(helpers) == contract['original_helper_prefix'], 'ORIGINAL_HELPERS_CHANGED')
     return contract, sections, frozen, old, source_lock, helpers
 
@@ -101,7 +223,7 @@ def server_program(frozen, old, sections, helpers, sources, variant, extra_modul
     def append(value):
         code.extend(value.encode() if isinstance(value, str) else value)
     for name in old['fixture_order']:
-        append(read(FROZEN / 'fixtures' / name)); append('\n')
+        append(read(frozen.HERE / 'fixtures' / name)); append('\n')
     append(sections['SERVER_ENGINE']); append('\n')
     for name in extra_engine:
         append(sections[name]); append('\n')
@@ -382,27 +504,54 @@ def verify_place(place, baseline_place, sources, baseline_sources):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('baseline-root', 'on-root', 'off-root', 'artifact-zip', 'luau-source', 'build-dir',
+    for name in ('baseline-root', 'on-root', 'off-root', 'artifact-zip', 'historical-root', 'luau-source', 'build-dir',
                  'out', 'cmake', 'ninja', 'git', 'cc', 'cxx', 'rojo'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--head', required=True)
     args = parser.parse_args()
-    contract, sections, frozen, old, source_lock, helpers = load_inputs()
-    repository_before = repository_snapshot(frozen, args.git, args.head, contract)
-    require(identity(read(args.artifact_zip)) == source_lock['official_input']['zip'], 'OFFICIAL_ARTIFACT_ZIP')
+    contract = load_native_contract()
     inputs = {'H93': args.baseline_root, 'ON': args.on_root, 'OFF': args.off_root}
     roots = [apply_source.safe_root(x) for x in [*inputs.values(), args.luau_source, args.build_dir, args.out]]
     require(all(not a.is_relative_to(b) and not b.is_relative_to(a)
                 for index, a in enumerate(roots) for b in roots[index + 1:]), 'GATE_DIRECTORY_OVERLAP')
+    historical_root = apply_source.safe_root(args.historical_root)
+    # The archive is an independent input tree, never an overlay of the repo,
+    # profiles, tools, build directory, or receipt directory.
+    protected = [REPO, *roots, args.artifact_zip, args.cmake, args.ninja,
+                 args.git, args.cc, args.cxx, args.rojo]
+    protected = {path for value in protected for path in (Path(value).absolute(), Path(value).resolve())}
+    require(all(not historical_root.is_relative_to(path) and not path.is_relative_to(historical_root)
+                for path in protected), 'GATE_DIRECTORY_OVERLAP')
+    require(not args.out.exists() and not args.build_dir.exists(), 'NEW_OUTPUT_AND_BUILD_REQUIRED')
+    historical_before = materialize_historical_inputs(contract['historical_inputs'], historical_root)
+    contract, sections, frozen, old, source_lock, helpers = load_inputs(historical_root)
+    repository_before = repository_snapshot(frozen, args.git, args.head, contract)
+    require(identity(read(args.artifact_zip)) == source_lock['official_input']['zip'], 'OFFICIAL_ARTIFACT_ZIP')
     before = {}
     for label, root in inputs.items():
         before[label] = frozen.source_snapshot(root / 'sources')
         require(before[label] == source_lock['sources_after' if label == 'ON' else 'sources_before'], 'EXACT69_' + label)
         require(identity(read(root / apply_source.PROJECT)) == {k: source_lock['project'][k] for k in ('bytes', 'sha256')}, 'PROJECT_' + label)
     require(identity(read(args.baseline_root / 'EGGRUMBLE_REAL69_PRIVATE.rbxlx')) == source_lock['official_input']['place'], 'ORIGINAL_PLACE')
-    require(not args.out.exists() and not args.build_dir.exists(), 'NEW_OUTPUT_AND_BUILD_REQUIRED')
     args.out.mkdir(parents=True, exist_ok=False)
     started = datetime.now(timezone.utc).isoformat()
+    historical_receipt = {
+        'schema': 'GQ470_S1A_H93_HISTORICAL_INPUT_RECEIPT_V1',
+        'status': 'VALIDATED_BEFORE_EXECUTION_AFTER_NOT_VERIFIED',
+        'current_repository': {'source_candidate_head': args.head,
+                               'files_bound_to_head': repository_before, 'file_count': len(repository_before)},
+        'historical_origin': {
+            'source_commit': contract['historical_inputs']['source_commit'],
+            'source_tree': contract['historical_inputs']['source_tree'],
+            'files': {relative: {key: row[key] for key in ('bytes', 'sha256', 'git_blob', 'origin_commit')}
+                      for relative, row in contract['historical_inputs']['files'].items()},
+            'file_count': len(contract['historical_inputs']['files']),
+            'original_modes_asserted': False,
+        },
+        'before': historical_before, 'after': None,
+        'same_physical_root_revalidated': False,
+    }
+    write_json(args.out / 'historical_input_receipt.json', historical_receipt)
     try:
         binary, built, toolchain_tree = frozen.build_repl(args.luau_source, args.build_dir, args.out, old,
             args.cmake, args.ninja, args.git, args.cc, args.cxx)
@@ -418,7 +567,7 @@ def main():
                         program, ranges, bodies = frozen.assemble(sources, old, old_name)
                     else:
                         legacy_sections = dict(sections)
-                        legacy_sections['LEGACY_CASES'] = read(FROZEN / old['case_files'][old_name])
+                        legacy_sections['LEGACY_CASES'] = read(frozen.HERE / old['case_files'][old_name])
                         program, ranges, bodies = server_program(frozen, old, legacy_sections, b'',
                             sources, 'legacy_' + old_name, case_section='LEGACY_CASES')
                     name = label + '_legacy_' + boundary + '_' + old_name
@@ -468,8 +617,12 @@ def main():
         require(identity(read(args.artifact_zip)) == source_lock['official_input']['zip'], 'FINAL_OFFICIAL_ZIP')
         require(identity(read(args.baseline_root / 'EGGRUMBLE_REAL69_PRIVATE.rbxlx')) == source_lock['official_input']['place'], 'FINAL_OFFICIAL_PLACE')
         frozen.fixture_snapshot(old)
-        load_inputs()
+        load_inputs(historical_root)
+        historical_after = revalidate_historical_inputs(contract['historical_inputs'], historical_root, historical_before)
         require(repository_snapshot(frozen, args.git, args.head, contract) == repository_before, 'REPO_CHANGED_DURING_GATE')
+        historical_receipt.update(status='PASS_SAME_PHYSICAL_ROOT_UNCHANGED', after=historical_after,
+                                  same_physical_root_revalidated=True)
+        write_json(args.out / 'historical_input_receipt.json', historical_receipt)
         built['binary_after_suites'] = pin
         write_json(args.out / 'build_receipt.json', built)
         write_json(args.out / 'compile_receipt.json', {'compiler': compiler_pin, 'build': compile_command, 'profiles': compilation})
@@ -480,12 +633,14 @@ def main():
             'source_count_pinned': 69, 'changed_sources': 4, 'unchanged_sources': 65,
             'input_lock': identity(read(HERE / 'INPUT_LOCK.json')), 'runner': identity(read(Path(__file__))),
             'build_receipt': identity(read(args.out / 'build_receipt.json')), 'compile_receipt': identity(read(args.out / 'compile_receipt.json')),
+            'historical_input_receipt': identity(read(args.out / 'historical_input_receipt.json')),
             'suites': suites, 'places': places, 'inverse_source_and_place_exact': True,
             'source_profiles': before, 'source_inputs_unchanged': True,
             'repository_files_bound_to_head': repository_before,
             'server_execution_matrix': contract['server_profiles'],
             'legacy_execution_matrix': contract['legacy_profiles'],
             'original_contracts_modified': False, 'new_candidate_contract': True,
+            'original_contracts_scope': 'H93 historical capsule: exact 11 files',
             'active_runtime': 'rich51', 'private_companion': 'REAL69_UNION22', 'runtime_unified': False,
             'PREP_READY': False, 'rc_write_authorized': False, 'formal_rc_adoption': False,
             'persistent_growth_wired': False, 'full_S1_complete': False,

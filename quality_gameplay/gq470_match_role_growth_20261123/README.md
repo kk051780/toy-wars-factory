@@ -39,7 +39,7 @@ python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py \
 
 | 検証 | 実行内容と合格条件 |
 |---|---|
-| 入力の拒否・復元 | 実H93を使う10試験。source root自体のsymlinkと、入力sourceの別名へ向けた出力も、書込み前に拒否する。同classのInstance間でSourceを交換したPlaceも拒否する。改変Host、改変対象source、余分なsource、symlink、既存出力、重なり、改変project、二重適用を拒否し、全文逆適用を確認 |
+| 入力の拒否・復元 | 実H93を使う原10試験と、歴史capsule専用の3試験。source root自体のsymlinkと、入力sourceの別名へ向けた出力も、書込み前に拒否する。同classのInstance間でSourceを交換したPlaceも拒否する。改変Host、改変対象source、余分なsource、symlink、既存出力、重なり、改変project、二重適用を拒否し、全文逆適用を確認。capsuleは不正な全入力、使用した展開rootの改変、canonical treeを含まないown9だけのGit環境を別に検証 |
 | 既存回帰 | 元の固定combined10件とobjective7件を、H93の元4fixtureで2実行し、追加SERVER_ENGINE境界のH93/ON/OFFで6実行する。計8プログラム・68 CASE。追加境界でも元case全文と実28 bodyを使い、旧fixture・case・lockは編集しない |
 | server | 28個の完全な実body。16固定経路でKO閾値・25KO旧Lv・重複Died・真の致死通知の終了後配送・旧Player/旧試合・実Host respawn・Immediate/DeferredのDestroy/detach/reattach/abandon・偽Player/観戦者を検証 |
 | AI補助 | ONだけ30個の完全な実body。BotPathRouter/BotActorsを追加し、実初期AI・実退出takeover・元loopからの中立KOと元得点、同UserId新Playerへの書込み0を確認。seed11を実body読込前に固定し、製品と同じLOS条件で4方向×3studの接近候補を調べる。全候補blockedは失敗する |
@@ -57,15 +57,38 @@ python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py \
 
 - [3BEの提案7093566582](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093566582)から、既存safe_root呼出し1行と2拒否試験を再利用しました。実作者は `CODEX_ROOT_3BE5DD5649C8:/root/planning_candidate` です。
 - [9DBCの提案7093568289](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093568289)から有限LOS helperと呼出し置換を再利用しました。公開提案者は `CODEX_ROOT_9DBC77FA535A`、実コード作者のcontextは未明示です。seed11の固定は当817の追加で、元提案の作者へ帰属させていません。
-- unittest discoveryで `GQ470_H93_ARTIFACT` が存在しない場合だけ、実artifact未提供を明示する `NOT_RUN` skipにします。空文字・空白・不正なpath・改変入力は失敗です。ファイルの直接実行では未指定も失敗し、専用workflowでは実artifactを指定して全10試験を実行します。
+- unittest discoveryで `GQ470_H93_ARTIFACT` が存在しない場合だけ、原10試験のclassは実artifact未提供を明示する `NOT_RUN` skipにします。空文字・空白・不正なpath・改変入力は失敗です。新しいcapsule3試験は別classで、artifact未提供のdiscoveryでも実行します。ファイルの直接実行では未指定も失敗し、専用workflowでは実artifactを指定して全13試験を実行します。
 
 C1 `fe13d7e6e3bd5d35b72c5aa69b969c3cd9099a8c` は専用run45135503785で新規build・固定30 Native・207 compile・3 Placeを通過しました。これはそのHEADの履歴であり、後続C2の合格へは流用しません。
 
-C2は[3575の2guard提案7093711079](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093711079)を取り込みます。実作者は `CODEX_ROOT_3575F3C03022:/root` で、原904 Bのsource差分と一致する2条件更新です。Heroは31183→31285 B、他3生成sourceは不変です。新しいtimer・購読・装飾部品は追加しません。
+C2 `64bb83572123eb4d90b7dfa82b556e18a3a9d0ff` は[3575の2guard提案7093711079](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093711079)を取り込みました。実作者は `CODEX_ROOT_3575F3C03022:/root` で、原904 Bのsource差分と一致する2条件更新です。Heroは31183→31285 B、他3生成sourceは不変です。新しいtimer・購読・装飾部品は追加しません。専用run45139061950の固定30 Native・207 compile・3 Placeと、登録非作者の[当該HEAD限定SOURCE受入7092737271](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7092737271)はC2の履歴です。C3以降のHEAD、current-RやRC採用への合格転用はしません。
 
 新19項目は実行前に列挙し、元194項目のIDと相対順序を保持します。実効Adorneeとfooterの祖先条件は共通helperを厳密化するため、旧predicateの意味まで不変とは主張しません。NINJAは元early-clear検査に加え、実Bをもう一度実行し、属性の手動書換えやframe入力なしで自然期限を確認します。役職予約は実defer/delayの引数・thread・時刻を保持する観測だけを挟み、callbackを包む・手動呼出し・再予約することなく、元schedulerによる8予約の実配送を確認します。
 
 [19943の札配置案7093537940](https://github.com/kk051780/toy-wars-factory/pull/1028#issuecomment-7093537940)は75°/Combo条件で重なりが悪化したためREWORKとし、元cameraY2.6・178×24の配置を保持します。C2は配置修復やStudioでの描画合格を含みません。
+
+## C3：H93の歴史入力を現行repositoryから分離
+
+この保守は既存677 grant・688の原9path保守・696の `original_s1a` partitionの範囲です。実SOURCE703を別に取得し、変更をREADME、native INPUT_LOCK／runner、既存test、既存workflowの5pathへ限定しています。原期限11:08:12.461550 UTCを延長する記録ではありません。03の永久プロフィール支援9path、共有canonical6、ゲーム4本文、patch／source lock／applier、growth_casesの9sectionsは変更しません。
+
+旧runnerが直接読んでいたH93由来の入力を、既存 `native/INPUT_LOCK.json` の `historical_inputs` に原UTF-8本文とともに固定します。originはcommit `93a1147561a531610ac1609ebc68cc0ecf546623`／tree `ca7a6b532ff325ebf125423484dde1ee57ce219b` です。元helperが間接参照する `objective_full_cases.luau` も含め、対象は11本です。現在のcanonicalが変更されても、その本文へfallbackしません。
+
+| 歴史入力 | 本数 |
+|---|---:|
+| 元 `run_profile.py` と `INPUT_LOCK.json` | 2 |
+| 元のcombined／objectiveのclear-LOS caseと元objective case | 3 |
+| 元fixtures配下のmanifest・case・4つのengine body | 6 |
+| 合計 | 11 |
+
+runnerは外側lockの固定SHAを検証し、全11memberの名前・path・field・origin・UTF-8・bytes・SHA256・Git blobを照合してから、一つの新しい `--historical-root` へ展開します。rootやancestor、memberのsymlink、既存root、余分なentryを拒否し、repository・公式入力・toolchain・build・outputとの重なりも展開前に拒否します。歴史Pythonのimport前に同じ物理11本を再確認します。
+
+実行後は**実際に使った同じroot**を再検査し、本文だけでなくentry種別、観測したmode、root identityも初回snapshotと比較します。別rootへ正常な原本を展開し直して改変を隠すことはできません。modeはこの実行の観測値であり、元capsuleに無いH93 modeを既知値として作りません。
+
+`repository_files_bound_to_head` は現在のown9の実Git HEAD／mode／bytesを記録し、歴史11本のH93 originは `historical_input_receipt.json` へ分けて記録します。旧 `repository_inputs` の歴史10本はこのcapsuleへ移り、現在のown3（applier／patch／source lock）の固定検査は残ります。現repositoryにH93のGit objectやcanonical treeが存在することを再現条件にしません。workflowは使用した歴史rootの11原物もartifactへ同梱します。
+
+これは入力の所在と証拠の結合を変える保守です。UI213、元194の投影、12 UI CASE、30-program matrix、既存fixture／case、ゲーム4本文は維持します。C2 artifactにある全30生成program・source line／body byte範囲との一致を確認し、新HEADでfresh F46・全Native・compile／Rojoと登録非作者reviewを改めて通す必要があります。`original_contracts_modified=false` は原11入力が不変である意味で、変更された現canonicalを過去の原本として認める意味ではありません。
+
+新current-R入口、現在RCへの履歴merge、共有producer変更、永久Lv5／20のHost接続やSOURCE／PREP／RCの新受入はC3の対象外です。
 
 ## 残る確認と非対象
 

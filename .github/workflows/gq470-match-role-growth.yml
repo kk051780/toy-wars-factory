@@ -110,6 +110,7 @@ jobs:
           python3 -B quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py \
             --baseline-root "$WORK/baseline" --on-root "$WORK/on" --off-root "$WORK/off" \
             --artifact-zip "$WORK/official.zip" --head "$CANDIDATE_HEAD" \
+            --historical-root "$WORK/historical" \
             --luau-source "$RUNNER_TEMP/gq470-s1a-luau-src" --build-dir "$WORK/fresh-build" \
             --out "$WORK/native" --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
             --git "$(command -v git)" --cc "$(command -v gcc)" --cxx "$(command -v g++)" --rojo "$WORK/rojo"
@@ -119,6 +120,7 @@ jobs:
           name: GQ470-P0D033-S1A-CANDIDATE-NOT-FORMAL-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/gq470-s1a/provenance/
+            ${{ runner.temp }}/gq470-s1a/historical/
             ${{ runner.temp }}/gq470-s1a/on/
             ${{ runner.temp }}/gq470-s1a/off/
             ${{ runner.temp }}/gq470-s1a/native/
