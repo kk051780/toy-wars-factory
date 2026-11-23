@@ -1,0 +1,38 @@
+name: P0D FB015 character art PREP native validation
+on:
+  push:
+    branches: [feature/p0d-fb015-character-art-v1-20261114]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  character-art-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact-source visual contract and OFF rollback
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_character_art.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fb015_luau
+          persist-credentials: false
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/fb015_luau_compile
+          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+      - name: Native Luau compile of actual FB015 character art
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fb015_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/fb015_luau_compile/luau-compile ]; then
+            cmake -S _fb015_luau -B /tmp/fb015_luau_compile -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/fb015_luau_compile --target Luau.Compile.CLI --parallel 4
+          fi
+          /tmp/fb015_luau_compile/luau-compile rc_fastlane/features/owner372_art/FB015CharacterArt.client.luau > /tmp/fb015_native.out
+          echo "FB015_NATIVE_PASS_NO_STUDIO_NO_FUN_NO_OFFICIAL_RC"
