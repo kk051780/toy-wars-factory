@@ -1,0 +1,151 @@
+name: GQ470 REAL69 CombatFeel 949+952 author-source composite A gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_combatfeel_a949_a952_composite_real69_20261121/**'
+      - '.github/workflows/gq470-combatfeel-composite-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  composite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin true formal original and the two already green original author PRs
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORMAL=e80973c354f14a0d0088577f3cc1a875454f0f8f
+          PR952=53be914b051137da1b092f289ec7387c96eea131
+          PR949=d94e8852b0da3d3c65d671f8ea263ab042b11c8d
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_HEAD_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.conclusion')" = "$FORMAL success"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44835421480" --jq '.head_sha+" "+.conclusion')" = "$PR952 success"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44834993878" --jq '.head_sha+" "+.conclusion')" = "$PR949 success"
+          ROOT=/tmp/gq470-composite
+          mkdir -p "$ROOT"/{official,reticle,parent_patch}
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/official"
+          gh run download 44835421480 --repo "$GITHUB_REPOSITORY" \
+            --name GQ470-REAL69-HIT-RETICLE-SOURCE-ONLY-NOT-FORMAL --dir "$ROOT/reticle"
+          gh api "repos/$GITHUB_REPOSITORY/contents/quality_gameplay/gq470_hit_matte_streak_real69_20261121/patch.py?ref=$PR949" \
+            --jq .content | base64 --decode > "$ROOT/parent_patch/patch.py"
+          test "$(git hash-object "$ROOT/parent_patch/patch.py")" = 18421d7f055d146a67843b11f574f06c937bb52a
+          python3 -m py_compile "$ROOT/parent_patch/patch.py"
+          python3 -m py_compile quality_gameplay/gq470_combatfeel_a949_a952_composite_real69_20261121/compose.py
+          python3 -B quality_gameplay/gq470_combatfeel_a949_a952_composite_real69_20261121/compose.py --self-test
+          python3 -B quality_gameplay/gq470_combatfeel_a949_a952_composite_real69_20261121/compose.py \
+            --official "$ROOT/official" --reticle "$ROOT/reticle" \
+            --patch949 "$ROOT/parent_patch/patch.py" --out "$ROOT/candidate"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('/tmp/gq470-composite/candidate/GQ470_COMBATFEEL_COMPOSITE_A_QA.json').read_text())
+          assert a['selected_modified']==1 and a['other_selected_exact']==68
+          assert a['combined_sha256']=='b37194cb97357cf7290fc6eb3f94396720265b15915ad588d2bd05b9b870e833'
+          assert a['new_world_parts']==0 and a['new_remotes']==0 and a['owner_accepted'] is False
+          print('GQ470_RETICLE_952_IMPACT_949_COMBINED_ONE_SOURCE_PINNED_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau compilation of all69 official original + all69 two-author composite
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-composite-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-composite-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          for lane in ('official','candidate'):
+              root=Path('/tmp/gq470-composite')/lane
+              project=json.loads((root/'EGGRUMBLE_REAL69.project.json').read_text())
+              paths=[]
+              def visit(node):
+                  if not isinstance(node,dict):return
+                  if '$path' in node:paths.append(root/node['$path'])
+                  for k,v in node.items():
+                      if not k.startswith('$'):visit(v)
+              visit(project['tree'])
+              assert len(paths)==69
+              for p in paths:
+                  subprocess.run(['/tmp/gq470-composite-luau/luau-compile','--text',str(p)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ470_COMPOSITE_NATIVE_LUAU_'+lane+'_69_PASS')
+          PY
+      - name: Pinned Rojo ON69 and byte-exact OFF69 original; confirm actual Place carries BOTH markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/tmp/gq470-composite
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-composite-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-composite-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-composite-rojo.zip') as z:
+              names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/gq470-composite-rojo');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq470-composite-rojo build "$ROOT/candidate/EGGRUMBLE_REAL69.project.json" -o "$ROOT/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          /tmp/gq470-composite-rojo build "$ROOT/official/EGGRUMBLE_REAL69.project.json" -o "$ROOT/original_rebuilt.rbxlx"
+          cmp "$ROOT/original_rebuilt.rbxlx" "$ROOT/official/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path('/tmp/gq470-composite')
+          def selected(place):
+              found={}
+              for node in ET.fromstring(place.read_bytes()).iter('Item'):
+                  kind=node.get('class')
+                  if kind not in ('Script','LocalScript','ModuleScript'):continue
+                  props=node.find('Properties');name=props.find("string[@name='Name']");source=props.find("string[@name='Source']")
+                  assert name is not None and source is not None and name.text not in found
+                  found[name.text]=(kind,source.text or '')
+              return found
+          a=selected(root/'official/EGGRUMBLE_REAL69_PRIVATE.rbxlx')
+          b=selected(root/'candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx')
+          assert len(a)==len(b)==69 and set(a)==set(b)
+          changed=[key for key in a if a[key]!=b[key]]
+          assert changed==['EGGRUMBLE_CombatFeel']
+          assert a[changed[0]][0]==b[changed[0]][0]=='LocalScript'
+          source=b[changed[0]][1]
+          assert hashlib.sha256(source.encode()).hexdigest()=='b37194cb97357cf7290fc6eb3f94396720265b15915ad588d2bd05b9b870e833'
+          assert 'GQ470_FB015_CONFIRMED_HIT_CENTERED_MATTE_RETICLE_REAL69_20261121' in source
+          assert 'GQ470_FB015_CONFIRMED_HIT_MATTE_STREAK_REAL69_20261121' in source
+          qa=json.loads((root/'candidate/GQ470_COMBATFEEL_COMPOSITE_A_QA.json').read_text())
+          actual=root/'candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          receipt=root/'candidate/REAL69_LEGACY_INTAKE_RECEIPT.json'
+          data=json.loads(receipt.read_text())
+          data['private_place_bytes']=actual.stat().st_size
+          data['private_place_sha256']=hashlib.sha256(actual.read_bytes()).hexdigest()
+          receipt.write_text(json.dumps(data,sort_keys=True,indent=2,ensure_ascii=False)+'\n')
+          print('GQ470_COMPOSITE_TRUE_ROJO_69_AND_EXACT_OFF_PASS ORIGINAL_BYTES',
+                (root/'official/EGGRUMBLE_REAL69_PRIVATE.rbxlx').stat().st_size,
+                'COMPOSITE_BYTES',actual.stat().st_size)
+          PY
+      - name: A-only handoff, NOT an RC update nor an owner ART verdict
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-COMBATFEEL-949-952-COMPOSITE-A-NOT-FORMAL
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            /tmp/gq470-composite/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-composite/candidate/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-composite/candidate/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-composite/candidate/GQ470_COMBATFEEL_COMPOSITE_A_QA.json
+            /tmp/gq470-composite/candidate/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau
