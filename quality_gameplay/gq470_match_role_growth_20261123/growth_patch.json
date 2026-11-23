@@ -1,0 +1,132 @@
+{
+  "files": [
+    {
+      "after": {
+        "bytes": 31183,
+        "sha256": "2bfbffebc6cb326a5309c8469903113d18d7120558c297885e6de2ca3da6d37f"
+      },
+      "before": {
+        "bytes": 20363,
+        "sha256": "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+      },
+      "hunks": [
+        {
+          "name": "managed_role_watch_and_growth",
+          "new": "-- GQ470_S1A_BOUNDED_BATTLE_GROWTH_TAG_20261123\n-- Read only the current server publications. This is not a level/XP authority.\nlocal function watchBattleGrowth(player:Player):()->()\n local retired=false\n local character:Model?=nil\n local head:BasePart?=nil\n local humanoid:Humanoid?=nil\n local rootPart:BasePart?=nil\n local arena:Instance?=nil\n local admittedArena:Instance?=nil\n local tag:BillboardGui?=nil\n local textLabel:TextLabel?=nil\n local playerConnections:{RBXScriptConnection}={}\n local characterConnections:{RBXScriptConnection}={}\n local partConnections:{RBXScriptConnection}={}\n local arenaConnections:{RBXScriptConnection}={}\n local arrivalConnection:RBXScriptConnection?=nil\n local retiring:{[Instance]:boolean}=setmetatable({},{__mode=\"k\"})\n local generation=0\n local stealthEpoch=0\n local stealthDeadline:number?=nil\n local update:()->()=function() end\n local function disconnectAll(connections:{RBXScriptConnection})\n  for _,connection in ipairs(connections) do connection:Disconnect() end\n  table.clear(connections)\n end\n local function hide()\n  if tag then tag:Destroy();tag=nil;textLabel=nil end\n end\n local function cancelArrival()\n  if arrivalConnection then arrivalConnection:Disconnect();arrivalConnection=nil end\n end\n local function cancelStealth()\n  stealthEpoch+=1;stealthDeadline=nil\n end\n local function current():boolean\n  return not retired and player.Parent==Players\n   and Players:GetPlayerByUserId(player.UserId)==player\n   and character~=nil and player.Character==character\n   and character:IsDescendantOf(workspace) and not retiring[character]\n end\n local function selectArena():Instance?\n  local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n  if mode~=\"TEAM\" and mode~=\"BATTLE_ROYALE\" then return nil end\n  local container=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n  local found=container and container:FindFirstChild(mode..\"_Arena\")\n  if found and found:IsA(\"Folder\") and found.Parent==container and not retiring[found] then return found end\n  return nil\n end\n local function bindArena(nextArena:Instance?)\n  if arena==nextArena then return end\n  disconnectAll(arenaConnections);cancelArrival();cancelStealth();hide()\n  arena=nextArena;admittedArena=nil\n  if not nextArena then return end\n  local captured=nextArena\n  local function changed()\n   if not retired and arena==captured then update() end\n  end\n  table.insert(arenaConnections,captured:GetAttributeChangedSignal(\"EGGRUMBLE_MatchPhase\"):Connect(changed))\n  table.insert(arenaConnections,captured.AncestryChanged:Connect(changed))\n  table.insert(arenaConnections,captured.Destroying:Connect(function()\n   retiring[captured]=true\n   if not retired and arena==captured then update() end\n  end))\n end\n local function validPart(instance:Instance?,className:string):boolean\n  return instance~=nil and instance:IsA(className) and instance.Parent==character and not retiring[instance]\n end\n local function bindParts()\n  local ch=character\n  local nextHead=ch and ch:FindFirstChild(\"Head\")\n  local nextHumanoid=ch and ch:FindFirstChildOfClass(\"Humanoid\")\n  local nextRoot=ch and ch:FindFirstChild(\"HumanoidRootPart\")\n  if not validPart(nextHead,\"BasePart\") then nextHead=nil end\n  if not validPart(nextHumanoid,\"Humanoid\") then nextHumanoid=nil end\n  if not validPart(nextRoot,\"BasePart\") then nextRoot=nil end\n  if head==nextHead and humanoid==nextHumanoid and rootPart==nextRoot then return end\n  local rootChanged=rootPart~=nextRoot\n  disconnectAll(partConnections);cancelArrival();cancelStealth();hide()\n  head=nextHead::BasePart?;humanoid=nextHumanoid::Humanoid?;rootPart=nextRoot::BasePart?\n  if rootChanged then admittedArena=nil end\n  local capturedGeneration=generation\n  for _,part in pairs({head,humanoid,rootPart}) do\n   local captured=part\n   local function changed()\n    if not retired and generation==capturedGeneration and character==ch then update() end\n   end\n   table.insert(partConnections,captured.AncestryChanged:Connect(changed))\n   table.insert(partConnections,captured.Destroying:Connect(function()\n    retiring[captured]=true;changed()\n   end))\n  end\n  if humanoid then\n   table.insert(partConnections,humanoid:GetPropertyChangedSignal(\"Health\"):Connect(function()\n    if not retired and generation==capturedGeneration and character==ch then update() end\n   end))\n  end\n end\n local function inCurrentArena():boolean\n  if not arena or not rootPart then return false end\n  local field=arena:FindFirstChild(\"TacticalBattlefield\")\n  if not field or not field:IsA(\"BasePart\") or field.Parent~=arena then return false end\n  local point=field.CFrame:PointToObjectSpace(rootPart.Position)\n  return math.abs(point.X)<=field.Size.X*.5 and math.abs(point.Z)<=field.Size.Z*.5\n   and math.abs(point.Y)<=120\n end\n update=function()\n  if retired then return end\n  bindParts();bindArena(selectArena())\n  local live=current()\n  local active=live and arena~=nil and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n   and player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n   and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  if not active then admittedArena=nil;cancelArrival();cancelStealth();hide();return end\n  -- A new avatar starts at the lobby while Host's real .8s return is pending.\n  -- Observe this concrete root entering the actual current arena once. Keep\n  -- the admission for this avatar/round; no frame poll or arbitrary timer.\n  if admittedArena~=arena then\n   if rootPart and humanoid and humanoid.Health>0 and inCurrentArena() then\n    admittedArena=arena;cancelArrival()\n   elseif rootPart and not arrivalConnection then\n    local captured=rootPart;local capturedGeneration=generation\n    arrivalConnection=captured:GetPropertyChangedSignal(\"CFrame\"):Connect(function()\n     if not retired and generation==capturedGeneration and rootPart==captured then update() end\n    end)\n   end\n  end\n  local role=player:GetAttribute(\"EGGRUMBLE_Role\")\n  local stage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n  local kos=player:GetAttribute(\"EGGRUMBLE_NeutralKOs\")\n  if admittedArena~=arena or not head or not humanoid or humanoid.Health<=0\n   or type(role)~=\"string\" or not roleSet[role]\n   or type(stage)~=\"number\" or stage~=math.floor(stage) or stage<1 or stage>3\n   or type(kos)~=\"number\" or kos~=kos or kos<0 or kos>=math.huge or kos~=math.floor(kos) then\n   cancelStealth();hide();return\n  end\n  local hiddenUntil=player:GetAttribute(\"EGGRUMBLE_StealthUntil\")\n  -- The original server skill writes os.clock()+3, not client/server epoch time.\n  if type(hiddenUntil)==\"number\" and hiddenUntil>os.clock() then\n   hide()\n   if hiddenUntil<math.huge and stealthDeadline~=hiddenUntil then\n    cancelStealth();stealthDeadline=hiddenUntil\n    local token=stealthEpoch;local capturedGeneration=generation\n    local capturedCharacter=character;local capturedHead=head\n    task.delay(math.max(0,hiddenUntil-os.clock())+.01,function()\n     if retired or token~=stealthEpoch or generation~=capturedGeneration\n      or character~=capturedCharacter or head~=capturedHead or not current() then return end\n     stealthDeadline=nil;update()\n    end)\n   end\n   return\n  end\n  cancelStealth()\n  if not tag then\n   local bill=Instance.new(\"BillboardGui\")\n   bill.Name=\"EGGRUMBLE_BattleGrowthTag\"\n   bill.Size=UDim2.fromOffset(178,24)\n   bill.StudsOffset=Vector3.new(0,2.6,0)\n   bill.AlwaysOnTop=false;bill.MaxDistance=72;bill.Enabled=false\n   bill.Adornee=head\n   local label=Instance.new(\"TextLabel\")\n   label.Name=\"BattleGrowthText\";label.Size=UDim2.fromScale(1,1)\n   label.BackgroundTransparency=.25;label.BackgroundColor3=Color3.fromRGB(23,34,48)\n   label.BorderSizePixel=0;label.Font=Enum.Font.GothamBold;label.TextSize=12\n   label.TextColor3=Color3.fromRGB(255,238,180);label.TextWrapped=false\n   label.TextTruncate=Enum.TextTruncate.AtEnd;label.Parent=bill\n   tag=bill;textLabel=label;bill.Parent=head\n  end\n  if textLabel then textLabel.Text=string.format(\"この試合 B%d｜中立KO%d\",stage,kos) end\n  tag.Enabled=true\n end\n local function clearCharacter()\n  generation+=1;cancelStealth();cancelArrival();hide()\n  disconnectAll(characterConnections);disconnectAll(partConnections);disconnectAll(arenaConnections)\n  character=nil;head=nil;humanoid=nil;rootPart=nil;arena=nil;admittedArena=nil\n end\n local function bindCharacter(nextCharacter:Model)\n  if retired or player.Parent~=Players or player.Character~=nextCharacter then return end\n  if character==nextCharacter then update();return end\n  clearCharacter();character=nextCharacter\n  local capturedGeneration=generation\n  local function changed()\n   if not retired and generation==capturedGeneration and character==nextCharacter then update() end\n  end\n  table.insert(characterConnections,nextCharacter.ChildAdded:Connect(changed))\n  table.insert(characterConnections,nextCharacter.ChildRemoved:Connect(changed))\n  table.insert(characterConnections,nextCharacter.AncestryChanged:Connect(changed))\n  table.insert(characterConnections,nextCharacter.Destroying:Connect(function()\n   retiring[nextCharacter]=true\n   if not retired and generation==capturedGeneration and character==nextCharacter then clearCharacter() end\n  end))\n  for _,object in ipairs(nextCharacter:GetDescendants()) do\n   if object.Name==\"EGGRUMBLE_BattleGrowthTag\" and object:IsA(\"BillboardGui\") then object:Destroy() end\n  end\n  update()\n end\n for _,attribute in ipairs({\"EGGRUMBLE_Role\",\"EGGRUMBLE_BattleStage\",\"EGGRUMBLE_NeutralKOs\",\n  \"EGGRUMBLE_GrowthActive\",\"EGGRUMBLE_QueuedMode\",\"EGGRUMBLE_Eliminated\",\"EGGRUMBLE_StealthUntil\"}) do\n  table.insert(playerConnections,player:GetAttributeChangedSignal(attribute):Connect(update))\n end\n table.insert(playerConnections,player.AncestryChanged:Connect(update))\n table.insert(playerConnections,player.CharacterAdded:Connect(bindCharacter))\n table.insert(playerConnections,player.CharacterRemoving:Connect(function(oldCharacter)\n  if character==oldCharacter then clearCharacter() end\n end))\n if player.Character then bindCharacter(player.Character) end\n return function()\n  if retired then return end\n  retired=true;clearCharacter();disconnectAll(playerConnections)\n end\nend\n-- GQ470_S1A_BOUNDED_BATTLE_GROWTH_TAG_END\n\nlocal roleWatchers:{[Player]:any}={}\nlocal function watchRole(player:Player)\n if roleWatchers[player] then return end\n local connections:{RBXScriptConnection}={}\n local record={connections=connections,stopGrowth=nil}\n roleWatchers[player]=record\n for _,attribute in ipairs({\"P0DPreviewRole\",\"EGGRUMBLE_SelectedRole\",\"EGGRUMBLE_Role\",\"EGGRUMBLE_LobbyPreviewRole\"}) do\n  table.insert(connections,player:GetAttributeChangedSignal(attribute):Connect(function() decorateHeroCharacter(player) end))\n end\n local function onCharacterAdded(character:Model)\n  -- Roblox CharacterAdded can run before UpperTorso/Torso is inserted.\n  -- One bounded delayed recheck prevents missing all V3 costumes after respawn.\n  task.defer(function()\n   if player.Character==character then decorateHeroCharacter(player) end\n  end)\n  task.delay(.35,function()\n   if player.Parent and player.Character==character then decorateHeroCharacter(player) end\n  end)\n end\n table.insert(connections,player.CharacterAdded:Connect(onCharacterAdded))\n if player.Character then onCharacterAdded(player.Character) end\n record.stopGrowth=watchBattleGrowth(player)\nend\n\nfor _,player in ipairs(Players:GetPlayers()) do watchRole(player) end\nPlayers.PlayerAdded:Connect(watchRole)\nPlayers.PlayerRemoving:Connect(function(player)\n local record=roleWatchers[player]\n if not record then return end\n roleWatchers[player]=nil\n for _,connection in ipairs(record.connections) do connection:Disconnect() end\n table.clear(record.connections)\n if record.stopGrowth then record.stopGrowth() end\nend)\n",
+          "old": "local function watchRole(player:Player)\n for _,attribute in ipairs({\"P0DPreviewRole\",\"EGGRUMBLE_SelectedRole\",\"EGGRUMBLE_Role\",\"EGGRUMBLE_LobbyPreviewRole\"}) do\n  player:GetAttributeChangedSignal(attribute):Connect(function() decorateHeroCharacter(player) end)\n end\n local function onCharacterAdded(character:Model)\n  -- Roblox CharacterAdded can run before UpperTorso/Torso is inserted.\n  -- One bounded delayed recheck prevents missing all V3 costumes after respawn.\n  task.defer(function()\n   if player.Character==character then decorateHeroCharacter(player) end\n  end)\n  task.delay(.35,function()\n   if player.Parent and player.Character==character then decorateHeroCharacter(player) end\n  end)\n end\n player.CharacterAdded:Connect(onCharacterAdded)\n if player.Character then onCharacterAdded(player.Character) end\nend\n\nfor _,player in ipairs(Players:GetPlayers()) do watchRole(player) end\nPlayers.PlayerAdded:Connect(watchRole)\n"
+        },
+        {
+          "name": "visual_scope_comment",
+          "new": "-- No gameplay authority, physics collisions, RemoteEvents, store or RC writes.\n-- One bounded read-only match-growth nameplate complements the original role art.",
+          "old": "-- No gameplay authority, physics collisions, RemoteEvents, GUI, store or RC writes."
+        }
+      ],
+      "path": "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau"
+    },
+    {
+      "after": {
+        "bytes": 8006,
+        "sha256": "c974c99e949fe50efc9eab986dc489a84cfc21ca77245e7de4b18a2e3b6ebcff"
+      },
+      "before": {
+        "bytes": 7410,
+        "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+      },
+      "hunks": [
+        {
+          "name": "final_snapshot_view",
+          "new": " local bossSuffix=if boss>0 then \" 巨\"..tostring(boss) else \"\"\n -- GQ470_P0D033_S1A_RESULT_GROWTH: final view of the original neutral ledger.\n -- Public live attributes are cleared at finish; the original session snapshot\n -- remains readable before/after lifecycle dispatch and during the GUI retry.\n local growthSuffix=\"\"\n local growthReader=session.swarm and session.swarm.getBattleGrowthSnapshot\n if type(growthReader)==\"function\" then\n  local snapshot=growthReader(id)\n  local stage=if type(snapshot)==\"table\" then snapshot.stage else nil\n  if stage==1 or stage==2 or stage==3 then growthSuffix=\" B\"..tostring(stage) end\n end\n",
+          "old": " local bossSuffix=if boss>0 then \" 巨\"..tostring(boss) else \"\"\n"
+        },
+        {
+          "name": "team_result_growth_suffix",
+          "new": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix..growthSuffix\n",
+          "old": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix\n"
+        },
+        {
+          "name": "br_result_growth_suffix",
+          "new": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix..growthSuffix\n",
+          "old": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix\n"
+        }
+      ],
+      "path": "ServerScriptService/EGGRUMBLE_MatchResultService.luau"
+    },
+    {
+      "after": {
+        "bytes": 43237,
+        "sha256": "19e59b06d20946a466ad66847699aafd36745ec7c27d1b5d975d8c7b59b461cf"
+      },
+      "before": {
+        "bytes": 38973,
+        "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+      },
+      "hunks": [
+        {
+          "name": "growth_view_and_concrete_publication_tokens",
+          "new": "-- S1A match-only awakening is a view of the original KO ledger.\n-- Concrete Player tokens contain no XP/score and cannot clear a newer round.\nlocal growthPublishedBy:{[Player]:any}=setmetatable({}, {__mode=\"k\"}) :: any\nlocal function battleGrowthSnapshot(neutralKOs:number):any\n return {\n  stage=if neutralKOs>=4 then 3 elseif neutralKOs>=1 then 2 else 1,\n  xp=10*math.min(neutralKOs,8),\n  neutralKOs=neutralKOs,\n }\nend\nlocal function labelKo(p:Player,n:number)\n",
+          "old": "local function labelKo(p:Player,n:number)\n"
+        },
+        {
+          "name": "owned_growth_lifecycle_after_original_kills",
+          "new": " local kills:{[string]:number}={}\n -- Own lifecycle connections independently: Host disconnects lifeConnections\n -- before Destroy, which would cancel pending Deferred cleanup callbacks.\n local growthWorld=session.world\n local growthLease={}\n local growthPlayers:{[string]:Player}={}\n local growthConnections:{RBXScriptConnection}={}\n local growthRetired=false\n local function growthRoundLive():boolean\n  return not growthRetired and session.world==growthWorld\n   and session.rules.phase==\"ACTIVE\" and session.rules.winner==nil\n   and growthWorld.Parent~=nil and growthWorld:IsDescendantOf(workspace)\n   and all.Parent==growthWorld\n end\n local function growthCurrentPlayer(id:string):Player?\n  local player=growthPlayers[id]\n  if not growthRoundLive() or not player or growthPublishedBy[player]~=growthLease\n   or player.Parent~=Players or Players:GetPlayerByUserId(player.UserId)~=player\n   or currentHumanForId(id)~=player then return nil end\n  return player\n end\n local function growthCreditAllowed(id:string):boolean\n  if not growthRoundLive() then return false end\n  local castle=session.rules.castles[id]\n  -- Preserve the existing real AI/takeover KO ledger; never publish it to\n  -- a replacement human who happens to reuse this numeric UserId.\n  return castle~=nil and (castle.isAI==true or growthCurrentPlayer(id)~=nil)\n end\n local function growthRetirePlayer(id:string,player:Player)\n  if growthPlayers[id]~=player then return end\n  growthPlayers[id]=nil\n  if growthPublishedBy[player]~=growthLease then return end\n  growthPublishedBy[player]=nil\n  if player.Parent==Players and Players:GetPlayerByUserId(player.UserId)==player then\n   player:SetAttribute(\"EGGRUMBLE_GrowthActive\",false)\n   player:SetAttribute(\"EGGRUMBLE_BattleStage\",1)\n   player:SetAttribute(\"EGGRUMBLE_BattleXP\",0)\n   labelKo(player,0)\n  end\n end\n local function growthRetire()\n  if growthRetired then return end\n  growthRetired=true\n  for _,connection in ipairs(growthConnections) do connection:Disconnect() end\n  table.clear(growthConnections)\n  for id,player in pairs(growthPlayers) do growthRetirePlayer(id,player) end\n end\n local function publishBattleGrowth(id:string)\n  local player=growthCurrentPlayer(id)\n  if not player then return end\n  local snapshot=battleGrowthSnapshot(kills[id] or 0)\n  player:SetAttribute(\"EGGRUMBLE_BattleStage\",snapshot.stage)\n  player:SetAttribute(\"EGGRUMBLE_BattleXP\",snapshot.xp)\n end\n if growthRoundLive() then\n  for _,player in ipairs(Players:GetPlayers()) do\n   local id=tostring(player.UserId)\n   if currentHumanForId(id)==player then\n    growthPlayers[id]=player\n    growthPublishedBy[player]=growthLease\n    labelKo(player,0)\n    publishBattleGrowth(id)\n    player:SetAttribute(\"EGGRUMBLE_GrowthActive\",true)\n   end\n  end\n  table.insert(growthConnections,growthWorld:GetAttributeChangedSignal(\"EGGRUMBLE_MatchPhase\"):Connect(function()\n   if growthWorld:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\"\n    or not growthRoundLive() then growthRetire() end\n  end))\n  table.insert(growthConnections,growthWorld.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,growthWorld.AncestryChanged:Connect(function(changed:Instance,parent:Instance?)\n   if (changed==growthWorld and parent==nil)\n    or not growthWorld:IsDescendantOf(workspace) then growthRetire() end\n  end))\n  table.insert(growthConnections,all.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,Players.PlayerRemoving:Connect(function(player:Player)\n   growthRetirePlayer(tostring(player.UserId),player)\n  end))\n else\n  growthRetired=true\n end\n local lastBotHit:",
+          "old": " local kills:{[string]:number}={}\n local lastBotHit:"
+        },
+        {
+          "name": "synchronous_original_credit_admission",
+          "new": " local function credit(id:string)\n  if not growthCreditAllowed(id) then return end\n  kills[id]=(kills[id] or 0)+1\n",
+          "old": " local function credit(id:string)\n  kills[id]=(kills[id] or 0)+1\n"
+        },
+        {
+          "name": "derived_publication_after_original_ko",
+          "new": "   labelKo(p,n)\n   publishBattleGrowth(id)\n   p:SetAttribute(\"EGGRUMBLE_BattleLevel\",math.min(50,1+math.floor(n/25)))",
+          "old": "   labelKo(p,n)\n   p:SetAttribute(\"EGGRUMBLE_BattleLevel\",math.min(50,1+math.floor(n/25)))"
+        },
+        {
+          "name": "consume_original_live_death_once",
+          "new": "   h.Died:Connect(function()\n    if live[m]~=h then return end\n    live[m]=nil\n    if ticket then session.neutralBudget:release(ticket) end\n",
+          "old": "   h.Died:Connect(function()\n    if ticket then session.neutralBudget:release(ticket) end\n    live[m]=nil\n"
+        },
+        {
+          "name": "died_admission_before_feedback_credit_and_musou",
+          "new": "    and KoFence.mayCredit(session,id,m,all) and growthCreditAllowed(id) then\n",
+          "old": "    and KoFence.mayCredit(session,id,m,all) then\n"
+        },
+        {
+          "name": "pure_existing_ledger_getter_and_concrete_player_api_fence",
+          "new": "  kills=kills,\n  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+          "old": "  kills=kills,\n  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n"
+        }
+      ],
+      "path": "ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
+    },
+    {
+      "after": {
+        "bytes": 26626,
+        "sha256": "0fb7445dd657127eadf95f0ab96d13e2342ea002adb7355f3893cf5d1ed17628"
+      },
+      "before": {
+        "bytes": 25323,
+        "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
+      },
+      "hunks": [
+        {
+          "name": "bounded_growth_footer",
+          "new": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\nlocal progress=frame(\"MusouCharge\",gui)",
+          "old": "local progress=frame(\"MusouCharge\",gui)"
+        },
+        {
+          "name": "footer_existing_status_width",
+          "new": " progress.Size=UDim2.fromOffset(bar.w,bar.h)\n growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)",
+          "old": " progress.Size=UDim2.fromOffset(bar.w,bar.h)"
+        },
+        {
+          "name": "footer_existing_tick",
+          "new": " gui.Enabled=inMatch -- no V3 combat chrome over the separate lobby\n -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"",
+          "old": " gui.Enabled=inMatch -- no V3 combat chrome over the separate lobby"
+        }
+      ],
+      "path": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau"
+    }
+  ],
+  "schema": "GQ470_P0D033_S1A_FOUR_SOURCE_PATCH_V1"
+}

@@ -1,0 +1,610 @@
+{
+  "PREP_READY": false,
+  "changed_sources": [
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau"
+  ],
+  "design": {
+    "head": "c09670984f8f1f418f4dce3fc1a68018cc55bc37",
+    "pr": 1025,
+    "scope": "S1A neutral-derived B1-B3 only; full two-layer S1 remains incomplete"
+  },
+  "official_input": {
+    "artifact_id": 14787568439,
+    "artifact_name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+    "branch": "rc/p0d-s1-kids-rc01",
+    "head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+    "place": {
+      "bytes": 828658,
+      "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+    },
+    "run_id": 45106580546,
+    "zip": {
+      "bytes": 5840240,
+      "sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d"
+    }
+  },
+  "project": {
+    "bytes": 9564,
+    "path": "EGGRUMBLE_REAL69.project.json",
+    "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+  },
+  "rc_write_authorized": false,
+  "registered_source_approval": false,
+  "schema": "GQ470_P0D033_S1A_69_SOURCE_LOCK_V1",
+  "scope_claim": {
+    "claim_id": "P0D-GQ033-MATCH-GROWTH-20261123-817BC984",
+    "registry_blob": "c84cfb5920cd3b98f80cb9bec91e4aa835f808b3",
+    "registry_commit": "30baf9dcad1eb86b34a06a3eb050eba9a0e11c8e",
+    "reviewer": "CODEX_ROOT_817BC9841838:/root/coordination_review",
+    "row_sha256": "880db710a8e5eed82edc7cdfcfce9bc039907bcc41170fe7b295ee8396adf441"
+  },
+  "source_authorization": {
+    "acquire_commit": "745e7a05e87dbc7407505724790670614abc54e0",
+    "epoch": 679,
+    "not_rc_write_authorization": true,
+    "not_source_approval": true,
+    "owner": "535a69b4-5fbd-43d8-81cb-af418da9d596",
+    "scope_expiry_utc": "2026-11-23T11:08:12.461550Z",
+    "source_lease_expires_at_utc": "2026-11-23T05:50:41.507127Z"
+  },
+  "sources_after": {
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
+      "bytes": 7596,
+      "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau": {
+      "bytes": 4506,
+      "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
+      "bytes": 6116,
+      "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+    },
+    "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau": {
+      "bytes": 5716,
+      "sha256": "b3a22982365ebf5e10e81a412f09162700e089780fd236dd2863843ea95ca55f"
+    },
+    "ServerScriptService/EGGRUMBLE_AttackGeometry.luau": {
+      "bytes": 1639,
+      "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+    },
+    "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau": {
+      "bytes": 6729,
+      "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+    },
+    "ServerScriptService/EGGRUMBLE_BossSessionFence.luau": {
+      "bytes": 776,
+      "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+    },
+    "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+      "bytes": 19070,
+      "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+    },
+    "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
+      "bytes": 7614,
+      "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+      "bytes": 13707,
+      "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau": {
+      "bytes": 16609,
+      "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau": {
+      "bytes": 5861,
+      "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": {
+      "bytes": 9786,
+      "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+    },
+    "ServerScriptService/EGGRUMBLE_CombatBalance.luau": {
+      "bytes": 4123,
+      "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+    },
+    "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau": {
+      "bytes": 5471,
+      "sha256": "4e9a0035744d750feccf0c51ebc8afe52272436fb31a532cab149a34c31a1954"
+    },
+    "ServerScriptService/EGGRUMBLE_DivineMantle.luau": {
+      "bytes": 4302,
+      "sha256": "e6019aea60ac7ba214b44468302e6945093e3f73111857042982cf58451a2ef1"
+    },
+    "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau": {
+      "bytes": 3174,
+      "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+    },
+    "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau": {
+      "bytes": 22046,
+      "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+    },
+    "ServerScriptService/EGGRUMBLE_FieldItemPickups.luau": {
+      "bytes": 15602,
+      "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+    },
+    "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+      "bytes": 13624,
+      "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+    },
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": {
+      "bytes": 31183,
+      "sha256": "2bfbffebc6cb326a5309c8469903113d18d7120558c297885e6de2ca3da6d37f"
+    },
+    "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+      "bytes": 3704,
+      "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+    },
+    "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
+      "bytes": 3612,
+      "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau": {
+      "bytes": 7498,
+      "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulRuntime.luau": {
+      "bytes": 11264,
+      "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau": {
+      "bytes": 12330,
+      "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+    },
+    "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
+      "bytes": 37578,
+      "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+      "bytes": 10202,
+      "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau": {
+      "bytes": 6534,
+      "sha256": "08737dda08863dd83b13ed54753e83ffaf0aaa1cfa0d99d96b6eca97f58fc72d"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+      "bytes": 31784,
+      "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+    },
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+      "bytes": 94590,
+      "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+    },
+    "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau": {
+      "bytes": 15584,
+      "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+    },
+    "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau": {
+      "bytes": 6609,
+      "sha256": "5de4c351d17910c67cf67e8ed5add9625f29cbb95d6e3b504c99aa5f54b3672e"
+    },
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+      "bytes": 8006,
+      "sha256": "c974c99e949fe50efc9eab986dc489a84cfc21ca77245e7de4b18a2e3b6ebcff"
+    },
+    "ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau": {
+      "bytes": 8984,
+      "sha256": "2e83c376f9082bbab88c687888e23f0fe489828c9eb92684fa9752065a0312fb"
+    },
+    "ServerScriptService/EGGRUMBLE_NaturalRegen.luau": {
+      "bytes": 4467,
+      "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau": {
+      "bytes": 2069,
+      "sha256": "cf64237fd3a03c44c175d5cf859f06539cd45f8f96e75faf8efb11777c576842"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau": {
+      "bytes": 4325,
+      "sha256": "55afec1c766be2fbcd5fff82c1c5124fce34596c6c0b7e699276a4cb85243feb"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau": {
+      "bytes": 1178,
+      "sha256": "c389fd3b15df106bbf0aa23f07573433cc0031dd8a13197294a4ce373fbc491e"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau": {
+      "bytes": 2630,
+      "sha256": "55db684fbf0ba0772b2dca641670d0cca27b23aa36324870fa32ff21e8ffc3ab"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+      "bytes": 7075,
+      "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+    },
+    "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau": {
+      "bytes": 2686,
+      "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+    },
+    "ServerScriptService/EGGRUMBLE_RaidItemIntake.luau": {
+      "bytes": 3116,
+      "sha256": "6ad8e2b9d83e41fbcb6744bf2a26b67c6314a9844d4751fc402f0b32414d7bf0"
+    },
+    "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+      "bytes": 35282,
+      "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+    },
+    "ServerScriptService/EGGRUMBLE_RoundReplay.luau": {
+      "bytes": 7083,
+      "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+    },
+    "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
+      "bytes": 8030,
+      "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+    },
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
+      "bytes": 73774,
+      "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+    },
+    "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+      "bytes": 10369,
+      "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+    },
+    "ServerScriptService/EGGRUMBLE_StatusTickFence.luau": {
+      "bytes": 779,
+      "sha256": "32ee5dae5262777812042fab06b0ad926d30c67d9c12749196b7ecb8b232c36b"
+    },
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+      "bytes": 43237,
+      "sha256": "19e59b06d20946a466ad66847699aafd36745ec7c27d1b5d975d8c7b59b461cf"
+    },
+    "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
+      "bytes": 5814,
+      "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+    },
+    "ServerScriptService/GQ802_StageManifestPolicy.luau": {
+      "bytes": 8246,
+      "sha256": "039d3b4d14dc39f765ce0d8916efe8668a40b7e494f37dc6ad7fed372893accf"
+    },
+    "ServerScriptService/GQ802_StageTileBlueprintPolicy.luau": {
+      "bytes": 4479,
+      "sha256": "8a4e1ec46537130542143dc2ae5b95673550a29fa0562ac356fe43d160e8261b"
+    },
+    "ServerScriptService/GQ802_StageTileVisualRenderer.luau": {
+      "bytes": 4214,
+      "sha256": "e5b28bc8c418b93e1d5fdea2d047962aebcb6ea11dfa1dc6e96064b6a77e173a"
+    },
+    "ServerScriptService/GQ805_LobbyGuildShop.server.luau": {
+      "bytes": 5192,
+      "sha256": "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
+    },
+    "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
+      "bytes": 12930,
+      "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+    },
+    "ServerScriptService/GQ8_TradeEscrowReducer.luau": {
+      "bytes": 11476,
+      "sha256": "d6ba09ad28c313910004881b114f44ab5ee5bcf455df19f8863528bacd12577f"
+    },
+    "ServerScriptService/GQ8_TradeJournalContract.luau": {
+      "bytes": 5096,
+      "sha256": "f32bc7ad70f0f68170293b09dfbda151b0cab2ad215f61ff98b2bbd39cbc99ba"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
+      "bytes": 7937,
+      "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau": {
+      "bytes": 26226,
+      "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+      "bytes": 26626,
+      "sha256": "0fb7445dd657127eadf95f0ab96d13e2342ea002adb7355f3893cf5d1ed17628"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau": {
+      "bytes": 6040,
+      "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau": {
+      "bytes": 6205,
+      "sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau": {
+      "bytes": 1881,
+      "sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
+      "bytes": 6764,
+      "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau": {
+      "bytes": 6897,
+      "sha256": "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
+      "bytes": 2170,
+      "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau": {
+      "bytes": 5149,
+      "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau": {
+      "bytes": 6425,
+      "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+    }
+  },
+  "sources_before": {
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
+      "bytes": 7596,
+      "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau": {
+      "bytes": 4506,
+      "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
+      "bytes": 6116,
+      "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+    },
+    "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau": {
+      "bytes": 5716,
+      "sha256": "b3a22982365ebf5e10e81a412f09162700e089780fd236dd2863843ea95ca55f"
+    },
+    "ServerScriptService/EGGRUMBLE_AttackGeometry.luau": {
+      "bytes": 1639,
+      "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+    },
+    "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau": {
+      "bytes": 6729,
+      "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+    },
+    "ServerScriptService/EGGRUMBLE_BossSessionFence.luau": {
+      "bytes": 776,
+      "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+    },
+    "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+      "bytes": 19070,
+      "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+    },
+    "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
+      "bytes": 7614,
+      "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+      "bytes": 13707,
+      "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau": {
+      "bytes": 16609,
+      "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau": {
+      "bytes": 5861,
+      "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": {
+      "bytes": 9786,
+      "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+    },
+    "ServerScriptService/EGGRUMBLE_CombatBalance.luau": {
+      "bytes": 4123,
+      "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+    },
+    "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau": {
+      "bytes": 5471,
+      "sha256": "4e9a0035744d750feccf0c51ebc8afe52272436fb31a532cab149a34c31a1954"
+    },
+    "ServerScriptService/EGGRUMBLE_DivineMantle.luau": {
+      "bytes": 4302,
+      "sha256": "e6019aea60ac7ba214b44468302e6945093e3f73111857042982cf58451a2ef1"
+    },
+    "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau": {
+      "bytes": 3174,
+      "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+    },
+    "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau": {
+      "bytes": 22046,
+      "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+    },
+    "ServerScriptService/EGGRUMBLE_FieldItemPickups.luau": {
+      "bytes": 15602,
+      "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+    },
+    "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+      "bytes": 13624,
+      "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+    },
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": {
+      "bytes": 20363,
+      "sha256": "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+    },
+    "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+      "bytes": 3704,
+      "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+    },
+    "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
+      "bytes": 3612,
+      "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau": {
+      "bytes": 7498,
+      "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulRuntime.luau": {
+      "bytes": 11264,
+      "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau": {
+      "bytes": 12330,
+      "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+    },
+    "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
+      "bytes": 37578,
+      "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+      "bytes": 10202,
+      "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau": {
+      "bytes": 6534,
+      "sha256": "08737dda08863dd83b13ed54753e83ffaf0aaa1cfa0d99d96b6eca97f58fc72d"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+      "bytes": 31784,
+      "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+    },
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+      "bytes": 94590,
+      "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+    },
+    "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau": {
+      "bytes": 15584,
+      "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+    },
+    "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau": {
+      "bytes": 6609,
+      "sha256": "5de4c351d17910c67cf67e8ed5add9625f29cbb95d6e3b504c99aa5f54b3672e"
+    },
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+      "bytes": 7410,
+      "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+    },
+    "ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau": {
+      "bytes": 8984,
+      "sha256": "2e83c376f9082bbab88c687888e23f0fe489828c9eb92684fa9752065a0312fb"
+    },
+    "ServerScriptService/EGGRUMBLE_NaturalRegen.luau": {
+      "bytes": 4467,
+      "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau": {
+      "bytes": 2069,
+      "sha256": "cf64237fd3a03c44c175d5cf859f06539cd45f8f96e75faf8efb11777c576842"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau": {
+      "bytes": 4325,
+      "sha256": "55afec1c766be2fbcd5fff82c1c5124fce34596c6c0b7e699276a4cb85243feb"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau": {
+      "bytes": 1178,
+      "sha256": "c389fd3b15df106bbf0aa23f07573433cc0031dd8a13197294a4ce373fbc491e"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau": {
+      "bytes": 2630,
+      "sha256": "55db684fbf0ba0772b2dca641670d0cca27b23aa36324870fa32ff21e8ffc3ab"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+      "bytes": 7075,
+      "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+    },
+    "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau": {
+      "bytes": 2686,
+      "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+    },
+    "ServerScriptService/EGGRUMBLE_RaidItemIntake.luau": {
+      "bytes": 3116,
+      "sha256": "6ad8e2b9d83e41fbcb6744bf2a26b67c6314a9844d4751fc402f0b32414d7bf0"
+    },
+    "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+      "bytes": 35282,
+      "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+    },
+    "ServerScriptService/EGGRUMBLE_RoundReplay.luau": {
+      "bytes": 7083,
+      "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+    },
+    "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
+      "bytes": 8030,
+      "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+    },
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
+      "bytes": 73774,
+      "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+    },
+    "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+      "bytes": 10369,
+      "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+    },
+    "ServerScriptService/EGGRUMBLE_StatusTickFence.luau": {
+      "bytes": 779,
+      "sha256": "32ee5dae5262777812042fab06b0ad926d30c67d9c12749196b7ecb8b232c36b"
+    },
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+      "bytes": 38973,
+      "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+    },
+    "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
+      "bytes": 5814,
+      "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+    },
+    "ServerScriptService/GQ802_StageManifestPolicy.luau": {
+      "bytes": 8246,
+      "sha256": "039d3b4d14dc39f765ce0d8916efe8668a40b7e494f37dc6ad7fed372893accf"
+    },
+    "ServerScriptService/GQ802_StageTileBlueprintPolicy.luau": {
+      "bytes": 4479,
+      "sha256": "8a4e1ec46537130542143dc2ae5b95673550a29fa0562ac356fe43d160e8261b"
+    },
+    "ServerScriptService/GQ802_StageTileVisualRenderer.luau": {
+      "bytes": 4214,
+      "sha256": "e5b28bc8c418b93e1d5fdea2d047962aebcb6ea11dfa1dc6e96064b6a77e173a"
+    },
+    "ServerScriptService/GQ805_LobbyGuildShop.server.luau": {
+      "bytes": 5192,
+      "sha256": "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
+    },
+    "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
+      "bytes": 12930,
+      "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+    },
+    "ServerScriptService/GQ8_TradeEscrowReducer.luau": {
+      "bytes": 11476,
+      "sha256": "d6ba09ad28c313910004881b114f44ab5ee5bcf455df19f8863528bacd12577f"
+    },
+    "ServerScriptService/GQ8_TradeJournalContract.luau": {
+      "bytes": 5096,
+      "sha256": "f32bc7ad70f0f68170293b09dfbda151b0cab2ad215f61ff98b2bbd39cbc99ba"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
+      "bytes": 7937,
+      "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau": {
+      "bytes": 26226,
+      "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+      "bytes": 25323,
+      "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau": {
+      "bytes": 6040,
+      "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau": {
+      "bytes": 6205,
+      "sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau": {
+      "bytes": 1881,
+      "sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
+      "bytes": 6764,
+      "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau": {
+      "bytes": 6897,
+      "sha256": "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
+      "bytes": 2170,
+      "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau": {
+      "bytes": 5149,
+      "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau": {
+      "bytes": 6425,
+      "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+    }
+  },
+  "unchanged_source_count": 65
+}

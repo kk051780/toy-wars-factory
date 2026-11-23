@@ -1,0 +1,126 @@
+name: GQ470 P0D033 S1A fixed source Native Rojo gate (not formal RC)
+
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_match_role_growth_20261123/**'
+      - 'tests/test_gq470_match_role_growth_20261123.py'
+      - '.github/workflows/gq470-match-role-growth.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  s1a-source-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Acquire the exact successful H93 official input
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          WORK="$RUNNER_TEMP/gq470-s1a"
+          mkdir "$WORK"
+          mkdir "$WORK/provenance"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45106580546" > "$WORK/provenance/official_run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439" > "$WORK/provenance/official_artifact.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439/zip" > "$WORK/official.zip"
+          python3 -B - <<'PY'
+          import hashlib, json, os, stat, zipfile
+          from pathlib import Path, PurePosixPath
+          work = Path(os.environ['RUNNER_TEMP']) / 'gq470-s1a'
+          package = Path('quality_gameplay/gq470_match_role_growth_20261123')
+          lock = json.loads((package / 'source_lock.json').read_text())
+          expected = lock['official_input']
+          run = json.loads((work / 'provenance/official_run.json').read_text())
+          artifact = json.loads((work / 'provenance/official_artifact.json').read_text())
+          assert run['id'] == expected['run_id'] and run['head_sha'] == expected['head']
+          assert run['status'] == 'completed' and run['conclusion'] == 'success' and run['event'] == 'push'
+          assert artifact['id'] == expected['artifact_id'] and artifact['name'] == expected['artifact_name']
+          assert not artifact['expired'] and artifact['workflow_run']['id'] == expected['run_id']
+          assert artifact['workflow_run']['head_sha'] == expected['head']
+          raw = (work / 'official.zip').read_bytes()
+          assert {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == expected['zip']
+          output = work / 'baseline'
+          output.mkdir()
+          with zipfile.ZipFile(work / 'official.zip') as archive:
+              names = [item.filename for item in archive.infolist()]
+              assert len(names) == len(set(names))
+              for item in archive.infolist():
+                  path = PurePosixPath(item.filename)
+                  assert not path.is_absolute() and '..' not in path.parts and '\\' not in item.filename
+                  assert not stat.S_ISLNK(item.external_attr >> 16)
+                  target = output / path
+                  if item.is_dir():
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes(archive.read(item))
+          assert (output / 'EGGRUMBLE_REAL69.project.json').is_file()
+          print('EXACT_OFFICIAL_H93_RUN_ARTIFACT_ZIP_VERIFIED')
+          PY
+      - name: Exact source inverse and malformed input rejection
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/gq470-s1a"
+          export GQ470_H93_ARTIFACT="$WORK/baseline"
+          python3 -B tests/test_gq470_match_role_growth_20261123.py
+          python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py --input "$WORK/baseline" --out "$WORK/on"
+          python3 -B quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py --input "$WORK/on" --out "$WORK/off" --reverse
+      - name: Prepare exact Luau source and pinned Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/gq470-s1a"
+          git init "$RUNNER_TEMP/gq470-s1a-luau-src"
+          git -C "$RUNNER_TEMP/gq470-s1a-luau-src" remote add origin https://github.com/luau-lang/luau.git
+          git -C "$RUNNER_TEMP/gq470-s1a-luau-src" fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C "$RUNNER_TEMP/gq470-s1a-luau-src" checkout --detach FETCH_HEAD
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$WORK/rojo.zip"
+          python3 -B - <<'PY'
+          import hashlib, os, zipfile
+          from pathlib import Path
+          work = Path(os.environ['RUNNER_TEMP']) / 'gq470-s1a'
+          raw = (work / 'rojo.zip').read_bytes()
+          assert hashlib.sha256(raw).hexdigest() == '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4'
+          with zipfile.ZipFile(work / 'rojo.zip') as archive:
+              names = [name for name in archive.namelist() if name.split('/')[-1] == 'rojo']
+              assert len(names) == 1
+              path = work / 'rojo'
+              path.write_bytes(archive.read(names[0]))
+              path.chmod(0o755)
+          PY
+      - name: Fresh build and fixed ON H93 OFF full-body suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/gq470-s1a"
+          python3 -B quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py \
+            --baseline-root "$WORK/baseline" --on-root "$WORK/on" --off-root "$WORK/off" \
+            --artifact-zip "$WORK/official.zip" --head "$CANDIDATE_HEAD" \
+            --luau-source "$RUNNER_TEMP/gq470-s1a-luau-src" --build-dir "$WORK/fresh-build" \
+            --out "$WORK/native" --cmake "$(command -v cmake)" --ninja "$(command -v ninja)" \
+            --git "$(command -v git)" --cc "$(command -v gcc)" --cxx "$(command -v g++)" --rojo "$WORK/rojo"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: GQ470-P0D033-S1A-CANDIDATE-NOT-FORMAL-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/gq470-s1a/provenance/
+            ${{ runner.temp }}/gq470-s1a/on/
+            ${{ runner.temp }}/gq470-s1a/off/
+            ${{ runner.temp }}/gq470-s1a/native/
+          if-no-files-found: error
+          retention-days: 14
