@@ -21749,6 +21749,202 @@
       "expires_at": "2026-11-23T09:59:13.000Z",
       "expiry_policy": "Six hours from this actual metadata transaction timestamp; expired reservation is not automatic takeover.",
       "if_matching_BUSY_owner_appears": "Join or coordinated handoff only. Recheck actual source/ref/registry before any source write."
+    },
+    {
+      "claim_id": "P0D-GQ824-AURA-LIFECYCLE-20261123-BEB3C323",
+      "feature_id": "GQ8_MUSOU_FEVER_CHAIN_20261119",
+      "version": 1,
+      "sub_scope": "CURRENT69_OBSERVER_HEAD_BINDING_LIFECYCLE",
+      "canonical_parent": "Existing #824 / PR825; no new feature alias",
+      "parent_issue": 824,
+      "integration_issue": 220,
+      "owner": "CODEX_ROOT_BEB3C323FED2",
+      "role": "A_PREP",
+      "author_contexts": [
+        "CODEX_ROOT_BEB3C323FED2:/root",
+        "CODEX_ROOT_BEB3C323FED2:/root/planning_gaps"
+      ],
+      "independent_reviewer_context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
+      "independent_review_status": "SOURCE_REVIEW_REQUIRED_AFTER_AUTHORING",
+      "state": "GRANTED",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_MUSOUAURACONTROLLER",
+        "MUSOU_CURRENT69_OBSERVER_LIFECYCLE_QA"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-gq8-musou-fever-native.yml",
+        ".github/workflows/p0d-gq8-musou-invul-real49.yml",
+        ".github/workflows/p0d-gq8-musou-real44-intake.yml",
+        ".github/workflows/p0d-gq8-musou-real47-native-rojo.yml",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraController.client.luau",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/README.md",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real47.py",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real49.py",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/make_native_musou.py",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real47.py",
+        "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real49.py",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/README.md",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/MusouAuraController.client.luau",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/apply_lifecycle.py",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/native_fixture.luau",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/run_native.py",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/verify_packet.py",
+        ".github/workflows/p0d-gq470-musou-head-lifecycle-native.yml"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/README.md",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/MusouAuraController.client.luau",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/apply_lifecycle.py",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/native_fixture.luau",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/run_native.py",
+        "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/verify_packet.py",
+        ".github/workflows/p0d-gq470-musou-head-lifecycle-native.yml"
+      ],
+      "frozen_original_paths": [
+        {
+          "path": ".github/workflows/p0d-gq8-musou-fever-native.yml",
+          "git_blob": "469dfdc37671979edd579d3390f61e07dd2af10e"
+        },
+        {
+          "path": ".github/workflows/p0d-gq8-musou-invul-real49.yml",
+          "git_blob": "9d1c996ed5f1b5d7c9510b5b2820115f9bc9355d"
+        },
+        {
+          "path": ".github/workflows/p0d-gq8-musou-real44-intake.yml",
+          "git_blob": "1dde07923fbce49ae6828a667b05a44a6695bfb7"
+        },
+        {
+          "path": ".github/workflows/p0d-gq8-musou-real47-native-rojo.yml",
+          "git_blob": "d9a6e0dd64fe1b408aa69bc882a1084a379511c7"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau",
+          "git_blob": "fcdc7be790d36aba9b8269ece45a69f78572c726"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraController.client.luau",
+          "git_blob": "21d881d5abe146e0281558bfaabc30cfb9cab313"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau",
+          "git_blob": "e043f6c728d60b27ef6a6b019cbb16b37c1034f9"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/README.md",
+          "git_blob": "208c8b716dbbd6970e1baea01e0780c01a3d6180"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real47.py",
+          "git_blob": "558fd339992ffede3220a3b1155150700e675d39"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real49.py",
+          "git_blob": "a4e30963e2a1088cf888a82b00cb6f05d4948856"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/make_native_musou.py",
+          "git_blob": "ed8a88d943e50ac2ddedadb68f5ecb63eb87674a"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real47.py",
+          "git_blob": "7efcba16960818752c406d61ef8cab6140a7679c"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real49.py",
+          "git_blob": "1bb9fefcecf8342c7107a8e083a09d9151cafe61"
+        }
+      ],
+      "prep_branch": "feature/gq8-musou-fever-20261119",
+      "pr": 825,
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "source_head_before": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
+      "source_head": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_MANUAL_COORDINATOR",
+      "issuer_operation_id": "6b1cdae8-a7f0-4e18-a9d0-dde7dcc1f443",
+      "issued_at": "2026-11-23T04:10:36.944990+00:00",
+      "expires_at": "2026-11-23T10:10:36.944990+00:00",
+      "coordination_lease": {
+        "ref": "db0e1fa06433be1a324a0fc6b794b1905cf56c2b",
+        "epoch": 672,
+        "owner": "6b1cdae8-a7f0-4e18-a9d0-dde7dcc1f443",
+        "acquired_at": "2026-11-23T04:09:47.933716+00:00",
+        "blob": "4753b842ffe4f3b9fddc1b010244ea1fac136d7e",
+        "work_branch": "coord/p0d-work-claims",
+        "kind": "CONTROLLER",
+        "task_id": null,
+        "service_run_id": null,
+        "status": "ACTUAL_CAS_READBACK_OWNED",
+        "branch": "twf-repair-coordinator",
+        "expires_at": "2026-11-23T04:39:47.933716+00:00"
+      },
+      "request_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7091221270",
+      "scope": {
+        "source_only": true,
+        "operation": "Eight add-only current69 Controller PREP/QA/workflow files on original PR825; preserve original thirteen blobs. Generated change only existing MusouAuraController. Same FEATURE finite serialized window; no whole historical PR merge.",
+        "selected_controller": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+        "baseline_bytes": 1881,
+        "baseline_sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9",
+        "unchanged_aura_sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+      },
+      "acceptance": [
+        "Exact full two-body Native baseline red/candidate green for late Head, invalidated callbacks, replacement and bounded cleanup",
+        "Preserve phase/role behavior and no unrelated-child reburst",
+        "Exactly one changed selected Controller; other68 sources and75 instance paths/classes preserved",
+        "All69 Native compile; Rojo ON/OFF and original exact inverse/place restore",
+        "Live same-source-head hosted source gate and separately registered independent review before PREP_READY",
+        "Studio/engine/Android/FUN remain NOT_TESTED until genuine separate observations"
+      ],
+      "rollback": "Inverse only Controller to1881B/SHA25613495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9; exact original69 source/class and same-format Place. Fail closed on changed actual controller.",
+      "preserved_pending_lanes": [
+        {
+          "owner": "Existing D5F MUSOU continuation",
+          "request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077208755",
+          "continuation": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7085610864",
+          "scope": "Swarm charge/avatar/round/replay publication; owner/candidate unchanged"
+        },
+        {
+          "pr": 950,
+          "feature_id": "GQ470_FB015_MUSOU_AURA_COMPACT_LOD_REAL69_20261121",
+          "scope": "AuraClient visual/LOD unchanged"
+        },
+        {
+          "scope": "Original Bot -> BEAST -> Guardian/currentP0 canonical producer queue unchanged"
+        }
+      ],
+      "forbidden_changes": [
+        "AuraClient",
+        "Swarm",
+        "Combat",
+        "Policy",
+        "Host/Replay/HUD",
+        "Remote/KO/Score/HP/Store authority",
+        "shared canonical builder/profile/workflow",
+        "official RC/main",
+        "Publish/Robux/payment",
+        "another owner's claim or lease"
+      ],
+      "authority_evidence": [
+        "https://github.com/kk051780/toy-wars-factory/issues/1011",
+        "https://github.com/kk051780/toy-wars-factory/blob/93a1147561a531610ac1609ebc68cc0ecf546623/docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+        "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6886441650",
+        "ops/REPAIR_COORDINATOR.json owner_delegation; normal manual CONTROLLER scope registration, no service identity asserted"
+      ],
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "no_main_or_publish": true,
+      "normal_return": "After exact-head source review/handoff, close this finite source window by separately leased metadata amendment preserving original D5F continuation. Not held until whole-game completion.",
+      "scope_design_independent_review": {
+        "context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
+        "status": "PASS_CONCRETE_SCOPE_DESIGN_ONLY_NOT_REGISTERED_SOURCE_APPROVAL",
+        "receipt_sha256": "a6a6e3db5226314a75d50a2a384216681477d83f570e60c0a305a57ef16fd6b1"
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
