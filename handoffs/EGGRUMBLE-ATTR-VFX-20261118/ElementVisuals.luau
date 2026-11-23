@@ -37,6 +37,24 @@ function Visual.capacity()
  return MAX_ACTIVE,MAX_BEAMS
 end
 
+-- Own only this module's short-lived cue anchors. No world scan or new loop.
+local function pruneInactive()
+ for index=#active,1,-1 do
+  local holder=active[index]
+  if holder and holder.Parent==nil then
+   table.remove(active,index)
+   holder:Destroy()
+  end
+ end
+end
+function Visual.clear()
+ -- Remove ownership before Destroy, so repeated or reentrant cleanup is safe.
+ while #active>0 do
+  local holder=table.remove(active)
+  if holder then holder:Destroy() end
+ end
+end
+
 -- Reuse the actual camera basis; this displays a graphic cue near an already confirmed event.
 -- This function MUST only be called on a client; no RemoteEvent, TakeDamage, XP, or HP writes.
 function Visual.render(element,kind,outcome,position,lowEnd)
@@ -48,18 +66,20 @@ function Visual.render(element,kind,outcome,position,lowEnd)
  local camera=workspace.CurrentCamera
  if not camera then return false end
  local Debris=game:GetService("Debris")
+ pruneInactive()
+ -- Reserve before parenting: even ChildAdded observers never see a ninth cue.
+ while #active>=MAX_ACTIVE do
+  local oldest=table.remove(active,1)
+  if oldest then oldest:Destroy() end
+ end
  local holder=Instance.new("Part")
  holder.Name="EGG_AttributeCue_"..d.element
  holder.Transparency=1;holder.Anchored=true
  holder.CanCollide=false;holder.CanTouch=false;holder.CanQuery=false
  holder.Size=Vector3.new(.1,.1,.1)
  holder.CFrame=CFrame.new(position)
- holder.Parent=workspace
  active[#active+1]=holder
- while #active>MAX_ACTIVE do
-  local oldest=table.remove(active,1)
-  if oldest then oldest:Destroy() end
- end
+ holder.Parent=workspace
  local right=camera.CFrame.RightVector
  local up=camera.CFrame.UpVector
  local scale=if kind=="SHIELD" then 2.7 elseif kind=="WEAPON" then 1.1 else 2.1
