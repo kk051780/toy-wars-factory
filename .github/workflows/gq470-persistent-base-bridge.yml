@@ -20,8 +20,6 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       PYTHONDONTWRITEBYTECODE: '1'
-      P0D033_OFFICIAL_ZIP: ${{ runner.temp }}/p0d033-inputs/official.zip
-      P0D033_DONOR_ZIP: ${{ runner.temp }}/p0d033-inputs/donor.zip
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,6 +62,9 @@ jobs:
               need(actual==row['zip'], 'INPUT_ZIP_IDENTITY')
               context['inputs'][label]={'run':run,'artifact':artifact,'actual_zip':actual}
           (evidence/'DOWNLOAD_AND_HEAD_BINDING.json').write_text(json.dumps(context,indent=2)+'\n')
+          with open(os.environ['GITHUB_ENV'],'a') as stream:
+              for key,label in (('P0D033_OFFICIAL_ZIP','official'),('P0D033_DONOR_ZIP','donor')):
+                  stream.write(key+'='+str(root/(label+'.zip'))+'\n')
           PY
       - name: Artifact and refusal tests in normal and optimized Python
         shell: bash
