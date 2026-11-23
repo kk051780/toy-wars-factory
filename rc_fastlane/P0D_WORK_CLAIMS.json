@@ -12544,14 +12544,14 @@
       }
     },
     {
-      "PREP_READY": false,
+      "PREP_READY": true,
       "allowed_new_prs": 1,
-      "amended_at": "2026-11-22T23:58:19.678Z",
+      "amended_at": "2026-11-23T01:18:14.966117+00:00",
       "amendment_issuer": {
-        "authority": "Existing ordinary engineering delegation, current AGENTS/execution policy v1.2 and #1011, independent scope review, and separate normal owned metadata lease. No new main/publish/spend authority.",
+        "authority": "Actual current delegated coordinator authority, existing execution policy and registered independent review; no new main/publish/spend rights.",
         "context": "CODEX_ROOT_79005A1F03B2",
         "login": "kk051780",
-        "operation_id": "124129a2-a55e-4105-b6f7-62011fef572b",
+        "operation_id": "62791882-7bf8-42ca-b384-4bf73320f558",
         "role": "OWNER_DELEGATED_COORDINATOR",
         "user_id": 233213370
       },
@@ -12567,7 +12567,7 @@
         "Original expired CONTROLLER602 was administratively fenced under standing delegation in immutable3a8a6eb8290b70ee02209b7e84fd2f4ff9f288e2; this row requires a separate actual metadata lease and is not granted by that revocation."
       ],
       "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
-      "candidate_pr_status": "DRAFT_OLD_H2E7_RETAINED_EXACT544_SOURCE_REBIND_AUTHORIZED_NOT_ADOPTED",
+      "candidate_pr_status": "OPEN_NON_DRAFT_READY_EXACT_H_TRUSTED_SELECTION_NOT_RC_ADOPTED",
       "canonical_parent": 828,
       "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
       "coordination_lease": {
@@ -12686,12 +12686,12 @@
           "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
         }
       ],
-      "grant_scope_version": 4,
+      "grant_scope_version": 5,
       "hud_only_off_place": {
         "bytes": 828114,
         "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
       },
-      "independent_review_status": "NEW_EXACT544_HEAD_REVIEW_AND_HOSTED_CI_REQUIRED",
+      "independent_review_status": "APPROVE_EXACT_H_SOURCE_AND_PR_CANDIDATE_ARTIFACT_NOT_RC_ADOPTION",
       "independent_reviewer_context": "/root/rules_audit",
       "integration_issue": 220,
       "issued_at": "2026-11-22T21:51:42Z",
@@ -12718,16 +12718,17 @@
         "source_lease_release_commit": "4d6db4e3275c57414facc6e12950ac1fbc3c6d1b"
       },
       "metadata_update_lease": {
-        "acquired_at": "2026-11-22T23:57:26.425724+00:00",
-        "actual_full_readback": true,
         "branch": "twf-repair-coordinator",
-        "commit": "f51d157baef0bcb4528afe95b3f3337a2a3ee02a",
-        "epoch": 639,
-        "expires_at": "2026-11-23T00:27:26.425724+00:00",
-        "owner_id": "124129a2-a55e-4105-b6f7-62011fef572b",
-        "work_branch": "coord/p0d-work-claims"
+        "commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+        "acquire_commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+        "epoch": 656,
+        "owner_id": "62791882-7bf8-42ca-b384-4bf73320f558",
+        "work_branch": "coord/p0d-work-claims",
+        "acquired_at": "2026-11-23T01:17:13.539028+00:00",
+        "expires_at": "2026-11-23T01:47:13.539028+00:00",
+        "actual_full_readback": true
       },
-      "metadata_updated_at": "2026-11-22T23:58:19.678Z",
+      "metadata_updated_at": "2026-11-23T01:18:14.966117+00:00",
       "no_main_or_publish": true,
       "no_review_waiver": true,
       "on_place": {
@@ -12785,7 +12786,7 @@
         "prior_total_forward_hunks": 168,
         "removed_plus_added_utf8_bytes": 55486
       },
-      "rc_write_authorized_by_this_claim": false,
+      "rc_write_authorized_by_this_claim": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "request_comment": 7085857481,
       "resources": [
@@ -12802,9 +12803,9 @@
           "sha256": "ba2183e0c0ea648b4cd95917f4fef4556ad58d68266c9349a1be30771a38e7f1"
         }
       },
-      "role": "A_PREP",
+      "role": "CODEX_PARENT_EXISTING_FIX_PREP_AND_SINGLE_WRITER_INTEGRATION",
       "rollback": "Keep the complete original UNION22 OFF-to-prior-BR rollback unchanged. Additionally reverse only the new HUD hunk to current RC HUD 3bf0d958... and exact 828114B Place. Repository rollback must inverse only the six-path follow-up delta while preserving any intervening work; never reset whole RC.",
-      "scope": "Existing exact 7a4 +544 HUD reuse with final selected old-layout-generator main and Policy14 gate in the same six paths. Preserve original Native28 bodies, two suites, fixtures, assertions, maintenance R2 inverse-prefix method and every other source. No min55 or other feature. This explicit amendment supersedes only the old +559 candidate semantics. Reuse exact +544 from existing7a4 and final original selected-layout generator main plus Policy14 gate. Preserve transport R2 on accepted dcb and all intervening accepted maintenance source. New actual HEAD, hosted CI/artifact, independent source/admission review and a separately scoped RC writer remain required.",
+      "scope": "Existing exact 7a4 +544 HUD reuse with final selected old-layout-generator main and Policy14 gate in the same six paths. Preserve original Native28 bodies, two suites, fixtures, assertions, maintenance R2 inverse-prefix method and every other source. No min55 or other feature. This explicit amendment supersedes only the old +559 candidate semantics. Reuse exact +544 from existing7a4 and final original selected-layout generator main plus Policy14 gate. Preserve transport R2 on accepted dcb and all intervening accepted maintenance source. New actual HEAD, hosted CI/artifact, independent source/admission review and a separately scoped RC writer remain required. Adoption-only V5 amendment: conditional single-writer integration of existing PR1019 exact H 93a1147561a531610ac1609ebc68cc0ecf546623 / tree ca7a6b532ff325ebf125423484dde1ee57ce219b into rc/p0d-s1-kids-rc01 from exact expected R dcb501673d7959e4904cf360ef0119917e6aa2e0. Only after actual same-H CI, registered independent exact-source and same-run candidate-artifact acceptance, genuine PREP_READY/intake and writer handoff, actual repository permissions and a separately acquired live RC writer lease; update exact R to H with expected_sha=R and force=false, respecting real protection. This amendment authorizes no further source edits, no different H/R, no new producer/FEATURE/PR, no other integration and no main/Publish/spend. Preserve immutable source grant9ed/V4 inside profile. If H or R changes, stop this fixed transaction and obtain a legitimate amended exact-head acceptance; do not erase intervening work. Formal acceptance additionally requires the same-new-R official GQ8 push success and independent canonical artifact/Place/source/Native/rollback verification. The permission is consumed by this one exact adoption only.",
       "scope_history": [
         {
           "complete_previous_row": {
@@ -13379,6 +13380,19 @@
           "preservation": "All existing history values remain intact. The complete latest pre-amendment row is fixed by this immutable commit/blob/canonical row hash; no recursive copy is required.",
           "preserved_at": "2026-11-22T23:58:19.678Z",
           "version": 3
+        },
+        {
+          "complete_previous_row_reference": {
+            "canonical_serialization": "UTF-8 JSON ensure_ascii=false sort_keys=true separators=(',',':') no trailing newline",
+            "claim_id": "P0D-GQ828-MOUNTED-HUD-20261123-79005A1F",
+            "path": "rc_fastlane/P0D_WORK_CLAIMS.json",
+            "registry_blob": "dfaaec496f7511be2f79ca887e2e8f3f9f9dec5a",
+            "registry_commit": "ac7cf81602ac2f0cac32857642a2525ae23d3f4c",
+            "row_sha256": "8147b8e2e52c2083c865db08dbdb66fcf80ca4039b0c8c1a814a6dd7dd64ce82"
+          },
+          "preservation": "Keep all three existing history entries, their values/evidence and every unrelated current field. This immutable reference retains the full pre-amendment V4 row including all nested history. Use only if the fresh target-row canonical hash still equals the reference; otherwise preserve the actual current row by a fresh immutable reference and re-review the exact amendment.",
+          "preserved_at": "2026-11-23T01:18:14.966117+00:00",
+          "version": 4
         }
       ],
       "scope_review": {
@@ -13389,9 +13403,9 @@
         "prior_plan_review_document_sha256": "1a0d92c47e9dcc34191049a46872dec1a559f9319a93d4e817d3b73813ce1c55",
         "prior_plan_review_sha256": "80752a7fa7b2415682faf3b870609c1616db23e29121bb9b0f43f1d43639eddb"
       },
-      "source_head": "2e7d18df9102a7272caefe83e718cfa91c06fe12",
-      "source_tree": "81dbb70cea1b8d7571f933c20a283a9f43a6b476",
-      "state": "SOURCE_WIP",
+      "source_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "source_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+      "state": "PREP_READY",
       "studio": "NOT_TESTED",
       "sub_scope": "MOUNTED_REALM_CONTEXT_EXISTING_HUD_ONE_HUNK",
       "target_paths": [
@@ -13561,7 +13575,218 @@
         },
         "source_lease_required": true,
         "status": "RETURNED_AFTER_ACTUAL_OFFICIAL_SAME_R_ACCEPTANCE"
-      }
+      },
+      "actual_candidate_evidence": {
+        "PREP_contract_and_selector": {
+          "receipt": {
+            "path": "/workspace/scratch/79005a1f03b2/admission_planning/hud_v5_adoption_actual/independent_review/INDEPENDENT_ACTUAL_READY_QUEUE_REVIEW.json",
+            "bytes": 11343,
+            "sha256": "579ea506d7be2a487222bde0eb7c02ee24ef824ae9098983d446046c81ae3722",
+            "git_blob": "a0cfcfbe5eea5aec6a901236a9f533de9e9d7d18"
+          },
+          "decision": "PASS_ACTUAL_READY_AND_TRUSTED_SELECTION_PREPARATION_NOT_V5_GRANT_OR_RC_AUTHORIZATION",
+          "contract": {
+            "unique_markers": {
+              "P0D_PREP_READY_V1": 1,
+              "OWNER_FAST_ADMISSION_V2": 1
+            },
+            "unique_fields": {
+              "PINNED_HEAD": "93a1147561a531610ac1609ebc68cc0ecf546623",
+              "BASE_RC": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+              "FEATURE_IDS": "GQ8_HUD_INTEL_FOG_20261119",
+              "SOURCE_LOCK": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+              "ROLLBACK": "Invert only the six recorded files relative to accepted dcb501, preserve its ten original-input additions and R2 workflow, retain exact HUD-only OFF356bc and historical BR OFFd2d separately; never reset RC or revert the whole merge against its first parent.",
+              "DECISION": "ADOPT",
+              "DESIGN_SOURCE": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7087020284",
+              "QUALITY_EVIDENCE": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+              "VALUE_DELTA": "搭乗中の不要な通常操作とSKILLメニューの重なりを減らし、HP・地図と降車後の操作を保つ。"
+            },
+            "real_design_ADOPT_comment": 7087020284,
+            "real_registered_review_comment": 7088685364,
+            "published_review_receipt_typed_exact_local": true,
+            "review_receipt": {
+              "path": "/workspace/scratch/79005a1f03b2/implementation_evidence/hud_v4_source93a1147/independent_review/REGISTERED_SOURCE_AND_CANDIDATE_REVIEW_H93.json",
+              "bytes": 7885,
+              "sha256": "663dde7b4a6de762b5e46a2878df6eb06d7d81aaea031004579e4c22027aec79"
+            },
+            "actual_selection_comment": 7088776925
+          },
+          "trusted_intake": {
+            "run": 45091279728,
+            "job": 137421158794,
+            "attempt": 1,
+            "event": "pull_request",
+            "head_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+            "workflow": ".github/workflows/p0d-two-lane-intake.yml",
+            "success": true,
+            "started_at": "2026-11-23T00:52:17Z",
+            "completed_at": "2026-11-23T00:52:27Z",
+            "all_seven_steps_success": true,
+            "trusted_checkout": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+            "workflow_contents_read_at_immutable_R": true,
+            "workflow_git_blob": "125833080a398b96cc23dadfc18594371b98bb44",
+            "contents_actions_pull_requests_permissions": "read",
+            "no_auto_merge": true,
+            "executed_queue_line": "P0D_TWO_LANE_QUEUE_PASS official=dcb501673d7959e4904cf360ef0119917e6aa2e0 ready=1 NO_AUTOMERGE",
+            "executed_selection_line": "P0D_PREP_LATEST_READY_FOR_220 1019 93a1147561a531610ac1609ebc68cc0ecf546623 GQ8_HUD_INTEL_FOG_20261119",
+            "selected_count": 1,
+            "evidence_is_executed_output_not_echoed_shell_source": true,
+            "queue_JSON_download_or_reexecution_performed": false
+          },
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088776925"
+        },
+        "base_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "registered_candidate_artifact_review": {
+          "receipt": {
+            "path": "/workspace/scratch/79005a1f03b2/implementation_evidence/hud_v4_source93a1147/independent_review/REGISTERED_SOURCE_AND_CANDIDATE_REVIEW_H93.json",
+            "bytes": 7885,
+            "sha256": "663dde7b4a6de762b5e46a2878df6eb06d7d81aaea031004579e4c22027aec79",
+            "git_blob": "d04a38fb2ec8f2a22228fe35a78ca05321cbb0e4"
+          },
+          "verdict": "APPROVE_EXACT_H_SOURCE_AND_PR_CANDIDATE_ARTIFACT_NOT_RC_ADOPTION",
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364"
+        },
+        "registered_source_review": {
+          "receipt": {
+            "path": "/workspace/scratch/79005a1f03b2/implementation_evidence/hud_v4_source93a1147/independent_review/REGISTERED_SOURCE_REVIEW_H93.json",
+            "bytes": 6800,
+            "sha256": "384c63d3ce57529621ce566d200665f49d2caf263be7fe5fed5142bdc8b7eebe",
+            "git_blob": "d3cd9b78922c0cf9568aff5bec4f3fc6c213e51a"
+          },
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+          "acceptance_receipt": {
+            "path": "/workspace/scratch/79005a1f03b2/implementation_evidence/hud_v4_source93a1147/independent_review/REGISTERED_SOURCE_AND_CANDIDATE_REVIEW_H93.json",
+            "bytes": 7885,
+            "sha256": "663dde7b4a6de762b5e46a2878df6eb06d7d81aaea031004579e4c22027aec79",
+            "git_blob": "d04a38fb2ec8f2a22228fe35a78ca05321cbb0e4"
+          }
+        },
+        "same_H_required_CI": {
+          "GQ8": {
+            "run": 45089836185,
+            "job": 137416659515,
+            "attempt": 1,
+            "event": "pull_request",
+            "head_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+            "conclusion": "success",
+            "all_job_steps_success": true,
+            "core48_normal_and_optimized_actual_logs": true,
+            "final11_normal_and_optimized_actual_logs": true
+          },
+          "bootstrap": {
+            "run": 45089836145,
+            "compile_hold_job": 137416659239,
+            "offline_job": 137416659556,
+            "both_success": true,
+            "three_conditional_automatic_repair_checks_not_applicable_skipped": true
+          },
+          "two_lane_readonly_intake_success_is_not_trusted_queue_selection": true
+        },
+        "same_run_candidate_artifact": {
+          "run": 45089836185,
+          "head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "merge_checkout": "69629d865d419290609283fa7d46009c3abd4b63",
+          "artifact": {
+            "id": 14781056814,
+            "name": "GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL",
+            "ZIP": {
+              "path": "/workspace/scratch/79005a1f03b2/implementation_evidence/hud_v4_source93a1147/independent_review/candidate_14781056814.zip",
+              "bytes": 5840632,
+              "sha256": "8f3ca6603b188af7fd619693941e467cb5f76b8ad5f4190793b24242870a3603",
+              "git_blob": "63644d3ad200bdd5a910b5765da76b4fd447e0bb"
+            },
+            "API_digest_equal": true,
+            "GitHub_download_calls": 1,
+            "CRC_all_pass": true,
+            "file_count": 120,
+            "manifest_pinned_files": 119,
+            "all_payload_pins_exact": true
+          }
+        },
+        "source_647_normal_release": "6154792c610d51d5041bacc39f8d1d04458bd3b2",
+        "source_grant": {
+          "comment_id": 7088004228,
+          "commit": "9ed7b2af97de4ce32be89f6cf91450095188fcea",
+          "profile_postimage": {
+            "bytes": 306439,
+            "git_blob": "8d455d7eb4f5334c4db25f71b9b18523134e9eff",
+            "sha256": "2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375"
+          },
+          "registry_blob": "e0065fba728c65ab745edc0f4a5df0215f793484",
+          "scope_version": 4
+        },
+        "tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b"
+      },
+      "bounded_rc_integration": {
+        "actual_grant_commit_resolution": "The enclosing realized immutable registry commit is the V5 grant. Bind its actual hash/blob/readback and #218 record externally after registration; do not invent a self-referential future hash.",
+        "actual_metadata_authority": {
+          "registry_parent": "ac7cf81602ac2f0cac32857642a2525ae23d3f4c",
+          "registry_blob": "dfaaec496f7511be2f79ca887e2e8f3f9f9dec5a",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "user_id": 233213370,
+            "context": "CODEX_ROOT_79005A1F03B2",
+            "operation_id": "62791882-7bf8-42ca-b384-4bf73320f558"
+          },
+          "metadata_lease": {
+            "branch": "twf-repair-coordinator",
+            "commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+            "acquire_commit": "3d8421d7955a502ef0702ddde939d6c7dd819893",
+            "epoch": 656,
+            "owner_id": "62791882-7bf8-42ca-b384-4bf73320f558",
+            "work_branch": "coord/p0d-work-claims",
+            "acquired_at": "2026-11-23T01:17:13.539028+00:00",
+            "expires_at": "2026-11-23T01:47:13.539028+00:00",
+            "actual_full_readback": true
+          },
+          "coordinator_readback": {
+            "path": "/workspace/scratch/79005a1f03b2/coord_leases/hud_v5_metadata_62791882-7bf8-42ca-b384-4bf73320f558/acquired.json",
+            "bytes": 201278,
+            "sha256": "c1413016b80795d6b43c6689d6713b21db3f0dfcf7ddbb19a0cb828fb61103d5",
+            "git_blob": "c05540c62441c6267637f39f9ec0b6a690935740"
+          },
+          "fresh_API_readbacks": [
+            {
+              "path": "/workspace/scratch/79005a1f03b2/admission_planning/hud_v5_adoption_actual/FRESH_AUTHORITY_656_API.json",
+              "bytes": 465466,
+              "sha256": "333a8bac48519fb76ed0328fa83a2b8fa48e1bcb7420f9df92406bdca528bc5f",
+              "git_blob": "08a264ad80bbd8a6aa3ad6a7d2f41c4e34623286"
+            }
+          ],
+          "observed_at": "2026-11-23T01:18:14.966117+00:00",
+          "concrete_pre_CAS_review_resolution": "Registered reviewer must approve this exact before/after and live authority before real CAS. Bind actual receipt and realized grant commit/blob externally in #218; this local afterimage is not registered authority."
+        },
+        "artifact_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "conditional_scope_review": {
+          "context": "/root/rules_audit",
+          "decision": "PASS_BOUNDED_FIELD_PROPOSAL_CONDITIONALLY_NOT_ACTUAL_GRANT_OR_RC_ADOPTION",
+          "proposal_sha256": "8aab1ea9f740d378629920ca3e2891ed4e291a76b58f450fce29530fd0f7617a",
+          "review_sha256": "2c0623bf8e43e95068b42c24909b859ce8776ef4977175868af0fc9f0e43e9c3"
+        },
+        "design_decision_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7087020284",
+        "expected_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "force_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "if_head_or_rc_moves": "Do not execute the fixed R-to-H transaction; preserve all newer work, rebind affected facts and obtain a legitimate exact-head amendment.",
+        "main_or_publish_allowed": false,
+        "one_exact_adoption_only": true,
+        "permitted_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "permitted_pr": 1019,
+        "permitted_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+        "post_push": "Require the actual same-new-R official GQ8 push success and registered independent canonical artifact ZIP/Place/69-source/Native28/two-suite/selected14/rollback review. A PR artifact or source-only local result is not formal acceptance.",
+        "scope_return": "No borrowed path is being returned by this adoption. Keep exact current six paths/four resources until a separately scoped post-adoption metadata update records the result and relinquishes or continues authority under existing rules. Do not modify other claims.",
+        "separate_rc_writer_lease_required": true,
+        "source_and_artifact_review_context": "/root/rules_audit",
+        "source_edits_authorized_by_this_amendment": false,
+        "source_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088685364",
+        "status": "EXACT_PR1019_ONLY_EFFECTIVE_AFTER_REAL_V5_REGISTRATION_AND_FRESH_GATES",
+        "trusted_intake_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1019#issuecomment-7088776925",
+        "writer_handoff_url": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086667909",
+        "future_RC_writes_authorized": false
+      },
+      "candidate_head": "93a1147561a531610ac1609ebc68cc0ecf546623"
     },
     {
       "PREP_READY": true,
