@@ -693,6 +693,104 @@
       },
       "service_completion_asserted": false
     }
+  ,
+    {
+      "schema": 1,
+      "case_id": "GQ_MANUAL_CONTROLLER_EPOCH684_BOUNDED_MAINTENANCE_20261123_870491EA",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "actor_context": "CODEX_ROOT_870491EA0B74:/root",
+      "actor_operation_id": "1dd374a3-f6e0-4f55-8836-7c7308a4e5d7",
+      "authenticated_github_actor": {
+        "login": "kk051780",
+        "user_id": 233213370
+      },
+      "recorded_at": "2026-11-23T07:14:24.575746+00:00",
+      "observed_ref": "dcb1b923a4670d2e9e870e2254cddf25c7379309",
+      "observed_state_blob": "77f8c55757fe08c29cd323b129f0f6bda09651b5",
+      "previous_epoch": 684,
+      "next_epoch": 685,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "b0e5a6bd-117b-4e05-b0c1-3ba01cd70339",
+        "task_id": null,
+        "epoch": 684,
+        "acquired_at": "2026-11-23T06:18:15.703967+00:00",
+        "expires_at": "2026-11-23T06:48:15.703967+00:00",
+        "base_main_sha": null,
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller"
+      },
+      "authorization": {
+        "type": "STANDING_OWNER_DELEGATION_APPLIED_TO_ONE_BOUNDED_MAINTENANCE_DECISION",
+        "current_request": "ゲーム品質ゲート。このチャットでは企画室案のRC統合を優先して進めて。githubルールに則って改善を進めて。残課題や企画室案の取り入れ余地が残ってる限り1回の作業時間は最低600分以上で進めて。",
+        "source": "Current OWNER task; existing owner_delegation dated2026-10-25; actual officialH93 AGENTS.md and docs/AUTONOMOUS_INTEGRATION.md; current#1011 and independently verified delegated maintenance route.",
+        "scope": "Fence only this identical manual CONTROLLER684. Preserve B8 Bot1027 sole executor and all claims. No registry, source, PR, RC, main, service schedule, credentials, gate, incident hold, spending or publication mutation.",
+        "expiry_alone_is_authority": false,
+        "new_general_expiry_takeover_rule_created": false,
+        "prior_epoch_specific_approvals_reused": false,
+        "new_user_consent_inferred": false
+      },
+      "evidence": {
+        "administrative_process_precedents_only": [
+          602,
+          656
+        ],
+        "precedent_records": [
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7086256437",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7088360708"
+        ],
+        "existing_normal_handoff": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7093722121",
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "normal_release_requires_original_owner": true,
+        "normal_acquire": {
+          "action": "WAIT_RECOVERY",
+          "write": false,
+          "state_unchanged": true,
+          "kind": "ACTUAL_UNCHANGED_POLICY_HELPER_ON_PINNED_REMOTE_STATE_NOT_A_REMOTE_ACQUISITION",
+          "owner_id": "1dd374a3-f6e0-4f55-8836-7c7308a4e5d7",
+          "now": "2026-11-23T07:14:24.575746+00:00"
+        },
+        "normal_recover_supports_manual_controller": false,
+        "last_completed_epoch": 683,
+        "last_completed_is_not_epoch684_release": true,
+        "github_repository_permissions": {
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "authority_observation": {
+          "bytes": 1566,
+          "sha256": "95ad1663d6af419f0a7ce334ce4b8dbf8f48509049084f1651514418f897dc7a",
+          "git_blob": "4010407e8d163f6b53d9d7825a0d9a4409b745e1"
+        },
+        "independent_prewrite_authority_review_required": true,
+        "protected_next_action": "Existing soleexecutor CODEX_ROOT_B8C8E7B756CD:/root may acquire its own separate RC lease and revalidate existing H93->H72 one-shot grant. This administrative fence grants no source/RC permission."
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "all_other_nested_values_unchanged": true,
+        "last_completed_unchanged": true,
+        "prior_revocations_unchanged": true,
+        "raw_existing_history_preserved": true,
+        "fresh_exact_ref_blob_holder_required": true,
+        "single_parent": true,
+        "expected_sha": "dcb1b923a4670d2e9e870e2254cddf25c7379309",
+        "force": false,
+        "one_cas_attempt_only": true,
+        "postwrite_full_state_readback_required": true,
+        "independent_postwrite_audit_required": true,
+        "no_automatic_claim_or_source_permission": true,
+        "no_new_lease_acquired": true,
+        "changed_state_requires_stop_not_retry": true
+      },
+      "service_completion_asserted": false
+    }
   ],
   "approval_packet": {
     "approval_text": "",
@@ -2296,18 +2394,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 684,
-  "holder": {
-  "kind": "CONTROLLER",
-  "owner_id": "b0e5a6bd-117b-4e05-b0c1-3ba01cd70339",
-  "task_id": null,
-  "epoch": 684,
-  "acquired_at": "2026-11-23T06:18:15.703967+00:00",
-  "expires_at": "2026-11-23T06:48:15.703967+00:00",
-  "base_main_sha": null,
-  "work_branch": "coord/p0d-work-claims",
-  "origin": "controller"
-},
+  "epoch": 685,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
