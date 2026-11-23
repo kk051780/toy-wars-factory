@@ -46,10 +46,30 @@ For each BEFORE/AFTER pair, reproduce position, camera direction, zoom/FOV, weat
 2. Run: python3 -B -m unittest discover -s art_quality -p test_art_quality.py -v
 3. Run source preflight: python3 -B art_quality/check_art_quality.py --place candidate.rbxlx --out ART_CHECK_REPORT.json
 4. Run strict evidence gate: python3 -B art_quality/check_art_quality.py --place candidate.rbxlx --evidence art_quality/evidence/manifest.json --screenshots art_quality/evidence --out ART_CHECK_REPORT.json --strict
-5. GitHub Actions workflow p0d-art-quality-gate.yml downloads the **exact run/artifact selected**, checks the real .rbxlx and emits ART_CHECK_REPORT.json. The dispatch default is a **pinned RC80 historical artifact**, NOT the evolving latest RC. For a new candidate, pass its exact run ID and artifact name. Strict mode FAILS on missing image evidence; preflight can be green with the explicit ART_NO_GO verdict.
-6. Reviewer examines screenshots and Studio capture authenticity. Only an explicit OWNER acceptance linked to #420/#372 ends ART_NO_GO, and only B #220 may formally integrate into canonical RC using authenticated non-force CAS.
+5. GitHub Actions workflow p0d-art-quality-gate.yml downloads an **exact, verified artifact ID**, checks the real .rbxlx and emits ART_CHECK_REPORT.json. On a PR it waits, for at most ten minutes, for the newest matching p0d-rc-fastlane.yml run for that exact PR head and base. It requires success, the compatible PRIVATE80 Place and its same-run ART receipt, including the current synthetic merge SHA. A newer pending/failed run never falls back to an older success. Manual dispatch requires an explicit run ID and artifact name, with no expiring historical default. Strict mode FAILS on missing image evidence; preflight can be green with the explicit ART_NO_GO verdict.
+6. Reviewer examines screenshots and Studio capture authenticity. Only an explicit OWNER acceptance linked to #420/#372 ends ART_NO_GO. Current [#1011](https://github.com/kk051780/toy-wars-factory/issues/1011) and [AGENTS.md](https://github.com/kk051780/toy-wars-factory/blob/18e4b04eb550ebf5195c3e287f97076dd9c92b6e/AGENTS.md) govern the exclusive development-RC writer; actual scoped authority, independent review and fresh non-force CAS are tracked in [#220](https://github.com/kk051780/toy-wars-factory/issues/220). ART OWNER acceptance remains separate from technical RC adoption.
 
 ## No-go rule
+
+### Artifact identity and coverage
+
+`resolve_artifact.py` checks the repository, producer workflow, PR number/head/base,
+latest run attempt, and unique non-expired artifact metadata. It downloads the
+selected IDs with the runner's read-only GitHub client, checks the ZIP byte count
+and SHA256 against GitHub's digest, and requires exactly one real Place. PR inputs
+also require matching Place bytes/hash in the source receipt and same-run ART
+report, plus matching run ID, PR merge ref and synthetic merge SHA. It rechecks the
+selection after download; drift, missing inputs or a bounded-wait timeout fail.
+The producer also triggers for changes to this ART workflow, so the dependency is
+actually scheduled. `ART_ARTIFACT_SELECTION.json` records the checked provenance.
+
+This legacy-compatible 80-script audit preserves its existing authority names and
+ten visual categories. It is separate from the current REAL69 composite source
+gate and cannot replace that gate or prove current gameplay, Studio execution,
+Android performance, child FUN or OWNER acceptance. Manual selection records its
+actual producer SHA and is explicitly identified as `MANUAL_EXPLICIT`, not a
+same-head PR result. The source/evidence/mobile/FUN checkers and thresholds are
+unchanged; missing real evidence continues to produce ART_NO_GO.
 
 Critical flags: missing visuals or stale Place SHA, blank/reused photos, scores below 4, obstructive leaves/meshes, unreadable Android, inadequate frame rate, generic placeholder art, UI occlusion, fake HIT visual, and no Studio test evidence. These remain NO_GO even if scripts compile perfectly. The gate never signs off its own art; result can reach REVIEW_READY_OWNER_PENDING only.
 

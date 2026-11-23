@@ -17,6 +17,9 @@ local valid = {
 }
 local armed = false
 local starting = false
+-- Keep the platform call occupied until its yielding start returns.
+local startInFlight = false
+local consentId = 0
 local capturing = false
 local captureId = 0
 local previousEpoch = -1
@@ -98,19 +101,30 @@ end
 
 local function captureFor(kind: string, currentEpoch: number)
     local cfg = valid[kind]
-    if not cfg or not armed or starting or capturing then
+    if not cfg or not armed or startInFlight or capturing then
         visual(kind)
         return
     end
     starting = true
+    startInFlight = true
     captureId += 1
     local startId = captureId
+    local startConsentId = consentId
     repaint()
     -- The platform's callback is the ONLY source of a real video to save.
     task.spawn(function()
+        local completed = false
         local ok, result = pcall(function()
             return CaptureService:StartVideoCaptureAsync(function(outcome, capture)
-                if not armed or currentEpoch ~= previousEpoch then return end
+                completed = true
+                -- A terminal callback may arrive before our duration timer.
+                if captureId == startId then
+                    starting = false
+                    capturing = false
+                    repaint()
+                end
+                if not armed or currentEpoch ~= previousEpoch
+                    or consentId ~= startConsentId then return end
                 if (outcome == Enum.VideoCaptureResult.Success
                     or outcome == Enum.VideoCaptureResult.TimeLimitReached)
                     and capture ~= nil then
@@ -120,14 +134,22 @@ local function captureFor(kind: string, currentEpoch: number)
                 end
             end, {})
         end)
-        if captureId ~= startId then
-            if ok and result == Enum.VideoCaptureStartedResult.Success then
+        starting = false
+        if captureId ~= startId or not armed or currentEpoch ~= previousEpoch then
+            if ok and result == Enum.VideoCaptureStartedResult.Success and not completed then
                 pcall(function() CaptureService:StopVideoCapture() end)
             end
+            startInFlight = false
+            repaint()
             return
         end
-        starting = false
+        startInFlight = false
         if not ok or result ~= Enum.VideoCaptureStartedResult.Success then
+            repaint()
+            visual(kind)
+            return
+        end
+        if completed then
             repaint()
             visual(kind)
             return
@@ -143,8 +165,9 @@ end
 
 toggle.Activated:Connect(function()
     armed = not armed
+    consentId += 1 -- a later ON does not re-authorize an old clip
     if not armed then
-        captureId += 1 -- abort pending StartVideoCaptureAsync (which may yield)
+        captureId += 1 -- invalidate the result, not the still-running platform call
         if capturing then
             capturing = false
             pcall(function() CaptureService:StopVideoCapture() end)
@@ -163,10 +186,13 @@ local function consume()
         or type(kind) ~= "string" or valid[kind] == nil then return end
     if epoch < previousEpoch or (epoch == previousEpoch and seq <= previousSeq) then return end
     if epoch > previousEpoch then
-        if capturing then stopCapture() end
-        previousEpoch = epoch
+        previousEpoch = epoch -- fence callbacks before Stop can complete a clip
         previousSeq = -1
         lastCueAt = -10000
+        captureId += 1
+        starting = false
+        if capturing then stopCapture() end
+        repaint()
     end
     previousSeq = seq
     local now = time()

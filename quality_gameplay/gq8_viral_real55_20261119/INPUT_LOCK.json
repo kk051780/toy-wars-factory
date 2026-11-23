@@ -1,0 +1,1456 @@
+{
+  "schema": "GQ8_CAPTURE_CURRENT69_LOCK_V1",
+  "status": "IMMUTABLE_CURRENT69_INPUT_AND_FROZEN_CONTRACTS_V1",
+  "feature_id": "GQ8_VIRAL_MOMENTS_CAPTURE_20261119",
+  "base_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+  "original_source_head": "bdb0bac0cf8aab08c8984ce195b4ff99d3900e70",
+  "input": {
+    "run": {
+      "id": 45083333379,
+      "event": "push",
+      "head_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "head_branch": "rc/p0d-s1-kids-rc01",
+      "path": ".github/workflows/gq8-real63-source-composite.yml",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1
+    },
+    "artifact": {
+      "id": 14777998713,
+      "name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+      "size_in_bytes": 5319187,
+      "url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14777998713",
+      "archive_download_url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14777998713/zip",
+      "expired": false,
+      "created_at": "2026-11-22T23:29:17Z",
+      "expires_at": "2026-12-22T23:29:16Z",
+      "updated_at": "2026-11-22T23:29:17Z",
+      "digest": "sha256:58e53ab1bffe5de2fea9be6dc9dcff533da9d643c0569a5570c9227fa450d98d",
+      "workflow_run": {
+        "id": 45083333379,
+        "repository_id": 1431683395,
+        "head_repository_id": 1431683395,
+        "head_branch": "rc/p0d-s1-kids-rc01",
+        "head_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0"
+      }
+    },
+    "project": {
+      "path": "EGGRUMBLE_REAL69.project.json",
+      "bytes": 9564,
+      "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+    },
+    "place": {
+      "path": "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+      "bytes": 828114,
+      "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+    },
+    "legacy_intake_receipt": {
+      "path": "REAL69_LEGACY_INTAKE_RECEIPT.json",
+      "bytes": 17623,
+      "sha256": "749a80be9cb050cead632a8ddf0cdd66fa2506adf01ef09c6726eb716c69de2f"
+    },
+    "fresh_zip_download_this_review": true,
+    "future_ci_must_reverify_download": true
+  },
+  "source_count": 69,
+  "instance_count": 75,
+  "candidate_changed_sources": 1,
+  "unchanged_sources": 68,
+  "candidate": {
+    "bytes": 7414,
+    "sha256": "18b8b67741fee206870a7941fdb3b5a39c6bc42925abcd53271137d9fb458215"
+  },
+  "historical_v2": {
+    "bytes": 6980,
+    "sha256": "786db18b3be2ad600c1037e99744fd1c4309b9317329390faf1d03c9d70f8e92"
+  },
+  "original_client": {
+    "bytes": 6425,
+    "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+  },
+  "source_delta_edits": [
+    {
+      "before": "local starting = false\nlocal capturing = false",
+      "after": "local starting = false\n-- Keep the platform call occupied until its yielding start returns.\nlocal startInFlight = false\nlocal consentId = 0\nlocal capturing = false"
+    },
+    {
+      "before": "if not cfg or not armed or starting or capturing then",
+      "after": "if not cfg or not armed or startInFlight or capturing then"
+    },
+    {
+      "before": "    starting = true\n    captureId += 1\n    local startId = captureId",
+      "after": "    starting = true\n    startInFlight = true\n    captureId += 1\n    local startId = captureId\n    local startConsentId = consentId"
+    },
+    {
+      "before": "                if not armed or currentEpoch ~= previousEpoch then return end",
+      "after": "                if not armed or currentEpoch ~= previousEpoch\n                    or consentId ~= startConsentId then return end"
+    },
+    {
+      "before": "        if captureId ~= startId then\n            if ok and result == Enum.VideoCaptureStartedResult.Success then\n                pcall(function() CaptureService:StopVideoCapture() end)\n            end\n            return\n        end\n        starting = false",
+      "after": "        starting = false\n        if captureId ~= startId or not armed or currentEpoch ~= previousEpoch then\n            if ok and result == Enum.VideoCaptureStartedResult.Success then\n                pcall(function() CaptureService:StopVideoCapture() end)\n            end\n            startInFlight = false\n            repaint()\n            return\n        end\n        startInFlight = false"
+    },
+    {
+      "before": "    armed = not armed\n    if not armed then\n        captureId += 1 -- abort pending StartVideoCaptureAsync (which may yield)",
+      "after": "    armed = not armed\n    consentId += 1 -- a later ON does not re-authorize an old clip\n    if not armed then\n        captureId += 1 -- invalidate the result, not the still-running platform call"
+    },
+    {
+      "before": "    if epoch > previousEpoch then\n        if capturing then stopCapture() end\n        previousEpoch = epoch\n        previousSeq = -1\n        lastCueAt = -10000\n    end",
+      "after": "    if epoch > previousEpoch then\n        previousEpoch = epoch -- fence callbacks before Stop can complete a clip\n        previousSeq = -1\n        lastCueAt = -10000\n        captureId += 1\n        starting = false\n        if capturing then stopCapture() end\n    end"
+    },
+    {
+      "before": "    if epoch > previousEpoch then\n        previousEpoch = epoch -- fence callbacks before Stop can complete a clip\n        previousSeq = -1\n        lastCueAt = -10000\n        captureId += 1\n        starting = false\n        if capturing then stopCapture() end\n    end",
+      "after": "    if epoch > previousEpoch then\n        previousEpoch = epoch -- fence callbacks before Stop can complete a clip\n        previousSeq = -1\n        lastCueAt = -10000\n        captureId += 1\n        starting = false\n        if capturing then stopCapture() end\n        repaint()\n    end"
+    },
+    {
+      "before": "    task.spawn(function()\n        local ok, result = pcall(function()\n",
+      "after": "    task.spawn(function()\n        local completed = false\n        local ok, result = pcall(function()\n"
+    },
+    {
+      "before": "            return CaptureService:StartVideoCaptureAsync(function(outcome, capture)\n                if not armed or currentEpoch ~= previousEpoch\n",
+      "after": "            return CaptureService:StartVideoCaptureAsync(function(outcome, capture)\n                completed = true\n                -- A terminal callback may arrive before our duration timer.\n                if captureId == startId then\n                    starting = false\n                    capturing = false\n                    repaint()\n                end\n                if not armed or currentEpoch ~= previousEpoch\n"
+    },
+    {
+      "before": "            if ok and result == Enum.VideoCaptureStartedResult.Success then\n",
+      "after": "            if ok and result == Enum.VideoCaptureStartedResult.Success and not completed then\n"
+    },
+    {
+      "before": "        capturing = true\n        repaint()\n        visual(kind) -- after recorder starts, not before\n",
+      "after": "        if completed then\n            repaint()\n            visual(kind)\n            return\n        end\n        capturing = true\n        repaint()\n        visual(kind) -- after recorder starts, not before\n"
+    }
+  ],
+  "original_delta_bytes": 989,
+  "toolchain": {
+    "luau_commit": "f46d879e28302a430029304f7f6a162aed66f103",
+    "rojo_version": "7.7.1",
+    "rojo_archive_sha256": "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4"
+  },
+  "sources": [
+    {
+      "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy",
+      "path": "sources/ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 7596,
+      "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+    },
+    {
+      "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog",
+      "path": "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau",
+      "class": "ModuleScript",
+      "bytes": 4506,
+      "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+    },
+    {
+      "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView",
+      "path": "sources/ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau",
+      "class": "ModuleScript",
+      "bytes": 6116,
+      "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+    },
+    {
+      "route": "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy",
+      "path": "sources/ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 5716,
+      "sha256": "b3a22982365ebf5e10e81a412f09162700e089780fd236dd2863843ea95ca55f"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_AttackGeometry",
+      "path": "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+      "class": "ModuleScript",
+      "bytes": 1639,
+      "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 6729,
+      "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_BossSessionFence",
+      "path": "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+      "class": "ModuleScript",
+      "bytes": 776,
+      "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_BotActors",
+      "path": "sources/ServerScriptService/EGGRUMBLE_BotActors.luau",
+      "class": "ModuleScript",
+      "bytes": 19070,
+      "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_BotPathRouter",
+      "path": "sources/ServerScriptService/EGGRUMBLE_BotPathRouter.luau",
+      "class": "ModuleScript",
+      "bytes": 7614,
+      "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+      "class": "ModuleScript",
+      "bytes": 13707,
+      "sha256": "9455e263a450002a4c578993e508f37d0b6ea8233eae36c8de06210889410096"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CastleMatchRules",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+      "class": "ModuleScript",
+      "bytes": 16609,
+      "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CastleSiegeBridge",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+      "class": "ModuleScript",
+      "bytes": 5861,
+      "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 9786,
+      "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CombatBalance",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+      "class": "ModuleScript",
+      "bytes": 4123,
+      "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_CurseConversionPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 5471,
+      "sha256": "4e9a0035744d750feccf0c51ebc8afe52272436fb31a532cab149a34c31a1954"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_DivineMantle",
+      "path": "sources/ServerScriptService/EGGRUMBLE_DivineMantle.luau",
+      "class": "ModuleScript",
+      "bytes": 4302,
+      "sha256": "e6019aea60ac7ba214b44468302e6945093e3f73111857042982cf58451a2ef1"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget",
+      "path": "sources/ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau",
+      "class": "ModuleScript",
+      "bytes": 3174,
+      "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt",
+      "path": "sources/ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau",
+      "class": "Script",
+      "bytes": 22046,
+      "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_FieldItemPickups",
+      "path": "sources/ServerScriptService/EGGRUMBLE_FieldItemPickups.luau",
+      "class": "ModuleScript",
+      "bytes": 15602,
+      "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_FlagshipFieldArt",
+      "path": "sources/ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
+      "class": "Script",
+      "bytes": 13624,
+      "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt",
+      "path": "sources/ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+      "class": "Script",
+      "bytes": 20363,
+      "sha256": "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_ImpactFeedback",
+      "path": "sources/ServerScriptService/EGGRUMBLE_ImpactFeedback.luau",
+      "class": "ModuleScript",
+      "bytes": 3704,
+      "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_InteractionGuard",
+      "path": "sources/ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+      "class": "ModuleScript",
+      "bytes": 3612,
+      "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_InvulCounterNeutral",
+      "path": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+      "class": "ModuleScript",
+      "bytes": 7498,
+      "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_InvulRuntime",
+      "path": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+      "class": "ModuleScript",
+      "bytes": 11264,
+      "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 12330,
+      "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+      "path": "sources/ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+      "class": "Script",
+      "bytes": 37578,
+      "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes",
+      "path": "sources/ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
+      "class": "Script",
+      "bytes": 10202,
+      "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
+      "path": "sources/ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau",
+      "class": "Script",
+      "bytes": 6534,
+      "sha256": "08737dda08863dd83b13ed54753e83ffaf0aaa1cfa0d99d96b6eca97f58fc72d"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes",
+      "path": "sources/ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau",
+      "class": "Script",
+      "bytes": 31784,
+      "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+      "path": "sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+      "class": "Script",
+      "bytes": 94590,
+      "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+      "path": "sources/ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+      "class": "Script",
+      "bytes": 15584,
+      "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 6609,
+      "sha256": "5de4c351d17910c67cf67e8ed5add9625f29cbb95d6e3b504c99aa5f54b3672e"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_MatchResultService",
+      "path": "sources/ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+      "class": "ModuleScript",
+      "bytes": 7410,
+      "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_MusouFeverPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 8984,
+      "sha256": "2e83c376f9082bbab88c687888e23f0fe489828c9eb92684fa9752065a0312fb"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NaturalRegen",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NaturalRegen.luau",
+      "class": "ModuleScript",
+      "bytes": 4467,
+      "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau",
+      "class": "ModuleScript",
+      "bytes": 2069,
+      "sha256": "cf64237fd3a03c44c175d5cf859f06539cd45f8f96e75faf8efb11777c576842"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 4325,
+      "sha256": "55afec1c766be2fbcd5fff82c1c5124fce34596c6c0b7e699276a4cb85243feb"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1178,
+      "sha256": "c389fd3b15df106bbf0aa23f07573433cc0031dd8a13197294a4ce373fbc491e"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau",
+      "class": "ModuleScript",
+      "bytes": 2630,
+      "sha256": "55db684fbf0ba0772b2dca641670d0cca27b23aa36324870fa32ff21e8ffc3ab"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_NeutralStoneGiant",
+      "path": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+      "class": "ModuleScript",
+      "bytes": 7075,
+      "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy",
+      "path": "sources/ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 2686,
+      "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_RaidItemIntake",
+      "path": "sources/ServerScriptService/EGGRUMBLE_RaidItemIntake.luau",
+      "class": "ModuleScript",
+      "bytes": 3116,
+      "sha256": "6ad8e2b9d83e41fbcb6744bf2a26b67c6314a9844d4751fc402f0b32414d7bf0"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+      "path": "sources/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
+      "class": "Script",
+      "bytes": 35282,
+      "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_RoundReplay",
+      "path": "sources/ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+      "class": "ModuleScript",
+      "bytes": 7083,
+      "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_ScoreBalance",
+      "path": "sources/ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+      "class": "ModuleScript",
+      "bytes": 8030,
+      "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+      "path": "sources/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+      "class": "ModuleScript",
+      "bytes": 73774,
+      "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_SkillFX",
+      "path": "sources/ServerScriptService/EGGRUMBLE_SkillFX.luau",
+      "class": "ModuleScript",
+      "bytes": 10369,
+      "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_StatusTickFence",
+      "path": "sources/ServerScriptService/EGGRUMBLE_StatusTickFence.luau",
+      "class": "ModuleScript",
+      "bytes": 779,
+      "sha256": "32ee5dae5262777812042fab06b0ad926d30c67d9c12749196b7ecb8b232c36b"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_SwarmCombat",
+      "path": "sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+      "class": "ModuleScript",
+      "bytes": 38973,
+      "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+    },
+    {
+      "route": "ServerScriptService/EGGRUMBLE_WeaponSilhouettes",
+      "path": "sources/ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau",
+      "class": "ModuleScript",
+      "bytes": 5814,
+      "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+    },
+    {
+      "route": "ServerScriptService/GQ802_StageManifestPolicy",
+      "path": "sources/ServerScriptService/GQ802_StageManifestPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 8246,
+      "sha256": "039d3b4d14dc39f765ce0d8916efe8668a40b7e494f37dc6ad7fed372893accf"
+    },
+    {
+      "route": "ServerScriptService/GQ802_StageTileBlueprintPolicy",
+      "path": "sources/ServerScriptService/GQ802_StageTileBlueprintPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 4479,
+      "sha256": "8a4e1ec46537130542143dc2ae5b95673550a29fa0562ac356fe43d160e8261b"
+    },
+    {
+      "route": "ServerScriptService/GQ802_StageTileVisualRenderer",
+      "path": "sources/ServerScriptService/GQ802_StageTileVisualRenderer.luau",
+      "class": "ModuleScript",
+      "bytes": 4214,
+      "sha256": "e5b28bc8c418b93e1d5fdea2d047962aebcb6ea11dfa1dc6e96064b6a77e173a"
+    },
+    {
+      "route": "ServerScriptService/GQ805_LobbyGuildShop",
+      "path": "sources/ServerScriptService/GQ805_LobbyGuildShop.server.luau",
+      "class": "Script",
+      "bytes": 5192,
+      "sha256": "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
+    },
+    {
+      "route": "ServerScriptService/GQ8_LobbySocialPlaza",
+      "path": "sources/ServerScriptService/GQ8_LobbySocialPlaza.server.luau",
+      "class": "Script",
+      "bytes": 12930,
+      "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+    },
+    {
+      "route": "ServerScriptService/GQ8_TradeEscrowReducer",
+      "path": "sources/ServerScriptService/GQ8_TradeEscrowReducer.luau",
+      "class": "ModuleScript",
+      "bytes": 11476,
+      "sha256": "d6ba09ad28c313910004881b114f44ab5ee5bcf455df19f8863528bacd12577f"
+    },
+    {
+      "route": "ServerScriptService/GQ8_TradeJournalContract",
+      "path": "sources/ServerScriptService/GQ8_TradeJournalContract.luau",
+      "class": "ModuleScript",
+      "bytes": 5096,
+      "sha256": "f32bc7ad70f0f68170293b09dfbda151b0cab2ad215f61ff98b2bbd39cbc99ba"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+      "class": "LocalScript",
+      "bytes": 7937,
+      "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau",
+      "class": "LocalScript",
+      "bytes": 26226,
+      "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+      "class": "LocalScript",
+      "bytes": 24779,
+      "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+      "class": "LocalScript",
+      "bytes": 6040,
+      "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau",
+      "class": "ModuleScript",
+      "bytes": 6205,
+      "sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+      "class": "LocalScript",
+      "bytes": 1881,
+      "sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau",
+      "class": "LocalScript",
+      "bytes": 6764,
+      "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau",
+      "class": "LocalScript",
+      "bytes": 6897,
+      "sha256": "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 2170,
+      "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau",
+      "class": "LocalScript",
+      "bytes": 5149,
+      "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+    },
+    {
+      "route": "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture",
+      "path": "sources/StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau",
+      "class": "LocalScript",
+      "bytes": 6425,
+      "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+    }
+  ],
+  "assets": {
+    "native/full_client_fixture.luau": {
+      "bytes": 9126,
+      "sha256": "0261592588c0c72559946c842ba5cf7a4559c9c2bc5575db69e91eb26fdeca8d",
+      "author": "/root/map_review"
+    },
+    "native/epoch_cases.luau": {
+      "bytes": 5588,
+      "sha256": "7fbd8ed8d1405254f1e0edc21bce079af5bfe18e9981e41291f81db3312ec7f2",
+      "author": "/root/map_review"
+    },
+    "native/full_client_fixture_extended.luau": {
+      "bytes": 10380,
+      "sha256": "28c6f9287d09382f4ee161aada219d83ed6670780d356a9be8767ebd84a34b50",
+      "author": "/root/review_intake"
+    },
+    "native/completion_cases.luau": {
+      "bytes": 2760,
+      "sha256": "cb5cfb97e82802ae03e9b91a4b531307a334328b582a0da49782bd56819e15d3",
+      "author": "/root/review_intake"
+    },
+    "native/completion_additional_cases.luau": {
+      "bytes": 2593,
+      "sha256": "df27936f56591643308cad1e38965a0c635bdadc830bb0e1fb4bdcc1602fad54",
+      "author": "/root/review_intake"
+    }
+  },
+  "contracts": {
+    "epoch_original": {
+      "suite": "epoch27",
+      "source": {
+        "bytes": 6425,
+        "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+      },
+      "counts": {
+        "total": 27,
+        "pass": 20,
+        "red": 7
+      },
+      "expected_observations": [
+        [
+          "normal_15s_save",
+          "default_off",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "opt_in_pending",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_start",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "before_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "after_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_completion_save",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "old_start_pending",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "epoch_no_parallel_start",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "epoch_pending_ui_idle",
+          "RED"
+        ],
+        [
+          "epoch_pending_success",
+          "stale_success_stopped",
+          "RED"
+        ],
+        [
+          "epoch_pending_success",
+          "old_epoch_save_fenced",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "fresh_cue_can_start",
+          "RED"
+        ],
+        [
+          "epoch_pending_success",
+          "fresh_cue_records",
+          "RED"
+        ],
+        [
+          "off_on_pending_serialized",
+          "second_start_suppressed",
+          "RED"
+        ],
+        [
+          "off_on_pending_serialized",
+          "old_return_stopped_and_released",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "fresh_cue_after_release",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "fresh_clip_saves",
+          "PASS"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "off_stops",
+          "PASS"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "old_clip_not_reauthorized",
+          "RED"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "new_consent_clip_saves",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "current_other_error_release",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "stale_no_device_release",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "failure_retry_can_start",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "failure_retry_saves",
+          "PASS"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "synchronous_old_completion_fenced",
+          "RED"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "new_epoch_request_pending",
+          "PASS"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "normal_sync_stop_still_saves",
+          "PASS"
+        ]
+      ],
+      "expected_finish_records": [
+        "EVT\tnormal_15s_save\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tepoch_pending_success\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=0,activeCue=-1,text=録画待機 ON",
+        "EVT\toff_on_pending_serialized\t30\tFINISH\trequests=3,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tcancelled_clip_after_rearm\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON",
+        "EVT\tstart_failures_release\t30\tFINISH\trequests=3,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tepoch_stop_sync_completion\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON"
+      ],
+      "stdout_sha256": "ece5689410280a4844fbd86a851e2ebb12cbaf2a4572dca4eb84a181c3311c1c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skeleton_sha256": "c6763566a2882a6034fcf5e63528121ecf0643d7c164a0c12ec00a71840aa843",
+      "provenance_receipt": {
+        "sha256": "c6ae42d22128ab9d008f2e2fdd8039f4c3f9b9eb900628bce925c5eca250aa06",
+        "bytes": 10676,
+        "path": "capture_epoch/evidence/comparison_v1_714c/baseline/RECEIPT.json"
+      }
+    },
+    "epoch_v3": {
+      "suite": "epoch27",
+      "source": {
+        "bytes": 7414,
+        "sha256": "18b8b67741fee206870a7941fdb3b5a39c6bc42925abcd53271137d9fb458215"
+      },
+      "counts": {
+        "total": 27,
+        "pass": 27,
+        "red": 0
+      },
+      "expected_observations": [
+        [
+          "normal_15s_save",
+          "default_off",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "opt_in_pending",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_start",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "before_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "after_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_completion_save",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "old_start_pending",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "epoch_no_parallel_start",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "epoch_pending_ui_idle",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "stale_success_stopped",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "old_epoch_save_fenced",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "fresh_cue_can_start",
+          "PASS"
+        ],
+        [
+          "epoch_pending_success",
+          "fresh_cue_records",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "second_start_suppressed",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "old_return_stopped_and_released",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "fresh_cue_after_release",
+          "PASS"
+        ],
+        [
+          "off_on_pending_serialized",
+          "fresh_clip_saves",
+          "PASS"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "off_stops",
+          "PASS"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "old_clip_not_reauthorized",
+          "PASS"
+        ],
+        [
+          "cancelled_clip_after_rearm",
+          "new_consent_clip_saves",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "current_other_error_release",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "stale_no_device_release",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "failure_retry_can_start",
+          "PASS"
+        ],
+        [
+          "start_failures_release",
+          "failure_retry_saves",
+          "PASS"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "synchronous_old_completion_fenced",
+          "PASS"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "new_epoch_request_pending",
+          "PASS"
+        ],
+        [
+          "epoch_stop_sync_completion",
+          "normal_sync_stop_still_saves",
+          "PASS"
+        ]
+      ],
+      "expected_finish_records": [
+        "EVT\tnormal_15s_save\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tepoch_pending_success\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=0,activeCue=-1,text=録画待機 ON",
+        "EVT\toff_on_pending_serialized\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tcancelled_clip_after_rearm\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tstart_failures_release\t30\tFINISH\trequests=3,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tepoch_stop_sync_completion\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON"
+      ],
+      "stdout_sha256": "219913dd5aeb862b72f60bfa6db63c7fb07e0a087e9ab95add6c9583f0800eff",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skeleton_sha256": "c6763566a2882a6034fcf5e63528121ecf0643d7c164a0c12ec00a71840aa843",
+      "provenance_receipt": {
+        "sha256": "49d71c8c63b99ce5a60b9d023ed2573a3f28cc2bc392acfd05e9a3dd50fc2fdf",
+        "bytes": 10728,
+        "path": "capture_epoch/evidence/comparison_v3_18b8/candidate/RECEIPT.json"
+      }
+    },
+    "completion_v2": {
+      "suite": "completion32",
+      "source": {
+        "bytes": 6980,
+        "sha256": "786db18b3be2ad600c1037e99744fd1c4309b9317329390faf1d03c9d70f8e92"
+      },
+      "counts": {
+        "total": 32,
+        "pass": 25,
+        "red": 7
+      },
+      "expected_observations": [
+        [
+          "normal_15s_save",
+          "default_off",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "opt_in_pending",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_start",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "before_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "after_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_completion_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "successful_start_before_completion",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "platform_ended_without_source_stop",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "completion_retires_recording_ui",
+          "RED"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "error_completion_does_not_prompt_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "eligible_next_cue_can_start",
+          "RED"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "ready_by_original_timer_deadline",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "cue_after_deadline_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "later_normal_stop_and_save_preserved",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "successful_start_before_completion",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "platform_ended_without_source_stop",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "completion_retires_recording_ui",
+          "RED"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "error_completion_does_not_prompt_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "eligible_next_cue_can_start",
+          "RED"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "ready_by_original_timer_deadline",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "cue_after_deadline_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "later_normal_stop_and_save_preserved",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_normal_timer_stop",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "new_capture_started_before_old_completion",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_normal_clip_still_saves",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_completion_preserves_new_recording",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "new_normal_stop_and_save",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "pending_start_control",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "pending_completion_ui_idle",
+          "RED"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "unfinished_start_remains_serialized",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "completed_success_return_does_not_record",
+          "RED"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "fresh_cue_after_completed_return",
+          "RED"
+        ]
+      ],
+      "expected_finish_records": [
+        "EVT\tnormal_15s_save\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tspontaneous_completion_ScreenSizeChanged\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tspontaneous_completion_OtherError\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\told_normal_completion_while_new_capture\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON",
+        "EVT\tconditional_completion_before_start_return\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=0,activeCue=-1,text=録画待機 ON"
+      ],
+      "stdout_sha256": "053e411032894a8aa934af7f39b76930e6961d713619960db2491fb7a6eae306",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skeleton_sha256": "7e18a843542302462361d2b57db41906c6cf1204ef87317e6572b22c3848478e",
+      "provenance_receipt": {
+        "sha256": "a24ee707f23252bc880b71ba7f9c85924adcfdd21969c89fa0ba51fb5367283a",
+        "bytes": 12156,
+        "path": "capture_completion_probe/extended/comparison_v2_v3/baseline_v2/RECEIPT.json"
+      }
+    },
+    "completion_v3": {
+      "suite": "completion32",
+      "source": {
+        "bytes": 7414,
+        "sha256": "18b8b67741fee206870a7941fdb3b5a39c6bc42925abcd53271137d9fb458215"
+      },
+      "counts": {
+        "total": 32,
+        "pass": 32,
+        "red": 0
+      },
+      "expected_observations": [
+        [
+          "normal_15s_save",
+          "default_off",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "opt_in_pending",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_start",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "before_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "after_15s",
+          "PASS"
+        ],
+        [
+          "normal_15s_save",
+          "normal_completion_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "successful_start_before_completion",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "platform_ended_without_source_stop",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "completion_retires_recording_ui",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "error_completion_does_not_prompt_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "eligible_next_cue_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "ready_by_original_timer_deadline",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "cue_after_deadline_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_ScreenSizeChanged",
+          "later_normal_stop_and_save_preserved",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "successful_start_before_completion",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "platform_ended_without_source_stop",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "completion_retires_recording_ui",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "error_completion_does_not_prompt_save",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "eligible_next_cue_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "ready_by_original_timer_deadline",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "cue_after_deadline_can_start",
+          "PASS"
+        ],
+        [
+          "spontaneous_completion_OtherError",
+          "later_normal_stop_and_save_preserved",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_normal_timer_stop",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "new_capture_started_before_old_completion",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_normal_clip_still_saves",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "old_completion_preserves_new_recording",
+          "PASS"
+        ],
+        [
+          "old_normal_completion_while_new_capture",
+          "new_normal_stop_and_save",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "pending_start_control",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "pending_completion_ui_idle",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "unfinished_start_remains_serialized",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "completed_success_return_does_not_record",
+          "PASS"
+        ],
+        [
+          "conditional_completion_before_start_return",
+          "fresh_cue_after_completed_return",
+          "PASS"
+        ]
+      ],
+      "expected_finish_records": [
+        "EVT\tnormal_15s_save\t30\tFINISH\trequests=1,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON",
+        "EVT\tspontaneous_completion_ScreenSizeChanged\t30\tFINISH\trequests=3,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON",
+        "EVT\tspontaneous_completion_OtherError\t30\tFINISH\trequests=3,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON",
+        "EVT\told_normal_completion_while_new_capture\t30\tFINISH\trequests=2,pending=0,stops=2,prompts=2,activeCue=-1,text=録画待機 ON",
+        "EVT\tconditional_completion_before_start_return\t30\tFINISH\trequests=2,pending=0,stops=1,prompts=1,activeCue=-1,text=録画待機 ON"
+      ],
+      "stdout_sha256": "b5ba50329f3c596b9914af0ba82e063c8f81fd47408c622e453ed26b2e94aa02",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skeleton_sha256": "7e18a843542302462361d2b57db41906c6cf1204ef87317e6572b22c3848478e",
+      "provenance_receipt": {
+        "sha256": "6acf312dd17f156d6df352b39807a16f229f37d83bf7556eb6b6d308c1610b3c",
+        "bytes": 12177,
+        "path": "capture_completion_probe/extended/comparison_v2_v3/candidate/RECEIPT.json"
+      }
+    }
+  },
+  "legacy_prefixes": {
+    "compose_real56.py": {
+      "bytes": 8020,
+      "sha256": "3cd6472b00cb8ea10c954f54f343acafa8fbbd55b904e6f4dfa47a82a2ade488"
+    },
+    "test_real56.py": {
+      "bytes": 3830,
+      "sha256": "c03a33791b0bd109015c6a549d7dbcb1b1ad7a81b8306fbe8ba29d897276e598"
+    },
+    "workflow_job_payload": {
+      "bytes": 5582,
+      "sha256": "20436babdf0cb380473c3d2965b1e53edddf90df31b259e6e65ac9e799d0a8a9"
+    }
+  },
+  "limits": [
+    "No actual CaptureService/window/device/video/gallery test",
+    "Conditional completion-before-Start-return is not a documented order guarantee",
+    "Character=nil excludes VFX; gallery false means prompt count is not saved video count",
+    "Normal6 overlap means27+32 is not59 independent features"
+  ],
+  "normal_shared_control": {
+    "bytes": 869,
+    "sha256": "0f604e8363f7f495d359bda89ed21d33c303907ca6cd4c5e0958d5aab6713bb8"
+  },
+  "shared_normal_observations": 6,
+  "archive": {
+    "bytes": 5319187,
+    "sha256": "58e53ab1bffe5de2fea9be6dc9dcff533da9d643c0569a5570c9227fa450d98d",
+    "members": 110,
+    "expanded_bytes": 8320289
+  },
+  "prior_official_input": {
+    "run": {
+      "id": 45041527167,
+      "event": "push",
+      "head_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+      "head_branch": "rc/p0d-s1-kids-rc01",
+      "path": ".github/workflows/gq8-real63-source-composite.yml",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "artifact": {
+      "id": 14761404772,
+      "name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+      "size_in_bytes": 5325025,
+      "url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14761404772",
+      "archive_download_url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14761404772/zip",
+      "expired": false,
+      "created_at": "2026-11-22T16:04:17Z",
+      "expires_at": "2026-12-22T16:04:15Z",
+      "updated_at": "2026-11-22T16:04:17Z",
+      "digest": "sha256:6e1c7cecb39b88a33f9c68b7698eaf21a178461852331c98e7583cbf47ab1793",
+      "workflow_run": {
+        "id": 45041527167,
+        "repository_id": 1431683395,
+        "head_repository_id": 1431683395,
+        "head_branch": "rc/p0d-s1-kids-rc01",
+        "head_sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd"
+      }
+    },
+    "project": {
+      "bytes": 9564,
+      "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7",
+      "path": "EGGRUMBLE_REAL69.project.json"
+    },
+    "place": {
+      "bytes": 828114,
+      "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6",
+      "path": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+    },
+    "legacy_intake_receipt": {
+      "bytes": 17623,
+      "sha256": "a4c987476b615bb3fe701bedf2216b1b448cc420a5b49cc5dc6f3bf35aec18df",
+      "path": "REAL69_LEGACY_INTAKE_RECEIPT.json"
+    },
+    "fresh_zip_download_this_review": false,
+    "future_ci_must_reverify_download": true
+  },
+  "base_change_evidence": {
+    "from": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+    "to": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+    "maintenance_only_paths": 12,
+    "all69_and_project_and_place_byte_exact": true,
+    "readback_sha256": "1d47c0f01fe23b6997f41a927d14143c81672d4b82cbe771943f5bdbd30b01bd"
+  },
+  "source_scope_paths": [
+    ".github/workflows/gq8-viral-real56-source.yml",
+    "quality_gameplay/gq8_viral_real55_20261119/GQ8_ViralCapture.client.luau",
+    "quality_gameplay/gq8_viral_real55_20261119/compose_real56.py",
+    "quality_gameplay/gq8_viral_real55_20261119/test_real56.py",
+    "quality_gameplay/gq8_viral_real55_20261119/INPUT_LOCK.json",
+    "quality_gameplay/gq8_viral_real55_20261119/README.md",
+    "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture.luau",
+    "quality_gameplay/gq8_viral_real55_20261119/native/epoch_cases.luau",
+    "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture_extended.luau",
+    "quality_gameplay/gq8_viral_real55_20261119/native/completion_cases.luau",
+    "quality_gameplay/gq8_viral_real55_20261119/native/completion_additional_cases.luau"
+  ],
+  "scope_grant": {
+    "claim_id": "P0D-GQ832-CAPTURE-LIFECYCLE-20261123-7A4B9B0B",
+    "owner": "CODEX_ROOT_7A4B9B0B26D0",
+    "registry_head": "c91c7aaeeb4961797c9b6b985cb9ca8d5530a7fc",
+    "grant_comment": 7088404028,
+    "role": "A_PREP",
+    "rc_write_authorized": false,
+    "independent_reviewer_context": "CODEX_ROOT_7A4B9B0B26D0:/root/planning_gap"
+  }
+}

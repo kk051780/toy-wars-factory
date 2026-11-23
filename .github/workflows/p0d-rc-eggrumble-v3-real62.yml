@@ -1,0 +1,129 @@
+name: P0D V3 Real62 from runnable official Real59 Host and trade3
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths: ['rc_fastlane/EGGRUMBLE_V3_REAL62.json', '.github/workflows/p0d-rc-eggrumble-v3-real62.yml']
+  push:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths: ['rc_fastlane/EGGRUMBLE_V3_REAL62.json', '.github/workflows/p0d-rc-eggrumble-v3-real62.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real62-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate latest current official Real59 and three source blobs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          j=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_REAL62.json").read_text())
+          assert j["parent_source_count"]==59 and j["candidate_source_count"]==62
+          assert len(j["source_locks"])==3 and j["trade_live"] is False and j["paid_settlement"] is False
+          for p,h in j["source_locks"].items():
+             assert subprocess.check_output(["git","hash-object",p],text=True).strip()==h
+          print("REAL62_THREE_EXACT_SOURCE_BLOB_LOCKS_PASS")
+          PY
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+             test "$LIVE" = 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca || { echo RED_PARENT_HOST_FIXED_MOVED_REBASE_REQUIRED; exit 1; }
+          else
+             test "$LIVE" = "$GITHUB_SHA" || { echo RED_OFFICIAL_HEAD_MOVED; exit 1; }
+          fi
+          EVIDENCE="$(gh run view 44401178585 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "38d11f0bf311491ba76fe03f818948e5d4b06889 success"
+          HOST_EVIDENCE="$(gh run view 44403496549 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$HOST_EVIDENCE" = "5a47e96f6b4766a9c59dd06b111bea53b73bd5ca success" || { echo RED_FORMAL_REAL59_HOST_CLASS_NOT_FIXED; exit 1; }
+          mkdir -p artifacts/official59
+          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir artifacts/official59
+          mkdir -p artifacts/official59host
+          gh run download 44403496549 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL59-HOST-ACTIVE-NOT-OFFICIAL --dir artifacts/official59host
+          test -s artifacts/official59host/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
+          test -s artifacts/official59host/HOST_ACTIVE_RECEIPT.json
+          python3 -B quality_gameplay/gq8_real62_composite_20261119/compose_real62.py \
+            --place artifacts/official59host/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx \
+            --receipt artifacts/official59/GQ828_REAL59_RECEIPT.json \
+            --inactive-place artifacts/official59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx \
+            --active-receipt artifacts/official59host/HOST_ACTIVE_RECEIPT.json \
+            --out artifacts/composite62
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau real62 and two trade adversarial suites
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for dir in artifacts/composite62/on62/sources artifacts/composite62/off59/sources; do
+            for file in "$dir"/*.luau; do /tmp/gq8native/luau-compile --text "$file" >/dev/null; done
+          done
+          /tmp/gq8native/luau quality_gameplay/gq8_trade_ux_journal_20261119/test_journal_native.luau | tee /tmp/tradej.log
+          grep -q GQ8_TRADE_JOURNAL_NATIVE_ORDER_REPLAY_RECOVERY_SESSION_LOCK_CONTRACT_PASS /tmp/tradej.log
+          /tmp/gq8native/luau quality_gameplay/gq8_trade_ux_journal_20261119/test_escrow_native.luau | tee /tmp/tradee.log
+          grep -q GQ8_TRADE58_ESCROW_REDUCER_TWO_ACCOUNT_RESERVE_DEBIT_CREDIT_COMMIT_REPLAY_PAID_FAILCLOSED_PASS /tmp/tradee.log
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/hudprobe
+          /tmp/gq8native/luau /tmp/hudprobe/good.luau | tee /tmp/hud.log
+          grep -q GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS /tmp/hud.log
+      - name: Exact official rollback and Rojo source class validation for 59 and 62
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq8rojo.zip") as z:
+            files=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+            assert len(files)==1
+            p=Path("/tmp/gq8rojo");p.write_bytes(z.read(files[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8rojo build artifacts/composite62/on62/REAL62_HUD_TRADE.project.json -o artifacts/composite62/EGGRUMBLE_REAL62.rbxlx
+          /tmp/gq8rojo build artifacts/composite62/off59/REAL62_OFF59.project.json -o artifacts/composite62/OFF59.rbxlx
+          cmp artifacts/composite62/OFF59.rbxlx artifacts/official59host/EGGRUMBLE_REAL59_HOST_ACTIVE.rbxlx
+          PYTHONPATH=handoffs/EGGRUMBLE-HUD-INTEL-20261119 python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          from compose_real40 import contents
+          src,_=contents(ET.parse("artifacts/composite62/EGGRUMBLE_REAL62.rbxlx").getroot())
+          assert src[("ServerScriptService","EGGRUMBLE_LobbyCastleModesPreview")][0]=="Script","RED_HOST_AUTO_START_LOST"
+          assert len(src)==62
+          print("REAL62_HOST_EXECUTABLE_CLASS_AND_62_SCRIPTS_PRESERVED")
+          PY
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/composite62/on62/REAL62_HUD_TRADE.project.json --place artifacts/composite62/EGGRUMBLE_REAL62.rbxlx --count 62
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/composite62/off59/REAL62_OFF59.project.json --place artifacts/composite62/OFF59.rbxlx --count 59
+          LIVE="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$LIVE" = 5a47e96f6b4766a9c59dd06b111bea53b73bd5ca
+          else
+            test "$LIVE" = "$GITHUB_SHA"
+          fi
+          python3 - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          r=Path("artifacts/composite62/B_REAL62_RECEIPT.json");m=json.loads(r.read_text())
+          p=Path("artifacts/composite62/EGGRUMBLE_REAL62.rbxlx")
+          m.update({"tested_head":os.environ["GITHUB_SHA"],"native_rojo_source_class_off59":"PASS","host_script_starts":"SOURCE_CLASS_VERIFIED","real62_bytes":p.stat().st_size,"real62_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"official_rc_adopted":os.environ["GITHUB_REF"]=="refs/heads/rc/p0d-s1-kids-rc01"})
+          r.write_text(json.dumps(m,indent=2,ensure_ascii=False)+"\n")
+          print("REAL62_TRUE_NATIVE_ROJO_SOURCE_CLASS_OFF59_SUCCESS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO
+          path: |
+            artifacts/composite62/EGGRUMBLE_REAL62.rbxlx
+            artifacts/composite62/OFF59.rbxlx
+            artifacts/composite62/B_REAL62_RECEIPT.json
+          retention-days: 5
+          if-no-files-found: error

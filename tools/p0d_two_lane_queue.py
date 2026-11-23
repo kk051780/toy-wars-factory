@@ -11,7 +11,10 @@ from typing import Any, Callable
 
 REPO = "kk051780/toy-wars-factory"
 OFFICIAL = "rc/p0d-s1-kids-rc01"
-RUN_NAME = "P0D canonical RC fast-lane Studio build"
+RUN_NAME = "GQ8 single formal RC source selected REAL66 legacy exploration OFF65"
+# The workflow display name is historical, but its PR run builds current REAL69.
+# Do not accept the old rich51 fast-lane job as proof of the current V3 candidate.
+REAL69_ARTIFACT = "GQ8-REAL69-RC85-FIRST90-PRIVATE-NOT-OFFICIAL"
 PIN = re.compile(r"^[0-9a-f]{40}$")
 FEATURE = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
 
@@ -33,14 +36,16 @@ def manifest(body: str) -> dict[str, Any]:
     rows = [x.strip() for x in body.splitlines()]
     if rows.count("P0D_PREP_READY_V1") != 1:
         raise ValueError("MISSING_UNIQUE_PREP_READY_CONTRACT")
+    if rows.count("OWNER_FAST_ADMISSION_V2") != 1:
+        raise ValueError("MISSING_UNIQUE_OWNER_FAST_ADMISSION_V2")
     values: dict[str, str] = {}
     for row in rows:
-        m = re.fullmatch(r"(PINNED_HEAD|BASE_RC|FEATURE_IDS|SOURCE_LOCK|ROLLBACK):\s*(\S.*)", row)
+        m = re.fullmatch(r"(PINNED_HEAD|BASE_RC|FEATURE_IDS|SOURCE_LOCK|ROLLBACK|DECISION|DESIGN_SOURCE|QUALITY_EVIDENCE|VALUE_DELTA):\s*(\S.*)", row)
         if m:
             if m.group(1) in values:
                 raise ValueError("DUPLICATE_CONTRACT_FIELD_" + m.group(1))
             values[m.group(1)] = m.group(2).strip()
-    missing = set(("PINNED_HEAD", "BASE_RC", "FEATURE_IDS", "SOURCE_LOCK", "ROLLBACK")) - set(values)
+    missing = set(("PINNED_HEAD", "BASE_RC", "FEATURE_IDS", "SOURCE_LOCK", "ROLLBACK", "DECISION", "DESIGN_SOURCE", "QUALITY_EVIDENCE", "VALUE_DELTA")) - set(values)
     if missing:
         raise ValueError("MISSING_FIELDS_" + ",".join(sorted(missing)))
     if not PIN.fullmatch(values["PINNED_HEAD"]) or not PIN.fullmatch(values["BASE_RC"]):
@@ -53,8 +58,18 @@ def manifest(body: str) -> dict[str, Any]:
         raise ValueError("INVALID_SOURCE_LOCK_PATH")
     if len(values["ROLLBACK"]) < 12:
         raise ValueError("MISSING_REAL_ROLLBACK")
+    if values["DECISION"] != "ADOPT":
+        raise ValueError("NOT_ADOPT_DECISION")
+    evidence_pattern = r"https://github\.com/kk051780/toy-wars-factory/(issues|pull)/[0-9]+(?:#issuecomment-[0-9]+)?"
+    for field in ("DESIGN_SOURCE", "QUALITY_EVIDENCE"):
+        if not re.fullmatch(evidence_pattern, values[field]):
+            raise ValueError("INVALID_" + field + "_URL")
+    if not 12 <= len(values["VALUE_DELTA"]) <= 300:
+        raise ValueError("INVALID_VALUE_DELTA")
     return {"head": values["PINNED_HEAD"], "base": values["BASE_RC"], "features": feature_ids,
-            "source_lock": lock, "rollback": values["ROLLBACK"]}
+            "source_lock": lock, "rollback": values["ROLLBACK"],
+            "decision": "ADOPT", "design_source": values["DESIGN_SOURCE"],
+            "quality_evidence": values["QUALITY_EVIDENCE"], "value_delta": values["VALUE_DELTA"]}
 
 def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
     if not PIN.fullmatch(official_sha):
@@ -87,7 +102,9 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
         except ValueError as exc:
             item["reason"] = str(exc)
             continue
-        item.update({"head": sha, "features": m["features"], "source_lock": m["source_lock"]})
+        item.update({"head": sha, "features": m["features"], "source_lock": m["source_lock"],
+                     "decision": m["decision"], "design_source": m["design_source"],
+                     "quality_evidence": m["quality_evidence"], "value_delta": m["value_delta"]})
         if m["head"] != sha or m["base"] != official_sha:
             item["reason"] = "STALE_PREP_MANIFEST_SHA"
             continue
@@ -96,13 +113,24 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
             item["reason"] = "NOT_A_FAST_FORWARD_FROM_OFFICIAL"
             continue
         runs = api(f"/repos/{repo}/actions/runs?head_sha={sha}&per_page=100").get("workflow_runs", [])
-        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == RUN_NAME]
+        matching = [x for x in runs if x.get("head_sha") == sha and x.get("name") == RUN_NAME and x.get("event") == "pull_request"]
         matching.sort(key=lambda x: (x.get("created_at", ""), x.get("id", 0)), reverse=True)
         if not matching or matching[0].get("status") != "completed" or matching[0].get("conclusion") != "success":
             item["reason"] = "LATEST_SAME_HEAD_FULL_RC_CI_NOT_GREEN"
             continue
+        # Require the actual REAL69 source-composite artifact from this *same PR-head* CI.
+        # A green legacy rich51 job, no artifact, an expired artifact, or a duplicate is NOT READY.
+        artifacts = api(f"/repos/{repo}/actions/runs/{matching[0]['id']}/artifacts?per_page=100").get("artifacts", [])
+        eligible = [a for a in artifacts if a.get("name") == REAL69_ARTIFACT
+                    and a.get("expired") is False
+                    and type(a.get("size_in_bytes")) is int and a["size_in_bytes"] > 0]
+        if len(eligible) != 1:
+            item["reason"] = "REAL69_CANDIDATE_ARTIFACT_MISSING_OR_DUPLICATE"
+            continue
+        item["candidate_artifact_id"] = eligible[0]["id"]
+        item["candidate_artifact_zip_bytes"] = eligible[0]["size_in_bytes"]
         item["status"] = "READY_FOR_SOLE_WRITER_REVIEW"
-        item["reason"] = "EXACT_HEAD_FF_AND_BUILD_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED"
+        item["reason"] = "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED"
         commit = api(f"/repos/{repo}/commits/{sha}")
         stamp = ((commit.get("commit") or {}).get("committer") or {}).get("date", "")
         if not stamp:

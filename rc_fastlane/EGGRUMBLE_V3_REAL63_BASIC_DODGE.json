@@ -1,0 +1,71 @@
+{
+  "schema": "GQ828_REAL63_NEWEST_V3_BASIC_DODGE_SINGLE_COMBAT",
+  "feature_id": "GQ828_BASIC_DODGE_REAL63_20261119",
+  "owner_issue": 828,
+  "source_pr": 847,
+  "formal_branch": "rc/p0d-s1-kids-rc01",
+  "verified_parent_official_sha": "b15db4b9ad1f1f4c1f02fb0976eb3c2f6db8a6ff",
+  "verified_parent_source_profile": "Real62 Host-active + HUD/Fog + Trade Journal/Review/Escrow",
+  "verified_parent_artifact_run": 44404334603,
+  "verified_parent_artifact_id": 14473628619,
+  "verified_parent_artifact_name": "P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO",
+  "original_count": 62,
+  "candidate_count": 63,
+  "source_locks": {
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/EGGRUMBLE_BasicMobilityPolicy.luau": "bfd2ec6be067fe18b7675463bd6e1ca365b8ddf2",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/compose_real63.py": "64f6fa961568f2e549c3009a0620b21d0f8a5823",
+    "handoffs/EGGRUMBLE-BASIC-DODGE-20261119/make_native_basic.py": "9a8aba6cff5e0fd54e7a84225ec01ade4b7a40b4",
+    "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py": "5715c178736170e3bc739bb1c60a670f7053707d"
+  },
+  "modified_existing_routes": [
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
+  ],
+  "new_route": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy",
+  "host_is_original_script": true,
+  "trade3_original_unchanged": true,
+  "damage_owner_original_only": true,
+  "no_new_remote": true,
+  "paid_purchase_enabled": false,
+  "public_publish_enabled": false,
+  "rollback": "Exact previous official Real62 62 original source/class, OFF62",
+  "candidate_studio_two_client": "NOT_TESTED",
+  "candidate_android15min": "NOT_TESTED",
+  "visual_art": "NO_GO",
+  "fun": "NO_GO",
+  "official_rc_adopted": false,
+  "canonical_workflow": ".github/workflows/p0d-rc-eggrumble-v3-real63-basic-dodge.yml",
+  "notice": "Source candidate: current official newest Real63 parent via prior formal Real62 physical Place; independent #220 B review/nonforce expectedSha CAS and exact NEW HEAD native/Rojo/OFF gate required. Do not claim Studio overlap verified or permit main/Publish/Robux.",
+  "original59_unchanged": true,
+  "ui_overlap_fix": {
+    "feature_id": "GQ8_REAL59_HUD_OCCLUSION_REAL63_20261119",
+    "viewports_tested_natively": [
+      "320x260",
+      "393x851",
+      "375x667",
+      "600x300",
+      "851x393",
+      "1280x720",
+      "1024x768"
+    ],
+    "handedness": [
+      "LEFT",
+      "RIGHT"
+    ],
+    "combat_hud_owner": "existing single EGGRUMBLE_HudIntelRuntime",
+    "drawers": "compact modal hides combat action surfaces while selecting",
+    "expanded_map": "movement/thumbstick clearance",
+    "server_rules_changed": false,
+    "studio_visual_test": "NOT_TESTED",
+    "official_rc_adopted": false
+  },
+  "downstream_fix_feature_id": "GQ8_REAL63_ROUND_EPOCH_FENCE_20261119",
+  "downstream_fix_details": "Original UI PR850 exact composer plus one round epoch correction; 2-round native test and PR850 14 viewport cases mandatory.",
+  "composition_provenance": {
+    "original_ui_pr": 850,
+    "original_ui_head": "bc32f074a8c8c1e6ecb543c0846dc374617ab50c",
+    "original_native_layout_blob": "5715c178736170e3bc739bb1c60a670f7053707d",
+    "unique_round_epoch_pr": 848
+  }
+}
