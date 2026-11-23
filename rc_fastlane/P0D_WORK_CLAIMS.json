@@ -24717,6 +24717,177 @@
         "service_run_id": null,
         "meaning": "Proposed metadata registration under the supplied actual live lease; no source or RC authority"
       }
+    },
+    {
+      "claim_id": "P0D-GQ805-SHOP-LIFECYCLE-20261123-82F2BEB2",
+      "feature_id": "GQ805_3D_SHOP_KIOSK_RUNTIME_20261118",
+      "sub_scope": "CURRENT69_ACTIVE_PHASE_CHARACTER_UI_LIFECYCLE",
+      "owner": "CODEX_ROOT_82F2BEB2AB16",
+      "role": "A_PREP",
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/816",
+      "parent_issue": 805,
+      "coordination_issue": 218,
+      "integration_issue": 220,
+      "quality_issue": 470,
+      "pr": null,
+      "allowed_new_prs": 1,
+      "prep_branch": "quality/gq805-shop-lifecycle-82f2beb2-20261123",
+      "source_branch_created": false,
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "source_head_before": null,
+      "source_head": null,
+      "candidate_head": null,
+      "candidate_pr_status": "NOT_CREATED",
+      "resources": [
+        "GQ805_SHOP_KIOSK_CLIENT"
+      ],
+      "resource_semantics": "Exactly the existing generated LocalScript StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient. This name is not an alias to evade another owner; any same-route/effect request must be reconciled, even under a different token.",
+      "target_paths": [
+        "quality_gameplay/gq805_shop_lifecycle_20261123/README.md",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/shop_lifecycle_patch.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/apply_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/shop_lifecycle.spec.luau",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/run_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq805_shop_lifecycle_20261123.py",
+        ".github/workflows/gq805-shop-lifecycle.yml"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq805_shop_lifecycle_20261123/README.md",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/shop_lifecycle_patch.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/apply_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/shop_lifecycle.spec.luau",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/run_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq805_shop_lifecycle_20261123.py",
+        ".github/workflows/gq805-shop-lifecycle.yml"
+      ],
+      "new_paths": [
+        "quality_gameplay/gq805_shop_lifecycle_20261123/README.md",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/shop_lifecycle_patch.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/source_lock.json",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/apply_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/shop_lifecycle.spec.luau",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/run_shop_lifecycle.py",
+        "quality_gameplay/gq805_shop_lifecycle_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq805_shop_lifecycle_20261123.py",
+        ".github/workflows/gq805-shop-lifecycle.yml"
+      ],
+      "target_paths_semantics": "Exactly nine new isolated PREP repository paths; no wildcard. Original #808/#816 paths and existing canonical producer/workflow/profile files are excluded.",
+      "author_contexts": [
+        "CODEX_ROOT_82F2BEB2AB16:/root",
+        "CODEX_ROOT_82F2BEB2AB16:/root/p0_gap"
+      ],
+      "source_author_context": "CODEX_ROOT_82F2BEB2AB16:/root",
+      "test_author_context": "CODEX_ROOT_82F2BEB2AB16:/root/p0_gap",
+      "scope_review_context": "CODEX_ROOT_82F2BEB2AB16:/root/rules_intake",
+      "independent_reviewer_context": "CODEX_ROOT_82F2BEB2AB16:/root/rules_intake",
+      "scope_review_is_code_approval": false,
+      "scope": "Reuse the original #816 GQ805_ShopKioskClient entry controller on official PRIVATE REAL69. Repair only the already mounted read-only shop UI lifetime: suppress/close the foreground shop during the current supported TEAM/BATTLE_ROYALE arena ACTIVE phase, preserve ordinary lobby/WAITING browsing, close stale owned GUI on old-character removal/death/elimination and teardown, and revalidate the same player/character/prompt/phase after existing require or PlayerGui waits before mounting. Read existing Host-published mode/arena/phase only. Preserve the original #808 Catalog and ShopView byte-for-byte, existing prompt/proximity checks and nil purchase callback. No new GUI renderer, runtime source, commerce authority or shared producer wiring.",
+      "generated_source_count": 69,
+      "generated_source_change_count": 1,
+      "other_sources_preserved": 68,
+      "generated_source_scope": [
+        {
+          "resource": "GQ805_SHOP_KIOSK_CLIENT",
+          "route": "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient",
+          "class": "LocalScript",
+          "generated_relative_path": "sources/StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
+          "before": {
+            "bytes": 2170,
+            "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+          },
+          "after": {
+            "bytes": 5002,
+            "sha256": "b8651e09ad0caae896e535ae39b74f7fde4b839b13fd33527b6ad5c5e6442b5a"
+          }
+        }
+      ],
+      "preserved_original_modules": [
+        {
+          "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog",
+          "class": "ModuleScript",
+          "bytes": 4506,
+          "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+        },
+        {
+          "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView",
+          "class": "ModuleScript",
+          "bytes": 6116,
+          "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+        }
+      ],
+      "official_input": {
+        "head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "profile": "PRIVATE_COMPANION_REAL69",
+        "run_id": 45106580546,
+        "artifact_id": 14787568439,
+        "zip_bytes": 5840240,
+        "zip_sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d",
+        "place_bytes": 828658,
+        "place_sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+      },
+      "acceptance": [
+        "Execute unchanged original complete Catalog/View/Kiosk bodies and demonstrate stale UI at genuine TEAM/BR ACTIVE and character replacement, preserve meaningful original prompt/dead/eliminated/distance/manual-close controls.",
+        "Proposed ON source closes/prevents only its owned foreground shop in ACTIVE and invalid old-character lifecycle; ordinary lobby and queued WAITING browsing remains available; noncurrent arena phase cannot affect unrelated players.",
+        "Exercise delayed requires/PlayerGui resolution, current-character changes, missing/destroyed/replaced arena or prompt, manual close/reopen, repeated transitions and owned GUI/request teardown. Teardown here means manual GUI close, destruction or detachment of the owned GUI, and retirement of stale requests; verify no stale UI reopening or surviving request-owned Heartbeat observer at the exercised Native fixture boundaries. This does not certify destruction, disabling or hot replacement of the executing LocalScript.",
+        "Only one existing generated LocalScript changes; other68 source bytes, all69 routes/classes and non-source structure remain identical; native compile and actual Rojo output/OFF identity required.",
+        "Dedicated same-source-HEAD CI plus registered independent source review; original source checks and assertions remain intact. No Studio, Android, FUN or input-hit-testing claim from Native geometry alone."
+      ],
+      "rollback": "Inverse only the KioskClient lifecycle patch to the exact official2170B/b381bf0e body; all other68 source bodies and original Rojo Place must be byte-exact. No source/RC/main rollback or shared state edits are granted by this preparation slice.",
+      "forbidden_changes": [
+        "ShopCatalog, ShopView and every source except the one existing KioskClient",
+        "GuildShop server/art, SocialPlaza/Dojo, TradePolicy/TradeReview/Journal/Escrow, Game/Host/Combat/Score",
+        "Purchase callback, wallet, DataStore, Remote, MarketplaceService, inventory or entitlement authority",
+        "Any broad rule that blocks queued WAITING browsing merely because QueuedMode is nonnil",
+        "Canonical shared workflow, UNION22 producer/profile/verifier/native/test paths, shared CI gates or feature catalog",
+        "Original #808/#816 branches, another duplicate shop runtime, source count69 to70",
+        "Official RC/main ref writes, merge, Roblox Publish or paid actions"
+      ],
+      "state": "GRANTED",
+      "source_scope_granted": true,
+      "source_writes_permitted_at_issuance": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "request_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7091284176",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "8899ff0a-7417-451a-84e6-3494689fb707",
+      "service_run_id": null,
+      "service_task_id": null,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "8899ff0a-7417-451a-84e6-3494689fb707",
+        "epoch": 682,
+        "acquire_commit": "820091a4b0097e77130736f13916068a77f6b04d",
+        "acquired_at": "2026-11-23T06:06:38+00:00",
+        "expires_at": "2026-11-23T06:36:38+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "issued_at": "2026-11-23T06:06:57+00:00",
+      "expires_at": "2026-11-23T12:06:57+00:00",
+      "grant_scope_version": 1,
+      "draft_only_not_issued": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "RUNTIME_UNIFIED": "NO",
+      "teardown_evidence_limitations": [
+        "Measured teardown concerns the owned GUI and request, including the original View Close/reopen, owned GUI destruction/detachment, stale-request retirement and request-owned Heartbeat observer cleanup. It is not a universal connection or memory-leak certification.",
+        "The Native fixture eagerly fires GUI Destroying and controls dependency/event scheduling. It does not model the executing LocalScript Instance being destroyed, disabled or replaced, nor engine cancellation of its execution and connections.",
+        "LocalScript-body Destroy, Disabled/re-enable or hot replacement, and Deferred Engine timing remain NOT_PROVEN / NOT_TESTED. The 38/38 Native PASS result must not be presented as proof or acceptance of those behaviors.",
+        "No existing source, Studio, 2client, Android, OWNER or integration gate is waived or marked passed by this wording alignment. The original Native cases, source body, code-approval and RC-approval boundaries remain unchanged."
+      ]
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
