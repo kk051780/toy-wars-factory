@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375"
+LOCK_SHA256 = "fbc4575b69fbc55ba4d81db6d8d322807e4c4712b126ba452558a35246e7ce0d"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -37,6 +37,9 @@ OFF_ARCHIVE = "OFF69_UNION22_PRIOR_BR_ROLLBACK.tar.gz"
 HUD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau"
 HUD_OFF = "off69_hud_context_current_rc"
 HUD_OFF_ARCHIVE = "OFF69_HUD_CONTEXT_CURRENT_RC_ROLLBACK.tar.gz"
+BOT_SOURCE = "ServerScriptService/EGGRUMBLE_BotActors.luau"
+BOT_OFF = "off69_bot_vault_hud_parent"
+BOT_OFF_ARCHIVE = "OFF69_BOT_VAULT_HUD_PARENT_ROLLBACK.tar.gz"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -319,17 +322,40 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 22, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 23, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
+def bot_parent_sources(on, lock):
+    """Undo only BotActors, yielding the recorded HUD parent."""
+    repair = lock["bot_followup_repair"]
+    row = lock["sources"][BOT_SOURCE]
+    need(repair["source_path"] == BOT_SOURCE and set(on) == set(lock["sources"])
+         and repair["changed_sources_from_hud_parent"] == 1
+         and repair["unchanged_sources_from_hud_parent"] == 68, "BOT_PARENT_SOURCE_SET")
+    need(all(identity(raw) == lock["sources"][p]["after"] for p, raw in on.items()),
+         "BOT_PARENT_REQUIRES_EXACT_FINAL_SOURCES")
+    need(repair["parent_bot"] == row["before"] and repair["repaired_bot"] == row["after"]
+         and repair["forward"] == row["forward"] and repair["inverse"] == row["inverse"]
+         and repair["parent_place"] == lock["followup_repair"]["repaired_place"]
+         and repair["repaired_place"] == lock["final_place"], "BOT_PARENT_CONTRACT")
+    parent = dict(on)
+    parent[BOT_SOURCE] = apply_hunks(on[BOT_SOURCE], repair["inverse"])
+    need(identity(parent[BOT_SOURCE]) == repair["parent_bot"]
+         and apply_hunks(parent[BOT_SOURCE], repair["forward"]) == on[BOT_SOURCE],
+         "BOT_PARENT_INVERSE_NOT_EXACT")
+    need([p for p in on if on[p] != parent[p]] == [BOT_SOURCE], "BOT_PARENT_CHANGE_SCOPE")
+    return parent
+
+
 def hud_current_sources(on, lock):
-    """Reverse only this follow-up; the historical BR rollback stays separate."""
+    """Undo HUD only after the Bot-only inverse has restored the HUD parent."""
     repair = lock["followup_repair"]
     need(repair["source_path"] == HUD_SOURCE and set(on) == set(lock["sources"]),
          "HUD_CURRENT_SOURCE_SET")
-    need(all(identity(raw) == lock["sources"][p]["after"] for p, raw in on.items()),
-         "HUD_CURRENT_REQUIRES_EXACT_REPAIRED_SOURCES")
+    need(all(identity(raw) == (lock["bot_followup_repair"]["parent_bot"] if p == BOT_SOURCE
+                              else lock["sources"][p]["after"]) for p, raw in on.items()),
+         "HUD_CURRENT_REQUIRES_EXACT_BOT_PARENT_SOURCES")
     current = dict(on)
     current[HUD_SOURCE] = apply_hunks(on[HUD_SOURCE], repair["inverse"])
     need(identity(current[HUD_SOURCE]) == repair["current_hud"]
@@ -396,7 +422,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    hud_off = hud_current_sources(on, lock)
+    bot_parent = bot_parent_sources(on, lock)
+    hud_off = hud_current_sources(bot_parent, lock)
     compiler, rojo = Path(compiler).resolve(), Path(rojo).resolve()
     compiler_before, rojo_before = identity(read_file(compiler)), identity(read_file(rojo))
     need(os.access(compiler, os.X_OK) and os.access(rojo, os.X_OK), "TOOL_NOT_EXECUTABLE")
@@ -405,18 +432,21 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
     stage = Path(tempfile.mkdtemp(prefix=output.name + ".building-", dir=output.parent))
     logs = []
     try:
-        for folder, sources in ((stage, on), (stage / OFF, off), (stage / HUD_OFF, hud_off)):
+        for folder, sources in ((stage, on), (stage / OFF, off), (stage / BOT_OFF, bot_parent), (stage / HUD_OFF, hud_off)):
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
             for name, raw in sources.items():
                 path = folder / "sources" / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(raw)
-                if folder != stage / HUD_OFF or name == HUD_SOURCE:
+                if (folder in (stage, stage / OFF)
+                        or folder == stage / BOT_OFF and name == BOT_SOURCE
+                        or folder == stage / HUD_OFF and name == HUD_SOURCE):
                     run_checked([compiler, "--text", path], logs, quiet_stdout=True)
             run_checked([rojo, "build", folder / PROJECT, "-o", folder / PLACE], logs)
-            wanted = (lock["final_place"] if folder == stage else
-                      lock["followup_repair"]["current_place"] if folder == stage / HUD_OFF else lock["prior_place"])
+            wanted = {stage: lock["final_place"], stage / OFF: lock["prior_place"],
+                      stage / BOT_OFF: lock["bot_followup_repair"]["parent_place"],
+                      stage / HUD_OFF: lock["followup_repair"]["current_place"]}[folder]
             place = read_file(folder / PLACE)
             need(identity(place) == wanted, "BUILT_PLACE_IDENTITY")
             embedded, non_source = place_inventory(place)
@@ -435,6 +465,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         archive_identity = identity(read_file(stage / OFF_ARCHIVE))
         make_archive(stage / HUD_OFF, stage / HUD_OFF_ARCHIVE, HUD_OFF)
         hud_archive_identity = identity(read_file(stage / HUD_OFF_ARCHIVE))
+        make_archive(stage / BOT_OFF, stage / BOT_OFF_ARCHIVE, BOT_OFF)
+        bot_archive_identity = identity(read_file(stage / BOT_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -446,6 +478,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({HUD_OFF + "/" + PROJECT: lock["project"],
                                HUD_OFF + "/" + PLACE: lock["followup_repair"]["current_place"],
                                HUD_OFF_ARCHIVE: hud_archive_identity})
+        expected_stage.update({BOT_OFF + "/sources/" + name: identity(raw) for name, raw in bot_parent.items()})
+        expected_stage.update({BOT_OFF + "/" + PROJECT: lock["project"],
+                               BOT_OFF + "/" + PLACE: lock["bot_followup_repair"]["parent_place"],
+                               BOT_OFF_ARCHIVE: bot_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -454,7 +490,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 22, "unchanged_source_count": 47,
+            "selected_source_count": 69, "changed_source_count": 23, "unchanged_source_count": 46,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -465,6 +501,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "runtime_rollback_archive": archive_identity,
             "followup_repair": lock["followup_repair"],
             "hud_only_current_rc_rollback_archive": hud_archive_identity,
+            "bot_followup_repair": lock["bot_followup_repair"],
+            "bot_only_hud_parent_rollback_archive": bot_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -476,12 +514,15 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 22, "unchanged_sources": 47,
-            "compile_count": 139, "rojo_build_count": 3, "instances": 75,
+            "source_count": 69, "changed_sources": 23, "unchanged_sources": 46,
+            "compile_count": 140, "rojo_build_count": 4, "instances": 75,
             "historical_on_br_compile_count": 138, "historical_on_br_rojo_build_count": 2,
             "hud_only_compile_count": 1, "hud_only_rojo_build_count": 1,
             "hud_only_off_place": lock["followup_repair"]["current_place"],
-            "changed_sources_from_current_rc": 1, "unchanged_sources_from_current_rc": 68,
+            "hud_stage_changed_sources_from_current_rc": 1, "hud_stage_unchanged_sources_from_current_rc": 68,
+            "bot_only_compile_count": 1, "bot_only_rojo_build_count": 1,
+            "bot_only_parent_place": lock["bot_followup_repair"]["parent_place"],
+            "changed_sources_from_hud_parent": 1, "unchanged_sources_from_hud_parent": 68,
             "prior_snapshot": inputs["snapshot"], "final_place": lock["final_place"],
             "off_place": lock["prior_place"], "actual_inverse_source_and_place_exact": True,
             "non_source_property_identity": identity(inputs["non_source"]),

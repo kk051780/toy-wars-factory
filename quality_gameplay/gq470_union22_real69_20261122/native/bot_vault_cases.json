@@ -1,0 +1,900 @@
+{
+  "acceptance_totals": {
+    "additional_modules_over_existing28": [
+      "BotPathRouter",
+      "BotActors"
+    ],
+    "distinct_full_bodies_with_existing_dual28": 30,
+    "exit_code_each": 0,
+    "full_bodies_each_program": 16,
+    "ordered_CASE_rows": 13,
+    "ordered_CHECK_rows": 43,
+    "scenarios": 9,
+    "stderr_bytes": 0,
+    "success_output_files": 37,
+    "warnings": 0
+  },
+  "baseline_controls_history_only": [
+    {
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "generated": {
+        "bytes": 267306,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_TEAM_normal/generated.luau",
+        "sha256": "07b177b03e339c553199ca1d8fc0330f132cae3f0fa3936574c9013280f8f982"
+      },
+      "not_a_candidate_runtime_gate": true,
+      "observed_result": "FAIL",
+      "observed_runtime_exit": 1,
+      "scenario_id": "baseline_route62_TEAM_normal",
+      "stderr": {
+        "bytes": 290,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_TEAM_normal/stderr.txt",
+        "sha256": "568882129fa0b6ba1ff2a8dc10b0cd94f9dcdeb00cb7d7e0a7b918be1539e504"
+      },
+      "stdout": {
+        "bytes": 264173,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_TEAM_normal/stdout.txt",
+        "sha256": "7d43463409e02db936398b3decbc7dc84f0e3bb588fbc364798ce94099c5fb48"
+      }
+    },
+    {
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "BATTLE_ROYALE",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "generated": {
+        "bytes": 267315,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_BATTLE_ROYALE_normal/generated.luau",
+        "sha256": "9fab8878ef4d57333afff647dd4334d309b610ab1e4e3fddfa696b26f02472db"
+      },
+      "not_a_candidate_runtime_gate": true,
+      "observed_result": "PASS",
+      "observed_runtime_exit": 0,
+      "scenario_id": "baseline_route62_BATTLE_ROYALE_normal",
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_BATTLE_ROYALE_normal/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 19957,
+        "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/baseline_route62_BATTLE_ROYALE_normal/stdout.txt",
+        "sha256": "807d9f62fa3ab4f504c85bbf82165e3157c56de289b635a42066dd36741b6011"
+      }
+    }
+  ],
+  "classification": "FROZEN_REUSE_INPUTS_NOT_CURRENT_PROFILE_ACCEPTANCE",
+  "corpora": [
+    {
+      "encoding": "utf-8",
+      "id": "route_cases",
+      "identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing bf89_v4 Bot vault phase route predicate, reused unchanged in review_bot.py for route62 and route58.",
+      "origin_path": "/workspace/scratch/0e8ad2e644bf/candidate_triage/prior/bf89_v4/audit_bot_vault_phase/route_cases.luau",
+      "raw_text": "-- One substantive integration scenario per mode/speed, under explicit waypoints.\nlocal function vec(v)return string.format(\"%.9f,%.9f,%.9f\",v.X,v.Y,v.Z)end\nlocal scenes=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\nlocal started=nil\nlocal function milestone(name,detail)print(\"MILESTONE\\t\"..name..\"\\t\"..detail)end\nlocal function scenario()\n advanceTo(now)\n firePrompt(scenes.ROLE_WARRIOR,\"職業選択\",player)\n firePrompt(scenes:FindFirstChild(TEST_MODE..\"_PORTAL\"),\"参加する\",player)\n advanceTo(now+12.01)\n assertCheck(#capturedSessions==1,\"one actual Host round\")\n routeSession=capturedSessions[1]\n local s=routeSession\n assertCheck(s.mode==TEST_MODE and s.rules.phase==\"ACTIVE\",\"actual mode running\")\n local botId=if TEST_MODE==\"TEAM\"then\"AI_2\"else\"AI_1\"\n local bot=s.botActors[botId]\n assertCheck(bot and bot.Parent,\"actual BotActors spawn exists\")\n local home=s.castleLocations[botId]\n local initial=bot:GetPivot().Position\n assertCheck((initial-(home+V.new(0,1.5,-34))).Magnitude<1e-8,\"unaltered actual spawn position\")\n assertCheck(bot.PrimaryPart.Size==V.new(2.1,3.2,1.6),\"actual source root dimensions\")\n local bits=s.castleModels[botId]\n local ramp=bits.model:FindFirstChild(\"CastleAccessRamp\")\n assertCheck(ramp.CFrame.UpVector.Z<-.2 and ramp.CFrame.UpVector.Y>.97,\"real Host ramp rotation preserved, never identity\")\n assertCheck(ramp.Size==V.new(11,.8,20)and ramp.CanCollide,\"actual rotated source ramp\")\n assertCheck(bits.model.StandardFoundation.CanCollide and not bits.door.CanCollide,\"actual solid foundation/open gate\")\n milestone(\"ACTUAL_SPAWN\",vec(initial)..\" rampUp=\"..vec(ramp.CFrame.UpVector))\n\n -- Consume field alternatives through actual existing human prompt/Rules paths.\n -- This isolates a vault raid without rewriting the BotActors objective logic.\n local humanFieldPickups=0\n for i=1,24 do\n  local field=s.world:FindFirstChild(\"FieldEgg_\"..i)\n  if field then\n   firePrompt(field,\"卵を拾う\",player)\n   humanFieldPickups+=1\n  end\n  assertCheck(s.rules.fieldEggTokens[\"FIELD_\"..i]==nil or s.rules.fieldEggTokens[\"FIELD_\"..i]==false,\"field token truly spent\")\n  if i%3==0 then\n   firePrompt(s.castleModels[tostring(player.UserId)].model.OwnEggDeposit,\"卵を納入\",player)\n   assertCheck(s.rules.castles[tostring(player.UserId)].heldEggs==0,\"actual human deposit drains cargo\")\n   advanceTo(now+.91)\n  end\n end\n milestone(\"FIELD_SETUP\",\"humanPromptPickups=\"..humanFieldPickups..\" alreadySpentBySourceBots=\"..(24-humanFieldPickups))\n assertCheck(Rules.auditEggConservation(s.rules).valid,\"source inventory conserved after real setup\")\n player.Character.HumanoidRootPart.CFrame=F.new(0,7,0)\n if TEST_SLOW then bot:SetAttribute(\"EGGRUMBLE_SlowUntil\",now+1000)end\n focusId=botId\n started=now\n local exited=false;local stolen=false;local deposited=false\n local lastMoved=now;local previous=initial\n local originalVault=s.rules.castles[botId].vaultEggs\n for step=1,1600 do\n  advanceTo(now+.18)\n  local at=bot:GetPivot().Position\n  if (at-previous).Magnitude>1e-6 then lastMoved=now;previous=at end\n  if not exited and at.Z<home.Z-57 then\n   exited=true;milestone(\"LEFT_OWN_CASTLE\",vec(at)..\" after=\"..(now-started))\n  end\n  for _,event in ipairs(actionEvents)do\n   if event.kind==\"STEAL\"and not stolen then\n    stolen=true\n    assertCheck(exited,\"own real ramp egress precedes raid\")\n    assertCheck(planarDistance(event.position,event.target)<=12.5+1e-8,\"actual vault action distance\")\n    assertCheck(math.abs(event.position.Y-event.target.Y)<=4+1e-8,\"actual vault action height\")\n    assertCheck(event.actualPart and event.actualPart.Parent,\"original actual vault Part\")\n    local q=RaycastParams.new();q.FilterType=Enum.RaycastFilterType.Exclude\n    q.FilterDescendantsInstances={bot,bot.Parent};q.RespectCanCollide=true\n    local from=event.position+V.new(0,.4,0)\n    local hit=workspace:Raycast(from,event.target-from,q)\n    assertCheck(hit==nil or hit.Instance==event.actualPart,\"actual geometry permits vault LOS\")\n    milestone(\"VAULT_STOLEN\",event.from..\" at=\"..vec(event.position)..\" distance=\"..planarDistance(event.position,event.target))\n   end\n   if event.kind==\"DEPOSIT\"and not deposited then\n    deposited=true\n    assertCheck(stolen,\"original theft precedes original return deposit\")\n    assertCheck(planarDistance(event.position,event.target)<=12.5+1e-8,\"actual own deposit distance\")\n    assertCheck(math.abs(event.position.Y-event.target.Y)<=4+1e-8,\"actual own deposit height\")\n    assertCheck(event.actualPart==bits.model.OwnEggDeposit,\"actual owner deposit object\")\n    local q=RaycastParams.new();q.FilterType=Enum.RaycastFilterType.Exclude\n    q.FilterDescendantsInstances={bot,bot.Parent};q.RespectCanCollide=true\n    local from=event.position+V.new(0,.4,0)\n    local hit=workspace:Raycast(from,event.target-from,q)\n    assertCheck(hit==nil or hit.Instance==event.actualPart,\"actual geometry permits own deposit LOS\")\n    milestone(\"HOME_DEPOSITED\",vec(event.position)..\" distance=\"..planarDistance(event.position,event.target))\n   end\n  end\n  if deposited then break end\n  assertCheck(now-lastMoved<22,\"focused bot stalled >22 simulated seconds with successful explicit waypoint service at=\"..vec(at)..\" goal=\"..s.botObjectives[botId])\n end\n assertCheck(exited and stolen and deposited,\"bounded actual spawn->vault->home loop completed\")\n assertCheck(s.rules.castles[botId].heldEggs==0 and s.rules.castles[botId].vaultEggs==originalVault+1,\"real Rules transfer deposited exactly stolen1\")\n assertCheck(Rules.auditEggConservation(s.rules).valid,\"actual whole-match conservation after raid\")\n assertCheck(#pathCalls>0 and #routeMoves>0,\"real Router accepted supplied path requests\")\n local expectedDT=.18*(if TEST_SLOW then .45 else 1)\n for _,move in ipairs(routeMoves)do\n  assertCheck(math.abs(move.dt-expectedDT)<1e-9,\"original BotActors slow multiplier reaches Router\")\n  assertCheck(planarDistance(move.before,move.after)<=30*expectedDT+1e-6,\"fixture pivot equals bounded source movement\")\n end\n milestone(\"FINISHED_LOOP\",\"simulatedSeconds=\"..(now-started)..\" routeTicks=\"..#routeMoves..\" paths=\"..#pathCalls)\n focusId=nil\n Players.PlayerRemoving:Fire(player);player.Parent=nil;currentPlayers={}\n advanceTo(now+2)\n assertCheck(s.rules.phase==\"ABANDONED\"and s.world.Parent==nil and #pending==0,\"real last-human cleanup and route retirement\")\n return \"actual whole Host/BotActors/Router; true ramp rotation; supplied paths; spawn/steal/deposit; \"..TEST_MODE..\" slow=\"..tostring(TEST_SLOW)\nend\nlocal ok,detail=pcall(scenario)\nprint(\"CASE\\t\"..TEST_MODE..(if TEST_SLOW then\"_slow\"else\"_normal\")..\"\\t\"..(if ok then\"PASS\"else\"FAIL\")..\"\\t\"..tostring(detail):gsub(\"\\n\",\" \"))\nif not ok and routeSession and routeSession.rules.phase==\"ACTIVE\"then\n print(\"METRIC\\tpending_at_failed_scenario_end\\t\"..#pending)\n focusId=nil\n Players.PlayerRemoving:Fire(player);player.Parent=nil;currentPlayers={}\n advanceTo(now+2)\nend\nfor i,m in ipairs(routeMoves)do\n print(\"MOVE\\t\"..i..\"\\t\"..m.at..\"\\t\"..vec(m.before)..\"\\t\"..vec(m.after)..\"\\t\"..vec(m.goal)..\"\\t\"..m.dt..\"\\t\"..m.held)\nend\nfor i,p in ipairs(pathCalls)do\n local values={};for _,point in ipairs(p.points)do table.insert(values,vec(point.Position))end\n print(\"PATH\\t\"..i..\"\\t\"..p.at..\"\\t\"..table.concat(values,\";\"))\nend\nfor name,n in pairs(queryStats)do print(\"METRIC\\tquery_\"..name..\"\\t\"..n)end\nfor name,n in pairs(queryHits)do print(\"HIT\\t\"..name..\"\\t\"..n)end\nprint(\"METRIC\\tstationary_other_router_calls\\t\"..ignoredRouterCalls)\nprint(\"METRIC\\tfocused_router_calls\\t\"..#routeMoves)\nprint(\"METRIC\\tprovided_paths\\t\"..#pathCalls)\nfinishEvidence()\nif not ok then error(detail,0)end\n"
+    },
+    {
+      "encoding": "utf-8",
+      "id": "contract_cases",
+      "identity": {
+        "bytes": 7991,
+        "sha256": "f0f1f0a6ef3e955902b839e5dcfc7d0ca27a70280a1f89a500c9dce73a1edac3"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing bf89_v4 Bot vault phase five-contract corpus, reused unchanged in review_bot.py.",
+      "origin_path": "/workspace/scratch/0e8ad2e644bf/candidate_triage/prior/bf89_v4/audit_bot_vault_phase/contract_cases.luau",
+      "raw_text": "-- Actual BotActors decisions under explicit geometric input controls.\n-- Focus movement is frozen for decision tables; no synthetic private helper.\nlocal failures=0\nlocal function contract(name,fn)\n local ok,detail=pcall(fn)\n print(\"CASE\\t\"..name..\"\\t\"..(if ok then\"PASS\"else\"FAIL\")..\"\\t\"..tostring(detail or \"\"):gsub(\"\\n\",\" \"))\n if not ok then failures+=1 end\nend\nlocal function same(a,b)return(a-b).Magnitude<1e-7 end\nlocal function vec(v)return string.format(\"%.6f,%.6f,%.6f\",v.X,v.Y,v.Z)end\nlocal scenes=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\nadvanceTo(now)\nfirePrompt(scenes.ROLE_WARRIOR,\"職業選択\",player)\nfirePrompt(scenes.TEAM_PORTAL,\"参加する\",player)\nadvanceTo(now+12.01)\nrouteSession=capturedSessions[1]\nlocal s=routeSession\nassertCheck(s and s.mode==\"TEAM\"and s.rules.phase==\"ACTIVE\",\"actual TEAM Host round\")\nlocal reserved=s.world:FindFirstChild(\"FieldEgg_24\")\nassertCheck(reserved and s.rules.fieldEggTokens.FIELD_24==true,\"one original field token reserved\")\nlocal function depositHuman()\n local human=s.rules.castles[tostring(player.UserId)]\n if human.heldEggs>0 then\n  firePrompt(s.castleModels[tostring(player.UserId)].model.OwnEggDeposit,\"卵を納入\",player)\n  assertCheck(human.heldEggs==0,\"original human deposit\")\n  advanceTo(now+.91)\n end\nend\nfor i=1,23 do\n local egg=s.world:FindFirstChild(\"FieldEgg_\"..i)\n if egg then firePrompt(egg,\"卵を拾う\",player)end\n if s.rules.castles[tostring(player.UserId)].heldEggs==3 then depositHuman()end\nend\ndepositHuman()\nplayer.Character.HumanoidRootPart.CFrame=F.new(0,7,0)\nfocusId=\"AI_2\";freezeFocusedMovement=true\nlocal bot=s.botActors[focusId]\nlocal enemyId=\"AI_1\";local enemyLoc=s.castleLocations[enemyId]\nlocal front=enemyLoc+V.new(0,3,-26);local inner=enemyLoc+V.new(0,3,-2)\nlocal function decision(dx,dz,field)\n -- Elevated avatar is a deliberate position input to prevent physical actions\n -- while inspecting planar source goal/field decisions. Not a walkability test.\n local at=enemyLoc+V.new(dx,20,dz)\n bot:PivotTo(F.new(at))\n reserved.Position=if field then at+V.new(30,0,0)else V.new(10000,10000,10000)\n local before=#routeMoves\n advanceTo(now+.181)\n assertCheck(#routeMoves>before,\"actual source BotActors tick requested a goal\")\n assertCheck(s.rules.castles[focusId].heldEggs==0,\"geometric decision probe grants no eggs\")\n local goal=routeMoves[#routeMoves].goal\n print(\"DECISION\\t\"..dx..\"\\t\"..dz..\"\\t\"..tostring(field)..\"\\t\"..s.botObjectives[focusId]..\"\\t\"..vec(goal))\n return goal\nend\n\ncontract(\"field_priority_unchanged_at_front_progress_side_and_rear\",function()\n local cases={\n  {0,-50,true},{0,-26,false},{0,-8,true},{0,-7,true},\n  {17,-10,true},{19,-10,true},{5,-10,false},\n  {0,-1,true},{0,8,true},{0,20,true},\n }\n for _,row in ipairs(cases)do\n  local goal=decision(row[1],row[2],true)\n  local expect=if row[3]then reserved.Position else inner\n  assertCheck(same(goal,expect),\"field priority changed at \"..row[1]..\",\"..row[2])\n end\n return \"10 declared front/progression/side/rear positions; same original field preference; no inventory mutation\"\nend)\n\ncontract(\"raid_goal_uses_bounded_forward_strip_without_rear_extension\",function()\n local cases={\n  {0,-44,false},{0,-43.9,true},{0,-26,true},{0,-8,true},{0,-7,true},\n  {0,-2,true},{0,-1,false},{0,8,false},{0,20,false},\n  {17.9,-4,true},{18,-4,false},{-17.9,-4,true},{-18,-4,false},\n }\n local mismatch={}\n for _,row in ipairs(cases)do\n  local goal=decision(row[1],row[2],false)\n  local expect=if row[3]then inner else front\n  if not same(goal,expect)then table.insert(mismatch,row[1]..\",\"..row[2])end\n end\n assertCheck(#mismatch==0,\"raid goal contract mismatches: \"..table.concat(mismatch,\";\"))\n return \"13 boundary/side/rear positions; front and inner goals unchanged; no admission beyond existing inner goal\"\nend)\n\ncontract(\"real_bot_death_respawn_recomputes_goal_and_clears_router\",function()\n decision(0,-7,false)\n local old=bot\n local beforeClears=#clearEvents\n old:FindFirstChildOfClass(\"Humanoid\"):TakeDamage(100)\n advanceTo(now+6.5)\n bot=s.botActors[focusId]\n assertCheck(bot~=old and old.Parent==nil and bot.Parent~=nil,\"actual source actor replacement\")\n assertCheck(same(bot:GetPivot().Position,s.castleLocations[focusId]+V.new(0,1.5,-34)),\"actual fresh spawn, no stale entered position\")\n local found=false\n for i=beforeClears+1,#clearEvents do if clearEvents[i].id==s.mode..\":\"..focusId then found=true end end\n assertCheck(found,\"original BotActors called actual Router.clear before replacement\")\n assertCheck(same(routeMoves[#routeMoves].goal,front),\"new actor requests front from actual home, not old inner goal\")\n assertCheck(Rules.auditEggConservation(s.rules).valid,\"death and replacement conserve stock\")\n return \"actual death -> six-second source rebirth -> new Model/source spawn; Router clear observed; goal recomputed\"\nend)\n\ncontract(\"missing_vault_and_real_castle_fall_cannot_retain_old_target\",function()\n reserved.Position=V.new(10000,10000,10000)\n local victim=s.rules.castles[enemyId]\n local vault=s.castleModels[enemyId].model.EggVault\n local oldVault=victim.vaultEggs\n vault:Destroy()\n bot:PivotTo(F.new(enemyLoc+V.new(0,1.5,-5)))\n advanceTo(now+.181)\n assertCheck(victim.vaultEggs==oldVault and s.rules.castles[focusId].heldEggs==0,\"missing actual vault cannot transfer eggs\")\n -- Move only the decision probe out of physical combat; destroy the target\n -- through actual paced human siege callbacks, not an edited alive/HP field.\n bot:PivotTo(F.new(enemyLoc+V.new(0,20,-7)))\n local hits=0\n while victim.alive and hits<30 do\n  firePrompt(s.castleModels[enemyId].door,\"攻城攻撃\",player)\n  hits+=1;advanceTo(now+3)\n end\n assertCheck(not victim.alive and s.rules.phase==\"ACTIVE\",\"real target falls while other enemies keep round active\")\n -- Consume newly released original tokens so they do not preempt this target\n -- decision. No field authority is replaced by the observer.\n for _,item in ipairs(s.world:GetChildren())do\n  if item:IsA(\"BasePart\")and item.Name:match(\"^ReleasedEgg_\")then\n   firePrompt(item,\"拾う\",player)\n   if s.rules.castles[tostring(player.UserId)].heldEggs==3 then depositHuman()end\n  end\n end\n depositHuman();player.Character.HumanoidRootPart.CFrame=F.new(0,7,0)\n advanceTo(now+.181)\n local goal=routeMoves[#routeMoves].goal\n assertCheck(not same(goal,front)and not same(goal,inner),\"eliminated enemy has no old front/inner target authority\")\n local valid=false\n for id,c in pairs(s.rules.castles)do\n  if id~=focusId and c.alive and c.team~=s.rules.castles[focusId].team then\n   local loc=s.castleLocations[id]\n   if same(goal,loc+V.new(0,3,-26))or same(goal,loc+V.new(0,3,-2))then valid=true end\n  end\n end\n assertCheck(valid and s.botObjectives[focusId]==\"STEAL\",\"source desiredTarget chose a different living enemy\")\n assertCheck(Rules.auditEggConservation(s.rules).valid,\"source castle fall/released pickup conserve stock\")\n print(\"TARGET_CHANGED\\t\"..enemyId..\"\\t\"..vec(goal)..\"\\t\"..hits)\n return \"missing Part blocks action; real paced siege eliminates old target; current source target recomputed without a stale latch\"\nend)\n\ncontract(\"last_human_leave_retires_source_loop_and_route\",function()\n local before=#clearEvents\n Players.PlayerRemoving:Fire(player);player.Parent=nil;currentPlayers={}\n advanceTo(now+2)\n assertCheck(s.rules.phase==\"ABANDONED\"and s.world.Parent==nil and #pending==0,\"original last-human close retires round\")\n local found=false\n for i=before+1,#clearEvents do if clearEvents[i].id==s.mode..\":\"..focusId then found=true end end\n assertCheck(found,\"source bot loop clears focused Router on shutdown\")\n local calls=#routeMoves\n advanceTo(now+5)\n assertCheck(#routeMoves==calls,\"no stale source goal after round retirement\")\n return \"actual close and source-loop Router.clear; no new private phase state or late navigation\"\nend)\nprint(\"METRIC\\tdecision_and_lifecycle_route_calls\\t\"..#routeMoves)\nprint(\"METRIC\\trouter_clear_calls\\t\"..#clearEvents)\nfinishEvidence()\nif failures>0 then error(\"contract failures=\"..failures,0)end\n"
+    },
+    {
+      "encoding": "utf-8",
+      "id": "common",
+      "identity": {
+        "bytes": 4063,
+        "sha256": "7e8402b9c5d05c959367bf64a8f57fbc943cbf892d42fac0281589d77aa689e0"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing 12d2c57daf16 formal-fb5 Bot QA shared fixture/control text; precedes actors, eggs, and parallel with one literal LF separator.",
+      "origin_path": "/workspace/scratch/12d2c57daf16/p0_bot_qa/cases/common.luau",
+      "raw_text": "-- New fixture-only controls around the existing complete Host/Bot/Rules bodies.\n-- Poses and service timing are explicit inputs. They are not engine play evidence.\nlocal contractChecks={}\nlocal damageObservations={}\nlocal fixtureDamage=methods.TakeDamage\nfunction methods:TakeDamage(amount)\n local _,line=debug.info(2,\"sl\")\n local row={at=now,target=self.Parent and self.Parent.Name or \"none\",amount=amount,\n  before=self.Health,sourceLine=line}\n table.insert(damageObservations,row)\n fixtureDamage(self,amount)\n row.after=self.Health\nend\nlocal function check(name,value,detail)\n table.insert(contractChecks,{name=name,pass=value,detail=tostring(detail)})\n print(\"CHECK\\t\"..name..\"\\t\"..(if value then \"PASS\" else \"FAIL\")..\"\\t\"..tostring(detail))\nend\nlocal function makeHuman(name,id)\n local p=Instance.new(\"Player\");p.Name=name;p.UserId=id;p.Parent=Players\n local gui=Instance.new(\"PlayerGui\");gui.Parent=p\n local backpack=Instance.new(\"Backpack\");backpack.Parent=p\n local ch=Instance.new(\"Model\");ch.Name=name..\"Avatar\";ch.Parent=workspace\n local h=Instance.new(\"Humanoid\");h.Parent=ch\n local r=Instance.new(\"Part\");r.Name=\"HumanoidRootPart\";r.Parent=ch\n r.CFrame=F.new(0,7,10)\n ch.PrimaryPart=r;p.Character=ch\n table.insert(currentPlayers,p)\n Players.PlayerAdded:Fire(p)\n return p,h,r\nend\nlocal function leave(p)\n if p.Parent==Players then\n  Players.PlayerRemoving:Fire(p)\n  p.Parent=nil\n  for i=#currentPlayers,1,-1 do if currentPlayers[i]==p then table.remove(currentPlayers,i)end end\n end\nend\nlocal function parkHumans()\n for i,p in ipairs(currentPlayers)do\n  if p.Character then p.Character:PivotTo(F.new(0,7,10*i))end\n end\nend\nlocal function parkBots(s)\n for id,b in pairs(s.botActors)do\n  if b.Parent then b:PivotTo(F.new(s.castleLocations[id]+V.new(0,1.5,-34)))end\n end\nend\nlocal function bootstrap(mode,people)\n advanceTo(now)\n local scenes=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n for _,p in ipairs(people)do\n  firePrompt(scenes.ROLE_WARRIOR,\"職業選択\",p)\n  firePrompt(scenes:FindFirstChild(mode..\"_PORTAL\"),\"参加する\",p)\n end\n advanceTo(now+12.01)\n local s=nil\n for _,session in ipairs(capturedSessions)do\n  if session.mode==mode and session.rules.phase==\"ACTIVE\"then s=session end\n end\n assertCheck(s~=nil,\"actual full Host started requested mode\")\n assertCheck(stubCalls[\"BotActors.start\"]==nil,\"actual BotActors replaced the existing stub\")\n assertCheck(stubCalls[\"Invul.attach\"]==nil,\"actual InvulRuntime replaced the existing stub\")\n routeSession=s;freezeFocusedMovement=true\n parkHumans();parkBots(s)\n advanceTo(now+4.1)\n return s\nend\nlocal function stage(s,botId)\n routeSession=s;focusId=botId;freezeFocusedMovement=true\n parkHumans();parkBots(s)\n advanceTo(now+1.3)\n local field=s.world:FindFirstChild(\"TacticalBattlefield\")\n assertCheck(field~=nil,\"actual Host battlefield exists\")\n local at=field.Position+V.new(70,5,80)\n s.botActors[botId]:PivotTo(F.new(at))\n return at\nend\nlocal function tick()advanceTo(now+.181)end\nlocal function finalize(name,scenario)\n local ok,detail=pcall(scenario)\n focusId=nil\n for _,p in ipairs(table.clone(currentPlayers))do leave(p)end\n local cleanupOk,cleanupError=pcall(function()advanceTo(now+8)end)\n check(\"all_original_host_tasks_retired\",cleanupOk and #pending==0,cleanupError or #pending)\n check(\"no_swallowed_runtime_warnings\",#warnings==0,#warnings)\n local accepted=ok and cleanupOk\n for _,row in ipairs(contractChecks)do accepted=accepted and row.pass end\n print(\"CASE\\t\"..name..\"\\t\"..(if accepted then \"PASS\"else \"FAIL\")..\"\\t\"..tostring(detail or \"\"):gsub(\"\\n\",\" \"))\n print(\"METRIC\\tcontract_checks\\t\"..#contractChecks)\n print(\"METRIC\\tpending_after_cleanup\\t\"..#pending)\n print(\"METRIC\\tfocused_decisions\\t\"..#routeMoves)\n for i,row in ipairs(damageObservations)do\n  print(\"DAMAGE\\t\"..i..\"\\t\"..row.at..\"\\t\"..row.target..\"\\t\"..row.amount..\"\\t\"..row.before..\"\\t\"..row.after..\"\\t\"..row.sourceLine)\n end\n for _,warning in ipairs(warnings)do print(\"WARNING\\t\"..warning)end\n if not accepted then error(detail or \"one or more substantive contract checks failed\",0)end\nend\n"
+    },
+    {
+      "encoding": "utf-8",
+      "id": "actors",
+      "identity": {
+        "bytes": 4408,
+        "sha256": "4373f5d6b24ddba6f72cb10e87484a51ac2dbe85d8a9ac7d49bcb71d993f9fde"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing 12d2c57daf16 formal-fb5 Bot QA actor eligibility/LOS/range/cooldown corpus; no new predicates authored for this manifest.",
+      "origin_path": "/workspace/scratch/12d2c57daf16/p0_bot_qa/cases/actors.luau",
+      "raw_text": "-- Contract: original BotActors targets living current-match enemies, obeys\n-- TEAM affiliation, <11-stud range, LOS, and the shared 1.15-second melee gate.\n-- Root poses deliberately isolate eligibility; Router movement is frozen.\nfinalize(\"FORMAL_BOT_CURRENT_HUMAN_AND_AI_TARGETS\",function()\n local second,secondHumanoid=makeHuman(\"BotTargetPeer\",43)\n local s=bootstrap(\"TEAM\",{player,second})\n assertCheck(s.isCurrentHuman(player) and s.isCurrentHuman(second),\"both actual current humans\")\n local home=s.rules.castles[tostring(player.UserId)]\n local other=s.rules.castles[tostring(second.UserId)]\n assertCheck(home.team~=other.team,\"actual balanced TEAM roster gives opposing human teams\")\n local botId=nil;local enemyBotId=nil;local allyBotId=nil\n for id,b in pairs(s.botActors)do\n  local c=s.rules.castles[id]\n  if c.team==home.team then\n   if not botId then botId=id elseif not allyBotId then allyBotId=id end\n  elseif not enemyBotId then enemyBotId=id end\n end\n assertCheck(botId and enemyBotId and allyBotId,\"source spawned both allied and enemy AI\")\n local bot=s.botActors[botId]\n local enemyBot=s.botActors[enemyBotId]\n local enemyHum=enemyBot:FindFirstChildOfClass(\"Humanoid\")\n local allyBot=s.botActors[allyBotId]\n local allyHum=allyBot:FindFirstChildOfClass(\"Humanoid\")\n local at=stage(s,botId)\n player.Character:PivotTo(F.new(at+V.new(0,0,3)))\n second.Character:PivotTo(F.new(at+V.new(0,0,7)))\n local friendBefore,enemyBefore=humanoid.Health,secondHumanoid.Health\n tick()\n check(\"nearer_allied_human_is_skipped\",humanoid.Health==friendBefore,humanoid.Health-friendBefore)\n check(\"living_current_enemy_human_receives_one_real_hit\",secondHumanoid.Health==enemyBefore-13,enemyBefore-secondHumanoid.Health)\n local cooldownHP=secondHumanoid.Health\n advanceTo(now+.36)\n check(\"shared_melee_cooldown_blocks_repeat\",secondHumanoid.Health==cooldownHP,cooldownHP-secondHumanoid.Health)\n\n at=stage(s,botId)\n second.Character:PivotTo(F.new(at+V.new(0,0,6)))\n local wall=Instance.new(\"Part\");wall.Name=\"BotMeleeCoverInput\";wall.Size=V.new(8,9,.5)\n wall.CFrame=F.new(at+V.new(0,2,3));wall.CanCollide=true;wall.Parent=s.world\n enemyBefore=secondHumanoid.Health\n tick()\n check(\"collidable_wall_blocks_live_enemy_human\",secondHumanoid.Health==enemyBefore,enemyBefore-secondHumanoid.Health)\n wall:Destroy()\n\n at=stage(s,botId)\n second.Character:PivotTo(F.new(at+V.new(0,0,11)))\n enemyBefore=secondHumanoid.Health;tick()\n check(\"eleven_stud_boundary_rejects_human\",secondHumanoid.Health==enemyBefore,enemyBefore-secondHumanoid.Health)\n at=stage(s,botId)\n second.Character:PivotTo(F.new(at+V.new(0,0,10.9)))\n enemyBefore=secondHumanoid.Health;tick()\n check(\"inside_eleven_studs_accepts_human\",secondHumanoid.Health==enemyBefore-13,enemyBefore-secondHumanoid.Health)\n\n at=stage(s,botId)\n player.Character:PivotTo(F.new(at+V.new(0,0,3)))\n allyBot:PivotTo(F.new(at+V.new(0,0,5)))\n local allyBefore=allyHum.Health;friendBefore=humanoid.Health\n tick()\n check(\"allied_bot_and_human_not_damaged\",allyHum.Health==allyBefore and humanoid.Health==friendBefore,\n  \"AI=\"..(allyBefore-allyHum.Health)..\", human=\"..(friendBefore-humanoid.Health))\n\n at=stage(s,botId)\n enemyBot:PivotTo(F.new(at+V.new(0,0,6)))\n enemyBefore=enemyHum.Health;tick()\n check(\"living_enemy_bot_receives_one_real_hit\",enemyHum.Health==enemyBefore-13,enemyBefore-enemyHum.Health)\n at=stage(s,botId)\n enemyBot:PivotTo(F.new(at+V.new(0,0,6)))\n wall=Instance.new(\"Part\");wall.Name=\"BotAICoverInput\";wall.Size=V.new(8,9,.5)\n wall.CFrame=F.new(at+V.new(0,2,3));wall.CanCollide=true;wall.Parent=s.world\n enemyBefore=enemyHum.Health;tick()\n check(\"collidable_wall_blocks_enemy_bot\",enemyHum.Health==enemyBefore,enemyBefore-enemyHum.Health)\n wall:Destroy()\n\n at=stage(s,botId)\n second.Character:PivotTo(F.new(at+V.new(0,0,6)))\n secondHumanoid:TakeDamage(secondHumanoid.Health)\n local callsBefore=#damageObservations\n tick()\n local botHitDead=false\n for i=callsBefore+1,#damageObservations do\n  if damageObservations[i].target==second.Character.Name then botHitDead=true end\n end\n check(\"dead_enemy_avatar_is_not_struck\",not botHitDead,\"extra damage calls=\"..(#damageObservations-callsBefore))\n check(\"actual_rules_conservation_during_target_probes\",Rules.auditEggConservation(s.rules).valid,\"unchanged inventory authority\")\n return \"16 complete formal source bodies; actual Host membership, BotActors target loop and Invul filter; posed LOS/range controls\"\nend)\n"
+    },
+    {
+      "encoding": "utf-8",
+      "id": "eggs",
+      "identity": {
+        "bytes": 6175,
+        "sha256": "c1bb44f91b08a4b006f56e6af7006eed799cedfd8a0f70879abf1aaf446bcde8"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing 12d2c57daf16 formal-fb5 Bot QA egg-custody/death/respawn corpus; no new predicates authored for this manifest.",
+      "origin_path": "/workspace/scratch/12d2c57daf16/p0_bot_qa/cases/eggs.luau",
+      "raw_text": "-- Contract: only an actual nearby unblocked live objective can transfer an egg.\n-- Token pickup, deposit, theft, death drop and rebirth remain actual Host/Rules.\n-- Explicit bot poses isolate action boundaries; they do not prove route traversal.\nfinalize(\"FORMAL_BOT_EGG_CUSTODY_AND_DEATH\",function()\n local s=bootstrap(\"TEAM\",{player})\n local botId=\"AI_2\";local enemyId=\"AI_1\"\n local bot=s.botActors[botId];local me=s.rules.castles[botId]\n local enemy=s.rules.castles[enemyId]\n assertCheck(bot and enemy and me.team~=enemy.team,\"actual opposed castle pair\")\n local reserved=s.world:FindFirstChild(\"FieldEgg_24\")\n assertCheck(reserved and s.rules.fieldEggTokens.FIELD_24==true,\"reserve an existing world field token\")\n local function depositHuman()\n  local state=s.rules.castles[tostring(player.UserId)]\n  if state.heldEggs>0 then\n   firePrompt(s.castleModels[state.id].model.OwnEggDeposit,\"卵を納入\",player)\n   assertCheck(state.heldEggs==0,\"actual setup human deposit\")\n   parkHumans();advanceTo(now+.91)\n  end\n end\n for i=1,23 do\n  local egg=s.world:FindFirstChild(\"FieldEgg_\"..i)\n  if egg then firePrompt(egg,\"卵を拾う\",player)end\n  if s.rules.castles[tostring(player.UserId)].heldEggs==3 then depositHuman()end\n end\n depositHuman();parkHumans()\n routeSession=s;focusId=botId;freezeFocusedMovement=true\n assertCheck(me.heldEggs==0,\"focused bot begins empty under actual source\")\n local fieldAt=reserved.Position\n bot:PivotTo(F.new(fieldAt+V.new(12.51,0,0)));tick()\n check(\"field_pickup_outside_action_radius_rejected\",me.heldEggs==0 and s.rules.fieldEggTokens.FIELD_24==true,s.botObjectives[botId])\n bot:PivotTo(F.new(fieldAt+V.new(0,0,6)))\n local wall=Instance.new(\"Part\");wall.Name=\"BotEggCoverInput\";wall.Size=V.new(8,9,.5)\n wall.CFrame=F.new(fieldAt+V.new(0,2,3));wall.CanCollide=true;wall.Parent=s.world\n tick()\n check(\"field_pickup_through_wall_rejected\",me.heldEggs==0 and s.rules.fieldEggTokens.FIELD_24==true,me.heldEggs)\n wall:Destroy()\n bot:PivotTo(F.new(fieldAt+V.new(0,4.01,0)));tick()\n check(\"field_pickup_above_height_limit_rejected\",me.heldEggs==0 and s.rules.fieldEggTokens.FIELD_24==true,me.heldEggs)\n bot:PivotTo(F.new(fieldAt+V.new(0,0,3)));tick()\n check(\"one_real_field_token_enters_bot_custody\",me.heldEggs==1 and s.rules.fieldEggTokens.FIELD_24~=true and reserved.Parent==nil,\n  \"held=\"..me.heldEggs..\", token=\"..tostring(s.rules.fieldEggTokens.FIELD_24))\n assertCheck(me.heldEggs==1,\"positive field pickup required before return tests\")\n check(\"field_pickup_preserves_whole_match_stock\",Rules.auditEggConservation(s.rules).valid,\"actual Rules audit\")\n\n local deposit=s.castleLocations[botId]+V.new(-16,3,-18)\n local homeStock=me.vaultEggs\n bot:PivotTo(F.new(deposit+V.new(12.51,0,0)));tick()\n check(\"distant_own_deposit_rejected\",me.heldEggs==1 and me.vaultEggs==homeStock,me.heldEggs)\n bot:PivotTo(F.new(deposit+V.new(0,0,-6)))\n wall=Instance.new(\"Part\");wall.Name=\"BotDepositCoverInput\";wall.Size=V.new(8,9,.5)\n wall.CFrame=F.new(deposit+V.new(0,2,-3));wall.CanCollide=true;wall.Parent=s.world\n tick()\n check(\"own_deposit_through_wall_rejected\",me.heldEggs==1 and me.vaultEggs==homeStock,me.heldEggs)\n wall:Destroy()\n bot:PivotTo(F.new(deposit+V.new(0,0,-3)));tick()\n check(\"real_return_priority_deposits_exact_one\",s.botObjectives[botId]==\"RETURN\" and me.heldEggs==0 and me.vaultEggs==homeStock+1,\n  \"held=\"..me.heldEggs..\", vaultDelta=\"..(me.vaultEggs-homeStock))\n assertCheck(me.heldEggs==0,\"positive own deposit required before theft\")\n\n local vault=s.castleModels[enemyId].model.EggVault\n local vaultParent=vault.Parent\n local target=s.castleLocations[enemyId]+V.new(0,3,6)\n local vaultStock=enemy.vaultEggs\n bot:PivotTo(F.new(target+V.new(0,0,-12.51)));tick()\n check(\"distant_enemy_vault_rejected\",me.heldEggs==0 and enemy.vaultEggs==vaultStock,me.heldEggs)\n bot:PivotTo(F.new(target+V.new(0,0,-11)))\n vault.Parent=nil;tick()\n check(\"missing_live_vault_rejected\",me.heldEggs==0 and enemy.vaultEggs==vaultStock,me.heldEggs)\n vault.Parent=vaultParent\n wall=Instance.new(\"Part\");wall.Name=\"BotVaultCoverInput\";wall.Size=V.new(8,9,.5)\n wall.CFrame=F.new(target+V.new(0,2,-5));wall.CanCollide=true;wall.Parent=s.world\n tick()\n check(\"enemy_vault_through_wall_rejected\",me.heldEggs==0 and enemy.vaultEggs==vaultStock,me.heldEggs)\n wall:Destroy();tick()\n check(\"real_vault_transfer_moves_exact_one_egg\",me.heldEggs==1 and enemy.vaultEggs==vaultStock-1,\n  \"held=\"..me.heldEggs..\", vaultDelta=\"..(enemy.vaultEggs-vaultStock))\n assertCheck(me.heldEggs==1,\"source theft required before death custody test\")\n check(\"theft_preserves_whole_match_stock\",Rules.auditEggConservation(s.rules).valid,\"actual Rules audit\")\n\n local tokensBefore={}\n for id,active in pairs(s.rules.fieldEggTokens)do if active then tokensBefore[id]=true end end\n local old=bot;local oldHum=old:FindFirstChildOfClass(\"Humanoid\")\n local clearBefore=#clearEvents\n oldHum:TakeDamage(oldHum.Health);tick()\n local dropped={}\n for id,active in pairs(s.rules.fieldEggTokens)do\n  if active and not tokensBefore[id]then table.insert(dropped,id)end\n end\n check(\"death_drops_one_actual_carried_token\",me.heldEggs==0 and #dropped==1,\n  \"held=\"..me.heldEggs..\", newTokens=\"..#dropped)\n if #dropped==1 then\n  local part=s.world:FindFirstChild(\"ReleasedEgg_\"..dropped[1])\n  check(\"death_drop_has_real_world_part\",part~=nil and part.Parent==s.world,dropped[1])\n end\n advanceTo(now+6.3)\n bot=s.botActors[botId]\n check(\"source_rebirth_replaces_dead_model\",bot~=old and old.Parent==nil and bot.Parent~=nil,\n  \"replaced=\"..tostring(bot~=old))\n local sawClear=false\n for i=clearBefore+1,#clearEvents do if clearEvents[i].id==\"TEAM:\"..botId then sawClear=true end end\n check(\"source_rebirth_clears_old_router\",sawClear,#clearEvents-clearBefore)\n local activeDrops=0\n for _,id in ipairs(dropped)do if s.rules.fieldEggTokens[id]==true then activeDrops+=1 end end\n check(\"death_does_not_duplicate_or_retain_carried_egg\",me.heldEggs==0 and activeDrops==1 and Rules.auditEggConservation(s.rules).valid,\n  \"held=\"..me.heldEggs..\", activeDropTokens=\"..activeDrops)\n return \"actual field/vault/own-deposit Rules transitions and Host death-drop; original distance, height, LOS and rebirth guards\"\nend)\n"
+    },
+    {
+      "encoding": "utf-8",
+      "id": "parallel",
+      "identity": {
+        "bytes": 3082,
+        "sha256": "c7c393e67840fd92dde5a6ad300b7d53f5345dcf2b7f4470e3d51294d9544fb2"
+      },
+      "normalization": "NONE: preserve all whitespace, comments, predicates, names, assertion values, and trailing newlines.",
+      "origin": "Existing 12d2c57daf16 formal-fb5 Bot QA concurrent TEAM/BR and retirement corpus; no new predicates authored for this manifest.",
+      "origin_path": "/workspace/scratch/12d2c57daf16/p0_bot_qa/cases/parallel.luau",
+      "raw_text": "-- Contract: actual concurrent TEAM/BR sessions never grant target membership\n-- across modes; retiring TEAM does not retire BR or create late takeover AI.\n-- Posed actors isolate membership. Shared Router callback ownership is tested\n-- separately with the real Router and an explicitly yielding path service.\nfinalize(\"FORMAL_BOT_CONCURRENT_MODE_AND_RETIREMENT\",function()\n local peer,peerHum=makeHuman(\"ParallelBRHuman\",43)\n local team=bootstrap(\"TEAM\",{player})\n local br=bootstrap(\"BATTLE_ROYALE\",{peer})\n assertCheck(#capturedSessions==2,\"two actual Host sessions\")\n assertCheck(team.isCurrentHuman(player) and not team.isCurrentHuman(peer),\"TEAM membership from Host\")\n assertCheck(br.isCurrentHuman(peer) and not br.isCurrentHuman(player),\"BR membership from Host\")\n local teamId=\"AI_1\";local brId=\"AI_1\"\n local teamBot=team.botActors[teamId];local brBot=br.botActors[brId]\n assertCheck(teamBot and brBot and teamBot~=brBot,\"same roster id has distinct mode actor instances\")\n local at=stage(team,teamId)\n peer.Character:PivotTo(F.new(at+V.new(0,0,6)))\n local before=peerHum.Health;tick()\n check(\"TEAM_bot_rejects_live_BR_human_at_melee_range\",peerHum.Health==before,before-peerHum.Health)\n\n parkBots(team)\n at=stage(br,brId)\n player.Character:PivotTo(F.new(at+V.new(0,0,6)))\n before=humanoid.Health;tick()\n check(\"BR_bot_rejects_live_TEAM_human_at_melee_range\",humanoid.Health==before,before-humanoid.Health)\n at=stage(br,brId)\n peer.Character:PivotTo(F.new(at+V.new(0,0,6)))\n before=peerHum.Health;tick()\n check(\"BR_bot_accepts_its_current_enemy_human\",peerHum.Health==before-13,before-peerHum.Health)\n parkHumans();parkBots(team);parkBots(br)\n\n routeSession=br;focusId=brId;freezeFocusedMovement=true\n local clearBefore=#clearEvents;local brDecisions=#routeMoves\n leave(player);advanceTo(now+2)\n check(\"last_TEAM_human_departure_retires_TEAM_only\",team.rules.phase==\"ABANDONED\" and team.world.Parent==nil\n  and br.rules.phase==\"ACTIVE\" and br.world.Parent~=nil,\"TEAM=\"..team.rules.phase..\", BR=\"..br.rules.phase)\n local teamClears,brClears=0,0\n for i=clearBefore+1,#clearEvents do\n  if clearEvents[i].id:sub(1,5)==\"TEAM:\"then teamClears+=1 end\n  if clearEvents[i].id:sub(1,13)==\"BATTLE_ROYALE:\"then brClears+=1 end\n end\n check(\"retiring_TEAM_clears_only_TEAM_router_keys\",teamClears>0 and brClears==0,\n  \"TEAM=\"..teamClears..\", BR=\"..brClears)\n check(\"BR_source_loop_continues_after_TEAM_retirement\",#routeMoves>brDecisions,#routeMoves-brDecisions)\n local actorCount=0\n for _ in pairs(team.botActors)do actorCount+=1 end\n local result=team.takeover(tostring(player.UserId))\n local afterCount=0\n for _ in pairs(team.botActors)do afterCount+=1 end\n check(\"retired_TEAM_rejects_late_takeover\",result==false and afterCount==actorCount,tostring(result))\n check(\"both_original_rule_ledgers_conserved\",Rules.auditEggConservation(team.rules).valid and Rules.auditEggConservation(br.rules).valid,\n  \"distinct actual session ledgers\")\n return \"two real Host modes, same AI id with distinct models, cross-mode human rejection, live BR continuation and terminal takeover fence\"\nend)\n"
+    }
+  ],
+  "engine_boundary": {
+    "declared_limits": [
+      "Explicit waypoint service, not engine navmesh; same-XZ waypoint deduplication may omit a differing-Y point.",
+      "Original OBB/SAT support-vertex approximation over actual Host parts; no real physics/ramp contact.",
+      "Only focused bot navigation advances; other bots remain at original declared Router observation boundary.",
+      "Slow input directly keeps original status attribute active; not a skill-duration acceptance.",
+      "Combat/Boss/Swarm/Regen/Guardian and other old declared stubs remain; not full69/current whole profile.",
+      "Formal full BotActors/Router/Rules/Host execute. Unrelated Combat/Swarm/Guardian/Regen remain preexisting stubs.",
+      "Posed contract cases freeze navigation at the preexisting Router observer boundary and explicitly position actual source models.",
+      "Source-originated damage/egg transitions are observed; no engine physics, navmesh, network, rendering or Android claim."
+    ],
+    "existing_native28_suites": "Must remain byte-identical at program/case/predicate level; this separate Bot16 corpus is not part of the original two suites.",
+    "original_stub_boundaries": [
+      "EGGRUMBLE_CastleGuardianRuntime",
+      "EGGRUMBLE_FieldItemPickups",
+      "EGGRUMBLE_NaturalRegen",
+      "EGGRUMBLE_NeutralStoneGiant",
+      "EGGRUMBLE_RaidItemIntake",
+      "EGGRUMBLE_SevenRoleCombat",
+      "EGGRUMBLE_SwarmCombat",
+      "GQ802_StageManifestPolicy",
+      "GQ802_StageTileBlueprintPolicy",
+      "GQ802_StageTileVisualRenderer"
+    ],
+    "scope": "Full actual Host/Rules/BotActors/Router16 bodies in a declared Native API fixture; not all69 runtime execution."
+  },
+  "execution_truth": "Inputs preserve original predicates byte-exact. This package alone is not Native execution, a current-HUD/current-HEAD pass, a CI attestation, a scope grant or formal RC admission.",
+  "modules_in_load_order": [
+    {
+      "historical_baseline": {
+        "bytes": 16609,
+        "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+      },
+      "historical_candidate": {
+        "bytes": 16609,
+        "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+      },
+      "module": "CastleMatchRules",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_CastleMatchRules@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 9786,
+        "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+      },
+      "historical_candidate": {
+        "bytes": 9786,
+        "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+      },
+      "module": "CastleSiegeGuardianPolicy",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_CastleSiegeGuardianPolicy@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 5861,
+        "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+      },
+      "historical_candidate": {
+        "bytes": 5861,
+        "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+      },
+      "module": "CastleSiegeBridge",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_CastleSiegeBridge@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 3612,
+        "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+      },
+      "historical_candidate": {
+        "bytes": 3612,
+        "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+      },
+      "module": "InteractionGuard",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_InteractionGuard@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 6729,
+        "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+      },
+      "historical_candidate": {
+        "bytes": 6729,
+        "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+      },
+      "module": "BasicMobilityPolicy",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_BasicMobilityPolicy@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 7083,
+        "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+      },
+      "historical_candidate": {
+        "bytes": 7083,
+        "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+      },
+      "module": "RoundReplay",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_RoundReplay@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 8030,
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      },
+      "historical_candidate": {
+        "bytes": 8030,
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      },
+      "module": "ScoreBalance",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_ScoreBalance@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 7410,
+        "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+      },
+      "historical_candidate": {
+        "bytes": 7410,
+        "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+      },
+      "module": "MatchResultService",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_MatchResultService@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 776,
+        "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+      },
+      "historical_candidate": {
+        "bytes": 776,
+        "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+      },
+      "module": "BossSessionFence",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_BossSessionFence@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 3174,
+        "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+      },
+      "historical_candidate": {
+        "bytes": 3174,
+        "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+      },
+      "module": "DualModeNeutralBudget",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_DualModeNeutralBudget@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 12330,
+        "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+      },
+      "historical_candidate": {
+        "bytes": 12330,
+        "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+      },
+      "module": "InvulnerabilityPolicy",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_InvulnerabilityPolicy@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 7498,
+        "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+      },
+      "historical_candidate": {
+        "bytes": 7498,
+        "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+      },
+      "module": "InvulCounterNeutral",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_InvulCounterNeutral@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 11264,
+        "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+      },
+      "historical_candidate": {
+        "bytes": 11264,
+        "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+      },
+      "module": "InvulRuntime",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_InvulRuntime@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 7614,
+        "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+      },
+      "historical_candidate": {
+        "bytes": 7614,
+        "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+      },
+      "module": "BotPathRouter",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_BotPathRouter.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_BotPathRouter@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 19070,
+        "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+      },
+      "historical_candidate": {
+        "bytes": 19625,
+        "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+      },
+      "module": "BotActors",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_BotActors.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_BotActors@@"
+    },
+    {
+      "historical_baseline": {
+        "bytes": 94590,
+        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+      },
+      "historical_candidate": {
+        "bytes": 94590,
+        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+      },
+      "module": "Host",
+      "relative_source_path": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+      "token": "@@EGGRUMBLE_FULL_SOURCE_Host@@"
+    }
+  ],
+  "origin_manifest": {
+    "bytes": 106991,
+    "path": "/workspace/scratch/0a2ba23f0733/runtime_review/portable_reference/BOT16_NINE_SCENARIO_REUSE_MANIFEST.json",
+    "sha256": "3de393c71970ee546826819fa0da1bb12699fcc53787daf7e637a348518593c8"
+  },
+  "original_wrapper_interpretation": {
+    "correct_interpretation": "TEAM62 baseline RED (exit1); BR62 baseline GREEN (exit0); all nine candidates GREEN.",
+    "error": "Legacy wrapper required every baseline to fail; baseline BR62 is an actual positive control. Its correct runtime exit 0 makes the old aggregate predicate false.",
+    "preservation": "Original wrapper, original receipt, baseline raw logs and generated programs are unchanged. Do not force BR to fail or label it a regression.",
+    "receipt": {
+      "bytes": 38626,
+      "path": "/workspace/scratch/0a2ba23f0733/runtime_review/replay01/REVIEW_RECEIPT.json",
+      "sha256": "83e8c7b8d359144e6c702342d11047f01908bc952f3ee1d78a9d531ada5fa537"
+    },
+    "recorded_baseline_red_reproduced": false,
+    "recorded_candidate_green": true
+  },
+  "provenance": {
+    "author_or_formal_review_registration_created": false,
+    "existing_candidate_scope_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077732218",
+    "portable_reference_review": {
+      "bytes": 6888,
+      "path": "/workspace/scratch/0a2ba23f0733/runtime_review/portable_reference/PORTABILITY_REVIEW.json",
+      "sha256": "12e1f7d0fce4c1f82df3cf166894a572db89e4408d3f13f82259b0de664752b1"
+    },
+    "previous_formal_qa_builder": {
+      "bytes": 7681,
+      "path": "/workspace/scratch/12d2c57daf16/p0_bot_qa/run.py",
+      "sha256": "ffe5b4d5b04656cac884b65d7f1f014ebcbfbe3637dcf278a61c261bcda61a7b"
+    },
+    "review_builder": {
+      "bytes": 8568,
+      "path": "/workspace/scratch/0a2ba23f0733/runtime_review/review_bot.py",
+      "sha256": "dd7bfc8075313eb874ee3b9bb2e2ac81a5d293fcdae9c0011e5e13fb2675b0c6"
+    }
+  },
+  "scenarios": [
+    {
+      "case_assembly_identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "route_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEST_MODE selects one real Host session; actual source Bot spawn, vault theft, own deposit, and last-human cleanup.",
+        "configured_approach": "Only the explicit supplied waypoint approach offset varies (62 or 58).",
+        "movement": "Focused actual Router runs with fixture-supplied waypoints and OBB/SAT queries over actual Host geometry. Other bots remain at the original Router observation boundary.",
+        "not_proven": [
+          "Roblox navmesh",
+          "physical ramp contact",
+          "network replication",
+          "rendering",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ],
+        "slow": "TEST_SLOW=true keeps the original slow status attribute active as a declared fixture input; this is not a skill-duration or real-device movement test."
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "TEAM_normal"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_route62_TEAM_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "route_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "true"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEST_MODE selects one real Host session; actual source Bot spawn, vault theft, own deposit, and last-human cleanup.",
+        "configured_approach": "Only the explicit supplied waypoint approach offset varies (62 or 58).",
+        "movement": "Focused actual Router runs with fixture-supplied waypoints and OBB/SAT queries over actual Host geometry. Other bots remain at the original Router observation boundary.",
+        "not_proven": [
+          "Roblox navmesh",
+          "physical ramp contact",
+          "network replication",
+          "rendering",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ],
+        "slow": "TEST_SLOW=true keeps the original slow status attribute active as a declared fixture input; this is not a skill-duration or real-device movement test."
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "TEAM_slow"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_route62_TEAM_slow"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "route_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "BATTLE_ROYALE",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEST_MODE selects one real Host session; actual source Bot spawn, vault theft, own deposit, and last-human cleanup.",
+        "configured_approach": "Only the explicit supplied waypoint approach offset varies (62 or 58).",
+        "movement": "Focused actual Router runs with fixture-supplied waypoints and OBB/SAT queries over actual Host geometry. Other bots remain at the original Router observation boundary.",
+        "not_proven": [
+          "Roblox navmesh",
+          "physical ramp contact",
+          "network replication",
+          "rendering",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ],
+        "slow": "TEST_SLOW=true keeps the original slow status attribute active as a declared fixture input; this is not a skill-duration or real-device movement test."
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "BATTLE_ROYALE_normal"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_route62_BATTLE_ROYALE_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "route_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "BATTLE_ROYALE",
+        "@@BOT_TEST_SLOW@@": "true"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEST_MODE selects one real Host session; actual source Bot spawn, vault theft, own deposit, and last-human cleanup.",
+        "configured_approach": "Only the explicit supplied waypoint approach offset varies (62 or 58).",
+        "movement": "Focused actual Router runs with fixture-supplied waypoints and OBB/SAT queries over actual Host geometry. Other bots remain at the original Router observation boundary.",
+        "not_proven": [
+          "Roblox navmesh",
+          "physical ramp contact",
+          "network replication",
+          "rendering",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ],
+        "slow": "TEST_SLOW=true keeps the original slow status attribute active as a declared fixture input; this is not a skill-duration or real-device movement test."
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "BATTLE_ROYALE_slow"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_route62_BATTLE_ROYALE_slow"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7594,
+        "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "route_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "58",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEST_MODE selects one real Host session; actual source Bot spawn, vault theft, own deposit, and last-human cleanup.",
+        "configured_approach": "Only the explicit supplied waypoint approach offset varies (62 or 58).",
+        "movement": "Focused actual Router runs with fixture-supplied waypoints and OBB/SAT queries over actual Host geometry. Other bots remain at the original Router observation boundary.",
+        "not_proven": [
+          "Roblox navmesh",
+          "physical ramp contact",
+          "network replication",
+          "rendering",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ],
+        "slow": "TEST_SLOW=true keeps the original slow status attribute active as a declared fixture input; this is not a skill-duration or real-device movement test."
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "TEAM_normal"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_route58_TEAM_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7991,
+        "sha256": "f0f1f0a6ef3e955902b839e5dcfc7d0ca27a70280a1f89a500c9dce73a1edac3"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "contract_cases"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEAM only. Existing five CASE predicates cover field priority, bounded forward strip, death/rebirth, missing vault/actual castle fall, and final human departure.",
+        "movement": "Focused navigation is frozen at the existing Router observation boundary. Explicit elevated bot/root and field-object positions isolate planar decisions.",
+        "not_proven": [
+          "Walkability of elevated decision-table poses",
+          "physical arrival",
+          "real engine action geometry",
+          "Studio",
+          "2-client",
+          "Android",
+          "FUN"
+        ]
+      },
+      "expected_CASE_count": 5,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 0,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "field_priority_unchanged_at_front_progress_side_and_rear",
+        "raid_goal_uses_bounded_forward_strip_without_rear_extension",
+        "real_bot_death_respawn_recomputes_goal_and_clears_router",
+        "missing_vault_and_real_castle_fall_cannot_retain_old_target",
+        "last_human_leave_retires_source_loop_and_route"
+      ],
+      "expected_ordered_CHECK_names": [],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_contracts_TEAM_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 8472,
+        "sha256": "b6120765763742345c525b659d95d4ec9126ca1233643340efda7ffab716ac6f"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "common"
+        },
+        {
+          "bytes": 1,
+          "literal_utf8": "\n"
+        },
+        {
+          "corpus_id": "actors"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEAM only; two actual Host human participants and source-created allied/enemy bots.",
+        "damage": "Actual BotActors/Invul/Host source-originated damage delegates to the declared fixture Humanoid API.",
+        "movement": "Shared common corpus freezes Router movement and explicitly poses roots to isolate membership/team/life, <11-stud range, LOS and shared melee cooldown.",
+        "not_proven": [
+          "Real engine movement/contact",
+          "network ownership",
+          "complete combat-source integration",
+          "Studio",
+          "Android",
+          "FUN"
+        ]
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 13,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "FORMAL_BOT_CURRENT_HUMAN_AND_AI_TARGETS"
+      ],
+      "expected_ordered_CHECK_names": [
+        "nearer_allied_human_is_skipped",
+        "living_current_enemy_human_receives_one_real_hit",
+        "shared_melee_cooldown_blocks_repeat",
+        "collidable_wall_blocks_live_enemy_human",
+        "eleven_stud_boundary_rejects_human",
+        "inside_eleven_studs_accepts_human",
+        "allied_bot_and_human_not_damaged",
+        "living_enemy_bot_receives_one_real_hit",
+        "collidable_wall_blocks_enemy_bot",
+        "dead_enemy_avatar_is_not_struck",
+        "actual_rules_conservation_during_target_probes",
+        "all_original_host_tasks_retired",
+        "no_swallowed_runtime_warnings"
+      ],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_actors_TEAM_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 10239,
+        "sha256": "5c8dcba94a27b94693c4a037314a5c4cdd34cf0eb8127e6fe21ed54a256bd3b3"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "common"
+        },
+        {
+          "bytes": 1,
+          "literal_utf8": "\n"
+        },
+        {
+          "corpus_id": "eggs"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "TEAM only; actual Host/Rules field pickup, vault theft, own deposit, death drop and source rebirth.",
+        "inventory": "Actual Rules ledgers and original Host token/drop lifecycle are observed; no parallel inventory authority.",
+        "movement": "Explicit bot/objective poses and frozen navigation isolate radius, height, LOS and live objective conditions; these are not end-to-end traversal measurements.",
+        "not_proven": [
+          "Physical pickup/deposit contact",
+          "world physics",
+          "network replication",
+          "Studio",
+          "Android",
+          "FUN"
+        ]
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 20,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "FORMAL_BOT_EGG_CUSTODY_AND_DEATH"
+      ],
+      "expected_ordered_CHECK_names": [
+        "field_pickup_outside_action_radius_rejected",
+        "field_pickup_through_wall_rejected",
+        "field_pickup_above_height_limit_rejected",
+        "one_real_field_token_enters_bot_custody",
+        "field_pickup_preserves_whole_match_stock",
+        "distant_own_deposit_rejected",
+        "own_deposit_through_wall_rejected",
+        "real_return_priority_deposits_exact_one",
+        "distant_enemy_vault_rejected",
+        "missing_live_vault_rejected",
+        "enemy_vault_through_wall_rejected",
+        "real_vault_transfer_moves_exact_one_egg",
+        "theft_preserves_whole_match_stock",
+        "death_drops_one_actual_carried_token",
+        "death_drop_has_real_world_part",
+        "source_rebirth_replaces_dead_model",
+        "source_rebirth_clears_old_router",
+        "death_does_not_duplicate_or_retain_carried_egg",
+        "all_original_host_tasks_retired",
+        "no_swallowed_runtime_warnings"
+      ],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_eggs_TEAM_normal"
+    },
+    {
+      "case_assembly_identity": {
+        "bytes": 7146,
+        "sha256": "e53c8bfd060bd80dd4d9a086e90e9f6165413db03a7f2b2578416dd985e3e35e"
+      },
+      "case_assembly_order": [
+        {
+          "corpus_id": "common"
+        },
+        {
+          "bytes": 1,
+          "literal_utf8": "\n"
+        },
+        {
+          "corpus_id": "parallel"
+        }
+      ],
+      "case_token": "@@BOT_VAULT_CASES@@",
+      "configuration_substitutions": {
+        "@@BOT_APPROACH_OFFSET@@": "62",
+        "@@BOT_TEST_MODE@@": "TEAM",
+        "@@BOT_TEST_SLOW@@": "false"
+      },
+      "engine_boundary": {
+        "actual_modes": "Corpus starts both actual TEAM and BATTLE_ROYALE sessions despite the historical scenario suffix TEAM_normal; checks cross-mode human rejection and independent session retirement.",
+        "lifecycle": "Actual TEAM last-human leave, TEAM-only Router clears, surviving BR decisions, and retired TEAM late-takeover rejection.",
+        "movement": "Shared common corpus freezes navigation and poses source-created actors; same AI IDs belong to distinct actual session models.",
+        "not_proven": [
+          "Real multiplayer networking",
+          "client session switching",
+          "Studio 2-client",
+          "Android",
+          "FUN"
+        ]
+      },
+      "expected_CASE_count": 1,
+      "expected_CASE_status": "PASS",
+      "expected_CHECK_count": 10,
+      "expected_CHECK_status": "PASS",
+      "expected_ordered_CASE_names": [
+        "FORMAL_BOT_CONCURRENT_MODE_AND_RETIREMENT"
+      ],
+      "expected_ordered_CHECK_names": [
+        "TEAM_bot_rejects_live_BR_human_at_melee_range",
+        "BR_bot_rejects_live_TEAM_human_at_melee_range",
+        "BR_bot_accepts_its_current_enemy_human",
+        "last_TEAM_human_departure_retires_TEAM_only",
+        "retiring_TEAM_clears_only_TEAM_router_keys",
+        "BR_source_loop_continues_after_TEAM_retirement",
+        "retired_TEAM_rejects_late_takeover",
+        "both_original_rule_ledgers_conserved",
+        "all_original_host_tasks_retired",
+        "no_swallowed_runtime_warnings"
+      ],
+      "expected_result": "PASS",
+      "expected_runtime_exit": 0,
+      "expected_warning_rows": 0,
+      "predicate_edit_count": 0,
+      "scenario_id": "candidate_parallel_TEAM_normal"
+    }
+  ],
+  "schema": "BOT_VAULT_NATIVE_SUPPLEMENT_CASES_V1",
+  "source_pin_contract": "Caller supplies the actual pinned 69-source profile. Historical source identities below are provenance only, never fallback inputs. Actual BotActors must be the original c38 +555 repair and Router must remain 92d44f; all sixteen full bodies must match the explicit caller profile. Later profile changes require their own source admission.",
+  "template": {
+    "bytes": 39006,
+    "filename": "bot_vault_base.template.luau",
+    "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"
+  }
+}

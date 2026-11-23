@@ -34,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 48, "final": 11}
+INTEGRATION_COUNTS = {"core": 57, "final": 19}
 
 
 def artifact_environment(expected_stage=None):
@@ -110,7 +110,8 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(result["archive_members"]), 75)
 
     def test_hud_only_inverse_restores_current_rc_and_other68(self):
-        before = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        before = compose.bot_parent_sources(final, self.lock)
         restored = compose.hud_current_sources(before, self.lock)
         self.assertEqual([p for p in before if before[p] != restored[p]], [compose.HUD_SOURCE])
         self.assertEqual(compose.identity(restored[compose.HUD_SOURCE]), self.lock["followup_repair"]["current_hud"])
@@ -122,8 +123,119 @@ class UnionBoundary(unittest.TestCase):
         changed = copy.deepcopy(self.lock)
         changed["followup_repair"]["inverse"][0]["new"] += "-- wrong rollback\n"
         sources = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        sources = compose.bot_parent_sources(sources, self.lock)
         with self.assertRaisesRegex(ValueError, "HUNK_PAYLOAD_IDENTITY"):
             compose.hud_current_sources(sources, changed)
+
+    def test_bot_only_inverse_restores_hud_parent_and_other68(self):
+        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        parent = compose.bot_parent_sources(final, self.lock)
+        self.assertEqual([p for p in final if final[p] != parent[p]], [compose.BOT_SOURCE])
+        self.assertEqual(compose.identity(parent[compose.BOT_SOURCE]), self.lock["bot_followup_repair"]["parent_bot"])
+        self.assertEqual(compose.identity(parent[compose.HUD_SOURCE]), self.lock["followup_repair"]["repaired_hud"])
+        verified = verify.independent_scan(self.current, self.lock, "after")
+        self.assertEqual(len(verify.verify_bot_parent_rollback(self.current, self.lock, verified)), 71)
+
+    def test_bot_inverse_rejects_wrong_source_before_restoring(self):
+        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        router = "ServerScriptService/EGGRUMBLE_BotPathRouter.luau"
+        self.assertIn(router, final)
+        final[router] += b"\n-- unrelated router mutation\n"
+        with self.assertRaisesRegex(ValueError, "BOT_PARENT_REQUIRES_EXACT_FINAL_SOURCES"):
+            compose.bot_parent_sources(final, self.lock)
+
+    def test_bot_only_inverse_payload_mutation_rejected(self):
+        changed = copy.deepcopy(self.lock)
+        changed["bot_followup_repair"]["inverse"][0]["new"] += "-- wrong Bot rollback\n"
+        changed["sources"][compose.BOT_SOURCE]["inverse"] = copy.deepcopy(changed["bot_followup_repair"]["inverse"])
+        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        with self.assertRaisesRegex(ValueError, "HUNK_PAYLOAD_IDENTITY"):
+            compose.bot_parent_sources(final, changed)
+
+    def test_bot_then_hud_rollback_order_required(self):
+        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        with self.assertRaisesRegex(ValueError, "HUD_CURRENT_REQUIRES_EXACT_BOT_PARENT_SOURCES"):
+            compose.hud_current_sources(final, self.lock)
+        parent = compose.bot_parent_sources(final, self.lock)
+        with self.assertRaisesRegex(ValueError, "BOT_PARENT_REQUIRES_EXACT_FINAL_SOURCES"):
+            compose.bot_parent_sources(parent, self.lock)
+        restored = compose.hud_current_sources(parent, self.lock)
+        self.assertEqual(compose.identity(restored[compose.BOT_SOURCE]), self.lock["bot_followup_repair"]["parent_bot"])
+        self.assertEqual(compose.identity(restored[compose.HUD_SOURCE]), self.lock["followup_repair"]["current_hud"])
+        self.assertEqual(sorted(p for p in final if final[p] != restored[p]),
+                         sorted([compose.BOT_SOURCE, compose.HUD_SOURCE]))
+
+    def test_bot_parent_payload_or_swapped_archive_rejected(self):
+        for mutation in ("source", "archive"):
+            with self.subTest(mutation=mutation):
+                root = self.current_copy()
+                if mutation == "source":
+                    path = root / compose.BOT_OFF / "sources" / compose.HUD_SOURCE
+                    path.write_bytes(path.read_bytes() + b"\n-- lost exact HUD parent\n")
+                else:
+                    shutil.copyfile(root / compose.HUD_OFF_ARCHIVE, root / compose.BOT_OFF_ARCHIVE)
+                self.reject_core(root)
+
+    def test_missing_or_reordered_bot_build_commands_rejected(self):
+        for mutation, reason in (("missing", "CORE_COMMAND_COMPLETION"), ("order", "CORE_BUILD_STAGE_ORDER")):
+            with self.subTest(mutation=mutation):
+                root = self.current_copy()
+                report = verify.data(root / "CORE_BUILD_REPORT.json")
+                report["build_command_namespace"]["committed_root"] = str(root)
+                commands = report["commands"]
+                self.assertIn(compose.BOT_OFF, commands[-4]["command"][2])
+                self.assertIn(compose.HUD_OFF, commands[-2]["command"][2])
+                if mutation == "missing":
+                    del commands[-4:-2]
+                else:
+                    commands[-4:] = commands[-2:] + commands[-4:-2]
+                compose.write_json(root / "CORE_BUILD_REPORT.json", report)
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify.verify_core(root, self.prior, self.reports, self.context)
+                self.assertFalse((root / "delivery").exists())
+
+    def test_bot_independent_programs_bind_current16_and_scenario_configuration(self):
+        contract, _ = verify.independent_bot_contract(self.native_lock)
+        programs = {}
+        for item in contract["scenarios"]:
+            scenario = item["scenario_id"]
+            program, assembly = verify.independent_bot_generated(self.current, self.native_lock, scenario)
+            self.assertEqual(assembly["scenario_id"], scenario)
+            self.assertEqual(assembly["configuration_substitutions"], item["configuration_substitutions"])
+            self.assertEqual(assembly["case_assembly"], item["case_assembly_identity"])
+            self.assertEqual(len(assembly["full_body_byte_ranges"]), 16)
+            for path, row in assembly["full_body_byte_ranges"].items():
+                body = (self.current / "sources" / path).read_bytes()
+                self.assertEqual(program[row["start"]:row["end"]], body)
+                self.assertEqual(program.count(body), 1)
+                self.assertEqual(compose.identity(body), self.native_lock["sources"][path])
+            programs[scenario] = program
+        self.assertEqual(len(set(programs.values())), 9)
+        cases = {item["scenario_id"]: item for item in contract["scenarios"]}
+        a, b = "candidate_route62_TEAM_normal", "candidate_route58_TEAM_normal"
+        self.assertEqual(cases[a]["expected_ordered_CASE_names"], cases[b]["expected_ordered_CASE_names"])
+        self.assertNotEqual(programs[a], programs[b])
+        # These two additional bodies are absent from the original two programs.
+        for suite in self.native_lock["suites"]:
+            original, _, _ = verify.independent_generated(self.current, self.native_lock, suite)
+            for path in (compose.BOT_SOURCE, "ServerScriptService/EGGRUMBLE_BotPathRouter.luau"):
+                self.assertNotIn((self.current / "sources" / path).read_bytes(), original)
+
+    def test_bot_source_reconstruction_rejects_stale_bot_wrong_router_or_truncated_host(self):
+        for mutation in ("stale_bot", "wrong_router", "truncated_host"):
+            with self.subTest(mutation=mutation):
+                root = self.current_copy()
+                if mutation == "stale_bot":
+                    path = root / "sources" / compose.BOT_SOURCE
+                    path.write_bytes(compose.apply_hunks(path.read_bytes(), self.lock["bot_followup_repair"]["inverse"]))
+                elif mutation == "wrong_router":
+                    path = root / "sources/ServerScriptService/EGGRUMBLE_BotPathRouter.luau"
+                    path.write_bytes(path.read_bytes() + b"\n-- wrong router\n")
+                else:
+                    path = root / "sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+                    path.write_bytes(path.read_bytes()[:-20])
+                with self.assertRaisesRegex(ValueError, "BOT_SOURCE_PROFILE"):
+                    verify.independent_bot_generated(root, self.native_lock, "candidate_route62_TEAM_normal")
 
     def test_hud_only_rollback_other_source_mutation_rejected(self):
         root = self.current_copy()
@@ -292,15 +404,16 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 142:
+            if calls == 144:
                 stage = Path(command[-1]).parent.parent
-                path = (prior if target == "input" else stage) / "sources" / self.first
+                path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
+                        else (prior if target == "input" else stage) / "sources" / self.first)
                 path.write_bytes(path.read_bytes() + b"\n-- reviewer late mutation control\n")
             return result
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 142)
+        self.assertEqual(calls, 144)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
@@ -314,6 +427,9 @@ class UnionBoundary(unittest.TestCase):
 
     def test_late_staged_source_mutation_cannot_commit(self):
         self.late_mutation_control("stage")
+
+    def test_late_bot_parent_source_mutation_cannot_commit(self):
+        self.late_mutation_control("bot_parent")
 
     def test_final_source_mutation_rejected(self):
         root = self.current_copy()
@@ -595,6 +711,28 @@ class FinalAdmissionBoundary(unittest.TestCase):
         self.check_failure(output, patch.object(verify, function_name, after_real_check), native,
                            "PAYLOAD_CHANGED_AFTER_" + phase)
 
+    def bot_native_copy(self):
+        copied = self.temporary() / "native"
+        shutil.copytree(self.native, copied)
+        return copied
+
+    def rebind_mutated_bot_evidence(self, copied, scenario=None):
+        # Negative controls refresh enclosing hashes so semantic checks, not a
+        # stale outer digest, must reject the deliberately forged copy.
+        folder = copied / "bot_vault"
+        if scenario is not None:
+            path = folder / scenario
+            receipt = verify.data(path / "receipt.json")
+            for key, name in (("generated", "generated.luau"), ("stdout", "stdout.log"), ("stderr", "stderr.log")):
+                receipt[key] = compose.identity((path / name).read_bytes())
+            compose.write_json(path / "receipt.json", receipt)
+        summary = verify.data(folder / "receipt.json")
+        summary["scenario_files"] = {name: pin for name, pin in verify.files(folder).items() if name != "receipt.json"}
+        compose.write_json(folder / "receipt.json", summary)
+        aggregate = verify.data(copied / "receipt.json")
+        aggregate["bot_vault_supplement"] = compose.identity((folder / "receipt.json").read_bytes())
+        compose.write_json(copied / "receipt.json", aggregate)
+
     def test_place_changed_after_real_core_rejected(self):
         def mutate(root, _):
             p = root / compose.PLACE
@@ -618,6 +756,138 @@ class FinalAdmissionBoundary(unittest.TestCase):
             p = root / "objective_full_clear_los/stdout.log"
             p.write_bytes(p.read_bytes() + b"TRACE\tlate evidence drift\n")
         self.phase_mutation("verify_native", "NATIVE", mutate, copy_native=True)
+
+    def test_bot_archive_changed_after_real_native_rejected(self):
+        def mutate(root, _):
+            shutil.copyfile(root / compose.HUD_OFF_ARCHIVE, root / compose.BOT_OFF_ARCHIVE)
+        self.phase_mutation("verify_native", "NATIVE", mutate)
+
+    def test_bot_route62_cannot_replace_route58_with_same_case_label(self):
+        copied = self.bot_native_copy()
+        source, target = "candidate_route62_TEAM_normal", "candidate_route58_TEAM_normal"
+        folder = copied / "bot_vault"
+        contract, _ = verify.independent_bot_contract(self.native_lock)
+        items = {s["scenario_id"]: s for s in contract["scenarios"]}
+        self.assertEqual(items[source]["expected_ordered_CASE_names"], items[target]["expected_ordered_CASE_names"])
+        self.assertNotEqual((folder / source / "generated.luau").read_bytes(),
+                            (folder / target / "generated.luau").read_bytes())
+        shutil.copyfile(folder / source / "generated.luau", folder / target / "generated.luau")
+        self.rebind_mutated_bot_evidence(copied, target)
+        with self.assertRaisesRegex(ValueError, "BOT_GENERATED_PROGRAM_AND_RANGES"):
+            verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_bot_missing_scenario_or_incomplete_duplicate_raw_vectors_rejected(self):
+        scenario = "candidate_actors_TEAM_normal"
+        for mutation, reason in (("scenario", "BOT_EVIDENCE_FILE_SET"),
+                                 ("check", "BOT_RAW_CHECK_VECTOR"), ("duplicate", "BOT_RAW_CASE_VECTOR")):
+            with self.subTest(mutation=mutation):
+                copied = self.bot_native_copy()
+                if mutation == "scenario":
+                    shutil.rmtree(copied / "bot_vault/candidate_route58_TEAM_normal")
+                    self.rebind_mutated_bot_evidence(copied)
+                else:
+                    path = copied / "bot_vault" / scenario / "stdout.log"
+                    lines = path.read_bytes().splitlines(keepends=True)
+                    if mutation == "check":
+                        index = next(i for i, line in enumerate(lines) if line.startswith(b"CHECK\t"))
+                        del lines[index]
+                    else:
+                        lines.append(next(line for line in lines if line.startswith(b"CASE\t")))
+                    path.write_bytes(b"".join(lines))
+                    self.rebind_mutated_bot_evidence(copied, scenario)
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_bot_forged_pass_stale_bot_wrong_router_or_truncated_program_rejected(self):
+        scenario = "candidate_route62_TEAM_normal"
+        for mutation in ("pass_marker", "stale_bot", "wrong_router", "truncated_host"):
+            with self.subTest(mutation=mutation):
+                copied = self.bot_native_copy()
+                path = copied / "bot_vault" / scenario / "generated.luau"
+                program = path.read_bytes()
+                if mutation == "pass_marker":
+                    changed = b'print("CASE\\tTEAM_normal\\tPASS\\tforged without game bodies")\n'
+                else:
+                    relative = (compose.BOT_SOURCE if mutation == "stale_bot" else
+                                "ServerScriptService/EGGRUMBLE_BotPathRouter.luau" if mutation == "wrong_router" else
+                                "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau")
+                    body = (self.current / "sources" / relative).read_bytes()
+                    self.assertEqual(program.count(body), 1)
+                    replacement = (compose.apply_hunks(body, self.lock["bot_followup_repair"]["inverse"])
+                                   if mutation == "stale_bot" else body + b"\n-- changed Router\n"
+                                   if mutation == "wrong_router" else body[:-20])
+                    changed = program.replace(body, replacement, 1)
+                path.write_bytes(changed)
+                self.rebind_mutated_bot_evidence(copied, scenario)
+                with self.assertRaisesRegex(ValueError, "BOT_GENERATED_PROGRAM_AND_RANGES"):
+                    verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_bot_wrong_binary_build_context_and_command_rejected(self):
+        scenario = "candidate_route62_TEAM_normal"
+        for mutation, reason in (("binary", "BOT_SCENARIO_RECEIPT_BINDING"),
+                                 ("build", "BOT_SCENARIO_RECEIPT_BINDING"),
+                                 ("context", "BOT_SCENARIO_RECEIPT_BINDING"),
+                                 ("source_receipt", "BOT_SCENARIO_RECEIPT_BINDING"),
+                                 ("argv", "BOT_EXECUTED_COMMAND"), ("timeout", "BOT_EXECUTED_COMMAND"),
+                                 ("exit", "BOT_PROCESS_EXIT_OR_STDERR")):
+            with self.subTest(mutation=mutation):
+                copied = self.bot_native_copy()
+                path = copied / "bot_vault" / scenario / "receipt.json"
+                receipt = verify.data(path)
+                if mutation == "binary":
+                    receipt["native"]["sha256"] = "0" * 64
+                elif mutation == "build":
+                    receipt["caller_fresh_build"]["target_build_started_ns"] -= 1
+                elif mutation == "context":
+                    receipt["execution_context"]["checkout_sha"] = "0" * 40
+                elif mutation == "source_receipt":
+                    receipt["source_receipt"]["sha256"] = "0" * 64
+                elif mutation == "argv":
+                    receipt["process"]["argv"][0] += "-different-vm"
+                elif mutation == "timeout":
+                    receipt["process"]["timed_out"] = True
+                else:
+                    receipt["process"]["exit_code"] = 1
+                compose.write_json(path, receipt)
+                self.rebind_mutated_bot_evidence(copied, scenario)
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_bot_aggregate_cannot_overclaim_body_coverage_or_process_count(self):
+        for mutation in ("old28_scope", "server31", "omit_policy", "processes", "files"):
+            with self.subTest(mutation=mutation):
+                copied = self.bot_native_copy()
+                path = copied / "receipt.json"
+                aggregate = verify.data(path)
+                if mutation == "old28_scope":
+                    aggregate["source_count_executed_full_body_basis"] = "all_current_sources"
+                elif mutation == "server31":
+                    aggregate["full_body_coverage"]["distinct_server_union"] = 31
+                elif mutation == "omit_policy":
+                    aggregate["full_body_coverage"]["distinct_all_full_bodies"] = 30
+                elif mutation == "processes":
+                    aggregate["native_process_count"] = 11
+                else:
+                    aggregate["native_evidence_file_count"] = 62
+                compose.write_json(path, aggregate)
+                with self.assertRaisesRegex(ValueError, "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE"):
+                    verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_bot_log_changed_after_real_native_cannot_enter_delivery(self):
+        def mutate(_, native_root):
+            path = native_root / "bot_vault/candidate_parallel_TEAM_normal/stdout.log"
+            path.write_bytes(path.read_bytes() + b"TRACE\tlate Bot log mutation\n")
+        self.phase_mutation("verify_native", "NATIVE", mutate, copy_native=True)
+
+    def test_bot_corpus_changed_after_real_native_cannot_enter_delivery(self):
+        contract = self.temporary() / "contract"
+        shutil.copytree(HERE, contract)
+        def mutate(_, __):
+            path = contract / "native/bot_vault_cases.json"
+            path.write_bytes(path.read_bytes() + b"\n")
+        # Mutate only an isolated contract copy, never the repository corpus.
+        with patch.object(verify, "HERE", contract):
+            self.phase_mutation("verify_native", "NATIVE", mutate)
 
     def test_unknown_file_in_delivery_stage_rejected(self):
         output = self.fresh_core()
@@ -772,8 +1042,14 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(previous["repaired_hud"],
                          {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
         self.assertEqual(repair["prior_profile"]["sha256"], "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60")
-        self.assertEqual(sum(len(row["forward"]) for row in self.lock["sources"].values()), 169)
-        remaining = {p: r for p, r in self.lock["sources"].items() if p != compose.HUD_SOURCE}
+        # Reconstruct the frozen HUD parent row view before its historical
+        # predicates; Bot is the sole additional row in this successor.
+        parent_rows = copy.deepcopy(self.lock["sources"])
+        parent_rows[compose.BOT_SOURCE]["after"] = self.lock["bot_followup_repair"]["parent_bot"]
+        parent_rows[compose.BOT_SOURCE]["forward"] = []
+        parent_rows[compose.BOT_SOURCE]["inverse"] = []
+        self.assertEqual(sum(len(row["forward"]) for row in parent_rows.values()), 169)
+        remaining = {p: r for p, r in parent_rows.items() if p != compose.HUD_SOURCE}
         encode = lambda value: (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
         self.assertEqual(compose.identity(encode(remaining)), {'bytes': 272752, 'sha256': 'e2a6bcfd7d060f0da78b4a5971a2e887f26681b0477b1e5f70d99abbf80b6066'})
         phase = self.lock["sources"][compose.HUD_SOURCE]["forward"][0]
@@ -784,6 +1060,77 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertFalse(self.native_lock["selected_hud_layout"]["hud_runtime_executed"])
         self.assertTrue(self.native_lock["selected_hud_layout"]["policy_full_body_executed"])
         self.assertEqual(self.native_lock["selected_hud_layout"]["condition_count"], 14)
+
+    def test_bot_reuse_preserves_exact_parent_rows_and_registered_scope(self):
+        repair = self.lock["bot_followup_repair"]
+        self.assertEqual(repair['grant_status'], 'GRANTED_SCOPE_1_NOT_ADOPTED')
+        self.assertEqual(repair['claim_id'], 'P0D-GQ484-BOT-VAULT-20261123-0A2BA23F')
+        self.assertEqual(repair['grant_commit'], 'b4a7601c8624160610a1211d63142b8794d64861')
+        self.assertEqual(repair['grant_registry_blob'], '5aed02901d3d1bea7b6eaf06b2a55a8d65f7e375')
+        self.assertEqual(repair['grant_comment'], 7091519547)
+        self.assertEqual(repair['grant_scope_version'], 1)
+        self.assertEqual(repair['grant_expires_at'], '2026-11-23T10:15:20.638570+00:00')
+        self.assertEqual(repair['grant_independent_reviewer_context'], 'CODEX_ROOT_B8C8E7B756CD:/root/environment_audit')
+        self.assertEqual(repair['source_publisher'], 'CODEX_ROOT_B8C8E7B756CD:/root')
+        self.assertEqual(repair['actual_hud_parent_head'], '93a1147561a531610ac1609ebc68cc0ecf546623')
+        self.assertEqual(repair['accepted_hud_parent_profile'], {'bytes': 306439, 'sha256': '2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375'})
+        self.assertEqual(repair['hud_preview_profile'], {'bytes': 306211, 'sha256': 'c7c58795e7974a7338cc46d10dfe2d8f2b4e226e9a05dbf624a10599295ace4a'})
+        self.assertTrue(repair["hud_parent_is_accepted"])
+        self.assertFalse(repair["new_lua_authored"])
+        self.assertFalse(repair["native_admission_proven"])
+        self.assertFalse(repair["studio_proven"])
+        self.assertEqual(repair["rollback_order"], ["BOT_TO_HUD_PARENT", "HUD_PARENT_TO_FB5"])
+        self.assertEqual((repair["changed_sources_from_hud_parent"], repair["unchanged_sources_from_hud_parent"]), (1, 68))
+        self.assertEqual(repair["parent_bot"], {"bytes": 19070, "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"})
+        self.assertEqual(repair["repaired_bot"], {"bytes": 19625, "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"})
+        self.assertEqual(repair["source_candidate_origin"]["source"], repair["repaired_bot"])
+        row = self.lock["sources"][compose.BOT_SOURCE]
+        self.assertEqual(row["before"], repair["parent_bot"])
+        self.assertEqual(row["after"], repair["repaired_bot"])
+        self.assertEqual(row["forward"], repair["forward"])
+        self.assertEqual(row["inverse"], repair["inverse"])
+        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 171)
+        self.assertEqual(sum(r["before"] != r["after"] for r in self.lock["sources"].values()), 23)
+        remaining = {p: r for p, r in self.lock["sources"].items() if p != compose.BOT_SOURCE}
+        encoded = (json.dumps(remaining, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
+        self.assertEqual(compose.identity(encoded), repair["preserved_parent_other68_rows"])
+        self.assertEqual(repair["parent_place"], self.lock["followup_repair"]["repaired_place"])
+        self.assertEqual(repair["repaired_place"], self.lock["final_place"])
+
+    def test_bot_immutable_template_corpus_and_adapter_drift_rejected(self):
+        for name in verify.BOT_INPUTS:
+            with self.subTest(file=name), tempfile.TemporaryDirectory(prefix="union22-bot-contract-") as directory:
+                root = Path(directory)
+                (root / "native").mkdir()
+                for source in verify.BOT_INPUTS:
+                    shutil.copyfile(HERE / "native" / source, root / "native" / source)
+                path = root / "native" / name
+                path.write_bytes(path.read_bytes() + b"\n")
+                with patch.object(verify, "HERE", root), self.assertRaisesRegex(ValueError, "BOT_IMMUTABLE_INPUTS"):
+                    verify.independent_bot_contract(self.native_lock)
+
+    def test_bot_raw_parser_rejects_incomplete_forged_or_warning_vectors(self):
+        # Protocol strings only; these checks do not execute or admit Native.
+        contract, _ = verify.independent_bot_contract(self.native_lock)
+        item = next(s for s in contract["scenarios"] if s["scenario_id"] == "candidate_actors_TEAM_normal")
+        lines = [("CHECK\t" + name + "\tPASS\tprotocol control\n").encode()
+                 for name in item["expected_ordered_CHECK_names"]]
+        lines += [("CASE\t" + name + "\tPASS\tprotocol control\n").encode()
+                  for name in item["expected_ordered_CASE_names"]]
+        good = b"".join(lines)
+        parsed = verify.independent_bot_vectors(item, good, b"", 0)
+        self.assertEqual((len(parsed["case_rows"]), len(parsed["check_rows"])), (1, 13))
+        mutations = [
+            (b"", b"", 0), (b"".join(lines[1:]), b"", 0), (good + lines[0], b"", 0),
+            (good + lines[-1], b"", 0), (good.replace(b"\tPASS\t", b"\tFAIL\t", 1), b"", 0),
+            (good.replace(b"CHECK\t", b"CHECK_BAD\t", 1), b"", 0),
+            (good + b" warning: swallowed runtime failure\n", b"", 0),
+            (good, b"runtime stderr", 0), (good, b"", 1), (good, b"", False),
+            (good + b"\xff\n", b"", 0),
+        ]
+        for index, (stdout, stderr, code) in enumerate(mutations):
+            with self.subTest(mutation=index), self.assertRaises(ValueError):
+                verify.independent_bot_vectors(item, stdout, stderr, code)
 
     def test_original_fixture_and_case_bytes_remain_pinned(self):
         self.assertEqual(native.fixture_snapshot(self.native_lock), self.native_lock["fixtures"])
@@ -895,7 +1242,7 @@ def load_tests(loader, standard_tests, pattern):
     # A module/script entry or even a partial context must request real artifacts.
     has_context = any(key.startswith("UNION22_TEST_") for key in os.environ)
     if pattern is not None and not has_context:
-        return checked_suite(loader, UnionOfflineContract, 13)
+        return checked_suite(loader, UnionOfflineContract, 16)
     return integration_suite(loader)
 
 

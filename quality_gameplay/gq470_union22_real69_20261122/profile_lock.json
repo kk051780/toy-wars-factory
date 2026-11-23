@@ -16,7 +16,132 @@
     "old_54726_count_was_unicode_characters": true,
     "prior_whole_receipt_not_pinned": true
   },
-  "changed_sources": 22,
+  "bot_followup_repair": {
+    "accepted_hud_parent_profile": {
+      "bytes": 306439,
+      "sha256": "2ceb3072c1e69a6575693f09027dd226a60cdf8da352b8533f01ae1e78a7c375"
+    },
+    "actual_hud_parent_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+    "changed_sources_from_hud_parent": 1,
+    "claim_id": "P0D-GQ484-BOT-VAULT-20261123-0A2BA23F",
+    "feature_id": "GQ484_ENEMY_VAULT_APPROACH_PHASE",
+    "forward": [
+      {
+        "new": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+        "new_identity": {
+          "bytes": 571,
+          "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 314,
+        "stop": 314
+      },
+      {
+        "new": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+        "new_identity": {
+          "bytes": 73,
+          "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+        },
+        "old": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+        "old_identity": {
+          "bytes": 89,
+          "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+        },
+        "start": 326,
+        "stop": 327
+      }
+    ],
+    "grant_comment": 7091519547,
+    "grant_commit": "b4a7601c8624160610a1211d63142b8794d64861",
+    "grant_expires_at": "2026-11-23T10:15:20.638570+00:00",
+    "grant_independent_reviewer_context": "CODEX_ROOT_B8C8E7B756CD:/root/environment_audit",
+    "grant_registry_blob": "5aed02901d3d1bea7b6eaf06b2a55a8d65f7e375",
+    "grant_scope_version": 1,
+    "grant_status": "GRANTED_SCOPE_1_NOT_ADOPTED",
+    "hud_parent_is_accepted": true,
+    "hud_preview_profile": {
+      "bytes": 306211,
+      "sha256": "c7c58795e7974a7338cc46d10dfe2d8f2b4e226e9a05dbf624a10599295ace4a"
+    },
+    "inverse": [
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+        "old_identity": {
+          "bytes": 571,
+          "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+        },
+        "start": 314,
+        "stop": 322
+      },
+      {
+        "new": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+        "new_identity": {
+          "bytes": 89,
+          "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+        },
+        "old": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+        "old_identity": {
+          "bytes": 73,
+          "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+        },
+        "start": 334,
+        "stop": 335
+      }
+    ],
+    "maintenance_snapshot_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+    "native_admission_proven": false,
+    "new_lua_authored": false,
+    "parent_bot": {
+      "bytes": 19070,
+      "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+    },
+    "parent_issue": 484,
+    "parent_place": {
+      "bytes": 828658,
+      "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+    },
+    "preserved_parent_other68_rows": {
+      "bytes": 276878,
+      "sha256": "6f2734433df1eb01a2aad0df6e0e29c01a13766b179b37e525bab7010fdddd6c"
+    },
+    "repaired_bot": {
+      "bytes": 19625,
+      "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+    },
+    "repaired_place": {
+      "bytes": 829213,
+      "sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5"
+    },
+    "rollback_order": [
+      "BOT_TO_HUD_PARENT",
+      "HUD_PARENT_TO_FB5"
+    ],
+    "schema": "GQ484_BOT_VAULT_FOLLOWUP_PREVIEW_V1",
+    "source_candidate_origin": {
+      "author_workspace": "bf89c1781045",
+      "kind": "EXACT_EXISTING_LOCAL_CANDIDATE_REUSE",
+      "original_relative_path": "audit_bot_vault_phase/proposal/EGGRUMBLE_BotActors.luau",
+      "reference": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077732218",
+      "source": {
+        "bytes": 19625,
+        "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+      }
+    },
+    "source_path": "ServerScriptService/EGGRUMBLE_BotActors.luau",
+    "source_publisher": "CODEX_ROOT_B8C8E7B756CD:/root",
+    "studio_proven": false,
+    "unchanged_sources_from_hud_parent": 68
+  },
+  "changed_sources": 23,
   "claim_id": "P0D-GQ470-UNION22-20261122-4B669",
   "class_counts": {
     "LocalScript": 10,
@@ -25,8 +150,8 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 828658,
-    "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+    "bytes": 829213,
+    "sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5"
   },
   "followup_repair": {
     "author_contexts": [
@@ -329,8 +454,8 @@
     "unchanged_sources_from_current_rc": 68
   },
   "formal_branch": "rc/p0d-s1-kids-rc01",
-  "forward_hunk_count": 169,
-  "forward_removed_plus_added_utf8_bytes": 55486,
+  "forward_hunk_count": 171,
+  "forward_removed_plus_added_utf8_bytes": 56219,
   "instance_count": 75,
   "luau_source": {
     "commit": "f46d879e28302a430029304f7f6a162aed66f103",
@@ -506,16 +631,74 @@
     },
     "ServerScriptService/EGGRUMBLE_BotActors.luau": {
       "after": {
-        "bytes": 19070,
-        "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+        "bytes": 19625,
+        "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
       },
       "before": {
         "bytes": 19070,
         "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+          "new_identity": {
+            "bytes": 571,
+            "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 314,
+          "stop": 314
+        },
+        {
+          "new": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+          },
+          "old": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+          "old_identity": {
+            "bytes": 89,
+            "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+          },
+          "start": 326,
+          "stop": 327
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+          "old_identity": {
+            "bytes": 571,
+            "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+          },
+          "start": 314,
+          "stop": 322
+        },
+        {
+          "new": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+          "new_identity": {
+            "bytes": 89,
+            "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+          },
+          "old": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+          },
+          "start": 334,
+          "stop": 335
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_BotActors"
     },
     "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
@@ -6105,5 +6288,5 @@
       "route": "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture"
     }
   },
-  "unchanged_sources": 47
+  "unchanged_sources": 46
 }

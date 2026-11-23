@@ -10,11 +10,13 @@ from __future__ import annotations
 import argparse
 import ast
 from collections import Counter
+from datetime import datetime, timezone
 import hashlib
 import importlib.util
 import json
 import os
 from pathlib import Path, PurePosixPath
+import re
 import shutil
 import stat
 import subprocess
@@ -36,6 +38,18 @@ HELPERS = {
     "art_quality/gq470_real69_source_gate.py": "5dd5c121cf59e7ec90d02790f1e53150a0074d7b9544ffbca065ddd10d26c578",
     "quality_gameplay/gq470_art_pr_provenance_20261121/guard.py": "5776cee1145742e2e5b1e830fb08243143b1bdb3b8cdfc7a0e2a27ec8df30a0f",
 }
+
+BOT_INPUTS = {
+    "bot_vault_base.template.luau": {"bytes": 39006, "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"},
+    "bot_vault_cases.json": {"bytes": 71446, "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"},
+    "bot_vault_suite.py": {"bytes": 19989, "sha256": "2ef31a508b7923a02f7c328283957359a8a26d15bb50a24b4d5966bfd38b6512"},
+}
+BOT_SCENARIOS = (
+    "candidate_route62_TEAM_normal", "candidate_route62_TEAM_slow",
+    "candidate_route62_BATTLE_ROYALE_normal", "candidate_route62_BATTLE_ROYALE_slow",
+    "candidate_route58_TEAM_normal", "candidate_contracts_TEAM_normal",
+    "candidate_actors_TEAM_normal", "candidate_eggs_TEAM_normal", "candidate_parallel_TEAM_normal",
+)
 
 
 def require(value, reason):
@@ -180,8 +194,42 @@ def verify_archive(path, expected, prefix=compose.OFF):
     return observed
 
 
+def verify_bot_parent_rollback(root, lock, current):
+    """Independently check final -> Bot-only OFF -> frozen HUD preview parent."""
+    repair = lock["bot_followup_repair"]
+    row = lock["sources"][compose.BOT_SOURCE]
+    require(repair["source_path"] == compose.BOT_SOURCE
+            and repair["changed_sources_from_hud_parent"] == 1
+            and repair["unchanged_sources_from_hud_parent"] == 68, "BOT_ROLLBACK_SCOPE")
+    require(repair["parent_bot"] == row["before"] and repair["repaired_bot"] == row["after"]
+            and repair["forward"] == row["forward"] and repair["inverse"] == row["inverse"]
+            and repair["parent_place"] == lock["followup_repair"]["repaired_place"]
+            and repair["repaired_place"] == lock["final_place"], "BOT_ROLLBACK_CONTRACT")
+    parent_lock = dict(lock)
+    parent_lock["sources"] = {p: dict(r) for p, r in lock["sources"].items()}
+    parent_lock["sources"][compose.BOT_SOURCE]["after"] = repair["parent_bot"]
+    parent_lock["final_place"] = repair["parent_place"]
+    parent = independent_scan(root / compose.BOT_OFF, parent_lock, "after")
+    require(parent["non_source"] == current["non_source"]
+            and parent["instances"] == current["instances"], "BOT_ROLLBACK_NON_SOURCE_DRIFT")
+    changes = []
+    for name in lock["sources"]:
+        final = read(root / "sources" / name)
+        restored = read(root / compose.BOT_OFF / "sources" / name)
+        expected = independent_inverse(final, repair["inverse"]) if name == compose.BOT_SOURCE else final
+        require(restored == expected, "BOT_ROLLBACK_INVERSE_NOT_PARENT")
+        if final != restored:
+            changes.append(name)
+    require(changes == [compose.BOT_SOURCE], "BOT_ROLLBACK_CHANGE_SET")
+    expected = {"sources/" + p: r["after"] for p, r in parent_lock["sources"].items()}
+    expected.update({compose.PROJECT: lock["project"], compose.PLACE: repair["parent_place"]})
+    require(len(expected) == 71 and files(root / compose.BOT_OFF) == expected, "BOT_ROLLBACK_MEMBER_SET")
+    verify_archive(root / compose.BOT_OFF_ARCHIVE, expected, compose.BOT_OFF)
+    return expected
+
+
 def verify_hud_current_rollback(root, lock, current):
-    """Independently verify the one-source inverse against the frozen current RC."""
+    """Independently check HUD-parent -> HUD-only OFF -> historical fb5."""
     repair = lock["followup_repair"]
     require(repair["source_path"] == compose.HUD_SOURCE
             and repair["changed_sources_from_current_rc"] == 1
@@ -189,6 +237,11 @@ def verify_hud_current_rollback(root, lock, current):
             "HUD_ROLLBACK_SCOPE")
     rollback_lock = dict(lock)
     rollback_lock["sources"] = {p: dict(row) for p, row in lock["sources"].items()}
+    rollback_lock["sources"][compose.BOT_SOURCE]["after"] = lock["bot_followup_repair"]["parent_bot"]
+    rollback_lock["final_place"] = lock["bot_followup_repair"]["parent_place"]
+    parent = independent_scan(root / compose.BOT_OFF, rollback_lock, "after")
+    require(parent["non_source"] == current["non_source"]
+            and parent["instances"] == current["instances"], "HUD_PARENT_NON_SOURCE_DRIFT")
     rollback_lock["sources"][compose.HUD_SOURCE]["after"] = repair["current_hud"]
     rollback_lock["final_place"] = repair["current_place"]
     restored = independent_scan(root / compose.HUD_OFF, rollback_lock, "after")
@@ -196,7 +249,7 @@ def verify_hud_current_rollback(root, lock, current):
             and restored["instances"] == current["instances"], "HUD_ROLLBACK_NON_SOURCE_DRIFT")
     changes = []
     for name, row in lock["sources"].items():
-        repaired = read(root / "sources" / name)
+        repaired = read(root / compose.BOT_OFF / "sources" / name)
         off = read(root / compose.HUD_OFF / "sources" / name)
         expected = independent_inverse(repaired, repair["inverse"]) if name == compose.HUD_SOURCE else repaired
         require(off == expected, "HUD_ROLLBACK_INVERSE_NOT_CURRENT")
@@ -222,7 +275,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 22 and len(lock["sources"]) - len(changed) == 47, "CHANGE_COUNT")
+    require(len(changed) == 23 and len(lock["sources"]) - len(changed) == 46, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -232,6 +285,7 @@ def verify_core(root, base, reports, context):
     expected_off.update({p: digest(inputs["evidence"][p]) for p in lock["prior_report_names"]})
     require(len(expected_off) == 75 and files(root / compose.OFF) == expected_off, "OFF_RUNTIME_MEMBER_SET")
     archive = verify_archive(root / compose.OFF_ARCHIVE, expected_off)
+    expected_bot_off = verify_bot_parent_rollback(root, lock, current)
     expected_hud_off = verify_hud_current_rollback(root, lock, current)
     expected_prior = {p: digest(raw) for p, raw in inputs["evidence"].items()}
     require(files(root / "prior_boundary") == expected_prior, "PRIOR_EVIDENCE_NOT_BYTE_EXACT")
@@ -245,7 +299,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 22, "unchanged_source_count": 47,
+        "selected_source_count": 69, "changed_source_count": 23, "unchanged_source_count": 46,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -254,6 +308,8 @@ def verify_core(root, base, reports, context):
         "runtime_rollback_archive": digest(read(root / compose.OFF_ARCHIVE)),
         "followup_repair": lock["followup_repair"],
         "hud_only_current_rc_rollback_archive": digest(read(root / compose.HUD_OFF_ARCHIVE)),
+        "bot_followup_repair": lock["bot_followup_repair"],
+        "bot_only_hud_parent_rollback_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -263,12 +319,16 @@ def verify_core(root, base, reports, context):
     core = data(root / "CORE_BUILD_REPORT.json")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 22 and core.get("unchanged_sources") == 47
-            and core.get("compile_count") == 139 and core.get("rojo_build_count") == 3
+            and core.get("changed_sources") == 23 and core.get("unchanged_sources") == 46
+            and core.get("compile_count") == 140 and core.get("rojo_build_count") == 4
             and core.get("historical_on_br_compile_count") == 138 and core.get("historical_on_br_rojo_build_count") == 2
             and core.get("hud_only_compile_count") == 1 and core.get("hud_only_rojo_build_count") == 1
             and core.get("hud_only_off_place") == lock["followup_repair"]["current_place"]
-            and core.get("changed_sources_from_current_rc") == 1 and core.get("unchanged_sources_from_current_rc") == 68
+            and core.get("hud_stage_changed_sources_from_current_rc") == 1
+            and core.get("hud_stage_unchanged_sources_from_current_rc") == 68
+            and core.get("bot_only_compile_count") == 1 and core.get("bot_only_rojo_build_count") == 1
+            and core.get("bot_only_parent_place") == lock["bot_followup_repair"]["parent_place"]
+            and core.get("changed_sources_from_hud_parent") == 1 and core.get("unchanged_sources_from_hud_parent") == 68
             and core.get("instances") == 75 and core.get("prior_snapshot") == inputs["snapshot"]
             and core.get("final_place") == lock["final_place"] and core.get("off_place") == lock["prior_place"]
             and core.get("non_source_property_identity") == digest(current["non_source"])
@@ -279,6 +339,8 @@ def verify_core(root, base, reports, context):
     expected_stage.update({"prior_boundary/" + name: pin for name, pin in expected_prior.items()})
     expected_stage.update({compose.HUD_OFF + "/" + name: pin for name, pin in expected_hud_off.items()})
     expected_stage[compose.HUD_OFF_ARCHIVE] = digest(read(root / compose.HUD_OFF_ARCHIVE))
+    expected_stage.update({compose.BOT_OFF + "/" + name: pin for name, pin in expected_bot_off.items()})
+    expected_stage[compose.BOT_OFF_ARCHIVE] = digest(read(root / compose.BOT_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -287,11 +349,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 142 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 144 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 139 and len(rojo_commands) == 3, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 140 and len(rojo_commands) == 4, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -300,10 +362,19 @@ def verify_core(root, base, reports, context):
     expected_compile = {str(Path(stage) / prefix / "sources" / p)
                         for prefix in ("", compose.OFF) for p in lock["sources"]}
     expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.BOT_OFF / "sources" / compose.BOT_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
-                for prefix in ("", compose.OFF, compose.HUD_OFF)}, "CORE_ROJO_PROJECT_SET")
+                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF)}, "CORE_ROJO_PROJECT_SET")
+    expected_order = []
+    for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF):
+        selected = (lock["sources"] if prefix in ("", compose.OFF) else
+                    [compose.BOT_SOURCE] if prefix == compose.BOT_OFF else [compose.HUD_SOURCE])
+        expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
+        expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
+    require([(c["command"][1], c["command"][2]) for c in commands] == expected_order,
+            "CORE_BUILD_STAGE_ORDER")
     require(core["rojo"] == {k: lock["rojo"][k] for k in ("bytes", "sha256")}, "CORE_ROJO_IDENTITY")
     return {"lock": lock, "inputs": inputs, "current": current, "receipt": receipt, "core": core,
             "archive_members": archive, "prior_evidence": expected_prior}
@@ -601,6 +672,196 @@ def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
             "files": expected_files}
 
 
+def independent_bot_contract(pins):
+    """Read immutable data directly; never import the supplement's decisions."""
+    require({name: digest(read(HERE / "native" / name)) for name in BOT_INPUTS} == BOT_INPUTS,
+            "BOT_IMMUTABLE_INPUTS")
+    contract = data(HERE / "native/bot_vault_cases.json")
+    template = read(HERE / "native/bot_vault_base.template.luau")
+    modules = contract["modules_in_load_order"]
+    names = [m["module"] for m in modules]
+    paths = [m["relative_source_path"] for m in modules]
+    require(contract["schema"] == "BOT_VAULT_NATIVE_SUPPLEMENT_CASES_V1"
+            and tuple(s["scenario_id"] for s in contract["scenarios"]) == BOT_SCENARIOS
+            and len(names) == len(set(names)) == len(set(paths)) == 16
+            and all(p in pins["sources"] for p in paths), "BOT_FIXED_SCENARIO_AND_BODY_SET")
+    original = {"ServerScriptService/EGGRUMBLE_" + p + ".luau"
+                for p in pins["modules_in_load_order"] + ["LobbyCastleModesPreview.server"]}
+    policy = "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau"
+    require(len(original) == 28 and len(original & set(paths)) == 14
+            and set(paths) - original == {compose.BOT_SOURCE, "ServerScriptService/EGGRUMBLE_BotPathRouter.luau"}
+            and len(original | set(paths)) == 30 and policy in pins["sources"]
+            and len(original | set(paths) | {policy}) == 31, "BOT_DISTINCT_BODY_COVERAGE")
+    for item in modules:
+        if item["module"] in ("BotActors", "BotPathRouter"):
+            require(pins["sources"][item["relative_source_path"]] == item["historical_candidate"],
+                    "BOT_ORIGINAL_REPAIR_AND_ROUTER")
+    corpora = contract["corpora"]
+    require(len(corpora) == len({c["id"] for c in corpora}) == 6
+            and all(digest(c["raw_text"].encode("utf-8")) == c["identity"] for c in corpora),
+            "BOT_CORPUS_BYTES")
+    expected = {
+        "schema": "UNION22_BOT_VAULT_SUPPLEMENT_LOCK_V1", "input_files": BOT_INPUTS,
+        "output_directory": "bot_vault", "module_order": names,
+        "selected_sources": {p: pins["sources"][p] for p in paths},
+        "scenario_order": list(BOT_SCENARIOS),
+        "scenarios": {s["scenario_id"]: {
+            "configuration_substitutions": s["configuration_substitutions"],
+            "case_assembly": s["case_assembly_identity"],
+            "expected_case_names": s["expected_ordered_CASE_names"],
+            "expected_check_names": s["expected_ordered_CHECK_names"]} for s in contract["scenarios"]},
+        "expected_totals": {"scenarios": 9, "CASE_rows": 13, "CHECK_rows": 43, "warning_rows": 0,
+                            "stderr_bytes": 0, "each_exit_code": 0, "evidence_files": 37},
+        "full_bodies_each_scenario": 16, "original_dual28_full_bodies": 28,
+        "distinct_server_full_bodies": 30, "hud_policy_separate_from_server_body_count": True,
+        "preserve_original_dual28_generated_programs": True, "same_fresh_F46_binary_required": True,
+        "source_only": True,
+    }
+    require(pins.get("bot_vault_supplement") == expected, "BOT_LOCK_SCENARIO_BINDING")
+    return contract, template
+
+
+def independent_bot_generated(root, pins, scenario_id):
+    """Rebuild from frozen tokens and current complete bodies, then locate ranges."""
+    contract, template = independent_bot_contract(pins)
+    require(len(pins["sources"]) == 69 and files(root / "sources") == pins["sources"], "BOT_SOURCE_PROFILE")
+    matches = [s for s in contract["scenarios"] if s["scenario_id"] == scenario_id]
+    require(len(matches) == 1, "BOT_UNKNOWN_SCENARIO")
+    item = matches[0]
+    corpora = {c["id"]: c["raw_text"].encode("utf-8") for c in contract["corpora"]}
+    case = b"".join(corpora[p["corpus_id"]] if "corpus_id" in p else p["literal_utf8"].encode("utf-8")
+                    for p in item["case_assembly_order"])
+    require(digest(case) == item["case_assembly_identity"], "BOT_CASE_ASSEMBLY")
+    replacements = {key.encode(): value.encode() for key, value in item["configuration_substitutions"].items()}
+    replacements[item["case_token"].encode()] = case
+    bodies = {}
+    for module_row in contract["modules_in_load_order"]:
+        path = module_row["relative_source_path"]
+        bodies[path] = read(root / "sources" / path)
+        replacements[module_row["token"].encode()] = bodies[path]
+    token = re.compile(rb"@@[A-Za-z0-9_]+@@")
+    observed = token.findall(template)
+    require(len(observed) == len(set(observed)) == len(replacements) == 20
+            and set(observed) == set(replacements), "BOT_TEMPLATE_TOKEN_SET")
+    generated = token.sub(lambda match: replacements[match.group()], template)
+    require(not token.search(generated), "BOT_UNRESOLVED_TOKEN")
+    ranges, lines, previous = {}, {}, -1
+    for module_row in contract["modules_in_load_order"]:
+        path, name = module_row["relative_source_path"], module_row["module"]
+        body = bodies[path]
+        require(digest(body) == pins["sources"][path] and generated.count(body) == 1, "BOT_FULL_BODY_EXACT_ONCE")
+        start = generated.index(body)
+        require(start > previous, "BOT_FULL_BODY_ORDER")
+        end = start + len(body)
+        ranges[path] = {"module": name, "start": start, "end": end, **digest(body)}
+        first = generated[:start].count(b"\n") + 1
+        lines[name] = {"first": first, "last": first + body.count(b"\n")}
+        previous = end
+    return generated, {"scenario_id": scenario_id,
+                       "configuration_substitutions": item["configuration_substitutions"],
+                       "case_assembly": digest(case), "full_body_byte_ranges": ranges,
+                       "source_line_ranges": lines, "generated": digest(generated)}
+
+
+def independent_bot_vectors(item, stdout, stderr, exit_code):
+    """Interpret raw process bytes; receipt PASS fields cannot supply a row."""
+    require(type(stdout) is bytes and type(stderr) is bytes, "BOT_RAW_PROCESS_BYTES")
+    require(type(exit_code) is int and exit_code == 0 and stderr == b"", "BOT_PROCESS_EXIT_OR_STDERR")
+    vectors = {"CASE": [], "CHECK": []}
+    for line in stdout.decode("utf-8").splitlines():
+        require(not line.lstrip().upper().startswith("WARN"), "BOT_RUNTIME_WARNING")
+        if line.lstrip().upper().startswith(("CASE", "CHECK")):
+            parts = line.split("\t", 3)
+            require(len(parts) == 4 and parts[0] in vectors and parts[2] == "PASS", "BOT_RAW_VECTOR_ROW")
+            vectors[parts[0]].append(parts)
+    for kind, rows in vectors.items():
+        require([row[1] for row in rows] == item["expected_ordered_" + kind + "_names"],
+                "BOT_RAW_" + kind + "_VECTOR")
+    return {"case_rows": vectors["CASE"], "check_rows": vectors["CHECK"], "warning_rows": [],
+            "exit_code": exit_code, "stderr_bytes": 0, "exact_complete_pass_vectors": True}
+
+
+def verify_bot_vault_supplement(native, root, pins, build, aggregate, context):
+    """Bind all nine executions to current sources and the already verified F46."""
+    contract, _ = independent_bot_contract(pins)
+    folder = native / "bot_vault"
+    observed = files(folder)
+    expected_files = {"receipt.json"} | {scenario + "/" + name for scenario in BOT_SCENARIOS
+                      for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
+    require(len(expected_files) == 37 and set(observed) == expected_files, "BOT_EVIDENCE_FILE_SET")
+    source_receipt = digest(read(root / compose.RECEIPT))
+    binary_pin = build["binary_before_suites"]
+    require(build.get("bot_vault_input_files") == BOT_INPUTS
+            and digest(read(build["binary_path"])) == binary_pin, "BOT_SAME_ACTUAL_BUILD_AND_INPUTS")
+    common = {
+        "execution_context": context, "source_receipt": source_receipt, "input_files": BOT_INPUTS,
+        "source_count_pinned": 69, "source_count_executed_full_body": 16,
+        "caller_fresh_build": {k: build[k] for k in
+            ("schema", "source_commit", "source_tree", "binary_before_suites", "target_build_started_ns")},
+        "source_only": True, "formal_rc_adoption_proven": False, "engine_boundary": contract["engine_boundary"],
+    }
+    layout = data(native / "selected_hud_layout/receipt.json")
+    execution_root = Path(layout["execution_directory"]).parent
+    require(execution_root.is_absolute() and ".." not in execution_root.parts, "BOT_EXECUTION_NAMESPACE")
+    def utc(value):
+        require(isinstance(value, str), "BOT_PROCESS_TIME_TYPE")
+        result = datetime.fromisoformat(value)
+        require(result.tzinfo is not None and result.utcoffset().total_seconds() == 0, "BOT_PROCESS_TIME_UTC")
+        return result
+    previous_finish = utc(layout["commands"]["native"]["started_at_utc"])
+    build_start = datetime.fromtimestamp(build["target_build_started_ns"] / 1_000_000_000, timezone.utc)
+    results, case_count, check_count = {}, 0, 0
+    for item in contract["scenarios"]:
+        scenario_id = item["scenario_id"]
+        path = folder / scenario_id
+        result = data(path / "receipt.json")
+        expected_program, assembly = independent_bot_generated(root, pins, scenario_id)
+        generated = read(path / "generated.luau")
+        require(generated == expected_program
+                and all(result.get(k) == value for k, value in assembly.items()), "BOT_GENERATED_PROGRAM_AND_RANGES")
+        process = result.get("process", {})
+        require(set(process) == {"argv", "exit_code", "timed_out", "started_at_utc", "finished_at_utc", "elapsed_ns"}
+                and process["argv"] == [build["binary_path"], str(execution_root / "bot_vault" / scenario_id / "generated.luau")]
+                and type(process["elapsed_ns"]) is int and process["elapsed_ns"] > 0
+                and process["timed_out"] is False, "BOT_EXECUTED_COMMAND")
+        started, finished = utc(process["started_at_utc"]), utc(process["finished_at_utc"])
+        require(build_start <= started <= finished and previous_finish <= started, "BOT_PROCESS_ORDER_AND_BUILD_TIME")
+        previous_finish = finished
+        stdout, stderr = read(path / "stdout.log"), read(path / "stderr.log")
+        parsed = independent_bot_vectors(item, stdout, stderr, process["exit_code"])
+        expected = {**common, **assembly, "schema": "BOT_VAULT_NATIVE_SCENARIO_V1", "status": "PASS",
+                    "native": binary_pin, "process": process, "result": parsed,
+                    "source_inputs_unchanged": True, "generated_and_binary_unchanged": True,
+                    "stdout": digest(stdout), "stderr": digest(stderr)}
+        require(result == expected and result.get("source_only") is True
+                and result.get("formal_rc_adoption_proven") is False
+                and result.get("source_inputs_unchanged") is True and result.get("generated_and_binary_unchanged") is True
+                and result.get("result", {}).get("exact_complete_pass_vectors") is True, "BOT_SCENARIO_RECEIPT_BINDING")
+        case_count += len(parsed["case_rows"])
+        check_count += len(parsed["check_rows"])
+        results[scenario_id] = {"case_count": len(parsed["case_rows"]), "check_count": len(parsed["check_rows"]),
+                                "receipt": digest(read(path / "receipt.json"))}
+    require((len(results), case_count, check_count) == (9, 13, 43), "BOT_COMPLETE_SCENARIO_VECTORS")
+    totals = {"scenarios": 9, "CASE_rows": case_count, "CHECK_rows": check_count, "warning_rows": 0,
+              "full_bodies_per_scenario": 16, "distinct_full_bodies_with_existing_dual28": 30}
+    summary = data(folder / "receipt.json")
+    expected_summary = {**common, "schema": "BOT_VAULT_NATIVE_SUPPLEMENT_V1", "status": "PASS", "totals": totals,
+                        "ordered_scenarios": list(BOT_SCENARIOS), "source_profile": pins["sources"],
+                        "source_inputs_unchanged": True, "native": binary_pin, "output_files_including_this_receipt": 37,
+                        "scenario_files": {name: pin for name, pin in observed.items() if name != "receipt.json"}}
+    require(summary == expected_summary and summary.get("source_inputs_unchanged") is True
+            and summary.get("source_only") is True and summary.get("formal_rc_adoption_proven") is False,
+            "BOT_SUPPLEMENT_RECEIPT_BINDING")
+    require(aggregate.get("bot_vault_supplement") == digest(read(folder / "receipt.json"))
+            and aggregate.get("bot_vault_input_files") == BOT_INPUTS, "BOT_SUPPLEMENT_AGGREGATE_BINDING")
+    require(files(folder) == observed and files(root / "sources") == pins["sources"]
+            and digest(read(build["binary_path"])) == binary_pin
+            and {name: digest(read(HERE / "native" / name)) for name in BOT_INPUTS} == BOT_INPUTS,
+            "BOT_INPUT_OR_OUTPUT_CHANGED_DURING_VALIDATION")
+    return {"totals": totals, "scenarios": results, "receipt": digest(read(folder / "receipt.json")),
+            "same_fresh_binary": True, "engine_boundary": contract["engine_boundary"], "files": expected_files}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -656,6 +917,13 @@ def verify_native(native, root, lock, context):
             and aggregate.get("source_count_pinned") == 69 and aggregate.get("source_count_executed_full_body") == 28
             and aggregate.get("source_only") is True and aggregate.get("formal_rc_adoption_proven") is False
             and aggregate.get("source_inputs_unchanged") is True, "NATIVE_AGGREGATE_FACTS")
+    require(aggregate.get("source_count_executed_full_body_basis") == "original_dual28_suites_only"
+            and aggregate.get("full_body_coverage") == {
+                "original_dual28": 28, "bot_vault_each": 16, "distinct_server_union": 30,
+                "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
+                "hud_client_runtime_executed": False}
+            and aggregate.get("native_process_count") == 12 and aggregate.get("native_evidence_file_count") == 63,
+            "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
     results = {}
@@ -712,13 +980,16 @@ def verify_native(native, root, lock, context):
     require(set(results) == {"combined_clear_los", "objective_full_clear_los"} and len(results) == 2,
             "NATIVE_BOTH_SUITES")
     layout = verify_selected_hud_layout(native, root, pins, build, aggregate, context)
+    bot = verify_bot_vault_supplement(native, root, pins, build, aggregate, context)
     expected_files = set(build["evidence_files"]) | {"build_receipt.json", "receipt.json"}
     expected_files |= {suite + "/" + name for suite in pins["suites"]
                        for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
     expected_files |= {"selected_hud_layout/" + name for name in layout["files"]}
-    require(set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
+    expected_files |= {"bot_vault/" + name for name in bot["files"]}
+    require(len(expected_files) == 63 and set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
-            "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"}}
+            "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
+            "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
 
 def admit_delivery(root, base, reports, native, context):
@@ -748,14 +1019,14 @@ def admit_delivery(root, base, reports, native, context):
     require(runtime["payload"] == native_before, "NATIVE_VALIDATION_SNAPSHOT_CHANGED")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
-                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
+                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
     expected_stage.update({"native_evidence/" + name: pin for name, pin in native_before.items()})
     expected_stage["UNION22_PROFILE_LOCK.json"] = digest(profile_before)
     stage = Path(tempfile.mkdtemp(prefix=".union22-delivery-", dir=root.parent))
     try:
         for relative in ("sources", "prior_boundary"):
             shutil.copytree(root / relative, stage / relative)
-        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
+        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
             (stage / name).write_bytes(read(root / name))
         shutil.copytree(native, stage / "native_evidence")
         (stage / "UNION22_PROFILE_LOCK.json").write_bytes(read(HERE / "profile_lock.json"))
@@ -767,19 +1038,28 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 22, "unchanged_sources": 47, "instances": 75,
+            "source_count": 69, "changed_sources": 23, "unchanged_sources": 46, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
             "hud_only_current_rc_inverse_place": verified["lock"]["followup_repair"]["current_place"],
             "hud_only_current_rc_inverse_archive": digest(read(root / compose.HUD_OFF_ARCHIVE)),
             "hud_only_current_rc_inverse_archive_members": 71,
-            "changed_sources_from_current_rc": 1, "unchanged_sources_from_current_rc": 68,
+            "hud_stage_changed_sources_from_current_rc": 1, "hud_stage_unchanged_sources_from_current_rc": 68,
+            "bot_followup_repair": verified["lock"]["bot_followup_repair"],
+            "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
+            "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
+            "bot_only_hud_parent_inverse_archive_members": 71,
+            "changed_sources_from_hud_parent": 1, "unchanged_sources_from_hud_parent": 68,
             "server_native_suites_are_not_hud_behavior_verification": True,
             "prior_reports_are_prior_boundary_only": True, "prior_opaque_rollback_archives_preserved": 8,
             "fresh_final_marker_retention": 17, "unchanged_all48_auditor_executed_on_final": 48,
             "visual_source_retention": 3, "native_suites": runtime["results"],
             "selected_hud_layout": runtime["selected_hud_layout"],
+            "bot_vault_supplement": runtime["bot_vault_supplement"],
+            "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
+            "native_process_count": runtime["aggregate"]["native_process_count"],
+            "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
             "native_suite_input_variants": runtime["aggregate"]["suite_input_variants"],
             "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
             "original_objective_case_preserved_not_claimed_as_unchanged_pass": True,
