@@ -692,8 +692,7 @@
         "changed_state_requires_stop_not_retry": true
       },
       "service_completion_asserted": false
-    }
-  ,
+    },
     {
       "schema": 1,
       "case_id": "GQ_MANUAL_CONTROLLER_EPOCH684_BOUNDED_MAINTENANCE_20261123_870491EA",
@@ -2394,8 +2393,18 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 696,
-  "holder": null,
+  "epoch": 697,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "b49d346e-f013-4ed6-85a6-c4da97a314b5",
+    "task_id": null,
+    "epoch": 697,
+    "acquired_at": "2026-11-23T09:10:27.372070+00:00",
+    "expires_at": "2026-11-23T09:40:27.372070+00:00",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "coord/p0d-work-claims",
+    "origin": "controller"
+  },
   "integration_results": {
     "35": {
       "merged": true,
