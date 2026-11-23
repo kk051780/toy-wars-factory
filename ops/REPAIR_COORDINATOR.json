@@ -2393,8 +2393,18 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 706,
-  "holder": null,
+  "epoch": 707,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "13ce85ca-79b0-4e40-96fe-247b1f38eea7",
+    "task_id": null,
+    "epoch": 707,
+    "acquired_at": "2026-11-23T10:42:02.827858+00:00",
+    "expires_at": "2026-11-23T11:12:02.827858+00:00",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "coord/p0d-work-claims",
+    "origin": "controller"
+  },
   "integration_results": {
     "35": {
       "merged": true,
@@ -4038,11 +4048,11 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-  "kind": "CONTROLLER",
-  "owner_id": "3d839333-8d63-4365-9298-b0b8e6a8ebf5",
-  "epoch": 706,
-  "released_at": "2026-11-23T10:41:47.154828+00:00"
-},
+    "kind": "CONTROLLER",
+    "owner_id": "3d839333-8d63-4365-9298-b0b8e6a8ebf5",
+    "epoch": 706,
+    "released_at": "2026-11-23T10:41:47.154828+00:00"
+  },
   "last_completed_history": [
     {
       "additional_spend_jpy": 0,
