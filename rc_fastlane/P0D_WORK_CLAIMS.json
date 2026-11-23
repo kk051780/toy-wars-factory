@@ -25481,7 +25481,14 @@
         "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
         "REAL69_SOURCE_EGGRUMBLE_HEROSILHOUETTEART",
         "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
-        "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE"
+        "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE",
+        "GQ033_PERSISTENT_ADMISSION_PREP",
+        "GQ033_PERSISTENT_STORE_DONOR_PREP",
+        "GQ033_PROGRESSION_DONOR_PREP",
+        "GQ033_EVOLUTION_DONOR_PREP",
+        "GQ033_SIX_SKILL_PROFILE_DONOR_PREP",
+        "GQ033_FOCUS_SCHEDULER_DONOR_PREP",
+        "GQ033_SESSION_XP_PREVIEW_DONOR_PREP"
       ],
       "target_paths": [
         "quality_gameplay/gq470_match_role_growth_20261123/README.md",
@@ -25492,7 +25499,16 @@
         "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
         "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
         "tests/test_gq470_match_role_growth_20261123.py",
-        ".github/workflows/gq470-match-role-growth.yml"
+        ".github/workflows/gq470-match-role-growth.yml",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/README.md",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/prepare_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/EGGRUMBLE_PersistentBaseAdmission.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/bridge_cases.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_persistent_base_bridge_20261123.py",
+        ".github/workflows/gq470-persistent-base-bridge.yml"
       ],
       "scope": "One isolated reversible four-source S1A match-only awakening visibility candidate, not the complete two-layer S1 MVP. Preserve existing BattleLevel 25-KO/cap50 calculation and all persistent Lv/XP/equipment/entitlements/base combat authorities. Derive new EGGRUMBLE_BattleStage B1/B2/B3 and BattleXP min(80,KO*10) from existing authoritative neutral KO ledger (KO1 B2, KO4 B3), publish GrowthActive only for actual current humans. Initialize new B1/XP0 plus known match-only NeutralKO0 on actual start, retain on death, reject new credit/publication synchronously when rules/current world/current human are invalid; retire new B/XP/visibility and existing match-only NeutralKO at the first delivery of the owned phase/Destroying/AncestryChanged lifecycle event, preserving the internal final KO snapshot. Bounded existing compact HUD and one nearby nameplate are read-only consumers. No added gameplay/XP/Store authority or permanent-level fiction. Existing Hero role-watch listeners may join the same bounded lifecycle cleanup without changing role decoration.",
       "generated_source_scope": {
@@ -25631,7 +25647,16 @@
         "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
         "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
         "tests/test_gq470_match_role_growth_20261123.py",
-        ".github/workflows/gq470-match-role-growth.yml"
+        ".github/workflows/gq470-match-role-growth.yml",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/README.md",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/prepare_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/EGGRUMBLE_PersistentBaseAdmission.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/bridge_cases.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_persistent_base_bridge_20261123.py",
+        ".github/workflows/gq470-persistent-base-bridge.yml"
       ],
       "mutable_paths": [
         "quality_gameplay/gq470_match_role_growth_20261123/README.md",
@@ -25642,7 +25667,16 @@
         "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
         "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
         "tests/test_gq470_match_role_growth_20261123.py",
-        ".github/workflows/gq470-match-role-growth.yml"
+        ".github/workflows/gq470-match-role-growth.yml",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/README.md",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/prepare_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/EGGRUMBLE_PersistentBaseAdmission.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/bridge_cases.luau",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py",
+        "quality_gameplay/gq470_persistent_base_bridge_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq470_persistent_base_bridge_20261123.py",
+        ".github/workflows/gq470-persistent-base-bridge.yml"
       ],
       "author_contexts_basis": "Original registered direct source/test implementers remain unchanged; this list is not a claim that reused incoming code has no other authors. Exact external origins and undeclared code-author contexts are recorded separately below.",
       "authorized_repository_writer_contexts": [
@@ -25830,6 +25864,462 @@
         "authority_scope": "SAME_CLAIM_METADATA_INTAKE_ONLY_NOT_SOURCE_LEASE",
         "original_677_issuance_history_preserved": true,
         "acquire_message_erratum": "The acquire commit message says source lease, but the actual holder work_branch is coord/p0d-work-claims. Epoch688 is metadata-only and is never SOURCE authority."
+      },
+      "bounded_support_stages": [
+        {
+          "schema": "P0D033_BOUNDED_SUPPORT_REGISTRATION_V1",
+          "stage_id": "P0D033_PERSISTENT_BASE_DEPENDENCY_PREPARATION",
+          "status": "GRANTED_SCOPE_REQUIRES_SEPARATE_LIVE_SOURCE_LEASE",
+          "authority_effective": true,
+          "source_scope_granted": true,
+          "source_writes_permitted": false,
+          "registered_source_approval": false,
+          "metadata_registration": {
+            "issuer": "kk051780",
+            "issuer_user_id": 233213370,
+            "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+            "issuer_operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+            "issued_at": "2026-11-23T09:00:31.169199+00:00",
+            "actual_metadata_authority": {
+              "status": "ACTUAL_METADATA_LEASE_READBACK",
+              "owner": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+              "epoch": 696,
+              "holder": {
+                "kind": "CONTROLLER",
+                "owner_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+                "task_id": null,
+                "epoch": 696,
+                "acquired_at": "2026-11-23T08:58:45.417400+00:00",
+                "expires_at": "2026-11-23T09:28:45.417400+00:00",
+                "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+                "work_branch": "coord/p0d-work-claims",
+                "origin": "controller"
+              },
+              "acquire_commit": "bf0eb57048981aa5a9ebe70b1dae1bc150282de7",
+              "state_blob": "b4b2dd90eb247a83a82ff97ed974dce93ea8f8af",
+              "actual_readback": true,
+              "authenticated_actor": {
+                "login": "kk051780",
+                "id": 233213370
+              },
+              "repo_permission": "admin",
+              "readback_at_utc": "2026-11-23T08:58:52Z",
+              "registry_before_ref": "df3bab856e7b77e083d8e5b4cb53ff2343e3b108",
+              "registry_before_blob": "618882394ef3de9adaffd4fb5e58f33aefbb70fe",
+              "authority_scope": "FINITE_SAME_CLAIM_SUPPORT_METADATA_ONLY_NOT_SOURCE_OR_RC_LEASE",
+              "original_677_and_688_history_is_not_support_authority": true
+            },
+            "coordination_lease": {
+              "kind": "CONTROLLER",
+              "owner_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+              "task_id": null,
+              "epoch": 696,
+              "acquired_at": "2026-11-23T08:58:45.417400+00:00",
+              "expires_at": "2026-11-23T09:28:45.417400+00:00",
+              "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+              "work_branch": "coord/p0d-work-claims",
+              "origin": "controller",
+              "acquire_commit": "bf0eb57048981aa5a9ebe70b1dae1bc150282de7",
+              "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+            },
+            "independent_before_after_review": {
+              "mode": "FINAL_EXACT_CANDIDATE_BOUND_EXTERNALLY_BEFORE_CAS",
+              "reviewer_context": "CODEX_ROOT_03A0FBA0D83E:/root/integration_authority",
+              "evidence_issue": 218,
+              "operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+              "before_ref": "df3bab856e7b77e083d8e5b4cb53ff2343e3b108",
+              "before_blob": "618882394ef3de9adaffd4fb5e58f33aefbb70fe",
+              "scope_review_is_source_approval": false,
+              "requires_actual_positive_review_before_cas": true
+            },
+            "claim_commit": null,
+            "registry_blob": null,
+            "actual_readback": null,
+            "self_reference_fields_meaning": "These null fields deliberately do not predict their own future Git identities or readback. Issue218 binds the actual resulting commit, complete blob/hash and readback to this operation UUID after the real CAS.",
+            "external_binding": {
+              "issue": 218,
+              "operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+              "parent_claim": "P0D-GQ033-MATCH-GROWTH-20261123-817BC984",
+              "stage_id": "P0D033_PERSISTENT_BASE_DEPENDENCY_PREPARATION",
+              "actual_post_cas_readback_required_before_source": true
+            },
+            "service_run_id": null,
+            "service_task_id": null,
+            "execution_context_kind": "ACTUAL_MANUAL_CONTROLLER_OPERATION_NOT_AUTOMATION_SERVICE_RUN"
+          },
+          "not_authorized_by_original_epoch677": true,
+          "request_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7093854719",
+          "planning_adoption": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7093981383",
+          "parent_claim": "P0D-GQ033-MATCH-GROWTH-20261123-817BC984",
+          "claim_owner_retained": "CODEX_ROOT_817BC9841838",
+          "original_scope_and_authority_retained": true,
+          "source_base": {
+            "status": "PINNED_EXISTING_H72_INPUT_BINDING_ONLY_NOT_RUNTIME_ACCEPTANCE",
+            "source_base_rc_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+            "formal_branch": "rc/p0d-s1-kids-rc01",
+            "workflow_run_id": 45132949073,
+            "artifact_id": 14798134590,
+            "artifact_name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+            "zip_bytes": 7144237,
+            "zip_sha256": "d178f62489f275831da86eaceda8b8ce1fba6a8ccf86366bd86cb8c5507a926b",
+            "place_member": "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+            "place_bytes": 829213,
+            "place_sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5",
+            "project_member": "EGGRUMBLE_REAL69.project.json",
+            "project_bytes": 9564,
+            "project_sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7",
+            "selected_source_count": 69,
+            "binding_receipt": {
+              "path": "/tmp/eggrumble_03a0fba0d83e/runtime_gap_audit/H72_SUPPORT_BASE_BINDING.json",
+              "bytes": 52675,
+              "sha256": "1fda36822da5ea49df260d8296552bc84c648a5271750625df667ea9fdd2e8fb",
+              "git_blob": "b6c573eda49e2ee5f6c1f04ec34e9a1bbaebf39f"
+            },
+            "binding_observed_at_utc": "2026-11-23T07:55:40.615553+00:00",
+            "official_metadata_provenance": "Parent-provided receipt; independently checked local ZIP identity and embedded execution contexts only.",
+            "historical_original_claim_base_rc_sha_retained": "93a1147561a531610ac1609ebc68cc0ecf546623",
+            "scope": "Use the received H72 official input for the new unattached support PREP only. Preserve original S1A H93 base and maintenance history; this is no rebase, current-R admission, Bot formal acceptance, SOURCE approval, or RC adoption.",
+            "fresh_revalidation_before_actual_source_execution_required": true,
+            "selected_runtime_mutations_authorized": false,
+            "independent_remote_fetch_or_runtime_rerun_by_this_utility": false
+          },
+          "scope_partition": {
+            "original_s1a": {
+              "owner": "CODEX_ROOT_817BC9841838",
+              "author_contexts": [
+                "CODEX_ROOT_817BC9841838:/root",
+                "CODEX_ROOT_817BC9841838:/root/growth_source_audit",
+                "CODEX_ROOT_817BC9841838:/root/backlog_review"
+              ],
+              "reviewer_context": "CODEX_ROOT_817BC9841838:/root/coordination_review",
+              "target_paths": [
+                "quality_gameplay/gq470_match_role_growth_20261123/README.md",
+                "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json",
+                "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json",
+                "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
+                "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
+                "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
+                "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+                "tests/test_gq470_match_role_growth_20261123.py",
+                ".github/workflows/gq470-match-role-growth.yml"
+              ],
+              "resources": [
+                "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+                "REAL69_SOURCE_EGGRUMBLE_HEROSILHOUETTEART",
+                "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+                "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE"
+              ],
+              "prep_branch": "quality/gq470-match-growth-817bc984-20261123",
+              "authority": "Existing original grant only; this proposal grants no additional writer access."
+            },
+            "proposed_support": {
+              "author_contexts": [
+                "CODEX_ROOT_03A0FBA0D83E:/root"
+              ],
+              "sole_publisher_context": "CODEX_ROOT_03A0FBA0D83E:/root",
+              "independent_reviewer_context": "CODEX_ROOT_03A0FBA0D83E:/root/integration_authority",
+              "reviewer_is_source_author": false,
+              "target_paths": [
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/README.md",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/prepare_bridge.py",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/EGGRUMBLE_PersistentBaseAdmission.luau",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/native/bridge_cases.luau",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py",
+                "quality_gameplay/gq470_persistent_base_bridge_20261123/native/INPUT_LOCK.json",
+                "tests/test_gq470_persistent_base_bridge_20261123.py",
+                ".github/workflows/gq470-persistent-base-bridge.yml"
+              ],
+              "resources": [
+                "GQ033_PERSISTENT_ADMISSION_PREP",
+                "GQ033_PERSISTENT_STORE_DONOR_PREP",
+                "GQ033_PROGRESSION_DONOR_PREP",
+                "GQ033_EVOLUTION_DONOR_PREP",
+                "GQ033_SIX_SKILL_PROFILE_DONOR_PREP",
+                "GQ033_FOCUS_SCHEDULER_DONOR_PREP",
+                "GQ033_SESSION_XP_PREVIEW_DONOR_PREP"
+              ],
+              "prep_branch": "quality/gq470-persistent-base-support-03a0fba0-20261123",
+              "may_write_original_s1a_paths_or_branch": false,
+              "may_publish_second_growth_pr": false,
+              "author_provenance_is_not_writer_authorization": true,
+              "claim_owner_field_is_not_executor_identity": true,
+              "claim_guard_is_not_delegated_publisher_authentication": true
+            }
+          },
+          "expiry": {
+            "expires_no_later_than": "2026-11-23T11:08:12.461550+00:00",
+            "actual_expires_at": "2026-11-23T11:08:12.461550+00:00",
+            "implicit_renewal": false,
+            "expired_claim_requires_new_coordinated_amendment": true
+          },
+          "work": {
+            "one_server_only_admission_module": "EGGRUMBLE_PersistentBaseAdmission",
+            "generated_namespace": "EGGRUMBLE_PersistentBaseSupport/",
+            "immutable_donor_count": 6,
+            "unattached_generated_module_count": 7,
+            "selected_runtime_source_count_change": 0,
+            "support_result_at_most": "DEPENDENCY_SOURCE_READY",
+            "gameplay_PREP_READY": false,
+            "full_S1_complete": false,
+            "native_actual_datastore_proof": false,
+            "donor_operations": [
+              "PersistentHatchStore.load",
+              "PersistentHatchStore.toProgressProfile"
+            ],
+            "dependency_handle": "Future authoritative Host supplies verified genuine-Studio eligibility and the original development-namespace read handle; absent from current V3.",
+            "identity": "Concrete Player + positive full UserId for account lifetime; read generation and revision; separate Host-owned round/admission identity.",
+            "snapshot": "Clone and freeze confirmed data at admission; late reads cannot mutate an admitted snapshot; ordinary respawn retains it; end removes admission only.",
+            "unready": "Distinguish a successful normalized read from failure/unloaded. Original Store.load does not expose raw-record existence: nil and a saved equivalent blank normalize to the same LOADED result. Raw existence remains UNKNOWN; LOADED or default Lv1 never proves past SAVED. No alternative queue/READY authority."
+          },
+          "donor_input": {
+            "commit": "84b39ba8dab77a5bda67969fe380484b619f1e00",
+            "run_id": 45090045932,
+            "artifact_id": 14781346003,
+            "zip_bytes": 555700,
+            "zip_sha256": "7a87a43771f7a6510813e7fcea0c2f608494359006d56812bd3f7bcbc0348662",
+            "place_bytes": 607997,
+            "place_sha256": "22ca247c1ce7348eab6bb3f65f7fc5c54e00684b7c7b8c248e229cb75ce849c7",
+            "modules": [
+              {
+                "name": "PersistentHatchStore",
+                "bytes": 24103,
+                "sha256": "4315bc3307a0341a0023a4feb606d739575e277de601c88ccdc015ceac0ac858"
+              },
+              {
+                "name": "ProgressionRules",
+                "bytes": 7436,
+                "sha256": "a2754c35b7ec86255b568eb2863b34beb233a4ed368851f8500f285e0b3ef89d"
+              },
+              {
+                "name": "EvolutionRules",
+                "bytes": 10064,
+                "sha256": "b8c2df76ec4b4492bcce66087833ec12f16b8eb29f4b8eb9386b58ab093b10a2"
+              },
+              {
+                "name": "SixSkillAtomicProfile",
+                "bytes": 7409,
+                "sha256": "904a4b16f0da39ecad569aba61ac44ced365a528146d49dfde9746d5b3361c31"
+              },
+              {
+                "name": "FocusTrainingScheduler",
+                "bytes": 8491,
+                "sha256": "6e42a4896eb3b8a233769339e4d714f600595e03987614a450266ae9baf99668"
+              },
+              {
+                "name": "SessionSixSkillXPPreview",
+                "bytes": 3786,
+                "sha256": "1d272a9ea2b37e69ff710958a74e92fcd24ce0ff5027efd1c62f8bae07ad9090"
+              }
+            ],
+            "donor_ownership_or_write_authority_transferred": false
+          },
+          "future_consumer": {
+            "path": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+            "owner_route": "Existing P0D033 / PR1028 / original817 subsequent exact S1B scope",
+            "host_edit_in_this_support": false,
+            "fresh_official_rc_artifact_required_before_later_integration": true,
+            "acceptance": "Original Store + actual Host: distinct confirmed Lv5/Lv20 starting views; current Player/round binding; respawn retained; end drops only admission. Combat/appearance/display wiring remains later work."
+          },
+          "acceptance": [
+            "Exact six original donor bodies, full-source Native evidence; no rewritten or stubbed Store logic.",
+            "Lv5/Lv20, full UserId key vs normalized policy ID, nil-success vs failure, legacy dojo/dojoV4 rejection retained.",
+            "Zero saving writes/Remote/new DataStore construction; dependency copies immutable.",
+            "Old Player late read/rejoin isolation, generation inversion/revision regression rejection.",
+            "Admission identity/round isolation, frozen snapshot across later read/respawn, nested data nonalias.",
+            "Prepare rejects symlink/path escape/input overwrite before any write; 69 original bodies/project/Place unchanged.",
+            "New exact support HEAD, real changed paths, own SOURCE lease and separate source-nonauthor review before DEPENDENCY_SOURCE_READY."
+          ],
+          "forbidden_changes": [
+            "Original817 nine paths/branch or other authors worktrees; Host/Combat/HUD/Hero/Result/Replay/Score.",
+            "Current69 selected source, selector, project, Place or shared canonical six producers.",
+            "Original donor content, new persistent Store/provider/key/namespace/Remote, save/write/XP reward/equipment entitlement authorities.",
+            "Gameplay PREP_READY/full S1/RC adoption/Studio/Android/ART/FUN claims based on component diagnostics.",
+            "Main, Roblox Publish, monetization, new spending, schedule or permission-policy changes."
+          ],
+          "rollback": "Remove only added nine support paths and unattached PREP output; original69/donor/S1A/Bot bytes and authorities retained.",
+          "execution_order": {
+            "existing_ready_bot1027_b8_priority_preserved": true,
+            "existing_s1a_repair_priority_preserved": true,
+            "no_queue_reservation": true,
+            "separate_genuine_metadata_then_source_lease": true,
+            "no_concurrent_overlapping_source_writer": true,
+            "rc_write_authorized": false
+          },
+          "source_writes_permitted_at_issuance": false,
+          "source_writes_permitted_meaning": "False is the issuance-time snapshot: this metadata operation has no SOURCE lease. A later concrete executor may write only after this exact registry CAS/readback and independent external binding, while the finite scope is live, the one partition matches every changed path/resource and branch, and the executor holds its own separate live SOURCE lease. No extra metadata CAS is required merely to start that separately fenced SOURCE operation.",
+          "source_write_requires_separate_live_source_lease": true
+        }
+      ],
+      "repository_authority_partitions": {
+        "schema": "P0D033_REPOSITORY_AUTHORITY_PARTITIONS_V1",
+        "status": "REGISTERED_FINITE_SCOPE_REQUIRES_EXTERNAL_CAS_READBACK_BINDING",
+        "authority_effective": true,
+        "does_not_revoke_existing_original_s1a_authority": true,
+        "use": "Manual genuine registration and pre-execution comparison of concrete executor, branch, exact paths/resources, reviewer and separately held live SOURCE lease. No existing guard authentication or automatic enforcement is claimed.",
+        "existing_claim_guard_authenticates_delegated_contexts": false,
+        "existing_claim_guard_enforces_these_partitions": false,
+        "cumulative_row_scope_arrays_are_not_a_union_of_writer_permissions": true,
+        "top_level_field_bindings": {
+          "authorized_repository_writer_contexts": {
+            "applies_exclusively_to": "original_s1a",
+            "value_preserved": true,
+            "does_not_authorize_support_paths_or_branch": true
+          },
+          "sole_source_publisher_context": {
+            "applies_exclusively_to": "original_s1a",
+            "value_preserved": true,
+            "not_a_row_wide_publisher_for_all_partitions": true
+          }
+        },
+        "original_s1a": {
+          "claim_owner": "CODEX_ROOT_817BC9841838",
+          "prep_branch": "quality/gq470-match-growth-817bc984-20261123",
+          "target_paths": [
+            "quality_gameplay/gq470_match_role_growth_20261123/README.md",
+            "quality_gameplay/gq470_match_role_growth_20261123/growth_patch.json",
+            "quality_gameplay/gq470_match_role_growth_20261123/source_lock.json",
+            "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
+            "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
+            "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
+            "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+            "tests/test_gq470_match_role_growth_20261123.py",
+            ".github/workflows/gq470-match-role-growth.yml"
+          ],
+          "resources": [
+            "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+            "REAL69_SOURCE_EGGRUMBLE_HEROSILHOUETTEART",
+            "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+            "REAL69_SOURCE_EGGRUMBLE_MATCHRESULTSERVICE"
+          ],
+          "authorized_repository_writer_contexts": [
+            "CODEX_ROOT_817BC9841838:/root",
+            "CODEX_ROOT_817BC9841838:/root/growth_source_audit",
+            "CODEX_ROOT_817BC9841838:/root/backlog_review"
+          ],
+          "sole_source_publisher_context": "CODEX_ROOT_817BC9841838:/root",
+          "independent_reviewer_context": "CODEX_ROOT_817BC9841838:/root/coordination_review",
+          "authority_source": "Existing original grant and registered maintenance metadata, preserved without any added support authority.",
+          "may_write_support_paths_or_branch": false,
+          "separate_live_source_lease_still_required": true
+        },
+        "proposed_support": {
+          "stage_id": "P0D033_PERSISTENT_BASE_DEPENDENCY_PREPARATION",
+          "authority_source": "The matching bounded_support_stages entry, issued by the actual metadata operation recorded there. Finite scope takes effect only with its exact remote CAS/readback and independent external review binding. A separate own live SOURCE lease is still mandatory.",
+          "prep_branch": "quality/gq470-persistent-base-support-03a0fba0-20261123",
+          "target_paths": [
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/README.md",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/source_lock.json",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/prepare_bridge.py",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/EGGRUMBLE_PersistentBaseAdmission.luau",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/native/bridge_cases.luau",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/native/run_bridge.py",
+            "quality_gameplay/gq470_persistent_base_bridge_20261123/native/INPUT_LOCK.json",
+            "tests/test_gq470_persistent_base_bridge_20261123.py",
+            ".github/workflows/gq470-persistent-base-bridge.yml"
+          ],
+          "resources": [
+            "GQ033_PERSISTENT_ADMISSION_PREP",
+            "GQ033_PERSISTENT_STORE_DONOR_PREP",
+            "GQ033_PROGRESSION_DONOR_PREP",
+            "GQ033_EVOLUTION_DONOR_PREP",
+            "GQ033_SIX_SKILL_PROFILE_DONOR_PREP",
+            "GQ033_FOCUS_SCHEDULER_DONOR_PREP",
+            "GQ033_SESSION_XP_PREVIEW_DONOR_PREP"
+          ],
+          "authorized_repository_writer_contexts": [
+            "CODEX_ROOT_03A0FBA0D83E:/root"
+          ],
+          "sole_source_publisher_context": "CODEX_ROOT_03A0FBA0D83E:/root",
+          "independent_reviewer_context": "CODEX_ROOT_03A0FBA0D83E:/root/integration_authority",
+          "authority_effective": true,
+          "source_scope_granted": true,
+          "source_writes_permitted": false,
+          "may_write_original_s1a_paths_or_branch": false,
+          "may_publish_second_growth_pr": false,
+          "expires_no_later_than": "2026-11-23T11:08:12.461550+00:00",
+          "source_writes_permitted_at_issuance": false,
+          "source_writes_permitted_meaning": "False is the issuance-time snapshot: this metadata operation has no SOURCE lease. A later concrete executor may write only after this exact registry CAS/readback and independent external binding, while the finite scope is live, the one partition matches every changed path/resource and branch, and the executor holds its own separate live SOURCE lease. No extra metadata CAS is required merely to start that separately fenced SOURCE operation.",
+          "source_write_requires_separate_live_source_lease": true,
+          "expires_at": "2026-11-23T11:08:12.461550+00:00"
+        },
+        "execution_rule": "All changed paths and generated resources must belong to the one partition matching the authenticated concrete executor and actual branch. Require the current finite grant and a separate live SOURCE lease for that same operation. Reject absent, ambiguous, mixed or mismatched partition evidence before any write; branch switching and a cumulative claim owner/paths match confer no other-partition authority.",
+        "cross_partition_authority_transfer": false,
+        "source_lease_transfer_between_partitions": false,
+        "new_rc_main_publish_or_host_authority": false,
+        "new_support_actual_issuer_lease_time_review_readback": {
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+          "issuer_operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+          "issued_at": "2026-11-23T09:00:31.169199+00:00",
+          "actual_metadata_authority": {
+            "status": "ACTUAL_METADATA_LEASE_READBACK",
+            "owner": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+            "epoch": 696,
+            "holder": {
+              "kind": "CONTROLLER",
+              "owner_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+              "task_id": null,
+              "epoch": 696,
+              "acquired_at": "2026-11-23T08:58:45.417400+00:00",
+              "expires_at": "2026-11-23T09:28:45.417400+00:00",
+              "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+              "work_branch": "coord/p0d-work-claims",
+              "origin": "controller"
+            },
+            "acquire_commit": "bf0eb57048981aa5a9ebe70b1dae1bc150282de7",
+            "state_blob": "b4b2dd90eb247a83a82ff97ed974dce93ea8f8af",
+            "actual_readback": true,
+            "authenticated_actor": {
+              "login": "kk051780",
+              "id": 233213370
+            },
+            "repo_permission": "admin",
+            "readback_at_utc": "2026-11-23T08:58:52Z",
+            "registry_before_ref": "df3bab856e7b77e083d8e5b4cb53ff2343e3b108",
+            "registry_before_blob": "618882394ef3de9adaffd4fb5e58f33aefbb70fe",
+            "authority_scope": "FINITE_SAME_CLAIM_SUPPORT_METADATA_ONLY_NOT_SOURCE_OR_RC_LEASE",
+            "original_677_and_688_history_is_not_support_authority": true
+          },
+          "coordination_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+            "task_id": null,
+            "epoch": 696,
+            "acquired_at": "2026-11-23T08:58:45.417400+00:00",
+            "expires_at": "2026-11-23T09:28:45.417400+00:00",
+            "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller",
+            "acquire_commit": "bf0eb57048981aa5a9ebe70b1dae1bc150282de7",
+            "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+          },
+          "independent_before_after_review": {
+            "mode": "FINAL_EXACT_CANDIDATE_BOUND_EXTERNALLY_BEFORE_CAS",
+            "reviewer_context": "CODEX_ROOT_03A0FBA0D83E:/root/integration_authority",
+            "evidence_issue": 218,
+            "operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+            "before_ref": "df3bab856e7b77e083d8e5b4cb53ff2343e3b108",
+            "before_blob": "618882394ef3de9adaffd4fb5e58f33aefbb70fe",
+            "scope_review_is_source_approval": false,
+            "requires_actual_positive_review_before_cas": true
+          },
+          "claim_commit": null,
+          "registry_blob": null,
+          "actual_readback": null,
+          "self_reference_fields_meaning": "These null fields deliberately do not predict their own future Git identities or readback. Issue218 binds the actual resulting commit, complete blob/hash and readback to this operation UUID after the real CAS.",
+          "external_binding": {
+            "issue": 218,
+            "operation_id": "3bfbd43f-18fd-4439-92a0-43d1b582feca",
+            "parent_claim": "P0D-GQ033-MATCH-GROWTH-20261123-817BC984",
+            "stage_id": "P0D033_PERSISTENT_BASE_DEPENDENCY_PREPARATION",
+            "actual_post_cas_readback_required_before_source": true
+          },
+          "service_run_id": null,
+          "service_task_id": null,
+          "execution_context_kind": "ACTUAL_MANUAL_CONTROLLER_OPERATION_NOT_AUTOMATION_SERVICE_RUN"
+        }
       }
     },
     {
