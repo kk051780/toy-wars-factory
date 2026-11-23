@@ -27462,6 +27462,294 @@
       "art": "NOT_TESTED",
       "fun": "NOT_TESTED",
       "RUNTIME_UNIFIED": "NO"
+    },
+    {
+      "claim_id": "P0D-GQ775-REGEN-OBSERVER-20261123-8E09E097",
+      "feature_id": "BATTLE_HP_REGEN_20261118_RUNTIME_INTEGRATION",
+      "sub_scope": "DELIVERED_HEALTH_EVENT_HISTORY_ONLY",
+      "owner": "CODEX_ROOT_8E09E097ABE2",
+      "role": "A_PREP",
+      "state": "GRANTED",
+      "parent_issue": 470,
+      "canonical_parent": "#765 lane7 / #773 policy / existing #775 runtime",
+      "request_comment": 7093596773,
+      "pr": 775,
+      "allowed_new_prs": 0,
+      "created_pr_count": 0,
+      "prep_branch": "quality/gq775-regen-observer-8e09e097-20261123",
+      "base_rc_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+      "existing_pr_head": "5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3",
+      "author_contexts": [
+        "CODEX_ROOT_8E09E097ABE2:/root",
+        "CODEX_ROOT_8E09E097ABE2:/root/local_inventory"
+      ],
+      "independent_reviewer_context": "CODEX_ROOT_8E09E097ABE2:/root/policy_path",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_NATURALREGEN",
+        "GQ775_REGEN_DELIVERED_HEALTH_OBSERVER_QA"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq775_regen_observer_20261123/README.md",
+        "quality_gameplay/gq775_regen_observer_20261123/SOURCE_LOCK.json",
+        "quality_gameplay/gq775_regen_observer_20261123/observer.patch",
+        "quality_gameplay/gq775_regen_observer_20261123/apply_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/engine_fixture.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/cases.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/run_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq775_regen_observer_20261123.py",
+        ".github/workflows/gq775-regen-observer.yml"
+      ],
+      "new_paths": [
+        "quality_gameplay/gq775_regen_observer_20261123/README.md",
+        "quality_gameplay/gq775_regen_observer_20261123/SOURCE_LOCK.json",
+        "quality_gameplay/gq775_regen_observer_20261123/observer.patch",
+        "quality_gameplay/gq775_regen_observer_20261123/apply_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/engine_fixture.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/cases.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/run_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq775_regen_observer_20261123.py",
+        ".github/workflows/gq775-regen-observer.yml"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq775_regen_observer_20261123/README.md",
+        "quality_gameplay/gq775_regen_observer_20261123/SOURCE_LOCK.json",
+        "quality_gameplay/gq775_regen_observer_20261123/observer.patch",
+        "quality_gameplay/gq775_regen_observer_20261123/apply_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/engine_fixture.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/cases.luau",
+        "quality_gameplay/gq775_regen_observer_20261123/native/run_observer.py",
+        "quality_gameplay/gq775_regen_observer_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq775_regen_observer_20261123.py",
+        ".github/workflows/gq775-regen-observer.yml"
+      ],
+      "scope": "Add-only evidence branch for the existing #775 feature, removing solely the eager e.lastHealth=h.Health write after passive healing so existing HealthChanged remains the sole delivered-health-history updater. This closes the concrete healing-before-regen false damage cooldown under supported Deferred FIFO delivery; it does not establish current H93 Studio SignalBehavior. Preserve the original +12B cadence repair as a distinct attributed exact input/transform, not new authorship.",
+      "generated_source_scope": {
+        "ServerScriptService/EGGRUMBLE_NaturalRegen.luau": "Read exact official4bdb input to prepare the separately attributed existing cadence94f parent, then remove only the25-byte eager history line from94f to4454-byte db264451b07ff64b0f3ab9db746350fef27937a87bbaff1d2ec4bab0d96a5433. Observer inverse restores94f byteexact. H93 removal-only4442/b230 remains prior diagnostic evidence, not another packaged implementation. No Policy, rates, thresholds, HP authority, scheduling or SignalBehavior mutation."
+      },
+      "preserved_lineage": {
+        "original_pr": 775,
+        "original_branch": "feature/gq8-natural-regen-20261118",
+        "original_head": "5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3",
+        "official_input": {
+          "bytes": 4467,
+          "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+        },
+        "cadence_input": {
+          "bytes": 4479,
+          "sha256": "94f1b7812781f4e4300971d8b38044b40dfed5cc3c80329fdb491e901c17f946",
+          "author": "CODEX_ROOT_7884A126E204",
+          "request_comment": 7077326916
+        },
+        "policy": {
+          "bytes": 2686,
+          "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+        },
+        "canonical_transport": {
+          "owner": "CODEX_ROOT_9E584AF98A13",
+          "comment": 7087084881,
+          "status": "EXISTING_NOT_GRANTED_REQUEST_PRESERVED"
+        },
+        "original_34": "Includes 17 Immediate and 17 Deferred cases; does not queue an earlier external healing callback before Regen's own Heartbeat write. Preserve historical evidence rather than claim Deferred was untested.",
+        "ownership_transfer": false,
+        "original_branch_writes": false
+      },
+      "forbidden_changes": [
+        "Existing PR775 branch/ref and original handoff files",
+        "Canonical UNION22 producers, profiles, shared workflows and prior transport requests",
+        "PassiveRegenPolicy, role HP, 7-second quiet interval, 0.7% rate, cadence or HP authority outside exact reused +12 input preparation",
+        "SignalBehavior or speculative task.defer scheduling",
+        "Fixing or relabeling pending-damage and standard Health coexistence residuals",
+        "Other feature owners, main, RC, Publish, monetization, spending, existing five automations"
+      ],
+      "acceptance": "Exact full Policy+Regen bodies; fixed official4bdb -> separately attributed reused cadence94f -> one-line observerdb264 -> inverse94f pipeline. Exact expected Native case IDs/status/count and exit mapping; Immediate invariance, Deferred healing-before-regen red->green, multiple queued heals, player isolation and detach replacement. Preserve the two pending-damage failures as explicit unresolved probes with raw nonzero exit. Freeze input/lock bytes through the run, bind actual hosted candidate checkout/ref/run separately from immutable source inputs. Read-only fixed-source CI with a fresh pinned Luau build; registered nonauthor review required before source readiness. No Studio/Android/FUN equivalence.",
+      "rollback": "Remove only the ten added package/CI/test paths; reverse only the observer line deletion to the exact chosen4479-byte cadence parent94f. The original +12 repair keeps its separate author/source/inverse lineage. The broader local Place proposal additionally reverses that inherited transform to recover H93 exactly; this does not grant canonical writes.",
+      "candidate_source": {
+        "bytes": 4454,
+        "sha256": "db264451b07ff64b0f3ab9db746350fef27937a87bbaff1d2ec4bab0d96a5433"
+      },
+      "source_scope_granted": true,
+      "scope_review_is_code_approval": false,
+      "registered_source_approval": false,
+      "PREP_READY": false,
+      "prep_ready": false,
+      "source_writes_permitted_at_issuance": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "canonical_write_authorized_by_this_claim": false,
+      "queue_preservation": "Preserve B8 Bot -> #618 BEAST -> #796 Guardian priority. The supplied actual coordinator records prior operation 13ce85ca-79b0-4e40-96fe-247b1f38eea7 at epoch 707 with released_at 2026-11-23T10:50:36.973302+00:00. This records that tuple without reclassifying an administrative fence or recovery as a normal return. No RC slot or prior-operation authority transfers to this metadata grant.",
+      "no_main_or_publish": true,
+      "runtime_unified": false,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "NOT_TESTED",
+      "fun": "NOT_TESTED",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "9e36c3b0-70f6-40e7-93d9-4cbc216e70fd",
+      "service_run_id": null,
+      "service_task_id": null,
+      "actual_metadata_authority": {
+        "status": "ACTUAL_METADATA_LEASE_READBACK",
+        "owner": "9e36c3b0-70f6-40e7-93d9-4cbc216e70fd",
+        "epoch": 708,
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "9e36c3b0-70f6-40e7-93d9-4cbc216e70fd",
+          "task_id": null,
+          "epoch": 708,
+          "acquired_at": "2026-11-23T10:51:05.551174+00:00",
+          "expires_at": "2026-11-23T11:21:05.551174+00:00",
+          "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        },
+        "claim_commit": "eeb43cbb4989cb9dedd792ad52f38753986bc49d",
+        "readback_ref": "eeb43cbb4989cb9dedd792ad52f38753986bc49d",
+        "state_blob": "d4757abc66494da33ce6f432b05ec835f5782423",
+        "readback_at_utc": "2026-11-23T10:51:19.914Z",
+        "actual_readback": true,
+        "authenticated_actor": {
+          "nickname": "kk051780",
+          "id": "233213370"
+        },
+        "repo_permission": "admin",
+        "authority_kind": "REAL_AUTHENTICATED_OWNER_DELEGATED_METADATA_COORDINATOR"
+      },
+      "issued_at": "2026-11-23T10:55:06.700398+00:00",
+      "expires_at": "2026-11-23T16:55:06.700398+00:00",
+      "proposal_only_until_actual_registration": false,
+      "draft_only_not_issued": false,
+      "scope_review_mode": "Concrete current before/after and actual metadata lease must be independently reviewed before registry CAS. Local code review is separate and not a registered approval.",
+      "expiry_policy": "Six hours from actual metadata issuance. Expiration alone never transfers ownership.",
+      "scope_version": 1,
+      "integration_issue": 220,
+      "no_review_waiver": true,
+      "base_rc_tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+      "base_rc_semantics": "Latest observed formal RC after actual B8 adoption. Re-fetch at metadata issuance. Immutable Native source provenance remains H93/PR775; this draft is not same-H72 official artifact acceptance.",
+      "candidate_head": null,
+      "candidate_tree": null,
+      "source_head": null,
+      "source_review": {
+        "status": "PENDING_ACTUAL_PUBLISHED_HEAD",
+        "reviewer_context": "CODEX_ROOT_8E09E097ABE2:/root/policy_path",
+        "local_review_is_registered_approval": false
+      },
+      "source_package": {
+        "version": 3,
+        "manifest": {
+          "path": "/workspace/scratch/8e09e097abe2/local_inventory/regen_proposal_validation/PACKAGE_RECEIPT_v3.json",
+          "bytes": 2152,
+          "sha256": "59a4e6dd72f625f1448839cbd783faba61c73ad0a0a3cff97417fe7383a0e27a"
+        },
+        "independent_local_review": {
+          "path": "/workspace/scratch/8e09e097abe2/policy_review/regen_package_review/INDEPENDENT_PACKAGE_REVIEW_v3.json",
+          "bytes": 10018,
+          "sha256": "95b937ce09a66f8d0b6fd431d1adbbfad09a4e1c03ae84bd1b03a92c55de55d3"
+        },
+        "native_run02": {
+          "path": "/workspace/scratch/8e09e097abe2/local_inventory/regen_proposal_validation/run02/RECEIPT.json",
+          "bytes": 21434,
+          "sha256": "4170f27db444646eb62769b759be5d18d3f317e8712bdb0e4296660952826d67"
+        },
+        "v3_new_native_executions": 0,
+        "v3_change": "Only shared-discovery compatibility, README, and two derived file pins; dedicated eight guards still require actual Native evidence."
+      },
+      "source_head_before": null,
+      "source_tree": null,
+      "source_branch_created": false,
+      "source_branch_state_before_creation": "ABSENT_AS_SUPPLIED_ACTUAL_READS",
+      "source_branch_creation_base_rc_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+      "grant_scope_version": 1,
+      "scope_review_context": "CODEX_ROOT_8E09E097ABE2:/root/policy_path",
+      "independent_review_status": "PENDING_REGISTERED_REVIEW_OF_ACTUAL_PUBLISHED_SOURCE_HEAD",
+      "formal_rc_adoption": false,
+      "formal_rc_adopted": false,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "9e36c3b0-70f6-40e7-93d9-4cbc216e70fd",
+        "task_id": null,
+        "epoch": 708,
+        "acquired_at": "2026-11-23T10:51:05.551174+00:00",
+        "expires_at": "2026-11-23T11:21:05.551174+00:00",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller",
+        "coordinator_ref": "eeb43cbb4989cb9dedd792ad52f38753986bc49d",
+        "coordinator_blob": "d4757abc66494da33ce6f432b05ec835f5782423",
+        "actual_acquire_commit": "eeb43cbb4989cb9dedd792ad52f38753986bc49d"
+      },
+      "authority_evidence": {
+        "profile": {
+          "path": "/workspace/scratch/8e09e097abe2/policy_review/regen_registration/actual_708/profile.actual.json",
+          "bytes": 402,
+          "sha256": "0adb03bf46c7283e5f71afc25790e989479b92248a18cd33cde5244666be729d",
+          "read_at_utc": "2026-11-23T10:52:09.187Z",
+          "source": "mcp__codex_apps__github_get_profile",
+          "receipt_format": "github_connector_tool_v1",
+          "tool": "mcp__codex_apps__github_get_profile",
+          "arguments": {},
+          "observed_at_utc": "2026-11-23T10:52:09.187Z",
+          "observed_identity": {
+            "nickname": "kk051780",
+            "id": "233213370"
+          }
+        },
+        "admin": {
+          "path": "/workspace/scratch/8e09e097abe2/policy_review/regen_registration/actual_708/admin.actual.json",
+          "bytes": 273,
+          "sha256": "343dd3d1e3faa352a98b4978ca4287a5ba34c57b5bc0277dc8af057fd35c988b",
+          "read_at_utc": "2026-11-23T10:52:30.547Z",
+          "source": "mcp__codex_apps__github_get_repo_collaborator_permission",
+          "receipt_format": "github_connector_tool_v1",
+          "tool": "mcp__codex_apps__github_get_repo_collaborator_permission",
+          "arguments": {
+            "repository_full_name": "kk051780/toy-wars-factory",
+            "username": "kk051780"
+          },
+          "observed_at_utc": "2026-11-23T10:52:30.547Z",
+          "observed_permission": "admin"
+        }
+      },
+      "local_package_evidence": {
+        "manifest": {
+          "path": "/workspace/scratch/8e09e097abe2/local_inventory/regen_proposal_validation/PACKAGE_RECEIPT_v3.json",
+          "bytes": 2152,
+          "sha256": "59a4e6dd72f625f1448839cbd783faba61c73ad0a0a3cff97417fe7383a0e27a"
+        },
+        "independent_technical_review": {
+          "path": "/workspace/scratch/8e09e097abe2/policy_review/regen_package_review/INDEPENDENT_PACKAGE_REVIEW_v3.json",
+          "bytes": 10018,
+          "sha256": "95b937ce09a66f8d0b6fd431d1adbbfad09a4e1c03ae84bd1b03a92c55de55d3"
+        },
+        "registered_source_approval": false
+      },
+      "target_paths_semantics": "Exactly ten new isolated evidence paths, no wildcard or original PR775/canonical writes; actual absence and current-runtime-body receipts must be reviewed before registry CAS.",
+      "source_preexistence_evidence": {
+        "path": "/workspace/scratch/8e09e097abe2/policy_review/regen_registration/actual_708/PREEXISTENCE_GATE.json",
+        "bytes": 3252,
+        "sha256": "733a3e7cd18112b2674a490366b20a28668c7dd52fcdfd6c7f50f2f43666351f",
+        "actual_reads_supplied_for_independent_review": true
+      },
+      "queue_preservation_evidence": {
+        "coordinator_ref": "eeb43cbb4989cb9dedd792ad52f38753986bc49d",
+        "last_completed": {
+          "kind": "CONTROLLER",
+          "owner_id": "13ce85ca-79b0-4e40-96fe-247b1f38eea7",
+          "epoch": 707,
+          "released_at": "2026-11-23T10:50:36.973302+00:00"
+        }
+      },
+      "scope_review": {
+        "status": "EXTERNAL_NONAUTHOR_REVIEW_REQUIRED_BEFORE_REGISTRY_CAS",
+        "reviewer_context": "CODEX_ROOT_8E09E097ABE2:/root/policy_path",
+        "self_approval": false,
+        "after_hash_bound_externally": true
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
