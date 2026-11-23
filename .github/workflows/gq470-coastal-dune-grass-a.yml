@@ -1,0 +1,113 @@
+name: GQ470 coastal dune grass REAL69 to private70 A source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq470_coastal_dune_grass_20261121/**"
+      - ".github/workflows/gq470-coastal-dune-grass-a.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real70-source-nonloss:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      ROOT: /tmp/gq470_dune
+      SRC: quality_gameplay/gq470_coastal_dune_grass_20261121
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact candidate checkout and Python source-negative gates
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -m py_compile "$SRC/compose_real70.py" "$SRC/test_coastal_dune_source.py"
+          python3 -m unittest discover -s "$SRC" -p 'test_*.py' -v
+      - name: Retrieve verified existing official REAL69 private source (credentialed isolated step)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL" || { echo RED_OFFICIAL_HEAD_MOVED; exit 1; }
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "$FORMAL success"
+          mkdir -p "$ROOT/off69"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/off69"
+      - name: Authentic 69 original sources and one new isolated client / OFF lock
+        run: |
+          set -euo pipefail
+          test -z "${GH_TOKEN:-}" || { echo RED_GITHUB_CREDENTIAL_LEAK_TO_PR_CODE; exit 1; }
+          python3 -B "$SRC/compose_real70.py" --original "$ROOT/off69" --out "$ROOT/on70"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq470_native_luau
+          persist-credentials: false
+      - name: Pinned native compile actual OFF69 and candidate ON70
+        run: |
+          set -euo pipefail
+          cmake -S _gq470_native_luau -B "$ROOT/luau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import os,sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          root=Path(os.environ['ROOT'])
+          for sub, expected in [('off69',69),('on70',70)]:
+              target=root/sub
+              mapping=project_scan(target,'EGGRUMBLE_REAL69.project.json')
+              assert len(mapping)==expected,(sub,len(mapping))
+              for entry in mapping.values():
+                  subprocess.run([str(root/'luau/luau-compile'),'--text',str(target/entry['path'])],
+                                  check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_DUNE_GRASS_TRUE_NATIVE_OFF69_ON70_PASS_NOT_STUDIO')
+          PY
+      - name: Pinned Rojo OFF69 byte-exact and ON70 Source/Class against genuine private Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ['ROOT'])
+          with ZipFile(root/'rojo.zip') as archive:
+              paths=[n for n in archive.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(paths)==1
+              binary=root/'rojo'
+              binary.write_bytes(archive.read(paths[0]))
+              binary.chmod(0o755)
+          PY
+          "$ROOT/rojo" build "$ROOT/off69/EGGRUMBLE_REAL69.project.json" -o "$ROOT/OFF69_REBUILT.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$ROOT/off69/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          "$ROOT/rojo" build "$ROOT/on70/EGGRUMBLE_REAL69.project.json" -o "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
+          python3 -B "$SRC/compose_real70.py" --verify "$ROOT/on70" --built "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
+          echo GQ470_DUNE_GRASS_ROJO_OFF69_BYTE_EXACT_ON70_CLASS_SOURCE_GREEN_NOT_ART_NOT_FORMAL
+      - name: B220 exact one source packet and 17 malicious/tampered negative fixtures
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$SRC/verify_b_packet.py"
+          python3 -B "$SRC/verify_b_packet.py" --candidate "$ROOT/on70" --built "$ROOT/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx"
+      - name: Fail closed if real formal RC moved during this A-only build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL" || { echo RED_FORMAL_MOVED_REBASE_REQUIRED; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-DUNE-GRASS-REAL70-A-SOURCE-NOT-FORMAL
+          retention-days: 7
+          path: |
+            /tmp/gq470_dune/on70/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470_dune/on70/GQ470_DUNE_GRASS_A_SOURCE_RECEIPT.json
+            /tmp/gq470_dune/on70/B220_DUNE_GRASS_ONE_CLIENT_SOURCE_NOT_FORMAL/**
+            /tmp/gq470_dune/GQ470_DUNE_GRASS_REAL70_A_ONLY.rbxlx
+            /tmp/gq470_dune/OFF69_REBUILT.rbxlx
