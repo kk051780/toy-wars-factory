@@ -12891,6 +12891,192 @@
         "scope_change": "Withdraw the proposed short-return production guard before grant/source editing; reuse original helper exactly.",
         "original_review_and_request_history_retained": true
       }
+    },
+    {
+      "claim_id": "P0D-469-SOURCE-INCREMENT-20261123-1E030E72",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_1E030E72B4F1",
+      "feature_id": "P0D_EXCLUSIVE_WORK_CLAIMS",
+      "sub_scope": "ORIGINAL469_OPT_IN_IN_PLACE_SOURCE_INCREMENT_VALIDATION",
+      "canonical_parent": 469,
+      "parent_issue": 469,
+      "coordination_issue": 218,
+      "integration_issue": 220,
+      "pr": 469,
+      "allowed_new_prs": 0,
+      "role": "A_PREP",
+      "work_kind": "SYSTEM_QUALITY_GATE_MAINTENANCE",
+      "request_comment": 7087805065,
+      "resources": [
+        "P0D_EXCLUSIVE_WORK_CLAIMS"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-work-claim-gate.yml",
+        "rc_fastlane/NO_DUPLICATE_WORK_V1.md",
+        "tests/test_p0d_work_claim_guard.py",
+        "tools/p0d_work_claim_guard.py"
+      ],
+      "mutable_paths": [
+        "tools/p0d_work_claim_guard.py",
+        "tests/test_p0d_work_claim_guard.py"
+      ],
+      "preserved_pr_diff_blobs": {
+        ".github/workflows/p0d-work-claim-gate.yml": "86b88823d0559158b54a0aee22dcfe18d24fccba",
+        "rc_fastlane/NO_DUPLICATE_WORK_V1.md": "4549ce057f8c9a42c92dd6b4a7615753654d8f9c"
+      },
+      "target_paths_semantics": "Existing original469 cumulative envelope4; only mutable2 may change. Frozen observer/doc2 retain actual path/type/mode/blob. No workflow/document write right.",
+      "source_increment_policy": {
+        "schema": "P0D_SOURCE_INCREMENT_POLICY_V1",
+        "kind": "IN_PLACE_REGULAR_BLOBS"
+      },
+      "prep_branch": "feature/p0d-anti-duplicate-claims-v1-20261115",
+      "maintenance_base_sha": "40cb67ea4077a0d0d855b7c6403992b541ad9c0f",
+      "source_head_before": "40cb67ea4077a0d0d855b7c6403992b541ad9c0f",
+      "maintenance_tree_sha": "0e7452f697ef4f40a82660b4df04fb55329b3ad6",
+      "source_head": null,
+      "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "base_rc_semantics": "Fresh official repair context only; not donor ancestry or a donor rebase claim.",
+      "pr_base_ref": "rc/p0d-s1-kids-rc01",
+      "pr_base_sha": "33ec975c54a2932deee65290a10818efc97c7762",
+      "pr_base_semantics": "Actual observed provider PR metadata; distinct from officialRC context and actual comparison merge-base. ReGET before grant/publication.",
+      "donor_maintenance_only": true,
+      "formal_rc_rebase_performed": false,
+      "before_entries": {
+        ".github/workflows/p0d-work-claim-gate.yml": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "86b88823d0559158b54a0aee22dcfe18d24fccba",
+          "size": 5491
+        },
+        "rc_fastlane/NO_DUPLICATE_WORK_V1.md": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4549ce057f8c9a42c92dd6b4a7615753654d8f9c",
+          "size": 4840
+        },
+        "tests/test_p0d_work_claim_guard.py": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "da72d6c04d211203c92670e0e849dba814870569",
+          "size": 4898
+        },
+        "tools/p0d_work_claim_guard.py": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "079baa100e0e7a3072af9c03fc068397f4281269",
+          "size": 7028
+        }
+      },
+      "original_authorship": {
+        "canonical_pr": 469,
+        "original_source_head": "35faf7291beba68c5b23aeda2cac1387b1c0bf40",
+        "current_donor_head": "40cb67ea4077a0d0d855b7c6403992b541ad9c0f",
+        "original_github_author": "kk051780",
+        "original_github_author_id": 233213370,
+        "historical_author_context": "NOT_RECOVERED_DO_NOT_INVENT",
+        "original_guard_blob": "079baa100e0e7a3072af9c03fc068397f4281269",
+        "original_tests_blob": "da72d6c04d211203c92670e0e849dba814870569",
+        "selected_official_adoption_commit": "9d70066d82a9c79b7bf5a725c9e399b4799831a0",
+        "credit": "Original469 author/source preserved; current root is authorized continuation author of future2-file delta only."
+      },
+      "author_contexts": [
+        "CODEX_ROOT_1E030E72B4F1:/root: existing guard implementation and sole source-branch publisher",
+        "CODEX_ROOT_1E030E72B4F1:/root/planning_quality: bounded design plus focused regression additions in existing test file; not independent reviewer"
+      ],
+      "independent_reviewer_context": "CODEX_ROOT_1E030E72B4F1:/root/candidate_triage",
+      "independent_review_status": "CONTEXT_REGISTERED_FOR_FUTURE_ACTUAL_HEAD_REVIEW_NO_SOURCE_APPROVAL",
+      "scope_review": {
+        "context": "CODEX_ROOT_1E030E72B4F1:/root/authority_intake",
+        "decision": "CONDITIONAL_SCOPE_PASS_NOT_GRANTED_NOT_SOURCE_APPROVED",
+        "review_sha256": "27d60043a15730729e3dc84b9c4667edbc11a81e825b7769304f2c9ff2cda1b4",
+        "legacy_source_pins_sha256": "724231e59144243d5d28d6e352567b650d6575ae21d88d96d7b9e928b8b101e5",
+        "design_context": "CODEX_ROOT_1E030E72B4F1:/root/planning_quality",
+        "design_sha256": "5ebbb7d19756df2a2007fb99a56b73465e5aca3f5ab9b853aa54b22964afe7c5",
+        "metadata_second_look_context": "CODEX_ROOT_1E030E72B4F1:/root/candidate_triage",
+        "metadata_second_look_receipt_sha256": "65498ee456685342a880d46a4006efd3378c9818fcfc99b60c4edb8ee8fe4821",
+        "actual_candidate_head_review_completed": false
+      },
+      "scope": "Reuse original469 with one opt-in strict source-increment checker in its existing guard and focused regression additions in its existing test file. Keep ordinary checker/helpers, original16 test bodies, default CLI contract, governance/auth gates and all unrelated sources unchanged.",
+      "acceptance": [
+        "All original six guard function bodies including check() and all original16 test method bodies preserve pinned raw bytes; no default result/CLI behavior change.",
+        "New --source-evidence path invokes unchanged scope check first, then fixed authority-owned policy; unsupported or malformed strict input fails without silent fallback.",
+        "A,H,B,M,U identities, actual complete trees/diffs, old/new path records, mutable/frozen/unrelated preservation and explicit PREPARED/PUBLISHED labels are reconciled.",
+        "Pure offline consistency result keeps provider authentication, independent approval, publication authorization and same-head CI false; no writes, network or grant.",
+        "Approximately ten bounded acceptance groups in frozen design; exact legacy G4 adapter only, Boss/Realm ordinary behavior retained.",
+        "Actual newHEAD push bootstrap runs retained16 plus new case names; separate immutable-head independent source review. Historical40cb green is route proof only."
+      ],
+      "source_publication_conditions": [
+        "ReGET actual donor head and full current PR diff; any head/source/tree drift invalidates these anchor pins until independently reconciled.",
+        "Candidate descends from actual donor40cb; complete donor-to-candidate tree delta is nonempty subset of exactly mutable2, existing regular100644 files modified in place; no add/delete/rename/copy/type/mode change.",
+        "Include old and new names in complete delta; frozen2 path/type/mode/blob and every unrelated source/tree entry preserved.",
+        "Use unchanged official guard for ordinary scope check; new proposed checker never authorizes its own grant or waives manual independent actual tree review.",
+        "Root obtains separate real source lease, checks expected donor HEAD immediately before nonforce publish, then actual API compare/cumulative4/tree/blob readback.",
+        "Preserve historical PR base separately from fresh official context; if provider base metadata changed, update actual binding honestly, never infer it equals officialRC."
+      ],
+      "candidate_ci": {
+        "workflow": ".github/workflows/bootstrap-quality.yml",
+        "blob": "5adea497e000a02afcc36323c68bef915c04841f",
+        "job": "offline",
+        "push_branch": "feature/p0d-anti-duplicate-claims-v1-20261115",
+        "matched_paths": [
+          "tools/**",
+          "tests/**"
+        ],
+        "command": "python3 -m unittest discover -s tests -p \"test_*.py\" -v",
+        "historical_route_proof": {
+          "run": 43667640712,
+          "job": 132670479538,
+          "head": "40cb67ea4077a0d0d855b7c6403992b541ad9c0f",
+          "legacy16_observed": true
+        },
+        "future_same_head_run_required": true,
+        "old_observer_status_is_not_candidate_test": true
+      },
+      "rollback": "Inverse only the actual authorized two-file new delta toward the pinned donor before-images, preserving later unrelated work; never reset the branch. Frozen workflow/doc and all other files unchanged.",
+      "future_rc_adoption": "Separate legitimate B220 single-writer handoff/lease/fresh RC CAS and exact-head CI. Selectively adopt only these2 source files; no full4 donor merge or activation of dormant observer/workflow by this claim.",
+      "forbidden_changes": [
+        "Frozen original469 observer workflow and doc",
+        "Any other workflow or .github path",
+        "Gameplay producers/sources or root game component13/full19",
+        "Coordination/lease/approval implementation, registry aliases or authority policy source",
+        "Additional source/test paths or new PR",
+        "main/Publish/spend/schedule changes",
+        "Source self-approval, fabricated newHEAD or CI"
+      ],
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "35947519-7e83-4f9c-918d-0b57936aeafd",
+      "issued_at": "2026-11-23T00:02:47.178827+00:00",
+      "expires_at": "2026-11-23T06:02:47.178827+00:00",
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "epoch": 640,
+        "owner_id": "35947519-7e83-4f9c-918d-0b57936aeafd",
+        "acquire_commit": "dec0c89bd0977a81d5ca98222082ac4512f91bfd",
+        "acquired_at": "2026-11-23T00:02:10.685660+00:00",
+        "expires_at": "2026-11-23T00:32:10.685660+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "expiry_policy": "Actual issued_at +6h by coordinator; expired reservation is not automatic handoff.",
+      "grant_scope_version": 1,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "source_scope_granted": true,
+      "rc_write_authorized_by_this_claim": false,
+      "root_game_component13_granted": false,
+      "root_game_full19_granted": false,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "author_path_assignments": {
+        "CODEX_ROOT_1E030E72B4F1:/root": [
+          "tools/p0d_work_claim_guard.py"
+        ],
+        "CODEX_ROOT_1E030E72B4F1:/root/planning_quality": [
+          "tests/test_p0d_work_claim_guard.py"
+        ]
+      },
+      "sole_source_publication_context": "CODEX_ROOT_1E030E72B4F1:/root"
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
