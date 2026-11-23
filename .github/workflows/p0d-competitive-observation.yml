@@ -1,0 +1,32 @@
+name: P0D competitive observations schema QA (read-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'competitive_observation/**'
+      - '.github/workflows/p0d-competitive-observation.yml'
+permissions:
+  contents: read
+jobs:
+  observation-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate evidence schema negative cases
+        run: python3 -B -m unittest discover -s competitive_observation -p 'test_*.py' -v
+      - name: Unmeasured baseline must be NOT_MEASURED
+        run: |
+          set +e
+          python3 -B competitive_observation/validate_observations.py --input competitive_observation/OBSERVATION_TEMPLATE.json --report /tmp/PQ470_OBSERVATIONS.json
+          status=$?
+          set -e
+          test "$status" -eq 1
+          python3 - <<'PY'
+          import json
+          r=json.load(open('/tmp/PQ470_OBSERVATIONS.json'))
+          assert r['decision']=='NOT_MEASURED'
+          assert r['valid_observations']==0
+          print('Correctly refused to invent competitor measurements')
+          PY
