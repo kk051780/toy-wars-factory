@@ -20968,6 +20968,225 @@
       "source_writes_permitted_at_issuance": false,
       "source_lease_status_at_issuance": "NOT_ACQUIRED",
       "source_write_requires_separate_live_source_lease": true
+    },
+    {
+      "claim_id": "P0D-GQ830-INVUL-PUBLICATION-20261123-FEEDE165",
+      "feature_id": "GQ470_INVUL_PUBLIC_LIFECYCLE_20261123",
+      "owner": "CODEX_ROOT_FEEDE1653726",
+      "role": "A_PREP",
+      "state": "GRANTED",
+      "source_scope_granted": true,
+      "source_writes_permitted_at_issuance": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "pr": 830,
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/830",
+      "prep_branch": "feature/gq822-real44-invul-first-hit-gate-20261119",
+      "source_head_before": "f7d4a736fefe1b680ba8f0f1b39a53606531cd47",
+      "source_head": null,
+      "source_tree": null,
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_INVULRUNTIME",
+        "INVUL_CURRENT69_PUBLICATION_QA"
+      ],
+      "target_paths": [
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/invul_publication.patch",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/fixture.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/cases.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/run_current69.py",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/SOURCE_LOCK.json",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/README.md",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/test_current69.py",
+        ".github/workflows/gq830-invul-publication-current69.yml",
+        ".github/workflows/gq822-real44-invul-prehit46.yml",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/README.md",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real46.py",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/test_compose_real46.py"
+      ],
+      "target_paths_semantics": "Cumulative PR envelope14 = added mutable8 plus immutable original6. Only new_paths8 may be authored. The frozen original6 do not grant six extra semantic edits. Original f7d history must be preserved; append only, no full RC merge/rebase under this scope.",
+      "new_paths": [
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/invul_publication.patch",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/fixture.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/cases.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/run_current69.py",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/SOURCE_LOCK.json",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/README.md",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/test_current69.py",
+        ".github/workflows/gq830-invul-publication-current69.yml"
+      ],
+      "mutable_paths": [
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/invul_publication.patch",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/fixture.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/cases.luau",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/run_current69.py",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/SOURCE_LOCK.json",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/README.md",
+        "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/current69_publication/test_current69.py",
+        ".github/workflows/gq830-invul-publication-current69.yml"
+      ],
+      "immutable_historical_files": [
+        {
+          "path": ".github/workflows/gq822-real44-invul-prehit46.yml",
+          "bytes": 8354,
+          "sha256": "8e08d67159aaa1f251868182832cf7cfbaafd0bbebeed96bd5394cd960c74a38",
+          "git_blob": "c7028496f84187a69bfbe4d9b17d9d2bd2adcbe2"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau",
+          "bytes": 6226,
+          "sha256": "1d68289882166728b470e69fde772cbef250ea9b3da199d1423feda67de7c6ec",
+          "git_blob": "2ada705fd09c2d49453ca1cd2e1e28bf0902f147"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/README.md",
+          "bytes": 2905,
+          "sha256": "659b298d1cc18454a584a29dcd3ab5e98397bc4130cc13f5b2002eba077ad42c",
+          "git_blob": "7d655f9b3b17fce89cf25e1363f49bfb43998555"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real46.py",
+          "bytes": 9123,
+          "sha256": "127ac0ced187c3686d3b9db2dd89fecdde7529ea94d392809542a8f7cffcaeca",
+          "git_blob": "192d09a7aa55ff18a8b54b6c5220db2b91b9aa53"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py",
+          "bytes": 6236,
+          "sha256": "394f579fb93ea370e77c6faf96485b0143e779c46f165d9fb5300f3354a56f72",
+          "git_blob": "df637e291157de40cc6256e42f526bc9d9e4d02e"
+        },
+        {
+          "path": "handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/test_compose_real46.py",
+          "bytes": 3867,
+          "sha256": "7f9b533b0474bb9f7dddad3660bfb7cfaeb70d6649df8b6205c7674a37125c58",
+          "git_blob": "3bac19222c6e8a2b332ede47b515adaec14fc777"
+        }
+      ],
+      "source_author_context": "CODEX_ROOT_FEEDE1653726:/root",
+      "independent_reviewer_context": "CODEX_ROOT_FEEDE1653726:/root/candidate_triage",
+      "scope_review_context": "CODEX_ROOT_FEEDE1653726:/root/coordination",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "58a3b2aa-dbae-434e-bf38-fb9519aba217",
+      "service_run_id": null,
+      "service_task_id": null,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "58a3b2aa-dbae-434e-bf38-fb9519aba217",
+        "task_id": null,
+        "epoch": 669,
+        "acquired_at": "2026-11-23T03:57:31.640124+00:00",
+        "expires_at": "2026-11-23T04:27:31.640124+00:00",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller",
+        "acquire_commit": "b40c05e0fab2b5f8ad7345ac2dd289f91812b43a",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "request_comment": 7091146388,
+      "original_lineage": {
+        "original_feature": "GQ8_INVUL_REACTIVE_COUNTER_AWAKENING_V2",
+        "focused_feature": "GQ470_INVUL_PUBLIC_LIFECYCLE_20261123",
+        "original_local_context": "CODEX_ROOT_12D2C57DAF16:/root/p0_triage",
+        "original_local_parent": "CODEX_ROOT_12D2C57DAF16:/root",
+        "original_technical_reviewer": "CODEX_ROOT_12D2C57DAF16:/root/rules_audit",
+        "original_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7084742754",
+        "original_source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/830#issuecomment-7085097539",
+        "original_local_root": "/workspace/scratch/12d2c57daf16/invul_candidate",
+        "historical_reviews_do_not_transfer_as_current_registered_approval": true,
+        "candidate_reuse": "Append an explicitly scoped continuation to existing PR830 and its actual branch. Preserve every original commit and original six source paths. Transport original patch, fixture and 17-case file byte-for-byte with original authorship pins. Do not create another PR or rewrite the repair. Generate the selected Runtime from canonical current input plus that patch. Existing historical real44/46 runtime file stays unchanged and is not selected as a second current authority.",
+        "no_original_author_ack_wait": "The OWNER permits successor continuation, but a true bounded source grant naming current writer and independent reviewer is still required; no permission is derived from this plan."
+      },
+      "official_input": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "profile": "PRIVATE_COMPANION REAL69",
+        "workflow_run_id": 45106580546,
+        "artifact_id": 14787568439,
+        "artifact_name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+        "archive_bytes": 5840240,
+        "archive_sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d",
+        "direct_archive_review": "Root separately downloaded, hash verified and compared original three inputs; see invul_reuse_review/current93a_binding.json. This reviewer verified current profile lock and 68 matched source bodies, including Runtime/Policy/Counter. No independent Native/Studio execution at triage stage."
+      },
+      "immutable_reused_inputs": {
+        "runtime_before": {
+          "bytes": 11264,
+          "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+        },
+        "runtime_after": {
+          "bytes": 11970,
+          "sha256": "70c6224273472e854c93a8024b05d2213a94f5f8b93bc9928079135e344234f5"
+        },
+        "policy_unchanged": {
+          "bytes": 12330,
+          "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+        },
+        "counter_unchanged": {
+          "bytes": 7498,
+          "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+        },
+        "original_patch": {
+          "bytes": 3544,
+          "sha256": "cbc53db0224ec9e6b258ced3fd5eebeff83cb74355cbafe85cb14f36ebc14e58"
+        },
+        "original_fixture": {
+          "bytes": 7351,
+          "sha256": "6635762a5aad323fc1609f4f81c788e41ff45607003f43c7232f92bcdaf93238"
+        },
+        "original_cases17": {
+          "bytes": 7336,
+          "sha256": "f60c999c429913fb2e1524f595c8c9a2e626434946bd8490ac9f535bb5d01e6e"
+        },
+        "optional_historical_extra8_not_new_scope": {
+          "local_path": "/workspace/scratch/12d2c57daf16/invul_review/extra_cases.luau",
+          "bytes": 3900,
+          "sha256": "13089412b99eac1c8b852fad575fa4d1f70c1156c8523efc92d9ad65b1e61c77"
+        }
+      },
+      "scope": "Continue existing PR830 only. Reuse original12D +706B exact InvulRuntime publication patch; preserve unchanged Policy/Counter and original patch/fixture/cases. Add only the eight bounded current69 producer/lock/tests/CI/doc paths. No second damage or defense authority.",
+      "acceptance": "Verify exact official current69 artifact and all69 source routes/classes/hash; replace one Runtime only and preserve other68, all original6 and original patch/fixture/cases bytes. Native focused original13PASS/4FAIL and after17PASS/0FAIL; 69source ON/OFF compile; Rojo original OFF69 byte-exact; original combined10/objective7 full source regression without changing original case predicates; reject provenance, path, source, context and rollback mutations. New actual source HEAD dedicated current69 CI and actual registered separate-context artifact/source review required. This does not waive or relabel historical Real44 CI failures.",
+      "rollback": "Restore selected Runtime with the exact inverse patch to11264B/086f7a79; other68 and original Place must be byte-exact. This SOURCE slice does not modify official runtime. A corrective append commit removes only new8 if the SOURCE continuation is rejected, without rewriting original branch history.",
+      "historical_ci_boundary": {
+        "original_real44_gate": "The unchanged historical real44/46 workflow pins and requires f77b4d4393d9e9b19b65566413432a7a9f13962b freshness, which is not current H93. Parent has inspected this guard. Do not relax or rewrite it.",
+        "new_gate_meaning": "Only dedicated current69 same-H source/native/artifact acceptance. Passing this gate does not claim the historical workflow, every PR check, or all profiles pass.",
+        "candidate_historical_failure_reporting": "If triggered, preserve the actual old-workflow outcome and identify the obsolete input/freshness requirement separately; do not suppress or mislabel it.",
+        "later_canonical_scope": "Use only exact accepted current69 repair hunks and requisite gates after a separate current-parent scope. Do not add or merge the historical original6 into current distribution."
+      },
+      "forbidden_changes": [
+        "All foreign source, policies, cooldowns, uses, damage multipliers, HP/Score/Store/Remote authorities",
+        "Shared canonical producer6 and canonical workflow",
+        "Original six frozen paths and original patch/fixture/cases bytes",
+        "Full RC merge/rebase or new duplicate PR",
+        "RC/main ref writes, Roblox Publish, spending, weakening or suppressing old CI"
+      ],
+      "shared_producer_paths_excluded": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "prep_ready": false,
+      "registered_source_approval": false,
+      "scope_review_is_code_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "draft_only_not_issued": false,
+      "issued_at": "2026-11-23T03:59:13Z",
+      "expires_at": "2026-11-23T09:59:13.000Z",
+      "expiry_policy": "Six hours from this actual metadata transaction timestamp; expired reservation is not automatic takeover.",
+      "if_matching_BUSY_owner_appears": "Join or coordinated handoff only. Recheck actual source/ref/registry before any source write."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
