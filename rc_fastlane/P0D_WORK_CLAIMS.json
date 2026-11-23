@@ -18016,7 +18016,7 @@
         "pinned_existing_pr_head": "f3ac9a5b2742daffb2396c67530db33a64be6779",
         "scope": "Existing ART payload registration only; no Exploration/canonical producer/RC takeover"
       },
-      "independent_review_status": "SCOPE_PASS; ACTUAL_HEAD_SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "independent_review_status": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
       "independent_reviewer_context": "/root/current_rules",
       "integration_issue": 220,
       "issued_at": "2026-11-22T23:44:25Z",
@@ -18069,9 +18069,9 @@
         "plan_receipt_path": "current_rules_review/art1010_scope_plan.json",
         "plan_sha256": "77c0409f121ffbcd02d1b1892f63208b55ec154486fc25dc1bd5f40cf63c1303"
       },
-      "source_head": null,
+      "source_head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
       "source_head_before": "f3ac9a5b2742daffb2396c67530db33a64be6779",
-      "state": "GRANTED",
+      "state": "RELEASED",
       "sub_scope": "CURRENT69_ENCOUNTER_CLEANUP_FIXED_PAYLOAD_REGISTRATION",
       "target_paths": [
         ".github/workflows/gq470-item-ornament-visibility-real69.yml",
@@ -18080,6 +18080,165 @@
         "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py",
         "quality_gameplay/gq470_item_visibility_real69_20261122/current69/EncounterReadabilityArt.cleanup.luau.txt",
         "quality_gameplay/gq470_item_visibility_real69_20261122/current69/ORIGINAL_JOINT_REVIEW.json"
+      ],
+      "source_evidence_review": {
+        "context": "/root/current_rules",
+        "decision": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
+        "head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+        "registered_scope": "CURRENT69_ENCOUNTER_CLEANUP_FIXED_PAYLOAD_REGISTRATION",
+        "receipt_bytes": 15032,
+        "receipt_sha256": "983d6ded34bb9b867fff5015bbc53c15475b919f83616d69651b7d139ab1b42d",
+        "summary_sha256": "fefb8ba9721f17481cde9c301ef6289dc48ea0c22442206815d07dd22ee40e27",
+        "published_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1010#issuecomment-7089023066",
+        "github_approve": false,
+        "source_implementation_by_reviewer": false,
+        "native_runs": 0,
+        "studio_runs": 0,
+        "unresolved_findings": 0
+      },
+      "source_registration": {
+        "head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+        "original_source_head": "f3ac9a5b2742daffb2396c67530db33a64be6779",
+        "previous_registration_head": "529f5816b28c05184d421f81b910ee5b6301ef78",
+        "precision_commit": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+        "cumulative_PR_paths": [
+          ".github/workflows/gq470-item-ornament-visibility-real69.yml",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/README.md",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/current69/EncounterReadabilityArt.cleanup.luau.txt",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/current69/ORIGINAL_JOINT_REVIEW.json"
+        ],
+        "mutable_paths": [
+          "quality_gameplay/gq470_item_visibility_real69_20261122/README.md",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/current69/EncounterReadabilityArt.cleanup.luau.txt",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/current69/ORIGINAL_JOINT_REVIEW.json"
+        ],
+        "immutable_three": {
+          ".github/workflows/gq470-item-ornament-visibility-real69.yml": "189c28d1859603cbbe4f37ba7d732aa16f5d2ee3",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py": "764b69d7f9c7f17745637109cf0233ee1c2328b8",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py": "19000e5aa73947c88e6dddaad73fb053036fe338"
+        },
+        "fixed_original_payloads": [
+          {
+            "path": "quality_gameplay/gq470_item_visibility_real69_20261122/current69/EncounterReadabilityArt.cleanup.luau.txt",
+            "bytes": 22284,
+            "sha256": "293eed3bff121484d132ecf7759d189fc3dc6d951412fd60f92f9598341b7837",
+            "git_blob": "3723dee279d5ed441e52485533ef889cdf1004a0"
+          },
+          {
+            "path": "quality_gameplay/gq470_item_visibility_real69_20261122/current69/ORIGINAL_JOINT_REVIEW.json",
+            "bytes": 232130,
+            "sha256": "f88b1563c0546ecd40532f1a89c3d3445f1a04b27f89df8db4832185dafa9c2a",
+            "git_blob": "5e077e095408ee4d3a4b849d2ebf723fe5d5df76"
+          }
+        ],
+        "previous_registration_commit_mutated_paths": 3,
+        "precision_commit_mutated_paths": 1,
+        "cumulative_registration_mutated_paths": 3,
+        "cumulative_PR_files": 6,
+        "final_README": {
+          "bytes": 7566,
+          "sha256": "467437456b7e732894c5645411e5ff93826041a12023d916b77c0fcb09717399",
+          "git_blob": "6f69bf196ae05c486be8d9350e49bf1157762a58",
+          "original_prefix_bytes": 2341,
+          "needle": "including its limited 26/34-body fixtures.",
+          "replacement": "including its limited 26-body programs. The copied receipt also references historical full34 helper pins; it does not itself contain the full34 execution records."
+        },
+        "no_game_code_or_historical_receipt_rewrite": true,
+        "initial_source_lease": {
+          "epoch": 637,
+          "acquire": "2e5b18c40055abcae8d7962b04f388924bd36909",
+          "release": "077c4983ef00c4f2880799852b2ccaf224260943"
+        },
+        "precision_source_lease": {
+          "epoch": 653,
+          "acquire": "44d1e913fdecfb9450573819535c06a7c9f31382",
+          "release": "72e6648b678ff2ba0f353084bbff7ad334686569"
+        }
+      },
+      "post_registration_ci": {
+        "head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+        "observed_workflow_results": "LEGACY_VISIBILITY_RED; BOOTSTRAP_AND_READ_ONLY_INTAKES_SUCCESS",
+        "run": 45093020020,
+        "job": 137426604826,
+        "conclusion": "failure",
+        "failed_step": "Pin real formal branch, run, and artifact identity",
+        "reason": "FORMAL_HEAD_MOVED_REBASE_REQUIRED_NO_ACCEPT",
+        "legacy_OFFICIAL": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+        "formal_at_source_operation_preflight": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "unchanged_workflow_blob": "189c28d1859603cbbe4f37ba7d732aa16f5d2ee3",
+        "source_tests_native_rojo_artifact_steps": "ALL_SKIPPED_AFTER_FORMAL_HEAD_FENCE",
+        "other_same_H_runs": [
+          {
+            "id": 45093043902,
+            "name": "P0D two-lane latest verified intake (read-only)",
+            "head_sha": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45093043902",
+            "run_attempt": 1,
+            "workflow_id": 417891594,
+            "created_at": "2026-11-23T01:10:38Z",
+            "updated_at": "2026-11-23T01:10:50Z",
+            "path": ".github/workflows/p0d-two-lane-intake.yml"
+          },
+          {
+            "id": 45093020063,
+            "name": "P0D two-lane latest verified intake (read-only)",
+            "head_sha": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45093020063",
+            "run_attempt": 1,
+            "workflow_id": 417891594,
+            "created_at": "2026-11-23T01:10:25Z",
+            "updated_at": "2026-11-23T01:10:37Z",
+            "path": ".github/workflows/p0d-two-lane-intake.yml"
+          },
+          {
+            "id": 45093020010,
+            "name": "Toy Wars bootstrap offline QA",
+            "head_sha": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45093020010",
+            "run_attempt": 1,
+            "workflow_id": 394718989,
+            "created_at": "2026-11-23T01:10:25Z",
+            "updated_at": "2026-11-23T01:10:57Z",
+            "path": ".github/workflows/bootstrap-quality.yml"
+          }
+        ],
+        "log": {
+          "path": "/workspace/scratch/7b6b25aeaa29/current_rules_review/art1010_h19_legacy_ci_job.log",
+          "bytes": 14642,
+          "sha256": "98e594b59073a01a433267e3a7bd54f8a3c61a988ccf63a6795f06f036e0163b"
+        },
+        "CI_reruns": 0,
+        "new_cleanup_runtime_validation": false,
+        "not_falsified_to_pass": true,
+        "PREP_READY": false,
+        "registered_source_approval": false,
+        "RC_adoption": false
+      },
+      "completion_observed_formal_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "released_at": "2026-11-23T02:14:16Z",
+      "released_by": "CODEX_ROOT_7B6B25AEAA29",
+      "release_reason": "Completed the bounded fixed-payload registration and its registered independent evidence-only review; free this source resource. Canonical adoption was excluded and still needs a new scoped handoff. This is not RC integration or gameplay source approval.",
+      "state_history": [
+        {
+          "at": "2026-11-23T02:14:16Z",
+          "from": "GRANTED",
+          "to": "RELEASED",
+          "owner": "CODEX_ROOT_7B6B25AEAA29",
+          "reason": "FIXED_PAYLOAD_REGISTRATION_COMPLETE",
+          "source_head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+          "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1010#issuecomment-7089023066"
+        }
       ]
     },
     {
@@ -18141,7 +18300,7 @@
         "pinned_existing_pr_head": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
         "scope": "Original fixed payload registration only; no canonical Router takeover or Bot successor change."
       },
-      "independent_review_status": "SCOPE_PASS; ACTUAL_HEAD_SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "independent_review_status": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
       "independent_reviewer_context": "/root/gameplay_audit",
       "integration_issue": 220,
       "issued_at": "2026-11-22T23:44:25Z",
@@ -18197,9 +18356,9 @@
         "plan_sha256": "76f6bd94abc7edb7f97243d20d20a590b3b34e5930255f0277d3939fc65609ad",
         "scope_review_receipt_sha256": "c96a6aa2a3810b244f3f69a7dd6be91d9c8e2d7c4d5ca7b55b72b10eba246da2"
       },
-      "source_head": null,
+      "source_head": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
       "source_head_before": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
-      "state": "GRANTED",
+      "state": "RELEASED",
       "sub_scope": "CURRENT69_FIXED_ROUTER_PAYLOAD_REGISTRATION",
       "target_paths": [
         ".github/workflows/p0d-gq-v3-bot-route-fullstep.yml",
@@ -18210,6 +18369,241 @@
         "quality_gameplay/v3_bot_route_fullstep_20261116/test_source.py",
         "quality_gameplay/v3_bot_route_fullstep_20261116/current69/EGGRUMBLE_BotPathRouter.luau.txt",
         "quality_gameplay/v3_bot_route_fullstep_20261116/current69/ROUTER_REVIEW.json"
+      ],
+      "source_evidence_review": {
+        "context": "/root/gameplay_audit",
+        "decision": "PASS_REGISTERED_SOURCE_EVIDENCE_REVIEW_ONLY",
+        "head": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+        "registered_scope": "CURRENT69_FIXED_ROUTER_PAYLOAD_REGISTRATION",
+        "receipt_bytes": 23563,
+        "receipt_sha256": "33b4e18d5b0ab73ac9b133c7a2751d38bd30bf77a1326cd3dadf165ae65bbe37",
+        "summary_sha256": "416861157432830a933ac68ddd0610b5aa1365627cb8ae9172255993208a8b9a",
+        "published_review_url": "https://github.com/kk051780/toy-wars-factory/pull/536#issuecomment-7089049336",
+        "github_approve": false,
+        "source_implementation_by_reviewer": false,
+        "native_runs": 0,
+        "studio_runs": 0,
+        "unresolved_findings": 0
+      },
+      "source_registration": {
+        "head": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+        "original_source_head": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
+        "tree": "0f17689a1306d94c24a5b80489cb8f04b07fffd0",
+        "branch": "quality/gq-v3-bot-route-fullstep-20261116",
+        "cumulative_PR_paths": [
+          ".github/workflows/p0d-gq-v3-bot-route-fullstep.yml",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/README.md",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/current69/EGGRUMBLE_BotPathRouter.luau.txt",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/current69/ROUTER_REVIEW.json",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/test_source.py"
+        ],
+        "mutable_paths": [
+          "quality_gameplay/v3_bot_route_fullstep_20261116/README.md",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/current69/EGGRUMBLE_BotPathRouter.luau.txt",
+          "quality_gameplay/v3_bot_route_fullstep_20261116/current69/ROUTER_REVIEW.json"
+        ],
+        "immutable_five": [
+          {
+            "path": ".github/workflows/p0d-gq-v3-bot-route-fullstep.yml",
+            "expected_git_blob": "92c853fd104a93d039853cd0e00d3c7a2fb33705",
+            "actual_git_blob": "92c853fd104a93d039853cd0e00d3c7a2fb33705",
+            "pass": true
+          },
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/make_native_navigate_harness.py",
+            "expected_git_blob": "f675aa99dcfd40c4244594852848ca0553ef1bda",
+            "actual_git_blob": "f675aa99dcfd40c4244594852848ca0553ef1bda",
+            "pass": true
+          },
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py",
+            "expected_git_blob": "49f40133bfa45b61d056990d2ff1cf409532d843",
+            "actual_git_blob": "49f40133bfa45b61d056990d2ff1cf409532d843",
+            "pass": true
+          },
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py",
+            "expected_git_blob": "651d4c6e92bfe8595eeadb438b594797bd473e77",
+            "actual_git_blob": "651d4c6e92bfe8595eeadb438b594797bd473e77",
+            "pass": true
+          },
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/test_source.py",
+            "expected_git_blob": "9d9b13ca6c9f2a9d8ce5ee19d515e9a6309d2694",
+            "actual_git_blob": "9d9b13ca6c9f2a9d8ce5ee19d515e9a6309d2694",
+            "pass": true
+          }
+        ],
+        "fixed_original_payloads": [
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/current69/EGGRUMBLE_BotPathRouter.luau.txt",
+            "bytes": 12555,
+            "sha256": "60ce79cacfc44cb73f2d1f0e84b24ce23e01a5020712b26718c8ab3672c77b12",
+            "git_blob": "25bc8a10c8a939f7b29faa3cec6b9804eb73b0e1",
+            "all_bytes_exact": true
+          },
+          {
+            "path": "quality_gameplay/v3_bot_route_fullstep_20261116/current69/ROUTER_REVIEW.json",
+            "bytes": 74409,
+            "sha256": "d0775bc4c4bfc0edd8be11b8d3fa4c5b21bb1b9df96409d1e879212045dc5c45",
+            "git_blob": "97917a911b35bd13cf4a5c4ded990310920bbc3a",
+            "all_bytes_exact": true
+          }
+        ],
+        "readme": {
+          "before": {
+            "bytes": 3123,
+            "sha256": "f6a1f3f98eb5db33ecc1be9e2d613ec1a359a1bd7cb85efbcbd1066c6a1a197c",
+            "git_blob": "1b787fce74ac6f2d04ebba6bca899978cf114bd9"
+          },
+          "after": {
+            "bytes": 8454,
+            "sha256": "ccd04eec13e620f3b7d100055301274f9b239408f9d750e2c8b430e993d50db8",
+            "git_blob": "dfcdfeeae85c8dbfe725082adb78cdc3c1eac1ee"
+          },
+          "old_prefix_bytes": 3123,
+          "old_prefix_exact": true,
+          "append_bytes": 5331,
+          "old_lines_deleted": 0,
+          "authorization_and_limits_explained": true
+        },
+        "source_lease": {
+          "epoch": 652,
+          "operation": "0d0e5aba-d689-43fa-a906-bf9f74504bfa",
+          "acquire_commit": "28d3f361e9639a34e4f196e12ec52eb44df80525",
+          "acquire_holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "0d0e5aba-d689-43fa-a906-bf9f74504bfa",
+            "task_id": null,
+            "epoch": 652,
+            "acquired_at": "2026-11-23T01:09:40Z",
+            "expires_at": "2026-11-23T01:39:40.000Z",
+            "base_main_sha": null,
+            "work_branch": "quality/gq-v3-bot-route-fullstep-20261116",
+            "origin": "controller"
+          },
+          "source_commit": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+          "sole_parent_observed": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
+          "author_recorded_expected_sha": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
+          "author_recorded_force": false,
+          "source_commit_within_live_lease": true,
+          "normal_release_commit": "504a8926a009ff7827275f8af7b7eba518eed4e5",
+          "release_holder": null,
+          "release_epoch": 652,
+          "release_last_completed": {
+            "kind": "CONTROLLER",
+            "owner_id": "0d0e5aba-d689-43fa-a906-bf9f74504bfa",
+            "epoch": 652,
+            "released_at": "2026-11-23T01:10:01Z",
+            "work_branch": "quality/gq-v3-bot-route-fullstep-20261116",
+            "result": "PASS_THREE_FILE_ORIGINAL_EVIDENCE_REGISTRATION_READBACK",
+            "source_commit": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "registered_review_complete": false,
+            "rc_adoption": false
+          },
+          "observed_cas_boundary": "Independent Git commit/compare proves sole parent and one three-file child; author transaction receipts additionally record expected-SHA/non-force update. No force-push or ref write is performed by reviewer.",
+          "prior646": {
+            "separate_operation": true,
+            "epoch": 646,
+            "source_commit_created": false,
+            "release_commit": "886be82d04818c939a52c8fd85719a61f9b6ea21",
+            "historical_ledger_rows": 17,
+            "not_counted_as_a_source_commit_or_current652_snapshot": true
+          }
+        },
+        "no_gameplay_executable_source_edit": true,
+        "no_original_receipt_rewrite": true
+      },
+      "post_registration_ci": {
+        "head": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+        "observed_at": "2026-11-23T01:14:29.538Z",
+        "conclusion": "LEGACY_SCOPE_SUCCESS_NOT_CURRENT69_ROUTER60CE_ACCEPTANCE",
+        "runs_count": 5,
+        "checks_count": 8,
+        "all_observed_completed_success": true,
+        "runs": [
+          {
+            "id": 45093002777,
+            "name": "P0D two-lane latest verified intake (read-only)",
+            "head_sha": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45093002777",
+            "run_attempt": 1
+          },
+          {
+            "id": 45092980634,
+            "name": "P0D two-lane latest verified intake (read-only)",
+            "head_sha": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45092980634",
+            "run_attempt": 1
+          },
+          {
+            "id": 45092980752,
+            "name": "P0D GQ V3 Bot Route Full-Step Ray Native Differential",
+            "head_sha": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45092980752",
+            "run_attempt": 1
+          },
+          {
+            "id": 45092980541,
+            "name": "Toy Wars bootstrap offline QA",
+            "head_sha": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45092980541",
+            "run_attempt": 1
+          },
+          {
+            "id": 45092977329,
+            "name": "P0D GQ V3 Bot Route Full-Step Ray Native Differential",
+            "head_sha": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45092977329",
+            "run_attempt": 1
+          }
+        ],
+        "workflow_pin": {
+          "key": "workflow",
+          "url": "https://github.com/kk051780/toy-wars-factory/blob/8b65b0a73f6cfaecf1ea61eaacf256372cf1485f/.github/workflows/p0d-gq-v3-bot-route-fullstep.yml",
+          "bytes": 11948,
+          "sha256": "c2dd8a5bd5e8798099157e4927a8d1b0f1f7dd325818f44597f0d9803ebbf1d3",
+          "git_blob": "92c853fd104a93d039853cd0e00d3c7a2fb33705"
+        },
+        "actual_workflow_source_selection": "original-source-native: git show6b52 source -> existing one-line source_patch -> fixed harnesses. private26: original482/484/485/487 pinned sources -> existing one-line overlay. Neither loads current69/EGGRUMBLE_BotPathRouter.luau.txt or ROUTER_REVIEW.json.",
+        "no_new60ce_runtime_at_this_head_claimed": true,
+        "no_global_CI_or_branch_protection_waiver": true,
+        "PREP_READY": false,
+        "registered_source_approval": false,
+        "RC_adoption": false
+      },
+      "completion_observed_formal_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "released_at": "2026-11-23T02:14:16Z",
+      "released_by": "CODEX_ROOT_7B6B25AEAA29",
+      "release_reason": "Completed the bounded fixed-payload registration and its registered independent evidence-only review; free this source resource. Canonical adoption was excluded and still needs a new scoped handoff. This is not RC integration or gameplay source approval.",
+      "state_history": [
+        {
+          "at": "2026-11-23T02:14:16Z",
+          "from": "GRANTED",
+          "to": "RELEASED",
+          "owner": "CODEX_ROOT_7B6B25AEAA29",
+          "reason": "FIXED_PAYLOAD_REGISTRATION_COMPLETE",
+          "source_head": "8b65b0a73f6cfaecf1ea61eaacf256372cf1485f",
+          "review_url": "https://github.com/kk051780/toy-wars-factory/pull/536#issuecomment-7089049336"
+        }
       ]
     },
     {
