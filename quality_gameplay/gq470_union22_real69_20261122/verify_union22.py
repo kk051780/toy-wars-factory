@@ -375,7 +375,8 @@ def independent_generated(root, pins, suite_name):
         byte_ranges[relative] = {"start": start, "end": len(program), **digest(body)}
         line_ranges[label] = {"first": first_line, "last": first_line + body.count(b"\n")}
         program.extend(closing)
-    case_files = {"combined_clear_los": "combined_cases_clear_los.luau", "objective_full": "objective_full_cases.luau"}
+    case_files = {"combined_clear_los": "combined_cases_clear_los.luau",
+                  "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
     require(pins["case_files"] == case_files and suite_name in case_files, "NATIVE_CASE_VARIANT")
     case_path = HERE / "native" / case_files[suite_name]
     case = read(case_path)
@@ -475,12 +476,19 @@ def verify_native(native, root, lock, context):
     spec.loader.exec_module(adapter)
     require(digest(read(input_lock_path))["sha256"] == adapter.INPUT_LOCK_SHA256, "NATIVE_LOCK_IDENTITY")
     pins = data(input_lock_path)
-    require(pins.get("schema") == "UNION22_NATIVE_CLEAR_LOS_SOURCE_BUILD_INPUTS_V2"
+    require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
             and pins.get("sources") == {p: row["after"] for p, row in lock["sources"].items()}, "NATIVE_SOURCE_LOCK")
-    variants = {"combined_clear_los": "BOUNDED_CLEAR_LOS_APPROACH_INPUT", "objective_full": "ORIGINAL_UNCHANGED"}
+    variants = {"combined_clear_los": "BOUNDED_CLEAR_LOS_APPROACH_INPUT",
+                "objective_full_clear_los": "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT"}
     require(set(pins["suites"]) == set(variants)
             and {name: row["input_variant"] for name, row in pins["suites"].items()} == variants,
             "NATIVE_SUITE_VARIANT_CLASSIFICATION")
+    original_objective = pins["objective_case_amendment"]["original_case"]
+    require(original_objective == {"path": "objective_full_cases.luau", "bytes": 7882,
+                                  "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"}
+            and digest(read(HERE / "native/objective_full_cases.luau"))
+            == {k: original_objective[k] for k in ("bytes", "sha256")},
+            "NATIVE_ORIGINAL_OBJECTIVE_NOT_PRESERVED")
     build = data(native / "build_receipt.json")
     require(build.get("schema") == "UNION22_F46_REPL_BUILD_V1" and build.get("status") == "PASS_NEW_BUILD"
             and build.get("execution_context") == context
@@ -500,9 +508,10 @@ def verify_native(native, root, lock, context):
     aggregate = data(native / "receipt.json")
     require(type(aggregate.get("suites")) is dict and set(aggregate["suites"]) == set(variants),
             "NATIVE_AGGREGATE_SUITE_SET")
-    require(aggregate.get("schema") == "UNION22_NATIVE_BOTH_SUITES_V2" and aggregate.get("status") == "PASS"
+    require(aggregate.get("schema") == "UNION22_NATIVE_BOTH_SUITES_V3" and aggregate.get("status") == "PASS"
             and aggregate.get("suite_input_variants") == variants
             and aggregate.get("original_combined_case_preserved_not_claimed_as_unchanged_pass") is True
+             and aggregate.get("original_objective_case_preserved_not_claimed_as_unchanged_pass") is True
             and aggregate.get("execution_context") == context
             and aggregate.get("source_receipt") == digest(read(root / compose.RECEIPT))
             and aggregate.get("build_receipt") == digest(read(native / "build_receipt.json"))
@@ -565,7 +574,8 @@ def verify_native(native, root, lock, context):
                 and result.get("runner") == digest(read(HERE / "native/run_profile.py")), "NATIVE_SUITE_SOURCE_RUNNER_BINDING")
         require(aggregate.get("suites", {}).get(suite_name) == digest(read(folder / "receipt.json")), "NATIVE_SUITE_BINDING")
         results[suite_name] = {"case_count": len(parts), "receipt": digest(read(folder / "receipt.json"))}
-    require(set(results) == {"combined_clear_los", "objective_full"} and len(results) == 2, "NATIVE_BOTH_SUITES")
+    require(set(results) == {"combined_clear_los", "objective_full_clear_los"} and len(results) == 2,
+            "NATIVE_BOTH_SUITES")
     expected_files = set(build["evidence_files"]) | {"build_receipt.json", "receipt.json"}
     expected_files |= {suite + "/" + name for suite in pins["suites"]
                        for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
@@ -627,6 +637,7 @@ def admit_delivery(root, base, reports, native, context):
             "visual_source_retention": 3, "native_suites": runtime["results"],
             "native_suite_input_variants": runtime["aggregate"]["suite_input_variants"],
             "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
+            "original_objective_case_preserved_not_claimed_as_unchanged_pass": True,
             "native_build_receipt": digest(read(Path(native) / "build_receipt.json")),
             "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
             "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",

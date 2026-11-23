@@ -3,6 +3,11 @@ on:
   push:
     branches: [integration/gq8-real63-fourlane-20261119-0618, rc/p0d-s1-kids-rc01]
     paths:
+      - 'rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json'
+      - 'rc_fastlane/apply_active_runtime_repairs.py'
+      - 'rc_fastlane/features/active_runtime_repairs/**'
+      - 'rc_fastlane/test_active_runtime_repairs.py'
+      - '.github/workflows/p0d-rc-fastlane.yml'
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
@@ -44,6 +49,11 @@ on:
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
+      - 'rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json'
+      - 'rc_fastlane/apply_active_runtime_repairs.py'
+      - 'rc_fastlane/features/active_runtime_repairs/**'
+      - 'rc_fastlane/test_active_runtime_repairs.py'
+      - '.github/workflows/p0d-rc-fastlane.yml'
       - 'quality_gameplay/gq8_real63_intake_20261119/**'
       - 'quality_gameplay/gq8_real65_storm_port_20261119/**'
       - 'quality_gameplay/gq8_rc85_rc86_reconcile_20261119/**'
@@ -163,14 +173,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}
-          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55
-          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59
-          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62
-          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62
-          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63
-          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56
-          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56
+          python3 -B quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py --out /tmp/gq863
           for file in \
             /tmp/gq863/base55/EGGRUMBLE_REAL55.project.json \
             /tmp/gq863/base55/B_REAL55_RECEIPT.json \
@@ -1752,7 +1755,7 @@ jobs:
           set -euo pipefail
           python3 -B tests/test_gq470_union22_real69_20261122.py
           python3 -B -O tests/test_gq470_union22_real69_20261122.py
-      - name: "Union22: fresh f46 Repl build, clear-LOS combined input and unchanged objective suite"
+      - name: "Union22: fresh f46 Repl build, separately named combined and objective clear-LOS inputs"
         shell: bash
         run: |
           set -euo pipefail

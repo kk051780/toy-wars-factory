@@ -19,6 +19,11 @@ import xml.etree.ElementTree as ET
 
 FEATURE_ROOT=Path(__file__).resolve().parent/'features/active_runtime_repairs'
 MANIFEST_SHA256='9584b9fddf3a0ec13f918f356d0380eeed61084ab90ad811f77c19a21b787e9f'
+CONTINUATION_MANIFEST_SHA256='badf8c3fe09fe23eec65f1549db9c52318c34a423ce5d36259cb84aff9b87e76'
+CONTINUATION_FLAG='persistence_continuation_v1'
+CONTINUATION_ID='ACTIVE66_PERSISTENCE_REVISION_UI_V1'
+REPAIR_FLAGS=(('game_lifecycle','game_fixes'),('evolution_retry','evolution_retry'),
+              ('equip_failure_recovery','equip_recovery'))
 SELECTION_FILE='ACTIVE_RUNTIME_SELECTION.json'
 SOURCE_MANIFEST='ACTIVE_RUNTIME_SOURCE_MANIFEST.json'
 
@@ -40,6 +45,76 @@ def read_manifest():
         check(raw.startswith(('--- a/'+spec['path']+'\n+++ b/'+spec['path']+'\n').encode()),'REPAIR_PATCH_TARGET_DRIFT')
         patches[feature]=raw
     return manifest,patches
+
+def read_continuation():
+    root=FEATURE_ROOT/'continuation_v1'
+    path=root/'MANIFEST.json'
+    check(not root.is_symlink() and path.is_file() and not path.is_symlink(),'CONTINUATION_RECIPE_REQUIRED')
+    raw=path.read_bytes()
+    check(sha(raw)==CONTINUATION_MANIFEST_SHA256,'CONTINUATION_RECIPE_DRIFT')
+    recipe=json.loads(raw)
+    check(recipe['schema']=='ACTIVE66_CONTINUATION_RECIPE_V1' and recipe['id']==CONTINUATION_ID
+          and recipe['parent_manifest_sha256']==MANIFEST_SHA256,'CONTINUATION_RECIPE_LINEAGE_MISMATCH')
+    patches={}
+    for name,spec in recipe['features'].items():
+        path=root/spec['patch']
+        check(path.is_file() and not path.is_symlink(),'CONTINUATION_PATCH_REQUIRED:'+name)
+        raw=path.read_bytes()
+        check(sha(raw)==spec['patch_sha256'],'CONTINUATION_PATCH_DRIFT:'+name)
+        check(raw.startswith(('--- a/'+spec['path']+'\n+++ b/'+spec['path']+'\n').encode()),
+              'CONTINUATION_PATCH_TARGET_DRIFT:'+name)
+        patches[name]=raw
+    return recipe,patches
+
+def resolve_repairs(flags):
+    """One exact recipe plan shared by selection, Native input and artifact binding."""
+    check(all(type(flags[key]) is bool for _,key in REPAIR_FLAGS),'BOOLEAN_SELECTION_REQUIRED')
+    continuation=flags.get(CONTINUATION_FLAG,False)
+    check(type(continuation) is bool,'BOOLEAN_CONTINUATION_REQUIRED')
+    check(not flags['equip_recovery'] or flags['game_fixes'],'RECOVERY_REQUIRES_GAME_FIXES')
+    check(not continuation or all(flags[key] for _,key in REPAIR_FLAGS),'CONTINUATION_REQUIRES_ALL_THREE_REPAIRS')
+    manifest,patches=read_manifest()
+    chosen=[name for name,key in REPAIR_FLAGS if flags[key]]
+    specs={name:manifest['features'][name] for name in chosen}
+    recipe=None
+    if continuation:
+        recipe,extra=read_continuation()
+        chosen+=list(recipe['features'])
+        specs.update(recipe['features']);patches.update(extra)
+    return manifest,patches,chosen,specs,recipe
+
+def continuation_identity(recipe):
+    return {'id':CONTINUATION_ID,'manifest_sha256':CONTINUATION_MANIFEST_SHA256,
+            'parent_selected_source_manifest_sha256':recipe['parent_selected_source_manifest_sha256'],
+            'contract_lock_sha256':recipe['contract']['sha256']}
+
+def resolve_selection(selection):
+    flags={key:selection[key] for _,key in REPAIR_FLAGS}
+    if selection.get('schema')=='ACTIVE_RUNTIME_SELECTION_V2':
+        check(selection.get(CONTINUATION_FLAG) is True,'V2_CONTINUATION_MUST_BE_SELECTED')
+        flags[CONTINUATION_FLAG]=True
+    else:
+        check(selection.get('schema')=='ACTIVE_RUNTIME_SELECTION_V1'
+              and CONTINUATION_FLAG not in selection and 'continuation' not in selection,'WRONG_SELECTION_SCHEMA')
+    manifest,patches,chosen,specs,recipe=resolve_repairs(flags)
+    check(chosen and chosen==selection['selected_repairs'],'REPAIR_SELECTION_MISMATCH')
+    check(selection['selection_manifest_sha256']==MANIFEST_SHA256,'WRONG_SELECTION_LINEAGE')
+    if recipe is not None:
+        check(selection.get('profile')=='rich51' and selection.get('source_count')==66
+              and selection.get('continuation')==continuation_identity(recipe),'CONTINUATION_SELECTION_IDENTITY_MISMATCH')
+        check(selection.get('selected_source_manifest_sha256')==recipe['selected_source_manifest_sha256'],
+              'CONTINUATION_SELECTED_PROFILE_MISMATCH')
+    return flags,manifest,chosen,specs,recipe
+
+def validate_selected_sources(sources,manifest,specs):
+    check(len(sources)==66 and set(sources)==set(manifest['source_gitblobs']),'SELECTED66_INVENTORY_REQUIRED')
+    changed={spec['path']:spec for spec in specs.values()}
+    for path,raw in sources.items():
+        if path in changed:
+            spec=changed[path]
+            check(sha(raw)==spec['after_sha256'] and len(raw)==spec['after_bytes'],'SELECTED_REPAIR_SOURCE_DRIFT:'+path)
+        else:
+            check(blob(raw)==manifest['source_gitblobs'][path],'UNSELECTED_SOURCE_DRIFT:'+path)
 
 def file_map(root):
     check(root.is_dir() and not root.is_symlink(),'INVALID_OR_LINKED_DIST')
@@ -89,28 +164,35 @@ def projected_source_manifest(stage,sources):
     return {'schema':'ACTIVE_RUNTIME_SELECTED_SOURCES_V1','profile':'rich51',
             'source_count':len(rows),'sources':rows}
 
-def apply(base:Path,out:Path,profile:str,game_fixes:bool,evolution_retry:bool,equip_recovery:bool=False):
-    check(all(type(flag) is bool for flag in (game_fixes,evolution_retry,equip_recovery)),'BOOLEAN_SWITCH_REQUIRED')
+def apply(base:Path,out:Path,profile:str,game_fixes:bool,evolution_retry:bool,equip_recovery:bool=False,
+          *,persistence_continuation_v1:bool=False):
+    check(all(type(flag) is bool for flag in (game_fixes,evolution_retry,equip_recovery,persistence_continuation_v1)),
+          'BOOLEAN_SWITCH_REQUIRED')
     check(profile in ('rich51','rich47','legacy21'),'UNKNOWN_PROFILE')
     check(profile!='rich51' or not equip_recovery or game_fixes,'EQUIP_RECOVERY_REQUIRES_GAME_FIXES')
+    check(not persistence_continuation_v1 or (profile=='rich51' and game_fixes and evolution_retry and equip_recovery),
+          'CONTINUATION_REQUIRES_RICH51_ALL_THREE_REPAIRS')
     if profile!='rich51' or not (game_fixes or evolution_retry):
         return {'applied':False,'selected_dist':str(base),'profile':profile,
                 'game_fixes':False,'evolution_retry':False,'equip_recovery':False,'filesystem_writes':0}
     base=base.absolute();out=out.absolute()
     check(not out.exists() and not out.is_symlink(),'OUTPUT_ALREADY_EXISTS')
     check(out.resolve()!=base.resolve() and not out.resolve().is_relative_to(base.resolve()),'OUTPUT_INSIDE_INPUT')
-    manifest,patches=read_manifest()
+    flags={'game_fixes':game_fixes,'evolution_retry':evolution_retry,'equip_recovery':equip_recovery}
+    if persistence_continuation_v1:flags[CONTINUATION_FLAG]=True
+    manifest,patches,chosen,specs,recipe=resolve_repairs(flags)
     before,original,lock,feature_lock=validate_base(base,manifest)
-    chosen=[name for name,on in [('game_lifecycle',game_fixes),('evolution_retry',evolution_retry),
-                                ('equip_failure_recovery',equip_recovery)] if on]
-    expected_changed={manifest['features'][name]['path'] for name in chosen}
+    expected_changed={specs[name]['path'] for name in chosen}
     out.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='active66-selection-',dir=out.parent) as temporary:
         stage=Path(temporary)/'dist'
         shutil.copytree(base,stage,symlinks=False)
         patch_commands=[]
         for name in chosen:
-            spec=manifest['features'][name]
+            if recipe is not None and name==next(iter(recipe['features'])):
+                parent=projected_source_manifest(stage,source_map(stage))
+                check(sha(encoded(parent))==recipe['parent_selected_source_manifest_sha256'],'CONTINUATION_PARENT_PROFILE_DRIFT')
+            spec=specs[name]
             check(sha((stage/'src'/spec['path']).read_bytes())==spec['before_sha256'],'FEATURE_BASE_DRIFT:'+name)
             argv=['patch','-p1','--fuzz=0','--batch','--forward','--reject-file=-']
             for command in [argv+['--dry-run'],argv]:
@@ -125,6 +207,8 @@ def apply(base:Path,out:Path,profile:str,game_fixes:bool,evolution_retry:bool,eq
         check((stage/'default.project.json').read_bytes()==before['default.project.json'],'PROJECT_CHANGED')
         pins={p:blob(raw) for p,raw in sorted(selected.items())}
         source_manifest=projected_source_manifest(stage,selected)
+        if recipe is not None:
+            check(sha(encoded(source_manifest))==recipe['selected_source_manifest_sha256'],'CONTINUATION_RESULT_PROFILE_DRIFT')
         selection={
             'schema':'ACTIVE_RUNTIME_SELECTION_V1','profile':'rich51','runtime_lane':'ACTIVE_RUNTIME',
             'source_count':66,'original_author_base_count':51,
@@ -144,6 +228,10 @@ def apply(base:Path,out:Path,profile:str,game_fixes:bool,evolution_retry:bool,eq
             'source_review_only':True,'formal_RC_adopted':False,'Studio':'NOT_TESTED',
             'live_DataStore_calls':0,
         }
+        if recipe is not None:
+            selection.update(schema='ACTIVE_RUNTIME_SELECTION_V2',persistence_continuation_v1=True,
+                             continuation=continuation_identity(recipe),
+                             rollback='Disable persistence_continuation_v1 to restore exact V3 selected66; disable all four switches to restore original66. Rebuild through this same producer.')
         lock['blobs']=pins;lock['rc_active_runtime_repairs']=selection
         feature_lock['source_gitblobs']=pins;feature_lock['active_runtime_repairs']=selection
         (stage/'SOURCE_LOCK.json').write_bytes(encoded(lock))
@@ -220,18 +308,8 @@ def emit_artifact_metadata(base:Path,place:Path,selector_path:Path,active_path:P
         selection=json.loads(selection_raw)
         check(selection==selector['selection'],'PRODUCER_SELECTION_LINEAGE_MISMATCH')
         check((base/SOURCE_MANIFEST).read_bytes()==encoded(source_manifest),'PRODUCER_SOURCE_MANIFEST_DRIFT')
-        chosen=[name for name,flag in [('game_lifecycle','game_fixes'),('evolution_retry','evolution_retry'),
-                                       ('equip_failure_recovery','equip_recovery')]
-                if selection.get(flag) is True]
-        check(selection['selected_repairs']==chosen,'PRODUCER_SELECTED_FLAGS_MISMATCH')
-        check('equip_failure_recovery' not in chosen or 'game_lifecycle' in chosen,'PRODUCER_RECOVERY_REQUIRES_GAME_FIXES')
-        changed={manifest['features'][name]['path']:manifest['features'][name] for name in chosen}
-        check(set(source_manifest['sources'])==set(manifest['source_gitblobs']),'PRODUCER_SELECTED_PATHS_DRIFT')
-        for path,row in source_manifest['sources'].items():
-            if path in changed:
-                check(row['sha256']==changed[path]['after_sha256'] and row['bytes']==changed[path]['after_bytes'],'PRODUCER_REPAIR_BYTES_MISMATCH:'+path)
-            else:
-                check(row['git_blob']==manifest['source_gitblobs'][path],'PRODUCER_UNSELECTED_SOURCE_CHANGED:'+path)
+        flags,selected_manifest,chosen,specs,recipe=resolve_selection(selection)
+        validate_selected_sources(source_map(base),selected_manifest,specs)
     else:
         selection={'schema':'ACTIVE_RUNTIME_SELECTION_V1','profile':'rich51',
                    'runtime_lane':'ACTIVE_RUNTIME','game_fixes':False,'evolution_retry':False,'equip_recovery':False,
@@ -273,6 +351,11 @@ def emit_artifact_metadata(base:Path,place:Path,selector_path:Path,active_path:P
                     'effect':'Rebuild with all false to restore the existing original primary source and Place bytes.'},
         'adoption_and_engine_status':'Read RC_BUILD_RECEIPT.json; source selection alone does not establish formal adoption or Studio testing.',
     }
+    if selection.get(CONTINUATION_FLAG) is True:
+        metadata.update(schema='ACTIVE_RUNTIME_ARTIFACT_IDENTITY_V2',continuation=selection['continuation'])
+        metadata['selected_flags'][CONTINUATION_FLAG]=True
+        metadata['rollback'].update(persistence_continuation_v1=False,
+                                    continuation_only='Disable only persistence_continuation_v1 to restore V3 selected66 through the same producer.')
     check(place.read_bytes()==place_raw,'PLACE_CHANGED_DURING_METADATA_VALIDATION')
     for name,raw in [(SOURCE_MANIFEST,encoded(source_manifest)),(SELECTION_FILE,selection_raw),
                      ('SOURCE_LOCK.json',source_lock),('RC_FEATURE_LOCK.json',feature_lock),
@@ -288,8 +371,10 @@ def main():
     parser.add_argument('--game-fixes',choices=('true','false'),required=True)
     parser.add_argument('--evolution-retry',choices=('true','false'),required=True)
     parser.add_argument('--equip-recovery',choices=('true','false'),default='false')
+    parser.add_argument('--persistence-continuation-v1',choices=('true','false'),default='false')
     args=parser.parse_args()
-    result=apply(args.dist,args.out,args.profile,args.game_fixes=='true',args.evolution_retry=='true',args.equip_recovery=='true')
+    result=apply(args.dist,args.out,args.profile,args.game_fixes=='true',args.evolution_retry=='true',args.equip_recovery=='true',
+                 persistence_continuation_v1=args.persistence_continuation_v1=='true')
     print(json.dumps(result,indent=2))
 
 if __name__=='__main__': main()

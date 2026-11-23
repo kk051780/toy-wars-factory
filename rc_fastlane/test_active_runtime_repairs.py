@@ -10,6 +10,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -420,5 +421,219 @@ class RepairFailureProtocolTests(unittest.TestCase):
         self.assertEqual(diagnostic['exception'],'FRESH_OUTPUT_OUTSIDE_DIST_REQUIRED');self.assertEqual(streams,{})
         self.assertEqual({p.name for p in result['out'].iterdir()},{'sentinel'})
         self.assertEqual((result['out']/'sentinel').read_bytes(),b'caller-owned output')
+
+class PersistenceContinuationTests(unittest.TestCase):
+    """Real fixed66 selection and contract integrity; no mocked Native admission."""
+    @classmethod
+    def setUpClass(cls):
+        cls.base=Path(os.environ['P0D_ACTIVE66_TEST_DIST'])
+        cls.manifest,cls.patches=adapter.read_manifest()
+        cls.original,cls.sources,_,_=adapter.validate_base(cls.base,cls.manifest)
+        spec=importlib.util.spec_from_file_location('continuation_contracts',HERE/'features/active_runtime_repairs/regression/run_selected.py')
+        cls.runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(cls.runner)
+        cls.lock,cls.fixtures=cls.runner.read_fixtures()
+        cls.continuation=cls.runner.read_continuation_fixtures(adapter)
+
+    def setUp(self):
+        self.temporary=tempfile.TemporaryDirectory(prefix='active66-continuation-contract-')
+        self.addCleanup(self.temporary.cleanup);self.root=Path(self.temporary.name)
+
+    def select(self,name='selected',continuation=True):
+        out=self.root/name
+        result=adapter.apply(self.base,out,'rich51',True,True,True,persistence_continuation_v1=continuation)
+        return out,result
+
+    def test_default_false_retains_exact_V3_metadata_and_three_body_selection_is_atomic(self):
+        old=self.root/'implicit'
+        adapter.apply(self.base,old,'rich51',True,True,True)
+        explicit,_=self.select('explicit',False)
+        self.assertEqual(adapter.file_map(old),adapter.file_map(explicit))
+        self.assertEqual(adapter.sha((old/adapter.SELECTION_FILE).read_bytes()),
+                         'e1bf34b001263ef191c8e0f819c314b3c5fae12f3437c03f72029b4c942d8e3a')
+        selected,result=self.select()
+        _,_,current,flags,source_manifest=self.runner.selected_input(selected)
+        before=adapter.source_map(old);changed={path for path in current if current[path]!=before[path]}
+        self.assertEqual(changed,{'server/Game.server.luau','server/PersistentHatchStore.luau','client/HUD.client.luau'})
+        self.assertEqual(sum(len(current[path])-len(before[path]) for path in changed),3947)
+        self.assertEqual(len(current),66);self.assertEqual(len(current)-len(changed),63)
+        self.assertTrue(flags[adapter.CONTINUATION_FLAG]);self.assertEqual(result['selection']['schema'],'ACTIVE_RUNTIME_SELECTION_V2')
+        self.assertEqual(source_manifest,self.continuation[0]['selected_source_manifest_sha256'])
+        self.assertEqual((selected/'default.project.json').read_bytes(),self.original['default.project.json'])
+        self.assertEqual(adapter.file_map(self.base),self.original)
+
+    def test_continuation_rejects_partial_flags_non_boolean_and_wrong_profile_before_output(self):
+        invalid=[('rich51',False,True,True,True),('rich51',True,False,True,True),
+                 ('rich51',True,True,False,True),('rich47',True,True,True,True),
+                 ('legacy21',True,True,True,True),('rich51',True,True,True,1),
+                 ('rich51',True,True,True,'false')]
+        for profile,game,evo,recovery,continuation in invalid:
+            with self.subTest(profile=profile,game=game,evo=evo,recovery=recovery,continuation=continuation):
+                with self.assertRaises(ValueError):
+                    adapter.apply(self.root/'missing',self.root/'no'/'output',profile,game,evo,recovery,
+                                  persistence_continuation_v1=continuation)
+                self.assertEqual(list(self.root.iterdir()),[])
+
+    def test_actual_three_patch_inverse_restores_V3_then_original66(self):
+        selected,_=self.select();prior,_=self.select('prior',False)
+        recipe,patches=adapter.read_continuation()
+        for name in reversed(list(recipe['features'])):
+            run=subprocess.run(['patch','-p1','--fuzz=0','--batch','--reverse','--reject-file=-'],
+                               cwd=selected/'src',input=patches[name],capture_output=True,timeout=15)
+            self.assertEqual(run.returncode,0,run.stderr)
+        self.assertEqual(adapter.source_map(selected),adapter.source_map(prior))
+        for name in ('SOURCE_LOCK.json','RC_FEATURE_LOCK.json',adapter.SELECTION_FILE,adapter.SOURCE_MANIFEST):
+            (selected/name).write_bytes((prior/name).read_bytes())
+        self.assertEqual(adapter.file_map(selected),adapter.file_map(prior))
+        for name in reversed(['game_lifecycle','evolution_retry','equip_failure_recovery']):
+            run=subprocess.run(['patch','-p1','--fuzz=0','--batch','--reverse','--reject-file=-'],
+                               cwd=selected/'src',input=self.patches[name],capture_output=True,timeout=15)
+            self.assertEqual(run.returncode,0,run.stderr)
+        (selected/adapter.SELECTION_FILE).unlink();(selected/adapter.SOURCE_MANIFEST).unlink()
+        for name in ('SOURCE_LOCK.json','RC_FEATURE_LOCK.json'):(selected/name).write_bytes(self.original[name])
+        self.assertEqual(adapter.file_map(selected),self.original)
+        off=adapter.apply(self.base,self.root/'unused','rich51',False,False,False,persistence_continuation_v1=False)
+        self.assertEqual(off['selected_dist'],str(self.base));self.assertFalse((self.root/'unused').exists())
+
+    def test_new_recipe_and_patch_drift_are_refused_without_selected_output(self):
+        copied=self.root/'feature';shutil.copytree(adapter.FEATURE_ROOT,copied)
+        with patch.object(adapter,'FEATURE_ROOT',copied):
+            for filename,reason in [('MANIFEST.json','CONTINUATION_RECIPE_DRIFT'),
+                                    ('game_completion_equip_ui.patch','CONTINUATION_PATCH_DRIFT'),
+                                    ('hud_equip_notice.patch','CONTINUATION_PATCH_DRIFT')]:
+                with self.subTest(filename=filename):
+                    path=copied/'continuation_v1'/filename;raw=path.read_bytes();path.write_bytes(raw+b' ')
+                    with self.assertRaisesRegex(ValueError,reason):self.select()
+                    self.assertFalse((self.root/'selected').exists());path.write_bytes(raw)
+
+    def test_new_contract_and_fixture_drift_do_not_change_original_lock(self):
+        copied=self.root/'feature';shutil.copytree(adapter.FEATURE_ROOT,copied)
+        old_lock=(copied/'regression/fixtures.lock.json').read_bytes()
+        with patch.object(adapter,'FEATURE_ROOT',copied):
+            for filename,reason in [('fixtures.lock.json','CONTINUATION_CONTRACT_DRIFT'),
+                                    ('ui.cases.luau','CONTINUATION_FIXTURE_DRIFT'),
+                                    ('ack_episode.original11.luau','CONTINUATION_FIXTURE_DRIFT')]:
+                with self.subTest(filename=filename):
+                    path=copied/'continuation_v1/regression'/filename;raw=path.read_bytes();path.write_bytes(raw+b' ')
+                    with self.assertRaisesRegex(ValueError,reason):self.runner.read_continuation_fixtures(adapter)
+                    path.write_bytes(raw)
+        self.assertEqual((copied/'regression/fixtures.lock.json').read_bytes(),old_lock)
+        self.assertEqual(adapter.sha(old_lock),self.runner.LOCK_SHA256)
+
+    def test_versioned_case_inverse_restores_all_original54_and_ACK11_bytes(self):
+        _,contract,variants=self.continuation
+        def block(text,name,call):
+            marker=call+'("'+name+'",function()\n'
+            self.assertEqual(text.count(marker),1);start=text.index(marker)
+            boundary=re.search(r'^(?:case\(|test\(|observation\(|print\("TOTAL)',text[start+len(marker):],re.M)
+            self.assertIsNotNone(boundary)
+            return text[start:start+len(marker)+boundary.start()]
+        restored={name:variants[name] for name in contract['migration54']['variant_case_files']}
+        self.assertEqual(len(contract['migration54']['changed_cases']),7)
+        for row in contract['migration54']['changed_cases']:
+            call='case' if row['suite']=='equip9' else 'test'
+            before=block(self.fixtures[row['file']],row['old'],call)
+            after=block(restored[row['file']],row['new'],call)
+            self.assertEqual(self.runner.ident(before.encode()),row['original_case'])
+            self.assertEqual(self.runner.ident(after.encode()),row['variant_case'])
+            restored[row['file']]=restored[row['file']].replace(after,before,1)
+        for name,text in restored.items():self.assertEqual(text,self.fixtures[name])
+        restored_ack=variants['ack_episode.cases.luau']
+        for row in reversed(contract['migration_ACK11']['input_edits']):
+            self.assertEqual(restored_ack.count(row['variant']),1)
+            restored_ack=restored_ack.replace(row['variant'],row['original'],1)
+        self.assertEqual(restored_ack,variants['ack_episode.original11.luau'])
+        self.assertEqual(len(contract['migration_ACK11']['changed_original_names']),7)
+        self.assertEqual(len(contract['migration_ACK11']['unchanged_names']),4)
+
+    def test_all_current_programs_are_exactly_bound_and_renderer_drift_is_refused(self):
+        selected,_=self.select();_,_,sources,flags,_=self.runner.selected_input(selected)
+        for compatibility,suites in [(False,self.runner.CONTINUATION_SUITES),(True,self.runner.COMPATIBILITY_SUITES)]:
+            for suite in suites:
+                with self.subTest(suite=suite):
+                    program,_=self.runner.render_selected_contract(suite,sources,flags,self.lock,self.fixtures,self.continuation)
+                    self.runner.verify_contract_program(suite,program,self.continuation,compatibility)
+                    with self.assertRaisesRegex(ValueError,'CONTINUATION_FROZEN_PROGRAM_DRIFT'):
+                        self.runner.verify_contract_program(suite,program+b'\n',self.continuation,compatibility)
+        self.assertEqual(sum(len(row['vector']) for row in self.continuation[1]['positive'].values()),112)
+        self.assertEqual(sum(row['status']=='FAIL' for item in self.continuation[1]['compatibility'].values() for row in item['vector']),14)
+
+    def test_forged_current_HUD_and_self_consistent_metadata_cannot_replace_exact_profile(self):
+        selected,_=self.select();path=selected/'src/client/HUD.client.luau';path.write_bytes(path.read_bytes()+b'\n-- unreviewed\n')
+        sources=adapter.source_map(selected);source_manifest=adapter.encoded(adapter.projected_source_manifest(selected,sources))
+        selection=json.loads((selected/adapter.SELECTION_FILE).read_bytes())
+        selection['selected_source_manifest_sha256']=adapter.sha(source_manifest)
+        (selected/adapter.SELECTION_FILE).write_bytes(adapter.encoded(selection));(selected/adapter.SOURCE_MANIFEST).write_bytes(source_manifest)
+        pins={name:adapter.blob(raw) for name,raw in sources.items()}
+        for name,map_key,selection_key in [('SOURCE_LOCK.json','blobs','rc_active_runtime_repairs'),
+                                           ('RC_FEATURE_LOCK.json','source_gitblobs','active_runtime_repairs')]:
+            value=json.loads((selected/name).read_bytes());value[map_key]=pins;value[selection_key]=selection
+            (selected/name).write_bytes(adapter.encoded(value))
+        with self.assertRaisesRegex(ValueError,'CONTINUATION_SELECTED_PROFILE_MISMATCH'):
+            self.runner.selected_input(selected)
+
+    def test_selected_input_rejects_reapplication_and_old_native_admission_schema(self):
+        selected,_=self.select()
+        with self.assertRaisesRegex(ValueError,'WRONG_66_SOURCE_DISTRIBUTION'):
+            adapter.apply(selected,self.root/'twice','rich51',True,True,True,persistence_continuation_v1=True)
+        self.assertFalse((self.root/'twice').exists())
+        folder=self.root/'invalid_legacy_receipt';folder.mkdir()
+        # Deliberately invalid input. No process or Native execution is claimed.
+        (folder/'receipt.json').write_text(json.dumps({'schema':'ACTIVE66_SELECTED_REPAIR_REGRESSION_V1','status':'PASS'}))
+        with self.assertRaisesRegex(ValueError,'REPAIR_REGRESSION_MUST_PASS'):
+            self.runner.artifact_binding(selected,folder)
+
+    def test_artifact_execution_status_requires_integer_not_boolean_or_float(self):
+        """Receipt protocol only: subprocess/provenance mocks are not Native evidence."""
+        selected,_=self.select();runner=self.runner;out=self.root/'protocol-only-output'
+        binary=self.root/'never-executed-luau';build=self.root/'never-built'
+        runtime={'profile':'ci-pinned-source-build','runtime_path':str(binary),
+                 'runtime_sha256':'protocol-runtime','source_dir':str(self.root/'mock-source'),
+                 'source_commit':'protocol-commit','tracked_and_untracked_clean':True,
+                 'build_dir':str(build),'CMakeCache_sha256':'protocol-cache',
+                 'CMake_home_directory':str(self.root/'mock-source'),'compiler_version':'protocol-compiler',
+                 'cmake_executable':'protocol-cmake','cmake_sha256':'protocol-cmake-hash'}
+        responses=[subprocess.CompletedProcess([],0,b'protocol-only build; not executed\n',b'')]
+        for section in ('positive','compatibility'):
+            for contract in self.continuation[1][section].values():
+                stdout=''.join('CASE\t'+row['name']+'\t'+row['status']+'\tprotocol-only fixture\n'
+                               for row in contract['vector'])
+                stdout+=''.join(row+'\n' for row in contract['observations'])
+                stderr=b'protocol-only expected failure; not executed\n' if contract['native_exit'] else b''
+                responses.append(subprocess.CompletedProcess([],contract['native_exit'],stdout.encode(),stderr))
+        argv=['run_selected.py','--dist',str(selected),'--out',str(out),'--luau',str(binary),
+              '--runtime-profile','ci-pinned-source-build','--luau-source-dir',runtime['source_dir'],
+              '--luau-build-dir',str(build)]
+        with patch.object(runner,'runtime_provenance',side_effect=lambda *_:dict(runtime)), \
+             patch.object(runner.subprocess,'run',side_effect=responses) as processes, \
+             patch.object(sys,'argv',argv),redirect_stdout(io.StringIO()):
+            self.assertEqual(runner.main(),0)
+            self.assertEqual(processes.call_count,14)  # All mocked; no real build or Native invocation.
+        aggregate=out/'receipt.json';original=aggregate.read_bytes()
+        suites={'positive':'revision_v1_spawn12','compatibility':'original_equip9'}
+        scopes={'positive':out/suites['positive'],'compatibility':out/'compatibility'/suites['compatibility']}
+        originals={key:(scope/'receipt.json').read_bytes() for key,scope in scopes.items()}
+        probes=[('build','exit_code',value,'REPAIR_REGRESSION_BUILD_COMMAND_MISMATCH') for value in (False,0.0)]
+        for category,values in [('positive',(False,0.0)),('compatibility',(True,1.0))]:
+            for field in ('native_exit','expected_native_exit'):
+                reason=('REPAIR_REGRESSION_CASE_VECTOR_MISMATCH:' if field=='native_exit'
+                        else 'CONTINUATION_RESULT_KIND_MISMATCH:')+suites[category]
+                probes.extend((category,field,value,reason) for value in values)
+        with patch.object(runner,'runtime_provenance',side_effect=lambda *_:dict(runtime)):
+            self.assertEqual(runner.artifact_binding(selected,out)['passed'],112)
+            for category,field,value,reason in probes:
+                with self.subTest(category=category,field=field,value_type=type(value).__name__):
+                    receipt=json.loads(original)
+                    if category=='build':receipt['runtime']['actual_build'][field]=value
+                    else:
+                        rows=receipt['suites'] if category=='positive' else receipt['compatibility_observations']['suites']
+                        row=rows[suites[category]];row[field]=value
+                        runner.write_json(scopes[category]/'receipt.json',row)
+                    runner.write_json(aggregate,receipt)
+                    try:
+                        with self.assertRaisesRegex(ValueError,reason):runner.artifact_binding(selected,out)
+                    finally:
+                        aggregate.write_bytes(original)
+                        for key,raw in originals.items():(scopes[key]/'receipt.json').write_bytes(raw)
+            self.assertEqual(runner.artifact_binding(selected,out)['passed'],112)
 
 if __name__=='__main__': unittest.main()

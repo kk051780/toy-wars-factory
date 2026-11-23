@@ -1,0 +1,20 @@
+--- a/client/HUD.client.luau
++++ b/client/HUD.client.luau
+@@ -752,12 +752,15 @@
+     local owned=if type(s.hatchOwned)=="table" then s.hatchOwned else {}
+     local equipped=if type(s.hatchEquipped)=="string" then s.hatchEquipped else ""
+     local saveState=if type(s.hatchSaveStatus)=="string" then s.hatchSaveStatus else "LOCAL_ONLY"
++    local equipReselect=saveState=="SAVED" and s.phase=="LOBBY"
++        and s.hatchEquipNeedsReselect==true
+     saveLabel.Visible=hatchAvailable and (lobby or s.phase=="RESULTS")
+-    saveLabel.Text=if saveState=="SAVED" then "✅ 保存サーバー応答あり（再ログイン検証は別）"
++    saveLabel.Text=if equipReselect then "⚠ 今の装備を表示中。もう一度選んでね"
++        elseif saveState=="SAVED" then "✅ 保存サーバー応答あり（再ログイン検証は別）"
+         elseif saveState=="LOADING" then "🔄 以前の魔獣を読み込み中"
+         elseif saveState=="SAVE_FAILED" then "⚠️ 保存未確認！再ログインで消失の可能性"
+         else "⚠️ Studioでは一時保存のみ。再ログインで消えます"
+-    saveLabel.TextColor3=if saveState=="SAVED" then Color3.fromRGB(153,247,177)
++    saveLabel.TextColor3=if saveState=="SAVED" and not equipReselect then Color3.fromRGB(153,247,177)
+         else Color3.fromRGB(255,207,120)
+     equipPanel.Visible=hatchAvailable and lobby and not evolutionOpen
+     if evolutionPanel.Visible then

@@ -651,13 +651,14 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             export ORIGINAL_DIST="$DIST"
-            read -r GAME_FIXES EVOLUTION_RETRY EQUIP_RECOVERY < <(python3 -c "import json; x=json.load(open('rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json')); assert x['schema']=='ACTIVE_RUNTIME_REPAIR_SWITCHES_V1' and x['source_profile']=='rich51'; flags=[x[k] for k in ('game_fixes','evolution_retry','equip_recovery')]; assert all(type(flag) is bool for flag in flags); assert not x['equip_recovery'] or x['game_fixes']; print(*(str(flag).lower() for flag in flags))")
+            read -r GAME_FIXES EVOLUTION_RETRY EQUIP_RECOVERY PERSISTENCE_CONTINUATION_V1 < <(python3 -c "import json; x=json.load(open('rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json')); assert x['schema']=='ACTIVE_RUNTIME_REPAIR_SWITCHES_V2' and x['source_profile']=='rich51'; flags=[x[k] for k in ('game_fixes','evolution_retry','equip_recovery','persistence_continuation_v1')]; assert all(type(flag) is bool for flag in flags); assert not x['equip_recovery'] or x['game_fixes']; assert not x['persistence_continuation_v1'] or all(flags[:3]); print(*(str(flag).lower() for flag in flags))")
             if [ "$GAME_FIXES" = true ] || [ "$EVOLUTION_RETRY" = true ] || [ "$EQUIP_RECOVERY" = true ]; then
               P0D_ACTIVE66_TEST_DIST="$ORIGINAL_DIST" python3 -B -m unittest discover -s rc_fastlane -p test_active_runtime_repairs.py -v
             fi
             python3 -B rc_fastlane/apply_active_runtime_repairs.py \
               --dist "$ORIGINAL_DIST" --out /tmp/p0d_rc_active66_selected --profile "$PROFILE" \
               --game-fixes "$GAME_FIXES" --evolution-retry "$EVOLUTION_RETRY" --equip-recovery "$EQUIP_RECOVERY" \
+              --persistence-continuation-v1 "$PERSISTENCE_CONTINUATION_V1" \
               > /tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json
             export DIST="$(python3 -c "import json; print(json.load(open('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'))['selected_dist'])")"
             if [ "$DIST" != "$ORIGINAL_DIST" ]; then

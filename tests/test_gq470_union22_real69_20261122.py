@@ -8,12 +8,14 @@ complete fixed suite; missing context never becomes a skip or an empty PASS.
 from __future__ import annotations
 
 import copy
+from contextlib import redirect_stdout
 import importlib.util
 import io
 import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -32,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 38, "final": 7}
+INTEGRATION_COUNTS = {"core": 42, "final": 9}
 
 
 def artifact_environment(expected_stage=None):
@@ -108,12 +110,49 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(result["archive_members"]), 75)
 
     def test_original_39_workflow_step_payloads_byte_exact(self):
-        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_text()
-        prefix = workflow.split("    steps:\n", 1)[1].split(
-            '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
-        self.assertEqual(compose.identity(prefix.encode()), {
-            "bytes": 106837, "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"})
+        workflow = (REPO / ".github/workflows/gq8-real63-source-composite.yml").read_bytes().decode("utf-8")
+        # Only the reviewed original-input transport changes; invert it before
+        # checking the unchanged historical 39-step contract.
+        old_transport = (
+            '          mkdir -p /tmp/gq863/{base55,hud59,trade62,formal62,formal63,viral56,counter56}\n'
+            '          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/base55\n'
+            '          gh run download 44401178585 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL59-HUD-MAP-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/hud59\n'
+            '          gh run download 44402402944 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL62-HUD59-TRADE3-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/trade62\n'
+            '          gh run download 44404334603 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL62-HUD-TRADE-PRIVATE-STUDIO --dir /tmp/gq863/formal62\n'
+            '          gh run download 44413796990 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL63-BASIC-DODGE-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq863/formal63\n'
+            '          gh run download 44398710101 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/viral56\n'
+            '          gh run download 44397387116 --repo "$GITHUB_REPOSITORY" --name GQ822-REAL56-CURRENT-FORMAL55-COUNTER-PRIVATE-NOT-OFFICIAL --dir /tmp/gq863/counter56\n'
+        )
+        new_transport = '          python3 -B quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py --out /tmp/gq863\n'
+        original = {"bytes": 106837,
+                    "sha256": "0ab1ece54d56747dd655146ef3f4425ab2ad0346bd9843956a9d6dcd532cd039"}
+
+        def check_original_prefix(candidate):
+            self.assertEqual(candidate.count(new_transport), 1)
+            self.assertNotIn(old_transport, candidate)
+            prefix = candidate.split("    steps:\n", 1)[1].split(
+                '      - name: "Union22: exact existing hunks after the unchanged BR-only prior boundary"\n', 1)[0]
+            self.assertEqual(prefix.count(new_transport), 1)
+            restored = prefix.replace(new_transport, old_transport, 1)
+            self.assertEqual(compose.identity(restored.encode()), original)
+
+        check_original_prefix(workflow)
         self.assertEqual(workflow.count("path: artifacts/real69_union22/delivery/"), 1)
+        # Historical bytes, loader commands and multiplicity are exact; even a
+        # physical LF-to-CRLF change must fail the inverse contract.
+        mutations = {
+            "historical_head": workflow.replace(
+                "44393525211:a6020867fac80fa3b2ca47478625873fc6f3678e",
+                "44393525211:b6020867fac80fa3b2ca47478625873fc6f3678e", 1),
+            "loader_output": workflow.replace("--out /tmp/gq863\n", "--out /tmp/gq863x\n", 1),
+            "duplicate_loader": workflow.replace(new_transport, new_transport * 2, 1),
+            "prefix_crlf": workflow.replace("          set -euo pipefail\n", "          set -euo pipefail\r\n", 1),
+        }
+        for label, mutated in mutations.items():
+            with self.subTest(mutation=label):
+                self.assertNotEqual(mutated, workflow)
+                with self.assertRaises(AssertionError):
+                    check_original_prefix(mutated)
 
     def test_actual_final_retention(self):
         result = verify.verify_core(self.current, self.prior, self.reports, self.context)
@@ -334,10 +373,10 @@ class UnionBoundary(unittest.TestCase):
             self.assertTrue(native.exact_vector(stdout, names)[0])
 
     def test_revised_suite_is_separate_from_original_combined(self):
-        self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full"})
+        self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full_clear_los"})
         self.assertEqual(self.native_lock["suites"]["combined_clear_los"]["input_variant"],
                          "BOUNDED_CLEAR_LOS_APPROACH_INPUT")
-        self.assertEqual(self.native_lock["suites"]["objective_full"]["input_variant"], "ORIGINAL_UNCHANGED")
+        self.assertEqual(self.native_lock["suites"]["objective_full_clear_los"]["input_variant"], "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT")
         with self.assertRaisesRegex(ValueError, "UNKNOWN_CASE_VARIANT"):
             native.assemble(self.current / "sources", self.native_lock, "original_combined")
 
@@ -367,7 +406,7 @@ class UnionBoundary(unittest.TestCase):
             native.fixture_snapshot(altered)
 
     def test_empty_missing_duplicate_extra_failed_case_rejected(self):
-        names = self.native_lock["suites"]["objective_full"]["expected_case_names"]
+        names = self.native_lock["suites"]["objective_full_clear_los"]["expected_case_names"]
         lines = ["CASE\t" + name + "\tPASS\tdetail" for name in names]
         bad = [[], lines[:-1], lines + [lines[0]], lines + ["CASE\tEXTRA\tPASS\tdetail"],
                [lines[0].replace("\tPASS\t", "\tFAIL\t")] + lines[1:], list(reversed(lines))]
@@ -396,6 +435,55 @@ class UnionBoundary(unittest.TestCase):
             self.assertEqual(len(ranges), 28)
             for rel, row in ranges.items():
                 self.assertEqual(generated[row["start"]:row["end"]], (self.current / "sources" / rel).read_bytes())
+
+    def test_objective_clear_los_case_inverse_preserves_original_assertions(self):
+        original = (HERE / "native/objective_full_cases.luau").read_bytes()
+        revised = (HERE / "native/objective_full_cases_clear_los.luau").read_bytes()
+        first = b"-- OBJECTIVE_FULL_CLEAR_LOS_INPUT_BEGIN\n"
+        last = b"-- OBJECTIVE_FULL_CLEAR_LOS_INPUT_END\n\n"
+        self.assertEqual(revised.count(first), 1)
+        self.assertEqual(revised.count(last), 1)
+        start = revised.index(first)
+        end = revised.index(last, start) + len(last)
+        self.assertEqual(compose.identity(revised[start:end]), {"bytes": 768,
+                         "sha256": "924c41396b10c0b31645f6edeefc456531671e5383e60510896091ae421daf30"})
+        restored = revised[:start] + revised[end:]
+        changed = (b" local beforeHealth=humanoid.Health\n local beforeWrites=#healthWrites\n"
+                   b" local target=neutral.PrimaryPart.Position\n"
+                   b" rootPart.CFrame=CFrame.new(clearMeleeApproach(neutral,character),target)\n"
+                   b" local beforeRays=rayQueries\n")
+        previous = (b" local beforeHealth=humanoid.Health\n local beforeWrites=#healthWrites\n"
+                    b" local beforeRays=rayQueries\n local target=neutral.PrimaryPart.Position\n"
+                    b" rootPart.CFrame=CFrame.new(target+Vector3.new(2,0,0),target)\n")
+        self.assertEqual(restored.count(changed), 1)
+        self.assertEqual(restored.replace(changed, previous, 1), original)
+
+    def test_corrupt_objective_clear_los_case_rejected_before_execution(self):
+        copied = self.temporary() / "native"
+        shutil.copytree(HERE / "native", copied)
+        p = copied / "objective_full_cases_clear_los.luau"
+        p.write_bytes(p.read_bytes() + b"\n-- unknown objective case change\n")
+        with patch.object(native, "HERE", copied), self.assertRaisesRegex(ValueError, "CASE_MISMATCH"):
+            native.fixture_snapshot(self.native_lock)
+
+    def test_original_objective_pin_cannot_substitute_clear_los_case(self):
+        altered = copy.deepcopy(self.native_lock)
+        original = altered["objective_case_amendment"]["original_case"]
+        altered["suites"]["objective_full_clear_los"]["case"] = {k: original[k] for k in ("bytes", "sha256")}
+        with self.assertRaisesRegex(ValueError, "CASE_MISMATCH"):
+            native.fixture_snapshot(altered)
+
+    def test_preserved_original_objective_drift_rejected_by_both_checks(self):
+        copied = self.temporary() / "contract"
+        shutil.copytree(HERE, copied)
+        p = copied / "native/objective_full_cases.luau"
+        p.write_bytes(p.read_bytes() + b"\n-- changed retained original\n")
+        with patch.object(native, "HERE", copied / "native"), self.assertRaisesRegex(
+                ValueError, "ORIGINAL_OBJECTIVE_CASE_NOT_PRESERVED"):
+            native.fixture_snapshot(self.native_lock)
+        with patch.object(verify, "HERE", copied), self.assertRaisesRegex(
+                ValueError, "NATIVE_ORIGINAL_OBJECTIVE_NOT_PRESERVED"):
+            verify.verify_native(copied / "missing-native-results", self.current, self.lock, self.context)
 
 
 class FinalAdmissionBoundary(unittest.TestCase):
@@ -465,7 +553,7 @@ class FinalAdmissionBoundary(unittest.TestCase):
 
     def test_native_evidence_changed_after_real_native_rejected(self):
         def mutate(_, root):
-            p = root / "objective_full/stdout.log"
+            p = root / "objective_full_clear_los/stdout.log"
             p.write_bytes(p.read_bytes() + b"TRACE\tlate evidence drift\n")
         self.phase_mutation("verify_native", "NATIVE", mutate, copy_native=True)
 
@@ -508,6 +596,34 @@ class FinalAdmissionBoundary(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "NATIVE_AGGREGATE_SUITE_SET"):
             verify.verify_native(copied, self.current, self.lock, self.context)
 
+    def test_original_objective_tail_cannot_be_relabelled_as_clear_los(self):
+        copied = self.temporary() / "native"
+        shutil.copytree(self.native, copied)
+        suite = copied / "objective_full_clear_los"
+        program = (suite / "generated.luau").read_bytes()
+        revised = (HERE / "native/objective_full_cases_clear_los.luau").read_bytes()
+        original = (HERE / "native/objective_full_cases.luau").read_bytes()
+        self.assertTrue(program.endswith(revised))
+        altered = program[:-len(revised)] + original
+        (suite / "generated.luau").write_bytes(altered)
+        receipt = verify.data(suite / "receipt.json")
+        receipt["generated"] = compose.identity(altered)
+        compose.write_json(suite / "receipt.json", receipt)
+        aggregate = verify.data(copied / "receipt.json")
+        aggregate["suites"]["objective_full_clear_los"] = compose.identity((suite / "receipt.json").read_bytes())
+        compose.write_json(copied / "receipt.json", aggregate)
+        with self.assertRaisesRegex(ValueError, "NATIVE_EXECUTED_PROGRAM_NOT_EXACT"):
+            verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_unexecuted_original_objective_cannot_enter_aggregate(self):
+        copied = self.temporary() / "native"
+        shutil.copytree(self.native, copied)
+        aggregate = verify.data(copied / "receipt.json")
+        aggregate["suites"]["objective_full"] = dict(aggregate["suites"]["objective_full_clear_los"])
+        compose.write_json(copied / "receipt.json", aggregate)
+        with self.assertRaisesRegex(ValueError, "NATIVE_AGGREGATE_SUITE_SET"):
+            verify.verify_native(copied, self.current, self.lock, self.context)
+
 
 class UnionOfflineContract(unittest.TestCase):
     """Repository-only checks; no artifact or runtime acceptance is claimed."""
@@ -520,7 +636,7 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(len(self.lock["sources"]), 69)
         self.assertEqual(self.native_lock["sources"],
                          {name: row["after"] for name, row in self.lock["sources"].items()})
-        self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full"})
+        self.assertEqual(set(self.native_lock["suites"]), {"combined_clear_los", "objective_full_clear_los"})
 
     def test_original_fixture_and_case_bytes_remain_pinned(self):
         self.assertEqual(native.fixture_snapshot(self.native_lock), self.native_lock["fixtures"])
@@ -532,8 +648,88 @@ class UnionOfflineContract(unittest.TestCase):
             with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
                 artifact_environment()
 
+    def test_native_failure_observation_preserves_fail_and_success_contracts(self):
+        # Python protocol controls only: subprocess, assembly and source reads
+        # are mocked. No game, source-build, Native or CI acceptance is claimed.
+        with tempfile.TemporaryDirectory(prefix="union22-diagnostic-protocol-") as directory:
+            parent = Path(directory)
+            binary = parent / "protocol-binary"
+            binary.write_bytes(b"protocol-only; never executed")
+            binary_pin = native.identity(binary.read_bytes())
+            before = copy.deepcopy(self.native_lock["sources"])
+            changed = copy.deepcopy(before)
+            changed[next(iter(changed))]["sha256"] = "0" * 64
+            expected = self.native_lock["suites"]["objective_full_clear_los"]["expected_case_names"]
+            passed = ("\n".join("CASE\t" + name + "\tPASS\tprotocol-only" for name in expected) + "\n").encode()
+            failed = passed.replace(b"\tPASS\t", b"\tFAIL\t", 1)
+            controls = [
+                ("process", subprocess.CompletedProcess([], 1, failed, b"original failure\n"), before, ValueError),
+                ("vector", subprocess.CompletedProcess([], 0, failed, b""), before, ValueError),
+                ("source", subprocess.CompletedProcess([], 0, passed, b""), changed, ValueError),
+                ("timeout", subprocess.TimeoutExpired([], 60, output=b"partial output\n", stderr=b"partial error\n"), before, subprocess.TimeoutExpired),
+                ("utf8", subprocess.CompletedProcess([], 0, b"\xff", b""), before, UnicodeDecodeError),
+                ("success", subprocess.CompletedProcess([], 0, passed, b""), before, None),
+            ]
+            for name, response, snapshot, error_type in controls:
+                with self.subTest(name=name):
+                    output = parent / name
+                    console = io.StringIO()
+                    effect = {"side_effect": response} if isinstance(response, Exception) else {"return_value": response}
+                    with patch.object(native, "assemble", return_value=(b"-- protocol only\n", {}, {})), \
+                         patch.object(native.subprocess, "run", **effect), \
+                         patch.object(native, "source_snapshot", return_value=snapshot), \
+                         patch.object(native, "fixture_snapshot"), redirect_stdout(console):
+                        arguments = (parent / "unused-source", output, binary, self.native_lock, "objective_full_clear_los", before,
+                                     binary_pin, {"kind": "PROTOCOL_ONLY"}, native.identity(b"protocol-receipt"),
+                                     native.identity(b"protocol-runner"))
+                        if error_type is None:
+                            result = native.run_suite(*arguments)
+                        else:
+                            with self.assertRaises(error_type) as caught:
+                                native.run_suite(*arguments)
+                    if error_type is None:
+                        self.assertEqual(console.getvalue(), "objective_full_clear_los: 7/7 exact PASS cases\n")
+                        self.assertEqual(result["schema"], "UNION22_FULL_RUNTIME_SUITE_V2")
+                        self.assertEqual(result["status"], "PASS")
+                        self.assertEqual({p.name for p in output.iterdir()},
+                                         {"generated.luau", "stdout.log", "stderr.log", "receipt.json"})
+                        self.assertEqual((output / "stdout.log").read_bytes(), passed)
+                        continue
+                    self.assertFalse((output / "receipt.json").exists())
+                    diagnostic = verify.data(output / "FAILED.json")
+                    stdout = response.stdout or b""
+                    stderr = response.stderr or b""
+                    self.assertEqual((output / "stdout.log").read_bytes(), stdout)
+                    self.assertEqual((output / "stderr.log").read_bytes(), stderr)
+                    self.assertEqual(diagnostic["stdout"], native.identity(stdout))
+                    self.assertEqual(diagnostic["stderr"], native.identity(stderr))
+                    self.assertEqual(diagnostic["native"], binary_pin)
+                    self.assertEqual(diagnostic["generated"], native.identity(b"-- protocol only\n"))
+                    self.assertEqual(diagnostic["status"], "FAIL_DIAGNOSTIC_ONLY")
+                    self.assertFalse(diagnostic["native_admission"])
+                    displayed = console.getvalue().splitlines()
+                    self.assertEqual(len(displayed), 3)
+                    self.assertEqual(json.loads(displayed[0].removeprefix("UNION22_NATIVE_FAILURE ")), diagnostic)
+                    self.assertEqual(json.loads(displayed[1].removeprefix("UNION22_NATIVE_FAILURE_STDOUT ")),
+                                     stdout.decode("utf-8", errors="backslashreplace"))
+                    self.assertEqual(json.loads(displayed[2].removeprefix("UNION22_NATIVE_FAILURE_STDERR ")),
+                                     stderr.decode("utf-8", errors="backslashreplace"))
+                    if name in ("process", "vector", "source"):
+                        self.assertIn("SUITE_FAILED_OR_SOURCE_MUTATED:objective_full_clear_los", str(caught.exception))
+                        self.assertEqual(diagnostic["native_exit"], response.returncode)
+                        self.assertEqual(diagnostic["source_inputs_unchanged"], name != "source")
+                        self.assertEqual(diagnostic["exact_complete_pass_vector"], name == "source")
+                        self.assertEqual(diagnostic["parse_reason"], "EXACT_PASS_VECTOR" if name == "source" else "NON_PASS_CASE")
+                    elif name == "timeout":
+                        self.assertIs(caught.exception, response)
+                        self.assertTrue(diagnostic["timed_out"])
+                        self.assertEqual(diagnostic["parse_reason"], "NOT_PARSED_TIMEOUT")
+                    else:
+                        self.assertEqual(diagnostic["parse_reason"], "INVALID_UTF8")
+
     test_original_39_workflow_step_payloads_byte_exact = UnionBoundary.test_original_39_workflow_step_payloads_byte_exact
     test_clear_los_case_exact_inverse_preserves_original_assertions = UnionBoundary.test_clear_los_case_exact_inverse_preserves_original_assertions
+    test_objective_clear_los_case_inverse_preserves_original_assertions = UnionBoundary.test_objective_clear_los_case_inverse_preserves_original_assertions
     test_original_vectors_exact_positive = UnionBoundary.test_original_vectors_exact_positive
     test_empty_missing_duplicate_extra_failed_case_rejected = UnionBoundary.test_empty_missing_duplicate_extra_failed_case_rejected
     test_duplicate_json_keys_rejected = UnionBoundary.test_duplicate_json_keys_rejected
@@ -552,7 +748,7 @@ def load_tests(loader, standard_tests, pattern):
     # A module/script entry or even a partial context must request real artifacts.
     has_context = any(key.startswith("UNION22_TEST_") for key in os.environ)
     if pattern is not None and not has_context:
-        return checked_suite(loader, UnionOfflineContract, 10)
+        return checked_suite(loader, UnionOfflineContract, 12)
     return integration_suite(loader)
 
 
