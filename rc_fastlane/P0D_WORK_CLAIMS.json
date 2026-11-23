@@ -21948,7 +21948,7 @@
     },
     {
       "claim_id": "P0D-GQ484-BOT-VAULT-20261123-0A2BA23F",
-      "state": "GRANTED",
+      "state": "PREP_READY",
       "owner": "CODEX_ROOT_B8C8E7B756CD",
       "feature_id": "GQ484_ENEMY_VAULT_APPROACH_PHASE",
       "sub_scope": "EXACT_EXISTING_BOT555_CANONICAL_UNION_SUCCESSOR_ONLY",
@@ -21993,9 +21993,9 @@
         "incremental_game_source_bytes": 555
       },
       "prep_branch": "quality/gq484-bot-vault-intake-20261123-0a2ba23f",
-      "source_branch_created": false,
+      "source_branch_created": true,
       "source_head_before": null,
-      "source_head": null,
+      "source_head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
       "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
       "actual_accepted_hud_parent_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
       "actual_accepted_hud_artifact": {
@@ -22056,22 +22056,22 @@
         "RUNTIME_UNIFIED": "NO",
         "OWNER_ACCEPTED": false
       },
-      "pr": null,
+      "pr": 1027,
       "allowed_new_prs": 1,
       "followup_pr_reason": "One narrow successor from the actual accepted HUD RC transports the same c38 fix into the existing UNION22 producer. Do not merge the divergent original20-file stack, overwrite or force-rebase its author branch, or duplicate Bot/Router implementation.",
-      "role": "A_PREP",
-      "grant_scope_version": 1,
+      "role": "SOURCE_OWNER_WITH_NAMED_SINGLE_WRITER_INTEGRATION",
+      "grant_scope_version": 2,
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
       "issuer_role": "OWNER_DELEGATED_MANUAL_COORDINATOR",
       "issuer_operation_id": "6b1cdae8-a7f0-4e18-a9d0-dde7dcc1f443",
       "issued_at": "2026-11-23T04:15:20.638570+00:00",
       "expires_at": "2026-11-23T10:15:20.638570+00:00",
-      "scope": "Reuse original PR484 c38 BotActors+555 in existing UNION22 after actual accepted HUD+normal shared-path/resource handoff. Exactly6 modified+3 added paths; Router and other68 bodies unchanged. Preserve original22 repairs, actual HUD8 provenance and R2. Same fresh F46 originaldual28+selectedHUD+Bot9; no new producer/workflow/authority.",
+      "scope": "Reuse original PR484 c38 BotActors+555 in existing UNION22 after actual accepted HUD+normal shared-path/resource handoff. Exactly6 modified+3 added paths; Router and other68 bodies unchanged. Preserve original22 repairs, actual HUD8 provenance and R2. Same fresh F46 originaldual28+selectedHUD+Bot9; no new producer/workflow/authority. V2 adoption-only amendment: original SOURCE v1 is sealed at accepted H72; no further source edits. Authorize only the separately leased B8/root non-force H93-to-H72 transaction for PR1027 after actual one-row registration/readback and concrete independent metadata review. Preserve all original source provenance,9paths/3resources/11acceptance clauses and original expiry. Official same-new-R independent artifact acceptance and separate metadata consumption/return remain required.",
       "source_publisher": "CODEX_ROOT_B8C8E7B756CD:/root",
       "independent_reviewer_context": "CODEX_ROOT_B8C8E7B756CD:/root/environment_audit",
       "author_may_self_approve": false,
-      "independent_review_status": "FUTURE_ACTUAL_PARENT_SCOPE_AND_EXACT_HEAD_REVIEW_REQUIRED",
+      "independent_review_status": "PASS_ACTUAL_SOURCE_AND_HOSTED_CI_CANDIDATE_NOT_RC_ADOPTED",
       "scope_contract": {
         "request_url": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7086509751",
         "value_adopt_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7088803358",
@@ -22172,7 +22172,34 @@
         "branch": "twf-repair-coordinator",
         "expires_at": "2026-11-23T04:39:47.933716+00:00"
       },
-      "source_lease": null,
+      "source_lease": {
+        "acquisition": "2d93f8f35fe57cafae84c06d2665b6de01a3d021",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "a4977f55-88ee-4a92-814e-001c7802cea1",
+          "task_id": null,
+          "epoch": 678,
+          "acquired_at": "2026-11-23T05:14:38Z",
+          "expires_at": "2026-11-23T05:44:38.000Z",
+          "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+          "work_branch": "quality/gq484-bot-vault-intake-20261123-0a2ba23f",
+          "origin": "controller"
+        },
+        "normal_release": {
+          "commit": "9e95a51d223f65f4b696a9fbe8dd188f51b73e2a",
+          "parent": "2d93f8f35fe57cafae84c06d2665b6de01a3d021",
+          "blob": "db361164d5a4f6ea78497a4c2e99ba8262d73e1c",
+          "tree": "07c7837bd9b070ccb96051bca5e196ee429c7b3e",
+          "epoch": 678,
+          "owner_id": "a4977f55-88ee-4a92-814e-001c7802cea1",
+          "released_at": "2026-11-23T05:20:34Z",
+          "reason": "published 72d620d PR1027 awaiting independent same-H CI acceptance",
+          "full_readback_exact": true,
+          "latest_observed_ref": "9e95a51d223f65f4b696a9fbe8dd188f51b73e2a",
+          "latest_ref_equals_release": true
+        },
+        "status": "COMPLETED_NORMALLY_RELEASED_NOT_AN_RC_LEASE"
+      },
       "acceptance": [
         "Before issuance, independently accept the actual HUD formal RC and official push artifact; verify normal six-path/two-shared-resource owner handoff. Keep accepted parent and base null until then.",
         "Fresh-read all claim rows, aliases, exact/pattern paths, canonical feature/resources and existing work/PRs. Treat expired BUSY rows as reserved until proper release/transfer. Re-review the exact scope against that actual parent and preserve unrelated registry rows/history.",
@@ -22221,9 +22248,9 @@
         "Main,Roblox Publish,monetization,spending",
         "A2 binder expansion or new P2/lifecycle/BEAST implementation"
       ],
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "RC_adoption": false,
       "no_main_or_publish": true,
@@ -22482,12 +22509,348 @@
       },
       "scope_review_context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
       "scope_review_is_code_approval": false,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_writes_permitted_at_issuance": false,
       "source_write_requires_separate_live_source_lease": true,
       "source_lease_status_at_issuance": "NOT_ACQUIRED",
       "expiry_policy": "Six hours from the real allocation time; no expiry-based ownership transfer.",
-      "fresh_actual_all_claim_and_prior_Bot_observation_required": true
+      "fresh_actual_all_claim_and_prior_Bot_observation_required": true,
+      "amended_at": "2026-11-23T05:43:43.212700+00:00",
+      "source_tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+      "source_preparation_closed": true,
+      "source_writes_authorized_by_this_claim": false,
+      "source_writes_permitted": false,
+      "current_integration_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+      "post_adoption_metadata_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+      "metadata_update_lease": {
+        "context": "CODEX_ROOT_B8C8E7B756CD:/root",
+        "authenticated_actor": {
+          "login": "kk051780",
+          "id": 233213370,
+          "permission": "admin",
+          "observed_at": "2026-11-23T05:43:04Z"
+        },
+        "operation_id": "40fa348c-968c-44e8-8e17-6f063daba7a4",
+        "metadata_lease": {
+          "kind": "CONTROLLER",
+          "owner_id": "40fa348c-968c-44e8-8e17-6f063daba7a4",
+          "task_id": null,
+          "epoch": 680,
+          "acquired_at": "2026-11-23T05:43:04Z",
+          "expires_at": "2026-11-23T06:13:04.000Z",
+          "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        },
+        "acquire_commit": "a86ce510c0ce5ee68d19afe8a5eb0a38c6a0645a",
+        "acquire_blob": "67ae5022c2e9fb1f9d68885802e7a2dd2774387e",
+        "actual_full_coordinator_readback": true,
+        "registry_parent": "30baf9dcad1eb86b34a06a3eb050eba9a0e11c8e",
+        "registry_blob": "c84cfb5920cd3b98f80cb9bec91e4aa835f808b3",
+        "fresh_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "source_head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "source_tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+        "pr": 1027,
+        "authority_basis": "Standing owner-delegated ordinary engineering coordination and #1011 v1.2 end-to-end responsibility; actual authenticated normal metadata lease. No expiry, silence, source approval or request is used as RC authority."
+      },
+      "prior_v1_immutable_reference": {
+        "commit": "30baf9dcad1eb86b34a06a3eb050eba9a0e11c8e",
+        "blob": "c84cfb5920cd3b98f80cb9bec91e4aa835f808b3",
+        "path": "rc_fastlane/P0D_WORK_CLAIMS.json",
+        "claim_id": "P0D-GQ484-BOT-VAULT-20261123-0A2BA23F",
+        "claim_index": 23,
+        "registry": {
+          "bytes": 1437604,
+          "sha256": "a9912cfbab4c6e6968089414d29ddab5b307321ae927e62fc0c977f49086c849",
+          "git_blob": "c84cfb5920cd3b98f80cb9bec91e4aa835f808b3"
+        },
+        "raw_row": {
+          "bytes": 30433,
+          "sha256": "bac7ed25e8a62a2f92c8fcb824556df149b7b54e833be45aaac0901ccd4a645f",
+          "git_blob": "1d414c9d53ec60c809c1fccd2b507f7abb4c14a8"
+        },
+        "original_source_grant_commit": "b4a7601c8624160610a1211d63142b8794d64861",
+        "original_source_grant_comment": 7091519547,
+        "original_version": 1,
+        "complete_v1_row_preserved_by_immutable_reference": true
+      },
+      "amendment_issuer": {
+        "context": "CODEX_ROOT_B8C8E7B756CD:/root",
+        "login": "kk051780",
+        "user_id": 233213370,
+        "operation_id": "40fa348c-968c-44e8-8e17-6f063daba7a4",
+        "role": "OWNER_DELEGATED_MANUAL_COORDINATOR",
+        "scope": "Same Bot claim exact accepted-source recording and one finite non-force RC adoption; no source expansion or new feature."
+      },
+      "actual_candidate_acceptance": {
+        "reviewer_context": "CODEX_ROOT_B8C8E7B756CD:/root/environment_audit",
+        "author_is_reviewer": false,
+        "decision": "PASS_ACTUAL_SOURCE_AND_HOSTED_CI_CANDIDATE_NOT_RC_ADOPTED",
+        "blocking_findings": [],
+        "head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+        "pr": 1027,
+        "review_id": 6016965788,
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1027#pullrequestreview-6016965788",
+        "submitted_at": "2026-11-23T05:33:14Z",
+        "receipt": {
+          "path": "/workspace/scratch/b8c8e7b756cd/environment_audit/bot1027_review_01/REGISTERED_ACTUAL_REVIEW.json",
+          "bytes": 20329,
+          "sha256": "079f85da47426dab78cf53c2acbf0f5a9992684dee050cd2dcf50586ddcf03f3"
+        },
+        "run": 45117034362,
+        "job": 137502111701,
+        "artifact": 14791977916,
+        "zip_bytes": 7144925,
+        "zip_sha256": "6c7e8a35599aeacd23f178bde388e33f1003c7fc76577296324ba701c0678be5",
+        "actual_pr_merge_checkout": "03ab90c3771fed66cb27a411a750f51113b6d143",
+        "original_acceptance_1_to_10": "PASS_CANDIDATE_STAGE",
+        "original_acceptance_11": "FUTURE_RC_STAGE_REQUIRED_NOT_AUTHORIZED"
+      },
+      "actual_source_files": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "bytes": 31187,
+          "sha256": "9905136314df2268526a8660c722c4ed899c6272935e7a0da0c94a3b00be148e",
+          "git_blob": "f8a6e82d6f466ed00a26621171b72f36f6974db1",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": false
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "bytes": 33915,
+          "sha256": "733f8f607809374ee7615d269a58e8300d3964d0e6624050cea4adaea44b05f4",
+          "git_blob": "984947983dfa7271bdf108ee464d5b0826de06ab",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_base.template.luau",
+          "bytes": 39006,
+          "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7",
+          "git_blob": "2e211a2b5401bb71d05713f8c4b1c23fb5cedd70",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_cases.json",
+          "bytes": 71446,
+          "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c",
+          "git_blob": "1a44af850be74c39e72768be6407b54ed84dd9af",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_suite.py",
+          "bytes": 19989,
+          "sha256": "2ef31a508b7923a02f7c328283957359a8a26d15bb50a24b4d5966bfd38b6512",
+          "git_blob": "edb336f6dbeea1e65d0e85e40351ebfd2f06b100",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "bytes": 37475,
+          "sha256": "4e746e4b09e809568d6ec462520c2475c98d995ec2ddfd6ff6ef863150d533e8",
+          "git_blob": "f5ca9d78d5493021dd5f6278cd98a92396a89e77",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "bytes": 315356,
+          "sha256": "fbc4575b69fbc55ba4d81db6d8d322807e4c4712b126ba452558a35246e7ce0d",
+          "git_blob": "ed0b0320b2b675138dbe14be69329ea1138ff668",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": false
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "bytes": 74427,
+          "sha256": "2d8bdc7f1c98ccd824d9f97c6c1f30d9589991b46608d9d54cdbd7e7d965f5ef",
+          "git_blob": "76364f988a0ecef7291afa1128984071066cf0cc",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": true
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 75069,
+          "sha256": "6a20cbd94c2b931e7828eb2b8b0d978b0cfcad421c0e94f00d801034c4f88667",
+          "git_blob": "3f3e0b5388b79ef645d521d6a1d9d7e63ecd97e0",
+          "remote_full_UTF8_text_equal": true,
+          "remote_git_blob_equal": true,
+          "equals_original_frozen9_bytes": false
+        }
+      ],
+      "actual_candidate_hosted_build": {
+        "workflow": ".github/workflows/gq8-real63-source-composite.yml",
+        "run_id": 45117034362,
+        "attempt": 1,
+        "event": "pull_request",
+        "job_id": 137502111701,
+        "job": "compose-one-v3",
+        "all48steps_success": true,
+        "actual_checkout": "03ab90c3771fed66cb27a411a750f51113b6d143",
+        "checkout_parents": [
+          "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "72d620d86761f2aa5da80263a251cc5fa63fecbb"
+        ],
+        "checkout_tree_equals_H": true,
+        "api_head_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "artifact_id": 14791977916,
+        "artifact_bytes": 7144925,
+        "artifact_sha256": "6c7e8a35599aeacd23f178bde388e33f1003c7fc76577296324ba701c0678be5",
+        "source_context": "PR_CANDIDATE",
+        "formal_rc_adoption_proven": false
+      },
+      "actual_candidate_evidence_readback": {
+        "path": "/workspace/scratch/b8c8e7b756cd/environment_audit/bot1027_review_01/SAVED_EVIDENCE_READBACK.json",
+        "bytes": 37503,
+        "sha256": "d8a4a67aa6126e9e05342845432674d41d501795d8fc7c3676ca33cb8b4eb8eb",
+        "checks": 108,
+        "counts": {
+          "checks": 108,
+          "delivery_members": 158,
+          "manifest_payload": 157,
+          "sources": 69,
+          "instances": 75,
+          "compile_commands": 140,
+          "rojo_commands": 4,
+          "native_evidence_files": 63,
+          "native_processes": 12,
+          "Bot_files": 37,
+          "Bot_CASE_rows": 13,
+          "Bot_CHECK_rows": 43,
+          "dual_CASE_rows": 17,
+          "selected_HUD_conditions": 14
+        }
+      },
+      "actual_PREP_readiness": {
+        "PR": {
+          "number": 1027,
+          "head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+          "base": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "draft": false,
+          "state": "open",
+          "updated_at": "2026-11-23T05:35:10Z",
+          "full_body_readback": true
+        },
+        "trusted_intake": {
+          "status": "ACTUAL_READY_INTAKE_ACCEPTED_NOT_ADOPTION",
+          "run": 45118704568,
+          "job": 137507306382,
+          "artifact": 14792596964,
+          "zip": {
+            "bytes": 8203,
+            "sha256": "6a17398d575080a9a38417e120fb02219daef64d1af93af157fe12b0c84bea66"
+          },
+          "payload": {
+            "bytes": 29907,
+            "sha256": "c8868afd3368496850c6067f9dfb298d239e383d175be4c882439e36997bed69"
+          },
+          "selected": [
+            {
+              "pr": 1027,
+              "title": "fix(gq484): bind existing vault approach +555 to accepted H93",
+              "status": "READY_FOR_SOLE_WRITER_REVIEW",
+              "reason": "EXACT_HEAD_REAL69_SOURCE_CI_ARTIFACT_GREEN; LIVE_SECURITY_CAS_REVIEW_REQUIRED",
+              "updated_at": "2026-11-23T05:35:10Z",
+              "head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+              "features": [
+                "GQ484_ENEMY_VAULT_APPROACH_PHASE"
+              ],
+              "source_lock": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+              "decision": "ADOPT",
+              "design_source": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7088803358",
+              "quality_evidence": "https://github.com/kk051780/toy-wars-factory/pull/1027",
+              "value_delta": "元PR484のBot敵倉庫接近phase+555を既存UNION22へ接続し、入口通過後も内側目標への接近を継続する。帰還先・carrier検出・他68本文は保持する。",
+              "candidate_artifact_id": 14791977916,
+              "candidate_artifact_zip_bytes": 7144925,
+              "commit_time": "2026-11-23T05:18:33Z",
+              "ci_run": 45117034362,
+              "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45117034362",
+              "ahead_commits": 1,
+              "rollback": "Apply the exact Bot-only inverse to H93 first (71 members), then the existing HUD inverse (71); preserve the separate full historical-BR inverse (75) and all8 opaque prior archives."
+            }
+          ],
+          "log": {
+            "bytes": 18408,
+            "sha256": "d2406f80a90854edbb186637c59d10de1e6430f2f9c9ae070b092d396c12ac19"
+          }
+        },
+        "design_decision": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7088803358",
+        "not_RC_adoption_ACK": true
+      },
+      "amendment_before_after_review": {
+        "registered_context": "CODEX_ROOT_B8C8E7B756CD:/root/review_coordination",
+        "status": "CONCRETE_BEFORE_AFTER_REVIEW_REQUIRED_BEFORE_REGISTRATION",
+        "actual_receipt_resolution": "Bind the real nonauthor review receipt to this exact after bytes/blob and the realized registry commit/readback externally in #218/#220; no future circular SHA is fabricated."
+      },
+      "bounded_rc_integration": {
+        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "permitted_head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "permitted_tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+        "permitted_pr": 1027,
+        "sole_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+        "source_owner_preserved": "CODEX_ROOT_B8C8E7B756CD",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "new_producer_feature_or_PR_allowed": false,
+        "expires_at": "2026-11-23T10:15:20.638570+00:00",
+        "separate_live_rc_writer_lease_required": true,
+        "source678_or_metadata_lease_is_not_RC_lease": true,
+        "fresh_R_H_PR_claim_permission_and_live_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "if_head_or_rc_moves": "Stop the fixed transaction, preserve actual intervening changes and obtain legitimate exact-head reacceptance/amendment; never force or silently widen this permission.",
+        "registered_postpush_reviewer": "CODEX_ROOT_B8C8E7B756CD:/root/environment_audit",
+        "official_postpush_acceptance_required": "Actual same-new-R official push run/job/artifact ZIP, Place,69 sources, Native,all prior and new rollback, full delivery; independent registered nonauthor review.",
+        "post_adoption_metadata": "Separate normally owned metadata lease records actual official acceptance, consumes this single permission and returns all9 paths/3resources. No automatic BEAST/Guardian/Carrier grant.",
+        "actual_metadata_authority": {
+          "context": "CODEX_ROOT_B8C8E7B756CD:/root",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370,
+            "permission": "admin",
+            "observed_at": "2026-11-23T05:43:04Z"
+          },
+          "operation_id": "40fa348c-968c-44e8-8e17-6f063daba7a4",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "40fa348c-968c-44e8-8e17-6f063daba7a4",
+            "task_id": null,
+            "epoch": 680,
+            "acquired_at": "2026-11-23T05:43:04Z",
+            "expires_at": "2026-11-23T06:13:04.000Z",
+            "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "a86ce510c0ce5ee68d19afe8a5eb0a38c6a0645a",
+          "acquire_blob": "67ae5022c2e9fb1f9d68885802e7a2dd2774387e",
+          "actual_full_coordinator_readback": true,
+          "registry_parent": "30baf9dcad1eb86b34a06a3eb050eba9a0e11c8e",
+          "registry_blob": "c84cfb5920cd3b98f80cb9bec91e4aa835f808b3",
+          "fresh_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "source_head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+          "source_tree": "aa27f9dd198b60f9a0855734177207d211da9b7a",
+          "pr": 1027,
+          "authority_basis": "Standing owner-delegated ordinary engineering coordination and #1011 v1.2 end-to-end responsibility; actual authenticated normal metadata lease. No expiry, silence, source approval or request is used as RC authority."
+        },
+        "actual_grant_commit_resolution": "Only the realized immutable registry commit and full readback issue this finite grant; bind actual hash/blob and concrete independent receipt externally after successful registration."
+      }
     },
     {
       "claim_id": "P0D-GQ997-CONTACT-FAIRNESS-20261123-ECF54B42",
