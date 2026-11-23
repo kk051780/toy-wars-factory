@@ -1,0 +1,221 @@
+name: P0D GQ original 27 with item cargo LOS and AI route safety
+on:
+  push:
+    branches: ['quality/p0d-eggrumble-objective-compass-20261116']
+    paths:
+      - 'handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/**'
+      - '.github/workflows/p0d-gq-original27-objective.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  original-author-26-plus-1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Read GQ objective client only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read immutable original V3 game author #482
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Read existing GQ AI and ramp author #484
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Read original ART author #485
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Read exact original ITEM safety author #489
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item
+          persist-credentials: false
+      - name: Read original SCORE author #487
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Check all immutable cross-chat author versions
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          ITEM=_v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
+          test "$(git -C _v3_item hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau)" = 107046cb0bf81fed9e3cba1699ada31571e44a22
+      - name: Run 26-source preservation and local client safety negatives
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests -p 'test_*.py'
+      - name: Reuse original ART artist tool (no duplicate visuals)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/ART_ORIGINAL.project.json
+      - name: Reuse exactly one existing #484 author and ART and SCORE 26-source composer
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/ART_ORIGINAL.project.json --out artifacts/GAME_ART_SCORE_26.project.json
+      - name: Overlay ONLY original owner item fairness plus new GQ client without touching other 25 sources
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tools/overlay_current26.py \
+            --base-project artifacts/GAME_ART_SCORE_26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --new-script handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/EGGRUMBLE_ObjectiveCompass.client.luau \
+            --item-source _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --item-sha256 "$(sha256sum _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau | cut -d' ' -f1)" \
+            --out artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json
+      - name: Read pinned native Luau compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Compile all 27 scripts in actual native Luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq27_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq27_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json')
+          def sources(node):
+              if isinstance(node,dict):
+                  if '$path' in node:yield (p.parent/node['$path']).resolve(strict=True)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith('$'):yield from sources(v)
+          files=list(sources(json.loads(p.read_text())['tree']))
+          assert len(files)==27
+          for f in files:
+              subprocess.run(['/tmp/gq27_native/luau-compile','--text',str(f)],check=True,stdout=subprocess.DEVNULL)
+          print('GQ_AUTHOR_ART_SCORE_NATIVE_27_OF_27_PASS')
+          PY
+      - name: Reuse #484 author's actual native bot path retarget regression
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq27_native/luau)
+      - name: Execute original #484 actual bot wall LOS and ghost target negative cases
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_action_los_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse original #484 bot-to-neutral failure isolation native behavior tests
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq27_native/luau)
+      - name: Reuse #489 author's real ITEM and Guard native VM in both match modes
+        run: |
+          set -euo pipefail
+          python3 _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq27_original_item_vm.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq27_original_item_vm.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq27_original_item_vm.luau
+      - name: Run original compass objective selection in native Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-GQ-OBJECTIVE-COMPASS-20261116/tests/make_native_objective_harness.py \
+            --out /tmp/gq_original_objective.spec.luau
+          /tmp/gq27_native/luau-compile --text /tmp/gq_original_objective.spec.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/gq_original_objective.spec.luau
+      - name: Download checksum-locked Rojo 7.7.1 and create unpublished actual Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq27_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq27_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq27_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              f=Path('/tmp/gq27_rojo')
+              f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+          /tmp/gq27_rojo build artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json -o artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27_PRIVATE.rbxlx
+      - name: Independent 27/27 exact source and script class readback
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          project=Path('artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json').resolve()
+          place=Path('artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27_PRIVATE.rbxlx')
+          tree=json.loads(project.read_text(encoding='utf-8'))['tree']
+          provenance=json.loads(Path('artifacts/GQ_OBJECTIVE_27_RECEIPT.json').read_text(encoding='utf-8'))
+          def flatten(node):
+              out={}
+              for n,v in node.items():
+                  if n.startswith('$') or not isinstance(v,dict):continue
+                  if '$path' in v:
+                      assert n not in out,n
+                      f=(project.parent/v['$path']).resolve(strict=True)
+                      typ='Script' if f.name.endswith('.server.luau') else ('LocalScript' if f.name.endswith('.client.luau') else 'ModuleScript')
+                      out[n]=(typ,f.read_text(encoding='utf-8').replace('\r\n','\n'))
+                  else:out.update(flatten(v))
+              return out
+          expected=flatten(tree)
+          assert len(expected)==27 and provenance['original_25_source_paths_preserved']
+          assert provenance['item_source_selectively_replaced']
+          assert not provenance['original_26_sources_preserved']
+          assert len(tree['ServerScriptService'])-1==23
+          assert len(tree['StarterPlayer']['StarterPlayerScripts'])-1==4
+          actual={}
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              typ=item.attrib.get('class')
+              if typ not in {'Script','LocalScript','ModuleScript'}:continue
+              props=item.find('Properties')
+              if props is None:continue
+              n=props.findtext("string[@name='Name']")
+              code=props.findtext("ProtectedString[@name='Source']")
+              if code is None:code=props.findtext("string[@name='Source']")
+              assert n not in actual and code is not None
+              actual[n]=(typ,code.replace('\r\n','\n'))
+          assert expected==actual,{'missing':sorted(set(expected)-set(actual)),
+                                   'extra':sorted(set(actual)-set(expected)),
+                                   'changed':[x for x in expected.keys()&actual.keys() if expected[x]!=actual[x]]}
+          provenance.update({'candidate_sha':os.environ['GITHUB_SHA'],
+                             'place_bytes':place.stat().st_size,
+                             'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()})
+          Path('artifacts/GQ_OBJECTIVE_27_RECEIPT.json').write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+'\n')
+          print('GQ_AUTHOR_ART_SCORE_27_SOURCE_EXACT_PASS',provenance['place_bytes'],provenance['place_sha256'])
+          PY
+      - name: Upload unpublished 27-script candidate and source receipts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-ORIGINAL27-PRIVATE-SOURCE-NOT-RC
+          path: |
+            artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_AUTHOR_ART_SCORE_GQ27.project.json
+            artifacts/SOURCE_RECEIPT.json
+            artifacts/GQ_OBJECTIVE_27_RECEIPT.json
+          retention-days: 3
