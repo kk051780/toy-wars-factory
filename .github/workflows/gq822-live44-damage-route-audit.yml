@@ -1,0 +1,108 @@
+name: GQ822 actual Real44 to Real48 damage route / invulnerability false-pass gate
+on:
+  push:
+    branches: [quality/gq822-actual44-damage-route-gate-20261119]
+    paths:
+      - "quality_gameplay/gq822_damage_route_20261119/**"
+      - ".github/workflows/gq822-live44-damage-route-audit.yml"
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "quality_gameplay/gq822_damage_route_20261119/**"
+      - ".github/workflows/gq822-live44-damage-route-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  damage-route-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin original current 44 game-source artifact; reject missing or fake source
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORMAL="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$FORMAL" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED; exit 1; }
+          RUN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44376856212" --jq .head_sha)"
+          test "$RUN_SHA" = a4684d6333db25474ad9f44ff6203aef7119dc6d || { echo RED_ORIGINAL44_RUN_PROVENANCE; exit 1; }
+          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          test -s artifacts/real44/REAL44.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          receipt=json.loads(Path("artifacts/real44/BUILD44_RECEIPT.json").read_text())
+          place=Path("artifacts/real44/REAL44.rbxlx")
+          assert receipt["source_count"]==44 and receipt["official_rc_adopted"] is False
+          assert receipt["place_bytes"]==place.stat().st_size
+          assert receipt["sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert place.read_bytes()==Path("artifacts/portable44/EGGRUMBLE_SOURCE44.rbxlx").read_bytes()
+          manifest=json.loads(Path("artifacts/portable44/EGGRUMBLE_SOURCE44.project.json").read_text())
+          assert "tree" in manifest and "ServerScriptService" in manifest["tree"]
+          print("GQ822_ORIGINAL_REAL44_PLACE_SHA256_AND_PORTABLE_BYTES_EXACT_PASS",place.stat().st_size)
+          print("GQ822_PR_HEAD_VS_BUILD_RECEIPT",receipt.get("commit"),"NOTE_PR_MERGE_SHA_MAY_DIFFER")
+          PY
+      - name: Verify latest Real48 has exact original44 and four readonly shop additions
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE48="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44382280050" --jq '.head_sha')"
+          test "$SOURCE48" = 8de978a03c21bcca46aa030ec6b9c172f74b55a2 || { echo RED_REAL48_RUN_NOT_FIXED; exit 1; }
+          gh run download 44382280050 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL48-CURSE-LOBBYSHOP-PRIVATE-NOT-OFFICIAL --dir artifacts/real48candidate
+          test -s artifacts/real48candidate/EGGRUMBLE_REAL48.rbxlx
+          test -s artifacts/real48candidate/B_REAL48_INTAKE_RECEIPT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          old={p.name:p.read_bytes() for p in Path('artifacts/portable44/sources').rglob('*.luau')}
+          new={p.name:p.read_bytes() for p in Path('artifacts/real48candidate/sources').rglob('*.luau')}
+          added=set(new)-set(old)
+          expected={'GQ805_LobbyGuildShop.server.luau','GQ805_ShopKioskClient.client.luau',
+                    'EGGRUMBLE_LobbyShopView.luau','EGGRUMBLE_LobbyShopCatalog.luau'}
+          assert len(old)==44 and len(new)==48 and added==expected,('RED_REAL48_NEW_RUNTIME_DRIFT',added)
+          assert all(new[k]==v for k,v in old.items()),'RED_REAL48_MUTATED_ORIGINAL44_GAMEPLAY'
+          receipt=json.loads(Path('artifacts/real48candidate/B_REAL48_INTAKE_RECEIPT.json').read_text())
+          place=Path('artifacts/real48candidate/EGGRUMBLE_REAL48.rbxlx')
+          assert receipt['on_source_count']==48 and receipt['off_source_count']==44
+          assert receipt['original44_preserved']==44 and receipt['official_rc_adopted'] is False
+          assert receipt['seller_purchases_enabled'] is False
+          assert receipt['candidate_place_bytes']==place.stat().st_size
+          assert receipt['candidate_place_sha256']==hashlib.sha256(place.read_bytes()).hexdigest()
+          print('GQ822_REAL44_TO_REAL48_ALL_44_ORIGINAL_BYTES_EXACT_AND_FOUR_SHOP_READONLY_PASS',len(new))
+          PY
+      - name: Inventory original Real44 and latest Real48 direct damage plus hostile mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
+            --source-root artifacts/portable44/sources --source-count 44 \
+            --out artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+          python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py --source-root artifacts/real48candidate/sources --source-count 48 --out artifacts/gq822/ACTUAL_REAL48_DAMAGE_ROUTE_RECEIPT.json
+          # The current unintegrated product MUST NOT be certified as full invulnerability.
+          if python3 -B quality_gameplay/gq822_damage_route_20261119/audit_damage_routes.py \
+            --source-root artifacts/real48candidate/sources --source-count 48 \
+            --out artifacts/gq822/EXPECTED_RED_RECEIPT.json --require-wired \
+            > /tmp/gq822-expected-red.txt 2>&1; then
+            echo RED_FALSE_INVULNERABILITY_ACCEPTANCE
+            exit 1
+          fi
+          grep -q RED_INVULNERABILITY_UNPROVEN_IN_REAL44 /tmp/gq822-expected-red.txt
+          echo GQ822_FAIL_CLOSED_UNWIRED_REAL44_INTEGRATION_GATE_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ822-REAL44-DAMAGE-ROUTE-RECEIPT-NOT-RC
+          path: |
+            artifacts/gq822/ACTUAL_REAL44_DAMAGE_ROUTE_RECEIPT.json
+            artifacts/gq822/ACTUAL_REAL48_DAMAGE_ROUTE_RECEIPT.json
+          retention-days: 5
+          if-no-files-found: error
