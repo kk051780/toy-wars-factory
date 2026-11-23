@@ -2395,17 +2395,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 692,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "7c1e32a4-8020-4954-a567-864eb8426ae0",
-    "task_id": null,
-    "epoch": 692,
-    "acquired_at": "2026-11-23T08:15:30.060312+00:00",
-    "expires_at": "2026-11-23T08:45:30.060312+00:00",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "quality/gq470-match-growth-817bc984-20261123",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -4048,7 +4038,12 @@
     "scope": "Complete approval table/reply recorded in service result, coordinator and setup PR. Notification delivery is unknown.",
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
-  "last_completed": {"kind":"CONTROLLER","owner_id":"0bbcc4a5-4c77-4813-9498-bf24d5c8093d","epoch":691,"released_at":"2026-11-23T08:14:34.820975+00:00"},
+  "last_completed": {
+    "kind": "CONTROLLER",
+    "owner_id": "7c1e32a4-8020-4954-a567-864eb8426ae0",
+    "epoch": 692,
+    "released_at": "2026-11-23T08:38:55.238390+00:00"
+  },
   "last_completed_history": [
     {
       "additional_spend_jpy": 0,
