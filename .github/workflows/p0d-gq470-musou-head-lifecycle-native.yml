@@ -1,0 +1,142 @@
+name: GQ824 current69 Musou Head lifecycle source PREP
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/**'
+      - '.github/workflows/p0d-gq470-musou-head-lifecycle-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gq824-aura-lifecycle-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-native-rojo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Bind actual checkout and immutable official H93 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/aura-input" "$RUNNER_TEMP/aura-provenance"
+          git rev-parse HEAD > "$RUNNER_TEMP/aura-provenance/checkout.txt"
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '{ref,object}' > "$RUNNER_TEMP/aura-provenance/official_ref.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45106580546" --jq '{id,head_sha,head_branch,event,status,conclusion,run_attempt,html_url}' > "$RUNNER_TEMP/aura-provenance/official_run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439" --jq '{id,name,size_in_bytes,expired,workflow_run}' > "$RUNNER_TEMP/aura-provenance/official_artifact.json"
+          python3 -B - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'aura-provenance'
+          lock=json.loads(pathlib.Path('quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json').read_text())
+          head=lock['base_rc_head']; inp=lock['official_input']
+          assert (p/'checkout.txt').read_text().strip()==os.environ['SOURCE_HEAD']
+          assert json.loads((p/'official_ref.json').read_text())['object']['sha']==head, 'Official parent moved; fresh binding/review required'
+          run=json.loads((p/'official_run.json').read_text())
+          assert (run['id'],run['head_sha'],run['head_branch'],run['event'],run['status'],run['conclusion'])==(inp['run_id'],head,'rc/p0d-s1-kids-rc01','push','completed','success')
+          artifact=json.loads((p/'official_artifact.json').read_text())
+          assert (artifact['id'],artifact['name'],artifact['size_in_bytes'],artifact['expired'])==(inp['artifact_id'],inp['name'],inp['archive']['bytes'],False)
+          assert artifact['workflow_run']['id']==run['id'] and artifact['workflow_run']['head_sha']==head
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14787568439/zip" > "$RUNNER_TEMP/aura-official.zip"
+          python3 -B - <<'PY'
+          import hashlib, json, os, pathlib, zipfile
+          root=pathlib.Path(os.environ['RUNNER_TEMP']); archive=root/'aura-official.zip'
+          lock=json.loads(pathlib.Path('quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json').read_text())
+          pin=lock['official_input']['archive']; raw=archive.read_bytes()
+          assert len(raw)==pin['bytes'] and hashlib.sha256(raw).hexdigest()==pin['sha256']
+          with zipfile.ZipFile(archive) as z:
+              for name in z.namelist():
+                  p=pathlib.PurePosixPath(name)
+                  assert not p.is_absolute() and '..' not in p.parts and '\\' not in name
+              z.extractall(root/'aura-input')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Build pinned Native VM and compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C _pinned_luau rev-parse HEAD > "$RUNNER_TEMP/aura-provenance/luau_commit.txt"
+          git -C _pinned_luau rev-parse 'HEAD^{tree}' > "$RUNNER_TEMP/aura-provenance/luau_tree.txt"
+          python3 -B - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'aura-provenance'
+          t=json.loads(pathlib.Path('quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json').read_text())['toolchain']
+          assert (p/'luau_commit.txt').read_text().strip()==t['luau_commit']
+          assert (p/'luau_tree.txt').read_text().strip()==t['luau_tree']
+          PY
+          cmake -S _pinned_luau -B "$RUNNER_TEMP/aura-luau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON > "$RUNNER_TEMP/aura-provenance/configure.stdout.txt" 2> "$RUNNER_TEMP/aura-provenance/configure.stderr.txt"
+          cmake --build "$RUNNER_TEMP/aura-luau" --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4 > "$RUNNER_TEMP/aura-provenance/build.stdout.txt" 2> "$RUNNER_TEMP/aura-provenance/build.stderr.txt"
+      - name: Obtain exact Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$RUNNER_TEMP/aura-rojo.zip"
+          python3 -B - <<'PY'
+          import hashlib, json, os, pathlib, zipfile
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])
+          lock=json.loads(pathlib.Path('quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json').read_text())
+          assert hashlib.sha256((root/'aura-rojo.zip').read_bytes()).hexdigest()==lock['toolchain']['rojo_archive_sha256']
+          with zipfile.ZipFile(root/'aura-rojo.zip') as z:
+              names=[n for n in z.namelist() if pathlib.PurePosixPath(n).name=='rojo']; assert len(names)==1
+              data=z.read(names[0]); assert hashlib.sha256(data).hexdigest()==lock['toolchain']['rojo_sha256']
+              p=root/'aura-rojo'; p.write_bytes(data); p.chmod(0o755)
+          PY
+      - name: Execute exact-body regression and 69-source ON/OFF gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/verify_packet.py \
+            --base-artifact "$RUNNER_TEMP/aura-input" --archive "$RUNNER_TEMP/aura-official.zip" \
+            --output "$RUNNER_TEMP/aura-packet" --luau "$RUNNER_TEMP/aura-luau/luau" \
+            --luau-compile "$RUNNER_TEMP/aura-luau/luau-compile" --rojo "$RUNNER_TEMP/aura-rojo" \
+            --source-head "$SOURCE_HEAD"
+          cp -R "$RUNNER_TEMP/aura-provenance" "$RUNNER_TEMP/aura-packet/provenance"
+          python3 -B - <<'PY'
+          import hashlib, json, os, pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'aura-packet'
+          context={'source_head':os.environ['SOURCE_HEAD'],'workflow_sha':os.environ['GITHUB_SHA'],
+                   'repository':os.environ['GITHUB_REPOSITORY'],'event':os.environ['GITHUB_EVENT_NAME'],
+                   'run_id':int(os.environ['GITHUB_RUN_ID']),'attempt':int(os.environ['GITHUB_RUN_ATTEMPT']),
+                   'job_key':os.environ['GITHUB_JOB'],'source_only':True,'formal_rc_adopted':False,'studio':'NOT_TESTED'}
+          (root/'GITHUB_CONTEXT.json').write_text(json.dumps(context,indent=2)+'\n')
+          files={}
+          for p in sorted(root.rglob('*')):
+              if p.is_file():
+                  b=p.read_bytes(); files[p.relative_to(root).as_posix()]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}
+          (root/'DELIVERY_MANIFEST.json').write_text(json.dumps({'schema':'GQ824_AURA_PREP_DELIVERY_V1','manifest_self_excluded':True,'files':files},indent=2)+'\n')
+          print('GQ824_AURA_SOURCE_NATIVE_ROJO_PREP_PASS_NOT_FORMAL_NOT_STUDIO')
+          PY
+      - name: Retain source-only candidate and raw evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ824-CURRENT69-AURA-LIFECYCLE-PREP-NOT-FORMAL
+          path: ${{ runner.temp }}/aura-packet/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Retain failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ824-AURA-LIFECYCLE-FAILURE-EVIDENCE
+          path: |
+            ${{ runner.temp }}/aura-provenance/
+            ${{ runner.temp }}/aura-packet/REPORT.json
+            ${{ runner.temp }}/aura-packet/logs/
+            ${{ runner.temp }}/aura-packet/native/
+          if-no-files-found: warn
+          retention-days: 7
+
