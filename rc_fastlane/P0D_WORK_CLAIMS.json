@@ -21765,8 +21765,8 @@
         "CODEX_ROOT_BEB3C323FED2:/root/planning_gaps"
       ],
       "independent_reviewer_context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
-      "independent_review_status": "SOURCE_REVIEW_REQUIRED_AFTER_AUTHORING",
-      "state": "GRANTED",
+      "independent_review_status": "PASS_CLAIM_REGISTERED_INDEPENDENT_CONTEXT_AT_FROZEN_HEAD",
+      "state": "RELEASED",
       "resources": [
         "REAL69_SOURCE_EGGRUMBLE_MUSOUAURACONTROLLER",
         "MUSOU_CURRENT69_OBSERVER_LIFECYCLE_QA"
@@ -21862,7 +21862,7 @@
       "pr": 825,
       "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
       "source_head_before": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
-      "source_head": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
+      "source_head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
       "issuer_role": "OWNER_DELEGATED_MANUAL_COORDINATOR",
@@ -21935,7 +21935,7 @@
         "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6886441650",
         "ops/REPAIR_COORDINATOR.json owner_delegation; normal manual CONTROLLER scope registration, no service identity asserted"
       ],
-      "PREP_READY": false,
+      "PREP_READY": true,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
       "no_main_or_publish": true,
@@ -21944,6 +21944,902 @@
         "context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
         "status": "PASS_CONCRETE_SCOPE_DESIGN_ONLY_NOT_REGISTERED_SOURCE_APPROVAL",
         "receipt_sha256": "a6a6e3db5226314a75d50a2a384216681477d83f570e60c0a305a57ef16fd6b1"
+      },
+      "source_tree": "50d5bef54010d08914b7afa1244fbe82d44ad73c",
+      "source_preparation_closed": true,
+      "source_writes_permitted": false,
+      "formal_rc_adopted": false,
+      "formal_registered_REVIEWER_service_run": false,
+      "formal_service_approval": false,
+      "claim_registered_independent_context_source_approval": true,
+      "prep_ready_at": "2026-11-23T05:13:00.818504+00:00",
+      "prep_ready_registration": {
+        "at": "2026-11-23T05:57:56.682Z",
+        "issuer": "kk051780",
+        "issuer_user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "context": "CODEX_ROOT_BEB3C323FED2:/root",
+        "operation_id": "bde26b93-8921-4c2b-a4e3-ffaa42a6aee3",
+        "actual_lease_commit": "5b90dda347978dd8b00fb18cce1dbbe3f2df1d4e",
+        "actual_lease_epoch": 681,
+        "actual_coordinator_blob": "06a811c2995bcaba218ba5a5a8306a22a6bf4ec4",
+        "registry_expected_parent": "df5cd3a95685619dadf1d6f21e58c2e35e96f4e9",
+        "registry_before_blob": "7eb2155b8d6ee64877753443bb1c3161d289d9c3",
+        "task_id": null,
+        "service_run_id": null,
+        "meaning": "Proposed metadata registration under the supplied actual live lease; no source or RC authority"
+      },
+      "source_publication": {
+        "original_receipt": {
+          "path": "/workspace/scratch/beb3c323fed2/analysis/AURA_ACTUAL_SOURCE_PUBLICATION.json",
+          "bytes": 11020,
+          "sha256": "e188a43e77a4187f8fec2ed47c06acab18690e5773a77ed0a836f40b40ed7218",
+          "git_blob": "406be3c60cdc8714d86db4c82fa26de14a9e6f03"
+        },
+        "actual_source": {
+          "head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+          "tree": "50d5bef54010d08914b7afa1244fbe82d44ad73c",
+          "parent": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
+          "created_at": "2026-11-23T05:01:18.248Z",
+          "published": true,
+          "branch": "feature/gq8-musou-fever-20261119",
+          "observed_at": "2026-11-23T05:02:29.771Z",
+          "expected_parent": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32",
+          "force": false,
+          "source_lease": {
+            "action": "ACQUIRE_COMPUTED_NOT_A_LOCK",
+            "manual_operation_uuid": "babad946-f902-43b1-9096-a7ad29ba9c7f",
+            "task_id": null,
+            "service_run_id": null,
+            "epoch": 676,
+            "observed_at": "2026-11-23T05:00:51.969017+00:00",
+            "before_ref": "2a02d3e2d2be4f98b9e9b0234a5ccfd06e3b0c3d",
+            "before_blob": "8eb22a6bc833933becb634406132fb2571d2120e",
+            "target_blob": "1e3a3f2793fb440b830442c5d090bc163e757715",
+            "target_sha256": "7e0739fc51c12ec1a84dc92538e79f25ddb4b10edd41f11934caef510831acb3",
+            "target_bytes": 205604,
+            "work_branch": "feature/gq8-musou-fever-20261119",
+            "evidence_directory": "/workspace/scratch/beb3c323fed2/analysis/coord_transactions/babad946-f902-43b1-9096-a7ad29ba9c7f",
+            "ref": "714de0e75fbe57a54147e58df34a6c72368728fa",
+            "status": "ACTUAL_SOURCE_CAS_READBACK_OWNED"
+          }
+        },
+        "actual_actor": {
+          "observed_at": "2026-11-23T04:57:43.237Z",
+          "login": "kk051780",
+          "id": "233213370",
+          "repository": "kk051780/toy-wars-factory",
+          "permission": "admin",
+          "author_context": "CODEX_ROOT_BEB3C323FED2:/root",
+          "no_service_task_claimed": true
+        },
+        "actual_cumulative_scope_gate": {
+          "schema": "P0D_CLAIM_GATE_V1",
+          "result": "CLAIM_SCOPE_PASS_NOT_RC_ADOPTION",
+          "claim_id": "P0D-GQ824-AURA-LIFECYCLE-20261123-BEB3C323",
+          "feature_id": "GQ8_MUSOU_FEVER_CHAIN_20261119",
+          "owner": "CODEX_ROOT_BEB3C323FED2",
+          "source_head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+          "official_head": "93a1147561a531610ac1609ebc68cc0ecf546623",
+          "changed_files": 21,
+          "no_merge": true,
+          "art_mobile_fun_verified": false,
+          "phase": "ACTUAL_CREATED_GITHUB_CANDIDATE_PRE_BRANCH_CAS",
+          "registry_ref": "970e7ccf86a0c56356a2a146ca2830a820370003",
+          "registry_blob": "ae3491df34b3df934ec120085b1c4c99e8343780",
+          "actual_git_commit": {
+            "head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+            "tree": "50d5bef54010d08914b7afa1244fbe82d44ad73c",
+            "parent": "b49350c8b8aaba561c9e0839d27fc5fc275c3a32"
+          },
+          "frozen13_preserved": true,
+          "actual_increment_files": 8
+        },
+        "actual_source_lease_normal_release": {
+          "ref": "59f6674dd5f9ff97885679fbf3e676b1daf0a9ec",
+          "epoch": 676,
+          "holder": null,
+          "last_completed": {
+            "kind": "CONTROLLER",
+            "owner_id": "babad946-f902-43b1-9096-a7ad29ba9c7f",
+            "epoch": 676,
+            "released_at": "2026-11-23T05:02:56.333534+00:00"
+          }
+        },
+        "source_publication_preceded_hosted_acceptance": true,
+        "snapshot_note": "The original SOURCE676 publication receipt predates hosted acceptance; its then-pending hosted_acceptance=false is historical. Actual later source acceptance is separately bound below."
+      },
+      "independent_actual_head_review": {
+        "context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
+        "decision": "APPROVE_REGISTERED_EXACT_HEAD_SOURCE_CI_ARTIFACT_ONLY",
+        "kind": "CLAIM_REGISTERED_INDEPENDENT_CONTEXT_NOT_FORMAL_SERVICE",
+        "reviewed_at": "2026-11-23T05:13:00.818504+00:00",
+        "source_head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+        "source_tree": "50d5bef54010d08914b7afa1244fbe82d44ad73c",
+        "receipt": {
+          "path": "/workspace/scratch/beb3c323fed2/analysis/AURA_REGISTERED_SOURCE_ACCEPTANCE_f0d66675_CORRECTED_V2.json",
+          "bytes": 47817,
+          "sha256": "b0ef80ff0d8ac2f8a35435af1d6b361f858385c720e8e3e9f0a36c81a8773777",
+          "git_blob": "9fbbb83404d299ea19f09dd64662cfc86e8e001a"
+        },
+        "public_COMMENT_review": {
+          "id": 6016943771,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/825#pullrequestreview-6016943771",
+          "head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+          "state": "COMMENTED",
+          "submitted_at": "2026-11-23T05:29:15Z",
+          "actual_body_preserved": true,
+          "supersedes_review_id": 6016862221,
+          "corrected_independent_receipt": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/AURA_REGISTERED_SOURCE_ACCEPTANCE_f0d66675_CORRECTED_V2.json",
+            "bytes": 47817,
+            "sha256": "b0ef80ff0d8ac2f8a35435af1d6b361f858385c720e8e3e9f0a36c81a8773777"
+          }
+        },
+        "formal_service_approval": false,
+        "GitHub_APPROVE_object": false
+      },
+      "verified_source_results": {
+        "exact_eight_blobs": {
+          ".github/workflows/p0d-gq470-musou-head-lifecycle-native.yml": {
+            "bytes": 8598,
+            "sha256": "ee89277e22342519b356fc108dc24977d3cb36b8fdb96b0597b2548e02ab9b62",
+            "git_blob": "5cebfec88459515ea35466cddcb789c4186bc72a"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/MusouAuraController.client.luau": {
+            "bytes": 4407,
+            "sha256": "c4bd990ef8e0f0135d52620e50acfe93620f83acc4097c2b78ef366ab980271e",
+            "git_blob": "ebbcfbd88d076f441b8741a497a2375792d21e85"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/README.md": {
+            "bytes": 8420,
+            "sha256": "25e768ce204503a6680bb9f88fdfdf8889cbda9babd88e79d1de8c8d2c1fd7f3",
+            "git_blob": "bef1c1fadc00e2e024034725101039068df8dc0b"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/apply_lifecycle.py": {
+            "bytes": 7212,
+            "sha256": "553291c82e06e94a3c3361991f2840adcc24f37ecfd2710af5de28a52679185a",
+            "git_blob": "897dc81b9bb5bf22fc9bedf1dffb1debe7237650"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/native_fixture.luau": {
+            "bytes": 15698,
+            "sha256": "1dfd003e306b745c0986ce6e36e98b1f9634cb8479f3f1bfc01308529b4e0602",
+            "git_blob": "7ea5d62fdc57066d3c225d2aa4ab5ac81dab91b4"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/run_native.py": {
+            "bytes": 10893,
+            "sha256": "d03e5985aab562c63004756cd515732e2b8bffe8776eb3e76b166158031ee9d7",
+            "git_blob": "d21a1cc2005fd000a38d7f74d881d839d4ebfe25"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/source_lock.json": {
+            "bytes": 5719,
+            "sha256": "a7d2a0e5605de987407a872617e5d09442ef2549f602a07fce4f4bf67894e0ed",
+            "git_blob": "cc715406b01c1411b3c4abd81564f83628a88c3a"
+          },
+          "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/verify_packet.py": {
+            "bytes": 22468,
+            "sha256": "e3ac51b1b61867745f45b9d5300992ced1b9f4692515618ff319f936e4edc1b2",
+            "git_blob": "ab5b69ad8c8b31b03c1e8e6edb0b743bf62418b6"
+          }
+        },
+        "actual_hosted_gate": {
+          "run": {
+            "id": 45115333093,
+            "head_sha": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+            "head_branch": "feature/gq8-musou-fever-20261119",
+            "event": "pull_request",
+            "workflow_id": 427418733,
+            "path": ".github/workflows/p0d-gq470-musou-head-lifecycle-native.yml",
+            "run_attempt": 1,
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45115333093",
+            "created_at": "2026-11-23T05:02:35Z",
+            "updated_at": "2026-11-23T05:03:30Z"
+          },
+          "job": {
+            "id": 137496758541,
+            "name": "source-native-rojo",
+            "head_sha": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-23T05:02:37Z",
+            "completed_at": "2026-11-23T05:03:30Z",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-23T05:02:37Z",
+                "completed_at": "2026-11-23T05:02:38Z"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-23T05:02:38Z",
+                "completed_at": "2026-11-23T05:02:39Z"
+              },
+              {
+                "name": "Bind actual checkout and immutable official H93 input",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-23T05:02:39Z",
+                "completed_at": "2026-11-23T05:02:41Z"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-23T05:02:41Z",
+                "completed_at": "2026-11-23T05:02:43Z"
+              },
+              {
+                "name": "Build pinned Native VM and compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-23T05:02:43Z",
+                "completed_at": "2026-11-23T05:03:25Z"
+              },
+              {
+                "name": "Obtain exact Rojo 7.7.1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-23T05:03:25Z",
+                "completed_at": "2026-11-23T05:03:25Z"
+              },
+              {
+                "name": "Execute exact-body regression and 69-source ON/OFF gate",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-23T05:03:25Z",
+                "completed_at": "2026-11-23T05:03:26Z"
+              },
+              {
+                "name": "Retain source-only candidate and raw evidence",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-23T05:03:26Z",
+                "completed_at": "2026-11-23T05:03:27Z"
+              },
+              {
+                "name": "Retain failure evidence",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 9,
+                "started_at": "2026-11-23T05:03:27Z",
+                "completed_at": "2026-11-23T05:03:27Z"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17,
+                "started_at": "2026-11-23T05:03:27Z",
+                "completed_at": "2026-11-23T05:03:28Z"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 18,
+                "started_at": "2026-11-23T05:03:28Z",
+                "completed_at": "2026-11-23T05:03:28Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 19,
+                "started_at": "2026-11-23T05:03:28Z",
+                "completed_at": "2026-11-23T05:03:28Z"
+              }
+            ],
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45115333093/job/137496758541"
+          },
+          "artifact": {
+            "id": 14791656556,
+            "name": "GQ824-CURRENT69-AURA-LIFECYCLE-PREP-NOT-FORMAL",
+            "size_in_bytes": 1156574,
+            "digest": "sha256:14165dc3fb3d96722f25aadad00be17376792bbc4295166e1ac719ee476239e3",
+            "expired": false,
+            "created_at": "2026-11-23T05:03:27Z",
+            "updated_at": "2026-11-23T05:03:27Z",
+            "workflow_run": {
+              "id": 45115333093,
+              "repository_id": 1431683395,
+              "head_repository_id": 1431683395,
+              "head_branch": "feature/gq8-musou-fever-20261119",
+              "head_sha": "f0d66675e3c81f92f872c36cc5178b20726a1d53"
+            }
+          },
+          "actual_PR_event_commit": {
+            "sha": "f42ccc06e62fa8831d32f4ba9164a444f837bd78",
+            "tree": "901353f3bfd7c0d287c2c5e8ef9f2590d2a4d321",
+            "parents": [
+              "93a1147561a531610ac1609ebc68cc0ecf546623",
+              "f0d66675e3c81f92f872c36cc5178b20726a1d53"
+            ],
+            "explanation": "GitHub PR event merge SHA differs from source HEAD; workflow explicitly checked out source HEAD. Actual parents independently verified."
+          },
+          "checkout_source_head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+          "workflow_definition_git_blob": "5cebfec88459515ea35466cddcb789c4186bc72a",
+          "raw_job_log": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/job137496758541.log",
+            "bytes": 35186,
+            "sha256": "21977350b15580e6e51ce4d25c7a6dd421f250e826c73fd97a9fd7a7fc16628e"
+          },
+          "workflow_read_only_tokens": true,
+          "fresh_toolchain": {
+            "actual_binaries": {
+              "luau": {
+                "path": "/home/runner/work/_temp/aura-luau/luau",
+                "bytes": 3831592,
+                "sha256": "45bfd0e7311d454529fb93fbaaf9be8fd3b24a7ff5f9a50f223e30a5f030b63c"
+              },
+              "luau_compile": {
+                "path": "/home/runner/work/_temp/aura-luau/luau-compile",
+                "bytes": 3131440,
+                "sha256": "8c2abd43cf5bb688cf5f1519ee10f96b49410222ff30537261e9640c2f1249b5"
+              },
+              "rojo": {
+                "path": "/home/runner/work/_temp/aura-rojo",
+                "bytes": 21002120,
+                "sha256": "cb997ef82543670e51f2114898950bcabf9911efc3bf44f798524833e0e47f6e"
+              }
+            },
+            "declared_source_pins": {
+              "luau_commit": "f46d879e28302a430029304f7f6a162aed66f103",
+              "luau_tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746",
+              "rojo_version": "7.7.1",
+              "rojo_sha256": "cb997ef82543670e51f2114898950bcabf9911efc3bf44f798524833e0e47f6e",
+              "rojo_archive_sha256": "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4"
+            },
+            "luau_binary_source_provenance": "NOT_INFERRED_FROM_BINARY_HASH_CALLER_BUILD_EVIDENCE_REQUIRED"
+          },
+          "original_official_input": {
+            "run_id": 45106580546,
+            "artifact_id": 14787568439,
+            "name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+            "archive": {
+              "bytes": 5840240,
+              "sha256": "1187e0f2ff176a286855e911495da84006d5c99841f68891aeca9630915f275d"
+            },
+            "manifest": {
+              "path": "UNION22_DELIVERY_MANIFEST.json",
+              "bytes": 21272,
+              "sha256": "a9ec16c632873234ff3d33007529697b692a445652e8dfb2bf4d2f959b4e4ba8"
+            },
+            "project": {
+              "path": "EGGRUMBLE_REAL69.project.json",
+              "bytes": 9564,
+              "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+            },
+            "place": {
+              "path": "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+              "bytes": 828658,
+              "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+            }
+          }
+        },
+        "actual_downloaded_artifact": {
+          "zip": {
+            "path": "/workspace/scratch/beb3c323fed2/evidence/gq824_current69_aura_f0d66675.zip",
+            "bytes": 1156574,
+            "sha256": "14165dc3fb3d96722f25aadad00be17376792bbc4295166e1ac719ee476239e3"
+          },
+          "zip_API_digest_equal": true,
+          "unique_safe_zip_members": 312,
+          "extracted_files": 312,
+          "delivery_manifest_entries": 311,
+          "manifest_self_excluded": true,
+          "full_inventory_hash_verification": "PASS",
+          "manifest": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/artifact/DELIVERY_MANIFEST.json",
+            "bytes": 51245,
+            "sha256": "266a07d05461891e1039d81f50a64209f63692096eb966d576b56a12b550cf99"
+          },
+          "report": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/artifact/REPORT.json",
+            "bytes": 66808,
+            "sha256": "54f4e49af7dd1f91c6800590dca517162df0f5ed370c5b364eeb9fa7b1b9fa0d"
+          },
+          "native_receipt": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/artifact/native/receipt.json",
+            "bytes": 13763,
+            "sha256": "148cdb625c887ad26267e6425e6d3bbf927c30adab0fdaa8b866dee029dee8b3"
+          },
+          "independent_artifact_audit": {
+            "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/INDEPENDENT_ARTIFACT_CHECKS.json",
+            "bytes": 12596,
+            "sha256": "c96732ae168eb4e091fb28b353492fced17b05707df5ed990bfc9eb050fa94cf"
+          },
+          "independent_checks_passed": 46,
+          "native": [
+            {
+              "name": "baseline",
+              "program": {
+                "bytes": 23710,
+                "sha256": "a83f9ec3ce6141cbbbedb9800be8d3e0370fc50d1fdf2ee8ac542bde2c8b874e"
+              },
+              "stdout": {
+                "bytes": 1738,
+                "sha256": "ab54f70a3cfe096a400b09fd3ad8e8541aaf19ecf14e104b4bdcbf9213fc4309"
+              },
+              "stderr": {
+                "bytes": 245,
+                "sha256": "10a45f8a3ab90d307524a387a53f6baf2b31453e1f77f7c5eddb3decf865378e"
+              },
+              "pass": 8,
+              "fail": 5,
+              "exit": 1,
+              "actual_failures": [
+                "existing_character_head_arrival_renders_without_new_snapshot",
+                "new_character_head_arrival_renders_without_new_snapshot",
+                "removed_character_deferred_render_does_not_resurrect",
+                "removed_player_deferred_render_does_not_resurrect",
+                "same_model_replaced_head_retargets_and_cleans"
+              ]
+            },
+            {
+              "name": "candidate",
+              "program": {
+                "bytes": 26236,
+                "sha256": "0660b35ebe35fe4b552f83037438628e9fc2380577908cbbf8ce204ae4a15cca"
+              },
+              "stdout": {
+                "bytes": 1738,
+                "sha256": "9e87a09ba2dd137b92234a29ce70708727cbc65408c451daa9df1f571d05ee59"
+              },
+              "stderr": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "pass": 13,
+              "fail": 0,
+              "exit": 0,
+              "actual_failures": []
+            }
+          ],
+          "commands": {
+            "validation_workload": {
+              "definition": "69 selected-source compiler processes + 2 Native VM child processes + 2 Rojo builds; excludes Rojo version query and Python Native runner wrapper",
+              "total": 73,
+              "selected_source_compile": 69,
+              "Native_VM": 2,
+              "Rojo_build": 2,
+              "exit0": 72,
+              "expected_baseline_exit1": 1,
+              "unexpected_nonzero": 0,
+              "empty_stderr": 72,
+              "expected_baseline_nonempty_stderr": 1,
+              "baseline_stderr": {
+                "path": "/workspace/scratch/beb3c323fed2/analysis/hosted_aura_f0d/artifact/native/baseline.stderr.txt",
+                "bytes": 245,
+                "sha256": "10a45f8a3ab90d307524a387a53f6baf2b31453e1f77f7c5eddb3decf865378e"
+              }
+            },
+            "outer_REPORT_commands": {
+              "definition": "REPORT.commands records outer invocations; child Native VM exit details are in native/receipt.json",
+              "total": 73,
+              "Rojo_version_query": 1,
+              "selected_source_compile": 69,
+              "Python_Native_runner_wrapper": 1,
+              "Rojo_build": 2,
+              "exit0": 73,
+              "empty_stderr": 73
+            },
+            "counting_note": "These two 73-entry populations overlap in the 69 compiler invocations and 2 Rojo builds; do not add their totals or transfer wrapper exit0 to the baseline VM. No claim that every tested process exited0 or had empty stderr is made."
+          },
+          "XML_and_Place": {
+            "baseline": {
+              "place": {
+                "bytes": 828658,
+                "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+              },
+              "source_count": 69,
+              "instance_count": 75,
+              "class_counts": {
+                "ModuleScript": 47,
+                "Script": 12,
+                "LocalScript": 10
+              },
+              "non_source_xml": {
+                "bytes": 14859,
+                "sha256": "7f87e13ccaf160487f52c4279a607d01bab3f3cf491b36779492d649eff24b7d"
+              }
+            },
+            "ON": {
+              "place": {
+                "bytes": 831184,
+                "sha256": "844665d032a34e008a9eb452a4db5959270fd64bef714b1d0ceea82dd64e1c0f"
+              },
+              "source_count": 69,
+              "instance_count": 75,
+              "class_counts": {
+                "ModuleScript": 47,
+                "Script": 12,
+                "LocalScript": 10
+              },
+              "non_source_xml": {
+                "bytes": 14859,
+                "sha256": "7f87e13ccaf160487f52c4279a607d01bab3f3cf491b36779492d649eff24b7d"
+              }
+            },
+            "OFF": {
+              "place": {
+                "bytes": 828658,
+                "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+              },
+              "source_count": 69,
+              "instance_count": 75,
+              "class_counts": {
+                "ModuleScript": 47,
+                "Script": 12,
+                "LocalScript": 10
+              },
+              "non_source_xml": {
+                "bytes": 14859,
+                "sha256": "7f87e13ccaf160487f52c4279a607d01bab3f3cf491b36779492d649eff24b7d"
+              }
+            }
+          },
+          "official_input119_plus_manifest120_verified": true,
+          "single_selected_source_changed": "sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+          "other_selected_sources_unchanged": 68,
+          "old_native_receipts_copied_as_new_evidence": 0
+        },
+        "acceptance_results": [
+          {
+            "result": "PASS",
+            "evidence": "Full original6205B AuraClient and original1881B/candidate4407B Controller are byte-exact inside actual hosted Native programs. Same13 raw predicates: baseline8P5F exit1; candidate13P0F exit0/stderr0. Five expected failures cover Head arrival, invalidated deferred callbacks and replacement cleanup.",
+            "original_acceptance": "Exact full two-body Native baseline red/candidate green for late Head, invalidated callbacks, replacement and bounded cleanup"
+          },
+          {
+            "result": "PASS",
+            "evidence": "Raw controls preserve rush/fever/role/off, replace same-Head role origin before Head replacement, and prove unchanged Head/unrelated child emits8 before and8 after. Current character subscriptions2; retired and post-leave subscriptions0.",
+            "original_acceptance": "Preserve phase/role behavior and no unrelated-child reburst"
+          },
+          {
+            "result": "PASS",
+            "evidence": "Independent artifact and XML parsing confirms only Controller changed +2526B, other68 source bytes exact; all75 instance routes/classes and all non-Source XML remain equal. AuraClient source remains original6205B.",
+            "original_acceptance": "Exactly one changed selected Controller; other68 sources and75 instance paths/classes preserved"
+          },
+          {
+            "result": "PASS",
+            "evidence": "Actual hosted fresh F46 VM/compiler build, 69 unique --null compilation commands, two Rojo7.7.1 builds, ON831184B and OFF exact entire original828658B. The validation workload comprises 69 selected-source compiler processes + 2 Native VM processes + 2 Rojo builds = 73: 72 exit0 with empty stderr, and one expected baseline Native exit1 with 245B stderr (SHA256 10a45f8a3ab90d307524a387a53f6baf2b31453e1f77f7c5eddb3decf865378e). Baseline is 8P/5 expected F; candidate is 13P/0F, exit0/stderr0. Separately, REPORT.commands contains 73 outer entries: 1 Rojo version query + 69 compiles + 1 Python Native runner wrapper + 2 Rojo builds; these outer entries all exit0 with empty stderr. The two child Native exits are recorded separately in native/receipt.json. Outer-wrapper success does not mean the expected-red baseline exited0.",
+            "original_acceptance": "All69 Native compile; Rojo ON/OFF and original exact inverse/place restore"
+          },
+          {
+            "result": "PASS_SOURCE_REVIEW_COMPLETE_METADATA_REGISTRATION_PENDING",
+            "evidence": "Dedicated successful PR run45115333093 attempt1/job137496758541 and artifact14791656556 are bound to exact Hf0d. This review is performed by the distinct nonauthor context registered in the actual source claim; no formal REVIEWER service or GitHub APPROVE object is invented.",
+            "original_acceptance": "Live same-source-head hosted source gate and separately registered independent review before PREP_READY"
+          },
+          {
+            "result": "PASS_TRUTH_BOUNDARY",
+            "evidence": "Studio/engine replication/two-client/Android/ART/FUN/OWNER remain unobserved. Native uses explicit Roblox API/signal/defer doubles; no formal RC adoption is asserted.",
+            "original_acceptance": "Studio/engine/Android/FUN remain NOT_TESTED until genuine separate observations"
+          }
+        ],
+        "truth_boundary": {
+          "source_only": true,
+          "claim_registered_nonauthor_source_review_complete": true,
+          "formal_service_approval": false,
+          "RC_scope_granted": false,
+          "formal_RC_adopted": false,
+          "main_write_or_publish": false,
+          "whole_PR_merge_approval": false,
+          "Studio": "NOT_TESTED",
+          "two_client": "NOT_TESTED",
+          "Android": "NOT_TESTED",
+          "ART": "NOT_TESTED",
+          "FUN": "NOT_TESTED",
+          "OWNER_accepted": false,
+          "ACTIVE_RUNTIME": "rich51",
+          "PRIVATE_COMPANION": "REAL69_UNION22",
+          "RUNTIME_UNIFIED": "NO",
+          "raw_offline_REPORT_flags_preserved": "hosted_ci_observed=false and independent_approval=false describe the offline gate itself. Actual external observations and this distinct review provide their own evidence; raw report was not edited."
+        }
+      },
+      "whole_PR_residual_checks": {
+        "whole_PR_green": false,
+        "whole_PR_direct_merge_ready": false,
+        "legacy_jobs": [
+          {
+            "id": 137496757968,
+            "run_id": 45115332997,
+            "head_sha": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+            "name": "real47-single-owner",
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-11-23T05:02:37Z",
+            "completed_at": "2026-11-23T05:02:46Z",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45115332997/job/137496757968",
+            "steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 2,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Pin official unchanged Core36 and immutable latest",
+                "number": 3,
+                "conclusion": "failure",
+                "status": "completed"
+              },
+              {
+                "name": "Compose exact singleton Swarm and SevenRoleCombat with three new real modules",
+                "number": 4,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 5,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "True Native Luau compiler all 44 original and all 47 selected + policy VM mutation checks",
+                "number": 6,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Pinned real Rojo 47 Source/Class plus precise OFF44 Place byte equality",
+                "number": 7,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "number": 8,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "number": 16,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Complete job",
+                "number": 17,
+                "conclusion": "success",
+                "status": "completed"
+              }
+            ]
+          },
+          {
+            "id": 137496757556,
+            "run_id": 45115332950,
+            "head_sha": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+            "name": "actual-authoritative49",
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-11-23T05:02:37Z",
+            "completed_at": "2026-11-23T05:02:47Z",
+            "html_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45115332950/job/137496757556",
+            "steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 2,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 3,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 4,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Freeze actual 815/830/823 owner refs and real44 base / official RC",
+                "number": 5,
+                "conclusion": "failure",
+                "status": "completed"
+              },
+              {
+                "name": "Compose exact private Real47 and source identical original Real46",
+                "number": 6,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Compose 49 from actual 47 plus all13 prehit authentic 46 and two-way exclusive modes",
+                "number": 7,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "number": 8,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Compile genuine 44 46 47 49 original Luau and execute both actual VM contracts",
+                "number": 9,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Actual Rojo portable49 and OFF44 OFF46 OFF47 identical to selected original games",
+                "number": 10,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "number": 11,
+                "conclusion": "skipped",
+                "status": "completed"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "number": 20,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "number": 21,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "number": 22,
+                "conclusion": "success",
+                "status": "completed"
+              },
+              {
+                "name": "Complete job",
+                "number": 23,
+                "conclusion": "success",
+                "status": "completed"
+              }
+            ]
+          }
+        ],
+        "raw_classification": [
+          {
+            "name": "real47",
+            "job_id": 137496757968,
+            "workflow_git_blob": "d9a6e0dd64fe1b408aa69bc882a1084a379511c7",
+            "workflow": {
+              "bytes": 8942,
+              "sha256": "00ae52f72a6207c651ea8ff996b876d8e46683fa2915f869c933ad06232ae08a"
+            },
+            "raw_log": {
+              "bytes": 14386,
+              "sha256": "e5ea942bf2a460963e54ce664216a558a07e7d0c42735f1a954a09edcc47b14a"
+            },
+            "actual_failure_markers": [
+              "2026-11-23T05:02:43.4451137Z RED_OFFICIAL_RC_MOVED_REFRESH"
+            ],
+            "conclusion_preserved": "failure",
+            "waived": false
+          },
+          {
+            "name": "real49",
+            "job_id": 137496757556,
+            "workflow_git_blob": "9d1c996ed5f1b5d7c9510b5b2820115f9bc9355d",
+            "workflow": {
+              "bytes": 12898,
+              "sha256": "33c88fd64294354cddd2f5ce615bc868630eb4df144e226c7bd5ba39a5176185"
+            },
+            "raw_log": {
+              "bytes": 34905,
+              "sha256": "c317fd1a87645bfcad4ab3c7d720117aabe2aa84fc816cb396c61b5882ea8c34"
+            },
+            "actual_failure_markers": [
+              "2026-11-23T05:02:44.3515084Z RED_OFFICIAL_RC_MOVED_NOT_ADOPTED"
+            ],
+            "conclusion_preserved": "failure",
+            "waived": false
+          }
+        ],
+        "cause": "Both frozen original workflows still require live official RC f77b4d4393d9e9b19b65566413432a7a9f13962b. Actual RC is H93, so their unchanged official-parent fences fail before composition, Native and Rojo. The new exact-current69 gate succeeds independently.",
+        "failures_relabelled_as_success": false,
+        "checks_edited_disabled_or_waived": false,
+        "whole_historical_PR_merge_approved": false
+      },
+      "metadata_completion_review": {
+        "context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
+        "status": "PENDING_AT_CANDIDATE_BUILD_EXTERNAL_EXACT_PRECAS_RECEIPT_REQUIRED",
+        "external_receipt_location": "/workspace/scratch/beb3c323fed2/analysis/completion_metadata/transaction_bde26b93-8921-4c2b-a4e3-ffaa42a6aee3/INDEPENDENT_PRECAS_REVIEW.json",
+        "approval_asserted_by_builder": false,
+        "meaning": "Actual rc_rules must independently review the full exact before/after and actual lease before CAS. This future pointer is not a performed review. The receipt remains external to avoid circular hashes."
+      },
+      "source_reservation_release": {
+        "kind": "NORMAL_COMPLETED_FROZEN_SOURCE_SCOPE_CLOSURE",
+        "previous_state": "GRANTED",
+        "at": "2026-11-23T05:57:56.682Z",
+        "source_head": "f0d66675e3c81f92f872c36cc5178b20726a1d53",
+        "source_quality_fact_preserved": "PREP_READY_AT_FROZEN_F0D_AND_H93_INPUT_ONLY",
+        "coordinator": {
+          "at": "2026-11-23T05:57:56.682Z",
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "role": "OWNER_DELEGATED_COORDINATOR",
+          "context": "CODEX_ROOT_BEB3C323FED2:/root",
+          "operation_id": "bde26b93-8921-4c2b-a4e3-ffaa42a6aee3",
+          "actual_lease_commit": "5b90dda347978dd8b00fb18cce1dbbe3f2df1d4e",
+          "actual_lease_epoch": 681,
+          "actual_coordinator_blob": "06a811c2995bcaba218ba5a5a8306a22a6bf4ec4",
+          "registry_expected_parent": "df5cd3a95685619dadf1d6f21e58c2e35e96f4e9",
+          "registry_before_blob": "7eb2155b8d6ee64877753443bb1c3161d289d9c3",
+          "task_id": null,
+          "service_run_id": null,
+          "meaning": "Proposed metadata registration under the supplied actual live lease; no source or RC authority"
+        },
+        "source_lease_normal_release": {
+          "ref": "59f6674dd5f9ff97885679fbf3e676b1daf0a9ec",
+          "epoch": 676,
+          "holder": null,
+          "last_completed": {
+            "kind": "CONTROLLER",
+            "owner_id": "babad946-f902-43b1-9096-a7ad29ba9c7f",
+            "epoch": 676,
+            "released_at": "2026-11-23T05:02:56.333534+00:00"
+          }
+        },
+        "paths_preserved": 21,
+        "immutable_pr_blobs_preserved": 13,
+        "mutable_path_definition_preserved": 8,
+        "all_resource_names_preserved": true,
+        "new_source_edits_authorized": false,
+        "requires_new_scoped_handoff_before_future_writes": true,
+        "scope_release_does_not_grant_rc_intake": true,
+        "successor_grant_issued": false,
+        "preserved_pending_lanes": [
+          {
+            "owner": "Existing D5F MUSOU continuation",
+            "request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077208755",
+            "continuation": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7085610864",
+            "scope": "Swarm charge/avatar/round/replay publication; owner/candidate unchanged"
+          },
+          {
+            "pr": 950,
+            "feature_id": "GQ470_FB015_MUSOU_AURA_COMPACT_LOD_REAL69_20261121",
+            "scope": "AuraClient visual/LOD unchanged"
+          },
+          {
+            "scope": "Original Bot -> BEAST -> Guardian/currentP0 canonical producer queue unchanged"
+          }
+        ],
+        "D5F_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7077208755",
+        "D5F_continuation": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7085610864",
+        "reason": "Exact published source, same-head hosted artifact and registered nonauthor acceptance are complete. Close only this finite source reservation; preserve original D5F continuation and root responsibility for later canonical/RC/Studio work."
       }
     },
     {
@@ -23527,6 +24423,300 @@
         "tests/test_gq470_match_role_growth_20261123.py",
         ".github/workflows/gq470-match-role-growth.yml"
       ]
+    },
+    {
+      "claim_id": "P0D-GQ828-MAP-ITEM-20261123-2D28C66A",
+      "feature_id": "GQ8_HUD_INTEL_FOG_20261119",
+      "owner": "CODEX_ROOT_2D28C66A7CD2",
+      "role": "A_PREP",
+      "state": "GRANTED",
+      "draft_only_not_issued": false,
+      "source_scope_granted": true,
+      "source_writes_permitted_at_issuance": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_lease_status_at_issuance": "NOT_ACQUIRED",
+      "parent_issue": 828,
+      "pr": 829,
+      "canonical_parent": "https://github.com/kk051780/toy-wars-factory/pull/829",
+      "canonical_parent_pr_status": "MERGED_HISTORICAL_ORIGINAL",
+      "candidate_pr": null,
+      "allowed_new_prs": 1,
+      "new_pr_reason": "Original PR829 is already merged. One isolated successor source-preparation PR may carry only the exact existing +288 repair and its bounded transport; preserve the original feature and parent lineage.",
+      "prep_branch": "fix/gq828-map-items-20261123-2d28c66a",
+      "source_head_before": null,
+      "source_head": null,
+      "source_tree": null,
+      "source_branch_creation_base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "source_branch_state_before_creation": "MUST_BE_FRESHLY_VERIFIED_ABSENT_OR_EXPLICITLY_OWNED",
+      "base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "base_rc_tree": "ca7a6b532ff325ebf125423484dde1ee57ce219b",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_MAPINTELBRIDGE"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq828_map_item_markers_20261123/patch_map_items.py",
+        "quality_gameplay/gq828_map_item_markers_20261123/SOURCE_LOCK.json",
+        "quality_gameplay/gq828_map_item_markers_20261123/README.md",
+        "quality_gameplay/gq828_map_item_markers_20261123/map_item_followup.patch",
+        "quality_gameplay/gq828_map_item_markers_20261123/fixtures/MapIntelBridge.h93.original.luau.txt",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/run_existing.py",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/map_api.luau",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/lifecycle.luau",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq828_map_item_markers_20261123.py"
+      ],
+      "mutable_paths": [
+        "quality_gameplay/gq828_map_item_markers_20261123/patch_map_items.py",
+        "quality_gameplay/gq828_map_item_markers_20261123/SOURCE_LOCK.json",
+        "quality_gameplay/gq828_map_item_markers_20261123/README.md",
+        "quality_gameplay/gq828_map_item_markers_20261123/map_item_followup.patch",
+        "quality_gameplay/gq828_map_item_markers_20261123/fixtures/MapIntelBridge.h93.original.luau.txt",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/run_existing.py",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/map_api.luau",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/lifecycle.luau",
+        "quality_gameplay/gq828_map_item_markers_20261123/native/INPUT_LOCK.json",
+        "tests/test_gq828_map_item_markers_20261123.py"
+      ],
+      "target_paths_semantics": "Exactly10 new isolated package/test paths. Only the existing public two-hunk +288 repair may change selected gameplay source. Transport/validation/tests may be implemented only within these paths. No canonical producer, workflow or RC write is granted.",
+      "author_contexts": [
+        "CODEX_ROOT_2D28C66A7CD2:/root"
+      ],
+      "source_author_context": "CODEX_ROOT_2D28C66A7CD2:/root",
+      "independent_reviewer_context": "CODEX_ROOT_2D28C66A7CD2:/root/runtime_gap_audit",
+      "scope_review_context": "CODEX_ROOT_2D28C66A7CD2:/root/authority_handoff",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "bde26b93-8921-4c2b-a4e3-ffaa42a6aee3",
+      "service_run_id": null,
+      "service_task_id": null,
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "owner_id": "bde26b93-8921-4c2b-a4e3-ffaa42a6aee3",
+        "task_id": null,
+        "epoch": 681,
+        "acquired_at": "2026-11-23T05:57:29.493650+00:00",
+        "expires_at": "2026-11-23T06:27:29.493650+00:00",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller",
+        "acquire_commit": "5b90dda347978dd8b00fb18cce1dbbe3f2df1d4e",
+        "readback_commit": "5b90dda347978dd8b00fb18cce1dbbe3f2df1d4e",
+        "readback_blob": "06a811c2995bcaba218ba5a5a8306a22a6bf4ec4",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE",
+        "service_run_id": null
+      },
+      "authority_evidence": {
+        "mode": "AUTHENTICATED_OWNER_DELEGATED_MANUAL_CONTROLLER_NOT_PROVIDER_SERVICE",
+        "last_observed_auth_at_utc": "2026-11-23T05:57:47.132Z",
+        "actual_login": "kk051780",
+        "actual_user_id": 233213370,
+        "actual_repo_permission": "admin",
+        "policy": "https://github.com/kk051780/toy-wars-factory/issues/1011",
+        "formal_policy_revision": "EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2 at93a1147561a531610ac1609ebc68cc0ecf546623",
+        "standing_delegation_record": "twf-repair-coordinator:ops/REPAIR_COORDINATOR.json.owner_delegation",
+        "fresh_auth_and_owned_lease_before_issuance_required": true,
+        "no_provider_run_or_terminal_attestation_claimed": true
+      },
+      "request_comment": 7091166686,
+      "request_url": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7091166686",
+      "sub_scope": "EXISTING_PUBLIC_MAP_ITEM_PLUS288_EXACT_REUSE_SOURCE_PREP",
+      "scope": "Existing PR829 MapIntel +288 exact reuse as a source-only preparation package. Preserve canonical FEATURE. Fix/review only transport and validation within the declared10 paths; add no new gameplay semantics.",
+      "original_lineage": {
+        "route": "ServerScriptService/EGGRUMBLE_MapIntelBridge",
+        "source_path": "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+        "class": "Script",
+        "before": {
+          "bytes": 15584,
+          "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+        },
+        "after": {
+          "bytes": 15872,
+          "sha256": "b258edbfc376571138dfdee0f2cff93fea1870d77de36ac48e95b5d44dba1002"
+        },
+        "delta_bytes": 288,
+        "patch_sha256": "1fda4e0d9f6e57fcef36d622890237e87fbff671c10fa3f2b8ccb330e7750733",
+        "original_url": "https://github.com/kk051780/toy-wars-factory/pull/829#issuecomment-7077731896",
+        "new_gameplay_authorship": false
+      },
+      "immutable_reused_inputs": {
+        "public_patch": {
+          "bytes": 1305,
+          "sha256": "1fda4e0d9f6e57fcef36d622890237e87fbff671c10fa3f2b8ccb330e7750733"
+        },
+        "map_api_fixture": {
+          "bytes": 1182,
+          "sha256": "275d9fa1c41c4cb0e16ec080e4c4a2ce2aacbcde02e562dab5e03078421cbe6c"
+        },
+        "lifecycle_fixture": {
+          "bytes": 8385,
+          "sha256": "fe255b86e13c44ce42c7d3c49f454522a406e9ba3cc445a45cdd2df61cb2f54e"
+        }
+      },
+      "acceptance": [
+        "Preserve exact original two-hunk patch and before/after map bytes",
+        "Fail closed on mismatched parent/dependency/patch inputs",
+        "69-source inventory and other68 bytes unchanged",
+        "Reuse unchanged original full30-body lifecycle cases: baseline10/15 with exact5knownRED; candidate15/15",
+        "Native output parses ordered CASE rows and SUMMARY; source-only evidence flags",
+        "Forward/inverse exact rollback to same current RC Map source",
+        "Independent scope and actual source review before source readiness",
+        "Native runner validates the trusted VM/toolchain, full69 input inventory, original fixture/program integrity and actual execution outputs; preserve baseline known5 failures and repaired15 cases.",
+        "Actual source HEAD independent review and same-HEAD source checks required before PREP_READY. A local diagnostics pass is not a CI/Studio or official-RC approval."
+      ],
+      "rollback": "Reverse only original +288 two-hunk patch against exact b258 candidate to exact d4ed H93 Map; no other source/profile/workflow changes.",
+      "scope_review": {
+        "context": "CODEX_ROOT_2D28C66A7CD2:/root/authority_handoff",
+        "plan_sha256": "454d68fbd586bcc835dd12273708a1c3791cf06b5f3189337bad9ea3a5957d0c",
+        "preliminary_receipt_sha256": "d0d130201bf618160c1bfe0dc9b7ccff9f61e1a0b583e0c9b5d5ffee4a6c4065",
+        "preliminary_decision": "PASS_PREPARATION_SCOPE_DESIGN_NOT_GRANT_OR_SOURCE_APPROVAL",
+        "final_exact_metadata_review": {
+          "context": "CODEX_ROOT_BEB3C323FED2:/root/rc_rules",
+          "status": "PENDING_AT_CANDIDATE_BUILD_EXTERNAL_EXACT_PRECAS_RECEIPT_REQUIRED",
+          "external_receipt_location": "/workspace/scratch/beb3c323fed2/analysis/completion_metadata/transaction_bde26b93-8921-4c2b-a4e3-ffaa42a6aee3/INDEPENDENT_PRECAS_REVIEW.json",
+          "approval_asserted_by_builder": false,
+          "meaning": "Actual rc_rules must independently review the full exact before/after and actual lease before CAS. This future pointer is not a performed review. The receipt remains external to avoid circular hashes."
+        },
+        "source_code_approval": false,
+        "original_2D_proposed_final_exact_metadata_review": {
+          "review_id": "GQ828-MAP-2D28C66A-METADATA-PRECAS-V1",
+          "context": "CODEX_ROOT_2D28C66A7CD2:/root/authority_handoff",
+          "external_receipt_location": "/workspace/scratch/2d28c66a7cd2/authority_handoff/map_claim_pre_cas_review.json"
+        }
+      },
+      "independent_review_status": "PENDING_ACTUAL_SOURCE_HEAD_REVIEW",
+      "registered_source_approval": false,
+      "scope_review_is_code_approval": false,
+      "PREP_READY": false,
+      "prep_ready": false,
+      "formal_rc_adoption": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "NOT_TESTED",
+      "fun": "NOT_TESTED",
+      "forbidden_changes": [
+        ".github/workflows/**",
+        "quality_gameplay/gq470_union22_real69_20261122/**",
+        "HUD runtime and Policy modifications",
+        "0E8 Map travel four-source proposal",
+        "ACTIVE_RUNTIME/main/Roblox Publish/monetization",
+        "Any second RC writer or queue reorder",
+        "Existing public patch/fixtures changed in substance",
+        "Another same-feature implementation or concurrent author",
+        "False provider identity, invented grant or transferred historical source approval"
+      ],
+      "queue": "Preserve existing #220 HUD→originalBot→BEAST→Guardian order; Map only subsequent source PREP unless separately admitted.",
+      "issued_at": "2026-11-23T05:57:56.682Z",
+      "expires_at": "2026-11-23T11:57:56.682000+00:00",
+      "expiry_policy": "Six hours from actual metadata issuance timestamp; expiry never authorizes takeover. A new amendment requires fresh scope review, live owned metadata lease and CAS/readback.",
+      "if_matching_BUSY_owner_appears": "Stop this issuance and join or use a coordinated handoff. Recheck actual registry, source owner/ref and formalRC before any source write.",
+      "local_candidate_independent_review_reference": {
+        "reviewer_context": "CODEX_ROOT_2D28C66A7CD2:/root/runtime_gap_audit",
+        "status": "APPROVE_SOURCE_ONLY",
+        "review_receipt_bytes": 5025,
+        "review_receipt_sha256": "1b59c793f387137edad609fe07a0a264b9a4f340d6a441676de70d55e5d29f39",
+        "target_manifest_bytes": 2219,
+        "target_manifest_sha256": "56245d5b48dfdbb668dab66ae3b8b099119267bed6c6b04e1c394a89d4e9e00f",
+        "target_file_count": 10,
+        "target_total_bytes": 81709,
+        "target_file_pins": [
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/README.md",
+            "bytes": 5621,
+            "sha256": "87f46bd7f61509c716827c4b0d717210ec8474428c8037b26b45cdbc9f7983da"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/SOURCE_LOCK.json",
+            "bytes": 1097,
+            "sha256": "ef150bfa233a0d01dc04d81d04d9b4936c87786daaaebfe78dbbcf7d4a8b3430"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/fixtures/MapIntelBridge.h93.original.luau.txt",
+            "bytes": 15584,
+            "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/map_item_followup.patch",
+            "bytes": 1305,
+            "sha256": "1fda4e0d9f6e57fcef36d622890237e87fbff671c10fa3f2b8ccb330e7750733"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/native/INPUT_LOCK.json",
+            "bytes": 23028,
+            "sha256": "c07b776ce59bc5f7040a83ee77c4c305a5669ee4b03e3c5dfb619d87f767e165"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/native/lifecycle.luau",
+            "bytes": 8385,
+            "sha256": "fe255b86e13c44ce42c7d3c49f454522a406e9ba3cc445a45cdd2df61cb2f54e"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/native/map_api.luau",
+            "bytes": 1182,
+            "sha256": "275d9fa1c41c4cb0e16ec080e4c4a2ce2aacbcde02e562dab5e03078421cbe6c"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/native/run_existing.py",
+            "bytes": 11887,
+            "sha256": "faee0099c3c3966b18e245bde6ce2d73478823fbadf65cc9d5e868a1e20f3c2b"
+          },
+          {
+            "path": "quality_gameplay/gq828_map_item_markers_20261123/patch_map_items.py",
+            "bytes": 4601,
+            "sha256": "eb09fd5ede1af7453c90062a0004639a3bfc99f67539e9cd2adb33add05eb575"
+          },
+          {
+            "path": "tests/test_gq828_map_item_markers_20261123.py",
+            "bytes": 9019,
+            "sha256": "3004756cda80f4fae9774b78af2bccb5ef148fc6dd58f52845df2d14970cf1b0"
+          }
+        ],
+        "review_scope": "Exact frozen local source-only10 files; not registered provider-service approval, current remote-HEAD CI, lease, PREP_READY or RC acceptance."
+      },
+      "original_preparation_authority_evidence": {
+        "mode": "AUTHENTICATED_OWNER_DELEGATED_MANUAL_CONTROLLER_NOT_PROVIDER_SERVICE",
+        "last_observed_auth_at_utc": "2026-11-23T04:10:23Z",
+        "actual_login": "kk051780",
+        "actual_user_id": 233213370,
+        "actual_repo_permission": "admin",
+        "policy": "https://github.com/kk051780/toy-wars-factory/issues/1011",
+        "formal_policy_revision": "EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md v1.2 at93a1147561a531610ac1609ebc68cc0ecf546623",
+        "standing_delegation_record": "twf-repair-coordinator:ops/REPAIR_COORDINATOR.json.owner_delegation",
+        "fresh_auth_and_owned_lease_before_issuance_required": true,
+        "no_provider_run_or_terminal_attestation_claimed": true
+      },
+      "template_provenance": {
+        "path": "/workspace/scratch/2d28c66a7cd2/authority_handoff/map_claim_row_template.json",
+        "bytes": 15930,
+        "sha256": "dc679f04a4ecdc2e6281cc421b81aa0c88f6f62ccdc47d33d5bb1a750e141e9d",
+        "git_blob": "1461e73b9dc8538e0cd73b7e32cd7ed16efdd126"
+      },
+      "actual_request_readback": {
+        "path": "/workspace/scratch/beb3c323fed2/analysis/completion_metadata/inputs_bde26b93-8921-4c2b-a4e3-ffaa42a6aee3/MAP_REQUEST_READBACK.json",
+        "bytes": 12611,
+        "sha256": "edcd33618739c064ae996ff2b89357da38853748af63f96854cd8db370bb2a83",
+        "git_blob": "56c08efc3995f3400b555193488ecd08c36d5516"
+      },
+      "metadata_registration": {
+        "at": "2026-11-23T05:57:56.682Z",
+        "issuer": "kk051780",
+        "issuer_user_id": 233213370,
+        "role": "OWNER_DELEGATED_COORDINATOR",
+        "context": "CODEX_ROOT_BEB3C323FED2:/root",
+        "operation_id": "bde26b93-8921-4c2b-a4e3-ffaa42a6aee3",
+        "actual_lease_commit": "5b90dda347978dd8b00fb18cce1dbbe3f2df1d4e",
+        "actual_lease_epoch": 681,
+        "actual_coordinator_blob": "06a811c2995bcaba218ba5a5a8306a22a6bf4ec4",
+        "registry_expected_parent": "df5cd3a95685619dadf1d6f21e58c2e35e96f4e9",
+        "registry_before_blob": "7eb2155b8d6ee64877753443bb1c3161d289d9c3",
+        "task_id": null,
+        "service_run_id": null,
+        "meaning": "Proposed metadata registration under the supplied actual live lease; no source or RC authority"
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
