@@ -19348,11 +19348,13 @@
       ],
       "target_paths": [
         "rc_fastlane/FEATURE_CATALOG.json",
-        "rc_fastlane/progress.py"
+        "rc_fastlane/progress.py",
+        "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json"
       ],
       "mutable_paths": [
         "rc_fastlane/FEATURE_CATALOG.json",
-        "rc_fastlane/progress.py"
+        "rc_fastlane/progress.py",
+        "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json"
       ],
       "prep_branch": "quality/gq470-release-requirements-20261123-e659",
       "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
@@ -19386,16 +19388,24 @@
           "sha": "41a47c6752170825f61ea1190dee21a17815ecf6",
           "bytes": 7190,
           "sha256": "1d5f520e698de1e1e5b07e7c2619672d856380335c86cd983171d60935c879a1"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "6b9fe294fbed692dcf8b4928d07e58d58d765e88",
+          "bytes": 12408,
+          "sha256": "35b5330fd810ed1a0b144cc61bfbe3af4891eceb7f6a7c23d3c943fe4981e56e"
         }
       },
       "author_contexts": [
         "CODEX_ROOT_E659B2512947:/root: accountable parent and sole future GitHub source writer",
-        "CODEX_ROOT_E659B2512947:/root/candidate_triage: exact two-file proposal implementation"
+        "CODEX_ROOT_E659B2512947:/root/candidate_triage: exact two metadata payloads and their one metadata SourceLock JSON"
       ],
       "author_path_assignments": {
         "CODEX_ROOT_E659B2512947:/root/candidate_triage": [
           "rc_fastlane/FEATURE_CATALOG.json",
-          "rc_fastlane/progress.py"
+          "rc_fastlane/progress.py",
+          "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json"
         ]
       },
       "independent_reviewer_context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
@@ -19410,9 +19420,17 @@
           "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
           "sha256": "d1dadb3ba96599ca3ae98bd8fafcfc312c73ad29f8a81d8e955a0083dfd33e59",
           "decision": "PASS_PROSPECTIVE_SCOPE_ONLY_NO_BLOCKING_FINDINGS"
+        },
+        "metadata_source_lock_initial_review": {
+          "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+          "receipt_bytes": 6321,
+          "receipt_sha256": "5848f885859405ce1aadefe4c584c3b6e5eb3af7f5ec0930ccf61e0ba0837990",
+          "decision": "PASS_FIXED_LOCAL_METADATA_SOURCE_LOCK_FOR_ONE_PATH_SCOPE_AMENDMENT_REVIEW",
+          "blocking_findings": 0,
+          "actual_candidate_head_review_completed": false
         }
       },
-      "scope": "Preserve all 67 historical catalog rows and prior root fields; add current seven-role release requirements without acceptance or count changes, and label the old report as a dated historical snapshot. No new game feature or runtime source.",
+      "scope": "Preserve all 67 historical catalog rows and prior root fields; add current seven-role release requirements without acceptance or count changes, and label the old report as a dated historical snapshot. No new game feature or runtime source. Add exactly the named metadata SourceLock as a real PREP input binding these two whole-file resources; no game/Native/profile/final-receipt ownership is added.",
       "preservation": [
         "Original #302 open draft and its P0D-059/last_progress_change history remain unchanged and are not imported.",
         "All existing catalog rows/root values and 9 prior progress JSON values remain unchanged.",
@@ -19420,19 +19438,29 @@
         "All acceptance assessments remain NOT_EVALUATED. No SOURCE/RC/ENGINE/FUN/OWNER pass."
       ],
       "source_publication_conditions": [
-        "Genuine metadata coordinator lease and current registry collision recheck before grant; source requires separate genuine lease after metadata lease release.",
-        "Fresh official RC and both before blobs must match; any drift requires explicit reconciliation before new branch creation.",
-        "One new isolated draft PR maximum, based on the actual current official RC. Exactly the two existing regular100644 files change.",
-        "Actual GitHub tree/compare/PR files readback, existing same-head CI and registered non-author actualHEAD review required. Local review is not actualHEAD approval.",
-        "No workflow edits or synthetic CI; RC78 existing path trigger may run, PRIVATE69 path-specific CI is not assumed."
+        "Genuine metadata coordinator lease and fresh all-BUSY path/resource collision recheck for this one-path amendment; release normally before a separate genuine source lease.",
+        "Fresh official RC, both existing before blobs and complete new-path absence must match; any drift requires explicit reconciliation before new branch creation.",
+        "One new isolated draft PR maximum, based on the actual current official RC. Exactly two existing regular100644 metadata files change and the one named regular100644 SourceLock JSON is added.",
+        "Actual GitHub tree/compare/PR-files readback and registered non-author actualHEAD review of all three complete files are required. The SourceLock's own byte/hash identity is externally pinned; local review is not actualHEAD approval.",
+        "Both existing RC78 report CI and existing REAL69 pull_request-event full CI/artifact must be observed at the actual candidate HEAD. No workflow edits, loans, synthetic CI, old-CI relabelling or manual-dispatch substitution.",
+        "Existing GQ8 files(HERE) detects in-execution changes but does not authenticate initial metadata, validate its meaning or include this JSON in delivery; B/non-author actualHEAD review supplies those metadata checks.",
+        "No extra game source, profile/Native/final-receipt consumer or producer changes. READY and B/RC single-writer authority remain separate."
       ],
       "rollback": {
         "patch_sha256": "278e141127ea78b46fc961acc158ef2ebc54ea465ea85b1045f925561d146fe2",
         "bytes": 12365,
-        "method": "Inverse only this two-file delta with fresh parent preservation; do not reset or overwrite unrelated changes."
+        "method": "Inverse only the original two-file delta with fresh parent preservation, then remove only the new metadata SourceLock after external actualHEAD pin verification. Do not reset or overwrite unrelated changes.",
+        "new_metadata_lock": {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json",
+          "before_must_be_absent": true,
+          "after_bytes": 12408,
+          "after_sha256": "35b5330fd810ed1a0b144cc61bfbe3af4891eceb7f6a7c23d3c943fe4981e56e",
+          "after_git_blob": "6b9fe294fbed692dcf8b4928d07e58d58d765e88",
+          "method": "Remove only this added file after matching the actualHEAD external pin; preserve all unrelated later changes. The old two-file inverse patch remains byte-identical."
+        }
       },
       "forbidden_changes": [
-        "All game runtime sources and source locks",
+        "All game runtime sources, game source locks, profile locks and Native input locks; only the named metadata SourceLock JSON is in this claim",
         "Workflow, tests, aliases, coordinator implementation, authority policy",
         "main, Publish, spending, five automations",
         "Any other author's branch or old #302",
@@ -19448,7 +19476,7 @@
       "source_head": null,
       "candidate_head": null,
       "source_branch_published": false,
-      "grant_scope_version": 1,
+      "grant_scope_version": 2,
       "source_scope_granted": true,
       "PREP_READY": false,
       "issuer": "kk051780",
@@ -19491,8 +19519,8 @@
       "no_main_or_publish": true,
       "no_review_waiver": true,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
-      "formal_intake_status": "UNRESOLVED_REAL69_SAME_HEAD_PR_CI_AND_ACTUAL_SOURCE_LOCK_REQUIRED_NO_READY_CONTRACT",
-      "formal_intake_boundary": "Existing RC78 CI is useful source/report evidence only and cannot substitute for required REAL69 PR-event full CI/artifact. This two-path grant does not include workflow edits, extra lock paths, queue changes, RC adoption, or policy exceptions.",
+      "formal_intake_status": "PENDING_ACTUAL_THREE_PATH_HEAD_RC78_AND_REAL69_PR_CI_AND_NONAUTHOR_SOURCE_LOCK_REVIEW_NO_READY_CONTRACT",
+      "formal_intake_boundary": "RC78 is report evidence and does not substitute for REAL69 full PR-event CI/artifact. The named metadata SourceLock is an actual B/non-author PREP input, not a CI semantic certificate or game/profile/final-receipt consumer change. Exactly three paths are allowed; workflow edits, other locks, queue changes, RC adoption and policy exceptions remain outside this grant.",
       "existing_same_file_candidate": {
         "pr": 302,
         "head": "14bd2a6afc460a78cb0476f3e4a12976a594d343",
@@ -19500,7 +19528,70 @@
         "draft": true,
         "same_requirement_repair": false,
         "import_close_or_authority_transfer": false
-      }
+      },
+      "new_path_preconditions": {
+        "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json": {
+          "before_must_be_absent": true,
+          "immutable_base_observation": {
+            "commit": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+            "tree": "a648b898e5dfc562b59c8f4a6085e6285e2e917d",
+            "truncated": false,
+            "entries": 1097,
+            "leaf_entries": 931
+          },
+          "fresh_publishing_base_recheck_required": true
+        }
+      },
+      "amendment_request_comment": 7088987117,
+      "source_lock_contract": {
+        "path": "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json",
+        "resources_covered": [
+          "P0D_FEATURE_CATALOG",
+          "P0D_PROGRESS_REPORT"
+        ],
+        "initial_local_non_author_review": "PASS_NOT_ACTUAL_HEAD_APPROVAL",
+        "own_hash_pinned_externally": true,
+        "game_final_receipt_resource_ownership": false,
+        "existing_GQ8_trigger_paths_cover_real_PREP_input": true
+      },
+      "scope_amendments": [
+        {
+          "scope_version_before": 1,
+          "scope_version_after": 2,
+          "amended_at": "2026-11-23T02:16:36.079271+00:00",
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "issuer_context": "CODEX_ROOT_E659B2512947",
+          "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+          "operation_id": "2610b844-52d7-4c9a-bdcc-59094e525a9d",
+          "coordination_lease": {
+            "kind": "CONTROLLER",
+            "epoch": 659,
+            "owner_id": "2610b844-52d7-4c9a-bdcc-59094e525a9d",
+            "acquire_commit": "a6f514252b8cb3f0062e88c36210a9b53827a786",
+            "acquired_at": "2026-11-23T02:15:13.334265+00:00",
+            "expires_at": "2026-11-23T02:45:13.334265+00:00",
+            "scope": "METADATA_SCOPE_AMENDMENT_ONLY_NOT_SOURCE_OR_RC_LEASE"
+          },
+          "registry_preimage": {
+            "ref": "96de4b77673131224512fb15601c82d7e46c7c78",
+            "blob": "54cac62649fe22948f9b92e2ef4b0c2b45fd8fbe",
+            "official_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0"
+          },
+          "request_comment": 7088987117,
+          "exact_added_path": "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json",
+          "resources_unchanged": true,
+          "original_grant_times_and_history_preserved": true,
+          "scope_review": {
+            "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+            "receipt_bytes": 6893,
+            "receipt_sha256": "6da45fbbaea389035db912d7c38bc313b5ecc4aa74aa4e47db14aebdb79f073f",
+            "decision": "PASS_PRIVATE_ONE_PATH_AMENDMENT_SCOPE_ONLY",
+            "actual_source_head_approval": false
+          },
+          "formal_source_and_RC_acceptance": false
+        }
+      ]
     },
     {
       "claim_id": "P0D-GQ866-PRIMARY-BINDING-20261123-0A2BA23F",
