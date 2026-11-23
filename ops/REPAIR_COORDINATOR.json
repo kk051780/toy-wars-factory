@@ -2394,17 +2394,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 698,
-  "holder": {
-  "kind": "CONTROLLER",
-  "owner_id": "5b78c183-8b14-47c9-ab4c-0e61fe68a594",
-  "task_id": null,
-  "epoch": 698,
-  "acquired_at": "2026-11-23T09:15:37+00:00",
-  "expires_at": "2026-11-23T09:45:37+00:00",
-  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-  "work_branch": "coord/p0d-work-claims",
-  "origin": "controller"
-},
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -4048,11 +4038,20 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "b49d346e-f013-4ed6-85a6-c4da97a314b5",
-    "epoch": 697,
-    "released_at": "2026-11-23T09:15:23.262775+00:00"
-  },
+  "kind": "CONTROLLER",
+  "owner_id": "5b78c183-8b14-47c9-ab4c-0e61fe68a594",
+  "epoch": 698,
+  "released_at": "2026-11-23T09:21:05+00:00",
+  "release_receipt": {
+    "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+    "repository": "kk051780/toy-wars-factory",
+    "owner_run_id": "5b78c183-8b14-47c9-ab4c-0e61fe68a594",
+    "epoch": 698,
+    "expected_parent": "b14ee74ddeb4685edc4e2e4ea36bf496c534f6e9",
+    "provider_terminal": "NOT_ATTESTED",
+    "postwrite_readback_required": true
+  }
+},
   "last_completed_history": [
     {
       "additional_spend_jpy": 0,
