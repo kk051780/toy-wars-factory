@@ -18708,6 +18708,180 @@
         "scope_unchanged": true,
         "actual_candidate_head_review_completed": false
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-RELEASE-REQUIREMENTS-20261123-E659",
+      "feature_id": "GQ470_RELEASE_REQUIREMENTS_CATALOG_20261123",
+      "sub_scope": "EXISTING_SEVEN_ROLE_RELEASE_REQUIREMENTS_AND_HISTORICAL_PROGRESS_LABELS",
+      "owner": "CODEX_ROOT_E659B2512947",
+      "role": "A_PREP",
+      "canonical_parent": 470,
+      "parent_issue": 470,
+      "coordination_issue": 218,
+      "integration_issue": 220,
+      "pr": null,
+      "allowed_new_prs": 1,
+      "request_comment": 7088238238,
+      "value_decision_comment": 7088238024,
+      "resources": [
+        "P0D_FEATURE_CATALOG",
+        "P0D_PROGRESS_REPORT"
+      ],
+      "target_paths": [
+        "rc_fastlane/FEATURE_CATALOG.json",
+        "rc_fastlane/progress.py"
+      ],
+      "mutable_paths": [
+        "rc_fastlane/FEATURE_CATALOG.json",
+        "rc_fastlane/progress.py"
+      ],
+      "prep_branch": "quality/gq470-release-requirements-20261123-e659",
+      "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "before_entries": {
+        "rc_fastlane/FEATURE_CATALOG.json": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "0d125d45fb5d2724539e0e119a586024aa47818b",
+          "bytes": 27330,
+          "sha256": "391fd6cbeaeafbee55ebaa2b8ec184d06a7610e4f4a344af426b2ace1a1a4741"
+        },
+        "rc_fastlane/progress.py": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "72e8110d3956505517b17803a8acdc34649b824c",
+          "bytes": 4704,
+          "sha256": "881d827978b48763ffa7ef4a045e537351bd819c0ab7cc3210a9207a36a6b8be"
+        }
+      },
+      "proposed_after": {
+        "rc_fastlane/FEATURE_CATALOG.json": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "997e975a3f0e1122680ddd06f5e4937495a392a3",
+          "bytes": 33390,
+          "sha256": "e12b1ebdb2073f8a094013ae781cdb9d72ee79d6723cfd51431f0fe814c21b3e"
+        },
+        "rc_fastlane/progress.py": {
+          "mode": "100644",
+          "type": "blob",
+          "sha": "41a47c6752170825f61ea1190dee21a17815ecf6",
+          "bytes": 7190,
+          "sha256": "1d5f520e698de1e1e5b07e7c2619672d856380335c86cd983171d60935c879a1"
+        }
+      },
+      "author_contexts": [
+        "CODEX_ROOT_E659B2512947:/root: accountable parent and sole future GitHub source writer",
+        "CODEX_ROOT_E659B2512947:/root/candidate_triage: exact two-file proposal implementation"
+      ],
+      "author_path_assignments": {
+        "CODEX_ROOT_E659B2512947:/root/candidate_triage": [
+          "rc_fastlane/FEATURE_CATALOG.json",
+          "rc_fastlane/progress.py"
+        ]
+      },
+      "independent_reviewer_context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+      "independent_review_status": "CONTEXT_REGISTERED_FOR_FUTURE_ACTUAL_HEAD_REVIEW_NO_SOURCE_APPROVAL",
+      "scope_review": {
+        "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+        "receipt_sha256": "db5864d8e4d8afd9fb3f3c67ed20141c9d116fa5d78e908411895871c2786383",
+        "decision": "PASS_FIXED_LOCAL_METADATA_PROPOSAL_AND_PROSPECTIVE_TWO_PATH_SCOPE",
+        "registry_blob": "178dbc57fb891591af4804ee3341c6bfee0be3ba",
+        "actual_candidate_head_review_completed": false,
+        "second_look": {
+          "context": "CODEX_ROOT_E659B2512947:/root/environment_audit",
+          "sha256": "d1dadb3ba96599ca3ae98bd8fafcfc312c73ad29f8a81d8e955a0083dfd33e59",
+          "decision": "PASS_PROSPECTIVE_SCOPE_ONLY_NO_BLOCKING_FINDINGS"
+        }
+      },
+      "scope": "Preserve all 67 historical catalog rows and prior root fields; add current seven-role release requirements without acceptance or count changes, and label the old report as a dated historical snapshot. No new game feature or runtime source.",
+      "preservation": [
+        "Original #302 open draft and its P0D-059/last_progress_change history remain unchanged and are not imported.",
+        "All existing catalog rows/root values and 9 prior progress JSON values remain unchanged.",
+        "Current seven roles remain existing internal IDs; NINJA required player name is 暗殺者; six other names are only observed source labels.",
+        "All acceptance assessments remain NOT_EVALUATED. No SOURCE/RC/ENGINE/FUN/OWNER pass."
+      ],
+      "source_publication_conditions": [
+        "Genuine metadata coordinator lease and current registry collision recheck before grant; source requires separate genuine lease after metadata lease release.",
+        "Fresh official RC and both before blobs must match; any drift requires explicit reconciliation before new branch creation.",
+        "One new isolated draft PR maximum, based on the actual current official RC. Exactly the two existing regular100644 files change.",
+        "Actual GitHub tree/compare/PR files readback, existing same-head CI and registered non-author actualHEAD review required. Local review is not actualHEAD approval.",
+        "No workflow edits or synthetic CI; RC78 existing path trigger may run, PRIVATE69 path-specific CI is not assumed."
+      ],
+      "rollback": {
+        "patch_sha256": "278e141127ea78b46fc961acc158ef2ebc54ea465ea85b1045f925561d146fe2",
+        "bytes": 12365,
+        "method": "Inverse only this two-file delta with fresh parent preservation; do not reset or overwrite unrelated changes."
+      },
+      "forbidden_changes": [
+        "All game runtime sources and source locks",
+        "Workflow, tests, aliases, coordinator implementation, authority policy",
+        "main, Publish, spending, five automations",
+        "Any other author's branch or old #302",
+        "Formal RC under this source grant"
+      ],
+      "source_grant": true,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "new_game_feature_count": 0,
+      "engine_mobile_fun_owner_acceptance": false,
+      "state": "GRANTED",
+      "work_kind": "SYSTEM_QUALITY_GATE_METADATA_MAINTENANCE",
+      "source_head": null,
+      "candidate_head": null,
+      "source_branch_published": false,
+      "grant_scope_version": 1,
+      "source_scope_granted": true,
+      "PREP_READY": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "a3b7d48f-58d9-4a64-94b9-e2cd1276a278",
+      "issued_at": "2026-11-23T00:43:36.017Z",
+      "expires_at": "2026-11-23T06:43:36.017Z",
+      "coordination_lease": {
+        "kind": "CONTROLLER",
+        "epoch": 649,
+        "owner_id": "a3b7d48f-58d9-4a64-94b9-e2cd1276a278",
+        "acquire_commit": "b74c6a22fc52f5c44e76bc664d7e998afea03b78",
+        "acquired_at": "2026-11-23T00:42:12.477655+00:00",
+        "expires_at": "2026-11-23T01:12:12.477655+00:00",
+        "scope": "METADATA_CLAIM_REGISTRATION_ONLY_NOT_SOURCE_LEASE"
+      },
+      "authority_evidence": {
+        "authenticated_user": "kk051780",
+        "authenticated_user_id": 233213370,
+        "repository_permissions": {
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "standing_delegation": "AGENTS.md / current OWNER #1011 / formal execution policy v1.2; ordinary delegated source preparation only",
+        "scope_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7088238238",
+        "value_decision": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7088238024"
+      },
+      "actual_grant_preflight": {
+        "registry_head": "c91c7aaeeb4961797c9b6b985cb9ca8d5530a7fc",
+        "registry_blob": "a7cc60a1e33d5a52bc147feb6bcb32ce28a29ca1",
+        "registry_rows": 17,
+        "official_rc": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "expiry_does_not_drop_busy_rows": true
+      },
+      "expiry_policy": "Actual issued_at +6 hours. Expiry alone does not release a BUSY reservation or authorize takeover.",
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "formal_intake_status": "UNRESOLVED_REAL69_SAME_HEAD_PR_CI_AND_ACTUAL_SOURCE_LOCK_REQUIRED_NO_READY_CONTRACT",
+      "formal_intake_boundary": "Existing RC78 CI is useful source/report evidence only and cannot substitute for required REAL69 PR-event full CI/artifact. This two-path grant does not include workflow edits, extra lock paths, queue changes, RC adoption, or policy exceptions.",
+      "existing_same_file_candidate": {
+        "pr": 302,
+        "head": "14bd2a6afc460a78cb0476f3e4a12976a594d343",
+        "state": "open",
+        "draft": true,
+        "same_requirement_repair": false,
+        "import_close_or_authority_transfer": false
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
