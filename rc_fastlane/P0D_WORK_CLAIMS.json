@@ -18882,6 +18882,177 @@
         "same_requirement_repair": false,
         "import_close_or_authority_transfer": false
       }
+    },
+    {
+      "claim_id": "P0D-GQ866-PRIMARY-BINDING-20261123-0A2BA23F",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_0A2BA23F0733",
+      "feature_id": "GQ866_REAL69_PRIMARY_STUDIO_BINDING",
+      "sub_scope": "A2_OFFLINE_PRIMARY_PROFILE_BINDING_VALIDATOR_ONLY",
+      "canonical_parent": 866,
+      "parent_issue": 866,
+      "integration_issue": 220,
+      "request_comment": 7088172456,
+      "design_comment": 7088154741,
+      "resources": [
+        "PRIMARY_PROFILE_BINDING_VALIDATOR"
+      ],
+      "target_paths": [
+        "rc_fastlane/bind_primary_profile.py",
+        "tests/test_primary_profile_binding.py"
+      ],
+      "mutable_paths": [
+        "rc_fastlane/bind_primary_profile.py",
+        "tests/test_primary_profile_binding.py"
+      ],
+      "change_shape": {
+        "added": 2,
+        "modified": 0,
+        "deleted": 0,
+        "renamed": 0,
+        "game_source_delta": 0
+      },
+      "prep_branch": "quality/gq866-primary-binding-validator-20261123-0a2ba23f",
+      "source_branch_created": false,
+      "source_head_before": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "source_head": null,
+      "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "pr": null,
+      "allowed_new_prs": 1,
+      "followup_pr_reason": "PR866 is merged and contains inventory only; one bounded follow-up offline validator, no parallel gameplay producer.",
+      "role": "A_PREP",
+      "grant_scope_version": 1,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_CODEX_CONTROLLER",
+      "issuer_operation_id": "08d4a603-cce9-49e1-9d20-2dc96e03450c",
+      "issued_at": "2026-11-23T00:47:05.346802+00:00",
+      "expires_at": "2026-11-23T06:47:05.346802+00:00",
+      "author_contexts": [
+        {
+          "context": "/root/gameplay_triage",
+          "paths": [
+            "rc_fastlane/bind_primary_profile.py"
+          ],
+          "role": "IMPLEMENTATION_AUTHOR_ONLY"
+        },
+        {
+          "context": "/root/runtime_review",
+          "paths": [
+            "tests/test_primary_profile_binding.py"
+          ],
+          "role": "INDEPENDENT_TEST_AUTHOR_ONLY"
+        }
+      ],
+      "source_publisher": "/root (CODEX_ROOT_0A2BA23F0733)",
+      "independent_reviewer_context": "/root/admission_review",
+      "author_may_self_approve": false,
+      "independent_review_status": "V2_SCOPE_ONLY_PASS; ACTUAL_SOURCE_HEAD_TEST_CI_REVIEW_REQUIRED",
+      "scope": "Exactly two new regular files: a local/offline read-only binding validator and independently authored tests. Bind ACTIVE selection, canonical REAL69 profile, exact complete delivery manifest, project/Place/source route/class/body map, final admission and archived nine-field context. Correctly classify authentic current rich51 primary plus REAL69 companion. No change to actual selection, workflows, canonical producer/profile/Native/delivery, gameplay or authority.",
+      "scope_contract": {
+        "request_url": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7088172456",
+        "scope_v2": {
+          "bytes": 19663,
+          "sha256": "466c5435393a6ef0ff32f463572e3ad2d5ceba944b26c263598399edc32ab617"
+        },
+        "api_v2": {
+          "bytes": 10704,
+          "sha256": "08317d1daf6e0bfaa35c245de5a44e4fa87a00c50b1db27d468f5920b7653abc"
+        },
+        "v1_preserved": true
+      },
+      "scope_review": {
+        "context": "/root/admission_review",
+        "decision": "PASS_V2_SAME_TWO_PATH_SCOPE_AND_HISTORICAL_NATIVE_BOUNDARY_ONLY_NOT_GRANTED",
+        "bytes": 6084,
+        "sha256": "08e9247fdab0811a97be9939152b161ce28c750078424284769aa57d5aca45bb",
+        "prior_v1_bytes": 7753,
+        "prior_v1_sha256": "75f404fd7c969b656afef84032ec58aabf7d17643353944e9f38e2db170820a8",
+        "actual_source_review": false
+      },
+      "required_evidence_contract": {
+        "status": "DESIGN_REQUIREMENTS_NOT_EXECUTED",
+        "validator_execution": "LOCAL_READ_ONLY",
+        "actual_archive_control": "COMPANION_NOT_SELECTED",
+        "synthetic_selection": "LOCAL_SYNTHETIC_SELECTION_ONLY",
+        "synthetic_admission": "LOCAL_SYNTHETIC_SOURCE_SELECTION_ONLY",
+        "archived_native_scope": "ARCHIVED_ADMISSION_BINDING",
+        "synthetic_native_scope": "HISTORICAL_ONLY",
+        "historical_native_file_set_and_all_bytes_preserved": true,
+        "historical_reference_in_emission_snapshot": true,
+        "current_native_admission_proven": false,
+        "no_inherited_github_env_or_live_context_or_subprocess_authority": true,
+        "fresh_ci_executed": false,
+        "native_executed": false,
+        "studio_executed": false,
+        "default_selection_changed": false
+      },
+      "observed_execution_status": {
+        "implementation_written": false,
+        "production_tests_written": false,
+        "offline_tests": "NOT_RUN",
+        "archive_control": "NOT_RUN",
+        "synthetic_control": "NOT_RUN",
+        "hosted_binder_ci": "NOT_RUN",
+        "new_native_runs": 0,
+        "studio": "NOT_TESTED"
+      },
+      "acceptance": [
+        "Independent hash-bound A2 scope review before actual grant.",
+        "Actual grant and own source lease before either author writes a production path.",
+        "Exact A2 changed-path and preservation readback; no existing file modification.",
+        "Normal and -O meaningful offline tests plus the actual dcb archive control classified companion, and explicitly synthetic prospective-control results.",
+        "Independent code/test/evidence review; truthful actual-HEAD CI and source status with no implied integrated workflow gate.",
+        "Draft one authorized PR only; no RC mutation or PREP_READY/cutover inference from local tests."
+      ],
+      "forbidden_changes": [
+        "rc_fastlane/ACTIVE.json",
+        ".github/workflows/p0d-rc-fastlane.yml",
+        ".github/workflows/gq8-real63-source-composite.yml",
+        ".github/workflows/p0d-rc-eggrumble-v3-31.yml",
+        ".github/workflows/p0d-rc-eggrumble-v3-core36.yml",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "rc_fastlane/ONE_RC_FAST_ADMISSION_20261120.md",
+        "rc_fastlane/README.md",
+        "All existing composer/verifier/Native runners and tests",
+        "All69 Luau sources and project topology",
+        "All delivery/rollback/native evidence bytes",
+        "Claim/coordinator/source/RC branch mutations by child authors",
+        "Network/spend/Roblox/Studio/Publish/main changes",
+        "Actual default-profile switch or historical workflow routing changes"
+      ],
+      "rollback": "Remove exactly the two new files/commits through a reviewed non-force change, preserving every existing file and all unrelated accepted changes. No runtime/selector/delivery/data rollback is required because A2 changes none.",
+      "source_lease_required": true,
+      "coordination_lease": {
+        "branch": "twf-repair-coordinator",
+        "epoch": 650,
+        "claim_commit": "20f28f9635764b300fc6c1c153cfeb13a0322609",
+        "work_branch": "coord/p0d-work-claims",
+        "owner_id": "08d4a603-cce9-49e1-9d20-2dc96e03450c",
+        "task_id": null,
+        "acquired_at": "2026-11-23T00:45:28.151196+00:00",
+        "expires_at": "2026-11-23T01:15:28.151196+00:00",
+        "status": "ACQUIRED_FULL_READBACK"
+      },
+      "authority_evidence": [
+        "Authenticated kk051780/233213370 and admin collaborator permission were actually checked; re-read before metadata commit.",
+        "Official RC AGENTS.md and execution policy v1.2/#1011 plus standing owner delegation authorize ordinary bounded development with independent review.",
+        "Request/scope review alone are not a grant; only successful expected-SHA registry commit/readback creates this row. The metadata lease confers no source or RC writer authority.",
+        "Existing claims, aliases, top-level metadata and all other owners/history must remain unchanged. Expiry alone does not free reservations."
+      ],
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "RC_adoption": false,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "ART_NO_GO",
+      "fun": "NOT_TESTED",
+      "RUNTIME_UNIFIED": "NO",
+      "later_expansion": "M8 cutover remains excluded and needs actual accepted parent, legitimate ACTIVE66/canonical-profile handoff, amended scope and affected CI. No future expansion is authorized by this row."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
