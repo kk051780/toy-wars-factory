@@ -21369,7 +21369,7 @@
           "type": "blob"
         }
       },
-      "independent_review_status": "LOCAL_SOURCE_AND_TEST_REVIEW_EXISTS; REGISTERED_FIXED_HEAD_SOURCE_APPROVAL_PENDING",
+      "independent_review_status": "ACTUAL_FIXED_HEAD_SOURCE_ACCEPTED_ONLY_NOT_READY_OR_RC",
       "independent_reviewer_context": "CODEX_ROOT_BD769DA1E937:/root/integration_route",
       "integration_issue": 220,
       "issued_at": "2026-11-23T03:34:47.310000+00:00",
@@ -21471,7 +21471,7 @@
       },
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
-      "registered_source_approval": false,
+      "registered_source_approval": true,
       "request_comment": 7088282430,
       "resources": [
         "GQ802_MATCH_ROUTE_V1",
@@ -21483,7 +21483,7 @@
       "scope_review_context": "CODEX_ROOT_BD769DA1E937:/root/p0_reuse_audit",
       "scope_review_is_code_approval": false,
       "source_author_context": "CODEX_ROOT_BD769DA1E937:/root",
-      "source_head": null,
+      "source_head": "ab9150746c6b75b6609716f7d075ada08993ed1e",
       "source_head_before": "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68",
       "source_increment_validation": {
         "actual_new_HEAD_native_CI_and_independent_review_required": true,
@@ -21510,8 +21510,8 @@
         "original_seven_comparison_base": "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68"
       },
       "source_scope_granted": true,
-      "source_tree": null,
-      "state": "GRANTED",
+      "source_tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+      "state": "RELEASED",
       "studio": "NOT_TESTED",
       "sub_scope": "Existing PR807 same-lobby same-cohort exclusion across a yielding MemoryStore claim; optional standalone source PREP only.",
       "target_paths": [
@@ -21529,7 +21529,538 @@
       "expiry_policy": "Actual issued_at +6h; expired reservation is not automatic handoff.",
       "source_writes_permitted_at_issuance": false,
       "source_lease_status_at_issuance": "NOT_ACQUIRED",
-      "source_write_requires_separate_live_source_lease": true
+      "source_write_requires_separate_live_source_lease": true,
+      "source_preparation_closed": true,
+      "formal_rc_adopted": false,
+      "source_reservation_release": {
+        "kind": "NORMAL_COMPLETED_FROZEN_SOURCE_SCOPE_CLOSURE",
+        "previous_state": "GRANTED",
+        "at": "2026-11-23T06:12:51.129Z",
+        "owner": "CODEX_ROOT_BD769DA1E937",
+        "source_head": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+        "source_tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+        "publication_base_rc_sha": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "current_official_ref_observed": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "paths_preserved": 7,
+        "mutable_path_definition_preserved": 3,
+        "immutable_donor_files_preserved": 4,
+        "all_resource_names_preserved": true,
+        "new_source_edits_authorized": false,
+        "requires_new_scoped_handoff_before_future_writes": true,
+        "scope_release_does_not_grant_rc_intake": true,
+        "successor_grant_issued": false,
+        "PREP_READY": false,
+        "official_rc_adopted": false,
+        "coordinator": {
+          "acquire_commit": "82565a0f25efeb0faffcf72d16bb3b039140c8e5",
+          "epoch": 683,
+          "operation_id": "83449299-32b6-4bd5-9acf-159014a06c88",
+          "issuer": "kk051780",
+          "issuer_user_id": 233213370,
+          "role": "OWNER_DELEGATED_COORDINATOR"
+        },
+        "original_grant": {
+          "ref": "7311ca42c9431252b8503656a1401e6c1fa08c9d",
+          "blob": "857850759fea35f4b11c05fcd1495d5b7cc41fda",
+          "raw_pin": {
+            "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/ACTUAL_HISTORICAL_GRANT.json",
+            "bytes": 1299783,
+            "sha256": "669878478285343de8e049471a3b6df95c9d69bd769751dd84e8fee8175e6462",
+            "git_blob": "857850759fea35f4b11c05fcd1495d5b7cc41fda"
+          },
+          "scope_version": 1,
+          "issued_at": "2026-11-23T03:34:47.310000+00:00",
+          "expires_at": "2026-11-23T09:34:47.310000+00:00",
+          "metadata_result": {
+            "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/INPUT_metadata_result.json",
+            "bytes": 1595,
+            "sha256": "d862117dd27dc806cb349408356c630aebbe65c461ebabcd476d3cd810595785",
+            "git_blob": "577581c2a1621f2b84a2cd95e290360436bc705c"
+          }
+        },
+        "previous_field_values": {
+          "state": "GRANTED",
+          "source_head": null,
+          "source_tree": null,
+          "registered_source_approval": false,
+          "independent_review_status": "LOCAL_SOURCE_AND_TEST_REVIEW_EXISTS; REGISTERED_FIXED_HEAD_SOURCE_APPROVAL_PENDING",
+          "PREP_READY": false,
+          "rc_write_authorized_by_this_claim": false
+        },
+        "original_transaction_result": {
+          "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/INPUT_source_result.json",
+          "bytes": 4233,
+          "sha256": "12d6d3ad283f0e36d3fc86be86c11e7e845f579c29e9fc1ca35ec34a8b9a8e92",
+          "git_blob": "6bf3bb655c947f453aedc516c90f0b4645cf2c5f"
+        },
+        "original_transaction_status_preserved": "SOURCE_WIP_NOT_CONFIRMED",
+        "original_failure_preserved": {
+          "message": "Error: Actual PR is no longer the same open original branch and formal base",
+          "at": "2026-11-23T03:43:38.618Z",
+          "status": "SOURCE_WIP_FAILURE_NO_RETRY",
+          "source_commit_created": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+          "source_update_attempted": true,
+          "source_update_returned": true,
+          "source_readback_confirmed": false,
+          "no_rollback_or_takeover_attempted": true
+        },
+        "later_readonly_reconciliation": {
+          "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/INPUT_reconciliation.json",
+          "bytes": 10104,
+          "sha256": "37022c5883d615d633427bcd10fe7990ba32e8691ab14173bbe9629388fb2ff8",
+          "git_blob": "cccdd75fdbf0c142f78c919ed323a9d4e5912d71"
+        },
+        "source_normal_release": {
+          "status": "RELEASED_READBACK",
+          "ref": "602a4885b7aeaf7fbaf57e919fb81fbc114f8422",
+          "blob": "568e966ffeea5a4ced304a5f73da3c538e155e08",
+          "last_completed": {
+            "kind": "CONTROLLER",
+            "owner_id": "054933b1-d0e5-414f-9857-d8df0c640e90",
+            "epoch": 667,
+            "released_at": "2026-11-23T03:43:43.080018+00:00"
+          }
+        },
+        "source_normal_release_raw": {
+          "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/ACTUAL_SOURCE667_NORMAL_RELEASE.json",
+          "bytes": 205226,
+          "sha256": "3ec893a132c4358ed89229c8c6ab617a8b9534347381bfbf6f112b53804fb49d",
+          "git_blob": "568e966ffeea5a4ced304a5f73da3c538e155e08"
+        },
+        "registered_source_review": {
+          "context": "CODEX_ROOT_BD769DA1E937:/root/integration_route",
+          "decision": "APPROVE_ACTUAL_PR807_HAB915_SOURCE_ONLY_NOT_READY_OR_RC",
+          "receipt": {
+            "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/ACCEPTED_SOURCE_REVIEW.json",
+            "bytes": 28026,
+            "sha256": "4bb0ff02ef79ca48d9a3117a243f29cacfecfbdb249224820f5f8e31cba703ef",
+            "git_blob": "dd214e4a83427e58fe68552050376513a0a4a477"
+          },
+          "original_path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/RESULT.json"
+        },
+        "actual_same_head_CI": {
+          "gq802": {
+            "run_id": 45107672087,
+            "workflow_id": 422544919,
+            "event": "pull_request",
+            "head_sha": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+            "head_branch": "quality/gq802-skill-match-policy-20261118",
+            "status": "completed",
+            "conclusion": "success",
+            "attempt": 1,
+            "path": ".github/workflows/gq802-skill-match.yml",
+            "jobs": [
+              {
+                "job_id": 137472571581,
+                "name": "native-cohorts",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:44:53Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 121,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 221,
+                      "value": "f46d879e28302a430029304f7f6a162aed66f103"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472571581.log",
+                  "bytes": 64701,
+                  "sha256": "e37cd4d80a6287574c1b96e6653cc6fdbd939ac4b7e94c4340b11cd27179b646",
+                  "git_blob": "37a816c87e12f3220ef570c1538ab88b4de64280",
+                  "lines": 549,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 121,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 221,
+                      "value": "f46d879e28302a430029304f7f6a162aed66f103"
+                    }
+                  ]
+                },
+                "skipped_steps": []
+              }
+            ]
+          },
+          "bootstrap": {
+            "run_id": 45107672313,
+            "workflow_id": 394718989,
+            "event": "pull_request",
+            "head_sha": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+            "head_branch": "quality/gq802-skill-match-policy-20261118",
+            "status": "completed",
+            "conclusion": "success",
+            "attempt": 1,
+            "path": ".github/workflows/bootstrap-quality.yml",
+            "jobs": [
+              {
+                "job_id": 137472572395,
+                "name": "offline",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:44:07Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 1330,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 1496,
+                      "value": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472572395.log",
+                  "bytes": 433235,
+                  "sha256": "e9c659ff7ca50402cae0a4c090ea7b385fb64cf1b62fee2c86e5fb3ae1277d96",
+                  "git_blob": "c9e8697e8b183e4e9394291ab8e23a418c5424ab",
+                  "lines": 2973,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 1330,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 1496,
+                      "value": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3"
+                    }
+                  ]
+                },
+                "skipped_steps": [
+                  "Enforce scheduled repair scope using the trusted base policy",
+                  "Enforce daily system-review scope using trusted base tools",
+                  "Verify immutable shared lease for automatic repair and system-review PRs"
+                ]
+              },
+              {
+                "job_id": 137472572642,
+                "name": "compile_hold",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:43:53Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 122,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472572642.log",
+                  "bytes": 16267,
+                  "sha256": "e37707bfc7a3a171d5db80156c98037a97b589a7deb61a83ca57a2e1eb9b82c7",
+                  "git_blob": "f477ba1c8291c278ceae5bc72090457e53786842",
+                  "lines": 196,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 122,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    }
+                  ]
+                },
+                "skipped_steps": []
+              }
+            ]
+          }
+        },
+        "source_quality_fact_preserved": "Actual fixed ab915 source acceptance only, after independently reviewed later readback; not full-RC candidate or engine acceptance.",
+        "current_source_report": {
+          "id": 7091039354,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/807#issuecomment-7091039354",
+          "pin": {
+            "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/PUBLIC_SOURCE_REPORT.json",
+            "bytes": 8477,
+            "sha256": "51c96e8f060a82ee05b286fb4730ede65522a8c59a0bea8fa5c7cf0f004e8515",
+            "git_blob": "706e466de6140ffeb302e300a1f6c9db9cf95748"
+          },
+          "authority": "INFORMATION_ONLY_NOT_A_GRANT"
+        },
+        "reason": "Complete the existing PR807 cohort-yield source repair and release its finite reservation. Preserve original history, seven paths, two resources, default OFF and separate canonical integration responsibility."
+      },
+      "verified_source_results": {
+        "head": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+        "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+        "ordered_parents": [
+          "fe65cbe8e42631e19d8b2d7f2e73d8ea675c7e68",
+          "93a1147561a531610ac1609ebc68cc0ecf546623"
+        ],
+        "complete_seven_manifest": {
+          "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/INPUT_manifest.json",
+          "bytes": 1947,
+          "sha256": "e20115e1a193b5a63bb5c4d9abd3a486f890ebedbc6eaa5f4d1f4c39b78666bf",
+          "git_blob": "2159b99438a95bfb5a55b84bf73c9f22eb956824"
+        },
+        "original_nineteen_history_preserved": true,
+        "source_commit_count": 20,
+        "complete_leaf_counts": {
+          "parent": 931,
+          "published": 938
+        },
+        "mutable_paths": [
+          "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_MatchTeleportBridge.luau",
+          "quality_gameplay/gq802_skill_match_20261118/test_match_teleport_native.luau",
+          "quality_gameplay/gq802_skill_match_20261118/MATCH_TELEPORT_LIVE_README.md"
+        ],
+        "frozen_files_preserved": {
+          ".github/workflows/gq802-skill-match.yml": {
+            "bytes": 2784,
+            "git_blob": "453259db92ef198de068459f3d5478d3f8a38b96",
+            "mode": "100644",
+            "scope": "IMMUTABLE_CARRY_FROM_FE65",
+            "sha256": "eb823a6202e917f912adb3e00820a6ec6e6d97f236df1f9dee0ea05715658d3a",
+            "type": "blob"
+          },
+          "quality_gameplay/gq802_skill_match_20261118/EGGRUMBLE_SkillMatchPolicy.luau": {
+            "bytes": 5725,
+            "git_blob": "4e4171006ac5982958841417817bfb56b40d3e2f",
+            "mode": "100644",
+            "scope": "IMMUTABLE_CARRY_FROM_FE65",
+            "sha256": "4004480d07658019be2666b563d8ab3bd49fa7c84f13fd70d9b6c4dbdbb05ec7",
+            "type": "blob"
+          },
+          "quality_gameplay/gq802_skill_match_20261118/README.md": {
+            "bytes": 1910,
+            "git_blob": "d38f1df2119ac8c2ff3e4edb3232710e0b8915f8",
+            "mode": "100644",
+            "scope": "IMMUTABLE_CARRY_FROM_FE65",
+            "sha256": "474bd445f68cd5aadf4c9aa11768bca25cb4fd0eceddd891fcc106a9f327ca42",
+            "type": "blob"
+          },
+          "quality_gameplay/gq802_skill_match_20261118/test_skill_match_native.luau": {
+            "bytes": 2864,
+            "git_blob": "6570ed387584d235dae9d8bdf43385b0ddc6f8a1",
+            "mode": "100644",
+            "scope": "IMMUTABLE_CARRY_FROM_FE65",
+            "sha256": "5c2461b39db52284298ca9bdd2ba8b2d11535c9724893ebee96231c48381b9bc",
+            "type": "blob"
+          }
+        },
+        "registered_source_review": {
+          "path": "/workspace/scratch/bd769da1e937/match_dispatch_repair/publication/h93_rebind/result_return/result_return_attempt08/ACCEPTED_SOURCE_REVIEW.json",
+          "bytes": 28026,
+          "sha256": "4bb0ff02ef79ca48d9a3117a243f29cacfecfbdb249224820f5f8e31cba703ef",
+          "git_blob": "dd214e4a83427e58fe68552050376513a0a4a477"
+        },
+        "same_head_CI": {
+          "gq802": {
+            "run_id": 45107672087,
+            "workflow_id": 422544919,
+            "event": "pull_request",
+            "head_sha": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+            "head_branch": "quality/gq802-skill-match-policy-20261118",
+            "status": "completed",
+            "conclusion": "success",
+            "attempt": 1,
+            "path": ".github/workflows/gq802-skill-match.yml",
+            "jobs": [
+              {
+                "job_id": 137472571581,
+                "name": "native-cohorts",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:44:53Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 121,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 221,
+                      "value": "f46d879e28302a430029304f7f6a162aed66f103"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472571581.log",
+                  "bytes": 64701,
+                  "sha256": "e37cd4d80a6287574c1b96e6653cc6fdbd939ac4b7e94c4340b11cd27179b646",
+                  "git_blob": "37a816c87e12f3220ef570c1538ab88b4de64280",
+                  "lines": 549,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 121,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 221,
+                      "value": "f46d879e28302a430029304f7f6a162aed66f103"
+                    }
+                  ]
+                },
+                "skipped_steps": []
+              }
+            ]
+          },
+          "bootstrap": {
+            "run_id": 45107672313,
+            "workflow_id": 394718989,
+            "event": "pull_request",
+            "head_sha": "ab9150746c6b75b6609716f7d075ada08993ed1e",
+            "head_branch": "quality/gq802-skill-match-policy-20261118",
+            "status": "completed",
+            "conclusion": "success",
+            "attempt": 1,
+            "path": ".github/workflows/bootstrap-quality.yml",
+            "jobs": [
+              {
+                "job_id": 137472572395,
+                "name": "offline",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:44:07Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 1330,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 1496,
+                      "value": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472572395.log",
+                  "bytes": 433235,
+                  "sha256": "e9c659ff7ca50402cae0a4c090ea7b385fb64cf1b62fee2c86e5fb3ae1277d96",
+                  "git_blob": "c9e8697e8b183e4e9394291ab8e23a418c5424ab",
+                  "lines": 2973,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 1330,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    },
+                    {
+                      "line": 1496,
+                      "value": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3"
+                    }
+                  ]
+                },
+                "skipped_steps": [
+                  "Enforce scheduled repair scope using the trusted base policy",
+                  "Enforce daily system-review scope using trusted base tools",
+                  "Verify immutable shared lease for automatic repair and system-review PRs"
+                ]
+              },
+              {
+                "job_id": 137472572642,
+                "name": "compile_hold",
+                "status": "completed",
+                "conclusion": "success",
+                "started_at": "2026-11-23T03:43:45Z",
+                "completed_at": "2026-11-23T03:43:53Z",
+                "checkout": {
+                  "commit": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13",
+                  "tree": "e58e337f78fc15871fcfeb6ed0e2a30318f37754",
+                  "equals_reviewed_tree": true,
+                  "kind": "ACTUAL_PR_MERGE_CHECKOUT_NOT_SOURCE_HEAD",
+                  "parents": [
+                    "93a1147561a531610ac1609ebc68cc0ecf546623",
+                    "ab9150746c6b75b6609716f7d075ada08993ed1e"
+                  ],
+                  "evidence": [
+                    {
+                      "line": 122,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    }
+                  ]
+                },
+                "log": {
+                  "path": "/workspace/scratch/bd769da1e937/integration_audit/pr807_actual_ab915_source_review/logs/job_137472572642.log",
+                  "bytes": 16267,
+                  "sha256": "e37707bfc7a3a171d5db80156c98037a97b589a7deb61a83ca57a2e1eb9b82c7",
+                  "git_blob": "f477ba1c8291c278ceae5bc72090457e53786842",
+                  "lines": 196,
+                  "exact_hash_output_lines": [
+                    {
+                      "line": 122,
+                      "value": "4a41286f62f11a12a0f115c810b6f23dd7ec7b13"
+                    }
+                  ]
+                },
+                "skipped_steps": []
+              }
+            ]
+          }
+        },
+        "initial_result_not_rewritten": true,
+        "later_readback_is_not_ref_retry": true,
+        "source_lease_normal_release": {
+          "status": "RELEASED_READBACK",
+          "ref": "602a4885b7aeaf7fbaf57e919fb81fbc114f8422",
+          "blob": "568e966ffeea5a4ced304a5f73da3c538e155e08",
+          "last_completed": {
+            "kind": "CONTROLLER",
+            "owner_id": "054933b1-d0e5-414f-9857-d8df0c640e90",
+            "epoch": 667,
+            "released_at": "2026-11-23T03:43:43.080018+00:00"
+          }
+        },
+        "PREP_READY": false,
+        "formal_rc_adopted": false,
+        "Host_connected": false,
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "fun": "NOT_TESTED",
+        "OWNER_ACCEPTED": false
+      }
     },
     {
       "claim_id": "P0D-GQ830-INVUL-PUBLICATION-20261123-FEEDE165",
