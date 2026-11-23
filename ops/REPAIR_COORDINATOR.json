@@ -2207,17 +2207,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 645,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "3d9c92c4-b9dd-4693-b085-ed6c20114014",
-    "task_id": null,
-    "epoch": 645,
-    "acquired_at": "2026-11-23T00:31:16.973724+00:00",
-    "expires_at": "2026-11-23T01:01:16.973724+00:00",
-    "base_main_sha": null,
-    "work_branch": "fix/gq8-input-rollback-20261123-3b3acf42",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3862,9 +3852,24 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "005ef560-07da-4087-8626-73e4171cc7bb",
-    "epoch": 644,
-    "released_at": "2026-11-23T00:31:02.477114+00:00"
+    "owner_id": "3d9c92c4-b9dd-4693-b085-ed6c20114014",
+    "epoch": 645,
+    "released_at": "2026-11-23T00:34:17.553Z",
+    "work_branch": "fix/gq8-input-rollback-20261123-3b3acf42",
+    "result": "SCOPED_SOURCE_AND_DRAFT_PR_PUBLISHED_NOT_RC_ADOPTED",
+    "source_head": "1677dca8e21ff415497242e4ad79babff117ccfd",
+    "source_tree": "6420ef4ef9b34e3b069269edaa4840b6254d9b46",
+    "source_parent": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+    "pr": 1021,
+    "changed_paths": [
+      "quality_gameplay/gq8_real63_intake_20261119/restore_original_inputs.py",
+      "tests/test_gq8_original_inputs_20261123.py"
+    ],
+    "actual_scope_receipt_sha256": "e53a56ed0de6366ed65159d85a884769d519f7e45a2a3b706d1f167895c4b539",
+    "independent_local_review_sha256": "04e3c590284ce5bfee3e40f3cc24f2bf283a70fcbdc31f1401141d0eb2987e81",
+    "hosted_CI": "PENDING",
+    "PREP_READY": false,
+    "rc_written": false
   },
   "last_completed_history": [
     {
@@ -4102,6 +4107,12 @@
       "released_at": "2026-11-22T23:44:45Z",
       "result": "PASS_EXACT_SCOPE_ART1010_ROUTER536_PASSIVE_REGISTRATION_GRANTS",
       "source_writes": 0
+    },
+    {
+      "kind": "CONTROLLER",
+      "owner_id": "005ef560-07da-4087-8626-73e4171cc7bb",
+      "epoch": 644,
+      "released_at": "2026-11-23T00:31:02.477114+00:00"
     }
   ],
   "last_completed_integration": {
