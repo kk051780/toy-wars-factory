@@ -18301,6 +18301,413 @@
       ],
       "target_paths_semantics": "Existing original469 cumulative envelope4; only mutable2 may change. Frozen observer/doc2 retain actual path/type/mode/blob. No workflow/document write right.",
       "work_kind": "SYSTEM_QUALITY_GATE_MAINTENANCE"
+    },
+    {
+      "claim_id": "P0D-GQ832-CAPTURE-LIFECYCLE-20261123-7A4B9B0B",
+      "feature_id": "GQ8_VIRAL_MOMENTS_CAPTURE_20261119",
+      "state": "GRANTED",
+      "owner": "CODEX_ROOT_7A4B9B0B26D0",
+      "sub_scope": "CURRENT69_CAPTURE_LIFECYCLE_EPOCH_CONSENT_COMPLETION",
+      "canonical_parent": 840,
+      "parent_issue": 832,
+      "integration_issue": 220,
+      "original_source_pr": 840,
+      "pr": null,
+      "allowed_new_prs": 1,
+      "candidate_pr_status": "NOT_CREATED_MAX_ONE_SUCCESSOR_DRAFT",
+      "resources": [
+        "REAL69_SOURCE_GQ8_VIRALCAPTURE"
+      ],
+      "target_paths": [
+        ".github/workflows/gq8-viral-real56-source.yml",
+        "quality_gameplay/gq8_viral_real55_20261119/GQ8_ViralCapture.client.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/compose_real56.py",
+        "quality_gameplay/gq8_viral_real55_20261119/test_real56.py",
+        "quality_gameplay/gq8_viral_real55_20261119/INPUT_LOCK.json",
+        "quality_gameplay/gq8_viral_real55_20261119/README.md",
+        "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/epoch_cases.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture_extended.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/completion_cases.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/completion_additional_cases.luau"
+      ],
+      "prep_branch": "feature/gq8-viral-real55-20261119",
+      "source_head_before": "bdb0bac0cf8aab08c8984ce195b4ff99d3900e70",
+      "source_head": null,
+      "base_rc_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "role": "A_PREP",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "005ef560-07da-4087-8626-73e4171cc7bb",
+      "issued_at": "2026-11-23T00:29:03.190067+00:00",
+      "expires_at": "2026-11-23T06:29:03.190067+00:00",
+      "coordination_lease": {
+        "ref": "8ddef509cc6b4b2f37554e3df95dd17e9bc4f745",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "005ef560-07da-4087-8626-73e4171cc7bb",
+          "task_id": null,
+          "epoch": 644,
+          "acquired_at": "2026-11-23T00:27:32.777922+00:00",
+          "expires_at": "2026-11-23T00:57:32.777922+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "request_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7086527737",
+      "author_contexts": [
+        "CODEX_ROOT_7A4B9B0B26D0:/root: Capture source v3 and future repository/CLI/CI binding",
+        "CODEX_ROOT_7A4B9B0B26D0:/root/map_review: original epoch27 test fixture and contracts; portable current69 verification wrapper in the existing test_real56.py may be authored in this same registered context",
+        "CODEX_ROOT_7A4B9B0B26D0:/root/review_intake: completion32 test additions and extended fixture"
+      ],
+      "independent_reviewer_context": "CODEX_ROOT_7A4B9B0B26D0:/root/planning_gap",
+      "independent_review_status": "SCOPE_PRECHECK_PASS_ACTUAL_CANDIDATE_HEAD_AND_CI_REVIEW_REQUIRED",
+      "scope_review": {
+        "context": "CODEX_ROOT_7A4B9B0B26D0:/root/review_intake",
+        "decision": "PASS_EXACT_ELEVEN_PATH_V2_SCOPE_ONLY_NOT_SOURCE_APPROVAL",
+        "review_sha256": "64c91452512878ef96c32f1618d980c29230bc1137ab4a8163687a327cc43c29",
+        "scope_manifest_sha256": "12b290ac8c085fdbeaf513718ae231d1de1e7dcf7c3eaffb0df6bc8760cca081",
+        "actual_candidate_head_review_completed": false
+      },
+      "grant_scope_version": 1,
+      "scope": {
+        "runtime_delta": {
+          "original": {
+            "path": "/workspace/scratch/7a4b9b0b26d0/baseline/official/sources/StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau",
+            "bytes": 6425,
+            "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+          },
+          "candidate_v3": {
+            "path": "/workspace/scratch/7a4b9b0b26d0/capture_epoch/proposal_v3/sources/StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau",
+            "bytes": 7414,
+            "sha256": "18b8b67741fee206870a7941fdb3b5a39c6bc42925abcd53271137d9fb458215"
+          },
+          "source_delta": {
+            "path": "/workspace/scratch/7a4b9b0b26d0/capture_epoch/proposal_v3/SOURCE_DELTA.json",
+            "bytes": 6160,
+            "sha256": "3688e2940b5d1b55ae675fee4030f9e81cb3d82c362dbee464d7f87808769831"
+          },
+          "original_matches_PR840_exact": true,
+          "replacement_one_current_source_only": true,
+          "unchanged_current_sources_required": 68,
+          "classes_count_required": 69,
+          "new_runtime_sources": 0
+        },
+        "contract_assets": [
+          {
+            "proposed_repository_path": "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture.luau",
+            "original": {
+              "path": "/workspace/scratch/7a4b9b0b26d0/capture_epoch/tests/full_client_fixture.luau",
+              "bytes": 9126,
+              "sha256": "0261592588c0c72559946c842ba5cf7a4559c9c2bc5575db69e91eb26fdeca8d"
+            },
+            "original_author": "/root/map_review",
+            "required_reuse": "BYTE_EXACT_NO_CASE_REWRITE"
+          },
+          {
+            "proposed_repository_path": "quality_gameplay/gq8_viral_real55_20261119/native/epoch_cases.luau",
+            "original": {
+              "path": "/workspace/scratch/7a4b9b0b26d0/capture_epoch/tests/contracts.luau",
+              "bytes": 5588,
+              "sha256": "7fbd8ed8d1405254f1e0edc21bce079af5bfe18e9981e41291f81db3312ec7f2"
+            },
+            "original_author": "/root/map_review",
+            "required_reuse": "BYTE_EXACT_NO_CASE_REWRITE"
+          },
+          {
+            "proposed_repository_path": "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture_extended.luau",
+            "original": {
+              "path": "/workspace/scratch/7a4b9b0b26d0/capture_completion_probe/extended/full_client_fixture_extended.luau",
+              "bytes": 10380,
+              "sha256": "28c6f9287d09382f4ee161aada219d83ed6670780d356a9be8767ebd84a34b50"
+            },
+            "original_author": "/root/review_intake",
+            "required_reuse": "BYTE_EXACT_NO_CASE_REWRITE"
+          },
+          {
+            "proposed_repository_path": "quality_gameplay/gq8_viral_real55_20261119/native/completion_cases.luau",
+            "original": {
+              "path": "/workspace/scratch/7a4b9b0b26d0/capture_completion_probe/completion_cases.luau",
+              "bytes": 2760,
+              "sha256": "cb5cfb97e82802ae03e9b91a4b531307a334328b582a0da49782bd56819e15d3"
+            },
+            "original_author": "/root/review_intake",
+            "required_reuse": "BYTE_EXACT_NO_CASE_REWRITE"
+          },
+          {
+            "proposed_repository_path": "quality_gameplay/gq8_viral_real55_20261119/native/completion_additional_cases.luau",
+            "original": {
+              "path": "/workspace/scratch/7a4b9b0b26d0/capture_completion_probe/extended/additional_cases.luau",
+              "bytes": 2593,
+              "sha256": "df27936f56591643308cad1e38965a0c635bdadc830bb0e1fb4bdcc1602fad54"
+            },
+            "original_author": "/root/review_intake",
+            "required_reuse": "BYTE_EXACT_NO_CASE_REWRITE"
+          }
+        ],
+        "fixed_suites": {
+          "epoch27": {
+            "cases": [
+              "cancelled_clip_after_rearm",
+              "epoch_pending_success",
+              "epoch_stop_sync_completion",
+              "normal_15s_save",
+              "off_on_pending_serialized",
+              "start_failures_release"
+            ],
+            "skeleton_sha256": "c6763566a2882a6034fcf5e63528121ecf0643d7c164a0c12ec00a71840aa843",
+            "expected_original": {
+              "total": 27,
+              "pass": 20,
+              "red": 7
+            },
+            "expected_v3": {
+              "total": 27,
+              "pass": 27,
+              "red": 0
+            }
+          },
+          "completion32": {
+            "cases": [
+              "conditional_completion_before_start_return",
+              "normal_15s_save",
+              "old_normal_completion_while_new_capture",
+              "spontaneous_completion_OtherError",
+              "spontaneous_completion_ScreenSizeChanged"
+            ],
+            "skeleton_sha256": "7e18a843542302462361d2b57db41906c6cf1204ef87317e6572b22c3848478e",
+            "expected_v2": {
+              "total": 32,
+              "pass": 25,
+              "red": 7
+            },
+            "expected_v3": {
+              "total": 32,
+              "pass": 32,
+              "red": 0
+            }
+          },
+          "shared_normal_observations": 6,
+          "normal_control": {
+            "path": "/workspace/scratch/7a4b9b0b26d0/capture_completion_probe/native01/original_normal_control.luau",
+            "bytes": 869,
+            "sha256": "0f604e8363f7f495d359bda89ed21d33c303907ca6cd4c5e0958d5aab6713bb8"
+          },
+          "normal_control_reuse": "Exact segment from original27 cases; not a second authored case",
+          "historical_v2_reuse": "Derive only via frozen v3 delta inverse and require exact786db18b SHA; no new history source file required",
+          "old_runner_binding_changes_required": [
+            "remove machine-specific ROOT/VM/baseline paths",
+            "pin immutable fixture/case/skeleton and expected names instead of trusting arbitrary prior JSON",
+            "record real CI source/binary/run/HEAD and raw output",
+            "only add runner entry inside existing test_real56.py; no fixture assertions or cases changed"
+          ],
+          "api_model_limits": [
+            "No actual CaptureService/window/device/video/gallery test",
+            "Conditional completion-before-Start-return is not a documented order guarantee",
+            "Character=nil excludes VFX; gallery false means prompt count is not saved video count",
+            "Normal6 overlap means27+32 is not59 independent features"
+          ]
+        },
+        "existing_recipe": "Only existing compose_real56.py/test_real56.py/current source workflow; explicit current69 mode with old55 function/step payload retained, no second producer",
+        "branch_sync": {
+          "method": "single two-parent source candidate commit and single nonforce ref update",
+          "first_parent": "fresh existing source branch head",
+          "second_parent": "fresh formal RC head",
+          "expected_tree": "fresh formal tree plus original four source-lane added blobs; authored continuation limited to eleven paths",
+          "comparison": {
+            "status": "diverged",
+            "ahead_by": 15,
+            "behind_by": 405,
+            "total_commits": 15
+          },
+          "merge_base": "a6020867fac80fa3b2ca47478625873fc6f3678e",
+          "compare_changed_files": [
+            {
+              "path": ".github/workflows/gq8-viral-real56-source.yml",
+              "status": "added"
+            },
+            {
+              "path": "quality_gameplay/gq8_viral_real55_20261119/GQ8_ViralCapture.client.luau",
+              "status": "added"
+            },
+            {
+              "path": "quality_gameplay/gq8_viral_real55_20261119/compose_real56.py",
+              "status": "added"
+            },
+            {
+              "path": "quality_gameplay/gq8_viral_real55_20261119/test_real56.py",
+              "status": "added"
+            }
+          ],
+          "current_four_absent_parent_confirmed": true,
+          "current_recipe_absent_direct_GET": true,
+          "coordinator_single_parent_policy_unchanged": true,
+          "merge_executed": false,
+          "parent_reported_actual_merge_tree": {
+            "author": "/root",
+            "command": "git merge-tree --write-tree bdb0bac0cf8aab08c8984ce195b4ff99d3900e70 fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "original_branch_head": "bdb0bac0cf8aab08c8984ce195b4ff99d3900e70",
+            "formal_head": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+            "exit_code": 0,
+            "tree": "c6bb6337fff9d21f9bb9c5d56afe8bbdc5b27ae5",
+            "formal_tree_diff": "Only original four added paths, all four blobs match originalPR",
+            "branch_ref_index_source_changes": 0,
+            "reported_repo_status": "clean",
+            "executed_by_this_reviewer": false,
+            "remote_sync_completed": false
+          },
+          "intermediate_sync_only_push_allowed": false,
+          "expected_final_candidate_tree": "fresh formal tree plus only the eleven allowed source-lane files; every other blob exactly formal",
+          "expected_candidate_parents": [
+            "fresh original source branch H as first parent",
+            "fresh formal RC H as second parent"
+          ],
+          "source_commits_and_ref_updates_proposed": {
+            "commit": 1,
+            "nonforce_ref_update": 1,
+            "successor_draft_pr_maximum": 1
+          },
+          "independent_actual_diff_requirement": "Check two source parents, expected merge-tree ancestry, full formal-to-candidate tree diff limited to eleven paths, and every out-of-scope blob unchanged",
+          "coordinator_and_claims_CAS_parent_count": 1
+        },
+        "excluded_paths": [
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "tests/test_gq470_union22_real69_20261122.py",
+          ".github/workflows/gq8-real63-source-composite.yml",
+          "quality_gameplay/gq470_viral_petal_real69_20261121/patch.py",
+          ".github/workflows/gq470-viral-petal-real69-prep.yml"
+        ],
+        "excluded_semantics": [
+          "current canonical producer authoring",
+          "shared GQ8 workflow/input recovery",
+          "Host/Combat/HP/Remote changes",
+          "GUI/layout change",
+          "visual-only #953 change",
+          "new feature/source lane/producer",
+          "Studio/video/gallery/Android acceptance"
+        ]
+      },
+      "original_owner_resolution": {
+        "github_login": "kk051780",
+        "original_session_id": null,
+        "original840": "Closed/unmerged/SUPERSEDED retained, no reopen or wholePR remerge",
+        "visual953": "Open immutable visual-only candidate remains preserved at3f6d23a; same runtime asset, not a separate resource alias. No visual/source/CI edits to953. Future visual reuse requires same sole source writer or explicit handoff and new whole-source binding.",
+        "if_new_active_conflict_observed": "Stop mutations and join the existing writer through normal coordinated handoff; expiration alone never transfers ownership."
+      },
+      "acceptance": [
+        "actual H checkout and head/event/source manifest",
+        "current exact canonical input, all69 binding, one changed/68 exact",
+        "full body27 and32 fixed suites and honest expected RED controls",
+        "actual pinned Luau compile and Rojo Source/Class",
+        "real inverse-source build OFF69 equals exact selected parent",
+        "candidate canonical=false; origin official receipt separated",
+        "independent registered complete actual H diff and same H CI before separate RC handoff"
+      ],
+      "rollback": "Zero-fuzz inverse of twelve fixed edits from candidate client; recover exact original 6425B/51f28 and preserve all other68 bodies, project and nonSource XML. Source branch rollback preserves formal history and intervening edits. No RC mutation authorized.",
+      "authority_evidence": {
+        "owner_directive": "https://github.com/kk051780/toy-wars-factory/issues/1011",
+        "policy": "docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+        "policy_version": "1.2",
+        "ordinary_development_delegated": true,
+        "authenticated_profile_observed_utc": "2026-11-23T00:03:51Z"
+      },
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "rc_write_requires_separate_scoped_single_writer_lease": true,
+      "no_main_or_publish": true,
+      "no_review_waiver": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art": "NO_GO",
+      "fun": "NOT_TESTED",
+      "source_producer_parent_pr": 840,
+      "mutable_paths": [
+        ".github/workflows/gq8-viral-real56-source.yml",
+        "quality_gameplay/gq8_viral_real55_20261119/GQ8_ViralCapture.client.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/compose_real56.py",
+        "quality_gameplay/gq8_viral_real55_20261119/test_real56.py",
+        "quality_gameplay/gq8_viral_real55_20261119/INPUT_LOCK.json",
+        "quality_gameplay/gq8_viral_real55_20261119/README.md",
+        "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/epoch_cases.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/full_client_fixture_extended.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/completion_cases.luau",
+        "quality_gameplay/gq8_viral_real55_20261119/native/completion_additional_cases.luau"
+      ],
+      "scope_plan_version": 2,
+      "base_rc_history": [
+        {
+          "sha": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+          "status": "PRIOR_OBSERVED_FORMAL_69_BODY_UNCHANGED"
+        }
+      ],
+      "current_official_input": {
+        "run": {
+          "id": 45083333379,
+          "event": "push",
+          "head_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+          "head_branch": "rc/p0d-s1-kids-rc01",
+          "path": ".github/workflows/gq8-real63-source-composite.yml",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "artifact": {
+          "id": 14777998713,
+          "name": "P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO",
+          "size_in_bytes": 5319187,
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14777998713",
+          "archive_download_url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/artifacts/14777998713/zip",
+          "expired": false,
+          "created_at": "2026-11-22T23:29:17Z",
+          "expires_at": "2026-12-22T23:29:16Z",
+          "updated_at": "2026-11-22T23:29:17Z",
+          "digest": "sha256:58e53ab1bffe5de2fea9be6dc9dcff533da9d643c0569a5570c9227fa450d98d",
+          "workflow_run": {
+            "id": 45083333379,
+            "repository_id": 1431683395,
+            "head_repository_id": 1431683395,
+            "head_branch": "rc/p0d-s1-kids-rc01",
+            "head_sha": "dcb501673d7959e4904cf360ef0119917e6aa2e0"
+          }
+        },
+        "project": {
+          "path": "EGGRUMBLE_REAL69.project.json",
+          "bytes": 9564,
+          "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+        },
+        "place": {
+          "path": "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
+          "bytes": 828114,
+          "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+        },
+        "legacy_intake_receipt": {
+          "path": "REAL69_LEGACY_INTAKE_RECEIPT.json",
+          "bytes": 17623,
+          "sha256": "749a80be9cb050cead632a8ddf0cdd66fa2506adf01ef09c6726eb716c69de2f"
+        },
+        "fresh_zip_download_this_review": true,
+        "future_ci_must_reverify_download": true
+      },
+      "current_formal_sync": {
+        "first_parent": "bdb0bac0cf8aab08c8984ce195b4ff99d3900e70",
+        "second_parent": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "merge_tree": "b7ebabac0b3359b028fff13e64810666c5c6dacb",
+        "all_other_candidate_blobs_must_match": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "only11_allowed_paths": true
+      },
+      "current_official_input_review": {
+        "context": "CODEX_ROOT_7A4B9B0B26D0:/root/planning_gap",
+        "receipt_sha256": "74d3f9d2525464884c7cadd74ba6cba5ec9bd60f412e63270062c7493e62520b",
+        "scope_unchanged": true,
+        "actual_candidate_head_review_completed": false
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
