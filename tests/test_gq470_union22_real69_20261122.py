@@ -37,6 +37,14 @@ ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT
 INTEGRATION_COUNTS = {"core": 59, "final": 19}
 
 
+def before_guardian(lock):
+    repair = lock["guardian_followup_repair"]
+    return lock | {
+        "sources": lock["sources"] | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"]},
+        "final_place": repair["parent_place"],
+    }
+
+
 def artifact_environment(expected_stage=None):
     supplied = {key: value for key, value in os.environ.items() if key.startswith("UNION22_TEST_")}
     if set(supplied) - set(ARTIFACT_ENV):
@@ -110,7 +118,7 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(result["archive_members"]), 75)
 
     def test_hud_only_inverse_restores_current_rc_and_other68(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         final = {p: (self.current / compose.BEAST_OFF / "sources" / p).read_bytes() for p in parent_lock["sources"]}
         before = compose.bot_parent_sources(final, parent_lock)
         restored = compose.hud_current_sources(before, parent_lock)
@@ -121,7 +129,7 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(verify.verify_hud_current_rollback(self.current, parent_lock, verified)), 71)
 
     def test_hud_only_inverse_payload_mutation_rejected(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         changed = copy.deepcopy(parent_lock)
         changed["followup_repair"]["inverse"][0]["new"] += "-- wrong rollback\n"
         sources = {p: (self.current / compose.BEAST_OFF / "sources" / p).read_bytes() for p in parent_lock["sources"]}
@@ -130,7 +138,7 @@ class UnionBoundary(unittest.TestCase):
             compose.hud_current_sources(sources, changed)
 
     def test_bot_only_inverse_restores_hud_parent_and_other68(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         final = {p: (self.current / compose.BEAST_OFF / "sources" / p).read_bytes() for p in parent_lock["sources"]}
         parent = compose.bot_parent_sources(final, parent_lock)
         self.assertEqual([p for p in final if final[p] != parent[p]], [compose.BOT_SOURCE])
@@ -140,7 +148,7 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(verify.verify_bot_parent_rollback(self.current, parent_lock, verified)), 71)
 
     def test_bot_inverse_rejects_wrong_source_before_restoring(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         final = {p: (self.current / compose.BEAST_OFF / "sources" / p).read_bytes() for p in parent_lock["sources"]}
         router = "ServerScriptService/EGGRUMBLE_BotPathRouter.luau"
         self.assertIn(router, final)
@@ -149,7 +157,7 @@ class UnionBoundary(unittest.TestCase):
             compose.bot_parent_sources(final, parent_lock)
 
     def test_bot_only_inverse_payload_mutation_rejected(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         changed = copy.deepcopy(parent_lock)
         changed["bot_followup_repair"]["inverse"][0]["new"] += "-- wrong Bot rollback\n"
         changed["sources"][compose.BOT_SOURCE]["inverse"] = copy.deepcopy(changed["bot_followup_repair"]["inverse"])
@@ -158,7 +166,7 @@ class UnionBoundary(unittest.TestCase):
             compose.bot_parent_sources(final, changed)
 
     def test_bot_then_hud_rollback_order_required(self):
-        parent_lock = compose.beast_parent_profile(self.lock)
+        parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
         final = {p: (self.current / compose.BEAST_OFF / "sources" / p).read_bytes() for p in parent_lock["sources"]}
         with self.assertRaisesRegex(ValueError, "HUD_CURRENT_REQUIRES_EXACT_BOT_PARENT_SOURCES"):
             compose.hud_current_sources(final, parent_lock)
@@ -172,9 +180,14 @@ class UnionBoundary(unittest.TestCase):
                          sorted([compose.BOT_SOURCE, compose.HUD_SOURCE]))
 
     def test_beast_only_inverse_restores_actual_h72_parent(self):
-        final = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        parent_lock = compose.beast_parent_profile(self.lock)
-        restored = compose.beast_parent_sources(final, self.lock, parent_lock)
+        on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        final, beast = compose.guardian_parent(on, self.lock)
+        self.assertEqual(beast, before_guardian(self.lock))
+        self.assertEqual([p for p in on if on[p] != final[p]], [compose.GUARDIAN_SOURCE])
+        self.assertEqual(compose.identity((self.current / compose.GUARDIAN_OFF / compose.PLACE).read_bytes()),
+                         self.lock["guardian_followup_repair"]["parent_place"])
+        parent_lock = compose.beast_parent_profile(beast)
+        restored = compose.beast_parent_sources(final, beast, parent_lock)
         self.assertEqual([p for p in final if final[p] != restored[p]], [compose.BEAST_SOURCE])
         self.assertEqual(self.lock["beast_followup_repair"]["parent_head"], "72d620d86761f2aa5da80263a251cc5fa63fecbb")
         self.assertEqual(compose.identity(restored[compose.BEAST_SOURCE]), self.lock["beast_followup_repair"]["parent_combat"])
@@ -182,14 +195,19 @@ class UnionBoundary(unittest.TestCase):
                          self.lock["beast_followup_repair"]["parent_place"])
 
     def test_beast_h72_parent_payload_or_swapped_archive_rejected(self):
-        for mutation in ("source", "archive"):
+        for mutation in ("source", "archive", "guardian_source", "guardian_archive"):
             with self.subTest(mutation=mutation):
                 root = self.current_copy()
                 if mutation == "source":
                     raw = root / compose.BEAST_OFF / "sources" / compose.BEAST_SOURCE
                     raw.write_bytes((root / "sources" / compose.BEAST_SOURCE).read_bytes())
-                else:
+                elif mutation == "archive":
                     shutil.copyfile(root / compose.BOT_OFF_ARCHIVE, root / compose.BEAST_OFF_ARCHIVE)
+                elif mutation == "guardian_source":
+                    raw = root / compose.GUARDIAN_OFF / "sources" / compose.GUARDIAN_SOURCE
+                    raw.write_bytes((root / "sources" / compose.GUARDIAN_SOURCE).read_bytes())
+                else:
+                    shutil.copyfile(root / compose.BEAST_OFF_ARCHIVE, root / compose.GUARDIAN_OFF_ARCHIVE)
                 self.reject_core(root)
 
     def test_bot_parent_payload_or_swapped_archive_rejected(self):
@@ -210,12 +228,12 @@ class UnionBoundary(unittest.TestCase):
                 report = verify.data(root / "CORE_BUILD_REPORT.json")
                 report["build_command_namespace"]["committed_root"] = str(root)
                 commands = report["commands"]
-                self.assertIn(compose.BOT_OFF, commands[-6]["command"][2])
-                self.assertIn(compose.HUD_OFF, commands[-4]["command"][2])
+                self.assertIn(compose.BOT_OFF, commands[-8]["command"][2])
+                self.assertIn(compose.HUD_OFF, commands[-6]["command"][2])
                 if mutation == "missing":
-                    del commands[-6:-4]
+                    del commands[-8:-6]
                 else:
-                    commands[-6:-2] = commands[-4:-2] + commands[-6:-4]
+                    commands[-8:-4] = commands[-6:-4] + commands[-8:-6]
                 compose.write_json(root / "CORE_BUILD_REPORT.json", report)
                 with self.assertRaisesRegex(ValueError, reason):
                     verify.verify_core(root, self.prior, self.reports, self.context)
@@ -431,7 +449,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 146:
+            if calls == 148:
                 stage = Path(command[-1]).parent.parent
                 path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
                         else (prior if target == "input" else stage) / "sources" / self.first)
@@ -440,7 +458,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 146)
+        self.assertEqual(calls, 148)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
@@ -1078,7 +1096,7 @@ class UnionOfflineContract(unittest.TestCase):
                          {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
         self.assertEqual(repair["prior_profile"]["sha256"], "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60")
         # Restore H72 before removing the later Bot rows for the HUD-stage proof.
-        parent_rows = copy.deepcopy(compose.beast_parent_profile(self.lock)["sources"])
+        parent_rows = copy.deepcopy(compose.beast_parent_profile(before_guardian(self.lock))["sources"])
         parent_rows[compose.BOT_SOURCE]["after"] = self.lock["bot_followup_repair"]["parent_bot"]
         parent_rows[compose.BOT_SOURCE]["forward"] = []
         parent_rows[compose.BOT_SOURCE]["inverse"] = []
@@ -1096,7 +1114,8 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(self.native_lock["selected_hud_layout"]["condition_count"], 14)
 
     def test_bot_reuse_preserves_exact_parent_rows_and_registered_scope(self):
-        h72 = compose.beast_parent_profile(self.lock)
+        beast = before_guardian(self.lock)
+        h72 = compose.beast_parent_profile(beast)
         repair = h72["bot_followup_repair"]
         self.assertEqual(repair['grant_status'], 'GRANTED_SCOPE_1_NOT_ADOPTED')
         self.assertEqual(repair['claim_id'], 'P0D-GQ484-BOT-VAULT-20261123-0A2BA23F')
@@ -1133,10 +1152,16 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(repair["repaired_place"], h72["final_place"])
         addition = self.lock["beast_followup_repair"]
         self.assertEqual(len(addition["forward"]), 2)
-        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 173)
-        self.assertEqual([path for path in self.lock["sources"]
-                          if self.lock["sources"][path] != h72["sources"][path]], [compose.BEAST_SOURCE])
+        self.assertEqual(sum(len(r["forward"]) for r in beast["sources"].values()), 173)
+        self.assertEqual([path for path in beast["sources"]
+                          if beast["sources"][path] != h72["sources"][path]], [compose.BEAST_SOURCE])
         self.assertEqual(addition["parent_place"], h72["final_place"])
+        guardian = self.lock["guardian_followup_repair"]
+        self.assertEqual(len(guardian["forward"]), 6)
+        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 179)
+        self.assertEqual([path for path in self.lock["sources"]
+                          if self.lock["sources"][path] != beast["sources"][path]], [compose.GUARDIAN_SOURCE])
+        self.assertEqual(guardian["parent_place"], beast["final_place"])
 
     def test_bot_immutable_template_corpus_and_adapter_drift_rejected(self):
         for name in verify.BOT_INPUTS:

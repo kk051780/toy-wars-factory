@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "4c3d69886787130d296ea99035b6d65b358c1d5ffd4b69ec7364147010a4d334"
+INPUT_LOCK_SHA256 = "639f2994cc82bcf67bcfd34ae118b0df021062ed3ac4876a73e9087dce8ef030"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -621,6 +621,11 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "native_evidence_file_count": 67,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
+        from run_guardian_diagnostic import run_from_profile
+        guardian_result = run_from_profile(root.parent, output, context)
+        if guardian_result is not None:
+            receipt["guardian_target_diagnostic"] = guardian_result
+            write_json(output / "receipt.json", receipt)
         return receipt
     except Exception as error:
         write_json(output / "FAILED.json", {"status": "FAIL_NO_NATIVE_ADMISSION", "reason": str(error)})

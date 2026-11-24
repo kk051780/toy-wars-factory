@@ -194,7 +194,45 @@ def verify_archive(path, expected, prefix=compose.OFF):
     return observed
 
 
-def verify_beast_parent_rollback(root, lock, current):
+def verify_guardian_parent_rollback(root, lock, current):
+    repair = lock["guardian_followup_repair"]
+    name = compose.GUARDIAN_SOURCE
+    row = lock["sources"][name]
+    require(repair["source_path"] == name and repair["repaired_place"] == lock["final_place"]
+            and repair["parent_place"] == lock["beast_followup_repair"]["repaired_place"]
+            and repair["repaired_guardian"] == row["after"]
+            and repair["parent_guardian_row"]["after"] == repair["parent_guardian"]
+            and repair["parent_guardian_row"]["before"] == row["before"]
+            and repair["changed_sources_from_beast_parent"] == 1
+            and repair["unchanged_sources_from_beast_parent"] == 68, "GUARDIAN_ROLLBACK_CONTRACT")
+    parent_lock = lock | {
+        "sources": lock["sources"] | {name: repair["parent_guardian_row"]},
+        "final_place": repair["parent_place"],
+    }
+    folder = root / compose.GUARDIAN_OFF
+    parent = independent_scan(folder, parent_lock, "after")
+    require(parent["non_source"] == current["non_source"]
+            and parent["instances"] == current["instances"], "GUARDIAN_ROLLBACK_NON_SOURCE_DRIFT")
+    changed = []
+    for candidate in parent_lock["sources"]:
+        raw = read(root / "sources" / candidate)
+        off = read(folder / "sources" / candidate)
+        if candidate == name:
+            require(independent_inverse(raw, repair["inverse"]) == off
+                    and independent_inverse(off, repair["forward"]) == raw, "GUARDIAN_EXACT_TWO_WAY")
+        else:
+            require(raw == off, "GUARDIAN_ROLLBACK_ADDITIONAL_SOURCE_CHANGE")
+        if raw != off:
+            changed.append(candidate)
+    require(changed == [name], "GUARDIAN_ROLLBACK_SCOPE")
+    expected = {"sources/" + source: item["after"] for source, item in parent_lock["sources"].items()}
+    expected.update({compose.PROJECT: parent_lock["project"], compose.PLACE: parent_lock["final_place"]})
+    require(len(expected) == 71 and files(folder) == expected, "GUARDIAN_ROLLBACK_MEMBER_SET")
+    verify_archive(root / compose.GUARDIAN_OFF_ARCHIVE, expected, compose.GUARDIAN_OFF)
+    return expected, parent_lock, parent
+
+
+def verify_beast_parent_rollback(root, lock, current, input_folder=None):
     repair = lock["beast_followup_repair"]
     row = repair["parent_combat_row"]
     require(repair["source_path"] == compose.BEAST_SOURCE
@@ -214,7 +252,7 @@ def verify_beast_parent_rollback(root, lock, current):
             and parent["instances"] == current["instances"], "BEAST_ROLLBACK_NON_SOURCE_DRIFT")
     changed = []
     for name in parent_lock["sources"]:
-        raw = read(root / "sources" / name)
+        raw = read((input_folder or root) / "sources" / name)
         restored = read(off / "sources" / name)
         if name == compose.BEAST_SOURCE:
             require(independent_inverse(raw, repair["inverse"]) == restored
@@ -322,7 +360,9 @@ def verify_core(root, base, reports, context):
     expected_off.update({p: digest(inputs["evidence"][p]) for p in lock["prior_report_names"]})
     require(len(expected_off) == 75 and files(root / compose.OFF) == expected_off, "OFF_RUNTIME_MEMBER_SET")
     archive = verify_archive(root / compose.OFF_ARCHIVE, expected_off)
-    expected_beast_off, h72_lock, h72 = verify_beast_parent_rollback(root, lock, current)
+    expected_guardian_off, guardian_off_lock, guardian_off = verify_guardian_parent_rollback(root, lock, current)
+    expected_beast_off, h72_lock, h72 = verify_beast_parent_rollback(
+        root, guardian_off_lock, guardian_off, root / compose.GUARDIAN_OFF)
     expected_bot_off = verify_bot_parent_rollback(root, h72_lock, h72)
     expected_hud_off = verify_hud_current_rollback(root, h72_lock, h72)
     expected_prior = {p: digest(raw) for p, raw in inputs["evidence"].items()}
@@ -350,6 +390,8 @@ def verify_core(root, base, reports, context):
         "bot_only_hud_parent_rollback_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
         "beast_followup_repair": lock["beast_followup_repair"],
         "beast_only_h72_parent_rollback_archive": digest(read(root / compose.BEAST_OFF_ARCHIVE)),
+        "guardian_followup_repair": lock["guardian_followup_repair"],
+        "guardian_only_beast_parent_rollback_archive": digest(read(root / compose.GUARDIAN_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -360,7 +402,11 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 23 and core.get("unchanged_sources") == 46
-            and core.get("compile_count") == 141 and core.get("rojo_build_count") == 5
+            and core.get("compile_count") == 142 and core.get("rojo_build_count") == 6
+            and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
+            and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
+            and core.get("changed_sources_from_beast_parent") == 1
+            and core.get("unchanged_sources_from_beast_parent") == 68
             and core.get("beast_only_compile_count") == 1 and core.get("beast_only_rojo_build_count") == 1
             and core.get("beast_only_h72_parent_place") == h72_lock["final_place"]
             and core.get("changed_sources_from_h72_parent") == 1 and core.get("unchanged_sources_from_h72_parent") == 68
@@ -386,6 +432,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.BOT_OFF_ARCHIVE] = digest(read(root / compose.BOT_OFF_ARCHIVE))
     expected_stage.update({compose.BEAST_OFF + "/" + name: pin for name, pin in expected_beast_off.items()})
     expected_stage[compose.BEAST_OFF_ARCHIVE] = digest(read(root / compose.BEAST_OFF_ARCHIVE))
+    expected_stage.update({compose.GUARDIAN_OFF + "/" + name: pin for name, pin in expected_guardian_off.items()})
+    expected_stage[compose.GUARDIAN_OFF_ARCHIVE] = digest(read(root / compose.GUARDIAN_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -394,11 +442,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 146 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 148 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 141 and len(rojo_commands) == 5, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 142 and len(rojo_commands) == 6, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -409,14 +457,16 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
     expected_compile.add(str(Path(stage) / compose.BOT_OFF / "sources" / compose.BOT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.BEAST_OFF / "sources" / compose.BEAST_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.GUARDIAN_OFF / "sources" / compose.GUARDIAN_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
-                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF)}, "CORE_ROJO_PROJECT_SET")
+                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF, compose.GUARDIAN_OFF)},
+            "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
                         compose.BOT_OFF: [compose.BOT_SOURCE], compose.HUD_OFF: [compose.HUD_SOURCE],
-                        compose.BEAST_OFF: [compose.BEAST_SOURCE]}
+                        compose.BEAST_OFF: [compose.BEAST_SOURCE], compose.GUARDIAN_OFF: [compose.GUARDIAN_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -914,6 +964,140 @@ def verify_bot_vault_supplement(native, root, pins, build, aggregate, context):
             "same_fresh_binary": True, "engine_boundary": contract["engine_boundary"], "files": expected_files}
 
 
+def verify_guardian_program_frame(program, ranges, contract, role, mode):
+    cursor = 0
+    def consume_literal(expected):
+        nonlocal cursor
+        require(program[cursor:cursor + len(expected)] == expected, "GUARDIAN_PROGRAM_FRAME")
+        cursor += len(expected)
+
+    def consume_pinned(pin):
+        nonlocal cursor
+        stop = cursor + pin["bytes"]
+        require(digest(program[cursor:stop]) == pin, "GUARDIAN_PROGRAM_PINNED_FIXTURE")
+        cursor = stop
+
+    for fixture in contract["execution_fixture_order"]:
+        consume_pinned(fixture["identity"])
+        consume_literal(b"\n")
+    for name in contract["modules_in_load_order"]:
+        if name == "LobbyCastleModesPreview.server":
+            span = ranges["Host"]
+            consume_literal(b"\ninstallApiObservers()\nloadingModule='Host'\ndo local _=(function()\n")
+            closing = b"\nend)()end\n"
+        else:
+            span = ranges[name]
+            consume_literal(
+                (f"\nloadingModule='{name}'\n"
+                 f"fullSourceRanges.{name}={{first={span['line_first']},last={span['line_last']}}}\n"
+                 f"dependencies.EGGRUMBLE_{name}=(function()\n").encode())
+            closing = b"\nend)()\n"
+        require(cursor == span["byte_start"], "GUARDIAN_PROGRAM_SOURCE_START")
+        cursor = span["byte_end_exclusive"]
+        consume_literal(closing)
+    expected = contract["guardian_roles"][role]
+    consume_literal((f"\nlocal GUARDIAN_ROLE='{role}'\n"
+                     f"local GUARDIAN_EXPECT={{hp={expected['hp']},damage={expected['damage']}}}\n").encode())
+    consume_pinned(contract["package_pins"]["fixture_boundary.luau"])
+    consume_literal((f"\n\nlocal MODE='{mode}'\n").encode())
+    consume_pinned(contract["package_pins"]["case.luau"])
+    require(cursor == len(program), "GUARDIAN_PROGRAM_TRAILING_BYTES")
+
+
+def verify_guardian_target(native, root, profile, input_pins, build, aggregate, context):
+    folder = native / "guardian_target"
+    if not folder.exists():
+        require(context["kind"] == "LOCAL_SOURCE_REVIEW" and "guardian_target_diagnostic" not in aggregate,
+                "MISSING_GUARDIAN_TARGET_EVIDENCE")
+        return None, set()
+    summary_name, contract_name = "GUARDIAN_DIAGNOSTIC_RECEIPT.json", "GUARDIAN_DONOR_CONTRACT.json"
+    summary_path, contract_path = folder / summary_name, folder / contract_name
+    summary, contract = data(summary_path), data(contract_path)
+    repair = profile["guardian_followup_repair"]
+    contract_pin = {"bytes": 39478,
+                    "sha256": "f37a9500da30d08fcd1baf30fec340d86733b18fd9c9d34f5e5917f271347dcb"}
+    require(digest(read(contract_path)) == contract_pin == summary["contract"], "GUARDIAN_MATRIX_DONOR_LOCK")
+    package = contract["existing_package_relative_path"]
+    donor_inputs = {"stealth_target/INPUT_LOCK.json": contract_pin,
+                    "stealth_target/run.py": {"bytes": 18363,
+                        "sha256": "fbe55545d5d427a37ae3bf7d30d6f7bc6a427d4d3dd997516970c140a666ef09"}}
+    donor_inputs.update({f"stealth_target/{name}": contract["package_pins"][name]
+                         for name in ("apply_stealth_target.py", "case.luau", "fixture_boundary.luau")})
+    donor_inputs.update({f"role_los/{name}": contract["existing_pr_files"][f"{package}/role_los/{name}"]
+                         for name in ("apply_existing_repairs.py", "fixture_boundary.luau")})
+    require(summary["donor_inputs"] == donor_inputs
+            and summary["donor_head"] == repair["donor_head"]
+            and summary["schema"] == "UNION22_GUARDIAN_DONOR_MATRIX_V1"
+            and summary["status"] == "SOURCE_NATIVE_PASS" and summary["studio"] == "NOT_TESTED"
+            and summary["gameplay_delivery_status_inferred"] is False and summary["context"] == context
+            and summary["binary"] == build["binary_before_suites"]
+            and summary["native_build_receipt"] == digest(read(native / "build_receipt.json"))
+            and summary["source_receipt"] == digest(read(root / compose.RECEIPT))
+            and summary["source_pin"] == repair["repaired_guardian"] == input_pins["sources"][compose.GUARDIAN_SOURCE]
+            and summary["place"] == repair["repaired_place"]
+            and summary["immediate_inverse_place"] == repair["parent_place"]
+            and summary["unchanged_other_sources"] == 68
+            and aggregate["guardian_target_diagnostic"] == digest(read(summary_path)),
+            "GUARDIAN_MATRIX_PROVENANCE")
+    matrix = contract["matrix"]
+    require(len(matrix) == len(summary["results"]) == summary["native_executions"] == 40
+            and len({(case["role"], case["mode"]) for case in matrix}) == summary["unique_scenarios"] == 13,
+            "GUARDIAN_MATRIX_SCENARIO_SET")
+    observed, counts = {}, Counter()
+    guard_source = compose.GUARDIAN_SOURCE
+    source_names = {"ServerScriptService/EGGRUMBLE_" + name + ".luau" for name in contract["modules_in_load_order"]}
+    for case, result in zip(matrix, summary["results"], strict=True):
+        group, role, mode = (case[key] for key in ("group", "role", "mode"))
+        kind, variant = group.split("_", 1)
+        relative = f"matrix/{group}/{role}/{mode}"
+        prefix = folder / relative
+        raw = {name: read(prefix / name) for name in ("receipt.json", "generated.luau", "stdout.log", "stderr.log")}
+        require(all(f"{relative}/{name}" not in observed for name in raw), "GUARDIAN_MATRIX_DUPLICATE")
+        observed.update({f"{relative}/{name}": digest(payload) for name, payload in raw.items()})
+        receipt = compose.strict_json(raw["receipt.json"])
+        red = case["expected_exit"] == 1
+        row_id = {"group": group, "role": role, "mode": mode, "expected_baseline_red": red,
+                  "native_exit_code": case["expected_exit"]}
+        require(result == (row_id | {"receipt_path": relative + "/receipt.json",
+                                    "receipt": observed[relative + "/receipt.json"]})
+                and all(receipt[key] == value for key, value in row_id.items())
+                and receipt["expected_process_result"] is True and receipt["exact_case_vector"] is True
+                and receipt["expected_exit_code"] == case["expected_exit"]
+                and all(receipt[key] == digest(raw[name]) for key, name in
+                        (("generated", "generated.luau"), ("stdout", "stdout.log"), ("stderr", "stderr.log"))),
+                "GUARDIAN_SCENARIO_RECEIPT:" + relative)
+        cases = [line for line in raw["stdout.log"].decode().splitlines() if line.startswith("CASE\t")]
+        rows = [line.split("\t", 3) for line in cases]
+        require(receipt["cases"] == cases and all(len(row) == 4 for row in rows)
+                and [row[1:3] for row in rows] == case["expected_case_vector"]
+                and (case["baseline_error"].encode() in raw["stderr.log"] and case["baseline_error"] in cases[-1]
+                     if red and cases else not red and not raw["stderr.log"]), "GUARDIAN_MATRIX_OBSERVED_VECTOR")
+        spans = list(receipt["full_source_ranges"].values())
+        require(receipt["full_source_body_count"] == len(spans) == len(source_names) == 28
+                and {span["path"] for span in spans} == source_names, "GUARDIAN_MATRIX_28_SOURCE_BODIES")
+        program = raw["generated.luau"]
+        end = 0
+        for span in sorted(spans, key=lambda row: row["byte_start"]):
+            path, first, last = (span[key] for key in ("path", "byte_start", "byte_end_exclusive"))
+            expected = (contract["guardian"]["variants"][variant]["input" if kind == "baseline" else "candidate"]
+                        if path == guard_source else input_pins["sources"][path])
+            body = program[first:last]
+            require(end <= first < last <= len(program) and digest(body) == expected ==
+                    {key: span[key] for key in ("bytes", "sha256")}
+                    and span["line_first"] == program[:first].count(b"\n") + 1
+                    and span["line_last"] == span["line_first"] + body.count(b"\n"),
+                    "GUARDIAN_MATRIX_SOURCE_SPAN:" + path)
+            end = last
+        verify_guardian_program_frame(program, receipt["full_source_ranges"], contract, role, mode)
+        counts["expected_baseline_failure" if red else
+               "candidate_pass" if kind == "candidate" else "baseline_control_pass"] += 1
+    require(counts == summary["counts"] == {"expected_baseline_failure": 8, "candidate_pass": 26, "baseline_control_pass": 6}
+            and len(observed) == 160 and observed == summary["files"]
+            and set(files(folder)) == {*observed, summary_name, contract_name}, "GUARDIAN_MATRIX_COMPLETE")
+    return {"native_executions": 40, "unique_scenarios": 13, "counts": dict(counts),
+            "receipt": digest(read(summary_path))}, {"guardian_target/" + name for name in files(folder)}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1041,8 +1225,11 @@ def verify_native(native, root, lock, context):
                        for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
     expected_files |= {"selected_hud_layout/" + name for name in layout["files"]}
     expected_files |= {"bot_vault/" + name for name in bot["files"]}
-    require(len(expected_files) == 67 and set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
+    guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
+    require(len(expected_files) == 67 and set(files(native)) == expected_files | guardian_files,
+            "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
+            "guardian_target_diagnostic": guardian,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1072,16 +1259,19 @@ def admit_delivery(root, base, reports, native, context):
     runtime = verify_native(native, root, verified["lock"], context)
     unchanged("NATIVE")
     require(runtime["payload"] == native_before, "NATIVE_VALIDATION_SNAPSHOT_CHANGED")
+    retained_build_files = (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE,
+                            compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE,
+                            compose.GUARDIAN_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
-                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
+                      or name in retained_build_files}
     expected_stage.update({"native_evidence/" + name: pin for name, pin in native_before.items()})
     expected_stage["UNION22_PROFILE_LOCK.json"] = digest(profile_before)
     stage = Path(tempfile.mkdtemp(prefix=".union22-delivery-", dir=root.parent))
     try:
         for relative in ("sources", "prior_boundary"):
             shutil.copytree(root / relative, stage / relative)
-        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
+        for name in retained_build_files:
             (stage / name).write_bytes(read(root / name))
         shutil.copytree(native, stage / "native_evidence")
         (stage / "UNION22_PROFILE_LOCK.json").write_bytes(read(HERE / "profile_lock.json"))
@@ -1106,6 +1296,10 @@ def admit_delivery(root, base, reports, native, context):
             "beast_only_h72_parent_inverse_place": verified["lock"]["beast_followup_repair"]["parent_place"],
             "beast_only_h72_parent_inverse_archive": digest(read(root / compose.BEAST_OFF_ARCHIVE)),
             "beast_only_h72_parent_inverse_archive_members": 71,
+            "guardian_followup_repair": verified["lock"]["guardian_followup_repair"],
+            "guardian_only_beast_parent_inverse_place": verified["lock"]["guardian_followup_repair"]["parent_place"],
+            "guardian_only_beast_parent_inverse_archive": digest(read(root / compose.GUARDIAN_OFF_ARCHIVE)),
+            "guardian_only_beast_parent_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -1117,6 +1311,7 @@ def admit_delivery(root, base, reports, native, context):
             "visual_source_retention": 3, "native_suites": runtime["results"],
             "selected_hud_layout": runtime["selected_hud_layout"],
             "bot_vault_supplement": runtime["bot_vault_supplement"],
+            "guardian_target_diagnostic": runtime["guardian_target_diagnostic"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
