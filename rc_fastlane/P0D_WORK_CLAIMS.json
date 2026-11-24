@@ -24065,7 +24065,7 @@
     },
     {
       "claim_id": "P0D-GQ484-BOT-VAULT-20261123-0A2BA23F",
-      "state": "PREP_READY",
+      "state": "RC_INTEGRATED",
       "owner": "CODEX_ROOT_B8C8E7B756CD",
       "feature_id": "GQ484_ENEMY_VAULT_APPROACH_PHASE",
       "sub_scope": "EXACT_EXISTING_BOT555_CANONICAL_UNION_SUCCESSOR_ONLY",
@@ -24367,9 +24367,9 @@
       ],
       "PREP_READY": true,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
+      "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
-      "RC_adoption": false,
+      "RC_adoption": true,
       "no_main_or_publish": true,
       "no_review_waiver": true,
       "studio": "NOT_TESTED",
@@ -24637,8 +24637,72 @@
       "source_preparation_closed": true,
       "source_writes_authorized_by_this_claim": false,
       "source_writes_permitted": false,
-      "current_integration_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
-      "post_adoption_metadata_executor": "/root (current GQ470 Work session / Bot factual closure only)",
+      "current_integration_executor": null,
+      "post_adoption_metadata_executor": null,
+      "post_adoption_factual_closure": {
+        "schema": "P0D_BOT_FACTUAL_CLOSURE_RECEIPT_V1",
+        "status": "ADOPTED_H72_CLOSED_9_PATHS_3_RESOURCES",
+        "recorded_at": "2026-11-24T21:18:19.570424+00:00",
+        "recorded_by": "/root (current GQ470 Work session / Bot factual closure only)",
+        "issuer": "kk051780",
+        "issuer_user_id": 233213370,
+        "original_adoption_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+        "actual_closed_metadata_lease": {
+          "ref": "6c0182ee22c7c7394d0adffd3d9d70de0256b3d6",
+          "blob": "b25ac2604d97e6feb6b06878a1a4f696ddad85a5",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "b5d5b9ac-1465-4be1-8292-805963d11787",
+            "task_id": null,
+            "epoch": 714,
+            "acquired_at": "2026-11-24T21:17:54.658091+00:00",
+            "expires_at": "2026-11-24T21:47:54.658091+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "returned_paths": [
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "tests/test_gq470_union22_real69_20261122.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_base.template.luau",
+          "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_cases.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_suite.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_BOTACTORS",
+          "REAL69_UNION22_FINAL_RECEIPT",
+          "REAL69_NATIVE_FULL28_PROFILE"
+        ],
+        "original_source_and_rc_expiry_preserved": "2026-11-23T10:15:20.638570+00:00",
+        "actual_official_adoption": {
+          "pr": 1027,
+          "merged_at": "2026-11-23T07:41:32Z",
+          "official_rc": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+          "run": 45132949073,
+          "artifact": 14798134590,
+          "official_zip": {
+            "bytes": 7144237,
+            "sha256": "d178f62489f275831da86eaceda8b8ce1fba6a8ccf86366bd86cb8c5507a926b",
+            "git_blob": "0a8a66667dd9d6540f202079c72ba2414f93ad7c"
+          },
+          "official_place": {
+            "bytes": 829213,
+            "sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5",
+            "git_blob": "b441b83e99b2fdd4c750c9fa06f10903d21ecee9"
+          },
+          "source_count": 69,
+          "instances": 75,
+          "existing_registered_review": 6018102444,
+          "existing_registered_review_state": "COMMENTED",
+          "studio": "NOT_TESTED"
+        },
+        "source_or_rc_authorization_open": false
+      },
       "post_adoption_metadata_assignment": {
         "schema": "P0D_BOT_FACTUAL_CLOSURE_DUTY_V1",
         "scope": "Metadata only: record already adopted PR1027, consume H93-to-H72 one-time authorization, return nine paths and three resources.",
@@ -24943,7 +25007,7 @@
         "actual_receipt_resolution": "Bind the real nonauthor review receipt to this exact after bytes/blob and the realized registry commit/readback externally in #218/#220; no future circular SHA is fabricated."
       },
       "bounded_rc_integration": {
-        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "status": "CONSUMED_BY_EXISTING_H72_ADOPTION",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
         "permitted_head": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
@@ -24952,7 +25016,7 @@
         "sole_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
         "source_owner_preserved": "CODEX_ROOT_B8C8E7B756CD",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
