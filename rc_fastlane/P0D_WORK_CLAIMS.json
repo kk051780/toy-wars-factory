@@ -28263,6 +28263,87 @@
           "REAL69_NATIVE_FULL28_PROFILE"
         ]
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB015-WEAPON-FACETS-20261125-929",
+      "feature_id": "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root current GQ470 Work session for existing #929 only",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 929,
+      "request_comment": 7146178881,
+      "base_rc_sha": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+      "source_head_before": "b6417df54b2c1805a21e257489e54a4a1454e923",
+      "source_head": null,
+      "prep_branch": "quality/gq470-fb015-weapon-sculpt-real69-20261120",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "b289bd74-a9a7-4ff1-9e55-c7d894595776",
+      "issued_at": "2026-11-24T22:41:30.406+00:00",
+      "expires_at": "2026-11-25T00:41:30.406+00:00",
+      "target_paths": [
+        ".github/workflows/gq470-weapon-sculpt-real69-prep.yml",
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau",
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/native_facets.luau",
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_WEAPONSILHOUETTES"
+      ],
+      "prepared_source_hashes": {
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau": {
+          "bytes": 7547,
+          "sha256": "497c6b91e0d02b3f8d15c517e9359d940b39ccf6295529f39286dee04eb42289"
+        },
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/native_facets.luau": {
+          "bytes": 4554,
+          "sha256": "7dec358aa9c1b3de2143ad495575f8fbddbd878564f79fe4cca34183b7680995"
+        },
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py": {
+          "bytes": 14512,
+          "sha256": "103f6bd3dcc714499546cfa8318d4ecc9314f3f124b9f0638a1d7f906993a310"
+        },
+        ".github/workflows/gq470-weapon-sculpt-real69-prep.yml": {
+          "bytes": 8228,
+          "sha256": "41678e68ab7d731d2d3b407287b6254c780f2f54b0daa27d19bf972e05353aa3"
+        }
+      },
+      "scope": "One fixed existing PR929 source update. Only these four files; exact 7547 B generated weapon module on f6c9a5. Pinned original V2 remains reachable and PR931 references are untouched. Source QA only. Maintain #910 canonical precedence and #796 current canonical priority.",
+      "approval": "SOURCE_SCOPE_ONLY",
+      "allowed_new_prs": 0,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "actual_metadata_lease": {
+        "ref": "b6a0662cee16e7c72af365d50f707cce01e8a039",
+        "blob": "aaa132978589236779fcbf39a6193cbf713e31c8",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "b289bd74-a9a7-4ff1-9e55-c7d894595776",
+          "task_id": null,
+          "epoch": 722,
+          "acquired_at": "2026-11-24T22:40:58.670+00:00",
+          "expires_at": "2026-11-24T23:10:58.670+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "prior_source_preserved": {
+        "pr": 929,
+        "head": "b6417df54b2c1805a21e257489e54a4a1454e923",
+        "original_main_art6_composite": 931
+      },
+      "authority_basis": "Current OWNER task, #1011, #470, plus authenticated #218 7146178881; source only, separate independent review and no assumption of formal admission."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
