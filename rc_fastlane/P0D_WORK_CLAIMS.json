@@ -28267,7 +28267,7 @@
     {
       "claim_id": "P0D-GQ470-FB015-WEAPON-FACETS-20261125-929",
       "feature_id": "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root current GQ470 Work session for existing #929 only",
       "parent_issue": 470,
@@ -28276,7 +28276,7 @@
       "request_comment": 7146178881,
       "base_rc_sha": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
       "source_head_before": "b6417df54b2c1805a21e257489e54a4a1454e923",
-      "source_head": null,
+      "source_head": "58c3d163187aab940519bed246b946bec7995542",
       "prep_branch": "quality/gq470-fb015-weapon-sculpt-real69-20261120",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -28303,8 +28303,8 @@
           "sha256": "7dec358aa9c1b3de2143ad495575f8fbddbd878564f79fe4cca34183b7680995"
         },
         "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py": {
-          "bytes": 14512,
-          "sha256": "103f6bd3dcc714499546cfa8318d4ecc9314f3f124b9f0638a1d7f906993a310"
+          "bytes": 15953,
+          "sha256": "722b114bb116e5f06334d87614acb7e4f7e92b2a51872a7e689430e05068a2f7"
         },
         ".github/workflows/gq470-weapon-sculpt-real69-prep.yml": {
           "bytes": 8228,
@@ -28343,7 +28343,45 @@
         "head": "b6417df54b2c1805a21e257489e54a4a1454e923",
         "original_main_art6_composite": 931
       },
-      "authority_basis": "Current OWNER task, #1011, #470, plus authenticated #218 7146178881; source only, separate independent review and no assumption of formal admission."
+      "authority_basis": "Current OWNER task, #1011, #470, plus authenticated #218 7146178881; source only, separate independent review and no assumption of formal admission.",
+      "provenance_verifier_amendment": {
+        "source_head_before": "58c3d163187aab940519bed246b946bec7995542",
+        "only_path": "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py",
+        "request_comment": 7146643351,
+        "amended_at": "2026-11-24T22:47:54.883+00:00",
+        "prior_source_publish_completed": true,
+        "one_exact_new_source_commit": true,
+        "further_source_or_rc_rights": false,
+        "previous_blob": "4a6f5eb399ef47f17ac8a039b33948054be5c24a",
+        "previous_pin": {
+          "bytes": 14512,
+          "sha256": "103f6bd3dcc714499546cfa8318d4ecc9314f3f124b9f0638a1d7f906993a310"
+        },
+        "new_pin": {
+          "bytes": 15953,
+          "sha256": "722b114bb116e5f06334d87614acb7e4f7e92b2a51872a7e689430e05068a2f7"
+        },
+        "actual_metadata_lease": {
+          "ref": "fa1013b7a0b2c4954133a81fdfbf9a1b951bb908",
+          "blob": "b3b864e592faa9fd8a9d3c9ccecb42e4758097ba",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "51b31d57-a850-44f3-a18f-40006b33a602",
+            "task_id": null,
+            "epoch": 724,
+            "acquired_at": "2026-11-24T22:47:22.241+00:00",
+            "expires_at": "2026-11-24T23:17:22.241+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "prior_artifact": 14971946585,
+        "prior_ci": 45503806417,
+        "prior_bootstrap": 45503806688,
+        "prior_acceptance_hold": "CANDIDATE_RECEIPT_PROVENANCE",
+        "change": "Only label candidate intake record and test exact official rollback provenance; three other published files remain exact."
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
