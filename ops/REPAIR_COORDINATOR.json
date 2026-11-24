@@ -789,6 +789,84 @@
         "changed_state_requires_stop_not_retry": true
       },
       "service_completion_asserted": false
+    },
+    {
+      "schema": 1,
+      "case_id": "GQ470_MANUAL_CONTROLLER_EPOCH711_BOUNDED_MAINTENANCE_20261125_3b7283bf",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "actor_context": "/root (current GQ470 Work session)",
+      "actor_operation_id": "3b7283bf-5d99-4ebd-a57d-67023845ea4d",
+      "authenticated_github_actor": {
+        "login": "kk051780",
+        "user_id": 233213370
+      },
+      "recorded_at": "2026-11-24T21:04:02.728071+00:00",
+      "observed_ref": "ef0d72307430718a8b42b7daecf5cf090af8d30f",
+      "observed_state_blob": "2b2be999b5c87794d96ce7471acce4e4738b6fe2",
+      "previous_epoch": 711,
+      "next_epoch": 712,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "5c7cf995-9b1f-465b-bea7-c52c2b64cc28",
+        "task_id": null,
+        "epoch": 711,
+        "acquired_at": "2026-11-23T11:17:15.262362+00:00",
+        "expires_at": "2026-11-23T11:47:15.262362+00:00",
+        "base_main_sha": null,
+        "work_branch": "coord/p0d-work-claims",
+        "origin": "controller"
+      },
+      "authorization": {
+        "type": "STANDING_OWNER_DELEGATION_APPLIED_TO_ONE_BOUNDED_MAINTENANCE_DECISION",
+        "source": [
+          "Current OWNER GQ470 task, all authority delegated to carry through formal RC.",
+          "Existing coordinator owner_delegation dated 2026-10-25 and actual H72 AGENTS.md / AUTONOMOUS_INTEGRATION.md.",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7131154245",
+          "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7093793381"
+        ],
+        "scope": "Only fence the exact manual CONTROLLER epoch 711. Preserve the existing order #1027 fact closure, #618, #796 and all existing claims. This confers no source, metadata, RC, main, scheduling, billing, or publication authority.",
+        "expiry_alone_is_authority": false,
+        "new_general_expiry_takeover_rule_created": false,
+        "prior_epoch_specific_approvals_reused": false
+      },
+      "evidence": {
+        "precedent": "https://github.com/kk051780/toy-wars-factory/commit/c80b22c60b102bded75db92642d2bfa0063c7df2",
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "normal_release_requires_original_owner": true,
+        "normal_acquire": {
+          "action": "WAIT_RECOVERY",
+          "write": false,
+          "state_unchanged": true
+        },
+        "normal_service_recovery_accepts_manual_controller": false,
+        "normal_service_recovery_result": "recovery requires positive completion evidence for the exact worker",
+        "last_completed_epoch": 710,
+        "formal_rc_read": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "registry_read": "a61284e2769d6d67d16b342eb494c360bc56cc2a",
+        "github_repository_permission": "admin",
+        "independent_prewrite_authority_review_required": true,
+        "independent_postwrite_readback_required": true
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "all_other_nested_values_unchanged": true,
+        "last_completed_unchanged": true,
+        "prior_revocations_unchanged": true,
+        "raw_existing_history_preserved": true,
+        "fresh_exact_ref_blob_holder_required": true,
+        "single_parent": true,
+        "expected_sha": "ef0d72307430718a8b42b7daecf5cf090af8d30f",
+        "force": false,
+        "one_cas_attempt_only": true,
+        "postwrite_full_state_readback_required": true,
+        "no_new_lease_acquired": true,
+        "changed_state_requires_stop_not_retry": true
+      },
+      "service_completion_asserted": false
     }
   ],
   "approval_packet": {
@@ -2393,18 +2471,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 711,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "5c7cf995-9b1f-465b-bea7-c52c2b64cc28",
-    "task_id": null,
-    "epoch": 711,
-    "acquired_at": "2026-11-23T11:17:15.262362+00:00",
-    "expires_at": "2026-11-23T11:47:15.262362+00:00",
-    "base_main_sha": null,
-    "work_branch": "coord/p0d-work-claims",
-    "origin": "controller"
-  },
+  "epoch": 712,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
