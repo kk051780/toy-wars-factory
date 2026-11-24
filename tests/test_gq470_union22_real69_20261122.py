@@ -1064,6 +1064,50 @@ class UnionOfflineContract(unittest.TestCase):
         cls.lock = compose.load_lock()
         cls.native_lock = native.load_lock()
 
+    def test_guardian_hosted_sparse_donor_includes_and_checks_original_dependencies(self):
+        with patch.object(sys, "path", [str(HERE / "native"), *sys.path]):
+            guardian_spec = importlib.util.spec_from_file_location(
+                "union22_guardian_sparse_tests", HERE / "native/run_guardian_diagnostic.py")
+            guardian = importlib.util.module_from_spec(guardian_spec)
+            guardian_spec.loader.exec_module(guardian)
+        prefix = guardian.DONOR_PACKAGE + "/"
+        contract_path = "stealth_target/INPUT_LOCK.json"
+        missing_before = ("role_los/INPUT_LOCK.json", "role_session/apply_role_snapshot.py",
+                          "role_session/INPUT_LOCK.json", "role_session/README.md",
+                          "role_session/case.luau", "role_session/fixture_boundary.luau", "role_session/run.py")
+        originals = set(missing_before) | {"role_los/README.md", "role_los/apply_existing_repairs.py",
+                                           "role_los/case.luau", "role_los/fixture_boundary.luau", "role_los/run.py"}
+        payload = {name: name.encode() for name in originals | set(guardian.STEALTH_INPUTS)}
+        payload[contract_path] = json.dumps({
+            "existing_pr_files": {prefix + name: native.identity(payload[name]) for name in sorted(originals)}
+        }).encode()
+        stealth = {name: (len(payload[name]), native.identity(payload[name])["sha256"])
+                   for name in guardian.STEALTH_INPUTS}
+        requests = []
+        corrupted = set()
+
+        def response(command, **kwargs):
+            expected = f"repos/{compose.REPOSITORY}/contents/{prefix}"
+            self.assertEqual(command[:4], ["gh", "api", "-H", "Accept: application/vnd.github.raw+json"])
+            self.assertTrue(command[4].startswith(expected))
+            relative, revision = command[4][len(expected):].split("?ref=")
+            self.assertEqual(revision, guardian.DONOR_HEAD)
+            requests.append(relative)
+            body = payload[relative] + (b"altered" if relative in corrupted else b"")
+            return subprocess.CompletedProcess(command, 0, body, b"")
+
+        with tempfile.TemporaryDirectory(prefix="union22-sparse-donor-") as directory, \
+                patch.dict(os.environ, {"GITHUB_REPOSITORY": compose.REPOSITORY, "GH_TOKEN": "unit-test"}), \
+                patch.object(guardian, "STEALTH_INPUTS", stealth), patch.object(guardian.subprocess, "run", response):
+            root = Path(directory)
+            good = root / "good"
+            guardian.load_hosted_donor(good)
+            self.assertEqual(guardian.observe_donor(good)[1], {name: native.identity(raw) for name, raw in payload.items()})
+            self.assertCountEqual(requests, payload.keys())
+            corrupted.add("role_session/apply_role_snapshot.py")
+            with self.assertRaisesRegex(ValueError, "GUARDIAN_PINNED_API_INPUT:role_session/apply_role_snapshot.py"):
+                guardian.load_hosted_donor(root / "corrupt")
+
     def test_profile_and_native_lock_share_exact69(self):
         self.assertEqual(len(self.lock["sources"]), 69)
         self.assertEqual(self.native_lock["sources"],
@@ -1308,7 +1352,7 @@ def load_tests(loader, standard_tests, pattern):
     # A module/script entry or even a partial context must request real artifacts.
     has_context = any(key.startswith("UNION22_TEST_") for key in os.environ)
     if pattern is not None and not has_context:
-        return checked_suite(loader, UnionOfflineContract, 16)
+        return checked_suite(loader, UnionOfflineContract, 17)
     return integration_suite(loader)
 
 

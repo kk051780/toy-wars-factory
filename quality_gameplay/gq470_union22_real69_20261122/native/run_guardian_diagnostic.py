@@ -22,16 +22,29 @@ DONOR_PACKAGE = "quality_gameplay/gq8_guardian_runtime_20261118"
 EVIDENCE_DIRECTORY = "guardian_target"
 SUMMARY = "GUARDIAN_DIAGNOSTIC_RECEIPT.json"
 CONTRACT = "GUARDIAN_DONOR_CONTRACT.json"
-DONOR_INPUTS = {
+STEALTH_INPUTS = {
     "stealth_target/run.py": (18363, "fbe55545d5d427a37ae3bf7d30d6f7bc6a427d4d3dd997516970c140a666ef09"),
     "stealth_target/INPUT_LOCK.json": (39478, "f37a9500da30d08fcd1baf30fec340d86733b18fd9c9d34f5e5917f271347dcb"),
     "stealth_target/apply_stealth_target.py": (3815, "4e41345d4f22983ccb58b907b0d5cbd49d0e70246a9eb4ad0c56fcb39e4d7b45"),
     "stealth_target/case.luau": (7386, "3b85a61ded6c0585030f7ea515b4b14f4fc9ab055fc03420359fb2a9f906e6d2"),
     "stealth_target/fixture_boundary.luau": (4933, "794d566cc99d73da827877368e47e2f35618cd3d2c080a8fd43745ab781d8e9e"),
-    "role_los/apply_existing_repairs.py": (4027, "59b1b8a5344212195ea032d002aba40909e04953a6c91b302c93ca1d95dbfcaa"),
-    "role_los/fixture_boundary.luau": (9041, "8650af84ee20070946a5bcf2a651b08dcc1eab67d0a0ce713286e606e815c104"),
+}
+ROLE_INPUT_NAMES = {
+    "role_los": ("INPUT_LOCK.json", "README.md", "apply_existing_repairs.py", "case.luau", "fixture_boundary.luau", "run.py"),
+    "role_session": ("INPUT_LOCK.json", "README.md", "apply_role_snapshot.py", "case.luau", "fixture_boundary.luau", "run.py"),
 }
 COUNTS = {"expected_baseline_failure": 8, "candidate_pass": 26, "baseline_control_pass": 6}
+
+
+def donor_input_pins(package):
+    pins = {relative: {"bytes": size, "sha256": sha} for relative, (size, sha) in STEALTH_INPUTS.items()}
+    raw = native.read(native.safe_root(package / "stealth_target/INPUT_LOCK.json"))
+    native.require(native.identity(raw) == pins["stealth_target/INPUT_LOCK.json"], "GUARDIAN_PINNED_STEALTH_CONTRACT")
+    previous = native.strict_json(raw)["existing_pr_files"]
+    expected = {f"{folder}/{name}" for folder, names in ROLE_INPUT_NAMES.items() for name in names}
+    native.require(set(previous) == {f"{DONOR_PACKAGE}/{relative}" for relative in expected},
+                   "GUARDIAN_EXACT_FROZEN_ROLE_AND_LOS_FILE_SET")
+    return pins | {relative: previous[f"{DONOR_PACKAGE}/{relative}"] for relative in sorted(expected)}
 
 
 def checked_donor(checkout):
@@ -43,25 +56,32 @@ def checked_donor(checkout):
 
 def observe_donor(checkout):
     package = checkout / DONOR_PACKAGE
-    pins = {relative: native.identity(native.read(native.safe_root(package / relative)))
-            for relative in DONOR_INPUTS}
-    native.require(pins == {relative: {"bytes": size, "sha256": sha} for relative, (size, sha)
-                            in DONOR_INPUTS.items()}, "GUARDIAN_DONOR_EXACT_INPUTS")
+    expected = donor_input_pins(package)
+    pins = {relative: native.identity(native.read(native.safe_root(package / relative))) for relative in expected}
+    native.require(pins == expected, "GUARDIAN_DONOR_EXACT_INPUTS")
     return package, pins
 
 
 def load_hosted_donor(checkout):
     native.require(os.environ.get("GITHUB_REPOSITORY") == compose.REPOSITORY and os.environ.get("GH_TOKEN"),
                    "GUARDIAN_PINNED_API_CONTEXT")
-    for relative, (size, sha) in DONOR_INPUTS.items():
+    package = checkout / DONOR_PACKAGE
+
+    def fetch(relative, pin):
         result = subprocess.run(["gh", "api", "-H", "Accept: application/vnd.github.raw+json",
                                  f"repos/{compose.REPOSITORY}/contents/{DONOR_PACKAGE}/{relative}?ref={DONOR_HEAD}"],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=35, check=False)
-        native.require(result.returncode == 0 and native.identity(result.stdout) == {"bytes": size, "sha256": sha},
+        native.require(result.returncode == 0 and native.identity(result.stdout) == pin,
                        "GUARDIAN_PINNED_API_INPUT:" + relative)
-        destination = checkout / DONOR_PACKAGE / relative
+        destination = package / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(result.stdout)
+
+    for relative, (size, sha) in STEALTH_INPUTS.items():
+        fetch(relative, {"bytes": size, "sha256": sha})
+    for relative, pin in donor_input_pins(package).items():
+        if relative not in STEALTH_INPUTS:
+            fetch(relative, pin)
 
 
 def source_contract(root, profile, input_lock):

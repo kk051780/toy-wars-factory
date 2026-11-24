@@ -1023,8 +1023,11 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
                         "sha256": "fbe55545d5d427a37ae3bf7d30d6f7bc6a427d4d3dd997516970c140a666ef09"}}
     donor_inputs.update({f"stealth_target/{name}": contract["package_pins"][name]
                          for name in ("apply_stealth_target.py", "case.luau", "fixture_boundary.luau")})
-    donor_inputs.update({f"role_los/{name}": contract["existing_pr_files"][f"{package}/role_los/{name}"]
-                         for name in ("apply_existing_repairs.py", "fixture_boundary.luau")})
+    originals = contract["existing_pr_files"]
+    require(package == "quality_gameplay/gq8_guardian_runtime_20261118" and len(originals) == 12
+            and all(path.startswith((f"{package}/role_los/", f"{package}/role_session/")) for path in originals),
+            "GUARDIAN_MATRIX_ORIGINAL_DEPENDENCIES")
+    donor_inputs.update({path.removeprefix(package + "/"): pin for path, pin in originals.items()})
     require(summary["donor_inputs"] == donor_inputs
             and summary["donor_head"] == repair["donor_head"]
             and summary["schema"] == "UNION22_GUARDIAN_DONOR_MATRIX_V1"
