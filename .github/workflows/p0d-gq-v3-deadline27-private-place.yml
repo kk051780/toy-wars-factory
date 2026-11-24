@@ -1,0 +1,192 @@
+name: EGGRUMBLE 7-domain actual 27-source deadline PRIVATE Place
+on:
+  push:
+    branches:
+      - 'quality/eggrumble-v3-match-deadline-20261116-01'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seven-domain-current26-plus-deadline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - name: Checkout isolated #499 QA writer (no official RC writes)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout tested existing #484 26-source quality composer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _fixed_quality
+          persist-credentials: false
+      - name: Checkout original game author's 21 sources
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _fixed_game
+          persist-credentials: false
+      - name: Checkout ART author's independent 4 sources
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _fixed_art
+          persist-credentials: false
+      - name: Checkout SCORE author's result and independent 1 source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _fixed_score
+          persist-credentials: false
+      - name: Checkout #489 original author ITEM fairness source (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _fixed_item
+          persist-credentials: false
+      - name: Author HEADs immutable, original source/negative contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fixed_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _fixed_game rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _fixed_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _fixed_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _fixed_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _fixed_item hash-object handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau)" = 107046cb0bf81fed9e3cba1699ada31571e44a22
+          python3 -m unittest discover -v -s quality_gameplay/v3_match_deadline_20261116/tests -p 'test_*.py'
+          python3 -m unittest discover -v -s _fixed_game/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py'
+          python3 -m unittest discover -v -s _fixed_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py'
+      - name: Run existing ART author's composer and original #484 quality composer, untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _fixed_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _fixed_game/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_ORIGINAL_ART26_BASE.project.json
+          python3 _fixed_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _fixed_game --quality _fixed_quality --art _fixed_art --score _fixed_score \
+            --art-project artifacts/EGGRUMBLE_ORIGINAL_ART26_BASE.project.json \
+            --out artifacts/EGGRUMBLE_ORIGINAL_26.project.json
+          test -f artifacts/SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("artifacts/SOURCE_RECEIPT.json").read_text())
+          assert p["script_count"]==26 and p["server_count"]==23 and p["client_count"]==3
+          assert p["status"]=="SOURCE_ONLY_NOT_OFFICIAL_RC"
+          print("ORIGINAL_26_GAME_ART_SCORE_REUSED_UNMODIFIED")
+          PY
+      - name: Generate one extra server policy and two narrow original-host/result overlays
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/compose_private_27.py \
+            --base artifacts/EGGRUMBLE_ORIGINAL_26.project.json \
+            --policy quality_gameplay/v3_match_deadline_20261116/EGGRUMBLE_DeadlinePolicy.luau \
+            --item _fixed_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.project.json
+          test -f artifacts/DEADLINE27_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("artifacts/DEADLINE27_SOURCE_RECEIPT.json").read_text())
+          assert p["source_count"]==27 and p["unchanged_original_sources"]==23,p
+          assert p["item_author_byte_exact"] is True
+          assert p["item_author_sha256"] != p["original_item_sha256"]
+          assert p["private_modified_original_sources"]==[
+            "EGGRUMBLE_FieldItemPickups","EGGRUMBLE_LobbyCastleModesPreview",
+            "EGGRUMBLE_MatchResultService"],p
+          print("GQ_LATEST_ITEM_AUTHOR_BYTE_EXACT_IN_DEADLINE27_PASS")
+          PY
+      - name: Get fixed upstream Luau native parser/VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fixed_luau
+          persist-credentials: false
+      - name: Compile all 27 generated sources, execute actual deadline policy and SCORE
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fixed_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _fixed_luau -B /tmp/p0d_gq_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_gq_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.project.json").resolve(strict=True)
+          tree=json.loads(project.read_text(encoding="utf-8"))["tree"]
+          def walk(node):
+              if isinstance(node,dict):
+                  if "$path" in node:
+                      yield (project.parent/node["$path"]).resolve(strict=True)
+                  else:
+                      for k,v in node.items():
+                          if not k.startswith("$"):yield from walk(v)
+          sources=list(walk(tree))
+          assert len(sources)==27,len(sources)
+          for p in sources:
+              subprocess.run(["/tmp/p0d_gq_luau/luau-compile","--text",str(p)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("ACTUAL_V3_GAME_ART_SCORE_DEADLINE_27_NATIVE_PARSE_PASS")
+          PY
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/make_native_deadline_harness.py --out /tmp/p0d_deadline_native.luau
+          /tmp/p0d_gq_luau/luau /tmp/p0d_deadline_native.luau
+          mkdir -p /tmp/p0d_score_native
+          score=_fixed_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          cp "$score/EGGRUMBLE_ScoreBalance.luau" /tmp/p0d_score_native/Results.luau
+          cp "$score/tests/EGGRUMBLE_ScoreBalance.spec.luau" /tmp/p0d_score_native/Cases.luau
+          cp "$score/tests/run_score_balance_native.luau" /tmp/p0d_score_native/Runner.luau
+          (cd /tmp/p0d_score_native && /tmp/p0d_gq_luau/luau Runner.luau) | tee artifacts/SCORE_NATIVE.log
+          grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/SCORE_NATIVE.log
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/make_native_cross_domain_harness.py \
+            --rules _fixed_game/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --score _fixed_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau \
+            --policy quality_gameplay/v3_match_deadline_20261116/EGGRUMBLE_DeadlinePolicy.luau \
+            --out /tmp/eggrumble_real_rules_score_timeout.luau
+          /tmp/p0d_gq_luau/luau-compile --text /tmp/eggrumble_real_rules_score_timeout.luau >/dev/null
+          /tmp/p0d_gq_luau/luau /tmp/eggrumble_real_rules_score_timeout.luau
+      - name: Acquire checksum-pinned Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/p0d_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/p0d_rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+      - name: Real PRIVATE Place and independent exact 27/27 embedded Source validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_rojo build artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.project.json -o artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.rbxlx
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/verify_private_27.py \
+            --project artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.project.json \
+            --place artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.rbxlx \
+            --receipt artifacts/DEADLINE27_SOURCE_RECEIPT.json
+      - name: Retain private evidence only, no deploy or publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ_DEADLINE27_PRIVATE_SOURCE_NOT_RC
+          path: |
+            artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.rbxlx
+            artifacts/EGGRUMBLE_27_DEADLINE_PRIVATE.project.json
+            artifacts/DEADLINE27_SOURCE_RECEIPT.json
+            artifacts/SCORE_NATIVE.log
+          retention-days: 3
