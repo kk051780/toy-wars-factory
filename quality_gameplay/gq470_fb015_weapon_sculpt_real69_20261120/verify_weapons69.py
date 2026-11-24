@@ -122,6 +122,15 @@ def selftest() -> None:
     for corrupt in mutations:
         demand(digest(corrupt.encode("utf-8")) != EXPECTED_AFTER, "NEGATIVE_FALSE_ACCEPT")
     demand(len(mutations) == 12, "MUTATION_TEST_CASES")
+    template = {"build_head": FORMAL, "canonical_build": True, "formal_rc_adoption_proven": True,
+                "receipt_provenance": "OFFICIAL", "official_build_head": FORMAL,
+                "execution_context": {"kind": "OFFICIAL"}}
+    flag_candidate(template)
+    demand(template["build_head"] == "PREP_FROM_" + FORMAL
+           and template["canonical_build"] is False and template["formal_rc_adoption_proven"] is False
+           and template["receipt_provenance"] == "PR_CANDIDATE" and template["official_build_head"] is None
+           and template["execution_context"] == {"kind": "PR_SOURCE_PREVIEW", "official_parent": FORMAL},
+           "CANDIDATE_PROVENANCE")
     print("GQ470_FB015_WEAPON_CANDIDATE_AND_12_NEGATIVE_SOURCE_MUTANTS_PASS")
 
 
@@ -189,6 +198,12 @@ def facets_cli(root: Path, binary: Path, former: Path, candidate: Path, output: 
     (output / "receipt.json").write_text(json.dumps(report,indent=2,sort_keys=True)+"\n")
     print("GQ470_7ROLE_NATIVE_FACETS_EXACT_96_ROWS_AND_12_FACETS_PASS")
 
+def flag_candidate(receipt: dict) -> None:
+    receipt.update(build_head="PREP_FROM_" + FORMAL, canonical_build=False,
+                   formal_rc_adoption_proven=False, receipt_provenance="PR_CANDIDATE",
+                   official_build_head=None,
+                   execution_context={"kind": "PR_SOURCE_PREVIEW", "official_parent": FORMAL})
+
 def apply(root: Path, candidate: Path) -> None:
     root = root.resolve()
     mapping = chosen(root)
@@ -224,7 +239,7 @@ def apply(root: Path, candidate: Path) -> None:
     demand(all(updated[r][1] == old[r][1] for r in updated), "CLASS_CHANGED")
     demand(old[TARGET][0].read_bytes() == original, "OFF69_NOT_EXACT")
     meta["source_hashes"][TARGET] = EXPECTED_AFTER
-    meta["build_head"] = "PREP_FROM_" + FORMAL
+    flag_candidate(meta)
     meta["gq470_fb015_weapon_sculpt"] = {
         "feature_id": FEATURE,
         "official_parent_sha": FORMAL,
@@ -241,6 +256,12 @@ def apply(root: Path, candidate: Path) -> None:
         **findings,
     }
     (root / RECEIPT).write_text(json.dumps(meta, indent=2, ensure_ascii=False, sort_keys=True) + "\n")
+    prepared = json.loads((root / RECEIPT).read_bytes())
+    demand(prepared["receipt_provenance"] == "PR_CANDIDATE"
+           and prepared["canonical_build"] is False and prepared["formal_rc_adoption_proven"] is False
+           and prepared["official_build_head"] is None, "PACKAGED_CANDIDATE_PROVENANCE")
+    demand(json.loads((off / RECEIPT).read_bytes())["formal_rc_adoption_proven"] is True,
+           "OFF69_RECEIPT_PROVENANCE")
     (root / "WEAPON_ART_SOURCE_REPORT.json").write_text(
         json.dumps(meta["gq470_fb015_weapon_sculpt"], indent=2, ensure_ascii=False) + "\n")
     print("GQ470_FB015_SELECTED_ONE_OF_69_WEAPON_SCULPT_SOURCE_AND_EXACT_OFF_PASS")
