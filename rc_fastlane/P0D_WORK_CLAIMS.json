@@ -27850,7 +27850,7 @@
     {
       "claim_id": "P0D-GQ618-BEAST-UNION22-20261123-B8C8E7B7",
       "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
-      "state": "PREP_READY",
+      "state": "RC_INTEGRATED",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #618 canonical transport)",
       "parent_issue": 470,
@@ -28002,14 +28002,14 @@
           "origin": "controller"
         }
       },
-      "scope_only": true,
+      "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
       "PREP_READY": true,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
-      "formal_rc_adoption": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": true,
       "no_main_or_publish": true,
       "authority_basis": "Current owner request, H72 AGENTS/#1011 and explicit original canonical transport #7088218616. No original review or expiry takeover reused.",
       "test_only_amendment": {
@@ -28058,7 +28058,7 @@
         "rc_write_authorized": false,
         "upstream_game_source_modified": false
       },
-      "current_integration_executor": "/root (current GQ470 Work session / #1032 finite RC adoption)",
+      "current_integration_executor": null,
       "exact_prep_ready_evidence": {
         "source_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
         "tree": "23e70ea9bdcbe09c83ed513a69258eb4b5f3458a",
@@ -28122,7 +28122,7 @@
         "trusted_queue_artifact": 14969755253
       },
       "bounded_rc_integration": {
-        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "status": "CONSUMED_BY_EXACT_F6C9A5_ADOPTION",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
         "permitted_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
@@ -28131,7 +28131,7 @@
         "sole_executor": "/root (current GQ470 Work session / #1032 finite RC adoption)",
         "source_owner_preserved": "CODEX_ROOT_B8C8E7B756CD",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -28176,6 +28176,92 @@
           "authority_basis": "OWNER current end-to-end mandate and recorded #220 comment 7131154245, #1011, active #218 grant and independent exact review."
         },
         "actual_grant_commit_resolution": "Only the realized immutable registry commit and whole readback grant this finite authority."
+      },
+      "post_adoption_factual_closure": {
+        "schema": "GQ618_FACTUAL_OFFICIAL_RC_CLOSURE_V1",
+        "status": "ADOPTED_AND_OFFICIAL_DELIVERY_VERIFIED",
+        "recorded_at": "2026-11-24T22:23:14.351662+00:00",
+        "recorded_by": "/root (current GQ470 Work session / #1032 finite RC adoption)",
+        "actual_metadata_lease": {
+          "ref": "600b9c0869711a4312e9e35ec67dc5936357a2f2",
+          "blob": "40fd07bec9f301659f679c05f653e32b6fac1ee4",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "8d6db847-d365-4b89-af31-cdea269e075f",
+            "task_id": null,
+            "epoch": 721,
+            "acquired_at": "2026-11-24T22:15:23.163517+00:00",
+            "expires_at": "2026-11-24T22:45:23.163517+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "actual_rc_write": {
+          "checked_at": "2026-11-24T22:10:35.066Z",
+          "old": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+          "head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+          "claim": "bc0d7c5a90fe7199b72675485bebd4e04c1ed01b",
+          "lease": "77bc7db5235fc1adb86872a46c535e0cbf753b4c",
+          "lease_owner": "6938f4ac-65bf-41fa-96a7-90112f1d322b",
+          "epoch": 720,
+          "lease_expires": "2026-11-24T22:38:18.244351+00:00",
+          "actual_ref": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+          "operation_result": {
+            "success": true
+          }
+        },
+        "actual_rc_lease_return": {
+          "commit": "ea6caee3b9f5ea2812d73107b39ced80dff2af3d",
+          "blob": "4726415dc937ac819864b7538b5f86cd8d5c42ed",
+          "epoch": 720
+        },
+        "official_rc": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "from": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "same_head_run": 45498404757,
+        "official_artifact_id": 14968679624,
+        "official_zip": {
+          "bytes": 7777708,
+          "sha256": "b4bb773562cdc9efbde044a71178f602dbe5226d4096dd9048dec2e4cad9d141"
+        },
+        "official_place": {
+          "bytes": 829328,
+          "sha256": "4c35d93b6d8243ecff753ddaef39de0d45d0793085435a21d8f33e4814e78b5a"
+        },
+        "source_count": 69,
+        "instances": 75,
+        "beast_only_h72_inverse": {
+          "bytes": 487809,
+          "sha256": "51e565e2793143dfdee6b73c53d9765a77edbbaab6876993e0333e73ce6390cb"
+        },
+        "independent_postpush_review": {
+          "id": 6048338904,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1032#pullrequestreview-6048338904",
+          "state": "COMMENTED",
+          "commit_id": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc"
+        },
+        "reviewer_context": "/root/rc_authority_review",
+        "native_cases": [
+          10,
+          7,
+          12
+        ],
+        "studio": "NOT_TESTED",
+        "returned_paths": [
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/beast_cases.luau",
+          "quality_gameplay/gq470_union22_real69_20261122/native/beast_fixture.luau",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "tests/test_gq470_union22_real69_20261122.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT",
+          "REAL69_UNION22_FINAL_RECEIPT",
+          "REAL69_NATIVE_FULL28_PROFILE"
+        ]
       }
     }
   ],
