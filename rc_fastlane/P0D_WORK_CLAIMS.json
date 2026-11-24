@@ -28507,6 +28507,171 @@
         "studio": "NOT_TESTED",
         "admission_boundary": "Source and hosted checks recorded. Candidate ZIP raw download inspection and formal RC admission remain separate. No future source or RC writer rights."
       }
+    },
+    {
+      "claim_id": "P0D-GQ815-GUARDIAN-UNION22-20261125",
+      "feature_id": "GQ815_GUARDIAN_ACTUAL_MATCH_AI",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (current GQ470 Work session / #796 canonical transport)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": null,
+      "canonical_parent": 796,
+      "request_comment": 7147249221,
+      "authenticated_scope_request_comment": 7147473293,
+      "design_comment": 7147477004,
+      "base_rc_sha": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+      "origin_source_pr": 796,
+      "origin_source_head": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+      "origin_source_owner": "CODEX_ROOT_870491EA0B74",
+      "origin_source_and_fixture_author_preserved": true,
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "prepared_source_hashes": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": {
+          "before": {
+            "bytes": 33567,
+            "sha256": "e14e052adcafbcdc2e6164b058ebb86297a883240cf1c5c757eeb9a9e8b36bdf",
+            "git_blob": "18a465b7d69e9ff25be682d64388d7af34b27c93"
+          },
+          "after": {
+            "bytes": 35935,
+            "sha256": "5db44f134f7d6d4051269502074583c831e371d0618b03b43bdd8aa2087fd983",
+            "git_blob": "8978ad36777c113e35a2886e8748c110fc7223bc"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": {
+          "before": {
+            "bytes": 34937,
+            "sha256": "4c3d69886787130d296ea99035b6d65b358c1d5ffd4b69ec7364147010a4d334",
+            "git_blob": "c66135904e072a101b6eda4a2b0e8e52d5d1e117"
+          },
+          "after": {
+            "bytes": 34937,
+            "sha256": "639f2994cc82bcf67bcfd34ae118b0df021062ed3ac4876a73e9087dce8ef030",
+            "git_blob": "765722b6fb6fd02316b0adae9654f5037bab1baa"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": {
+          "before": null,
+          "after": {
+            "bytes": 11508,
+            "sha256": "282663508159680ee05c8c8eb09bab314a2f300efc937c4877aa3f538c8ba53f",
+            "git_blob": "254f54b221862028a85c11a4df5fd84789222f29"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": {
+          "before": {
+            "bytes": 38152,
+            "sha256": "012425fea1a7d57af199f9cd57427be4ea6516c5b652282d9edc8aa964e700f2",
+            "git_blob": "83c54c40ac942490f709250c8beaa3587b98111c"
+          },
+          "after": {
+            "bytes": 38451,
+            "sha256": "3800050fb5366a89fe742487bbe09dbd57bd6020150d0fd2980b74a99225ea57",
+            "git_blob": "f82f6de9fbd7e328f2654548a23981a3900f27e5"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": {
+          "before": {
+            "bytes": 341522,
+            "sha256": "61a484da4aaf495a91ed8167fc955d1fc6763397c79253c12a2eaac2f7cab610",
+            "git_blob": "9da815ed77b6fe3d0bb80b10937c37f09b23f682"
+          },
+          "after": {
+            "bytes": 364561,
+            "sha256": "442210f95ba60f841c8e7e5eeed56d984e9a5a66d6eb69578445e23d3b27859c",
+            "git_blob": "e4688fc6e9b28cff39cbec9a3c70d51a9b56297a"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": {
+          "before": {
+            "bytes": 78485,
+            "sha256": "12decd9e8353a49b9caf261a1f7f08c2364118a89b07313559ce66977a0b2f59",
+            "git_blob": "f449c9ad5131f30f77b08b89276979cfd87016d9"
+          },
+          "after": {
+            "bytes": 91301,
+            "sha256": "9664868f0739c076944bb02e84a2cc30ab9146c7731819d8fb9bfef438cf3c25",
+            "git_blob": "0177e5e32936ecc36c58b11d9e332c62d4936b2c"
+          },
+          "mode": "100644"
+        },
+        "tests/test_gq470_union22_real69_20261122.py": {
+          "before": {
+            "bytes": 78142,
+            "sha256": "715b1a288cdb7a6b61307a299da77581665ea7756e03ee82df29ddbdb4d82379",
+            "git_blob": "6aa5370a75f0f21957e963e98641675d6dd63ff3"
+          },
+          "after": {
+            "bytes": 79804,
+            "sha256": "4b28997946ba1e26c2bebb0d4a2463b2e5e401092b0f245b7fac94121d9309f8",
+            "git_blob": "da0202c8b9b9402459acb60f2bf4bf935b34393c"
+          },
+          "mode": "100644"
+        }
+      },
+      "scope_proposal": {
+        "bytes": 6173,
+        "sha256": "286566ec2afc1ca6e05a92f3f9c5543b7ed442707fc4541f4cf87d26321762c6",
+        "git_blob": "cc40a1428cd6fa356abdb4ed6b6e36a459c1a556"
+      },
+      "prepared_candidate_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+      "scope": "Seven locked Union22 paths. One Guardian gameplay module changes by six runtime hunks and 494 bytes. Hosted Native uses the existing job and seven exact donor blobs. Read-only physical Studio validation is handled by the separate Codex lane.",
+      "prep_branch": "fix/gq815-guardian-union22-transport-20261125",
+      "allowed_new_prs": 1,
+      "source_publisher": "/root (current GQ470 Work session / #796 canonical transport)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "4a3f2af4-8b82-4c59-8955-18b7d2b2b368",
+      "issued_at": "2026-11-24T23:36:34.700520+00:00",
+      "expires_at": "2026-11-25T05:36:34.700520+00:00",
+      "actual_metadata_lease": {
+        "ref": "c5bf6725649ca8b0056f20b8b2f05738bdc34747",
+        "blob": "e869b574bf8b439eabc43007f282e28d771c682d",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "4a3f2af4-8b82-4c59-8955-18b7d2b2b368",
+          "task_id": null,
+          "epoch": 728,
+          "acquired_at": "2026-11-24T23:30:54.120+00:00",
+          "expires_at": "2026-11-25T00:00:54.120+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_scope_granted": true,
+      "source_head": null,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "authority_basis": "Current owner delegated quality-gate task, repository AGENTS and #1011, exact #218 scope and #250 bounded ADOPT decision."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
