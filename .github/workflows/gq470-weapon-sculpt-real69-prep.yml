@@ -15,20 +15,25 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
+      FORMAL_HEAD: f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc
+      FORMAL_RUN: '45498404757'
+      FORMAL_ARTIFACT: '14968679624'
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check fixed weapon source, five mutation negatives, and fresh canonical parent
+      - name: Check fixed weapon source, twelve mutation negatives, and fresh canonical parent
         shell: bash
         run: |
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py
           python3 -B quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py --self-test
-          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD_REBASE_REQUIRED; exit 1; }
-          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL_HEAD" || { echo RED_STALE_FORMAL_HEAD_REBASE_REQUIRED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$FORMAL_RUN" --jq '.head_sha+" "+.conclusion+" "+.event')" = "$FORMAL_HEAD success push"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$FORMAL_ARTIFACT" --jq '.workflow_run.id|tostring')" = "$FORMAL_RUN"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$FORMAL_ARTIFACT" --jq .digest)" = 'sha256:b4bb773562cdc9efbde044a71178f602dbe5226d4096dd9048dec2e4cad9d141'
           mkdir -p /tmp/gq470-weapons
-          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-weapons
+          gh run download "$FORMAL_RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-weapons
           test -s /tmp/gq470-weapons/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           test -s /tmp/gq470-weapons/REAL69_LEGACY_INTAKE_RECEIPT.json
           python3 -B quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py --base /tmp/gq470-weapons
@@ -55,7 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           cmake -S _pinned_luau -B /tmp/gq470-weapon-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470-weapon-luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq470-weapon-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import subprocess,sys
           from pathlib import Path
@@ -70,6 +75,11 @@ jobs:
                   subprocess.run(["/tmp/gq470-weapon-luau/luau-compile","--text",str(file)],check=True,stdout=subprocess.DEVNULL)
           print("GQ470_WEAPON_NATIVE_ON69_OFF69_PASS")
           PY
+          sourcepath=quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120
+          gh api -H 'Accept: application/vnd.github.raw+json' "repos/$GITHUB_REPOSITORY/contents/$sourcepath/EGGRUMBLE_WeaponSilhouettes.luau?ref=b6417df54b2c1805a21e257489e54a4a1454e923" > /tmp/gq470-weapon-v2.luau
+          python3 -B "$sourcepath/verify_weapons69.py" --base /tmp/gq470-weapons \
+            --native /tmp/gq470-weapon-luau/luau --previous-v2 /tmp/gq470-weapon-v2.luau \
+            --evidence /tmp/gq470-weapons/WEAPON_FACET_NATIVE
       - name: Rojo ON/OFF inverse, source family, old48 inventory
         shell: bash
         run: |
@@ -117,6 +127,7 @@ jobs:
             /tmp/gq470-weapons/sources/**
             /tmp/gq470-weapons/WEAPON_ART_SOURCE_REPORT.json
             /tmp/gq470-weapons/WEAPON_LEGACY48_AUDIT.json
+            /tmp/gq470-weapons/WEAPON_FACET_NATIVE/**
             /tmp/gq470-weapons/OFF69_WEAPON_REBUILT.rbxlx
           if-no-files-found: error
           retention-days: 7

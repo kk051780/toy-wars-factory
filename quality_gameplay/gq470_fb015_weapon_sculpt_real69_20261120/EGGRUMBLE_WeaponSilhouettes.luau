@@ -24,6 +24,21 @@ local TAPERED_WEAPONS={
  RailGunBarrelLeft=true,RailGunBarrelRight=true,
  SoulProngLeft=true,SoulProngRight=true,
 }
+-- Keep the taper visible from the avatar's front for vertical silhouettes.
+-- Mirrored pairs slope toward opposite sides. Rail barrels retain depth taper.
+local QUARTER_TURN=math.pi/2
+local FRONT_TAPER_YAW={
+ OdachiBlade=-QUARTER_TURN,
+ TwinDaggerNear=QUARTER_TURN,TwinDaggerFar=-QUARTER_TURN,
+ TamingHorn=QUARTER_TURN,BeastClawLeft=-QUARTER_TURN,BeastClawRight=QUARTER_TURN,
+ PrismProngLeft=-QUARTER_TURN,PrismProngRight=QUARTER_TURN,
+ PsiOrbitLeft=-QUARTER_TURN,PsiOrbitRight=QUARTER_TURN,
+ SoulProngLeft=-QUARTER_TURN,SoulProngRight=QUARTER_TURN,
+}
+local DOWNWARD_TIP={
+ OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,
+ BeastClawLeft=true,BeastClawRight=true,
+}
 local function part(root:Model,grip:BasePart,name:string,
  size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart
  local p:BasePart
@@ -33,6 +48,14 @@ local function part(root:Model,grip:BasePart,name:string,
   local block=Instance.new("Part")
   block.Shape=shape or Enum.PartType.Block
   p=block
+ end
+ local yaw=FRONT_TAPER_YAW[name]
+ if yaw then
+  size=Vector3.new(size.Z,size.Y,size.X)
+  offset=offset*CFrame.Angles(0,yaw,0)
+  if DOWNWARD_TIP[name] then
+   offset=offset*CFrame.Angles(math.pi,0,0)
+  end
  end
  p.Name=name;p.Size=size;p.Color=color;p.Material=material
  p.Reflectance=if material==Enum.Material.Metal then .08 else 0
