@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "fbc4575b69fbc55ba4d81db6d8d322807e4c4712b126ba452558a35246e7ce0d"
+LOCK_SHA256 = "61a484da4aaf495a91ed8167fc955d1fc6763397c79253c12a2eaac2f7cab610"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -40,6 +40,9 @@ HUD_OFF_ARCHIVE = "OFF69_HUD_CONTEXT_CURRENT_RC_ROLLBACK.tar.gz"
 BOT_SOURCE = "ServerScriptService/EGGRUMBLE_BotActors.luau"
 BOT_OFF = "off69_bot_vault_hud_parent"
 BOT_OFF_ARCHIVE = "OFF69_BOT_VAULT_HUD_PARENT_ROLLBACK.tar.gz"
+BEAST_SOURCE = "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau"
+BEAST_OFF = "off69_beast_h72_parent"
+BEAST_OFF_ARCHIVE = "OFF69_BEAST_H72_PARENT_ROLLBACK.tar.gz"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -326,6 +329,32 @@ def transform(inputs, lock):
     return on, off
 
 
+def beast_parent_profile(lock):
+    repair = lock["beast_followup_repair"]
+    need(repair["source_path"] == BEAST_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["bot_followup_repair"]["repaired_place"]
+         and repair["parent_combat_row"]["after"] == repair["parent_combat"]
+         and lock["sources"][BEAST_SOURCE]["after"] == repair["repaired_combat"]
+         and repair["changed_sources_from_h72_parent"] == 1
+         and repair["unchanged_sources_from_h72_parent"] == 68,
+         "BEAST_PARENT_PROFILE")
+    return lock | {
+        "sources": lock["sources"] | {BEAST_SOURCE: repair["parent_combat_row"]},
+        "final_place": repair["parent_place"],
+    }
+
+
+def beast_parent_sources(on, lock, parent_lock):
+    repair = lock["beast_followup_repair"]
+    parent = on | {BEAST_SOURCE: apply_hunks(on[BEAST_SOURCE], repair["inverse"])}
+    need(set(parent) == set(parent_lock["sources"])
+         and all(identity(raw) == parent_lock["sources"][p]["after"] for p, raw in parent.items())
+         and parent[BEAST_SOURCE] != on[BEAST_SOURCE]
+         and apply_hunks(parent[BEAST_SOURCE], repair["forward"]) == on[BEAST_SOURCE],
+         "BEAST_H72_PARENT_INVERSE")
+    return parent
+
+
 def bot_parent_sources(on, lock):
     """Undo only BotActors, yielding the recorded HUD parent."""
     repair = lock["bot_followup_repair"]
@@ -422,8 +451,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    bot_parent = bot_parent_sources(on, lock)
-    hud_off = hud_current_sources(bot_parent, lock)
+    parent_lock = beast_parent_profile(lock)
+    h72 = beast_parent_sources(on, lock, parent_lock)
+    bot_parent = bot_parent_sources(h72, parent_lock)
+    hud_off = hud_current_sources(bot_parent, parent_lock)
     compiler, rojo = Path(compiler).resolve(), Path(rojo).resolve()
     compiler_before, rojo_before = identity(read_file(compiler)), identity(read_file(rojo))
     need(os.access(compiler, os.X_OK) and os.access(rojo, os.X_OK), "TOOL_NOT_EXECUTABLE")
@@ -432,21 +463,21 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
     stage = Path(tempfile.mkdtemp(prefix=output.name + ".building-", dir=output.parent))
     logs = []
     try:
-        for folder, sources in ((stage, on), (stage / OFF, off), (stage / BOT_OFF, bot_parent), (stage / HUD_OFF, hud_off)):
+        builds = ((stage, on, lock["final_place"], None),
+                  (stage / OFF, off, lock["prior_place"], None),
+                  (stage / BOT_OFF, bot_parent, lock["bot_followup_repair"]["parent_place"], BOT_SOURCE),
+                  (stage / HUD_OFF, hud_off, lock["followup_repair"]["current_place"], HUD_SOURCE),
+                  (stage / BEAST_OFF, h72, parent_lock["final_place"], BEAST_SOURCE))
+        for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
             for name, raw in sources.items():
                 path = folder / "sources" / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(raw)
-                if (folder in (stage, stage / OFF)
-                        or folder == stage / BOT_OFF and name == BOT_SOURCE
-                        or folder == stage / HUD_OFF and name == HUD_SOURCE):
+                if changed_source is None or name == changed_source:
                     run_checked([compiler, "--text", path], logs, quiet_stdout=True)
             run_checked([rojo, "build", folder / PROJECT, "-o", folder / PLACE], logs)
-            wanted = {stage: lock["final_place"], stage / OFF: lock["prior_place"],
-                      stage / BOT_OFF: lock["bot_followup_repair"]["parent_place"],
-                      stage / HUD_OFF: lock["followup_repair"]["current_place"]}[folder]
             place = read_file(folder / PLACE)
             need(identity(place) == wanted, "BUILT_PLACE_IDENTITY")
             embedded, non_source = place_inventory(place)
@@ -467,6 +498,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         hud_archive_identity = identity(read_file(stage / HUD_OFF_ARCHIVE))
         make_archive(stage / BOT_OFF, stage / BOT_OFF_ARCHIVE, BOT_OFF)
         bot_archive_identity = identity(read_file(stage / BOT_OFF_ARCHIVE))
+        make_archive(stage / BEAST_OFF, stage / BEAST_OFF_ARCHIVE, BEAST_OFF)
+        beast_archive_identity = identity(read_file(stage / BEAST_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -482,6 +515,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({BOT_OFF + "/" + PROJECT: lock["project"],
                                BOT_OFF + "/" + PLACE: lock["bot_followup_repair"]["parent_place"],
                                BOT_OFF_ARCHIVE: bot_archive_identity})
+        expected_stage.update({BEAST_OFF + "/sources/" + name: identity(raw) for name, raw in h72.items()})
+        expected_stage.update({BEAST_OFF + "/" + PROJECT: lock["project"],
+                               BEAST_OFF + "/" + PLACE: parent_lock["final_place"],
+                               BEAST_OFF_ARCHIVE: beast_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -503,6 +540,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "hud_only_current_rc_rollback_archive": hud_archive_identity,
             "bot_followup_repair": lock["bot_followup_repair"],
             "bot_only_hud_parent_rollback_archive": bot_archive_identity,
+            "beast_followup_repair": lock["beast_followup_repair"],
+            "beast_only_h72_parent_rollback_archive": beast_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -515,7 +554,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 23, "unchanged_sources": 46,
-            "compile_count": 140, "rojo_build_count": 4, "instances": 75,
+            "compile_count": 141, "rojo_build_count": 5, "instances": 75,
+            "beast_only_compile_count": 1, "beast_only_rojo_build_count": 1,
+            "beast_only_h72_parent_place": parent_lock["final_place"],
+            "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "historical_on_br_compile_count": 138, "historical_on_br_rojo_build_count": 2,
             "hud_only_compile_count": 1, "hud_only_rojo_build_count": 1,
             "hud_only_off_place": lock["followup_repair"]["current_place"],

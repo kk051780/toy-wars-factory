@@ -19,9 +19,10 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "733f8f607809374ee7615d269a58e8300d3964d0e6624050cea4adaea44b05f4"
+INPUT_LOCK_SHA256 = "4c3d69886787130d296ea99035b6d65b358c1d5ffd4b69ec7364147010a4d334"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
-              "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
+              "objective_full_clear_los": "objective_full_cases_clear_los.luau",
+              "beast_target_selection": "beast_cases.luau"}
 BOT_INPUTS = {
     "bot_vault_base.template.luau": {"bytes": 39006, "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"},
     "bot_vault_cases.json": {"bytes": 71446, "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"},
@@ -105,6 +106,8 @@ def fixture_snapshot(lock):
                           "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"}
             and identity(read(HERE / objective["path"])) == {k: objective[k] for k in ("bytes", "sha256")},
             "ORIGINAL_OBJECTIVE_CASE_NOT_PRESERVED")
+    require(identity(read(HERE / "beast_fixture.luau"))
+            == lock["suites"]["beast_target_selection"]["fixture"], "BEAST_FIXTURE_CHANGED")
     return result
 
 
@@ -388,6 +391,10 @@ def assemble(root, lock, suite_name):
     case = HERE / CASE_FILES[suite_name]
     require(identity(read(case)) == lock["suites"][suite_name]["case"], "EXACT_CASE_FILE")
     code = "".join(read(HERE / "fixtures" / name).decode("utf-8") + "\n" for name in lock["fixture_order"])
+    if suite_name == "beast_target_selection":
+        fixture = read(HERE / "beast_fixture.luau")
+        require(identity(fixture) == lock["suites"][suite_name]["fixture"], "BEAST_FIXTURE_IDENTITY")
+        code += fixture.decode("utf-8") + "\n"
     ranges, byte_ranges = {}, {}
     order = lock["modules_in_load_order"] + ["LobbyCastleModesPreview.server"]
     for name in order:
@@ -503,12 +510,15 @@ def run_suite(root, output, binary, lock, suite_name, source_before, binary_pin,
             except Exception:
                 pass
         raise
+    fixture_pins = lock["fixtures"]
+    if suite_name == "beast_target_selection":
+        fixture_pins = fixture_pins | {"beast_fixture.luau": lock["suites"][suite_name]["fixture"]}
     receipt = {"schema": "UNION22_FULL_RUNTIME_SUITE_V2", "status": "PASS", "profile": "union22", "suite": suite_name,
         "input_variant": lock["suites"][suite_name]["input_variant"], "case_path": CASE_FILES[suite_name],
         "execution_context": context, "source_receipt": source_receipt,
         "source_count_pinned": 69, "source_count_executed_full_body": 28, "source_profile": source_before,
         "source_root": str(root), "full_body_byte_ranges": byte_ranges, "source_line_ranges": line_ranges,
-        "fixture_pins": lock["fixtures"], "runner": runner_pin,
+        "fixture_pins": fixture_pins, "runner": runner_pin,
         "input_lock": identity(read(HERE / "INPUT_LOCK.json")), "case_file": lock["suites"][suite_name]["case"],
         "generated": identity(generated), "stdout": identity(result.stdout), "stderr": identity(result.stderr),
         "native": binary_pin, "exit_code": result.returncode, "cases": lines,
@@ -549,7 +559,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         built["input_lock"] = identity(lock_before)
         built["runner"] = identity(runner_before)
         pin = built["binary_before_suites"]
-        for suite in ("combined_clear_los", "objective_full_clear_los"):
+        for suite in CASE_FILES:
             run_suite(root, output / suite, binary, lock, suite, before, pin, context,
                       identity(source_receipt_raw), identity(runner_before))
         run_selected_hud_layout(root, output / "selected_hud_layout", binary, lock, pin, context,
@@ -557,7 +567,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         original_outputs = {name: evidence_snapshot(output / name)
                             for name in (*CASE_FILES, "selected_hud_layout")}
         require({name: len(rows) for name, rows in original_outputs.items()} == {
-            "combined_clear_los": 4, "objective_full_clear_los": 4, "selected_hud_layout": 9},
+            "combined_clear_los": 4, "objective_full_clear_los": 4, "beast_target_selection": 4, "selected_hud_layout": 9},
             "ORIGINAL_DUAL28_AND_HUD_FILE_COUNTS")
         bot_result = bot_adapter.run_supplement(
             source_root=root, expected_profile=lock["sources"], binary=binary,
@@ -588,7 +598,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 62, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 66, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -596,19 +606,19 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "execution_context": context, "source_receipt": identity(source_receipt_raw),
                    "source_inputs_unchanged": True, "source_profile": before,
                    "source_count_pinned": 69, "source_count_executed_full_body": 28,
-                   "source_count_executed_full_body_basis": "original_dual28_suites_only",
+                   "source_count_executed_full_body_basis": "original_dual28_suites_and_beast_target_selection",
                    "input_lock": identity(lock_before), "runner": identity(runner_before),
                    "build_receipt": identity(read(output / "build_receipt.json")),
                    "suites": {name: identity(read(output / name / "receipt.json")) for name in lock["suites"]},
                    "selected_hud_layout": identity(read(output / "selected_hud_layout/receipt.json")),
                    "bot_vault_supplement": identity(read(output / "bot_vault/receipt.json")),
                    "bot_vault_input_files": bot_before,
-                   "full_body_coverage": {"original_dual28": 28, "bot_vault_each": 16,
+                   "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 12,
-                   "native_evidence_file_count": 63,
+                   "native_process_count": 13,
+                   "native_evidence_file_count": 67,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         return receipt

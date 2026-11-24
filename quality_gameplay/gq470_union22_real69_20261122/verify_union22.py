@@ -194,6 +194,43 @@ def verify_archive(path, expected, prefix=compose.OFF):
     return observed
 
 
+def verify_beast_parent_rollback(root, lock, current):
+    repair = lock["beast_followup_repair"]
+    row = repair["parent_combat_row"]
+    require(repair["source_path"] == compose.BEAST_SOURCE
+            and repair["parent_combat"] == row["after"]
+            and repair["repaired_combat"] == lock["sources"][compose.BEAST_SOURCE]["after"]
+            and repair["parent_place"] == lock["bot_followup_repair"]["repaired_place"]
+            and repair["repaired_place"] == lock["final_place"]
+            and repair["changed_sources_from_h72_parent"] == 1
+            and repair["unchanged_sources_from_h72_parent"] == 68, "BEAST_ROLLBACK_IDENTITY")
+    parent_lock = lock | {
+        "sources": lock["sources"] | {compose.BEAST_SOURCE: row},
+        "final_place": repair["parent_place"],
+    }
+    off = root / compose.BEAST_OFF
+    parent = independent_scan(off, parent_lock, "after")
+    require(parent["non_source"] == current["non_source"]
+            and parent["instances"] == current["instances"], "BEAST_ROLLBACK_NON_SOURCE_DRIFT")
+    changed = []
+    for name in parent_lock["sources"]:
+        raw = read(root / "sources" / name)
+        restored = read(off / "sources" / name)
+        if name == compose.BEAST_SOURCE:
+            require(independent_inverse(raw, repair["inverse"]) == restored
+                    and independent_inverse(restored, repair["forward"]) == raw, "BEAST_EXACT_TWO_WAY")
+        else:
+            require(raw == restored, "BEAST_ADDITIONAL_SOURCE_CHANGE")
+        if raw != restored:
+            changed.append(name)
+    require(changed == [compose.BEAST_SOURCE], "BEAST_ROLLBACK_SCOPE")
+    expected = {"sources/" + p: v["after"] for p, v in parent_lock["sources"].items()}
+    expected.update({compose.PROJECT: parent_lock["project"], compose.PLACE: repair["parent_place"]})
+    require(len(expected) == 71 and files(off) == expected, "BEAST_ROLLBACK_MEMBER_SET")
+    verify_archive(root / compose.BEAST_OFF_ARCHIVE, expected, compose.BEAST_OFF)
+    return expected, parent_lock, parent
+
+
 def verify_bot_parent_rollback(root, lock, current):
     """Independently check final -> Bot-only OFF -> frozen HUD preview parent."""
     repair = lock["bot_followup_repair"]
@@ -214,7 +251,7 @@ def verify_bot_parent_rollback(root, lock, current):
             and parent["instances"] == current["instances"], "BOT_ROLLBACK_NON_SOURCE_DRIFT")
     changes = []
     for name in lock["sources"]:
-        final = read(root / "sources" / name)
+        final = read(root / compose.BEAST_OFF / "sources" / name)
         restored = read(root / compose.BOT_OFF / "sources" / name)
         expected = independent_inverse(final, repair["inverse"]) if name == compose.BOT_SOURCE else final
         require(restored == expected, "BOT_ROLLBACK_INVERSE_NOT_PARENT")
@@ -285,8 +322,9 @@ def verify_core(root, base, reports, context):
     expected_off.update({p: digest(inputs["evidence"][p]) for p in lock["prior_report_names"]})
     require(len(expected_off) == 75 and files(root / compose.OFF) == expected_off, "OFF_RUNTIME_MEMBER_SET")
     archive = verify_archive(root / compose.OFF_ARCHIVE, expected_off)
-    expected_bot_off = verify_bot_parent_rollback(root, lock, current)
-    expected_hud_off = verify_hud_current_rollback(root, lock, current)
+    expected_beast_off, h72_lock, h72 = verify_beast_parent_rollback(root, lock, current)
+    expected_bot_off = verify_bot_parent_rollback(root, h72_lock, h72)
+    expected_hud_off = verify_hud_current_rollback(root, h72_lock, h72)
     expected_prior = {p: digest(raw) for p, raw in inputs["evidence"].items()}
     require(files(root / "prior_boundary") == expected_prior, "PRIOR_EVIDENCE_NOT_BYTE_EXACT")
     require(len([p for p in expected_prior if p.startswith("legacy_rollbacks/")]) == 8, "OPAQUE_ROLLBACK_COUNT")
@@ -310,6 +348,8 @@ def verify_core(root, base, reports, context):
         "hud_only_current_rc_rollback_archive": digest(read(root / compose.HUD_OFF_ARCHIVE)),
         "bot_followup_repair": lock["bot_followup_repair"],
         "bot_only_hud_parent_rollback_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
+        "beast_followup_repair": lock["beast_followup_repair"],
+        "beast_only_h72_parent_rollback_archive": digest(read(root / compose.BEAST_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -320,7 +360,10 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 23 and core.get("unchanged_sources") == 46
-            and core.get("compile_count") == 140 and core.get("rojo_build_count") == 4
+            and core.get("compile_count") == 141 and core.get("rojo_build_count") == 5
+            and core.get("beast_only_compile_count") == 1 and core.get("beast_only_rojo_build_count") == 1
+            and core.get("beast_only_h72_parent_place") == h72_lock["final_place"]
+            and core.get("changed_sources_from_h72_parent") == 1 and core.get("unchanged_sources_from_h72_parent") == 68
             and core.get("historical_on_br_compile_count") == 138 and core.get("historical_on_br_rojo_build_count") == 2
             and core.get("hud_only_compile_count") == 1 and core.get("hud_only_rojo_build_count") == 1
             and core.get("hud_only_off_place") == lock["followup_repair"]["current_place"]
@@ -341,6 +384,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.HUD_OFF_ARCHIVE] = digest(read(root / compose.HUD_OFF_ARCHIVE))
     expected_stage.update({compose.BOT_OFF + "/" + name: pin for name, pin in expected_bot_off.items()})
     expected_stage[compose.BOT_OFF_ARCHIVE] = digest(read(root / compose.BOT_OFF_ARCHIVE))
+    expected_stage.update({compose.BEAST_OFF + "/" + name: pin for name, pin in expected_beast_off.items()})
+    expected_stage[compose.BEAST_OFF_ARCHIVE] = digest(read(root / compose.BEAST_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -349,11 +394,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 144 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 146 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 140 and len(rojo_commands) == 4, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 141 and len(rojo_commands) == 5, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -363,14 +408,16 @@ def verify_core(root, base, reports, context):
                         for prefix in ("", compose.OFF) for p in lock["sources"]}
     expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
     expected_compile.add(str(Path(stage) / compose.BOT_OFF / "sources" / compose.BOT_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.BEAST_OFF / "sources" / compose.BEAST_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
-                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF)}, "CORE_ROJO_PROJECT_SET")
+                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF)}, "CORE_ROJO_PROJECT_SET")
     expected_order = []
-    for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF):
-        selected = (lock["sources"] if prefix in ("", compose.OFF) else
-                    [compose.BOT_SOURCE] if prefix == compose.BOT_OFF else [compose.HUD_SOURCE])
+    selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
+                        compose.BOT_OFF: [compose.BOT_SOURCE], compose.HUD_OFF: [compose.HUD_SOURCE],
+                        compose.BEAST_OFF: [compose.BEAST_SOURCE]}
+    for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
     require([(c["command"][1], c["command"][2]) for c in commands] == expected_order,
@@ -468,6 +515,10 @@ def independent_generated(root, pins, suite_name):
         raw = read(HERE / "native/fixtures" / name)
         require(digest(raw) == pins["fixtures"][name], "NATIVE_EXECUTED_FIXTURE_IDENTITY")
         program.extend(raw + b"\n")
+    if suite_name == "beast_target_selection":
+        fixture = read(HERE / "native/beast_fixture.luau")
+        require(digest(fixture) == pins["suites"][suite_name]["fixture"], "BEAST_EXECUTED_FIXTURE_IDENTITY")
+        program.extend(fixture + b"\n")
     byte_ranges, line_ranges = {}, {}
     for name in pins["modules_in_load_order"] + ["LobbyCastleModesPreview.server"]:
         relative = "ServerScriptService/EGGRUMBLE_" + name + ".luau"
@@ -488,7 +539,8 @@ def independent_generated(root, pins, suite_name):
         line_ranges[label] = {"first": first_line, "last": first_line + body.count(b"\n")}
         program.extend(closing)
     case_files = {"combined_clear_los": "combined_cases_clear_los.luau",
-                  "objective_full_clear_los": "objective_full_cases_clear_los.luau"}
+                  "objective_full_clear_los": "objective_full_cases_clear_los.luau",
+                  "beast_target_selection": "beast_cases.luau"}
     require(pins["case_files"] == case_files and suite_name in case_files, "NATIVE_CASE_VARIANT")
     case_path = HERE / "native" / case_files[suite_name]
     case = read(case_path)
@@ -875,7 +927,8 @@ def verify_native(native, root, lock, context):
     require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
             and pins.get("sources") == {p: row["after"] for p, row in lock["sources"].items()}, "NATIVE_SOURCE_LOCK")
     variants = {"combined_clear_los": "BOUNDED_CLEAR_LOS_APPROACH_INPUT",
-                "objective_full_clear_los": "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT"}
+                "objective_full_clear_los": "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT",
+                "beast_target_selection": "GQ618_TARGET_ELIGIBILITY_CASES"}
     require(set(pins["suites"]) == set(variants)
             and {name: row["input_variant"] for name, row in pins["suites"].items()} == variants,
             "NATIVE_SUITE_VARIANT_CLASSIFICATION")
@@ -917,12 +970,12 @@ def verify_native(native, root, lock, context):
             and aggregate.get("source_count_pinned") == 69 and aggregate.get("source_count_executed_full_body") == 28
             and aggregate.get("source_only") is True and aggregate.get("formal_rc_adoption_proven") is False
             and aggregate.get("source_inputs_unchanged") is True, "NATIVE_AGGREGATE_FACTS")
-    require(aggregate.get("source_count_executed_full_body_basis") == "original_dual28_suites_only"
+    require(aggregate.get("source_count_executed_full_body_basis") == "original_dual28_suites_and_beast_target_selection"
             and aggregate.get("full_body_coverage") == {
-                "original_dual28": 28, "bot_vault_each": 16, "distinct_server_union": 30,
+                "original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16, "distinct_server_union": 30,
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed": False}
-            and aggregate.get("native_process_count") == 12 and aggregate.get("native_evidence_file_count") == 63,
+            and aggregate.get("native_process_count") == 13 and aggregate.get("native_evidence_file_count") == 67,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -972,13 +1025,15 @@ def verify_native(native, root, lock, context):
                 and result.get("native") == build["binary_before_suites"]
                 and result.get("input_lock") == digest(read(input_lock_path))
                 and result.get("case_file") == suite["case"]
-                and result.get("fixture_pins") == pins["fixtures"], "NATIVE_SUITE_RECEIPT_FACTS")
+                and result.get("fixture_pins") == (
+                    pins["fixtures"] | {"beast_fixture.luau": suite["fixture"]}
+                    if suite_name == "beast_target_selection" else pins["fixtures"]
+                ), "NATIVE_SUITE_RECEIPT_FACTS")
         require(result.get("source_profile") == pins["sources"]
                 and result.get("runner") == digest(read(HERE / "native/run_profile.py")), "NATIVE_SUITE_SOURCE_RUNNER_BINDING")
         require(aggregate.get("suites", {}).get(suite_name) == digest(read(folder / "receipt.json")), "NATIVE_SUITE_BINDING")
         results[suite_name] = {"case_count": len(parts), "receipt": digest(read(folder / "receipt.json"))}
-    require(set(results) == {"combined_clear_los", "objective_full_clear_los"} and len(results) == 2,
-            "NATIVE_BOTH_SUITES")
+    require(set(results) == set(variants), "NATIVE_ALL_ORIGINAL_PLUS_BEAST_SUITES")
     layout = verify_selected_hud_layout(native, root, pins, build, aggregate, context)
     bot = verify_bot_vault_supplement(native, root, pins, build, aggregate, context)
     expected_files = set(build["evidence_files"]) | {"build_receipt.json", "receipt.json"}
@@ -986,7 +1041,7 @@ def verify_native(native, root, lock, context):
                        for name in ("generated.luau", "stdout.log", "stderr.log", "receipt.json")}
     expected_files |= {"selected_hud_layout/" + name for name in layout["files"]}
     expected_files |= {"bot_vault/" + name for name in bot["files"]}
-    require(len(expected_files) == 63 and set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
+    require(len(expected_files) == 67 and set(files(native)) == expected_files, "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
@@ -1019,14 +1074,14 @@ def admit_delivery(root, base, reports, native, context):
     require(runtime["payload"] == native_before, "NATIVE_VALIDATION_SNAPSHOT_CHANGED")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
-                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
+                      or name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")}
     expected_stage.update({"native_evidence/" + name: pin for name, pin in native_before.items()})
     expected_stage["UNION22_PROFILE_LOCK.json"] = digest(profile_before)
     stage = Path(tempfile.mkdtemp(prefix=".union22-delivery-", dir=root.parent))
     try:
         for relative in ("sources", "prior_boundary"):
             shutil.copytree(root / relative, stage / relative)
-        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
+        for name in (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE, compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE, "CORE_BUILD_REPORT.json"):
             (stage / name).write_bytes(read(root / name))
         shutil.copytree(native, stage / "native_evidence")
         (stage / "UNION22_PROFILE_LOCK.json").write_bytes(read(HERE / "profile_lock.json"))
@@ -1047,6 +1102,11 @@ def admit_delivery(root, base, reports, native, context):
             "hud_only_current_rc_inverse_archive_members": 71,
             "hud_stage_changed_sources_from_current_rc": 1, "hud_stage_unchanged_sources_from_current_rc": 68,
             "bot_followup_repair": verified["lock"]["bot_followup_repair"],
+            "beast_followup_repair": verified["lock"]["beast_followup_repair"],
+            "beast_only_h72_parent_inverse_place": verified["lock"]["beast_followup_repair"]["parent_place"],
+            "beast_only_h72_parent_inverse_archive": digest(read(root / compose.BEAST_OFF_ARCHIVE)),
+            "beast_only_h72_parent_inverse_archive_members": 71,
+            "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
             "bot_only_hud_parent_inverse_archive_members": 71,

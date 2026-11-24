@@ -352,6 +352,7 @@
     "scope": "Only the controlled player approach position; actual collidable-wall rejection unchanged; no seed selection or retry"
   },
   "case_files": {
+    "beast_target_selection": "beast_cases.luau",
     "combined_clear_los": "combined_cases_clear_los.luau",
     "objective_full_clear_los": "objective_full_cases_clear_los.luau"
   },
@@ -727,8 +728,8 @@
       "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
     },
     "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
-      "bytes": 73774,
-      "sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76"
+      "bytes": 73889,
+      "sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a"
     },
     "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
       "bytes": 10369,
@@ -820,6 +821,31 @@
     }
   },
   "suites": {
+    "beast_target_selection": {
+      "case": {
+        "bytes": 12862,
+        "sha256": "97f0a7efb7dad24499f0161e0d3dd71190990abd2918ae15fd5b9300e7e2badb"
+      },
+      "expected_case_names": [
+        "REAL_TEAM_CHARM_CREATED",
+        "REAL_OPPONENT_CHARM_CREATED",
+        "CHARMED_ALLY_DOES_NOT_STARVE_HOSTILE_TARGET",
+        "INITIAL_BLAST_DID_NOT_CONFOUND_BACKWARD_TARGET",
+        "OPPONENT_CHARM_DOES_NOT_STARVE_HOSTILE_TARGET",
+        "STEALTH_ENEMY_DOES_NOT_REVEAL_OR_STARVE_VISIBLE_TARGET",
+        "STEALTH_CARRIER_REMAINS_TARGET",
+        "ORDINARY_TEAMMATE_REMAINS_EXCLUDED",
+        "REAL_CHARM_RELEASE_RESTORES_NEUTRAL_TARGET",
+        "STALE_HUMAN_MEMBER_REMAINS_EXCLUDED",
+        "DEAD_CASTER_RETIRES_COMPANION",
+        "NO_GAME_WARNINGS"
+      ],
+      "fixture": {
+        "bytes": 1757,
+        "sha256": "cb5aa5d810aba1ebfc7bddf9f9af272b06503f5b6197a48798f5b890968b891e"
+      },
+      "input_variant": "GQ618_TARGET_ELIGIBILITY_CASES"
+    },
     "combined_clear_los": {
       "case": {
         "bytes": 15973,
