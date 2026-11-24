@@ -28267,7 +28267,7 @@
     {
       "claim_id": "P0D-GQ470-FB015-WEAPON-FACETS-20261125-929",
       "feature_id": "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED",
       "role": "A_PREP",
       "owner": "/root current GQ470 Work session for existing #929 only",
       "parent_issue": 470,
@@ -28276,7 +28276,7 @@
       "request_comment": 7146178881,
       "base_rc_sha": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
       "source_head_before": "b6417df54b2c1805a21e257489e54a4a1454e923",
-      "source_head": "58c3d163187aab940519bed246b946bec7995542",
+      "source_head": "47b8c98fe0eb20325ab45b3a34b8e314ec8e66f8",
       "prep_branch": "quality/gq470-fb015-weapon-sculpt-real69-20261120",
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -28314,7 +28314,7 @@
       "scope": "One fixed existing PR929 source update. Only these four files; exact 7547 B generated weapon module on f6c9a5. Pinned original V2 remains reachable and PR931 references are untouched. Source QA only. Maintain #910 canonical precedence and #796 current canonical priority.",
       "approval": "SOURCE_SCOPE_ONLY",
       "allowed_new_prs": 0,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_write_requires_separate_live_source_lease": true,
       "independent_reviewer_context": "/root/rc_authority_review",
       "author_may_self_approve": false,
@@ -28381,6 +28381,52 @@
         "prior_bootstrap": 45503806688,
         "prior_acceptance_hold": "CANDIDATE_RECEIPT_PROVENANCE",
         "change": "Only label candidate intake record and test exact official rollback provenance; three other published files remain exact."
+      },
+      "source_reservation_release": {
+        "kind": "SOURCE_ONLY_PUBLISHED_AND_HOSTED_QA_RECORDED",
+        "at": "2026-11-24T22:53:40.127+00:00",
+        "actual_metadata_lease": {
+          "ref": "2aeb895acf12d837e84a6e535cd9ce1d03ae977c",
+          "blob": "3be580b8128b1392c3bf7545fc765c1f89390cb1",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "baf3bc0b-a30b-442e-b1d2-d82b3870e7d9",
+            "task_id": null,
+            "epoch": 726,
+            "acquired_at": "2026-11-24T22:52:24.049+00:00",
+            "expires_at": "2026-11-24T23:22:24.049+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "actual_source_release": "25339719c0027efaf102cbd52164479310cc2835",
+        "pr": 929,
+        "head": "47b8c98fe0eb20325ab45b3a34b8e314ec8e66f8",
+        "tree": "0abd5d42e59cbe9cafa3dfa481f6cb596a8b7197",
+        "independent_source_hosted_review": "https://github.com/kk051780/toy-wars-factory/pull/929#pullrequestreview-6048661407",
+        "independent_review_id": 6048661407,
+        "dedicated_ci": 45504707893,
+        "shared_ci": 45504707896,
+        "artifact": {
+          "id": 14972607780,
+          "bytes": 807875,
+          "sha256": "896bd511bd742e7523396d6b057e2c1e57d982af1d8a96b9ad366588ee50ad51",
+          "archive_bytes_locally_read_back": false
+        },
+        "returned_paths": [
+          ".github/workflows/gq470-weapon-sculpt-real69-prep.yml",
+          "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau",
+          "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/native_facets.luau",
+          "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_WEAPONSILHOUETTES"
+        ],
+        "official_rc": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "formal_rc_adoption": false,
+        "studio": "NOT_TESTED",
+        "admission_boundary": "Source and hosted checks recorded. Candidate ZIP raw download inspection and formal RC admission remain separate. No future source or RC writer rights."
       }
     }
   ],
