@@ -1077,9 +1077,8 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(previous["repaired_hud"],
                          {"bytes": 25338, "sha256": "d794669eb82ad8ff0804241879904c8e26e55d9c0f93fe5e771135f66651f001"})
         self.assertEqual(repair["prior_profile"]["sha256"], "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60")
-        # Reconstruct the frozen HUD parent row view before its historical
-        # predicates; Bot is the sole additional row in this successor.
-        parent_rows = copy.deepcopy(self.lock["sources"])
+        # Restore H72 before removing the later Bot rows for the HUD-stage proof.
+        parent_rows = copy.deepcopy(compose.beast_parent_profile(self.lock)["sources"])
         parent_rows[compose.BOT_SOURCE]["after"] = self.lock["bot_followup_repair"]["parent_bot"]
         parent_rows[compose.BOT_SOURCE]["forward"] = []
         parent_rows[compose.BOT_SOURCE]["inverse"] = []
@@ -1097,7 +1096,8 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(self.native_lock["selected_hud_layout"]["condition_count"], 14)
 
     def test_bot_reuse_preserves_exact_parent_rows_and_registered_scope(self):
-        repair = self.lock["bot_followup_repair"]
+        h72 = compose.beast_parent_profile(self.lock)
+        repair = h72["bot_followup_repair"]
         self.assertEqual(repair['grant_status'], 'GRANTED_SCOPE_1_NOT_ADOPTED')
         self.assertEqual(repair['claim_id'], 'P0D-GQ484-BOT-VAULT-20261123-0A2BA23F')
         self.assertEqual(repair['grant_commit'], 'b4a7601c8624160610a1211d63142b8794d64861')
@@ -1119,18 +1119,24 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(repair["parent_bot"], {"bytes": 19070, "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"})
         self.assertEqual(repair["repaired_bot"], {"bytes": 19625, "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"})
         self.assertEqual(repair["source_candidate_origin"]["source"], repair["repaired_bot"])
-        row = self.lock["sources"][compose.BOT_SOURCE]
+        row = h72["sources"][compose.BOT_SOURCE]
         self.assertEqual(row["before"], repair["parent_bot"])
         self.assertEqual(row["after"], repair["repaired_bot"])
         self.assertEqual(row["forward"], repair["forward"])
         self.assertEqual(row["inverse"], repair["inverse"])
-        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 171)
-        self.assertEqual(sum(r["before"] != r["after"] for r in self.lock["sources"].values()), 23)
-        remaining = {p: r for p, r in self.lock["sources"].items() if p != compose.BOT_SOURCE}
+        self.assertEqual(sum(len(r["forward"]) for r in h72["sources"].values()), 171)
+        self.assertEqual(sum(r["before"] != r["after"] for r in h72["sources"].values()), 23)
+        remaining = {p: r for p, r in h72["sources"].items() if p != compose.BOT_SOURCE}
         encoded = (json.dumps(remaining, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
         self.assertEqual(compose.identity(encoded), repair["preserved_parent_other68_rows"])
-        self.assertEqual(repair["parent_place"], self.lock["followup_repair"]["repaired_place"])
-        self.assertEqual(repair["repaired_place"], self.lock["final_place"])
+        self.assertEqual(repair["parent_place"], h72["followup_repair"]["repaired_place"])
+        self.assertEqual(repair["repaired_place"], h72["final_place"])
+        addition = self.lock["beast_followup_repair"]
+        self.assertEqual(len(addition["forward"]), 2)
+        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 173)
+        self.assertEqual([path for path in self.lock["sources"]
+                          if self.lock["sources"][path] != h72["sources"][path]], [compose.BEAST_SOURCE])
+        self.assertEqual(addition["parent_place"], h72["final_place"])
 
     def test_bot_immutable_template_corpus_and_adapter_drift_rejected(self):
         for name in verify.BOT_INPUTS:
