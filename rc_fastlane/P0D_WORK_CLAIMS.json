@@ -15929,7 +15929,7 @@
         }
       ],
       "grant_scope_version": 4,
-      "independent_review_status": "V4_NEW_PUBLISHED_HEAD_AND_COMPONENT_CI_ARTIFACT_REVIEW_REQUIRED",
+      "independent_review_status": "V4_HISTORIC_COMPONENT_SOURCE_QA_PASS_FACT_RECORDED_ONLY",
       "independent_reviewer_context": "CODEX_ROOT_870491EA0B74:/root/integration_rules",
       "integration_issue": 220,
       "issued_at": "2026-11-23T08:47:06.448Z",
@@ -15938,7 +15938,34 @@
       "issuer_role": "OWNER_DELEGATED_MANUAL_COORDINATOR",
       "issuer_user_id": 233213370,
       "last_source_submission": null,
-      "last_verified_source_submission": null,
+      "last_verified_source_submission": {
+        "head": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+        "tree": "2b844de35cce2b8335927b6c9d30c8e8c7cf278c",
+        "component_run": 45158426195,
+        "component_job": 137637239612,
+        "component_conclusion": "success",
+        "whole_workflow_conclusion": "failure",
+        "archive_id": 14809602920,
+        "archive": {
+          "bytes": 8052202,
+          "sha256": "f006de05ffbc75af0d7e53613ced26cf65413d6a60206f8f531fa08e16e4ec05",
+          "git_blob": "e9966a838b024e2976645b5a6cc26a497da567c4"
+        },
+        "source_receipt": {
+          "bytes": 21824,
+          "sha256": "e8e1d619876dfb13f59fa6ed1bfd9735eb7594c876bcd4b4d97cfdde6248d679",
+          "git_blob": "8c3c1a6b1de424b098979a082c5b5307443d11ab"
+        },
+        "independent_comment_review": 6020475779,
+        "source_review_scope": "PINNED_DONOR_COMPONENT_ONLY",
+        "original_review_context": "CODEX_ROOT_870491EA0B74:/root/local_reuse",
+        "original_review_receipt_sha256": "7a657f592bfe53d584c68692de3ddcbfb58993a51687f0f3955b8f8534b1c3cf",
+        "original_source_release": "4fb17cbe382eabcc50ac7050f84381d110070f14",
+        "original_source_epoch": 706,
+        "actual_rc_at_previous_source_review": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "same_approved_branch_remains_open": true,
+        "studio": "NOT_TESTED"
+      },
       "mutable_paths_this_amendment": [
         ".github/workflows/gq815-guardian-real42.yml",
         "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/INPUT_LOCK.json",
@@ -16030,7 +16057,7 @@
         }
       ],
       "progress_update_metadata_lease": null,
-      "progress_updated_at": null,
+      "progress_updated_at": "2026-11-24T23:26:11.072470+00:00",
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "request_comment": 7086698599,
@@ -16059,15 +16086,15 @@
         "registry_commit": "109842c88ce8d85f42e17a6991814de1b0d203ac",
         "workflow_draft_sha256": "7229e7b50cbdd7b0d6956a0e4326b095a982d81035768da076d1b317ca20b44f"
       },
-      "source_head": "233684a21411afe12289b18a61d78619061ec322",
+      "source_head": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
       "source_head_before": "233684a21411afe12289b18a61d78619061ec322",
       "source_head_review": {
         "status": "V4_NOT_PUBLISHED_OR_APPROVED",
         "head": null
       },
       "source_producer_parent_pr": 796,
-      "source_tree": "52ee54c22d03f7cc5618ee6ce2ac00556798090d",
-      "state": "SOURCE_WIP",
+      "source_tree": "2b844de35cce2b8335927b6c9d30c8e8c7cf278c",
+      "state": "RELEASED",
       "studio": "NOT_TESTED",
       "sub_scope": "SESSION_ROLE_ORIGINAL_LOS_AND_THREE_HUNK_STEALTH_TARGET_SUPPORT",
       "target_paths": [
@@ -16163,7 +16190,7 @@
       "canonical_source_owner": "CODEX_ROOT_3B3ACF42B01A",
       "sole_source_publication_executor": "CODEX_ROOT_870491EA0B74:/root",
       "parallel_old_publisher_permission": false,
-      "registered_source_approval": false,
+      "registered_source_approval": true,
       "canonical_original_authors": [
         "/root in workspace3b3acf42b01a: role snapshot adapter/runner and sole GitHub writer",
         "/root/source_gate_audit: independent whole-Host lifecycle tests, no source fix"
@@ -16262,6 +16289,58 @@
         "source_head": "233684a21411afe12289b18a61d78619061ec322",
         "source_tree": "52ee54c22d03f7cc5618ee6ce2ac00556798090d",
         "complete_v3_preserved_in_immutable_registry_and_byte_exact_operator_snapshot": true
+      },
+      "source_scope_granted": false,
+      "historical_source_lane_return": {
+        "status": "DONE_HISTORICAL_SOURCE_V4_NO_CURRENT_RC_ADOPTION",
+        "request_comment": 7147249221,
+        "prior_owner_source_record": 7094055753,
+        "current_rc_when_recorded": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "source_context_preserved": "CODEX_ROOT_870491EA0B74",
+        "owner_actor": "kk051780",
+        "owner_id": 233213370,
+        "existing_reviewer_only": true,
+        "metadata_lease": {
+          "ref": "13ceb8959fa27db7c19d9cdd0b7c46e01c7cfe0f",
+          "blob": "1e0f29effe1add77512e60f2c559f5893cad3032",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "816f9af1-4f51-4ea4-ba8f-27bb74f3d01e",
+            "task_id": null,
+            "epoch": 727,
+            "acquired_at": "2026-11-24T23:24:39.814+00:00",
+            "expires_at": "2026-11-24T23:54:39.814+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "returned_paths": [
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/apply_role_snapshot.py",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/INPUT_LOCK.json",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/case.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/fixture_boundary.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/run.py",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_session/README.md",
+          ".github/workflows/gq815-guardian-real42.yml",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/apply_existing_repairs.py",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/INPUT_LOCK.json",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/run.py",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/README.md",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/case.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/role_los/fixture_boundary.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/INPUT_LOCK.json",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/README.md",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/apply_stealth_target.py",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/case.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/fixture_boundary.luau",
+          "quality_gameplay/gq8_guardian_runtime_20261118/stealth_target/run.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+          "GUARDIAN_CURRENT69_ROLE_SESSION_QA"
+        ],
+        "no_new_source_or_rc_permission": true
       }
     },
     {
