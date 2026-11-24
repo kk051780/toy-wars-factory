@@ -24638,7 +24638,38 @@
       "source_writes_authorized_by_this_claim": false,
       "source_writes_permitted": false,
       "current_integration_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
-      "post_adoption_metadata_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+      "post_adoption_metadata_executor": "/root (current GQ470 Work session / Bot factual closure only)",
+      "post_adoption_metadata_assignment": {
+        "schema": "P0D_BOT_FACTUAL_CLOSURE_DUTY_V1",
+        "scope": "Metadata only: record already adopted PR1027, consume H93-to-H72 one-time authorization, return nine paths and three resources.",
+        "former_executor": "CODEX_ROOT_B8C8E7B756CD:/root",
+        "executor": "/root (current GQ470 Work session / Bot factual closure only)",
+        "accountable_scope": "Current OWNER EGGRUMBLE delegated RC task, #220 7131154245, exact #218 two-phase closure route",
+        "issuer": "kk051780",
+        "issuer_user_id": 233213370,
+        "issued_at": "2026-11-24T21:12:05.471871+00:00",
+        "expires_at": "2026-11-24T23:12:05.471871+00:00",
+        "assignment_lease": {
+          "ref": "82c0ce5239c5434342c1e677868fc583852ce402",
+          "blob": "a17fe9eeb2464a01728de0fae4ba7c0d5d6500b7",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "cd38e5d3-96ab-4bf4-a13f-7671341b8724",
+            "task_id": null,
+            "epoch": 713,
+            "acquired_at": "2026-11-24T21:11:22.821038+00:00",
+            "expires_at": "2026-11-24T21:41:22.821038+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "no_source_or_rc_authority": true,
+        "existing_owner_and_past_authorization_unchanged": true,
+        "factual_closure_requires_separate_lease_and_exact_pre": true,
+        "handoff_source": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7097896428",
+        "official_acceptance_reference": "https://github.com/kk051780/toy-wars-factory/pull/1027#pullrequestreview-6018102444"
+      },
       "metadata_update_lease": {
         "context": "CODEX_ROOT_B8C8E7B756CD:/root",
         "authenticated_actor": {
