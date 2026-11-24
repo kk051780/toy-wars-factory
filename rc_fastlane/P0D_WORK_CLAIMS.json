@@ -27850,12 +27850,12 @@
     {
       "claim_id": "P0D-GQ618-BEAST-UNION22-20261123-B8C8E7B7",
       "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #618 canonical transport)",
       "parent_issue": 470,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1032,
       "canonical_parent": 618,
       "request_comment": 7088218616,
       "authenticated_scope_request_comment": 7145093380,
@@ -27959,9 +27959,9 @@
         },
         "tests/test_gq470_union22_real69_20261122.py": {
           "after": {
-            "blob": "f70de0d619709a900f56e1a62cb9678a6fa8fb5f",
-            "bytes": 77723,
-            "sha256": "b86d1deb54946fdf4bcfa56e938a0c14cea549e3287a08d142a3a3e3ce3b8fb6"
+            "blob": "6aa5370a75f0f21957e963e98641675d6dd63ff3",
+            "bytes": 78142,
+            "sha256": "715b1a288cdb7a6b61307a299da77581665ea7756e03ee82df29ddbdb4d82379"
           },
           "before": {
             "blob": "3f3e0b5388b79ef645d521d6a1d9d7e63ecd97e0",
@@ -28005,13 +28005,59 @@
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
       "source_scope_granted": true,
-      "source_head": null,
+      "source_head": "74336688bf05df332d18434569112b9956d6e9af",
       "PREP_READY": false,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
       "formal_rc_adoption": false,
       "no_main_or_publish": true,
-      "authority_basis": "Current owner request, H72 AGENTS/#1011 and explicit original canonical transport #7088218616. No original review or expiry takeover reused."
+      "authority_basis": "Current owner request, H72 AGENTS/#1011 and explicit original canonical transport #7088218616. No original review or expiry takeover reused.",
+      "test_only_amendment": {
+        "schema": "GQ618_BOOTSTRAP_TEST_ONLY_SOURCE_AMENDMENT_V1",
+        "amended_at": "2026-11-24T21:48:36.454239+00:00",
+        "metadata_lease": {
+          "ref": "efaadecb545d193b3fbed6a59d0fab48d4d08725",
+          "blob": "e58f0af3a665864d863671f6554a2d54964b0d29",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "68ca8a26-a846-4b2e-b027-499264f48f2c",
+            "task_id": null,
+            "epoch": 717,
+            "acquired_at": "2026-11-24T21:47:54.279313+00:00",
+            "expires_at": "2026-11-24T22:17:54.279313+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "prior_draft_pr": 1032,
+        "prior_draft_head": "74336688bf05df332d18434569112b9956d6e9af",
+        "test_path": "tests/test_gq470_union22_real69_20261122.py",
+        "prior_published_test": {
+          "blob": "f70de0d619709a900f56e1a62cb9678a6fa8fb5f",
+          "bytes": 77723,
+          "sha256": "b86d1deb54946fdf4bcfa56e938a0c14cea549e3287a08d142a3a3e3ce3b8fb6"
+        },
+        "replacement_test": {
+          "blob": "6aa5370a75f0f21957e963e98641675d6dd63ff3",
+          "bytes": 78142,
+          "sha256": "715b1a288cdb7a6b61307a299da77581665ea7756e03ee82df29ddbdb4d82379"
+        },
+        "prior_scope_proposal": {
+          "bytes": 3903,
+          "sha256": "d497ee8ca4dfaff0c7c9c958fb54b1c264357eb61e9e4bb9f3b71a77cbeddd6c",
+          "git_blob": "12675838a8904c0b66c0efba567c2ae45237368e"
+        },
+        "local_bootstrap_revision": {
+          "bytes": 4843,
+          "sha256": "f68ef1376de5d6f1a6ebfb42e0d38b4e17644fb3e38d388f9fe64b4c8f2560b9",
+          "git_blob": "bb406ef14eb7c4aa5decdfeb489f7eb196255ee3"
+        },
+        "prior_bootstrap_failure_run": 45493673869,
+        "reason": "The two historical H72/H93 assertions must inspect their original stages, with a distinct final +2-hunk assertion.",
+        "rc_write_authorized": false,
+        "upstream_game_source_modified": false
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
