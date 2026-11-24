@@ -27846,6 +27846,172 @@
         "self_approval": false,
         "after_hash_bound_externally": true
       }
+    },
+    {
+      "claim_id": "P0D-GQ618-BEAST-UNION22-20261123-B8C8E7B7",
+      "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (current GQ470 Work session / #618 canonical transport)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": null,
+      "canonical_parent": 618,
+      "request_comment": 7088218616,
+      "authenticated_scope_request_comment": 7145093380,
+      "design_comment": 7098378553,
+      "base_rc_sha": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+      "origin_source_pr": 618,
+      "origin_source_head": "440d866832b61b8ccb077976906e61aca034acf3",
+      "origin_source_owner": "CODEX_ROOT_B8C8E7B756CD",
+      "origin_source_and_fixture_author_preserved": true,
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/beast_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/beast_fixture.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "prepared_source_hashes": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": {
+          "after": {
+            "blob": "18a465b7d69e9ff25be682d64388d7af34b27c93",
+            "bytes": 33567,
+            "sha256": "e14e052adcafbcdc2e6164b058ebb86297a883240cf1c5c757eeb9a9e8b36bdf"
+          },
+          "before": {
+            "blob": "f8a6e82d6f466ed00a26621171b72f36f6974db1",
+            "bytes": 31187,
+            "sha256": "9905136314df2268526a8660c722c4ed899c6272935e7a0da0c94a3b00be148e"
+          }
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": {
+          "after": {
+            "blob": "c66135904e072a101b6eda4a2b0e8e52d5d1e117",
+            "bytes": 34937,
+            "sha256": "4c3d69886787130d296ea99035b6d65b358c1d5ffd4b69ec7364147010a4d334"
+          },
+          "before": {
+            "blob": "984947983dfa7271bdf108ee464d5b0826de06ab",
+            "bytes": 33915,
+            "sha256": "733f8f607809374ee7615d269a58e8300d3964d0e6624050cea4adaea44b05f4"
+          }
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/beast_cases.luau": {
+          "after": {
+            "blob": "2c11169f3b82daa7c9e07360ed5e3a6b666aec5f",
+            "bytes": 12862,
+            "sha256": "97f0a7efb7dad24499f0161e0d3dd71190990abd2918ae15fd5b9300e7e2badb"
+          },
+          "before": null
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/beast_fixture.luau": {
+          "after": {
+            "blob": "cf36d9ee0576244eff4479cd578a8b80a20bc9af",
+            "bytes": 1757,
+            "sha256": "cb5aa5d810aba1ebfc7bddf9f9af272b06503f5b6197a48798f5b890968b891e"
+          },
+          "before": null
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": {
+          "after": {
+            "blob": "83c54c40ac942490f709250c8beaa3587b98111c",
+            "bytes": 38152,
+            "sha256": "012425fea1a7d57af199f9cd57427be4ea6516c5b652282d9edc8aa964e700f2"
+          },
+          "before": {
+            "blob": "f5ca9d78d5493021dd5f6278cd98a92396a89e77",
+            "bytes": 37475,
+            "sha256": "4e746e4b09e809568d6ec462520c2475c98d995ec2ddfd6ff6ef863150d533e8"
+          }
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": {
+          "after": {
+            "blob": "9da815ed77b6fe3d0bb80b10937c37f09b23f682",
+            "bytes": 341522,
+            "sha256": "61a484da4aaf495a91ed8167fc955d1fc6763397c79253c12a2eaac2f7cab610"
+          },
+          "before": {
+            "blob": "ed0b0320b2b675138dbe14be69329ea1138ff668",
+            "bytes": 315356,
+            "sha256": "fbc4575b69fbc55ba4d81db6d8d322807e4c4712b126ba452558a35246e7ce0d"
+          }
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": {
+          "after": {
+            "blob": "f449c9ad5131f30f77b08b89276979cfd87016d9",
+            "bytes": 78485,
+            "sha256": "12decd9e8353a49b9caf261a1f7f08c2364118a89b07313559ce66977a0b2f59"
+          },
+          "before": {
+            "blob": "76364f988a0ecef7291afa1128984071066cf0cc",
+            "bytes": 74427,
+            "sha256": "2d8bdc7f1c98ccd824d9f97c6c1f30d9589991b46608d9d54cdbd7e7d965f5ef"
+          }
+        },
+        "tests/test_gq470_union22_real69_20261122.py": {
+          "after": {
+            "blob": "f70de0d619709a900f56e1a62cb9678a6fa8fb5f",
+            "bytes": 77723,
+            "sha256": "b86d1deb54946fdf4bcfa56e938a0c14cea549e3287a08d142a3a3e3ce3b8fb6"
+          },
+          "before": {
+            "blob": "3f3e0b5388b79ef645d521d6a1d9d7e63ecd97e0",
+            "bytes": 75069,
+            "sha256": "6a20cbd94c2b931e7828eb2b8b0d978b0cfcad421c0e94f00d801034c4f88667"
+          }
+        }
+      },
+      "scope_proposal": {
+        "bytes": 3903,
+        "sha256": "d497ee8ca4dfaff0c7c9c958fb54b1c264357eb61e9e4bb9f3b71a77cbeddd6c",
+        "git_blob": "12675838a8904c0b66c0efba567c2ae45237368e"
+      },
+      "scope": "Exactly the existing canonical transport request. Six additions to existing adapter files in place and two unchanged donor fixture/case files. H72 Combat changes two hunks / +115 bytes. 68 existing sources and official source, Rojo, Native and rollback guards are retained; no new game authority.",
+      "prep_branch": "fix/gq618-beast-union22-transport-20261123-b8c8e7b7",
+      "allowed_new_prs": 1,
+      "source_publisher": "/root (current GQ470 Work session / #618 canonical transport)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "3b56e3be-ab48-4474-9b8f-cc65236348df",
+      "issued_at": "2026-11-24T21:35:17.835413+00:00",
+      "expires_at": "2026-11-25T03:35:17.835413+00:00",
+      "actual_metadata_lease": {
+        "ref": "5ea21a04e72cdba03a23a2b70f8ac69101aaa30c",
+        "blob": "1a606b5e98b26eb14856ad4e305b1f3b4b37921e",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "3b56e3be-ab48-4474-9b8f-cc65236348df",
+          "task_id": null,
+          "epoch": 715,
+          "acquired_at": "2026-11-24T21:34:07.387531+00:00",
+          "expires_at": "2026-11-24T22:04:07.387531+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_scope_granted": true,
+      "source_head": null,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "authority_basis": "Current owner request, H72 AGENTS/#1011 and explicit original canonical transport #7088218616. No original review or expiry takeover reused."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
