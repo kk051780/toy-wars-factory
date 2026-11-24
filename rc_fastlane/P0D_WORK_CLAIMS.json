@@ -28511,12 +28511,12 @@
     {
       "claim_id": "P0D-GQ815-GUARDIAN-UNION22-20261125",
       "feature_id": "GQ815_GUARDIAN_ACTUAL_MATCH_AI",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #796 canonical transport)",
       "parent_issue": 470,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1033,
       "canonical_parent": 796,
       "request_comment": 7147249221,
       "authenticated_scope_request_comment": 7147473293,
@@ -28570,9 +28570,9 @@
         "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": {
           "before": null,
           "after": {
-            "bytes": 11508,
-            "sha256": "282663508159680ee05c8c8eb09bab314a2f300efc937c4877aa3f538c8ba53f",
-            "git_blob": "254f54b221862028a85c11a4df5fd84789222f29"
+            "bytes": 12455,
+            "sha256": "398c25d5312f17e80a471a6588027270f5f5d33c258e6cacb181375f1cad52ae",
+            "git_blob": "fe93029bc65645915c30cfc0082554c8460998da"
           },
           "mode": "100644"
         },
@@ -28609,9 +28609,9 @@
             "git_blob": "f449c9ad5131f30f77b08b89276979cfd87016d9"
           },
           "after": {
-            "bytes": 91301,
-            "sha256": "9664868f0739c076944bb02e84a2cc30ab9146c7731819d8fb9bfef438cf3c25",
-            "git_blob": "0177e5e32936ecc36c58b11d9e332c62d4936b2c"
+            "bytes": 91512,
+            "sha256": "4d341ddd2c7668402c315483dbe792096dae7b188c099a95b0839e4f5256b204",
+            "git_blob": "43244f3955c84b7086077374fb54b667176cb00c"
           },
           "mode": "100644"
         },
@@ -28622,9 +28622,9 @@
             "git_blob": "6aa5370a75f0f21957e963e98641675d6dd63ff3"
           },
           "after": {
-            "bytes": 79804,
-            "sha256": "4b28997946ba1e26c2bebb0d4a2463b2e5e401092b0f245b7fac94121d9309f8",
-            "git_blob": "da0202c8b9b9402459acb60f2bf4bf935b34393c"
+            "bytes": 82803,
+            "sha256": "4ac2372af72c493aef6381eb83231ad73ee0b2229733a314a9f08caaf4d40d0b",
+            "git_blob": "427940948c855fccdaf280b78d8e205dba66e3eb"
           },
           "mode": "100644"
         }
@@ -28634,7 +28634,7 @@
         "sha256": "286566ec2afc1ca6e05a92f3f9c5543b7ed442707fc4541f4cf87d26321762c6",
         "git_blob": "cc40a1428cd6fa356abdb4ed6b6e36a459c1a556"
       },
-      "prepared_candidate_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+      "prepared_candidate_tree": "89690ae97566011a3e210ad5920447274363ccbf",
       "scope": "Seven locked Union22 paths. One Guardian gameplay module changes by six runtime hunks and 494 bytes. Hosted Native uses the existing job and seven exact donor blobs. Read-only physical Studio validation is handled by the separate Codex lane.",
       "prep_branch": "fix/gq815-guardian-union22-transport-20261125",
       "allowed_new_prs": 1,
@@ -28665,13 +28665,247 @@
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
       "source_scope_granted": true,
-      "source_head": null,
+      "source_head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
       "PREP_READY": false,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
       "formal_rc_adoption": false,
       "no_main_or_publish": true,
-      "authority_basis": "Current owner delegated quality-gate task, repository AGENTS and #1011, exact #218 scope and #250 bounded ADOPT decision."
+      "authority_basis": "Current owner delegated quality-gate task, repository AGENTS and #1011, exact #218 scope and #250 bounded ADOPT decision.",
+      "source_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+      "source_publication": {
+        "source_lease": {
+          "sha": "ce5aed9864fc2ff74b62c3c38a71453723021da1",
+          "parent": "82afe21c5197e174bb1fcc579af894f459de5403",
+          "tree": "c6b9b71fb1835bda67f86e9bb81df40120d6634f",
+          "entries": {
+            "ops/REPAIR_COORDINATOR.json": "e8cef7c45b90cba17975d1369d72d407748b0a54"
+          },
+          "oid": "e8cef7c45b90cba17975d1369d72d407748b0a54",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "b1d952e7-c7b9-4196-b3c3-ab5c706c1f3e",
+            "task_id": null,
+            "epoch": 729,
+            "acquired_at": "2026-11-24T23:40:00.259+00:00",
+            "expires_at": "2026-11-25T00:10:00.259+00:00",
+            "base_main_sha": null,
+            "work_branch": "fix/gq815-guardian-union22-transport-20261125",
+            "origin": "controller"
+          }
+        },
+        "source_release": {
+          "sha": "287e08a4ae0a4ce263fd50b461ce684cd71e31cb",
+          "parent": "ce5aed9864fc2ff74b62c3c38a71453723021da1",
+          "tree": "95fbe46d6cff14049d935a00feb6ca9954caa926",
+          "entries": {
+            "ops/REPAIR_COORDINATOR.json": "f88a9367774f5b8063e18c2361e8d493f4ba45a4"
+          },
+          "oid": "f88a9367774f5b8063e18c2361e8d493f4ba45a4",
+          "last": {
+            "kind": "CONTROLLER",
+            "owner_id": "b1d952e7-c7b9-4196-b3c3-ab5c706c1f3e",
+            "epoch": 729,
+            "released_at": "2026-11-24T23:40:58.779+00:00"
+          }
+        },
+        "actual_pr_url": "https://github.com/kk051780/toy-wars-factory/pull/1033",
+        "head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
+        "tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+        "base": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "independent_publication_receipt": {
+          "bytes": 4937,
+          "sha256": "20d5dbb49701fca26f576fad5f75550341a9d2bafed62d2246eaefdc5887a8a2",
+          "git_blob": "47453f56e1097f5ddbee8b8222c5719008105036"
+        },
+        "metadata_lease": {
+          "ref": "68668aa8e991e098abe389882f50852b653e0896",
+          "blob": "b1a6d8a65e0e046f47d738f73e8b551bf0d28e9c",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "0d2b3bc6-9292-45ae-b176-c28b41a20654",
+            "task_id": null,
+            "epoch": 730,
+            "acquired_at": "2026-11-24T23:48:27.162+00:00",
+            "expires_at": "2026-11-25T00:18:27.162+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "exact_source_registered_at": "2026-11-24T23:52:31.067779+00:00",
+        "admission_state": "DRAFT_FIRST_HOSTED_GQ8_FAILED_AT_FROZEN_DONOR_MATERIALIZATION",
+        "published_source_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+        "published_cumulative_source_pins": {
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": {
+            "before": {
+              "bytes": 33567,
+              "sha256": "e14e052adcafbcdc2e6164b058ebb86297a883240cf1c5c757eeb9a9e8b36bdf",
+              "git_blob": "18a465b7d69e9ff25be682d64388d7af34b27c93"
+            },
+            "after": {
+              "bytes": 35935,
+              "sha256": "5db44f134f7d6d4051269502074583c831e371d0618b03b43bdd8aa2087fd983",
+              "git_blob": "8978ad36777c113e35a2886e8748c110fc7223bc"
+            },
+            "mode": "100644"
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": {
+            "before": {
+              "bytes": 34937,
+              "sha256": "4c3d69886787130d296ea99035b6d65b358c1d5ffd4b69ec7364147010a4d334",
+              "git_blob": "c66135904e072a101b6eda4a2b0e8e52d5d1e117"
+            },
+            "after": {
+              "bytes": 34937,
+              "sha256": "639f2994cc82bcf67bcfd34ae118b0df021062ed3ac4876a73e9087dce8ef030",
+              "git_blob": "765722b6fb6fd02316b0adae9654f5037bab1baa"
+            },
+            "mode": "100644"
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": {
+            "before": null,
+            "after": {
+              "bytes": 11508,
+              "sha256": "282663508159680ee05c8c8eb09bab314a2f300efc937c4877aa3f538c8ba53f",
+              "git_blob": "254f54b221862028a85c11a4df5fd84789222f29"
+            },
+            "mode": "100644"
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": {
+            "before": {
+              "bytes": 38152,
+              "sha256": "012425fea1a7d57af199f9cd57427be4ea6516c5b652282d9edc8aa964e700f2",
+              "git_blob": "83c54c40ac942490f709250c8beaa3587b98111c"
+            },
+            "after": {
+              "bytes": 38451,
+              "sha256": "3800050fb5366a89fe742487bbe09dbd57bd6020150d0fd2980b74a99225ea57",
+              "git_blob": "f82f6de9fbd7e328f2654548a23981a3900f27e5"
+            },
+            "mode": "100644"
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": {
+            "before": {
+              "bytes": 341522,
+              "sha256": "61a484da4aaf495a91ed8167fc955d1fc6763397c79253c12a2eaac2f7cab610",
+              "git_blob": "9da815ed77b6fe3d0bb80b10937c37f09b23f682"
+            },
+            "after": {
+              "bytes": 364561,
+              "sha256": "442210f95ba60f841c8e7e5eeed56d984e9a5a66d6eb69578445e23d3b27859c",
+              "git_blob": "e4688fc6e9b28cff39cbec9a3c70d51a9b56297a"
+            },
+            "mode": "100644"
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": {
+            "before": {
+              "bytes": 78485,
+              "sha256": "12decd9e8353a49b9caf261a1f7f08c2364118a89b07313559ce66977a0b2f59",
+              "git_blob": "f449c9ad5131f30f77b08b89276979cfd87016d9"
+            },
+            "after": {
+              "bytes": 91301,
+              "sha256": "9664868f0739c076944bb02e84a2cc30ab9146c7731819d8fb9bfef438cf3c25",
+              "git_blob": "0177e5e32936ecc36c58b11d9e332c62d4936b2c"
+            },
+            "mode": "100644"
+          },
+          "tests/test_gq470_union22_real69_20261122.py": {
+            "before": {
+              "bytes": 78142,
+              "sha256": "715b1a288cdb7a6b61307a299da77581665ea7756e03ee82df29ddbdb4d82379",
+              "git_blob": "6aa5370a75f0f21957e963e98641675d6dd63ff3"
+            },
+            "after": {
+              "bytes": 79804,
+              "sha256": "4b28997946ba1e26c2bebb0d4a2463b2e5e401092b0f245b7fac94121d9309f8",
+              "git_blob": "da0202c8b9b9402459acb60f2bf4bf935b34393c"
+            },
+            "mode": "100644"
+          }
+        }
+      },
+      "source_scope_revision": {
+        "scope_version": 2,
+        "kind": "EXACT_3_EXISTING_PATH_HOSTED_DONOR_DEPENDENCIES_ONLY",
+        "approved_revision_tree": "89690ae97566011a3e210ad5920447274363ccbf",
+        "parent_candidate_head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
+        "parent_candidate_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+        "prepared_amendment_hashes": {
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": {
+            "before": {
+              "bytes": 11508,
+              "sha256": "282663508159680ee05c8c8eb09bab314a2f300efc937c4877aa3f538c8ba53f",
+              "git_blob": "254f54b221862028a85c11a4df5fd84789222f29"
+            },
+            "after": {
+              "bytes": 12455,
+              "sha256": "398c25d5312f17e80a471a6588027270f5f5d33c258e6cacb181375f1cad52ae",
+              "git_blob": "fe93029bc65645915c30cfc0082554c8460998da"
+            }
+          },
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": {
+            "before": {
+              "bytes": 91301,
+              "sha256": "9664868f0739c076944bb02e84a2cc30ab9146c7731819d8fb9bfef438cf3c25",
+              "git_blob": "0177e5e32936ecc36c58b11d9e332c62d4936b2c"
+            },
+            "after": {
+              "bytes": 91512,
+              "sha256": "4d341ddd2c7668402c315483dbe792096dae7b188c099a95b0839e4f5256b204",
+              "git_blob": "43244f3955c84b7086077374fb54b667176cb00c"
+            }
+          },
+          "tests/test_gq470_union22_real69_20261122.py": {
+            "before": {
+              "bytes": 79804,
+              "sha256": "4b28997946ba1e26c2bebb0d4a2463b2e5e401092b0f245b7fac94121d9309f8",
+              "git_blob": "da0202c8b9b9402459acb60f2bf4bf935b34393c"
+            },
+            "after": {
+              "bytes": 82803,
+              "sha256": "4ac2372af72c493aef6381eb83231ad73ee0b2229733a314a9f08caaf4d40d0b",
+              "git_blob": "427940948c855fccdaf280b78d8e205dba66e3eb"
+            }
+          }
+        },
+        "patch": {
+          "bytes": 10554,
+          "sha256": "2484b2330aebfdcc4372b6bb0b81173624b348e91fb29beb4fd211da6657d6b7",
+          "git_blob": "1acd6e4d2d7743a7573778c8cd394376938d5969"
+        },
+        "exact_revision_plan": {
+          "bytes": 7570,
+          "sha256": "468436a51c510600a11f5684c2b7664ec0c929f7197a3c23c46f237b6099431a",
+          "git_blob": "a74344a3f92ce2680d43f42a56a3e84b0cb700f4"
+        },
+        "failure": {
+          "head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
+          "number": 1033,
+          "run": 45512011460,
+          "job": 138861836005,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45512011460",
+          "conclusion": "failure",
+          "bootstrap": 45512011791,
+          "observed_error": "FileNotFoundError materializing donor role_los/INPUT_LOCK.json; previous role_session dependencies were also missing.",
+          "excerpts": [
+            "2026-11-24T23:43:55.6876236Z combined_clear_los: 10/10 exact PASS cases",
+            "2026-11-24T23:43:55.8096265Z objective_full_clear_los: 7/7 exact PASS cases",
+            "2026-11-24T23:43:57.1720676Z beast_target_selection: 12/12 exact PASS cases",
+            "2026-11-24T23:43:57.2316230Z selected_hud_layout: original main and 14 fixed Policy conditions PASS; HUD runtime not executed",
+            "2026-11-24T23:44:00.9304736Z bot_vault: 9 scenarios, 13 CASE, 43 CHECK PASS; same fresh F46; 30 distinct server bodies with dual28",
+            "2026-11-24T23:44:03.0986064Z     role = role_los.transform(baseline, \"baseline\", \"combined\")",
+            "2026-11-24T23:44:03.0995992Z FileNotFoundError: [Errno 2] No such file or directory: '/tmp/union22-guardian-donor-lpf1gvjw/quality_gameplay/gq8_guardian_runtime_20261118/role_los/INPUT_LOCK.json'"
+          ]
+        },
+        "separate_same_branch_source_lease_required": true,
+        "authenticated_pr_record": "https://github.com/kk051780/toy-wars-factory/pull/1033#issuecomment-7147833290",
+        "allowed_existing_pr": 1033,
+        "additional_new_prs": 0,
+        "no_new_paths_resources_or_runtime_scope": true,
+        "no_registered_hosted_review_prep_or_rc_rights": true
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
