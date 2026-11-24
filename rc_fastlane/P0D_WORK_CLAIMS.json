@@ -27850,7 +27850,7 @@
     {
       "claim_id": "P0D-GQ618-BEAST-UNION22-20261123-B8C8E7B7",
       "feature_id": "GQ_BEAST_ESCORT_REAL_UNIT_20261117",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #618 canonical transport)",
       "parent_issue": 470,
@@ -28005,10 +28005,10 @@
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
       "source_scope_granted": true,
-      "source_head": "74336688bf05df332d18434569112b9956d6e9af",
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "source_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "formal_rc_adoption": false,
       "no_main_or_publish": true,
       "authority_basis": "Current owner request, H72 AGENTS/#1011 and explicit original canonical transport #7088218616. No original review or expiry takeover reused.",
@@ -28057,6 +28057,125 @@
         "reason": "The two historical H72/H93 assertions must inspect their original stages, with a distinct final +2-hunk assertion.",
         "rc_write_authorized": false,
         "upstream_game_source_modified": false
+      },
+      "current_integration_executor": "/root (current GQ470 Work session / #1032 finite RC adoption)",
+      "exact_prep_ready_evidence": {
+        "source_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "tree": "23e70ea9bdcbe09c83ed513a69258eb4b5f3458a",
+        "prior_candidate_head": "74336688bf05df332d18434569112b9956d6e9af",
+        "registered_review_id": 6048081120,
+        "registered_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1032#pullrequestreview-6048081120",
+        "registered_review_state": "COMMENTED",
+        "reviewer_context": "/root/rc_authority_review",
+        "root_is_source_author": true,
+        "source_review_is_github_approval": false,
+        "official_base": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "quality_evidence_url": "https://github.com/kk051780/toy-wars-factory/pull/1032#issuecomment-7145676778",
+        "same_head_ci": [
+          {
+            "id": 45495624450,
+            "head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+            "conclusion": "success",
+            "status": "completed",
+            "event": "pull_request",
+            "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45495624450"
+          },
+          {
+            "id": 45495624624,
+            "head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+            "conclusion": "success",
+            "status": "completed",
+            "event": "pull_request",
+            "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45495624624"
+          }
+        ],
+        "candidate_artifact_id": 14969500138,
+        "candidate_artifact": {
+          "bytes": 7778399,
+          "sha256": "659fd03473febc8af887089c14b7d8aa141f02a77b920bfcebc4be85046d9d8f"
+        },
+        "candidate_place": {
+          "bytes": 829328,
+          "sha256": "4c35d93b6d8243ecff753ddaef39de0d45d0793085435a21d8f33e4814e78b5a"
+        },
+        "source_lock": {
+          "bytes": 341522,
+          "sha256": "61a484da4aaf495a91ed8167fc955d1fc6763397c79253c12a2eaac2f7cab610"
+        },
+        "source_lock_path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "beast_only_inverse": {
+          "bytes": 487809,
+          "sha256": "51e565e2793143dfdee6b73c53d9765a77edbbaab6876993e0333e73ce6390cb"
+        },
+        "h72_parent_place": {
+          "bytes": 829213,
+          "sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5"
+        },
+        "member_count": 163,
+        "native_cases": [
+          10,
+          7,
+          12
+        ],
+        "studio": "NOT_TESTED",
+        "trusted_queue_run": 45496852670,
+        "trusted_queue_artifact": 14969755253
+      },
+      "bounded_rc_integration": {
+        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+        "permitted_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "permitted_tree": "23e70ea9bdcbe09c83ed513a69258eb4b5f3458a",
+        "permitted_pr": 1032,
+        "sole_executor": "/root (current GQ470 Work session / #1032 finite RC adoption)",
+        "source_owner_preserved": "CODEX_ROOT_B8C8E7B756CD",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "new_producer_feature_or_PR_allowed": false,
+        "expires_at": "2026-11-25T00:03:38.384924+00:00",
+        "separate_live_rc_writer_lease_required": true,
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "fresh_R_H_PR_claim_permission_and_live_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "registered_postpush_reviewer": "/root/rc_authority_review",
+        "latest_pr_checkout_matches_pinned_tree": "f3c20cb5c50cf4887b4ae4c1654b99e3c64a58fc",
+        "if_head_or_rc_moves": "Stop this exact adoption and re-review actual intervening changes.",
+        "official_postpush_acceptance_required": "Same new-R official push artifact, manifest, Place, Native and four rollbacks independently checked.",
+        "post_adoption_metadata": "Separate metadata lease records actual official artifact and acceptance, consumes one grant and returns eight paths / three resources.",
+        "actual_metadata_authority": {
+          "context": "/root (current GQ470 Work session / #1032 finite RC adoption)",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370,
+            "permission": "admin/push"
+          },
+          "operation_id": "380e9fd2-fb66-454a-ad1e-473e2b43af23",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "380e9fd2-fb66-454a-ad1e-473e2b43af23",
+            "task_id": null,
+            "epoch": 719,
+            "acquired_at": "2026-11-24T22:01:42.025607+00:00",
+            "expires_at": "2026-11-24T22:31:42.025607+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "693c65840114161bd422d2b2d01a2fe2a35bd764",
+          "acquire_blob": "d5e2e8030532e4fca8ebbed4af2ee5cfc602f8d1",
+          "registry_parent": "6189af91c7b7a0acb70535f883f3155cb07e58fe",
+          "registry_blob": "bac282a07b2b107ea16e4926512dd9417db6a751",
+          "fresh_rc": "72d620d86761f2aa5da80263a251cc5fa63fecbb",
+          "source_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+          "source_tree": "23e70ea9bdcbe09c83ed513a69258eb4b5f3458a",
+          "pr": 1032,
+          "authority_basis": "OWNER current end-to-end mandate and recorded #220 comment 7131154245, #1011, active #218 grant and independent exact review."
+        },
+        "actual_grant_commit_resolution": "Only the realized immutable registry commit and whole readback grant this finite authority."
       }
     }
   ],
