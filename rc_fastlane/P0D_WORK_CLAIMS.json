@@ -29051,6 +29051,140 @@
         },
         "actual_grant_commit_resolution": "Only actual immutable registry readback grants the finite authority."
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-KO-LIVE-CAP-20261125",
+      "feature_id": "GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (current Work session / original #928 takeover-free targeted PREP)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 928,
+      "canonical_parent": 928,
+      "request_comment": 7148479599,
+      "authenticated_scope_request_comment": 7148479599,
+      "design_comment": 7049907594,
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "origin_source_pr": 928,
+      "origin_source_head": "5beaeddd77586f170459018df7a4a113b7522609",
+      "origin_source_owner": "kk051780/original-#928",
+      "origin_followup_owner_comment": 7130786017,
+      "origin_source_and_fixture_author_preserved": true,
+      "target_paths": [
+        ".github/workflows/gq470-ko-slash-real69-prep.yml",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_IMPACTFEEDBACK",
+        "GQ470_KO_SLASH_DEDICATED_PREP",
+        "GQ815_OFFICIAL_ARCHIVE_READ_ONLY_QA"
+      ],
+      "prepared_source_hashes": {
+        ".github/workflows/gq470-ko-slash-real69-prep.yml": {
+          "before": {
+            "bytes": 6694,
+            "sha256": "0e67d9ec8bff8991f9558ee7ec7fafcc3156973f6987da149f421927386ce68a",
+            "git_blob": "09ee9f4005467307b74c8931af44eaf0aac7184a"
+          },
+          "after": {
+            "bytes": 8838,
+            "sha256": "988cdcb0d692f5be916255822d502d8a62c8348a509f7f8148879eb8b47d1fcd",
+            "git_blob": "193d73dba5ddfd80ecb990429d18aa8d6a56ca19"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py": {
+          "before": {
+            "bytes": 9286,
+            "sha256": "d12c7947f1b2e40d5c0515dabe3198efe2a1a81b63342662d722debbd2730d88",
+            "git_blob": "31cf788512299677a6024fc6f62e9da9aecf6cbe"
+          },
+          "after": {
+            "bytes": 13141,
+            "sha256": "7fd062cedc14c9ceebc48ebfc04820f4f47f99510a739085279732b69f790925",
+            "git_blob": "37ad94d4648ff2321fd8451234df95abd8650b9b"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py": {
+          "before": null,
+          "after": {
+            "bytes": 4837,
+            "sha256": "f50259c9a7b206b66819acef81b381563251ec436b9fcb8fa9bec74037d467e4",
+            "git_blob": "a1a2641c22c453a58ad94513bdc909e0b977c4bc"
+          },
+          "mode": "100644"
+        },
+        "quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py": {
+          "before": null,
+          "after": {
+            "bytes": 15572,
+            "sha256": "a3af42cc117ff99ffcf884c109cd87845edccb80b0609ee3f21db452daf6f474",
+            "git_blob": "1d485a0516cfa26694733dbb69cf4b24948212af"
+          },
+          "mode": "100644"
+        }
+      },
+      "prepared_candidate_tree": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
+      "scope_proposal": {
+        "bytes": 2772,
+        "sha256": "1697b8dac6ccbfb6ba24835fdf50dffcfceb2d424badfc334214efe5666d072a",
+        "git_blob": "e84935d8f8f14b2a37d8f4abe8558e0a7caca27c"
+      },
+      "source_head": "5beaeddd77586f170459018df7a4a113b7522609",
+      "source_tree": "39b23ed8730e791dedf3d706f5ae68424f3b2890",
+      "scope": "Same #928 original A-only PREP. Reuse the existing author 5244-byte ImpactFeedback, preserve hit/score and all other selected modules, authenticate current official parent via dedicated read-only workflow, and validate exact original KO behavior with Native. No other branch, main, RC, publish, mobile or ART adoption.",
+      "prep_branch": "quality/gq470-ko-slashed-burst-real69-20261120",
+      "allowed_new_prs": 0,
+      "allowed_existing_pr": 928,
+      "source_publisher": "/root (current Work session / original #928 takeover-free targeted PREP)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "318fd5bb-d688-4f32-a8e9-80d926a23bd9",
+      "issued_at": "2026-11-25T00:29:49.934+00:00",
+      "expires_at": "2026-11-25T06:29:49.934+00:00",
+      "actual_metadata_lease": {
+        "ref": "8722439cb12d69b7ce0e739a3b81d171f0ad642f",
+        "blob": "b674396acca3a71b5217ddc04d849cc3010939da",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "318fd5bb-d688-4f32-a8e9-80d926a23bd9",
+          "task_id": null,
+          "epoch": 734,
+          "acquired_at": "2026-11-25T00:26:10.626+00:00",
+          "expires_at": "2026-11-25T00:56:10.626+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_scope_granted": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "art_gate": "ART_NO_GO",
+      "studio": "NOT_TESTED",
+      "original_official_input": {
+        "id": 14977773039,
+        "run": 45516606797,
+        "job": 138877535812,
+        "head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "sha256": "f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0",
+        "bytes": 13407250,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797/artifacts/14977773039",
+        "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
+        "step_count": 48
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
