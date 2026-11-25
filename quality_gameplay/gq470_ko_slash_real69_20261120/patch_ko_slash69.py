@@ -9,10 +9,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 
-BASE = "e80973c354f14a0d0088577f3cc1a875454f0f8f"
+BASE = "273e763c42ee0f405ef854b75c3cf071b078e896"
+PUBLISHED_KO_SHA = "b5ae780bf885813155f0ae8a99ff15577a8cb8ed75f5126b6a265ff7d022c703"
+OWNER_LIVE_CAP_SHA = "63e6658dd635588f71ffdb21a130b8b837f7862abfbe9d4eeb2f66e26638a8b8"
 ROUTE = "ServerScriptService/EGGRUMBLE_ImpactFeedback"
 OLD_SHA = "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
 FEATURE = "GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120"
@@ -141,7 +144,60 @@ def self_test():
         raise AssertionError("NEGATIVE_MUTATION_ACCEPTED")
     print("GQ470_KO_SLASH_6_NEGATIVES_PASS")
 
-def apply(root: Path, head: str):
+def apply_owner_live_cap(published: bytes) -> bytes:
+    """Reuse the exact source provided in #928 comment 7130786017."""
+    must(sha(published) == PUBLISHED_KO_SHA, "EXACT_PUBLISHED_KO_SOURCE")
+    changes = (
+        (
+            b"local MAX_KO_BURSTS_PER_SEC=6\n",
+            b"local MAX_KO_BURSTS_PER_SEC=6\nlocal MAX_LIVE_KO_BURSTS=6\n",
+        ),
+        (
+            b"local koCount=0\n",
+            b"local koCount=0\n"
+            b"-- A burst owns both fins until neither is parented. Bounded by the live cap,\n"
+            b"-- never by the number of KOs in a long match. No per-frame or timer loop.\n"
+            b"local liveKOBursts:{{BasePart}}={}\n",
+        ),
+        (
+            b" if not world.Parent or not target.PrimaryPart or not budget(true) then return false end\n local pivot=",
+            b" if not world.Parent or not target.PrimaryPart then return false end\n"
+            b" -- A fixed-second rate limiter alone permits two overlapping bursts of six\n"
+            b" -- around a second boundary. Reclaim only fully removed pairs (Debris or\n"
+            b" -- arena teardown); a single remaining fin still occupies the burst slot.\n"
+            b" for i=#liveKOBursts,1,-1 do\n"
+            b"  local live=false\n"
+            b"  for _,fin in ipairs(liveKOBursts[i]) do\n"
+            b"   if fin.Parent then live=true;break end\n"
+            b"  end\n"
+            b"  if not live then table.remove(liveKOBursts,i) end\n"
+            b" end\n"
+            b" if #liveKOBursts>=MAX_LIVE_KO_BURSTS or not budget(true) then return false end\n local pivot=",
+        ),
+        (
+            b" for side=-1,1,2 do\n",
+            b" local burst:{BasePart}={}\n table.insert(liveKOBursts,burst)\n for side=-1,1,2 do\n",
+        ),
+        (b"  fin.Parent=world\n", b"  table.insert(burst,fin)\n  fin.Parent=world\n"),
+    )
+    fixed = published
+    for previous, replacement in changes:
+        must(fixed.count(previous) == 1, "OWNER_LIVE_CAP_ANCHOR")
+        fixed = fixed.replace(previous, replacement, 1)
+    must(sha(fixed) == OWNER_LIVE_CAP_SHA, "COMPLETE_ORIGINAL_OWNER_LIVE_CAP")
+    inverse = fixed
+    for previous, replacement in reversed(changes):
+        must(inverse.count(replacement) == 1, "OWNER_LIVE_CAP_INVERSE_ANCHOR")
+        inverse = inverse.replace(replacement, previous, 1)
+    must(inverse == published, "OWNER_LIVE_CAP_INVERSE")
+    return fixed
+
+
+def apply(root: Path, head: str, candidate_head: str):
+    must(re.fullmatch(r"[a-f0-9]{40}", candidate_head) is not None, "ACTUAL_CANDIDATE_CHECKOUT")
+    official = json.loads((root / "UNION22_FINAL_ADMISSION.json").read_text())
+    must(official.get("receipt_provenance") == "OFFICIAL" and official.get("official_build_head") == BASE
+         and official.get("formal_rc_adoption_proven") is True, "EXACT_OFFICIAL_SOURCE_CHAIN")
     paths = selected(root)
     receipt = json.loads((root / RECEIPT).read_text(encoding="utf-8"))
     must(head == BASE and receipt.get("build_head") == BASE, "STALE_OFFICIAL")
@@ -152,19 +208,28 @@ def apply(root: Path, head: str):
     must(receipt["source_hashes"].get(ROUTE) == OLD_SHA, "STALE_SOURCE_HASH")
     for route, path in paths.items():
         must(sha(path.read_bytes()) == receipt["source_hashes"][route], "INPUT_SOURCE_" + route)
+    original = paths[ROUTE].read_bytes()
+    changed = apply_owner_live_cap(transform(original.decode("utf-8")).encode("utf-8"))
     backup = root / OFF
     must(not backup.exists(), "DUPLICATE_OFF")
     backup.mkdir()
     shutil.copytree(root / "sources", backup / "sources")
     for name in (PROJECT, RECEIPT, "EGGRUMBLE_REAL69_PRIVATE.rbxlx"):
         shutil.copyfile(root / name, backup / name)
-    original = paths[ROUTE].read_bytes()
-    changed = transform(original.decode("utf-8")).encode("utf-8")
     paths[ROUTE].write_bytes(changed)
     before = selected(backup)
     must({route for route, path in paths.items()
           if path.read_bytes() != before[route].read_bytes()} == {ROUTE}, "OTHER68_CHANGED")
     must((root / PROJECT).read_bytes() == (backup / PROJECT).read_bytes(), "PROJECT_CHANGED")
+    receipt.update({
+        "build_head": candidate_head,
+        "official_build_head": None,
+        "receipt_provenance": "A_PRIVATE_SOURCE_PREP_ONLY",
+        "canonical_build": False,
+        "formal_rc_adoption_proven": False,
+        "execution_context": {"kind": "A_PRIVATE_SOURCE_PREP_ONLY", "build_head": candidate_head,
+                              "exact_official_parent": head},
+    })
     receipt["source_hashes"][ROUTE] = sha(changed)
     receipt["gq470_ko_slashed_confirmed"] = {
         "feature_id": FEATURE,
@@ -173,6 +238,11 @@ def apply(root: Path, head: str):
         "after_sha256": sha(changed),
         "other_sources_unchanged": 68,
         "ko_per_second_limit": 6,
+        "max_parented_ko_pairs": 6,
+        "max_parented_ko_fin_parts": 12,
+        "official_parent_head": head,
+        "official_parent_receipt_sha256": sha((backup / RECEIPT).read_bytes()),
+        "original_author_live_cap": "https://github.com/kk051780/toy-wars-factory/pull/928#issuecomment-7130786017",
         "new_parts_per_confirmed_ko": 2,
         "previous_parts_per_confirmed_ko": 1,
         "yaw_follows_victim": True,
@@ -194,10 +264,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", type=Path)
     parser.add_argument("--head", default=BASE)
+    parser.add_argument("--candidate-head")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     if args.self_test:
         self_test()
     else:
-        must(args.base is not None, "MISSING_ARTIFACT")
-        apply(args.base, args.head)
+        must(args.base is not None and args.candidate_head is not None, "MISSING_ARTIFACT_OR_CANDIDATE_HEAD")
+        apply(args.base, args.head, args.candidate_head)

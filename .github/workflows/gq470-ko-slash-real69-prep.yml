@@ -15,23 +15,37 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
+      KO_PARENT_SHA: 273e763c42ee0f405ef854b75c3cf071b078e896
+      KO_PARENT_RUN: '45516606797'
+      KO_PARENT_ARTIFACT: '14977773039'
+      KO_PARENT_ZIP_SHA: f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0
+      KO_PARENT_ZIP_BYTES: '13407250'
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Source-locked 69-script confirmed KO slash patch and six mutation negatives
+      - name: Independently verify the official Guardian packet and apply the source-locked KO live cap
         shell: bash
         run: |
           set -euo pipefail
           python3 -m py_compile quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py
           python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py --self-test
-          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
-          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
-          mkdir -p /tmp/gq470-ko
-          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-ko
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$KO_PARENT_SHA" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$KO_PARENT_RUN" --jq '.head_sha+" "+.event+" "+.head_branch+" "+.conclusion')" = "$KO_PARENT_SHA push rc/p0d-s1-kids-rc01 success"
+          artifact="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$KO_PARENT_RUN/artifacts" --jq ".artifacts[] | select(.id == $KO_PARENT_ARTIFACT)")"
+          test "$(jq -r '[.id,.name,.size_in_bytes,.digest,.expired,.workflow_run.id] | @tsv' <<< "$artifact")" = "$(printf '%s\t%s\t%s\t%s\tfalse\t%s' "$KO_PARENT_ARTIFACT" P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO "$KO_PARENT_ZIP_BYTES" "sha256:$KO_PARENT_ZIP_SHA" "$KO_PARENT_RUN")"
+          zip=/tmp/gq470-ko-official.zip
+          curl --fail --silent --show-error --location --retry 2 --max-time 120 \
+            --header "Authorization: Bearer $GH_TOKEN" --header 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$KO_PARENT_ARTIFACT/zip" --output "$zip"
+          test "$(wc -c < "$zip")" -eq "$KO_PARENT_ZIP_BYTES"
+          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py \
+            --zip "$zip" --head "$KO_PARENT_SHA" --sha256 "$KO_PARENT_ZIP_SHA" --unpack /tmp/gq470-ko \
+            | tee /tmp/gq470-ko-official-audit.json
+          mv /tmp/gq470-ko-official-audit.json /tmp/gq470-ko/KO_OFFICIAL_PARENT_AUDIT.json
           test -s /tmp/gq470-ko/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           test -s /tmp/gq470-ko/REAL69_LEGACY_INTAKE_RECEIPT.json
-          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py --base /tmp/gq470-ko
+          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py --base /tmp/gq470-ko --head "$KO_PARENT_SHA" --candidate-head "$GITHUB_SHA"
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -39,6 +53,8 @@ jobs:
           x=r["gq470_ko_slashed_confirmed"]
           assert x["other_sources_unchanged"]==68
           assert x["new_parts_per_confirmed_ko"]==2 and x["new_remotes"]==0
+          assert x["max_parented_ko_pairs"]==6 and x["max_parented_ko_fin_parts"]==12
+          assert r["receipt_provenance"]=="A_PRIVATE_SOURCE_PREP_ONLY" and r["formal_rc_adoption_proven"] is False
           assert x["new_gameplay_authority"] is False and x["pc_android_beauty"]=="NOT_TESTED"
           print("KO_SLASH_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS")
           PY
@@ -48,12 +64,12 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _pinned_luau
           persist-credentials: false
-      - name: Compile all 69 selected Luau ON and OFF
+      - name: Compile all 69 selected Luau ON and OFF and test real KO live-cap source
         shell: bash
         run: |
           set -euo pipefail
           cmake -S _pinned_luau -B /tmp/gq470-ko-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq470-ko-luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq470-ko-luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import subprocess,sys
           from pathlib import Path
@@ -69,6 +85,11 @@ jobs:
                                  check=True,stdout=subprocess.DEVNULL)
           print("GQ470_KO_NATIVE_ON69_OFF69_PASS")
           PY
+          python3 -B quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py \
+            --luau /tmp/gq470-ko-luau/luau \
+            --official-source /tmp/gq470-ko/OFF69_KO_SLASH/sources/ServerScriptService/EGGRUMBLE_ImpactFeedback.luau \
+            --selected-source /tmp/gq470-ko/sources/ServerScriptService/EGGRUMBLE_ImpactFeedback.luau \
+            | tee /tmp/gq470-ko/KO_NATIVE_LIVE_CAP.log
       - name: Exact Rojo ON/OFF Place and source nonloss gate
         shell: bash
         run: |
@@ -116,5 +137,7 @@ jobs:
             /tmp/gq470-ko/sources/**
             /tmp/gq470-ko/OFF69_KO_SLASH_REBUILT.rbxlx
             /tmp/gq470-ko/KO_SLASH_LEGACY48_AUDIT.json
+            /tmp/gq470-ko/KO_NATIVE_LIVE_CAP.log
+            /tmp/gq470-ko/KO_OFFICIAL_PARENT_AUDIT.json
           if-no-files-found: error
           retention-days: 7
