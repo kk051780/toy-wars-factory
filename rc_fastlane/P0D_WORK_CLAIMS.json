@@ -28511,7 +28511,7 @@
     {
       "claim_id": "P0D-GQ815-GUARDIAN-UNION22-20261125",
       "feature_id": "GQ815_GUARDIAN_ACTUAL_MATCH_AI",
-      "state": "PREP_READY",
+      "state": "RC_INTEGRATED",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #796 canonical transport)",
       "parent_issue": 470,
@@ -28664,12 +28664,12 @@
       },
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
-      "formal_rc_adoption": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": true,
       "no_main_or_publish": true,
       "authority_basis": "Current owner delegated quality-gate task, repository AGENTS and #1011, exact #218 scope and #250 bounded ADOPT decision.",
       "source_tree": "89690ae97566011a3e210ad5920447274363ccbf",
@@ -28995,7 +28995,7 @@
         "trusted_queue_artifact": 14977348639
       },
       "bounded_rc_integration": {
-        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "status": "ACTUAL_EXACT_FINITE_AUTHORITY_CONSUMED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
         "permitted_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
@@ -29004,7 +29004,7 @@
         "sole_executor": "/root (current GQ470 Work session / #1033 finite RC adoption)",
         "source_owner_preserved": "CODEX_ROOT_870491EA0B74",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -29049,7 +29049,215 @@
           "pr": 1033,
           "authority_basis": "OWNER current end-to-end delegation and #220 7131154245, #1011, authenticated scope #218, real independent review."
         },
-        "actual_grant_commit_resolution": "Only actual immutable registry readback grants the finite authority."
+        "actual_grant_commit_resolution": "Only actual immutable registry readback grants the finite authority.",
+        "actual_adopted_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "actual_merge_commit_id": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "actual_rc_write_lease": "c08cc096f136761feeecfa59a2648fb33aefadec",
+        "actual_rc_write_normal_return": "94a08d0a2530884c8a56a4a2648c79fa34eb64f2",
+        "official_independent_review_id": 6049898443,
+        "scope_returned_after_accepted_artifact": true
+      },
+      "progress_updated_at": "2026-11-25T01:07:19.719+00:00",
+      "official_postpush_and_scope_return": {
+        "actual_merged_pr": 1033,
+        "actual_merge_time_utc": "2026-11-25T00:15:03Z",
+        "old_official_head": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "new_official_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "tree": "89690ae97566011a3e210ad5920447274363ccbf",
+        "official_artifact": {
+          "id": 14977773039,
+          "run": 45516606797,
+          "job": 138877535812,
+          "head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "sha256": "f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0",
+          "bytes": 13407250,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797/artifacts/14977773039",
+          "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
+          "step_count": 48
+        },
+        "official_archive_content": {
+          "instances": 75,
+          "inverses": {
+            "OFF69_BEAST_H72_PARENT_ROLLBACK.tar.gz": {
+              "archive": {
+                "bytes": 487809,
+                "sha256": "51e565e2793143dfdee6b73c53d9765a77edbbaab6876993e0333e73ce6390cb"
+              },
+              "members": 71,
+              "place": {
+                "bytes": 829213,
+                "sha256": "cacc922501717c417c05e60bdf3c32c6d917e3622931401ab45fc8eeed3da3c5"
+              },
+              "project": {
+                "bytes": 9564,
+                "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+              }
+            },
+            "OFF69_BOT_VAULT_HUD_PARENT_ROLLBACK.tar.gz": {
+              "archive": {
+                "bytes": 487456,
+                "sha256": "434943b9495e082e20b4679a53c979b36c024ae21f49d9ffd9d5df206568e0bc"
+              },
+              "members": 71,
+              "place": {
+                "bytes": 828658,
+                "sha256": "9cc9068b85893605c5090964fdc27175d9c48372803d65fe52914591fa7e5899"
+              },
+              "project": {
+                "bytes": 9564,
+                "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+              }
+            },
+            "OFF69_GUARDIAN_BEAST_PARENT_ROLLBACK.tar.gz": {
+              "archive": {
+                "bytes": 487854,
+                "sha256": "be4c9c01f27910515d0c9e2cc466c920055b733d209018e80a4649832e858493"
+              },
+              "members": 71,
+              "place": {
+                "bytes": 829328,
+                "sha256": "4c35d93b6d8243ecff753ddaef39de0d45d0793085435a21d8f33e4814e78b5a"
+              },
+              "project": {
+                "bytes": 9564,
+                "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+              }
+            },
+            "OFF69_HUD_CONTEXT_CURRENT_RC_ROLLBACK.tar.gz": {
+              "archive": {
+                "bytes": 487151,
+                "sha256": "0cd18de896ed89a058c77b8b2c428388fbe97f048eb858268100a793a42c6ba9"
+              },
+              "members": 71,
+              "place": {
+                "bytes": 828114,
+                "sha256": "356bcfc9b5602b03a04f77f9638e15175be2deec084ef2a9d95963cadf7586f6"
+              },
+              "project": {
+                "bytes": 9564,
+                "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+              }
+            },
+            "OFF69_UNION22_PRIOR_BR_ROLLBACK.tar.gz": {
+              "archive": {
+                "bytes": 481826,
+                "sha256": "35218885c9ad827167ca4193aa2fa6ab77c6fd9f43e8a847390a482d303e4a32"
+              },
+              "members": 75,
+              "place": {
+                "bytes": 798416,
+                "sha256": "d2d685377eba115a64fd7996f7f4a8d934bcce5e535e462ee22ed23678d14265"
+              },
+              "project": {
+                "bytes": 9564,
+                "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"
+              }
+            }
+          },
+          "manifest": {
+            "bytes": 61928,
+            "sha256": "2e29635d9bd9496c533108d3c4ca1d135c809d6fce3e96d2738739ced50fc405"
+          },
+          "members": 326,
+          "native_guardian": {
+            "cases": {
+              "baseline_control_pass": 6,
+              "candidate_pass": 26,
+              "expected_baseline_failure": 8
+            },
+            "compiled_body_spans": 1120,
+            "inputs": 17,
+            "processes": 40,
+            "scenarios": 13
+          },
+          "native_standard": {
+            "bot_scenarios": 9,
+            "frozen_standard_cases": {
+              "beast_target_selection": 12,
+              "combined_clear_los": 10,
+              "objective_full_clear_los": 7
+            },
+            "hud_layout": 14,
+            "native_files": 67,
+            "processes": 13
+          },
+          "official_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "place": {
+            "bytes": 829822,
+            "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"
+          },
+          "script_count": 69,
+          "status": "PASS_EXACT_OFFICIAL_1033_ARCHIVE_INDEPENDENT_REREAD",
+          "verifier": {
+            "bytes": 15614,
+            "sha256": "79c150cf2133c5299b0287dc2495f6bcc6093a28e6762b058df7afa08dec7923"
+          },
+          "zip": {
+            "bytes": 13407250,
+            "sha256": "f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0"
+          }
+        },
+        "independent_official_review": {
+          "id": 6049898443,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1033#pullrequestreview-6049898443",
+          "state": "COMMENTED",
+          "commit_id": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "context": "/root/rc_authority_review",
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          }
+        },
+        "independent_hosted_archive_read": {
+          "run": 45520909028,
+          "job": 138892200589,
+          "head": "f181040d1febe4b0e1104090e6c4022235e96202",
+          "receipt_artifact": 14979738251,
+          "parser_pin": {
+            "bytes": 15614,
+            "sha256": "79c150cf2133c5299b0287dc2495f6bcc6093a28e6762b058df7afa08dec7923"
+          }
+        },
+        "actual_writer_epoch": 733,
+        "actual_writer_acquire": "c08cc096f136761feeecfa59a2648fb33aefadec",
+        "actual_writer_release": "94a08d0a2530884c8a56a4a2648c79fa34eb64f2",
+        "actual_metadata_lease": {
+          "ref": "4267494a532c84f2c1b5866709e5218a740a7672",
+          "blob": "2070572a66ebe68a25d7c6a9ae5423d4956de865",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "dad56c69-4c59-4295-93f3-9971e348011c",
+            "task_id": null,
+            "epoch": 740,
+            "acquired_at": "2026-11-25T01:07:12.157+00:00",
+            "expires_at": "2026-11-25T01:37:12.157+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        },
+        "integration_grant": "f1af5d77928582bce9bb483f279588ae8977b64f",
+        "scope_release": {
+          "paths": [
+            "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "tests/test_gq470_union22_real69_20261122.py"
+          ],
+          "resources": [
+            "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+            "REAL69_UNION22_FINAL_RECEIPT",
+            "REAL69_NATIVE_FULL28_PROFILE"
+          ]
+        },
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "owner_accepted": false,
+        "device_handoff": "https://github.com/kk051780/toy-wars-factory/issues/420#issuecomment-7148462095",
+        "main_sha_observed": "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
       }
     },
     {
