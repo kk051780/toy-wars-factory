@@ -12,6 +12,7 @@ import hashlib
 import json
 import re
 import struct
+import zlib
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -105,18 +106,42 @@ def png_info(path: Path) -> tuple[int, int, str]:
         raise ValueError("INVALID_SCREENSHOT_DIMENSIONS")
     if len(data) < 1024:
         raise ValueError("IMAGE_TOO_SMALL_FOR_EVIDENCE")
+    offset = len(PNG)
+    image_data = False
+    finished = False
+    while offset + 12 <= len(data):
+        size, kind = struct.unpack_from(">I4s", data, offset)
+        checksum_at = offset + 8 + size
+        next_offset = checksum_at + 4
+        if next_offset > len(data):
+            raise ValueError("TRUNCATED_PNG_CHUNK")
+        crc, = struct.unpack_from(">I", data, checksum_at)
+        if zlib.crc32(data[offset + 4:checksum_at]) != crc:
+            raise ValueError("INVALID_PNG_CHUNK_CRC")
+        if kind == b"IHDR" and (offset != len(PNG) or size != 13):
+            raise ValueError("INVALID_PNG_IHDR")
+        if kind == b"IDAT" and size > 0:
+            image_data = True
+        if kind == b"IEND":
+            finished = (size == 0 and next_offset == len(data))
+            break
+        offset = next_offset
+    if not image_data or not finished:
+        raise ValueError("INCOMPLETE_PNG_IMAGE")
     return width, height, digest(data)
 
 def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str) -> dict:
+    expected = {(scene, dev, version) for scene in SCENES for dev in DEVICES for version in VERSIONS}
+    counts = {"shots_received": 0, "shots_submitted": 0, "shots_required": len(expected)}
     if manifest_file is None:
-        return {"gate": "MISSING", "violations": ["NO_STUDIO_EVIDENCE_MANIFEST"],
-                "shots_received": 0, "shots_required": len(SCENES)*len(DEVICES)*len(VERSIONS)}
+        return {"gate": "MISSING", "violations": ["NO_STUDIO_EVIDENCE_MANIFEST"], **counts}
     violations = []
     try:
         manifest = json.loads(manifest_file.read_text(encoding="utf8"))
+        if not isinstance(manifest, dict):
+            raise ValueError("MANIFEST_NOT_OBJECT")
     except (OSError, ValueError) as exc:
-        return {"gate": "FAIL", "violations": ["INVALID_MANIFEST:" + type(exc).__name__],
-                "shots_received": 0}
+        return {"gate": "FAIL", "violations": ["INVALID_MANIFEST:" + type(exc).__name__], **counts}
     if manifest.get("schema") != "P0D_ART_STUDIO_EVIDENCE_V1":
         violations.append("SCHEMA_MISMATCH")
     for key in ("before_head", "after_head"):
@@ -124,20 +149,24 @@ def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str
             violations.append("HEAD_MISSING:" + key)
     if manifest.get("after_place_sha256") != place_sha:
         violations.append("STUDIO_PLACE_SHA_MISMATCH")
+    usable_identity = not violations
     root = root if root is not None else manifest_file.parent
     root = root.resolve()
     shots = manifest.get("shots", [])
     seen = set()
-    duplicate_sha = {}
+    eligible = set()
+    first_by_sha = {}
     for shot in shots if isinstance(shots, list) else []:
         if not isinstance(shot, dict):
             violations.append("INVALID_SHOT"); continue
         key = (shot.get("scene"), shot.get("device"), shot.get("version"))
-        if key in seen:
-            violations.append("DUPLICATE_SHOT_KEY:" + str(key)); continue
-        seen.add(key)
-        if key[0] not in SCENES or key[1] not in DEVICES or key[2] not in VERSIONS:
+        if any(not isinstance(value, str) for value in key) or key not in expected:
             violations.append("UNKNOWN_CAMERA_ID:" + str(key)); continue
+        if key in seen:
+            violations.append("DUPLICATE_SHOT_KEY:" + str(key))
+            eligible.discard(key)
+            continue
+        seen.add(key)
         name = shot.get("file")
         if not isinstance(name, str):
             violations.append("MISSING_SHOT_FILE:" + str(key)); continue
@@ -148,15 +177,16 @@ def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str
             width, height, sha = png_info(candidate)
         except (ValueError, OSError) as exc:
             violations.append("INVALID_SCREENSHOT:" + str(key) + ":" + str(exc)); continue
-        if key[1] == "pc" and (width < 1280 or height < 720):
+        full_pc_resolution = key[1] != "pc" or (width >= 1280 and height >= 720)
+        if not full_pc_resolution:
             violations.append("LOW_PC_RESOLUTION:" + str(key))
-        if sha in duplicate_sha:
-            other = duplicate_sha[sha]
-            if (key[0], key[1], key[2]) != (other[0], other[1], other[2]):
-                violations.append("REUSED_SCREENSHOT:" + str(key))
-        duplicate_sha[sha] = key
-    expected = {(scene, dev, version) for scene in SCENES
-                for dev in DEVICES for version in VERSIONS}
+        if sha in first_by_sha:
+            violations.append("REUSED_SCREENSHOT:" + str(key))
+            eligible.discard(first_by_sha[sha])
+        else:
+            first_by_sha[sha] = key
+            if full_pc_resolution:
+                eligible.add(key)
     for missing in sorted(expected - seen):
         violations.append("MISSING_SCREENSHOT:" + "/".join(missing))
     ratings = manifest.get("ratings", {})
@@ -205,8 +235,9 @@ def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str
     # execution or owner acceptance: an OWNER review of the actual images is required.
     return {
         "gate": "REVIEW_READY" if not violations else "FAIL",
-        "violations": violations, "shots_received": len(seen),
-        "shots_required": len(expected), "human_reviewer_claim": bool(manifest.get("human_reviewer")),
+        "violations": violations, "shots_received": len(eligible) if usable_identity else 0,
+        "shots_submitted": len(seen), "shots_required": len(expected),
+        "human_reviewer_claim": bool(manifest.get("human_reviewer")),
         "owner_accepted": False,
     }
 
