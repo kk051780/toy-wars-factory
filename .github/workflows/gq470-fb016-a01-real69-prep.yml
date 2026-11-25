@@ -28,14 +28,16 @@ jobs:
           python3 -m py_compile "$SCRIPT"
           python3 -B "$SCRIPT" --self-test
           CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
-          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
-          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44695199140" --jq '.head_sha+" "+.status+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f completed success"
+          test "$CURRENT" = "273e763c42ee0f405ef854b75c3cf071b078e896" || { echo RED_STALE_FORMAL_HEAD; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/45516606797" --jq '.head_sha+" "+.status+" "+.conclusion')" = "273e763c42ee0f405ef854b75c3cf071b078e896 completed success"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14977773039" --jq '.workflow_run.id|tostring')" = "45516606797"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14977773039" --jq .digest)" = "sha256:f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            test "$(jq -r '.pull_request.base.sha' "$GITHUB_EVENT_PATH")" = "$CURRENT" || { echo RED_STALE_PR_BASE; exit 1; }
+            test "$(jq -r '.pull_request.base.ref' "$GITHUB_EVENT_PATH")" = "rc/p0d-s1-kids-rc01" || { echo RED_STALE_PR_BASE; exit 1; }
             test "$(jq -r '.pull_request.head.sha' "$GITHUB_EVENT_PATH")" = "$(git rev-parse HEAD)" || { echo RED_HEAD_SHA_DRIFT; exit 1; }
           fi
           mkdir -p /tmp/gq470-a01
-          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-a01
+          gh run download 45516606797 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-a01
           test -s /tmp/gq470-a01/EGGRUMBLE_REAL69_PRIVATE.rbxlx
           python3 -B "$SCRIPT" --base /tmp/gq470-a01 --head "$CURRENT"
           python3 - <<'PY'
@@ -126,7 +128,7 @@ jobs:
           (base/'FB016_LEGACY17.json').write_text(json.dumps({'family_count':len(families),'families':families,'studio':'NOT_TESTED','art':'NO_GO'},indent=2)+'\n')
           (base/'FB016_ART_REPORT.json').write_text(json.dumps({
            'schema':'GQ470_A01_FB016_ART_GATE_PREP_V1','candidate_head':receipt['build_head'],
-           'base_official_head':'e80973c354f14a0d0088577f3cc1a875454f0f8f',
+           'base_official_head':'273e763c42ee0f405ef854b75c3cf071b078e896',
            'selected_scripts':69,'changed_source_routes':1,'untouched_source_routes':68,
            'source_gate':'PASS_SOURCE_ONLY','native_luau':'PASS','rojo':'PASS',
            'rollback':'PASS','screenshots_actual':0,'screenshots_required':32,
