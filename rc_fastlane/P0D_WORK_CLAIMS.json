@@ -29263,7 +29263,7 @@
     {
       "claim_id": "P0D-GQ470-KO-LIVE-CAP-20261125",
       "feature_id": "GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED",
       "role": "A_PREP",
       "owner": "/root (current Work session / original #928 takeover-free targeted PREP)",
       "parent_issue": 470,
@@ -29342,8 +29342,8 @@
         "sha256": "1697b8dac6ccbfb6ba24835fdf50dffcfceb2d424badfc334214efe5666d072a",
         "git_blob": "e84935d8f8f14b2a37d8f4abe8558e0a7caca27c"
       },
-      "source_head": "45002d3f1f46c1be740588fcfcb151f3fa02ddd0",
-      "source_tree": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
+      "source_head": "f181040d1febe4b0e1104090e6c4022235e96202",
+      "source_tree": "80fc727a76cac2d143f76efd2ec3a3bce9636140",
       "scope": "Same #928 original A-only PREP. Reuse the existing author 5244-byte ImpactFeedback, preserve hit/score and all other selected modules, authenticate current official parent via dedicated read-only workflow, and validate exact original KO behavior with Native. No other branch, main, RC, publish, mobile or ART adoption.",
       "prep_branch": "quality/gq470-ko-slashed-burst-real69-20261120",
       "allowed_new_prs": 0,
@@ -29374,7 +29374,7 @@
       },
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "PREP_READY": false,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
@@ -29438,12 +29438,70 @@
         },
         "meta_lease": "e5dd21d513ed1f9331b222e128b90c3d0d1e330e",
         "needs_separate_live_source_lease": true
+      },
+      "progress_updated_at": "2026-11-25T01:48:55.193+00:00",
+      "source_reservation_release": {
+        "kind": "SOURCE_ONLY_CI_AND_INDEPENDENT_EVIDENCE_RECORDED",
+        "at": "2026-11-25T01:48:55.193+00:00",
+        "exact_head": "f181040d1febe4b0e1104090e6c4022235e96202",
+        "tree": "80fc727a76cac2d143f76efd2ec3a3bce9636140",
+        "source_lease": "23ec5003fa228925a817f817da4b2ad3f3c693c8",
+        "source_lease_epoch": 737,
+        "normal_source_lease_return": "10c6f7ded1a39f44d219ff3eba32a7e615de4b3e",
+        "exact_hosted": {
+          "run": 45520909028,
+          "job": 138892200589,
+          "conclusion": "success"
+        },
+        "artifact": {
+          "id": 14979738251,
+          "bytes": 805044,
+          "digest": "sha256:b93ae26116fe4bbc633fc5900bdc0f4b0583332d692e7eed8b600ebf18ba1008"
+        },
+        "authenticated_reviewer": {
+          "id": 6050256419,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/928#pullrequestreview-6050256419",
+          "status": "COMMENTED",
+          "context": "/root/rc_authority_review"
+        },
+        "returned_paths": [
+          ".github/workflows/gq470-ko-slash-real69-prep.yml",
+          "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py",
+          "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py",
+          "quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_IMPACTFEEDBACK",
+          "GQ470_KO_SLASH_DEDICATED_PREP",
+          "GQ815_OFFICIAL_ARCHIVE_READ_ONLY_QA"
+        ],
+        "source_scope": "A_ONLY",
+        "scope_evidence": "24 to 12 live effect parts; source and Native only",
+        "artifact_raw_local_reread": false,
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "formal_rc_adoption": false,
+        "actual_metadata_lease": {
+          "ref": "115528add4ea71f8480c3f1f294d52218c897e05",
+          "blob": "90a8dee0057cf7177e3751fd8aceae8bd4db8d33",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "19158e44-e094-4041-ba1e-cc91222c714d",
+            "task_id": null,
+            "epoch": 748,
+            "acquired_at": "2026-11-25T01:48:48.275+00:00",
+            "expires_at": "2026-11-25T02:18:48.275+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        }
       }
     },
     {
       "claim_id": "P0D-GQ1010-ITEM-ORNAMENT-A-PREP-20261125",
       "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED",
       "role": "A_PREP",
       "owner": "/root/guardian_transport (existing #1010 source-only PREP publisher)",
       "parent_issue": 470,
@@ -29512,8 +29570,8 @@
         }
       },
       "prepared_candidate_tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
-      "source_head": "561f2181fe76eaa5fc2ff47372e7c1f049d3c885",
-      "source_tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
+      "source_head": "facbcaaa0300f98270e06328a94b504118662634",
+      "source_tree": "d2fbf3e40e74ad2374b7595c24ce7328f02710f9",
       "prep_branch": "quality/gq470-real69-item-ornament-visibility-20261122-a01",
       "allowed_new_prs": 0,
       "allowed_existing_pr": 1010,
@@ -29549,7 +29607,7 @@
         }
       },
       "scope_only": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_write_requires_separate_live_source_lease": true,
       "PREP_READY": false,
       "registered_source_approval": false,
@@ -29569,7 +29627,7 @@
         "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
         "step_count": 48
       },
-      "progress_updated_at": "2026-11-25T01:18:35.687+00:00",
+      "progress_updated_at": "2026-11-25T01:48:55.220+00:00",
       "actual_source_publication": {
         "head": "561f2181fe76eaa5fc2ff47372e7c1f049d3c885",
         "tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
@@ -29617,6 +29675,61 @@
         },
         "meta_lease": "c9b2eeab56312f6d0126ab3d34139bfc3a449524",
         "needs_separate_live_source_lease": true
+      },
+      "source_reservation_release": {
+        "kind": "SOURCE_ONLY_CI_AND_INDEPENDENT_EVIDENCE_RECORDED",
+        "at": "2026-11-25T01:48:55.220+00:00",
+        "exact_head": "facbcaaa0300f98270e06328a94b504118662634",
+        "tree": "d2fbf3e40e74ad2374b7595c24ce7328f02710f9",
+        "source_lease": "16849ede02f57efec70d95de227e826ef92b7e04",
+        "source_lease_epoch": 742,
+        "normal_source_lease_return": "3baa2818fa996d77c47139c5c702446726a3797a",
+        "exact_hosted": {
+          "run": 45527121625,
+          "job": 138913115978,
+          "conclusion": "success"
+        },
+        "artifact": {
+          "id": 14983216700,
+          "bytes": 518643,
+          "digest": "sha256:1d72777c6c7341f61ce9f20440e9cd706f61e1f8eb8a20c5de677433c6604a36"
+        },
+        "authenticated_reviewer": {
+          "id": 6050342542,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/1010#pullrequestreview-6050342542",
+          "status": "COMMENTED",
+          "context": "/root/rc_authority_review"
+        },
+        "returned_paths": [
+          ".github/workflows/gq470-item-ornament-visibility-real69.yml",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py",
+          "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py"
+        ],
+        "returned_resources": [
+          "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+          "GQ470_ITEM_ORNAMENT_DEDICATED_PREP"
+        ],
+        "source_scope": "A_ONLY",
+        "scope_evidence": "5 actual cleanup fixture groups with exact old/new rollback",
+        "artifact_raw_local_reread": false,
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "formal_rc_adoption": false,
+        "actual_metadata_lease": {
+          "ref": "115528add4ea71f8480c3f1f294d52218c897e05",
+          "blob": "90a8dee0057cf7177e3751fd8aceae8bd4db8d33",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "19158e44-e094-4041-ba1e-cc91222c714d",
+            "task_id": null,
+            "epoch": 748,
+            "acquired_at": "2026-11-25T01:48:48.275+00:00",
+            "expires_at": "2026-11-25T02:18:48.275+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        }
       }
     },
     {
@@ -29716,7 +29829,7 @@
     {
       "claim_id": "P0D-GQ424-SHOT-PROGRESS-20261125",
       "feature_id": "GQ470_ART_EVIDENCE_VALID_IMAGE_PROGRESS",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (Work A-only, existing #424)",
       "parent_issue": 420,
@@ -29735,8 +29848,8 @@
       "prep_branch": "feature/p0d-art-quality-gate-20261115",
       "allowed_new_prs": 0,
       "allowed_existing_pr": 424,
-      "source_head": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
-      "source_tree": "1ac34a3d4bad02a5ca7d930ed7ede974758a1001",
+      "source_head": "887bbfe38b3698b63cbe372b5dbde07269734022",
+      "source_tree": "410f491bc7567f4be221d401db1580531c7a7510",
       "prepared_candidate_tree": "410f491bc7567f4be221d401db1580531c7a7510",
       "prepared_source_hashes": {
         "art_quality/check_art_quality.py": {
@@ -29804,7 +29917,52 @@
       "no_main_or_publish": true,
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "art_gate": "ART_NO_GO"
+      "art_gate": "ART_NO_GO",
+      "progress_updated_at": "2026-11-25T01:48:55.163+00:00",
+      "recorded_first_source": {
+        "commit": "887bbfe38b3698b63cbe372b5dbde07269734022",
+        "tree": "410f491bc7567f4be221d401db1580531c7a7510",
+        "lease": "6bf10eb9bb8093d08ab18cbc26193999f8f5f5df",
+        "normal_return": "b1c8c43aac2017574bd5d59afed9e59bc0925cc3",
+        "status": "CI_NOT_STARTED_DIRTY_PR"
+      },
+      "exact_only_alignment": {
+        "head_before": "887bbfe38b3698b63cbe372b5dbde07269734022",
+        "head_second_parent": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "formal_tree_before": "89690ae97566011a3e210ad5920447274363ccbf",
+        "proposed_tree": "8de405b1399007fa4db76744930161eea06158d7",
+        "path_hashes_relative_to_formal": {
+          "art_quality/check_art_quality.py": {
+            "before": {
+              "bytes": 12435,
+              "sha256": "281b92ea0aa4bb204e128c9e0bf39dcb2a1546992e06b01e17d69065fc4a869e",
+              "git_blob": "6029de357b0a94fcb787280a82a760ef28a4b3e0"
+            },
+            "after": {
+              "bytes": 13660,
+              "sha256": "7375429c4efe2e51e31e6460d51bdc34ac7f2efcd25cd1775844e0d0c11098cf",
+              "git_blob": "be890ba0f03feea60c718084f06607426545e69a"
+            }
+          },
+          "art_quality/test_art_quality.py": {
+            "before": {
+              "bytes": 5666,
+              "sha256": "8c2c8b1aa4dd284b6cc6b6d75ddbe9d9dcfcb8805e9f4e07b98ad700accd4dae",
+              "git_blob": "3e745cc99b2c8ecc88f008516ae971d796c1160d"
+            },
+            "after": {
+              "bytes": 8420,
+              "sha256": "c10872feebf681e34187908c3dcb655401287c65088d11340aaa4dd10c4fe8a8",
+              "git_blob": "8eb2baa094cc02ab0ca67daa56abfa1fe3fbd986"
+            }
+          }
+        },
+        "authenticated_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7149923862",
+        "needs_separate_source": true,
+        "allowed_existing_pr": 424,
+        "one_no_force_source_on_existing_pr": true,
+        "new_runtime_source_count": 0
+      }
     },
     {
       "claim_id": "P0D-GQ926-FOLIAGE-PARENT-REPIN-20261125",
