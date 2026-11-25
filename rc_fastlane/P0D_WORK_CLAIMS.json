@@ -29443,7 +29443,7 @@
     {
       "claim_id": "P0D-GQ1010-ITEM-ORNAMENT-A-PREP-20261125",
       "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root/guardian_transport (existing #1010 source-only PREP publisher)",
       "parent_issue": 470,
@@ -29512,8 +29512,8 @@
         }
       },
       "prepared_candidate_tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
-      "source_head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
-      "source_tree": "812662c6ce5b719216f47eaa6e388b057c563a13",
+      "source_head": "561f2181fe76eaa5fc2ff47372e7c1f049d3c885",
+      "source_tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
       "prep_branch": "quality/gq470-real69-item-ornament-visibility-20261122-a01",
       "allowed_new_prs": 0,
       "allowed_existing_pr": 1010,
@@ -29568,6 +29568,55 @@
         "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797/artifacts/14977773039",
         "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
         "step_count": 48
+      },
+      "progress_updated_at": "2026-11-25T01:18:35.687+00:00",
+      "actual_source_publication": {
+        "head": "561f2181fe76eaa5fc2ff47372e7c1f049d3c885",
+        "tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
+        "initial_source_lease": "123550773c6190951746332b7c663210382949e7",
+        "normal_return": "cfad3ad8aef70427dd4f205fc94eb0eac61e0f49",
+        "observed_ci": {
+          "run": 45523227394,
+          "job": 138900056150,
+          "status": "FAILURE",
+          "reason": "Test-only OFF entry cannot compile: missing closing end for runItemCleanup."
+        }
+      },
+      "exact_bounded_source_amendment": {
+        "scope": "Same existing #1010 only. One existing test path, missing Luau end and bounded failure diagnostics. Gameplay +238 body, exact lifecycle vectors and workflow retained.",
+        "authenticated_record": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7149306483",
+        "issuer": {
+          "login": "kk051780",
+          "id": 233213370
+        },
+        "source_authority_registration_only": true,
+        "publisher": "/root/guardian_transport",
+        "revision": {
+          "current": "561f2181fe76eaa5fc2ff47372e7c1f049d3c885",
+          "tree_before": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
+          "path": "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py",
+          "before": {
+            "bytes": 18186,
+            "sha256": "03f7b16b1348df78d21378decb7b99dea86bcfc047f75027a37a5f4f07ea0efe",
+            "git_blob": "e0ef6fa46415cf471f8bcd740d88d1a732851c10"
+          },
+          "after": {
+            "bytes": 19094,
+            "sha256": "ccec42e2974ccc08b020c3da7d9058bf2767323ba6fffd9dcb6c6e3f57aac579",
+            "git_blob": "fb88213dee13b7019af271ce7fed0d92e396703f"
+          },
+          "tree": "d2fbf3e40e74ad2374b7595c24ce7328f02710f9",
+          "base": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "branch": "quality/gq470-real69-item-ornament-visibility-20261122-a01",
+          "pr": 1010,
+          "failure": {
+            "run": 45523227394,
+            "job": 138900056150,
+            "conclusion": "failure"
+          }
+        },
+        "meta_lease": "c9b2eeab56312f6d0126ab3d34139bfc3a449524",
+        "needs_separate_live_source_lease": true
       }
     }
   ],
