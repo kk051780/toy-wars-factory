@@ -127,9 +127,10 @@ def guard_matrix(data, admission, profile):
             path = span["path"]
             start, end = span["byte_start"], span["byte_end_exclusive"]
             body = program[start:end]
-            expected_source = (contract["guardian"]["variants"][group.removeprefix(prior)]["input"]
-                               if path == SOURCE and group.startswith(prior)
-                               else profile["sources"][path]["after"])
+            flavor, variant = group.split("_", 1)
+            frozen = "input" if flavor == "baseline" else "candidate"
+            expected_source = (contract["guardian"]["variants"][variant][frozen]
+                               if path == SOURCE else profile["sources"][path]["after"])
             require(0 <= start < end <= len(program) and pin(body) == expected_source
                     and pin(body) == {key: span[key] for key in ("bytes", "sha256")}, "GUARDIAN_ACTUAL_SOURCE_SPAN")
             body_count += 1
