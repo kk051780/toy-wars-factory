@@ -29884,7 +29884,7 @@
     {
       "claim_id": "P0D-GQ424-SHOT-PROGRESS-20261125",
       "feature_id": "GQ470_ART_EVIDENCE_VALID_IMAGE_PROGRESS",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED",
       "role": "A_PREP",
       "owner": "/root (Work A-only, existing #424)",
       "parent_issue": 420,
@@ -29903,8 +29903,8 @@
       "prep_branch": "feature/p0d-art-quality-gate-20261115",
       "allowed_new_prs": 0,
       "allowed_existing_pr": 424,
-      "source_head": "76e9df7d7450f0a8d624c555e4bfe24bf847b5d9",
-      "source_tree": "8de405b1399007fa4db76744930161eea06158d7",
+      "source_head": "f13ce4763a9e7451f732d3dc85ad61dcdd83b9b7",
+      "source_tree": "cfa7b71eaebc311018ee5a0a04f950d551be8725",
       "prepared_candidate_tree": "410f491bc7567f4be221d401db1580531c7a7510",
       "prepared_source_hashes": {
         "art_quality/check_art_quality.py": {
@@ -29963,7 +29963,7 @@
       "source_publisher": "/root (Work A-only, existing #424)",
       "independent_reviewer_context": "/root/rc_authority_review",
       "author_may_self_approve": false,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_write_requires_separate_live_source_lease": true,
       "PREP_READY": false,
       "registered_source_approval": false,
@@ -29973,7 +29973,7 @@
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "art_gate": "ART_NO_GO",
-      "progress_updated_at": "2026-11-25T01:59:53.740+00:00",
+      "progress_updated_at": "2026-11-25T02:07:50.020+00:00",
       "recorded_first_source": {
         "commit": "887bbfe38b3698b63cbe372b5dbde07269734022",
         "tree": "410f491bc7567f4be221d401db1580531c7a7510",
@@ -30058,6 +30058,59 @@
         "needs_separate_source": true,
         "allowed_pr": 424,
         "artifact_and_previous_acceptance": "Prior green tests did not cover corrupted IDAT; preserved."
+      },
+      "source_reservation_release": {
+        "kind": "EXACT_A_SCOPE_QA_COMPLETE",
+        "at": "2026-11-25T02:07:50.020+00:00",
+        "source_head": "f13ce4763a9e7451f732d3dc85ad61dcdd83b9b7",
+        "source_tree": "cfa7b71eaebc311018ee5a0a04f950d551be8725",
+        "formal_parent": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "ci": {
+          "run": 45530250338,
+          "job": 138923479559,
+          "status": "success",
+          "unit_scope": null
+        },
+        "candidate_artifact": {
+          "id": 14984312022,
+          "bytes": 3473,
+          "digest": "sha256:830599ca523b153e077799239d487f998e0fe9649763d7e8324918337b2c5f73"
+        },
+        "allowed_scope_receipt": "Two-file evidence checker progress and invalid compressed raster cases passed. Normal and split Adam7 accepted; source report ART_NO_GO (real required images missing).",
+        "non_author_review": {
+          "id": 6050572795,
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/424#pullrequestreview-6050572795",
+          "context": "/root/rc_authority_review"
+        },
+        "source_acquire": "75c7ffdb96f10e776d3a95d44075e17b6f3c709f",
+        "source_epoch": 751,
+        "normal_return": "7c4c5fc59d7d339bc7d60e9a21dbaeb6e430066f",
+        "returned_paths": [
+          "art_quality/check_art_quality.py",
+          "art_quality/test_art_quality.py"
+        ],
+        "returned_resources": [
+          "ART_QUALITY_SCREENSHOT_EVIDENCE_COUNT"
+        ],
+        "PREP_READY": false,
+        "studio": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "formal_rc_adoption": false,
+        "actual_metadata_lease": {
+          "ref": "37c01adfeb56815aeab9c271ca7ded89ac270195",
+          "blob": "dcf6ac1e410cdc92bef860275f44218bf24d6ec7",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "1d721682-28a0-46f0-8d6f-b12226a58eda",
+            "task_id": null,
+            "epoch": 752,
+            "acquired_at": "2026-11-25T02:07:43.358+00:00",
+            "expires_at": "2026-11-25T02:37:43.358+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          }
+        }
       }
     },
     {
