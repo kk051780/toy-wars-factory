@@ -28511,7 +28511,7 @@
     {
       "claim_id": "P0D-GQ815-GUARDIAN-UNION22-20261125",
       "feature_id": "GQ815_GUARDIAN_ACTUAL_MATCH_AI",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP",
       "owner": "/root (current GQ470 Work session / #796 canonical transport)",
       "parent_issue": 470,
@@ -28665,14 +28665,14 @@
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
       "source_scope_granted": true,
-      "source_head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "source_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "formal_rc_adoption": false,
       "no_main_or_publish": true,
       "authority_basis": "Current owner delegated quality-gate task, repository AGENTS and #1011, exact #218 scope and #250 bounded ADOPT decision.",
-      "source_tree": "238c92910232bef0591efa493925d94bf7bc9f35",
+      "source_tree": "89690ae97566011a3e210ad5920447274363ccbf",
       "source_publication": {
         "source_lease": {
           "sha": "ce5aed9864fc2ff74b62c3c38a71453723021da1",
@@ -28905,6 +28905,151 @@
         "additional_new_prs": 0,
         "no_new_paths_resources_or_runtime_scope": true,
         "no_registered_hosted_review_prep_or_rc_rights": true
+      },
+      "current_integration_executor": "/root (current GQ470 Work session / #1033 finite RC adoption)",
+      "exact_prep_ready_evidence": {
+        "source_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "source_tree": "89690ae97566011a3e210ad5920447274363ccbf",
+        "first_published_head": "d49f3c1ddd955845176f7115c39f713adc6eae58",
+        "source_release": {
+          "sha": "7d58adbae937107669991ca0b472230138ed6359",
+          "parent": "995bbcb4588e041e930c5071b3c6b5b760600024",
+          "tree": "898929b8262731aade6748b0bf27a7a9b322a988",
+          "entries": {
+            "ops/REPAIR_COORDINATOR.json": "be27344c5139f4420bb8845734b5b2b155e2db67"
+          },
+          "oid": "be27344c5139f4420bb8845734b5b2b155e2db67",
+          "last": {
+            "kind": "CONTROLLER",
+            "owner_id": "c6f0aef2-0953-49ed-a07d-1b8500f2f6a3",
+            "epoch": 731,
+            "released_at": "2026-11-24T23:57:09.918+00:00"
+          }
+        },
+        "author_not_reviewer": true,
+        "registered_review_id": 6049449260,
+        "registered_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1033#pullrequestreview-6049449260",
+        "registered_review_state": "COMMENTED",
+        "reviewer_context": "/root/rc_authority_review",
+        "source_review_is_github_approval": false,
+        "official_base": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "quality_evidence_url": "https://github.com/kk051780/toy-wars-factory/pull/1033#issuecomment-7148109102",
+        "same_head_ci": [
+          {
+            "id": 45514194668,
+            "head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+            "status": "completed",
+            "conclusion": "success",
+            "event": "pull_request",
+            "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45514194668"
+          },
+          {
+            "id": 45514194670,
+            "head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+            "status": "completed",
+            "conclusion": "success",
+            "event": "pull_request",
+            "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45514194670"
+          }
+        ],
+        "candidate_artifact": {
+          "bytes": 13408169,
+          "sha256": "7eec83c7d1fb03e30e7b38669ed2092b0a3d8e4e6f042983780028a857728f50"
+        },
+        "candidate_artifact_id": 14976458499,
+        "candidate_place": {
+          "bytes": 829822,
+          "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"
+        },
+        "source_lock": {
+          "bytes": 364561,
+          "sha256": "442210f95ba60f841c8e7e5eeed56d984e9a5a66d6eb69578445e23d3b27859c"
+        },
+        "source_lock_path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "candidate_checkout": "7d9eff6a92a925123f6183cb776e72c318189953",
+        "guardian_only_inverse": {
+          "bytes": 487854,
+          "sha256": "be4c9c01f27910515d0c9e2cc466c920055b733d209018e80a4649832e858493"
+        },
+        "inverse_parent_place": {
+          "bytes": 829328,
+          "sha256": "4c35d93b6d8243ecff753ddaef39de0d45d0793085435a21d8f33e4814e78b5a"
+        },
+        "member_count": 326,
+        "native": {
+          "native_executions": 40,
+          "unique_scenarios": 13,
+          "counts": {
+            "baseline_control_pass": 6,
+            "expected_baseline_failure": 8,
+            "candidate_pass": 26
+          },
+          "receipt": {
+            "bytes": 46089,
+            "sha256": "308385eaea5a927bb296dfa90887762c987f5a7d5ee7de40a29f16ddf8301c4b"
+          }
+        },
+        "native_standard_processes": 13,
+        "studio": "NOT_TESTED",
+        "trusted_queue_run": 45515302413,
+        "trusted_queue_artifact": 14977348639
+      },
+      "bounded_rc_integration": {
+        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+        "permitted_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "permitted_tree": "89690ae97566011a3e210ad5920447274363ccbf",
+        "permitted_pr": 1033,
+        "sole_executor": "/root (current GQ470 Work session / #1033 finite RC adoption)",
+        "source_owner_preserved": "CODEX_ROOT_870491EA0B74",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "new_feature_or_new_pr_allowed": false,
+        "expires_at": "2026-11-25T02:08:29.786566+00:00",
+        "separate_live_rc_writer_lease_required": true,
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "actual_protection_must_be_respected": true,
+        "fresh_R_H_PR_claim_permission_and_live_lease_required": true,
+        "registered_postpush_reviewer": "/root/rc_authority_review",
+        "formal_scope": "Private REAL69 source delivery only. No main, publish, spending, device or OWNER acceptance.",
+        "verified_synthetic_merge_commit": "7d9eff6a92a925123f6183cb776e72c318189953",
+        "verified_synthetic_merge_tree": "89690ae97566011a3e210ad5920447274363ccbf",
+        "official_postpush_acceptance_required": "Exact new RC same-push official manifest, Place, Native evidence and five inverse archives.",
+        "post_adoption_metadata": "After official exact evidence and separate review, record actual one-time consumption and return seven paths and three resources.",
+        "actual_metadata_authority": {
+          "context": "/root (current GQ470 Work session / #1033 finite RC adoption)",
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370,
+            "permission": "admin/push"
+          },
+          "operation_id": "23ba9155-eb5c-463d-b4ee-04b8a0d6f7f6",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "23ba9155-eb5c-463d-b4ee-04b8a0d6f7f6",
+            "task_id": null,
+            "epoch": 732,
+            "acquired_at": "2026-11-25T00:05:54.886+00:00",
+            "expires_at": "2026-11-25T00:35:54.886+00:00",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "6d2f74259452a5e317030dd523d8e4d8227aeba7",
+          "acquire_blob": "3f0e645dad62f1f32f9da597d8af2475acd31d0e",
+          "registry_parent": "c09ff439465d5a0030a5223128c60d8dabd3d2a3",
+          "registry_blob": "e7ff20190e4c53bf1dcbe4201af01429f2ddc830",
+          "fresh_rc": "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc",
+          "source_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "source_tree": "89690ae97566011a3e210ad5920447274363ccbf",
+          "pr": 1033,
+          "authority_basis": "OWNER current end-to-end delegation and #220 7131154245, #1011, authenticated scope #218, real independent review."
+        },
+        "actual_grant_commit_resolution": "Only actual immutable registry readback grants the finite authority."
       }
     }
   ],
