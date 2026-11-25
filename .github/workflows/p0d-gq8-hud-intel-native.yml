@@ -1,0 +1,48 @@
+name: GQ8 HUD Intel Fog Native Source QA
+on:
+  push:
+    branches: ['feature/gq8-hud-intel-fog-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
+      - '.github/workflows/p0d-gq8-hud-intel-native.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
+      - '.github/workflows/p0d-gq8-hud-intel-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hud-intel-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate real-source good and mutant tests
+        run: python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/gq8-hud-intel
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile native Luau and execute positive and negative source regression
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-hud-vm -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-hud-vm --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          VM=/tmp/gq8-hud-vm/luau
+          CC=/tmp/gq8-hud-vm/luau-compile
+          for f in handoffs/EGGRUMBLE-HUD-INTEL-20261119/*.luau /tmp/gq8-hud-intel/*.luau; do "$CC" --text "$f" >/dev/null; done
+          "$VM" /tmp/gq8-hud-intel/good.luau | tee /tmp/gq8-hud-intel.log
+          grep -qx GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS /tmp/gq8-hud-intel.log
+          for mutant in auth role fog; do
+            if "$VM" "/tmp/gq8-hud-intel/${mutant}_mutant.luau" >"/tmp/gq8-hud-${mutant}.log" 2>&1; then
+              echo "RED_UNDETECTED_${mutant}_MUTANT"; exit 1
+            fi
+            grep -q "RED_" "/tmp/gq8-hud-${mutant}.log"
+          done
+          echo GQ8_HUD_INTEL_NATIVE_GOOD_THREE_MUTANTS_PASS

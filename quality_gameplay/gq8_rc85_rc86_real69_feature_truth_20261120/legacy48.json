@@ -1,0 +1,499 @@
+{
+  "schema": "EGGRUMBLE_RC85_RC86_REAL69_48_FLAG_TRUTH_V1",
+  "owner_directive": "REAL65 is lineage baseline; cumulatively select useful RC85 and RC86 features into sole official rc/p0d-s1-kids-rc01",
+  "legacy": {
+    "rc85": {
+      "artifact_id": 14158848286,
+      "feature_lock_sha256": "2385d01ab14de5a7997b6e54061dea40c3cb5f80216d3f50a19f47fccecfec9a"
+    },
+    "rc86": {
+      "artifact_id": 14161823401,
+      "feature_lock_sha256": "60d4bb207081ce8881874d04819dba601e18372e707d9a10f295f44f5d19203a"
+    },
+    "flag_id_sha256": "ada1dbb65bc821c366cedf6b2ae52e834b7b81ce70f06a48373da1f1604c0fbb",
+    "flag_count": 48,
+    "physical_diff": "RC85 85 scripts -> RC86 86 scripts; one StagePickupLoot added; existing Game and MapBuilder changed"
+  },
+  "formal_branch": "rc/p0d-s1-kids-rc01",
+  "selected_profile": "REAL69",
+  "classification_rule": "A current source path or marker is evidence of selected-source analogue only; not proof of original old S1 feature behavior. Missing category is missing integration evidence, not proof of literal absence.",
+  "entries": [
+    {
+      "id": "REALM_HUNT_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+      ],
+      "source_marker": "GQ8_RC85_RC86_LEGACY_EXPLORE_DISCOVERY_TOAST_REAL69_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "SIX_SKILL_DURABLE",
+      "category": "MISSING_V3_INTEGRATION_EVIDENCE",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "SAVED_PVE_MASTERY",
+      "category": "MISSING_V3_INTEGRATION_EVIDENCE",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "SAVED_BEAST_EVOLUTION",
+      "category": "MISSING_V3_INTEGRATION_EVIDENCE",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "SCOUT_SPECIES_V1",
+      "category": "MISSING_V3_INTEGRATION_EVIDENCE",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "WCS_F01_C01",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
+      ],
+      "source_marker": "GQ8_RC85_WCS_CANYON_ONLY_REAL67_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "SEVEN_JOBS_PVE_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "EGG_RELAY_CLASSIC_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_CastleMatchRules"
+      ],
+      "source_marker": "GQ8_RC86_EGG_RELAY_CLASSIC_SINGLE_CASTLE_AUTHORITY_REAL67_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "STARRY_PATH_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_RealmBattleCore"
+      ],
+      "source_marker": "GQ8_RC86_STARRY_PATH_SINGLE_REALM_REAL66_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "METEOR_FOURTH_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_RealmBattleCore"
+      ],
+      "source_marker": "GQ8_RC86_METEOR_SHORTCUT_SINGLE_REALM_REAL66_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "STAR_SHARDS_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge",
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+      ],
+      "source_marker": "GQ8_RC85_RC86_LEGACY_EXPLORE_DISCOVERY_TOAST_REAL69_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "TWIN_BIOMES_4NPC_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+      ],
+      "source_marker": "GQ8_RC85_TWIN_BIOMES_TRAINING_BOND_REAL68_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "TWIN_CREATURE_TRAINING_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+      ],
+      "source_marker": "GQ8_RC85_TWIN_BIOMES_TRAINING_BOND_REAL68_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "OWNER_FIRSTPLAY_UX_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90"
+      ],
+      "source_marker": "GQ8_RC85_FIRST90_REAL69_STUDIO_GUIDE_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "TWIN_BOND_PVE_COMPANION_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+      ],
+      "source_marker": "GQ8_RC85_TWIN_BIOMES_TRAINING_BOND_REAL68_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_URGENT_READY_900_V1",
+      "category": "LEGACY_QA_OR_READINESS_FLAG",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB007_LOBBY_DOJO_PHYSICAL_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+        "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview",
+        "ServerScriptService/EGGRUMBLE_BotActors"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "OWNER361_CASTLE_WORLD_ADDON_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_CastleMatchRules",
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_HUD_CLEAR_COMBAT_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime",
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_FORTRESS_DETAIL_ART_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": "GQ8_RC86_FB015_FORTRESS_DETAIL_VISUAL_PORT_REAL69_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_ART_WORLD_LIGHT_FOLIAGE_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB011_H1_COASTAL_SEASCAPE_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_REAL_SEA_GROUND_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "ART_MINION_THREE_SILHOUETTES_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_GOROGAN_BEAST_VISUAL_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"
+      ],
+      "source_marker": "GQ8_RC86_FB015_GOROGAN_RUNESTONE_ART_SINGLE_EXISTING_OWNER_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB008_CONFIRMED_HIT_SLASH_VFX_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_MINION_MOTION_VISUAL_ONLY_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SwarmCombat",
+        "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB016_FOLIAGE_PASSAGE_20261114",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB017_NO_PERSISTENT_BATTLE_GUIDES",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB018_ACTION_BUTTON_TEXT_INIT",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB019_RESPONSIVE_ATTACK_INPUT_SWING",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+      ],
+      "source_marker": "GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED",
+      "adaptation_scope": "Only existing V3 touch ATTACK local two-slash prompt; preexisting server owned Tool unchanged; full legacy FB019 parity NOT_PROVEN"
+    },
+    {
+      "id": "FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_FOREST_BIOMES_MONUMENTS_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB016_ART_CAMERA_SIGHTLINE_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
+      ],
+      "source_marker": "GQ8_RC86_FB016_FOLIAGE_SIGHTLINE_V3_20261119",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_GOROGAN_MOBILE_LOD_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
+      ],
+      "source_marker": "GQ8_RC86_GOROGAN_MOBILE_LOD_REAL68_20261120",
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_LIVE_CASTLE_SAFE_PARITY_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_PRIVATE_LIVE_HORDE_NINE_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SwarmCombat"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_PRIVATE_LIVE_HORDE_ATTACK_TICK_V2",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SwarmCombat"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_PRIVATE_LIVE_HORDE_HIT_TOAST_V3",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB015_LIVE_ART_PRIVATE_CLIENT_PILOT_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_PRIVATE_ONE_HUMAN_HORDE_READY_TRIAL_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_PRIVATE_HORDE_ENGINE_EVIDENCE_V1",
+      "category": "LEGACY_QA_OR_READINESS_FLAG",
+      "current_routes": [],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB003_OWNER_PROMPT_ACCESS_AND_H2_DISAMBIGUATION_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "FB008_ORIGINAL17_SIXPACK_REAL82_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SwarmCombat"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_FB003_FB008_PERSONAL_RESULTS_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_MatchResultService"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    },
+    {
+      "id": "P0D_ROLE7_ASSASSIN_PRIVATE_MOBILE_SELECT_V1",
+      "category": "SOURCE_CANDIDATE",
+      "current_routes": [
+        "ServerScriptService/EGGRUMBLE_SevenRoleCombat",
+        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+      ],
+      "source_marker": null,
+      "semantic_parity": "NOT_PROVEN",
+      "engine_quality": "NOT_TESTED"
+    }
+  ]
+}

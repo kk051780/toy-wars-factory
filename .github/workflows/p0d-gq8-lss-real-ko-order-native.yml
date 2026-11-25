@@ -1,0 +1,76 @@
+name: GQ8 LSS server-confirmed KO combo order native
+on:
+  push:
+    branches: [feature/gq8-lss-real-ko-order-sync-20261118-01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-real-ko-order-native.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-real-ko-order-native.yml'
+permissions:
+  contents: read
+jobs:
+  actual-milestone-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: All original LSS source contracts, including real KO and Combo dual-listener
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          d=Path("handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117")
+          f=d/"EGGRUMBLE_LandSeaSkyTraversal.server.luau"
+          blob=subprocess.check_output(["git","hash-object",str(f)],text=True).strip()
+          side=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json").read_text())
+          assert blob==side["added_source_git_blob"],"RED_OPTIONAL32_SOURCE_BLOB_STALE"
+          assert side["source_count"]==32
+          assert side["status"] in (
+            "SOURCE_CANDIDATE_PREP_QA_PENDING_AUTHORIZED_RC_CAS",
+            "CURRENT_RC57_PREMERGE_OPTIONAL_PROFILE_PENDING_SAMEHEAD_QA",
+            "OPTIONAL32_SOURCE_UPGRADE_PENDING_CURRENT_HEAD_QA")
+          assert side["robot_release_authorized"] is False
+          assert side["optional_source_update"]["candidate_only"] is True
+          assert 'if not RunService:IsStudio() then return end' in f.read_text()
+          assert 'Instance.new("RemoteEvent")' not in f.read_text()
+          assert 'TakeDamage(' not in f.read_text()
+          print("GQ8_KO_COMBO_32_SOURCE_EXACT_BLOB_PENDING_ADOPTION_PASS",blob)
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_native_luau
+          persist-credentials: false
+      - name: Compile source server and actual extracted 17-case milestone logic
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq8_native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq8_native_luau -B /tmp/gq8-ko-order -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-ko-order --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          LUA=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_musou_attr_order_native.py \
+            --out /tmp/gq8-ko-order-valid.luau --mutant /tmp/gq8-ko-order-mutant.luau
+          /tmp/gq8-ko-order/luau-compile --text "$LUA" >/dev/null
+          /tmp/gq8-ko-order/luau-compile --text /tmp/gq8-ko-order-valid.luau >/dev/null
+          /tmp/gq8-ko-order/luau-compile --text /tmp/gq8-ko-order-mutant.luau >/dev/null
+          /tmp/gq8-ko-order/luau /tmp/gq8-ko-order-valid.luau | tee /tmp/gq8-ko-valid.log
+          grep -q GQ8_LSS_ACTUAL_SERVER_MUSOU_17_NATIVE_CASES_PASS /tmp/gq8-ko-valid.log
+          if /tmp/gq8-ko-order/luau /tmp/gq8-ko-order-mutant.luau \
+            > /tmp/gq8-ko-mutant-expected-red.log 2>&1; then
+            echo RED_DUPLICATE_WAVE_MUTANT_ACCEPTED
+            exit 1
+          fi
+          grep -q MUSOU_ATTR_ORDER_FAIL_repeat_same_combo /tmp/gq8-ko-mutant-expected-red.log
+          echo GQ8_REAL_KO_COMBO_ORDER_MUTANT_EXPECTED_RED_PASS

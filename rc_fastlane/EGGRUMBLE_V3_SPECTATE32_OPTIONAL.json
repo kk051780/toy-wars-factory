@@ -1,0 +1,48 @@
+{
+  "schema": "P0D_GQ470_OPTIONAL32_SOURCE_PROFILE_V1",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "base_official_head": "7b3e055bae93ea71a89f981c4e78e8ab72996ae9",
+  "profile": "eggrumble_v3_spectate32_studio",
+  "base_profile": "eggrumble_v3_31",
+  "source_count": 32,
+  "base_count": 31,
+  "enabled_as_optional_profile": true,
+  "default_selected": false,
+  "feature_id": "GQ470_CASTLE_ELIMINATION_SPECTATE_492",
+  "original_author": {
+    "pr": 492,
+    "commit": "eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20",
+    "git_blob": "c39b2d3cc481052940b9d11a6fc695261a9b1e40",
+    "script_name": "EGGRUMBLE_EliminatedSpectate",
+    "class": "LocalScript",
+    "original_path": "handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau"
+  },
+  "existing_prep_reuse": {
+    "pr": 634,
+    "commit": "fed9cbb5680d40c68a2e1395e9b84276d7868fb9",
+    "selector": "rc_fastlane/quality_spectate492_rc32/admit_spectator.py"
+  },
+  "current_selected31": "AUTO_SOURCE_EXACT_CURRENT_CANONICAL31_PLACE",
+  "selected32": "artifacts/gq470_optional32/GQ470_SPECTATE32_OPTIONAL.project.json",
+  "place32": "artifacts/gq470_optional32/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx",
+  "source_count_preserved": 31,
+  "production_enabled": false,
+  "studio_only_original": true,
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "owner_fun": "NO_GO",
+  "publish_authorized": false,
+  "rollback": "Switch optional spectator32 OFF; canonical main current31 and S1 rich51 kept untouched",
+  "authorized_writer": "#220 authenticated sole nonforce CAS; no individual author ACK required",
+  "acceptance": "Optional32 source profile and actual Rojo evidence, not engine/public gameplay acceptance",
+  "current_official_extra_flags": [
+    "LOBBY_QUEUE_ETA_615",
+    "MATCH_DEADLINE_DRAW_499",
+    "BOT_SIEGE_TARGET_PACING_527",
+    "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509",
+    "GQ81_CONFIRMED_HIT_042_V3_PORT_20261117"
+  ],
+  "optional32_parent_source": "AUTO: exact current official 31-source Rojo Place, Source/Class SHA proven, plus original #492 spectator only",
+  "current_selected31_resolver": "rc_fastlane/quality_spectator32_optional/resolve_current31.py",
+  "canonical_current31_place": "artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx"
+}

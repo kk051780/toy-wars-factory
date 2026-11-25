@@ -11,12 +11,16 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - '.github/workflows/p0d-art-quality-gate.yml'
+      - 'art_quality/**'
   pull_request:
     branches:
       - rc/p0d-s1-kids-rc01
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - '.github/workflows/p0d-art-quality-gate.yml'
+      - 'art_quality/**'
   workflow_dispatch:
     inputs:
       profile:
@@ -1749,4 +1753,1512 @@ jobs:
           name: P0D-FB019-PREP-ATTACK-SWING
           path: /tmp/p0d_fb019_attack_final/*
           retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB019 V2: real server-confirmed hit visible while no persistent combat guides'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb019_attack_gesture_dist
+          OUT=/tmp/p0d_fb019_hit_visibility_dist
+          mkdir -p /tmp/p0d_fb019_v2_out
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb019_hit_visibility.py -v
+          python3 -B rc_fastlane/apply_fb019_hit_visibility.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb019_hit_visibility.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb019_hit_visibility.py --dist "$OUT" --place /tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx --receipt /tmp/p0d_fb019_v2_out/RC80_CONFIRMED_HIT_RECEIPT.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('/tmp/p0d_fb019_v2_out/RC80_CONFIRMED_HIT_RECEIPT.json')
+          r=json.loads(p.read_text())
+          r['source_head_sha']=os.environ['GITHUB_SHA']
+          r['official_rc_branch']='rc/p0d-s1-kids-rc01'
+          r['official_rc_adoption']=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          r['rollback']='846d4be03b96c53b9fbbba3de94c2eda2d7d8aa6'
+          r['owner_studio_retest']='REQUIRED'
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('FB019_V2_P0_REAL_HIT_VISIBLE_SOURCE80',r['place_bytes'],r['official_rc_adoption'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-FB019-REAL-HIT-V2
+          path: /tmp/p0d_fb019_v2_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-rc78-stage-20261114-2000' }}
+        with:
+          name: P0D-FB019-V2-STAGE-REAL-HIT
+          path: /tmp/p0d_fb019_v2_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB015 forest biome v2 on confirmed-hit official RC80, other79 byte exact'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OUT=/tmp/p0d_fb015_forest_v2_confirmed_hit_private80
+          mkdir -p /tmp/p0d_fb015_forest_v2_confirmed_hit_out
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo FB015_FOREST_V2_FULL80_NATIVE_LUAU_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$OUT" --place /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx --receipt /tmp/p0d_fb015_forest_v2_confirmed_hit_out/RECEIPT.json
+          echo FB015_FOREST_BIOME_PRIVATE_ONLY_NOT_FORMAL_RC
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-FB015-FOREST-BIOMES-FB019V2-PRIVATE80
+          path: /tmp/p0d_fb015_forest_v2_confirmed_hit_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'ART GATE #420: full actual RC80 Place plus forest candidate, no cosmetic false-positive'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s art_quality -p 'test_*.py' -v
+          mkdir -p /tmp/p0d_art_gate_samehead
+          python3 -B art_quality/check_art_quality.py \
+            --place /tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx \
+            --out /tmp/p0d_art_gate_samehead/ART_CHECK_OFFICIAL_RC80.json
+          python3 -B art_quality/check_reference_benchmarks.py \
+            --references art_quality/REFERENCE_BENCHMARKS_V2.json \
+            --out /tmp/p0d_art_gate_samehead/ART_BENCHMARK_REPORT.json
+          python3 -B art_quality/check_mobile_fun.py \
+            --out /tmp/p0d_art_gate_samehead/MOBILE_KID_FUN_REPORT.json
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test -f /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx
+            python3 -B art_quality/check_art_quality.py \
+              --place /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx \
+              --out /tmp/p0d_art_gate_samehead/ART_CHECK_FOREST_PRIVATE80.json
+          fi
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          output=Path('/tmp/p0d_art_gate_samehead')
+          official=json.loads((output/'ART_CHECK_OFFICIAL_RC80.json').read_text())
+          assert official['source']['source_gate']=='PASS',official['source']['source_violations']
+          assert official['source']['script_count']==80,'NOT_80_GENUINE_SOURCES'
+          assert official['owner_accepted'] is False and official['art_decision']=='ART_NO_GO'
+          p=output/'ART_CHECK_FOREST_PRIVATE80.json'
+          if p.exists():
+              candidate=json.loads(p.read_text())
+              assert candidate['source']['source_gate']=='PASS',candidate['source']['source_violations']
+              assert candidate['source']['script_count']==80
+              assert candidate['owner_accepted'] is False
+          receipt={
+              'schema':'P0D_ART_QUALITY_SAMEHEAD_RC80_RECEIPT_V1',
+              'github_head':os.environ['GITHUB_SHA'],
+              'github_run_id':os.environ['GITHUB_RUN_ID'],
+              'github_ref':os.environ['GITHUB_REF'],
+              'official_build_under_test':'P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx',
+              'official_source_gate':official['source']['source_gate'],
+              'official_script_count':official['source']['script_count'],
+              'forest_candidate_source_gate':('PASS' if p.exists() else 'NOT_BUILT_THIS_EVENT'),
+              'studio_pc':'NOT_TESTED','android':'NOT_TESTED','kid_fun':'NOT_TESTED',
+              'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+              'owner_accepted':False,
+              'official_art_adoption_by_this_gate':False
+          }
+          (output/'ART_RC_INTAKE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_ART_QUALITY_SAMEHEAD_SOURCE_ONLY_OK',receipt['github_head'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-ART-GATE-RC80-SAMEHEAD-NO-OWNER-APPROVAL
+          path: /tmp/p0d_art_gate_samehead/*
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: 'FB015 two-scene cumulative official RC preview: forest + castle reversible SOURCE GATE'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_castle_gate_silhouette.py -v
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OLD=/tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx
+          FOREST=/tmp/p0d_rc80_fb015_world_s1
+          FINAL=/tmp/p0d_rc80_fb015_castle_s2
+          OUT=/tmp/p0d_rc80_art_world_castle
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/verify_fb019_hit_visibility.py --dist "$BASE" --place "$OLD" --receipt "$OUT/BASE_V2_RECEIPT.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          assert x['schema']=='P0D_RC80_ART_PREVIEW_FLAGS_V1'
+          assert x['owner_accepted'] is False and x['review_only'] is True
+          assert x['base_official_head']=='f4e64c9248423f9c021f633b80e554706f7a66e4'
+          f=x['features']
+          assert type(f['FB015_FOREST_BIOMES_MONUMENTS_V2']) is bool
+          assert type(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']) is bool
+          with open('/tmp/p0d_art_flags.env','w') as g:
+              g.write('FOREST_ENABLED='+str(f['FB015_FOREST_BIOMES_MONUMENTS_V2']).lower()+'\n')
+              g.write('CASTLE_ENABLED='+str(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']).lower()+'\n')
+          PY
+          source /tmp/p0d_art_flags.env
+          if [ "$FOREST_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled false
+            cp -a "$BASE" "$FOREST"
+          fi
+          if [ "$CASTLE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled false
+            cp -a "$FOREST" "$FINAL"
+          fi
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 80
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' script; do
+            /tmp/p0d_new_luau/luau-compile "$script" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx"
+          if [ "$FOREST_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/FOREST_SOURCE_RECEIPT.json"
+          fi
+          if [ "$CASTLE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/CASTLE_SOURCE_RECEIPT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_REPORT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_fb015_forest_v2 import read,blob
+          base=Path('/tmp/p0d_fb019_hit_visibility_dist')
+          final=Path('/tmp/p0d_rc80_fb015_castle_s2')
+          out=Path('/tmp/p0d_rc80_art_world_castle')
+          old,new=read(base),read(final)
+          f=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text())['features']
+          allow=set()
+          if f['FB015_FOREST_BIOMES_MONUMENTS_V2']: allow.add('server/FantasyWorldArt.server.luau')
+          if f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']: allow.add('server/CastleDetailArt.server.luau')
+          changed={p for p in old if old[p]!=new[p]}
+          assert set(new)==set(old) and len(new)==80 and changed==allow,('UNEXPECTED_SOURCE_DRIFT',changed,allow)
+          src=json.loads((final/'SOURCE_LOCK.json').read_text())
+          feats=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          pins={p:blob(b) for p,b in sorted(new.items())}
+          assert src['blobs']==feats['source_gitblobs']==pins
+          assert old['server/Game.server.luau']==new['server/Game.server.luau']
+          assert old['client/HUD.client.luau']==new['client/HUD.client.luau']
+          assert old['client/BattleHUDGovernor.client.luau']==new['client/BattleHUDGovernor.client.luau']
+          place=out/'P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx'
+          gate=json.loads((out/'ART_QUALITY_REPORT.json').read_text())
+          assert gate['source']['source_gate']=='PASS'
+          assert gate['source']['script_count']==80
+          assert gate['art_decision']=='ART_NO_GO' and gate['owner_accepted'] is False
+          receipt={
+            'schema':'P0D_RC80_ART_WORLD_CASTLE_SOURCE_INTAKE_V1',
+            'head':os.environ['GITHUB_SHA'],
+            'official_branch':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+            'source_changes':sorted(changed),'source_count':80,'other_source_byte_exact':True,
+            'place_bytes':place.stat().st_size,'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'features':f,'source_gate':'PASS','art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO','owner_accepted':False,
+            'real_studio_pc':'NOT_TESTED','real_android_15min':'NOT_TESTED',
+            'kid_fun_first3min':'NOT_TESTED','sourcery_major_review':'PENDING_OWNER',
+            'normal_pr_merge':False,'roblox_publish':False,
+            'rollback':'Disable each ART feature in art_quality/RC80_ART_PREVIEW_CONFIG.json and rebuild on fresh official HEAD'
+          }
+          (out/'RC_ART_PREVIEW_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB015_ART_WORLD_CASTLE_80_SOURCE_EXACT_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-ART-WORLD-CASTLE-SOURCE-ONLY
+          path: /tmp/p0d_rc80_art_world_castle/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC80-ART-WORLD-CASTLE-SOURCE-ONLY
+          path: /tmp/p0d_rc80_art_world_castle/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'FB015 all-four art stack: Studio leaf visibility + beast mobile LOD over official forest and castle'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb016_camera_v2.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_gorogan_mobile_lod.py -v
+          python3 -B -m unittest discover -s art_quality -p test_live_art_parity.py -v
+          BASE=/tmp/p0d_rc80_fb015_castle_s2
+          CAMERA=/tmp/p0d_rc80_fb016_camera_s3
+          FINAL=/tmp/p0d_rc80_fb015_gorogan_s4
+          OUT=/tmp/p0d_rc80_art_full4
+          mkdir -p "$OUT"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('art_quality/RC80_ART_PREVIEW_CONFIG.json')
+          cfg=json.loads(p.read_text('utf8'))
+          flags=cfg['features']
+          assert cfg['owner_accepted'] is False and cfg['human_art_gate']=='ART_NO_GO'
+          for feature in ('FB016_ART_CAMERA_SIGHTLINE_V2','FB015_GOROGAN_MOBILE_LOD_V1'):
+              assert type(flags[feature]) is bool
+          with open('/tmp/p0d_art_full4_flags.env','w') as out:
+              out.write('CAMERA_ENABLED='+str(flags['FB016_ART_CAMERA_SIGHTLINE_V2']).lower()+'\n')
+              out.write('GOROGAN_ENABLED='+str(flags['FB015_GOROGAN_MOBILE_LOD_V1']).lower()+'\n')
+          PY
+          source /tmp/p0d_art_full4_flags.env
+          if [ "$CAMERA_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_fb016_camera_v2.py --base "$BASE" --out "$CAMERA" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb016_camera_v2.py --base "$BASE" --out "$CAMERA" --enabled false
+            cp -a "$BASE" "$CAMERA"
+          fi
+          if [ "$GOROGAN_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$CAMERA" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$CAMERA" --out "$FINAL" --enabled false
+            cp -a "$CAMERA" "$FINAL"
+          fi
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 80
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' src; do
+            /tmp/p0d_new_luau/luau-compile "$src" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx"
+          PLACE="$OUT/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx"
+          python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/FOREST_V2_EXACT.json"
+          python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/CASTLE_V3_EXACT.json"
+          if [ "$CAMERA_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_fb016_camera_v2.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/CAMERA_V2_EXACT.json"
+          fi
+          if [ "$GOROGAN_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_fb015_gorogan_mobile_lod.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/GOROGAN_LOD_EXACT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_SOURCE_CHECK.json"
+          python3 -B art_quality/check_live_art_parity.py --place "$PLACE" --out "$OUT/LIVE_ART_PARITY_REPORT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_fb015_forest_v2 import read,blob
+          base=Path('/tmp/p0d_fb019_hit_visibility_dist')
+          built=Path('/tmp/p0d_rc80_fb015_gorogan_s4')
+          out=Path('/tmp/p0d_rc80_art_full4')
+          before,after=read(base),read(built)
+          config=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          paths={
+             'FB015_FOREST_BIOMES_MONUMENTS_V2':'server/FantasyWorldArt.server.luau',
+             'FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3':'server/CastleDetailArt.server.luau',
+             'FB016_ART_CAMERA_SIGHTLINE_V2':'client/FoliageCameraFade.client.luau',
+             'FB015_GOROGAN_MOBILE_LOD_V1':'client/FB015CharacterArt.client.luau'
+          }
+          allow={path for flag,path in paths.items() if config['features'][flag] is True}
+          changed={p for p in before if before[p]!=after[p]}
+          assert set(before)==set(after) and len(after)==80 and changed==allow,('SOURCE_SET_DRIFT',sorted(changed),sorted(allow))
+          sl=json.loads((built/'SOURCE_LOCK.json').read_text('utf8'))
+          fl=json.loads((built/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          pin={name:blob(raw) for name,raw in sorted(after.items())}
+          assert sl['blobs']==fl['source_gitblobs']==pin
+          for script in ('server/Game.server.luau','client/HUD.client.luau',
+                         'client/BattleHUDGovernor.client.luau','server/MusouHorde.luau',
+                         'server/SoloTeamBots.luau'):
+              assert after[script]==before[script],('GAMEPLAY_SOURCE_CHANGED',script)
+          art=json.loads((out/'ART_SOURCE_CHECK.json').read_text('utf8'))
+          live=json.loads((out/'LIVE_ART_PARITY_REPORT.json').read_text('utf8'))
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==80
+          assert live['source_gate']=='PASS' and live['script_count']==80
+          assert live['top_studio_only_count']==7,('LIVE_VISUAL_GUARD_DRIFT',live['top_studio_only_count'])
+          assert art['art_decision']=='ART_NO_GO' and live['live_art_decision']=='LIVE_ART_NO_GO'
+          assert live['owner_accepted'] is False and art['owner_accepted'] is False
+          place=out/'P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx'
+          report={
+              'schema':'P0D_RC80_ART_STACK4_SOURCE_EXACT_V1',
+              'head':os.environ['GITHUB_SHA'],
+              'on_off':config['features'],
+              'source_count':80,'changed_sources':sorted(changed),'unaltered_source_count':80-len(changed),
+              'Game_HUD_HP_egg_Remote_authority_unchanged':True,
+              'place_bytes':place.stat().st_size,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'source_gate':'PASS','nonstudio_live_status':'LIVE_ART_NO_GO',
+              'top_studio_only_art_layers':7,
+              'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+              'fun_decision':'FUN_NO_GO','owner_accepted':False,
+              'android_15min':'NOT_TESTED','child_first3min':'NOT_TESTED',
+              'sourcery_review':'PENDING_P0_P1',
+              'publish_approved':False,'main_modified':False,
+              'rollback':'Disable individually via config on newly verified canonical RC branch and CAS'
+          }
+          (out/'RC80_FULL4_ART_SOURCE_RECEIPT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_RC80_ART_STACK4_SOURCE_80_EXACT_PASS',report['place_bytes'],report['place_sha256'])
+          print('P0D_LIVE_ART_GUARD',report['top_studio_only_art_layers'],report['nonstudio_live_status'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-ART-STACK4-FOLIAGE-GOROGAN-LIVE-NOGO
+          path: /tmp/p0d_rc80_art_full4/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC80-ART-STACK4-FOLIAGE-GOROGAN-LIVE-NOGO
+          path: /tmp/p0d_rc80_art_full4/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 #431: real MapBuilder castle fallback live-safe 81 script over cumulative ART4'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s rc_fastlane -p test_live_castle_safe.py -v
+          python3 -B -m unittest discover -s art_quality -p test_rc_source_identity.py -v
+          BASE=/tmp/p0d_rc80_fb015_gorogan_s4
+          FINAL=/tmp/p0d_live_safe_castle81_source
+          OUT=/tmp/p0d_live_safe_castle81_artifact
+          mkdir -p "$OUT"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          flag=cfg['features']['FB015_LIVE_CASTLE_SAFE_PARITY_V1']
+          assert type(flag) is bool
+          assert cfg['human_art_gate']=='ART_NO_GO'
+          assert cfg['owner_accepted'] is False and cfg['review_only'] is True
+          Path('/tmp/p0d_live_castle_enabled').write_text('true' if flag else 'false')
+          PY
+          LIVE_ENABLED="$(cat /tmp/p0d_live_castle_enabled)"
+          if [ "$LIVE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_live_castle_safe.py --base "$BASE" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_live_castle_safe.py --base "$BASE" --out "$FINAL" --enabled false
+            cp -a "$BASE" "$FINAL"
+          fi
+          SOURCE_COUNT="$(find "$FINAL/src" -name '*.luau' | wc -l)"
+          if [ "$LIVE_ENABLED" = true ]; then
+            test "$SOURCE_COUNT" -eq 81
+          else
+            test "$SOURCE_COUNT" -eq 80
+          fi
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' src; do
+            /tmp/p0d_new_luau/luau-compile "$src" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx"
+          if [ "$LIVE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_live_castle_safe.py --dist "$FINAL" --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/LIVE_CASTLE_RC81_EXACT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_RC81_SOURCE.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" \
+            --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" \
+            --receipt "$OUT/RC81_PRE_UPLOAD_INSTANCE_BINDINGS.json" \
+            --count "$SOURCE_COUNT"
+          python3 -B art_quality/check_live_art_parity.py --place /tmp/p0d_rc80_art_full4/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx --out "$OUT/LEGACY_SEVEN_STUDIO_ONLY_AUDIT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_live_castle_safe import read_sources,blob,AUTHOR_BLOB,DEST
+          base=Path('/tmp/p0d_rc80_fb015_gorogan_s4')
+          final=Path('/tmp/p0d_live_safe_castle81_source')
+          output=Path('/tmp/p0d_live_safe_castle81_artifact')
+          original,after=read_sources(base),read_sources(final)
+          cfg=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          enabled=cfg['features']['FB015_LIVE_CASTLE_SAFE_PARITY_V1']
+          expected=81 if enabled else 80
+          assert len(original)==80 and len(after)==expected
+          assert all(after[k]==v for k,v in original.items()),'ORIGINAL_80_CHANGED'
+          extra=set(after)-set(original)
+          assert extra==({DEST} if enabled else set()),('UNEXPECTED_LUAU_ADDITION',extra)
+          if enabled:
+              assert blob(after[DEST])==AUTHOR_BLOB,'LIVE_CASTLE_AUTHOR_BLOB_DRIFT'
+          lock=json.loads((final/'SOURCE_LOCK.json').read_text('utf8'))
+          features=json.loads((final/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          pin={name:blob(raw) for name,raw in sorted(after.items())}
+          assert lock['total_scripts']==features['total_sources']==expected
+          assert lock['blobs']==features['source_gitblobs']==pin
+          gate=json.loads((output/'ART_QUALITY_RC81_SOURCE.json').read_text('utf8'))
+          audit=json.loads((output/'LEGACY_SEVEN_STUDIO_ONLY_AUDIT.json').read_text('utf8'))
+          assert gate['source']['source_gate']=='PASS' and gate['source']['script_count']==expected
+          assert gate['art_decision']=='ART_NO_GO' and gate['owner_accepted'] is False
+          assert audit['source_gate']=='PASS' and audit['top_studio_only_count']==7
+          assert audit['live_art_decision']=='LIVE_ART_NO_GO' and audit['owner_accepted'] is False
+          place=output/'P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx'
+          report={
+            'schema':'P0D_RC81_LIVE_SAFE_CASTLE_SOURCE_INTAKE_20261115',
+            'head':os.environ['GITHUB_SHA'],
+            'official_branch':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+            'source_gate':'PASS','source_count':expected,
+            'original80_luau_all_byte_identical':True,
+            'new_script':DEST if enabled else None,
+            'new_art_budget_max':36 if enabled else 0,
+            'production_mapbuilder_anchor_verified_in_source':True,
+            'real_roblox_runtime':'NOT_TESTED',
+            'studio_pc_live_comparison':'NOT_TESTED',
+            'android_real_15min':'NOT_TESTED',
+            'kid_fun_first3min':'NOT_TESTED',
+            'live_art_legacy_studio_only_layers':7,
+            'fallback_live_codepath':'SOURCE_PRESENT_NOT_RUNTIME_VERIFIED' if enabled else 'OFF',
+            'art_decision':'ART_NO_GO','live_art_decision':'LIVE_ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,'publish_approved':False,
+            'sourcery_major_review':'PENDING',
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'rollback':'Disable FB015_LIVE_CASTLE_SAFE_PARITY_V1, rebuild and source CAS to previous 80 scripts'
+          }
+          (output/'RC81_LIVE_CASTLE_RECEIPT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('P0D_RC81_LIVE_CASTLE_SOURCE_AND_ORIGINAL80_EXACT_PASS',report['place_bytes'],report['place_sha256'])
+          print('P0D_LIVE_ART_NO_GO_LEGACY_7_GUARDS',report['live_art_legacy_studio_only_layers'])
+          PY
+
+      - name: 'P0 #444 source-only private 9 neutral Horde canary; public unchanged off'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          if [ "$(find /tmp/p0d_live_safe_castle81_source/src -name '*.luau' | wc -l)" -eq 81 ]; then
+            python3 -B -m unittest discover -s rc_fastlane -p test_private_live_horde.py -v
+          else
+            echo "P0D_PRIVATE_HORDE_V1_SKIP_UNDER_RC80_CASTLE_FALLBACK"
+          fi
+          BASE=/tmp/p0d_live_safe_castle81_source
+          FINAL=/tmp/p0d_private_live_horde81_dist
+          OUT=/tmp/p0d_private_live_horde81_evidence
+          mkdir -p "$OUT"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text())
+          assert cfg['owner_accepted'] is False
+          flag=cfg['features']['P0D_PRIVATE_LIVE_HORDE_NINE_V1']
+          assert type(flag) is bool
+          assert cfg['private_gameplay_canary']['release']=='NOT_AUTHORIZED'
+          parent_count=len(list(Path('/tmp/p0d_live_safe_castle81_source/src').rglob('*.luau')))
+          assert parent_count in (80,81),('UNEXPECTED_RC_PARENT_COUNT',parent_count)
+          enabled=bool(flag and parent_count==81)
+          Path('/tmp/p0d_horde_stage_enabled').write_text('true' if enabled else 'false')
+          if flag and parent_count==80:
+              print('P0D_PRIVATE_HORDE_V1_FORCE_OFF_UNDER_RC80_FALLBACK')
+          PY
+          ENABLED="$(cat /tmp/p0d_horde_stage_enabled)"
+          if [ "$ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_private_live_horde.py --base "$BASE" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_private_live_horde.py --base "$BASE" --out "$FINAL" --enabled false
+            cp -a "$BASE" "$FINAL"
+          fi
+          BASE_COUNT="$(find "$BASE/src" -name '*.luau' | wc -l)"
+          test "$BASE_COUNT" -eq 80 -o "$BASE_COUNT" -eq 81
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq "$BASE_COUNT"
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx"
+          if [ "$ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_private_live_horde.py --dist "$FINAL" --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" --receipt "$OUT/PRIVATE_HORDE81_SOURCE_RECEIPT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" --out "$OUT/ART_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" \
+            --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" \
+            --receipt "$OUT/RC81_PRE_UPLOAD_INSTANCE_BINDINGS.json" \
+            --count "$BASE_COUNT"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_private_live_horde import read,blob,GAME,HORDE,FEATURE,NEW,OLD
+          baseline=Path('/tmp/p0d_live_safe_castle81_source')
+          built=Path('/tmp/p0d_private_live_horde81_dist')
+          dest=Path('/tmp/p0d_private_live_horde81_evidence')
+          before,after=read(baseline),read(built)
+          enabled=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text())['features'][FEATURE]
+          enabled=bool(enabled and len(before)==81)
+          changed={k for k in before if after[k]!=before[k]}
+          assert set(before)==set(after) and len(after) in (80,81)
+          assert changed==({GAME} if enabled else set()),('UNEXPECTED_LUAU_DRIFT',changed)
+          assert before[HORDE]==after[HORDE]
+          if enabled:
+              assert after[GAME].decode().count(NEW)==1 and OLD not in after[GAME].decode()
+          sl=json.loads((built/'SOURCE_LOCK.json').read_text())
+          fl=json.loads((built/'RC_FEATURE_LOCK.json').read_text())
+          pins={p:blob(v) for p,v in sorted(after.items())}
+          assert sl['blobs']==fl['source_gitblobs']==pins and fl['total_sources']==sl['total_scripts']==len(after)
+          gate=json.loads((dest/'ART_SOURCE_QA.json').read_text())
+          assert gate['source']['source_gate']=='PASS'
+          assert gate['source']['script_count']==len(after) and gate['art_decision']=='ART_NO_GO'
+          assert gate['owner_accepted'] is False
+          place=dest/'P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx'
+          report={
+             'schema':'P0D_P0_444_HORDE81_CANDIDATE_V1',
+             'head':os.environ['GITHUB_SHA'],
+             'official_branch':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+             'source_count':len(after),'changed_sources':sorted(changed),'unchanged_sources':len(after)-len(changed),
+             'game_singleton':True,'Horde_original_byte_exact':True,
+             'studio_original':True,'public_nonstudio_horde':'UNCHANGED_OFF',
+             'private_with_owner_flag':'CODEPATH_ONLY_NOT_RUNTIME_TESTED' if enabled else 'OFF_UNDER_RC80_FALLBACK',
+             'real_neutral9':'NOT_TESTED','real_hit_popup':'NOT_TESTED',
+             'PC_Studio':'NOT_TESTED','Android15min':'NOT_TESTED','child_fun_first3min':'NOT_TESTED',
+             'blocker_444':'OPEN','blocker_431':'OPEN',
+             'owner_accepted':False,'publish_approved':False,
+             'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+             'fun_decision':'FUN_NO_GO','live_art_decision':'LIVE_ART_NO_GO',
+             'place_bytes':place.stat().st_size,
+             'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+             'rollback':'Disable P0D_PRIVATE_LIVE_HORDE_NINE_V1 and rebuild original RC81 before publishing'
+          }
+          (dest/'PRIVATE_HORDE_FULL_RECEIPT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE_HORDE81_FULL_REAL_PLACE_PASS',report['place_bytes'],report['place_sha256'])
+          PY
+      - name: 'P0 #444 V2 PRIVATE Horde real Game ATTACK and 0.5s tick after official B reset'
+        id: horde_v2
+        if: env.PROFILE == 'rich51'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_live_horde81_dist
+          if [ "$(find "$BASE/src" -name '*.luau' | wc -l)" -ne 81 ]; then
+            echo "built=false" >> "$GITHUB_OUTPUT"
+            echo "P0D_HORDE_V2_SKIP_WHEN_CASTLE_RC80_FALLBACK"
+            exit 0
+          fi
+          echo "built=true" >> "$GITHUB_OUTPUT"
+          FINAL=/tmp/p0d_horde_private_lifecycle_v2_81
+          OUT=/tmp/p0d_horde_private_lifecycle_v2_artifact
+          PLACE="$OUT/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_combat.py -v
+          python3 -B -m unittest discover -s art_quality -p test_live_art_expected_scripts.py -v
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/native_private_horde_combat.py \
+            --dist "$FINAL" --out "$OUT/NATIVE_THREE_GUARDS.luau"
+          /tmp/p0d_new_luau/luau "$OUT/NATIVE_THREE_GUARDS.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_private_horde_combat.py \
+            --dist "$FINAL" --place "$PLACE" --receipt "$OUT/HORDE_LIFECYCLE_EXACT.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/RC81_V2_PRE_UPLOAD_FULL_INSTANCE_BINDINGS.json" --count 81
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_horde_private_lifecycle_v2_artifact')
+          p=out/'P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx'
+          qa=json.loads((out/'HORDE_LIFECYCLE_EXACT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_REPORT.json').read_text())
+          live=json.loads((out/'LIVE_ART_REPORT.json').read_text())
+          assert qa['embedded81_real_luau_exact']==81
+          assert qa['original_B_reset_unchanged'] and qa['one_Game_Horde_HUD']
+          assert qa['three_original_Horde_guards_with_private_optin']
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert live['expected_script_count']==81
+          assert live['source_gate']=='PASS' and live['top_studio_only_count']==7
+          assert art['art_decision']=='ART_NO_GO' and qa['live_horde_decision']=='LIVE_HORDE_NO_GO'
+          result={
+            'schema':'P0D_ISSUE444_HORDE_PRIVATE_LIFECYCLE_V2_SOURCE_GATE',
+            'official_parent':'0287c696bd2467177236c46a1b2b39646d5aa2b9',
+            'ci_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,'real_luau_source_count':81,
+            'B_canonical_reset_unchanged':True,
+            'additional_guards':['original_attack_hit','original_half_second_horde_tick'],
+            'original_bot_tick_studio_only':True,
+            'Game_only_source_modified':True,'other80_byte_exact':True,
+            'public_runtime_default':'OFF','owner_private_attr':'P0D_PRIVATE_LIVE_HORDE_NINE',
+            'place_bytes':p.stat().st_size,'place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'source_gate':'PASS','live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO','art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+            'actual_live_nine_mobs':'NOT_TESTED','real_hit_hp_popup':'NOT_TESTED',
+            'android15min':'NOT_TESTED','kid_first3min':'NOT_TESTED','owner_accepted':False
+          }
+          (out/'HORDE_PRIVATE_V2_RECEIPT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE_HORDE_V2_SOURCE81_QA_NOT_ENGINE_GO',result['place_bytes'],result['place_sha256'])
+          PY
+
+      - name: 'P0 #420 final RC81 genuine Castle, Horde1 and Horde2 full Instance path+class+source gate'
+        if: env.PROFILE == 'rich51'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s art_quality -p test_rc_source_identity.py -v
+          OUT=/tmp/p0d_rc81_full_bindings_v2_receipts
+          mkdir -p "$OUT"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist /tmp/p0d_live_safe_castle81_source \
+            --place /tmp/p0d_live_safe_castle81_artifact/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx \
+            --receipt "$OUT/01_CASTLE_BINDINGS.json" \
+            --count "$(find /tmp/p0d_live_safe_castle81_source/src -name '*.luau' | wc -l)"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist /tmp/p0d_private_live_horde81_dist \
+            --place /tmp/p0d_private_live_horde81_evidence/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx \
+            --receipt "$OUT/02_HORDE_RESET_BINDINGS.json" \
+            --count "$(find /tmp/p0d_private_live_horde81_dist/src -name '*.luau' | wc -l)"
+          if [ -f /tmp/p0d_horde_private_lifecycle_v2_artifact/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx ]; then
+            python3 -B art_quality/verify_rc_source_identity.py \
+              --dist /tmp/p0d_horde_private_lifecycle_v2_81 \
+              --place /tmp/p0d_horde_private_lifecycle_v2_artifact/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx \
+              --receipt "$OUT/03_HORDE_REAL_ATTACK_AI_BINDINGS.json" --count 81
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('/tmp/p0d_rc81_full_bindings_v2_receipts')
+          records=[json.loads(p.read_text('utf8')) for p in sorted(root.glob('*.json'))]
+          assert len(records) in (2,3)
+          assert all(
+              x['embedded_count']==x['source_count']
+              and x['all_instance_class_name_path_source_exact']
+              and x['all_ancestor_container_class_exact']
+              and x['source_gate']=='PASS'
+              and x['art_decision']=='ART_NO_GO'
+              and x['mobile_decision']=='MOBILE_NO_GO'
+              and x['fun_decision']=='FUN_NO_GO'
+              and x['owner_accepted'] is False
+              for x in records
+          ), 'UNVERIFIED_RC_PLACE_MUST_NOT_BE_UPLOADED'
+          print('P0D_RC81_FULL_3_STUDIO_IDENTITY_NOT_ART_GO',
+                len(records),sum(x['embedded_count'] for x in records))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC81-PRIVATE-HORDE9-SOURCE-NO-GO
+          path: /tmp/p0d_private_live_horde81_evidence/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC81-HORDE9-SOURCE-NO-GO
+          path: /tmp/p0d_private_live_horde81_evidence/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && steps.horde_v2.outputs.built == 'true'
+        with:
+          name: P0D-CANONICAL-RC81-PRIVATE-HORDE-FULL-LIFECYCLE-V2-SOURCE-NOGO
+          path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request' && steps.horde_v2.outputs.built == 'true'
+        with:
+          name: P0D-PRIVATE-RC81-HORDE-FULL-LIFECYCLE-V2-SOURCE-NOGO
+          path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-ALL-PLACE-INSTANCE-IDENTITY-SOURCE-QA
+          path: /tmp/p0d_rc81_full_bindings_v2_receipts/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 #444 / #431 newest 81 QA: HIT 0.42s stale callback + MISS source guard + private art'
+        if: env.PROFILE == 'rich51' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01')
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_horde_private_lifecycle_v2_81
+          HIT=/tmp/p0d_private_horde_hit_toast_v3_81
+          FINAL=/tmp/p0d_private_horde_hit_toast_art_rc81
+          OUT=/tmp/p0d_private_horde_hit_art_rc81_artifact
+          PLACE="$OUT/P0D_RC81_PRIVATE_HIT_TOAST_AND_GOROGAN_VISUAL.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_hit_toast.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$HIT" --enabled false
+          test ! -e "$HIT"
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$HIT" --enabled true
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$HIT" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$HIT" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 81
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          /tmp/p0d_rc_rojo build "$HIT/default.project.json" -o "$OUT/P0D_RC81_HIT_TOAST_PRE_ART_STAGE.rbxlx"
+          python3 -B rc_fastlane/verify_private_horde_hit_toast.py \
+            --dist "$HIT" --place "$OUT/P0D_RC81_HIT_TOAST_PRE_ART_STAGE.rbxlx" \
+            --receipt "$OUT/HIT_TOAST81_SOURCE_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py \
+            --base "$HIT" --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/CLIENT_ART81_SOURCE_RECEIPT.json"
+          python3 -B rc_fastlane/verify_hit_and_art_rc81.py \
+            --base "$BASE" --toast "$HIT" --final "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/HIT_ART_FINAL_SOURCE_RECEIPT.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 81 \
+            --receipt "$OUT/RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_SOURCE_GATE.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          out=Path('/tmp/p0d_private_horde_hit_art_rc81_artifact')
+          c=json.loads((out/'HIT_ART_FINAL_SOURCE_RECEIPT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_GATE.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          identity=json.loads((out/'RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json').read_text())
+          assert identity['embedded_count']==identity['source_count']==81
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert c['source_gate']=='PASS' and c['script_count']==81
+          assert c['unchanged_original_sources']==76 and len(c['changed_sources'])==5
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert live['source_gate']=='PASS' and live['expected_script_count']==81
+          assert live['top_studio_only_count']==4,('STUDIO_ART_GUARD_DRIFT',live['top_studio_only_count'])
+          assert art['art_decision']=='ART_NO_GO' and c['live_horde_decision']=='LIVE_HORDE_NO_GO'
+          assert art['owner_accepted'] is False and c['owner_accepted'] is False
+          print('P0D_HIT_TOAST_042S_AND_REAL_CLIENT_ART_81_ALL_SRC_PASS',c['place_bytes'],c['place_sha256'])
+          print('P0D_LIVE_RUNTIME_ART_ANDROID_KID_OWNER_ALL_NO_GO')
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp art_quality/P0D_PRIVATE_HIT_ART_RC81_STAGING.json "$OUT/FEATURES.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_private_horde_hit_art_rc81_artifact')
+          candidate=json.loads((out/'HIT_ART_FINAL_SOURCE_RECEIPT.json').read_text())
+          assert candidate['source_gate']=='PASS' and candidate['script_count']==81
+          assert candidate['place_bytes']==761489,('UNEXPECTED_REAL_PLACE_BYTES',candidate['place_bytes'])
+          assert candidate['place_sha256']=='6169da88349712352bca62a41ae703e2ae6dc75113a560c874c00128a5b5e49e', 'UNEXPECTED_REAL_PLACE_SHA'
+          official=(os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01')
+          record={
+            'schema':'P0D_B_220_OFFICIAL_PRIVATE_HIT_ART_SOURCE_ONLY_RECEIPT_V1',
+            'head':os.environ['GITHUB_SHA'],
+            'official_rc_branch':official,
+            'rc_source_intake': 'FORMAL_SOURCE_STAGE' if official else 'PRIVATE_PR_SOURCE_STAGE',
+            'game_source_count':81,
+            'changed_game_sources':candidate['changed_sources'],
+            'original_unchanged_sources':76,
+            'place_bytes':candidate['place_bytes'],
+            'place_sha256':candidate['place_sha256'],
+            'private_runtime': 'NOT_TESTED',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'owner_accepted':False,
+            'public_or_paid_release':False,
+            'rollback':'omit staged overlay and rebuild original 81 official source'
+          }
+          (out/'B220_SOURCE_ONLY_INTAKE_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_B220_CAS_STAGED_REAL_81_SOURCE_NO_RUNTIME_GO',record['head'],record['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-PRIVATE-HIT-MEDIUM2-FIXES-ART-81IDENTITY-NOGO
+          path: /tmp/p0d_private_horde_hit_art_rc81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-CANONICAL-RC81-PRIVATE-HIT-ART-STAGED-SOURCE-NOGO
+          path: /tmp/p0d_private_horde_hit_art_rc81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 #444 B#220 cumulative OWNER-private 1-human READY + verified HIT/ART (RC81)'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_horde_hit_toast_art_rc81
+          FINAL=/tmp/p0d_private_onehuman_after_art_rc81
+          OUT=/tmp/p0d_private_onehuman_after_art_receipts
+          PLACE="$OUT/P0D_RC81_PRIVATE_ONEHUMAN_HIT_ART_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_onehuman_horde_post_art.py -v
+          python3 -B rc_fastlane/apply_private_onehuman_horde_post_art.py \
+            --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_onehuman_horde_post_art.py \
+            --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/native_private_onehuman_horde_post_art.py \
+            --dist "$FINAL" --out "$OUT/REAL_ONEHUMAN_READY_NATIVE_16.luau"
+          /tmp/p0d_new_luau/luau "$OUT/REAL_ONEHUMAN_READY_NATIVE_16.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_private_onehuman_horde_post_art.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/PRIVATE_ONEHUMAN_HIT_ART_RC81_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 81 \
+            --receipt "$OUT/REAL_81_INSTANCE_PATH_CLASS_SOURCE.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 \
+            --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,str(Path('rc_fastlane').resolve()))
+          from apply_private_onehuman_horde_post_art import read,GAME,SOLO,HORDE,FEATURE
+          out=Path('/tmp/p0d_private_onehuman_after_art_receipts')
+          base=Path('/tmp/p0d_private_horde_hit_toast_art_rc81')
+          final=Path('/tmp/p0d_private_onehuman_after_art_rc81')
+          before,after=read(base),read(final)
+          assert len(before)==len(after)==81
+          assert set(before)==set(after)
+          assert {p for p in before if before[p]!=after[p]}=={GAME}
+          assert all(after[p]==before[p] for p in before if p!=GAME)
+          assert after[SOLO]==before[SOLO] and after[HORDE]==before[HORDE]
+          assert b'musouHitFeedback = ' in after[GAME], 'LAST_RC_REAL_HIT_MISSING'
+          assert b'privateHordeTrialAllowed()' in after[GAME]
+          assert b'impactDisplayEpoch' in after['client/HUD.client.luau']
+          for p in ('client/FB015CharacterArt.client.luau','client/ConfirmedSlashFX.client.luau','server/CastleDetailArt.server.luau'):
+              assert after[p]==before[p],('LAST_RC_ART_LOST',p)
+          sl=json.loads((final/'SOURCE_LOCK.json').read_text())
+          fl=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert sl['blobs']==fl['source_gitblobs']
+          for f in (FEATURE,'P0D_PRIVATE_LIVE_HORDE_HIT_TOAST_V3',
+                    'FB015_LIVE_ART_PRIVATE_CLIENT_PILOT_V1'):
+              assert fl['feature_flags'][f]
+          actual=json.loads((out/'PRIVATE_ONEHUMAN_HIT_ART_RC81_SOURCE_QA.json').read_text())
+          identity=json.loads((out/'REAL_81_INSTANCE_PATH_CLASS_SOURCE.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          assert actual['source_gate']=='PASS' and actual['actual_embedded_luau_sources']==81
+          assert actual['private_one_human_requires_owner_flag_and_READY']
+          assert actual['public_match_min_players']==2
+          assert identity['source_count']==identity['embedded_count']==81
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS' and art['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['expected_script_count']==81
+          assert not actual['owner_accepted']
+          place=out/'P0D_RC81_PRIVATE_ONEHUMAN_HIT_ART_STUDIO.rbxlx'
+          record={
+            'schema':'P0D_B220_CUMULATIVE_ONEHUMAN_REAL_HIT_MOBILE_ART_PRIVATE_81_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'original_private_hit_art_parent':'7005762b4a137fd46e4938c06fbaa937ce8f8cf9',
+            'source_count':81,
+            'incremental_changed_game_sources':[GAME],
+            'incremental_unchanged_game_sources':80,
+            'original_cumulative_game_sources_changed':5,
+            'native_ready_cases':16,
+            'real_rojo_path_class_source_gate':'PASS',
+            'source_gate':'PASS',
+            'owner_private_onehuman_ready':'SOURCE_QA_ONLY',
+            'public_no_permission':'OFF',
+            'real_private_runtime':'NOT_TESTED',
+            'PC_Android_32_visual_samples':'NOT_TESTED',
+            'low_end_Android_15min':'NOT_TESTED',
+            'kid_first_3min':'NOT_TESTED',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,
+            'game_release_approved':False,
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'rollback':'omit only post-HIT/ART onehuman overlay to restore official previous private preview'
+          }
+          (out/'B220_CUMULATIVE_SOURCE_ONLY_RC_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          assert record['place_bytes'] > 760000
+          print('P0D_B220_REAL_81_ONEHUMAN_HIT_ART_CUMULATIVE_SOURCE_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC81-PRIVATE-ONEHUMAN-POST-HIT-ART-81-SOURCE-NOGO
+          path: /tmp/p0d_private_onehuman_after_art_receipts/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 #444 B#220 cumulative RC81 -> PRIVATE82 real-engine 3-minute read-only Horde witness'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_onehuman_after_art_rc81
+          FINAL=/tmp/p0d_private_onehuman_hit_art_evidence82
+          OUT=/tmp/p0d_private_onehuman_hit_art_evidence82_artifact
+          PLACE="$OUT/P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          export P0D_HORDE_RUNTIME_EVIDENCE_PARENT="$BASE"
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_horde_runtime_evidence.py' -v
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py \
+            --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py \
+            --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$BASE/src" -type f -name '*.luau' | wc -l)" -eq 81
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_horde_runtime_evidence.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/PRIVATE_HORDE_ENGINE_EVIDENCE82_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/REAL_82_INSTANCE_PATH_CLASS_SOURCE.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 82 \
+            --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path("rc_fastlane").resolve()))
+          from apply_horde_runtime_evidence import read,blob,DEST,GAME,HORDE,AUTHOR_BLOB
+          base=Path('/tmp/p0d_private_onehuman_after_art_rc81')
+          final=Path('/tmp/p0d_private_onehuman_hit_art_evidence82')
+          out=Path('/tmp/p0d_private_onehuman_hit_art_evidence82_artifact')
+          before,after=read(base),read(final)
+          assert len(before)==81 and len(after)==82
+          assert set(after)-set(before)=={DEST}
+          assert all(after[k]==before[k] for k in before)
+          assert blob(after[DEST])==AUTHOR_BLOB
+          for p in (GAME,HORDE,'client/HUD.client.luau',
+                    'client/FB015CharacterArt.client.luau',
+                    'client/ConfirmedSlashFX.client.luau',
+                    'server/CastleDetailArt.server.luau'):
+              assert after[p]==before[p],('REGRESSION_SOURCE',p)
+          assert b'privateHordeTrialAllowed' in after[GAME]
+          assert b'musouHitFeedback' in after[GAME]
+          evidence=json.loads((out/'PRIVATE_HORDE_ENGINE_EVIDENCE82_SOURCE_QA.json').read_text())
+          identity=json.loads((out/'REAL_82_INSTANCE_PATH_CLASS_SOURCE.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          assert evidence['real_rojo_source_count_exact']==82
+          assert evidence['old81_source_bytes_unchanged']
+          assert identity['source_count']==identity['embedded_count']==82
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS' and art['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['expected_script_count']==82
+          assert evidence['public_runtime_codepath']=='HARD_OFF'
+          assert evidence['actual_nonstudio_private9']=='NOT_TESTED'
+          assert not evidence['owner_accepted']
+          record={
+            'schema':'P0D_B220_RC82_ONEHUMAN_HIT_ART_PRIVATE_EVIDENCE_SOURCE_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'parent_cumulative_private_rc81':'bf3e2ae7ff8ab7f5e6e5af6d139f0b0f62483df2',
+            'original_81_game_sources_unchanged':True,
+            'new_diagnostic_server_source':DEST,
+            'source_count':82,'source_gate':'PASS',
+            'rojo_82_full_path_class_source':'PASS',
+            'server_only_private_two_flag_optin':True,
+            'max_runtime_seconds_if_owner_enabled':180,
+            'actual_roblox_runtime':'NOT_TESTED',
+            'android15':'NOT_TESTED','kid3min':'NOT_TESTED',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,
+            'public_release':False,
+            'place_bytes':(out/'P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx').stat().st_size,
+            'place_sha256':hashlib.sha256((out/'P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx').read_bytes()).hexdigest(),
+            'rollback':'remove extra evidence Script, original 81 unchanged'
+          }
+          (out/'B220_RC82_PRIVATE_SOURCE_ONLY_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_B220_82_REAL_SOURCE_PRIVATE_PROBE_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-CANONICAL-RC82-PRIVATE-ONEHUMAN-HIT-ART-EVIDENCE-SOURCE-NOGO
+          path: /tmp/p0d_private_onehuman_hit_art_evidence82_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 FB003 #470 owner-original Classic+H2 egg prompt fix — real 82-source RC candidate'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_onehuman_hit_art_evidence82
+          FINAL=/tmp/p0d_rc82_fb003_egg_controls_v1
+          OUT=/tmp/p0d_rc82_fb003_egg_controls_receipts
+          PLACE="$OUT/P0D_RC82_FB003_EGG_CONTROLS_PRIVATE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_fb003_prompt_fix.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb003_prompt_fix.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0, 'rc_fastlane')
+          from apply_fb003_prompt_fix import read,blob,patch,GAME,MAP,FEATURE
+          base=Path('/tmp/p0d_private_onehuman_hit_art_evidence82')
+          final=Path('/tmp/p0d_rc82_fb003_egg_controls_v1')
+          original=read(base); fixed=read(final)
+          assert len(original)==len(fixed)==82
+          assert {p for p in original if original[p]!=fixed[p]}=={GAME,MAP}
+          assert fixed==patch(original)
+          for f in ('SOURCE_LOCK.json','RC_FEATURE_LOCK.json'):
+              o=json.loads((final/f).read_text())
+              assert 'source_gitblobs' in o or 'blobs' in o
+          m=fixed[MAP].decode();g=fixed[GAME].decode()
+          assert 'p.HoldDuration = 0' in m and 'p.MaxActivationDistance = 12' in m
+          assert g.count('def.prompt.KeyboardKeyCode=Enum.KeyCode.E')==2
+          assert g.count('def.prompt.KeyboardKeyCode=Enum.KeyCode.F')==1
+          assert g.count('def.prompt.GamepadKeyCode=Enum.KeyCode.ButtonY')==1
+          assert original[GAME].count(b'H2Score.deposit(')==fixed[GAME].count(b'H2Score.deposit(')==1
+          assert original[GAME].count(b'remote.OnServerEvent:Connect(')==fixed[GAME].count(b'remote.OnServerEvent:Connect(')==1
+          corrupted=dict(original);corrupted[GAME]+=b'\n-- mutation'
+          try:patch(corrupted)
+          except AssertionError:pass
+          else:raise AssertionError('MUTANT_SOURCE_NOT_REJECTED')
+          print('FB003_OWNER_REAL82_SOURCE_PATCH_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/REAL_FB003_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_rc82_fb003_egg_controls_receipts')
+          src=json.loads((out/'REAL_FB003_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert src['source_count']==src['embedded_count']==82
+          assert src['all_instance_class_name_path_source_exact']
+          assert src['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_FB003_EGG_CONTROLS_PRIVATE_STUDIO.rbxlx'
+          receipt={'schema':'FB003_OWNER_REAL_SOURCE_EGG_FIX_PRIVATE_V1',
+                   'official_rc_head':os.environ['GITHUB_SHA'],
+                   'changed_sources':['server/Game.server.luau','server/MapBuilder.luau'],
+                   'other80_byte_exact':True,'source_count':82,
+                   'native_luau':'PASS','rojo_source_identity':'PASS',
+                   'actual_owner_studio_egg_pickup_score':'NOT_TESTED',
+                   'android':'NOT_TESTED','product_quality':'NO_GO',
+                   'owner_accepted':False,'place_bytes':place.stat().st_size,
+                   'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()}
+          (out/'FB003_OWNER_FIX_RC_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB003_REAL82_EGG_PROMPT_FIXED_PLACE_SOURCE_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-FB003-EGG-INTERACTION-FIX-PRIVATE-STUDIO-NO-OWNER-GO
+          path: /tmp/p0d_rc82_fb003_egg_controls_receipts/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 FB008 #470 original author 17-mob sixpack real 82-source cumulative fixed-egg preview'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc82_fb003_egg_controls_v1
+          FINAL=/tmp/p0d_rc82_fb003_fb008_sixpack_v1
+          OUT=/tmp/p0d_rc82_fb003_fb008_sixpack_receipts
+          PLACE="$OUT/P0D_RC82_FB003_FB008_SIXPACK17_PRIVATE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_fb008_sixpack_rc82.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb008_sixpack_rc82.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import math,sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_fb008_sixpack_rc82 import read,blob,patch,H,ORIGINAL_BLOB,FEATURE
+          before=read(Path('/tmp/p0d_rc82_fb003_egg_controls_v1'))
+          after=read(Path('/tmp/p0d_rc82_fb003_fb008_sixpack_v1'))
+          assert len(before)==len(after)==82
+          assert {p for p in before if after[p]!=before[p]}=={H}
+          assert after[H]==patch(before[H])
+          assert blob(before[H])==ORIGINAL_BLOB
+          for name in ('server/Game.server.luau','server/MapBuilder.luau',
+                       'client/HUD.client.luau','server/P0DPrivateHordeEvidence.server.luau'):
+              assert after[name]==before[name],('SHARED_AUTHORITY_CHANGED',name)
+          s=after[H].decode()
+          assert s.count('function Horde:hit(')==1 and s.count('function Horde:tick(')==1
+          assert s.count('return touched,defeated')==1
+          assert 'local MINIONS = 16' in s and 'local MAX_ACTIVE = 17' in s
+          assert 'local MINION_HP = 24' in s and 'touched<6' in s
+          assert 'minionImpacts<4' in s and '(impactsByPlayer[nearest] or 0)<2' in s
+          assert 'Horde.MINIONS=MINIONS' in s and 'Horde.MAX_ACTIVE=MAX_ACTIVE' in s
+          six=[(-24,-18),(-19,-18),(-14,-18),(-24,-12),(-19,-12),(-14,-12)]
+          assert len(set(six))==6
+          x,z=-26,-17
+          count=0
+          for a,b in six:
+              dx,dz=a-x,b-z
+              dist=math.hypot(dx,dz)
+              dot=dx/dist
+              if dist<=13 and dot>=.1:count+=1
+          assert count==6,('UNREACHABLE_FIRST_SIX_SWEEP',count)
+          corrupted=before[H]+b'\n-- mutation'
+          try:patch(corrupted)
+          except AssertionError:pass
+          else:raise AssertionError('MUTANT_BLOB_ACCEPTED')
+          rollback=after.copy();rollback[H]=before[H]
+          assert rollback==before
+          meta=json.loads((Path('/tmp/p0d_rc82_fb003_fb008_sixpack_v1')/'RC_FEATURE_LOCK.json').read_text())
+          assert meta['feature_flags'][FEATURE] is True
+          assert meta['fb008_sixpack']['other81_byte_exact']
+          print('P0D_FB008_SOURCE_REAL82_AUTHOR_6PACK_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/FB008_SIXPACK_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/FB008_ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/FB008_MOBILE_FUN_NO_GO.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_rc82_fb003_fb008_sixpack_receipts')
+          identity=json.loads((out/'FB008_SIXPACK_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'FB008_ART_SOURCE_ONLY.json').read_text())
+          assert identity['source_count']==identity['embedded_count']==82
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_FB003_FB008_SIXPACK17_PRIVATE_STUDIO.rbxlx'
+          record={
+              'schema':'P0D_FB003_FB008_REAL82_ORIGINAL_AUTHOR_CUMULATIVE_PRIVATE_V1',
+              'official_rc_head':os.environ['GITHUB_SHA'],
+              'source_author_pr':382,
+              'previous_fb003_fixed':True,
+              'modified_source':'server/MusouHorde.luau',
+              'other81_script_byte_exact':True,
+              'minions':16,'elite':1,'sweep_max':6,
+              'real_server_six_ko':'NOT_TESTED',
+              'android15':'NOT_TESTED','fun3':'NOT_TESTED',
+              'source_gate':'PASS','product_quality':'NO_GO',
+              'owner_accepted':False,'not_public':True,
+              'place_bytes':place.stat().st_size,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'rollback':'remove FB008 overlay; FB003 fixed original 82 remains'
+          }
+          (out/'FB008_RC82_PRIVATE_SOURCE_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB008_SOURCE_REAL82_SIXPACK_NATIVE_ROJO_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-FB003-FB008-ORIGINAL17-SIXPACK-PRIVATE-STUDIO-NO-OWNER-GO
+          path: /tmp/p0d_rc82_fb003_fb008_sixpack_receipts/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 FB003 FB008 per-player real KO and returned eggs at RESULTS; cumulative 82-source QA'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc82_fb003_fb008_sixpack_v1
+          FINAL=/tmp/p0d_rc82_fb003_fb008_personal_results_v1
+          OUT=/tmp/p0d_rc82_fb003_fb008_personal_results_receipts
+          PLACE="$OUT/P0D_RC82_FB003_FB008_PERSONAL_RESULTS_PRIVATE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_personal_results_rc82.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_personal_results_rc82.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,json
+          sys.path.insert(0,'rc_fastlane')
+          from apply_personal_results_rc82 import read,blob,patch,GAME,HUD,RESULT,NEW_PINS,PINS
+          base=Path('/tmp/p0d_rc82_fb003_fb008_sixpack_v1')
+          final=Path('/tmp/p0d_rc82_fb003_fb008_personal_results_v1')
+          before=read(base);after=read(final)
+          assert len(before)==len(after)==82
+          assert {p for p in before if after[p]!=before[p]}==set(PINS)
+          assert all(after[k]==v for k,v in patch(before).items())
+          assert {k:blob(after[k]) for k in NEW_PINS}==NEW_PINS
+          assert all(after[p]==before[p] for p in before if p not in PINS)
+          for name in ('server/MusouHorde.luau','server/MapBuilder.luau',
+                       'server/P0DPrivateHordeEvidence.server.luau'):
+              assert before[name]==after[name],('WRONG_GAME_AUTHORITY',name)
+          h=after['server/MusouHorde.luau'].decode()
+          assert h.count('return touched,defeated')==1
+          assert 'if m.hp<=0 then' in h and 'defeated+=1' in h
+          g=after[GAME].decode()
+          assert g.count('horde:hit(')==3
+          assert g.count('personalNeutralKOs[player]=(personalNeutralKOs[player] or 0)+')==3
+          assert g.count('personalEggDeposits[player]=(personalEggDeposits[player] or 0)+1')==2
+          assert g.count('personalNeutralKOs[p] = 0')==1
+          assert g.count('personalEggDeposits[p] = 0')==1
+          assert g.count('personalNeutralKOs[player] = nil')==1
+          assert g.count('personalEggDeposits[player] = nil')==1
+          assert g.count('H2Score.deposit(')==1 and g.count('match.scores[team] += 1')==1
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert after[RESULT].count(b'personalEggDeposits')>=1
+          assert after[HUD].count(b'personalNeutralKOs')>=1
+          altered=before.copy();altered[GAME]=altered[GAME]+b'\n-- mutation'
+          try:patch(altered)
+          except AssertionError:pass
+          else:raise AssertionError('MUTATED_GAME_WAS_ACCEPTED')
+          new_lock=json.loads((final/'SOURCE_LOCK.json').read_text())
+          new_flags=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert new_lock['total_scripts']==new_flags['total_sources']==82
+          assert new_lock['blobs']==new_flags['source_gitblobs']=={p:blob(v) for p,v in after.items()}
+          print('P0D_PERSONAL_RESULTS_REAL82_SERVER_ONLY_SOURCE_REGRESSION_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/REAL_PERSONAL_RESULTS_RC82_SOURCE.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_FUN_NOT_ENGINE_TESTED.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,json,hashlib
+          out=Path('/tmp/p0d_rc82_fb003_fb008_personal_results_receipts')
+          source=json.loads((out/'REAL_PERSONAL_RESULTS_RC82_SOURCE.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert source['source_count']==source['embedded_count']==82
+          assert source['all_instance_class_name_path_source_exact']
+          assert source['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_FB003_FB008_PERSONAL_RESULTS_PRIVATE_STUDIO.rbxlx'
+          receipt={
+           'schema':'P0D_FB003_FB008_PERSONAL_MATCH_RESULTS_RC82_PRIVATE_V1',
+           'official_head':os.environ['GITHUB_SHA'],
+           'three_sources':['server/Game.server.luau','client/HUD.client.luau',
+                            'client/ResultNextStep.client.luau'],
+           'other79_byte_exact':True,'source_count':82,
+           'player_confirmed_ko_normal_job_scout':True,
+           'classic_and_h2_successful_home_deposit_counted_as_one':True,
+           'fresh_round_resets_per_player':True,'game_remote_damage_egg_authorities':'UNCHANGED',
+           'Native_Luau_compilation':'PASS','Rojo_source_exact':'PASS',
+           'real_studio_ko_score':'NOT_TESTED','real_android':'NOT_TESTED',
+           'quality':'PRODUCT_NO_GO','owner_accepted':False,
+           'place_bytes':place.stat().st_size,
+           'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()
+          }
+          (out/'PERSONAL_RESULT_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB008_PERSONAL_RESULTS_REAL82_NATIVE_ROJO_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-FB003-FB008-PERSONAL-SCORES-PRIVATE-STUDIO-NOGO
+          path: /tmp/p0d_rc82_fb003_fb008_personal_results_receipts/*
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: 'P0 #470 7 jobs: original #297 Assassin alias + server-ACK first-join selection + private mobile gate'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc82_fb003_fb008_personal_results_v1
+          FINAL=/tmp/p0d_role7_assassin_mobile_private_rc82
+          OUT=/tmp/p0d_role7_assassin_mobile_private_receipts
+          PLACE="$OUT/P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_role7_assassin_mobile_rc82.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_role7_assassin_mobile_rc82.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_role7_assassin_mobile_rc82 import read,patch,blob,PINS,OUTPUT,GAME,HUD,POLICY,FEATURE
+          base=Path('/tmp/p0d_rc82_fb003_fb008_personal_results_v1')
+          final=Path('/tmp/p0d_role7_assassin_mobile_private_rc82')
+          before,after=read(base),read(final)
+          assert len(before)==len(after)==82
+          assert {p for p in before if before[p]!=after[p]}==set(PINS)
+          assert all(after[k]==v for k,v in patch(before).items())
+          assert {k:blob(after[k]) for k in OUTPUT}==OUTPUT
+          for p in ('server/MusouHorde.luau','server/MapBuilder.luau',
+                    'server/H2FiveEggRules.luau','client/ResultNextStep.client.luau'):
+              assert after[p]==before[p],('PREVIOUS_OWNED_SOURCE_OVERWRITTEN',p)
+          g=after[GAME].decode('utf8');h=after[HUD].decode('utf8')
+          assert 'jobStudioPvE = (RunService:IsStudio() or privateHordeTrialAllowed())' in g
+          assert g.count('{studio=(RunService:IsStudio() or privateHordeTrialAllowed())')==2
+          assert g.count('local function privateHordeTrialAllowed(): boolean')==1
+          assert 'game.PrivateServerId ~= ""' in g and 'workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE") == true' in g
+          assert 'jobSelected = sevenJobSelected[player] == true' in g
+          assert 'sevenJobSelected[player]=true' in g
+          assert 'pendingJobChoice=entry[1]' in h
+          assert 's.jobSelected==true and s.job==pendingJobChoice' in h
+          assert 'jobPanel.Visible=true' in h
+          assert '🗡 暗殺者' in h and '🥷 忍者' not in h
+          assert 'NINJA={label="暗殺者",skill="影刃"' in after[POLICY].decode()
+          assert 'NINJA' in after[POLICY].decode()
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert g.count('horde:hit(')==3
+          assert g.count('personalNeutralKOs[player]=(personalNeutralKOs[player] or 0)+')==3
+          assert g.count('personalEggDeposits[player]=(personalEggDeposits[player] or 0)+1')==2
+          bad=dict(before);bad[GAME]+=b'\n-- unrelated game change'
+          try:patch(bad)
+          except AssertionError:pass
+          else:raise AssertionError('UNPINNED_ORIGINAL_GAME_ACCEPTED')
+          meta=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert meta['feature_flags'].get(FEATURE)==True
+          assert meta['assassin_private_role7']['public_server_role7']=='DISABLED'
+          assert meta['assassin_private_role7']['unchanged79_sources_byte_exact']
+          assert meta['source_gitblobs']=={k:blob(v) for k,v in after.items()}
+          print('P0D_ROLE7_ASSASSIN_PRIVATE_SEVEN_SERVER_ACK_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/ROLE7_ASSASSIN_REAL_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_FUN_NOT_ENGINE_TESTED.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_role7_assassin_mobile_private_receipts')
+          source=json.loads((out/'ROLE7_ASSASSIN_REAL_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert source['source_count']==source['embedded_count']==82
+          assert source['all_instance_class_name_path_source_exact']
+          assert source['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx'
+          receipt={
+            'schema':'P0D_ROLE7_ASSASSIN_PRIVATE_SERVER_MOBILE_PREP_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'original_author_297_alias':True,
+            'server_gate':'STUDIO_OR_EXPLICIT_OWNER_PRIVATE_HORDE_ONLY',
+            'selection_server_ACK':True,
+            'public_server_seven_jobs':'HARD_OFF',
+            'internal_job_id_NINJA':'UNCHANGED',
+            'sources':82,'original_other79_byte_exact':True,
+            'source_exact':'PASS','luau_compilation':'PASS',
+            'real_android_private_play':'NOT_TESTED',
+            'seven_job_full_abilities':'NOT_COMPLETED',
+            'owner_acceptance':False,'product_quality':'NO_GO',
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()}
+          (out/'ASSASSIN_PRIVATE_MOBILE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_ROLE7_ASSASSIN_PRIVATE_MOBILE_SOURCE_BUILD_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO
+          path: /tmp/p0d_role7_assassin_mobile_private_receipts/*
+          retention-days: 14
           if-no-files-found: error

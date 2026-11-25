@@ -1,0 +1,74 @@
+{
+  "schema": "P0D_ART_RC80_ADMISSION_MATRIX_V1",
+  "date_jst": "2026-11-15",
+  "baseline_official_sha": "bd5b819b846705e18537a994ed97ffe71ddd4855",
+  "baseline_official_scripts": 80,
+  "official_art_state": "ART_NO_GO",
+  "mechanism": {
+    "issue": 420,
+    "source_pr": 424,
+    "source_sha": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
+    "source_ci": 43640246895,
+    "status": "SOURCE_QA_PASS_NOT_ART_PASS",
+    "policy": "SOURCE_LOCK/CAS/sameHEAD CI before technical adoption; real 32 images and OWNER human review later"
+  },
+  "candidate_art": [
+    {
+      "family": "ART-WORLD/FOREST",
+      "pr": 421,
+      "source_head": "6223abdf43427dedb00c81c592b7121d3d701cfd",
+      "source_ci": 43638389157,
+      "feature_id": "FB015_FOREST_BIOMES_MONUMENTS_V2",
+      "stage": "PRIVATE80_SOURCE_QA_CANDIDATE",
+      "technical_scope": "single FantasyWorldArt decorative script, 79 other source blobs unchanged",
+      "reason": "noncolliding foliage accents/ancient gateways, FB019 preserved",
+      "studio_status": "NOT_TESTED",
+      "android_status": "NOT_TESTED",
+      "art_decision": "ART_NO_GO",
+      "official_game_adopted": false
+    },
+    {
+      "family": "ART-CAMERA/FOREST",
+      "pr": 417,
+      "stage": "DUPLICATE_SCREEN_FOR_FB016",
+      "reason": "potential overlap with official FB016 foliage and #421; compare before any intake",
+      "art_decision": "ART_NO_GO",
+      "official_game_adopted": false
+    },
+    {
+      "family": "ART-COMBAT/MINIONS",
+      "pr": 408,
+      "stage": "DEFER_OLDER_RC80_STAGING",
+      "reason": "not latest parent and no real visual evidence; require rebase+QA",
+      "art_decision": "ART_NO_GO",
+      "official_game_adopted": false
+    },
+    {
+      "family": "ART-CASTLE/SEA/MINION/BEAST/COMBAT",
+      "pr": 389,
+      "stage": "PREVIOUS_PRIVATE78_NOT_CURRENT",
+      "reason": "baseline source already contains art overlays; avoid double counting and reset from actual official RC80",
+      "art_decision": "ART_NO_GO",
+      "official_game_adopted": false
+    }
+  ],
+  "acceptance": {
+    "pc_art_goal": 4.5,
+    "android_art_goal": 4,
+    "low_android_median_fps": 30,
+    "low_android_p10_fps": 25,
+    "low_android_minutes": 15,
+    "thermal_loss_max": 0.2,
+    "required_screenshots": 32,
+    "kid_first_3_min_fun_goal": 4,
+    "source_qa_is_not_art_qa": true,
+    "owner_only_accepts": true
+  },
+  "deployment": {
+    "main_push": false,
+    "normal_merge": false,
+    "roblox_publish": false,
+    "paid_services": false,
+    "official_game_authority_unchanged": true
+  }
+}

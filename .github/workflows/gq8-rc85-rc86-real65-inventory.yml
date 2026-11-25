@@ -1,0 +1,83 @@
+name: GQ8 RC85 RC86 REAL65 no-loss physical source inventory
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/**'
+      - '.github/workflows/gq8-rc85-rc86-real65-inventory.yml'
+  push:
+    branches: [quality/gq8-rc85-rc86-real65-unification-20261119]
+    paths:
+      - 'quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/**'
+      - '.github/workflows/gq8-rc85-rc86-real65-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  physical-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source XML parser regression and compile
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py
+          python3 quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py --selftest
+      - name: Verify pinned legacy success and select fresh formal REAL65 same-HEAD source
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test -n "$current"
+          for pair in \
+            43709500167:886d8f243eced1ef949ee94ec6123831ce29ae75 \
+            43714858562:0556ed62b326bd5c1072447294438ecc5c6096c7 \
+            43767133429:c405088d7655265ef4d1f79ee519c57faf168c43
+          do
+            id="$(echo "$pair" | cut -d: -f1)"
+            expected="$(echo "$pair" | cut -d: -f2)"
+            actual="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id" --jq '.head_sha + ":" + .conclusion')"
+            test "$actual" = "$expected:success" || { echo "RED_WRONG_LEGACY_RUN $id $actual"; exit 1; }
+          done
+          run_id="$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/gq8-real63-source-composite.yml/runs?branch=rc%2Fp0d-s1-kids-rc01&per_page=30" --jq '.workflow_runs | map(select(.head_sha == "'"$current"'" and .event == "push" and .conclusion == "success")) | first | .id')"
+          test -n "$run_id" && test "$run_id" != null || { echo "RED_NO_CURRENT_FORMAL_SAMEHEAD_SUCCESS"; exit 1; }
+          echo "PINNED_CURRENT_OFFICIAL=$current" >> "$GITHUB_ENV"
+          echo "PINNED_CURRENT_RUN=$run_id" >> "$GITHUB_ENV"
+          echo "LIVE_OFFICIAL_REAL65=$current RUN=$run_id"
+      - name: Download verified immutable source Places from GitHub Actions
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq8-unification/rc85 /tmp/gq8-unification/rc86 /tmp/gq8-unification/rc91 /tmp/gq8-unification/real65
+          gh run download 43709500167 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc85
+          gh run download 43714858562 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc86
+          gh run download 43767133429 --repo "$GITHUB_REPOSITORY" --dir /tmp/gq8-unification/rc91
+          gh run download "$PINNED_CURRENT_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL65-CANONICAL-PRIVATE-STUDIO \
+            --dir /tmp/gq8-unification/real65
+          actual="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$actual" = "$PINNED_CURRENT_OFFICIAL" || { echo "RED_FORMAL_MOVED_DURING_DOWNLOAD"; exit 1; }
+      - name: Compare all physical scripts and classify retention without assuming functional parity
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_rc85_rc86_real65_unification_20261119/inventory.py \
+            --rc85 /tmp/gq8-unification/rc85 \
+            --rc86 /tmp/gq8-unification/rc86 \
+            --rc91 /tmp/gq8-unification/rc91 \
+            --real65 /tmp/gq8-unification/real65 \
+            --out /tmp/gq8-unification-report/source_inventory.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: GQ8-RC85-RC86-REAL65-PHYSICAL-SOURCE-DIFF-NOT-PRODUCT-QA
+          path: /tmp/gq8-unification-report/
+          if-no-files-found: warn
+          retention-days: 30

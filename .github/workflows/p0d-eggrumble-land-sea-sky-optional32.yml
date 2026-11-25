@@ -1,0 +1,97 @@
+name: P0D EGGRUMBLE LSS optional32 private source gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-eggrumble-land-sea-sky-optional32.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lss-opt-in-32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Own-source safety and reversible 31-to-32 source gate
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_optional32.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _lss_pinned_luau
+          persist-credentials: false
+      - name: Actual Luau compilation (new script only; NOT current31 engine proof)
+        run: |
+          set -euo pipefail
+          cmake -S _lss_pinned_luau -B /tmp/lss-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-native --target Luau.Compile.CLI --parallel 4
+          /tmp/lss-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            >/dev/null
+          echo LSS_NATIVE_AUTHOR_NEW_SCRIPT_COMPILE_PASS
+      - name: Pin Rojo 7.7.1 and build only MOCK31 plus real optional source
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/lss-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/lss-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/lss-rojo.zip') as z:
+              exe=Path('/tmp/lss-rojo')
+              files=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(files)==1
+              exe.write_bytes(z.read(files[0]))
+              exe.chmod(0o755)
+          PY
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/test_optional32.py')
+          s=importlib.util.spec_from_file_location('test_lss',p)
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          root=Path('artifacts/lss_mock31')
+          root.mkdir(parents=True,exist_ok=True)
+          m.LandSeaSkySourceTests.fixture(root)
+          PY
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/lss_mock31/base31.project.json \
+            --out artifacts/lss_mock32/ON.project.json
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/lss_mock31/base31.project.json \
+            --out artifacts/lss_mock32/OFF.project.json --off
+          /tmp/lss-rojo build artifacts/lss_mock32/ON.project.json \
+            -o artifacts/lss_mock32/ON.rbxlx
+          /tmp/lss-rojo build artifacts/lss_mock32/OFF.project.json \
+            -o artifacts/lss_mock32/OFF.rbxlx
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py')
+          s=importlib.util.spec_from_file_location('lss',p)
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          m.verify_place(Path('artifacts/lss_mock32/ON.project.json'),
+                         Path('artifacts/lss_mock32/ON.rbxlx'))
+          m.verify_place(Path('artifacts/lss_mock32/OFF.project.json'),
+                         Path('artifacts/lss_mock32/OFF.rbxlx'))
+          print('LSS_MOCK31_TRUE_ROJO32_AND_OFF31_BOTH_SOURCE_EXACT_PASS')
+          PY
+      - name: Upload private mock fixture and receipts (not formal RC)
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_LSS32_MOCK_QA_NOT_FORMAL_RC
+          path: artifacts/lss_mock32/
+          if-no-files-found: error
+          retention-days: 3

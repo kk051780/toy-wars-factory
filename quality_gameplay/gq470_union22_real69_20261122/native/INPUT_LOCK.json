@@ -1,0 +1,900 @@
+{
+  "bot_vault_supplement": {
+    "distinct_server_full_bodies": 30,
+    "expected_totals": {
+      "CASE_rows": 13,
+      "CHECK_rows": 43,
+      "each_exit_code": 0,
+      "evidence_files": 37,
+      "scenarios": 9,
+      "stderr_bytes": 0,
+      "warning_rows": 0
+    },
+    "full_bodies_each_scenario": 16,
+    "hud_policy_separate_from_server_body_count": true,
+    "input_files": {
+      "bot_vault_base.template.luau": {
+        "bytes": 39006,
+        "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"
+      },
+      "bot_vault_cases.json": {
+        "bytes": 71446,
+        "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"
+      },
+      "bot_vault_suite.py": {
+        "bytes": 19989,
+        "sha256": "2ef31a508b7923a02f7c328283957359a8a26d15bb50a24b4d5966bfd38b6512"
+      }
+    },
+    "module_order": [
+      "CastleMatchRules",
+      "CastleSiegeGuardianPolicy",
+      "CastleSiegeBridge",
+      "InteractionGuard",
+      "BasicMobilityPolicy",
+      "RoundReplay",
+      "ScoreBalance",
+      "MatchResultService",
+      "BossSessionFence",
+      "DualModeNeutralBudget",
+      "InvulnerabilityPolicy",
+      "InvulCounterNeutral",
+      "InvulRuntime",
+      "BotPathRouter",
+      "BotActors",
+      "Host"
+    ],
+    "original_dual28_full_bodies": 28,
+    "output_directory": "bot_vault",
+    "preserve_original_dual28_generated_programs": true,
+    "same_fresh_F46_binary_required": true,
+    "scenario_order": [
+      "candidate_route62_TEAM_normal",
+      "candidate_route62_TEAM_slow",
+      "candidate_route62_BATTLE_ROYALE_normal",
+      "candidate_route62_BATTLE_ROYALE_slow",
+      "candidate_route58_TEAM_normal",
+      "candidate_contracts_TEAM_normal",
+      "candidate_actors_TEAM_normal",
+      "candidate_eggs_TEAM_normal",
+      "candidate_parallel_TEAM_normal"
+    ],
+    "scenarios": {
+      "candidate_actors_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 8472,
+          "sha256": "b6120765763742345c525b659d95d4ec9126ca1233643340efda7ffab716ac6f"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "FORMAL_BOT_CURRENT_HUMAN_AND_AI_TARGETS"
+        ],
+        "expected_check_names": [
+          "nearer_allied_human_is_skipped",
+          "living_current_enemy_human_receives_one_real_hit",
+          "shared_melee_cooldown_blocks_repeat",
+          "collidable_wall_blocks_live_enemy_human",
+          "eleven_stud_boundary_rejects_human",
+          "inside_eleven_studs_accepts_human",
+          "allied_bot_and_human_not_damaged",
+          "living_enemy_bot_receives_one_real_hit",
+          "collidable_wall_blocks_enemy_bot",
+          "dead_enemy_avatar_is_not_struck",
+          "actual_rules_conservation_during_target_probes",
+          "all_original_host_tasks_retired",
+          "no_swallowed_runtime_warnings"
+        ]
+      },
+      "candidate_contracts_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 7991,
+          "sha256": "f0f1f0a6ef3e955902b839e5dcfc7d0ca27a70280a1f89a500c9dce73a1edac3"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "field_priority_unchanged_at_front_progress_side_and_rear",
+          "raid_goal_uses_bounded_forward_strip_without_rear_extension",
+          "real_bot_death_respawn_recomputes_goal_and_clears_router",
+          "missing_vault_and_real_castle_fall_cannot_retain_old_target",
+          "last_human_leave_retires_source_loop_and_route"
+        ],
+        "expected_check_names": []
+      },
+      "candidate_eggs_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 10239,
+          "sha256": "5c8dcba94a27b94693c4a037314a5c4cdd34cf0eb8127e6fe21ed54a256bd3b3"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "FORMAL_BOT_EGG_CUSTODY_AND_DEATH"
+        ],
+        "expected_check_names": [
+          "field_pickup_outside_action_radius_rejected",
+          "field_pickup_through_wall_rejected",
+          "field_pickup_above_height_limit_rejected",
+          "one_real_field_token_enters_bot_custody",
+          "field_pickup_preserves_whole_match_stock",
+          "distant_own_deposit_rejected",
+          "own_deposit_through_wall_rejected",
+          "real_return_priority_deposits_exact_one",
+          "distant_enemy_vault_rejected",
+          "missing_live_vault_rejected",
+          "enemy_vault_through_wall_rejected",
+          "real_vault_transfer_moves_exact_one_egg",
+          "theft_preserves_whole_match_stock",
+          "death_drops_one_actual_carried_token",
+          "death_drop_has_real_world_part",
+          "source_rebirth_replaces_dead_model",
+          "source_rebirth_clears_old_router",
+          "death_does_not_duplicate_or_retain_carried_egg",
+          "all_original_host_tasks_retired",
+          "no_swallowed_runtime_warnings"
+        ]
+      },
+      "candidate_parallel_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 7146,
+          "sha256": "e53c8bfd060bd80dd4d9a086e90e9f6165413db03a7f2b2578416dd985e3e35e"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "FORMAL_BOT_CONCURRENT_MODE_AND_RETIREMENT"
+        ],
+        "expected_check_names": [
+          "TEAM_bot_rejects_live_BR_human_at_melee_range",
+          "BR_bot_rejects_live_TEAM_human_at_melee_range",
+          "BR_bot_accepts_its_current_enemy_human",
+          "last_TEAM_human_departure_retires_TEAM_only",
+          "retiring_TEAM_clears_only_TEAM_router_keys",
+          "BR_source_loop_continues_after_TEAM_retirement",
+          "retired_TEAM_rejects_late_takeover",
+          "both_original_rule_ledgers_conserved",
+          "all_original_host_tasks_retired",
+          "no_swallowed_runtime_warnings"
+        ]
+      },
+      "candidate_route58_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 7594,
+          "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "58",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "TEAM_normal"
+        ],
+        "expected_check_names": []
+      },
+      "candidate_route62_BATTLE_ROYALE_normal": {
+        "case_assembly": {
+          "bytes": 7594,
+          "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "BATTLE_ROYALE",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "BATTLE_ROYALE_normal"
+        ],
+        "expected_check_names": []
+      },
+      "candidate_route62_BATTLE_ROYALE_slow": {
+        "case_assembly": {
+          "bytes": 7594,
+          "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "BATTLE_ROYALE",
+          "@@BOT_TEST_SLOW@@": "true"
+        },
+        "expected_case_names": [
+          "BATTLE_ROYALE_slow"
+        ],
+        "expected_check_names": []
+      },
+      "candidate_route62_TEAM_normal": {
+        "case_assembly": {
+          "bytes": 7594,
+          "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "false"
+        },
+        "expected_case_names": [
+          "TEAM_normal"
+        ],
+        "expected_check_names": []
+      },
+      "candidate_route62_TEAM_slow": {
+        "case_assembly": {
+          "bytes": 7594,
+          "sha256": "df596985e31bf1ed7a001fcaa0abd0f790ec4d491381e3b523014c47f9ebdbc0"
+        },
+        "configuration_substitutions": {
+          "@@BOT_APPROACH_OFFSET@@": "62",
+          "@@BOT_TEST_MODE@@": "TEAM",
+          "@@BOT_TEST_SLOW@@": "true"
+        },
+        "expected_case_names": [
+          "TEAM_slow"
+        ],
+        "expected_check_names": []
+      }
+    },
+    "schema": "UNION22_BOT_VAULT_SUPPLEMENT_LOCK_V1",
+    "selected_sources": {
+      "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau": {
+        "bytes": 6729,
+        "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+      },
+      "ServerScriptService/EGGRUMBLE_BossSessionFence.luau": {
+        "bytes": 776,
+        "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+      },
+      "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+        "bytes": 19625,
+        "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+      },
+      "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
+        "bytes": 7614,
+        "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau": {
+        "bytes": 16609,
+        "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau": {
+        "bytes": 5861,
+        "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+      },
+      "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": {
+        "bytes": 9786,
+        "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+      },
+      "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau": {
+        "bytes": 3174,
+        "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+      },
+      "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
+        "bytes": 3612,
+        "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau": {
+        "bytes": 7498,
+        "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulRuntime.luau": {
+        "bytes": 11264,
+        "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+      },
+      "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau": {
+        "bytes": 12330,
+        "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+      },
+      "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+        "bytes": 94590,
+        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+      },
+      "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+        "bytes": 7410,
+        "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+      },
+      "ServerScriptService/EGGRUMBLE_RoundReplay.luau": {
+        "bytes": 7083,
+        "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+      },
+      "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
+        "bytes": 8030,
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      }
+    },
+    "source_only": true
+  },
+  "case_amendment": {
+    "added_case": {
+      "bytes": 15973,
+      "path": "combined_cases_clear_los.luau",
+      "sha256": "dbe90332faf3f9e71838f043d2e484ada46896ad35eaaf0586b8e6e9f9a6b209"
+    },
+    "diagnostic_manifest": {
+      "bytes": 11134,
+      "sha256": "8c854ee6513c58f81fe5108c9948e99e12ac8b4ed381ed98f5eefd71a6b03d37"
+    },
+    "failure_replay_receipt": {
+      "bytes": 8012,
+      "sha256": "411629f5425f47e1b6baaed43c5b21648bb68e4d225ebb11dff6f88d3f243c36"
+    },
+    "grant_registry_commit": "f94d137997b68a8e908dd6630c0ca47eab84bad1",
+    "grant_scope_version": 2,
+    "independent_new_case_execution_review": {
+      "bytes": 10632,
+      "result": "PASS_BOUNDED_CLEAR_LOS_QA",
+      "reviewer": "/root/governance_300",
+      "scope": "Fresh four-run prefix/replay/original-negative/all-blocked execution with immutable inputs; not candidate HEAD, CI, RC or product approval.",
+      "sha256": "80670e61f4102a51e79fe9f98c4513f7342011d37b7472222cedd4043df5a38c"
+    },
+    "old_case_preserved_not_claimed_as_unchanged_pass": true,
+    "original_case": {
+      "bytes": 15083,
+      "path": "fixtures/combined_cases.luau",
+      "sha256": "e819701847a32d4aa73215ecde37d3dbfd5ced03c7c80940143270a595944604"
+    },
+    "original_ten_assertions_and_names_preserved": true,
+    "proposal_patch": {
+      "bytes": 1588,
+      "sha256": "568ae81c70a87f871208a2cff5010a5ad5e31395b2cde6bdb37776228ae985d5"
+    },
+    "scope": "Only the controlled player approach position; actual collidable-wall rejection unchanged; no seed selection or retry"
+  },
+  "case_files": {
+    "beast_target_selection": "beast_cases.luau",
+    "combined_clear_los": "combined_cases_clear_los.luau",
+    "objective_full_clear_los": "objective_full_cases_clear_los.luau"
+  },
+  "fixture_order": [
+    "native_prefix.luau",
+    "fixture_additions.luau",
+    "speed_fixture_additions.luau",
+    "combined_fixture_additions.luau"
+  ],
+  "fixtures": {
+    "INPUT_MANIFEST.json": {
+      "bytes": 10445,
+      "sha256": "70e398daf4f05284ab735a8a6f8850427ac1a44ce299b611bf20a19bb4b5801f"
+    },
+    "combined_cases.luau": {
+      "bytes": 15083,
+      "sha256": "e819701847a32d4aa73215ecde37d3dbfd5ced03c7c80940143270a595944604"
+    },
+    "combined_fixture_additions.luau": {
+      "bytes": 8134,
+      "sha256": "03b6f27bab53a1b2dbb0748b18a11fbe74e6d091de46295c2aa1e8f920da82c3"
+    },
+    "fixture_additions.luau": {
+      "bytes": 9164,
+      "sha256": "35cb13f894170cd07084c5cc34117d8ea5c7d5dcbfd0cc7c8f8dcd2cca081eb4"
+    },
+    "native_prefix.luau": {
+      "bytes": 7111,
+      "sha256": "4b0ca7971a97fc7b304cddcbc8d4a9ee39c3133ce91cb523239406bee614130d"
+    },
+    "speed_fixture_additions.luau": {
+      "bytes": 4012,
+      "sha256": "b61b6e58067ae19f9b527b30847116350279c6853b05dfd670ff9cbd8a7048d1"
+    }
+  },
+  "limitations": [
+    "Native Luau with exact frozen engine fixtures, not Roblox Studio or network replication",
+    "69 source files pinned; the listed 28 full production bodies execute",
+    "Original fixture boundary includes cosmetic and unrelated modules; no ART/FUN/mobile conclusion",
+    "Axis-aligned simulated queries; no actual Roblox physics validation",
+    "New source-build toolchain contract; the historical binary-pinned adapter and receipt remain unchanged",
+    "combined_clear_los changes the controlled approach input; the original combined case is retained, including its historical failure evidence",
+    "objective_full_clear_los changes only the bounded melee approach setup; original objective_full case and failures are preserved and not claimed as an unchanged PASS; original official failure CASE is unknown",
+    "Bot vault supplement reuses nine fixed scenarios with16 full bodies and the same fresh F46 binary; with original dual28 the distinct server body union is30. Selected HUD Policy executes separately; HUD runtime and other declared stubs remain outside this execution claim."
+  ],
+  "modules_in_load_order": [
+    "BasicMobilityPolicy",
+    "CombatBalance",
+    "AttackGeometry",
+    "StatusTickFence",
+    "CastleMatchRules",
+    "CastleSiegeGuardianPolicy",
+    "CastleSiegeBridge",
+    "InteractionGuard",
+    "RoundReplay",
+    "ScoreBalance",
+    "MatchResultService",
+    "BossSessionFence",
+    "DualModeNeutralBudget",
+    "InvulnerabilityPolicy",
+    "InvulCounterNeutral",
+    "InvulRuntime",
+    "NeutralFinisherPolicy",
+    "MusouFeverPolicy",
+    "CurseConversionPolicy",
+    "NeutralMeleePolicy",
+    "NeutralSpawnPacing",
+    "NeutralEncounterFairness",
+    "FieldItemPickups",
+    "RaidItemIntake",
+    "CastleGuardianRuntime",
+    "SwarmCombat",
+    "SevenRoleCombat"
+  ],
+  "objective_case_amendment": {
+    "added_case": {
+      "bytes": 8662,
+      "path": "objective_full_cases_clear_los.luau",
+      "sha256": "82febdf03b28fdf1094cbce7fced4e7c9cb5b683beb6531ac8971117536cafb0"
+    },
+    "grant_registry_commit": "edfdbf6c9ea9db754f3fa1f63ead7c050ff9a6f3",
+    "grant_scope_version": 3,
+    "historical_failed_seeds": [
+      448,
+      596,
+      599,
+      723,
+      830
+    ],
+    "independent_new_case_execution_review": {
+      "bytes": 10656,
+      "result": "PASS_BOUNDED_INPUT_PROPOSAL_AND_TWO_INDEPENDENT_RUNS",
+      "reviewer": "/root/governance_300",
+      "scope": "Separate case and exact preserved inputs under Native fixture; not candidate HEAD, CI, RC or product approval.",
+      "sha256": "07e62d9a252a880e59e12c6d2045b0cbf002ccc9a56352186981ec083124d0d7"
+    },
+    "inverse_proof": {
+      "bytes": 3147,
+      "sha256": "85736859446d513cad3582b1e68fdba77d1d8d88c752134c6e22451b4f985fbd"
+    },
+    "official_original_failure_case": "UNKNOWN_NOT_EMITTED",
+    "old_case_preserved_not_claimed_as_unchanged_pass": true,
+    "original_case": {
+      "bytes": 7882,
+      "path": "objective_full_cases.luau",
+      "sha256": "27d69b1cdf78c0936ab821d2ed0b945364839e62470a19d16fa6be084f8f9b1a"
+    },
+    "original_seven_assertions_and_names_preserved": true,
+    "proposal_manifest": {
+      "bytes": 1892,
+      "sha256": "b15fa050886f7ff28827eba1805d8b88528ab6d4ec53e48d328edccc8dd0301d"
+    },
+    "proposal_patch": {
+      "bytes": 1819,
+      "sha256": "dc500d2b52c20b976ffbe31785b7b69ada9ca80d11cdd6f5be2a7a61b849a62b"
+    },
+    "proposal_results": {
+      "bytes": 57829,
+      "sha256": "f5f3182bf6b0b4eefb4d40be1f4f8cb357393f52008e020a3453fe84faec2125"
+    },
+    "proposal_verification": {
+      "bytes": 22931,
+      "sha256": "10937d9fa99f47a52938918c1eb2b5dfbcb12bcc5d499e70fe471c719dd3e521"
+    },
+    "scope": "Only the controlled player melee approach setup, first clear of fixed +X2/-X2/+Z2/-Z2 under actual Swarm ray predicate; fail when all blocked; no retry or seed selection",
+    "setup_queries_excluded_from_actual_swarm_evidence": true
+  },
+  "original_lock": {
+    "bytes": 29615,
+    "sha256": "ec57f4d3a8d90a68da06ecfc2449eafa95cc630cbf27b7670df9e979ceae322a"
+  },
+  "original_runner": {
+    "bytes": 6728,
+    "sha256": "5432a82b86b1faf2de65ea63026ddd54c46d292511b15f660fa8b577b9d31a9c"
+  },
+  "schema": "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3",
+  "selected_hud_layout": {
+    "condition_count": 14,
+    "expected_generator_stdout": "GQ8_REAL63_SELECTED_SOURCE_MODAL_LAYOUT_PROOFS_PASS\n",
+    "expected_native_stdout": "GQ8_REAL63_UI_SQUARE_COLLISIONS_14_CASES_PASS\n",
+    "flat_sources": {
+      "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": "EGGRUMBLE_HudPresentationPolicy.luau",
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": "EGGRUMBLE_HudIntelRuntime.client.luau"
+    },
+    "generator": {
+      "bytes": 3097,
+      "path": "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py",
+      "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"
+    },
+    "generator_python_optimization": 0,
+    "hands": [
+      "RIGHT",
+      "LEFT"
+    ],
+    "hud_runtime_executed": false,
+    "policy_full_body_executed": true,
+    "schema": "GQ828_SELECTED_HUD_LAYOUT_GATE_V1",
+    "viewport_shapes": [
+      [
+        320,
+        260
+      ],
+      [
+        393,
+        851
+      ],
+      [
+        375,
+        667
+      ],
+      [
+        600,
+        300
+      ],
+      [
+        851,
+        393
+      ],
+      [
+        1280,
+        720
+      ],
+      [
+        1024,
+        768
+      ]
+    ]
+  },
+  "separate_from_historical_9c_binary_contract": true,
+  "sources": {
+    "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
+      "bytes": 7596,
+      "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau": {
+      "bytes": 4506,
+      "sha256": "c9418ebec21b6ca1550a2f3aa1970631127087d1cc0fbd4e866d71b7644dc792"
+    },
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
+      "bytes": 6116,
+      "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+    },
+    "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau": {
+      "bytes": 5716,
+      "sha256": "b3a22982365ebf5e10e81a412f09162700e089780fd236dd2863843ea95ca55f"
+    },
+    "ServerScriptService/EGGRUMBLE_AttackGeometry.luau": {
+      "bytes": 1639,
+      "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+    },
+    "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau": {
+      "bytes": 6729,
+      "sha256": "3ad3fdd5f9d1f3695152828171c91c343f5f3a7049b5bbfb8e819bdf41b22764"
+    },
+    "ServerScriptService/EGGRUMBLE_BossSessionFence.luau": {
+      "bytes": 776,
+      "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+    },
+    "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+      "bytes": 19625,
+      "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+    },
+    "ServerScriptService/EGGRUMBLE_BotPathRouter.luau": {
+      "bytes": 7614,
+      "sha256": "92d44fd4635878fdfbbf1d8f3db691537ae348472dd5770f82421f78b00d5f52"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+      "bytes": 14201,
+      "sha256": "a6a4433966ba52212d42e12dc69e8bca7a63424fe31c25ade89724928d417ef2"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau": {
+      "bytes": 16609,
+      "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau": {
+      "bytes": 5861,
+      "sha256": "1c0cf96c60986e8cc5be7646a7d71fdde2f40316865e1849f8ade0d7f7c95951"
+    },
+    "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau": {
+      "bytes": 9786,
+      "sha256": "7b3325464b519bb3aa4a35b02334b3cc4ca98cd07c2008bb9ecc76fefe07df27"
+    },
+    "ServerScriptService/EGGRUMBLE_CombatBalance.luau": {
+      "bytes": 4123,
+      "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+    },
+    "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau": {
+      "bytes": 5471,
+      "sha256": "4e9a0035744d750feccf0c51ebc8afe52272436fb31a532cab149a34c31a1954"
+    },
+    "ServerScriptService/EGGRUMBLE_DivineMantle.luau": {
+      "bytes": 4302,
+      "sha256": "e6019aea60ac7ba214b44468302e6945093e3f73111857042982cf58451a2ef1"
+    },
+    "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau": {
+      "bytes": 3174,
+      "sha256": "580eb4be5fb5f9aedaa45499279eedd3b2b0a763c493aea888d3dad3ce51d3a1"
+    },
+    "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau": {
+      "bytes": 22046,
+      "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+    },
+    "ServerScriptService/EGGRUMBLE_FieldItemPickups.luau": {
+      "bytes": 15602,
+      "sha256": "1a7b224d85d7e8eb817f9a0c763344cccfd467b819ba32af5fb82eef66b08868"
+    },
+    "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+      "bytes": 13624,
+      "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+    },
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": {
+      "bytes": 20363,
+      "sha256": "1ef5bbfc3d73d82b74ad37eb4b34f64f83790ca352cf5825ebb6001ea6f20424"
+    },
+    "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+      "bytes": 3704,
+      "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+    },
+    "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
+      "bytes": 3612,
+      "sha256": "772af3180f831045dde70d66c100e239f50e6d646780c698fdb4d381bbfe2e98"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau": {
+      "bytes": 7498,
+      "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulRuntime.luau": {
+      "bytes": 11264,
+      "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+    },
+    "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau": {
+      "bytes": 12330,
+      "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+    },
+    "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
+      "bytes": 37578,
+      "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+      "bytes": 10202,
+      "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyExplorationBridge.server.luau": {
+      "bytes": 6534,
+      "sha256": "08737dda08863dd83b13ed54753e83ffaf0aaa1cfa0d99d96b6eca97f58fc72d"
+    },
+    "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+      "bytes": 31784,
+      "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+    },
+    "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+      "bytes": 94590,
+      "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+    },
+    "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau": {
+      "bytes": 15584,
+      "sha256": "d4edc2c1b0c9f33c2c99c896e3983091bc98e61b7eaa1c48bd9625a96813828d"
+    },
+    "ServerScriptService/EGGRUMBLE_MapVisibilityPolicy.luau": {
+      "bytes": 6609,
+      "sha256": "5de4c351d17910c67cf67e8ed5add9625f29cbb95d6e3b504c99aa5f54b3672e"
+    },
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+      "bytes": 7410,
+      "sha256": "ae19313a46e3df334549f04ce4531f57f89354f4436133f97288d38e12da56d9"
+    },
+    "ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau": {
+      "bytes": 8984,
+      "sha256": "2e83c376f9082bbab88c687888e23f0fe489828c9eb92684fa9752065a0312fb"
+    },
+    "ServerScriptService/EGGRUMBLE_NaturalRegen.luau": {
+      "bytes": 4467,
+      "sha256": "4bdb8fa5dfd3496c263f2ecb51e83e656190ef2071c7ba723f43b1c85396c519"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau": {
+      "bytes": 2069,
+      "sha256": "cf64237fd3a03c44c175d5cf859f06539cd45f8f96e75faf8efb11777c576842"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau": {
+      "bytes": 4325,
+      "sha256": "55afec1c766be2fbcd5fff82c1c5124fce34596c6c0b7e699276a4cb85243feb"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau": {
+      "bytes": 1178,
+      "sha256": "c389fd3b15df106bbf0aa23f07573433cc0031dd8a13197294a4ce373fbc491e"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau": {
+      "bytes": 2630,
+      "sha256": "55db684fbf0ba0772b2dca641670d0cca27b23aa36324870fa32ff21e8ffc3ab"
+    },
+    "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+      "bytes": 7075,
+      "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+    },
+    "ServerScriptService/EGGRUMBLE_PassiveRegenPolicy.luau": {
+      "bytes": 2686,
+      "sha256": "f287606c151312dee7c5b3076619575cd67c87ee749cd188db491da684dd2a63"
+    },
+    "ServerScriptService/EGGRUMBLE_RaidItemIntake.luau": {
+      "bytes": 3116,
+      "sha256": "6ad8e2b9d83e41fbcb6744bf2a26b67c6314a9844d4751fc402f0b32414d7bf0"
+    },
+    "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+      "bytes": 35282,
+      "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+    },
+    "ServerScriptService/EGGRUMBLE_RoundReplay.luau": {
+      "bytes": 7083,
+      "sha256": "98da28dd0b9cc85a9dd6246f9800c74b307ba6609271232bf33e1dc1f1e853a4"
+    },
+    "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
+      "bytes": 8030,
+      "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+    },
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
+      "bytes": 73889,
+      "sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a"
+    },
+    "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+      "bytes": 10369,
+      "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+    },
+    "ServerScriptService/EGGRUMBLE_StatusTickFence.luau": {
+      "bytes": 779,
+      "sha256": "32ee5dae5262777812042fab06b0ad926d30c67d9c12749196b7ecb8b232c36b"
+    },
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+      "bytes": 38973,
+      "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+    },
+    "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
+      "bytes": 5814,
+      "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+    },
+    "ServerScriptService/GQ802_StageManifestPolicy.luau": {
+      "bytes": 8246,
+      "sha256": "039d3b4d14dc39f765ce0d8916efe8668a40b7e494f37dc6ad7fed372893accf"
+    },
+    "ServerScriptService/GQ802_StageTileBlueprintPolicy.luau": {
+      "bytes": 4479,
+      "sha256": "8a4e1ec46537130542143dc2ae5b95673550a29fa0562ac356fe43d160e8261b"
+    },
+    "ServerScriptService/GQ802_StageTileVisualRenderer.luau": {
+      "bytes": 4214,
+      "sha256": "e5b28bc8c418b93e1d5fdea2d047962aebcb6ea11dfa1dc6e96064b6a77e173a"
+    },
+    "ServerScriptService/GQ805_LobbyGuildShop.server.luau": {
+      "bytes": 5192,
+      "sha256": "139fb22fd8051635dc2f5a892777983c37dbe16cf741eb82cd213a829993ba6d"
+    },
+    "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
+      "bytes": 12930,
+      "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+    },
+    "ServerScriptService/GQ8_TradeEscrowReducer.luau": {
+      "bytes": 11476,
+      "sha256": "d6ba09ad28c313910004881b114f44ab5ee5bcf455df19f8863528bacd12577f"
+    },
+    "ServerScriptService/GQ8_TradeJournalContract.luau": {
+      "bytes": 5096,
+      "sha256": "f32bc7ad70f0f68170293b09dfbda151b0cab2ad215f61ff98b2bbd39cbc99ba"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
+      "bytes": 7937,
+      "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau": {
+      "bytes": 26226,
+      "sha256": "d378d6a356b9462c99deddc19b4393d79bf113225047a057658d1782e1e8a32e"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+      "bytes": 25323,
+      "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau": {
+      "bytes": 6040,
+      "sha256": "ba8aa87aac195a47d5ec4dac73c689284c4d9b75ade43de44253bc2da26c5249"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraClient.luau": {
+      "bytes": 6205,
+      "sha256": "b2c279371a8fd986b929883290aae58ed9acdafb7cd48f878eae3785e4acccab"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau": {
+      "bytes": 1881,
+      "sha256": "13495f0c816f88a78f62e8c40ec5a79c7140c2057b33037695d6073e527768c9"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
+      "bytes": 6764,
+      "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+    },
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau": {
+      "bytes": 6897,
+      "sha256": "8a7473f348bfe834fc8c6f5018822608903845c89796ce4976eea04fe9a95e6f"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
+      "bytes": 2170,
+      "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau": {
+      "bytes": 5149,
+      "sha256": "459aad9f06a18c0d517d88987afb5812f890a108b6f17d14775c235ceaddde61"
+    },
+    "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture.client.luau": {
+      "bytes": 6425,
+      "sha256": "51f28c53a5a930225e5eba1668b48f0734b762d50cc74ae8528da3867e75c285"
+    }
+  },
+  "suites": {
+    "beast_target_selection": {
+      "case": {
+        "bytes": 12862,
+        "sha256": "97f0a7efb7dad24499f0161e0d3dd71190990abd2918ae15fd5b9300e7e2badb"
+      },
+      "expected_case_names": [
+        "REAL_TEAM_CHARM_CREATED",
+        "REAL_OPPONENT_CHARM_CREATED",
+        "CHARMED_ALLY_DOES_NOT_STARVE_HOSTILE_TARGET",
+        "INITIAL_BLAST_DID_NOT_CONFOUND_BACKWARD_TARGET",
+        "OPPONENT_CHARM_DOES_NOT_STARVE_HOSTILE_TARGET",
+        "STEALTH_ENEMY_DOES_NOT_REVEAL_OR_STARVE_VISIBLE_TARGET",
+        "STEALTH_CARRIER_REMAINS_TARGET",
+        "ORDINARY_TEAMMATE_REMAINS_EXCLUDED",
+        "REAL_CHARM_RELEASE_RESTORES_NEUTRAL_TARGET",
+        "STALE_HUMAN_MEMBER_REMAINS_EXCLUDED",
+        "DEAD_CASTER_RETIRES_COMPANION",
+        "NO_GAME_WARNINGS"
+      ],
+      "fixture": {
+        "bytes": 1757,
+        "sha256": "cb5aa5d810aba1ebfc7bddf9f9af272b06503f5b6197a48798f5b890968b891e"
+      },
+      "input_variant": "GQ618_TARGET_ELIGIBILITY_CASES"
+    },
+    "combined_clear_los": {
+      "case": {
+        "bytes": 15973,
+        "sha256": "dbe90332faf3f9e71838f043d2e484ada46896ad35eaaf0586b8e6e9f9a6b209"
+      },
+      "expected_case_names": [
+        "SHARED_MODULES",
+        "FIRST_READY",
+        "FIRST_GUARDIAN_INCOMING",
+        "FIRST_SWARM_KO",
+        "FINISH_AND_CLOSE",
+        "NEXT_READY",
+        "OLD_GENERATION_RETIRED",
+        "SECOND_GUARDIAN_INCOMING",
+        "SECOND_SWARM_KO",
+        "COMBINED_HOST_RUNTIME"
+      ],
+      "input_variant": "BOUNDED_CLEAR_LOS_APPROACH_INPUT"
+    },
+    "objective_full_clear_los": {
+      "case": {
+        "bytes": 8662,
+        "sha256": "82febdf03b28fdf1094cbce7fced4e7c9cb5b683beb6531ac8971117536cafb0"
+      },
+      "expected_case_names": [
+        "WHOLE_HOST_READY",
+        "REAL_TOOL_REAL_SWARM_AWAKEN",
+        "AWAKENED_SIEGE_DENIED",
+        "AWAKENED_VAULT_DENIED",
+        "AWAKENED_FIELD_DENIED",
+        "EXPIRY_PICKUP_DEPOSIT_RESTORED",
+        "WHOLE_HOST_OBJECTIVE_CROSS"
+      ],
+      "input_variant": "BOUNDED_CLEAR_LOS_MELEE_APPROACH_INPUT"
+    }
+  },
+  "toolchain": {
+    "recipe": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "LUAU_BUILD_CLI": "ON",
+      "LUAU_BUILD_TESTS": "OFF",
+      "binary_relative_path": "luau",
+      "build_parallel": 2,
+      "dedicated_directory_must_be_new": true,
+      "generator": "Ninja",
+      "target": "Luau.Repl.CLI"
+    },
+    "source_commit": "f46d879e28302a430029304f7f6a162aed66f103",
+    "source_tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746",
+    "tracked_file_count": 2336
+  }
+}

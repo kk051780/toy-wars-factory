@@ -1,0 +1,57 @@
+name: P0D GQ732 original CastleRules duplicate decoration native QA
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq732_duplicate_house/**'
+      - '.github/workflows/p0d-gq732-duplicate-decor.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  true-original-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9, path: _original482, persist-credentials: false}
+      - uses: actions/checkout@v4
+        with: {repository: luau-lang/luau, ref: f46d879e28302a430029304f7f6a162aed66f103, path: _luau, persist-credentials: false}
+      - name: Reuse exact original CastleRules and prove inverse
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _original482 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          python3 -B -m unittest discover -s quality_gameplay/gq732_duplicate_house -p 'test_*.py' -v
+          ORIG=_original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau
+          test "$(git hash-object "$ORIG")" = 27da5ca1e9e6d9a7afe0674030e387f094ee7492
+          python3 -B quality_gameplay/gq732_duplicate_house/select_duplicate_house.py \
+            --original "$ORIG" --on artifacts/gq732/Rules_ON.luau \
+            --off artifacts/gq732/Rules_OFF.luau \
+            --native artifacts/gq732/Rules_NATIVE.luau \
+            --mutant artifacts/gq732/Rules_ORIGINAL_MUTANT.luau
+          cmp -s "$ORIG" artifacts/gq732/Rules_OFF.luau
+      - name: Real author native 48 slots and old buggy acceptance mutant RED
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _luau -B /tmp/gq732 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq732 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for file in artifacts/gq732/Rules_ON.luau artifacts/gq732/Rules_OFF.luau artifacts/gq732/Rules_NATIVE.luau artifacts/gq732/Rules_ORIGINAL_MUTANT.luau; do
+            /tmp/gq732/luau-compile --text "$file" >/dev/null
+          done
+          /tmp/gq732/luau artifacts/gq732/Rules_NATIVE.luau | tee artifacts/gq732/native.log
+          grep -qx GQ732_DUPLICATE_HOUSE_DECOR_REAL_RULES_NATIVE_PASS artifacts/gq732/native.log
+          if /tmp/gq732/luau artifacts/gq732/Rules_ORIGINAL_MUTANT.luau >artifacts/gq732/mutant.log 2>&1; then
+            echo "RED: duplicate original module unexpectedly passed"; exit 1
+          fi
+          grep -q 'GQ732_DUPLICATE_REJECT_MISSING_' artifacts/gq732/mutant.log
+          echo GQ732_REAL_SOURCE_AND_MUTANT_RED_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ732-ORIGINAL-CASTLE-DECOR-NATIVE-ONLY
+          path: artifacts/gq732/
+          retention-days: 3

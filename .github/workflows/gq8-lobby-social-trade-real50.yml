@@ -1,0 +1,139 @@
+name: GQ8 Social/Trade Real53 to private Real55 native Rojo OFF53
+on:
+  push:
+    branches: [quality/gq8-lobby-social-real49-20261119]
+    paths:
+      - 'quality_gameplay/gq8_social_lobby_20261119/**'
+      - '.github/workflows/gq8-lobby-social-trade-real50.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_social_lobby_20261119/**'
+      - '.github/workflows/gq8-lobby-social-trade-real50.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  nonoverlap-real55:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Immutable parent Real53 plus true official-branch fence
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_CANONICAL_RC_MOVED_REBASE_REQUIRED; exit 1; }
+          EVIDENCE="$(gh run view 44390823718 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "96ac3b4caa2f649f98c9e093c864c39555f3616a success" || { echo RED_PARENT53_UNVERIFIED; exit 1; }
+          mkdir -p artifacts/parent53
+          gh run download 44390823718 --repo "$GITHUB_REPOSITORY" --name GQ8-REAL53-MUSOU-INVUL-CURSE-SHOP-PRIVATE-NOT-OFFICIAL --dir artifacts/parent53
+          test -s artifacts/parent53/EGGRUMBLE_REAL53.project.json
+          test -s artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json
+          test -s artifacts/parent53/EGGRUMBLE_REAL53.rbxlx
+          echo GQ8_IMMUTABLE_ORIGINAL53_SOURCE_CI_PROVEN
+      - name: Social/trade policy negative gate, preserve 53 and select unique 2 modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=quality_gameplay/gq8_social_lobby_20261119
+          python3 "$R/test_social55.py"
+          python3 "$R/compose_social55.py" \
+            --parent53 artifacts/parent53/EGGRUMBLE_REAL53.project.json \
+            --receipt53 artifacts/parent53/B_REAL53_INTAKE_RECEIPT.json \
+            --out artifacts/social55
+          python3 - <<'PY'
+          import sys,json,hashlib
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          original=Path("artifacts/parent53/EGGRUMBLE_REAL53.project.json")
+          candidate=Path("artifacts/social55/EGGRUMBLE_REAL55.project.json")
+          _,before=flatten(original);_,after=flatten(candidate)
+          assert len(before)==53 and len(after)==55
+          assert len(set(after)-set(before))==2
+          for key,file in before.items():
+            assert after[key].read_bytes()==file.read_bytes(),("parent source altered",key)
+          assert all("GQ8" in "/".join(k) for k in set(after)-set(before))
+          assert json.loads(Path("artifacts/social55/B_REAL55_RECEIPT.json").read_text())["actual_trade_settlement_enabled"] is False
+          print("GQ8_REAL53_PARENT_53_EXACT_BYTE_PRESERVATION_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all 55 actual Roblox Luau source modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8_social_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8_social_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          for name,n in (("artifacts/parent53/EGGRUMBLE_REAL53.project.json",53),("artifacts/social55/EGGRUMBLE_REAL55.project.json",55)):
+            _,source=flatten(Path(name))
+            assert len(source)==n
+            for script in source.values():
+              subprocess.run(['/tmp/gq8_social_luau/luau-compile','--text',str(script)],check=True,stdout=subprocess.DEVNULL)
+            print("GQ8_REAL55_NATIVE_SELECTED_COMPILATION_PASS",n)
+          PY
+          R=quality_gameplay/gq8_social_lobby_20261119
+          /tmp/gq8_social_luau/luau-compile --text "$R/test_trade_policy_native.luau" >/dev/null
+          /tmp/gq8_social_luau/luau "$R/test_trade_policy_native.luau" | tee /tmp/gq8_trade_vm.log
+          grep -q GQ8_TRADE_POLICY_NATIVE_DOUBLE_CONFIRM_OWNERSHIP_PAID_REPLAY_DUPLICATE_PASS /tmp/gq8_trade_vm.log
+      - name: Pinned Rojo7.7.1 Source/Class and byte-exact OFF53 Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8social-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8social-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8social-rojo.zip') as z:
+            a=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(a)==1
+            f=Path('/tmp/gq8social-rojo')
+            f.write_bytes(z.read(a[0]));f.chmod(0o755)
+          PY
+          /tmp/gq8social-rojo build artifacts/social55/EGGRUMBLE_REAL55.project.json -o artifacts/social55/EGGRUMBLE_REAL55.rbxlx
+          /tmp/gq8social-rojo build artifacts/parent53/EGGRUMBLE_REAL53.project.json -o artifacts/social55/OFF53.rbxlx
+          cmp artifacts/social55/OFF53.rbxlx artifacts/parent53/EGGRUMBLE_REAL53.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/social55/EGGRUMBLE_REAL55.project.json \
+            --place artifacts/social55/EGGRUMBLE_REAL55.rbxlx --count 55
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/parent53/EGGRUMBLE_REAL53.project.json \
+            --place artifacts/social55/OFF53.rbxlx --count 53
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_CANONICAL_RC_MOVED_DURING_QA; exit 1; }
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path("artifacts/social55/EGGRUMBLE_REAL55.rbxlx")
+          f=Path("artifacts/social55/B_REAL55_RECEIPT.json")
+          x=json.loads(f.read_text())
+          x.update({"private_head":os.environ["GITHUB_SHA"],
+            "native_rojo_source_class":"PASS","off53_place_bytes_identical":"PASS",
+            "private_place_bytes":p.stat().st_size,
+            "private_place_sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
+          f.write_text(json.dumps(x,ensure_ascii=False,indent=2,sort_keys=True)+"\n")
+          print("GQ8_LOBBY_SOCIAL55_TRUE_BUILD_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-SOCIAL-TRADE-REAL55-PRIVATE-NOT-OFFICIAL
+          path: artifacts/social55/
+          retention-days: 5
+          if-no-files-found: error

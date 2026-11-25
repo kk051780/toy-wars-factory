@@ -1,0 +1,68 @@
+name: P0D GQ8 LSS live Part budget native regression
+on:
+  pull_request:
+    branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-active-part-cap-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  no-lifetime-cap-exhaustion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Static and negative source-contract tests (parent+fix)
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _lss_pinned_luau
+          persist-credentials: false
+      - name: Compile the actual 32nd optional Studio script with pinned Luau
+        run: |
+          set -euo pipefail
+          cmake -S _lss_pinned_luau -B /tmp/lss-livepart-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-livepart-native \
+            --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/lss-livepart-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            >/dev/null
+          echo LSS_ACTUAL_32ND_LUAU_COMPILE_PASS
+      - name: Execute current actual put() 120 recycle cases; old budget mutant must fail
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_live_budget_native.py \
+            --out /tmp/LSS_LIVEPART_ACTUAL.luau --mutant /tmp/LSS_LIVEPART_MUTANT.luau
+          /tmp/lss-livepart-native/luau-compile --text /tmp/LSS_LIVEPART_ACTUAL.luau >/dev/null
+          /tmp/lss-livepart-native/luau-compile --text /tmp/LSS_LIVEPART_MUTANT.luau >/dev/null
+          /tmp/lss-livepart-native/luau /tmp/LSS_LIVEPART_ACTUAL.luau | tee /tmp/lss-livepart-pass.txt
+          grep -q LSS_ACTUAL_LIVE_PART_BUDGET_NATIVE_120_RECYCLES_PASS /tmp/lss-livepart-pass.txt
+          if /tmp/lss-livepart-native/luau /tmp/LSS_LIVEPART_MUTANT.luau; then
+            echo 'RED: old monotonic-budget mutant survived'; exit 1
+          fi
+          echo LSS_MUTANT_NO_RELEASE_EXPECTED_RED_PASS
+      - name: Scope check for 1 optional Script and no original 31 mutations
+        run: |
+          set -euo pipefail
+          test -f handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path("handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau").read_text()
+          assert src.count('local function makeRide(')==1
+          assert src.count('local function put(')==1
+          assert src.count('RunService:IsStudio()')==1
+          assert 'Instance.new("RemoteEvent")' not in src
+          assert 'DataStoreService' not in src
+          assert 'local liveParts=0' in src
+          assert 'local totalParts=0' not in src
+          print("LSS_ONE_NEW_STUDIO_SCRIPT_NO_CANONICAL_AUTHORITY_CHANGE")
+          PY

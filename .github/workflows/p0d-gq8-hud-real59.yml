@@ -1,0 +1,151 @@
+name: GQ828 Real55 to Real59 HUD Fog Native Rojo OFF55
+on:
+  push:
+    branches: ['feature/gq8-hud-intel-fog-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
+      - '.github/workflows/p0d-gq8-hud-real59.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-HUD-INTEL-20261119/**'
+      - '.github/workflows/p0d-gq8-hud-real59.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-real59-hud-fog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify latest formal Real55 and download same-head immutable selected Place
+        run: |
+          set -euo pipefail
+          RC_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$RC_HEAD" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_OFFICIAL_RC_MOVED_REBASE_REAL59; exit 1; }
+          EVIDENCE="$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "a6020867fac80fa3b2ca47478625873fc6f3678e success" || { echo RED_REAL55_PARENT_CI_UNVERIFIED; exit 1; }
+          echo "RC_HEAD=$RC_HEAD" >> "$GITHUB_ENV"
+          mkdir -p artifacts/official55
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
+             --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO \
+             --dir artifacts/official55
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          for filename,key in (("EGGRUMBLE_REAL55.rbxlx","PLACE"),
+                               ("B_REAL55_RECEIPT.json","RECEIPT")):
+              found=list(Path("artifacts/official55").rglob(filename))
+              assert len(found)==1,(filename,len(found))
+              with open(os.environ["GITHUB_ENV"],"a") as f:
+                  f.write(f"{key}={found[0]}\n")
+          PY
+      - name: Extract actual original55 and select exactly four HUD/Fog scripts, OFF55 preservation
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/compose_real59.py \
+             --place "$PLACE" --receipt "$RECEIPT" --out artifacts/gq828real59
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("artifacts/gq828real59/GQ828_REAL59_RECEIPT.json").read_text())
+          assert m["baseline55_exact_sources_unchanged"] is True
+          assert len(m["off_sources"])==55 and len(m["on_sources"])==59
+          routes={x["route"] for x in m["on_sources"]}-{x["route"] for x in m["off_sources"]}
+          assert routes==set(m["new_routes"]),("RED_UNREVIEWED_SCRIPT",routes)
+          root=Path("handoffs/EGGRUMBLE-HUD-INTEL-20261119")
+          server=(root/"EGGRUMBLE_MapIntelBridge.server.luau").read_text()
+          client=(root/"EGGRUMBLE_HudIntelRuntime.client.luau").read_text()
+          assert 'remote:FireClient(p,' in server
+          assert 'local visible=Intel.project(' in server
+          assert 'closeColor(tint,Color3.fromRGB' in server
+          assert 'EGGRUMBLE_Neutral' in server
+          assert 'kind="EGG"' in server
+          assert 'tool:Activate()' not in server
+          assert 't:Activate()' in client
+          for bad in ('OnServerEvent:Connect(', 'remote:FireServer(', 'TakeDamage(', 'UpdateAsync(', 'ProcessReceipt'):
+              assert bad not in server+client,("RED_NEW_GAME_AUTHORITY",bad)
+          print("GQ828_REAL59_AUTHORITATIVE_TOOL_REUSE_AND_PRIVACY_BRIDGE_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile every actual 59 source; role Fog and malicious source mutation tests
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq828-real59 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq828-real59 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CC=/tmp/gq828-real59/luau-compile
+          for dir in artifacts/gq828real59/on59/sources artifacts/gq828real59/off55/sources; do
+             for src in "$dir"/*.luau; do "$CC" --text "$src" >/dev/null; done
+          done
+          python3 -B handoffs/EGGRUMBLE-HUD-INTEL-20261119/make_native_hud_intel.py --out /tmp/gq828-real59-probes
+          /tmp/gq828-real59/luau /tmp/gq828-real59-probes/good.luau | tee /tmp/gq828-real59-good.log
+          grep -qx GQ8_HUD_INTEL_NATIVE_LAYOUT_STATUS_FOG_7ROLE_PRIVACY_PASS /tmp/gq828-real59-good.log
+          for mutant in auth role fog; do
+            if /tmp/gq828-real59/luau "/tmp/gq828-real59-probes/${mutant}_mutant.luau" >"/tmp/gq828-real59-${mutant}.log" 2>&1; then
+              echo "RED_UNDETECTED_${mutant}_MUTANT"; exit 1
+            fi
+            grep -q RED_ "/tmp/gq828-real59-${mutant}.log"
+          done
+          echo GQ828_REAL59_NATIVE_PRESERVED55_SEVEN_ROLE_FOG_GOOD_MUTATIONS_PASS
+      - name: Pinned Rojo output selected59 and exact OFF55 Source and Class checks
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq828-real59-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq828-real59-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq828-real59-rojo.zip") as z:
+              files=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(files)==1
+              p=Path("/tmp/gq828-real59-rojo")
+              p.write_bytes(z.read(files[0]));p.chmod(0o755)
+          PY
+          /tmp/gq828-real59-rojo build artifacts/gq828real59/on59/GQ828_REAL59_HUD_MAP.project.json -o artifacts/gq828real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+          /tmp/gq828-real59-rojo build artifacts/gq828real59/off55/GQ828_OFF55.project.json -o artifacts/gq828real59/EGGRUMBLE_OFF55_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq828real59/on59/GQ828_REAL59_HUD_MAP.project.json \
+            --place artifacts/gq828real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx --count 59
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq828real59/off55/GQ828_OFF55.project.json \
+            --place artifacts/gq828real59/EGGRUMBLE_OFF55_PRIVATE.rbxlx --count 55
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = "$RC_HEAD" || { echo RED_OFFICIAL_HEAD_CHANGED_DURING_59; exit 1; }
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path("artifacts/gq828real59")
+          receipt=root/"GQ828_REAL59_RECEIPT.json"
+          m=json.loads(receipt.read_text())
+          on=root/"EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx"
+          off=root/"EGGRUMBLE_OFF55_PRIVATE.rbxlx"
+          m.update(actual_native="PASS",actual_rojo="PASS",off55="PASS",
+                   candidate_head=os.environ["GITHUB_SHA"],official_head=os.environ["RC_HEAD"],
+                   selected59_place_sha256=hashlib.sha256(on.read_bytes()).hexdigest(),
+                   selected59_place_bytes=on.stat().st_size,
+                   off55_place_sha256=hashlib.sha256(off.read_bytes()).hexdigest(),
+                   off55_place_bytes=off.stat().st_size)
+          receipt.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n")
+          print("GQ828_REAL59_ACTUAL_NATIVE_ROJO_SOURCE_CLASS_OFF55_PASS",on.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ828-REAL59-HUD-MAP-PRIVATE-NOT-OFFICIAL-RC
+          path: |
+            artifacts/gq828real59/EGGRUMBLE_REAL59_HUD_MAP_PRIVATE.rbxlx
+            artifacts/gq828real59/EGGRUMBLE_OFF55_PRIVATE.rbxlx
+            artifacts/gq828real59/GQ828_REAL59_RECEIPT.json
+            artifacts/gq828real59/on59/GQ828_REAL59_HUD_MAP.project.json
+          retention-days: 4
+          if-no-files-found: error

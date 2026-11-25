@@ -1,0 +1,42 @@
+{
+  "schema": "P0D_PRIVATE_RC81_HIT_ART_SOURCERY_MEDIUM2_FIXED_V1",
+  "jst_date": "2026-11-15",
+  "parent_official_rc_sha": "f52879fa1dfbd4204adc27fdba3f45f242a5a1ac",
+  "parent_official_original_source_count": 81,
+  "input_author_prs": [
+    457,
+    456
+  ],
+  "expected_changed": [
+    "server/Game.server.luau",
+    "client/HUD.client.luau",
+    "server/CastleDetailArt.server.luau",
+    "client/FB015CharacterArt.client.luau",
+    "client/ConfirmedSlashFX.client.luau"
+  ],
+  "other_76_byte_exact": true,
+  "visible_hit_popup_source_duration_s": 0.42,
+  "permanent_guide_first90_and_mob_and_buttons_studio_only": true,
+  "real_horde_reset_attack_tick_preserved": true,
+  "public_default_off": true,
+  "private_owner_explicit_optin": true,
+  "live_engine": "NOT_TESTED",
+  "android_low_end": "NOT_TESTED",
+  "child3min": "NOT_TESTED",
+  "owner_accepted": false,
+  "release": "NO_GO",
+  "source_gate": "AUTHOR_PR_464_SAMEHEAD_SOURCE_QA_PASS_B220_INTAKE_CANDIDATE",
+  "no_official_update": false,
+  "no_main": true,
+  "no_merge": true,
+  "no_roblox_publish": true,
+  "sourcery_medium": [
+    "Medium1: stale 0.42-second earlier timer can hide subsequent true hit; use hitSeq UI Instance attribute per true hit and callback token match",
+    "Medium2: source only asserts increment snippets exist, misses might trigger; use fail closed touched>0 structural prefix and negative mutation test"
+  ],
+  "sourcery_new_review": "INDEPENDENT_SOURCERY_FORMAL_APPROVAL_NOT_RECEIVED",
+  "official_rc_source_only_stage": true,
+  "official_runtime_feature_accepted": false,
+  "source_parent_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43653552404",
+  "candidate_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43654483232"
+}

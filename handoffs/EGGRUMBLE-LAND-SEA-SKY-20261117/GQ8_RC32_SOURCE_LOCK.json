@@ -1,0 +1,66 @@
+{
+  "schema": "GQ8_LSS_CURRENT_RC57_SOURCE_LOCK_V3",
+  "canonical_base": {
+    "repo": "kk051780/toy-wars-factory",
+    "branch": "rc/p0d-s1-kids-rc01",
+    "sha": "30673c9db684f8b084e51b01e739937910cbe5ba",
+    "source_count": 31,
+    "enabled_flags": 61,
+    "original_samehead_v3_run": "RECHECK_NEW_HEAD",
+    "original_samehead_rc78_run": "RECHECK_NEW_HEAD",
+    "original_samehead_balance_run": "RECHECK_NEW_HEAD",
+    "all_conclusion": "PREP_PENDING_NEW_HEAD"
+  },
+  "optional_profile": {
+    "id": "eggrumble_v3_lss32_studio",
+    "added_class": "Script",
+    "added_route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "source_path": "handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau",
+    "source_blob_sha": "c4ca82218d985914ad98dead565f9f79f5374dcb",
+    "original31_script_count": 31,
+    "optional_count": 32,
+    "original_author_prs": [
+      714,
+      737,
+      749,
+      753
+    ]
+  },
+  "authority": {
+    "official_default": "rich51",
+    "canonical_v3_31_profile_untouched": true,
+    "no_game_combat_host_swarm_remote_store_replacement": true,
+    "optional_script_only": true,
+    "studio_only": true,
+    "production_enabled": false
+  },
+  "regression_gate": {
+    "native31_native32_off31": "PENDING_REBASE_6868_SAMEHEAD",
+    "rojo31_rojo32_off31": "PENDING_REBASE_6868_SAMEHEAD",
+    "source_class_exact": "PENDING_REBASE_6868_SAMEHEAD",
+    "original31_byte_exact": "PENDING_REBASE_6868_SAMEHEAD",
+    "false_positive_or_stale_head": "RED",
+    "orphan_craft_native": "RECHECK_CURRENT_COMBINED_SHA",
+    "spatial_trap_slots_native_and_mutant": "PENDING_CANDIDATE_CI",
+    "prompt_sight_negative": "PENDING_MERGED_CANDIDATE_SAMEHEAD_SOURCE_AND_MUTANTS",
+    "full_footprint_native": "PENDING_THIS_SHA",
+    "public_travel_native8_mutant_red": "PENDING_THIS_HEAD"
+  },
+  "eight_domains": {
+    "characters": "7 original professions, optional Builder/Beast ride",
+    "field": "current land/sea/sky, latest authoritative prompt sight, distinct spatial psychic traps, airborne expiry safe return; whole-craft full-span collision and yaw guard",
+    "battle": "existing Combat and KO ownership only",
+    "castle": "original castle/egg untouched",
+    "neutral": "original single Swarm and budget preserved",
+    "items": "original pickups and egg rules preserved",
+    "lobby": "original current Host and two modes unchanged",
+    "balance": "4 craft / 95 live Part budget, live two-owner trap slots, owner reaper, 180s sea+air expiry rescue; original31 exact; four craft budget and other authority unchanged; per-player voluntary public travel 2.5s; emergency rescue unrestricted"
+  },
+  "rollback": "Do not select the LSS32 profile, or remove its lone additive ServerScript; 31 original scripts and S1 rich51 remain byte-exact.",
+  "adoption": "GQ8_LSS_PUBLIC_TRAVEL_PACING_20261118_PENDING_SAME_HEAD_CI",
+  "studio_2client": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "art_fun_owner": "NO_GO",
+  "no_main_publish_pay": true,
+  "caveat": "PR #763 public travel uniquely rebased onto current full-craft sweep and prompt sight; no Studio/Android/FUN test"
+}

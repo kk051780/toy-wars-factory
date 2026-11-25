@@ -1,0 +1,100 @@
+name: P0D RC V3 original GQ568 balance-tail native QA
+on:
+  push:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - '.github/workflows/p0d-rc-v3-balance-tail-gq568.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - '.github/workflows/p0d-rc-v3-balance-tail-gq568.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  balance-outlier-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Reuse original GQ568 author
+        uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: c7d6a4d3bb15e6c16116e1d3af11fe7c11e7da53, path: _gq568_original, persist-credentials: false}
+      - name: Reuse original V3 score source
+        uses: actions/checkout@v4
+        with: {repository: kk051780/toy-wars-factory, ref: 438a406ccfda5563053d783d7561797ccd364361, path: _gq568_score, persist-credentials: false}
+      - name: Pin native Luau
+        uses: actions/checkout@v4
+        with: {repository: luau-lang/luau, ref: f46d879e28302a430029304f7f6a162aed66f103, path: _gq568_luau, persist-credentials: false}
+      - name: Guard current RC and select original-author standalone QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq568_original rev-parse HEAD)" = c7d6a4d3bb15e6c16116e1d3af11fe7c11e7da53
+          test "$(git -C _gq568_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _gq568_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("rc_fastlane/EGGRUMBLE_V3_ACTIVE.json").read_text())
+          assert m["schema"]=="P0D_EGGRUMBLE_V3_CANONICAL_RC_COMPANION_V1"
+          assert m["canonical_branch"]=="rc/p0d-s1-kids-rc01" and m["source_count"]==31 and m["enabled"]
+          assert m["feature_flags"]["MATCH_DEADLINE_DRAW_499"] is True
+          assert m["source_heads"]["score487"]=="438a406ccfda5563053d783d7561797ccd364361"
+          assert m["publication_authorized"] is False
+          print("GQ568_RC_31_SOURCE_AND_DEADLINE_SOURCE_LOCK_PASS")
+          PY
+          ROOT=_gq568_original/quality_gameplay/v3_balance_outlier_20261116
+          ORIGINAL=_gq568_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BalanceMetrics.luau
+          test "$(git hash-object "$ORIGINAL")" = 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
+          export P0D_ORIGINAL_BALANCE="$ORIGINAL"
+          python3 -B -m unittest discover -s "$ROOT" -p test_select.py -v
+          mkdir -p artifacts/gq568_on artifacts/gq568_off
+          python3 "$ROOT/select_balance.py" \
+            --input "$ORIGINAL" \
+            --output artifacts/gq568_on/EGGRUMBLE_BalanceMetrics.luau \
+            --off-output artifacts/gq568_off/EGGRUMBLE_BalanceMetrics.luau
+          cmp -s "$ORIGINAL" artifacts/gq568_off/EGGRUMBLE_BalanceMetrics.luau
+          test "$(git hash-object artifacts/gq568_off/EGGRUMBLE_BalanceMetrics.luau)" = 1cb9316faa41f646bf2c18e15c6ddc46fc93bc78
+          cp "$ROOT/RoundTailNative.spec.luau" artifacts/gq568_on/
+          mkdir -p artifacts/gq568_on/tests
+          cp _gq568_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_BalanceMetrics.spec.luau artifacts/gq568_on/tests/
+          test ! -e artifacts/gq568_on/default.project.json
+      - name: Real Luau native test normal/overlong/boundary/mode-coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq568_luau -B /tmp/gq568_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq568_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq568_native/luau-compile artifacts/gq568_on/EGGRUMBLE_BalanceMetrics.luau >/dev/null
+          /tmp/gq568_native/luau-compile artifacts/gq568_on/RoundTailNative.spec.luau >/dev/null
+          (cd artifacts/gq568_on/tests && /tmp/gq568_native/luau EGGRUMBLE_BalanceMetrics.spec.luau) | tee artifacts/gq568_on/author.log
+          grep -q EGGRUMBLE_BALANCE_NATIVE_SOURCE_PASS artifacts/gq568_on/author.log
+          (cd artifacts/gq568_on && /tmp/gq568_native/luau RoundTailNative.spec.luau) | tee artifacts/gq568_on/tail.log
+          grep -q GQ_V3_BALANCE_OUTLIER_NATIVE_PASS artifacts/gq568_on/tail.log
+          echo GQ568_RC_BALANCE_20MIN_NATIVE_PASS
+      - name: Receipt - QA only, no extra runtime actor
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          obj={"sha":os.environ["GITHUB_SHA"],"author":"GQ568",
+            "qa_only":True,"game_source_count":31,"game_source_modified":0,
+            "original_source_blob":"1cb9316faa41f646bf2c18e15c6ddc46fc93bc78",
+            "native":"PASS","max_round_seconds":1200,"test_overlong_seconds":1500,
+            "studio_android_owner":"NOT_TESTED","publish":False}
+          Path("artifacts/gq568_on/receipt.json").write_text(json.dumps(obj,indent=2)+"\n")
+          print("GQ568_RC_QUALITY_GATE_ONLY_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ568-RC-BALANCE-TAIL-QA-ONLY
+          path: |
+            artifacts/gq568_on/receipt.json
+            artifacts/gq568_on/author.log
+            artifacts/gq568_on/tail.log
+          retention-days: 3

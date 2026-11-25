@@ -1,0 +1,186 @@
+name: P0D EGGRUMBLE V3 Core36 canonical private RC source build
+on:
+  push:
+    branches: [integration/gq8-v3-core36-rc-source-20261118, rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
+      - 'rc_fastlane/ACTIVE.json'
+      - '.github/workflows/p0d-rc-eggrumble-v3-core36.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/EGGRUMBLE_V3_CORE36.json'
+      - 'rc_fastlane/ACTIVE.json'
+      - '.github/workflows/p0d-rc-eggrumble-v3-core36.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  canonical-private-core36:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - name: Structural good and malicious source mutation probes
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s _qa780/quality_gameplay/gq8_crosslane_20261118 -p 'test_*.py'
+      - name: Verify uniquely selected source and pinned official31 immutable baseline
+        id: official
+        run: |
+          set -euo pipefail
+          BASE="261b75d0a7093db5c13db3b95dad9a2911f78689"
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$CURRENT" != "$BASE" ]; then
+            test "$GITHUB_REF" = "refs/heads/rc/p0d-s1-kids-rc01" || { echo RED_RC_MOVED_BEFORE_ADOPTION; exit 1; }
+            test "$CURRENT" = "$GITHUB_SHA" || { echo RED_CONCURRENT_RC_WRITER; exit 1; }
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/compare/$BASE...$GITHUB_SHA" > /tmp/core36diff.json
+          python3 - <<'PY'
+          import json
+          changed={x["filename"] for x in json.load(open("/tmp/core36diff.json"))["files"]}
+          expected={"rc_fastlane/EGGRUMBLE_V3_CORE36.json","rc_fastlane/ACTIVE.json",
+                    ".github/workflows/p0d-rc-eggrumble-v3-core36.yml"}
+          assert changed==expected,("RED_UNREVIEWED_RC_SOURCE_CHANGE",sorted(changed))
+          m=json.load(open("rc_fastlane/EGGRUMBLE_V3_CORE36.json"))
+          a=json.load(open("rc_fastlane/ACTIVE.json"))
+          assert m["baseline_official_rc_commit"]=="261b75d0a7093db5c13db3b95dad9a2911f78689"
+          assert m["source_count"]==36 and m["source_map"]["modified_existing"]==["ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"]
+          assert a["active_profile"]=="rich51" and a["source_profiles"]["eggrumble_v3_core36"]["selected_for_private_v3_studio_build"] is True
+          assert a["source_profiles"]["eggrumble_v3_core36"]["selected_for_roblox_publish"] is False
+          print("GQ8_CANONICAL_CORE36_PROFILE_SOURCE_LOCK_PASS")
+          PY
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 90 \
+            --json databaseId,headSha,status,conclusion > /tmp/official31.json
+          RUN="$(jq -r --arg sha "$BASE" '[.[]|select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official31.json)"
+          test -n "$RUN" || { echo RED_PINNED_OFFICIAL31_CI_MISSING; exit 1; }
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "sha=$BASE" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+      - name: Fetch genuine official 31-source artifact, no synthetic substitution
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Compose from independent authors, with immutable exact31 source
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head "${{ steps.official.outputs.sha }}"
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/combined36/COMBINED36.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile real all 36 sources, preserving original Game Combat Host identities
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-combined -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-combined --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'_qa780')
+          from quality_gameplay.gq8_crosslane_20261118.compose_rehearsal36 import flatten
+          for project,count in (("artifacts/combined36/COMBINED36.project.json",36),
+                                ("artifacts/current31/CURRENT31_REAL_SOURCE.project.json",31)):
+              _,files=flatten(Path(project))
+              assert len(files)==count
+              for file in files.values():
+                  subprocess.run(["/tmp/gq8-combined/luau-compile","--text",str(file)],
+                      check=True,stdout=subprocess.DEVNULL)
+              print("GQ8_CROSSLANE_NATIVE_SOURCE_PASS",count)
+          PY
+      - name: Install pinned Rojo and compare actual Source plus Roblox Script Class
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq8-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq8-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/combined36/COMBINED36.rbxlx
+          /tmp/gq8-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/combined36/OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/combined36/COMBINED36.project.json \
+            --place artifacts/combined36/COMBINED36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --place artifacts/combined36/OFF31.rbxlx --count 31
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "${{ steps.official.outputs.current }}" || { echo RED_RC_MOVED_DURING_BUILD; exit 1; }
+          cp artifacts/combined36/COMBINED36.rbxlx artifacts/combined36/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx
+          python3 - <<'PY'
+          import json,os,pathlib,hashlib
+          p=pathlib.Path("artifacts/combined36/EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx")
+          record={"schema":"P0D_GQ8_CANONICAL_CORE36_PRIVATE_RC_ACTUAL_BUILD_V1",
+                  "source_count":36,"base_rc":"261b75d0a7093db5c13db3b95dad9a2911f78689",
+                  "build_sha":os.getenv("GITHUB_SHA"),"build_ref":os.getenv("GITHUB_REF"),
+                  "selected_in_formal_rc_branch":os.getenv("GITHUB_REF")=="refs/heads/rc/p0d-s1-kids-rc01",
+                  "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"place_bytes":p.stat().st_size,
+                  "actual_native36":True,"actual_rojo_source_class36":True,"rollback_off31":True,
+                  "studio_2client":"NOT_TESTED","android":"NOT_TESTED","owner_fun":"NO_GO",
+                  "main_changed":False,"published":False}
+          pathlib.Path("artifacts/combined36/CORE36_RC_SELECTION_RECEIPT.json").write_text(json.dumps(record,indent=2)+"\n")
+          print("GQ8_CANONICAL_CORE36_PRIVATE_SOURCE_SELECTED_CI_PASS",record["place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO
+          path: |
+            artifacts/combined36/
+            artifacts/current31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error

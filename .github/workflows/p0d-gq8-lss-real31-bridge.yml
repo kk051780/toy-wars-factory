@@ -1,0 +1,187 @@
+name: P0D GQ8 LSS Real31 to32 source class bridge
+on:
+  push:
+    branches:
+      - feature/eggrumble-land-sea-sky-traversal-20261117-01
+      - feature/gq8-true31-32-currenthead-autogate-20261117-01
+      - quality/gq8-lss-rc-intake-20261118-0312
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'quality_gameplay/gq8_real_squad_fan_20261117/**'
+      - 'quality_gameplay/gq8_lss_real31_20261117/**'
+      - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_lss_real31_20261117/**'
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-real31-bridge.yml'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact31-to-real32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Current-source extraction & optional32 regressions
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rehydrate_real31.py'
+          python3 -m unittest discover -v -s quality_gameplay/gq8_lss_real31_20261117 -p 'test_rc_auto_follow.py'
+          python3 -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
+      - name: Verify current RC descends from historically proven original 31-source build
+        id: official
+        run: |
+          set -euo pipefail
+          H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$H" =~ ^[a-f0-9]{40}$ ]]
+          echo "sha=$H" >> "$GITHUB_OUTPUT"
+          # Historical 31-source optional LSS QA only; never pass this as current Real65.
+          BASE31_SHA=f77b4d4393d9e9b19b65566413432a7a9f13962b
+          BASE31_RUN=44232589258
+          FOUND="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${BASE31_RUN}" --jq '.head_sha+" "+.status+" "+.conclusion')"
+          test "$FOUND" = "$BASE31_SHA completed success" || { echo RED_HISTORICAL31_RUN_NOT_PROVEN; exit 1; }
+          ANCESTRY="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE31_SHA}...${H}" --jq .status)"
+          { test "$ANCESTRY" = "ahead" || test "$ANCESTRY" = "identical"; } || { echo RED_FORMAL_RC_NOT_DESCENDANT_OF_PROVEN31; exit 1; }
+          echo "run=$BASE31_RUN" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$BASE31_SHA" >> "$GITHUB_OUTPUT"
+          echo "GQ8_HISTORICAL_REAL31_BASE=$BASE31_SHA RUN=$BASE31_RUN CURRENT_RC=$H; LSS32_NOT_CURRENT_RC_ACCEPTANCE"
+
+      - name: Download historically proven 31 source Place and receipt
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Rehydrate real31 then select ON32 and OFF31
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/real31 --head "${{ steps.official.outputs.source_sha }}"
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/real32/ON32.project.json
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/compose_optional32.py \
+            --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/real32/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile all actual31, ON32 and OFF31 native Luau
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/lss-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/lss-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for name,n in (('artifacts/real31/CURRENT31_REAL_SOURCE.project.json',31),
+                         ('artifacts/real32/ON32.project.json',32),
+                         ('artifacts/real32/OFF31.project.json',31)):
+            p=Path(name); files=flat_project(json.loads(p.read_text()))
+            assert len(files)==n
+            for item in files.values():
+              src=(p.parent/item['$path']).resolve(strict=True)
+              subprocess.run(['/tmp/lss-native/luau-compile','--text',str(src)],
+                             check=True,stdout=subprocess.DEVNULL)
+            print('GQ8_LSS_ACTUAL_ALL_NATIVE_PASS',n)
+          PY
+      - name: GQ8 BR psychic trap one-owner-one-slot real Luau and expected-mutant RED
+        run: |
+          set -euo pipefail
+          SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 -B "$SOURCE/make_native_trap_owner.py"             --out /tmp/GQ8_TRAP_OWNER_GOOD.luau --mutant /tmp/GQ8_TRAP_OWNER_MUTANT.luau
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_OWNER_GOOD.luau >/dev/null
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_OWNER_MUTANT.luau >/dev/null
+          /tmp/lss-native/luau /tmp/GQ8_TRAP_OWNER_GOOD.luau | tee /tmp/GQ8_TRAP_OWNER_GOOD.log
+          grep -qx GQ8_LSS_TRAP_OWNER_LUAU_11_CASES_PASS /tmp/GQ8_TRAP_OWNER_GOOD.log
+          if /tmp/lss-native/luau /tmp/GQ8_TRAP_OWNER_MUTANT.luau             >/tmp/GQ8_TRAP_OWNER_MUTANT_EXPECTED_RED.log 2>&1; then
+            echo RED_TRAP_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q RED_SAME_OWNER_TWO_TRAPS /tmp/GQ8_TRAP_OWNER_MUTANT_EXPECTED_RED.log
+          echo GQ8_BR_TRAP_OWNER_REAL_VM_AND_MUTANT_RED_PASS
+      - name: GQ8 distinct live psychic-trap spatial slots actual Luau and mutant RED
+        run: |
+          set -euo pipefail
+          SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 -B "$SOURCE/make_native_trap_slots.py" --out /tmp/GQ8_TRAP_SLOTS_GOOD.luau --mutant /tmp/GQ8_TRAP_SLOTS_MUTANT.luau
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_SLOTS_GOOD.luau >/dev/null
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_TRAP_SLOTS_MUTANT.luau >/dev/null
+          /tmp/lss-native/luau /tmp/GQ8_TRAP_SLOTS_GOOD.luau | tee /tmp/GQ8_TRAP_SLOTS_GOOD.log
+          grep -qx GQ8_LSS_TRAP_SPATIAL_6_NATIVE_CASES_PASS /tmp/GQ8_TRAP_SLOTS_GOOD.log
+          if /tmp/lss-native/luau /tmp/GQ8_TRAP_SLOTS_MUTANT.luau >/tmp/GQ8_TRAP_SLOTS_MUTANT_EXPECTED_RED.log 2>&1; then
+            echo RED_SPATIAL_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q RED_SECOND_OWNER_MUST_HAVE_DISTINCT_SLOT /tmp/GQ8_TRAP_SLOTS_MUTANT_EXPECTED_RED.log
+          echo GQ8_LSS_TRAP_SPATIAL_VM_AND_MUTANT_RED_PASS
+      - name: GQ8 public shuttle/cloud travel actual Luau and cooldown mutant RED
+        run: |
+          set -euo pipefail
+          SOURCE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 -B "$SOURCE/make_public_travel_native.py" --out /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau --mutant /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau >/dev/null
+          /tmp/lss-native/luau-compile --text /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau >/dev/null
+          /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_GOOD.luau | tee /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
+          grep -qx GQ8_LSS_PUBLIC_TRAVEL_LUAU_8_CASES_PASS /tmp/GQ8_PUBLIC_TRAVEL_GOOD.log
+          if /tmp/lss-native/luau /tmp/GQ8_PUBLIC_TRAVEL_MUTANT.luau >/tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log 2>&1; then
+            echo RED_PUBLIC_TRAVEL_MUTANT_WAS_ACCEPTED; exit 1
+          fi
+          grep -q RED_GQ8_PUBLIC_TRAVEL_DOUBLE_HOP /tmp/GQ8_PUBLIC_TRAVEL_MUTANT_EXPECTED_RED.log
+          echo GQ8_PUBLIC_TRAVEL_NATIVE_8_AND_MUTANT_EXPECTED_RED_PASS
+      - name: Fetch pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/lss-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/lss-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/lss-rojo.zip') as z:
+            found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+            assert len(found)==1
+            exe=Path('/tmp/lss-rojo');exe.write_bytes(z.read(found[0]));exe.chmod(0o755)
+          PY
+      - name: Build real selected32 and inverse OFF31, verify source/class for each
+        run: |
+          set -euo pipefail
+          /tmp/lss-rojo build artifacts/real32/ON32.project.json -o artifacts/real32/LSS_REAL32_STUDIO.rbxlx
+          /tmp/lss-rojo build artifacts/real32/OFF31.project.json -o artifacts/real32/LSS_OFF31_STUDIO.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real32/ON32.project.json \
+            --place artifacts/real32/LSS_REAL32_STUDIO.rbxlx --count 32
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real32/OFF31.project.json \
+            --place artifacts/real32/LSS_OFF31_STUDIO.rbxlx --count 31
+          H="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H" = "${{ steps.official.outputs.sha }}"
+          echo GQ8_LSS_HISTORICAL31_TO32_NATIVE_ROJO_OFF_EXACT_FROZEN_BASE_SUCCESS_NOT_CURRENT_REAL65
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-LSS-HISTORICAL31-TO32-CANDIDATE-NOT-CURRENT-RC
+          path: |
+            artifacts/real32/
+            artifacts/real31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 3

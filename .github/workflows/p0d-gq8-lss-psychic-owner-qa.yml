@@ -1,0 +1,70 @@
+name: P0D GQ8 LSS psychic caster-round safety Native QA
+on:
+  pull_request:
+    branches: [feature/eggrumble-land-sea-sky-traversal-20261117-01]
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - '.github/workflows/p0d-gq8-lss-psychic-owner-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  caster-is-still-current:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original parent and lifecycle source contract suite
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v \
+            -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 \
+            -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_luau
+          persist-credentials: false
+      - name: Compile actual one Studio traversal source
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_luau -B /tmp/gq8-psychic-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-psychic-native \
+            --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          /tmp/gq8-psychic-native/luau-compile --text \
+            handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            >/dev/null
+          echo GQ8_LSS_PSYCHIC_FULL_SCRIPT_NATIVE_COMPILE_PASS
+      - name: Real Touched callback seven executable cases, removed-guard mutant RED
+        run: |
+          set -euo pipefail
+          python3 handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/make_psychic_owner_native.py \
+            --out /tmp/GQ8_PSYCHIC_ACTUAL.luau \
+            --mutant /tmp/GQ8_PSYCHIC_NO_CASTER_GUARD_MUTANT.luau
+          /tmp/gq8-psychic-native/luau-compile --text /tmp/GQ8_PSYCHIC_ACTUAL.luau >/dev/null
+          /tmp/gq8-psychic-native/luau-compile --text /tmp/GQ8_PSYCHIC_NO_CASTER_GUARD_MUTANT.luau >/dev/null
+          /tmp/gq8-psychic-native/luau /tmp/GQ8_PSYCHIC_ACTUAL.luau | tee /tmp/gq8-psy-valid.txt
+          grep -q LSS_ACTUAL_PSYCHIC_OWNER_LUAU_10_CASES_PASS /tmp/gq8-psy-valid.txt
+          if /tmp/gq8-psychic-native/luau /tmp/GQ8_PSYCHIC_NO_CASTER_GUARD_MUTANT.luau; then
+            echo 'RED: old trap without caster safety was not caught'
+            exit 1
+          fi
+          echo GQ8_LSS_ORIGINAL_INVALID_CASTER_MUTANT_EXPECTED_RED_PASS
+      - name: No 2nd Game, KO writer, Remote or old 31 source mutations
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau").read_text()
+          assert s.count('t.Touched:Connect(function(other)')==1
+          assert s.count('GQ8_LSS_PSYCHIC_OWNER_LIFECYCLE_BEGIN')==1
+          assert s.count('RunService:IsStudio()')==1
+          assert 'Instance.new("RemoteEvent")' not in s
+          assert 'DataStoreService' not in s
+          assert 't.Destroying:Connect(function() traps[t]=nil end)' in s
+          print("GQ8_LSS_PSYCHIC_ONE_SAFE_BR_TRAP_NO_DUPLICATE_AUTHORITY")
+          PY

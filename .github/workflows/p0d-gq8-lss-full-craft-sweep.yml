@@ -1,0 +1,56 @@
+name: GQ8 LSS full craft envelope original native and mutant
+on:
+  push:
+    branches: ['quality/gq8-lss-full-vehicle-sweep-20261118-01']
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-full-craft-sweep.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_LSS_OPTIONAL32.json'
+      - '.github/workflows/p0d-gq8-lss-full-craft-sweep.yml'
+permissions:
+  contents: read
+jobs:
+  actual-source-and-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: All original LSS Python contracts and new source lock
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117 -p 'test_*.py'
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_native_luau
+          persist-credentials: false
+      - name: Compile real optional script and run extracted native/mutant
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq8_native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq8_native_luau -B /tmp/gq8-full-craft -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-full-craft --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          BASE=handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117
+          python3 "$BASE/test_craft_full_footprint.py" \
+            --native /tmp/gq8-craft-valid.luau --mutant /tmp/gq8-craft-mutant.luau
+          /tmp/gq8-full-craft/luau-compile --text "$BASE/EGGRUMBLE_LandSeaSkyTraversal.server.luau" >/dev/null
+          /tmp/gq8-full-craft/luau-compile --text /tmp/gq8-craft-valid.luau >/dev/null
+          /tmp/gq8-full-craft/luau-compile --text /tmp/gq8-craft-mutant.luau >/dev/null
+          /tmp/gq8-full-craft/luau /tmp/gq8-craft-valid.luau | tee /tmp/gq8-craft-valid.log
+          grep -q GQ8_LSS_ACTUAL_FULL_FOOTPRINT_5_NATIVE_CASES_PASS /tmp/gq8-craft-valid.log
+          if /tmp/gq8-full-craft/luau /tmp/gq8-craft-mutant.luau \
+            >/tmp/gq8-craft-mutant.log 2>&1; then
+            echo RED_OLD_HULL_COLLISION_MUTANT_PASSED
+            exit 1
+          fi
+          grep -q GQ8_SWEEP_WING_TOO_NARROW /tmp/gq8-craft-mutant.log
+          echo GQ8_LSS_HULL_ONLY_MUTANT_EXPECTED_RED_PASS
