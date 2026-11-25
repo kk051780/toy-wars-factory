@@ -15,23 +15,30 @@ jobs:
     timeout-minutes: 35
     env:
       GH_TOKEN: ${{ github.token }}
-      FORMAL_HEAD: f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc
-      FORMAL_RUN: '45498404757'
-      FORMAL_ARTIFACT: '14968679624'
+      FORMAL_HEAD: 273e763c42ee0f405ef854b75c3cf071b078e896
+      FORMAL_RUN: '45516606797'
+      FORMAL_ARTIFACT: '14977773039'
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Check fixed weapon source, twelve mutation negatives, and fresh canonical parent
         shell: bash
         run: |
           set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" = "$(git rev-parse HEAD)" || { echo RED_CANDIDATE_CHECKOUT_HEAD_DRIFT; exit 1; }
+            test "$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")" = "rc/p0d-s1-kids-rc01" || { echo RED_CANDIDATE_PR_BASE_DRIFT; exit 1; }
+          else
+            test "$GITHUB_SHA" = "$(git rev-parse HEAD)"
+          fi
           python3 -m py_compile quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py
           python3 -B quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py --self-test
           test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01 --jq .object.sha)" = "$FORMAL_HEAD" || { echo RED_STALE_FORMAL_HEAD_REBASE_REQUIRED; exit 1; }
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$FORMAL_RUN" --jq '.head_sha+" "+.conclusion+" "+.event')" = "$FORMAL_HEAD success push"
           test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$FORMAL_ARTIFACT" --jq '.workflow_run.id|tostring')" = "$FORMAL_RUN"
-          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$FORMAL_ARTIFACT" --jq .digest)" = 'sha256:b4bb773562cdc9efbde044a71178f602dbe5226d4096dd9048dec2e4cad9d141'
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$FORMAL_ARTIFACT" --jq .digest)" = 'sha256:f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0'
           mkdir -p /tmp/gq470-weapons
           gh run download "$FORMAL_RUN" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-weapons
           test -s /tmp/gq470-weapons/EGGRUMBLE_REAL69_PRIVATE.rbxlx

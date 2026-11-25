@@ -9,12 +9,12 @@ import re
 import shutil
 import subprocess
 
-FORMAL = "f6c9a503361e95eb6b166c2123ec3d18f8b5c9fc"
+FORMAL = "273e763c42ee0f405ef854b75c3cf071b078e896"
 TARGET = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes"
 EXPECTED_BEFORE = "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
 EXPECTED_V2 = "9a19fa6394b44f3bdf7ed60b09ca789cadfd2eec75eee57d6a0075c3e1a0a741"
 EXPECTED_AFTER = "497c6b91e0d02b3f8d15c517e9359d940b39ccf6295529f39286dee04eb42289"
-FORMAL_PLACE = {"bytes": 829328, "sha256": "4c35d93b6d8243ecff753ddaef39de0d45d0793085435a21d8f33e4814e78b5a"}
+FORMAL_PLACE = {"bytes": 829822, "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"}
 FEATURE = "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120"
 SOURCE = Path("quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/EGGRUMBLE_WeaponSilhouettes.luau")
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -148,7 +148,7 @@ def verify_official(root: Path, meta: dict) -> None:
     demand(pin((root / PLACE).read_bytes()) == FORMAL_PLACE, "OFFICIAL_PLACE_IDENTITY")
     present = {p.relative_to(root).as_posix():pin(p.read_bytes()) for p in root.rglob("*")
                if p.is_file() and p != root / manifest_file}
-    demand(len(present) == 162 and present == manifest["files"], "OFFICIAL_MANIFEST_162")
+    demand(len(present) == 325 and present == manifest["files"], "OFFICIAL_MANIFEST_325")
 
 def facets_cli(root: Path, binary: Path, former: Path, candidate: Path, output: Path) -> None:
     official = chosen(root / "OFF69_WEAPON")[TARGET][0].read_bytes()
