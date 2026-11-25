@@ -1,0 +1,170 @@
+name: GQ802 genuine Core36 to visual39 selected-source rehearsal
+on:
+  push:
+    branches: [feature/gq802-physical-tiles-visual-safety-20261118-01]
+    paths:
+      - 'quality_gameplay/gq802_stage_visual_tiles_20261118/**'
+      - '.github/workflows/gq802-stage-real39.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-39-original-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d6080df13d07792160a52b4c7025e0ae7950379c
+          path: _gq803
+          persist-credentials: false
+      - name: Exact branch and manifest author pins (read-only)
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/feature/gq802-physical-tiles-visual-safety-20261118-01" --jq '.object.sha')" = "$GITHUB_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = "f77b4d4393d9e9b19b65566413432a7a9f13962b"
+          test "$(git hash-object _gq803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau)" = "696d2312ef7408e26b03281caede7606472c155b"
+      - name: Download exact real official31 artifact, not synthesized sources
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download 44232589258 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Rehydrate genuine 31 and original immutable Realm/Regen/Core36
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/current31 --head f77b4d4393d9e9b19b65566413432a7a9f13962b
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau \
+            --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py \
+            --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py \
+            --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json \
+            --regen33 artifacts/regen33/REGEN33.project.json \
+            --realm34 artifacts/realm34/REALM34.project.json \
+            --out artifacts/combined36/COMBINED36.project.json
+      - name: Compose exact Core36 + #803 policy + 2 visual modules into 39 sources
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/stage_modules
+          cp _gq803/quality_gameplay/gq802_stage_manifest_20261118/EGGRUMBLE_StageManifestPolicy.luau artifacts/stage_modules/
+          cp quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileBlueprintPolicy.luau artifacts/stage_modules/
+          cp quality_gameplay/gq802_stage_visual_tiles_20261118/EGGRUMBLE_StageTileVisualRenderer.luau artifacts/stage_modules/
+          python3 quality_gameplay/gq802_stage_visual_tiles_20261118/compose_visual39.py \
+            --core36 artifacts/combined36/COMBINED36.project.json \
+            --source-dir artifacts/stage_modules \
+            --out artifacts/visual39/VISUAL39.project.json
+          python3 quality_gameplay/gq802_stage_visual_tiles_20261118/wire_actual_host39.py \
+            --project artifacts/visual39/VISUAL39.project.json \
+            --out artifacts/wired39/WIRED39.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native compile all 39 plus official ON36 and OFF31 sources
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq802-real39 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq802-real39 --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,"quality_gameplay/gq802_stage_visual_tiles_20261118")
+          from compose_visual39 import flatten
+          for name,expected in [
+            ("artifacts/visual39/VISUAL39.project.json",39),
+            ("artifacts/wired39/WIRED39.project.json",39),
+            ("artifacts/combined36/COMBINED36.project.json",36),
+            ("artifacts/current31/CURRENT31_REAL_SOURCE.project.json",31)]:
+              _,files=flatten(Path(name))
+              assert len(files)==expected,(name,len(files))
+              for file in files.values():
+                  subprocess.run(["/tmp/gq802-real39/luau-compile","--text",str(file)],
+                     stdout=subprocess.DEVNULL,check=True)
+              print("GQ802_SELECTED_GENUINE_NATIVE_SOURCES_PASS",expected)
+          PY
+      - name: Install and verify fixed Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq802-real39-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq802-real39-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq802-real39-rojo.zip") as z:
+              a=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+              assert len(a)==1
+              p=Path("/tmp/gq802-real39-rojo")
+              p.write_bytes(z.read(a[0]));p.chmod(0o755)
+          PY
+      - name: Real Rojo Source+Class exact for 39/36/31, no fake OFF
+        run: |
+          set -euo pipefail
+          /tmp/gq802-real39-rojo build artifacts/visual39/VISUAL39.project.json -o artifacts/visual39/VISUAL39.rbxlx
+          /tmp/gq802-real39-rojo build artifacts/wired39/WIRED39.project.json -o artifacts/wired39/WIRED39.rbxlx
+          /tmp/gq802-real39-rojo build artifacts/combined36/COMBINED36.project.json -o artifacts/visual39/CORE36_ROLLBACK.rbxlx
+          /tmp/gq802-real39-rojo build artifacts/current31/CURRENT31_REAL_SOURCE.project.json -o artifacts/visual39/OFF31_ROLLBACK.rbxlx
+          for entry in "artifacts/wired39/WIRED39.project.json artifacts/wired39/WIRED39.rbxlx 39" \
+                       "artifacts/visual39/VISUAL39.project.json artifacts/visual39/VISUAL39.rbxlx 39" \
+                       "artifacts/combined36/COMBINED36.project.json artifacts/visual39/CORE36_ROLLBACK.rbxlx 36" \
+                       "artifacts/current31/CURRENT31_REAL_SOURCE.project.json artifacts/visual39/OFF31_ROLLBACK.rbxlx 31"; do
+            set -- $entry
+            python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project "$1" --place "$2" --count "$3"
+          done
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = "f77b4d4393d9e9b19b65566413432a7a9f13962b"
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("artifacts/wired39/WIRED39.rbxlx")
+          receipt=json.loads(Path("artifacts/wired39/WIRED39.project.receipt.json").read_text())
+          receipt.update({"place_bytes":p.stat().st_size,"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+              "native39":True,"rojo39":True,"off36":True,"off31":True})
+          Path("artifacts/wired39/WIRED39_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ802_WIRED39_REAL_HOST_ROJO39_OFF36_OFF31_SOURCE_EXACT_PASS",p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ802-REAL39-PRIVATE-SOURCE-REHEARSAL-NOT-LIVE
+          path: |
+            artifacts/wired39/WIRED39.rbxlx
+            artifacts/wired39/WIRED39_BUILD_RECEIPT.json
+            artifacts/visual39/VISUAL39.rbxlx
+            artifacts/visual39/CORE36_ROLLBACK.rbxlx
+            artifacts/visual39/OFF31_ROLLBACK.rbxlx
+            artifacts/wired39/WIRED39.project.receipt.json
+          retention-days: 7
