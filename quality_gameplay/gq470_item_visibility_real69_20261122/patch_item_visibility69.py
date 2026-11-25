@@ -1,180 +1,259 @@
 #!/usr/bin/env python3
-"""GQ470: source-locked REAL69 pickup ornament visibility, A-only visual fix.
-
-Consumes the *actual* official Actions ZIP, not a guessed Studio project. No
-privileged game, inventory or score source is modified. This is not a formal RC
-writer or an Android/ART acceptance test.
-"""
+"""Rebind the registered #1010 cleanup to real, current Union22 A-only inputs."""
 from __future__ import annotations
+
 import argparse
+from collections import Counter
+from difflib import SequenceMatcher
 import hashlib
+import io
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import re
+import stat
+from xml.etree import ElementTree as ET
 import zipfile
 
-OFFICIAL_HEAD = 'e80973c354f14a0d0088577f3cc1a875454f0f8f'
-TARGET = 'ServerScriptService/EGGRUMBLE_EncounterReadabilityArt'
-TARGET_FILE = 'sources/ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau'
-TARGET_SHA = '9ec9982ed0d6e68457712e4e5dd10e7fb608c666adfe2e6904a209f5692a50c9'
-FEATURE = 'GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122'
-START = 'local function decorateFieldItem(item:BasePart)\n'
-END = '\nlocal function decorateVault(part:BasePart)'
-OLD_END = ''' item.Destroying:Connect(function()
-  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)
-  marked[item]=nil
- end)
-end
-'''
-NEW_END = ''' -- GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122
- -- The original Item engine hides the real pickup on consume and restores it
- -- on respawn. Keep our TWO existing matte ornaments in the same visibility
- -- state, including an item decorated while its spawn is already inactive.
- -- This is signal-driven (zero extra Part, UI, polling loop, or Remote).
- local function syncItemArtVisibility()
-  if not item.Parent or not trim.Parent then return end
-  local alpha=if item.Transparency>=.99 or not item.CanQuery then 1 else item.Transparency
-  for _,child in ipairs(trim:GetChildren()) do
-   if child:IsA("BasePart") and math.abs(child.Transparency-alpha)>.001 then
-    child.Transparency=alpha
-   end
-  end
- end
- local transparencyConnection=item:GetPropertyChangedSignal("Transparency"):Connect(syncItemArtVisibility)
- local queryConnection=item:GetPropertyChangedSignal("CanQuery"):Connect(syncItemArtVisibility)
- syncItemArtVisibility()
- item.Destroying:Connect(function()
-  transparencyConnection:Disconnect()
-  queryConnection:Disconnect()
-  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)
-  marked[item]=nil
- end)
-end
-'''
+OFFICIAL_HEAD = "273e763c42ee0f405ef854b75c3cf071b078e896"
+OFFICIAL_BRANCH = "rc/p0d-s1-kids-rc01"
+ARTIFACT = {"run_id": 45516606797, "artifact_id": 14977773039, "bytes": 13407250,
+            "sha256": "f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0"}
+AUTHOR_HEAD = "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4"
+AUTHOR_BLOB = "3723dee279d5ed441e52485533ef889cdf1004a0"
+TARGET = "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"
+TARGET_FILE = "sources/" + TARGET + ".server.luau"
+SOURCE_BEFORE = {"bytes": 22046, "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"}
+SOURCE_AFTER = {"bytes": 22284, "sha256": "293eed3bff121484d132ecf7759d189fc3dc6d951412fd60f92f9598341b7837"}
+PROJECT = "EGGRUMBLE_REAL69.project.json"
+PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+PROJECT_PIN = {"bytes": 9564, "sha256": "90cf3f9fd181002b1b5521a30f17b15b5a14d73bd00f0755d77aaeb68f7885e7"}
+GUARDIAN_FILE = "sources/ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau"
+GUARDIAN_PIN = {"bytes": 14201, "sha256": "a6a4433966ba52212d42e12dc69e8bca7a63424fe31c25ade89724928d417ef2"}
+OFF_PLACE = {"bytes": 829822, "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"}
+ON_PLACE = {"bytes": 830060, "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"}
+MANIFEST = "UNION22_DELIVERY_MANIFEST.json"
+ADMISSION = "UNION22_FINAL_ADMISSION.json"
+RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
+A_RECEIPT = "GQ470_ITEM_CLEANUP_A_ONLY_EVIDENCE.json"
+REGISTERED = Path(__file__).with_name("current69") / "EncounterReadabilityArt.cleanup.luau.txt"
+CLASS_COUNTS = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
+HUNKS = [("replace", 195, 196, 195, 197), ("replace", 247, 248, 248, 250),
+         ("insert", 257, 257, 259, 262), ("insert", 338, 338, 343, 346)]
 
 
-def sha(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
+def require(condition, reason):
+    if not condition:
+        raise ValueError("RED_ITEM_CLEANUP_" + reason)
 
 
-def walk_project(node: dict, route: str = '') -> dict[str, str]:
-    found = {}
-    if '$path' in node:
-        found[route] = node['$path']
-    for k, value in node.items():
-        if not k.startswith('$') and isinstance(value, dict):
-            child_route = f'{route}/{k}' if route else k
-            found.update(walk_project(value, child_route))
-    return found
+def identity(data):
+    return {"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
 
 
-def transform(source: str) -> str:
-    if FEATURE in source:
-        raise ValueError('RED_DOUBLE_APPLY')
-    if source.count(START) != 1 or source.count(END) != 1:
-        raise ValueError('RED_ITEM_BOUNDARY')
-    before, rest = source.split(START, 1)
-    item_block, after = rest.split(END, 1)
-    if item_block.count(OLD_END) != 1 or not item_block.endswith(OLD_END):
-        raise ValueError('RED_ITEM_END_ANCHOR')
-    required = (
-        'if marked[item] then return end',
-        'if kind~="HEAL" and kind~="DASH" and kind~="SHIELD" then return end',
-        'MAX_DECORATED_ITEMS_PER_WORLD',
-        'trim.Name="EGGRUMBLE_FieldItemVisual_VisualOnly"',
-        'trim.Parent=item',
-        'jewel(trim,item,"GroundHalo"',
-        'jewel(trim,item,"RemedyCross"',
-        'jewel(trim,item,"WingTip"',
-        'jewel(trim,item,"GuardDiamond"',
-    )
-    if any(r not in item_block for r in required):
-        raise ValueError('RED_ORIGINAL_VISUAL_CONTRACT')
-    if item_block.count('jewel(trim,item,') != 4:
-        raise ValueError('RED_ORNAMENT_BUDGET')
-    if 'if not RunService:IsStudio() then return end' not in before:
-        raise ValueError('RED_STUDIO_ONLY')
-    if not all(s in source for s in ('p.CanCollide=false', 'p.CanTouch=false', 'p.CanQuery=false')):
-        raise ValueError('RED_NO_GAME_PHYSICS')
-    out = before + START + item_block.replace(OLD_END, NEW_END, 1) + END + after
-    if out.count(FEATURE) != 1:
-        raise ValueError('RED_PATCH_MARKER')
-    if before != out.split(START, 1)[0] or after != out.split(END, 1)[1]:
-        raise ValueError('RED_OTHER_OWNER_CHANGE')
-    if out.count('jewel(trim,item,') != source.count('jewel(trim,item,'):
-        raise ValueError('RED_NEW_VISUAL_OBJECT')
-    return out
+def strict_json(raw):
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "DUPLICATE_JSON_KEY")
+            result[key] = value
+        return result
+    return json.loads(raw, object_pairs_hook=unique)
 
 
-def patch_artifact(artifact: Path, out: Path) -> dict:
-    with zipfile.ZipFile(artifact) as z:
-        names = set(z.namelist())
-        receipt = json.loads(z.read('REAL69_LEGACY_INTAKE_RECEIPT.json'))
-        project = json.loads(z.read('EGGRUMBLE_REAL69.project.json'))
-        mapping = walk_project(project['tree'])
-        hashes = receipt['source_hashes']
-        if receipt.get('build_head') != OFFICIAL_HEAD or receipt.get('canonical_build') is not True:
-            raise ValueError('RED_OFFICIAL_HEAD')
-        if len(mapping) != 69 or set(mapping) != set(hashes) or len(hashes) != 69:
-            raise ValueError('RED_SOURCE69_ROUTE_SET')
-        if receipt.get('source_hashes', {}).get(TARGET) != TARGET_SHA:
-            raise ValueError('RED_TARGET_SHA_RECEIPT')
-        for route, path in mapping.items():
-            if path not in names or not path.startswith('sources/') or '..' in Path(path).parts:
-                raise ValueError('RED_SOURCE_PATH')
-            if sha(z.read(path)) != hashes[route]:
-                raise ValueError('RED_SOURCE_HASH:' + route)
-        if mapping[TARGET] != TARGET_FILE:
-            raise ValueError('RED_TARGET_ROUTE')
-        original = z.read(TARGET_FILE)
-        if sha(original) != TARGET_SHA:
-            raise ValueError('RED_ORIGINAL_SHA')
-        changed = transform(original.decode('utf-8')).encode('utf-8')
-        out.mkdir(parents=True, exist_ok=True)
-        for route, path in mapping.items():
-            fp = out / path
-            fp.parent.mkdir(parents=True, exist_ok=True)
-            fp.write_bytes(changed if route == TARGET else z.read(path))
-        for filename in ('EGGRUMBLE_REAL69.project.json', 'EGGRUMBLE_REAL69_PRIVATE.rbxlx'):
-            (out / filename).write_bytes(z.read(filename))
-        off_root = out / 'OFF69_original'
-        (off_root / TARGET_FILE).parent.mkdir(parents=True, exist_ok=True)
-        (off_root / TARGET_FILE).write_bytes(original)
-        (off_root / 'EGGRUMBLE_REAL69_PRIVATE.rbxlx').write_bytes(z.read('EGGRUMBLE_REAL69_PRIVATE.rbxlx'))
-        receipt['source_hashes'][TARGET] = sha(changed)
-        receipt['gq470_item_ornament_visibility'] = {
-            'feature_id': FEATURE,
-            'official_head': OFFICIAL_HEAD,
-            'only_changed_route': TARGET,
-            'unchanged_selected_sources': 68,
-            'ornament_parts_per_item_before_after': [2, 2],
-            'zero_extra_loop': True,
-            'extra_signals_per_item': 2,
-            'original_item_game_authority_modified': False,
-            'studio_actual_patch_retest': 'NOT_TESTED',
-            'android_15min': 'NOT_TESTED',
-            'art_owner_acceptance': False,
-            'formal_rc_integrated': False,
-        }
-        (out / 'REAL69_LEGACY_INTAKE_RECEIPT.json').write_text(json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2) + '\n')
-        for route, path in mapping.items():
-            body = (out / path).read_bytes()
-            if sha(body) != receipt['source_hashes'][route]:
-                raise ValueError('RED_OUTPUT_SOURCE_LOCK:' + route)
-        if (out / 'OFF69_original/EGGRUMBLE_REAL69_PRIVATE.rbxlx').read_bytes() != z.read('EGGRUMBLE_REAL69_PRIVATE.rbxlx'):
-            raise ValueError('RED_OFF_PLACE_BYTES')
-        return {'feature_id': FEATURE, 'official_head': OFFICIAL_HEAD, 'original_sha256': sha(original),
-                'patched_sha256': sha(changed), 'original_bytes': len(original), 'patched_bytes': len(changed),
-                'unchanged_sources': 68, 'original_private_place_bytes': len(z.read('EGGRUMBLE_REAL69_PRIVATE.rbxlx')),
-                'private_place_is_unmodified_original': True, 'studio_tested': False}
+def safe_path(path):
+    parts = PurePosixPath(path).parts
+    return bool(parts and not PurePosixPath(path).is_absolute() and ".." not in parts and "\\" not in path
+                and str(PurePosixPath(path)) == path)
+
+
+def read_zip(raw):
+    contents = {}
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        for entry in archive.infolist():
+            path = entry.filename.rstrip("/") if entry.is_dir() else entry.filename
+            mode = (entry.external_attr >> 16) & 0xffff
+            require(safe_path(path) and not mode & 0o7000,
+                    "UNSAFE_ZIP_MEMBER")
+            if entry.is_dir():
+                require(stat.S_IFMT(mode) in (0, stat.S_IFDIR), "UNSAFE_ZIP_DIRECTORY")
+                continue
+            require(path not in contents and stat.S_IFMT(mode) in (0, stat.S_IFREG), "UNSAFE_ZIP_FILE")
+            contents[path] = archive.read(entry)
+    return contents
+
+
+def project_routes(project):
+    root = strict_json(project)["tree"]
+    require(root.get("$className") == "DataModel", "PROJECT_ROOT")
+    routes = {}
+
+    def visit(node, parts):
+        require(isinstance(node, dict), "PROJECT_NODE")
+        if "$path" in node:
+            path = node["$path"]
+            route = "/".join(parts)
+            require(isinstance(path, str) and safe_path(path) and path.startswith("sources/")
+                    and path.endswith(".luau") and route not in routes, "PROJECT_ROUTE")
+            routes[route] = path
+        for name, value in node.items():
+            if not name.startswith("$"):
+                visit(value, parts + [name])
+    visit(root, [])
+    require(len(routes) == len(set(routes.values())) == 69 and routes.get(TARGET) == TARGET_FILE, "PROJECT_69")
+    return routes
+
+
+def scan_place(place, routes, classes, source):
+    root = ET.fromstring(place)
+    instances, observed = set(), set()
+
+    def visit(node, parent):
+        props = node.find("Properties")
+        require(props is not None, "PLACE_PROPERTIES")
+        names = [p.text for p in props if p.tag == "string" and p.get("name") == "Name"]
+        require(len(names) == 1 and names[0], "INSTANCE_NAME")
+        route = "/".join(parent + [names[0]])
+        require(route not in instances, "DUPLICATE_INSTANCE")
+        instances.add(route)
+        cells = [p for p in props if p.get("name") == "Source"]
+        actual = node.get("class")
+        if cells or actual in CLASS_COUNTS:
+            require(len(cells) == 1 and route in routes and actual == classes[route]
+                    and cells[0].tag in ("string", "ProtectedString"), "PLACE_SOURCE_ROUTE_OR_CLASS")
+            require((cells[0].text or "").encode() == source[routes[route]], "PLACE_EMBEDDED_SOURCE")
+            cells[0].text = "__SOURCE__"
+            observed.add(route)
+        for child in node.findall("Item"):
+            visit(child, parent + [names[0]])
+    for node in root.findall("Item"):
+        visit(node, [])
+    require(len(instances) == 75 and observed == set(routes), "PLACE_69_SOURCES_75_INSTANCES")
+    return ET.tostring(root, encoding="utf-8")
+
+
+def verify_parent(contents):
+    manifest = strict_json(contents[MANIFEST])
+    recorded = manifest["files"]
+    actual = {path: identity(body) for path, body in contents.items() if path != MANIFEST}
+    require(len(contents) == 326 and len(recorded) == 325
+            and manifest["schema"] == "UNION22_DELIVERY_FILES_V1"
+            and manifest["manifest_self_excluded"] is True and manifest["current_place"] == PLACE
+            and actual == recorded, "PARENT_MANIFEST_325")
+    receipt = strict_json(contents[RECEIPT])
+    admission = strict_json(contents[ADMISSION])
+    require(admission["schema"] == "UNION22_FINAL_DELIVERY_ADMISSION_V1"
+            and admission["status"] == "PASS_SOURCE_AND_NATIVE_ONLY"
+            and admission["candidate_build_head"] == admission["official_build_head"] == OFFICIAL_HEAD
+            and admission["receipt_provenance"] == "OFFICIAL" and admission["formal_rc_adoption_proven"] is True
+            and admission["source_count"] == 69 and admission["instances"] == 75, "OFFICIAL_ADMISSION")
+    require(receipt["build_head"] == receipt["official_build_head"] == OFFICIAL_HEAD
+            and receipt["official_branch"] == OFFICIAL_BRANCH and receipt["receipt_provenance"] == "OFFICIAL"
+            and receipt["canonical_build"] is True and receipt["formal_rc_adoption_proven"] is True
+            and receipt["selected_source_count"] == 69, "OFFICIAL_RECEIPT")
+    require(admission["current_place"] == identity(contents[PLACE]) == OFF_PLACE
+            and receipt["private_place_bytes"] == OFF_PLACE["bytes"]
+            and receipt["private_place_sha256"] == OFF_PLACE["sha256"], "PARENT_PLACE")
+    require(identity(contents[PROJECT]) == PROJECT_PIN and identity(contents[GUARDIAN_FILE]) == GUARDIAN_PIN,
+            "PROJECT_AND_GUARDIAN_PARENT_PINS")
+    routes = project_routes(contents[PROJECT])
+    hashes, classes = receipt["source_hashes"], receipt["source_classes"]
+    require(set(hashes) == set(classes) == set(routes) and Counter(classes.values()) == CLASS_COUNTS
+            and classes[TARGET] == "Script", "RECEIPT_ROUTE_CLASSES")
+    require({p for p in contents if p.startswith("sources/")} == set(routes.values()), "ONLY_69_SOURCE_MEMBERS")
+    source = {path: contents[path] for path in routes.values()}
+    require(all(identity(source[path])["sha256"] == hashes[route] for route, path in routes.items()), "SOURCE_HASHES")
+    require(identity(source[TARGET_FILE]) == SOURCE_BEFORE, "EXACT_IMMEDIATE_PREIMAGE")
+    shape = scan_place(contents[PLACE], routes, classes, source)
+    return routes, classes, source, shape
+
+
+def registered_cleanup(original, candidate):
+    require(identity(original) == SOURCE_BEFORE and identity(candidate) == SOURCE_AFTER,
+            "REGISTERED_SOURCE_PAIR")
+    git_object = b"blob " + str(len(candidate)).encode() + b"\0" + candidate
+    require(hashlib.sha1(git_object).hexdigest() == AUTHOR_BLOB, "REGISTERED_GIT_BLOB")
+    opcodes = SequenceMatcher(None, original.splitlines(keepends=True),
+                              candidate.splitlines(keepends=True), autojunk=False).get_opcodes()
+    require([row for row in opcodes if row[0] != "equal"] == HUNKS, "EXACT_FOUR_HUNKS")
+    return candidate
+
+
+def patch_artifact(artifact, out):
+    raw = artifact.read_bytes()
+    require(identity(raw) == {key: ARTIFACT[key] for key in ("bytes", "sha256")}, "OFFICIAL_ZIP_PIN")
+    contents = read_zip(raw)
+    _, _, original, _ = verify_parent(contents)
+    candidate = original | {TARGET_FILE: registered_cleanup(original[TARGET_FILE], REGISTERED.read_bytes())}
+    require(out.is_dir() and not (out / "ON69").exists() and not (out / "OFF69").exists(), "NEW_OUTPUT_PAIR")
+    for name, sources in (("ON69", candidate), ("OFF69", original)):
+        root = out / name
+        root.mkdir()
+        (root / PROJECT).write_bytes(contents[PROJECT])
+        for path, body in sources.items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(body)
+    return {"scope": "A_ONLY_NOT_FORMAL", "official_parent_head": OFFICIAL_HEAD, "artifact": ARTIFACT,
+            "author_original_head": AUTHOR_HEAD, "author_blob": AUTHOR_BLOB, "changed_source": TARGET,
+            "before": SOURCE_BEFORE, "after": SOURCE_AFTER, "new_bytes": 238,
+            "changed_sources": 1, "unchanged_sources": 68, "formal_rc_adoption": False,
+            "studio": "NOT_TESTED", "android": "NOT_TESTED", "human_art": "NOT_TESTED",
+            "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO"}
+
+
+def verify_places(artifact, out, evidence):
+    raw = artifact.read_bytes()
+    require(identity(raw) == {key: ARTIFACT[key] for key in ("bytes", "sha256")}, "OFFICIAL_ZIP_CHANGED")
+    contents = read_zip(raw)
+    routes, classes, original, shape = verify_parent(contents)
+    patched = original | {TARGET_FILE: registered_cleanup(original[TARGET_FILE], REGISTERED.read_bytes())}
+    for name, wanted, sources in (("ON69", ON_PLACE, patched), ("OFF69", OFF_PLACE, original)):
+        root = out / name
+        place = (root / PLACE).read_bytes()
+        require((root / PROJECT).read_bytes() == contents[PROJECT], "PROJECT_OUTPUT_DRIFT")
+        require({p.relative_to(root).as_posix() for p in (root / "sources").rglob("*") if p.is_file()}
+                == set(sources), "OUTPUT_SOURCE_MEMBERS")
+        require(all((root / path).read_bytes() == body for path, body in sources.items()), "OUTPUT_SOURCE_DRIFT")
+        require(identity(place) == wanted and scan_place(place, routes, classes, sources) == shape,
+                "ROJO_EXACT_PLACE_OR_STRUCTURE")
+        if name == "OFF69":
+            require(place == contents[PLACE], "BYTE_EXACT_OFF_PLACE")
+    native = out / "native"
+    receipt_bytes = (native / "receipt.json").read_bytes()
+    receipt = strict_json(receipt_bytes)
+    require(receipt["scope"] == "A_ONLY_API_DOUBLE" and receipt["compile_count"] == 138
+            and receipt["actual_luau_executions"] == 2 and receipt["candidate_pass"] == 5
+            and receipt["baseline_control_pass"] == 1 and receipt["expected_baseline_remainders"] == 4
+            and set(receipt["runs"]) == {"off", "on"}, "NATIVE_RECEIPT_COUNTS")
+    for mode, wanted in (("off", SOURCE_BEFORE), ("on", SOURCE_AFTER)):
+        files = native / mode
+        row = receipt["runs"][mode]
+        generated = (files / "generated.luau").read_bytes()
+        first, last = row["source_range"]
+        require(row["selected_source"] == identity(generated[first:last]) == wanted
+                and identity(generated) == row["program"] and row["exit"] == 0
+                and identity((files / "stdout.log").read_bytes()) == row["stdout"]
+                and identity((files / "stderr.log").read_bytes()) == row["stderr"] == identity(b""),
+                "NATIVE_RECEIPT_FILE_PIN")
+    evidence.update({"on_place": ON_PLACE, "off_place": OFF_PLACE, "instances": 75,
+                     "native_receipt": identity(receipt_bytes),
+                     "source_inventory": 69, "rojo_round_trip": "PASS_BOTH_69", "byte_exact_off": True})
+    (out / A_RECEIPT).write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--artifact', type=Path, required=True)
-    ap.add_argument('--output', type=Path, required=True)
-    args = ap.parse_args()
-    print(json.dumps(patch_artifact(args.artifact, args.output), ensure_ascii=False, indent=2))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--artifact", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--verify-places", action="store_true")
+    args = parser.parse_args()
+    preliminary = args.output / "A_SOURCE_PREP.json"
+    if args.verify_places:
+        verify_places(args.artifact, args.output, strict_json(preliminary.read_bytes()))
+    else:
+        report = patch_artifact(args.artifact, args.output)
+        preliminary.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
