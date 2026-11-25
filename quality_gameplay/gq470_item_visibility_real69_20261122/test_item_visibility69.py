@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -229,6 +230,7 @@ local function runItemCleanup(mode, source)
     boss:Destroy()
     assert(state.marked[boss] == (if previous then true else nil))
     report("boss_marked_removal")
+end
 '''.encode()
 
 
@@ -272,6 +274,17 @@ def native_checks(work, native_dir):
         process = subprocess.run([binary, program], capture_output=True, timeout=30)
         (case / "stdout.log").write_bytes(process.stdout)
         (case / "stderr.log").write_bytes(process.stderr)
+        if process.returncode != 0 or process.stdout != expected_stdout(mode) or process.stderr:
+            observation = {
+                "mode": mode, "returncode": process.returncode, "compiled_sources": len(expected),
+                "expected_stdout": patch.identity(expected_stdout(mode)), "stdout": patch.identity(process.stdout),
+                "stderr": patch.identity(process.stderr), "native_f46": pin, "fixture": patch.identity(FIXTURE),
+                "source": patch.identity(source), "generated": patch.identity(generated),
+                "bounded_stdout_text": process.stdout[:3072].decode("utf-8", "replace"),
+                "bounded_stderr_text": process.stderr[:3072].decode("utf-8", "replace"),
+            }
+            print("ITEM_CLEANUP_NATIVE_FAILURE " + json.dumps(observation, ensure_ascii=True, sort_keys=True),
+                  file=sys.stderr, flush=True)
         patch.require(process.returncode == 0 and process.stdout == expected_stdout(mode) and not process.stderr
                       and patch.identity(binary.read_bytes()) == pin and program.read_bytes() == generated
                       and body_path.read_bytes() == source, "NATIVE_EXACT_LIFECYCLE_VECTOR:" + mode)
