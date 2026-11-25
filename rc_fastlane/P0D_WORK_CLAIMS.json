@@ -29805,6 +29805,100 @@
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "art_gate": "ART_NO_GO"
+    },
+    {
+      "claim_id": "P0D-GQ926-FOLIAGE-PARENT-REPIN-20261125",
+      "feature_id": "GQ470_FB016_FOLIAGE_TRUE_OCCLUSION_A01_REAL69_20261120",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (Work A-only, existing #926)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 926,
+      "canonical_parent": 926,
+      "request_comment": 7149465950,
+      "design_comment": 7049907594,
+      "basis_comment": "https://github.com/kk051780/toy-wars-factory/pull/926#issuecomment-7091751438",
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "scope": "Existing forest A-only original canopy solver preserved byte exact. Two dedicated QA files check new exact official runtime parent, original visual candidate and fully reversible existing source.",
+      "scope_only": true,
+      "original_source_preserved": true,
+      "origin_source_pr": 926,
+      "origin_source_head": "68935d6054855620c5f726b6bd9568f126d69beb",
+      "prep_branch": "quality/gq470-fb016-a01-occlusion-real69-20261120",
+      "allowed_new_prs": 0,
+      "allowed_existing_pr": 926,
+      "source_head": "68935d6054855620c5f726b6bd9568f126d69beb",
+      "source_tree": "80f9f2dd4939a0b52ab21066d32f268ab9dd1451",
+      "prepared_candidate_tree": "0029f783f51c9ab28b30f6c2ff728e280f4b3a8b",
+      "prepared_source_hashes": {
+        ".github/workflows/gq470-fb016-a01-real69-prep.yml": {
+          "before": {
+            "bytes": 9463,
+            "sha256": "0c5ff2f13be72d265c4448dc7d65a8f58307949329edfb1703c7b95272b9a409",
+            "git_blob": "077a15040e59ffc975b1478223976c6e09756b38"
+          },
+          "after": {
+            "bytes": 9780,
+            "sha256": "fdb5cdb232e9d3677f1c6abbb8f43b8320a57eef404dfb9642c53829100a544c",
+            "git_blob": "d1f554ebe4f3250777a955f91eb95c163b561468"
+          }
+        },
+        "quality_gameplay/gq470_fb016_foliage_a01_real69_20261120/patch_foliage69.py": {
+          "before": {
+            "bytes": 8331,
+            "sha256": "0a6f4b42c87fc669aef4f2b9460012f4e6eda7f268c983ec4004c55ad497c84a",
+            "git_blob": "cad4be03daab03314f85d8214c7578ddf90b20fd"
+          },
+          "after": {
+            "bytes": 9585,
+            "sha256": "e6daaa0c6a245e0e5e6ea053489720c66e94359ec70e8bee04fca4973b1ea42f",
+            "git_blob": "118f591705511f622433296d7aabb596f8d94496"
+          }
+        }
+      },
+      "target_paths": [
+        ".github/workflows/gq470-fb016-a01-real69-prep.yml",
+        "quality_gameplay/gq470_fb016_foliage_a01_real69_20261120/patch_foliage69.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_ARTDISTANCELOD",
+        "GQ470_FB016_FOLIAGE_DEDICATED_PREP"
+      ],
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "0a9bb9cf-bf64-41f9-a519-9885ba4bb5bf",
+      "issued_at": "2026-11-25T01:43:57.234+00:00",
+      "expires_at": "2026-11-25T07:43:57.234+00:00",
+      "actual_metadata_lease": {
+        "ref": "35ca0fea4c77952708a53652735c916d18111de9",
+        "blob": "a5e85ee69d867cf69f63eaef31265687d777c8ed",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "0a9bb9cf-bf64-41f9-a519-9885ba4bb5bf",
+          "task_id": null,
+          "epoch": 746,
+          "acquired_at": "2026-11-25T01:43:49.352+00:00",
+          "expires_at": "2026-11-25T02:13:49.352+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "source_publisher": "/root (Work A-only, existing #926)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art_gate": "ART_NO_GO"
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
