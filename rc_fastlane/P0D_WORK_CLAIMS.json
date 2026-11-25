@@ -29618,6 +29618,193 @@
         "meta_lease": "c9b2eeab56312f6d0126ab3d34139bfc3a449524",
         "needs_separate_live_source_lease": true
       }
+    },
+    {
+      "claim_id": "P0D-GQ929-WEAPON-PARENT-REPIN-20261125",
+      "feature_id": "GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (Work A-only, existing #929)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 929,
+      "canonical_parent": 929,
+      "request_comment": 7148966309,
+      "design_comment": 7049907594,
+      "basis_comment": "https://github.com/kk051780/toy-wars-factory/issues/420#issuecomment-7148707162",
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "scope": "Existing #929, two dedicated QA files, official parent provenance, exact actual candidate checkout. All seven weapon visual source and Native fixture raw content preserved.",
+      "scope_only": true,
+      "original_source_preserved": true,
+      "origin_source_pr": 929,
+      "origin_source_head": "47b8c98fe0eb20325ab45b3a34b8e314ec8e66f8",
+      "prep_branch": "quality/gq470-fb015-weapon-sculpt-real69-20261120",
+      "allowed_new_prs": 0,
+      "allowed_existing_pr": 929,
+      "source_head": "47b8c98fe0eb20325ab45b3a34b8e314ec8e66f8",
+      "source_tree": "0abd5d42e59cbe9cafa3dfa481f6cb596a8b7197",
+      "prepared_candidate_tree": "86b901381dd0006344767930d1cfaf429b9a347d",
+      "prepared_source_hashes": {
+        ".github/workflows/gq470-weapon-sculpt-real69-prep.yml": {
+          "before": {
+            "bytes": 8228,
+            "sha256": "41678e68ab7d731d2d3b407287b6254c780f2f54b0daa27d19bf972e05353aa3",
+            "git_blob": "ad885a4710fa28b42acaa82d419f6e310c36ed56"
+          },
+          "after": {
+            "bytes": 8743,
+            "sha256": "33f9a7ac52fd8e9e46b8b695d17ee60c11253ada12f0816551b35d4ad22c6d1a",
+            "git_blob": "d9e5a89c16207391be62b07bdb32ee1f5510c674"
+          }
+        },
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py": {
+          "before": {
+            "bytes": 15953,
+            "sha256": "722b114bb116e5f06334d87614acb7e4f7e92b2a51872a7e689430e05068a2f7",
+            "git_blob": "8740a87d0b2b09d987b685af146cff1743433c8b"
+          },
+          "after": {
+            "bytes": 15953,
+            "sha256": "ac94aad5c8abcc5c9bb34f52e8c25faf20082425cc26f73b138b641f91886986",
+            "git_blob": "c71f336ce3ddbff00fd87278bb4d140ec52c5cb1"
+          }
+        }
+      },
+      "target_paths": [
+        ".github/workflows/gq470-weapon-sculpt-real69-prep.yml",
+        "quality_gameplay/gq470_fb015_weapon_sculpt_real69_20261120/verify_weapons69.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_WEAPONSILHOUETTES",
+        "GQ470_WEAPON_SCULPT_DEDICATED_PREP"
+      ],
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "d6476691-bc13-4e4e-b6ec-342343862b9b",
+      "issued_at": "2026-11-25T01:39:12.133+00:00",
+      "expires_at": "2026-11-25T07:39:12.133+00:00",
+      "actual_metadata_lease": {
+        "ref": "040dd76e8c4b58a7416156fbf88bb05cdacd9327",
+        "blob": "ee6f234c0a63d67c3d0445bf2427f0306114d568",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d6476691-bc13-4e4e-b6ec-342343862b9b",
+          "task_id": null,
+          "epoch": 743,
+          "acquired_at": "2026-11-25T01:39:04.173+00:00",
+          "expires_at": "2026-11-25T02:09:04.173+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "source_publisher": "/root (Work A-only, existing #929)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art_gate": "ART_NO_GO"
+    },
+    {
+      "claim_id": "P0D-GQ424-SHOT-PROGRESS-20261125",
+      "feature_id": "GQ470_ART_EVIDENCE_VALID_IMAGE_PROGRESS",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (Work A-only, existing #424)",
+      "parent_issue": 420,
+      "integration_issue": 220,
+      "pr": 424,
+      "canonical_parent": 424,
+      "request_comment": 7149148259,
+      "design_comment": 6884187589,
+      "basis_comment": "https://github.com/kk051780/toy-wars-factory/issues/420#issuecomment-7148707162",
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "scope": "Two existing art-quality checker/test files. Count only eligible current PNGs, 32 original slots and all physical thresholds retained.",
+      "scope_only": true,
+      "original_source_preserved": true,
+      "origin_source_pr": 424,
+      "origin_source_head": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
+      "prep_branch": "feature/p0d-art-quality-gate-20261115",
+      "allowed_new_prs": 0,
+      "allowed_existing_pr": 424,
+      "source_head": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
+      "source_tree": "1ac34a3d4bad02a5ca7d930ed7ede974758a1001",
+      "prepared_candidate_tree": "410f491bc7567f4be221d401db1580531c7a7510",
+      "prepared_source_hashes": {
+        "art_quality/check_art_quality.py": {
+          "before": {
+            "bytes": 12435,
+            "sha256": "281b92ea0aa4bb204e128c9e0bf39dcb2a1546992e06b01e17d69065fc4a869e",
+            "git_blob": "6029de357b0a94fcb787280a82a760ef28a4b3e0"
+          },
+          "after": {
+            "bytes": 13660,
+            "sha256": "7375429c4efe2e51e31e6460d51bdc34ac7f2efcd25cd1775844e0d0c11098cf",
+            "git_blob": "be890ba0f03feea60c718084f06607426545e69a"
+          }
+        },
+        "art_quality/test_art_quality.py": {
+          "before": {
+            "bytes": 5666,
+            "sha256": "8c2c8b1aa4dd284b6cc6b6d75ddbe9d9dcfcb8805e9f4e07b98ad700accd4dae",
+            "git_blob": "3e745cc99b2c8ecc88f008516ae971d796c1160d"
+          },
+          "after": {
+            "bytes": 8420,
+            "sha256": "c10872feebf681e34187908c3dcb655401287c65088d11340aaa4dd10c4fe8a8",
+            "git_blob": "8eb2baa094cc02ab0ca67daa56abfa1fe3fbd986"
+          }
+        }
+      },
+      "target_paths": [
+        "art_quality/check_art_quality.py",
+        "art_quality/test_art_quality.py"
+      ],
+      "resources": [
+        "ART_QUALITY_SCREENSHOT_EVIDENCE_COUNT"
+      ],
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "d6476691-bc13-4e4e-b6ec-342343862b9b",
+      "issued_at": "2026-11-25T01:39:12.133+00:00",
+      "expires_at": "2026-11-25T07:39:12.133+00:00",
+      "actual_metadata_lease": {
+        "ref": "040dd76e8c4b58a7416156fbf88bb05cdacd9327",
+        "blob": "ee6f234c0a63d67c3d0445bf2427f0306114d568",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d6476691-bc13-4e4e-b6ec-342343862b9b",
+          "task_id": null,
+          "epoch": 743,
+          "acquired_at": "2026-11-25T01:39:04.173+00:00",
+          "expires_at": "2026-11-25T02:09:04.173+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "source_publisher": "/root (Work A-only, existing #424)",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "art_gate": "ART_NO_GO"
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
