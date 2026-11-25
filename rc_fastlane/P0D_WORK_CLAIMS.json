@@ -29055,7 +29055,7 @@
     {
       "claim_id": "P0D-GQ470-KO-LIVE-CAP-20261125",
       "feature_id": "GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (current Work session / original #928 takeover-free targeted PREP)",
       "parent_issue": 470,
@@ -29121,21 +29121,21 @@
         "quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py": {
           "before": null,
           "after": {
-            "bytes": 15572,
-            "sha256": "a3af42cc117ff99ffcf884c109cd87845edccb80b0609ee3f21db452daf6f474",
-            "git_blob": "1d485a0516cfa26694733dbb69cf4b24948212af"
+            "bytes": 15614,
+            "sha256": "79c150cf2133c5299b0287dc2495f6bcc6093a28e6762b058df7afa08dec7923",
+            "git_blob": "b254faa13cf2475c975ae74094862e640caea5cc"
           },
           "mode": "100644"
         }
       },
-      "prepared_candidate_tree": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
+      "prepared_candidate_tree": "80fc727a76cac2d143f76efd2ec3a3bce9636140",
       "scope_proposal": {
         "bytes": 2772,
         "sha256": "1697b8dac6ccbfb6ba24835fdf50dffcfceb2d424badfc334214efe5666d072a",
         "git_blob": "e84935d8f8f14b2a37d8f4abe8558e0a7caca27c"
       },
-      "source_head": "5beaeddd77586f170459018df7a4a113b7522609",
-      "source_tree": "39b23ed8730e791dedf3d706f5ae68424f3b2890",
+      "source_head": "45002d3f1f46c1be740588fcfcb151f3fa02ddd0",
+      "source_tree": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
       "scope": "Same #928 original A-only PREP. Reuse the existing author 5244-byte ImpactFeedback, preserve hit/score and all other selected modules, authenticate current official parent via dedicated read-only workflow, and validate exact original KO behavior with Native. No other branch, main, RC, publish, mobile or ART adoption.",
       "prep_branch": "quality/gq470-ko-slashed-burst-real69-20261120",
       "allowed_new_prs": 0,
@@ -29184,6 +29184,52 @@
         "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797/artifacts/14977773039",
         "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
         "step_count": 48
+      },
+      "actual_source_publication": {
+        "source_lease": "4a828ea3a76622ec2e854094164d2beab35890ec",
+        "normal_return": "e25d1e41986354caad9a84ac11cf234625cc5232",
+        "actual_head": "45002d3f1f46c1be740588fcfcb151f3fa02ddd0",
+        "tree": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
+        "primary_Hosted_CI": "FAIL_ARCHIVED_DIAGNOSTIC_EXPECTED_CANDIDATE_VARIANT",
+        "actual_failure": {
+          "run": 45519684958,
+          "job": 138888105238,
+          "reason": "Compare candidate_h93 Guardian diagnostic body to its own frozen format instead of the combined official PR796 body",
+          "official_zip_metadata_verified": true
+        }
+      },
+      "exact_bounded_source_amendment": {
+        "scope": "Same PR #928 only; comparison of generated Guardian body per original role/LOS flavor. No game source or workflow change.",
+        "authenticated_record": "https://github.com/kk051780/toy-wars-factory/pull/928#issuecomment-7148762414",
+        "source_authority_registration_only": true,
+        "revision": {
+          "current": "45002d3f1f46c1be740588fcfcb151f3fa02ddd0",
+          "tree_before": "a5715d6e737cfacf4a46bd33b4e9dfa1046bc825",
+          "path": "quality_gameplay/gq470_ko_slash_real69_20261120/verify_guardian_parent_packet.py",
+          "before": {
+            "bytes": 15572,
+            "sha256": "a3af42cc117ff99ffcf884c109cd87845edccb80b0609ee3f21db452daf6f474",
+            "git_blob": "1d485a0516cfa26694733dbb69cf4b24948212af"
+          },
+          "after": {
+            "bytes": 15614,
+            "sha256": "79c150cf2133c5299b0287dc2495f6bcc6093a28e6762b058df7afa08dec7923",
+            "git_blob": "b254faa13cf2475c975ae74094862e640caea5cc"
+          },
+          "tree": "80fc727a76cac2d143f76efd2ec3a3bce9636140",
+          "base": "273e763c42ee0f405ef854b75c3cf071b078e896",
+          "branch": "quality/gq470-ko-slashed-burst-real69-20261120",
+          "pr": 928,
+          "failure": {
+            "run": 45519684958,
+            "job": 138888105238,
+            "reason": "Compare candidate_h93 Guardian diagnostic body to its own frozen format instead of the combined official PR796 body",
+            "official_zip_metadata_verified": true
+          },
+          "official_reference_from_original_source": "        spans = list(receipt[\"full_source_ranges\"].values())\n        require(receipt[\"full_source_body_count\"] == len(spans) == len(source_names) == 28\n                and {span[\"path\"] for span in spans} == source_names, \"GUARDIAN_MATRIX_28_SOURCE_BODIES\")\n        program = raw[\"generated.luau\"]\n        end = 0\n        for span in sorted(spans, key=lambda row: row[\"byte_start\"]):\n            path, first, last = (span[key] for key in (\"path\", \"byte_start\", \"byte_end_exclusive\"))\n            expected = (contract[\"guardian\"][\"variants\"][variant][\"input\" if kind == \"baseline\" else \"candidate\"]\n                        if path == guard_source else input_pins[\"sources\"][path])\n            body = program[first:last]\n            require(end <= first < last <= len(program) and digest(body) == expected ==\n                    {key: span[key] for key in (\"bytes\", \"sha256\")}\n                    and span[\"line_first\"] == program[:first].count(b\"\\n\") + 1\n                    and span[\"line_last\"] == span[\"line_first\"] + body.count(b\"\\n\"),\n                    \"GUARDIAN_MATRIX_SOURCE_SPAN:\" + path)\n            end = last\n        verify_guardian_program_frame(program, receipt[\"full_source_ranges\"], contract, role, mode)\n        counts[\"expected_baseline_failure\" if red else"
+        },
+        "meta_lease": "e5dd21d513ed1f9331b222e128b90c3d0d1e330e",
+        "needs_separate_live_source_lease": true
       }
     }
   ],
