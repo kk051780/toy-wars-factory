@@ -95,19 +95,79 @@ def scene_inventory(place: Path) -> dict:
         "source_violations": violations,
     }
 
+
+def png_row_widths(width: int, height: int, pixel_bits: int, interlace: int):
+    passes = ((0, 0, 1, 1),) if interlace == 0 else (
+        (0, 0, 8, 8), (4, 0, 8, 8), (0, 4, 4, 8), (2, 0, 4, 4),
+        (0, 2, 2, 4), (1, 0, 2, 2), (0, 1, 1, 2),
+    )
+    for x, y, dx, dy in passes:
+        if width > x and height > y:
+            pixels = (width - x + dx - 1) // dx
+            stride = 1 + (pixels * pixel_bits + 7) // 8
+            for _ in range((height - y + dy - 1) // dy):
+                yield stride
+
+
+def decode_png_blocks(data: bytes, spans: list[tuple[int, int]]):
+    decoder = zlib.decompressobj()
+    view = memoryview(data)
+    try:
+        for start, stop in spans:
+            for at in range(start, stop, 65536):
+                pending = view[at:min(at + 65536, stop)]
+                while pending:
+                    block = decoder.decompress(pending, 65536)
+                    if decoder.unused_data:
+                        raise ValueError("INVALID_PNG_IDAT_DEFLATE")
+                    yield block
+                    pending = decoder.unconsumed_tail
+        while not decoder.eof:
+            block = decoder.decompress(b"", 65536)
+            if not block:
+                raise ValueError("INVALID_PNG_IDAT_DEFLATE")
+            yield block
+    except zlib.error as exc:
+        raise ValueError("INVALID_PNG_IDAT_DEFLATE") from exc
+
+
+def check_png_raster(data: bytes, spans: list[tuple[int, int]], rows) -> None:
+    decoded = 0
+    filter_at = 0
+    for block in decode_png_blocks(data, spans):
+        end = decoded + len(block)
+        while filter_at < end:
+            stride = next(rows, None)
+            if stride is None or block[filter_at - decoded] > 4:
+                raise ValueError("INVALID_PNG_RASTER")
+            filter_at += stride
+        decoded = end
+    if decoded != filter_at or next(rows, None) is not None:
+        raise ValueError("INVALID_PNG_RASTER")
+
+
 def png_info(path: Path) -> tuple[int, int, str]:
     if not path.is_file() or path.is_symlink() or path.suffix.lower() != ".png":
         raise ValueError("PNG_FILE_REQUIRED")
     data = path.read_bytes()
     if len(data) < 33 or data[:8] != PNG or data[12:16] != b"IHDR":
         raise ValueError("INVALID_PNG_HEADER")
-    width, height = struct.unpack(">II", data[16:24])
+    if struct.unpack_from(">I", data, 8)[0] != 13:
+        raise ValueError("INVALID_PNG_IHDR")
+    width, height, depth, color, compression, filter_method, interlace = struct.unpack_from(">IIBBBBB", data, 16)
+    layouts = {0: (1, {1, 2, 4, 8, 16}), 2: (3, {8, 16}), 3: (1, {1, 2, 4, 8}),
+               4: (2, {8, 16}), 6: (4, {8, 16})}
+    layout = layouts.get(color)
+    if layout is None or depth not in layout[1] or compression != 0 or filter_method != 0 or interlace not in (0, 1):
+        raise ValueError("INVALID_PNG_IHDR")
     if width < 720 or height < 400 or width > 16384 or height > 16384:
         raise ValueError("INVALID_SCREENSHOT_DIMENSIONS")
     if len(data) < 1024:
         raise ValueError("IMAGE_TOO_SMALL_FOR_EVIDENCE")
     offset = len(PNG)
-    image_data = False
+    spans = []
+    idat_ended = False
+    palette = False
     finished = False
     while offset + 12 <= len(data):
         size, kind = struct.unpack_from(">I4s", data, offset)
@@ -120,14 +180,23 @@ def png_info(path: Path) -> tuple[int, int, str]:
             raise ValueError("INVALID_PNG_CHUNK_CRC")
         if kind == b"IHDR" and (offset != len(PNG) or size != 13):
             raise ValueError("INVALID_PNG_IHDR")
-        if kind == b"IDAT" and size > 0:
-            image_data = True
+        if kind == b"PLTE":
+            if palette or spans or size == 0 or size > 768 or size % 3 != 0:
+                raise ValueError("INVALID_PNG_PALETTE")
+            palette = True
+        if kind == b"IDAT":
+            if idat_ended:
+                raise ValueError("NONCONTIGUOUS_PNG_IDAT")
+            spans.append((offset + 8, checksum_at))
+        elif spans:
+            idat_ended = True
         if kind == b"IEND":
             finished = (size == 0 and next_offset == len(data))
             break
         offset = next_offset
-    if not image_data or not finished:
+    if not spans or not finished or (color == 3 and not palette):
         raise ValueError("INCOMPLETE_PNG_IMAGE")
+    check_png_raster(data, spans, png_row_widths(width, height, layout[0] * depth, interlace))
     return width, height, digest(data)
 
 def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str) -> dict:
