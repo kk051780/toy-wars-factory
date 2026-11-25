@@ -29231,6 +29231,136 @@
         "meta_lease": "e5dd21d513ed1f9331b222e128b90c3d0d1e330e",
         "needs_separate_live_source_lease": true
       }
+    },
+    {
+      "claim_id": "P0D-GQ1010-ITEM-ORNAMENT-A-PREP-20261125",
+      "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root/guardian_transport (existing #1010 source-only PREP publisher)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 1010,
+      "canonical_parent": 1010,
+      "request_comment": 7148783208,
+      "authenticated_scope_request_comment": 7148783208,
+      "design_comment": 7049907594,
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "origin_source_pr": 1010,
+      "origin_source_head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+      "origin_source_owner": "CODEX_ROOT_7B6B25AEAA29",
+      "origin_source_and_fixture_author_preserved": true,
+      "origin_source_registry_claim": "P0D-GQ1010-ART-CLEANUP-20261123-7B6B25AE",
+      "origin_source_exact_blob": {
+        "bytes": 22284,
+        "sha256": "293eed3bff121484d132ecf7759d189fc3dc6d951412fd60f92f9598341b7837",
+        "git_blob": "3723dee279d5ed441e52485533ef889cdf1004a0"
+      },
+      "target_paths": [
+        ".github/workflows/gq470-item-ornament-visibility-real69.yml",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+        "GQ470_ITEM_ORNAMENT_DEDICATED_PREP"
+      ],
+      "prepared_source_hashes": {
+        ".github/workflows/gq470-item-ornament-visibility-real69.yml": {
+          "before": {
+            "bytes": 8078,
+            "sha256": "e90daec651bd952c44996f9bd6feafa37eb5d9db9b07aacea452d2a9de496525",
+            "git_blob": "189c28d1859603cbbe4f37ba7d732aa16f5d2ee3"
+          },
+          "after": {
+            "bytes": 6157,
+            "sha256": "fc6e680e75a19bf8ff8a0e3b1d4f61318046a3bc98585bd37d19f3383b3626ee",
+            "git_blob": "dc5edc1926587d46b23efdfd3e699d6e3d8ac9fe"
+          }
+        },
+        "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py": {
+          "before": {
+            "bytes": 8408,
+            "sha256": "410504f3dbdb9ba797aee12daa1e41a3aa9e9feb48dc7a189bd5ff59e6dbc7fa",
+            "git_blob": "764b69d7f9c7f17745637109cf0233ee1c2328b8"
+          },
+          "after": {
+            "bytes": 13562,
+            "sha256": "54756b94d7a9d6c3f78a9de8a33eeb7e38fc9270d87589b1fc9637518f0c6463",
+            "git_blob": "99b29dc1044c4731675e9b712bc1409be764b615"
+          }
+        },
+        "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py": {
+          "before": {
+            "bytes": 4813,
+            "sha256": "6f0f8347565cea188e737fbe12e11416492930cb3f62a98acb1f19bcd909eb33",
+            "git_blob": "19000e5aa73947c88e6dddaad73fb053036fe338"
+          },
+          "after": {
+            "bytes": 18186,
+            "sha256": "03f7b16b1348df78d21378decb7b99dea86bcfc047f75027a37a5f4f07ea0efe",
+            "git_blob": "e0ef6fa46415cf471f8bcd740d88d1a732851c10"
+          }
+        }
+      },
+      "prepared_candidate_tree": "82b0e1cdd3bf3546f2c8d9892c3ffe7859e4b36d",
+      "source_head": "19fe14a7b5cc4f4f7cfb09943128d7a1ebf803d4",
+      "source_tree": "812662c6ce5b719216f47eaa6e388b057c563a13",
+      "prep_branch": "quality/gq470-real69-item-ornament-visibility-20261122-a01",
+      "allowed_new_prs": 0,
+      "allowed_existing_pr": 1010,
+      "scope": "Same existing #1010 A-only producer. Three paths. Use immutable original author's +238 cleanup on the already adopted visibility source, retain exact artwork, keep authority and other 68 sources unchanged, test live six lifecycle states via two F46 source processes, genuine ON/OFF Rojo, exact current official parent.",
+      "scope_proposal": {
+        "bytes": 2284,
+        "sha256": "999fad4945d0f18245c3eb2c1219f7bd00c06419117acefbac6af785b2d35e23",
+        "git_blob": "acccd40b8aae6aec5dcd37e72635c73dd8c715f3"
+      },
+      "source_publisher": "/root/guardian_transport (existing #1010 source-only PREP publisher)",
+      "source_agent_context": "/root/guardian_transport",
+      "independent_reviewer_context": "/root/rc_authority_review",
+      "author_may_self_approve": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "ea3faa51-9e25-4026-ab55-25d2c3cf9d3f",
+      "issued_at": "2026-11-25T00:49:05.780+00:00",
+      "expires_at": "2026-11-25T06:49:05.780+00:00",
+      "actual_metadata_lease": {
+        "ref": "b5b322ee6446246588dc9aadb40dcfbd09f7782e",
+        "blob": "e02973ecf9525783474b726f6cc7582e32b3e77a",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "ea3faa51-9e25-4026-ab55-25d2c3cf9d3f",
+          "task_id": null,
+          "epoch": 738,
+          "acquired_at": "2026-11-25T00:48:59.305+00:00",
+          "expires_at": "2026-11-25T01:18:59.305+00:00",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "scope_only": true,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "art_gate": "ART_NO_GO",
+      "studio": "NOT_TESTED",
+      "original_official_input": {
+        "id": 14977773039,
+        "run": 45516606797,
+        "job": 138877535812,
+        "head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "sha256": "f4e8cfb036cfb83e33d95c20e0d9cf9522e5737881e26e61f317fccb230567b0",
+        "bytes": 13407250,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797/artifacts/14977773039",
+        "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45516606797",
+        "step_count": 48
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
