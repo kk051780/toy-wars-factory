@@ -1,0 +1,26 @@
+{
+  "schema": "P0D_GQ8_REALM_CORE34_FOUNDATION_V1",
+  "feature_id": "GQ8_REALM_PERMANENT_LAND_SEA_AIR_SUBSEA_20261118",
+  "target_profile": "eggrumble_v3_realm_core34",
+  "purpose": "Permanent V3 land/sea/air/subsea baseline, not a legacy Studio optional32 switch",
+  "source_count": 34,
+  "original_source_count": 31,
+  "added_sources": [
+    "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal",
+    "ServerScriptService/EGGRUMBLE_RealmBattleCore",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls"
+  ],
+  "composer": "handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py",
+  "native_rojo_workflow": ".github/workflows/p0d-gq8-realm-core34.yml",
+  "proof_success_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/44190368910",
+  "in_game_studio_tested": false,
+  "android_tested": false,
+  "primary_rich51_preserved": true,
+  "main_modified": false,
+  "publishing_authorized": false,
+  "priority": "Owner-requested foundation; promote on V3 after authenticated #220 CAS/source gate",
+  "existing_host_combat_swarm_store_score_unmodified": true,
+  "realm_weapon_targets": "New mounts and sea creatures; BR vehicles; no TEAM human/castle until original Combat/Host adapter",
+  "rollback": "Select original31, without replacing any existing 31 source bytes",
+  "state": "SOURCE_BUILD_QA_PASS_PENDING_FORMAL_RC_CORE_PROFILE_ADOPTION"
+}

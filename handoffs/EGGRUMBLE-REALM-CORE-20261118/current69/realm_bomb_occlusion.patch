@@ -1,0 +1,43 @@
+--- a/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau
++++ b/ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau
+@@ -574,17 +574,29 @@
+    query.FilterDescendantsInstances={model,player.Character}
+    local ray=Workspace:Raycast(impact,Vector3.new(0,-260,0),query)
+    if ray then impact=ray.Position else impact=impact-Vector3.new(0,60,0) end
++   -- Keep the radius at the actual impact; start sight just outside its surface.
++   local blastOrigin=if ray then impact+ray.Normal*.1 else impact
++   local blastQuery=RaycastParams.new()
++   blastQuery.FilterType=Enum.RaycastFilterType.Exclude
++   blastQuery.FilterDescendantsInstances={model,player.Character}
++   blastQuery.RespectCanCollide=true
++   local function clearBlastPath(target)
++    local delta=target:GetPivot().Position-blastOrigin
++    if delta.Magnitude<=.001 then return true end
++    local hit=Workspace:Raycast(blastOrigin,delta,blastQuery)
++    return hit==nil or hit.Instance:IsDescendantOf(target)
++   end
+    local fx=part(core,"BombImpact",CFrame.new(impact),
+     Vector3.new(26,2,26),Color3.fromRGB(245,167,65),false,.45)
+    fx.CanQuery=false;Debris:AddItem(fx,.4)
+    for m in pairs(state.creatures) do
+-    if m.Parent and (m:GetPivot().Position-impact).Magnitude<=27 then
++    if m.Parent and (m:GetPivot().Position-impact).Magnitude<=27 and clearBlastPath(m) then
+      damageRealm(m,46,"BLAST",true)
+     end
+    end
+    if mode=="BATTLE_ROYALE" then
+     for other in pairs(state.planes) do
+-     if other~=model and other.Parent and (other:GetPivot().Position-impact).Magnitude<=27 then
++     if other~=model and other.Parent and (other:GetPivot().Position-impact).Magnitude<=27 and clearBlastPath(other) then
+       damageRealm(other,46,"BLAST",false)
+      end
+     end
+@@ -593,7 +605,7 @@
+      for _,other in ipairs(lss:GetChildren()) do
+       if other:IsA("Model") and other~=model and other:FindFirstChild("PilotSeat")
+        and other.Name:match("_(%d+)$")
+-       and (other:GetPivot().Position-impact).Magnitude<=27 then
++       and (other:GetPivot().Position-impact).Magnitude<=27 and clearBlastPath(other) then
+        if other:GetAttribute("RealmHP")==nil then other:SetAttribute("RealmHP",100) end
+        damageRealm(other,46,"BLAST",false)
+       end

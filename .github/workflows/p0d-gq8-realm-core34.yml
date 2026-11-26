@@ -1,0 +1,208 @@
+name: P0D GQ8 Realm Core34 Native Rojo Admission
+on:
+  push:
+    branches: ['feature/gq8-realm-core-20261118', 'quality/gq8-realm-hydro-mount-guard-20261118-0743']
+    paths:
+      - 'handoffs/EGGRUMBLE-REALM-CORE-20261118/**'
+      - '.github/workflows/p0d-gq8-realm-core34.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-REALM-CORE-20261118/**'
+      - '.github/workflows/p0d-gq8-realm-core34.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  core34:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Source exactness, gameplay safety and inverse31 regression
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s handoffs/EGGRUMBLE-REALM-CORE-20261118 -p 'test_realm_core.py'
+      - name: Pin current official RC head and same-head V3 artifact
+        id: rc
+        run: |
+          set -euo pipefail
+          # PIN a completed original31 source artifact (must match its own SHA).
+          # If live RC has moved, this candidate remains SOURCE_PREP only,
+          # and the sole RC writer must rerun exact-current gates before CAS.
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 60 \
+            --json databaseId,headSha,status,conclusion > /tmp/v3-runs.json
+          RUN="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/v3-runs.json)"
+          HEAD_SHA="$(jq -r '[.[]|select(.status=="completed" and .conclusion=="success")][0].headSha // empty' /tmp/v3-runs.json)"
+          test -n "$RUN"
+          [[ "$HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]
+          echo "sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Download official original31 script source
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official
+          gh run download "${{ steps.rc.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO \
+            --dir artifacts/official
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          test -s artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json
+          test -s artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
+      - name: Extract same-head real31 and compose permanent core34 plus OFF31
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract \
+            --place artifacts/official/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --template artifacts/official/gq515_official_select/GQ510_MAGE_SELECTED31.project.json \
+            --receipt artifacts/official/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --out artifacts/real31 --head "${{ steps.rc.outputs.sha }}"
+          # Pull the exact current canonical LSS source, not the stale branch copy.
+          LSS_API="repos/${GITHUB_REPOSITORY}/contents/handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau?ref=${{ steps.rc.outputs.sha }}"
+          gh api "$LSS_API" --jq .content | base64 -d > artifacts/real31/CURRENT_OFFICIAL_LSS.luau
+          BLOB="$(gh api "$LSS_API" --jq .sha)"
+          test "$(git hash-object artifacts/real31/CURRENT_OFFICIAL_LSS.luau)" = "$BLOB"
+          python3 handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --lss-source artifacts/real31/CURRENT_OFFICIAL_LSS.luau \
+            --out artifacts/realm34/CORE34.project.json
+          python3 handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py \
+            --current31 artifacts/real31/CURRENT31_REAL_SOURCE.project.json \
+            --out artifacts/realm34/OFF31.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Real native Luau syntax for actual34 and OFF31
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/realm34-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/realm34-native --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import sys
+          sys.path.insert(0, "handoffs/EGGRUMBLE-REALM-CORE-20261118")
+          from compose_core34 import get_files
+          for filename, count in (("artifacts/realm34/CORE34.project.json",34),
+                                  ("artifacts/realm34/OFF31.project.json",31)):
+              _, files=get_files(Path(filename))
+              assert len(files)==count,(filename,len(files))
+              for script in files.values():
+                  subprocess.run(["/tmp/realm34-native/luau-compile","--text",str(script)],
+                                 check=True,stdout=subprocess.DEVNULL)
+              print("REALM_NATIVE_EXACT",count)
+          PY
+      - name: Install pinned Rojo 7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/realm-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/realm-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/realm-rojo.zip') as z:
+              found=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(found)==1
+              exe=Path('/tmp/realm-rojo')
+              exe.write_bytes(z.read(found[0]))
+              exe.chmod(0o755)
+          PY
+      - name: Rojo core34 and rollback31 exact source/class verification
+        run: |
+          set -euo pipefail
+          /tmp/realm-rojo build artifacts/realm34/CORE34.project.json -o artifacts/realm34/EGGRUMBLE_REALM_CORE34.rbxlx
+          /tmp/realm-rojo build artifacts/realm34/OFF31.project.json -o artifacts/realm34/EGGRUMBLE_REALM_OFF31.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/realm34/CORE34.project.json \
+            --place artifacts/realm34/EGGRUMBLE_REALM_CORE34.rbxlx --count 34
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/realm34/OFF31.project.json \
+            --place artifacts/realm34/EGGRUMBLE_REALM_OFF31.rbxlx --count 31
+          NOW="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          if [ "$NOW" = "${{ steps.rc.outputs.sha }}" ]; then
+            echo CURRENT_RC_HEAD_MATCHES_EXACT_VERIFIED_CORE34
+          else
+            echo YELLOW_RC_MOVED_AFTER_PIN_CORE34_PREP_ONLY_NO_FORMAL_ADOPTION
+          fi
+          echo GQ8_REALM_CORE34_PINNED_NATIVE_ROJO_EXACT_OFF31_SUCCESS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-REALM-CORE34-STUDIO-CANDIDATE-NOT-PUBLISHED
+          path: |
+            artifacts/realm34/
+            artifacts/real31/CURRENT31_REAL_SOURCE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error
+  current69-bomb-occlusion:
+    name: Frozen official69 Realm BOMB occlusion source QA (not canonical RC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq764_current69_luau
+          persist-credentials: false
+      - name: Fetch the one immutable official69 artifact and original Rojo release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gq764-current69-input"
+          gh api repos/kk051780/toy-wars-factory/actions/runs/45041527167 > "$RUNNER_TEMP/gq764-current69-input/run.json"
+          gh api 'repos/kk051780/toy-wars-factory/actions/runs/45041527167/artifacts?per_page=100' > "$RUNNER_TEMP/gq764-current69-input/artifacts.json"
+          gh api repos/kk051780/toy-wars-factory/actions/artifacts/14761404772/zip > "$RUNNER_TEMP/gq764-current69-input/official69.zip"
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$RUNNER_TEMP/gq764-current69-input/rojo.zip"
+      - name: Reject changed source, metadata, native output and unsafe output boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-REALM-CORE-20261118/current69/test_gate.py \
+            --artifact-zip "$RUNNER_TEMP/gq764-current69-input/official69.zip" \
+            --run-metadata "$RUNNER_TEMP/gq764-current69-input/run.json" \
+            --artifact-metadata "$RUNNER_TEMP/gq764-current69-input/artifacts.json"
+      - name: Fresh pinned Native; exact one-source ON, inverse OFF69 and unchanged gameplay cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-REALM-CORE-20261118/current69/gate.py \
+            --artifact-zip "$RUNNER_TEMP/gq764-current69-input/official69.zip" \
+            --run-metadata "$RUNNER_TEMP/gq764-current69-input/run.json" \
+            --artifact-metadata "$RUNNER_TEMP/gq764-current69-input/artifacts.json" \
+            --luau-source _gq764_current69_luau \
+            --rojo-zip "$RUNNER_TEMP/gq764-current69-input/rojo.zip" \
+            --out artifacts/gq764_current69 --context GITHUB_NONCANONICAL_QA
+      - name: Retain this source QA evidence (not an official build or engine acceptance)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ764-CURRENT69-BOMB-OCCLUSION-QA-NOT-CANONICAL
+          path: |
+            artifacts/gq764_current69/receipt.json
+            artifacts/gq764_current69/provider.json
+            artifacts/gq764_current69/run_metadata.json
+            artifacts/gq764_current69/artifact_metadata.json
+            artifacts/gq764_current69/toolchain_evidence/**
+            artifacts/gq764_current69/patch_logs/**
+            artifacts/gq764_current69/compile_logs/**
+            artifacts/gq764_current69/build_logs/**
+            artifacts/gq764_current69/native/**
+            artifacts/gq764_current69/on/**
+            artifacts/gq764_current69/off/**
+          retention-days: 3
