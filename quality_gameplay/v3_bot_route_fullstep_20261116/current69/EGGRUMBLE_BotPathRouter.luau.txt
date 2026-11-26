@@ -1,0 +1,299 @@
+--!strict
+-- EGGRUMBLE V3 AI world navigation. Source-only Studio preview, not commercial nav QA.
+-- Roblox PathfindingService does real route computation; asynchronous bounded requests
+-- avoid 15 bots recalculating expensive city-length routes at the same instant.
+local PathfindingService=game:GetService("PathfindingService")
+local RunService=game:GetService("RunService")
+local Router={}
+local MAX_COMPUTES_IN_FLIGHT=2
+local RECOMPUTE_SECONDS=2.8
+local WAYPOINT_RADIUS=4.2
+local GOAL_CHANGE_DISTANCE=12
+local PATH_MAX_DISTANCE=2600
+local PATH_TRAVEL_SPEED=30
+local CRAWL_RETRY_DELAY=1.25
+local states:{[string]:any}={}
+local inFlight=0
+
+local function planar(a:Vector3,b:Vector3):Vector3
+ return Vector3.new(b.X-a.X,0,b.Z-a.Z)
+end
+local function raycastParams(actors:Instance):RaycastParams
+ local params=RaycastParams.new()
+ params.FilterType=Enum.RaycastFilterType.Exclude
+ params.FilterDescendantsInstances={actors}
+ params.RespectCanCollide=true
+ return params
+end
+local function walkableSurface(pos:Vector3,actors:Instance):Vector3?
+ -- A ceiling/leaf, steep cliff or empty gap cannot be used as a walkable floor.
+ -- Ray from near the moving bot's feet; never snap to a high distant roof.
+ local result=workspace:Raycast(pos+Vector3.new(0,2,0),Vector3.new(0,-16,0),raycastParams(actors))
+ if not result or not result.Instance.CanCollide or result.Normal.Y<.65 then return nil end
+ return Vector3.new(pos.X,result.Position.Y+2.0,pos.Z)
+end
+local function surfaceAt(pos:Vector3,actors:Instance):Vector3
+ return walkableSurface(pos,actors) or pos
+end
+local function bodyBounds(body:BasePart,at:Vector3):Vector3?
+ local size=body.Size
+ local width=Vector3.new(size.X,0,size.Z).Magnitude
+ if not (size.X>0 and size.Y>0 and size.Z>0 and width<=512 and size.Y<=512) then return nil end
+ -- BotActors' upright PrimaryPart is centered on the model pivot. Its horizontal
+ -- diagonal bounds every yaw, including the turn performed by the final PivotTo.
+ local up=body.CFrame.UpVector
+ if body.Position~=at or up.X~=0 or up.Z~=0 or not (up.Y>0) then return nil end
+ return Vector3.new(width,size.Y,width)
+end
+local function bodySupport(from:Vector3,to:Vector3,bounds:Vector3,actors:Instance):Vector3
+ -- The center ray must still find a floor. Also support the body's front at an
+ -- allowed low step, before its center reaches the step, or a full-body cast
+ -- would strand the actor at TacticalRoute's 0.6-stud raised edge.
+ local top=from.Y+2.25
+ local distance=top-to.Y+2.0-bounds.Y/2
+ if distance<=0 then return to end
+ local hit=workspace:Blockcast(CFrame.new(Vector3.new(to.X,top,to.Z)),bounds,
+  Vector3.new(0,-distance,0),raycastParams(actors))
+ if hit and hit.Instance.CanCollide and hit.Normal.Y>=.65 then
+  return Vector3.new(to.X,math.max(to.Y,hit.Position.Y+2.0),to.Z)
+ end
+ return to
+end
+local function routeClear(model:Model,to:Vector3,direction:Vector3,actors:Instance):boolean
+ local current=model:GetPivot()
+ local from=current.Position
+ local root=model.PrimaryPart
+ if not root then return false end
+ local size=root.Size
+ local start=CFrame.lookAt(from,from+direction)
+ local overlap=OverlapParams.new()
+ overlap.FilterType=Enum.RaycastFilterType.Exclude
+ overlap.FilterDescendantsInstances={actors}
+ overlap.RespectCanCollide=true
+ overlap.MaxParts=1
+ local hx,hz=size.X*.5,size.Z*.5
+ local r=math.sqrt(hx*hx+hz*hz)
+ local peakX,peakZ=math.atan2(hz,hx),math.atan2(hx,hz)
+ local function turnClear(look:Vector3,halfYaw:number,depth:number):boolean
+  -- Bound the shortest upright yaw arc in its midpoint frame. Refine only
+  -- bounds hits: at most eight arcs / 15 queries; unresolved bounds stop.
+  local a=math.abs(halfYaw)
+  local c,s=math.cos(halfYaw),math.sin(halfYaw)
+  local rx=if a>=peakX then r else hx*c+hz*math.abs(s)
+  local rz=if a>=peakZ then r else hz*c+hx*math.abs(s)
+  local mid=look*c+Vector3.new(look.Z,0,-look.X)*s
+  local bounds=CFrame.lookAt(from,from+mid)
+  if #workspace:GetPartBoundsInBox(bounds,Vector3.new(rx*2,size.Y,rz*2),overlap)==0 then return true end
+  if depth==0 or halfYaw==0 then return false end
+  return turnClear(look,halfYaw*.5,depth-1) and turnClear(mid,halfYaw*.5,depth-1)
+ end
+ local look=current.LookVector
+ local halfYaw=.5*math.atan2(look:Cross(direction).Y,look:Dot(direction))
+ if not turnClear(look,halfYaw,3)
+  or #workspace:GetPartBoundsInBox(CFrame.lookAt(to,to+direction),size,overlap)>0 then
+  return false
+ end
+ local params=raycastParams(actors)
+ local horizontal=Vector3.new(to.X-from.X,0,to.Z-from.Z)
+ local vertical=Vector3.new(0,to.Y-from.Y,0)
+ -- Step up before translating; step down after translating. A single sloped
+ -- chord can cut through a floor/ramp join even though both poses are clear.
+ if vertical.Y>0 then
+  if workspace:Blockcast(start,size,vertical,params) then return false end
+  return workspace:Blockcast(start+vertical,size,horizontal,params)==nil
+ end
+ if workspace:Blockcast(start,size,horizontal,params) then return false end
+ return vertical.Y==0 or workspace:Blockcast(start+horizontal,size,vertical,params)==nil
+end
+local function resetPath(state:any)
+ if state.blockedConn then
+  state.blockedConn:Disconnect()
+  state.blockedConn=nil
+ end
+ if state.path then state.path:Destroy();state.path=nil end
+ state.waypoints=nil
+ state.index=1
+end
+local function maybeCompute(id:string,model:Model,at:Vector3,goal:Vector3,state:any,actors:Instance)
+ local now=os.clock()
+ if state.inFlight or inFlight>=MAX_COMPUTES_IN_FLIGHT or now<state.retryAt then return end
+ if planar(at,goal).Magnitude>PATH_MAX_DISTANCE then
+  -- Map-level route should be split at sector/bridge waypoints, not a >3000 stud call.
+  state.retryAt=now+RECOMPUTE_SECONDS;return
+ end
+ inFlight+=1;state.inFlight=true;state.retryAt=now+RECOMPUTE_SECONDS
+ local expectedTarget=goal
+ task.spawn(function()
+  -- CreatePath may throw before ComputeAsync starts. Both operations must
+  -- share the same failure cleanup or all two AI path slots can be leaked.
+  local path:any=nil
+  local ok=pcall(function()
+   path=PathfindingService:CreatePath({
+    AgentRadius=2,AgentHeight=5,AgentCanJump=false,
+    WaypointSpacing=8,Costs={Water=15},
+   })
+   path:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
+  end)
+  inFlight=math.max(0,inFlight-1)
+  if states[id]~=state or not model.Parent then
+   if path then path:Destroy() end
+   return
+  end
+  state.inFlight=false
+  if not path then
+   -- Never permanently strand this actor's navigator after CreatePath fails.
+   state.failed=(state.failed or 0)+1
+   state.retryAt=os.clock()+RECOMPUTE_SECONDS
+   return
+  end
+  -- A bot can switch from raid to returning a stolen egg while ComputeAsync
+  -- is still pending. Never install that earlier target's path or overwrite
+  -- the current desired goal after the server state has changed.
+  if state.latestRequestedGoal==nil
+   or planar(state.latestRequestedGoal,expectedTarget).Magnitude>GOAL_CHANGE_DISTANCE then
+   path:Destroy()
+   state.retryAt=os.clock()
+   return
+  end
+  if ok and path.Status==Enum.PathStatus.Success then
+   resetPath(state)
+   state.path=path
+   state.waypoints=path:GetWaypoints()
+   state.index=1
+   state.goal=expectedTarget
+   state.lastRepath=os.clock()
+   state.blocked=false
+   state.blockedConn=path.Blocked:Connect(function(blockedAt)
+    if blockedAt>=state.index then
+     state.blocked=true
+     state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+    end
+   end)
+  else
+   path:Destroy()
+   state.failed=(state.failed or 0)+1
+   state.retryAt=os.clock()+RECOMPUTE_SECONDS
+  end
+ end)
+end
+local function advanceState(state:any,here:Vector3)
+ local points=state.waypoints
+ if not points then return end
+ while state.index<=#points do
+  local point=points[state.index].Position
+  local distance=planar(here,point).Magnitude
+  if distance>.05 then
+   -- Preserve the wide arrival radius only along an actual straight route.
+   -- A nearby bend must be reached: cutting its corner can cross a wall/gap.
+   local nextPoint=if state.index<#points then points[state.index+1].Position else state.latestRequestedGoal
+   if not nextPoint then break end
+   local onward=planar(point,nextPoint)
+   local length=onward.Magnitude
+   if length>.05 then
+    local direction=onward.Unit
+    local offset=planar(point,here)
+    if (offset-direction*offset:Dot(direction)).Magnitude>.05 then break end
+    -- A delayed path may leave several straight points behind the body.
+    -- A distant point must already be passed, never skipped on approach.
+    if distance>=WAYPOINT_RADIUS and offset:Dot(direction)<0 then break end
+    local previous=points[state.index-1]
+    local approach=if previous then planar(previous.Position,point) else Vector3.zero
+    if approach.Magnitude>.05 then
+     if approach.Unit:Dot(direction)<1-1e-6 then break end
+    elseif offset:Dot(direction)<0 then
+     -- During ComputeAsync the fallback may already move along the first leg.
+     -- Consume that old start only when the body has actually passed it.
+     break
+    end
+   elseif length>1e-6 or distance>=WAYPOINT_RADIUS then
+    -- A short bend or distant duplicate cannot prove safe straight progress.
+    break
+   end
+  end
+  state.index+=1
+ end
+ if state.index>#points then
+  resetPath(state)
+ end
+end
+function Router.navigate(id:string,model:Model,goal:Vector3,dt:number,actors:Instance):number
+ assert(RunService:IsStudio(),"Preview navigation cannot run in public")
+ local body=model.PrimaryPart
+ if not model.Parent or not body or not body:IsDescendantOf(model) then return math.huge end
+ local here=model:GetPivot().Position
+ local bounds=bodyBounds(body,here)
+ if not bounds then return math.huge end
+ local remain=planar(here,goal).Magnitude
+ if remain<=1.2 then return remain end
+ local state=states[id]
+ if not state then
+  state={retryAt=0,index=1,inFlight=false,blocked=false,goal=nil,lastPos=here,lastProgressAt=os.clock()}
+  states[id]=state
+ end
+ -- The latest game objective wins over a previously queued ComputeAsync.
+ state.latestRequestedGoal=goal
+ advanceState(state,here)
+ local changed=state.goal==nil or planar(state.goal,goal).Magnitude>GOAL_CHANGE_DISTANCE
+ if changed then
+  -- Discard old route immediately, even when another path request is pending.
+  -- The in-flight request is rejected on completion if its target is stale.
+  resetPath(state)
+  state.goal=goal
+ end
+ if changed or state.blocked or not state.waypoints then
+  maybeCompute(id,model,here,goal,state,actors)
+ end
+ local destination=goal
+ if state.waypoints and state.index<=#state.waypoints then
+  destination=state.waypoints[state.index].Position
+ end
+ local delta=planar(here,destination)
+ if delta.Magnitude<=.05 then return remain end
+ local direction=delta.Unit
+ local step=math.min(PATH_TRAVEL_SPEED*math.clamp(dt,.05,.3),delta.Magnitude)
+ local next=here+direction*step
+ local grounded=walkableSurface(next,actors)
+ if grounded==nil then
+  -- A failed/stale navmesh route may point across an unsupported ledge.
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  return remain
+ end
+ local rise=grounded.Y-here.Y
+ if rise>2.25 or rise< -5.5 then
+  -- Never climb a 4.5-stud castle foundation by teleporting upward.
+  -- The standard castle now provides the physical entrance ramp.
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  return remain
+ end
+ grounded=bodySupport(here,grounded,bounds,actors)
+ local supportedRise=grounded.Y-here.Y
+ if supportedRise>2.25 or supportedRise< -5.5 then
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  return remain
+ end
+ -- A failed path or a stale waypoint MUST NOT enable wall phasing.
+ if not routeClear(model,grounded,direction,actors) then
+  state.blocked=true
+  -- Remain in place until asynchronous PathfindingService provides valid route.
+  return remain
+ end
+ -- Anchored preview rig; server still verifies actual ground before every PivotTo.
+ local smoothed=Vector3.new(next.X,grounded.Y,next.Z)
+ model:PivotTo(CFrame.lookAt(smoothed,smoothed+direction))
+ if planar(state.lastPos,smoothed).Magnitude>=2.5 then
+  state.lastPos=smoothed;state.lastProgressAt=os.clock()
+ elseif os.clock()-state.lastProgressAt>2.8 then
+  state.blocked=true;state.retryAt=math.min(state.retryAt,os.clock()+CRAWL_RETRY_DELAY)
+  state.lastProgressAt=os.clock()
+ end
+ return remain
+end
+function Router.clear(id:string)
+ local state=states[id]
+ if not state then return end
+ resetPath(state);states[id]=nil
+end
+function Router.close()
+ for id,_ in pairs(states) do Router.clear(id) end
+end
+return Router
