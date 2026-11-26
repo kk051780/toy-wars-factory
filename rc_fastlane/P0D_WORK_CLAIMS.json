@@ -30266,7 +30266,7 @@
       "claim_id": "P0D-GQ1010-CANONICAL-ITEM-CLEANUP-20261127",
       "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
       "state": "GRANTED",
-      "role": "A_PREP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (current Codex parent, #1010 canonical source intake)",
       "parent_issue": 470,
       "integration_issue": 220,
@@ -30336,13 +30336,13 @@
           "origin": "controller"
         }
       },
-      "scope_only": true,
+      "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
-      "source_scope_granted": true,
-      "source_head": "72bc44175349060a34992747b1dbcb1580459a54",
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "source_scope_granted": false,
+      "source_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "formal_rc_adoption": false,
       "no_main_or_publish": true,
       "authority_basis": "Current authenticated owner and standing ordinary-development delegation. #1011 2026-11-27 V2 and #220 comment 7202869642 prioritize this exact existing candidate if #482 is fenced. Actual independent scope review and #218 request are recorded.",
@@ -30571,7 +30571,97 @@
       "failed_ci": [
         45907805849
       ],
-      "registered_independent_hold_review": 6081260863
+      "registered_independent_hold_review": 6081260863,
+      "independent_source_receipt": {
+        "author_not_reviewer": true,
+        "registered_review_id": 6081358138,
+        "registered_review_state": "COMMENTED",
+        "registered_review_url": "https://github.com/kk051780/toy-wars-factory/pull/1010#pullrequestreview-6081358138",
+        "reviewer_context": "/root/intake482",
+        "source_review_is_github_approval": false,
+        "official_base": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "source_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "source_tree": "a381f55db12b8bfe086cd14a24929d584f65951f",
+        "candidate_checkout": "95b91492ca3911e663bbef420fca89ad42e8ca71",
+        "quality_evidence_url": "https://github.com/kk051780/toy-wars-factory/pull/1010#issuecomment-7154222172",
+        "same_head_ci": [
+          45908708351,
+          45908708225,
+          45908708227
+        ],
+        "sourcery": "SKIPPED_REVIEW_LIMIT_NO_INLINE_FINDINGS",
+        "trusted_queue_run": 45909085345,
+        "trusted_queue_artifact": 15159217203,
+        "candidate_artifact_id": 15158847515,
+        "candidate_artifact": {
+          "bytes": 13919671,
+          "sha256": "4995139f9c1688f579b1ad181382f46487baf2c0597373949e1010353c0cf97f",
+          "origin": "GitHub metadata and upload log"
+        },
+        "candidate_place": {
+          "bytes": 830060,
+          "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3",
+          "origin": "independently rebuilt reviewed source tree"
+        },
+        "source_lock_path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "item_off_archive": "OFF69_ITEM_CLEANUP_GUARDIAN_PARENT_ROLLBACK.tar.gz",
+        "item_off_place": {
+          "bytes": 829822,
+          "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"
+        },
+        "existing_rollback_member_sets_preserved": 5,
+        "studio": "NOT_TESTED"
+      },
+      "bounded_rc_integration": {
+        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "permitted_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "permitted_tree": "a381f55db12b8bfe086cd14a24929d584f65951f",
+        "permitted_pr": 1010,
+        "sole_executor": "/root (current Codex parent, #1010 finite RC adoption)",
+        "source_owner_preserved": "facbcaaa0300f98270e06328a94b504118662634",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "new_feature_or_new_pr_allowed": false,
+        "expires_at": "2026-11-26T23:41:32.738Z",
+        "separate_live_rc_writer_lease_required": true,
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "actual_protection_must_be_respected": true,
+        "fresh_R_H_PR_claim_permission_and_live_lease_required": true,
+        "registered_postpush_reviewer": "/root/intake482",
+        "formal_scope": "Exact existing #1010 cleanup and canonical verification. Development RC only.",
+        "verified_synthetic_merge_commit": "95b91492ca3911e663bbef420fca89ad42e8ca71",
+        "verified_synthetic_merge_tree": "a381f55db12b8bfe086cd14a24929d584f65951f",
+        "official_postpush_acceptance_required": "Exact same post-adoption push CI and Place, Native and OFF receipt. Studio uses a fresh checkout of the new formal SHA.",
+        "actual_metadata_authority": {
+          "authenticated_actor": {
+            "login": "kk051780",
+            "id": 233213370,
+            "permission": "admin/push"
+          },
+          "operation_id": "c2cc2166-4470-4854-a4ab-da2ae554098d",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "c2cc2166-4470-4854-a4ab-da2ae554098d",
+            "task_id": null,
+            "epoch": 761,
+            "acquired_at": "2026-11-26T23:11:16.781Z",
+            "expires_at": "2026-11-26T23:41:16.781Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "110f4890611fa498aa594e2f0e93b3cf6952d46e",
+          "acquire_blob": "c01905e5dcbeba50ae000445ba24b0444b832216",
+          "registry_parent": "6057a7e94d49c49f6e0af30096dc85cff2f3d487",
+          "registry_blob": "4d306aa7bb1742eac09b03cae56d1d2db2fb5140",
+          "authority_basis": "Actual authenticated OWNER standing delegated controller, current #1011 V2 and #220 7202869642, #218 7203649634, registered independent review 6081358138 and trusted exact-head inbox."
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
