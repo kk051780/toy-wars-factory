@@ -1,0 +1,247 @@
+{
+  "schema": "P0D_RELEASE_REQUIREMENTS_METADATA_SOURCE_LOCK_V1",
+  "scope": "CATALOG_AND_PROGRESS_METADATA_ONLY",
+  "repository": "kk051780/toy-wars-factory",
+  "repository_path": "quality_gameplay/gq470_union22_real69_20261122/RELEASE_REQUIREMENTS_SOURCE_LOCK.json",
+  "purpose": "PREPのB/非作者source reviewerがactual HEADからこのlockと対象2ファイルを実際に読み、固定したmetadata提案と同一であることを照合するためのSourceLock。ファイルの存在やGQ8成功だけでは受付完了にしない。",
+  "base_reference": {
+    "commit": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+    "url": "https://github.com/kk051780/toy-wars-factory/tree/dcb501673d7959e4904cf360ef0119917e6aa2e0",
+    "meaning": "固定した2path before本文の取得元。catalog内部の2026-11-14履歴RC HEADとは区別する。",
+    "preimage_rule": "actual PR baseが別commitなら、対象2pathの実本文がbefore pinと同一かを非作者が確認する。不一致なら停止して提案を再レビューし、古いbefore lockを緩めない。"
+  },
+  "payload": {
+    "rc_fastlane/FEATURE_CATALOG.json": {
+      "before": {
+        "bytes": 27330,
+        "sha256": "391fd6cbeaeafbee55ebaa2b8ec184d06a7610e4f4a344af426b2ace1a1a4741",
+        "git_blob": "0d125d45fb5d2724539e0e119a586024aa47818b"
+      },
+      "after": {
+        "bytes": 33390,
+        "sha256": "e12b1ebdb2073f8a094013ae781cdb9d72ee79d6723cfd51431f0fe814c21b3e",
+        "git_blob": "997e975a3f0e1122680ddd06f5e4937495a392a3"
+      }
+    },
+    "rc_fastlane/progress.py": {
+      "before": {
+        "bytes": 4704,
+        "sha256": "881d827978b48763ffa7ef4a045e537351bd819c0ab7cc3210a9207a36a6b8be",
+        "git_blob": "72e8110d3956505517b17803a8acdc34649b824c"
+      },
+      "after": {
+        "bytes": 7190,
+        "sha256": "1d5f520e698de1e1e5b07e7c2619672d856380335c86cd983171d60935c879a1",
+        "git_blob": "41a47c6752170825f61ea1190dee21a17815ecf6"
+      }
+    }
+  },
+  "contract_references": {
+    "owner_role7": {
+      "label": "OWNER 7職フル仕様の発売必須指定",
+      "url": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "marker": "OWNER_PRODUCT_QUALITY_CONCEPT_FIDELITY_POINTER_20261115",
+      "issue_updated_at": "2026-11-22T23:44:06Z",
+      "excerpt_sha256": "9622af786bd2ccd3005ff10820bbee6ac2e1d7a79f3768e520174958057165de"
+    },
+    "owner_assassin": {
+      "label": "OWNER 暗殺者表示・NINJA内部ID維持",
+      "url": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "marker": "OWNER_ROLE7_ASSASSIN_RENAME_20261115",
+      "issue_updated_at": "2026-11-22T23:44:06Z",
+      "excerpt_sha256": "70fe1e0f472742d369a002a82de9a983379a5414ff1a342465fb711ed222a5c0"
+    },
+    "formal_v1_2": {
+      "label": "正式v1.2 ゲーム品質ゲート・M1",
+      "url": "https://github.com/kk051780/toy-wars-factory/blob/dcb501673d7959e4904cf360ef0119917e6aa2e0/docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+      "git_blob": "079947edfbe6976c7a2bf80c1b396ba804c5a068",
+      "section": "5. 品質の客観ゲート / 6. main昇格は固定SHAごとに別承認（M1）"
+    }
+  },
+  "change_contract": {
+    "catalog_added_root_key": "current_release_requirements",
+    "aggregate_feature_id": "P0D-008",
+    "role_feature_ids": {
+      "P0D-009": "WARRIOR",
+      "P0D-010": "MAGE",
+      "P0D-011": "NINJA",
+      "P0D-012": "TRAPPER",
+      "P0D-013": "BUILDER",
+      "P0D-014": "BEAST",
+      "P0D-015": "ZOMBIE"
+    },
+    "release_must_pass_is_requirement_not_acceptance": true,
+    "required_player_display_name": {
+      "internal_role_id": "NINJA",
+      "display_name": "暗殺者",
+      "preserve_internal_role_id": true,
+      "source_ref": "owner_assassin"
+    },
+    "other_player_display_names": "既存PRIVATE_COMPANION REAL69 JOBSの観測値だけ。新たな名称必須契約や受入を追加しない。",
+    "display_observation_reference": {
+      "label": "正式RCのPRIVATE_COMPANION REAL69 JOBS（表示名・内部IDの観測）",
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45083333379",
+      "rc_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "artifact_id": 14777998713,
+      "source_path": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+      "source_bytes": 73774,
+      "source_sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76",
+      "symbol": "JOBS",
+      "evidence_scope": "PRIVATE_COMPANION REAL69での表示名と内部IDの観測のみ。ACTIVE_RUNTIME rich51の稼働・能力・実機・FUN・OWNER受入の証明ではない。",
+      "runtime_track": "PRIVATE_COMPANION_REAL69"
+    },
+    "acceptance_assessment_required_value": {
+      "status": "NOT_EVALUATED",
+      "domains": [
+        "SOURCE",
+        "RC",
+        "ENGINE",
+        "FUN",
+        "OWNER"
+      ],
+      "note": "このmetadata更新は必須要件を示すだけで、SOURCE・RC・ENGINE・FUN・OWNER受入を評価しない。履歴stageやJOBSの存在から合格を引き継がない。"
+    },
+    "progress_presentation": "旧数値を実as_of_jst付き履歴snapshotとして表示し、現在の必須要件と未評価状態を別表/JSON項目で表示する。過去31/67を現在のRC搭載と判定しない。",
+    "progress_added_json_keys": [
+      "historical_snapshot",
+      "current_release_requirements"
+    ]
+  },
+  "historical_preservation": {
+    "catalog_schema": "P0D_OWNER_PORTFOLIO_V1",
+    "as_of_jst": "2026-11-14",
+    "historical_verified_rc_head": "2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264",
+    "existing_root_keys": [
+      "schema",
+      "as_of_jst",
+      "rc_branch",
+      "active_source",
+      "verified_rc_head",
+      "official_s1_previous_score",
+      "stages",
+      "progress_scoring",
+      "progress_note",
+      "rows",
+      "last_progress_change"
+    ],
+    "row_count": 67,
+    "required_comparison": "追加root current_release_requirementsだけを除いた値と既存rootの相対順序をbeforeと比較する。既存67行、stage、release、行名、SHA、証拠、P0D-059、last_progress_changeを保全する。catalogの追加挿入を除くraw bytesもbeforeと一致すること。",
+    "existing_progress_json_values": {
+      "total": 67,
+      "rc": 31,
+      "rc_pct": 46.3,
+      "phase_pct": 50.9,
+      "stage_counts": {
+        "IDEA": 10,
+        "SOURCE": 26,
+        "RC": 31,
+        "STUDIO": 0,
+        "FUN": 0
+      },
+      "targets": {
+        "S1": {
+          "all": 22,
+          "rc": 22,
+          "rc_pct": 100.0,
+          "phase_pct": 70.0
+        },
+        "S2+": {
+          "all": 45,
+          "rc": 9,
+          "rc_pct": 20.0,
+          "phase_pct": 41.6
+        }
+      },
+      "official_s1_last_reported": 75,
+      "studio_rich51": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "existing_cli_arguments": [
+      "--out",
+      "--json"
+    ],
+    "existing_cli_marker": "P0D_FEATURE_CATALOG_PASS 67 31 46.3",
+    "meaning": "これは履歴値の固定であり、現RC/Studio/Android/FUN/OWNER合格の証拠ではない。"
+  },
+  "local_rollback": {
+    "patches_are_review_packet_artifacts_not_added_repository_paths": true,
+    "forward_patch": {
+      "name": "RELEASE_REQUIREMENTS.patch",
+      "bytes": 12365,
+      "sha256": "c8867b19d606ce5d03a76f23d0b11fceaa4c4457f97457569a4f02d9aac98b03",
+      "git_blob": "1bf35b1485ffbb2564f5344d15a302570d9820da",
+      "from": "payload.before",
+      "to": "payload.after"
+    },
+    "inverse_patch": {
+      "name": "ROLLBACK.patch",
+      "bytes": 12365,
+      "sha256": "278e141127ea78b46fc961acc158ef2ebc54ea465ea85b1045f925561d146fe2",
+      "git_blob": "bd9ffc046114ffbe51d9da1c3c2dbfcfd33d9f2f",
+      "from": "payload.after",
+      "to": "payload.before"
+    },
+    "payload_precondition": "対象2pathが適用方向の入力pinに全一致する場合だけ使用する。正逆patchは既存2path専用で、無関係な変更を巻き戻さない。",
+    "source_lock_rollback": "新規追加したこのlockは、外部PREP/review記録でactual HEADのbytes/SHA256/Git blobを照合してから、その1pathだけを除去する。既存ROLLBACK.patchにlock削除は含まれない。",
+    "source_lock_absence_precondition": "このpathが適用前treeに存在しないことをPREPで確認する。既存fileがあれば上書きせず停止する。"
+  },
+  "required_actual_head_review": {
+    "consumer": "既存PREPのB/非作者source reviewer",
+    "self_hash_policy": "lock自身のhashはこのJSONに埋め込まない。actual HEADの取得byteから計算したbytes/SHA256/Git blobを、別の非作者レビュー記録で固定する。",
+    "checks": [
+      "actual HEADをimmutable commit SHAで固定し、このlockとpayload 2pathをそのHEADから実読する。3pathの実scope grant/amendmentを別metadataで照合する。このJSONから権限を推定しない。",
+      "base_referenceの2path beforeとactual HEADの2path afterを、bytes/SHA256/Git blobでそれぞれ照合する。lockの初期内容自体も非作者がレビューし外部記録へpinする。",
+      "historical_preservation、change_contract、#219 OWNER blocksと正式v1.2参照を確認する。requiredとpassedを混ぜず、履歴67行と旧9項目の値を保全する。",
+      "正逆patch pinと切戻しの入力条件を既存review packetに結び付ける。新lockの除去を2path rollbackと区別する。",
+      "既存2pathのlocal CLI/正逆検証はその固定byteの過去証拠として読む。actual HEADの登録承認、hosted CI、正式RC採用をこのlockまたは旧receiptから生成しない。"
+    ],
+    "external_record_fields": [
+      "reviewer_identity",
+      "author_separation",
+      "actual_head",
+      "source_lock_bytes_sha256_git_blob",
+      "observed_payload_before_after_pins",
+      "scope_amendment_reference",
+      "checks_and_findings",
+      "review_disposition"
+    ],
+    "failure_rule": "未読、pin不一致、履歴破壊、根拠不一致、scope不足なら受付を完了せず、該当箇所を既存担当へ返す。"
+  },
+  "existing_local_evidence": {
+    "scope": "追加lockを含まない既存2path限定の過去検証。新actual HEADの登録承認ではない。",
+    "author_verification": {
+      "packet_relative_path": "release_requirements_proposal/VERIFICATION_RECEIPT.json",
+      "bytes": 8796,
+      "sha256": "dfb84b2cb4e6e0b0db3c1a227eaee7064018df6d8cc4267c9253dfdb45756263",
+      "git_blob": "8e601378cf141f502112475813ffbb4f1ef1d7e3"
+    },
+    "non_author_review": {
+      "packet_relative_path": "release_requirements_independent/REVIEW_RECEIPT.json",
+      "bytes": 11044,
+      "sha256": "db5864d8e4d8afd9fb3f3c67ed20141c9d116fa5d78e908411895871c2786383",
+      "git_blob": "c19c7dfca217e1e87cd89ba0bc1ba089bc886c04"
+    }
+  },
+  "gq8_evidence_boundary": {
+    "observed_verifier": {
+      "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+      "ref": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+      "bytes": 44927,
+      "sha256": "64561332d0b30bae5cc73873b1ad7b8b87f8601b2bccc80c50b509f1a543a74d",
+      "git_blob": "91bbe0609276f4e1bfcc5a792b567df556a17713",
+      "url": "https://github.com/kk051780/toy-wars-factory/blob/dcb501673d7959e4904cf360ef0119917e6aa2e0/quality_gameplay/gq470_union22_real69_20261122/verify_union22.py"
+    },
+    "method": "実codeの静的読取りだけ。今回verifier/CI/gameplayは実行しない。",
+    "files_here": "admit_deliveryはcontract_before = files(HERE)を取得し、各unchanged段階でfiles(HERE)と比較する。このpathにJSONがあれば監視対象に入る。",
+    "initial_content_authentication": false,
+    "metadata_semantic_validation": false,
+    "copied_to_delivery": false,
+    "limit": "GQ8の開始時snapshotはこのlockの正しい初期pinや内容の意味を認証しない。deliveryへのコピー対象にも入らない。PREPでの非作者実読と外部pinを代替しない。"
+  },
+  "non_claims": [
+    "69ゲームsource/profile lockの変更または受入",
+    "UNION22 final receipt/admission、Nativeまたはruntimeの合格",
+    "7職の能力実装・SOURCE/RC/ENGINE/FUN/OWNER受入",
+    "このJSONの存在だけによるsource scope grant、登録reviewまたは正式RC採用"
+  ]
+}

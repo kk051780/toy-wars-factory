@@ -1,5 +1,165 @@
 {
   "schema": "P0D_OWNER_PORTFOLIO_V1",
+  "current_release_requirements": {
+    "schema": "P0D_CURRENT_RELEASE_REQUIREMENTS_V1",
+    "owner_effective_as_of_jst": "2026-11-15",
+    "scope_note": "P0D-008は7職の集約要件、P0D-009〜015は既存の7職IDへの参照。既存67行を増減せず、履歴のS2+は現在の発売必須要件を免除しない。",
+    "display_names_note": "表示名は固定した正式RC artifactのPRIVATE_COMPANION（REAL69）JOBS定義の観測値。今回明示する必須表示名はNINJAの「暗殺者」。他職の観測名から新たな名称契約や受入結果は作らない。",
+    "sources": {
+      "owner_role7": {
+        "label": "OWNER 7職フル仕様の発売必須指定",
+        "url": "https://github.com/kk051780/toy-wars-factory/issues/219",
+        "marker": "OWNER_PRODUCT_QUALITY_CONCEPT_FIDELITY_POINTER_20261115",
+        "issue_updated_at": "2026-11-22T23:44:06Z",
+        "excerpt_sha256": "9622af786bd2ccd3005ff10820bbee6ac2e1d7a79f3768e520174958057165de"
+      },
+      "owner_assassin": {
+        "label": "OWNER 暗殺者表示・NINJA内部ID維持",
+        "url": "https://github.com/kk051780/toy-wars-factory/issues/219",
+        "marker": "OWNER_ROLE7_ASSASSIN_RENAME_20261115",
+        "issue_updated_at": "2026-11-22T23:44:06Z",
+        "excerpt_sha256": "70fe1e0f472742d369a002a82de9a983379a5414ff1a342465fb711ed222a5c0"
+      },
+      "formal_v1_2": {
+        "label": "正式v1.2 ゲーム品質ゲート・M1",
+        "url": "https://github.com/kk051780/toy-wars-factory/blob/dcb501673d7959e4904cf360ef0119917e6aa2e0/docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+        "git_blob": "079947edfbe6976c7a2bf80c1b396ba804c5a068",
+        "section": "5. 品質の客観ゲート / 6. main昇格は固定SHAごとに別承認（M1）"
+      },
+      "current69_jobs": {
+        "label": "正式RCのPRIVATE_COMPANION REAL69 JOBS（表示名・内部IDの観測）",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/45083333379",
+        "rc_head": "dcb501673d7959e4904cf360ef0119917e6aa2e0",
+        "artifact_id": 14777998713,
+        "source_path": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+        "source_bytes": 73774,
+        "source_sha256": "1b4ec066f4273c7cfc88d075a4a1df4855233e759f81d0241b134383bef42f76",
+        "symbol": "JOBS",
+        "evidence_scope": "PRIVATE_COMPANION REAL69での表示名と内部IDの観測のみ。ACTIVE_RUNTIME rich51の稼働・能力・実機・FUN・OWNER受入の証明ではない。",
+        "runtime_track": "PRIVATE_COMPANION_REAL69"
+      }
+    },
+    "requirements": [
+      {
+        "feature_id": "P0D-008",
+        "kind": "aggregate",
+        "name": "7職業のフル実装",
+        "release_must_pass": true,
+        "requirement": "7職それぞれの全能力を正式リリース前に満たす。",
+        "role_feature_ids": [
+          "P0D-009",
+          "P0D-010",
+          "P0D-011",
+          "P0D-012",
+          "P0D-013",
+          "P0D-014",
+          "P0D-015"
+        ],
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-009",
+        "kind": "role",
+        "internal_role_id": "WARRIOR",
+        "observed_player_display_name": "武神",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-010",
+        "kind": "role",
+        "internal_role_id": "MAGE",
+        "observed_player_display_name": "魔法使い",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-011",
+        "kind": "role",
+        "internal_role_id": "NINJA",
+        "observed_player_display_name": "暗殺者",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ],
+        "required_player_display_name": "暗殺者",
+        "preserve_internal_role_id": true,
+        "display_requirement_source_ref": "owner_assassin"
+      },
+      {
+        "feature_id": "P0D-012",
+        "kind": "role",
+        "internal_role_id": "TRAPPER",
+        "observed_player_display_name": "超能力者",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-013",
+        "kind": "role",
+        "internal_role_id": "BUILDER",
+        "observed_player_display_name": "マッドサイエンティスト",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-014",
+        "kind": "role",
+        "internal_role_id": "BEAST",
+        "observed_player_display_name": "魔獣使い",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      },
+      {
+        "feature_id": "P0D-015",
+        "kind": "role",
+        "internal_role_id": "ZOMBIE",
+        "observed_player_display_name": "呪術師",
+        "display_name_source_ref": "current69_jobs",
+        "release_must_pass": true,
+        "source_refs": [
+          "owner_role7",
+          "formal_v1_2"
+        ]
+      }
+    ],
+    "acceptance_assessment": {
+      "status": "NOT_EVALUATED",
+      "domains": [
+        "SOURCE",
+        "RC",
+        "ENGINE",
+        "FUN",
+        "OWNER"
+      ],
+      "note": "このmetadata更新は必須要件を示すだけで、SOURCE・RC・ENGINE・FUN・OWNER受入を評価しない。履歴stageやJOBSの存在から合格を引き継がない。"
+    }
+  },
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
