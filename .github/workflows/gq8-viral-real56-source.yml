@@ -1,0 +1,210 @@
+name: GQ8 Capture Current69 Lifecycle and Explicit Legacy55
+on:
+  push:
+    branches: ['feature/gq8-viral-real55-20261119']
+    paths:
+      - 'quality_gameplay/gq8_viral_real55_20261119/**'
+      - '.github/workflows/gq8-viral-real56-source.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_viral_real55_20261119/**'
+      - '.github/workflows/gq8-viral-real56-source.yml'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Current69 lifecycle gate or the preserved historical Real55 gate
+        required: true
+        type: choice
+        default: current69
+        options: [current69, legacy55]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real55-immutable-one-owner-viral:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.profile == 'legacy55' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify real official Real55 source artifact at canonical lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = a6020867fac80fa3b2ca47478625873fc6f3678e || { echo RED_OFFICIAL_HEAD_MOVED_REBASE_REQUIRED; exit 1; }
+          EVIDENCE="$(gh run view 44393525211 --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.headSha+" "+.conclusion')"
+          test "$EVIDENCE" = "a6020867fac80fa3b2ca47478625873fc6f3678e success" || { echo RED_PARENT55_NOT_PROVEN; exit 1; }
+          mkdir -p /tmp/gq8-real55
+          gh run download 44393525211 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL55-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq8-real55
+          test -s /tmp/gq8-real55/EGGRUMBLE_REAL55.project.json
+          test -s /tmp/gq8-real55/B_REAL55_RECEIPT.json
+          test -s /tmp/gq8-real55/EGGRUMBLE_REAL55.rbxlx
+          echo GQ8_ACTUAL_OFFICIAL_REAL55_SOURCE_EVIDENCE_PASS
+      - name: Real55 plus one actual server-authoritative event hook, no copy of 54 originals
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          _,items=flatten(Path('/tmp/gq8-real55/EGGRUMBLE_REAL55.project.json'))
+          host=items[('ServerScriptService','EGGRUMBLE_LobbyCastleModesPreview')]
+          lines=host.read_text().splitlines()
+          keys=('depositEggs','takeEggs(', 'local c=session.rules.castles[tostring(player.UserId)]', 'session.rules.winner~=nil', 'session.world.Name=')
+          print('GQ8_REAL55_OWNER_ANCHOR_AUDIT_ONLY')
+          for i,line in enumerate(lines):
+              if any(k in line for k in keys):
+                  print('LINE',i+1, '\\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0,i-3),min(len(lines),i+5))))
+          PY
+          python3 -B quality_gameplay/gq8_viral_real55_20261119/compose_real56.py \
+            --parent55 /tmp/gq8-real55/EGGRUMBLE_REAL55.project.json \
+            --receipt55 /tmp/gq8-real55/B_REAL55_RECEIPT.json \
+            --client quality_gameplay/gq8_viral_real55_20261119/GQ8_ViralCapture.client.luau \
+            --out /tmp/gq8-real56
+          python3 -B quality_gameplay/gq8_viral_real55_20261119/test_real56.py \
+            --parent /tmp/gq8-real55/EGGRUMBLE_REAL55.project.json \
+            --candidate /tmp/gq8-real56/EGGRUMBLE_REAL56.project.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Pinned Luau compile all actual 56 sources
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-viral56-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-viral56-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/gq8_successor_real48_shop_20261119")
+          from compose_real48 import flatten
+          _,all=flatten(Path('/tmp/gq8-real56/EGGRUMBLE_REAL56.project.json'))
+          assert len(all)==56
+          for script in all.values():
+              subprocess.run(['/tmp/gq8-viral56-luau/luau-compile','--text',str(script)],check=True,stdout=subprocess.DEVNULL)
+          print('GQ8_REAL56_LUAU_56_56_ACTUAL_SOURCE_COMPILATION_PASS')
+          PY
+      - name: Rojo7.7.1 source/class ON56 and one-byte-exact OFF55
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq8-viral56-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-viral56-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-viral56-rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              f=Path('/tmp/gq8-viral56-rojo')
+              f.write_bytes(z.read(names[0]));f.chmod(0o755)
+          PY
+          /tmp/gq8-viral56-rojo build /tmp/gq8-real56/EGGRUMBLE_REAL56.project.json -o /tmp/gq8-real56/EGGRUMBLE_REAL56.rbxlx
+          /tmp/gq8-viral56-rojo build /tmp/gq8-real55/EGGRUMBLE_REAL55.project.json -o /tmp/gq8-real56/OFF55.rbxlx
+          cmp /tmp/gq8-real56/OFF55.rbxlx /tmp/gq8-real55/EGGRUMBLE_REAL55.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project /tmp/gq8-real56/EGGRUMBLE_REAL56.project.json \
+            --place /tmp/gq8-real56/EGGRUMBLE_REAL56.rbxlx --count 56
+          echo GQ8_REAL56_ROJO_SOURCE_CLASS_TRUE_OFF55_BYTE_EXACT_PASS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-REAL56-VIRAL-CAPTURE-PRIVATE-NOT-OFFICIAL
+          path: /tmp/gq8-real56/
+          retention-days: 5
+          if-no-files-found: error
+  current69-capture-lifecycle:
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.profile != 'legacy55' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CAPTURE_PROFILE: ${{ github.event.inputs.profile || 'current69' }}
+      CAPTURE_SLICE: quality_gameplay/gq8_viral_real55_20261119
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind actual source HEAD and fixed current69 input identifiers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$CAPTURE_PROFILE" = current69 || { echo CURRENT69_INVALID_DISPATCH_PROFILE; exit 1; }
+          echo "CAPTURE_SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          python3 -B - <<'PY' >> "$GITHUB_ENV"
+          import sys
+          sys.path.insert(0, "quality_gameplay/gq8_viral_real55_20261119")
+          from compose_real56 import current69_load_lock
+          lock = current69_load_lock()
+          print("CAPTURE_INPUT_RUN=" + str(lock["input"]["run"]["id"]))
+          print("CAPTURE_INPUT_ARTIFACT=" + str(lock["input"]["artifact"]["id"]))
+          PY
+      - name: Read fresh official API metadata and exact artifact ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir /tmp/gq8-capture-current69-api
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" > /tmp/gq8-capture-current69-api/formal-ref.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CAPTURE_INPUT_RUN" > /tmp/gq8-capture-current69-api/official-run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$CAPTURE_INPUT_ARTIFACT" > /tmp/gq8-capture-current69-api/official-artifact.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$CAPTURE_INPUT_ARTIFACT/zip" > /tmp/gq8-capture-current69-input.zip
+      - name: Compose one existing Capture replacement and actual inverse source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$CAPTURE_SLICE/compose_real56.py" current69 --archive /tmp/gq8-capture-current69-input.zip --out /tmp/gq8-capture-current69 --ref-json /tmp/gq8-capture-current69-api/formal-ref.json --run-json /tmp/gq8-capture-current69-api/official-run.json --artifact-json /tmp/gq8-capture-current69-api/official-artifact.json --source-head "$CAPTURE_SOURCE_HEAD"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_capture_luau
+          persist-credentials: false
+      - name: Build pinned Luau VM and compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _pinned_capture_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _pinned_capture_luau -B /tmp/gq8-capture-current69-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-capture-current69-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Verify and unpack Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-capture-current69-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-capture-current69-rojo.zip' | sha256sum -c
+          python3 -B - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq8-capture-current69-rojo.zip') as z:
+              names = [n for n in z.namelist() if n.split('/')[-1] == 'rojo']
+              if len(names) != 1:
+                  raise SystemExit('CURRENT69_ROJO_ARCHIVE_MEMBER')
+              path = Path('/tmp/gq8-capture-current69-rojo')
+              path.write_bytes(z.read(names[0]))
+              path.chmod(0o755)
+          PY
+      - name: Four fixed Native contracts, compile69, Rojo ON and inverse OFF, normal and optimized negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$CAPTURE_SLICE/test_real56.py" current69 --bundle /tmp/gq8-capture-current69 --luau /tmp/gq8-capture-current69-luau/luau --compile /tmp/gq8-capture-current69-luau/luau-compile --luau-source "$GITHUB_WORKSPACE/_pinned_capture_luau" --rojo /tmp/gq8-capture-current69-rojo --source-head "$CAPTURE_SOURCE_HEAD"
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: GQ8-CURRENT69-CAPTURE-LIFECYCLE-NOT-OFFICIAL
+          path: /tmp/gq8-capture-current69/
+          retention-days: 30
+          if-no-files-found: error
