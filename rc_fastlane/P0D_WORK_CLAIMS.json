@@ -30734,6 +30734,95 @@
           "origin": "controller"
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ482-EMPTY-VAULT-CANONICAL-20261127",
+      "feature_id": "GQ470_FB015_EMPTY_VAULT_PROMPT",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (Codex parent, original #482 empty-vault intake)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "canonical_parent": 482,
+      "pr": null,
+      "requested_scope": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7174609783",
+      "latest_scope": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7190532839",
+      "design_comment": 7202869642,
+      "base_rc_sha": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+      "origin_pr": 482,
+      "origin_pr_head": "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
+      "original_728_source": "https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-7098579950",
+      "original_pr_preserved": true,
+      "scope": "One narrow successor PR under existing #482. Original #482 draft has 104 changes and a separate old base, so merging or rewriting it would mix unrelated source. Adopt only existing Host +728 B empty-vault behavior. Original #482 and related +355/+65 remain preserved. Seven canonical wiring/QA paths. No workflows changed.",
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "prepared_source_blobs": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "6b5c186f5d8b95757b4d19d3f5a3bc2d87a4a74a",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "6c31a01a6a9a72188cbee982c014cad188f1605a",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "a6820af88ca41624a1adf3e10b43b01811e82e62",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "bfab58d621d8ac5e20e36e4708c75edd19725420",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "d52260af7871d270d167ab5459f5a6e8ff7f4515",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "f16592c64ee5dd6bad5ebcf769be76393faf4936",
+        "tests/test_gq470_union22_real69_20261122.py": "4493d7075e333c8b499f790013ace83616612cef"
+      },
+      "prepared_candidate_tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb",
+      "prepared_candidate_head": "0065e204445db840861c4610770cd1b8cb470db6",
+      "prep_branch": "feature/p0d-prep-482-empty-vault-20261127",
+      "allowed_new_prs": 1,
+      "expected_source_branch": "ABSENT",
+      "evidence": {
+        "actual_host_after_sha256": "7b7da6cbddc155b8c2dae3cc1b5191fe77bb61d2eee2692430e0c43cdee3a29a",
+        "actual_candidate_place": 830788,
+        "actual_immediate_off_place": 830060,
+        "preserved_old_rollback_archives": 6,
+        "local_native_prompt_checks": 18,
+        "local_normal_and_optimized_offline_tests": 17,
+        "local_focused_core_tests": 6
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "independent_local_scope_review": "Actual separate context reviewed seven exact paths and current tree, old rollback, normal and optimized local tests. Exact hosted head review remains required.",
+      "author_may_self_approve": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "scope_only": true,
+      "source_scope_granted": true,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "no_main_or_publish": true,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "03a41ff9-0d8a-4535-8af0-0a54fecada89",
+      "issued_at": "2026-11-26T23:52:15.551Z",
+      "expires_at": "2026-11-27T05:52:15.551Z",
+      "actual_metadata_lease": {
+        "ref": "42fef7fab26364e12c24f707399d9471ee06b866",
+        "blob": "ce8af7665c12feda7b57a878b6ff0c1d5830ce61",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "03a41ff9-0d8a-4535-8af0-0a54fecada89",
+          "task_id": null,
+          "epoch": 764,
+          "acquired_at": "2026-11-26T23:51:55.910Z",
+          "expires_at": "2026-11-27T00:21:55.910Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated owner standing ordinary-development delegation, current #1011 V2.1 and exact #220 sequence/empty-vault authorization in comment 7202869642; reused existing #218 requests."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
