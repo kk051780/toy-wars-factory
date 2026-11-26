@@ -3,10 +3,12 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import errno
 import hashlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import shutil
 import stat
@@ -206,6 +208,288 @@ class OriginalInputs(unittest.TestCase):
         message = json.loads(result.stdout)
         self.assertEqual(message["status"], "FAIL_NO_INPUT_ADMISSION")
         self.assertNotIn("PASS", result.stdout.decode())
+
+    def output_failure(self, phase, intervene=None, fail_file=1):
+        """Reuse the original 17-byte ENOSPC fault after genuine packet decoding."""
+        output = self.root / "output"
+        real_open = Path.open
+        opened, faults = [], []
+
+        class FailingOutput:
+            def __init__(self, path, stream):
+                self.path, self.stream = path, stream
+                self.pending = None
+
+            def __enter__(self):
+                return self
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def fail(self, raw):
+                self.stream.write(raw[:17])
+                self.stream.flush()
+                faults.append((self.path, phase, len(raw)))
+                if intervene is not None:
+                    intervene(self.path, raw, opened)
+                raise OSError(errno.ENOSPC, "injected " + phase + " failure after 17 bytes")
+
+            def write(self, raw):
+                if phase == "write":
+                    self.fail(raw)
+                self.pending = raw  # Model a buffered write failing during close.
+                return len(raw)
+
+            def __exit__(self, typ, value, traceback):
+                try:
+                    if phase == "close" and typ is None:
+                        self.fail(self.pending)
+                finally:
+                    self.stream.close()
+                return False
+
+        def output_open(path, mode="r", *args, **kwargs):
+            stream = real_open(path, mode, *args, **kwargs)
+            if mode == "xb" and path.is_relative_to(output):
+                st = os.fstat(stream.fileno())
+                opened.append((path, (st.st_dev, st.st_ino)))
+                if len(opened) == fail_file:
+                    return FailingOutput(path, stream)
+            return stream
+
+        captured = io.StringIO()
+        with mock.patch.object(Path, "open", output_open), mock.patch.object(
+                sys, "argv", [str(ADAPTER), "--out", str(output)]), contextlib.redirect_stdout(captured):
+            result = restore.main()
+        self.assertEqual(result, 1)
+        self.assertEqual(json.loads(captured.getvalue())["status"], "FAIL_NO_INPUT_ADMISSION")
+        self.assertEqual(len(faults), 1)
+        self.assertGreater(faults[0][2], 17)
+        return output, opened
+
+    def test_partial_write_failure_removes_owned_output_for_retry(self):
+        output, _ = self.output_failure("write")
+        self.assertFalse(output.exists())
+        result = restore.restore(output)
+        self.assertEqual(result["status"], "PASS_IMMUTABLE_TRANSPORT_ONLY")
+        self.assertEqual(result["file_count"], 316)
+
+    def test_close_failure_removes_owned_partial_output(self):
+        output, _ = self.output_failure("close")
+        self.assertFalse(output.exists())
+
+    def test_partial_failure_preserves_foreign_owned_inode_bytes(self):
+        def intervene(path, raw, opened):
+            path.write_bytes(b"intervening work on the same inode")
+            st = path.lstat()
+            self.assertEqual((st.st_dev, st.st_ino), opened[-1][1])
+        _, opened = self.output_failure("write", intervene)
+        self.assertEqual(opened[-1][0].read_bytes(), b"intervening work on the same inode")
+
+    def test_partial_failure_preserves_replaced_inode_and_foreign_directory(self):
+        def intervene(path, raw, opened):
+            path.unlink()
+            path.write_bytes(raw[:17])  # Identical bytes must not confer ownership.
+            st = path.lstat()
+            self.assertNotEqual((st.st_dev, st.st_ino), opened[-1][1])
+            (path.parent / "foreign.txt").write_bytes(b"unrelated work")
+        output, opened = self.output_failure("write", intervene)
+        self.assertEqual(opened[-1][0].stat().st_size, 17)
+        self.assertEqual((opened[-1][0].parent / "foreign.txt").read_bytes(), b"unrelated work")
+        self.assertTrue(output.is_dir())
+
+    def test_partial_failure_preserves_symlink_replacement(self):
+        foreign = self.root / "foreign.txt"
+        foreign.write_bytes(b"keep target")
+        def intervene(path, raw, opened):
+            path.unlink()
+            path.symlink_to(foreign)
+        _, opened = self.output_failure("write", intervene)
+        self.assertTrue(opened[-1][0].is_symlink())
+        self.assertEqual(foreign.read_bytes(), b"keep target")
+
+    def test_partial_failure_keeps_completed_file_hash_guard(self):
+        retained = []
+        def intervene(path, raw, opened):
+            completed = opened[0][0]
+            prefix = completed.read_bytes()[:17]
+            completed.write_bytes(prefix)
+            retained.append((completed, prefix))
+        _, opened = self.output_failure("write", intervene, fail_file=2)
+        self.assertEqual(retained[0][0].read_bytes(), retained[0][1])
+        self.assertFalse(opened[-1][0].exists())
+
+    def test_full_write_close_failure_removes_owned_output_and_retries(self):
+        """A real full write and real close still precede a reported close EIO."""
+        output = self.root / "output"
+        target = output / "base55/B_REAL55_RECEIPT.json"
+        source_before, inputs_before = ADAPTER.read_bytes(), restore.snapshot(INPUTS)
+        expected = {}
+        for packet in restore.PACKETS:
+            with zipfile.ZipFile(INPUTS / (packet + ".zip")) as archive:
+                for name in archive.namelist():
+                    expected[packet + "/" + name] = archive.read(name)
+        self.assertEqual(len(expected), 316)
+        real_open, opened, faults = Path.open, [], []
+        test = self
+
+        class FullWriteCloseFailure:
+            def __init__(self, path, stream):
+                self.path, self.stream = path, stream
+                self.raw = None
+
+            def __enter__(self):
+                return self
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def write(self, raw):
+                self.raw = raw
+                written = self.stream.write(raw)
+                test.assertEqual(written, len(raw))
+                return written
+
+            def __exit__(self, typ, value, traceback):
+                self.stream.close()  # Flush and close the real buffered output first.
+                if typ is None:
+                    committed = self.path.read_bytes()
+                    st = self.path.lstat()
+                    faults.append({"closed": self.stream.closed,
+                                   "committed": {"bytes": len(committed),
+                                                 "sha256": hashlib.sha256(committed).hexdigest()},
+                                   "same_bytes_as_write": committed == self.raw,
+                                   "inode_after_close": [st.st_dev, st.st_ino]})
+                    raise OSError(errno.EIO, "injected full-write close EIO")
+                return False
+
+        def output_open(path, mode="r", *args, **kwargs):
+            stream = real_open(path, mode, *args, **kwargs)
+            if mode == "xb" and path == target:
+                self.assertIsInstance(stream, io.BufferedWriter)
+                st = os.fstat(stream.fileno())
+                opened.append((st.st_dev, st.st_ino))
+                return FullWriteCloseFailure(path, stream)
+            return stream
+
+        captured = io.StringIO()
+        with mock.patch.object(Path, "open", output_open), mock.patch.object(
+                sys, "argv", [str(ADAPTER), "--out", str(output)]), contextlib.redirect_stdout(captured):
+            result = restore.main()
+        residue = target.read_bytes() if target.exists() else None
+        print("RETENTION_IO_OBSERVATION\t" + json.dumps({
+            "case": "full_write_real_close_eio", "main_return": result,
+            "raw_cli_stdout": captured.getvalue(), "faults": faults,
+            "output_exists_after_failure": output.exists(),
+            "residue": None if residue is None else {
+                "bytes": len(residue), "sha256": hashlib.sha256(residue).hexdigest()}}))
+        self.assertEqual(result, 1)
+        message = json.loads(captured.getvalue())
+        self.assertEqual(message["status"], "FAIL_NO_INPUT_ADMISSION")
+        self.assertIn("injected full-write close EIO", message["reason"])
+        self.assertEqual(len(opened), 1)
+        self.assertEqual(len(faults), 1)
+        self.assertTrue(faults[0]["closed"] and faults[0]["same_bytes_as_write"])
+        self.assertEqual(faults[0]["inode_after_close"], list(opened[0]))
+        self.assertEqual(faults[0]["committed"]["bytes"], len(expected["base55/B_REAL55_RECEIPT.json"]))
+        self.assertFalse(output.exists())
+
+        retried = io.StringIO()
+        with mock.patch.object(sys, "argv", [str(ADAPTER), "--out", str(output)]), contextlib.redirect_stdout(retried):
+            retry_result = restore.main()
+        actual = {p.relative_to(output).as_posix(): p.read_bytes()
+                  for p in output.rglob("*") if p.is_file()}
+        print("RETENTION_IO_OBSERVATION\t" + json.dumps({
+            "case": "same_output_retry_after_full_close_eio", "main_return": retry_result,
+            "raw_cli_stdout": retried.getvalue(), "actual_files": len(actual),
+            "all316_bytes_match_archives": actual == expected}))
+        self.assertEqual(retry_result, 0)
+        self.assertEqual(json.loads(retried.getvalue())["status"], "PASS_IMMUTABLE_TRANSPORT_ONLY")
+        self.assertEqual(actual, expected)
+        self.assertEqual(restore.snapshot(INPUTS), inputs_before)
+        self.assertEqual(ADAPTER.read_bytes(), source_before)
+
+    def test_pre_return_replaced_inode_with_same_prefix_is_preserved(self):
+        """Replace the path before returning the real exclusive-open stream."""
+        output = self.root / "output"
+        target = output / "base55/B_REAL55_RECEIPT.json"
+        source_before, inputs_before = ADAPTER.read_bytes(), restore.snapshot(INPUTS)
+        with zipfile.ZipFile(INPUTS / "base55.zip") as archive:
+            expected = archive.read("B_REAL55_RECEIPT.json")
+        self.assertGreater(len(expected), 17)
+        prefix = expected[:17]
+        real_open, opened, faults, streams = Path.open, [], [], []
+        test = self
+
+        class DetachedWriteFailure:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def write(self, raw):
+                test.assertEqual(raw, expected)
+                test.assertEqual(self.stream.write(raw[:17]), 17)
+                self.stream.flush()
+                st = os.fstat(self.stream.fileno())
+                faults.append({"owned_inode_during_write": [st.st_dev, st.st_ino],
+                               "written_prefix_bytes": 17})
+                raise OSError(errno.ENOSPC, "injected write after pre-return inode replacement")
+
+            def __exit__(self, typ, value, traceback):
+                self.stream.close()
+                return False
+
+        def output_open(path, mode="r", *args, **kwargs):
+            stream = real_open(path, mode, *args, **kwargs)
+            if mode == "xb" and path == target:
+                self.assertIsInstance(stream, io.BufferedWriter)
+                owned = os.fstat(stream.fileno())
+                streams.append(stream)
+                self.addCleanup(stream.close)
+                path.unlink()  # The open fd retains this inode until its real close.
+                with real_open(path, "xb") as foreign:
+                    self.assertEqual(foreign.write(prefix), len(prefix))
+                    foreign.flush()
+                    replacement = os.fstat(foreign.fileno())
+                self.assertNotEqual((owned.st_dev, owned.st_ino),
+                                    (replacement.st_dev, replacement.st_ino))
+                opened.append({"owned_inode": [owned.st_dev, owned.st_ino],
+                               "replacement_inode": [replacement.st_dev, replacement.st_ino]})
+                return DetachedWriteFailure(stream)
+            return stream
+
+        captured = io.StringIO()
+        with mock.patch.object(Path, "open", output_open), mock.patch.object(
+                sys, "argv", [str(ADAPTER), "--out", str(output)]), contextlib.redirect_stdout(captured):
+            result = restore.main()
+        remaining = target.read_bytes() if target.exists() else None
+        print("RETENTION_IO_OBSERVATION\t" + json.dumps({
+            "case": "xb_returned_after_foreign_same_prefix_replacement", "main_return": result,
+            "raw_cli_stdout": captured.getvalue(), "opened": opened, "faults": faults,
+            "foreign_file_exists": target.exists(), "foreign_bytes_preserved": remaining == prefix,
+            "foreign_prefix_sha256": hashlib.sha256(prefix).hexdigest()}))
+        self.assertEqual(result, 1)
+        message = json.loads(captured.getvalue())
+        self.assertEqual(message["status"], "FAIL_NO_INPUT_ADMISSION")
+        self.assertIn("injected write after pre-return inode replacement", message["reason"])
+        self.assertEqual(len(opened), 1)
+        self.assertEqual(len(faults), 1)
+        self.assertEqual(faults[0]["owned_inode_during_write"], opened[0]["owned_inode"])
+        self.assertTrue(streams[0].closed)
+        self.assertTrue(target.exists())
+        st = target.lstat()
+        self.assertEqual([st.st_dev, st.st_ino], opened[0]["replacement_inode"])
+        self.assertEqual(remaining, prefix)
+        self.assertEqual([p.relative_to(output).as_posix() for p in output.rglob("*") if p.is_file()],
+                         ["base55/B_REAL55_RECEIPT.json"])
+        self.assertTrue(output.is_dir())
+        self.assertEqual(restore.snapshot(INPUTS), inputs_before)
+        self.assertEqual(ADAPTER.read_bytes(), source_before)
 
 
 if __name__ == "__main__":

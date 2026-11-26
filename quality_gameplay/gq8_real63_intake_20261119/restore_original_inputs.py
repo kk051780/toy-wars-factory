@@ -154,6 +154,22 @@ def remove_owned(created_files, created_dirs):
             pass
 
 
+def remember_partial_write(record, intended):
+    """Pin only an observed prefix on the inode opened by this invocation."""
+    path, owned, _ = record
+    try:
+        no_links(path)
+        current = path.lstat()
+        if (current.st_dev, current.st_ino) != owned:
+            return
+        partial = read_regular(path)
+        if intended.startswith(partial):
+            # Cleanup will independently recheck both inode and these exact bytes.
+            record[2] = identity(partial)
+    except (OSError, ValueError):
+        pass
+
+
 def restore(output, inputs=None):
     inputs = no_links(HERE / "immutable_inputs" if inputs is None else inputs)
     output = no_links(output)
@@ -186,10 +202,18 @@ def restore(output, inputs=None):
                     created_dirs.append((parent, (st.st_dev, st.st_ino)))
                 require(parent.is_dir(), "OUTPUT_PARENT_NOT_DIRECTORY")
             path = parent / parts[-1]
-            with path.open("xb") as stream:
-                stream.write(raw)
-            st = path.lstat()
-            created_files.append((path, (st.st_dev, st.st_ino), expected[name]))
+            record = None
+            try:
+                with path.open("xb") as stream:
+                    st = os.fstat(stream.fileno())
+                    record = [path, (st.st_dev, st.st_ino), None]
+                    created_files.append(record)  # None never authorizes deletion.
+                    stream.write(raw)
+                record[2] = expected[name]
+            except Exception:
+                if record is not None:
+                    remember_partial_write(record, raw)
+                raise
         require(inventory(output) == expected, "RESTORED_PAYLOAD_DRIFT")
         require(snapshot(inputs) == before and read_regular(Path(__file__)) == source_before,
                 "INPUTS_OR_RESTORER_CHANGED")
