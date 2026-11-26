@@ -669,10 +669,913 @@
     "ModuleScript": 47,
     "Script": 12
   },
+  "empty_vault_followup": {
+    "forward": [
+      {
+        "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+        "new_identity": {
+          "bytes": 128,
+          "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+        },
+        "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+        "old_identity": {
+          "bytes": 86,
+          "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+        },
+        "start": 1066,
+        "stop": 1067
+      },
+      {
+        "new": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
+        "new_identity": {
+          "bytes": 62,
+          "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 1068,
+        "stop": 1068
+      },
+      {
+        "new": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n  end\n end\n",
+        "new_identity": {
+          "bytes": 483,
+          "sha256": "dd957e0d350305655ee6ca604d7515f74db8306020acb488d869b098d843bb92"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 1073,
+        "stop": 1073
+      },
+      {
+        "new": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+        "new_identity": {
+          "bytes": 116,
+          "sha256": "bace85b27209cfd29815fcf3fe312e9259a0c2019271716d8e6b53ddf26fc019"
+        },
+        "old": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+        "old_identity": {
+          "bytes": 73,
+          "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+        },
+        "start": 1221,
+        "stop": 1222
+      },
+      {
+        "new": " end,false)\n",
+        "new_identity": {
+          "bytes": 12,
+          "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+        },
+        "old": " end)\n",
+        "old_identity": {
+          "bytes": 6,
+          "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+        },
+        "start": 1233,
+        "stop": 1234
+      },
+      {
+        "new": "  refreshVaultPrompts(session)\n",
+        "new_identity": {
+          "bytes": 31,
+          "sha256": "3df1d0b14e6677a9586cb263ec5d0c3b03ef02ac9ab8e8ab1a0c989867952ffe"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 1320,
+        "stop": 1320
+      },
+      {
+        "new": "  refreshVaultPrompts(session)\n",
+        "new_identity": {
+          "bytes": 31,
+          "sha256": "3df1d0b14e6677a9586cb263ec5d0c3b03ef02ac9ab8e8ab1a0c989867952ffe"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 1391,
+        "stop": 1391
+      },
+      {
+        "new": " refreshVaultPrompts(session)\n",
+        "new_identity": {
+          "bytes": 30,
+          "sha256": "fda17a46ff81e5ae5dffaf7f475c967e2b3bf67253775bf9a60a0c3bb70e38c7"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 1490,
+        "stop": 1490
+      }
+    ],
+    "inverse": [
+      {
+        "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+        "new_identity": {
+          "bytes": 86,
+          "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+        },
+        "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+        "old_identity": {
+          "bytes": 128,
+          "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+        },
+        "start": 1066,
+        "stop": 1067
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
+        "old_identity": {
+          "bytes": 62,
+          "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
+        },
+        "start": 1068,
+        "stop": 1069
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n  end\n end\n",
+        "old_identity": {
+          "bytes": 483,
+          "sha256": "dd957e0d350305655ee6ca604d7515f74db8306020acb488d869b098d843bb92"
+        },
+        "start": 1074,
+        "stop": 1087
+      },
+      {
+        "new": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+        "new_identity": {
+          "bytes": 73,
+          "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+        },
+        "old": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+        "old_identity": {
+          "bytes": 116,
+          "sha256": "bace85b27209cfd29815fcf3fe312e9259a0c2019271716d8e6b53ddf26fc019"
+        },
+        "start": 1235,
+        "stop": 1236
+      },
+      {
+        "new": " end)\n",
+        "new_identity": {
+          "bytes": 6,
+          "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+        },
+        "old": " end,false)\n",
+        "old_identity": {
+          "bytes": 12,
+          "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+        },
+        "start": 1247,
+        "stop": 1248
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": "  refreshVaultPrompts(session)\n",
+        "old_identity": {
+          "bytes": 31,
+          "sha256": "3df1d0b14e6677a9586cb263ec5d0c3b03ef02ac9ab8e8ab1a0c989867952ffe"
+        },
+        "start": 1334,
+        "stop": 1335
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": "  refreshVaultPrompts(session)\n",
+        "old_identity": {
+          "bytes": 31,
+          "sha256": "3df1d0b14e6677a9586cb263ec5d0c3b03ef02ac9ab8e8ab1a0c989867952ffe"
+        },
+        "start": 1406,
+        "stop": 1407
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": " refreshVaultPrompts(session)\n",
+        "old_identity": {
+          "bytes": 30,
+          "sha256": "fda17a46ff81e5ae5dffaf7f475c967e2b3bf67253775bf9a60a0c3bb70e38c7"
+        },
+        "start": 1506,
+        "stop": 1507
+      }
+    ],
+    "origin_head": "fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9",
+    "origin_pr": 482,
+    "original_fix_record": "https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-7098579950",
+    "parent_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+    "parent_host_row": {
+      "after": {
+        "bytes": 94590,
+        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+      },
+      "before": {
+        "bytes": 91635,
+        "sha256": "8d8f6a63db5dd24740f787437b7aa88edfbaaa9c2aae062b07a884e59c06ad85"
+      },
+      "class": "Script",
+      "forward": [
+        {
+          "new": "-- GQ470_P0_EARLY_EXISTING_LOBBY_SPAWN_REAL69_20261121\n-- Preserve the actual preexisting spawn/root; create exactly the original\n-- GQ646 floor+neutral SpawnLocation before potentially blocking module requires.\nlocal gqEarlyOriginalSpawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal gqEarlyRoot=gqEarlyOriginalSpawn and gqEarlyOriginalSpawn.Position or Vector3.new(0,4,0)\nlocal gqEarlyFolder=Instance.new(\"Folder\")\ngqEarlyFolder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\"\ngqEarlyFolder.Parent=workspace\nlocal gqEarlyGround=Instance.new(\"Part\")\ngqEarlyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\ngqEarlyGround.Anchored=true\ngqEarlyGround.Size=Vector3.new(154,2,156)\ngqEarlyGround.Position=gqEarlyRoot+Vector3.new(0,-5,21)\ngqEarlyGround.Material=Enum.Material.Grass\ngqEarlyGround.Color=Color3.fromRGB(88,139,104)\ngqEarlyGround.CanCollide=true\ngqEarlyGround.Parent=gqEarlyFolder\nlocal gqEarlySpawn=Instance.new(\"SpawnLocation\")\ngqEarlySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\ngqEarlySpawn.Anchored=true\ngqEarlySpawn.Size=Vector3.new(12,1,12)\ngqEarlySpawn.Position=gqEarlyRoot+Vector3.new(0,-2,-27)\ngqEarlySpawn.Neutral=true\ngqEarlySpawn.Enabled=true\ngqEarlySpawn.AllowTeamChangeOnTouch=false\ngqEarlySpawn.Duration=0\ngqEarlySpawn.Material=Enum.Material.SmoothPlastic\ngqEarlySpawn.Color=Color3.fromRGB(232,230,178)\ngqEarlySpawn.CanCollide=true\ngqEarlySpawn.Parent=gqEarlyFolder\n-- The same GQ646 binder also protects existing/joining characters while\n-- module initialization yields; later match code retains these same tables.\nlocal root=gqEarlyRoot\nlocal sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+          "new_identity": {
+            "bytes": 2695,
+            "sha256": "3ae1ed2d2d8fe0a000988d82a6c5fbb96323e9dcc1f9bb233d817e13c5221516"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 8,
+          "stop": 8
+        },
+        {
+          "new": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+          "new_identity": {
+            "bytes": 81,
+            "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 53,
+          "stop": 53
+        },
+        {
+          "new": "local WalkPolicy=require(script.Parent:WaitForChild(\"EGGRUMBLE_BasicMobilityPolicy\"))\n",
+          "new_identity": {
+            "bytes": 86,
+            "sha256": "72bcea99f1f94dedd47e433a920459096398d244b9d65bb52e213565ed00b4cc"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 176,
+          "stop": 176
+        },
+        {
+          "new": " -- Reuse original SevenRoleCombat slow attributes and shared data-only expiry.\n local player=Players:GetPlayerFromCharacter(model)\n if not player or player.Character~=model or hum.Parent~=model then return end\n local function applySpeed(speed:number?,slowActive:boolean?)\n  if type(speed)~=\"number\" or not player.Parent or player.Character~=model\n   or hum.Parent~=model or hum.Health<=0 then return end\n  hum.WalkSpeed=speed\n  if slowActive==false then\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n   hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n  end\n end\n applySpeed(WalkPolicy.walkCurrent(player,model,hum,session,now))\n",
+          "new_identity": {
+            "bytes": 635,
+            "sha256": "7b360ca44e0cff8a31d3e1fc9ef00c7808503fe49485b7ef17cfc16cf57a3e27"
+          },
+          "old": " -- Reuse original SevenRoleCombat slow attributes rather than create an\n -- independent speed authority. RoundReplay clears these after the match.\n",
+          "old_identity": {
+            "bytes": 148,
+            "sha256": "e88bbe80e8305456a57fff4d28ee914269cd53c42284836d412f2521f9b84b79"
+          },
+          "start": 184,
+          "stop": 186
+        },
+        {
+          "new": " local finalExpiry=math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires)\n local slowed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n local baseline=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n if type(baseline)~=\"number\" or baseline~=baseline or baseline<8 or baseline>32 then baseline=base end\n local slowToken=WalkPolicy.walkEffect(player,model,hum,session,\n  \"SLOW\",slowed,finalExpiry,baseline,now)\n if not slowToken then return end\n",
+          "new_identity": {
+            "bytes": 473,
+            "sha256": "927066d4781051fbbe9897cebfa9c873bd692cce0836d8122baf2468d06244f7"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 190,
+          "stop": 190
+        },
+        {
+          "new": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",finalExpiry)\n hum.WalkSpeed=slowed\n task.delay(finalExpiry-now+.1,function()\n  applySpeed(WalkPolicy.walkRelease(player,model,hum,session,slowToken,os.clock()))\n",
+          "new_identity": {
+            "bytes": 202,
+            "sha256": "ff5c6132cbc733443de47ccef03f2305870ede9820d9ae0070a2cc6ba5f34b4e"
+          },
+          "old": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",\n  math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires))\n hum.WalkSpeed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n task.delay(1.2,function()\n  -- A delayed callback must not overwrite a new round's movement baseline.\n  if session.rules.phase==\"ACTIVE\" and session.world.Parent\n   and hum.Parent and hum.Health>0\n   and os.clock()>=(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge)\n   and hum:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\")==base then\n   hum.WalkSpeed=base\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  end\n",
+          "old_identity": {
+            "bytes": 591,
+            "sha256": "40148abc8010e479a17b0bf79549c6f5f0c31600fa051425be4567cb46d399b7"
+          },
+          "start": 191,
+          "stop": 203
+        },
+        {
+          "new": "   local defenseDamage=InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\")\n   closest.hum:TakeDamage(defenseDamage)\n   if kind==\"TRAP\" and defenseDamage>0 and closest.hum.Health>0 then\n",
+          "new_identity": {
+            "bytes": 228,
+            "sha256": "d67f720e5f1263b373626c40930d6f44b2254135f7feb97d35032f8ea5ba51c9"
+          },
+          "old": "   closest.hum:TakeDamage(InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\"))\n   if kind==\"TRAP\" and closest.hum.Health>0 then\n",
+          "old_identity": {
+            "bytes": 171,
+            "sha256": "bfd52322fb34b52578b4735329c61f7c95e244f79091467390a0f63a61a775f2"
+          },
+          "start": 287,
+          "stop": 289
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+          "old_identity": {
+            "bytes": 81,
+            "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+          },
+          "start": 606,
+          "stop": 607
+        },
+        {
+          "new": "local spawn=gqEarlyOriginalSpawn\nlocal folder=gqEarlyFolder\n",
+          "new_identity": {
+            "bytes": 60,
+            "sha256": "67f15bc1d479bd00b3578c76515bf5874a65231001127b70cdb3705d704fcf5a"
+          },
+          "old": "local spawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal root=spawn and spawn.Position or Vector3.new(0,4,0)\nlocal folder=Instance.new(\"Folder\");folder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\";folder.Parent=workspace\n",
+          "old_identity": {
+            "bytes": 252,
+            "sha256": "193d75b34ff0440d2449714a0835961c9231ae5499c70c54ba64777e7769a854"
+          },
+          "start": 918,
+          "stop": 921
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\n",
+          "old_identity": {
+            "bytes": 67,
+            "sha256": "0775a7f78fa3eadcbaae6fadabf80b6cc50d4c4ec99771cf410127b7f2b9b53a"
+          },
+          "start": 922,
+          "stop": 924
+        },
+        {
+          "new": "local lobbyGround=gqEarlyGround\nlocal lobbySpawn=gqEarlySpawn\n",
+          "new_identity": {
+            "bytes": 62,
+            "sha256": "88a045d5c6e52cd4ae0d6050d2bfad7d2433c2eed17c53010e9359e1b11dc0ee"
+          },
+          "old": "local lobbyGround=Instance.new(\"Part\")\nlobbyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\nlobbyGround.Anchored=true\nlobbyGround.Size=Vector3.new(154,2,156)\nlobbyGround.Position=root+Vector3.new(0,-5,21)\nlobbyGround.Material=Enum.Material.Grass\nlobbyGround.Color=Color3.fromRGB(88,139,104)\nlobbyGround.CanCollide=true\nlobbyGround.Parent=folder\nlocal lobbySpawn=Instance.new(\"SpawnLocation\")\nlobbySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\nlobbySpawn.Anchored=true\nlobbySpawn.Size=Vector3.new(12,1,12)\nlobbySpawn.Position=root+Vector3.new(0,-2,-27)\nlobbySpawn.Neutral=true\nlobbySpawn.Enabled=true\nlobbySpawn.AllowTeamChangeOnTouch=false\nlobbySpawn.Duration=0\nlobbySpawn.Material=Enum.Material.SmoothPlastic\nlobbySpawn.Color=Color3.fromRGB(232,230,178)\nlobbySpawn.CanCollide=true\nlobbySpawn.Parent=folder\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+          "old_identity": {
+            "bytes": 1846,
+            "sha256": "1538cb2985e8f945dfa34b6ec8d9e1d30748e2502595d0b870c92f86750ad945"
+          },
+          "start": 935,
+          "stop": 980
+        },
+        {
+          "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "new_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1151,
+          "stop": 1151
+        },
+        {
+          "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "new_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1175,
+          "stop": 1175
+        },
+        {
+          "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "new_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1199,
+          "stop": 1199
+        },
+        {
+          "new": "  local realmWorldKey,realmRules=session.world,session.rules\n",
+          "new_identity": {
+            "bytes": 61,
+            "sha256": "cbf4fbe204b32641ae2182484b9dcb7879bf3eb51ea6275d01b695802c52c66b"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1225,
+          "stop": 1225
+        },
+        {
+          "new": " session.world.Name=mode..\"_Arena\"\n -- Publish the existing Rules phase before Realm can observe this world.\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n session.world.Parent=folder\n",
+          "new_identity": {
+            "bytes": 210,
+            "sha256": "ea5f8891a5ce4f780232cf2a1d8fd56f9938690026c930bbbad83ed73aaf7609"
+          },
+          "old": " session.world.Name=mode..\"_Arena\";session.world.Parent=folder\n",
+          "old_identity": {
+            "bytes": 63,
+            "sha256": "d1e688156396763e67e4ad6bf47a4f1d9ead0ed25093f1a5e1e739fd6f698a2d"
+          },
+          "start": 1231,
+          "stop": 1232
+        },
+        {
+          "new": "  -- Revoke this exact pair before optional cleanup can fail or yield.\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n",
+          "new_identity": {
+            "bytes": 124,
+            "sha256": "20e7f01de12b4673cf47a2991493cd792fe2d07f328344ca28a86cc2ac079356"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1285,
+          "stop": 1285
+        },
+        {
+          "new": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "d09f38606ff90d3b97d3a489d1ee2d9900ac200e9134d526967bbc4c5fbf7b71"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1286,
+          "stop": 1286
+        },
+        {
+          "new": "    if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "new_identity": {
+            "bytes": 72,
+            "sha256": "2f78d6c27257835e2ec6ffcef22653aa81700ec0fc0565c00e8291475b0131f5"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1331,
+          "stop": 1331
+        },
+        {
+          "new": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new_identity": {
+            "bytes": 144,
+            "sha256": "a70777057f7f46dc8ca70f0c1a13ade9259e0cc2a3741f3a06de4ea10028ba9e"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1354,
+          "stop": 1354
+        },
+        {
+          "new": "   if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "new_identity": {
+            "bytes": 71,
+            "sha256": "7f3aa757f120c1ead7e3dfc9da29e3978ffd7a276b3b5fb18715ce7ef015ef65"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1423,
+          "stop": 1423
+        },
+        {
+          "new": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new_identity": {
+            "bytes": 537,
+            "sha256": "53a58baf1ba90a1bf9cabb0ee744973d91d39ac294e2c699a050f32e994d0410"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1443,
+          "stop": 1443
+        },
+        {
+          "new": "     if not InvulRuntime.allowObjectiveAction(session,receiver)\n      or not InvulRuntime.allowObjectiveAction(session,carrierPlayer) then return end\n",
+          "new_identity": {
+            "bytes": 150,
+            "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1571,
+          "stop": 1571
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- GQ470_P0_EARLY_EXISTING_LOBBY_SPAWN_REAL69_20261121\n-- Preserve the actual preexisting spawn/root; create exactly the original\n-- GQ646 floor+neutral SpawnLocation before potentially blocking module requires.\nlocal gqEarlyOriginalSpawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal gqEarlyRoot=gqEarlyOriginalSpawn and gqEarlyOriginalSpawn.Position or Vector3.new(0,4,0)\nlocal gqEarlyFolder=Instance.new(\"Folder\")\ngqEarlyFolder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\"\ngqEarlyFolder.Parent=workspace\nlocal gqEarlyGround=Instance.new(\"Part\")\ngqEarlyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\ngqEarlyGround.Anchored=true\ngqEarlyGround.Size=Vector3.new(154,2,156)\ngqEarlyGround.Position=gqEarlyRoot+Vector3.new(0,-5,21)\ngqEarlyGround.Material=Enum.Material.Grass\ngqEarlyGround.Color=Color3.fromRGB(88,139,104)\ngqEarlyGround.CanCollide=true\ngqEarlyGround.Parent=gqEarlyFolder\nlocal gqEarlySpawn=Instance.new(\"SpawnLocation\")\ngqEarlySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\ngqEarlySpawn.Anchored=true\ngqEarlySpawn.Size=Vector3.new(12,1,12)\ngqEarlySpawn.Position=gqEarlyRoot+Vector3.new(0,-2,-27)\ngqEarlySpawn.Neutral=true\ngqEarlySpawn.Enabled=true\ngqEarlySpawn.AllowTeamChangeOnTouch=false\ngqEarlySpawn.Duration=0\ngqEarlySpawn.Material=Enum.Material.SmoothPlastic\ngqEarlySpawn.Color=Color3.fromRGB(232,230,178)\ngqEarlySpawn.CanCollide=true\ngqEarlySpawn.Parent=gqEarlyFolder\n-- The same GQ646 binder also protects existing/joining characters while\n-- module initialization yields; later match code retains these same tables.\nlocal root=gqEarlyRoot\nlocal sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+          "old_identity": {
+            "bytes": 2695,
+            "sha256": "3ae1ed2d2d8fe0a000988d82a6c5fbb96323e9dcc1f9bb233d817e13c5221516"
+          },
+          "start": 8,
+          "stop": 66
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+          "old_identity": {
+            "bytes": 81,
+            "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+          },
+          "start": 111,
+          "stop": 112
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local WalkPolicy=require(script.Parent:WaitForChild(\"EGGRUMBLE_BasicMobilityPolicy\"))\n",
+          "old_identity": {
+            "bytes": 86,
+            "sha256": "72bcea99f1f94dedd47e433a920459096398d244b9d65bb52e213565ed00b4cc"
+          },
+          "start": 235,
+          "stop": 236
+        },
+        {
+          "new": " -- Reuse original SevenRoleCombat slow attributes rather than create an\n -- independent speed authority. RoundReplay clears these after the match.\n",
+          "new_identity": {
+            "bytes": 148,
+            "sha256": "e88bbe80e8305456a57fff4d28ee914269cd53c42284836d412f2521f9b84b79"
+          },
+          "old": " -- Reuse original SevenRoleCombat slow attributes and shared data-only expiry.\n local player=Players:GetPlayerFromCharacter(model)\n if not player or player.Character~=model or hum.Parent~=model then return end\n local function applySpeed(speed:number?,slowActive:boolean?)\n  if type(speed)~=\"number\" or not player.Parent or player.Character~=model\n   or hum.Parent~=model or hum.Health<=0 then return end\n  hum.WalkSpeed=speed\n  if slowActive==false then\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n   hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n  end\n end\n applySpeed(WalkPolicy.walkCurrent(player,model,hum,session,now))\n",
+          "old_identity": {
+            "bytes": 635,
+            "sha256": "7b360ca44e0cff8a31d3e1fc9ef00c7808503fe49485b7ef17cfc16cf57a3e27"
+          },
+          "start": 244,
+          "stop": 257
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " local finalExpiry=math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires)\n local slowed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n local baseline=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n if type(baseline)~=\"number\" or baseline~=baseline or baseline<8 or baseline>32 then baseline=base end\n local slowToken=WalkPolicy.walkEffect(player,model,hum,session,\n  \"SLOW\",slowed,finalExpiry,baseline,now)\n if not slowToken then return end\n",
+          "old_identity": {
+            "bytes": 473,
+            "sha256": "927066d4781051fbbe9897cebfa9c873bd692cce0836d8122baf2468d06244f7"
+          },
+          "start": 261,
+          "stop": 268
+        },
+        {
+          "new": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",\n  math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires))\n hum.WalkSpeed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n task.delay(1.2,function()\n  -- A delayed callback must not overwrite a new round's movement baseline.\n  if session.rules.phase==\"ACTIVE\" and session.world.Parent\n   and hum.Parent and hum.Health>0\n   and os.clock()>=(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge)\n   and hum:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\")==base then\n   hum.WalkSpeed=base\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  end\n",
+          "new_identity": {
+            "bytes": 591,
+            "sha256": "40148abc8010e479a17b0bf79549c6f5f0c31600fa051425be4567cb46d399b7"
+          },
+          "old": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",finalExpiry)\n hum.WalkSpeed=slowed\n task.delay(finalExpiry-now+.1,function()\n  applySpeed(WalkPolicy.walkRelease(player,model,hum,session,slowToken,os.clock()))\n",
+          "old_identity": {
+            "bytes": 202,
+            "sha256": "ff5c6132cbc733443de47ccef03f2305870ede9820d9ae0070a2cc6ba5f34b4e"
+          },
+          "start": 269,
+          "stop": 273
+        },
+        {
+          "new": "   closest.hum:TakeDamage(InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\"))\n   if kind==\"TRAP\" and closest.hum.Health>0 then\n",
+          "new_identity": {
+            "bytes": 171,
+            "sha256": "bfd52322fb34b52578b4735329c61f7c95e244f79091467390a0f63a61a775f2"
+          },
+          "old": "   local defenseDamage=InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\")\n   closest.hum:TakeDamage(defenseDamage)\n   if kind==\"TRAP\" and defenseDamage>0 and closest.hum.Health>0 then\n",
+          "old_identity": {
+            "bytes": 228,
+            "sha256": "d67f720e5f1263b373626c40930d6f44b2254135f7feb97d35032f8ea5ba51c9"
+          },
+          "start": 357,
+          "stop": 360
+        },
+        {
+          "new": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+          "new_identity": {
+            "bytes": 81,
+            "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 677,
+          "stop": 677
+        },
+        {
+          "new": "local spawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal root=spawn and spawn.Position or Vector3.new(0,4,0)\nlocal folder=Instance.new(\"Folder\");folder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\";folder.Parent=workspace\n",
+          "new_identity": {
+            "bytes": 252,
+            "sha256": "193d75b34ff0440d2449714a0835961c9231ae5499c70c54ba64777e7769a854"
+          },
+          "old": "local spawn=gqEarlyOriginalSpawn\nlocal folder=gqEarlyFolder\n",
+          "old_identity": {
+            "bytes": 60,
+            "sha256": "67f15bc1d479bd00b3578c76515bf5874a65231001127b70cdb3705d704fcf5a"
+          },
+          "start": 988,
+          "stop": 990
+        },
+        {
+          "new": "local sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\n",
+          "new_identity": {
+            "bytes": 67,
+            "sha256": "0775a7f78fa3eadcbaae6fadabf80b6cc50d4c4ec99771cf410127b7f2b9b53a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 991,
+          "stop": 991
+        },
+        {
+          "new": "local lobbyGround=Instance.new(\"Part\")\nlobbyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\nlobbyGround.Anchored=true\nlobbyGround.Size=Vector3.new(154,2,156)\nlobbyGround.Position=root+Vector3.new(0,-5,21)\nlobbyGround.Material=Enum.Material.Grass\nlobbyGround.Color=Color3.fromRGB(88,139,104)\nlobbyGround.CanCollide=true\nlobbyGround.Parent=folder\nlocal lobbySpawn=Instance.new(\"SpawnLocation\")\nlobbySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\nlobbySpawn.Anchored=true\nlobbySpawn.Size=Vector3.new(12,1,12)\nlobbySpawn.Position=root+Vector3.new(0,-2,-27)\nlobbySpawn.Neutral=true\nlobbySpawn.Enabled=true\nlobbySpawn.AllowTeamChangeOnTouch=false\nlobbySpawn.Duration=0\nlobbySpawn.Material=Enum.Material.SmoothPlastic\nlobbySpawn.Color=Color3.fromRGB(232,230,178)\nlobbySpawn.CanCollide=true\nlobbySpawn.Parent=folder\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+          "new_identity": {
+            "bytes": 1846,
+            "sha256": "1538cb2985e8f945dfa34b6ec8d9e1d30748e2502595d0b870c92f86750ad945"
+          },
+          "old": "local lobbyGround=gqEarlyGround\nlocal lobbySpawn=gqEarlySpawn\n",
+          "old_identity": {
+            "bytes": 62,
+            "sha256": "88a045d5c6e52cd4ae0d6050d2bfad7d2433c2eed17c53010e9359e1b11dc0ee"
+          },
+          "start": 1002,
+          "stop": 1004
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "start": 1175,
+          "stop": 1176
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "start": 1200,
+          "stop": 1201
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "start": 1225,
+          "stop": 1226
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  local realmWorldKey,realmRules=session.world,session.rules\n",
+          "old_identity": {
+            "bytes": 61,
+            "sha256": "cbf4fbe204b32641ae2182484b9dcb7879bf3eb51ea6275d01b695802c52c66b"
+          },
+          "start": 1252,
+          "stop": 1253
+        },
+        {
+          "new": " session.world.Name=mode..\"_Arena\";session.world.Parent=folder\n",
+          "new_identity": {
+            "bytes": 63,
+            "sha256": "d1e688156396763e67e4ad6bf47a4f1d9ead0ed25093f1a5e1e739fd6f698a2d"
+          },
+          "old": " session.world.Name=mode..\"_Arena\"\n -- Publish the existing Rules phase before Realm can observe this world.\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n session.world.Parent=folder\n",
+          "old_identity": {
+            "bytes": 210,
+            "sha256": "ea5f8891a5ce4f780232cf2a1d8fd56f9938690026c930bbbad83ed73aaf7609"
+          },
+          "start": 1259,
+          "stop": 1263
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  -- Revoke this exact pair before optional cleanup can fail or yield.\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n",
+          "old_identity": {
+            "bytes": 124,
+            "sha256": "20e7f01de12b4673cf47a2991493cd792fe2d07f328344ca28a86cc2ac079356"
+          },
+          "start": 1316,
+          "stop": 1318
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "d09f38606ff90d3b97d3a489d1ee2d9900ac200e9134d526967bbc4c5fbf7b71"
+          },
+          "start": 1319,
+          "stop": 1320
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "    if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 72,
+            "sha256": "2f78d6c27257835e2ec6ffcef22653aa81700ec0fc0565c00e8291475b0131f5"
+          },
+          "start": 1365,
+          "stop": 1366
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old_identity": {
+            "bytes": 144,
+            "sha256": "a70777057f7f46dc8ca70f0c1a13ade9259e0cc2a3741f3a06de4ea10028ba9e"
+          },
+          "start": 1389,
+          "stop": 1391
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "   if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 71,
+            "sha256": "7f3aa757f120c1ead7e3dfc9da29e3978ffd7a276b3b5fb18715ce7ef015ef65"
+          },
+          "start": 1460,
+          "stop": 1461
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old_identity": {
+            "bytes": 537,
+            "sha256": "53a58baf1ba90a1bf9cabb0ee744973d91d39ac294e2c699a050f32e994d0410"
+          },
+          "start": 1481,
+          "stop": 1490
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "     if not InvulRuntime.allowObjectiveAction(session,receiver)\n      or not InvulRuntime.allowObjectiveAction(session,carrierPlayer) then return end\n",
+          "old_identity": {
+            "bytes": 150,
+            "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
+          },
+          "start": 1618,
+          "stop": 1620
+        }
+      ],
+      "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
+    },
+    "parent_place": {
+      "bytes": 830060,
+      "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"
+    },
+    "repaired_place": {
+      "bytes": 830788,
+      "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe"
+    },
+    "source_path": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+  },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 830060,
-    "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"
+    "bytes": 830788,
+    "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe"
   },
   "followup_repair": {
     "author_contexts": [
@@ -4056,8 +4959,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
       "after": {
-        "bytes": 94590,
-        "sha256": "12e74acc12b991e1287f158fbc9bb0b52329b3bdb8cf33d2a24c2378da39fe00"
+        "bytes": 95318,
+        "sha256": "7b7da6cbddc155b8c2dae3cc1b5191fe77bb61d2eee2692430e0c43cdee3a29a"
       },
       "before": {
         "bytes": 91635,
@@ -4220,6 +5123,48 @@
           "stop": 980
         },
         {
+          "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+          "new_identity": {
+            "bytes": 128,
+            "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+          },
+          "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+          "old_identity": {
+            "bytes": 86,
+            "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+          },
+          "start": 1042,
+          "stop": 1043
+        },
+        {
+          "new": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
+          "new_identity": {
+            "bytes": 62,
+            "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1044,
+          "stop": 1044
+        },
+        {
+          "new": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n  end\n end\n",
+          "new_identity": {
+            "bytes": 483,
+            "sha256": "dd957e0d350305655ee6ca604d7515f74db8306020acb488d869b098d843bb92"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1049,
+          "stop": 1049
+        },
+        {
           "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
           "new_identity": {
             "bytes": 70,
@@ -4248,6 +5193,20 @@
           "stop": 1175
         },
         {
+          "new": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+          "new_identity": {
+            "bytes": 116,
+            "sha256": "bace85b27209cfd29815fcf3fe312e9259a0c2019271716d8e6b53ddf26fc019"
+          },
+          "old": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+          },
+          "start": 1195,
+          "stop": 1196
+        },
+        {
           "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
           "new_identity": {
             "bytes": 70,
@@ -4260,6 +5219,20 @@
           },
           "start": 1199,
           "stop": 1199
+        },
+        {
+          "new": " end,false)\n",
+          "new_identity": {
+            "bytes": 12,
+            "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+          },
+          "old": " end)\n",
+          "old_identity": {
+            "bytes": 6,
+            "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+          },
+          "start": 1206,
+          "stop": 1207
         },
         {
           "new": "  local realmWorldKey,realmRules=session.world,session.rules\n",
@@ -4304,10 +5277,10 @@
           "stop": 1285
         },
         {
-          "new": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
           "new_identity": {
-            "bytes": 73,
-            "sha256": "d09f38606ff90d3b97d3a489d1ee2d9900ac200e9134d526967bbc4c5fbf7b71"
+            "bytes": 104,
+            "sha256": "9f7980686bc8e98585deb3c4c57251a13b58c5c8236ce08ea38ed33dad280abf"
           },
           "old": "",
           "old_identity": {
@@ -4332,10 +5305,10 @@
           "stop": 1331
         },
         {
-          "new": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
           "new_identity": {
-            "bytes": 144,
-            "sha256": "a70777057f7f46dc8ca70f0c1a13ade9259e0cc2a3741f3a06de4ea10028ba9e"
+            "bytes": 175,
+            "sha256": "baaa050783447837908600d7a48c32e3daa3c950986a13cda798b5a8ec6d4938"
           },
           "old": "",
           "old_identity": {
@@ -4360,10 +5333,10 @@
           "stop": 1423
         },
         {
-          "new": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "new": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n refreshVaultPrompts(session)\n",
           "new_identity": {
-            "bytes": 537,
-            "sha256": "53a58baf1ba90a1bf9cabb0ee744973d91d39ac294e2c699a050f32e994d0410"
+            "bytes": 567,
+            "sha256": "df18dc7c0385004fa93bf211a325ff9776a851bac93b7ae03efdd77f63c11ddb"
           },
           "old": "",
           "old_identity": {
@@ -4544,18 +5517,46 @@
           "stop": 1004
         },
         {
+          "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+          "new_identity": {
+            "bytes": 86,
+            "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+          },
+          "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+          "old_identity": {
+            "bytes": 128,
+            "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+          },
+          "start": 1066,
+          "stop": 1067
+        },
+        {
           "new": "",
           "new_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
           "old_identity": {
-            "bytes": 70,
-            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+            "bytes": 62,
+            "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
           },
-          "start": 1175,
-          "stop": 1176
+          "start": 1068,
+          "stop": 1069
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n  end\n end\n",
+          "old_identity": {
+            "bytes": 483,
+            "sha256": "dd957e0d350305655ee6ca604d7515f74db8306020acb488d869b098d843bb92"
+          },
+          "start": 1074,
+          "stop": 1087
         },
         {
           "new": "",
@@ -4568,8 +5569,8 @@
             "bytes": 70,
             "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
           },
-          "start": 1200,
-          "stop": 1201
+          "start": 1189,
+          "stop": 1190
         },
         {
           "new": "",
@@ -4582,8 +5583,50 @@
             "bytes": 70,
             "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
           },
-          "start": 1225,
-          "stop": 1226
+          "start": 1214,
+          "stop": 1215
+        },
+        {
+          "new": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+          },
+          "old": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+          "old_identity": {
+            "bytes": 116,
+            "sha256": "bace85b27209cfd29815fcf3fe312e9259a0c2019271716d8e6b53ddf26fc019"
+          },
+          "start": 1235,
+          "stop": 1236
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+          "old_identity": {
+            "bytes": 70,
+            "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+          },
+          "start": 1239,
+          "stop": 1240
+        },
+        {
+          "new": " end)\n",
+          "new_identity": {
+            "bytes": 6,
+            "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+          },
+          "old": " end,false)\n",
+          "old_identity": {
+            "bytes": 12,
+            "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+          },
+          "start": 1247,
+          "stop": 1248
         },
         {
           "new": "",
@@ -4596,8 +5639,8 @@
             "bytes": 61,
             "sha256": "cbf4fbe204b32641ae2182484b9dcb7879bf3eb51ea6275d01b695802c52c66b"
           },
-          "start": 1252,
-          "stop": 1253
+          "start": 1266,
+          "stop": 1267
         },
         {
           "new": " session.world.Name=mode..\"_Arena\";session.world.Parent=folder\n",
@@ -4610,8 +5653,8 @@
             "bytes": 210,
             "sha256": "ea5f8891a5ce4f780232cf2a1d8fd56f9938690026c930bbbad83ed73aaf7609"
           },
-          "start": 1259,
-          "stop": 1263
+          "start": 1273,
+          "stop": 1277
         },
         {
           "new": "",
@@ -4624,8 +5667,8 @@
             "bytes": 124,
             "sha256": "20e7f01de12b4673cf47a2991493cd792fe2d07f328344ca28a86cc2ac079356"
           },
-          "start": 1316,
-          "stop": 1318
+          "start": 1330,
+          "stop": 1332
         },
         {
           "new": "",
@@ -4633,13 +5676,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
           "old_identity": {
-            "bytes": 73,
-            "sha256": "d09f38606ff90d3b97d3a489d1ee2d9900ac200e9134d526967bbc4c5fbf7b71"
+            "bytes": 104,
+            "sha256": "9f7980686bc8e98585deb3c4c57251a13b58c5c8236ce08ea38ed33dad280abf"
           },
-          "start": 1319,
-          "stop": 1320
+          "start": 1333,
+          "stop": 1335
         },
         {
           "new": "",
@@ -4652,8 +5695,8 @@
             "bytes": 72,
             "sha256": "2f78d6c27257835e2ec6ffcef22653aa81700ec0fc0565c00e8291475b0131f5"
           },
-          "start": 1365,
-          "stop": 1366
+          "start": 1380,
+          "stop": 1381
         },
         {
           "new": "",
@@ -4661,13 +5704,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old": "  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
           "old_identity": {
-            "bytes": 144,
-            "sha256": "a70777057f7f46dc8ca70f0c1a13ade9259e0cc2a3741f3a06de4ea10028ba9e"
+            "bytes": 175,
+            "sha256": "baaa050783447837908600d7a48c32e3daa3c950986a13cda798b5a8ec6d4938"
           },
-          "start": 1389,
-          "stop": 1391
+          "start": 1404,
+          "stop": 1407
         },
         {
           "new": "",
@@ -4680,8 +5723,8 @@
             "bytes": 71,
             "sha256": "7f3aa757f120c1ead7e3dfc9da29e3978ffd7a276b3b5fb18715ce7ef015ef65"
           },
-          "start": 1460,
-          "stop": 1461
+          "start": 1476,
+          "stop": 1477
         },
         {
           "new": "",
@@ -4689,13 +5732,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n",
+          "old": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n refreshVaultPrompts(session)\n",
           "old_identity": {
-            "bytes": 537,
-            "sha256": "53a58baf1ba90a1bf9cabb0ee744973d91d39ac294e2c699a050f32e994d0410"
+            "bytes": 567,
+            "sha256": "df18dc7c0385004fa93bf211a325ff9776a851bac93b7ae03efdd77f63c11ddb"
           },
-          "start": 1481,
-          "stop": 1490
+          "start": 1497,
+          "stop": 1507
         },
         {
           "new": "",
@@ -4708,8 +5751,8 @@
             "bytes": 150,
             "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
           },
-          "start": 1618,
-          "stop": 1620
+          "start": 1635,
+          "stop": 1637
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"

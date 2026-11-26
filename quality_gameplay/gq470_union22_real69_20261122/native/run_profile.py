@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "c220252a36af453828a23cf40546a9334151a4b02ed546e195aeef01ac38923d"
+INPUT_LOCK_SHA256 = "afda1d7fa6a078dd8d93b3e7adb1d57a7919f8aceef450faa7e7c965b6338ed8"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -57,7 +57,7 @@ def strict_json(raw):
 
 
 def write_json(path, data):
-    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def load_lock():

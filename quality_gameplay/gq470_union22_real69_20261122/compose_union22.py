@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "103eee2a9ca6422cec58c1bccf2ee46bdcadf80d1a1095a91dfb3bd9662eb6a8"
+LOCK_SHA256 = "9488e4d546b30f8bc43dc78ba351caea049e2d83acbaf03a4ce409fba1387f96"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -49,6 +49,9 @@ GUARDIAN_OFF_ARCHIVE = "OFF69_GUARDIAN_BEAST_PARENT_ROLLBACK.tar.gz"
 ITEM_SOURCE = "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau"
 ITEM_OFF = "off69_item_cleanup_guardian_parent"
 ITEM_OFF_ARCHIVE = "OFF69_ITEM_CLEANUP_GUARDIAN_PARENT_ROLLBACK.tar.gz"
+VAULT_SOURCE = "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+VAULT_OFF = "off69_empty_vault_item_parent"
+VAULT_OFF_ARCHIVE = "OFF69_EMPTY_VAULT_ITEM_PARENT_ROLLBACK.tar.gz"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -335,6 +338,21 @@ def transform(inputs, lock):
     return on, off
 
 
+def vault_parent(on, lock):
+    repair = lock["empty_vault_followup"]
+    row = lock["sources"][VAULT_SOURCE]
+    parent_row = repair["parent_host_row"]
+    need(repair["source_path"] == VAULT_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["item_cleanup_followup"]["repaired_place"]
+         and parent_row["before"] == row["before"], "VAULT_PARENT_PROFILE")
+    restored = apply_hunks(on[VAULT_SOURCE], repair["inverse"])
+    need(identity(restored) == parent_row["after"] and restored != on[VAULT_SOURCE]
+         and apply_hunks(restored, repair["forward"]) == on[VAULT_SOURCE], "VAULT_EXACT_TWO_WAY")
+    return on | {VAULT_SOURCE: restored}, lock | {
+        "sources": lock["sources"] | {VAULT_SOURCE: parent_row}, "final_place": repair["parent_place"],
+    }
+
+
 def item_parent(on, lock):
     repair = lock["item_cleanup_followup"]
     row = lock["sources"][ITEM_SOURCE]
@@ -435,7 +453,7 @@ def hud_current_sources(on, lock):
 
 
 def write_json(path, data):
-    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def run_checked(command, log, timeout=60, quiet_stdout=False):
@@ -490,7 +508,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    item_off, item_off_lock = item_parent(on, lock)
+    vault_off, vault_off_lock = vault_parent(on, lock)
+    item_off, item_off_lock = item_parent(vault_off, vault_off_lock)
     guardian_off, guardian_off_lock = guardian_parent(item_off, item_off_lock)
     parent_lock = beast_parent_profile(guardian_off_lock)
     h72 = beast_parent_sources(guardian_off, guardian_off_lock, parent_lock)
@@ -510,7 +529,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / HUD_OFF, hud_off, lock["followup_repair"]["current_place"], HUD_SOURCE),
                   (stage / BEAST_OFF, h72, parent_lock["final_place"], BEAST_SOURCE),
                   (stage / GUARDIAN_OFF, guardian_off, guardian_off_lock["final_place"], GUARDIAN_SOURCE),
-                  (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE))
+                  (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE),
+                  (stage / VAULT_OFF, vault_off, vault_off_lock["final_place"], VAULT_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -547,6 +567,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         field_archive_identity = identity(read_file(stage / GUARDIAN_OFF_ARCHIVE))
         make_archive(stage / ITEM_OFF, stage / ITEM_OFF_ARCHIVE, ITEM_OFF)
         item_archive_identity = identity(read_file(stage / ITEM_OFF_ARCHIVE))
+        make_archive(stage / VAULT_OFF, stage / VAULT_OFF_ARCHIVE, VAULT_OFF)
+        vault_archive_identity = identity(read_file(stage / VAULT_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -574,6 +596,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({ITEM_OFF + "/" + PROJECT: lock["project"],
                                ITEM_OFF + "/" + PLACE: item_off_lock["final_place"],
                                ITEM_OFF_ARCHIVE: item_archive_identity})
+        expected_stage.update({VAULT_OFF + "/sources/" + name: identity(raw) for name, raw in vault_off.items()})
+        expected_stage.update({VAULT_OFF + "/" + PROJECT: lock["project"],
+                               VAULT_OFF + "/" + PLACE: vault_off_lock["final_place"],
+                               VAULT_OFF_ARCHIVE: vault_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -601,6 +627,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "guardian_only_beast_parent_rollback_archive": field_archive_identity,
             "item_cleanup_followup": lock["item_cleanup_followup"],
             "item_cleanup_only_rollback_archive": item_archive_identity,
+            "empty_vault_followup": lock["empty_vault_followup"],
+            "empty_vault_only_rollback_archive": vault_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -613,8 +641,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 23, "unchanged_sources": 46,
-            "compile_count": 143, "rojo_build_count": 7, "instances": 75,
+            "compile_count": 144, "rojo_build_count": 8, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
+            "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
