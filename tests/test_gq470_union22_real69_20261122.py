@@ -1232,10 +1232,17 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(addition["parent_place"], h72["final_place"])
         guardian = self.lock["guardian_followup_repair"]
         self.assertEqual(len(guardian["forward"]), 6)
-        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 179)
-        self.assertEqual([path for path in self.lock["sources"]
-                          if self.lock["sources"][path] != beast["sources"][path]], [compose.GUARDIAN_SOURCE])
+        item = self.lock["item_cleanup_followup"]
+        guardian_sources = self.lock["sources"] | {compose.ITEM_SOURCE: item["parent_item_row"]}
+        self.assertEqual(sum(len(r["forward"]) for r in guardian_sources.values()), 179)
+        self.assertEqual([path for path in guardian_sources
+                          if guardian_sources[path] != beast["sources"][path]], [compose.GUARDIAN_SOURCE])
         self.assertEqual(guardian["parent_place"], beast["final_place"])
+        self.assertEqual(item["parent_place"], guardian["repaired_place"])
+        self.assertEqual(len(item["forward"]), 4)
+        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 182)
+        self.assertEqual([path for path in self.lock["sources"]
+                          if self.lock["sources"][path] != guardian_sources[path]], [compose.ITEM_SOURCE])
 
     def test_bot_immutable_template_corpus_and_adapter_drift_rejected(self):
         for name in verify.BOT_INPUTS:
