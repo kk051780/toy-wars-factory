@@ -30738,13 +30738,13 @@
     {
       "claim_id": "P0D-GQ482-EMPTY-VAULT-CANONICAL-20261127",
       "feature_id": "GQ470_FB015_EMPTY_VAULT_PROMPT",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (Codex parent, original #482 empty-vault intake)",
       "parent_issue": 470,
       "integration_issue": 220,
       "canonical_parent": 482,
-      "pr": null,
+      "pr": 1034,
       "requested_scope": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7174609783",
       "latest_scope": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7190532839",
       "design_comment": 7202869642,
@@ -30780,7 +30780,7 @@
       "prepared_candidate_tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb",
       "prepared_candidate_head": "0065e204445db840861c4610770cd1b8cb470db6",
       "prep_branch": "feature/p0d-prep-482-empty-vault-20261127",
-      "allowed_new_prs": 1,
+      "allowed_new_prs": 0,
       "expected_source_branch": "ABSENT",
       "evidence": {
         "actual_host_after_sha256": "7b7da6cbddc155b8c2dae3cc1b5191fe77bb61d2eee2692430e0c43cdee3a29a",
@@ -30822,7 +30822,35 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Authenticated owner standing ordinary-development delegation, current #1011 V2.1 and exact #220 sequence/empty-vault authorization in comment 7202869642; reused existing #218 requests."
+      "authority_basis": "Authenticated owner standing ordinary-development delegation, current #1011 V2.1 and exact #220 sequence/empty-vault authorization in comment 7202869642; reused existing #218 requests.",
+      "source_head": "0065e204445db840861c4610770cd1b8cb470db6",
+      "credentialed_source_readback": "0065e204445db840861c4610770cd1b8cb470db6",
+      "exact_head_source_branch": "feature/p0d-prep-482-empty-vault-20261127",
+      "actual_candidate_readback": {
+        "head": "0065e204445db840861c4610770cd1b8cb470db6",
+        "tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb",
+        "pr": 1034,
+        "base": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "changed_file_count": 7,
+        "lease": "5892cde12456eadb127a01280587bef263adc3c8"
+      },
+      "source_activity_note": "Initial git command returned a background session identifier before final ref visibility. Its controller lease was released before final proof was read. Subsequent GET and a newly acquired source-lane lease confirmed the registered exact commit/tree/diff and created the single approved draft. No official ref changed.",
+      "no_source_changes_after_fixed_head_without_new_scope": true,
+      "actual_source_pr_binding_metadata_lease": {
+        "ref": "5892cde12456eadb127a01280587bef263adc3c8",
+        "blob": "9bbed94ebcb98dd946535197cb6b14e8aba272a9",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "25e946bc-0430-49d7-aa96-6e0886f86b85",
+          "task_id": null,
+          "epoch": 767,
+          "acquired_at": "2026-11-26T23:56:56.479Z",
+          "expires_at": "2026-11-27T00:26:56.479Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
