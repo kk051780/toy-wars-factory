@@ -34,13 +34,14 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 59, "final": 19}
+INTEGRATION_COUNTS = {"core": 62, "final": 19}
 
 
 def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
-        "sources": lock["sources"] | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"]},
+        "sources": lock["sources"] | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"],
+                                      compose.ITEM_SOURCE: lock["item_cleanup_followup"]["parent_item_row"]},
         "final_place": repair["parent_place"],
     }
 
@@ -181,9 +182,10 @@ class UnionBoundary(unittest.TestCase):
 
     def test_beast_only_inverse_restores_actual_h72_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        final, beast = compose.guardian_parent(on, self.lock)
+        guardian_on, guardian_lock = compose.item_parent(on, self.lock)
+        final, beast = compose.guardian_parent(guardian_on, guardian_lock)
         self.assertEqual(beast, before_guardian(self.lock))
-        self.assertEqual([p for p in on if on[p] != final[p]], [compose.GUARDIAN_SOURCE])
+        self.assertEqual([p for p in guardian_on if guardian_on[p] != final[p]], [compose.GUARDIAN_SOURCE])
         self.assertEqual(compose.identity((self.current / compose.GUARDIAN_OFF / compose.PLACE).read_bytes()),
                          self.lock["guardian_followup_repair"]["parent_place"])
         parent_lock = compose.beast_parent_profile(beast)
@@ -193,6 +195,34 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(compose.identity(restored[compose.BEAST_SOURCE]), self.lock["beast_followup_repair"]["parent_combat"])
         self.assertEqual(compose.identity((self.current / compose.BEAST_OFF / compose.PLACE).read_bytes()),
                          self.lock["beast_followup_repair"]["parent_place"])
+
+    def test_item_cleanup_only_inverse_restores_exact_guardian_parent(self):
+        on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
+        restored, parent_lock = compose.item_parent(on, self.lock)
+        self.assertEqual([p for p in on if on[p] != restored[p]], [compose.ITEM_SOURCE])
+        self.assertEqual(parent_lock["final_place"], self.lock["guardian_followup_repair"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.ITEM_OFF / compose.PLACE).read_bytes()),
+                         parent_lock["final_place"])
+
+    def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
+        root = self.current_copy()
+        shutil.copyfile(root / compose.GUARDIAN_OFF_ARCHIVE, root / compose.ITEM_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_guardian_matrix_binds_new_item_stage_and_rejects_wrong_parent(self):
+        with patch.dict(sys.modules, {"run_profile": native}):
+            guardian_spec = importlib.util.spec_from_file_location(
+                "union22_guardian_item_boundary_tests", HERE / "native/run_guardian_diagnostic.py")
+            guardian = importlib.util.module_from_spec(guardian_spec)
+            guardian_spec.loader.exec_module(guardian)
+        guardian.source_contract(self.current, self.lock, self.native_lock)
+        for wrong, expected in (("source", "GUARDIAN_SOURCE69_CONTEXT"), ("place", "GUARDIAN_PLACE_PAIR")):
+            with self.subTest(wrong=wrong):
+                root = self.current_copy()
+                path = "sources/" + compose.ITEM_SOURCE if wrong == "source" else compose.PLACE
+                shutil.copyfile(root / path, root / compose.ITEM_OFF / path)
+                with self.assertRaisesRegex(ValueError, expected):
+                    guardian.source_contract(root, self.lock, self.native_lock)
 
     def test_beast_h72_parent_payload_or_swapped_archive_rejected(self):
         for mutation in ("source", "archive", "guardian_source", "guardian_archive"):
@@ -449,7 +479,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 148:
+            if calls == 150:
                 stage = Path(command[-1]).parent.parent
                 path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
                         else (prior if target == "input" else stage) / "sources" / self.first)
@@ -458,7 +488,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 148)
+        self.assertEqual(calls, 150)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)

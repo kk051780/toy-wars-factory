@@ -1,0 +1,520 @@
+--!strict
+-- EGGRUMBLE V3: independent, Studio-only visual language on the original game.
+-- P0D ART-A01 scope. DO NOT change neutral HP/KO, egg stock, rewards, mode queues,
+-- ProximityPrompts, castle combat, AI nav, ability Remotes, or source actor ownership.
+-- No collidable art, new combat scripts, loops, particles, permanent GUIs or monetization.
+local RunService=game:GetService("RunService")
+local TweenService=game:GetService("TweenService")
+local Debris=game:GetService("Debris")
+local Players=game:GetService("Players")
+if not RunService:IsStudio() then return end
+
+local ROOT_NAME="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW"
+local MAX_DECORATED_NEUTRALS_PER_ARENA=24
+local MAX_DECORATED_EGGS_PER_ARENA=28
+local MAX_DECORATED_ITEMS_PER_WORLD=12
+local MAX_SIMULTANEOUS_KO_BURSTS=8
+local MAX_GATE_PIECES=7
+local activeNeutrals:{[Instance]:number}={}
+local activeEggs:{[Instance]:number}={}
+local activeItems:{[Instance]:number}={}
+local activeBurst=0
+local marked:{[Instance]:boolean}={}
+local ceramic=Color3.fromRGB(205,193,160)
+local gold=Color3.fromRGB(231,187,103)
+local jade=Color3.fromRGB(82,168,131)
+local steel=Color3.fromRGB(93,117,142)
+local maroon=Color3.fromRGB(137,64,76)
+local dark=Color3.fromRGB(64,73,88)
+
+local function previewFor(instance:Instance):Instance?
+ local ptr:Instance?=instance
+ while ptr do
+  if ptr.Name==ROOT_NAME then return ptr end
+  ptr=ptr.Parent
+ end
+ return nil
+end
+
+local function arenaFor(instance:Instance):Instance?
+ local ptr:Instance?=instance
+ while ptr do
+  if ptr.Name=="TEAM_Arena" or ptr.Name=="BATTLE_ROYALE_Arena" then
+   if ptr.Parent and ptr.Parent.Name==ROOT_NAME then return ptr end
+   return nil
+  end
+  ptr=ptr.Parent
+ end
+ return nil
+end
+
+local function itemPreviewFor(instance:Instance):Instance?
+ local ptr:Instance?=instance
+ while ptr do
+  if ptr.Name=="EGGRUMBLE_ItemPreviewWorld" then return ptr end
+  ptr=ptr.Parent
+ end
+ return nil
+end
+
+-- Weld to the actual gameplay part, never add independent world Anchored obstacles.
+local function jewel(parent:Instance,anchor:BasePart,name:string,shape:string,
+ size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,transparency:number?):BasePart
+ local p:BasePart
+ if shape=="Wedge" then p=Instance.new("WedgePart")
+ else
+  local q=Instance.new("Part")
+  if shape=="Cylinder" then q.Shape=Enum.PartType.Cylinder end
+  if shape=="Ball" then q.Shape=Enum.PartType.Ball end
+  p=q
+ end
+ p.Name="ART_"..name
+ p.Size=size
+ p.CFrame=anchor.CFrame*offset
+ p.Color=color
+ p.Material=material
+ p.Transparency=transparency or 0
+ p.Anchored=false
+ p.CanCollide=false
+ p.CanTouch=false
+ p.CanQuery=false
+ p.CastShadow=false
+ p.Massless=true
+ p.Parent=parent
+ local weld=Instance.new("WeldConstraint")
+ weld.Part0=anchor
+ weld.Part1=p
+ weld.Parent=p
+ return p
+end
+
+local function deathCue(neutral:Model,cueColor:Color3)
+ -- The neutral Humanoid's real death is the only trigger, never a fake 10,000-KO counter.
+ if activeBurst>=MAX_SIMULTANEOUS_KO_BURSTS then return end
+ local root=neutral.PrimaryPart
+ if not root or not root.Parent then return end
+ local nearHuman=false
+ for _,player in ipairs(Players:GetPlayers()) do
+  local character=player.Character
+  local pr=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+  if pr and (pr.Position-root.Position).Magnitude<=125 then
+   nearHuman=true;break
+  end
+ end
+ if not nearHuman then return end
+ activeBurst+=1
+ local ring=Instance.new("Part")
+ ring.Name="ART_TrueNeutralKOCue"
+ ring.Shape=Enum.PartType.Cylinder
+ ring.Size=Vector3.new(.17,2.4,2.4)
+ ring.CFrame=CFrame.new(root.Position-Vector3.new(0,1.1,0))*CFrame.Angles(0,0,math.rad(90))
+ ring.Material=Enum.Material.Glass
+ ring.Color=cueColor
+ ring.Transparency=.2
+ ring.Anchored=true
+ ring.CanCollide=false
+ ring.CanTouch=false
+ ring.CanQuery=false
+ ring.CastShadow=false
+ -- Transient cue is outside the dead model so Debris owns its guaranteed cleanup.
+ ring.Parent=previewFor(neutral) or workspace
+ TweenService:Create(ring,TweenInfo.new(.21,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{
+  Size=Vector3.new(.17,7.2,7.2),Transparency=1
+ }):Play()
+ Debris:AddItem(ring,.25)
+ task.delay(.28,function() activeBurst=math.max(0,activeBurst-1) end)
+end
+
+local function decorateNeutral(neutral:Model)
+ if marked[neutral] or neutral:GetAttribute("EGGRUMBLE_Neutral")~=true then return end
+ if neutral.Name~="HordeSoldier" then return end
+ local arena=arenaFor(neutral)
+ local root=neutral:FindFirstChild("HumanoidRootPart")
+ local head=neutral:FindFirstChild("Head")
+ local hum=neutral:FindFirstChildOfClass("Humanoid")
+ if not arena or not root or not root:IsA("BasePart") or not head or not head:IsA("BasePart") or not hum then return end
+ if (activeNeutrals[arena] or 0)>=MAX_DECORATED_NEUTRALS_PER_ARENA then return end
+ marked[neutral]=true
+ activeNeutrals[arena]=(activeNeutrals[arena] or 0)+1
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_NeutralArt_VisualOnly"
+ art.Parent=neutral
+ -- Three muted distinct mini-enemy silhouettes, each EXACTLY two pieces;
+ -- style is determined by world position, not HP/KO/gameplay class or random replication.
+ local variant=math.floor(math.abs(root.Position.X*.17+root.Position.Z*.31))%3
+ local cueColor=if variant==0 then jade elseif variant==1 then gold else steel
+ if variant==0 then
+  jewel(art,root,"ScoutMantle","Wedge",Vector3.new(1.85,.75,1.15),
+   CFrame.new(0,.7,.45)*CFrame.Angles(0,math.pi,0),dark,Enum.Material.Fabric)
+  jewel(art,head,"ScoutBoneCrest","Wedge",Vector3.new(.68,.78,1.0),
+   CFrame.new(0,.61,0),ceramic,Enum.Material.SmoothPlastic)
+ elseif variant==1 then
+  jewel(art,root,"VanguardPauldron","Wedge",Vector3.new(2.35,.86,1.7),
+   CFrame.new(0,.9,-.12)*CFrame.Angles(0,math.pi,0),maroon,Enum.Material.Metal)
+  jewel(art,head,"VanguardHorn","Wedge",Vector3.new(.72,1.03,.85),
+   CFrame.new(-.28,.78,0),gold,Enum.Material.Metal)
+ else
+  jewel(art,root,"CursedMantle","Wedge",Vector3.new(1.7,1.15,1.65),
+   CFrame.new(0,.55,.39)*CFrame.Angles(0,math.pi,0),steel,Enum.Material.Fabric)
+  jewel(art,head,"CursedHalo","Cylinder",Vector3.new(.17,1.67,1.67),
+   CFrame.new(0,.8,0)*CFrame.Angles(0,0,math.rad(90)),ceramic,Enum.Material.Slate)
+ end
+ local fired=false
+ hum.Died:Connect(function()
+  if fired then return end
+  fired=true
+  deathCue(neutral,cueColor)
+ end)
+ neutral.Destroying:Connect(function()
+  activeNeutrals[arena]=math.max(0,(activeNeutrals[arena] or 1)-1)
+  marked[neutral]=nil
+ end)
+end
+
+local function decorateEgg(egg:BasePart)
+ if marked[egg] then return end
+ local arena=arenaFor(egg)
+ if not arena then return end
+ if not (egg.Name:match("^FieldEgg_%d+$") or egg.Name:match("^ReleasedEgg_")) then return end
+ if (activeEggs[arena] or 0)>=MAX_DECORATED_EGGS_PER_ARENA then return end
+ marked[egg]=true
+ activeEggs[arena]=(activeEggs[arena] or 0)+1
+ -- The pickup remains the original ProximityPrompt host and the sole egg authority.
+ local trim=Instance.new("Folder")
+ trim.Name="EGGRUMBLE_EggVisual_VisualOnly"
+ trim.Parent=egg
+ -- GQ470_P0_FIELD_RELEASED_EGG_CREST_REAL69_20261120
+ -- Keep two ornament Parts per egg (56 pieces max in 28-egg arena), no on-screen UI.
+ -- Released eggs have a warm accent to distinguish the post-castle-loot phase.
+ local isReleased = egg.Name:match("^ReleasedEgg_") ~= nil
+ local crestTint = if isReleased then maroon else jade
+ jewel(trim,egg,"ObjectiveBaseRing","Cylinder",Vector3.new(.16,5.0,5.0),
+  CFrame.new(0,-1.5,0)*CFrame.Angles(0,0,math.rad(90)),gold,Enum.Material.Metal)
+ jewel(trim,egg,"RaisedEggCrest","Wedge",Vector3.new(1.9,2.2,1.35),
+  CFrame.new(0,1.85,0)*CFrame.Angles(0,math.rad(45),0),crestTint,Enum.Material.SmoothPlastic)
+ egg.Destroying:Connect(function()
+  local remaining=math.max(0,(activeEggs[arena] or 1)-1)
+  activeEggs[arena]=if remaining>0 then remaining else nil
+  marked[egg]=nil
+ end)
+end
+
+local function decorateFieldItem(item:BasePart)
+ if marked[item] then return end
+ local kind=item.Name:match("^ITEM_%d+_(%u+)$")
+ if kind~="HEAL" and kind~="DASH" and kind~="SHIELD" then return end
+ local world=arenaFor(item) or itemPreviewFor(item)
+ if not world then return end
+ if (activeItems[world] or 0)>=MAX_DECORATED_ITEMS_PER_WORLD then return end
+ marked[item]=true
+ activeItems[world]=(activeItems[world] or 0)+1
+ local trim=Instance.new("Folder")
+ trim.Name="EGGRUMBLE_FieldItemVisual_VisualOnly"
+ trim.Parent=item
+ -- Three SHAPES and colors, not three unreadable identical neon balls:
+ -- healing = cross, dash = swept wing, shield = guarded crest.
+ local roleColor=if kind=="HEAL" then jade elseif kind=="DASH" then steel else maroon
+ jewel(trim,item,"GroundHalo","Cylinder",Vector3.new(.14,3.6,3.6),
+  CFrame.new(0,-1.3,0)*CFrame.Angles(0,0,math.rad(90)),roleColor,Enum.Material.Metal)
+ if kind=="HEAL" then
+  jewel(trim,item,"RemedyCross","Block",Vector3.new(.55,1.8,.4),
+   CFrame.new(0,1.3,0),ceramic,Enum.Material.SmoothPlastic)
+ elseif kind=="DASH" then
+  jewel(trim,item,"WingTip","Wedge",Vector3.new(1.65,1.4,.42),
+   CFrame.new(0,1.3,0)*CFrame.Angles(0,0,math.rad(24)),gold,Enum.Material.Metal)
+ else
+  jewel(trim,item,"GuardDiamond","Wedge",Vector3.new(1.45,1.45,.38),
+   CFrame.new(0,1.3,0)*CFrame.Angles(0,0,math.rad(45)),ceramic,Enum.Material.Slate)
+ end
+ -- GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122
+ -- The original Item engine hides the real pickup on consume and restores it
+ -- on respawn. Keep our TWO existing matte ornaments in the same visibility
+ -- state, including an item decorated while its spawn is already inactive.
+ -- This is signal-driven (zero extra Part, UI, polling loop, or Remote).
+ local function syncItemArtVisibility()
+  if not item.Parent or not trim.Parent then return end
+  local alpha=if item.Transparency>=.99 or not item.CanQuery then 1 else item.Transparency
+  for _,child in ipairs(trim:GetChildren()) do
+   if child:IsA("BasePart") and math.abs(child.Transparency-alpha)>.001 then
+    child.Transparency=alpha
+   end
+  end
+ end
+ local transparencyConnection=item:GetPropertyChangedSignal("Transparency"):Connect(syncItemArtVisibility)
+ local queryConnection=item:GetPropertyChangedSignal("CanQuery"):Connect(syncItemArtVisibility)
+ syncItemArtVisibility()
+ item.Destroying:Connect(function()
+  transparencyConnection:Disconnect()
+  queryConnection:Disconnect()
+  local remaining=math.max(0,(activeItems[world] or 1)-1)
+  activeItems[world]=if remaining>0 then remaining else nil
+  marked[item]=nil
+ end)
+end
+
+local function decorateVault(part:BasePart)
+ if marked[part] then return end
+ if part.Name~="EggVault" and part.Name~="OwnEggDeposit" then return end
+ if not arenaFor(part) then return end
+ marked[part]=true
+ part.Destroying:Connect(function()
+  marked[part]=nil
+ end)
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_CastleEggStationArt_VisualOnly"
+ art.Parent=part
+ local isVault=part.Name=="EggVault"
+ jewel(art,part,"StationBadge","Cylinder",Vector3.new(.15,2.9,2.9),
+  CFrame.new(0,part.Size.Y/2+.6,0)*CFrame.Angles(0,0,math.rad(90)),
+  if isVault then gold else jade,Enum.Material.Metal)
+ -- Distinguish enemy-vault theft from your own deposit through shape and color.
+end
+
+local function decorateModeGate(gate:BasePart)
+ if marked[gate] then return end
+ if gate.Name~="TEAM_PORTAL" and gate.Name~="BATTLE_ROYALE_PORTAL" then return end
+ -- Both existing V3 portals and the author's separate 7-class UX preview
+ -- share this decorative gate, but never share queue/selection authority.
+ local parent=gate.Parent
+ if not previewFor(gate) and not (parent and parent.Name=="EGGRUMBLE_LobbyUX") then return end
+ marked[gate]=true
+ local team=gate.Name=="TEAM_PORTAL"
+ local c=if team then maroon else steel
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_ModeGateFrame_VisualOnly"
+ art.Parent=gate
+ local n=0
+ local function g(name:string,shape:string,sz:Vector3,off:CFrame,color:Color3)
+  if n>=MAX_GATE_PIECES then return end
+  n+=1
+  jewel(art,gate,name,shape,sz,off,color,Enum.Material.Metal)
+ end
+ -- Distinct silhouette and no new billboard:
+ -- TEAM: low fortress battlements. BR: taller three-point crown.
+ for _,side in ipairs({-1,1}) do
+  g("Upright"..side,"Wedge",Vector3.new(1.4,11.8,2.7),
+   CFrame.new(side*5.15,0,.3)*CFrame.Angles(0,math.rad(side*90),0),c)
+ end
+ g("GateLintel","Block",Vector3.new(12.2,1.3,2.6),
+  CFrame.new(0,6.18,.25),ceramic)
+ if team then
+  for _,side in ipairs({-1,1}) do
+   g("Battlement"..side,"Block",Vector3.new(2.5,2.2,2.7),
+    CFrame.new(side*3.65,7.73,.3),c)
+  end
+ else
+  for _,side in ipairs({-1,1}) do
+   g("CrownSpike"..side,"Wedge",Vector3.new(2.2,3.4,2.6),
+    CFrame.new(side*3.65,8.16,.3),c)
+  end
+ end
+ g("PortalMedallion","Cylinder",Vector3.new(.16,2.4,2.4),
+  CFrame.new(0,6.9,-1.28)*CFrame.Angles(0,math.rad(90),0),gold)
+end
+
+local DEFENSE_COLORS:{[string]:Color3}={
+ HARDENED=ceramic,REPAIR=jade,TURRET=gold,TRAP=maroon,SENSOR=steel
+}
+local function decorateDefense(stand:BasePart)
+ if marked[stand] or not previewFor(stand) then return end
+ local id=stand.Name:match("^DEFENSE_(%u+)$")
+ if not id or not DEFENSE_COLORS[id] then return end
+ marked[stand]=true
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_DefenseModuleVisualOnly"
+ art.Parent=stand
+ jewel(art,stand,"ModuleDisc","Cylinder",Vector3.new(.22,2.2,2.2),
+  CFrame.new(0,stand.Size.Y/2+.5,0)*CFrame.Angles(0,0,math.rad(90)),
+  DEFENSE_COLORS[id],Enum.Material.Metal)
+ -- Only the original server rules determine a module's defensive power.
+end
+
+-- Distinct boss silhouette on the ORIGINAL isolated neutral-boss preview.
+-- The authored StoneGiant still owns its core HP, 2s red telegraph and damage.
+local MAX_BOSS_ORNAMENT_PARTS=17
+local function decorateStoneGiant(model:Model)
+ if marked[model] or model.Name~="NEUTRAL_BOSS_STONE_GIANT" then return end
+ local torso=model:FindFirstChild("Torso")
+ local head=model:FindFirstChild("Head")
+ local core=model:FindFirstChild("CoreWeakpoint")
+ if not torso or not torso:IsA("BasePart")
+  or not head or not head:IsA("BasePart")
+  or not core or not core:IsA("BasePart") then return end
+ marked[model]=true
+ model.Destroying:Connect(function()
+  marked[model]=nil
+ end)
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_StoneGiantVisual_VisualOnly"
+ art.Parent=model
+ local made=0
+ local function add(anchor:BasePart,name:string,kind:string,size:Vector3,offset:CFrame,
+  color:Color3,material:Enum.Material):BasePart?
+  if made>=MAX_BOSS_ORNAMENT_PARTS then return nil end
+  made+=1
+  return jewel(art,anchor,name,kind,size,offset,color,material)
+ end
+ -- Shoulder monoliths, stone mask, sapphire chest bezel; attack core stays
+ -- the ORIGINAL untouched CoreWeakpoint ProximityPrompt's only parent.
+ for _,side in ipairs({-1,1}) do
+  add(torso,"MonolithShoulder"..side,"Wedge",Vector3.new(3.6,5.0,3.8),
+   CFrame.new(side*5.0,3.8,.3)*CFrame.Angles(0,math.rad(side*18),0),
+   dark,Enum.Material.Slate)
+ end
+ add(head,"BrokenCrown","Wedge",Vector3.new(5.7,3.0,4.1),
+  CFrame.new(0,3.35,.15),ceramic,Enum.Material.Limestone)
+ local bezel=add(core,"WeakpointBezel","Cylinder",Vector3.new(.22,3.8,3.8),
+  CFrame.new(0,0,-.42)*CFrame.Angles(0,math.rad(90),0),core.Color,Enum.Material.Metal)
+ add(torso,"HeartRunicRidge","Wedge",Vector3.new(2.7,2.6,.7),
+  CFrame.new(0,-2.7,-3.0),steel,Enum.Material.Slate)
+
+ -- GQ8_RC86_FB015_GOROGAN_RUNESTONE_ART_SINGLE_EXISTING_OWNER_20261119
+ -- Exact RC86 FB015GoroganVisual motifs adapted to original V3 static boss.
+ -- Do not instantiate old Gorogan_ServerRig, Humanoid, server AI or art script.
+ -- Existing weakpoint/ProximityPrompt/HP telegraph and 5 preexisting ornaments stay intact.
+ art:SetAttribute("RC86VisualMotif","GOROGAN_RUNESTONE_TITAN")
+ art:SetAttribute("RC86OriginalSourceSHA256","8699dd37fea2c78a11ac5d8081931a08189581f4ada7694eec735317009d2e60")
+ art:SetAttribute("GameAuthorityUnchanged",true)
+ art:SetAttribute("MaxDecorParts",17)
+ local basalt=Color3.fromRGB(64,73,83)
+ local basaltLight=Color3.fromRGB(103,119,128)
+ local rune=Color3.fromRGB(110,236,221)
+ local eyeAmber=Color3.fromRGB(255,176,112)
+ for _,side in ipairs({-1,1}) do
+  -- Two distinctive asymmetric stone horns, the original RC86 silhouette.
+  add(head,"GoroganCrownHorn"..side,"Wedge",Vector3.new(1.5,3.9,1.5),
+   CFrame.new(side*1.8,3.1,.4)*CFrame.Angles(0,0,side*.28),
+   basalt,Enum.Material.Slate)
+  add(head,"GoroganRuneEye"..side,"Ball",Vector3.new(.75,.6,.26),
+   CFrame.new(side*.93,.62,-head.Size.Z*.5-.18),
+   eyeAmber,Enum.Material.Neon)
+  add(torso,"GoroganShoulderSigil"..side,"Ball",Vector3.new(.85,.85,.22),
+   CFrame.new(side*5.0,3.3,-torso.Size.Z*.5-.18),
+   rune,Enum.Material.Neon)
+  add(torso,"GoroganFlankArmor"..side,"Wedge",Vector3.new(1.3,3.2,3.0),
+   CFrame.new(side*4,-2.0,0)*CFrame.Angles(0,0,side*.12),
+   basaltLight,Enum.Material.Slate)
+ end
+ -- Original five-spine motif condensed to four within mobile art budget.
+ for i=1,4 do
+  add(torso,"GoroganBackSpine"..i,"Wedge",
+   Vector3.new(1.1,2.8-(i-1)*.35,1.25),
+   CFrame.new(0,3.8-(i-1)*1.45,torso.Size.Z*.5+.8)
+    *CFrame.Angles(.5,0,0),basaltLight,Enum.Material.Slate)
+ end
+ -- Only the preexisting V3 ArtDistanceLOD can fade this folder at distance.
+ -- Extra visual objects are weld-only, no collision/query, no independent loop.
+
+ if bezel then
+  -- Red phase is read from real server-owned weak-point health color only.
+  core:GetPropertyChangedSignal("Color"):Connect(function()
+   if core.Parent and bezel.Parent then bezel.Color=core.Color end
+  end)
+ end
+end
+
+-- The independent original CASTLE INTERIOR has an actually openable gate and
+-- real walkable vault. Add heraldry which fades WITH the real gate, instead of
+-- forming a new invisible obstruction or fake entrance.
+local MAX_CASTLE_INTERIOR_ART_PARTS=5
+local function decorateStandaloneCastle(model:Model)
+ if marked[model] or model.Name~="EGGRUMBLE_EnterableCastle" then return end
+ local gate=model:FindFirstChild("CastleGate")
+ local vault=model:FindFirstChild("EggVault")
+ local core=model:FindFirstChild("SiegeCore")
+ if not gate or not gate:IsA("BasePart")
+  or not vault or not vault:IsA("BasePart")
+  or not core or not core:IsA("BasePart") then return end
+ marked[model]=true
+ local art=Instance.new("Folder")
+ art.Name="EGGRUMBLE_InteriorHeraldry_VisualOnly"
+ art.Parent=model
+ local made=0
+ local gateTrim:{BasePart}={}
+ local function add(anchor:BasePart,name:string,kind:string,size:Vector3,offset:CFrame,
+  color:Color3,material:Enum.Material):BasePart?
+  if made>=MAX_CASTLE_INTERIOR_ART_PARTS then return nil end
+  made+=1
+  return jewel(art,anchor,name,kind,size,offset,color,material)
+ end
+ for _,side in ipairs({-1,1}) do
+  local p=add(gate,"GateRune"..side,"Wedge",Vector3.new(.75,7.4,.22),
+   CFrame.new(side*3.3,0,-.65),gold,Enum.Material.Metal)
+  if p then table.insert(gateTrim,p) end
+ end
+ local function syncDoor()
+  local fade=math.clamp(gate.Transparency+.15,0,1)
+  for _,p in ipairs(gateTrim) do
+   if p.Parent then p.Transparency=fade end
+  end
+ end
+ syncDoor()
+ gate:GetPropertyChangedSignal("Transparency"):Connect(syncDoor)
+ add(vault,"VaultShield","Wedge",Vector3.new(4.8,2.8,.4),
+  CFrame.new(0,vault.Size.Y*.5+.9,-vault.Size.Z*.5-.28),
+  gold,Enum.Material.Metal)
+ add(vault,"VaultRelief","Cylinder",Vector3.new(.22,2.6,2.6),
+  CFrame.new(0,vault.Size.Y*.5+1.0,-vault.Size.Z*.5-.60)
+    *CFrame.Angles(0,math.rad(90),0),ceramic,Enum.Material.Limestone)
+ add(core,"SiegeCoreSeal","Wedge",Vector3.new(3.6,1.3,.25),
+  CFrame.new(0,core.Size.Y*.5+1.0,-core.Size.Z*.5-.20),
+  core.Color,Enum.Material.Metal)
+end
+
+local function process(instance:Instance)
+ if instance:IsA("BasePart")
+  and (instance.Name=="TEAM_PORTAL" or instance.Name=="BATTLE_ROYALE_PORTAL")
+  and instance.Parent and instance.Parent.Name=="EGGRUMBLE_LobbyUX" then
+  decorateModeGate(instance)
+  return
+ end
+ -- Independent #482 boss and physical castle are owned by their original authors;
+ -- observe their completed parts, never replace their scripts or objects.
+ if instance:IsA("Model") and instance.Name=="NEUTRAL_BOSS_STONE_GIANT" then
+  task.defer(function() if instance.Parent then decorateStoneGiant(instance) end end)
+  return
+ elseif instance:IsA("Model") and instance.Name=="EGGRUMBLE_EnterableCastle" then
+  task.defer(function() if instance.Parent then decorateStandaloneCastle(instance) end end)
+  return
+ elseif instance:IsA("BasePart") and instance.Name=="CoreWeakpoint"
+  and instance.Parent and instance.Parent.Name=="NEUTRAL_BOSS_STONE_GIANT" then
+  local m=instance.Parent
+  task.defer(function() if m:IsA("Model") then decorateStoneGiant(m) end end)
+  return
+ elseif instance:IsA("BasePart") and instance.Name=="SiegeCore"
+  and instance.Parent and instance.Parent.Name=="EGGRUMBLE_EnterableCastle" then
+  local m=instance.Parent
+  task.defer(function() if m:IsA("Model") then decorateStandaloneCastle(m) end end)
+  return
+ end
+ -- The authored 9-pickup field-item preview runs independently from the V3 lobby.
+ -- Both visual-only variants are supported with the SAME isolated script.
+ if instance:IsA("BasePart") and instance.Name:match("^ITEM_%d+_%u+$") then
+  decorateFieldItem(instance)
+  return
+ end
+ if not previewFor(instance) then return end
+ if instance:IsA("Model") and instance.Name=="HordeSoldier" then
+  task.defer(function() if instance.Parent then decorateNeutral(instance) end end)
+ elseif instance:IsA("BasePart") then
+  if instance.Name=="HumanoidRootPart" and instance.Parent and instance.Parent.Name=="HordeSoldier" then
+   local m=instance.Parent
+   task.defer(function() if m:IsA("Model") then decorateNeutral(m) end end)
+  elseif instance.Name=="Head" and instance.Parent and instance.Parent.Name=="HordeSoldier" then
+   local m=instance.Parent
+   task.defer(function() if m:IsA("Model") then decorateNeutral(m) end end)
+  elseif instance.Name:match("^FieldEgg_%d+$") or instance.Name:match("^ReleasedEgg_") then
+   decorateEgg(instance)
+  elseif instance.Name=="EggVault" or instance.Name=="OwnEggDeposit" then
+   decorateVault(instance)
+  elseif instance.Name=="TEAM_PORTAL" or instance.Name=="BATTLE_ROYALE_PORTAL" then
+   decorateModeGate(instance)
+  elseif instance.Name:match("^DEFENSE_%u+$") then
+   decorateDefense(instance)
+  end
+ end
+end
+
+for _,instance in ipairs(workspace:GetDescendants()) do process(instance) end
+workspace.DescendantAdded:Connect(process)
+print("[EGGRUMBLE ART] true-KO cues, capped small-neutral silhouettes, egg visibility and 2 gate shapes / Studio only")

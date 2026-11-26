@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "442210f95ba60f841c8e7e5eeed56d984e9a5a66d6eb69578445e23d3b27859c"
+LOCK_SHA256 = "103eee2a9ca6422cec58c1bccf2ee46bdcadf80d1a1095a91dfb3bd9662eb6a8"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -46,6 +46,9 @@ BEAST_OFF_ARCHIVE = "OFF69_BEAST_H72_PARENT_ROLLBACK.tar.gz"
 GUARDIAN_SOURCE = "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau"
 GUARDIAN_OFF = "off69_guardian_beast_parent"
 GUARDIAN_OFF_ARCHIVE = "OFF69_GUARDIAN_BEAST_PARENT_ROLLBACK.tar.gz"
+ITEM_SOURCE = "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau"
+ITEM_OFF = "off69_item_cleanup_guardian_parent"
+ITEM_OFF_ARCHIVE = "OFF69_ITEM_CLEANUP_GUARDIAN_PARENT_ROLLBACK.tar.gz"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -332,6 +335,21 @@ def transform(inputs, lock):
     return on, off
 
 
+def item_parent(on, lock):
+    repair = lock["item_cleanup_followup"]
+    row = lock["sources"][ITEM_SOURCE]
+    parent_row = repair["parent_item_row"]
+    need(repair["source_path"] == ITEM_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["guardian_followup_repair"]["repaired_place"]
+         and parent_row["before"] == row["before"], "ITEM_CLEANUP_PARENT_PROFILE")
+    restored = apply_hunks(on[ITEM_SOURCE], repair["inverse"])
+    need(identity(restored) == parent_row["after"] and restored != on[ITEM_SOURCE]
+         and apply_hunks(restored, repair["forward"]) == on[ITEM_SOURCE], "ITEM_CLEANUP_EXACT_TWO_WAY")
+    return on | {ITEM_SOURCE: restored}, lock | {
+        "sources": lock["sources"] | {ITEM_SOURCE: parent_row}, "final_place": repair["parent_place"],
+    }
+
+
 def guardian_parent(on, lock):
     repair = lock["guardian_followup_repair"]
     row = lock["sources"][GUARDIAN_SOURCE]
@@ -472,7 +490,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    guardian_off, guardian_off_lock = guardian_parent(on, lock)
+    item_off, item_off_lock = item_parent(on, lock)
+    guardian_off, guardian_off_lock = guardian_parent(item_off, item_off_lock)
     parent_lock = beast_parent_profile(guardian_off_lock)
     h72 = beast_parent_sources(guardian_off, guardian_off_lock, parent_lock)
     bot_parent = bot_parent_sources(h72, parent_lock)
@@ -490,7 +509,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / BOT_OFF, bot_parent, lock["bot_followup_repair"]["parent_place"], BOT_SOURCE),
                   (stage / HUD_OFF, hud_off, lock["followup_repair"]["current_place"], HUD_SOURCE),
                   (stage / BEAST_OFF, h72, parent_lock["final_place"], BEAST_SOURCE),
-                  (stage / GUARDIAN_OFF, guardian_off, guardian_off_lock["final_place"], GUARDIAN_SOURCE))
+                  (stage / GUARDIAN_OFF, guardian_off, guardian_off_lock["final_place"], GUARDIAN_SOURCE),
+                  (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -525,6 +545,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         beast_archive_identity = identity(read_file(stage / BEAST_OFF_ARCHIVE))
         make_archive(stage / GUARDIAN_OFF, stage / GUARDIAN_OFF_ARCHIVE, GUARDIAN_OFF)
         field_archive_identity = identity(read_file(stage / GUARDIAN_OFF_ARCHIVE))
+        make_archive(stage / ITEM_OFF, stage / ITEM_OFF_ARCHIVE, ITEM_OFF)
+        item_archive_identity = identity(read_file(stage / ITEM_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -548,6 +570,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({GUARDIAN_OFF + "/" + PROJECT: lock["project"],
                                GUARDIAN_OFF + "/" + PLACE: guardian_off_lock["final_place"],
                                GUARDIAN_OFF_ARCHIVE: field_archive_identity})
+        expected_stage.update({ITEM_OFF + "/sources/" + name: identity(raw) for name, raw in item_off.items()})
+        expected_stage.update({ITEM_OFF + "/" + PROJECT: lock["project"],
+                               ITEM_OFF + "/" + PLACE: item_off_lock["final_place"],
+                               ITEM_OFF_ARCHIVE: item_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -573,6 +599,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "beast_only_h72_parent_rollback_archive": beast_archive_identity,
             "guardian_followup_repair": lock["guardian_followup_repair"],
             "guardian_only_beast_parent_rollback_archive": field_archive_identity,
+            "item_cleanup_followup": lock["item_cleanup_followup"],
+            "item_cleanup_only_rollback_archive": item_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -585,7 +613,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 23, "unchanged_sources": 46,
-            "compile_count": 142, "rojo_build_count": 6, "instances": 75,
+            "compile_count": 143, "rojo_build_count": 7, "instances": 75,
+            "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

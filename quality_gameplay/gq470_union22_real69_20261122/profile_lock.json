@@ -671,8 +671,8 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 829822,
-    "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"
+    "bytes": 830060,
+    "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"
   },
   "followup_repair": {
     "author_contexts": [
@@ -1331,6 +1331,209 @@
     "unchanged_sources_from_beast_parent": 68
   },
   "instance_count": 75,
+  "item_cleanup_followup": {
+    "author_artifact": 14983216700,
+    "author_head": "facbcaaa0300f98270e06328a94b504118662634",
+    "author_run": 45527121625,
+    "forward": [
+      {
+        "new": "  local remaining=math.max(0,(activeEggs[arena] or 1)-1)\n  activeEggs[arena]=if remaining>0 then remaining else nil\n",
+        "new_identity": {
+          "bytes": 116,
+          "sha256": "8077f96bf35cd89a3285d477888dcccf0293a1f3ddd54aad97cc13ef1fbbee30"
+        },
+        "old": "  activeEggs[arena]=math.max(0,(activeEggs[arena] or 1)-1)\n",
+        "old_identity": {
+          "bytes": 59,
+          "sha256": "e7c8b490bbf02d2541804ca5552d2551a31978a54b2a34d6e6414551cb137aa6"
+        },
+        "start": 195,
+        "stop": 196
+      },
+      {
+        "new": "  local remaining=math.max(0,(activeItems[world] or 1)-1)\n  activeItems[world]=if remaining>0 then remaining else nil\n",
+        "new_identity": {
+          "bytes": 118,
+          "sha256": "9ac045f76f2630c49bf68f97509bf38a30b3c2c38f294f77f7b75e70411218a7"
+        },
+        "old": "  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)\n",
+        "old_identity": {
+          "bytes": 61,
+          "sha256": "578f995c9268efcf867ee13facd58e1a31c1c57014cd4e2d7dee36eb4741ea2a"
+        },
+        "start": 247,
+        "stop": 248
+      },
+      {
+        "new": " part.Destroying:Connect(function()\n  marked[part]=nil\n end)\n",
+        "new_identity": {
+          "bytes": 61,
+          "sha256": "908f27783a0ea36baa6e0c76ed99ea6ce77c72bc68c2cce3c06fe98802d6d727"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 257,
+        "stop": 257
+      },
+      {
+        "new": " model.Destroying:Connect(function()\n  marked[model]=nil\n end)\n",
+        "new_identity": {
+          "bytes": 63,
+          "sha256": "11c60e678eaf768a32cfffb9f600dc8f5d90ceedfc33f606ccc2669d2e12fcbd"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 338,
+        "stop": 338
+      }
+    ],
+    "inverse": [
+      {
+        "new": "  activeEggs[arena]=math.max(0,(activeEggs[arena] or 1)-1)\n",
+        "new_identity": {
+          "bytes": 59,
+          "sha256": "e7c8b490bbf02d2541804ca5552d2551a31978a54b2a34d6e6414551cb137aa6"
+        },
+        "old": "  local remaining=math.max(0,(activeEggs[arena] or 1)-1)\n  activeEggs[arena]=if remaining>0 then remaining else nil\n",
+        "old_identity": {
+          "bytes": 116,
+          "sha256": "8077f96bf35cd89a3285d477888dcccf0293a1f3ddd54aad97cc13ef1fbbee30"
+        },
+        "start": 195,
+        "stop": 197
+      },
+      {
+        "new": "  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)\n",
+        "new_identity": {
+          "bytes": 61,
+          "sha256": "578f995c9268efcf867ee13facd58e1a31c1c57014cd4e2d7dee36eb4741ea2a"
+        },
+        "old": "  local remaining=math.max(0,(activeItems[world] or 1)-1)\n  activeItems[world]=if remaining>0 then remaining else nil\n",
+        "old_identity": {
+          "bytes": 118,
+          "sha256": "9ac045f76f2630c49bf68f97509bf38a30b3c2c38f294f77f7b75e70411218a7"
+        },
+        "start": 248,
+        "stop": 250
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": " part.Destroying:Connect(function()\n  marked[part]=nil\n end)\n",
+        "old_identity": {
+          "bytes": 61,
+          "sha256": "908f27783a0ea36baa6e0c76ed99ea6ce77c72bc68c2cce3c06fe98802d6d727"
+        },
+        "start": 259,
+        "stop": 262
+      },
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": " model.Destroying:Connect(function()\n  marked[model]=nil\n end)\n",
+        "old_identity": {
+          "bytes": 63,
+          "sha256": "11c60e678eaf768a32cfffb9f600dc8f5d90ceedfc33f606ccc2669d2e12fcbd"
+        },
+        "start": 343,
+        "stop": 346
+      }
+    ],
+    "parent_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+    "parent_item_row": {
+      "after": {
+        "bytes": 22046,
+        "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+      },
+      "before": {
+        "bytes": 21027,
+        "sha256": "9ec9982ed0d6e68457712e4e5dd10e7fb608c666adfe2e6904a209f5692a50c9"
+      },
+      "class": "Script",
+      "forward": [
+        {
+          "new": " -- GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122\n -- The original Item engine hides the real pickup on consume and restores it\n -- on respawn. Keep our TWO existing matte ornaments in the same visibility\n -- state, including an item decorated while its spawn is already inactive.\n -- This is signal-driven (zero extra Part, UI, polling loop, or Remote).\n local function syncItemArtVisibility()\n  if not item.Parent or not trim.Parent then return end\n  local alpha=if item.Transparency>=.99 or not item.CanQuery then 1 else item.Transparency\n  for _,child in ipairs(trim:GetChildren()) do\n   if child:IsA(\"BasePart\") and math.abs(child.Transparency-alpha)>.001 then\n    child.Transparency=alpha\n   end\n  end\n end\n local transparencyConnection=item:GetPropertyChangedSignal(\"Transparency\"):Connect(syncItemArtVisibility)\n local queryConnection=item:GetPropertyChangedSignal(\"CanQuery\"):Connect(syncItemArtVisibility)\n syncItemArtVisibility()\n",
+          "new_identity": {
+            "bytes": 950,
+            "sha256": "0b7a4b703b51c794efc85d1e9dc72c89edc2f8785f79eabdb8606ccc82b5dcfc"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 227,
+          "stop": 227
+        },
+        {
+          "new": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n",
+          "new_identity": {
+            "bytes": 69,
+            "sha256": "e2a0650518c1a2ba33a0af2509361598469411218b5c999961dfdabe4947a510"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 228,
+          "stop": 228
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122\n -- The original Item engine hides the real pickup on consume and restores it\n -- on respawn. Keep our TWO existing matte ornaments in the same visibility\n -- state, including an item decorated while its spawn is already inactive.\n -- This is signal-driven (zero extra Part, UI, polling loop, or Remote).\n local function syncItemArtVisibility()\n  if not item.Parent or not trim.Parent then return end\n  local alpha=if item.Transparency>=.99 or not item.CanQuery then 1 else item.Transparency\n  for _,child in ipairs(trim:GetChildren()) do\n   if child:IsA(\"BasePart\") and math.abs(child.Transparency-alpha)>.001 then\n    child.Transparency=alpha\n   end\n  end\n end\n local transparencyConnection=item:GetPropertyChangedSignal(\"Transparency\"):Connect(syncItemArtVisibility)\n local queryConnection=item:GetPropertyChangedSignal(\"CanQuery\"):Connect(syncItemArtVisibility)\n syncItemArtVisibility()\n",
+          "old_identity": {
+            "bytes": 950,
+            "sha256": "0b7a4b703b51c794efc85d1e9dc72c89edc2f8785f79eabdb8606ccc82b5dcfc"
+          },
+          "start": 227,
+          "stop": 244
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n",
+          "old_identity": {
+            "bytes": 69,
+            "sha256": "e2a0650518c1a2ba33a0af2509361598469411218b5c999961dfdabe4947a510"
+          },
+          "start": 245,
+          "stop": 247
+        }
+      ],
+      "route": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"
+    },
+    "parent_place": {
+      "bytes": 829822,
+      "sha256": "ab6c1242a4df6d905b8abaf6662f78b704a15f707e2c6f2a838357f1feb511e5"
+    },
+    "repaired_place": {
+      "bytes": 830060,
+      "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"
+    },
+    "source_path": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau"
+  },
   "luau_source": {
     "commit": "f46d879e28302a430029304f7f6a162aed66f103",
     "tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746"
@@ -2467,8 +2670,8 @@
     },
     "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau": {
       "after": {
-        "bytes": 22046,
-        "sha256": "40f4f741be4b71a37085240927dc61fa1a776acceff759f268d97c6d115ec05c"
+        "bytes": 22284,
+        "sha256": "293eed3bff121484d132ecf7759d189fc3dc6d951412fd60f92f9598341b7837"
       },
       "before": {
         "bytes": 21027,
@@ -2476,6 +2679,20 @@
       },
       "class": "Script",
       "forward": [
+        {
+          "new": "  local remaining=math.max(0,(activeEggs[arena] or 1)-1)\n  activeEggs[arena]=if remaining>0 then remaining else nil\n",
+          "new_identity": {
+            "bytes": 116,
+            "sha256": "8077f96bf35cd89a3285d477888dcccf0293a1f3ddd54aad97cc13ef1fbbee30"
+          },
+          "old": "  activeEggs[arena]=math.max(0,(activeEggs[arena] or 1)-1)\n",
+          "old_identity": {
+            "bytes": 59,
+            "sha256": "e7c8b490bbf02d2541804ca5552d2551a31978a54b2a34d6e6414551cb137aa6"
+          },
+          "start": 195,
+          "stop": 196
+        },
         {
           "new": " -- GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122\n -- The original Item engine hides the real pickup on consume and restores it\n -- on respawn. Keep our TWO existing matte ornaments in the same visibility\n -- state, including an item decorated while its spawn is already inactive.\n -- This is signal-driven (zero extra Part, UI, polling loop, or Remote).\n local function syncItemArtVisibility()\n  if not item.Parent or not trim.Parent then return end\n  local alpha=if item.Transparency>=.99 or not item.CanQuery then 1 else item.Transparency\n  for _,child in ipairs(trim:GetChildren()) do\n   if child:IsA(\"BasePart\") and math.abs(child.Transparency-alpha)>.001 then\n    child.Transparency=alpha\n   end\n  end\n end\n local transparencyConnection=item:GetPropertyChangedSignal(\"Transparency\"):Connect(syncItemArtVisibility)\n local queryConnection=item:GetPropertyChangedSignal(\"CanQuery\"):Connect(syncItemArtVisibility)\n syncItemArtVisibility()\n",
           "new_identity": {
@@ -2491,21 +2708,63 @@
           "stop": 227
         },
         {
-          "new": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n",
+          "new": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n  local remaining=math.max(0,(activeItems[world] or 1)-1)\n  activeItems[world]=if remaining>0 then remaining else nil\n",
           "new_identity": {
-            "bytes": 69,
-            "sha256": "e2a0650518c1a2ba33a0af2509361598469411218b5c999961dfdabe4947a510"
+            "bytes": 187,
+            "sha256": "e0f326199da945c43f8d03320db05211487abd5278dcd6779fae9101d2f35f42"
+          },
+          "old": "  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)\n",
+          "old_identity": {
+            "bytes": 61,
+            "sha256": "578f995c9268efcf867ee13facd58e1a31c1c57014cd4e2d7dee36eb4741ea2a"
+          },
+          "start": 228,
+          "stop": 229
+        },
+        {
+          "new": " part.Destroying:Connect(function()\n  marked[part]=nil\n end)\n",
+          "new_identity": {
+            "bytes": 61,
+            "sha256": "908f27783a0ea36baa6e0c76ed99ea6ce77c72bc68c2cce3c06fe98802d6d727"
           },
           "old": "",
           "old_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 228,
-          "stop": 228
+          "start": 238,
+          "stop": 238
+        },
+        {
+          "new": " model.Destroying:Connect(function()\n  marked[model]=nil\n end)\n",
+          "new_identity": {
+            "bytes": 63,
+            "sha256": "11c60e678eaf768a32cfffb9f600dc8f5d90ceedfc33f606ccc2669d2e12fcbd"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 319,
+          "stop": 319
         }
       ],
       "inverse": [
+        {
+          "new": "  activeEggs[arena]=math.max(0,(activeEggs[arena] or 1)-1)\n",
+          "new_identity": {
+            "bytes": 59,
+            "sha256": "e7c8b490bbf02d2541804ca5552d2551a31978a54b2a34d6e6414551cb137aa6"
+          },
+          "old": "  local remaining=math.max(0,(activeEggs[arena] or 1)-1)\n  activeEggs[arena]=if remaining>0 then remaining else nil\n",
+          "old_identity": {
+            "bytes": 116,
+            "sha256": "8077f96bf35cd89a3285d477888dcccf0293a1f3ddd54aad97cc13ef1fbbee30"
+          },
+          "start": 195,
+          "stop": 197
+        },
         {
           "new": "",
           "new_identity": {
@@ -2517,8 +2776,22 @@
             "bytes": 950,
             "sha256": "0b7a4b703b51c794efc85d1e9dc72c89edc2f8785f79eabdb8606ccc82b5dcfc"
           },
-          "start": 227,
-          "stop": 244
+          "start": 228,
+          "stop": 245
+        },
+        {
+          "new": "  activeItems[world]=math.max(0,(activeItems[world] or 1)-1)\n",
+          "new_identity": {
+            "bytes": 61,
+            "sha256": "578f995c9268efcf867ee13facd58e1a31c1c57014cd4e2d7dee36eb4741ea2a"
+          },
+          "old": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n  local remaining=math.max(0,(activeItems[world] or 1)-1)\n  activeItems[world]=if remaining>0 then remaining else nil\n",
+          "old_identity": {
+            "bytes": 187,
+            "sha256": "e0f326199da945c43f8d03320db05211487abd5278dcd6779fae9101d2f35f42"
+          },
+          "start": 246,
+          "stop": 250
         },
         {
           "new": "",
@@ -2526,13 +2799,27 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  transparencyConnection:Disconnect()\n  queryConnection:Disconnect()\n",
+          "old": " part.Destroying:Connect(function()\n  marked[part]=nil\n end)\n",
           "old_identity": {
-            "bytes": 69,
-            "sha256": "e2a0650518c1a2ba33a0af2509361598469411218b5c999961dfdabe4947a510"
+            "bytes": 61,
+            "sha256": "908f27783a0ea36baa6e0c76ed99ea6ce77c72bc68c2cce3c06fe98802d6d727"
           },
-          "start": 245,
-          "stop": 247
+          "start": 259,
+          "stop": 262
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " model.Destroying:Connect(function()\n  marked[model]=nil\n end)\n",
+          "old_identity": {
+            "bytes": 63,
+            "sha256": "11c60e678eaf768a32cfffb9f600dc8f5d90ceedfc33f606ccc2669d2e12fcbd"
+          },
+          "start": 343,
+          "stop": 346
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt"

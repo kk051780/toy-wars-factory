@@ -89,15 +89,22 @@ def source_contract(root, profile, input_lock):
     previous = root / compose.GUARDIAN_OFF / "sources"
     current_pins, previous_pins = native.source_snapshot(current), native.source_snapshot(previous)
     repair = profile["guardian_followup_repair"]
+    item = profile["item_cleanup_followup"]
+    item_parent_pin = item["parent_item_row"]["after"]
+    item_parent = root / compose.ITEM_OFF / "sources"
+    item_parent_pins = current_pins | {compose.ITEM_SOURCE: item_parent_pin}
     rel = compose.GUARDIAN_SOURCE
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == repair["repaired_guardian"]
-                   and previous_pins == (current_pins | {rel: repair["parent_guardian"]}),
+                   and native.source_snapshot(item_parent) == item_parent_pins
+                   and previous_pins == (item_parent_pins | {rel: repair["parent_guardian"]}),
                    "GUARDIAN_SOURCE69_CONTEXT")
     current_raw = native.read(current / rel)
     bodies = {path: native.read(previous / path) for path in previous_pins}
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(current_raw) == current_pins[rel], "GUARDIAN_SOURCE_READ_DRIFT")
-    native.require(native.identity(native.read(root / compose.PLACE)) == repair["repaired_place"]
+    native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"] == item["repaired_place"]
+                   and native.identity(native.read(root / compose.ITEM_OFF / compose.PLACE))
+                   == item["parent_place"] == repair["repaired_place"]
                    and native.identity(native.read(root / compose.GUARDIAN_OFF / compose.PLACE))
                    == repair["parent_place"], "GUARDIAN_PLACE_PAIR")
     return current, previous, current_pins, previous_pins, bodies, current_raw
@@ -163,6 +170,8 @@ def run(root, native_output, checkout, output, head, donor=checked_donor):
     native.require(donor(checkout)[1] == pins
                    and native.source_snapshot(current) == current_pins
                    and native.source_snapshot(previous) == previous_pins
+                   and native.source_snapshot(root / compose.ITEM_OFF / "sources")
+                   == (current_pins | {compose.ITEM_SOURCE: profile["item_cleanup_followup"]["parent_item_row"]["after"]})
                    and native.read(root / compose.RECEIPT) == receipt and native.read(root / "CORE_BUILD_REPORT.json") == core_raw
                    and native.read(native_output / "build_receipt.json") == built_raw
                    and native.identity(native.read(binary)) == binary_pin, "GUARDIAN_INPUT_DRIFT_AFTER_MATRIX")
