@@ -258,12 +258,20 @@ class UnionBoundary(unittest.TestCase):
                 report = verify.data(root / "CORE_BUILD_REPORT.json")
                 report["build_command_namespace"]["committed_root"] = str(root)
                 commands = report["commands"]
-                self.assertIn(compose.BOT_OFF, commands[-8]["command"][2])
-                self.assertIn(compose.HUD_OFF, commands[-6]["command"][2])
+                stage = Path(report["build_command_namespace"]["executed_stage"])
+                bot_dir, hud_dir = stage / compose.BOT_OFF, stage / compose.HUD_OFF
+                bot_compile = ["--text", str(bot_dir / "sources" / compose.BOT_SOURCE)]
+                bot_index, = [index for index, row in enumerate(commands) if row["command"][1:] == bot_compile]
+                self.assertEqual([row["command"][1:] for row in commands[bot_index:bot_index + 4]], [
+                    bot_compile,
+                    ["build", str(bot_dir / compose.PROJECT), "-o", str(bot_dir / compose.PLACE)],
+                    ["--text", str(hud_dir / "sources" / compose.HUD_SOURCE)],
+                    ["build", str(hud_dir / compose.PROJECT), "-o", str(hud_dir / compose.PLACE)],
+                ])
                 if mutation == "missing":
-                    del commands[-8:-6]
+                    del commands[bot_index:bot_index + 2]
                 else:
-                    commands[-8:-4] = commands[-6:-4] + commands[-8:-6]
+                    commands[bot_index:bot_index + 4] = commands[bot_index + 2:bot_index + 4] + commands[bot_index:bot_index + 2]
                 compose.write_json(root / "CORE_BUILD_REPORT.json", report)
                 with self.assertRaisesRegex(ValueError, reason):
                     verify.verify_core(root, self.prior, self.reports, self.context)
