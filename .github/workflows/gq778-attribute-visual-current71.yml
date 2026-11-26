@@ -1,0 +1,135 @@
+name: GQ778 existing attribute cues current69 to71 source evidence
+on:
+  push:
+    branches: ['feature/gq8-attr-vfx-20261118-1218']
+    paths:
+      - 'handoffs/EGGRUMBLE-ATTR-VFX-20261118/**'
+      - 'quality_gameplay/gq778_attribute_visual_current69_20261123/**'
+      - 'tests/test_gq778_attribute_visual_current69_20261123.py'
+      - '.github/workflows/gq778-attribute-visual-current71.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-ATTR-VFX-20261118/**'
+      - 'quality_gameplay/gq778_attribute_visual_current69_20261123/**'
+      - 'tests/test_gq778_attribute_visual_current69_20261123.py'
+      - '.github/workflows/gq778-attribute-visual-current71.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-source-native-compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify candidate and immutable official artifact provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          mkdir -p /tmp/gq778-input artifacts/gq778-provenance
+          python3 - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          root=Path('quality_gameplay/gq778_attribute_visual_current69_20261123')
+          lock=json.loads((root/'source_lock.json').read_text())
+          repo=os.environ['GITHUB_REPOSITORY']
+          assert repo=='kk051780/toy-wars-factory','RED_WRONG_REPOSITORY'
+          def api(path):
+              return json.loads(subprocess.check_output(['gh','api','repos/'+repo+'/'+path]))
+          current=api('git/ref/heads/rc/p0d-s1-kids-rc01')
+          assert current['object']['sha']==lock['official_rc_sha'],'RED_OFFICIAL_HEAD_MOVED_REBIND_REQUIRED'
+          run=api('actions/runs/'+str(lock['official_run_id']))
+          assert run['head_sha']==lock['official_rc_sha'] and run['head_branch']=='rc/p0d-s1-kids-rc01'
+          assert run['event']=='push' and run['status']=='completed' and run['conclusion']=='success'
+          assert run['path']==lock['official_workflow'],'RED_OFFICIAL_WORKFLOW'
+          artifact=api('actions/artifacts/'+str(lock['artifact']['id']))
+          assert artifact['name']==lock['artifact']['name'] and not artifact['expired']
+          assert artifact['size_in_bytes']==lock['artifact']['bytes']
+          assert artifact['digest']=='sha256:'+lock['artifact']['sha256']
+          assert artifact['workflow_run']['id']==lock['official_run_id']
+          assert artifact['workflow_run']['head_sha']==lock['official_rc_sha']
+          raw=subprocess.check_output(['gh','api','repos/'+repo+'/actions/artifacts/'+str(artifact['id'])+'/zip'])
+          assert len(raw)==lock['artifact']['bytes'] and hashlib.sha256(raw).hexdigest()==lock['artifact']['sha256']
+          Path('/tmp/gq778-input/official.zip').write_bytes(raw)
+          provenance={'candidate_head':os.environ['CANDIDATE_HEAD'],'rc_ref':current,'run':run,'artifact':artifact,
+                      'official_zip_sha256':hashlib.sha256(raw).hexdigest(),'formal_rc_adoption':False}
+          Path('artifacts/gq778-provenance/INPUT_GITHUB_PROVENANCE.json').write_text(json.dumps(provenance,indent=2)+'\n')
+          PY
+      - name: Artifact-free discovery stays runnable
+        run: python3 -B -m unittest discover -s tests -p test_gq778_attribute_visual_current69_20261123.py -v
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq778_luau_source
+          persist-credentials: false
+      - name: Verify checksum-pinned Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq778-input/rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq778-input/rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq778-input/rojo.zip') as archive:
+              names=[n for n in archive.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              body=archive.read(names[0])
+              assert hashlib.sha256(body).hexdigest()=='cb997ef82543670e51f2114898950bcabf9911efc3bf44f798524833e0e47f6e'
+              path=Path('/tmp/gq778-input/rojo');path.write_bytes(body);path.chmod(0o755)
+          PY
+      - name: Fresh native full bodies, regressions, mutants,140 compile and exact ON71 OFF69
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq778_attribute_visual_current69_20261123/native/run_current71.py \
+            --artifact /tmp/gq778-input/official.zip \
+            --luau-source _gq778_luau_source \
+            --rojo /tmp/gq778-input/rojo \
+            --out-dir artifacts/gq778-current71
+      - name: Recheck actual source and official parent before evidence publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          lock=json.loads(Path('quality_gameplay/gq778_attribute_visual_current69_20261123/source_lock.json').read_text())
+          current=json.loads(subprocess.check_output(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/git/ref/heads/rc/p0d-s1-kids-rc01']))
+          assert current['object']['sha']==lock['official_rc_sha'],'RED_OFFICIAL_HEAD_MOVED_DURING_EVIDENCE'
+          report=json.loads(Path('artifacts/gq778-current71/REPORT.json').read_text())
+          assert report['source_head']==os.environ['CANDIDATE_HEAD'] and not report['diagnostic_proposal_only']
+          assert report['status']=='LOCAL_NATIVE_COMPILE_ROJO_EVIDENCE_COMPLETE'
+          Path('artifacts/gq778-provenance/FINAL_GITHUB_FENCE.json').write_text(json.dumps(current,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: GQ778-CURRENT71-SOURCE-EVIDENCE-NOT-OFFICIAL-RC
+          path: |
+            artifacts/gq778-provenance/
+            artifacts/gq778-current71/REPORT.json
+            artifacts/gq778-current71/FAILURE.json
+            artifacts/gq778-current71/ON71/
+            artifacts/gq778-current71/OFF69/
+            artifacts/gq778-current71/native/
+            artifacts/gq778-current71/legacy/
+            artifacts/gq778-current71/compile/
+            artifacts/gq778-current71/native_build/*.json
+            artifacts/gq778-current71/native_build/*.log
+            artifacts/gq778-current71/*.log
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,139 @@
+{
+  "schema": "GQ778_FULL_BODY_NATIVE_INPUT_V1",
+  "feature_id": "BATTLE_ATTR_VFX_20261118",
+  "fixture_sha256": "8f0fcdbc90b3b7d4c8141fc24fdb9eb2ea0fa0eb4743d8f4d04856f7f40e3625",
+  "source_lock_sha256": "0fc39e9de6e956727c64623aea90b5b710f6b9576d0fbabdf493f769fb19c247",
+  "luau": {
+    "commit": "f46d879e28302a430029304f7f6a162aed66f103",
+    "tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746"
+  },
+  "rojo_binary_sha256": "cb997ef82543670e51f2114898950bcabf9911efc3bf44f798524833e0e47f6e",
+  "originals": {
+    "module": {
+      "git_blob": "fbbd58ba563af6bc35699969ecbc4e7d7f0a1654",
+      "sha256": "efb17e076113dad865caf6d168c65a85d5a1fdb976f74d1a90c4815bf76d1a43",
+      "bytes": 5270
+    },
+    "client": {
+      "git_blob": "977671f9bbb2c42ff43d03af93b9832b62eac68f",
+      "sha256": "7e742da035e84618e629043edc672d780e15fad0b53dadf1c6466cf2ca6a43ab",
+      "bytes": 1664
+    }
+  },
+  "immutable_original_paths": {
+    "handoffs/EGGRUMBLE-ATTR-VFX-20261118/make_native_tests.py": "80ed3ecf75f55c83875b0ff901b4576f8f9d7403",
+    "quality_gameplay/gq8_attribute_visual_real31_20261118/compose_real33.py": "a443cfabbbb0647fd9dc60e5c8f80036aa315eaa",
+    ".github/workflows/p0d-gq8-attr-vfx-native.yml": "7cc59e76fda429a0057cd81761774eb7701dc388",
+    ".github/workflows/p0d-gq8-attr-vfx-real33.yml": "0784a2cc8b07ea89c75c36709f7a6dccccefecfd"
+  },
+  "terminal_markers": {
+    "original": "GQ778_FULL_BODY_COMPLETE sourceMode=original;assertions=140;gapChecks=61;rendererCases=8;rendererMatrix=192;NOT_STUDIO_NOT_RC_ACCEPTANCE",
+    "proposal": "GQ778_FULL_BODY_COMPLETE sourceMode=proposal;assertions=140;gapChecks=61;rendererCases=8;rendererMatrix=192;NOT_STUDIO_NOT_RC_ACCEPTANCE"
+  },
+  "observation_count": 140,
+  "known_gap_checks": 61,
+  "renderer_cases": 8,
+  "renderer_matrix_actual_renders": 192,
+  "baseline_contract_failure": "ATTACH_REJECT_OBSERVED_OLDER expected 0, got 1",
+  "mutants": [
+    {
+      "name": "client_attach_seed_removed",
+      "target": "client",
+      "old": " seedCurrentSignature()\n local binding=readBinding()",
+      "new": " local binding=readBinding()",
+      "failure_contains": "ATTACH_REJECT_OBSERVED_OLDER expected 0, got 1"
+    },
+    {
+      "name": "client_active_phase_guard_removed",
+      "target": "client",
+      "old": " and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"",
+      "new": " and true",
+      "failure_contains": "FINISHED_WORLD_REJECT expected 0, got 1"
+    },
+    {
+      "name": "client_concrete_identity_guard_removed",
+      "target": "client",
+      "old": "if before[key]~=after[key] then return false end",
+      "new": "if false then return false end",
+      "failure_contains": "NEW_WORLD_FRESH_SEQUENCE expected 1, got 2"
+    },
+    {
+      "name": "client_disconnect_removed",
+      "target": "client",
+      "old": "for _,connection in ipairs(connections) do connection:Disconnect() end",
+      "new": "-- mutant omits explicit disconnection",
+      "failure_contains": "OBSERVED_PLAYER_EXIT_DISCONNECTS_OWNED expected 0, got 35"
+    },
+    {
+      "name": "client_phase_listener_removed",
+      "target": "client",
+      "old": "  connect(bindingConnections,binding.arena:GetAttributeChangedSignal(\"EGGRUMBLE_MatchPhase\"),refresh)",
+      "new": "  -- mutant omits delivered phase listener",
+      "failure_contains": "DELIVERED_FINISH_CLEARS_CUE expected 0, got 1"
+    },
+    {
+      "name": "client_camera_listener_removed",
+      "target": "client",
+      "old": "connect(globalConnections,workspace:GetPropertyChangedSignal(\"CurrentCamera\"),refresh)",
+      "new": "-- mutant omits delivered camera listener",
+      "failure_contains": "DELIVERED_CAMERA_REPLACEMENT_CLEARS expected 0, got 1"
+    },
+    {
+      "name": "client_removing_identity_not_retired",
+      "target": "client",
+      "old": " and character~=retiringCharacter",
+      "new": "",
+      "failure_contains": "DELIVERED_REMOVING_CHARACTER_REJECTS expected 0, got 1"
+    },
+    {
+      "name": "client_stale_removing_not_ignored",
+      "target": "client",
+      "old": " if character~=player.Character then return end\n retiringCharacter=character",
+      "new": " retiringCharacter=character",
+      "failure_contains": "DELAYED_OLD_REMOVING_PRESERVES_NEW_CUE expected 1, got 0"
+    },
+    {
+      "name": "client_stale_added_clears_retirement",
+      "target": "client",
+      "old": "if character~=player.Character or character==retiringCharacter then return end",
+      "new": "if character==retiringCharacter then return end",
+      "failure_contains": "DELAYED_OLD_ADDED_CANNOT_REVIVE_REMOVING_CURRENT expected 0, got 1"
+    },
+    {
+      "name": "module_anchor_limit_nine",
+      "target": "module",
+      "old": "local MAX_ACTIVE=8",
+      "new": "local MAX_ACTIVE=9",
+      "failure_contains": "STRICT_LIVE_ANCHOR_LIMIT expected true, got false"
+    },
+    {
+      "name": "module_touch_budget_eight",
+      "target": "module",
+      "old": "lowEnd and 4 or MAX_BEAMS",
+      "new": "lowEnd and 8 or MAX_BEAMS",
+      "failure_contains": "BEAMS_ICE expected 4, got 7"
+    },
+    {
+      "name": "module_prune_removed",
+      "target": "module",
+      "old": "\n pruneInactive()\n",
+      "new": "\n -- mutant omits detached pruning\n",
+      "failure_contains": "DETACHED_OWNER_PRUNED expected true, got false"
+    },
+    {
+      "name": "module_debris_removed",
+      "target": "module",
+      "old": " Debris:AddItem(holder,d.duration)",
+      "new": " -- mutant omits independent Debris",
+      "failure_contains": "DISABLED_SCRIPT_MAX_DURATION_FALLBACK expected 0, got 1"
+    }
+  ],
+  "limitations": [
+    "Native uses explicit deterministic mocked Roblox API/event boundaries; no real instance replication, rendering, Studio, Android, or network-order evidence.",
+    "WaitForChild covers already-replicated children; absence returns nil.",
+    "Script-disabled callback suppression is a worst-case teardown boundary, not Roblox timing proof.",
+    "The current signature has no server epoch. Client-runtime highwater and currently observed attachment seed do not prove arbitrary network/reload replay immunity.",
+    "Original observation checks confirm known defects; they do not make the original satisfy the repaired contract.",
+    "Local or hosted native/compile/Rojo evidence is separate from registered independent SOURCE acceptance, canonical selection, official RC adoption and same-R engine/owner acceptance."
+  ]
+}
