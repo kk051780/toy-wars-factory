@@ -1,0 +1,97 @@
+name: P0D GQ original boss wave wall occlusion source/native gate
+on:
+  push:
+    branches: [feature/gq-boss-wave-occlusion-20261116-01]
+    paths:
+      - 'quality_gameplay/boss_wave_occlusion_20261116/**'
+      - '.github/workflows/p0d-gq-boss-wave-occlusion-20261116.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/boss_wave_occlusion_20261116/**'
+      - '.github/workflows/p0d-gq-boss-wave-occlusion-20261116.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boss-wall-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _author
+          persist-credentials: false
+      - name: Source-locked original + negative regression suite
+        shell: bash
+        env:
+          GQ_ORIGINAL_BOSS: _author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_NeutralStoneGiant.luau
+        run: |
+          set -euo pipefail
+          test "$(git -C _author rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          python3 -B -m unittest discover -s quality_gameplay/boss_wave_occlusion_20261116/tests -p 'test_*.py' -v
+          python3 -B quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py \
+            --source "$GQ_ORIGINAL_BOSS" \
+            --output build/private_boss_wave/EGGRUMBLE_NeutralStoneGiant.luau
+          diff -u "$GQ_ORIGINAL_BOSS" build/private_boss_wave/EGGRUMBLE_NeutralStoneGiant.luau > build/private_boss_wave/author_delta.diff || test "$?" -eq 1
+          test "$(grep -c '^+.*shockwaveClear' build/private_boss_wave/author_delta.diff)" = 2
+          echo "SOURCE_PATCH_PASS ORIGINAL_AUTHOR_UNCHANGED OFFICIAL_RC_NOT_WRITTEN"
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Native Luau syntax compile actual generated original boss
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau -B /tmp/gq_boss_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq_boss_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/gq_boss_luau/luau-compile build/private_boss_wave/EGGRUMBLE_NeutralStoneGiant.luau >/dev/null
+          echo "NATIVE_LUAU_COMPILE_PASS (NO ROBLOX_ENGINE_OR_STUDIO_CLAIM)"
+      - name: Compose original #482 21 exact sources plus ONE selected boss module
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/boss_wave_occlusion_20261116/tools/compose_private21.py \
+            --original _author/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            --output build/private_v3
+          test "$(find build/private_v3 -name '*.luau' | wc -l)" -eq 21
+          while IFS= read -r file; do /tmp/gq_boss_luau/luau-compile "$file" >/dev/null; done \
+            < <(find build/private_v3 -name '*.luau' | sort)
+          echo "ORIGINAL21_ACTUAL_NATIVE_LUAU_PASS 21/21"
+      - name: Build actual private Rojo Place with pinned binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_rojo.zip') as archive:
+              matches=[n for n in archive.namelist() if n.split('/')[-1]=='rojo']
+              assert len(matches)==1
+              Path('/tmp/gq_rojo').write_bytes(archive.read(matches[0]))
+              Path('/tmp/gq_rojo').chmod(0o755)
+          PY
+          /tmp/gq_rojo build build/private_v3/EGGRUMBLE_V3_STUDIO.project.json \
+            -o build/private_v3/EGGRUMBLE_GQ_BOSS_WALL_PRIVATE21_NOT_RC.rbxlx
+          python3 -B quality_gameplay/boss_wave_occlusion_20261116/tools/verify_private21.py \
+            --project-dir build/private_v3 \
+            --place build/private_v3/EGGRUMBLE_GQ_BOSS_WALL_PRIVATE21_NOT_RC.rbxlx
+          echo "REAL_PRIVATE_PLACE_ONLY NOT_OFFICIAL_RC NOT_STUDIO_PLAY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: private-original-boss-wave-source-only-NOT-RC
+          path: |
+            build/private_boss_wave/
+            build/private_v3/
+          retention-days: 3
+          if-no-files-found: error

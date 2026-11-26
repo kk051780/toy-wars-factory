@@ -1,0 +1,10 @@
+--- a/sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau
++++ b/sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau
+@@ -72,6 +72,7 @@
+   if (root.Position-eye.Position).Magnitude>maxReach then return false end
+   local params=RaycastParams.new()
+   params.FilterType=Enum.RaycastFilterType.Exclude;params.FilterDescendantsInstances={c,model}
++  params.RespectCanCollide=true
+   local ray=workspace:Raycast(root.Position,eye.Position-root.Position,params)
+   if ray and ray.Instance.CanCollide then return false end
+   local now=os.clock()

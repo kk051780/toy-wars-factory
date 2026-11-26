@@ -1,0 +1,502 @@
+{
+  "decision": "PASS_LOCAL_SOURCE_NATIVE_SCOPE",
+  "base_rc": "fb5d9b693c48d4ffcce05c3f89d490593e0cecfd",
+  "reviewed_at_utc": "2026-11-22T20:24:28.302687+00:00",
+  "before": {
+    "bytes": 7075,
+    "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+  },
+  "candidate": {
+    "bytes": 7107,
+    "sha256": "0e81e4487877c014612125e8ccde422023c7a13d46bf65aa6a241318dd1b3615"
+  },
+  "source_delta_bytes": 32,
+  "expected_damage_variant": {
+    "old": 850,
+    "current": 860,
+    "formula": "900 - 50 * .80"
+  },
+  "validations": {
+    "geometry24_before": {
+      "source_inputs": [
+        {
+          "name": "InvulnerabilityPolicy",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+          "bytes": 12330,
+          "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+        },
+        {
+          "name": "InvulCounterNeutral",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+          "bytes": 7498,
+          "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+        },
+        {
+          "name": "InvulRuntime",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+          "bytes": 11264,
+          "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+        },
+        {
+          "name": "AttackGeometry",
+          "production": "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+          "bytes": 1639,
+          "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+        },
+        {
+          "name": "CombatBalance",
+          "production": "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+          "bytes": 4123,
+          "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+        },
+        {
+          "name": "BossSessionFence",
+          "production": "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+          "bytes": 776,
+          "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+        },
+        {
+          "name": "NeutralStoneGiant",
+          "production": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+          "bytes": 7075,
+          "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+        },
+        {
+          "name": "__HOST_MEMBERSHIP__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 320,
+          "sha256": "7744cf40e24db12428ca2ac659407b18833840f24b4810912e17fe92427e121b"
+        },
+        {
+          "name": "__HOST_BOSS_BLOCK__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 1107,
+          "sha256": "aef91ce4e3ced37c85c65b9518f1b7ae24a8eb9f45ccb605437ece8eb113e5ed"
+        },
+        {
+          "name": "__COMBAT_HELPERS_A__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 3368,
+          "sha256": "ad25310944816634d985b44f8140c79f8ee145dfe5d8dd22bb9eb70243b74ca4"
+        },
+        {
+          "name": "__COMBAT_HELPERS_B__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 8914,
+          "sha256": "b96823411230b0979b33407a738b291117ec2799ff44cd44e3feaf82fd88cfe0"
+        },
+        {
+          "name": "__COMBAT_STATUS__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 5026,
+          "sha256": "882123a11b7e70220a1cfe51c9f26c178b2259a692b7276c51dc117640792668"
+        },
+        {
+          "name": "__COMBAT_BOOST_AND_BLAST__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 1745,
+          "sha256": "a759a35a425ed98707ea8527c3b0844ec128279f471ddff2ac40ec2db0b14c7d"
+        },
+        {
+          "name": "SwarmPiece",
+          "production": "EGGRUMBLE_SwarmCombat.luau",
+          "bytes": 281,
+          "sha256": "c71f09ce6e7f874492b8a2d3a4c470bdd82fd4a69b6206e927e4c52f9d98ed9e"
+        },
+        {
+          "name": "HostBlock",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 262,
+          "sha256": "5d550ff30c296021cf8dd4022d85255bcc33bd00a6fdf203959c0fb95f888989"
+        }
+      ],
+      "all_7_full_modules_exact": true,
+      "all_excerpts_current": true,
+      "reverse_to_frozen_historical_exact": true,
+      "old18_case_text_unchanged": false,
+      "reported_results_match_logs": true,
+      "passed": 16,
+      "failed": 8
+    },
+    "geometry24_after": {
+      "source_inputs": [
+        {
+          "name": "InvulnerabilityPolicy",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+          "bytes": 12330,
+          "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+        },
+        {
+          "name": "InvulCounterNeutral",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+          "bytes": 7498,
+          "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+        },
+        {
+          "name": "InvulRuntime",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+          "bytes": 11264,
+          "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+        },
+        {
+          "name": "AttackGeometry",
+          "production": "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+          "bytes": 1639,
+          "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+        },
+        {
+          "name": "CombatBalance",
+          "production": "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+          "bytes": 4123,
+          "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+        },
+        {
+          "name": "BossSessionFence",
+          "production": "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+          "bytes": 776,
+          "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+        },
+        {
+          "name": "NeutralStoneGiant",
+          "production": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+          "bytes": 7107,
+          "sha256": "0e81e4487877c014612125e8ccde422023c7a13d46bf65aa6a241318dd1b3615"
+        },
+        {
+          "name": "__HOST_MEMBERSHIP__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 320,
+          "sha256": "7744cf40e24db12428ca2ac659407b18833840f24b4810912e17fe92427e121b"
+        },
+        {
+          "name": "__HOST_BOSS_BLOCK__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 1107,
+          "sha256": "aef91ce4e3ced37c85c65b9518f1b7ae24a8eb9f45ccb605437ece8eb113e5ed"
+        },
+        {
+          "name": "__COMBAT_HELPERS_A__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 3368,
+          "sha256": "ad25310944816634d985b44f8140c79f8ee145dfe5d8dd22bb9eb70243b74ca4"
+        },
+        {
+          "name": "__COMBAT_HELPERS_B__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 8914,
+          "sha256": "b96823411230b0979b33407a738b291117ec2799ff44cd44e3feaf82fd88cfe0"
+        },
+        {
+          "name": "__COMBAT_STATUS__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 5026,
+          "sha256": "882123a11b7e70220a1cfe51c9f26c178b2259a692b7276c51dc117640792668"
+        },
+        {
+          "name": "__COMBAT_BOOST_AND_BLAST__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 1745,
+          "sha256": "a759a35a425ed98707ea8527c3b0844ec128279f471ddff2ac40ec2db0b14c7d"
+        },
+        {
+          "name": "SwarmPiece",
+          "production": "EGGRUMBLE_SwarmCombat.luau",
+          "bytes": 281,
+          "sha256": "c71f09ce6e7f874492b8a2d3a4c470bdd82fd4a69b6206e927e4c52f9d98ed9e"
+        },
+        {
+          "name": "HostBlock",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 262,
+          "sha256": "5d550ff30c296021cf8dd4022d85255bcc33bd00a6fdf203959c0fb95f888989"
+        }
+      ],
+      "all_7_full_modules_exact": true,
+      "all_excerpts_current": true,
+      "reverse_to_frozen_historical_exact": true,
+      "old18_case_text_unchanged": false,
+      "reported_results_match_logs": true,
+      "passed": 24,
+      "failed": 0
+    },
+    "prior_independent18_before": {
+      "source_inputs": [
+        {
+          "name": "InvulnerabilityPolicy",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+          "bytes": 12330,
+          "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+        },
+        {
+          "name": "InvulCounterNeutral",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+          "bytes": 7498,
+          "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+        },
+        {
+          "name": "InvulRuntime",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+          "bytes": 11264,
+          "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+        },
+        {
+          "name": "AttackGeometry",
+          "production": "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+          "bytes": 1639,
+          "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+        },
+        {
+          "name": "CombatBalance",
+          "production": "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+          "bytes": 4123,
+          "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+        },
+        {
+          "name": "BossSessionFence",
+          "production": "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+          "bytes": 776,
+          "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+        },
+        {
+          "name": "NeutralStoneGiant",
+          "production": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+          "bytes": 7075,
+          "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+        },
+        {
+          "name": "__HOST_MEMBERSHIP__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 320,
+          "sha256": "7744cf40e24db12428ca2ac659407b18833840f24b4810912e17fe92427e121b"
+        },
+        {
+          "name": "__HOST_BOSS_BLOCK__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 1107,
+          "sha256": "aef91ce4e3ced37c85c65b9518f1b7ae24a8eb9f45ccb605437ece8eb113e5ed"
+        },
+        {
+          "name": "__COMBAT_HELPERS_A__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 3368,
+          "sha256": "ad25310944816634d985b44f8140c79f8ee145dfe5d8dd22bb9eb70243b74ca4"
+        },
+        {
+          "name": "__COMBAT_HELPERS_B__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 8914,
+          "sha256": "b96823411230b0979b33407a738b291117ec2799ff44cd44e3feaf82fd88cfe0"
+        },
+        {
+          "name": "__COMBAT_STATUS__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 5026,
+          "sha256": "882123a11b7e70220a1cfe51c9f26c178b2259a692b7276c51dc117640792668"
+        },
+        {
+          "name": "__COMBAT_BOOST_AND_BLAST__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 1745,
+          "sha256": "a759a35a425ed98707ea8527c3b0844ec128279f471ddff2ac40ec2db0b14c7d"
+        },
+        {
+          "name": "SwarmPiece",
+          "production": "EGGRUMBLE_SwarmCombat.luau",
+          "bytes": 281,
+          "sha256": "c71f09ce6e7f874492b8a2d3a4c470bdd82fd4a69b6206e927e4c52f9d98ed9e"
+        },
+        {
+          "name": "HostBlock",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 262,
+          "sha256": "5d550ff30c296021cf8dd4022d85255bcc33bd00a6fdf203959c0fb95f888989"
+        }
+      ],
+      "all_7_full_modules_exact": true,
+      "all_excerpts_current": true,
+      "reverse_to_frozen_historical_exact": true,
+      "old18_case_text_unchanged": true,
+      "reported_results_match_logs": true,
+      "passed": 12,
+      "failed": 6
+    },
+    "prior_independent18_after": {
+      "source_inputs": [
+        {
+          "name": "InvulnerabilityPolicy",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+          "bytes": 12330,
+          "sha256": "78e6867e1098a0e703267b43a25446189be7785519117c74a403273a88e28046"
+        },
+        {
+          "name": "InvulCounterNeutral",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+          "bytes": 7498,
+          "sha256": "e8f0d6a40155a08230d6c4597739f52e533d2f431926684ceea234fe4ae09f9a"
+        },
+        {
+          "name": "InvulRuntime",
+          "production": "sources/ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+          "bytes": 11264,
+          "sha256": "086f7a79f05951c5d519d8d39481717111eb7da32c9d71be88c4debd917baadb"
+        },
+        {
+          "name": "AttackGeometry",
+          "production": "sources/ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+          "bytes": 1639,
+          "sha256": "76508ad25a3c625c4944f13b883122268dc05d2e1c6b0e9a2b373db2c1007518"
+        },
+        {
+          "name": "CombatBalance",
+          "production": "sources/ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+          "bytes": 4123,
+          "sha256": "8149722751ce3081823e6b598f6e71f46f641b8915644d81c2973f923e0a9701"
+        },
+        {
+          "name": "BossSessionFence",
+          "production": "sources/ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+          "bytes": 776,
+          "sha256": "7bcfa6002118a52e3984235b82e59697ec2f226dedaf08111ccac1a72743ebf4"
+        },
+        {
+          "name": "NeutralStoneGiant",
+          "production": "sources/ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau",
+          "bytes": 7107,
+          "sha256": "0e81e4487877c014612125e8ccde422023c7a13d46bf65aa6a241318dd1b3615"
+        },
+        {
+          "name": "__HOST_MEMBERSHIP__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 320,
+          "sha256": "7744cf40e24db12428ca2ac659407b18833840f24b4810912e17fe92427e121b"
+        },
+        {
+          "name": "__HOST_BOSS_BLOCK__",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 1107,
+          "sha256": "aef91ce4e3ced37c85c65b9518f1b7ae24a8eb9f45ccb605437ece8eb113e5ed"
+        },
+        {
+          "name": "__COMBAT_HELPERS_A__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 3368,
+          "sha256": "ad25310944816634d985b44f8140c79f8ee145dfe5d8dd22bb9eb70243b74ca4"
+        },
+        {
+          "name": "__COMBAT_HELPERS_B__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 8914,
+          "sha256": "b96823411230b0979b33407a738b291117ec2799ff44cd44e3feaf82fd88cfe0"
+        },
+        {
+          "name": "__COMBAT_STATUS__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 5026,
+          "sha256": "882123a11b7e70220a1cfe51c9f26c178b2259a692b7276c51dc117640792668"
+        },
+        {
+          "name": "__COMBAT_BOOST_AND_BLAST__",
+          "production": "EGGRUMBLE_SevenRoleCombat.luau",
+          "bytes": 1745,
+          "sha256": "a759a35a425ed98707ea8527c3b0844ec128279f471ddff2ac40ec2db0b14c7d"
+        },
+        {
+          "name": "SwarmPiece",
+          "production": "EGGRUMBLE_SwarmCombat.luau",
+          "bytes": 281,
+          "sha256": "c71f09ce6e7f874492b8a2d3a4c470bdd82fd4a69b6206e927e4c52f9d98ed9e"
+        },
+        {
+          "name": "HostBlock",
+          "production": "EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "bytes": 262,
+          "sha256": "5d550ff30c296021cf8dd4022d85255bcc33bd00a6fdf203959c0fb95f888989"
+        }
+      ],
+      "all_7_full_modules_exact": true,
+      "all_excerpts_current": true,
+      "reverse_to_frozen_historical_exact": true,
+      "old18_case_text_unchanged": true,
+      "reported_results_match_logs": true,
+      "passed": 18,
+      "failed": 0
+    }
+  },
+  "independent_runs": {
+    "new6_before": {
+      "exit_code": 1,
+      "passed": 2,
+      "failed": 4,
+      "native": {
+        "bytes": 3319168,
+        "sha256": "b000dfd72e3d9c4d4484a72034446cc951c506516a12b8e46a4dfc7aa02060a5"
+      },
+      "generated": {
+        "bytes": 81906,
+        "sha256": "b21dc82699552ddc444fd89c723445efd67f120f53e8db3e65554ade13097a39"
+      },
+      "stdout": {
+        "bytes": 952,
+        "sha256": "9925f3fcaeca5f300eb5be0f9218753d5218ccef3be81998dffc3445a5bcb3c9"
+      },
+      "stderr": {
+        "bytes": 246,
+        "sha256": "25bf56baf9b5b5ba2418747dac7ffb5ceb47cde0f0b461849f1c29defd9fe415"
+      }
+    },
+    "new6_after": {
+      "exit_code": 0,
+      "passed": 6,
+      "failed": 0,
+      "native": {
+        "bytes": 3319168,
+        "sha256": "b000dfd72e3d9c4d4484a72034446cc951c506516a12b8e46a4dfc7aa02060a5"
+      },
+      "generated": {
+        "bytes": 81938,
+        "sha256": "e7a57ed3a18b181415d2f315c2854bfa7e51025491b9cf361f65329295b5102c"
+      },
+      "stdout": {
+        "bytes": 420,
+        "sha256": "15c4fcb81ba3f6b8d9e09acfb80cca15228bdd04ea768ae9696bafa396d15046"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "replayed_historical18_after": {
+      "exit_code": 0,
+      "passed": 18,
+      "failed": 0,
+      "native": {
+        "bytes": 3319168,
+        "sha256": "b000dfd72e3d9c4d4484a72034446cc951c506516a12b8e46a4dfc7aa02060a5"
+      },
+      "generated": {
+        "bytes": 81683,
+        "sha256": "07d5de0b892833e65b905668824dba5b718b4458a2980e1ea15a3718977085ef"
+      },
+      "stdout": {
+        "bytes": 1048,
+        "sha256": "d414ac2f33dd7096259056e25efca369e14047e679b6f39f858af8cb10dcfd15"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "author_inputs_unchanged": true,
+  "official_69_and_project_unchanged": true,
+  "source_edits": 0,
+  "github_write_attempts": 0,
+  "registered_approval": false,
+  "rc_adoption": false,
+  "studio_runs": 0,
+  "limitations": [
+    "Native AABB/API fixtures are not Roblox physics, Studio or client evidence.",
+    "Host and Combat are exact bounded excerpts, not full controller executions.",
+    "Reuses historical environment and AABB helper after independent byte-level verification."
+  ]
+}
