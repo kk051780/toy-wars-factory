@@ -83,12 +83,22 @@ local function stepLegacyDojo(player:Player,root:BasePart,now:number,step:number
     local right=math.max(player.UserId,other.UserId)
     local pairKey=tostring(left).."_"..tostring(right)
     local cached=dojoFriendCache[pairKey]
-    if not cached or now-cached.checked>60 then
-     local ok,yes=pcall(function() return player:IsFriendsWith(other.UserId) end)
-     cached={checked=now,yes=ok and yes==true}
+    if not cached or (not cached.pending and now-cached.checked>60) then
+     -- The friendship API may yield. Never suspend a training tick or replay
+     -- old training state after a player departs, changes skill or joins a match.
+     cached={checked=now,yes=false,pending=true,left=player,right=other}
      dojoFriendCache[pairKey]=cached
+     local request=cached
+     task.spawn(function()
+      local ok,yes=pcall(function() return player:IsFriendsWith(other.UserId) end)
+      if dojoFriendCache[pairKey]~=request or not plaza.Parent
+       or player.Parent~=Players or other.Parent~=Players then return end
+      request.checked=time()
+      request.yes=ok and yes==true
+      request.pending=false
+     end)
     end
-    if cached.yes then friend=true;break end
+    if not cached.pending and cached.yes then friend=true;break end
    end
   end
  end
@@ -112,6 +122,11 @@ local function stepLegacyDojo(player:Player,root:BasePart,now:number,step:number
 end
 Players.PlayerRemoving:Connect(function(player:Player)
  dojoTrainers[player.UserId]=nil
+ -- Drop completed and pending requests. A late response may only update its
+ -- original entry, never recreate a departed player's pair or new session.
+ for key,request in pairs(dojoFriendCache) do
+  if request.left==player or request.right==player then dojoFriendCache[key]=nil end
+ end
 end)
 '''
 
