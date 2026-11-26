@@ -1,0 +1,169 @@
+name: P0D GQ Zombie Commander unique server policy native QA
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_zombie_command_20261116/**'
+      - '.github/workflows/p0d-gq-zombie-command-20261116.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-native-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Compile actual new Luau and exercise native policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq-zombie-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-zombie-native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          for source in quality_gameplay/v3_zombie_command_20261116/*.luau; do
+            /tmp/gq-zombie-native/luau-compile --text "$source" >/dev/null
+          done
+          /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_command_native.luau
+          mkdir -p artifacts
+          /tmp/gq-zombie-native/luau quality_gameplay/v3_zombie_command_20261116/test_zombie_guard_native.luau \
+            | tee artifacts/gq582_guard_castle_leash_native.log
+          grep -q GQ_ZOMBIE_GUARD_CASTLE_LEASH_NATIVE_12_CASES_PASS \
+            artifacts/gq582_guard_castle_leash_native.log
+          python3 -B quality_gameplay/v3_zombie_command_20261116/build_neutral_identity_native.py \
+            --composer quality_gameplay/v3_zombie_command_20261116/compose_original_single_combat.py \
+            --out artifacts/gq_zombie_neutral_unique_actual.luau
+          /tmp/gq-zombie-native/luau-compile --text artifacts/gq_zombie_neutral_unique_actual.luau >/dev/null
+          /tmp/gq-zombie-native/luau artifacts/gq_zombie_neutral_unique_actual.luau \
+            | tee artifacts/gq582_neutral_unique_native.txt
+          grep -q GQ582_ACTUAL_NEUTRAL_INSTANCE_ID_NATIVE_PASS artifacts/gq582_neutral_unique_native.txt
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _gq_original482
+          persist-credentials: false
+      - name: Source-select exact original ZOMBIE skill into ONE existing Combat and native compile original21
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq_original482 rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          ROOT=_gq_original482/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          OUT=artifacts/gq_zombie21
+          mkdir -p "$OUT"
+          python3 -B quality_gameplay/v3_zombie_command_20261116/compose_original_single_combat.py \
+            --combat "$ROOT/EGGRUMBLE_SevenRoleCombat.luau" \
+            --policy quality_gameplay/v3_zombie_command_20261116/EGGRUMBLE_ZombieOrderPolicy.luau \
+            --runtime quality_gameplay/v3_zombie_command_20261116/EGGRUMBLE_ZombieSquadRuntime.luau \
+            --out "$OUT/GQ_ZOMBIE_SINGLE_COMBAT.luau" \
+            --receipt "$OUT/GQ_ZOMBIE_ORIGINAL_COMBAT_RECEIPT.json"
+          cp -a "$ROOT/." "$OUT/"
+          cp "$OUT/GQ_ZOMBIE_SINGLE_COMBAT.luau" "$OUT/EGGRUMBLE_SevenRoleCombat.luau"
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          root=Path("artifacts/gq_zombie21")
+          p=json.loads((root/"EGGRUMBLE_V3_STUDIO.project.json").read_text())
+          sources=[]
+          def collect(node):
+              for k,v in node.items():
+                  if k.startswith("$"):continue
+                  if "$path" in v: sources.append((k,root/v["$path"]))
+                  else:collect(v)
+          collect(p["tree"])
+          assert len(sources)==21 and len({n for n,_ in sources})==21
+          for _,source in sources:
+              assert source.is_file()
+              subprocess.run(["/tmp/gq-zombie-native/luau-compile","--text",str(source)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ_ZOMBIE_PRIVATE21_ONE_COMBAT_ALL_NATIVE_COMPILE_PASS")
+          PY
+      - name: Build 21-source private original-author Rojo Place and verify exact source/class
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_zombie_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_zombie_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq_zombie_rojo.zip") as z:
+              bins=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(bins)==1
+              p=Path("/tmp/gq_zombie_rojo")
+              p.write_bytes(z.read(bins[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq_zombie_rojo build artifacts/gq_zombie21/EGGRUMBLE_V3_STUDIO.project.json -o artifacts/gq_zombie21/GQ_ZOMBIE_PRIVATE21.rbxlx
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root=Path("artifacts/gq_zombie21")
+          spec=json.loads((root/"EGGRUMBLE_V3_STUDIO.project.json").read_text())
+          refs={}
+          def collect(node):
+              for k,v in node.items():
+                  if k.startswith("$"):continue
+                  if "$path" in v:refs[k]=(root/v["$path"]).read_text()
+                  else:collect(v)
+          collect(spec["tree"])
+          tree=ET.parse(root/"GQ_ZOMBIE_PRIVATE21.rbxlx")
+          seen={}
+          for item in tree.findall(".//Item"):
+              props=item.find("Properties")
+              if props is None:continue
+              name=props.findtext("string[@name='Name']")
+              src=props.findtext("ProtectedString[@name='Source']")
+              if src is None:src=props.findtext("string[@name='Source']")
+              if not name or src is None or name not in refs:continue
+              assert name not in seen
+              assert src.replace("\r\n","\n")==refs[name].replace("\r\n","\n"),name
+              seen[name]=item.attrib.get("class")
+          assert len(refs)==len(seen)==21,(len(refs),len(seen))
+          for n,cls in seen.items():
+              assert cls in ("ModuleScript","Script","LocalScript"),(n,cls)
+          place=root/"GQ_ZOMBIE_PRIVATE21.rbxlx"
+          receipt=json.loads((root/"GQ_ZOMBIE_ORIGINAL_COMBAT_RECEIPT.json").read_text())
+          receipt.update({"private_place_bytes":place.stat().st_size,
+                          "private_place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+                          "native21":"PASS","rojo21_source_class_exact":"21/21",
+                          "official_rc_adoption":False})
+          (root/"GQ_ZOMBIE_ORIGINAL_COMBAT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ_ZOMBIE_PRIVATE_ORIGINAL21_ROJO_SOURCE_CLASS_21_21_PASS")
+          PY
+      - name: Retain private original21 engine source candidate, NOT official RC
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-ZOMBIE-PRIVATE21-ONE-COMBAT-NOT-FORMAL-RC
+          path: |
+            artifacts/gq_zombie21/GQ_ZOMBIE_PRIVATE21.rbxlx
+            artifacts/gq_zombie21/GQ_ZOMBIE_ORIGINAL_COMBAT_RECEIPT.json
+          retention-days: 3
+      - name: Enforce isolated private source lane and forbid unauthorized RC writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('quality_gameplay/v3_zombie_command_20261116')
+          policy=(root/'EGGRUMBLE_ZombieOrderPolicy.luau').read_text()
+          adapter=(root/'EGGRUMBLE_ZombieSquadRuntime.luau').read_text()
+          assert 'function Policy.step' in policy
+          assert 'function Runtime.begin' in adapter
+          assert 'opts.hit' in adapter
+          assert 'RunService:IsServer()' in adapter
+          assert 'SetNetworkOwner(nil)' in adapter
+          assert 'function Runtime.stop' in adapter
+          assert 'Instance.new("RemoteEvent")' not in adapter
+          assert 'DataStoreService' not in adapter
+          assert 'Humanoid:TakeDamage' not in adapter
+          print('GQ_ZOMBIE_NO_DUPLICATE_DAMAGE_REMOTE_OR_STORE_PASS')
+          PY
