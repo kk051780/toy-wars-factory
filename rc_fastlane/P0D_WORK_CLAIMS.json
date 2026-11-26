@@ -30265,7 +30265,7 @@
     {
       "claim_id": "P0D-GQ1010-CANONICAL-ITEM-CLEANUP-20261127",
       "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
-      "state": "GRANTED",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (current Codex parent, #1010 canonical source intake)",
       "parent_issue": 470,
@@ -30340,10 +30340,10 @@
       "source_write_requires_separate_live_source_lease": true,
       "source_scope_granted": false,
       "source_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
-      "formal_rc_adoption": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": true,
       "no_main_or_publish": true,
       "authority_basis": "Current authenticated owner and standing ordinary-development delegation. #1011 2026-11-27 V2 and #220 comment 7202869642 prioritize this exact existing candidate if #482 is fenced. Actual independent scope review and #218 request are recorded.",
       "source_expected_head": "72bc44175349060a34992747b1dbcb1580459a54",
@@ -30613,7 +30613,7 @@
         "studio": "NOT_TESTED"
       },
       "bounded_rc_integration": {
-        "status": "FINITE_AUTHORITY_EFFECTIVE_ONLY_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "273e763c42ee0f405ef854b75c3cf071b078e896",
         "permitted_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
@@ -30622,7 +30622,7 @@
         "sole_executor": "/root (current Codex parent, #1010 finite RC adoption)",
         "source_owner_preserved": "facbcaaa0300f98270e06328a94b504118662634",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -30660,6 +30660,78 @@
           "registry_parent": "6057a7e94d49c49f6e0af30096dc85cff2f3d487",
           "registry_blob": "4d306aa7bb1742eac09b03cae56d1d2db2fb5140",
           "authority_basis": "Actual authenticated OWNER standing delegated controller, current #1011 V2 and #220 7202869642, #218 7203649634, registered independent review 6081358138 and trusted exact-head inbox."
+        },
+        "writer_acquire_ref": "cdf5945bf71f5460c3c39a304d33314034746198",
+        "writer_return_ref": "14c4d8c7b0a5db52a48ab98df19113533cc882da",
+        "recorded_formal_ref": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "actual_non_force_expected_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "actual_readback_at": "2026-11-26T23:12:48.654Z"
+      },
+      "closed_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "closed_resources": [
+        "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "actual_postpush": {
+        "official_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "old_head": "273e763c42ee0f405ef854b75c3cf071b078e896",
+        "official_push_run": 45909573624,
+        "official_push_event": "push",
+        "official_push_ci": "success",
+        "official_artifact": {
+          "id": 15158924776,
+          "bytes": 13903873,
+          "digest": "sha256:c2a0f81b7c17a7e30283c24fd4be34cee559f4ad3588592b21abd0015a3af4ad",
+          "provenance": "actual GitHub official upload log and artifact metadata"
+        },
+        "local_studio_seed": {
+          "bytes": 830060,
+          "sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3",
+          "generated_from_exact_official_worktree": true
+        },
+        "artifact_transfer": "SIGNED_URL_TO_UNSANDBOXED_TERMINAL_AUTO_REVIEW_REJECTED",
+        "studio_local_packet": {
+          "bytes": 4288599,
+          "sha256": "f8500e99580560ff5b29e78c1697e095e562c05df4bd3cb64b5589c06b5c2b49"
+        },
+        "studio_receipt_sha256": "96365971b9447de538c2212763765d32b7250a38b5f6e12c4e101b96f11061cc",
+        "studio_closure_file": "nov24-rc1010solo27b-710fa5ce6ccfc3e6.json",
+        "studio_exit_pids": [
+          37396,
+          43928
+        ],
+        "studio_closed_verified": true,
+        "studio_solo_dash": "PASS",
+        "dash_respawn_seconds": 35.019,
+        "android": "NOT_TESTED",
+        "studio_two_client": "NOT_TESTED",
+        "fun": "NOT_TESTED",
+        "postpush_independent_review_context": "/root/intake482",
+        "postpush_review_independent_runtime_evidence_checked": true,
+        "github_studio_packet": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
+      },
+      "actual_consumption_metadata_lease": {
+        "ref": "f0321d4999701fddd247f8a63fc3939e95eba8b4",
+        "blob": "803c935d4f3cbeafd01e1df82e549e010c5fe983",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "e57a5500-afe7-49d5-954e-2f8e539fa31f",
+          "task_id": null,
+          "epoch": 763,
+          "acquired_at": "2026-11-26T23:34:40.858Z",
+          "expires_at": "2026-11-27T00:04:40.858Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
         }
       }
     }
