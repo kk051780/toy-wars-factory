@@ -30261,6 +30261,128 @@
         }
       },
       "progress_updated_at": "2026-11-25T01:59:53.717+00:00"
+    },
+    {
+      "claim_id": "P0D-GQ1010-CANONICAL-ITEM-CLEANUP-20261127",
+      "feature_id": "GQ470_FB015_PICKUP_ORNAMENT_VISIBILITY_REAL69_20261122",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (current Codex parent, #1010 canonical source intake)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 1010,
+      "canonical_parent": 1010,
+      "authenticated_scope_request_comment": 7203649634,
+      "design_comment": 7202869642,
+      "base_rc_sha": "273e763c42ee0f405ef854b75c3cf071b078e896",
+      "origin_source_pr": 1010,
+      "origin_source_head": "facbcaaa0300f98270e06328a94b504118662634",
+      "origin_source_and_fixture_author_preserved": true,
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_ENCOUNTERREADABILITYART",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "prepared_source_hashes": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": {
+          "blob": "a0e35811b57413973efd4dfc494db7393993bb79",
+          "bytes": 37843,
+          "sha256": "740de103c5ccfb8ea6cd5aa82e55b2e56395af1f1748904d7289ff3b5d545e4e",
+          "class_": "MUTABLE"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": {
+          "blob": "13ce6e6ee9d766429f670089021a505d5fd70c8e",
+          "bytes": 34937,
+          "sha256": "c220252a36af453828a23cf40546a9334151a4b02ed546e195aeef01ac38923d",
+          "class_": "MUTABLE"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": {
+          "blob": "7d02cc2c1be249a3b6dc5dfe5b7f853292534e4a",
+          "bytes": 13162,
+          "sha256": "1ff24aa92dad73a62353f35047a00ba6532ee1ff8462cf2664d86e1018fed07c",
+          "class_": "MUTABLE"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": {
+          "blob": "8238b3f3af53184a1048e82cf4b63ca910a8dd00",
+          "bytes": 38451,
+          "sha256": "43f690172c59848ab38b924ff1b84213daa3df25b4c5848c33b84fd11849ee2a",
+          "class_": "MUTABLE"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": {
+          "blob": "5a36b9923f76e2f17f0c588374b6d8f0f189557f",
+          "bytes": 377012,
+          "sha256": "103eee2a9ca6422cec58c1bccf2ee46bdcadf80d1a1095a91dfb3bd9662eb6a8",
+          "class_": "MUTABLE"
+        },
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": {
+          "blob": "a21bd6a244790044ab062969dbda77e05b636e25",
+          "bytes": 94414,
+          "sha256": "e437069f7e9493a6e47fe339dc3e2fd61c40f342f7e4dc2ea8402f662d12c287",
+          "class_": "MUTABLE"
+        },
+        "tests/test_gq470_union22_real69_20261122.py": {
+          "blob": "3550fddc8d375eba76df96bce2488ec1edd3fcbe",
+          "bytes": 84876,
+          "sha256": "d045478045f890c0a60555acb8d5e671b644a4f0e5b264c7ac3a825ad12f4419",
+          "class_": "MUTABLE"
+        }
+      },
+      "preserved_original_blobs": {
+        ".github/workflows/gq470-item-ornament-visibility-real69.yml": "dc5edc1926587d46b23efdfd3e699d6e3d8ac9fe",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/README.md": "6f69bf196ae05c486be8d9350e49bf1157762a58",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/current69/EncounterReadabilityArt.cleanup.luau.txt": "3723dee279d5ed441e52485533ef889cdf1004a0",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/current69/ORIGINAL_JOINT_REVIEW.json": "5e077e095408ee4d3a4b849d2ebf723fe5d5df76",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/patch_item_visibility69.py": "99b29dc1044c4731675e9b712bc1409be764b615",
+        "quality_gameplay/gq470_item_visibility_real69_20261122/test_item_visibility69.py": "fb88213dee13b7019af271ce7fed0d92e396703f"
+      },
+      "prepared_candidate_tree": "1c5d64eb391f4eb5b2d8764082c8816ff60462fc",
+      "scope": "One non-force fast-forward of existing PR #1010 from its exact author head. Both original PR head and current RC remain parents. Seven canonical wiring/verification paths; six original PR blobs retained; no workflow edits or other source edits. Custody and independently verified Source-only approval of original source retained. New hosted CI and separate registered candidate review still required.",
+      "prep_branch": "quality/gq470-real69-item-ornament-visibility-20261122-a01",
+      "allowed_new_prs": 0,
+      "source_publisher": "/root",
+      "independent_reviewer_context": "/root/intake482",
+      "scope_review": "Actual distinct Codex context independently confirmed the seven mutable paths, the six frozen donor blobs, one-path product source, exact parent Place/OFF and ordered rollback. This review does not approve a future hosted HEAD.",
+      "author_may_self_approve": false,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "bb556171-edf6-44ae-b429-dc5eec679006",
+      "issued_at": "2026-11-26T22:44:17.021Z",
+      "expires_at": "2026-11-27T04:44:17.021Z",
+      "actual_metadata_lease": {
+        "ref": "1a40abc75aaef804165a26bbabfd2299e1b4edc0",
+        "blob": "91317741151c18c9c4376ebbefe2f9dda82afc39",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "bb556171-edf6-44ae-b429-dc5eec679006",
+          "task_id": null,
+          "epoch": 755,
+          "acquired_at": "2026-11-26T22:43:59.341Z",
+          "expires_at": "2026-11-26T23:13:59.341Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "source_scope_granted": true,
+      "source_head": null,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "formal_rc_adoption": false,
+      "no_main_or_publish": true,
+      "authority_basis": "Current authenticated owner and standing ordinary-development delegation. #1011 2026-11-27 V2 and #220 comment 7202869642 prioritize this exact existing candidate if #482 is fenced. Actual independent scope review and #218 request are recorded."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
