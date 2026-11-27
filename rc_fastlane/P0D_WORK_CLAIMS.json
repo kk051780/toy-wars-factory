@@ -33822,7 +33822,7 @@
     {
       "claim_id": "P0D-GQ470-COMBAT-VISUAL-931-20261127",
       "feature_id": "GQ470_COMBAT_VISUAL_READABILITY",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #931 reused)",
       "parent_issue": 470,
@@ -33838,8 +33838,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Three already authored leaves only: compact Subject-owned nearby Bot objective tag, confirmed KO fin cap and proven fade delay, stone giant noncolliding silhouette. Preserve original #931 and donor branches. Equal other 66. No #940, no training, skill effectiveness, growth, store, AI decisions, match control, active profile changes.",
       "resources": [
@@ -34185,6 +34185,22 @@
         "actual_candidate": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
         "source_lease": "4b48905171caa103d65975e21402ac7627c60239",
         "source_return": "fd06d838e861e4330bfb56a48beddafb3c027fd4"
+      },
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/931#pullrequestreview-6084456753",
+        "review_id": 6084456753,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "scope_registration": "7eeb0162bf7a322151747356416a9941ecbd804b",
+        "review_is_comment": true,
+        "author_self_approval": false,
+        "canonical_ci_run": 45952663940,
+        "canonical_job": 140351874952,
+        "canonical_steps": 48
+      },
+      "actual_prep_ready_lease": {
+        "commit": "2ccf72dc4be9d8bbf0aa866cb3638289f1e7bb39",
+        "operation_id": "7a6db1b6-43b0-432f-9f96-69d74ab176d6"
       }
     }
   ],
