@@ -2492,7 +2492,7 @@
         "static_Score_build_evaluations": 55,
         "unit_tests": 15
       },
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "sub_scope": "EXISTING_711_RELAY_ACCOUNTING_PREP_TRANSPORT",
       "target_paths": [
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
@@ -2511,7 +2511,7 @@
       ],
       "transport_authorization": "Exactly one Draft transport PR for canonical487, six additions against currentRC. Preserve old487438a406/oldfeaturebase/7files, bidirectional links and single owner. No old branch rebase/force/whole import. Real PR number recorded only after creation.",
       "source_scope_granted": false,
-      "scope_only": true,
+      "scope_only": false,
       "source_reconciliation_v21": "Reuse reviewed score source from original PR #1017 and preserve every existing PR commit and six donor blobs. Modify exactly seven current producer, profile and QA paths in detached preparation. Any authenticated publication uses a later finite source lease, fast-forward to updated existing PR only, and no RC write.",
       "source_expected_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
       "original_target_paths": [
@@ -2549,8 +2549,8 @@
         "head": "547fd7d56ef0c1e0a688135e789df0f79e0358c6"
       },
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "actual_metadata_lease": {
         "ref": "98a37ef6f473b231040f3b1357cd8084dc31e538",
         "blob": "988236e7055bf207e221b876ea8242ad51763fbe",
@@ -2666,7 +2666,59 @@
         }
       },
       "no_source_changes_after_fixed_head_without_new_scope": true,
-      "pre_verifier_fix_binding": "ea2b8f19257c2b15b7bfdb8e0d1880d5abac3e02"
+      "pre_verifier_fix_binding": "ea2b8f19257c2b15b7bfdb8e0d1880d5abac3e02",
+      "independent_source_receipt": {
+        "review": 6082347693,
+        "reviewer_context": "/root/p0_offer_review26",
+        "head": "7ad4055bd28e6aaf0ba6183796912503812de416",
+        "hosted_run": 45923428056,
+        "trusted_queue_run": 45923880487,
+        "trusted_queue_artifact": 15165133882,
+        "artifact": 15165602137
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "cc6fed686214596eb717cc5827856311338999ad",
+        "permitted_head": "7ad4055bd28e6aaf0ba6183796912503812de416",
+        "permitted_tree": "bbf0b4dc888dc2269d21940e5a5a7667f86abf0d",
+        "permitted_pr": 1017,
+        "sole_executor": "/root (Codex parent, B coordinator for #1017)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T02:11:40.035Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact previously decided #250 #487 Score 711-byte fragment, six donor Git blobs retained. Development RC only.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "7bb617cf-86bc-456d-a5b8-f465daa8a3cc",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "7bb617cf-86bc-456d-a5b8-f465daa8a3cc",
+            "task_id": null,
+            "epoch": 792,
+            "acquired_at": "2026-11-27T01:41:22.998Z",
+            "expires_at": "2026-11-27T02:11:22.998Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "e7faedc406bf73e59c34a863d8714ba10f37bd00",
+          "acquire_blob": "5ead6fe9067293baa2be39caffc5c65dba04d5f2",
+          "registry_parent": "526437339e0618381af11fc0b4b393be5f1e9dd5",
+          "registry_blob": "d40f2d86c7024b3dfbcd6e029cff70585e2aee21",
+          "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 7202869642, exact original #1017 renewed #218 registration, independent 6082347693 and trusted green fixed candidate."
+        }
+      }
     },
     {
       "PREP_READY": false,
