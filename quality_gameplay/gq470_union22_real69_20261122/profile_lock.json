@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 895073,
-    "sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74"
+    "bytes": 895840,
+    "sha256": "805cea73d632b54629c3cd775efa2aff284e2d98601725de3662af7379d493ef"
   },
   "followup_repair": {
     "author_contexts": [
@@ -18338,8 +18338,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
       "after": {
-        "bytes": 37578,
-        "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+        "bytes": 38345,
+        "sha256": "6a94c5f33498c1c741a17272302bf89a96d708c2cc60df95e3740464cd38518f"
       },
       "before": {
         "bytes": 34811,
@@ -18444,6 +18444,20 @@
           },
           "start": 144,
           "stop": 145
+        },
+        {
+          "new": " -- GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121\n -- Six original, visual-only surf patches. Varied ellipses break up the\n -- six glaring rectangular stripes while preserving route and part budget.\n -- All foam stays shallow, noncolliding and outside the public land dock.\n for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local sideways=if i%2==0 then 1 else -1\n  local drift=math.sin(i*1.73)*1.55\n  local surfAngle=math.rad(sideways*(7+(i%3)*4))\n  local width=47+(i%3)*5\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63+drift)*CFrame.Angles(0,surfAngle,0),\n   Vector3.new(width,.10,2.0+(i%2)*.45),\n   if i%2==0 then Color3.fromRGB(190,225,228)\n    else Color3.fromRGB(207,235,237),\n   Enum.Material.SmoothPlastic,false,.33)\n  -- Cylinder's local X axis is the length: flattened oval-like surf,\n  -- not a thick pipe, and neither casts nor receives physics queries.\n  foam.Shape=Enum.PartType.Cylinder\n  foam.CastShadow=false\n  foam.CanQuery=false\n end\n",
+          "new_identity": {
+            "bytes": 983,
+            "sha256": "52095577f958d8ec7275269da3db489b896864c7722c968484da4da3a3c64a7c"
+          },
+          "old": " for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63),Vector3.new(55,.10,2.3),\n   Color3.fromRGB(225,247,248),Enum.Material.SmoothPlastic,false,.19)\n end\n",
+          "old_identity": {
+            "bytes": 216,
+            "sha256": "8c041e84fecb9c8cda67f9724dddd0b90287489011970604ba3f753887a3d989"
+          },
+          "start": 225,
+          "stop": 231
         },
         {
           "new": "   flying=flying,speed=speed,at=at,alive=true,acc=0,lastCraftPosition=start.Position,\n",
@@ -18686,6 +18700,20 @@
           "stop": 176
         },
         {
+          "new": " for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63),Vector3.new(55,.10,2.3),\n   Color3.fromRGB(225,247,248),Enum.Material.SmoothPlastic,false,.19)\n end\n",
+          "new_identity": {
+            "bytes": 216,
+            "sha256": "8c041e84fecb9c8cda67f9724dddd0b90287489011970604ba3f753887a3d989"
+          },
+          "old": " -- GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121\n -- Six original, visual-only surf patches. Varied ellipses break up the\n -- six glaring rectangular stripes while preserving route and part budget.\n -- All foam stays shallow, noncolliding and outside the public land dock.\n for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local sideways=if i%2==0 then 1 else -1\n  local drift=math.sin(i*1.73)*1.55\n  local surfAngle=math.rad(sideways*(7+(i%3)*4))\n  local width=47+(i%3)*5\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63+drift)*CFrame.Angles(0,surfAngle,0),\n   Vector3.new(width,.10,2.0+(i%2)*.45),\n   if i%2==0 then Color3.fromRGB(190,225,228)\n    else Color3.fromRGB(207,235,237),\n   Enum.Material.SmoothPlastic,false,.33)\n  -- Cylinder's local X axis is the length: flattened oval-like surf,\n  -- not a thick pipe, and neither casts nor receives physics queries.\n  foam.Shape=Enum.PartType.Cylinder\n  foam.CastShadow=false\n  foam.CanQuery=false\n end\n",
+          "old_identity": {
+            "bytes": 983,
+            "sha256": "52095577f958d8ec7275269da3db489b896864c7722c968484da4da3a3c64a7c"
+          },
+          "start": 256,
+          "stop": 278
+        },
+        {
           "new": "   flying=flying,speed=speed,at=at,alive=true,acc=0,\n",
           "new_identity": {
             "bytes": 53,
@@ -18696,8 +18724,8 @@
             "bytes": 86,
             "sha256": "4dc97b639ff59c3865a77e9485a6c8da08d7d46bec2068e6c737db384a07ac41"
           },
-          "start": 348,
-          "stop": 349
+          "start": 364,
+          "stop": 365
         },
         {
           "new": "",
@@ -18710,8 +18738,8 @@
             "bytes": 264,
             "sha256": "0959fb528392e99874e313ecef9034109dbfc2c656772c76b1114ea25b3939ff"
           },
-          "start": 380,
-          "stop": 384
+          "start": 396,
+          "stop": 400
         },
         {
           "new": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Z>z+halfZ+10 then\n",
@@ -18724,8 +18752,8 @@
             "bytes": 158,
             "sha256": "f708f2caa2836ae31aeab1fa3e51032a49cb9534343b19ee689c0771f3568796"
           },
-          "start": 392,
-          "stop": 395
+          "start": 408,
+          "stop": 411
         },
         {
           "new": "      safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
@@ -18738,8 +18766,8 @@
             "bytes": 73,
             "sha256": "167cabf17481490bcde8300c38585d6f7298d2ac213e5652ecb58b733c33aa7a"
           },
-          "start": 404,
-          "stop": 405
+          "start": 420,
+          "stop": 421
         },
         {
           "new": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then\n     safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
@@ -18752,8 +18780,8 @@
             "bytes": 249,
             "sha256": "a81039571502ec7e21a11571f6c95467fdc49d74aeffea1cca6b043e86ee8954"
           },
-          "start": 419,
-          "stop": 423
+          "start": 435,
+          "stop": 439
         },
         {
           "new": "",
@@ -18766,8 +18794,8 @@
             "bytes": 1516,
             "sha256": "481ea43ef18fc32dfed05ba6723cf914a10285330c288117a596e36c48372840"
           },
-          "start": 686,
-          "stop": 726
+          "start": 702,
+          "stop": 742
         },
         {
           "new": "  if not active or not world.Parent or not scene.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
@@ -18780,8 +18808,8 @@
             "bytes": 147,
             "sha256": "c17e4420a1ab5281ad030ea6c761068be427db58dd0b763abaa5ade8fb34565c"
           },
-          "start": 727,
-          "stop": 730
+          "start": 743,
+          "stop": 746
         },
         {
           "new": "",
@@ -18794,8 +18822,8 @@
             "bytes": 37,
             "sha256": "ea718710ec125c0a05bc2cab7724fd0f0a3261647ed310fc81b4a57bd2c96362"
           },
-          "start": 799,
-          "stop": 800
+          "start": 815,
+          "stop": 816
         },
         {
           "new": "",
@@ -18808,8 +18836,8 @@
             "bytes": 32,
             "sha256": "a19254b59cea4e8d1469f9c802ec129dc967c8645f9453d29807fd67b0821a9c"
           },
-          "start": 841,
-          "stop": 842
+          "start": 857,
+          "stop": 858
         },
         {
           "new": " world.Destroying:Connect(function()\n  active=false\n  if heartbeat then heartbeat:Disconnect() end\n  entered:Disconnect()\n  exited:Disconnect()\n  for player in pairs(combatConnections) do unwatchCombo(player) end\n  table.clear(combatConnections)\n  table.clear(lastNeutralCount)\n  table.clear(lastComboCount)\n  table.clear(lastKOAdvanceAt)\n  table.clear(lastComboAdvanceAt)\n  table.clear(lastShownCombo)\n  table.clear(lastSurgeAt)\n  table.clear(publicTravelAt)\n  for _,v in pairs(vessels) do v.alive=false end\n  scenes[world]=nil\n end)\n",
@@ -18822,8 +18850,8 @@
             "bytes": 65,
             "sha256": "b7fe1c651d11ec5d1d265e3bb704c5aba2c3ad74918d19cfc10d7d4f2638f209"
           },
-          "start": 850,
-          "stop": 851
+          "start": 866,
+          "stop": 867
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
@@ -26674,5 +26702,554 @@
     },
     "studio": "NOT_TESTED",
     "android": "NOT_TESTED"
+  },
+  "shorefoam_followup": {
+    "author": {
+      "git_blob": "f8829509ab3de56da8f5e205f0f85c2b8bd1bffb",
+      "head": "2448dc4f0580462335b3b4777f94c641e38b3c65",
+      "identity": {
+        "bytes": 7892,
+        "sha256": "394da8ad79b0ec4dbddd3fe1fb76e82b357b58af32332923bcd145ac2bca5be0"
+      },
+      "path": "quality_gameplay/gq470_union22_real69_20261122/shorefoam/prepare.py",
+      "pull_request": 942,
+      "workflow_run": 44828660187
+    },
+    "parent_place": {
+      "bytes": 895073,
+      "sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74"
+    },
+    "repaired_place": {
+      "bytes": 895840,
+      "sha256": "805cea73d632b54629c3cd775efa2aff284e2d98601725de3662af7379d493ef"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121\n -- Six original, visual-only surf patches. Varied ellipses break up the\n -- six glaring rectangular stripes while preserving route and part budget.\n -- All foam stays shallow, noncolliding and outside the public land dock.\n for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local sideways=if i%2==0 then 1 else -1\n  local drift=math.sin(i*1.73)*1.55\n  local surfAngle=math.rad(sideways*(7+(i%3)*4))\n  local width=47+(i%3)*5\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63+drift)*CFrame.Angles(0,surfAngle,0),\n   Vector3.new(width,.10,2.0+(i%2)*.45),\n   if i%2==0 then Color3.fromRGB(190,225,228)\n    else Color3.fromRGB(207,235,237),\n   Enum.Material.SmoothPlastic,false,.33)\n  -- Cylinder's local X axis is the length: flattened oval-like surf,\n  -- not a thick pipe, and neither casts nor receives physics queries.\n  foam.Shape=Enum.PartType.Cylinder\n  foam.CastShadow=false\n  foam.CanQuery=false\n end\n",
+            "new_identity": {
+              "bytes": 983,
+              "sha256": "52095577f958d8ec7275269da3db489b896864c7722c968484da4da3a3c64a7c"
+            },
+            "old": " for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63),Vector3.new(55,.10,2.3),\n   Color3.fromRGB(225,247,248),Enum.Material.SmoothPlastic,false,.19)\n end\n",
+            "old_identity": {
+              "bytes": 216,
+              "sha256": "8c041e84fecb9c8cda67f9724dddd0b90287489011970604ba3f753887a3d989"
+            },
+            "start": 256,
+            "stop": 262
+          }
+        ],
+        "inverse": [
+          {
+            "new": " for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63),Vector3.new(55,.10,2.3),\n   Color3.fromRGB(225,247,248),Enum.Material.SmoothPlastic,false,.19)\n end\n",
+            "new_identity": {
+              "bytes": 216,
+              "sha256": "8c041e84fecb9c8cda67f9724dddd0b90287489011970604ba3f753887a3d989"
+            },
+            "old": " -- GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121\n -- Six original, visual-only surf patches. Varied ellipses break up the\n -- six glaring rectangular stripes while preserving route and part budget.\n -- All foam stays shallow, noncolliding and outside the public land dock.\n for i=1,6 do\n  local xi=x-265+(i-1)*106\n  local sideways=if i%2==0 then 1 else -1\n  local drift=math.sin(i*1.73)*1.55\n  local surfAngle=math.rad(sideways*(7+(i%3)*4))\n  local width=47+(i%3)*5\n  local foam=put(scene,\"ShoreFoam_\"..i,\n   CFrame.new(xi,y+0.21,shoreZ-63+drift)*CFrame.Angles(0,surfAngle,0),\n   Vector3.new(width,.10,2.0+(i%2)*.45),\n   if i%2==0 then Color3.fromRGB(190,225,228)\n    else Color3.fromRGB(207,235,237),\n   Enum.Material.SmoothPlastic,false,.33)\n  -- Cylinder's local X axis is the length: flattened oval-like surf,\n  -- not a thick pipe, and neither casts nor receives physics queries.\n  foam.Shape=Enum.PartType.Cylinder\n  foam.CastShadow=false\n  foam.CanQuery=false\n end\n",
+            "old_identity": {
+              "bytes": 983,
+              "sha256": "52095577f958d8ec7275269da3db489b896864c7722c968484da4da3a3c64a7c"
+            },
+            "start": 256,
+            "stop": 278
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 37578,
+            "sha256": "d581d3ddcf6406eada8f0c5cb92babadf53e3f6c28dc9b504d0c4ad126d74462"
+          },
+          "before": {
+            "bytes": 34811,
+            "sha256": "0119d26e27e09a46390679e3207c22871aa3886cc04bc09d0cc0bbe701680092"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "-- Read the existing Host-bound Rules authority; no independent phase writer.\nlocal Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\nif type(Rules.isRuntimeWorldActive)~=\"function\" then return end\n",
+              "new_identity": {
+                "bytes": 220,
+                "sha256": "b4a80b432f03ea89bd0bbc0af7a98844dcbf3ce639776987bd8b1b830eb61685"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 12,
+              "stop": 12
+            },
+            {
+              "new": "  -- Queued events may outlive their destroyed prompt/part under Deferred.\n  if q.Parent~=part or not q.Enabled or not part:IsDescendantOf(Workspace) then return end\n",
+              "new_identity": {
+                "bytes": 166,
+                "sha256": "9db15913154338d2825a6829e82191e3979d1b9f732b560ce2e914bc3724638b"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 61,
+              "stop": 61
+            },
+            {
+              "new": "local function currentWorld(world,mode)\n local lobby=world.Parent\n return lobby~=nil and lobby.Parent==Workspace and lobby.Name==LOBBY\n  and Workspace:FindFirstChild(LOBBY)==lobby\n  and world.Name==mode..\"_Arena\" and lobby:FindFirstChild(world.Name)==world\nend\n\nlocal function attachedHuman(player,mode,world,role)\n local ch=player.Character\n return currentWorld(world,mode)\n  and player.Parent==Players and Players:GetPlayerByUserId(player.UserId)==player\n  and ch~=nil and ch:IsDescendantOf(Workspace)\n  and Players:GetPlayerFromCharacter(ch)==player\n  and player:GetAttribute(\"EGGRUMBLE_QueuedMode\")==mode\n",
+              "new_identity": {
+                "bytes": 609,
+                "sha256": "1c8e23fe2b828556aacb58e5d7e6bcf1fdad7ff871bf1d46a848eb213499e6d4"
+              },
+              "old": "local function matchHuman(player,mode,world,role)\n return world.Parent~=nil and world:IsDescendantOf(Workspace)\n  and world.Parent.Name==LOBBY\n  and world.Parent:FindFirstChild(world.Name)==world\n  and player.Parent==Players and player:GetAttribute(\"EGGRUMBLE_QueuedMode\")==mode\n",
+              "old_identity": {
+                "bytes": 279,
+                "sha256": "1c09f6266f053cece4d5e72c6b89ea1608fd66bf3e89e78e1198dc43c9c4b27d"
+              },
+              "start": 89,
+              "stop": 94
+            },
+            {
+              "new": "end\n\nlocal function matchHuman(player,mode,world,role)\n return attachedHuman(player,mode,world,role)\n  and Rules.isRuntimeWorldActive(world,mode)\n",
+              "new_identity": {
+                "bytes": 146,
+                "sha256": "0711351a89a32b38644b113cf96bab6cf8df5fcd5c30179afdca5801b2254d25"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 98,
+              "stop": 98
+            },
+            {
+              "new": "local function moveAvatar(player,at)\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "b232979429f2e7a565ee50308ab9abdaaca157967ed1b11934ed3defe9633ce4"
+              },
+              "old": "local function safeMove(player,at,mode,world)\n if not matchHuman(player,mode,world,nil) then return false end\n",
+              "old_identity": {
+                "bytes": 110,
+                "sha256": "f2498fabd1fa4d13254434111887079f8f3c5abe8be52a75a8536525890df4b6"
+              },
+              "start": 110,
+              "stop": 112
+            },
+            {
+              "new": "end\n\nlocal function safeMove(player,at,mode,world)\n if not matchHuman(player,mode,world,nil) then return false end\n return moveAvatar(player,at)\nend\n\n-- Safety cleanup may land a known original pilot during the result hold.\n-- It never accepts public input, and never moves a detached/stale world avatar.\nlocal function safeRescue(player,at,mode,world)\n if not attachedHuman(player,mode,world,nil) then return false end\n return moveAvatar(player,at)\n",
+              "new_identity": {
+                "bytes": 450,
+                "sha256": "8847118583d626610ad30482132d7acd6d5017e757d4b0dccaf5aa4738858e3e"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 120,
+              "stop": 120
+            },
+            {
+              "new": " if not mode or not currentWorld(world,mode)\n  or not Rules.isRuntimeWorldActive(world,mode) then return end\n",
+              "new_identity": {
+                "bytes": 109,
+                "sha256": "5d0fc26fe1bdbe0abad6393cb93ef042d40b73dbd9ee650eaf882ff589566978"
+              },
+              "old": " if not mode then return end\n",
+              "old_identity": {
+                "bytes": 29,
+                "sha256": "056ee8ea7f3e6cf43ae31dad60fac81bb8e59c28c376b6aae25e800831b6c648"
+              },
+              "start": 144,
+              "stop": 145
+            },
+            {
+              "new": "   flying=flying,speed=speed,at=at,alive=true,acc=0,lastCraftPosition=start.Position,\n",
+              "new_identity": {
+                "bytes": 86,
+                "sha256": "4dc97b639ff59c3865a77e9485a6c8da08d7d46bec2068e6c737db384a07ac41"
+              },
+              "old": "   flying=flying,speed=speed,at=at,alive=true,acc=0,\n",
+              "old_identity": {
+                "bytes": 53,
+                "sha256": "c3c6966a94b2c676ca7b6892baecbc4b09fa66ce87a2fa02c9b200e54501d8ef"
+              },
+              "start": 317,
+              "stop": 318
+            },
+            {
+              "new": "   if not data.alive then return end\n   -- Keep the original Debris lifetime/guarantee. Deferred callbacks use\n   -- the position captured by this owner's last verified live craft step.\n   -- Never require Parent here: a valid Debris expiry may already detach it.\n",
+              "new_identity": {
+                "bytes": 264,
+                "sha256": "0959fb528392e99874e313ecef9034109dbfc2c656772c76b1114ea25b3939ff"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 349,
+              "stop": 349
+            },
+            {
+              "new": "     and attachedHuman(player,mode,world,role)\n     and (root.Position-data.lastCraftPosition).Magnitude<28\n     and data.lastCraftPosition.Z>z+halfZ+10 then\n",
+              "new_identity": {
+                "bytes": 158,
+                "sha256": "f708f2caa2836ae31aeab1fa3e51032a49cb9534343b19ee689c0771f3568796"
+              },
+              "old": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Z>z+halfZ+10 then\n",
+              "old_identity": {
+                "bytes": 161,
+                "sha256": "5b3059888f9a921782f0e226849440d3969b04495120b3a9db7f37323c82e42c"
+              },
+              "start": 357,
+              "stop": 360
+            },
+            {
+              "new": "      safeRescue(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "new_identity": {
+                "bytes": 73,
+                "sha256": "167cabf17481490bcde8300c38585d6f7298d2ac213e5652ecb58b733c33aa7a"
+              },
+              "old": "      safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "old_identity": {
+                "bytes": 71,
+                "sha256": "43bdae7aed139f6f290cfc990f9e3b05f882d69bd2c9f493cecda24a3b59ed14"
+              },
+              "start": 369,
+              "stop": 370
+            },
+            {
+              "new": "     and attachedHuman(player,mode,world,role)\n     and (root.Position-data.lastCraftPosition).Magnitude<28\n     and data.lastCraftPosition.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then\n     safeRescue(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "new_identity": {
+                "bytes": 249,
+                "sha256": "a81039571502ec7e21a11571f6c95467fdc49d74aeffea1cca6b043e86ee8954"
+              },
+              "old": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then\n     safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "old_identity": {
+                "bytes": 250,
+                "sha256": "2f6ea483adc3c3a9719420d742eaf1bb528137d6c1158bd897542bb5a60b5afa"
+              },
+              "start": 384,
+              "stop": 388
+            },
+            {
+              "new": " local function retireTraversal(allowLanding)\n  if not active then return end\n  active=false\n  if heartbeat then heartbeat:Disconnect() end\n  entered:Disconnect()\n  exited:Disconnect()\n  for player in pairs(combatConnections) do unwatchCombo(player) end\n  -- Stop ongoing movement/warps. Land only the exact live original pilot\n  -- before destroying an anchored ride; a result screen must not drop them.\n  for craft,v in pairs(vessels) do\n   local pilot=v.seat.Occupant\n   local ch=v.owner.Character\n   local root=ch and ch:FindFirstChild(\"HumanoidRootPart\")\n   if allowLanding and scene.Parent==world and craft.Parent==scene and pilot\n    and pilot.Parent==ch and pilot.Sit and pilot.Health>0 and root\n    and attachedHuman(v.owner,mode,world,v.role)\n    and (root.Position-craft:GetPivot().Position).Magnitude<28 then\n    safeRescue(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world)\n   end\n   v.lastPilot=nil\n   v.alive=false\n   if craft.Parent then craft:Destroy() end\n  end\n  for trap in pairs(traps) do if trap.Parent then trap:Destroy() end end\n  for _,item in ipairs(scene:GetDescendants()) do\n   if item:IsA(\"ProximityPrompt\") then item.Enabled=false end\n  end\n  table.clear(vessels)\n  table.clear(perUser)\n  table.clear(traps)\n  table.clear(combatConnections)\n  table.clear(lastNeutralCount)\n  table.clear(lastComboCount)\n  table.clear(lastKOAdvanceAt)\n  table.clear(lastComboAdvanceAt)\n  table.clear(lastShownCombo)\n  table.clear(lastSurgeAt)\n  table.clear(publicTravelAt)\n  scenes[world]=nil\n end\n",
+              "new_identity": {
+                "bytes": 1516,
+                "sha256": "481ea43ef18fc32dfed05ba6723cf914a10285330c288117a596e36c48372840"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 651,
+              "stop": 651
+            },
+            {
+              "new": "  if not active or not scene.Parent or not currentWorld(world,mode)\n   or not Rules.isRuntimeWorldActive(world,mode) then\n   retireTraversal(true)\n",
+              "new_identity": {
+                "bytes": 147,
+                "sha256": "c17e4420a1ab5281ad030ea6c761068be427db58dd0b763abaa5ade8fb34565c"
+              },
+              "old": "  if not active or not world.Parent or not scene.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
+              "old_identity": {
+                "bytes": 109,
+                "sha256": "a51eb87b280ffa9667aaf43a8e22f2dfbfb1f02d49a50f0622fd34a4c7f57adc"
+              },
+              "start": 652,
+              "stop": 654
+            },
+            {
+              "new": "     v.lastCraftPosition=cf.Position\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "ea718710ec125c0a05bc2cab7724fd0f0a3261647ed310fc81b4a57bd2c96362"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 723,
+              "stop": 723
+            },
+            {
+              "new": "      v.lastCraftPosition=point\n",
+              "new_identity": {
+                "bytes": 32,
+                "sha256": "a19254b59cea4e8d1469f9c802ec129dc967c8645f9453d29807fd67b0821a9c"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 764,
+              "stop": 764
+            },
+            {
+              "new": " world.Destroying:Connect(function() retireTraversal(false) end)\n",
+              "new_identity": {
+                "bytes": 65,
+                "sha256": "b7fe1c651d11ec5d1d265e3bb704c5aba2c3ad74918d19cfc10d7d4f2638f209"
+              },
+              "old": " world.Destroying:Connect(function()\n  active=false\n  if heartbeat then heartbeat:Disconnect() end\n  entered:Disconnect()\n  exited:Disconnect()\n  for player in pairs(combatConnections) do unwatchCombo(player) end\n  table.clear(combatConnections)\n  table.clear(lastNeutralCount)\n  table.clear(lastComboCount)\n  table.clear(lastKOAdvanceAt)\n  table.clear(lastComboAdvanceAt)\n  table.clear(lastShownCombo)\n  table.clear(lastSurgeAt)\n  table.clear(publicTravelAt)\n  for _,v in pairs(vessels) do v.alive=false end\n  scenes[world]=nil\n end)\n",
+              "old_identity": {
+                "bytes": 535,
+                "sha256": "cc331c95350c04cdd27f8528ea01022d6ae5d2848b90acfc4063d55dbf02bce1"
+              },
+              "start": 772,
+              "stop": 789
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- Read the existing Host-bound Rules authority; no independent phase writer.\nlocal Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\nif type(Rules.isRuntimeWorldActive)~=\"function\" then return end\n",
+              "old_identity": {
+                "bytes": 220,
+                "sha256": "b4a80b432f03ea89bd0bbc0af7a98844dcbf3ce639776987bd8b1b830eb61685"
+              },
+              "start": 12,
+              "stop": 15
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- Queued events may outlive their destroyed prompt/part under Deferred.\n  if q.Parent~=part or not q.Enabled or not part:IsDescendantOf(Workspace) then return end\n",
+              "old_identity": {
+                "bytes": 166,
+                "sha256": "9db15913154338d2825a6829e82191e3979d1b9f732b560ce2e914bc3724638b"
+              },
+              "start": 64,
+              "stop": 66
+            },
+            {
+              "new": "local function matchHuman(player,mode,world,role)\n return world.Parent~=nil and world:IsDescendantOf(Workspace)\n  and world.Parent.Name==LOBBY\n  and world.Parent:FindFirstChild(world.Name)==world\n  and player.Parent==Players and player:GetAttribute(\"EGGRUMBLE_QueuedMode\")==mode\n",
+              "new_identity": {
+                "bytes": 279,
+                "sha256": "1c09f6266f053cece4d5e72c6b89ea1608fd66bf3e89e78e1198dc43c9c4b27d"
+              },
+              "old": "local function currentWorld(world,mode)\n local lobby=world.Parent\n return lobby~=nil and lobby.Parent==Workspace and lobby.Name==LOBBY\n  and Workspace:FindFirstChild(LOBBY)==lobby\n  and world.Name==mode..\"_Arena\" and lobby:FindFirstChild(world.Name)==world\nend\n\nlocal function attachedHuman(player,mode,world,role)\n local ch=player.Character\n return currentWorld(world,mode)\n  and player.Parent==Players and Players:GetPlayerByUserId(player.UserId)==player\n  and ch~=nil and ch:IsDescendantOf(Workspace)\n  and Players:GetPlayerFromCharacter(ch)==player\n  and player:GetAttribute(\"EGGRUMBLE_QueuedMode\")==mode\n",
+              "old_identity": {
+                "bytes": 609,
+                "sha256": "1c8e23fe2b828556aacb58e5d7e6bcf1fdad7ff871bf1d46a848eb213499e6d4"
+              },
+              "start": 94,
+              "stop": 108
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "end\n\nlocal function matchHuman(player,mode,world,role)\n return attachedHuman(player,mode,world,role)\n  and Rules.isRuntimeWorldActive(world,mode)\n",
+              "old_identity": {
+                "bytes": 146,
+                "sha256": "0711351a89a32b38644b113cf96bab6cf8df5fcd5c30179afdca5801b2254d25"
+              },
+              "start": 112,
+              "stop": 117
+            },
+            {
+              "new": "local function safeMove(player,at,mode,world)\n if not matchHuman(player,mode,world,nil) then return false end\n",
+              "new_identity": {
+                "bytes": 110,
+                "sha256": "f2498fabd1fa4d13254434111887079f8f3c5abe8be52a75a8536525890df4b6"
+              },
+              "old": "local function moveAvatar(player,at)\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "b232979429f2e7a565ee50308ab9abdaaca157967ed1b11934ed3defe9633ce4"
+              },
+              "start": 129,
+              "stop": 130
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "end\n\nlocal function safeMove(player,at,mode,world)\n if not matchHuman(player,mode,world,nil) then return false end\n return moveAvatar(player,at)\nend\n\n-- Safety cleanup may land a known original pilot during the result hold.\n-- It never accepts public input, and never moves a detached/stale world avatar.\nlocal function safeRescue(player,at,mode,world)\n if not attachedHuman(player,mode,world,nil) then return false end\n return moveAvatar(player,at)\n",
+              "old_identity": {
+                "bytes": 450,
+                "sha256": "8847118583d626610ad30482132d7acd6d5017e757d4b0dccaf5aa4738858e3e"
+              },
+              "start": 138,
+              "stop": 150
+            },
+            {
+              "new": " if not mode then return end\n",
+              "new_identity": {
+                "bytes": 29,
+                "sha256": "056ee8ea7f3e6cf43ae31dad60fac81bb8e59c28c376b6aae25e800831b6c648"
+              },
+              "old": " if not mode or not currentWorld(world,mode)\n  or not Rules.isRuntimeWorldActive(world,mode) then return end\n",
+              "old_identity": {
+                "bytes": 109,
+                "sha256": "5d0fc26fe1bdbe0abad6393cb93ef042d40b73dbd9ee650eaf882ff589566978"
+              },
+              "start": 174,
+              "stop": 176
+            },
+            {
+              "new": "   flying=flying,speed=speed,at=at,alive=true,acc=0,\n",
+              "new_identity": {
+                "bytes": 53,
+                "sha256": "c3c6966a94b2c676ca7b6892baecbc4b09fa66ce87a2fa02c9b200e54501d8ef"
+              },
+              "old": "   flying=flying,speed=speed,at=at,alive=true,acc=0,lastCraftPosition=start.Position,\n",
+              "old_identity": {
+                "bytes": 86,
+                "sha256": "4dc97b639ff59c3865a77e9485a6c8da08d7d46bec2068e6c737db384a07ac41"
+              },
+              "start": 348,
+              "stop": 349
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   if not data.alive then return end\n   -- Keep the original Debris lifetime/guarantee. Deferred callbacks use\n   -- the position captured by this owner's last verified live craft step.\n   -- Never require Parent here: a valid Debris expiry may already detach it.\n",
+              "old_identity": {
+                "bytes": 264,
+                "sha256": "0959fb528392e99874e313ecef9034109dbfc2c656772c76b1114ea25b3939ff"
+              },
+              "start": 380,
+              "stop": 384
+            },
+            {
+              "new": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Z>z+halfZ+10 then\n",
+              "new_identity": {
+                "bytes": 161,
+                "sha256": "5b3059888f9a921782f0e226849440d3969b04495120b3a9db7f37323c82e42c"
+              },
+              "old": "     and attachedHuman(player,mode,world,role)\n     and (root.Position-data.lastCraftPosition).Magnitude<28\n     and data.lastCraftPosition.Z>z+halfZ+10 then\n",
+              "old_identity": {
+                "bytes": 158,
+                "sha256": "f708f2caa2836ae31aeab1fa3e51032a49cb9534343b19ee689c0771f3568796"
+              },
+              "start": 392,
+              "stop": 395
+            },
+            {
+              "new": "      safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "new_identity": {
+                "bytes": 71,
+                "sha256": "43bdae7aed139f6f290cfc990f9e3b05f882d69bd2c9f493cecda24a3b59ed14"
+              },
+              "old": "      safeRescue(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "old_identity": {
+                "bytes": 73,
+                "sha256": "167cabf17481490bcde8300c38585d6f7298d2ac213e5652ecb58b733c33aa7a"
+              },
+              "start": 404,
+              "stop": 405
+            },
+            {
+              "new": "     and matchHuman(player,mode,world,role)\n     and (root.Position-craft:GetPivot().Position).Magnitude<28\n     and craft:GetPivot().Position.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then\n     safeMove(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "new_identity": {
+                "bytes": 250,
+                "sha256": "2f6ea483adc3c3a9719420d742eaf1bb528137d6c1158bd897542bb5a60b5afa"
+              },
+              "old": "     and attachedHuman(player,mode,world,role)\n     and (root.Position-data.lastCraftPosition).Magnitude<28\n     and data.lastCraftPosition.Y>y+FLIGHT_MIN_Y_ABOVE_GROUND-4 then\n     safeRescue(player,landDock.Position+Vector3.new(0,4,0),mode,world)\n",
+              "old_identity": {
+                "bytes": 249,
+                "sha256": "a81039571502ec7e21a11571f6c95467fdc49d74aeffea1cca6b043e86ee8954"
+              },
+              "start": 419,
+              "stop": 423
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local function retireTraversal(allowLanding)\n  if not active then return end\n  active=false\n  if heartbeat then heartbeat:Disconnect() end\n  entered:Disconnect()\n  exited:Disconnect()\n  for player in pairs(combatConnections) do unwatchCombo(player) end\n  -- Stop ongoing movement/warps. Land only the exact live original pilot\n  -- before destroying an anchored ride; a result screen must not drop them.\n  for craft,v in pairs(vessels) do\n   local pilot=v.seat.Occupant\n   local ch=v.owner.Character\n   local root=ch and ch:FindFirstChild(\"HumanoidRootPart\")\n   if allowLanding and scene.Parent==world and craft.Parent==scene and pilot\n    and pilot.Parent==ch and pilot.Sit and pilot.Health>0 and root\n    and attachedHuman(v.owner,mode,world,v.role)\n    and (root.Position-craft:GetPivot().Position).Magnitude<28 then\n    safeRescue(v.owner,landDock.Position+Vector3.new(0,4,0),mode,world)\n   end\n   v.lastPilot=nil\n   v.alive=false\n   if craft.Parent then craft:Destroy() end\n  end\n  for trap in pairs(traps) do if trap.Parent then trap:Destroy() end end\n  for _,item in ipairs(scene:GetDescendants()) do\n   if item:IsA(\"ProximityPrompt\") then item.Enabled=false end\n  end\n  table.clear(vessels)\n  table.clear(perUser)\n  table.clear(traps)\n  table.clear(combatConnections)\n  table.clear(lastNeutralCount)\n  table.clear(lastComboCount)\n  table.clear(lastKOAdvanceAt)\n  table.clear(lastComboAdvanceAt)\n  table.clear(lastShownCombo)\n  table.clear(lastSurgeAt)\n  table.clear(publicTravelAt)\n  scenes[world]=nil\n end\n",
+              "old_identity": {
+                "bytes": 1516,
+                "sha256": "481ea43ef18fc32dfed05ba6723cf914a10285330c288117a596e36c48372840"
+              },
+              "start": 686,
+              "stop": 726
+            },
+            {
+              "new": "  if not active or not world.Parent or not scene.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
+              "new_identity": {
+                "bytes": 109,
+                "sha256": "a51eb87b280ffa9667aaf43a8e22f2dfbfb1f02d49a50f0622fd34a4c7f57adc"
+              },
+              "old": "  if not active or not scene.Parent or not currentWorld(world,mode)\n   or not Rules.isRuntimeWorldActive(world,mode) then\n   retireTraversal(true)\n",
+              "old_identity": {
+                "bytes": 147,
+                "sha256": "c17e4420a1ab5281ad030ea6c761068be427db58dd0b763abaa5ade8fb34565c"
+              },
+              "start": 727,
+              "stop": 730
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "     v.lastCraftPosition=cf.Position\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "ea718710ec125c0a05bc2cab7724fd0f0a3261647ed310fc81b4a57bd2c96362"
+              },
+              "start": 799,
+              "stop": 800
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "      v.lastCraftPosition=point\n",
+              "old_identity": {
+                "bytes": 32,
+                "sha256": "a19254b59cea4e8d1469f9c802ec129dc967c8645f9453d29807fd67b0821a9c"
+              },
+              "start": 841,
+              "stop": 842
+            },
+            {
+              "new": " world.Destroying:Connect(function()\n  active=false\n  if heartbeat then heartbeat:Disconnect() end\n  entered:Disconnect()\n  exited:Disconnect()\n  for player in pairs(combatConnections) do unwatchCombo(player) end\n  table.clear(combatConnections)\n  table.clear(lastNeutralCount)\n  table.clear(lastComboCount)\n  table.clear(lastKOAdvanceAt)\n  table.clear(lastComboAdvanceAt)\n  table.clear(lastShownCombo)\n  table.clear(lastSurgeAt)\n  table.clear(publicTravelAt)\n  for _,v in pairs(vessels) do v.alive=false end\n  scenes[world]=nil\n end)\n",
+              "new_identity": {
+                "bytes": 535,
+                "sha256": "cc331c95350c04cdd27f8528ea01022d6ae5d2848b90acfc4063d55dbf02bce1"
+              },
+              "old": " world.Destroying:Connect(function() retireTraversal(false) end)\n",
+              "old_identity": {
+                "bytes": 65,
+                "sha256": "b7fe1c651d11ec5d1d265e3bb704c5aba2c3ad74918d19cfc10d7d4f2638f209"
+              },
+              "start": 850,
+              "stop": 851
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal"
+        }
+      }
+    }
   }
 }

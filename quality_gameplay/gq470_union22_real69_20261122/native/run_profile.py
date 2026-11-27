@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "89f483f2df871997f33a4cdd455cba1d59b79f49aec9ff0525fb1643d03dc5d3"
+INPUT_LOCK_SHA256 = "0e75c6c1c51e79db1db6a00498c8eed4a25340704de9424eb77b63346b2787be"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -711,7 +711,9 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                       identity(source_receipt_raw), identity(runner_before))
         profile = compose.load_lock()
         layout_parent = profile["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
-        layout_pins = lock | {"sources": lock["sources"] | {compose.PORTRAIT_SOURCE: layout_parent}}
+        traversal_parent = profile["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
+        layout_pins = lock | {"sources": lock["sources"] | {compose.PORTRAIT_SOURCE: layout_parent,
+                                                         compose.SHOREFOAM_SOURCE: traversal_parent}}
         run_selected_hud_layout(root.parent / compose.PORTRAIT_OFF / "sources",
                                 output / "selected_hud_layout", binary, layout_pins, pin, context,
                                 identity(source_receipt_raw), identity(runner_before))
