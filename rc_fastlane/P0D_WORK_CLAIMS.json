@@ -33365,7 +33365,39 @@
           "digest": "sha256:dad61580039b458816fc8377ea31bd140297c8bcdc937e58ed5c5f1af98fbfd5"
         },
         "intake": {
-          "status": "AWAITING_PUBLISHED_READY_METADATA"
+          "run": 45946520611,
+          "job": 140332356643,
+          "status": "READY_FOR_SOLE_WRITER_REVIEW"
+        }
+      },
+      "bounded_rc_integration": {
+        "status": "ONE_EXACT_FAST_FORWARD_AUTHORIZED_PENDING_LIVE_LEASE",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "fb87f9f23d0a136da048804cef307a865483f133",
+        "permitted_head": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "permitted_tree": "748dbb66db9d4fd55fed3eb6fa74359aaf2adb17",
+        "permitted_pr": 1003,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEx_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T06:06:14.624Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Current PRIVATE_COMPANION three visual readability leaves only, author preserved. Same-head official CI and adopted Studio required. No main, active_runtime selection, publication or spending.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated #1011 V2.2/#220, independent current source and trusted queue",
+          "lease": "4926790282bb81adefffa4aa2c418adb3bc51328",
+          "owner": "397b12a0-ee9d-404d-9515-1e956dce8182"
         }
       }
     }
