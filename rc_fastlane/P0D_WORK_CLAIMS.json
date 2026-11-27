@@ -30774,11 +30774,11 @@
         "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "a6820af88ca41624a1adf3e10b43b01811e82e62",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "bfab58d621d8ac5e20e36e4708c75edd19725420",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "d52260af7871d270d167ab5459f5a6e8ff7f4515",
-        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "f16592c64ee5dd6bad5ebcf769be76393faf4936",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "8a234c120c1bf02f179d940f3eba7d773fe43dea",
         "tests/test_gq470_union22_real69_20261122.py": "860a53175367d13b24ff74ae8c5faa3fc37ed71d"
       },
-      "prepared_candidate_tree": "228e8b1f12e7232f46809017e51eae8ff45a39a4",
-      "prepared_candidate_head": "ff60d7559c3352a8d38b54af19ab496b499d3037",
+      "prepared_candidate_tree": "54ca79dd541bba0b10726f6cc9934926a9c1e982",
+      "prepared_candidate_head": "633f849ffc0a9bf4e34bf39da48c25a7170ea929",
       "prep_branch": "feature/p0d-prep-482-empty-vault-20261127",
       "allowed_new_prs": 0,
       "expected_source_branch": "ABSENT",
@@ -30796,7 +30796,7 @@
       "author_may_self_approve": false,
       "source_write_requires_separate_live_source_lease": true,
       "scope_only": true,
-      "source_scope_granted": false,
+      "source_scope_granted": true,
       "PREP_READY": false,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
@@ -30852,19 +30852,20 @@
           "origin": "controller"
         }
       },
-      "expected_source_head": "0065e204445db840861c4610770cd1b8cb470db6",
+      "expected_source_head": "010e483767c30328ac3eb0fdd0a46c4e5c93a254",
       "allowed_update_paths": [
-        "tests/test_gq470_union22_real69_20261122.py"
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py"
       ],
       "failed_ci": [
-        45913773115
+        45913773115,
+        45914404999
       ],
-      "source_scope_revision": 2,
+      "source_scope_revision": 3,
       "second_fix": "Actual one test invocation follows the new Vault OFF before legacy Item and Beast rollback. Independent normal and -O test reached the old Beast assertions successfully. No runtime or workflow mutation.",
       "previous_source_binding": {
-        "registry": "c5bf5d1f2ce0133a1818284e659ad41697052051",
-        "head": "0065e204445db840861c4610770cd1b8cb470db6",
-        "tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb"
+        "registry": "7e268b3b2fcf174be042c52a899319ebb9e2ec77",
+        "head": "010e483767c30328ac3eb0fdd0a46c4e5c93a254",
+        "tree": "228e8b1f12e7232f46809017e51eae8ff45a39a4"
       },
       "actual_test_repair_scope_lease": {
         "ref": "ce78b4723affcb860e5124c1e0c0f5a334f23587",
@@ -30891,6 +30892,22 @@
           "epoch": 770,
           "acquired_at": "2026-11-27T00:04:10.528Z",
           "expires_at": "2026-11-27T00:34:10.528Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "third_fix": "Guard verifier uses the frozen historical Host and Art pins emitted by existing 40-case generator. True failure reproduced in hosted final verify (Source and Native passed). Actual independent reviewer diagnosed exact path and correction. Product source, workflow, test gates and count unchanged.",
+      "actual_verifier_repair_scope_lease": {
+        "ref": "8eef217699d7e1931243dd3e70fd6ea1bfeb6229",
+        "blob": "6b5994efcfaa48b75e65b7a3fa61e4bcb44812a4",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d63148cd-f7a0-4017-aa95-f60a4aca12a2",
+          "task_id": null,
+          "epoch": 771,
+          "acquired_at": "2026-11-27T00:08:53.714Z",
+          "expires_at": "2026-11-27T00:38:53.714Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
