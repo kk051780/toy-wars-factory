@@ -183,7 +183,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_beast_only_inverse_restores_actual_h72_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        guardian_on, guardian_lock = compose.item_parent(on, self.lock)
+        item_on, item_lock = compose.vault_parent(on, self.lock)
+        guardian_on, guardian_lock = compose.item_parent(item_on, item_lock)
         final, beast = compose.guardian_parent(guardian_on, guardian_lock)
         self.assertEqual(beast, before_guardian(self.lock))
         self.assertEqual([p for p in guardian_on if guardian_on[p] != final[p]], [compose.GUARDIAN_SOURCE])
