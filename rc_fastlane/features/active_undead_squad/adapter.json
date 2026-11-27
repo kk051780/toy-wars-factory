@@ -1,0 +1,62 @@
+{
+  "game": [
+    {
+      "anchor": "local SevenJobs = require(script.Parent:WaitForChild(\"SevenJobsRules\"))\n",
+      "replace": "local SevenJobs = require(script.Parent:WaitForChild(\"SevenJobsRules\"))\nSevenJobs.Undead = require(script.Parent:WaitForChild(\"UndeadSquad\"))\n"
+    },
+    {
+      "anchor": "    for _,p in ipairs(Players:GetPlayers()) do cleanupScout(p) end\n    match.phase = \"RESULTS\"",
+      "replace": "    for _,p in ipairs(Players:GetPlayers()) do\n        cleanupScout(p)\n        SevenJobs.Undead.clear(p)\n    end\n    match.phase = \"RESULTS\""
+    },
+    {
+      "anchor": "local function resetRound()\n    SoloTeamBots.stop()",
+      "replace": "local function resetRound()\n    for _,p in ipairs(Players:GetPlayers()) do SevenJobs.Undead.clear(p) end\n    SoloTeamBots.stop()"
+    },
+    {
+      "anchor": "            dropEgg(player)\n            player.Team = teamInstances[move.to]",
+      "replace": "            dropEgg(player)\n            SevenJobs.Undead.clear(player)\n            player.Team = teamInstances[move.to]"
+    },
+    {
+      "anchor": "            stopWind(player)\n            restoreSlow(player)\n            dropEgg(player)\n",
+      "replace": "            stopWind(player)\n            restoreSlow(player)\n            SevenJobs.Undead.clear(player)\n            dropEgg(player)\n"
+    },
+    {
+      "anchor": "    sevenJobs[player]=job\n    sevenJobLastChoose[player]=now\n",
+      "replace": "    SevenJobs.Undead.clear(player)\n    sevenJobs[player]=job\n    sevenJobLastChoose[player]=now\n"
+    },
+    {
+      "anchor": "    elseif job==\"NECROMANCER\" then\n        sevenJobStrike(player,root.Position,facing,14)\n        sevenJobDelayedStrike(player,job,match.serial,root.Position,-facing,14,.8)\n        sevenJobDelayedStrike(player,job,match.serial,root.Position,facing,14,1.6)",
+      "replace": "    elseif job==\"NECROMANCER\" then\n        sevenJobStrike(player,root.Position,facing,14)\n        local castAvatar=player.Character\n        local castSerial=match.serial\n        local castSelection=sevenJobLastChoose[player]\n        SevenJobs.Undead.cast(player,{\n            parent=map.model,\n            root=function()\n                if player.Character~=castAvatar then return nil end\n                local alive,current=healthy(player)\n                return if alive then current else nil\n            end,\n            valid=function()\n                return player.Parent==Players and castAvatar~=nil\n                    and player.Character==castAvatar\n                    and match.phase==\"ACTIVE\" and match.serial==castSerial\n                    and getTeamName(player)==team and sevenJobs[player]==\"NECROMANCER\"\n                    and sevenJobLastChoose[player]==castSelection\n                    and carry[player]==nil and slowed[player]==nil\n                    and RunService:IsStudio()\n                    and ServerStorage:GetAttribute(\"P0D_RC_ENABLE_SEVEN_JOBS_PVE\")~=false\n            end,\n            targets=function() return horde.mobs end,\n            hit=function(position,direction,damage)\n                return sevenJobStrike(player,position,direction,damage)\n            end,\n        })"
+    },
+    {
+      "anchor": "        clearEarnedPowerVisual(player)\n        cleanupScout(player)\n        dropEgg(player)\n",
+      "replace": "        clearEarnedPowerVisual(player)\n        cleanupScout(player)\n        SevenJobs.Undead.clear(player)\n        dropEgg(player)\n"
+    },
+    {
+      "anchor": "    cleanupScout(player)\n    lastFreeHatch[player]=nil\n",
+      "replace": "    cleanupScout(player)\n    SevenJobs.Undead.clear(player)\n    lastFreeHatch[player]=nil\n"
+    }
+  ],
+  "squad": [
+    {
+      "anchor": "                        desired = root.Position + flat.Unit * math.min(flat.Magnitude, guardRadius)",
+      "replace": "                        -- Stay within reach after a blocked swing. Walking into the\n                        -- target's center leaves no direction for a follow-up strike.\n                        local direction = flat.Unit\n                        local side = Vector3.new(-direction.Z, 0, direction.X)\n                        local flank = direction * math.max(0, flat.Magnitude - 2.2)\n                            + side * ((i - 2) * 1.25)\n                        if flank.Magnitude > guardRadius then flank = flank.Unit * guardRadius end\n                        desired = root.Position + flank"
+    },
+    {
+      "anchor": "    local old = squads[player]\n    if old and old.container and old.container.Parent then",
+      "replace": "    local old = squads[player]\n    local now = os.clock()\n    if old and old.container and old.container.Parent and now - old.created < MAX_DURATION then"
+    },
+    {
+      "anchor": "    sight.IgnoreWater = true\n    local now = os.clock()\n    local squad",
+      "replace": "    sight.IgnoreWater = true\n    local squad"
+    },
+    {
+      "anchor": "        local start = avatarRoot.Position + offset + Vector3.new(0, -1.6, 0)\n        table.insert(squad.zombies, buildZombie(i, start, container))",
+      "replace": "        local spawnBase = avatarRoot.Position + Vector3.new(0, -1.6, 0)\n        local blocked = workspace:Raycast(spawnBase + Vector3.new(0, 1.4, 0), offset, sight)\n        local start = if blocked then spawnBase else spawnBase + offset\n        table.insert(squad.zombies, buildZombie(i, start, container))"
+    },
+    {
+      "anchor": "os.clock() - squad.created > MAX_DURATION",
+      "replace": "os.clock() - squad.created >= MAX_DURATION"
+    }
+  ]
+}
