@@ -13066,8 +13066,8 @@
           "place_sha256": "6127dce8053431e31a5d3254bccb2f004bfbb3641f6d01dfcd26c8b278e5b7a2",
           "off": 639340,
           "changed_old_Game_bytes": 931,
-          "other65_runtime_sources_preserved_here": true,
-          "proof": "local-qa/eggrumble-20261127-cycle600/persistence-1016-obsolete-ack-npt8f414/REPRO_AND_FIX.json"
+          "proof": "local-qa/eggrumble-20261127-cycle600/persistence-1016-obsolete-ack-npt8f414/REPRO_AND_FIX.json",
+          "unchanged_vs_held_candidate_runtime_sources": 66
         },
         "independent_context": "/root/p0_offer_review26",
         "grant_lease": "3a02ce7c00fb5d652d40fed1a3505f042d8a15c6",
@@ -13110,7 +13110,7 @@
         "operation_id": "cbe66025-e010-4874-9d19-c59b07b574d2"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
         "permitted_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
@@ -13123,7 +13123,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -13141,7 +13141,34 @@
           "review": 6089991549,
           "trusted_queue_run": 46020611620,
           "trusted_queue_job": 140578982003
-        }
+        },
+        "writer_acquire_ref": "31a64da6f94fef516390806e556a623ff2bde459",
+        "writer_return_ref": "63864ef3a5edd56e0d105bfa196ce542d19e448e",
+        "exact_adoption_readback_at": "2026-11-27T15:00:02.804Z"
+      },
+      "actual_official_rc": {
+        "head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
+        "previous": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+        "active_ci": 46020916978,
+        "active_job": 140580051669,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15208710113,
+        "active_zip_bytes": 190924,
+        "active_zip_digest": "sha256:25b8c0c01dccf4672d47433b5f0a4a3fc35fa9e7507d29e57d0d850481eedd17",
+        "active_place_bytes": 646032,
+        "active_place_sha256": "6127dce8053431e31a5d3254bccb2f004bfbb3641f6d01dfcd26c8b278e5b7a2",
+        "active_off_place_bytes": 639340,
+        "private_ci": 46020917017,
+        "private_job": 140580050390,
+        "private_steps": 48,
+        "private_artifact": 15209065632,
+        "private_zip_bytes": 25129625,
+        "private_zip_digest": "sha256:d0d38c8bd55d5708f318538bcbc8aa63310ba29fe782899e7b53ca8140e198b0",
+        "device_evidence": "NOT_TESTED_V3.5",
+        "real_datastore": "NOT_TESTED",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7221693806"
       }
     },
     {
@@ -38701,7 +38728,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 376,
         "branch": "feature/p0d-fb007-lobby-dojo-real-separation-20261114",
         "old_pr_head": "8d7dcfc6d623549915526ea434b6e39bb50f1200",
@@ -38767,6 +38794,62 @@
           "older_lifecycle_functions_byte_exact": true,
           "photo_device": "NOT_TESTED"
         }
+      },
+      "source_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+      "prepared_candidate_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+      "prepared_candidate_tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "4924c8830bdd63ea78bfefb2c31208b986110970",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 223156
+        },
+        {
+          "mode": "100644",
+          "blob": "1931decfbcc33592b1cc29515d1a63b074f9215d",
+          "path": "rc_fastlane/apply_active_safe_lobby.py",
+          "bytes": 7939
+        },
+        {
+          "mode": "100644",
+          "blob": "052651243fd35126bcd21bd8507105dfc67743e3",
+          "path": "rc_fastlane/features/active_safe_lobby/source_lock.json",
+          "bytes": 1135
+        },
+        {
+          "mode": "100644",
+          "blob": "58186a874e5b35df8ee9c88a024c1871566d737e",
+          "path": "rc_fastlane/features/active_safe_lobby/spectator_placement.luau",
+          "bytes": 1367
+        },
+        {
+          "mode": "100644",
+          "blob": "bfba47b744904b56dc334087f7a574e080fac388",
+          "path": "rc_fastlane/verify_active_safe_lobby_native.py",
+          "bytes": 9728
+        },
+        {
+          "mode": "100644",
+          "blob": "2945f10ea15df97957a369ba5d0369df4c1f1962",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 111944
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 376,
+        "exact_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "exact_tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+        "exact_parent": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "preserved_author_parent": "8d7dcfc6d623549915526ea434b6e39bb50f1200",
+        "source_lease": "26284f104632a98067ca2bc1f05c3b6a185603fc",
+        "source_lease_return": "03137456cfaf611f3cb7804794535b2875d12265",
+        "prepared_at": "2026-11-27T15:10:47.485Z",
+        "same_name_base_refreshed_at": "2026-11-27T15:06:13Z"
+      },
+      "actual_binding_lease": {
+        "commit": "e58af98c7b0c6b48f4aba9e2d0a730010d960871",
+        "operation_id": "ec4c04f5-a06e-41b8-8d68-5eeada628ec3"
       }
     }
   ],
