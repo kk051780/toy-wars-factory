@@ -34048,9 +34048,9 @@
           "owner": "da12e40a-8cb3-4a30-afa0-40685d72669a"
         }
       },
-      "source_head": "a5611327a5a88b90c6805b6efb748dd3aac691cb",
-      "prepared_candidate_head": "a5611327a5a88b90c6805b6efb748dd3aac691cb",
-      "prepared_candidate_tree": "0a50c23c3a6d32cb45f0ac12271a8d85f7e15c64",
+      "source_head": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+      "prepared_candidate_head": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+      "prepared_candidate_tree": "48a9e1a517b3351b965c45f3efe5b01f9905acda",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py",
@@ -34139,27 +34139,29 @@
         {
           "path": "tests/test_gq470_union22_real69_20261122.py",
           "mode": "100644",
-          "bytes": 103480,
-          "blob": "f29f8c375021ef1df98fc9979728109359103e41"
+          "bytes": 103674,
+          "blob": "4572348a488d4f2ddbaa9c31055406731086d89c"
         }
       ],
       "actual_candidate_readback": {
-        "commit": "a5611327a5a88b90c6805b6efb748dd3aac691cb",
-        "tree": "0a50c23c3a6d32cb45f0ac12271a8d85f7e15c64",
+        "commit": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "tree": "48a9e1a517b3351b965c45f3efe5b01f9905acda",
         "branch": "quality/gq470-art4-composite-prep-20261120",
-        "source_lease": "1140513adc86df124d488a50dd017b4ce49675ad",
-        "return": "6e5ce8b4a087fba6d942e5de59a4ac23f7d5640c",
+        "source_lease": "4b48905171caa103d65975e21402ac7627c60239",
+        "return": "fd06d838e861e4330bfb56a48beddafb3c027fd4",
         "existing_pr": 931,
         "old_author_parent": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
         "formal_parent": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
-        "observed_old_pr_base": "e80973c354f14a0d0088577f3cc1a875454f0f8f"
+        "observed_old_pr_base": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+        "observed_pr_base_after": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "qa_only_predecessor": "a5611327a5a88b90c6805b6efb748dd3aac691cb"
       },
       "actual_binding_lease": {
-        "commit": "46d7bc93972f1fe633291abb47bbdeedf1645a9a",
-        "operation_id": "f4eb624f-09a5-434f-8d92-5625ce4dc8f3"
+        "commit": "85ba945bcfc80fe3f50fdc5cca5e37a972c079e1",
+        "operation_id": "82f0a164-760c-47c1-9781-957c4e4fe5ea"
       },
       "source_correction_grant": {
-        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "status": "CONSUMED_EXACT_QA_ONLY",
         "pr": 931,
         "branch": "quality/gq470-art4-composite-prep-20261120",
         "old_candidate": "a5611327a5a88b90c6805b6efb748dd3aac691cb",
@@ -34179,7 +34181,10 @@
         "metadata": {
           "lease": "d26c47928a12a4040f27c2e5f46ef2fb4c8f784c",
           "owner": "cadbd7ab-bb43-477d-99ae-844429276649"
-        }
+        },
+        "actual_candidate": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "source_lease": "4b48905171caa103d65975e21402ac7627c60239",
+        "source_return": "fd06d838e861e4330bfb56a48beddafb3c027fd4"
       }
     }
   ],
