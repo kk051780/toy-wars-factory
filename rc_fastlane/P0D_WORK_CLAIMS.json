@@ -31088,13 +31088,13 @@
     {
       "claim_id": "P0D-GQ482-CASTLE-RELEASE-STOCK-20261127",
       "feature_id": "GQ470_FB015_CASTLE_RELEASE_STOCK",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP",
       "owner": "/root (Codex parent, original #482 castle release handoff)",
       "parent_issue": 470,
       "integration_issue": 220,
       "canonical_parent": 482,
-      "pr": null,
+      "pr": 1035,
       "base_rc_sha": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
       "scope": "One narrow successor to the preserved #482 104-file draft and closed #1034. Only existing layout +355, RELEASE-only noncollision +65 and the existing stock display +140 on one Host. Seven scoped canonical paths, tests and immediate OFF rollback. No changes to old source branches, rules, score authority or workflows.",
       "registered_scope_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7190532839",
@@ -31130,7 +31130,7 @@
         "REAL69_NATIVE_FULL28_PROFILE"
       ],
       "prep_branch": "feature/p0d-prep-482-castle-release-stock-20261127",
-      "allowed_new_prs": 1,
+      "allowed_new_prs": 0,
       "expected_source_branch": "ABSENT",
       "local_native_release": {
         "cases": 24,
@@ -31155,7 +31155,7 @@
       },
       "independent_reviewer_context": "/root/p0_offer_review26",
       "scope_only": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
       "PREP_READY": false,
@@ -31183,7 +31183,31 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Current #1011 V2.1 authenticated ordinary development delegation and existing #218 #482 scope, #220 orderly integration. Actual independent local verification in registered context."
+      "authority_basis": "Current #1011 V2.1 authenticated ordinary development delegation and existing #218 #482 scope, #220 orderly integration. Actual independent local verification in registered context.",
+      "source_head": "cc6fed686214596eb717cc5827856311338999ad",
+      "actual_candidate_readback": {
+        "head": "cc6fed686214596eb717cc5827856311338999ad",
+        "tree": "2ee10df7cbf619a0cefe8b5e5f35dc017c13a4f2",
+        "pr": 1035,
+        "base": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "changed_file_count": 7,
+        "lease": "98474902a0926bf3a24f800089e432a6d43093a6"
+      },
+      "actual_binding_lease": {
+        "ref": "98474902a0926bf3a24f800089e432a6d43093a6",
+        "blob": "0753e512849e998fd9817029e3761cf8dee64356",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "59daf214-c08b-4b30-b873-13f886889abe",
+          "task_id": null,
+          "epoch": 779,
+          "acquired_at": "2026-11-27T00:45:22.159Z",
+          "expires_at": "2026-11-27T01:15:22.159Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
