@@ -32873,9 +32873,9 @@
         }
       },
       "pr": 1038,
-      "source_head": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
-      "prepared_candidate_head": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
-      "prepared_candidate_tree": "f3deac814d8ab6ee5b4c9f1d492de3bdf5829ca0",
+      "source_head": "fb87f9f23d0a136da048804cef307a865483f133",
+      "prepared_candidate_head": "fb87f9f23d0a136da048804cef307a865483f133",
+      "prepared_candidate_tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -32927,26 +32927,27 @@
         },
         {
           "path": "tests/test_gq470_union22_real69_20261122.py",
-          "bytes": 98421,
-          "blob": "e1585a43b81ce2cbb75b80a7281ca87fd0b194b8",
+          "bytes": 98583,
+          "blob": "56f065768928bab68e0c96e33a22066d1f27f789",
           "mode": "100644"
         }
       ],
       "actual_candidate_readback": {
-        "commit": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
-        "tree": "f3deac814d8ab6ee5b4c9f1d492de3bdf5829ca0",
+        "commit": "fb87f9f23d0a136da048804cef307a865483f133",
+        "tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
         "branch": "feature/p0d-field-egg-terminal-20261127",
-        "source_lease": "8e2a71a39a45d9560a4a8d0ae6681cd6c8a19a6f",
-        "return": "165776d4af205496338d08ad8728b501193d0044",
+        "source_lease": "79c69347523bb70bfa865759b6bbc1995fcc1909",
         "existing_pr": 1038,
-        "rc_parent": "daa6b076ac3502de632220aea9d7aec494232694"
+        "rc_parent": "daa6b076ac3502de632220aea9d7aec494232694",
+        "earlier_draft": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
+        "earlier_red": 45941661352
       },
       "actual_binding_lease": {
-        "commit": "34cb6d0572c55dfb7839faa49693fd2517f30740",
-        "operation_id": "c050c2ac-db67-4817-88e0-887cb56c021a"
+        "commit": "87ac63d1f14f6b353d7398ad733d5c31e3fe4967",
+        "operation_id": "6212a07e-5335-4f60-8e3e-e237f5e897c7"
       },
       "source_correction_grant": {
-        "status": "ONE_NONFORCE_TEST_ONLY_UPDATE_ON_EXISTING_PR",
+        "status": "EXECUTED_VERIFIED",
         "pr": 1038,
         "branch": "feature/p0d-field-egg-terminal-20261127",
         "parent": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
@@ -32963,7 +32964,14 @@
           "blob": "56f065768928bab68e0c96e33a22066d1f27f789",
           "bytes": 98583
         },
-        "reason": "Existing mutation test injected at old ordinal 165; retain three negatives at final real Rojo invocation, now ordinal 167. No runtime or build changes. Re-run all unchanged required checks."
+        "reason": "Existing mutation test injected at old ordinal 165; retain three negatives at final real Rojo invocation, now ordinal 167. No runtime or build changes. Re-run all unchanged required checks.",
+        "executed": {
+          "head": "fb87f9f23d0a136da048804cef307a865483f133",
+          "tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+          "lease": "79c69347523bb70bfa865759b6bbc1995fcc1909",
+          "local_late_injection": "3/3 PASS",
+          "source_unchanged": true
+        }
       }
     }
   ],
