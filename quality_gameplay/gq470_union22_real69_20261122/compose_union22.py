@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "a118afa3be90937bac80bd2e0e41254bb77a2bd91246afe1f21d677a490623a7"
+LOCK_SHA256 = "ef326fc874dbb214e2d0d3411a86e6db265dedb3921189b3970f1e723c0332d9"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -54,6 +54,10 @@ VAULT_OFF = "off69_empty_vault_item_parent"
 VAULT_OFF_ARCHIVE = "OFF69_EMPTY_VAULT_ITEM_PARENT_ROLLBACK.tar.gz"
 CASTLE_OFF = "off69_castle_release_stock_vault_parent"
 CASTLE_OFF_ARCHIVE = "OFF69_CASTLE_RELEASE_STOCK_VAULT_PARENT_ROLLBACK.tar.gz"
+SCORE_SOURCE = "ServerScriptService/EGGRUMBLE_ScoreBalance.luau"
+SCORE_OFF = "off69_score_relay_castle_parent"
+SCORE_OFF_ARCHIVE = "OFF69_SCORE_RELAY_CASTLE_PARENT_ROLLBACK.tar.gz"
+SCORE_REGRESSION_DONOR = "quality_gameplay/gq487_relay_score_real69_20261122"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -336,32 +340,41 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 23, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 24, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
-def host_parent(on, lock, repair, prior_place, reason):
-    row = lock["sources"][VAULT_SOURCE]
-    parent_row = repair["parent_host_row"]
-    need(repair["source_path"] == VAULT_SOURCE and repair["repaired_place"] == lock["final_place"]
+def single_source_parent(on, lock, name, repair, parent_row, prior_place, reason):
+    row = lock["sources"][name]
+    need(repair["source_path"] == name and repair["repaired_place"] == lock["final_place"]
          and repair["parent_place"] == prior_place
          and parent_row["before"] == row["before"], reason + "_PARENT_PROFILE")
-    restored = apply_hunks(on[VAULT_SOURCE], repair["inverse"])
-    need(identity(restored) == parent_row["after"] and restored != on[VAULT_SOURCE]
-         and apply_hunks(restored, repair["forward"]) == on[VAULT_SOURCE], reason + "_EXACT_TWO_WAY")
-    return on | {VAULT_SOURCE: restored}, lock | {
-        "sources": lock["sources"] | {VAULT_SOURCE: parent_row}, "final_place": repair["parent_place"],
+    restored = apply_hunks(on[name], repair["inverse"])
+    need(identity(restored) == parent_row["after"] and restored != on[name]
+         and apply_hunks(restored, repair["forward"]) == on[name], reason + "_EXACT_TWO_WAY")
+    return on | {name: restored}, lock | {
+        "sources": lock["sources"] | {name: parent_row}, "final_place": repair["parent_place"],
     }
 
 
+def score_parent(on, lock):
+    repair = lock["score_relay_followup"]
+    need(len(repair["forward"]) == 1 and repair["forward"][0]["old"] == ""
+         and repair["forward"][0]["new_identity"] == repair["fragment"], "SCORE_ORIGINAL_FRAGMENT")
+    return single_source_parent(on, lock, SCORE_SOURCE, repair, repair["parent_score_row"],
+                                lock["castle_release_stock_followup"]["repaired_place"], "SCORE_RELAY")
+
+
 def castle_parent(on, lock):
-    return host_parent(on, lock, lock["castle_release_stock_followup"],
-                       lock["empty_vault_followup"]["repaired_place"], "CASTLE_RELEASE_STOCK")
+    repair = lock["castle_release_stock_followup"]
+    return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
+                                lock["empty_vault_followup"]["repaired_place"], "CASTLE_RELEASE_STOCK")
 
 
 def vault_parent(on, lock):
-    return host_parent(on, lock, lock["empty_vault_followup"],
-                       lock["item_cleanup_followup"]["repaired_place"], "VAULT")
+    repair = lock["empty_vault_followup"]
+    return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
+                                lock["item_cleanup_followup"]["repaired_place"], "VAULT")
 
 
 def item_parent(on, lock):
@@ -519,7 +532,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    castle_off, castle_off_lock = castle_parent(on, lock)
+    score_off, score_off_lock = score_parent(on, lock)
+    castle_off, castle_off_lock = castle_parent(score_off, score_off_lock)
     vault_off, vault_off_lock = vault_parent(castle_off, castle_off_lock)
     item_off, item_off_lock = item_parent(vault_off, vault_off_lock)
     guardian_off, guardian_off_lock = guardian_parent(item_off, item_off_lock)
@@ -543,7 +557,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / GUARDIAN_OFF, guardian_off, guardian_off_lock["final_place"], GUARDIAN_SOURCE),
                   (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE),
                   (stage / VAULT_OFF, vault_off, vault_off_lock["final_place"], VAULT_SOURCE),
-                  (stage / CASTLE_OFF, castle_off, castle_off_lock["final_place"], VAULT_SOURCE))
+                  (stage / CASTLE_OFF, castle_off, castle_off_lock["final_place"], VAULT_SOURCE),
+                  (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -584,6 +599,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         vault_archive_identity = identity(read_file(stage / VAULT_OFF_ARCHIVE))
         make_archive(stage / CASTLE_OFF, stage / CASTLE_OFF_ARCHIVE, CASTLE_OFF)
         castle_archive_identity = identity(read_file(stage / CASTLE_OFF_ARCHIVE))
+        make_archive(stage / SCORE_OFF, stage / SCORE_OFF_ARCHIVE, SCORE_OFF)
+        score_archive_identity = identity(read_file(stage / SCORE_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -619,6 +636,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({CASTLE_OFF + "/" + PROJECT: lock["project"],
                                CASTLE_OFF + "/" + PLACE: castle_off_lock["final_place"],
                                CASTLE_OFF_ARCHIVE: castle_archive_identity})
+        expected_stage.update({SCORE_OFF + "/sources/" + name: identity(raw) for name, raw in score_off.items()})
+        expected_stage.update({SCORE_OFF + "/" + PROJECT: lock["project"],
+                               SCORE_OFF + "/" + PLACE: score_off_lock["final_place"],
+                               SCORE_OFF_ARCHIVE: score_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -627,7 +648,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 23, "unchanged_source_count": 46,
+            "selected_source_count": 69, "changed_source_count": 24, "unchanged_source_count": 45,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -650,6 +671,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "empty_vault_only_rollback_archive": vault_archive_identity,
             "castle_release_stock_followup": lock["castle_release_stock_followup"],
             "castle_release_stock_rollback_archive": castle_archive_identity,
+            "score_relay_followup": lock["score_relay_followup"],
+            "score_relay_rollback_archive": score_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -661,11 +684,12 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 23, "unchanged_sources": 46,
-            "compile_count": 145, "rojo_build_count": 9, "instances": 75,
+            "source_count": 69, "changed_sources": 24, "unchanged_sources": 45,
+            "compile_count": 146, "rojo_build_count": 10, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
+            "score_relay_parent_place": score_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

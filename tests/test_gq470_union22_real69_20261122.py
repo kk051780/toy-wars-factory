@@ -34,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 64, "final": 19}
+INTEGRATION_COUNTS = {"core": 65, "final": 20}
 
 
 def before_guardian(lock):
@@ -42,6 +42,7 @@ def before_guardian(lock):
     return lock | {
         "sources": lock["sources"] | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"],
                                       compose.ITEM_SOURCE: lock["item_cleanup_followup"]["parent_item_row"],
+                                      compose.SCORE_SOURCE: lock["score_relay_followup"]["parent_score_row"],
                                       compose.VAULT_SOURCE: lock["empty_vault_followup"]["parent_host_row"]},
         "final_place": repair["parent_place"],
     }
@@ -183,7 +184,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_beast_only_inverse_restores_actual_h72_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(on, self.lock)
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
         item_on, item_lock = compose.vault_parent(vault_on, vault_lock)
         guardian_on, guardian_lock = compose.item_parent(item_on, item_lock)
         final, beast = compose.guardian_parent(guardian_on, guardian_lock)
@@ -201,7 +202,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_item_cleanup_only_inverse_restores_exact_guardian_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(on, self.lock)
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
         item_ready, item_lock = compose.vault_parent(vault_on, vault_lock)
         restored, parent_lock = compose.item_parent(item_ready, item_lock)
         self.assertEqual([p for p in item_ready if item_ready[p] != restored[p]], [compose.ITEM_SOURCE])
@@ -211,7 +212,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_empty_vault_inverse_keeps_item_and_rejects_wrong_archive(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(on, self.lock)
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
         restored, parent = compose.vault_parent(vault_on, vault_lock)
         self.assertEqual([p for p in vault_on if vault_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["item_cleanup_followup"]["repaired_place"])
@@ -223,13 +224,25 @@ class UnionBoundary(unittest.TestCase):
 
     def test_castle_release_and_stock_inverse_keeps_empty_vault_fix(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        restored, parent = compose.castle_parent(on, self.lock)
-        self.assertEqual([p for p in on if on[p] != restored[p]], [compose.VAULT_SOURCE])
+        parent_on, parent_lock = compose.score_parent(on, self.lock)
+        restored, parent = compose.castle_parent(parent_on, parent_lock)
+        self.assertEqual([p for p in parent_on if parent_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["empty_vault_followup"]["repaired_place"])
         self.assertEqual(compose.identity((self.current / compose.CASTLE_OFF / compose.PLACE).read_bytes()),
                          parent["final_place"])
         root = self.current_copy()
         shutil.copyfile(root / compose.VAULT_OFF_ARCHIVE, root / compose.CASTLE_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_score_rollback_restores_exact_castle_parent_and_rejects_wrong_archive(self):
+        on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        actual, restored = compose.score_parent(on, self.lock)
+        self.assertEqual([name for name in on if on[name] != actual[name]], [compose.SCORE_SOURCE])
+        self.assertEqual(restored["final_place"], self.lock["castle_release_stock_followup"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.SCORE_OFF / compose.PLACE).read_bytes()),
+                         restored["final_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.CASTLE_OFF_ARCHIVE, root / compose.SCORE_OFF_ARCHIVE)
         self.reject_core(root)
 
     def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
@@ -831,6 +844,24 @@ class FinalAdmissionBoundary(unittest.TestCase):
         shutil.copytree(self.native, copied)
         return copied
 
+    def test_score_regressions_reject_stale_score_with_fresh_receipt_hashes(self):
+        copied = self.bot_native_copy()
+        folder = copied / "score_relay"
+        prefix = "EGGRUMBLE_RelayScoreRegression"
+        runner = folder / (prefix + ".luau")
+        on = (self.current / "sources" / compose.SCORE_SOURCE).read_bytes()
+        off = (self.current / compose.SCORE_OFF / "sources" / compose.SCORE_SOURCE).read_bytes()
+        self.assertEqual(runner.read_bytes().count(on), 1)
+        runner.write_bytes(runner.read_bytes().replace(on, off, 1))
+        receipt_path, aggregate_path = folder / "receipt.json", copied / "receipt.json"
+        receipt, aggregate = verify.data(receipt_path), verify.data(aggregate_path)
+        receipt["results"][prefix + ".spec.luau"]["program"] = compose.identity(runner.read_bytes())
+        compose.write_json(receipt_path, receipt)
+        aggregate["score_relay_regressions"] = compose.identity(receipt_path.read_bytes())
+        compose.write_json(aggregate_path, aggregate)
+        with self.assertRaisesRegex(ValueError, "SCORE_VERIFIED_EXACT_PROGRAM_AND_RUN"):
+            verify.verify_native(copied, self.current, self.lock, self.context)
+
     def rebind_mutated_bot_evidence(self, copied, scenario=None):
         # Negative controls refresh enclosing hashes so semantic checks, not a
         # stale outer digest, must reject the deliberately forged copy.
@@ -1271,8 +1302,10 @@ class UnionOfflineContract(unittest.TestCase):
         item = self.lock["item_cleanup_followup"]
         vault = self.lock["empty_vault_followup"]
         castle = self.lock["castle_release_stock_followup"]
-        vault_sources = self.lock["sources"] | {compose.VAULT_SOURCE: castle["parent_host_row"]}
-        item_sources = self.lock["sources"] | {compose.VAULT_SOURCE: vault["parent_host_row"]}
+        score = self.lock["score_relay_followup"]
+        castle_sources = self.lock["sources"] | {compose.SCORE_SOURCE: score["parent_score_row"]}
+        vault_sources = castle_sources | {compose.VAULT_SOURCE: castle["parent_host_row"]}
+        item_sources = castle_sources | {compose.VAULT_SOURCE: vault["parent_host_row"]}
         guardian_sources = item_sources | {compose.ITEM_SOURCE: item["parent_item_row"]}
         self.assertEqual(sum(len(r["forward"]) for r in guardian_sources.values()), 179)
         self.assertEqual([path for path in guardian_sources
@@ -1289,11 +1322,13 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(sum(len(r["forward"]) for r in vault_sources.values()), 187)
         self.assertEqual([path for path in item_sources
                           if item_sources[path] != vault_sources[path]], [compose.VAULT_SOURCE])
-        self.assertEqual(castle["repaired_place"], self.lock["final_place"])
+        self.assertEqual(castle["repaired_place"], score["parent_place"])
+        self.assertEqual(score["repaired_place"], self.lock["final_place"])
         self.assertEqual(len(castle["forward"]), 5)
-        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 190)
+        self.assertEqual(sum(len(r["forward"]) for r in castle_sources.values()), 190)
+        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 191)
         self.assertEqual([path for path in vault_sources
-                          if vault_sources[path] != self.lock["sources"][path]], [compose.VAULT_SOURCE])
+                          if vault_sources[path] != castle_sources[path]], [compose.VAULT_SOURCE])
 
     def test_bot_immutable_template_corpus_and_adapter_drift_rejected(self):
         for name in verify.BOT_INPUTS:

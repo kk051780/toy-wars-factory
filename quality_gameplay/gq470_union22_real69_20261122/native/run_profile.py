@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "72622831c3c6e7990c94e14c1037a85e46a76896431ff73ead6ea6fdf9ebbff0"
+INPUT_LOCK_SHA256 = "279b921048b840d30622a922f5275797d0fe3461672d61c0b198b103fb52a376"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -530,6 +530,45 @@ def run_suite(root, output, binary, lock, suite_name, source_before, binary_pin,
     return receipt
 
 
+def run_score_regressions(root, output, binary, binary_pin, context, profile, compose):
+    source = read(root / compose.SCORE_SOURCE)
+    require(identity(source) == profile["sources"][compose.SCORE_SOURCE]["after"],
+            "SCORE_REGRESSION_SOURCE")
+    repair = profile["score_relay_followup"]
+    required = {
+        "EGGRUMBLE_ScoreBalance.spec.luau": b"EGGRUMBLE_V3_MATCH_RESULTS_NATIVE_PASS assertions=107\n",
+        "EGGRUMBLE_RelayScoreRegression.spec.luau": b"EGGRUMBLE_RELAY_SCORE_NATIVE_REGRESSION_PASS assertions=16\n",
+    }
+    require(set(repair["regression_specs"]) == {"native/" + name for name in required},
+            "SCORE_REGRESSION_SPEC_SET")
+    donor = HERE.parents[2] / compose.SCORE_REGRESSION_DONOR / "native"
+    output.mkdir()
+    results = {}
+    for name, expected in required.items():
+        spec = read(donor / name)
+        require(identity(spec) == repair["regression_specs"]["native/" + name],
+                "SCORE_REGRESSION_SPEC_IDENTITY")
+        prefix = name.split(".")[0]
+        program_path = output / (prefix + ".luau")
+        program = b"local score=(function()\n" + source + b"\nend)()\nlocal spec=(function()\n" + spec
+        program += b"\nend)()\nassert(spec(score))\n"
+        program_path.write_bytes(program)
+        run = subprocess.run([str(binary), str(program_path)], env=clean_environment(),
+                             capture_output=True, timeout=30)
+        (output / (prefix + ".stdout.log")).write_bytes(run.stdout)
+        (output / (prefix + ".stderr.log")).write_bytes(run.stderr)
+        require(run.returncode == 0 and run.stdout == expected.replace(b"\n", os.linesep.encode()) and not run.stderr,
+                "SCORE_REGRESSION_EXACT_VECTOR:" + name)
+        require(identity(read(binary)) == binary_pin and read(program_path) == program
+                and read(donor / name) == spec and read(root / compose.SCORE_SOURCE) == source,
+                "SCORE_REGRESSION_INPUT_DRIFT")
+        results[name] = {"spec": identity(spec), "program": identity(program), "stdout": identity(run.stdout),
+                         "stderr": identity(run.stderr), "exit": run.returncode}
+    write_json(output / "receipt.json", {"source": identity(source), "native": binary_pin,
+                                       "execution_context": context, "results": results})
+    print("score_relay: original 107 + 16 checks PASS in two fresh processes", flush=True)
+
+
 def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, cc, cxx, context):
     lock = load_lock()
     runner_before = read(Path(__file__))
@@ -580,6 +619,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                     "distinct_full_bodies_with_existing_dual28": 30}
                 and len(evidence_snapshot(output / "bot_vault")) == 37, "BOT_COMPLETE_SUPPLEMENT")
         print("bot_vault: 9 scenarios, 13 CASE, 43 CHECK PASS; same fresh F46; 30 distinct server bodies with dual28", flush=True)
+        run_score_regressions(root, output / "score_relay", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -598,7 +638,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 66, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 73, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -612,13 +652,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "suites": {name: identity(read(output / name / "receipt.json")) for name in lock["suites"]},
                    "selected_hud_layout": identity(read(output / "selected_hud_layout/receipt.json")),
                    "bot_vault_supplement": identity(read(output / "bot_vault/receipt.json")),
+                   "score_relay_regressions": identity(read(output / "score_relay/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 13,
-                   "native_evidence_file_count": 67,
+                   "native_process_count": 15,
+                   "native_evidence_file_count": 74,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

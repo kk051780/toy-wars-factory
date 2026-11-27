@@ -2542,8 +2542,8 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 831348,
-    "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
+    "bytes": 832059,
+    "sha256": "8566439a006f4d0193ffd6c415574ed20e17878b31f510b5822b457bab143d9d"
   },
   "followup_repair": {
     "author_contexts": [
@@ -3447,6 +3447,81 @@
     "RUNTIME_UNIFIED": "NO"
   },
   "schema": "GQ470_UNION22_PRODUCTION_PROFILE_V1",
+  "score_relay_followup": {
+    "author_head": "547fd7d56ef0c1e0a688135e789df0f79e0358c6",
+    "contract_url": "https://github.com/kk051780/toy-wars-factory/issues/250#issuecomment-7079854695",
+    "forward": [
+      {
+        "new": "  elseif kind==\"EGG_RELAY\" then\n   local sender=byId[tostring(event.from)]\n   local receiver=byId[tostring(event.to)]\n   local quantity=integer(event.quantity)\n   if sender and receiver and sender~=receiver and quantity==1 then\n    -- No per-egg provenance: donor loses pending stolen claims first.\n    local stolenMoved=math.min(sender.pendingSteals,quantity)\n    sender.pendingSteals-=stolenMoved\n    sender.pendingField=math.max(0,sender.pendingField-(quantity-stolenMoved))\n    -- Recipient gets genuine inventory but NO fabricated self-raid credit.\n    receiver.pendingField+=quantity\n   elseif sender then\n    -- Malformed receipt: fail closed on unresolved raid credit.\n    sender.pendingSteals=0\n   end\n",
+        "new_identity": {
+          "bytes": 711,
+          "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 109,
+        "stop": 109
+      }
+    ],
+    "fragment": {
+      "bytes": 711,
+      "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+    },
+    "inverse": [
+      {
+        "new": "",
+        "new_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "old": "  elseif kind==\"EGG_RELAY\" then\n   local sender=byId[tostring(event.from)]\n   local receiver=byId[tostring(event.to)]\n   local quantity=integer(event.quantity)\n   if sender and receiver and sender~=receiver and quantity==1 then\n    -- No per-egg provenance: donor loses pending stolen claims first.\n    local stolenMoved=math.min(sender.pendingSteals,quantity)\n    sender.pendingSteals-=stolenMoved\n    sender.pendingField=math.max(0,sender.pendingField-(quantity-stolenMoved))\n    -- Recipient gets genuine inventory but NO fabricated self-raid credit.\n    receiver.pendingField+=quantity\n   elseif sender then\n    -- Malformed receipt: fail closed on unresolved raid credit.\n    sender.pendingSteals=0\n   end\n",
+        "old_identity": {
+          "bytes": 711,
+          "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+        },
+        "start": 109,
+        "stop": 124
+      }
+    ],
+    "origin_pr": 1017,
+    "parent_head": "cc6fed686214596eb717cc5827856311338999ad",
+    "parent_place": {
+      "bytes": 831348,
+      "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
+    },
+    "parent_score_row": {
+      "after": {
+        "bytes": 8030,
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      },
+      "before": {
+        "bytes": 8030,
+        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+      },
+      "class": "ModuleScript",
+      "forward": [],
+      "inverse": [],
+      "route": "ServerScriptService/EGGRUMBLE_ScoreBalance"
+    },
+    "regression_specs": {
+      "native/EGGRUMBLE_RelayScoreRegression.spec.luau": {
+        "bytes": 3518,
+        "sha256": "e8b2c88e8d1b29bec7ce148edece60a0da0f410313fbf891fa7b0ea566f56754"
+      },
+      "native/EGGRUMBLE_ScoreBalance.spec.luau": {
+        "bytes": 18694,
+        "sha256": "3ee00c7481f967009198f70afc30fadd7f915a452561bd2e663c15ef9045086c"
+      }
+    },
+    "repaired_place": {
+      "bytes": 832059,
+      "sha256": "8566439a006f4d0193ffd6c415574ed20e17878b31f510b5822b457bab143d9d"
+    },
+    "source_path": "ServerScriptService/EGGRUMBLE_ScoreBalance.luau"
+  },
   "source_count": 69,
   "sources": {
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
@@ -8277,16 +8352,46 @@
     },
     "ServerScriptService/EGGRUMBLE_ScoreBalance.luau": {
       "after": {
-        "bytes": 8030,
-        "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
+        "bytes": 8741,
+        "sha256": "67c76c12cc4d311847fb1cf794988b2f164053690660f6b55f4e590f93824136"
       },
       "before": {
         "bytes": 8030,
         "sha256": "ef0c1bf657ecf9fb8883036b114e0a19bb6def86b46dec1b6f8b11ccb94662a9"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "  elseif kind==\"EGG_RELAY\" then\n   local sender=byId[tostring(event.from)]\n   local receiver=byId[tostring(event.to)]\n   local quantity=integer(event.quantity)\n   if sender and receiver and sender~=receiver and quantity==1 then\n    -- No per-egg provenance: donor loses pending stolen claims first.\n    local stolenMoved=math.min(sender.pendingSteals,quantity)\n    sender.pendingSteals-=stolenMoved\n    sender.pendingField=math.max(0,sender.pendingField-(quantity-stolenMoved))\n    -- Recipient gets genuine inventory but NO fabricated self-raid credit.\n    receiver.pendingField+=quantity\n   elseif sender then\n    -- Malformed receipt: fail closed on unresolved raid credit.\n    sender.pendingSteals=0\n   end\n",
+          "new_identity": {
+            "bytes": 711,
+            "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 109,
+          "stop": 109
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  elseif kind==\"EGG_RELAY\" then\n   local sender=byId[tostring(event.from)]\n   local receiver=byId[tostring(event.to)]\n   local quantity=integer(event.quantity)\n   if sender and receiver and sender~=receiver and quantity==1 then\n    -- No per-egg provenance: donor loses pending stolen claims first.\n    local stolenMoved=math.min(sender.pendingSteals,quantity)\n    sender.pendingSteals-=stolenMoved\n    sender.pendingField=math.max(0,sender.pendingField-(quantity-stolenMoved))\n    -- Recipient gets genuine inventory but NO fabricated self-raid credit.\n    receiver.pendingField+=quantity\n   elseif sender then\n    -- Malformed receipt: fail closed on unresolved raid credit.\n    sender.pendingSteals=0\n   end\n",
+          "old_identity": {
+            "bytes": 711,
+            "sha256": "acf5c2d1bea91b1387251fd0de3c4cdc132fa42a818e8df1c8b366789381a55b"
+          },
+          "start": 109,
+          "stop": 124
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_ScoreBalance"
     },
     "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
