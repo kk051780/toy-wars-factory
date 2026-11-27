@@ -33071,6 +33071,199 @@
           ]
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-VISUAL-READABILITY-1003-925-926-20261127",
+      "feature_id": "GQ470_FB001_FB008_FB015_FB016_VISUAL_READABILITY",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, existing #1003 reused)",
+      "parent_issue": 470,
+      "art_gate_issue": 420,
+      "integration_issue": 220,
+      "base_rc_sha": "fb87f9f23d0a136da048804cef307a865483f133",
+      "base_rc_tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+      "pr": 1003,
+      "prep_branch": "quality/gq470-art17-neutral-subject-20261121-a01",
+      "expected_source_branch": "0768a879173cb6cfa7cb1d4ab00b55bdd9abb09e",
+      "allowed_new_prs": 0,
+      "source_scope_granted": true,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Existing neutral NPC subject label and damaged-bar policy from #1003; smaller lobby names and roof from #925; exact existing verified Wedge LocalScript for #926 FB016 in place of the older authored AABB. Preserve #1003 full original author ancestry and leave #925/#926 transport untouched. Only three runtime leaves and canonical locks/tests, no new authority. #929/#943 already adopted.",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+        "REAL69_SOURCE_GQ8_LOBBYSOCIALPLAZA",
+        "REAL69_SOURCE_EGGRUMBLE_ARTDISTANCELOD",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "GQ470_FB001_FB008_FB015_FB016_VISUAL_READABILITY"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_art16_p0_lobby_composite_20261121/neutral_name_visibility_fix.py",
+        "quality_gameplay/gq470_social_plaza_art_real69_20261120/patch_social_art69.py",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/foliage_native_cases.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/foliage_readability.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-7059635245",
+      "source_donors": [
+        {
+          "pr": 1003,
+          "head": "0768a879173cb6cfa7cb1d4ab00b55bdd9abb09e",
+          "bytes": [
+            38973,
+            39288
+          ]
+        },
+        {
+          "pr": 925,
+          "head": "a997fb5fc7ec6b7a40afa4c67667c6875483f00d",
+          "bytes": [
+            12930,
+            13848
+          ]
+        },
+        {
+          "pr": 926,
+          "head": "c8406ba5cdb195f700dfa171669f65a2ccefb3ff",
+          "bytes": [
+            7937,
+            10210
+          ],
+          "selected_wedge": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd"
+        }
+      ],
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "7f3401cc-1caa-449b-ad3e-3253fba8cf76",
+      "issued_at": "2026-11-27T05:18:06.370Z",
+      "expires_at": "2026-11-27T07:18:06.370Z",
+      "actual_metadata_lease": {
+        "ref": "7de587c1d77dad11a864577ae19759fbe93b2d40",
+        "blob": "330f264f2ab4d2318a7eafda988fa4de1b5b7728",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "7f3401cc-1caa-449b-ad3e-3253fba8cf76",
+          "task_id": null,
+          "epoch": 834,
+          "acquired_at": "2026-11-27T05:17:42.698Z",
+          "expires_at": "2026-11-27T05:47:42.698Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated OWNER #1011 V2.2 delegated reuse, #218 scoped nonoverlap, old draft source parent preserved. No RC authority or self-review.",
+      "source_grant": {
+        "status": "ONE_EXACT_NONFORCE_UPDATE_EXISTING_PR",
+        "pr": 1003,
+        "branch": "quality/gq470-art17-neutral-subject-20261121-a01",
+        "branch_expected_before": "0768a879173cb6cfa7cb1d4ab00b55bdd9abb09e",
+        "formal_parent": "fb87f9f23d0a136da048804cef307a865483f133",
+        "author_parent": "0768a879173cb6cfa7cb1d4ab00b55bdd9abb09e",
+        "tree": "748dbb66db9d4fd55fed3eb6fa74359aaf2adb17",
+        "local_head": "b1e628f04f43c2fab2e2b5c42d77be6991d64dcc",
+        "expected_pr_base": "quality/gq470-art16-p0-lobby-composite-20261121-a01",
+        "permitted_retarget": "rc/p0d-s1-kids-rc01",
+        "maximum_new_prs": 0,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_art16_p0_lobby_composite_20261121/neutral_name_visibility_fix.py",
+            "mode": "100644",
+            "blob": "fd73112a51f6ac27c7ac65233d1ce853de2d17b3",
+            "bytes": 6575
+          },
+          {
+            "path": "quality_gameplay/gq470_social_plaza_art_real69_20261120/patch_social_art69.py",
+            "mode": "100644",
+            "blob": "daa7940970c3deb1c9b676705066743592626093",
+            "bytes": 8451
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "c573041cfcedae42d2771517d0a8e16ce62e0d36",
+            "bytes": 51420
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "736d9172f4ffa0f4237455792754b8b85b8c2dad",
+            "bytes": 34939
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/foliage_native_cases.py",
+            "mode": "100644",
+            "blob": "6f9797a3a6dc963358eb198d70f93c6599ba8723",
+            "bytes": 18926
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/foliage_readability.py",
+            "mode": "100644",
+            "blob": "7601c75e7867aee1f8aebac184fe8312cfa0818f",
+            "bytes": 3338
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "1d98a7bcebc116840ce742fae55aa1a644506216",
+            "bytes": 16592
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "dc25aa191a6d79b886533efd7c9b75a79afdf848",
+            "bytes": 48459
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "bcc000b469ee9aa40dbbddb7c84fecea6e53601f",
+            "bytes": 879133
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "ff263b8b6fd0399c461a561cf5cb222300241662",
+            "bytes": 119814
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "9a25345eb8817d9a5e1d658f35b42bf4dee5b838",
+            "bytes": 99950
+          }
+        ],
+        "local_qa": {
+          "compile": 156,
+          "rojo": 15,
+          "older_rollbacks": 13,
+          "octet_exact_immediate_off": true,
+          "native_foliage": 14,
+          "neutral_author_negatives": 11,
+          "plaza_author_negatives": 6,
+          "boundary_tests": 5,
+          "place_bytes": 852755,
+          "place_sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+        },
+        "expires_at": "2026-11-27T06:13:06.370Z",
+        "issued_from": {
+          "lease": "7de587c1d77dad11a864577ae19759fbe93b2d40",
+          "owner": "7f3401cc-1caa-449b-ad3e-3253fba8cf76"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
