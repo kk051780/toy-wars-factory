@@ -37200,7 +37200,7 @@
     {
       "claim_id": "P0D-GQ910-ACTIVE-RESULTS-391-20261127",
       "feature_id": "GQ910_ACTIVE_RESULTS_RETURN_391",
-      "state": "SOURCE_WIP",
+      "state": "RC_INTEGRATED",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, bounded reuse of original #391)",
       "parent_issue": 910,
@@ -37450,7 +37450,7 @@
         "operation_id": "39f2ac05-fba5-43d7-a6fc-eb2070f6de9e"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
         "permitted_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
@@ -37463,7 +37463,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -37481,7 +37481,34 @@
           "review": 6088740925,
           "trusted_queue_run": 46006300394,
           "trusted_queue_job": 140530188505
-        }
+        },
+        "writer_acquire_ref": "c797788026991960cdf30cfefc8099fcdae07ab7",
+        "writer_return_ref": "fda7a190296683081e1f31c1fe9469cfa4a018cf",
+        "exact_adoption_readback_at": "2026-11-27T13:22:41.142Z"
+      },
+      "actual_official_rc": {
+        "head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
+        "previous": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "active_ci": 46006587976,
+        "active_job": 140531163747,
+        "active_success_steps": 107,
+        "active_conditional_skip": 14,
+        "active_artifact": 15201172632,
+        "active_zip_bytes": 177151,
+        "active_zip_digest": "sha256:d7e165dea36bb7cb9ee3b0970d40de798b18c6133676bddefce483585d1d5309",
+        "active_place_bytes": 610358,
+        "active_place_sha256": "b8d81c3fcc19d712a71882f274ea94f894479e5adffdb6ac68eee7d940511813",
+        "active_off_place_bytes": 608571,
+        "private_ci": 46006588013,
+        "private_job": 140531163336,
+        "private_steps": 48,
+        "private_artifact": 15202033226,
+        "private_zip_bytes": 25129847,
+        "private_zip_digest": "sha256:a6a373446a94d375be7d30daf48aea39400e7e32bb99ffb9549809c559c1eb4e",
+        "independent_context": "/root/p0_offer_review26",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7219609255",
+        "device_evidence": "NOT_TESTED_V3.5"
       }
     },
     {
@@ -37543,7 +37570,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 397,
         "branch": "feature/p0d-prep-solo-roster-path-20261114",
         "old_pr_head": "e6b9b002fd343451f6af475709ad38bf2d3fac62",
@@ -37604,6 +37631,61 @@
           "native_hud": true,
           "native_results_preserved": true
         }
+      },
+      "source_head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+      "prepared_candidate_head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+      "prepared_candidate_tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "1232ad0a6f78ff299a4596a26a1195b336fce144",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 207708
+        },
+        {
+          "mode": "100644",
+          "blob": "1efd8e82ff4a682607010691d42c0990262404b6",
+          "path": "rc_fastlane/apply_active_mode_start.py",
+          "bytes": 3006
+        },
+        {
+          "mode": "100644",
+          "blob": "ff8cbf40efbdb1f0fb27dedbcc626845e6b56757",
+          "path": "rc_fastlane/features/active_mode_start/mode_vote.json",
+          "bytes": 8729
+        },
+        {
+          "mode": "100644",
+          "blob": "d6b4c87c429b3f9e25392cdccb0e2f22ce11cfb4",
+          "path": "rc_fastlane/features/active_mode_start/source_lock.json",
+          "bytes": 600
+        },
+        {
+          "mode": "100644",
+          "blob": "639c4a247dccaf84971245f4d2e8736a2baee9b9",
+          "path": "rc_fastlane/verify_active_mode_start_native.py",
+          "bytes": 8984
+        },
+        {
+          "mode": "100644",
+          "blob": "22a4c2f5ff6cd8f1e0ef8983bafa8cc791cf750b",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 110045
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 397,
+        "exact_head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "exact_tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+        "exact_parent": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "preserved_author_parent": "e6b9b002fd343451f6af475709ad38bf2d3fac62",
+        "source_lease": "fd337dab332b5137b74eaeb6df16179e17f659f5",
+        "source_lease_return": "d7d5cba4e219e6f2d458e8ecd4b68945dec6457c",
+        "prepared_at": "2026-11-27T13:36:20.968Z"
+      },
+      "actual_binding_lease": {
+        "commit": "11e8cd8fc7df4f8112b40f763863e7cd2e0c59b7",
+        "operation_id": "ada24c5d-196e-4413-9f7a-4c58a4989752"
       }
     }
   ],
