@@ -34,13 +34,19 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 67, "final": 21}
+INTEGRATION_COUNTS = {"core": 68, "final": 21}
+
+
+def restore_canyon(on, lock):
+    return compose.br_canyon_parent(*compose.role_readability_parent(on, lock))
 
 
 def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["role_readability_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["br_canyon_followup"]["rows"].items()
         } | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"],
                                       compose.ITEM_SOURCE: lock["item_cleanup_followup"]["parent_item_row"],
@@ -188,7 +194,7 @@ class UnionBoundary(unittest.TestCase):
     def test_beast_only_inverse_restores_actual_h72_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
         vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(
-            *compose.br_canyon_parent(on, self.lock))))
+            *restore_canyon(on, self.lock))))
         item_on, item_lock = compose.vault_parent(vault_on, vault_lock)
         guardian_on, guardian_lock = compose.item_parent(item_on, item_lock)
         final, beast = compose.guardian_parent(guardian_on, guardian_lock)
@@ -207,7 +213,7 @@ class UnionBoundary(unittest.TestCase):
     def test_item_cleanup_only_inverse_restores_exact_guardian_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
         vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(
-            *compose.br_canyon_parent(on, self.lock))))
+            *restore_canyon(on, self.lock))))
         item_ready, item_lock = compose.vault_parent(vault_on, vault_lock)
         restored, parent_lock = compose.item_parent(item_ready, item_lock)
         self.assertEqual([p for p in item_ready if item_ready[p] != restored[p]], [compose.ITEM_SOURCE])
@@ -218,7 +224,7 @@ class UnionBoundary(unittest.TestCase):
     def test_empty_vault_inverse_keeps_item_and_rejects_wrong_archive(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
         vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(
-            *compose.br_canyon_parent(on, self.lock))))
+            *restore_canyon(on, self.lock))))
         restored, parent = compose.vault_parent(vault_on, vault_lock)
         self.assertEqual([p for p in vault_on if vault_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["item_cleanup_followup"]["repaired_place"])
@@ -230,7 +236,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_castle_release_and_stock_inverse_keeps_empty_vault_fix(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        parent_on, parent_lock = compose.score_parent(*compose.relay_presentation_parent(*compose.br_canyon_parent(on, self.lock)))
+        parent_on, parent_lock = compose.score_parent(*compose.relay_presentation_parent(*restore_canyon(on, self.lock)))
         restored, parent = compose.castle_parent(parent_on, parent_lock)
         self.assertEqual([p for p in parent_on if parent_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["empty_vault_followup"]["repaired_place"])
@@ -242,7 +248,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_score_rollback_restores_exact_castle_parent_and_rejects_wrong_archive(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        parent, lock = compose.relay_presentation_parent(*compose.br_canyon_parent(on, self.lock))
+        parent, lock = compose.relay_presentation_parent(*restore_canyon(on, self.lock))
         actual, restored = compose.score_parent(parent, lock)
         self.assertEqual([name for name in parent if parent[name] != actual[name]], [compose.SCORE_SOURCE])
         self.assertEqual(restored["final_place"], self.lock["castle_release_stock_followup"]["repaired_place"])
@@ -254,7 +260,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_relay_presentation_off_restores_both_routes_and_rejects_previous_archive(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        on, post_relay = compose.br_canyon_parent(on, self.lock)
+        on, post_relay = restore_canyon(on, self.lock)
         prior, lock = compose.relay_presentation_parent(on, post_relay)
         self.assertEqual({name for name in on if on[name] != prior[name]},set(compose.RELAY_PRESENTATION_SOURCES))
         self.assertEqual(lock["final_place"],self.lock["score_relay_followup"]["repaired_place"])
@@ -266,7 +272,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_br_canyon_restores_exact_relay_parent_and_rejects_stale_pair(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        prior, lock = compose.br_canyon_parent(on, self.lock)
+        on, post_canyon = compose.role_readability_parent(on, self.lock)
+        prior, lock = compose.br_canyon_parent(on, post_canyon)
         self.assertEqual({name for name in on if on[name] != prior[name]}, set(compose.BR_CANYON_SOURCES))
         self.assertEqual(lock["final_place"], self.lock["relay_presentation_followup"]["repaired_place"])
         self.assertEqual(compose.identity((self.current / compose.BR_CANYON_OFF / compose.PLACE).read_bytes()),
@@ -275,6 +282,17 @@ class UnionBoundary(unittest.TestCase):
             native.br_canyon_program(self.current / compose.BR_CANYON_OFF / "sources", self.lock, compose)
         root = self.current_copy()
         shutil.copyfile(root / compose.RELAY_PRESENTATION_OFF_ARCHIVE, root / compose.BR_CANYON_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_role_readability_parity_and_wrong_rollback_rejected(self):
+        on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        restored, lock = compose.role_readability_parent(on, self.lock)
+        self.assertEqual({name for name in on if on[name] != restored[name]}, set(compose.ROLE_READABILITY_SOURCES))
+        self.assertEqual(lock["final_place"], self.lock["br_canyon_followup"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.ROLE_READABILITY_OFF / compose.PLACE).read_bytes()),
+                         lock["final_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.BR_CANYON_OFF_ARCHIVE, root / compose.ROLE_READABILITY_OFF_ARCHIVE)
         self.reject_core(root)
 
     def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
@@ -560,7 +578,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 162:
+            if calls == 165:
                 stage = Path(command[-1]).parent.parent
                 path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
                         else (prior if target == "input" else stage) / "sources" / self.first)
@@ -569,7 +587,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 162)
+        self.assertEqual(calls, 165)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
@@ -1356,7 +1374,9 @@ class UnionOfflineContract(unittest.TestCase):
         score = self.lock["score_relay_followup"]
         relay = self.lock["relay_presentation_followup"]
         canyon = self.lock["br_canyon_followup"]
-        relay_sources = self.lock["sources"] | {name: row["parent"] for name, row in canyon["rows"].items()}
+        role = self.lock["role_readability_followup"]
+        canyon_sources = self.lock["sources"] | {name: row["parent"] for name, row in role["rows"].items()}
+        relay_sources = canyon_sources | {name: row["parent"] for name, row in canyon["rows"].items()}
         score_sources = relay_sources | {name: row["parent"] for name,row in relay["rows"].items()}
         castle_sources = score_sources | {compose.SCORE_SOURCE: score["parent_score_row"]}
         vault_sources = castle_sources | {compose.VAULT_SOURCE: castle["parent_host_row"]}
@@ -1380,7 +1400,8 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(castle["repaired_place"], score["parent_place"])
         self.assertEqual(score["repaired_place"], relay["parent_place"])
         self.assertEqual(relay["repaired_place"], canyon["parent_place"])
-        self.assertEqual(canyon["repaired_place"], self.lock["final_place"])
+        self.assertEqual(canyon["repaired_place"], role["parent_place"])
+        self.assertEqual(role["repaired_place"], self.lock["final_place"])
         self.assertEqual(len(castle["forward"]), 5)
         self.assertEqual(sum(len(r["forward"]) for r in castle_sources.values()), 190)
         self.assertEqual(sum(len(r["forward"]) for r in score_sources.values()), 191)

@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "13c78f40eb8a362d57ab8a8b0f4ef2a0896a44e2c68de078d52b7d9e520b6603"
+INPUT_LOCK_SHA256 = "220c545d13b436ac5b3f90a07d1c58e555f6bc44872b7e49481728fce0d34928"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -721,6 +721,11 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         run_score_regressions(root, output / "score_relay", binary, pin, context, compose.load_lock(), compose)
         run_relay_presentation(root, output / "relay_presentation", binary, pin, context, compose.load_lock(), compose)
         run_br_canyon(root, output / "br_canyon", binary, pin, context, compose.load_lock(), compose)
+        from role_readability_native import run as run_role_readability
+        role_compiler = Path(core["commands"][0]["command"][0])
+        require(identity(read(role_compiler)) == core["compiler"], "ROLE_READABILITY_COMPILER")
+        run_role_readability(root, output / "role_readability", binary, role_compiler, source,
+                             pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -739,7 +744,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 81, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 92, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -756,13 +761,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "score_relay_regressions": identity(read(output / "score_relay/receipt.json")),
                    "relay_presentation": identity(read(output / "relay_presentation/receipt.json")),
                    "br_canyon": identity(read(output / "br_canyon/receipt.json")),
+                   "role_readability": identity(read(output / "role_readability/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 17,
-                   "native_evidence_file_count": 82,
+                   "native_process_count": 19,
+                   "native_evidence_file_count": 93,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

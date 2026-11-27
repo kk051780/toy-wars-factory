@@ -3109,8 +3109,8 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 842354,
-    "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+    "bytes": 848891,
+    "sha256": "ab621dff32fe89b61e8b1c54164f0b74f0802667bc2f73fe3adcd3bb23523b8a"
   },
   "followup_repair": {
     "author_contexts": [
@@ -5233,6 +5233,876 @@
     "bytes": 21002120,
     "sha256": "cb997ef82543670e51f2114898950bcabf9911efc3bf44f798524833e0e47f6e",
     "version": "7.7.1"
+  },
+  "role_readability_followup": {
+    "archived_author_workflow": {
+      "head": "78a1296b400db9221d9cb4cda298acb02e51d5d1",
+      "historical_expected_rc": "93a1147561a531610ac1609ebc68cc0ecf546623",
+      "identity": {
+        "bytes": 6289,
+        "sha256": "60d824d549b17bb4ba1f81dca608ab2895cf33be212b9c5a1ac9575838018471"
+      },
+      "path": ".github/workflows/gq470-role-motion-real69-prep.yml"
+    },
+    "motion_original_head": "78a1296b400db9221d9cb4cda298acb02e51d5d1",
+    "motion_reference": {
+      "bytes": 8662,
+      "sha256": "1856594a79d2e7ab7d4f6ac386c9379a45a8647a4168f65354246e888428bffb"
+    },
+    "motion_reference_hunks": [
+      {
+        "new": "local characterListeners:{[number]:RBXScriptConnection}={}\n",
+        "new_identity": {
+          "bytes": 59,
+          "sha256": "26ea677933eec46f312b7bd46b55f19d4f3668010b5d1777c34e81461f6dfd8b"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 13,
+        "stop": 13
+      },
+      {
+        "new": " characterListeners[uid]=p.CharacterRemoving:Connect(function(character)\n",
+        "new_identity": {
+          "bytes": 73,
+          "sha256": "7df4b94908525dd42fb03be210106aadb2f35cfaf6194cca59a70c8fb8fc8f2d"
+        },
+        "old": " p.CharacterRemoving:Connect(function(character)\n",
+        "old_identity": {
+          "bytes": 49,
+          "sha256": "77aef5eb06d29085b25415d7fd152e36ccb1466b6a8aaec3f840c7bc4da2fc86"
+        },
+        "start": 89,
+        "stop": 90
+      },
+      {
+        "new": " local characterListener=characterListeners[uid]\n if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end\n",
+        "new_identity": {
+          "bytes": 139,
+          "sha256": "4126a899292bf8cac2d4ecb8c2401918602bfd4bf80004cdf107cb5a7205c9c6"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 100,
+        "stop": 100
+      },
+      {
+        "new": "-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.\n-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery\n-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.\n-- Normalized time is server-cast-driven; no server damage/skill timing changes.\nlocal function smoothstep(t:number):number\n local x=math.clamp(t,0,1)\n return x*x*(3-2*x)\nend\nlocal function motionProfile(t:number,slot:string):(number,number)\n local u=math.clamp(t,0,1)\n -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.\n -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).\n -- Longer B/C skills keep their previous pacing without changing server timing.\n local strikeEnd=(slot==\"A\") and .36 or .42\n local holdEnd=(slot==\"A\") and .62 or .54\n if u<.18 then\n  return -.20*smoothstep(u/.18),0\n elseif u<strikeEnd then\n  local strike=smoothstep((u-.18)/(strikeEnd-.18))\n  return -.20+1.20*strike,strike\n elseif u<holdEnd then\n  return 1,1\n else\n  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))\n  return recover,recover\n end\nend\n",
+        "new_identity": {
+          "bytes": 1126,
+          "sha256": "c7edbad2d361089880af837ece2f84cff03de4375651a8a73abb2a1940434433"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 107,
+        "stop": 107
+      },
+      {
+        "new": " local pulse,snap=motionProfile(t,slot)\n",
+        "new_identity": {
+          "bytes": 40,
+          "sha256": "b589fac27443a59ed0c98410dca9171e6e2c9ab1dabcfde28b93b70e6fae1966"
+        },
+        "old": " local pulse=math.sin(math.pi*math.clamp(t,0,1))\n local snap=math.sin(math.pi*math.min(1,t*1.8))\n",
+        "old_identity": {
+          "bytes": 97,
+          "sha256": "be0dc2fe7219553faf94fb623e8c793f5ef5896d708eaa80081ee8f89a0ac5c7"
+        },
+        "start": 108,
+        "stop": 110
+      },
+      {
+        "new": "  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)\n  if role==\"MAGE\" or role==\"ZOMBIE\" then\n   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)\n  elseif role==\"BUILDER\" then\n   waist=waist*CFrame.Angles(0,-.14*snap,0)\n  end\n",
+        "new_identity": {
+          "bytes": 222,
+          "sha256": "0330e28c3ea38e9fba5c852fcca538e79953cdf0345b30cee2fefcec86ec42ca"
+        },
+        "old": "  right=right*CFrame.Angles(-.25*pulse,0,0)\n",
+        "old_identity": {
+          "bytes": 44,
+          "sha256": "c376fac36fb4c5c1470b9021256127162d9b40f6f87886f03070c67e9be81559"
+        },
+        "start": 138,
+        "stop": 139
+      },
+      {
+        "new": "  if role==\"WARRIOR\" then\n   waist=waist*CFrame.Angles(0,-.19*snap,0)\n  elseif role==\"NINJA\" then\n   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)\n  elseif role==\"BEAST\" then\n   left=left*CFrame.Angles(-.12*snap,0,.14*snap)\n  elseif role==\"TRAPPER\" then\n   waist=waist*CFrame.Angles(-.10*snap,0,0)\n  end\n",
+        "new_identity": {
+          "bytes": 305,
+          "sha256": "8a32fc0d75b0faeebe49f7887f248fb22cb46c347b933913e8d3df8309a1f4fe"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 142,
+        "stop": 142
+      },
+      {
+        "new": "  else\n   -- Distance cull must unpose the avatar, not freeze an old swing in view.\n   resetPose(record)\n   active[uid]=nil\n",
+        "new_identity": {
+          "bytes": 124,
+          "sha256": "58305166fa38bd18307007162bc43b9049301320ddc9da6cfcef10a9d345e594"
+        },
+        "old": "",
+        "old_identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "start": 168,
+        "stop": 168
+      }
+    ],
+    "original_motion_files": {
+      "quality_gameplay/gq470_role_motion_real69_20261121/README.md": {
+        "bytes": 9157,
+        "sha256": "5da5f529d889e3d68a732d5196745214e615002b5838229f6c72f7151d53eb99"
+      },
+      "quality_gameplay/gq470_role_motion_real69_20261121/ROLE_MOTION_REAL69.patch": {
+        "bytes": 8398,
+        "sha256": "7073fe8432e8fba1b28a7f797997466aed3e157a929a9dcb0b0aa62e95ccd28f"
+      },
+      "quality_gameplay/gq470_role_motion_real69_20261121/gate.py": {
+        "bytes": 19466,
+        "sha256": "4c552924934ff7a07c0f52beb653ede995b373199bb0cc0d43e9dcd266cce5c2"
+      },
+      "quality_gameplay/gq470_role_motion_real69_20261121/source_lock.json": {
+        "bytes": 15668,
+        "sha256": "3c654848cbabd9cf7129ca6dc3dae9cc9efedc2efa6f2480297553767ea8b8fb"
+      },
+      "quality_gameplay/gq470_role_motion_real69_20261121/test_native_cast_wiring.py": {
+        "bytes": 33447,
+        "sha256": "696e8381d6db0b20d8525b0358b76a923618dc1106dda96a91c2380d9031734a"
+      },
+      "quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py": {
+        "bytes": 4211,
+        "sha256": "74040ccd0062e7b506700a135d549718eff49ca97192bd23a345e6507d167930"
+      }
+    },
+    "original_motion_patch": {
+      "bytes": 8398,
+      "sha256": "7073fe8432e8fba1b28a7f797997466aed3e157a929a9dcb0b0aa62e95ccd28f"
+    },
+    "parent_head": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+    "parent_place": {
+      "bytes": 842354,
+      "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+    },
+    "repaired_place": {
+      "bytes": 848891,
+      "sha256": "ab621dff32fe89b61e8b1c54164f0b74f0802667bc2f73fe3adcd3bb23523b8a"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
+        "forward": [
+          {
+            "new": "-- GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120\n-- Shape diversity without new visual parts, lights, meshes or gameplay owners.\nlocal TAPERED_WEAPONS={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,\n -- Distinct matte faceted tips for staffs, psi fins and rail barrels.\n PrismProngLeft=true,PrismProngRight=true,\n PsiOrbitLeft=true,PsiOrbitRight=true,\n RailGunBarrelLeft=true,RailGunBarrelRight=true,\n SoulProngLeft=true,SoulProngRight=true,\n}\n-- Keep the taper visible from the avatar's front for vertical silhouettes.\n-- Mirrored pairs slope toward opposite sides. Rail barrels retain depth taper.\nlocal QUARTER_TURN=math.pi/2\nlocal FRONT_TAPER_YAW={\n OdachiBlade=-QUARTER_TURN,\n TwinDaggerNear=QUARTER_TURN,TwinDaggerFar=-QUARTER_TURN,\n TamingHorn=QUARTER_TURN,BeastClawLeft=-QUARTER_TURN,BeastClawRight=QUARTER_TURN,\n PrismProngLeft=-QUARTER_TURN,PrismProngRight=QUARTER_TURN,\n PsiOrbitLeft=-QUARTER_TURN,PsiOrbitRight=QUARTER_TURN,\n SoulProngLeft=-QUARTER_TURN,SoulProngRight=QUARTER_TURN,\n}\nlocal DOWNWARD_TIP={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n BeastClawLeft=true,BeastClawRight=true,\n}\n",
+            "new_identity": {
+              "bytes": 1195,
+              "sha256": "952c39ff50b6263c76ae133bab52067499bec1aa019658fc28d7b8c2a974b41e"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 15,
+            "stop": 15
+          },
+          {
+            "new": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart\n local p:BasePart\n if TAPERED_WEAPONS[name] then\n  p=Instance.new(\"WedgePart\")\n else\n  local block=Instance.new(\"Part\")\n  block.Shape=shape or Enum.PartType.Block\n  p=block\n end\n local yaw=FRONT_TAPER_YAW[name]\n if yaw then\n  size=Vector3.new(size.Z,size.Y,size.X)\n  offset=offset*CFrame.Angles(0,yaw,0)\n  if DOWNWARD_TIP[name] then\n   offset=offset*CFrame.Angles(math.pi,0,0)\n  end\n end\n",
+            "new_identity": {
+              "bytes": 483,
+              "sha256": "7fb402029abc9880e60332c0e568a36422c9d99fcb1d496e9842c49e64e4fd08"
+            },
+            "old": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):Part\n local p=Instance.new(\"Part\")\n",
+            "old_identity": {
+              "bytes": 121,
+              "sha256": "1386c4ac2992e466d8ca3de8c362331bc6f5f4daf61c26502a2bd0847351387f"
+            },
+            "start": 16,
+            "stop": 18
+          },
+          {
+            "new": " p.Reflectance=if material==Enum.Material.Metal then .08 else 0\n p.Transparency=if material==Enum.Material.Neon then .32 else 0\n",
+            "new_identity": {
+              "bytes": 128,
+              "sha256": "03e9d9240064a1c23702078cc640a5efa6d69a555bddffb8d369097d8ffe0440"
+            },
+            "old": " p.Shape=shape or Enum.PartType.Block\n",
+            "old_identity": {
+              "bytes": 38,
+              "sha256": "7ea5262396ab8cdc1c74fd515a250b9c9f3fc99817aec337e1101a11da88771b"
+            },
+            "start": 19,
+            "stop": 20
+          },
+          {
+            "new": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,false)\n",
+            "new_identity": {
+              "bytes": 82,
+              "sha256": "1f85ab63c8df39044522937753c665d9afb9ad5b0d974ced4303e98a4ecba194"
+            },
+            "old": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,true)\n",
+            "old_identity": {
+              "bytes": 81,
+              "sha256": "e6b322d07d1c36e44a4e2d7437cdaf49c835518952cf27904062b012bbd4eedf"
+            },
+            "start": 57,
+            "stop": 58
+          },
+          {
+            "new": "  piece(\"WarGodCrest\",Vector3.new(.65,.16,.65),CFrame.new(0,-1.45,-.35),b,false,Enum.PartType.Cylinder)\n",
+            "new_identity": {
+              "bytes": 104,
+              "sha256": "112beaaf419da55840e6d6c0d69ea7131b077b080d8658eba78dd55fbbcedb80"
+            },
+            "old": "  piece(\"WarGodCrest\",Vector3.new(.65,.64,.22),CFrame.new(0,-1.45,-.35),b,true,Enum.PartType.Ball)\n",
+            "old_identity": {
+              "bytes": 99,
+              "sha256": "8da3026a6a02cc8399bfd76514078e1242eea3399196c35876e067a983b8fd69"
+            },
+            "start": 60,
+            "stop": 61
+          },
+          {
+            "new": "  piece(\"PrismHeart\",Vector3.new(.88,1.3,.88),CFrame.new(0,.75,-.3)*CFrame.Angles(0,0,.55),b,true,Enum.PartType.Cylinder)\n",
+            "new_identity": {
+              "bytes": 122,
+              "sha256": "96d6f2807e59581f33e079c9ef194ecc445f726814dc481bbeb87e00e0e7732f"
+            },
+            "old": "  piece(\"PrismHeart\",Vector3.new(1.2,1.2,1.2),CFrame.new(0,.75,-.3),b,true,Enum.PartType.Ball)\n",
+            "old_identity": {
+              "bytes": 95,
+              "sha256": "41a291e0031deba94a49bb88e800041b2fc29969a8d24b6b6c61d7eab7fb97ca"
+            },
+            "start": 63,
+            "stop": 64
+          },
+          {
+            "new": "  piece(\"PsiCore\",Vector3.new(.75,1.1,.75),CFrame.new(0,.85,-.35)*CFrame.Angles(0,0,.45),b,true,Enum.PartType.Cylinder)\n",
+            "new_identity": {
+              "bytes": 120,
+              "sha256": "dd3c4aad2787993e64ada2a9cb054b1083b6c9a38d5abff93fc4977f7628ab7b"
+            },
+            "old": "  piece(\"PsiCore\",Vector3.new(.95,.95,.95),CFrame.new(0,.85,-.35),b,true,Enum.PartType.Ball)\n",
+            "old_identity": {
+              "bytes": 93,
+              "sha256": "b2a0a1cd73fa958fe727dbf49803ee56f6d73bfbde49ece1be45df3c5dea7d48"
+            },
+            "start": 74,
+            "stop": 75
+          },
+          {
+            "new": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,false)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,false)\n",
+            "new_identity": {
+              "bytes": 174,
+              "sha256": "ece1a58c4bb5b7ddc514112fb09ce32f540e092811be7c44e4dbd3fd1905b065"
+            },
+            "old": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,true)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,true)\n",
+            "old_identity": {
+              "bytes": 172,
+              "sha256": "9c56fb697ad96b1064b91c2c1098bedac330e0d4414740c51eff4a9fbcd086bc"
+            },
+            "start": 79,
+            "stop": 81
+          },
+          {
+            "new": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,false)\n",
+            "new_identity": {
+              "bytes": 75,
+              "sha256": "e5a0129a49c42aaa97326aa9c7e3c0e7162ae821a3af9aa2892831b671357192"
+            },
+            "old": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,true)\n",
+            "old_identity": {
+              "bytes": 74,
+              "sha256": "cd6a4ced931cb27e5d08f3ac7c57555df1abbb83610b8f545eec86fc526f9e01"
+            },
+            "start": 85,
+            "stop": 86
+          },
+          {
+            "new": "  piece(\"SoulCage\",Vector3.new(1.0,1.3,1.0),CFrame.new(0,.6,-.4)*CFrame.Angles(0,0,.4),b,true,Enum.PartType.Cylinder)\n",
+            "new_identity": {
+              "bytes": 118,
+              "sha256": "788a6eef364305c6fb711674a935ce61b564ed9433fec140f09ae05ec472b2fb"
+            },
+            "old": "  piece(\"SoulCage\",Vector3.new(1.25,1.25,1.25),CFrame.new(0,.6,-.4),b,true,Enum.PartType.Ball)\n",
+            "old_identity": {
+              "bytes": 95,
+              "sha256": "995129adc2bab7c79dc72c6ae02f17b897c686f73b1be6e30bb1786da8e4b573"
+            },
+            "start": 90,
+            "stop": 91
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120\n-- Shape diversity without new visual parts, lights, meshes or gameplay owners.\nlocal TAPERED_WEAPONS={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,\n -- Distinct matte faceted tips for staffs, psi fins and rail barrels.\n PrismProngLeft=true,PrismProngRight=true,\n PsiOrbitLeft=true,PsiOrbitRight=true,\n RailGunBarrelLeft=true,RailGunBarrelRight=true,\n SoulProngLeft=true,SoulProngRight=true,\n}\n-- Keep the taper visible from the avatar's front for vertical silhouettes.\n-- Mirrored pairs slope toward opposite sides. Rail barrels retain depth taper.\nlocal QUARTER_TURN=math.pi/2\nlocal FRONT_TAPER_YAW={\n OdachiBlade=-QUARTER_TURN,\n TwinDaggerNear=QUARTER_TURN,TwinDaggerFar=-QUARTER_TURN,\n TamingHorn=QUARTER_TURN,BeastClawLeft=-QUARTER_TURN,BeastClawRight=QUARTER_TURN,\n PrismProngLeft=-QUARTER_TURN,PrismProngRight=QUARTER_TURN,\n PsiOrbitLeft=-QUARTER_TURN,PsiOrbitRight=QUARTER_TURN,\n SoulProngLeft=-QUARTER_TURN,SoulProngRight=QUARTER_TURN,\n}\nlocal DOWNWARD_TIP={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n BeastClawLeft=true,BeastClawRight=true,\n}\n",
+            "old_identity": {
+              "bytes": 1195,
+              "sha256": "952c39ff50b6263c76ae133bab52067499bec1aa019658fc28d7b8c2a974b41e"
+            },
+            "start": 15,
+            "stop": 41
+          },
+          {
+            "new": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):Part\n local p=Instance.new(\"Part\")\n",
+            "new_identity": {
+              "bytes": 121,
+              "sha256": "1386c4ac2992e466d8ca3de8c362331bc6f5f4daf61c26502a2bd0847351387f"
+            },
+            "old": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart\n local p:BasePart\n if TAPERED_WEAPONS[name] then\n  p=Instance.new(\"WedgePart\")\n else\n  local block=Instance.new(\"Part\")\n  block.Shape=shape or Enum.PartType.Block\n  p=block\n end\n local yaw=FRONT_TAPER_YAW[name]\n if yaw then\n  size=Vector3.new(size.Z,size.Y,size.X)\n  offset=offset*CFrame.Angles(0,yaw,0)\n  if DOWNWARD_TIP[name] then\n   offset=offset*CFrame.Angles(math.pi,0,0)\n  end\n end\n",
+            "old_identity": {
+              "bytes": 483,
+              "sha256": "7fb402029abc9880e60332c0e568a36422c9d99fcb1d496e9842c49e64e4fd08"
+            },
+            "start": 42,
+            "stop": 59
+          },
+          {
+            "new": " p.Shape=shape or Enum.PartType.Block\n",
+            "new_identity": {
+              "bytes": 38,
+              "sha256": "7ea5262396ab8cdc1c74fd515a250b9c9f3fc99817aec337e1101a11da88771b"
+            },
+            "old": " p.Reflectance=if material==Enum.Material.Metal then .08 else 0\n p.Transparency=if material==Enum.Material.Neon then .32 else 0\n",
+            "old_identity": {
+              "bytes": 128,
+              "sha256": "03e9d9240064a1c23702078cc640a5efa6d69a555bddffb8d369097d8ffe0440"
+            },
+            "start": 60,
+            "stop": 62
+          },
+          {
+            "new": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,true)\n",
+            "new_identity": {
+              "bytes": 81,
+              "sha256": "e6b322d07d1c36e44a4e2d7437cdaf49c835518952cf27904062b012bbd4eedf"
+            },
+            "old": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,false)\n",
+            "old_identity": {
+              "bytes": 82,
+              "sha256": "1f85ab63c8df39044522937753c665d9afb9ad5b0d974ced4303e98a4ecba194"
+            },
+            "start": 99,
+            "stop": 100
+          },
+          {
+            "new": "  piece(\"WarGodCrest\",Vector3.new(.65,.64,.22),CFrame.new(0,-1.45,-.35),b,true,Enum.PartType.Ball)\n",
+            "new_identity": {
+              "bytes": 99,
+              "sha256": "8da3026a6a02cc8399bfd76514078e1242eea3399196c35876e067a983b8fd69"
+            },
+            "old": "  piece(\"WarGodCrest\",Vector3.new(.65,.16,.65),CFrame.new(0,-1.45,-.35),b,false,Enum.PartType.Cylinder)\n",
+            "old_identity": {
+              "bytes": 104,
+              "sha256": "112beaaf419da55840e6d6c0d69ea7131b077b080d8658eba78dd55fbbcedb80"
+            },
+            "start": 102,
+            "stop": 103
+          },
+          {
+            "new": "  piece(\"PrismHeart\",Vector3.new(1.2,1.2,1.2),CFrame.new(0,.75,-.3),b,true,Enum.PartType.Ball)\n",
+            "new_identity": {
+              "bytes": 95,
+              "sha256": "41a291e0031deba94a49bb88e800041b2fc29969a8d24b6b6c61d7eab7fb97ca"
+            },
+            "old": "  piece(\"PrismHeart\",Vector3.new(.88,1.3,.88),CFrame.new(0,.75,-.3)*CFrame.Angles(0,0,.55),b,true,Enum.PartType.Cylinder)\n",
+            "old_identity": {
+              "bytes": 122,
+              "sha256": "96d6f2807e59581f33e079c9ef194ecc445f726814dc481bbeb87e00e0e7732f"
+            },
+            "start": 105,
+            "stop": 106
+          },
+          {
+            "new": "  piece(\"PsiCore\",Vector3.new(.95,.95,.95),CFrame.new(0,.85,-.35),b,true,Enum.PartType.Ball)\n",
+            "new_identity": {
+              "bytes": 93,
+              "sha256": "b2a0a1cd73fa958fe727dbf49803ee56f6d73bfbde49ece1be45df3c5dea7d48"
+            },
+            "old": "  piece(\"PsiCore\",Vector3.new(.75,1.1,.75),CFrame.new(0,.85,-.35)*CFrame.Angles(0,0,.45),b,true,Enum.PartType.Cylinder)\n",
+            "old_identity": {
+              "bytes": 120,
+              "sha256": "dd3c4aad2787993e64ada2a9cb054b1083b6c9a38d5abff93fc4977f7628ab7b"
+            },
+            "start": 116,
+            "stop": 117
+          },
+          {
+            "new": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,true)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,true)\n",
+            "new_identity": {
+              "bytes": 172,
+              "sha256": "9c56fb697ad96b1064b91c2c1098bedac330e0d4414740c51eff4a9fbcd086bc"
+            },
+            "old": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,false)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,false)\n",
+            "old_identity": {
+              "bytes": 174,
+              "sha256": "ece1a58c4bb5b7ddc514112fb09ce32f540e092811be7c44e4dbd3fd1905b065"
+            },
+            "start": 121,
+            "stop": 123
+          },
+          {
+            "new": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,true)\n",
+            "new_identity": {
+              "bytes": 74,
+              "sha256": "cd6a4ced931cb27e5d08f3ac7c57555df1abbb83610b8f545eec86fc526f9e01"
+            },
+            "old": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,false)\n",
+            "old_identity": {
+              "bytes": 75,
+              "sha256": "e5a0129a49c42aaa97326aa9c7e3c0e7162ae821a3af9aa2892831b671357192"
+            },
+            "start": 127,
+            "stop": 128
+          },
+          {
+            "new": "  piece(\"SoulCage\",Vector3.new(1.25,1.25,1.25),CFrame.new(0,.6,-.4),b,true,Enum.PartType.Ball)\n",
+            "new_identity": {
+              "bytes": 95,
+              "sha256": "995129adc2bab7c79dc72c6ae02f17b897c686f73b1be6e30bb1786da8e4b573"
+            },
+            "old": "  piece(\"SoulCage\",Vector3.new(1.0,1.3,1.0),CFrame.new(0,.6,-.4)*CFrame.Angles(0,0,.4),b,true,Enum.PartType.Cylinder)\n",
+            "old_identity": {
+              "bytes": 118,
+              "sha256": "788a6eef364305c6fb711674a935ce61b564ed9433fec140f09ae05ec472b2fb"
+            },
+            "start": 132,
+            "stop": 133
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 5814,
+            "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+          },
+          "before": {
+            "bytes": 5814,
+            "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+          },
+          "class": "ModuleScript",
+          "forward": [],
+          "inverse": [],
+          "route": "ServerScriptService/EGGRUMBLE_WeaponSilhouettes"
+        }
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
+        "forward": [
+          {
+            "new": "local characterListeners:{[number]:RBXScriptConnection}={}\n",
+            "new_identity": {
+              "bytes": 59,
+              "sha256": "26ea677933eec46f312b7bd46b55f19d4f3668010b5d1777c34e81461f6dfd8b"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 13,
+            "stop": 13
+          },
+          {
+            "new": "-- BASIC has its own server-owned serial; never synthesize a skill signature.\n-- Per-character observer tokens invalidate already queued local callbacks.\n-- The numeric attribute has no server character/match epoch: this is not proof\n-- against arbitrary old network values arriving after a new character binds.\nlocal basicObservers:{[number]:any}={}\nlocal BASIC_ROLES={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,\n BUILDER=true,BEAST=true,ZOMBIE=true}\nlocal function basicSerial(player:Player):number?\n local value=player:GetAttribute(\"EGGRUMBLE_BasicCastSerial\")\n if type(value)~=\"number\" or value~=value or value<=0\n  or value==math.huge or value%1~=0 then return nil end\n return value\nend\nlocal function startCast(player:Player,role:string,slot:string,origin:string)\n local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local previous=active[player.UserId]\n if origin==\"BASIC\" and previous and previous.origin==\"SKILL\"\n  and previous.char==c and os.clock()-previous.start<previous.duration then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),origin=origin,\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\nend\n",
+            "new_identity": {
+              "bytes": 1483,
+              "sha256": "d7a4e34f89481b13a7f627e397e4cb9c9c02545435af499a281ecfac08ffd330"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 62,
+            "stop": 62
+          },
+          {
+            "new": " startCast(player,role,slot,\"SKILL\")\nend\nlocal function watchBasic(player:Player)\n local uid=player.UserId\n local binding:any={player=player,sequence=0}\n basicObservers[uid]=binding\n local function bind(character:Model?)\n  if basicObservers[uid]~=binding then return end\n  if binding.changed then binding.changed:Disconnect() end\n  local token={}\n  binding.token=token;binding.character=character\n  -- A present serial is a baseline, including on respawn; do not replay it.\n  binding.sequence=basicSerial(player) or 0\n  binding.changed=player:GetAttributeChangedSignal(\"EGGRUMBLE_BasicCastSerial\"):Connect(function()\n   if basicObservers[uid]~=binding or binding.token~=token\n    or player.Parent~=Players then return end\n   local serial=basicSerial(player)\n   if not serial or serial<=binding.sequence then return end\n   binding.sequence=serial -- consume drops as well as displayed attacks\n   local c=player.Character\n   if not c or c~=character or not c.Parent then return end\n   local role=player:GetAttribute(\"EGGRUMBLE_Role\")\n   if type(role)~=\"string\" or not BASIC_ROLES[role] then return end\n   startCast(player,role,\"A\",\"BASIC\")\n  end)\n end\n binding.added=player.CharacterAdded:Connect(function(character)\n  if basicObservers[uid]==binding and player.Character==character then bind(character) end\n end)\n binding.bind=bind\n bind(player.Character)\nend\nlocal function removeBasicCharacter(player:Player,character:Model)\n local binding=basicObservers[player.UserId]\n if binding and binding.player==player and binding.character==character then binding.bind(nil) end\nend\nlocal function unwatchBasic(player:Player)\n local binding=basicObservers[player.UserId]\n if not binding or binding.player~=player then return end\n basicObservers[player.UserId]=nil;binding.token=nil\n if binding.changed then binding.changed:Disconnect() end\n binding.added:Disconnect()\n",
+            "new_identity": {
+              "bytes": 1859,
+              "sha256": "bbd82eb64379da12817f300b862144d1ac57b29ec7dad342f4cd4820a233bd25"
+            },
+            "old": " local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\n",
+            "old_identity": {
+              "bytes": 504,
+              "sha256": "c9dce1b19e5d615732dbade63f8fef676b151b08d112ce82df3ed72f6aa6be29"
+            },
+            "start": 70,
+            "stop": 82
+          },
+          {
+            "new": " characterListeners[uid]=p.CharacterRemoving:Connect(function(character)\n",
+            "new_identity": {
+              "bytes": 73,
+              "sha256": "7df4b94908525dd42fb03be210106aadb2f35cfaf6194cca59a70c8fb8fc8f2d"
+            },
+            "old": " p.CharacterRemoving:Connect(function(character)\n",
+            "old_identity": {
+              "bytes": 49,
+              "sha256": "77aef5eb06d29085b25415d7fd152e36ccb1466b6a8aaec3f840c7bc4da2fc86"
+            },
+            "start": 89,
+            "stop": 90
+          },
+          {
+            "new": "  removeBasicCharacter(p,character)\n",
+            "new_identity": {
+              "bytes": 36,
+              "sha256": "0edb56f7516dc3e026d5086bf7510118d6668ead8407116b6007e0b3ee72b9b9"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 94,
+            "stop": 94
+          },
+          {
+            "new": " watchBasic(p)\n",
+            "new_identity": {
+              "bytes": 15,
+              "sha256": "7a229fc9f8a1b30378a8a38a948a86e43a7fe0a82ef8e3f56653b2cb5e69f98a"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 95,
+            "stop": 95
+          },
+          {
+            "new": " local characterListener=characterListeners[uid]\n if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end\n",
+            "new_identity": {
+              "bytes": 139,
+              "sha256": "4126a899292bf8cac2d4ecb8c2401918602bfd4bf80004cdf107cb5a7205c9c6"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 100,
+            "stop": 100
+          },
+          {
+            "new": " unwatchBasic(p)\n",
+            "new_identity": {
+              "bytes": 17,
+              "sha256": "20d4eaa7712eaff57c5f7ec7bdd2caab4d5d1e044fdc51d8739b69153f08cc8e"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 103,
+            "stop": 103
+          },
+          {
+            "new": "-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.\n-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery\n-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.\n-- Normalized time is server-cast-driven; no server damage/skill timing changes.\nlocal function smoothstep(t:number):number\n local x=math.clamp(t,0,1)\n return x*x*(3-2*x)\nend\nlocal function motionProfile(t:number,slot:string):(number,number)\n local u=math.clamp(t,0,1)\n -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.\n -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).\n -- Longer B/C skills keep their previous pacing without changing server timing.\n local strikeEnd=(slot==\"A\") and .36 or .42\n local holdEnd=(slot==\"A\") and .62 or .54\n if u<.18 then\n  return -.20*smoothstep(u/.18),0\n elseif u<strikeEnd then\n  local strike=smoothstep((u-.18)/(strikeEnd-.18))\n  return -.20+1.20*strike,strike\n elseif u<holdEnd then\n  return 1,1\n else\n  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))\n  return recover,recover\n end\nend\n",
+            "new_identity": {
+              "bytes": 1126,
+              "sha256": "c7edbad2d361089880af837ece2f84cff03de4375651a8a73abb2a1940434433"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 107,
+            "stop": 107
+          },
+          {
+            "new": " local pulse,snap=motionProfile(t,slot)\n",
+            "new_identity": {
+              "bytes": 40,
+              "sha256": "b589fac27443a59ed0c98410dca9171e6e2c9ab1dabcfde28b93b70e6fae1966"
+            },
+            "old": " local pulse=math.sin(math.pi*math.clamp(t,0,1))\n local snap=math.sin(math.pi*math.min(1,t*1.8))\n",
+            "old_identity": {
+              "bytes": 97,
+              "sha256": "be0dc2fe7219553faf94fb623e8c793f5ef5896d708eaa80081ee8f89a0ac5c7"
+            },
+            "start": 108,
+            "stop": 110
+          },
+          {
+            "new": "  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)\n  if role==\"MAGE\" or role==\"ZOMBIE\" then\n   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)\n  elseif role==\"BUILDER\" then\n   waist=waist*CFrame.Angles(0,-.14*snap,0)\n  end\n",
+            "new_identity": {
+              "bytes": 222,
+              "sha256": "0330e28c3ea38e9fba5c852fcca538e79953cdf0345b30cee2fefcec86ec42ca"
+            },
+            "old": "  right=right*CFrame.Angles(-.25*pulse,0,0)\n",
+            "old_identity": {
+              "bytes": 44,
+              "sha256": "c376fac36fb4c5c1470b9021256127162d9b40f6f87886f03070c67e9be81559"
+            },
+            "start": 138,
+            "stop": 139
+          },
+          {
+            "new": "  if role==\"WARRIOR\" then\n   waist=waist*CFrame.Angles(0,-.19*snap,0)\n  elseif role==\"NINJA\" then\n   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)\n  elseif role==\"BEAST\" then\n   left=left*CFrame.Angles(-.12*snap,0,.14*snap)\n  elseif role==\"TRAPPER\" then\n   waist=waist*CFrame.Angles(-.10*snap,0,0)\n  end\n",
+            "new_identity": {
+              "bytes": 305,
+              "sha256": "8a32fc0d75b0faeebe49f7887f248fb22cb46c347b933913e8d3df8309a1f4fe"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 142,
+            "stop": 142
+          },
+          {
+            "new": "  else\n   -- Distance cull must unpose the avatar, not freeze an old swing in view.\n   resetPose(record)\n   active[uid]=nil\n",
+            "new_identity": {
+              "bytes": 124,
+              "sha256": "58305166fa38bd18307007162bc43b9049301320ddc9da6cfcef10a9d345e594"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 168,
+            "stop": 168
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "local characterListeners:{[number]:RBXScriptConnection}={}\n",
+            "old_identity": {
+              "bytes": 59,
+              "sha256": "26ea677933eec46f312b7bd46b55f19d4f3668010b5d1777c34e81461f6dfd8b"
+            },
+            "start": 13,
+            "stop": 14
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- BASIC has its own server-owned serial; never synthesize a skill signature.\n-- Per-character observer tokens invalidate already queued local callbacks.\n-- The numeric attribute has no server character/match epoch: this is not proof\n-- against arbitrary old network values arriving after a new character binds.\nlocal basicObservers:{[number]:any}={}\nlocal BASIC_ROLES={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,\n BUILDER=true,BEAST=true,ZOMBIE=true}\nlocal function basicSerial(player:Player):number?\n local value=player:GetAttribute(\"EGGRUMBLE_BasicCastSerial\")\n if type(value)~=\"number\" or value~=value or value<=0\n  or value==math.huge or value%1~=0 then return nil end\n return value\nend\nlocal function startCast(player:Player,role:string,slot:string,origin:string)\n local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local previous=active[player.UserId]\n if origin==\"BASIC\" and previous and previous.origin==\"SKILL\"\n  and previous.char==c and os.clock()-previous.start<previous.duration then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),origin=origin,\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\nend\n",
+            "old_identity": {
+              "bytes": 1483,
+              "sha256": "d7a4e34f89481b13a7f627e397e4cb9c9c02545435af499a281ecfac08ffd330"
+            },
+            "start": 63,
+            "stop": 93
+          },
+          {
+            "new": " local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\n",
+            "new_identity": {
+              "bytes": 504,
+              "sha256": "c9dce1b19e5d615732dbade63f8fef676b151b08d112ce82df3ed72f6aa6be29"
+            },
+            "old": " startCast(player,role,slot,\"SKILL\")\nend\nlocal function watchBasic(player:Player)\n local uid=player.UserId\n local binding:any={player=player,sequence=0}\n basicObservers[uid]=binding\n local function bind(character:Model?)\n  if basicObservers[uid]~=binding then return end\n  if binding.changed then binding.changed:Disconnect() end\n  local token={}\n  binding.token=token;binding.character=character\n  -- A present serial is a baseline, including on respawn; do not replay it.\n  binding.sequence=basicSerial(player) or 0\n  binding.changed=player:GetAttributeChangedSignal(\"EGGRUMBLE_BasicCastSerial\"):Connect(function()\n   if basicObservers[uid]~=binding or binding.token~=token\n    or player.Parent~=Players then return end\n   local serial=basicSerial(player)\n   if not serial or serial<=binding.sequence then return end\n   binding.sequence=serial -- consume drops as well as displayed attacks\n   local c=player.Character\n   if not c or c~=character or not c.Parent then return end\n   local role=player:GetAttribute(\"EGGRUMBLE_Role\")\n   if type(role)~=\"string\" or not BASIC_ROLES[role] then return end\n   startCast(player,role,\"A\",\"BASIC\")\n  end)\n end\n binding.added=player.CharacterAdded:Connect(function(character)\n  if basicObservers[uid]==binding and player.Character==character then bind(character) end\n end)\n binding.bind=bind\n bind(player.Character)\nend\nlocal function removeBasicCharacter(player:Player,character:Model)\n local binding=basicObservers[player.UserId]\n if binding and binding.player==player and binding.character==character then binding.bind(nil) end\nend\nlocal function unwatchBasic(player:Player)\n local binding=basicObservers[player.UserId]\n if not binding or binding.player~=player then return end\n basicObservers[player.UserId]=nil;binding.token=nil\n if binding.changed then binding.changed:Disconnect() end\n binding.added:Disconnect()\n",
+            "old_identity": {
+              "bytes": 1859,
+              "sha256": "bbd82eb64379da12817f300b862144d1ac57b29ec7dad342f4cd4820a233bd25"
+            },
+            "start": 101,
+            "stop": 143
+          },
+          {
+            "new": " p.CharacterRemoving:Connect(function(character)\n",
+            "new_identity": {
+              "bytes": 49,
+              "sha256": "77aef5eb06d29085b25415d7fd152e36ccb1466b6a8aaec3f840c7bc4da2fc86"
+            },
+            "old": " characterListeners[uid]=p.CharacterRemoving:Connect(function(character)\n",
+            "old_identity": {
+              "bytes": 73,
+              "sha256": "7df4b94908525dd42fb03be210106aadb2f35cfaf6194cca59a70c8fb8fc8f2d"
+            },
+            "start": 150,
+            "stop": 151
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  removeBasicCharacter(p,character)\n",
+            "old_identity": {
+              "bytes": 36,
+              "sha256": "0edb56f7516dc3e026d5086bf7510118d6668ead8407116b6007e0b3ee72b9b9"
+            },
+            "start": 155,
+            "stop": 156
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " watchBasic(p)\n",
+            "old_identity": {
+              "bytes": 15,
+              "sha256": "7a229fc9f8a1b30378a8a38a948a86e43a7fe0a82ef8e3f56653b2cb5e69f98a"
+            },
+            "start": 157,
+            "stop": 158
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " local characterListener=characterListeners[uid]\n if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end\n",
+            "old_identity": {
+              "bytes": 139,
+              "sha256": "4126a899292bf8cac2d4ecb8c2401918602bfd4bf80004cdf107cb5a7205c9c6"
+            },
+            "start": 163,
+            "stop": 165
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " unwatchBasic(p)\n",
+            "old_identity": {
+              "bytes": 17,
+              "sha256": "20d4eaa7712eaff57c5f7ec7bdd2caab4d5d1e044fdc51d8739b69153f08cc8e"
+            },
+            "start": 168,
+            "stop": 169
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.\n-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery\n-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.\n-- Normalized time is server-cast-driven; no server damage/skill timing changes.\nlocal function smoothstep(t:number):number\n local x=math.clamp(t,0,1)\n return x*x*(3-2*x)\nend\nlocal function motionProfile(t:number,slot:string):(number,number)\n local u=math.clamp(t,0,1)\n -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.\n -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).\n -- Longer B/C skills keep their previous pacing without changing server timing.\n local strikeEnd=(slot==\"A\") and .36 or .42\n local holdEnd=(slot==\"A\") and .62 or .54\n if u<.18 then\n  return -.20*smoothstep(u/.18),0\n elseif u<strikeEnd then\n  local strike=smoothstep((u-.18)/(strikeEnd-.18))\n  return -.20+1.20*strike,strike\n elseif u<holdEnd then\n  return 1,1\n else\n  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))\n  return recover,recover\n end\nend\n",
+            "old_identity": {
+              "bytes": 1126,
+              "sha256": "c7edbad2d361089880af837ece2f84cff03de4375651a8a73abb2a1940434433"
+            },
+            "start": 173,
+            "stop": 200
+          },
+          {
+            "new": " local pulse=math.sin(math.pi*math.clamp(t,0,1))\n local snap=math.sin(math.pi*math.min(1,t*1.8))\n",
+            "new_identity": {
+              "bytes": 97,
+              "sha256": "be0dc2fe7219553faf94fb623e8c793f5ef5896d708eaa80081ee8f89a0ac5c7"
+            },
+            "old": " local pulse,snap=motionProfile(t,slot)\n",
+            "old_identity": {
+              "bytes": 40,
+              "sha256": "b589fac27443a59ed0c98410dca9171e6e2c9ab1dabcfde28b93b70e6fae1966"
+            },
+            "start": 201,
+            "stop": 202
+          },
+          {
+            "new": "  right=right*CFrame.Angles(-.25*pulse,0,0)\n",
+            "new_identity": {
+              "bytes": 44,
+              "sha256": "c376fac36fb4c5c1470b9021256127162d9b40f6f87886f03070c67e9be81559"
+            },
+            "old": "  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)\n  if role==\"MAGE\" or role==\"ZOMBIE\" then\n   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)\n  elseif role==\"BUILDER\" then\n   waist=waist*CFrame.Angles(0,-.14*snap,0)\n  end\n",
+            "old_identity": {
+              "bytes": 222,
+              "sha256": "0330e28c3ea38e9fba5c852fcca538e79953cdf0345b30cee2fefcec86ec42ca"
+            },
+            "start": 230,
+            "stop": 236
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  if role==\"WARRIOR\" then\n   waist=waist*CFrame.Angles(0,-.19*snap,0)\n  elseif role==\"NINJA\" then\n   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)\n  elseif role==\"BEAST\" then\n   left=left*CFrame.Angles(-.12*snap,0,.14*snap)\n  elseif role==\"TRAPPER\" then\n   waist=waist*CFrame.Angles(-.10*snap,0,0)\n  end\n",
+            "old_identity": {
+              "bytes": 305,
+              "sha256": "8a32fc0d75b0faeebe49f7887f248fb22cb46c347b933913e8d3df8309a1f4fe"
+            },
+            "start": 239,
+            "stop": 248
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  else\n   -- Distance cull must unpose the avatar, not freeze an old swing in view.\n   resetPose(record)\n   active[uid]=nil\n",
+            "old_identity": {
+              "bytes": 124,
+              "sha256": "58305166fa38bd18307007162bc43b9049301320ddc9da6cfcef10a9d345e594"
+            },
+            "start": 274,
+            "stop": 278
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 6764,
+            "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+          },
+          "before": {
+            "bytes": 6764,
+            "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+          },
+          "class": "LocalScript",
+          "forward": [],
+          "inverse": [],
+          "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills"
+        }
+      }
+    },
+    "weapon_fixture": "local function vec(x, y, z)\n    return {X = x, Y = y, Z = z}\nend\nlocal function matrixProduct(a, b)\n    local result = {}\n    for row = 0, 2 do\n        for col = 1, 3 do\n            result[row * 3 + col] = a[row * 3 + 1] * b[col]\n                + a[row * 3 + 2] * b[3 + col] + a[row * 3 + 3] * b[6 + col]\n        end\n    end\n    return result\nend\nlocal identity = {1, 0, 0, 0, 1, 0, 0, 0, 1}\nlocal function transform(a, p)\n    return vec(a[1]*p.X+a[2]*p.Y+a[3]*p.Z, a[4]*p.X+a[5]*p.Y+a[6]*p.Z, a[7]*p.X+a[8]*p.Y+a[9]*p.Z)\nend\nlocal frameMethods = {}\nlocal function frame(p, r)\n    return setmetatable({p = p, r = r}, frameMethods)\nend\nframeMethods.__mul = function(a, b)\n    local p = transform(a.r, b.p)\n    return frame(vec(a.p.X+p.X, a.p.Y+p.Y, a.p.Z+p.Z), matrixProduct(a.r,b.r))\nend\nlocal function angles(x, y, z)\n    local cx, sx = math.cos(x), math.sin(x)\n    local cy, sy = math.cos(y), math.sin(y)\n    local cz, sz = math.cos(z), math.sin(z)\n    local rx = {1,0,0,0,cx,-sx,0,sx,cx}\n    local ry = {cy,0,sy,0,1,0,-sy,0,cy}\n    local rz = {cz,-sz,0,sz,cz,0,0,0,1}\n    return frame(vec(0,0,0), matrixProduct(matrixProduct(rx,ry),rz))\nend\nlocal function instance(kind)\n    local object = {Name = kind, ClassName = kind, children = {}, attrs = {}}\n    function object:IsA(class)\n        return class==kind or (class==\"BasePart\" and (kind==\"Part\" or kind==\"WedgePart\"))\n    end\n    function object:FindFirstChild(name)\n        for _, child in ipairs(self.children) do\n            if child.Name==name and child.Parent==self then return child end\n        end\n        return nil\n    end\n    function object:Destroy()\n        for _, child in ipairs(self.children) do child:Destroy() end\n        self.Parent = false\n    end\n    function object:SetAttribute(name, value)\n        self.attrs[name] = value\n    end\n    return setmetatable(object, {__newindex = function(self, key, value)\n        if key==\"Parent\" and value then table.insert(value.children, self) end\n        rawset(self, key, value)\n    end})\nend\nlocal env = setmetatable({\n    CFrame = {\n        new = function(x,y,z) return frame(vec(x,y,z),identity) end,\n        Angles = angles,\n    },\n    Vector3 = {new = vec},\n    Color3 = {fromRGB = function(r,g,b) return {r,g,b} end},\n    Enum = {Material = {Metal = \"Metal\", Neon = \"Neon\"}, PartType = {Block = \"Block\", Cylinder = \"Cylinder\"}},\n    Instance = {new = instance},\n}, {__index = getfenv()})\nlocal roleCases = {\n    {\"WARRIOR\",5}, {\"MAGE\",4}, {\"NINJA\",5}, {\"TRAPPER\",4}, {\"BUILDER\",5}, {\"BEAST\",4}, {\"ZOMBIE\",5},\n}\nlocal function scan(version, source)\n    local evaluated = assert(loadstring(source))\n    setfenv(evaluated,env)\n    local weapons = evaluated()\n    local total = 0\n    for _, case in ipairs(roleCases) do\n        local role,num = case[1],case[2]\n        local character = instance(\"Model\")\n        local grip = instance(\"Part\")\n        grip.Name = \"RightHand\"\n        grip.CFrame = frame(vec(0,0,0),identity)\n        grip.Parent = character\n        local player = {Character = character}\n        assert(weapons.attach(player,role))\n        local first = assert(character:FindFirstChild(\"EGGRUMBLE_ClassWeapon\"))\n        assert(not weapons.attach(player,\"UNKNOWN\") and first.Parent==character)\n        grip.Name = \"Right Arm\"\n        assert(weapons.attach(player,role))\n        assert(first.Parent==false)\n        local selected = assert(character:FindFirstChild(\"EGGRUMBLE_ClassWeapon\"))\n        assert(selected.attrs.Role==role and selected.attrs.VisualParts==num and #selected.children==num)\n        for _, item in ipairs(selected.children) do\n            local weld = assert(item:FindFirstChild(\"EGGRUMBLE_SafeGrip\"))\n            assert(weld.ClassName==\"WeldConstraint\" and weld.Part0==grip and weld.Part1==item)\n            assert(not item.Anchored and not item.CanCollide and not item.CanTouch and not item.CanQuery and not item.CastShadow)\n            assert(item.Massless and item.Parent==selected)\n            local p,s,r = item.CFrame.p,item.Size,item.CFrame.r\n            local row = {version,role,item.Name,item.ClassName,item.Shape or \"Wedge\",item.Material,\n                         item.Transparency or 0,item.Reflectance or 0,p.X,p.Y,p.Z,s.X,s.Y,s.Z}\n            for _, value in ipairs(item.Color) do table.insert(row,value) end\n            for _, value in ipairs(r) do table.insert(row,value) end\n            print(table.concat(row,\"\\t\"))\n            total+=1\n        end\n        weapons.clear(player)\n        assert(not character:FindFirstChild(\"EGGRUMBLE_ClassWeapon\"))\n    end\n    assert(total==32)\nend\n",
+    "weapon_fixture_pin": {
+      "bytes": 4554,
+      "sha256": "7dec358aa9c1b3de2143ad495575f8fbddbd878564f79fe4cca34183b7680995"
+    },
+    "weapon_native_output": {
+      "bytes": 13439,
+      "sha256": "0c4f2be1d86d8c37f54cab6b4416be2061ff3f9df243d7f43c11817e1ec1e8c9"
+    },
+    "weapon_original_head": "ff8dfac569dab8d55da438641c2546d7fb6e384f",
+    "weapon_previous": "--!strict\n-- EGGRUMBLE V3 7 distinctive low-part in-hand hero weapon models.\n-- Server-replicated visual-only, no weapon combat authority or collisions.\n-- Placeholder geometry until art team supplies original premium rigs and animations.\nlocal Weapons={}\nlocal PART_BUDGET_PER_AVATAR=8\nlocal CONFIG={\n WARRIOR={base=Color3.fromRGB(212,197,168),accent=Color3.fromRGB(255,199,66)},\n MAGE={base=Color3.fromRGB(100,147,201),accent=Color3.fromRGB(101,226,255)},\n NINJA={base=Color3.fromRGB(60,62,89),accent=Color3.fromRGB(179,113,250)},\n TRAPPER={base=Color3.fromRGB(94,72,135),accent=Color3.fromRGB(223,102,255)},\n BUILDER={base=Color3.fromRGB(54,93,112),accent=Color3.fromRGB(91,247,216)},\n BEAST={base=Color3.fromRGB(128,88,50),accent=Color3.fromRGB(255,174,68)},\n ZOMBIE={base=Color3.fromRGB(80,65,102),accent=Color3.fromRGB(143,232,134)},\n}\n-- GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120\n-- Shape diversity without new visual parts, lights, meshes or gameplay owners.\nlocal TAPERED_WEAPONS={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,\n -- Distinct matte faceted tips for staffs, psi fins and rail barrels.\n PrismProngLeft=true,PrismProngRight=true,\n PsiOrbitLeft=true,PsiOrbitRight=true,\n RailGunBarrelLeft=true,RailGunBarrelRight=true,\n SoulProngLeft=true,SoulProngRight=true,\n}\nlocal function part(root:Model,grip:BasePart,name:string,\n size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart\n local p:BasePart\n if TAPERED_WEAPONS[name] then\n  p=Instance.new(\"WedgePart\")\n else\n  local block=Instance.new(\"Part\")\n  block.Shape=shape or Enum.PartType.Block\n  p=block\n end\n p.Name=name;p.Size=size;p.Color=color;p.Material=material\n p.Reflectance=if material==Enum.Material.Metal then .08 else 0\n p.Transparency=if material==Enum.Material.Neon then .32 else 0\n p.Anchored=false;p.Massless=true;p.CanCollide=false;p.CanTouch=false;p.CanQuery=false\n p.CastShadow=false;p.CFrame=grip.CFrame*offset;p.Parent=root\n local weld=Instance.new(\"WeldConstraint\")\n weld.Name=\"EGGRUMBLE_SafeGrip\";weld.Part0=grip;weld.Part1=p;weld.Parent=p\n return p\nend\nlocal function add(root:Model,grip:BasePart,name:string,size:Vector3,\n offset:CFrame,color:Color3,glow:boolean,shape:Enum.PartType?)\n return part(root,grip,name,size,offset,color,\n  if glow then Enum.Material.Neon else Enum.Material.Metal,shape)\nend\nfunction Weapons.clear(player:Player)\n local char=player.Character\n if not char then return end\n local old=char:FindFirstChild(\"EGGRUMBLE_ClassWeapon\")\n if old then old:Destroy() end\nend\nfunction Weapons.attach(player:Player,role:string):boolean\n local char=player.Character\n if not char then return false end\n local hand=char:FindFirstChild(\"RightHand\") or char:FindFirstChild(\"Right Arm\")\n if not hand or not hand:IsA(\"BasePart\") then return false end\n local cfg=CONFIG[role]\n if not cfg then return false end\n Weapons.clear(player)\n local model=Instance.new(\"Model\");model.Name=\"EGGRUMBLE_ClassWeapon\"\n model:SetAttribute(\"Role\",role);model.Parent=char\n local a=cfg.base;local b=cfg.accent\n local count=0\n local function piece(name:string,size:Vector3,off:CFrame,color:Color3,glow:boolean,shape:Enum.PartType?)\n  if count>=PART_BUDGET_PER_AVATAR then return end\n  count+=1\n  add(model,hand,name,size,off,color,glow,shape)\n end\n if role==\"WARRIOR\" then\n  -- Oversized general's odachi, gold guard, red oath mark.\n  piece(\"OdachiGrip\",Vector3.new(.24,1.9,.28),CFrame.new(0,-.7,-.35),a,false)\n  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,false)\n  piece(\"OdachiBlade\",Vector3.new(.38,4.5,.17),CFrame.new(0,-3.87,-.35),a,false)\n  piece(\"OdachiGoldEdge\",Vector3.new(.1,4.2,.12),CFrame.new(.2,-3.8,-.35),b,true)\n  piece(\"WarGodCrest\",Vector3.new(.65,.16,.65),CFrame.new(0,-1.45,-.35),b,false,Enum.PartType.Cylinder)\n elseif role==\"MAGE\" then\n  piece(\"RuneStaff\",Vector3.new(.25,5.5,.25),CFrame.new(0,-2.3,-.3),a,false)\n  piece(\"PrismHeart\",Vector3.new(.88,1.3,.88),CFrame.new(0,.75,-.3)*CFrame.Angles(0,0,.55),b,true,Enum.PartType.Cylinder)\n  piece(\"PrismProngLeft\",Vector3.new(.25,1.1,.25),CFrame.new(-.65,.4,-.3)*CFrame.Angles(0,0,.55),a,false)\n  piece(\"PrismProngRight\",Vector3.new(.25,1.1,.25),CFrame.new(.65,.4,-.3)*CFrame.Angles(0,0,-.55),a,false)\n elseif role==\"NINJA\" then\n  piece(\"TwinDaggerNear\",Vector3.new(.26,2.7,.15),CFrame.new(-.55,-1.6,-.4)*CFrame.Angles(0,0,-.18),a,false)\n  piece(\"TwinDaggerNearEdge\",Vector3.new(.12,2.4,.10),CFrame.new(-.7,-1.6,-.4)*CFrame.Angles(0,0,-.18),b,true)\n  piece(\"TwinDaggerFar\",Vector3.new(.26,2.7,.15),CFrame.new(.57,-1.5,-.4)*CFrame.Angles(0,0,.2),a,false)\n  piece(\"TwinDaggerFarEdge\",Vector3.new(.12,2.4,.10),CFrame.new(.7,-1.5,-.4)*CFrame.Angles(0,0,.2),b,true)\n  piece(\"ShadowGuard\",Vector3.new(1.5,.2,.36),CFrame.new(0,-.65,-.4),a,false)\n elseif role==\"TRAPPER\" then\n  piece(\"PsiGauntlet\",Vector3.new(.65,1.55,.74),CFrame.new(0,-.45,-.35),a,false)\n  piece(\"PsiCore\",Vector3.new(.75,1.1,.75),CFrame.new(0,.85,-.35)*CFrame.Angles(0,0,.45),b,true,Enum.PartType.Cylinder)\n  piece(\"PsiOrbitLeft\",Vector3.new(.18,1.8,.2),CFrame.new(-.56,.85,-.35)*CFrame.Angles(0,0,.52),a,false)\n  piece(\"PsiOrbitRight\",Vector3.new(.18,1.8,.2),CFrame.new(.56,.85,-.35)*CFrame.Angles(0,0,-.52),a,false)\n elseif role==\"BUILDER\" then\n  piece(\"RailGunReceiver\",Vector3.new(1,1.25,2.4),CFrame.new(0,-.5,-1.1),a,false)\n  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,false)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,false)\n  piece(\"RailGunScope\",Vector3.new(.32,.4,.9),CFrame.new(0,.26,-.9),b,true)\n  piece(\"RailGunGrip\",Vector3.new(.38,1.3,.5),CFrame.new(0,-1.4,-.4),a,false)\n elseif role==\"BEAST\" then\n  piece(\"BeastHornHandle\",Vector3.new(.6,1.6,.7),CFrame.new(0,-.7,-.4),a,false)\n  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,false)\n  piece(\"BeastClawLeft\",Vector3.new(.22,1.75,.4),CFrame.new(-.45,-1.3,-.5)*CFrame.Angles(0,0,.2),b,false)\n  piece(\"BeastClawRight\",Vector3.new(.22,1.75,.4),CFrame.new(.45,-1.3,-.5)*CFrame.Angles(0,0,-.2),b,false)\n elseif role==\"ZOMBIE\" then\n  piece(\"CurseStaff\",Vector3.new(.25,4.3,.24),CFrame.new(0,-1.8,-.4),a,false)\n  piece(\"SoulCage\",Vector3.new(1.0,1.3,1.0),CFrame.new(0,.6,-.4)*CFrame.Angles(0,0,.4),b,true,Enum.PartType.Cylinder)\n  piece(\"SoulProngLeft\",Vector3.new(.22,1,.23),CFrame.new(-.7,.5,-.4),a,false)\n  piece(\"SoulProngRight\",Vector3.new(.22,1,.23),CFrame.new(.7,.5,-.4),a,false)\n  piece(\"CurseSigil\",Vector3.new(.72,.16,.72),CFrame.new(0,.1,-.4),a,false,Enum.PartType.Cylinder)\n end\n model:SetAttribute(\"VisualParts\",count)\n return true\nend\nreturn Weapons\n",
+    "weapon_previous_pin": {
+      "bytes": 6662,
+      "sha256": "9a19fa6394b44f3bdf7ed60b09ca789cadfd2eec75eee57d6a0075c3e1a0a741"
+    }
   },
   "runtime_labels": {
     "ACTIVE_RUNTIME": "rich51",
@@ -11229,16 +12099,298 @@
     },
     "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau": {
       "after": {
-        "bytes": 5814,
-        "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
+        "bytes": 7547,
+        "sha256": "497c6b91e0d02b3f8d15c517e9359d940b39ccf6295529f39286dee04eb42289"
       },
       "before": {
         "bytes": 5814,
         "sha256": "08b33e6639d61fd07b526b1b41cd448505927acd4675c3c6b975cab4fc7a1ec8"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "-- GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120\n-- Shape diversity without new visual parts, lights, meshes or gameplay owners.\nlocal TAPERED_WEAPONS={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,\n -- Distinct matte faceted tips for staffs, psi fins and rail barrels.\n PrismProngLeft=true,PrismProngRight=true,\n PsiOrbitLeft=true,PsiOrbitRight=true,\n RailGunBarrelLeft=true,RailGunBarrelRight=true,\n SoulProngLeft=true,SoulProngRight=true,\n}\n-- Keep the taper visible from the avatar's front for vertical silhouettes.\n-- Mirrored pairs slope toward opposite sides. Rail barrels retain depth taper.\nlocal QUARTER_TURN=math.pi/2\nlocal FRONT_TAPER_YAW={\n OdachiBlade=-QUARTER_TURN,\n TwinDaggerNear=QUARTER_TURN,TwinDaggerFar=-QUARTER_TURN,\n TamingHorn=QUARTER_TURN,BeastClawLeft=-QUARTER_TURN,BeastClawRight=QUARTER_TURN,\n PrismProngLeft=-QUARTER_TURN,PrismProngRight=QUARTER_TURN,\n PsiOrbitLeft=-QUARTER_TURN,PsiOrbitRight=QUARTER_TURN,\n SoulProngLeft=-QUARTER_TURN,SoulProngRight=QUARTER_TURN,\n}\nlocal DOWNWARD_TIP={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n BeastClawLeft=true,BeastClawRight=true,\n}\n",
+          "new_identity": {
+            "bytes": 1195,
+            "sha256": "952c39ff50b6263c76ae133bab52067499bec1aa019658fc28d7b8c2a974b41e"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 15,
+          "stop": 15
+        },
+        {
+          "new": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart\n local p:BasePart\n if TAPERED_WEAPONS[name] then\n  p=Instance.new(\"WedgePart\")\n else\n  local block=Instance.new(\"Part\")\n  block.Shape=shape or Enum.PartType.Block\n  p=block\n end\n local yaw=FRONT_TAPER_YAW[name]\n if yaw then\n  size=Vector3.new(size.Z,size.Y,size.X)\n  offset=offset*CFrame.Angles(0,yaw,0)\n  if DOWNWARD_TIP[name] then\n   offset=offset*CFrame.Angles(math.pi,0,0)\n  end\n end\n",
+          "new_identity": {
+            "bytes": 483,
+            "sha256": "7fb402029abc9880e60332c0e568a36422c9d99fcb1d496e9842c49e64e4fd08"
+          },
+          "old": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):Part\n local p=Instance.new(\"Part\")\n",
+          "old_identity": {
+            "bytes": 121,
+            "sha256": "1386c4ac2992e466d8ca3de8c362331bc6f5f4daf61c26502a2bd0847351387f"
+          },
+          "start": 16,
+          "stop": 18
+        },
+        {
+          "new": " p.Reflectance=if material==Enum.Material.Metal then .08 else 0\n p.Transparency=if material==Enum.Material.Neon then .32 else 0\n",
+          "new_identity": {
+            "bytes": 128,
+            "sha256": "03e9d9240064a1c23702078cc640a5efa6d69a555bddffb8d369097d8ffe0440"
+          },
+          "old": " p.Shape=shape or Enum.PartType.Block\n",
+          "old_identity": {
+            "bytes": 38,
+            "sha256": "7ea5262396ab8cdc1c74fd515a250b9c9f3fc99817aec337e1101a11da88771b"
+          },
+          "start": 19,
+          "stop": 20
+        },
+        {
+          "new": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,false)\n",
+          "new_identity": {
+            "bytes": 82,
+            "sha256": "1f85ab63c8df39044522937753c665d9afb9ad5b0d974ced4303e98a4ecba194"
+          },
+          "old": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,true)\n",
+          "old_identity": {
+            "bytes": 81,
+            "sha256": "e6b322d07d1c36e44a4e2d7437cdaf49c835518952cf27904062b012bbd4eedf"
+          },
+          "start": 57,
+          "stop": 58
+        },
+        {
+          "new": "  piece(\"WarGodCrest\",Vector3.new(.65,.16,.65),CFrame.new(0,-1.45,-.35),b,false,Enum.PartType.Cylinder)\n",
+          "new_identity": {
+            "bytes": 104,
+            "sha256": "112beaaf419da55840e6d6c0d69ea7131b077b080d8658eba78dd55fbbcedb80"
+          },
+          "old": "  piece(\"WarGodCrest\",Vector3.new(.65,.64,.22),CFrame.new(0,-1.45,-.35),b,true,Enum.PartType.Ball)\n",
+          "old_identity": {
+            "bytes": 99,
+            "sha256": "8da3026a6a02cc8399bfd76514078e1242eea3399196c35876e067a983b8fd69"
+          },
+          "start": 60,
+          "stop": 61
+        },
+        {
+          "new": "  piece(\"PrismHeart\",Vector3.new(.88,1.3,.88),CFrame.new(0,.75,-.3)*CFrame.Angles(0,0,.55),b,true,Enum.PartType.Cylinder)\n",
+          "new_identity": {
+            "bytes": 122,
+            "sha256": "96d6f2807e59581f33e079c9ef194ecc445f726814dc481bbeb87e00e0e7732f"
+          },
+          "old": "  piece(\"PrismHeart\",Vector3.new(1.2,1.2,1.2),CFrame.new(0,.75,-.3),b,true,Enum.PartType.Ball)\n",
+          "old_identity": {
+            "bytes": 95,
+            "sha256": "41a291e0031deba94a49bb88e800041b2fc29969a8d24b6b6c61d7eab7fb97ca"
+          },
+          "start": 63,
+          "stop": 64
+        },
+        {
+          "new": "  piece(\"PsiCore\",Vector3.new(.75,1.1,.75),CFrame.new(0,.85,-.35)*CFrame.Angles(0,0,.45),b,true,Enum.PartType.Cylinder)\n",
+          "new_identity": {
+            "bytes": 120,
+            "sha256": "dd3c4aad2787993e64ada2a9cb054b1083b6c9a38d5abff93fc4977f7628ab7b"
+          },
+          "old": "  piece(\"PsiCore\",Vector3.new(.95,.95,.95),CFrame.new(0,.85,-.35),b,true,Enum.PartType.Ball)\n",
+          "old_identity": {
+            "bytes": 93,
+            "sha256": "b2a0a1cd73fa958fe727dbf49803ee56f6d73bfbde49ece1be45df3c5dea7d48"
+          },
+          "start": 74,
+          "stop": 75
+        },
+        {
+          "new": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,false)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,false)\n",
+          "new_identity": {
+            "bytes": 174,
+            "sha256": "ece1a58c4bb5b7ddc514112fb09ce32f540e092811be7c44e4dbd3fd1905b065"
+          },
+          "old": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,true)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,true)\n",
+          "old_identity": {
+            "bytes": 172,
+            "sha256": "9c56fb697ad96b1064b91c2c1098bedac330e0d4414740c51eff4a9fbcd086bc"
+          },
+          "start": 79,
+          "stop": 81
+        },
+        {
+          "new": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,false)\n",
+          "new_identity": {
+            "bytes": 75,
+            "sha256": "e5a0129a49c42aaa97326aa9c7e3c0e7162ae821a3af9aa2892831b671357192"
+          },
+          "old": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,true)\n",
+          "old_identity": {
+            "bytes": 74,
+            "sha256": "cd6a4ced931cb27e5d08f3ac7c57555df1abbb83610b8f545eec86fc526f9e01"
+          },
+          "start": 85,
+          "stop": 86
+        },
+        {
+          "new": "  piece(\"SoulCage\",Vector3.new(1.0,1.3,1.0),CFrame.new(0,.6,-.4)*CFrame.Angles(0,0,.4),b,true,Enum.PartType.Cylinder)\n",
+          "new_identity": {
+            "bytes": 118,
+            "sha256": "788a6eef364305c6fb711674a935ce61b564ed9433fec140f09ae05ec472b2fb"
+          },
+          "old": "  piece(\"SoulCage\",Vector3.new(1.25,1.25,1.25),CFrame.new(0,.6,-.4),b,true,Enum.PartType.Ball)\n",
+          "old_identity": {
+            "bytes": 95,
+            "sha256": "995129adc2bab7c79dc72c6ae02f17b897c686f73b1be6e30bb1786da8e4b573"
+          },
+          "start": 90,
+          "stop": 91
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- GQ470_FB015_SEVEN_ROLE_WEAPON_SCULPT_REAL69_20261120\n-- Shape diversity without new visual parts, lights, meshes or gameplay owners.\nlocal TAPERED_WEAPONS={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n TamingHorn=true,BeastClawLeft=true,BeastClawRight=true,\n -- Distinct matte faceted tips for staffs, psi fins and rail barrels.\n PrismProngLeft=true,PrismProngRight=true,\n PsiOrbitLeft=true,PsiOrbitRight=true,\n RailGunBarrelLeft=true,RailGunBarrelRight=true,\n SoulProngLeft=true,SoulProngRight=true,\n}\n-- Keep the taper visible from the avatar's front for vertical silhouettes.\n-- Mirrored pairs slope toward opposite sides. Rail barrels retain depth taper.\nlocal QUARTER_TURN=math.pi/2\nlocal FRONT_TAPER_YAW={\n OdachiBlade=-QUARTER_TURN,\n TwinDaggerNear=QUARTER_TURN,TwinDaggerFar=-QUARTER_TURN,\n TamingHorn=QUARTER_TURN,BeastClawLeft=-QUARTER_TURN,BeastClawRight=QUARTER_TURN,\n PrismProngLeft=-QUARTER_TURN,PrismProngRight=QUARTER_TURN,\n PsiOrbitLeft=-QUARTER_TURN,PsiOrbitRight=QUARTER_TURN,\n SoulProngLeft=-QUARTER_TURN,SoulProngRight=QUARTER_TURN,\n}\nlocal DOWNWARD_TIP={\n OdachiBlade=true,TwinDaggerNear=true,TwinDaggerFar=true,\n BeastClawLeft=true,BeastClawRight=true,\n}\n",
+          "old_identity": {
+            "bytes": 1195,
+            "sha256": "952c39ff50b6263c76ae133bab52067499bec1aa019658fc28d7b8c2a974b41e"
+          },
+          "start": 15,
+          "stop": 41
+        },
+        {
+          "new": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):Part\n local p=Instance.new(\"Part\")\n",
+          "new_identity": {
+            "bytes": 121,
+            "sha256": "1386c4ac2992e466d8ca3de8c362331bc6f5f4daf61c26502a2bd0847351387f"
+          },
+          "old": " size:Vector3,offset:CFrame,color:Color3,material:Enum.Material,shape:Enum.PartType?):BasePart\n local p:BasePart\n if TAPERED_WEAPONS[name] then\n  p=Instance.new(\"WedgePart\")\n else\n  local block=Instance.new(\"Part\")\n  block.Shape=shape or Enum.PartType.Block\n  p=block\n end\n local yaw=FRONT_TAPER_YAW[name]\n if yaw then\n  size=Vector3.new(size.Z,size.Y,size.X)\n  offset=offset*CFrame.Angles(0,yaw,0)\n  if DOWNWARD_TIP[name] then\n   offset=offset*CFrame.Angles(math.pi,0,0)\n  end\n end\n",
+          "old_identity": {
+            "bytes": 483,
+            "sha256": "7fb402029abc9880e60332c0e568a36422c9d99fcb1d496e9842c49e64e4fd08"
+          },
+          "start": 42,
+          "stop": 59
+        },
+        {
+          "new": " p.Shape=shape or Enum.PartType.Block\n",
+          "new_identity": {
+            "bytes": 38,
+            "sha256": "7ea5262396ab8cdc1c74fd515a250b9c9f3fc99817aec337e1101a11da88771b"
+          },
+          "old": " p.Reflectance=if material==Enum.Material.Metal then .08 else 0\n p.Transparency=if material==Enum.Material.Neon then .32 else 0\n",
+          "old_identity": {
+            "bytes": 128,
+            "sha256": "03e9d9240064a1c23702078cc640a5efa6d69a555bddffb8d369097d8ffe0440"
+          },
+          "start": 60,
+          "stop": 62
+        },
+        {
+          "new": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,true)\n",
+          "new_identity": {
+            "bytes": 81,
+            "sha256": "e6b322d07d1c36e44a4e2d7437cdaf49c835518952cf27904062b012bbd4eedf"
+          },
+          "old": "  piece(\"OdachiGuard\",Vector3.new(1.55,.19,.45),CFrame.new(0,-1.56,-.35),b,false)\n",
+          "old_identity": {
+            "bytes": 82,
+            "sha256": "1f85ab63c8df39044522937753c665d9afb9ad5b0d974ced4303e98a4ecba194"
+          },
+          "start": 99,
+          "stop": 100
+        },
+        {
+          "new": "  piece(\"WarGodCrest\",Vector3.new(.65,.64,.22),CFrame.new(0,-1.45,-.35),b,true,Enum.PartType.Ball)\n",
+          "new_identity": {
+            "bytes": 99,
+            "sha256": "8da3026a6a02cc8399bfd76514078e1242eea3399196c35876e067a983b8fd69"
+          },
+          "old": "  piece(\"WarGodCrest\",Vector3.new(.65,.16,.65),CFrame.new(0,-1.45,-.35),b,false,Enum.PartType.Cylinder)\n",
+          "old_identity": {
+            "bytes": 104,
+            "sha256": "112beaaf419da55840e6d6c0d69ea7131b077b080d8658eba78dd55fbbcedb80"
+          },
+          "start": 102,
+          "stop": 103
+        },
+        {
+          "new": "  piece(\"PrismHeart\",Vector3.new(1.2,1.2,1.2),CFrame.new(0,.75,-.3),b,true,Enum.PartType.Ball)\n",
+          "new_identity": {
+            "bytes": 95,
+            "sha256": "41a291e0031deba94a49bb88e800041b2fc29969a8d24b6b6c61d7eab7fb97ca"
+          },
+          "old": "  piece(\"PrismHeart\",Vector3.new(.88,1.3,.88),CFrame.new(0,.75,-.3)*CFrame.Angles(0,0,.55),b,true,Enum.PartType.Cylinder)\n",
+          "old_identity": {
+            "bytes": 122,
+            "sha256": "96d6f2807e59581f33e079c9ef194ecc445f726814dc481bbeb87e00e0e7732f"
+          },
+          "start": 105,
+          "stop": 106
+        },
+        {
+          "new": "  piece(\"PsiCore\",Vector3.new(.95,.95,.95),CFrame.new(0,.85,-.35),b,true,Enum.PartType.Ball)\n",
+          "new_identity": {
+            "bytes": 93,
+            "sha256": "b2a0a1cd73fa958fe727dbf49803ee56f6d73bfbde49ece1be45df3c5dea7d48"
+          },
+          "old": "  piece(\"PsiCore\",Vector3.new(.75,1.1,.75),CFrame.new(0,.85,-.35)*CFrame.Angles(0,0,.45),b,true,Enum.PartType.Cylinder)\n",
+          "old_identity": {
+            "bytes": 120,
+            "sha256": "dd3c4aad2787993e64ada2a9cb054b1083b6c9a38d5abff93fc4977f7628ab7b"
+          },
+          "start": 116,
+          "stop": 117
+        },
+        {
+          "new": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,true)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,true)\n",
+          "new_identity": {
+            "bytes": 172,
+            "sha256": "9c56fb697ad96b1064b91c2c1098bedac330e0d4414740c51eff4a9fbcd086bc"
+          },
+          "old": "  piece(\"RailGunBarrelLeft\",Vector3.new(.22,.2,2.8),CFrame.new(-.36,-.5,-2.3),b,false)\n  piece(\"RailGunBarrelRight\",Vector3.new(.22,.2,2.8),CFrame.new(.36,-.5,-2.3),b,false)\n",
+          "old_identity": {
+            "bytes": 174,
+            "sha256": "ece1a58c4bb5b7ddc514112fb09ce32f540e092811be7c44e4dbd3fd1905b065"
+          },
+          "start": 121,
+          "stop": 123
+        },
+        {
+          "new": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,true)\n",
+          "new_identity": {
+            "bytes": 74,
+            "sha256": "cd6a4ced931cb27e5d08f3ac7c57555df1abbb83610b8f545eec86fc526f9e01"
+          },
+          "old": "  piece(\"TamingHorn\",Vector3.new(.8,2.4,.7),CFrame.new(0,.65,-.4),b,false)\n",
+          "old_identity": {
+            "bytes": 75,
+            "sha256": "e5a0129a49c42aaa97326aa9c7e3c0e7162ae821a3af9aa2892831b671357192"
+          },
+          "start": 127,
+          "stop": 128
+        },
+        {
+          "new": "  piece(\"SoulCage\",Vector3.new(1.25,1.25,1.25),CFrame.new(0,.6,-.4),b,true,Enum.PartType.Ball)\n",
+          "new_identity": {
+            "bytes": 95,
+            "sha256": "995129adc2bab7c79dc72c6ae02f17b897c686f73b1be6e30bb1786da8e4b573"
+          },
+          "old": "  piece(\"SoulCage\",Vector3.new(1.0,1.3,1.0),CFrame.new(0,.6,-.4)*CFrame.Angles(0,0,.4),b,true,Enum.PartType.Cylinder)\n",
+          "old_identity": {
+            "bytes": 118,
+            "sha256": "788a6eef364305c6fb711674a935ce61b564ed9433fec140f09ae05ec472b2fb"
+          },
+          "start": 132,
+          "stop": 133
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_WeaponSilhouettes"
     },
     "ServerScriptService/GQ802_StageManifestPolicy.luau": {
@@ -11961,16 +13113,382 @@
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau": {
       "after": {
-        "bytes": 6764,
-        "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
+        "bytes": 11568,
+        "sha256": "2d4145fdbd05359e89cf52ca41117ec416c7b6e7ad3d95aedac5c857bc3e34fe"
       },
       "before": {
         "bytes": 6764,
         "sha256": "95e5dba544a759547ea41e8ecec1984317fc61b35281f4533b2323df1951491f"
       },
       "class": "LocalScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "local characterListeners:{[number]:RBXScriptConnection}={}\n",
+          "new_identity": {
+            "bytes": 59,
+            "sha256": "26ea677933eec46f312b7bd46b55f19d4f3668010b5d1777c34e81461f6dfd8b"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 13,
+          "stop": 13
+        },
+        {
+          "new": "-- BASIC has its own server-owned serial; never synthesize a skill signature.\n-- Per-character observer tokens invalidate already queued local callbacks.\n-- The numeric attribute has no server character/match epoch: this is not proof\n-- against arbitrary old network values arriving after a new character binds.\nlocal basicObservers:{[number]:any}={}\nlocal BASIC_ROLES={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,\n BUILDER=true,BEAST=true,ZOMBIE=true}\nlocal function basicSerial(player:Player):number?\n local value=player:GetAttribute(\"EGGRUMBLE_BasicCastSerial\")\n if type(value)~=\"number\" or value~=value or value<=0\n  or value==math.huge or value%1~=0 then return nil end\n return value\nend\nlocal function startCast(player:Player,role:string,slot:string,origin:string)\n local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local previous=active[player.UserId]\n if origin==\"BASIC\" and previous and previous.origin==\"SKILL\"\n  and previous.char==c and os.clock()-previous.start<previous.duration then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),origin=origin,\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\nend\n",
+          "new_identity": {
+            "bytes": 1483,
+            "sha256": "d7a4e34f89481b13a7f627e397e4cb9c9c02545435af499a281ecfac08ffd330"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 62,
+          "stop": 62
+        },
+        {
+          "new": " startCast(player,role,slot,\"SKILL\")\nend\nlocal function watchBasic(player:Player)\n local uid=player.UserId\n local binding:any={player=player,sequence=0}\n basicObservers[uid]=binding\n local function bind(character:Model?)\n  if basicObservers[uid]~=binding then return end\n  if binding.changed then binding.changed:Disconnect() end\n  local token={}\n  binding.token=token;binding.character=character\n  -- A present serial is a baseline, including on respawn; do not replay it.\n  binding.sequence=basicSerial(player) or 0\n  binding.changed=player:GetAttributeChangedSignal(\"EGGRUMBLE_BasicCastSerial\"):Connect(function()\n   if basicObservers[uid]~=binding or binding.token~=token\n    or player.Parent~=Players then return end\n   local serial=basicSerial(player)\n   if not serial or serial<=binding.sequence then return end\n   binding.sequence=serial -- consume drops as well as displayed attacks\n   local c=player.Character\n   if not c or c~=character or not c.Parent then return end\n   local role=player:GetAttribute(\"EGGRUMBLE_Role\")\n   if type(role)~=\"string\" or not BASIC_ROLES[role] then return end\n   startCast(player,role,\"A\",\"BASIC\")\n  end)\n end\n binding.added=player.CharacterAdded:Connect(function(character)\n  if basicObservers[uid]==binding and player.Character==character then bind(character) end\n end)\n binding.bind=bind\n bind(player.Character)\nend\nlocal function removeBasicCharacter(player:Player,character:Model)\n local binding=basicObservers[player.UserId]\n if binding and binding.player==player and binding.character==character then binding.bind(nil) end\nend\nlocal function unwatchBasic(player:Player)\n local binding=basicObservers[player.UserId]\n if not binding or binding.player~=player then return end\n basicObservers[player.UserId]=nil;binding.token=nil\n if binding.changed then binding.changed:Disconnect() end\n binding.added:Disconnect()\n",
+          "new_identity": {
+            "bytes": 1859,
+            "sha256": "bbd82eb64379da12817f300b862144d1ac57b29ec7dad342f4cd4820a233bd25"
+          },
+          "old": " local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\n",
+          "old_identity": {
+            "bytes": 504,
+            "sha256": "c9dce1b19e5d615732dbade63f8fef676b151b08d112ce82df3ed72f6aa6be29"
+          },
+          "start": 70,
+          "stop": 82
+        },
+        {
+          "new": " characterListeners[uid]=p.CharacterRemoving:Connect(function(character)\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "7df4b94908525dd42fb03be210106aadb2f35cfaf6194cca59a70c8fb8fc8f2d"
+          },
+          "old": " p.CharacterRemoving:Connect(function(character)\n",
+          "old_identity": {
+            "bytes": 49,
+            "sha256": "77aef5eb06d29085b25415d7fd152e36ccb1466b6a8aaec3f840c7bc4da2fc86"
+          },
+          "start": 89,
+          "stop": 90
+        },
+        {
+          "new": "  removeBasicCharacter(p,character)\n",
+          "new_identity": {
+            "bytes": 36,
+            "sha256": "0edb56f7516dc3e026d5086bf7510118d6668ead8407116b6007e0b3ee72b9b9"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 94,
+          "stop": 94
+        },
+        {
+          "new": " watchBasic(p)\n",
+          "new_identity": {
+            "bytes": 15,
+            "sha256": "7a229fc9f8a1b30378a8a38a948a86e43a7fe0a82ef8e3f56653b2cb5e69f98a"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 95,
+          "stop": 95
+        },
+        {
+          "new": " local characterListener=characterListeners[uid]\n if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end\n",
+          "new_identity": {
+            "bytes": 139,
+            "sha256": "4126a899292bf8cac2d4ecb8c2401918602bfd4bf80004cdf107cb5a7205c9c6"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 100,
+          "stop": 100
+        },
+        {
+          "new": " unwatchBasic(p)\n",
+          "new_identity": {
+            "bytes": 17,
+            "sha256": "20d4eaa7712eaff57c5f7ec7bdd2caab4d5d1e044fdc51d8739b69153f08cc8e"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 103,
+          "stop": 103
+        },
+        {
+          "new": "-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.\n-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery\n-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.\n-- Normalized time is server-cast-driven; no server damage/skill timing changes.\nlocal function smoothstep(t:number):number\n local x=math.clamp(t,0,1)\n return x*x*(3-2*x)\nend\nlocal function motionProfile(t:number,slot:string):(number,number)\n local u=math.clamp(t,0,1)\n -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.\n -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).\n -- Longer B/C skills keep their previous pacing without changing server timing.\n local strikeEnd=(slot==\"A\") and .36 or .42\n local holdEnd=(slot==\"A\") and .62 or .54\n if u<.18 then\n  return -.20*smoothstep(u/.18),0\n elseif u<strikeEnd then\n  local strike=smoothstep((u-.18)/(strikeEnd-.18))\n  return -.20+1.20*strike,strike\n elseif u<holdEnd then\n  return 1,1\n else\n  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))\n  return recover,recover\n end\nend\n",
+          "new_identity": {
+            "bytes": 1126,
+            "sha256": "c7edbad2d361089880af837ece2f84cff03de4375651a8a73abb2a1940434433"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 107,
+          "stop": 107
+        },
+        {
+          "new": " local pulse,snap=motionProfile(t,slot)\n",
+          "new_identity": {
+            "bytes": 40,
+            "sha256": "b589fac27443a59ed0c98410dca9171e6e2c9ab1dabcfde28b93b70e6fae1966"
+          },
+          "old": " local pulse=math.sin(math.pi*math.clamp(t,0,1))\n local snap=math.sin(math.pi*math.min(1,t*1.8))\n",
+          "old_identity": {
+            "bytes": 97,
+            "sha256": "be0dc2fe7219553faf94fb623e8c793f5ef5896d708eaa80081ee8f89a0ac5c7"
+          },
+          "start": 108,
+          "stop": 110
+        },
+        {
+          "new": "  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)\n  if role==\"MAGE\" or role==\"ZOMBIE\" then\n   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)\n  elseif role==\"BUILDER\" then\n   waist=waist*CFrame.Angles(0,-.14*snap,0)\n  end\n",
+          "new_identity": {
+            "bytes": 222,
+            "sha256": "0330e28c3ea38e9fba5c852fcca538e79953cdf0345b30cee2fefcec86ec42ca"
+          },
+          "old": "  right=right*CFrame.Angles(-.25*pulse,0,0)\n",
+          "old_identity": {
+            "bytes": 44,
+            "sha256": "c376fac36fb4c5c1470b9021256127162d9b40f6f87886f03070c67e9be81559"
+          },
+          "start": 138,
+          "stop": 139
+        },
+        {
+          "new": "  if role==\"WARRIOR\" then\n   waist=waist*CFrame.Angles(0,-.19*snap,0)\n  elseif role==\"NINJA\" then\n   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)\n  elseif role==\"BEAST\" then\n   left=left*CFrame.Angles(-.12*snap,0,.14*snap)\n  elseif role==\"TRAPPER\" then\n   waist=waist*CFrame.Angles(-.10*snap,0,0)\n  end\n",
+          "new_identity": {
+            "bytes": 305,
+            "sha256": "8a32fc0d75b0faeebe49f7887f248fb22cb46c347b933913e8d3df8309a1f4fe"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 142,
+          "stop": 142
+        },
+        {
+          "new": "  else\n   -- Distance cull must unpose the avatar, not freeze an old swing in view.\n   resetPose(record)\n   active[uid]=nil\n",
+          "new_identity": {
+            "bytes": 124,
+            "sha256": "58305166fa38bd18307007162bc43b9049301320ddc9da6cfcef10a9d345e594"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 168,
+          "stop": 168
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local characterListeners:{[number]:RBXScriptConnection}={}\n",
+          "old_identity": {
+            "bytes": 59,
+            "sha256": "26ea677933eec46f312b7bd46b55f19d4f3668010b5d1777c34e81461f6dfd8b"
+          },
+          "start": 13,
+          "stop": 14
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- BASIC has its own server-owned serial; never synthesize a skill signature.\n-- Per-character observer tokens invalidate already queued local callbacks.\n-- The numeric attribute has no server character/match epoch: this is not proof\n-- against arbitrary old network values arriving after a new character binds.\nlocal basicObservers:{[number]:any}={}\nlocal BASIC_ROLES={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,\n BUILDER=true,BEAST=true,ZOMBIE=true}\nlocal function basicSerial(player:Player):number?\n local value=player:GetAttribute(\"EGGRUMBLE_BasicCastSerial\")\n if type(value)~=\"number\" or value~=value or value<=0\n  or value==math.huge or value%1~=0 then return nil end\n return value\nend\nlocal function startCast(player:Player,role:string,slot:string,origin:string)\n local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local previous=active[player.UserId]\n if origin==\"BASIC\" and previous and previous.origin==\"SKILL\"\n  and previous.char==c and os.clock()-previous.start<previous.duration then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),origin=origin,\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\nend\n",
+          "old_identity": {
+            "bytes": 1483,
+            "sha256": "d7a4e34f89481b13a7f627e397e4cb9c9c02545435af499a281ecfac08ffd330"
+          },
+          "start": 63,
+          "stop": 93
+        },
+        {
+          "new": " local c=player.Character\n local hum=c and c:FindFirstChildOfClass(\"Humanoid\")\n if not c or not hum or hum.Health<=0 then return end\n local count=0\n for _ in pairs(active) do count+=1 end\n if count>=MAX_ANIMATED_AVATARS and not active[player.UserId] then return end\n if active[player.UserId] then resetPose(active[player.UserId]) end\n active[player.UserId]={\n  player=player,char=c,role=role,slot=slot,start=os.clock(),\n  duration=DURATION[slot] or .3,joints=joints(c),\n  lastApplied={},lastDelta={},\n }\n",
+          "new_identity": {
+            "bytes": 504,
+            "sha256": "c9dce1b19e5d615732dbade63f8fef676b151b08d112ce82df3ed72f6aa6be29"
+          },
+          "old": " startCast(player,role,slot,\"SKILL\")\nend\nlocal function watchBasic(player:Player)\n local uid=player.UserId\n local binding:any={player=player,sequence=0}\n basicObservers[uid]=binding\n local function bind(character:Model?)\n  if basicObservers[uid]~=binding then return end\n  if binding.changed then binding.changed:Disconnect() end\n  local token={}\n  binding.token=token;binding.character=character\n  -- A present serial is a baseline, including on respawn; do not replay it.\n  binding.sequence=basicSerial(player) or 0\n  binding.changed=player:GetAttributeChangedSignal(\"EGGRUMBLE_BasicCastSerial\"):Connect(function()\n   if basicObservers[uid]~=binding or binding.token~=token\n    or player.Parent~=Players then return end\n   local serial=basicSerial(player)\n   if not serial or serial<=binding.sequence then return end\n   binding.sequence=serial -- consume drops as well as displayed attacks\n   local c=player.Character\n   if not c or c~=character or not c.Parent then return end\n   local role=player:GetAttribute(\"EGGRUMBLE_Role\")\n   if type(role)~=\"string\" or not BASIC_ROLES[role] then return end\n   startCast(player,role,\"A\",\"BASIC\")\n  end)\n end\n binding.added=player.CharacterAdded:Connect(function(character)\n  if basicObservers[uid]==binding and player.Character==character then bind(character) end\n end)\n binding.bind=bind\n bind(player.Character)\nend\nlocal function removeBasicCharacter(player:Player,character:Model)\n local binding=basicObservers[player.UserId]\n if binding and binding.player==player and binding.character==character then binding.bind(nil) end\nend\nlocal function unwatchBasic(player:Player)\n local binding=basicObservers[player.UserId]\n if not binding or binding.player~=player then return end\n basicObservers[player.UserId]=nil;binding.token=nil\n if binding.changed then binding.changed:Disconnect() end\n binding.added:Disconnect()\n",
+          "old_identity": {
+            "bytes": 1859,
+            "sha256": "bbd82eb64379da12817f300b862144d1ac57b29ec7dad342f4cd4820a233bd25"
+          },
+          "start": 101,
+          "stop": 143
+        },
+        {
+          "new": " p.CharacterRemoving:Connect(function(character)\n",
+          "new_identity": {
+            "bytes": 49,
+            "sha256": "77aef5eb06d29085b25415d7fd152e36ccb1466b6a8aaec3f840c7bc4da2fc86"
+          },
+          "old": " characterListeners[uid]=p.CharacterRemoving:Connect(function(character)\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "7df4b94908525dd42fb03be210106aadb2f35cfaf6194cca59a70c8fb8fc8f2d"
+          },
+          "start": 150,
+          "stop": 151
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  removeBasicCharacter(p,character)\n",
+          "old_identity": {
+            "bytes": 36,
+            "sha256": "0edb56f7516dc3e026d5086bf7510118d6668ead8407116b6007e0b3ee72b9b9"
+          },
+          "start": 155,
+          "stop": 156
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " watchBasic(p)\n",
+          "old_identity": {
+            "bytes": 15,
+            "sha256": "7a229fc9f8a1b30378a8a38a948a86e43a7fe0a82ef8e3f56653b2cb5e69f98a"
+          },
+          "start": 157,
+          "stop": 158
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " local characterListener=characterListeners[uid]\n if characterListener then characterListener:Disconnect();characterListeners[uid]=nil end\n",
+          "old_identity": {
+            "bytes": 139,
+            "sha256": "4126a899292bf8cac2d4ecb8c2401918602bfd4bf80004cdf107cb5a7205c9c6"
+          },
+          "start": 163,
+          "stop": 165
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " unwatchBasic(p)\n",
+          "old_identity": {
+            "bytes": 17,
+            "sha256": "20d4eaa7712eaff57c5f7ec7bdd2caab4d5d1e044fdc51d8739b69153f08cc8e"
+          },
+          "start": 168,
+          "stop": 169
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- GQ470_FB015_ROLE_MOTION_READABLE_REAL69_20261121: visual-only timing.\n-- A modest anticipation, crisp strike, brief impact silhouette and smooth recovery\n-- make 7 job gestures readable without new parts, tweens, remotes or frame loops.\n-- Normalized time is server-cast-driven; no server damage/skill timing changes.\nlocal function smoothstep(t:number):number\n local x=math.clamp(t,0,1)\n return x*x*(3-2*x)\nend\nlocal function motionProfile(t:number,slot:string):(number,number)\n local u=math.clamp(t,0,1)\n -- Skill A is only 0.26s: its old 0.12*duration=31ms hold may be skipped at 25fps.\n -- Extend just A's impact silhouette to 0.26*0.26s=67.6ms (mobile-friendly).\n -- Longer B/C skills keep their previous pacing without changing server timing.\n local strikeEnd=(slot==\"A\") and .36 or .42\n local holdEnd=(slot==\"A\") and .62 or .54\n if u<.18 then\n  return -.20*smoothstep(u/.18),0\n elseif u<strikeEnd then\n  local strike=smoothstep((u-.18)/(strikeEnd-.18))\n  return -.20+1.20*strike,strike\n elseif u<holdEnd then\n  return 1,1\n else\n  local recover=1-smoothstep((u-holdEnd)/(1-holdEnd))\n  return recover,recover\n end\nend\n",
+          "old_identity": {
+            "bytes": 1126,
+            "sha256": "c7edbad2d361089880af837ece2f84cff03de4375651a8a73abb2a1940434433"
+          },
+          "start": 173,
+          "stop": 200
+        },
+        {
+          "new": " local pulse=math.sin(math.pi*math.clamp(t,0,1))\n local snap=math.sin(math.pi*math.min(1,t*1.8))\n",
+          "new_identity": {
+            "bytes": 97,
+            "sha256": "be0dc2fe7219553faf94fb623e8c793f5ef5896d708eaa80081ee8f89a0ac5c7"
+          },
+          "old": " local pulse,snap=motionProfile(t,slot)\n",
+          "old_identity": {
+            "bytes": 40,
+            "sha256": "b589fac27443a59ed0c98410dca9171e6e2c9ab1dabcfde28b93b70e6fae1966"
+          },
+          "start": 201,
+          "stop": 202
+        },
+        {
+          "new": "  right=right*CFrame.Angles(-.25*pulse,0,0)\n",
+          "new_identity": {
+            "bytes": 44,
+            "sha256": "c376fac36fb4c5c1470b9021256127162d9b40f6f87886f03070c67e9be81559"
+          },
+          "old": "  right=right*CFrame.Angles(-.25*pulse,0,.12*snap)\n  if role==\"MAGE\" or role==\"ZOMBIE\" then\n   left=left*CFrame.Angles(-.18*snap,0,-.12*snap)\n  elseif role==\"BUILDER\" then\n   waist=waist*CFrame.Angles(0,-.14*snap,0)\n  end\n",
+          "old_identity": {
+            "bytes": 222,
+            "sha256": "0330e28c3ea38e9fba5c852fcca538e79953cdf0345b30cee2fefcec86ec42ca"
+          },
+          "start": 230,
+          "stop": 236
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  if role==\"WARRIOR\" then\n   waist=waist*CFrame.Angles(0,-.19*snap,0)\n  elseif role==\"NINJA\" then\n   waist=waist*CFrame.Angles(.10*snap,.18*snap,0)\n  elseif role==\"BEAST\" then\n   left=left*CFrame.Angles(-.12*snap,0,.14*snap)\n  elseif role==\"TRAPPER\" then\n   waist=waist*CFrame.Angles(-.10*snap,0,0)\n  end\n",
+          "old_identity": {
+            "bytes": 305,
+            "sha256": "8a32fc0d75b0faeebe49f7887f248fb22cb46c347b933913e8d3df8309a1f4fe"
+          },
+          "start": 239,
+          "stop": 248
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  else\n   -- Distance cull must unpose the avatar, not freeze an old swing in view.\n   resetPose(record)\n   active[uid]=nil\n",
+          "old_identity": {
+            "bytes": 124,
+            "sha256": "58305166fa38bd18307007162bc43b9049301320ddc9da6cfcef10a9d345e594"
+          },
+          "start": 274,
+          "stop": 278
+        }
+      ],
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills"
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_RealmBattleControls.client.luau": {

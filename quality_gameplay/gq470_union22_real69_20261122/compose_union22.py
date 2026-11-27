@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "23545934453d2efe92ce75bfb51ee61635efa6a731f80cee4625a66ae19296e7"
+LOCK_SHA256 = "8841c4742c23c8654230e177a06765b2ff889c3d196a7045339021af72d3130c"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -67,6 +67,11 @@ BR_CANYON_SOURCES = (
     "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
     "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
 )
+ROLE_READABILITY_OFF = "off69_role_readability_canyon_parent"
+ROLE_READABILITY_OFF_ARCHIVE = "OFF69_ROLE_READABILITY_CANYON_PARENT_ROLLBACK.tar.gz"
+ROLE_MOTION_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau"
+ROLE_WEAPON_SOURCE = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau"
+ROLE_READABILITY_SOURCES = (ROLE_WEAPON_SOURCE, ROLE_MOTION_SOURCE)
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -349,7 +354,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 24, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 26, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -398,6 +403,11 @@ def relay_presentation_parent(on, lock):
 def br_canyon_parent(on, lock):
     return paired_source_parent(on, lock, lock["br_canyon_followup"], BR_CANYON_SOURCES,
                                 lock["relay_presentation_followup"]["repaired_place"], "BR_CANYON")
+
+
+def role_readability_parent(on, lock):
+    return paired_source_parent(on, lock, lock["role_readability_followup"], ROLE_READABILITY_SOURCES,
+                                lock["br_canyon_followup"]["repaired_place"], "ROLE_READABILITY")
 
 
 def castle_parent(on, lock):
@@ -567,7 +577,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    canyon_off, canyon_off_lock = br_canyon_parent(on, lock)
+    role_off, role_off_lock = role_readability_parent(on, lock)
+    canyon_off, canyon_off_lock = br_canyon_parent(role_off, role_off_lock)
     relay_off, relay_off_lock = relay_presentation_parent(canyon_off, canyon_off_lock)
     score_off, score_off_lock = score_parent(relay_off, relay_off_lock)
     castle_off, castle_off_lock = castle_parent(score_off, score_off_lock)
@@ -597,7 +608,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / CASTLE_OFF, castle_off, castle_off_lock["final_place"], VAULT_SOURCE),
                   (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE),
                   (stage / RELAY_PRESENTATION_OFF, relay_off, relay_off_lock["final_place"], RELAY_PRESENTATION_SOURCES),
-                  (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES))
+                  (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES),
+                  (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -645,6 +657,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         relay_archive_identity = identity(read_file(stage / RELAY_PRESENTATION_OFF_ARCHIVE))
         make_archive(stage / BR_CANYON_OFF, stage / BR_CANYON_OFF_ARCHIVE, BR_CANYON_OFF)
         canyon_archive_identity = identity(read_file(stage / BR_CANYON_OFF_ARCHIVE))
+        make_archive(stage / ROLE_READABILITY_OFF, stage / ROLE_READABILITY_OFF_ARCHIVE, ROLE_READABILITY_OFF)
+        role_archive_identity = identity(read_file(stage / ROLE_READABILITY_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -692,6 +706,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({BR_CANYON_OFF + "/" + PROJECT: lock["project"],
                                BR_CANYON_OFF + "/" + PLACE: canyon_off_lock["final_place"],
                                BR_CANYON_OFF_ARCHIVE: canyon_archive_identity})
+        expected_stage.update({ROLE_READABILITY_OFF + "/sources/" + name: identity(raw) for name, raw in role_off.items()})
+        expected_stage.update({ROLE_READABILITY_OFF + "/" + PROJECT: lock["project"],
+                               ROLE_READABILITY_OFF + "/" + PLACE: role_off_lock["final_place"],
+                               ROLE_READABILITY_OFF_ARCHIVE: role_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -700,7 +718,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 24, "unchanged_source_count": 45,
+            "selected_source_count": 69, "changed_source_count": 26, "unchanged_source_count": 43,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -729,6 +747,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "relay_presentation_rollback_archive": relay_archive_identity,
             "br_canyon_followup": lock["br_canyon_followup"],
             "br_canyon_rollback_archive": canyon_archive_identity,
+            "role_readability_followup": lock["role_readability_followup"],
+            "role_readability_rollback_archive": role_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -740,14 +760,15 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 24, "unchanged_sources": 45,
-            "compile_count": 150, "rojo_build_count": 12, "instances": 75,
+            "source_count": 69, "changed_sources": 26, "unchanged_sources": 43,
+            "compile_count": 152, "rojo_build_count": 13, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
             "score_relay_parent_place": score_off_lock["final_place"],
             "relay_presentation_parent_place": relay_off_lock["final_place"],
             "br_canyon_parent_place": canyon_off_lock["final_place"],
+            "role_readability_parent_place": role_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
