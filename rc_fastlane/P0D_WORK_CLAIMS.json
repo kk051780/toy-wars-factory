@@ -43578,7 +43578,7 @@
       },
       "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "branch": "quality/gq470-private-fb003-team-win-gate-20261128",
         "formal_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
         "tree": "6811f298bea27bad3293daac4afc3baad620ab95",
@@ -43681,9 +43681,9 @@
           "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py"
         ]
       },
-      "source_head": null,
-      "prepared_candidate_head": null,
-      "prepared_candidate_tree": null,
+      "source_head": "83f729b1d2952873392ff0a22bcc0d2ebbb64b29",
+      "prepared_candidate_head": "83f729b1d2952873392ff0a22bcc0d2ebbb64b29",
+      "prepared_candidate_tree": "6811f298bea27bad3293daac4afc3baad620ab95",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -43724,8 +43724,8 @@
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py",
           "mode": "100644",
-          "blob": "efd9785a39fdccdcc3eb7dd6eb0884da78f25de9",
-          "bytes": 3418
+          "blob": "b6881b07883e14f9098db2e4be21684aba5094fd",
+          "bytes": 3509
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_scene.luau",
@@ -43752,10 +43752,20 @@
           "bytes": 125890
         }
       ],
-      "actual_candidate_readback": null,
+      "actual_candidate_readback": {
+        "pr": 1048,
+        "exact_head": "83f729b1d2952873392ff0a22bcc0d2ebbb64b29",
+        "exact_tree": "6811f298bea27bad3293daac4afc3baad620ab95",
+        "exact_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "previous_candidate": "5000f077dc900000aa772092b085f930ef503e89",
+        "preserved_author_parent": null,
+        "source_lease": "e87c162d268b8ffb2b380269fa95f1a7bfa442ff",
+        "source_lease_return": "8cb3368ea6cc9735e422dcd317c30d97f14c8bfa",
+        "prepared_at": "2026-11-27T21:05:14.521Z"
+      },
       "actual_binding_lease": {
-        "commit": "f3a2fe0858c1c01394ccc9401bb283eb7e83ed25",
-        "operation_id": "4dc09999-97d5-4c8d-bbc1-1d725229fbb4"
+        "commit": "f932840ebd42acbb0b834eb31d0ec1a611c9d7fd",
+        "operation_id": "92a30eb9-2af1-4105-a1aa-01265259bf09"
       },
       "superseded_binding": {
         "pr": 1048,
