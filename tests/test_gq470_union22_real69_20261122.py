@@ -163,6 +163,10 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(ended["profile"], selection["active_profile"])
         self.assertEqual(ended["before"], ready["routes"]["server/Game.server.luau"]["after"])
         self.assertNotIn(ended["after"], private_blobs)
+        match_mode = verify.data(active / "features/active_mode_start/source_lock.json")
+        self.assertEqual(match_mode["profile"], selection["active_profile"])
+        self.assertEqual(match_mode["routes"]["server/Game.server.luau"]["before"], ended["after"])
+        self.assertTrue(private_blobs.isdisjoint(row["after"] for row in match_mode["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])

@@ -679,6 +679,18 @@ jobs:
                 grep -Fx P0_RICH51_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
                 grep -Fx ACTIVE_RESULTS_ROUND_AND_TEAM_FENCE_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
                 grep -Fx ACTIVE_RESULTS_IN_FLIGHT_READY_AND_COUNTDOWN_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                MODE_STATUS=$(python3 -B rc_fastlane/apply_active_mode_start.py --profile "$PROFILE" --dist "$DIST")
+                echo "$MODE_STATUS"
+                if [ "$MODE_STATUS" = ACTIVE_RICH51_MODE_ELIGIBILITY_EXACT_GAME_AND_HUD_PASS ]; then
+                  /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                  /tmp/p0d_new_luau/luau-compile "$DIST/src/client/HUD.client.luau" >/dev/null
+                  python3 -B rc_fastlane/verify_active_mode_start_native.py --dist "$DIST" \
+                    --server /tmp/p0d_active_rich51_mode_server.luau --hud /tmp/p0d_active_rich51_mode_hud.luau
+                  /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_mode_server.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_SERVER.log
+                  /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_mode_hud.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_HUD.log
+                  grep -Fx PASS:TWO_HUMANS_SCORE_KICKOFF /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_SERVER.log
+                  grep -Fx PASS:HUD_SOLO_TWO_CLIENT_ACTIVE /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_HUD.log
+                fi
               fi
             fi
           elif [ "$PROFILE" = rich47 ]; then
