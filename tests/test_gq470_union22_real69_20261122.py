@@ -167,6 +167,14 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(match_mode["profile"], selection["active_profile"])
         self.assertEqual(match_mode["routes"]["server/Game.server.luau"]["before"], ended["after"])
         self.assertTrue(private_blobs.isdisjoint(row["after"] for row in match_mode["routes"].values()))
+        bot_package = active / "features/active_solo_bots"
+        solo_bots = verify.data(bot_package / "source_lock.json")
+        self.assertEqual(solo_bots["profile"], selection["active_profile"])
+        self.assertEqual(solo_bots["before_game"], match_mode["routes"]["server/Game.server.luau"]["after"])
+        bot_body = (bot_package / "SoloTeamBots.luau").read_bytes()
+        bot_gitblob = hashlib.sha1(b"blob " + str(len(bot_body)).encode() + b"\0" + bot_body).hexdigest()
+        self.assertEqual(bot_gitblob, solo_bots["bot_blob"])
+        self.assertTrue(private_blobs.isdisjoint((bot_gitblob, solo_bots["after_game"])))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
