@@ -102,7 +102,4 @@ if __name__ == "__main__":
     cli.add_argument("--profile", choices=("rich51", "rich47", "legacy21"), required=True)
     cli.add_argument("--dist", type=Path, required=True)
     a = cli.parse_args()
-    if apply(a.dist, a.profile):
-        from apply_active_sky_routes import apply as apply_sky_routes
-
-        apply_sky_routes(a.dist, a.profile)
+    apply(a.dist, a.profile)

@@ -649,7 +649,14 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/p0d_rc_out
           if [ "$PROFILE" = rich51 ]; then
-            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            SOURCE_DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            # The later private profiles still consume the original pinned 66 bodies.
+            export DIST=/tmp/p0d_rc_active_playable
+            cp -a "$SOURCE_DIST" "$DIST"
+            python3 -B rc_fastlane/apply_active_sky_routes.py --profile "$PROFILE" --dist "$DIST"
+            for route in H1FunWorld WCS_CrystalCanyon; do
+              /tmp/p0d_new_luau/luau-compile "$DIST/src/server/${route}.server.luau" >/dev/null
+            done
           elif [ "$PROFILE" = rich47 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
           else
@@ -974,7 +981,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$PROFILE" = rich51 ]; then
-            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            DIST=/tmp/p0d_rc_active_playable
             python3 -B rc_fastlane/verify_private63.py \
               --dist "$DIST" --place /tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx
           fi

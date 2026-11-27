@@ -1,5 +1,6 @@
-"""Select two fixed Active rich51 route scripts after the original WCS gate."""
+"""Select two fixed rich51 route scripts in the isolated playable distribution."""
 
+import argparse
 import json
 from pathlib import Path
 
@@ -30,6 +31,10 @@ def apply(dist, profile, enabled_override=None):
             and config["source_commit"] == SOURCE_COMMIT and tuple(config["routes"]) == TARGETS, "CONFIG")
     if not enabled:
         print("ACTIVE_SKY_ROUTES_OFF_ORIGINAL_WCS")
+        return False
+    wcs_enabled = json.loads((ROOT / "FEATURE_SWITCHES.json").read_bytes())["features"]["WCS_F01_C01"]["enabled"]
+    require(type(wcs_enabled) is bool, "WCS_SWITCH")
+    if not wcs_enabled:
         return False
     selected = json.loads((ROOT / "ACTIVE.json").read_bytes())
     require(selected["active_profile"] == "rich51"
@@ -75,3 +80,11 @@ def apply(dist, profile, enabled_override=None):
         feature_path.write_bytes(encode(feature_lock))
     print("ACTIVE_SKY_ROUTES_RICH51_EXACT_TWO_EXISTING_SOURCES_PASS")
     return True
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dist", type=Path, required=True)
+    parser.add_argument("--profile", choices=("rich51", "rich47", "legacy21"), required=True)
+    args = parser.parse_args()
+    apply(args.dist, args.profile)
