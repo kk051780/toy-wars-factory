@@ -36564,7 +36564,7 @@
     {
       "claim_id": "P0D-GQ910-ACTIVE-SKY-ROUTES-20261127",
       "feature_id": "GQ910_ACTIVE_SKY_ROUTES",
-      "state": "SOURCE_WIP",
+      "state": "RC_INTEGRATED",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent)",
       "parent_issue": 910,
@@ -36813,7 +36813,7 @@
         "operation_id": "d5cb6ec4-466e-46c1-bbbe-a278be6c312d"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
         "permitted_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
@@ -36826,7 +36826,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -36844,7 +36844,34 @@
           "review": 6087930252,
           "trusted_queue_run": 45996791771,
           "trusted_queue_job": 140498074057
-        }
+        },
+        "writer_acquire_ref": "57cbb47f6c305fd503e227a086d2adb43628354a",
+        "writer_return_ref": "362220a3b1248205855b1e6bb2cf3c2e201baaef",
+        "exact_adoption_readback_at": "2026-11-27T12:15:32.951Z"
+      },
+      "actual_official_rc": {
+        "head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "tree": "a504747453e9f2a1df088884cfe3708e648c644f",
+        "previous": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "active_ci": 45997135320,
+        "active_job": 140499240962,
+        "active_success_steps": 107,
+        "active_conditional_skip": 14,
+        "active_artifact": 15197040582,
+        "active_zip_bytes": 174427,
+        "active_zip_digest": "sha256:d711f2def8c35225d803ce87b3dd0260bda05fecf0b6d9b32d5821e302ec30b1",
+        "active_place_bytes": 602614,
+        "active_place_sha256": "8d0774c778b593f1f791729eec603663ca5ae2e9ed188de8d7811dc026e391d3",
+        "active_off_place_bytes": 602236,
+        "private_ci": 45997135315,
+        "private_job": 140499240953,
+        "private_steps": 48,
+        "private_artifact": 15197490365,
+        "private_zip_bytes": 25129781,
+        "private_zip_digest": "sha256:0b496f00e3effd7989be1de24617f4f279ff24e219779fd1a9ec73520b0cd091",
+        "independent_context": "/root/p0_offer_review26",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7218217662",
+        "device_evidence": "NOT_TESTED_V3.5"
       }
     },
     {
@@ -37025,6 +37052,52 @@
       "actual_binding_lease": {
         "commit": "38137c02b97c6cdc3d47d6f507dbb0c1cb56b9a6",
         "operation_id": "0331c2aa-73f7-4017-8fc9-a6cddecab90a"
+      },
+      "qa_correction_grant": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "permitted_pr": 1042,
+        "branch": "quality/gq910-active-voluntary-ready-20261127",
+        "prior_remote_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
+        "formal_parent": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "local_head": "488d96847bea663b2cf585f0eb75a6013d837861",
+        "tree": "4bca19eaba9e3964fb7509c210dc1d56dcd4555a",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "1291258ac6046c02a9837bde44b9c397f3b67587",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 205571
+          },
+          {
+            "mode": "100644",
+            "blob": "959bdf671c75c769af59b21e8a3a2466c7138052",
+            "path": "rc_fastlane/features/active_ready/coach_spectator_layout.json",
+            "bytes": 19676
+          },
+          {
+            "mode": "100644",
+            "blob": "daa95c179d6cce72e78f28e514a00f5b65aec209",
+            "path": "rc_fastlane/features/active_ready/source_lock.json",
+            "bytes": 1105
+          },
+          {
+            "mode": "100644",
+            "blob": "b0c98ee8730368d467c5a74652b7fe5f3d454084",
+            "path": "rc_fastlane/test_p0_ready_composed_native.py",
+            "bytes": 8230
+          }
+        ],
+        "reason": "Registered independent context detected reachable late spectator results show legacy auto rematch. Only final FirstMinuteModel +366 B, ready-aware NONE guard; existing Game and HUD unchanged, legacy non-READY and real team coaching preserved. Native reproduced old, corrected model four phase views and preserved Ready real Remote six and observer bounds.",
+        "independent_context": "/root/p0_offer_review26",
+        "local_scope_evidence": {
+          "place": 608571,
+          "place_sha256": "40b0094010386eed5de71b382a15129917dc0a5f6894644885124613cb0d181b",
+          "official_off": 602614,
+          "changed_gameplay_source_count_from_old": 1
+        },
+        "grant_lease": "b962911e7d5716564427d4f782152259bdfc49be",
+        "grant_operation": "3954e085-bf83-4409-9142-c6d65635d162",
+        "expires_at": "2026-11-27T13:30:15.181Z"
       }
     }
   ],
