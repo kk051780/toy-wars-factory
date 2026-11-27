@@ -43851,6 +43851,182 @@
           "trusted_queue_job": 140740310017
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB002-PRIVATE-FRACTIONAL-HP-20261128",
+      "feature_id": "GQ470_FB002_PRIVATE_FRACTIONAL_HP_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 364,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "83f729b1d2952873392ff0a22bcc0d2ebbb64b29",
+      "base_rc_tree": "6811f298bea27bad3293daac4afc3baad620ab95",
+      "prep_branch": "quality/gq470-private-fb002-fractional-hp-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "PRIVATE trial FB-002. Preserve original 69-source HUD and clarify one real live fractional-HP case: 0<HP<1 displays HP <1 instead of HP 0. Existing layout, KO cleanup, ordinary HP, TEAM/BR/castle health and gameplay authorities retained. One selected HUD hunk +92 B and genuine historical and exact immediate inverse proof; no ACTIVE scope. OWNER 06:19 authorizes two-line AGENTS.md procedure alignment alongside this game change.",
+      "resources": [
+        "PRIVATE_REAL69_HUD_FRACTIONAL_LIVE_HP_FB002"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fractional_hp_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fractional_hp_scene.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py",
+        "AGENTS.md"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/364",
+      "protected_overlap": {
+        "issues": [
+          363,
+          385,
+          947,
+          1048
+        ],
+        "partition": "PRIVATE HUD live fractional number format only. #363/#385 legacy ACTIVE HUD, #947 placement policy, #1048 match gate and native proof all retained.",
+        "docs": "#1011 06:19 JST explicitly calls for only AGENTS lines 2/5 and no policy-only PR."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "be33d6e4-cdaa-4989-954e-aee80531aedd",
+      "issued_at": "2026-11-27T21:25:03.661Z",
+      "expires_at": "2026-11-27T23:25:03.661Z",
+      "actual_metadata_lease": {
+        "ref": "cf7744211f1f804c0222a93ed523d4285879b217",
+        "blob": "b44e886be3f16d8a8222aeb2e9222156d9dc8db8",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "be33d6e4-cdaa-4989-954e-aee80531aedd",
+          "task_id": null,
+          "epoch": 1053,
+          "acquired_at": "2026-11-27T21:24:49.667Z",
+          "expires_at": "2026-11-27T21:54:49.667Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V4.1 06:19 JST, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq470-private-fb002-fractional-hp-20261128",
+        "formal_parent": "83f729b1d2952873392ff0a22bcc0d2ebbb64b29",
+        "tree": "8e97b7a0d665be24b62ceb80509d9ebb9fcf5678",
+        "local_head": "633bb26fb26f1a39233c7ac882d1fa70b65021a2",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "blob": "4a0b8eb19ce5b347b3ecf012d6bcf97649cb2340",
+            "bytes": 68928,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "blob": "25cd1c0e978fcb86320530ab1d4c42c765361ee2",
+            "bytes": 35255,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fractional_hp_native.py",
+            "blob": "fbdd22b3b4358a1179b3185682ccd043398cdb54",
+            "bytes": 4595,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fractional_hp_scene.luau",
+            "blob": "2707cc91ccdd9cd22396fccb488172c1a85e3834",
+            "bytes": 6014,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "blob": "5715b6c9d5392d4f0ff7200fbd601e69233d8d83",
+            "bytes": 10441,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "blob": "49a01368d2b7f95752baba9d9d8754c79d63f0c6",
+            "bytes": 7813,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "blob": "8e3c7b1c394d7e000e2af335fc06f968dfb70ee5",
+            "bytes": 22174,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "blob": "4b73ed2ce29c1bf13f5cc809a988c9b4cf380ebf",
+            "bytes": 53866,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "blob": "b2a119eeefbc63e37f2e7f596803318b39130744",
+            "bytes": 1746681,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "blob": "83517b246851b41685bee80e36e63886629532f5",
+            "bytes": 165477,
+            "mode": "100644"
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "blob": "0980591735517495cce913dfce99261b31d487ea",
+            "bytes": 127091,
+            "mode": "100644"
+          },
+          {
+            "path": "AGENTS.md",
+            "mode": "100644",
+            "blob": "3968d44bc101bc0bd56ba6600f6afffdb4917d18",
+            "bytes": 9097
+          }
+        ],
+        "expires_at": "2026-11-27T22:25:03.661Z",
+        "issued_from": {
+          "lease": "cf7744211f1f804c0222a93ed523d4285879b217",
+          "owner": "be33d6e4-cdaa-4989-954e-aee80531aedd"
+        },
+        "local_qa": {
+          "actual_fractional_HP": 0.5,
+          "place_bytes": 895935,
+          "place_sha256": "163a3045fb4a68f315a1c3d8fa467811be384983026ef0c06112f3aa3182b899",
+          "off_bytes": 895843,
+          "off_sha256": "9b5c8b90eb9f59702eaade05b9a23e209e4c792b27237d4c9255be6a6cd57db2",
+          "unchanged_selected_sources": 68,
+          "prior_archives_byte_exact": 25,
+          "source_before": "4ae67a4e0a85fe601a98206973b364a7a0a0b98d54ec6b3d0660dc69367a5b3a",
+          "source_after": "f0d3ad91d0d889dd6f34d7225afa397a5f7e6f9f74e8ed788c21be51a39f25d5",
+          "source_delta_bytes": 92,
+          "windows_luau_compiles": 180,
+          "windows_rojo_builds": 27,
+          "real_hp_and_team_native": true,
+          "portable_and_mutant_verification": true,
+          "device": "NOT_TESTED_V4.1"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
