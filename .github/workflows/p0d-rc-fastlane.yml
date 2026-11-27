@@ -879,6 +879,27 @@ jobs:
                                   /tmp/p0d_new_luau/luau /tmp/p0d_active_touch_attack.luau | tee /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
                                   grep -Fx ACTIVE_TOUCH_Q_F_JUMP_AND_FEEDBACK_TIMER_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
                                   grep -Fx ACTIVE_TOUCH_ROTATION_RELAY_DESKTOP_AND_LOBBY_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
+                                  GROWTH_CONFIG=rc_fastlane/features/active_role_growth/source_lock.json
+                                  if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$GROWTH_CONFIG"; then
+                                    GROWTH_OFF=/tmp/p0d_rc_active_role_growth_off.rbxlx
+                                    /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$GROWTH_OFF"
+                                    python3 -B rc_fastlane/apply_active_role_growth.py --profile "$PROFILE" --dist "$DIST" \
+                                      --off-place "$GROWTH_OFF" | tee /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_OFF.log
+                                    grep -Fx ACTIVE_ROLE_GROWTH_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_OFF.log
+                                    for route in server/Game.server server/MusouHorde server/MatchRoleGrowth server/TimePremiumRules client/HUD.client; do
+                                      /tmp/p0d_new_luau/luau-compile "$DIST/src/$route.luau" >/dev/null
+                                    done
+                                    python3 -B rc_fastlane/verify_active_role_growth_native.py --dist "$DIST" --out /tmp/p0d_active_role_growth.luau
+                                    /tmp/p0d_new_luau/luau /tmp/p0d_active_role_growth.luau | tee /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_NATIVE.log
+                                    grep -Fx ROLE_GROWTH_ACTIVITY_AFK_RESPAWN_TELEPORT_EPOCH_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_NATIVE.log
+                                    grep -Fx ROLE_GROWTH_S0_TO_S4_ENERGY_COOLDOWN_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_NATIVE.log
+                                    grep -Fx ROLE_GROWTH_REAL_GAME_SKILL_RANGE_CAP_SPECTATOR_LEGACY_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_NATIVE.log
+                                    grep -Fx ROLE_GROWTH_SNAPSHOT_AVATAR_BOUNDS_AND_HUD_READINESS_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_NATIVE.log
+                                    python3 -B rc_fastlane/verify_active_touch_attack_native.py --dist "$DIST" --out /tmp/p0d_active_touch_attack_after_growth.luau
+                                    /tmp/p0d_new_luau/luau /tmp/p0d_active_touch_attack_after_growth.luau | tee /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_AFTER_GROWTH.log
+                                    grep -Fx ACTIVE_TOUCH_Q_F_JUMP_AND_FEEDBACK_TIMER_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_AFTER_GROWTH.log
+                                    grep -Fx ACTIVE_TOUCH_ROTATION_RELAY_DESKTOP_AND_LOBBY_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_AFTER_GROWTH.log
+                                  fi
                                 fi
                               fi
                             fi
@@ -931,10 +952,13 @@ jobs:
           assassin_wind_enabled=p=='rich51' and json.loads(assassin_wind_lock.read_bytes())['enabled']
           touch_lock=pathlib.Path('rc_fastlane/features/active_touch_attack/source_lock.json')
           touch_enabled=p=='rich51' and json.loads(touch_lock.read_bytes())['enabled']
+          role_growth_lock=pathlib.Path('rc_fastlane/features/active_role_growth/source_lock.json')
+          role_growth_enabled=p=='rich51' and json.loads(role_growth_lock.read_bytes())['enabled']
           assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
           assert not assassin_wind_enabled or undead_enabled, 'ASSASSIN_WIND_REQUIRES_EXACT_UNDEAD_PARENT'
           assert not touch_enabled or assassin_wind_enabled, 'TOUCH_REQUIRES_EXACT_ASSASSIN_WIND_PARENT'
-          expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          assert not role_growth_enabled or touch_enabled, 'GROWTH_REQUIRES_EXACT_TOUCH_PARENT'
+          expected={'rich51':51+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           xml=ET.fromstring(target.read_bytes())
@@ -970,6 +994,8 @@ jobs:
           assert titles[('ModuleScript','SoloTeamBots')]==int(bots_enabled),('BOT_MODULE_COUNT',titles)
           assert titles[('ModuleScript','LobbyDojoIsland')]==int(lobby_enabled),('LOBBY_MODULE_COUNT',titles)
           assert titles[('ModuleScript','UndeadSquad')]==int(undead_enabled),('UNDEAD_MODULE_COUNT',titles)
+          assert titles[('ModuleScript','MatchRoleGrowth')]==int(role_growth_enabled),('ROLE_GROWTH_MODULE_COUNT',titles)
+          assert titles[('ModuleScript','TimePremiumRules')]==int(role_growth_enabled),('ROLE_GROWTH_TIME_MODULE_COUNT',titles)
           if p=='rich51':
               active_receipt=json.loads((base/'RC_FEATURE_LOCK.json').read_bytes())
               assert ('rc_active_solo_bots' in active_receipt)==bots_enabled
@@ -980,6 +1006,7 @@ jobs:
               assert ('rc_active_undead_squad' in active_receipt)==undead_enabled
               assert ('rc_active_assassin_wind' in active_receipt)==assassin_wind_enabled
               assert ('rc_active_touch_attack' in active_receipt)==touch_enabled
+              assert ('rc_active_role_growth' in active_receipt)==role_growth_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -1015,7 +1042,8 @@ jobs:
                       hit=active_receipt['rc_active_confirmed_hit']
                       assert lock['rc_active_confirmed_hit']==hit and hit['feature']=='FB019_ATTACK_RESPONSE_V1'
                       assert hit['routes']['server/Game.server.luau']['before']==final_game
-                      assert lock['blobs']['server/MusouHorde.luau']==hit['horde']
+                      if not role_growth_enabled:
+                          assert lock['blobs']['server/MusouHorde.luau']==hit['horde']
                       for route, pins in hit['routes'].items():
                           if route=='client/HUD.client.luau' and assassin_wind_enabled:
                               continue
@@ -1039,10 +1067,20 @@ jobs:
                           touch=active_receipt['rc_active_touch_attack']
                           assert lock['rc_active_touch_attack']==touch and touch['feature']=='ACTIVE_TOUCH_ATTACK_LAYOUT_V2'
                           assert touch['source']=='client/HUD.client.luau' and touch['before']==wind_hud
-                          assert lock['blobs']['client/HUD.client.luau']==touch['after']
+                          if not role_growth_enabled:
+                              assert lock['blobs']['client/HUD.client.luau']==touch['after']
                       else:
                           assert lock['blobs']['client/HUD.client.luau']==wind_hud
                       final_game=wind['routes']['server/Game.server.luau']['after']
+                  if role_growth_enabled:
+                      growth=active_receipt['rc_active_role_growth']
+                      assert lock['rc_active_role_growth']==growth and growth['feature']=='GQ219_WARRIOR_001_ACTIVE_GROWTH_V1'
+                      assert growth['studio_selected_role_only'] is True
+                      assert growth['routes']['server/Game.server.luau']['before']==final_game
+                      assert growth['routes']['client/HUD.client.luau']['before']==touch['after']
+                      assert growth['routes']['server/MusouHorde.luau']['before']==hit['horde']
+                      assert all(lock['blobs'][r]==i['after'] for r,i in growth['routes'].items())
+                      final_game=growth['routes']['server/Game.server.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -1107,7 +1145,9 @@ jobs:
               assert titles[('ModuleScript','SevenJobsRules')]==1
               assert sum('action("JOB_SKILL",nil)' in src for src in included)==1
               assert sum('P0D_RC_ENABLE_SEVEN_JOBS_PVE' in src for src in included)==1
-              assert sum('horde:hit(source,dir,damage,serverNow(),player.Character)' in src for src in included)==1
+              job_horde_call=('horde:hit(source,dir,damage,serverNow(),player.Character,reach,targetLimit)'
+                             if role_growth_enabled else 'horde:hit(source,dir,damage,serverNow(),player.Character)')
+              assert sum(job_horde_call in src for src in included)==1
               assert 'SavedPveMasteryPolicy' in ''.join(included.elements())
               assert json.loads((base/'default.project.json').read_text('utf8'))['tree']['ServerStorage']['$attributes']['P0D_RC_ENABLE_SEVEN_JOBS_PVE'] is True
           else:
@@ -1260,6 +1300,7 @@ jobs:
           if undead_enabled: overlay_ids.append('FB026_UNDEAD_SIEGE_ACTIVE_V1')
           if assassin_wind_enabled: overlay_ids.append('FB020_ASSASSIN_WIND_ACTIVE_V1')
           if touch_enabled: overlay_ids.append('ACTIVE_TOUCH_ATTACK_LAYOUT_V2')
+          if role_growth_enabled: overlay_ids.append('GQ219_WARRIOR_001_ACTIVE_GROWTH_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
@@ -1346,7 +1387,8 @@ jobs:
           bots_enabled=json.load(open('rc_fastlane/features/active_solo_bots/source_lock.json'))['enabled']
           lobby_enabled=json.load(open('rc_fastlane/features/active_safe_lobby/source_lock.json'))['enabled']
           undead_enabled=json.load(open('rc_fastlane/features/active_undead_squad/source_lock.json'))['enabled']
-          assert x['native_source_count']==64+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          role_growth_enabled=json.load(open('rc_fastlane/features/active_role_growth/source_lock.json'))['enabled']
+          assert x['native_source_count']==64+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
