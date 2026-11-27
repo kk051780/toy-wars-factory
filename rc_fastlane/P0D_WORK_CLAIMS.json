@@ -42147,7 +42147,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #947 exact author HudPresentationPolicy only, integrated into selected PRIVATE REAL69_UNION22. Separate narrow portrait invulnerability and musou controls by 21 px at 320x260; move item/skill menus clear of HP. Keep #1043 attack/jump, minimap, gameplay, Active profile and remaining 68 selected sources exact. Preserve prior 22 rollback archives.",
       "resources": [
@@ -42392,6 +42392,70 @@
       "actual_binding_lease": {
         "commit": "366d7516d43a81ac8c6378c8a90d468bd8a52792",
         "operation_id": "465ae731-fce3-44ed-a58d-f59ce1068bea"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/947#pullrequestreview-6092646472",
+        "review_id": 6092646472,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 895073,
+        "private_place_sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74",
+        "private_immediate_off_bytes": 894743,
+        "private_ci": 46056506909,
+        "private_job": 140700178631,
+        "private_steps": 48,
+        "private_artifact": 15227531616,
+        "private_zip_bytes": 26761974,
+        "private_zip_digest": "sha256:9435f788cfd4d833dc827d0385fd3b24e31f8eb90bf0db41f2fc792582a5a56f",
+        "source_lock": "9d1892a72788ef22836200a230d069113ec73c9126e22cf5d68acfdea468c331",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "67ee8fe865d5ae742b661d5494cbfd2ffff87dbe",
+        "operation_id": "00d3d1f4-82b4-42f0-ac1e-6ee1f0c07cea"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "permitted_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "permitted_tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+        "permitted_pr": 947,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T19:56:33.813Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Original #947 exact author HudPresentationPolicy only, integrated into selected PRIVATE REAL69_UNION22. Separate narrow portrait invulnerability and musou controls by 21 px at 320x260; move item/skill menus clear of HP. Keep #1043 attack/jump, minimap, gameplay, Active profile and remaining 68 selected sources exact. Preserve prior 22 rollback archives.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "67ee8fe865d5ae742b661d5494cbfd2ffff87dbe",
+          "owner": "00d3d1f4-82b4-42f0-ac1e-6ee1f0c07cea",
+          "review": 6092646472,
+          "trusted_queue_run": 46057791079,
+          "trusted_queue_job": 140704394733
+        }
       }
     }
   ],
