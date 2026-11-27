@@ -44720,7 +44720,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "V4.2 selected PRIVATE actual S0-S4 TEAM/BR. Opt-in water/lightning loadout reuses the exact six ACTIVE donors and current PRIVATE tool/Swarm/HP. A MAGE-041, C MAGE-025 and D COMBO-004, B preserved. Real water mark/traced lightning and atomic component cooldowns/energy, existing HUD returns from D when standard gear comes back. No new Remote/world/Store/PvP. Preserve #1050 immediate inverse and prior sources.",
       "resources": [
@@ -44955,6 +44955,70 @@
       "actual_binding_lease": {
         "commit": "f4b97f9f2dd20ffb491146ee310f8133de21348a",
         "operation_id": "90560318-54e2-4717-9ab3-487c86ea09d7"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1051#pullrequestreview-6094092728",
+        "review_id": 6094092728,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "d69486222fd699a690c836efe820d392f88dff60",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 963229,
+        "private_place_sha256": "643e2365926fd87ff2b79630c8b3cd44c0aa21a16dee880f253aa23e6d109f2d",
+        "private_immediate_off_bytes": 921208,
+        "private_ci": 46078133073,
+        "private_job": 140770586439,
+        "private_steps": 48,
+        "private_artifact": 15235809709,
+        "private_zip_bytes": 30546606,
+        "private_zip_digest": "sha256:e5b95f092e61e9b15ad62034ad255edebf3c8f550ad0adf5d17026a2f00558d8",
+        "source_lock": "5aa5711d90e962b1d73f6d5ee80315a85c01524134623803e0f6545546e95dcf",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "f0f196e0f38b6e4faf41fccdb01b226590eef56b",
+        "operation_id": "eb80754f-1f46-4354-bfbc-a133fd3c9bf6"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "permitted_head": "d69486222fd699a690c836efe820d392f88dff60",
+        "permitted_tree": "f2350a27bd7e8d1b6b6d71267bf2b4553ff35586",
+        "permitted_pr": 1051,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T23:16:06.895Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "PRIVATE opt-in Mage water mark, lightning and COMBO-004 through existing Tool/Host/Swarm and cross-match HUD; ACTIVE intact",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-27T22:41:21Z",
+          "lease": "f0f196e0f38b6e4faf41fccdb01b226590eef56b",
+          "owner": "eb80754f-1f46-4354-bfbc-a133fd3c9bf6",
+          "review": 6094092728,
+          "trusted_queue_run": 46079418878,
+          "trusted_queue_job": 140774664352
+        }
       }
     }
   ],
