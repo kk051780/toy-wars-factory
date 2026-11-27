@@ -37,8 +37,12 @@ ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT
 INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
+def restore_combat(on, lock):
+    return compose.combat_visual_parent(*compose.growth_musou_parent(on, lock))
+
+
 def restore_canyon(on, lock):
-    wall_off = compose.guardian_wall_parent(*compose.combat_visual_parent(on, lock))
+    wall_off = compose.guardian_wall_parent(*restore_combat(on, lock))
     neutral_off = compose.neutral_names_parent(*wall_off)
     return compose.br_canyon_parent(*compose.role_readability_parent(*compose.field_prompt_parent(*neutral_off)))
 
@@ -47,6 +51,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["growth_musou_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["combat_visual_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["neutral_names_followup"]["rows"].items()
@@ -278,7 +284,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_br_canyon_restores_exact_relay_parent_and_rejects_stale_pair(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        wall_off = compose.guardian_wall_parent(*compose.combat_visual_parent(on, self.lock))
+        wall_off = compose.guardian_wall_parent(*restore_combat(on, self.lock))
         before_labels = compose.neutral_names_parent(*wall_off)
         on, post_canyon = compose.role_readability_parent(*compose.field_prompt_parent(*before_labels))
         prior, lock = compose.br_canyon_parent(on, post_canyon)
@@ -294,7 +300,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_role_readability_parity_and_wrong_rollback_rejected(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        on, visual_lock = compose.guardian_wall_parent(*compose.combat_visual_parent(on, self.lock))
+        on, visual_lock = compose.guardian_wall_parent(*restore_combat(on, self.lock))
         neutral_off, neutral_lock = compose.neutral_names_parent(on, visual_lock)
         self.assertEqual({name for name in on if on[name] != neutral_off[name]}, set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual(compose.identity((self.current / compose.NEUTRAL_NAMES_OFF / compose.PLACE).read_bytes()),
@@ -322,13 +328,23 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        on, combat_lock = compose.combat_visual_parent(final, self.lock)
+        growth_off, growth_lock = compose.growth_musou_parent(final, self.lock)
+        self.assertEqual({name for name in growth_off if growth_off[name] != final[name]},
+                         set(compose.GROWTH_MUSOU_SOURCES))
+        self.assertEqual(growth_lock["final_place"], self.lock["combat_visual_followup"]["repaired_place"])
+        with self.assertRaisesRegex(ValueError, "HUNK|GROWTH_MUSOU_TWO_WAY"):
+            compose.growth_musou_parent(growth_off, self.lock)
+        root = self.current_copy()
+        shutil.copyfile(root / compose.COMBAT_VISUAL_OFF_ARCHIVE, root / compose.GROWTH_MUSOU_OFF_ARCHIVE)
+        self.reject_core(root)
+        final = growth_off
+        on, combat_lock = compose.combat_visual_parent(final, growth_lock)
         self.assertEqual({name for name in on if on[name] != final[name]}, set(compose.COMBAT_VISUAL_SOURCES))
         self.assertEqual(combat_lock["final_place"], self.lock["guardian_wall_followup"]["repaired_place"])
         self.assertEqual(compose.identity((self.current / compose.COMBAT_VISUAL_OFF / compose.PLACE).read_bytes()),
                          combat_lock["final_place"])
         with self.assertRaisesRegex(ValueError, "HUNK|COMBAT_VISUAL_TWO_WAY"):
-            compose.combat_visual_parent(on, self.lock)
+            compose.combat_visual_parent(on, growth_lock)
         parent, lock = compose.guardian_wall_parent(on, combat_lock)
         guard = compose.GUARDIAN_SOURCE
         self.assertEqual({name for name in on if on[name] != parent[name]}, {guard})
@@ -1445,7 +1461,9 @@ class UnionOfflineContract(unittest.TestCase):
         neutral_names = self.lock["neutral_names_followup"]
         wall = self.lock["guardian_wall_followup"]
         combat = self.lock["combat_visual_followup"]
-        wall_sources = self.lock["sources"] | {name: row["parent"] for name, row in combat["rows"].items()}
+        growth = self.lock["growth_musou_followup"]
+        combat_sources = self.lock["sources"] | {name: row["parent"] for name, row in growth["rows"].items()}
+        wall_sources = combat_sources | {name: row["parent"] for name, row in combat["rows"].items()}
         visual_sources = wall_sources | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
         field_sources = visual_sources | {name: row["parent"] for name, row in neutral_names["rows"].items()}
         role_sources = field_sources | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]}
@@ -1479,7 +1497,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(field["repaired_place"], neutral_names["parent_place"])
         self.assertEqual(neutral_names["repaired_place"], wall["parent_place"])
         self.assertEqual(wall["repaired_place"], combat["parent_place"])
-        self.assertEqual(combat["repaired_place"], self.lock["final_place"])
+        self.assertEqual(combat["repaired_place"], growth["parent_place"])
+        self.assertEqual(growth["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(growth["rows"]), set(compose.GROWTH_MUSOU_SOURCES))
         self.assertEqual(set(combat["rows"]), set(compose.COMBAT_VISUAL_SOURCES))
         self.assertEqual(set(wall["rows"]), {compose.GUARDIAN_SOURCE})
         self.assertEqual(set(field["rows"]), {compose.VAULT_SOURCE})
