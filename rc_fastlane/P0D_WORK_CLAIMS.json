@@ -35535,9 +35535,9 @@
           "owner": "f6291d3c-c2ae-4082-a28b-e6e570cdca01"
         }
       },
-      "source_head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
-      "prepared_candidate_head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
-      "prepared_candidate_tree": "ca766112c0e61d258940fab4d6d9235876d49278",
+      "source_head": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+      "prepared_candidate_head": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+      "prepared_candidate_tree": "101c5aa63b79612bc284b243199ec686f32bce60",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_mage_contact_20261127/cases.luau",
@@ -35622,25 +35622,35 @@
           "mode": "100644",
           "blob": "46207f9635d0f6b644a55afa74bffdedeac8ba06",
           "bytes": 106794
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "5cae79bd1c955bb586cd721f8f2a712469bdd9c5",
+          "bytes": 9675
         }
       ],
       "actual_candidate_readback": {
-        "head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
-        "tree": "ca766112c0e61d258940fab4d6d9235876d49278",
+        "head": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "tree": "101c5aa63b79612bc284b243199ec686f32bce60",
         "base": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
         "branch": "quality/gq470-mage-close-basic-v3-20261127",
         "sourceLease": "dea18bfc04e5091bf7da324f1003304372ad4691",
         "sourceOperation": "6a1c885a-86ef-4b4a-8b48-757f68a5c86c",
         "pr": 1039,
         "livePrBase": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
-        "sourceReturn": "11f945ad9218ba3de24e1e7629d74453a08bb81d"
+        "sourceReturn": "11f945ad9218ba3de24e1e7629d74453a08bb81d",
+        "oldHead": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
+        "correctionLease": "ea60b6a5562c4b4103e092fc5b71006df42f156e",
+        "correctionOperation": "a00e5484-8f2b-4f4b-9c86-d0dac373044b",
+        "correctionReturn": "fdfdb5d19c77939f8b270af123c9beffeb38f917"
       },
       "actual_binding_lease": {
-        "commit": "cfbcc9c9106b6faeb6a0e244ac8d1b17c55e1abe",
-        "operation_id": "a6dc076c-0b59-4ff2-9d14-7a61e1af9a79"
+        "commit": "f6a646877e3179071cbee94c9a06785b9968d051",
+        "operation_id": "9ddceba8-2b1d-49c4-b5f0-31b84781b523"
       },
       "qa_correction_grant": {
-        "status": "ONE_EXACT_NONFORCE_QA_UPDATE",
+        "status": "CONSUMED_EXACT_QA_ONLY",
         "pr": 1039,
         "branch": "quality/gq470-mage-close-basic-v3-20261127",
         "old_candidate": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
@@ -35662,7 +35672,10 @@
         "metadata": {
           "lease": "d94cd4e732a31cda01c8a0a30b3f87259ed1ac44",
           "owner": "b5eb1361-2be0-4bb5-9cd7-a1c7fd038da8"
-        }
+        },
+        "actual_candidate": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "source_lease": "ea60b6a5562c4b4103e092fc5b71006df42f156e",
+        "source_return": "fdfdb5d19c77939f8b270af123c9beffeb38f917"
       }
     }
   ],
