@@ -34157,6 +34157,29 @@
       "actual_binding_lease": {
         "commit": "46d7bc93972f1fe633291abb47bbdeedf1645a9a",
         "operation_id": "f4eb624f-09a5-434f-8d92-5625ce4dc8f3"
+      },
+      "source_correction_grant": {
+        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "pr": 931,
+        "branch": "quality/gq470-art4-composite-prep-20261120",
+        "old_candidate": "a5611327a5a88b90c6805b6efb748dd3aac691cb",
+        "formal_parent": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "tree": "48a9e1a517b3351b965c45f3efe5b01f9905acda",
+        "local_head": "c1e07eb04c28b503eb76caf4d52a0502038ae495",
+        "one_file": {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 103674,
+          "mode": "100644",
+          "blob": "4572348a488d4f2ddbaa9c31055406731086d89c"
+        },
+        "source_runtime_changed": false,
+        "reason": "Hosted preserved stale program test crashed applying original Bot inverse to new label body. Restore exact pre-label OFF before applying original inverse. Same expected forgery rejection.",
+        "prior_exact_failed_run": 45951800393,
+        "expires_at": "2026-11-27T07:02:22.071Z",
+        "metadata": {
+          "lease": "d26c47928a12a4040f27c2e5f46ef2fb4c8f784c",
+          "owner": "cadbd7ab-bb43-477d-99ae-844429276649"
+        }
       }
     }
   ],
