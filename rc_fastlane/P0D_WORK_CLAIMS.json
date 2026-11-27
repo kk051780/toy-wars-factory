@@ -39633,20 +39633,20 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 479,
         "branch": "feature/p0d-fb026-undead-siege-native85-20261115",
-        "old_pr_head": "3541e5106001fc89ef9a507825f395d63be8f603",
+        "old_pr_head": "872b00383d60cc411571365754f6a6cff2507463",
         "old_base_ref": "feature/p0d-product-quality-gate-20261115",
         "formal_parent": "349d45f868b1594f3cb5f058e42c02b614278236",
-        "tree": "baa35166b3dc019a47b46d330a928ea74f731970",
-        "local_head": "3ec1b79977b0c154d547f0a1880c7a2174106a2d",
+        "tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+        "local_head": "da6c9756b281e6d073efb5778fc7b63da5622ca8",
         "allowed_changed_files": [
           {
-            "mode": "100644",
-            "blob": "b21ed2e62bee26eeee3b23812065723948a28f36",
             "path": ".github/workflows/p0d-rc-fastlane.yml",
-            "bytes": 230596
+            "mode": "100644",
+            "blob": "6b336281b64c967a24396e0104a8db895959704d",
+            "bytes": 230729
           },
           {
             "mode": "100644",
@@ -39691,10 +39691,10 @@
             "bytes": 114240
           }
         ],
-        "expires_at": "2026-11-27T17:18:43.634Z",
+        "expires_at": "2026-11-27T17:23:35.735Z",
         "issued_from": {
-          "lease": "64093a0fd2425ddb80568b92c63dfded738de3d0",
-          "owner": "a5031fd1-bea0-44b6-a438-8184634d87b7"
+          "lease": "6b964ea21142b60b0974f28c0dc5ad0e8f0e0f76",
+          "owner": "00318709-bc16-4835-b0e9-f368d0c89beb"
         },
         "local_qa": {
           "on": 668223,
@@ -39710,8 +39710,23 @@
           "baseline_no_bodies_proved": true,
           "spatial_wall_block_closed_hp64": true,
           "expiry_recast_48_01_owner_three": true,
-          "preserve_original_module": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341"
-        }
+          "preserve_original_module": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341",
+          "hosted_actual_rojo_source_count": 69,
+          "hosted_actual_rojo_place_bytes": 668223,
+          "unchanged_product_for_correction": true
+        },
+        "repair_changed_paths_from_red": [
+          ".github/workflows/p0d-rc-fastlane.yml"
+        ]
+      },
+      "first_candidate": {
+        "head": "872b00383d60cc411571365754f6a6cff2507463",
+        "tree": "baa35166b3dc019a47b46d330a928ea74f731970",
+        "source_lease": "d7fcea20bd33e4e695230e823a001dbfaa724343",
+        "source_return": "f4d5a9f4e8e180b60814ee657ab6d0844385a9fa",
+        "author_parent": "3541e5106001fc89ef9a507825f395d63be8f603",
+        "failed_job": 140620325360,
+        "reason": "CAPACITY_GATE_MISSING_NEW_EXACT_MODULE"
       }
     }
   ],
