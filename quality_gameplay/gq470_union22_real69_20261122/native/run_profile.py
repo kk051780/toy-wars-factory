@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "98576bcb8642b9fb5e60907eb911055298a2a721d2c39c39c6845baf2d1eec94"
+INPUT_LOCK_SHA256 = "5d85923950d1c49f2d3efd7926ebe5812feaa69f387172f53bb1bc4f3533f8df"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -752,6 +752,9 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         run_mage_contact(root.parent, output / "mage_contact", binary, pin, context, compose.load_lock(), compose)
         from relay_eligibility_native import run as run_relay_eligibility
         run_relay_eligibility(root.parent, output / "relay_eligibility", binary, pin, context, compose.load_lock(), compose)
+        from private_touch_native import run as run_private_touch
+        run_private_touch(root, output / "private_touch", binary, pin, context, compose.load_lock(), compose,
+                          clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -775,8 +778,9 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         art_files = sum(name.startswith("art_polish_skillfx/") for name in evidence)
         mage_files = sum(name.startswith("mage_contact/") for name in evidence)
         eligibility_files = sum(name.startswith("relay_eligibility/") for name in evidence)
-        require(len(evidence) == 299 and growth_files == 103 and art_files == 4 and mage_files == 77
-                and eligibility_files == 10,
+        touch_files = sum(name.startswith("private_touch/") for name in evidence)
+        require(len(evidence) == 303 and growth_files == 103 and art_files == 4 and mage_files == 77
+                and eligibility_files == 10 and touch_files == 4,
                 "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
@@ -803,6 +807,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "art_polish_skillfx": identity(read(output / "art_polish_skillfx/receipt.json")),
                    "mage_contact": identity(read(output / "mage_contact/receipt.json")),
                    "relay_eligibility": identity(read(output / "relay_eligibility/receipt.json")),
+                   "private_touch": identity(read(output / "private_touch/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -810,8 +815,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_original_suites": False,
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
-                   "native_process_count": 95,
-                   "native_evidence_file_count": 300,
+                   "native_process_count": 96,
+                   "native_evidence_file_count": 304,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

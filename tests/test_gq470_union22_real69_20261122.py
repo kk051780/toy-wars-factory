@@ -35,11 +35,12 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 69, "final": 21}
+INTEGRATION_COUNTS = {"core": 70, "final": 21}
 
 
 def restore_combat(on, lock):
-    relay_off = compose.relay_eligibility_parent(*compose.moguron_parent(on, lock))
+    touch_off = compose.private_touch_parent(on, lock)
+    relay_off = compose.relay_eligibility_parent(*compose.moguron_parent(*touch_off))
     mage_off = compose.mage_contact_parent(*relay_off)
     return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(*mage_off)))
 
@@ -435,10 +436,23 @@ class UnionBoundary(unittest.TestCase):
         shutil.copyfile(root / compose.FIELD_PROMPT_OFF_ARCHIVE, root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)
         self.reject_core(root)
 
+    def test_private_touch_inverse_changes_only_hud_and_rejects_older_archive(self):
+        final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        parent, parent_lock = compose.private_touch_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != parent[name]}, {compose.PRIVATE_TOUCH_SOURCE})
+        self.assertEqual(parent_lock["final_place"], self.lock["moguron_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.MOGURON_OFF_ARCHIVE, root / compose.PRIVATE_TOUCH_OFF_ARCHIVE)
+        with self.assertRaisesRegex(ValueError, "ARCHIVE"):
+            verify.verify_core(root, self.prior, self.reports, self.context)
+        self.assertFalse((root / "delivery").exists())
+
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        moguron_off, moguron_lock = compose.moguron_parent(final, self.lock)
-        self.assertEqual({name for name in moguron_off if moguron_off[name] != final[name]}, {compose.MOGURON_SOURCE})
+        touch_off, touch_lock = compose.private_touch_parent(final, self.lock)
+        moguron_off, moguron_lock = compose.moguron_parent(touch_off, touch_lock)
+        self.assertEqual({name for name in moguron_off if moguron_off[name] != touch_off[name]},
+                         {compose.MOGURON_SOURCE})
         self.assertEqual(moguron_lock["final_place"], self.lock["relay_eligibility_followup"]["repaired_place"])
         root = self.current_copy()
         shutil.copyfile(root / compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, root / compose.MOGURON_OFF_ARCHIVE)
