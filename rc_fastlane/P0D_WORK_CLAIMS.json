@@ -37363,6 +37363,55 @@
       "actual_binding_lease": {
         "commit": "6f1617b6da50ffbed796d6e46a763bb15b071fff",
         "operation_id": "e54bba74-201d-43c0-987c-4845c266b98f"
+      },
+      "qa_correction_grant": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "permitted_pr": 391,
+        "branch": "feature/p0d-prep-results-return-20261114",
+        "prior_remote_head": "c2e902081bab11b1cb128fbf7b06160263f50718",
+        "formal_parent": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "local_head": "54f5bc6db8bb5b3e589686c0ada98165e9ff14d9",
+        "tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "866902567db297fb2f881c35c7499a70de54768a",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 206574
+          },
+          {
+            "mode": "100644",
+            "blob": "8263f6d4e6e84e57bbfcc528f2874dc6d9f2acf7",
+            "path": "rc_fastlane/apply_active_results.py",
+            "bytes": 5644
+          },
+          {
+            "mode": "100644",
+            "blob": "00063fbbcd21cbe40569213ab5375984f0c23c11",
+            "path": "rc_fastlane/features/active_results/source_lock.json",
+            "bytes": 315
+          },
+          {
+            "mode": "100644",
+            "blob": "5d7a44bfe28ff0f7ee8a00560edf45e58a7c267e",
+            "path": "rc_fastlane/verify_p0_results78_native.py",
+            "bytes": 10717
+          }
+        ],
+        "reason": "Independent actual Game Remote/READY/phase Native with a suspended LoadCharacter saw the dead player admitted and resetRound called after the 7-second countdown. Existing #391 return is maintained; per-round pending table blocks affirmative READY without consuming seq and both countdown edges, preserves cancellation and clears on completion/exit.",
+        "local_scope_evidence": {
+          "place": 610358,
+          "place_sha256": "b8d81c3fcc19d712a71882f274ea94f894479e5adffdb6ac68eee7d940511813",
+          "official_off": 608571,
+          "changed_gameplay_source_count": 1,
+          "legacy_results_native": 15,
+          "round_team_fence": true,
+          "inflight_native": true
+        },
+        "independent_context": "/root/p0_offer_review26",
+        "grant_lease": "f7e692c6c59e851779c71c6b9a8ec15d35f01a68",
+        "grant_operation": "6cccf5c6-6873-4dfa-86b2-c66ce2e0541e",
+        "expires_at": "2026-11-27T14:06:52.386Z"
       }
     }
   ],
