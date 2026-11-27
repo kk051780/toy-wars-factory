@@ -33480,7 +33480,7 @@
     {
       "claim_id": "P0D-GQ796-GUARDIAN-WALL-PATROL-20261127",
       "feature_id": "GQ796_GUARDIAN_WALL_PATROL",
-      "state": "PREP_READY",
+      "state": "RC_ADMISSION_AUTHORIZED",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, original #796 and prepared wall fix reuse)",
       "parent_issue": 470,
@@ -33497,7 +33497,7 @@
       "author_may_self_approve": false,
       "PREP_READY": true,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": false,
+      "rc_write_authorized_by_this_claim": true,
       "scope": "One existing guardian movement route, prepared exact f57d11b4 guard-body sweeps/tangent slide/end overlap, 1545 bytes, no new hostile target policy, castle rules, character HP, inventory, authority or art variant. Reuse existing open #796 and preserve original head. Preserve old 40 native exact historical context and run seven strict new cases. Shared canonical scope serialized; #957 excluded.",
       "resources": [
         "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
@@ -33741,6 +33741,39 @@
       "actual_prep_ready_lease": {
         "commit": "56738ad4cc7a7c0ca9ef786c6b9e27c9995b646f",
         "operation_id": "ddb6f374-4599-48a9-8a88-2369839c50c4"
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "permitted_head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "permitted_tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+        "permitted_pr": 796,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEx_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T06:35:18.502Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact Guardian wall runtime repair only. Same-head formal CI and Place required, routine Studio deferred by current #1011 V3.0. No main, active runtime selection, publication or spending.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated #1011 V3.0, #220, exact independent COMMENT and trusted intake",
+          "independent_review_id": 6084124229,
+          "trusted_queue_run": 45949267329,
+          "trusted_queue_job": 140341056968,
+          "lease": "2362f14650335e917a8cc3aea93403558b2128e5",
+          "owner": "7bee6b42-4043-4af2-a877-76d98254b3ec"
+        }
       }
     }
   ],
