@@ -41499,6 +41499,140 @@
           "trusted_queue_job": 140675666067
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-MAGE-041-ACTIVE-WATER-BOLT-20261128",
+      "feature_id": "GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent scoped Active companion)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+      "base_rc_tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
+      "prep_branch": "quality/gq219-active-mage-water-041-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Exact fixed GQ219 MAGE-041 catalog row and actual active selected Mage Q, only neutral combat. Reuse Growth, single original Game/Horde HP path, caster-root LOS, only actual living target marks, current role/round/avatar authority, existing 3-target budget, no extra mark damage. Real status range/time/UI, existing Mage F and Warrior Q preserved; no Combo activation, Store or additional Remote.",
+      "resources": [
+        "ACTIVE_RICH51_MAGE_041_WATER_Q_NEUTRAL_GQ219_ONLY"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_mage_water.py",
+        "rc_fastlane/features/active_mage_water/MageWaterCatalog.luau",
+        "rc_fastlane/features/active_mage_water/native_cases.luau",
+        "rc_fastlane/features/active_mage_water/source_lock.json",
+        "rc_fastlane/verify_active_mage_water_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7204247109",
+      "protected_overlap": {
+        "issues": [
+          1044,
+          297,
+          1039
+        ],
+        "partition": "MAGE-041 is selected Mage Q only. #1044 F and #297 WARRIOR Q tested intact; #1039 Private scope and vector unchanged. COMBO-004 is separate; no owner permission for publication."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "f694c0da-7af6-428b-a486-cf58b6f496f9",
+      "issued_at": "2026-11-27T18:28:57.109Z",
+      "expires_at": "2026-11-27T20:28:57.109Z",
+      "actual_metadata_lease": {
+        "ref": "1553ca29d451a248b475484c4f88a5ee41990d08",
+        "blob": "d64a283fe1d4d49817bacc084c3c1981e3fe5d5d",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "f694c0da-7af6-428b-a486-cf58b6f496f9",
+          "task_id": null,
+          "epoch": 1005,
+          "acquired_at": "2026-11-27T18:28:26.899Z",
+          "expires_at": "2026-11-27T18:58:26.899Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5; #218/#220 and #219 fixed MAGE-041 design. Existing frozen catalog row reused. One exact active Q draft after #1044 supports no broad or formal writer authority.",
+      "source_grant": {
+        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "branch": "quality/gq219-active-mage-water-041-20261128",
+        "formal_parent": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "tree": "e190d093a79f249696a8cbff8c1604986b602cbb",
+        "local_head": "3d0a0afdd290e8c78cf2a792a5de00248dff6ca4",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "c16655b475b69684bff2783a93822ece4fa184c1",
+            "bytes": 250526
+          },
+          {
+            "path": "rc_fastlane/apply_active_mage_water.py",
+            "mode": "100644",
+            "blob": "71c633c568c0670e7fa9b496e456f97e0471f8d9",
+            "bytes": 18316
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_water/MageWaterCatalog.luau",
+            "mode": "100644",
+            "blob": "102605d25f7330adf739b5e6860b0f6012f838e6",
+            "bytes": 1292
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_water/native_cases.luau",
+            "mode": "100644",
+            "blob": "866a571c46c2f9484a9ca4b32591ff17435327c3",
+            "bytes": 5236
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_water/source_lock.json",
+            "mode": "100644",
+            "blob": "a55927c69d7f8b5f1a4e5ea343b9349ceef4eba9",
+            "bytes": 1499
+          },
+          {
+            "path": "rc_fastlane/verify_active_mage_water_native.py",
+            "mode": "100644",
+            "blob": "3e1deea3a90e4c7931ecf41729b69086a0690358",
+            "bytes": 1775
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "3837b9b810905695bfd136845dec1a938cc1106f",
+            "bytes": 119038
+          }
+        ],
+        "expires_at": "2026-11-27T19:28:57.109Z",
+        "issued_from": {
+          "lease": "1553ca29d451a248b475484c4f88a5ee41990d08",
+          "owner": "f694c0da-7af6-428b-a486-cf58b6f496f9"
+        },
+        "local_qa": {
+          "place_bytes": 709077,
+          "place_sha256": "1c42a55ba536537779e61ad1079fd0cb2c7098bab1fa7d7f33459f86c59482d5",
+          "off_bytes": 700116,
+          "off_sha256": "4bc6a0b61fcc784c52de5cc5c9a5ddbefac0e16564cdc33b89484d942d6c604d",
+          "all_compile": 73,
+          "unchanged_sources": 68,
+          "native_all_groups": 12,
+          "draft_only": true,
+          "studio": "NOT_TESTED_V3.5",
+          "independent_tests": "Closed/open LOS, exactly 12s after flag OFF/ON, target cue after source KO, actual tick + simultaneous mark owners."
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
