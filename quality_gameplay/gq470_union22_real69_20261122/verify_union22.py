@@ -522,9 +522,17 @@ def verify_core(root, base, reports, context):
     art_polish = lock["art_polish_followup"]
     mage = lock["mage_contact_followup"]
     eligibility = lock["relay_eligibility_followup"]
+    moguron = lock["moguron_followup"]
+    require(set(moguron["rows"]) == {compose.MOGURON_SOURCE}, "MOGURON_SOURCE_SET")
+    expected_moguron_off, moguron_off_lock, moguron_off = verify_source_rollback(
+        root, root, lock, current, moguron, moguron["rows"], eligibility["repaired_place"],
+        compose.MOGURON_OFF, compose.MOGURON_OFF_ARCHIVE, "MOGURON")
+    verify_exact_author_patch(root, compose.MOGURON_OFF, (compose.MOGURON_SOURCE,),
+                              moguron["author_patch"], "MOGURON", ("--directory=sources",))
     require(set(eligibility["rows"]) == set(compose.RELAY_ELIGIBILITY_SOURCES), "RELAY_ELIGIBILITY_SOURCE_SET")
     expected_eligibility_off, eligibility_off_lock, eligibility_off = verify_source_rollback(
-        root, root, lock, current, eligibility, eligibility["rows"], mage["repaired_place"],
+        root, root / compose.MOGURON_OFF, moguron_off_lock, moguron_off, eligibility, eligibility["rows"],
+        mage["repaired_place"],
         compose.RELAY_ELIGIBILITY_OFF, compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, "RELAY_ELIGIBILITY")
     verify_exact_author_patch(root, compose.RELAY_ELIGIBILITY_OFF, compose.RELAY_ELIGIBILITY_SOURCES,
                               eligibility["author_patch"], "RELAY_ELIGIBILITY")
@@ -677,6 +685,8 @@ def verify_core(root, base, reports, context):
         "mage_contact_rollback_archive": digest(read(root / compose.MAGE_CONTACT_OFF_ARCHIVE)),
         "relay_eligibility_followup": eligibility,
         "relay_eligibility_rollback_archive": digest(read(root / compose.RELAY_ELIGIBILITY_OFF_ARCHIVE)),
+        "moguron_followup": moguron,
+        "moguron_rollback_archive": digest(read(root / compose.MOGURON_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -687,7 +697,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 33 and core.get("unchanged_sources") == 36
-            and core.get("compile_count") == 174 and core.get("rojo_build_count") == 21
+            and core.get("compile_count") == 175 and core.get("rojo_build_count") == 22
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -764,6 +774,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.MAGE_CONTACT_OFF_ARCHIVE] = digest(read(root / compose.MAGE_CONTACT_OFF_ARCHIVE))
     expected_stage.update({compose.RELAY_ELIGIBILITY_OFF + "/" + name: pin for name, pin in expected_eligibility_off.items()})
     expected_stage[compose.RELAY_ELIGIBILITY_OFF_ARCHIVE] = digest(read(root / compose.RELAY_ELIGIBILITY_OFF_ARCHIVE))
+    expected_stage.update({compose.MOGURON_OFF + "/" + name: pin for name, pin in expected_moguron_off.items()})
+    expected_stage[compose.MOGURON_OFF_ARCHIVE] = digest(read(root / compose.MOGURON_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -772,11 +784,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 195 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 197 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 174 and len(rojo_commands) == 21, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 175 and len(rojo_commands) == 22, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -799,6 +811,7 @@ def verify_core(root, base, reports, context):
                             for name in compose.MAGE_CONTACT_SOURCES)
     expected_compile.update(str(Path(stage) / compose.RELAY_ELIGIBILITY_OFF / "sources" / name)
                             for name in compose.RELAY_ELIGIBILITY_SOURCES)
+    expected_compile.add(str(Path(stage) / compose.MOGURON_OFF / "sources" / compose.MOGURON_SOURCE))
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -820,7 +833,8 @@ def verify_core(root, base, reports, context):
                                compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
                                compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
-                               compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF)},
+                               compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
+                               compose.MOGURON_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -846,7 +860,8 @@ def verify_core(root, base, reports, context):
                         compose.MAGE_CONTACT_OFF: [name for name in lock["sources"]
                                                  if name in compose.MAGE_CONTACT_SOURCES],
                         compose.RELAY_ELIGIBILITY_OFF: [name for name in lock["sources"]
-                                                       if name in compose.RELAY_ELIGIBILITY_SOURCES]}
+                                                       if name in compose.RELAY_ELIGIBILITY_SOURCES],
+                        compose.MOGURON_OFF: [compose.MOGURON_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -2031,7 +2046,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.GROWTH_MUSOU_OFF_ARCHIVE,
                             compose.ART_POLISH_OFF_ARCHIVE,
                             compose.MAGE_CONTACT_OFF_ARCHIVE,
-                            compose.RELAY_ELIGIBILITY_OFF_ARCHIVE,
+                            compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, compose.MOGURON_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2130,6 +2145,9 @@ def admit_delivery(root, base, reports, native, context):
             "relay_eligibility_followup": verified["lock"]["relay_eligibility_followup"],
             "relay_eligibility_inverse_place": verified["lock"]["relay_eligibility_followup"]["parent_place"],
             "relay_eligibility_inverse_archive": digest(read(root / compose.RELAY_ELIGIBILITY_OFF_ARCHIVE)),
+            "moguron_followup": verified["lock"]["moguron_followup"],
+            "moguron_inverse_place": verified["lock"]["moguron_followup"]["parent_place"],
+            "moguron_inverse_archive": digest(read(root / compose.MOGURON_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],

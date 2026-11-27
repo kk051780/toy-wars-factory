@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "d77a2f8959ad50efc7feaf83ee74c939315e773d271bfbc7b5a8dadf2bb16981"
+INPUT_LOCK_SHA256 = "98576bcb8642b9fb5e60907eb911055298a2a721d2c39c39c6845baf2d1eec94"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
