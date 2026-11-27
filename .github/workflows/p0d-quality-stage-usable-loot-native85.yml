@@ -1,0 +1,196 @@
+name: P0D real six usable arena weapon pickups 3 types in original Game native85
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/stage_usable_loot/**
+      - .github/workflows/p0d-quality-stage-usable-loot-native85.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/stage_usable_loot/**
+      - .github/workflows/p0d-quality-stage-usable-loot-native85.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-85-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download exact already native and Rojo PASS original 84 real Game
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_stage_loot85_parent
+          gh run download 43707316344 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-SIEGE-HIT-FX-AND-AI-ARRIVAL-RC84-NOGO \
+            -D /tmp/p0d_stage_loot85_parent
+          test -s /tmp/p0d_stage_loot85_parent/P0D_SIEGE_HIT_FEEDBACK_V3.zip
+      - name: Rebuild real 85 script Studio Place and require source exact original Game and new weapon module
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/stage_usable_loot/build_stage_usable85.py \
+            --parent /tmp/p0d_stage_loot85_parent/P0D_SIEGE_HIT_FEEDBACK_V3.zip \
+            --out /tmp/P0D_STAGE_LOOT85_PRIVATE.zip \
+            --extract /tmp/p0d_stage_loot85_sources
+          python3 - <<'PY'
+          import sys,json,hashlib
+          from pathlib import Path
+          from zipfile import ZipFile
+          sys.path.insert(0,'product_quality/stage_usable_loot')
+          import build_stage_usable85 as builder
+          with ZipFile('/tmp/P0D_STAGE_LOOT85_PRIVATE.zip') as z:
+              receipt=json.loads(z.read('RECEIPT.json'))
+              place=z.read(builder.OUTPUT)
+          assert receipt['script_count']==85 and receipt['existing_83_script_bodies_exact']
+          assert receipt['stage_world_weapon_count']==6 and receipt['stage_unique_weapon_types']==3
+          assert receipt['server_validated_no_remote_and_no_store']
+          assert receipt['pickup_active_round_only'] and receipt['stage_loot_cannot_buff_egg_carrier']
+          assert receipt['seven_job_special_weapons_preserved']
+          assert not receipt['official_rc_write'] and receipt['product']=='NO_GO'
+          assert len(place)==832695 and hashlib.sha256(place).hexdigest()==builder.EXPECTED_SHA
+          _,scripts=builder.collect(place)
+          assert len(scripts)==85
+          assert len(list(Path('/tmp/p0d_stage_loot85_sources').glob('*.luau')))==85
+          game=scripts['Game'].text
+          loot=scripts['StagePickupLoot'].text
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert game.count('SevenJobs.StageLoot.hitOrigin(')==2
+          assert 'SevenJobs.StageLoot.damageMultiplier(player,now,match.serial)' in game
+          assert game.count('SevenJobs.StageLoot.endRound()')==2
+          assert 'summonSevenBeast' in game
+          assert 'SevenJobs.TrapperWarp.place' in game
+          assert 'SevenJobs.ArmamentM1.strike' in game
+          for key in ('SUN_BLADE','WIND_SPEAR','THUNDER_BOW'):
+              assert key in loot
+          assert 'P0D_PRIVATE_STAGE_WEAPON_LOOT' in loot
+          assert 'StageLoot.clearPlayer(player)' in loot
+          assert 'GetServerTimeNow' in loot
+          assert 'RemoteEvent' not in loot and 'DataStore' not in loot
+          try:builder.patch_game(game)
+          except ValueError:pass
+          else:raise AssertionError('DUPLICATE_GAME_STAGE_LOOT_PATCH_ACCEPTED')
+          try:builder.add_module(builder.collect(place)[0],loot)
+          except ValueError:pass
+          else:raise AssertionError('DUPLICATE_STAGE_LOOT_MODULE_ACCEPTED')
+          print('REAL_STAGE_LOOT85_SOURCE_EXACT_83_UNCHANGED_NO_SECOND_GAME_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_stage_loot85_luau
+          persist-credentials: false
+      - name: Native compile ALL 84 actual Luau scripts including genuine Game
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_stage_loot85_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_stage_loot85_luau -B /tmp/p0d_stage_loot85_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_stage_loot85_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_stage_loot85_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_stage_loot85_sources -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 85
+          echo 'P0D_REAL_STAGE_LOOT85_NATIVE_85_OF_85_PASS'
+      - name: Reconstruct 84 original Roblox paths and types from the actual Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          import hashlib,json
+          target=Path('/tmp/p0d_stage_loot85_rojo')
+          with ZipFile('/tmp/P0D_STAGE_LOOT85_PRIVATE.zip') as z:
+              root=ET.fromstring(z.read('P0D_RC85_3_USEABLE_STAGE_WEAPONS_SIEGE_BEAST_TRAPPER_SOLO_PRIVATE.rbxlx'))
+          types={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          manifest=[]
+          def walk(item,old=()):
+              p=item.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=old+((name,) if name else ())
+              if src is not None:
+                  assert item.get('class') in types and len(here)>=3
+                  assert here[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(t.isidentifier() for t in here)
+                  f=target/'src'/Path(*here).with_suffix(types[item.get('class')])
+                  f.parent.mkdir(parents=True,exist_ok=True)
+                  assert not f.exists()
+                  f.write_text(src,encoding='utf-8')
+                  raw=src.encode('utf-8')
+                  d=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  manifest.append({'path':'/'.join(here),'kind':item.get('class'),'blob':d})
+              for child in item.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(manifest)==85
+          assert len({x['path'] for x in manifest})==85
+          (target/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          project={'name':'P0DReal85StageUsableLoot','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage',
+              'TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService',
+              'TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer',
+              'StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (target/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('85_REAL_LUAU_PATH_CLASS_BLOB_MANIFEST_PREPARED')
+          PY
+      - name: Pinned Rojo 7.7.1 rebuild exact 84 class path and source GitBlob
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_stage_loot85_rojo_release.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_stage_loot85_rojo_release.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_stage_loot85_rojo_release.zip') as z:
+              entries=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(entries)==1
+              file=Path('/tmp/p0d_stage_loot85_rojo_binary')
+              file.write_bytes(z.read(entries[0]))
+              file.chmod(0o755)
+          PY
+          /tmp/p0d_stage_loot85_rojo_binary build /tmp/p0d_stage_loot85_rojo/default.project.json -o /tmp/p0d_stage_loot85_rojo_rebuilt.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import hashlib,json
+          want=json.loads(Path('/tmp/p0d_stage_loot85_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_stage_loot85_rojo_rebuilt.rbxlx').read_bytes())
+          got=[]
+          def walk(n,prior=()):
+              p=n.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=prior+((name,) if name else ())
+              if src is not None:
+                  raw=src.encode('utf-8')
+                  d=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  got.append({'path':'/'.join(here),'kind':n.get('class'),'blob':d})
+              for c in n.findall('Item'):walk(c,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(got)==len(want)==85
+          assert {x['path']:(x['kind'],x['blob']) for x in got}=={
+              x['path']:(x['kind'],x['blob']) for x in want}
+          print('P0D_REAL_STAGE_LOOT85_ROJO_EXACT_85_OF_85_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-REAL-THREE-STAGE-WEAPON-LOOT-RC85-NOGO
+          path: /tmp/P0D_STAGE_LOOT85_PRIVATE.zip
+          retention-days: 7
