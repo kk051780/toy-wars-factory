@@ -739,7 +739,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 77, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 81, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
