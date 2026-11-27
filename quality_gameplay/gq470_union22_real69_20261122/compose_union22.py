@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "5d013aed60e524bb8bb216362a6357d43b81854ca209116705852e09f945dfa9"
+LOCK_SHA256 = "9d1892a72788ef22836200a230d069113ec73c9126e22cf5d68acfdea468c331"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -96,6 +96,9 @@ MOGURON_OFF_ARCHIVE = "OFF69_MOGURON_RELAY_PARENT_ROLLBACK.tar.gz"
 PRIVATE_TOUCH_SOURCE = HUD_SOURCE
 PRIVATE_TOUCH_OFF = "off69_private_touch_moguron_parent"
 PRIVATE_TOUCH_OFF_ARCHIVE = "OFF69_PRIVATE_TOUCH_MOGURON_PARENT_ROLLBACK.tar.gz"
+PORTRAIT_SOURCE = "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau"
+PORTRAIT_OFF = "off69_portrait_private_touch_parent"
+PORTRAIT_OFF_ARCHIVE = "OFF69_PORTRAIT_PRIVATE_TOUCH_PARENT_ROLLBACK.tar.gz"
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -399,7 +402,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 33, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 34, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -503,6 +506,11 @@ def moguron_parent(on, lock):
 def private_touch_parent(on, lock):
     return paired_source_parent(on, lock, lock["private_touch_followup"], (PRIVATE_TOUCH_SOURCE,),
                                 lock["moguron_followup"]["repaired_place"], "PRIVATE_TOUCH")
+
+
+def portrait_parent(on, lock):
+    return paired_source_parent(on, lock, lock["portrait_followup"], (PORTRAIT_SOURCE,),
+                                lock["private_touch_followup"]["repaired_place"], "PORTRAIT")
 
 
 def castle_parent(on, lock):
@@ -672,7 +680,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    private_touch_off, private_touch_off_lock = private_touch_parent(on, lock)
+    portrait_off, portrait_off_lock = portrait_parent(on, lock)
+    private_touch_off, private_touch_off_lock = private_touch_parent(portrait_off, portrait_off_lock)
     moguron_off, moguron_off_lock = moguron_parent(private_touch_off, private_touch_off_lock)
     eligibility_off, eligibility_off_lock = relay_eligibility_parent(moguron_off, moguron_off_lock)
     mage_off, mage_off_lock = mage_contact_parent(eligibility_off, eligibility_off_lock)
@@ -726,7 +735,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                    RELAY_ELIGIBILITY_SOURCES),
                   (stage / MOGURON_OFF, moguron_off, moguron_off_lock["final_place"], MOGURON_SOURCE),
                   (stage / PRIVATE_TOUCH_OFF, private_touch_off, private_touch_off_lock["final_place"],
-                   PRIVATE_TOUCH_SOURCE))
+                   PRIVATE_TOUCH_SOURCE),
+                  (stage / PORTRAIT_OFF, portrait_off, portrait_off_lock["final_place"], PORTRAIT_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -796,6 +806,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         moguron_archive_identity = identity(read_file(stage / MOGURON_OFF_ARCHIVE))
         make_archive(stage / PRIVATE_TOUCH_OFF, stage / PRIVATE_TOUCH_OFF_ARCHIVE, PRIVATE_TOUCH_OFF)
         private_touch_archive_identity = identity(read_file(stage / PRIVATE_TOUCH_OFF_ARCHIVE))
+        make_archive(stage / PORTRAIT_OFF, stage / PORTRAIT_OFF_ARCHIVE, PORTRAIT_OFF)
+        portrait_archive_identity = identity(read_file(stage / PORTRAIT_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -890,6 +902,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({PRIVATE_TOUCH_OFF + "/" + PROJECT: lock["project"],
                                PRIVATE_TOUCH_OFF + "/" + PLACE: private_touch_off_lock["final_place"],
                                PRIVATE_TOUCH_OFF_ARCHIVE: private_touch_archive_identity})
+        expected_stage.update({PORTRAIT_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in portrait_off.items()})
+        expected_stage.update({PORTRAIT_OFF + "/" + PROJECT: lock["project"],
+                               PORTRAIT_OFF + "/" + PLACE: portrait_off_lock["final_place"],
+                               PORTRAIT_OFF_ARCHIVE: portrait_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -898,7 +915,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 33, "unchanged_source_count": 36,
+            "selected_source_count": 69, "changed_source_count": 34, "unchanged_source_count": 35,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -949,6 +966,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "moguron_rollback_archive": moguron_archive_identity,
             "private_touch_followup": lock["private_touch_followup"],
             "private_touch_rollback_archive": private_touch_archive_identity,
+            "portrait_followup": lock["portrait_followup"],
+            "portrait_rollback_archive": portrait_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -960,8 +979,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 33, "unchanged_sources": 36,
-            "compile_count": 176, "rojo_build_count": 23, "instances": 75,
+            "source_count": 69, "changed_sources": 34, "unchanged_sources": 35,
+            "compile_count": 177, "rojo_build_count": 24, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -978,6 +997,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_contact_parent_place": mage_off_lock["final_place"],
             "relay_eligibility_parent_place": eligibility_off_lock["final_place"],
             "private_touch_parent_place": private_touch_off_lock["final_place"],
+            "portrait_parent_place": portrait_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

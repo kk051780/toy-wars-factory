@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 894743,
-    "sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564"
+    "bytes": 895073,
+    "sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74"
   },
   "followup_repair": {
     "author_contexts": [
@@ -15608,16 +15608,102 @@
   "sources": {
     "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
       "after": {
-        "bytes": 7596,
-        "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+        "bytes": 7926,
+        "sha256": "0a7784e909345fc974a76a487915be1144f5c8ce5ab45b27a0e7b442d44bc36f"
       },
       "before": {
         "bytes": 7596,
         "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "start": 41,
+          "stop": 42,
+          "old": "        local menuY = math.max(62, math.min(133, h * .18))\n",
+          "new": "        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121\n        -- On compact portrait screens the old y=h*.18 put MENU buttons\n        -- very close to the HP status strip. Reserve a 7px clearance.\n        local menuY = clamp(h * .18, 64, 133)\n        -- Narrow portrait ITEM shifts outward to protect the combat center.\n        local itemInset = if w <= 360 then 45 else 65\n",
+          "old_identity": {
+            "bytes": 59,
+            "sha256": "1209506ee2083f151e7209402c96160db6c3fec54873be502ca43cb0c8bdf874"
+          },
+          "new_identity": {
+            "bytes": 382,
+            "sha256": "f33b4311c4e306f4ba8b22b75b61955c2d51e905246c489ddd08a01a05eafb60"
+          }
+        },
+        {
+          "start": 46,
+          "stop": 47,
+          "old": "            INVUL = at(x - 102, h - 71, 46, \"無敵\"),\n",
+          "new": "            INVUL = at(x - 122, h - 71, 46, \"無敵\"),\n",
+          "old_identity": {
+            "bytes": 55,
+            "sha256": "d94542cf17ddc6abbb242c4eebf7cdb9e611b6368e71ab958e143a246f25255a"
+          },
+          "new_identity": {
+            "bytes": 55,
+            "sha256": "855724461fbdfcfed158ed452449e785b6a74f7f2d09d97c1bd6249661d94aaa"
+          }
+        },
+        {
+          "start": 48,
+          "stop": 49,
+          "old": "            ITEM = at(x - 65, menuY, 42, \"道具\"),\n",
+          "new": "            ITEM = at(x - itemInset, menuY, 42, \"道具\"),\n",
+          "old_identity": {
+            "bytes": 52,
+            "sha256": "8baead7541484a4fc7724780131b7884345540f0dfa95d83f804fa71ecb70f66"
+          },
+          "new_identity": {
+            "bytes": 59,
+            "sha256": "2d424b36272a5185c62e8d694e06ae715ab27f6c8b4398aaccf8eb4cc410e1d3"
+          }
+        }
+      ],
+      "inverse": [
+        {
+          "start": 41,
+          "stop": 47,
+          "old": "        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121\n        -- On compact portrait screens the old y=h*.18 put MENU buttons\n        -- very close to the HP status strip. Reserve a 7px clearance.\n        local menuY = clamp(h * .18, 64, 133)\n        -- Narrow portrait ITEM shifts outward to protect the combat center.\n        local itemInset = if w <= 360 then 45 else 65\n",
+          "new": "        local menuY = math.max(62, math.min(133, h * .18))\n",
+          "old_identity": {
+            "bytes": 382,
+            "sha256": "f33b4311c4e306f4ba8b22b75b61955c2d51e905246c489ddd08a01a05eafb60"
+          },
+          "new_identity": {
+            "bytes": 59,
+            "sha256": "1209506ee2083f151e7209402c96160db6c3fec54873be502ca43cb0c8bdf874"
+          }
+        },
+        {
+          "start": 51,
+          "stop": 52,
+          "old": "            INVUL = at(x - 122, h - 71, 46, \"無敵\"),\n",
+          "new": "            INVUL = at(x - 102, h - 71, 46, \"無敵\"),\n",
+          "old_identity": {
+            "bytes": 55,
+            "sha256": "855724461fbdfcfed158ed452449e785b6a74f7f2d09d97c1bd6249661d94aaa"
+          },
+          "new_identity": {
+            "bytes": 55,
+            "sha256": "d94542cf17ddc6abbb242c4eebf7cdb9e611b6368e71ab958e143a246f25255a"
+          }
+        },
+        {
+          "start": 53,
+          "stop": 54,
+          "old": "            ITEM = at(x - itemInset, menuY, 42, \"道具\"),\n",
+          "new": "            ITEM = at(x - 65, menuY, 42, \"道具\"),\n",
+          "old_identity": {
+            "bytes": 59,
+            "sha256": "2d424b36272a5185c62e8d694e06ae715ab27f6c8b4398aaccf8eb4cc410e1d3"
+          },
+          "new_identity": {
+            "bytes": 52,
+            "sha256": "8baead7541484a4fc7724780131b7884345540f0dfa95d83f804fa71ecb70f66"
+          }
+        }
+      ],
       "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
     },
     "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopCatalog.luau": {
@@ -26452,6 +26538,139 @@
       "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/layout_scene.luau",
       "bytes": 4023,
       "sha256": "a1e4c9c7622e7463e9fa475cec894df317d53ede651b4195061e5e3a5dba7814"
+    },
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED"
+  },
+  "portrait_followup": {
+    "origin": {
+      "pr": 947,
+      "head": "47eef95e1b824d3d196cc119174df8a9e7426ecf",
+      "claim_comment": 7052355829,
+      "author_policy_gitblob": "38318fcec751a6584738db4d907bfff886599aeb"
+    },
+    "parent_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+    "parent_tree": "db391980f1224e82028e84a2e033c6218e154871",
+    "parent_place": {
+      "bytes": 894743,
+      "sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564"
+    },
+    "repaired_place": {
+      "bytes": 895073,
+      "sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74"
+    },
+    "author": {
+      "path": "quality_gameplay/gq470_union22_real69_20261122/portrait/prepare.py",
+      "identity": {
+        "bytes": 8148,
+        "sha256": "8670e17eb408c01bc6320a545e0e6e8a4fcb4a46d87230327cb7b20dd36d3a84"
+      }
+    },
+    "rows": {
+      "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau": {
+        "parent": {
+          "after": {
+            "bytes": 7596,
+            "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+          },
+          "before": {
+            "bytes": 7596,
+            "sha256": "18519fb774ba892db9cd70331da29695df87098fadd2f1a2af8a06d104eb3976"
+          },
+          "class": "ModuleScript",
+          "forward": [],
+          "inverse": [],
+          "route": "ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy"
+        },
+        "forward": [
+          {
+            "start": 41,
+            "stop": 42,
+            "old": "        local menuY = math.max(62, math.min(133, h * .18))\n",
+            "new": "        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121\n        -- On compact portrait screens the old y=h*.18 put MENU buttons\n        -- very close to the HP status strip. Reserve a 7px clearance.\n        local menuY = clamp(h * .18, 64, 133)\n        -- Narrow portrait ITEM shifts outward to protect the combat center.\n        local itemInset = if w <= 360 then 45 else 65\n",
+            "old_identity": {
+              "bytes": 59,
+              "sha256": "1209506ee2083f151e7209402c96160db6c3fec54873be502ca43cb0c8bdf874"
+            },
+            "new_identity": {
+              "bytes": 382,
+              "sha256": "f33b4311c4e306f4ba8b22b75b61955c2d51e905246c489ddd08a01a05eafb60"
+            }
+          },
+          {
+            "start": 46,
+            "stop": 47,
+            "old": "            INVUL = at(x - 102, h - 71, 46, \"無敵\"),\n",
+            "new": "            INVUL = at(x - 122, h - 71, 46, \"無敵\"),\n",
+            "old_identity": {
+              "bytes": 55,
+              "sha256": "d94542cf17ddc6abbb242c4eebf7cdb9e611b6368e71ab958e143a246f25255a"
+            },
+            "new_identity": {
+              "bytes": 55,
+              "sha256": "855724461fbdfcfed158ed452449e785b6a74f7f2d09d97c1bd6249661d94aaa"
+            }
+          },
+          {
+            "start": 48,
+            "stop": 49,
+            "old": "            ITEM = at(x - 65, menuY, 42, \"道具\"),\n",
+            "new": "            ITEM = at(x - itemInset, menuY, 42, \"道具\"),\n",
+            "old_identity": {
+              "bytes": 52,
+              "sha256": "8baead7541484a4fc7724780131b7884345540f0dfa95d83f804fa71ecb70f66"
+            },
+            "new_identity": {
+              "bytes": 59,
+              "sha256": "2d424b36272a5185c62e8d694e06ae715ab27f6c8b4398aaccf8eb4cc410e1d3"
+            }
+          }
+        ],
+        "inverse": [
+          {
+            "start": 41,
+            "stop": 47,
+            "old": "        -- GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121\n        -- On compact portrait screens the old y=h*.18 put MENU buttons\n        -- very close to the HP status strip. Reserve a 7px clearance.\n        local menuY = clamp(h * .18, 64, 133)\n        -- Narrow portrait ITEM shifts outward to protect the combat center.\n        local itemInset = if w <= 360 then 45 else 65\n",
+            "new": "        local menuY = math.max(62, math.min(133, h * .18))\n",
+            "old_identity": {
+              "bytes": 382,
+              "sha256": "f33b4311c4e306f4ba8b22b75b61955c2d51e905246c489ddd08a01a05eafb60"
+            },
+            "new_identity": {
+              "bytes": 59,
+              "sha256": "1209506ee2083f151e7209402c96160db6c3fec54873be502ca43cb0c8bdf874"
+            }
+          },
+          {
+            "start": 51,
+            "stop": 52,
+            "old": "            INVUL = at(x - 122, h - 71, 46, \"無敵\"),\n",
+            "new": "            INVUL = at(x - 102, h - 71, 46, \"無敵\"),\n",
+            "old_identity": {
+              "bytes": 55,
+              "sha256": "855724461fbdfcfed158ed452449e785b6a74f7f2d09d97c1bd6249661d94aaa"
+            },
+            "new_identity": {
+              "bytes": 55,
+              "sha256": "d94542cf17ddc6abbb242c4eebf7cdb9e611b6368e71ab958e143a246f25255a"
+            }
+          },
+          {
+            "start": 53,
+            "stop": 54,
+            "old": "            ITEM = at(x - itemInset, menuY, 42, \"道具\"),\n",
+            "new": "            ITEM = at(x - 65, menuY, 42, \"道具\"),\n",
+            "old_identity": {
+              "bytes": 59,
+              "sha256": "2d424b36272a5185c62e8d694e06ae715ab27f6c8b4398aaccf8eb4cc410e1d3"
+            },
+            "new_identity": {
+              "bytes": 52,
+              "sha256": "8baead7541484a4fc7724780131b7884345540f0dfa95d83f804fa71ecb70f66"
+            }
+          }
+        ]
+      }
     },
     "studio": "NOT_TESTED",
     "android": "NOT_TESTED"

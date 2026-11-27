@@ -497,7 +497,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 33 and len(lock["sources"]) - len(changed) == 36, "CHANGE_COUNT")
+    require(len(changed) == 34 and len(lock["sources"]) - len(changed) == 35, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -524,12 +524,24 @@ def verify_core(root, base, reports, context):
     eligibility = lock["relay_eligibility_followup"]
     moguron = lock["moguron_followup"]
     private_touch = lock["private_touch_followup"]
+    portrait = lock["portrait_followup"]
+    require(set(portrait["rows"]) == {compose.PORTRAIT_SOURCE}, "PORTRAIT_SOURCE_SET")
+    expected_portrait_off, portrait_off_lock, portrait_off = verify_source_rollback(
+        root, root, lock, current, portrait, portrait["rows"], private_touch["repaired_place"],
+        compose.PORTRAIT_OFF, compose.PORTRAIT_OFF_ARCHIVE, "PORTRAIT")
+    author = portrait["author"]
+    transform = visual_author(author["path"], author["identity"], "PORTRAIT_EXACT_AUTHOR")
+    old_policy = read(root / compose.PORTRAIT_OFF / "sources" / compose.PORTRAIT_SOURCE)
+    require(transform.patch_module(old_policy.decode("utf-8")).encode("utf-8")
+            == read(root / "sources" / compose.PORTRAIT_SOURCE), "PORTRAIT_AUTHOR_TRANSFORM_DRIFT")
     require(set(private_touch["rows"]) == {compose.PRIVATE_TOUCH_SOURCE}, "PRIVATE_TOUCH_SOURCE_SET")
     expected_touch_off, touch_off_lock, touch_off = verify_source_rollback(
-        root, root, lock, current, private_touch, private_touch["rows"], moguron["repaired_place"],
+        root, root / compose.PORTRAIT_OFF, portrait_off_lock, portrait_off,
+        private_touch, private_touch["rows"], moguron["repaired_place"],
         compose.PRIVATE_TOUCH_OFF, compose.PRIVATE_TOUCH_OFF_ARCHIVE, "PRIVATE_TOUCH")
     verify_exact_author_patch(root, compose.PRIVATE_TOUCH_OFF, (compose.PRIVATE_TOUCH_SOURCE,),
-                              private_touch["author_patch"], "PRIVATE_TOUCH", ("--directory=sources",))
+                              private_touch["author_patch"], "PRIVATE_TOUCH", ("--directory=sources",),
+                              result_stage=compose.PORTRAIT_OFF)
     require(set(moguron["rows"]) == {compose.MOGURON_SOURCE}, "MOGURON_SOURCE_SET")
     expected_moguron_off, moguron_off_lock, moguron_off = verify_source_rollback(
         root, root / compose.PRIVATE_TOUCH_OFF, touch_off_lock, touch_off, moguron, moguron["rows"],
@@ -651,7 +663,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 33, "unchanged_source_count": 36,
+        "selected_source_count": 69, "changed_source_count": 34, "unchanged_source_count": 35,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -700,6 +712,8 @@ def verify_core(root, base, reports, context):
         "moguron_rollback_archive": digest(read(root / compose.MOGURON_OFF_ARCHIVE)),
         "private_touch_followup": private_touch,
         "private_touch_rollback_archive": digest(read(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE)),
+        "portrait_followup": portrait,
+        "portrait_rollback_archive": digest(read(root / compose.PORTRAIT_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -709,8 +723,8 @@ def verify_core(root, base, reports, context):
     core = data(root / "CORE_BUILD_REPORT.json")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 33 and core.get("unchanged_sources") == 36
-            and core.get("compile_count") == 176 and core.get("rojo_build_count") == 23
+            and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
+            and core.get("compile_count") == 177 and core.get("rojo_build_count") == 24
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -727,6 +741,7 @@ def verify_core(root, base, reports, context):
             and core.get("mage_contact_parent_place") == mage_off_lock["final_place"]
             and core.get("relay_eligibility_parent_place") == eligibility_off_lock["final_place"]
             and core.get("private_touch_parent_place") == touch_off_lock["final_place"]
+            and core.get("portrait_parent_place") == portrait_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -792,6 +807,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.MOGURON_OFF_ARCHIVE] = digest(read(root / compose.MOGURON_OFF_ARCHIVE))
     expected_stage.update({compose.PRIVATE_TOUCH_OFF + "/" + name: pin for name, pin in expected_touch_off.items()})
     expected_stage[compose.PRIVATE_TOUCH_OFF_ARCHIVE] = digest(read(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE))
+    expected_stage.update({compose.PORTRAIT_OFF + "/" + name: pin for name, pin in expected_portrait_off.items()})
+    expected_stage[compose.PORTRAIT_OFF_ARCHIVE] = digest(read(root / compose.PORTRAIT_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -800,11 +817,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 199 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 201 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 176 and len(rojo_commands) == 23, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 177 and len(rojo_commands) == 24, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -829,6 +846,7 @@ def verify_core(root, base, reports, context):
                             for name in compose.RELAY_ELIGIBILITY_SOURCES)
     expected_compile.add(str(Path(stage) / compose.MOGURON_OFF / "sources" / compose.MOGURON_SOURCE))
     expected_compile.add(str(Path(stage) / compose.PRIVATE_TOUCH_OFF / "sources" / compose.PRIVATE_TOUCH_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.PORTRAIT_OFF / "sources" / compose.PORTRAIT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -851,7 +869,7 @@ def verify_core(root, base, reports, context):
                                compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
-                               compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF)},
+                               compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -879,7 +897,8 @@ def verify_core(root, base, reports, context):
                         compose.RELAY_ELIGIBILITY_OFF: [name for name in lock["sources"]
                                                        if name in compose.RELAY_ELIGIBILITY_SOURCES],
                         compose.MOGURON_OFF: [compose.MOGURON_SOURCE],
-                        compose.PRIVATE_TOUCH_OFF: [compose.PRIVATE_TOUCH_SOURCE]}
+                        compose.PRIVATE_TOUCH_OFF: [compose.PRIVATE_TOUCH_SOURCE],
+                        compose.PORTRAIT_OFF: [compose.PORTRAIT_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1124,9 +1143,13 @@ def independent_build_evidence(native, build, pins, context, root):
 
 
 def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
-    """Independently bind original main, selected final bodies, generated code and execution."""
+    """Independently bind the historic pre-portrait layout test to its exact source stage."""
     folder = native / "selected_hud_layout"
     result = data(folder / "receipt.json")
+    profile = compose.load_lock()
+    old_policy = profile["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
+    source_pins = pins["sources"] | {compose.PORTRAIT_SOURCE: old_policy}
+    source_stage = root / compose.PORTRAIT_OFF / "sources"
     contract = pins["selected_hud_layout"]
     relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
     expected_generator = {"bytes": 3097, "sha256": "1323e10a2d66ca5c986f9a75049df5b4e7fbd016c22583f9d9790d7d1d3e164d"}
@@ -1150,8 +1173,8 @@ def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
             "NATIVE_SELECTED_LAYOUT_GENERATOR_IDENTITY")
     selected = {}
     for path, name in flat.items():
-        raw = read(root / "sources" / path)
-        require(raw == read(folder / "sources" / name) and digest(raw) == pins["sources"][path],
+        raw = read(source_stage / path)
+        require(raw == read(folder / "sources" / name) and digest(raw) == source_pins[path],
                 "NATIVE_SELECTED_LAYOUT_FINAL_SOURCE")
         selected[path] = digest(raw)
     tree = ast.parse(generator.decode("utf-8"))
@@ -1160,7 +1183,7 @@ def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
                                                      for t in node.targets)]
     require(len(values) == 1 and isinstance(values[0], str) and values[0].count("__SOURCE__") == 1,
             "NATIVE_SELECTED_LAYOUT_TEST_TEMPLATE")
-    policy = read(root / "sources/ReplicatedStorage/EGGRUMBLE_HudPresentationPolicy.luau")
+    policy = read(source_stage / compose.PORTRAIT_SOURCE)
     expected_program = values[0].replace("__SOURCE__", policy.decode("utf-8")).encode("utf-8")
     generated = read(folder / "generated.luau")
     require(generated == expected_program and generated.count(policy) == 1,
@@ -1500,6 +1523,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["portrait_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["relay_eligibility_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["mage_contact_followup"]["rows"].items()
@@ -1865,6 +1890,19 @@ def verify_private_touch_native(native, root, lock, build, aggregate, context):
     return expected, {"private_touch/" + name for name in contract.FILES}
 
 
+def verify_portrait_native(native, root, lock, build, aggregate, context):
+    spec = importlib.util.spec_from_file_location("union22_portrait_verify", HERE / "native/portrait_native.py")
+    contract = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(contract)
+    folder = native / "portrait"
+    receipt = folder / "receipt.json"
+    expected = contract.observe(root / "sources", folder, Path(build["binary_path"]),
+                                build["binary_before_suites"], context, lock, compose)
+    require(set(files(folder)) == contract.FILES and data(receipt) == expected
+            and digest(read(receipt)) == aggregate["portrait"], "PORTRAIT_EXACT_RECEIPT")
+    return expected, {"portrait/" + name for name in contract.FILES}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1927,7 +1965,7 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 96 and aggregate.get("native_evidence_file_count") == 304,
+            and aggregate.get("native_process_count") == 97 and aggregate.get("native_evidence_file_count") == 308,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2019,8 +2057,10 @@ def verify_native(native, root, lock, context):
     expected_files |= eligibility_files
     private_touch, touch_files = verify_private_touch_native(native, root, lock, build, aggregate, context)
     expected_files |= touch_files
+    portrait, portrait_files = verify_portrait_native(native, root, lock, build, aggregate, context)
+    expected_files |= portrait_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 304 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 308 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -2037,6 +2077,7 @@ def verify_native(native, root, lock, context):
             "mage_contact": mage_contact,
             "relay_eligibility": relay_eligibility,
             "private_touch": private_touch,
+            "portrait": portrait,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2082,6 +2123,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.MAGE_CONTACT_OFF_ARCHIVE,
                             compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, compose.MOGURON_OFF_ARCHIVE,
                             compose.PRIVATE_TOUCH_OFF_ARCHIVE,
+                            compose.PORTRAIT_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2104,7 +2146,7 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 33, "unchanged_sources": 36, "instances": 75,
+            "source_count": 69, "changed_sources": 34, "unchanged_sources": 35, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
@@ -2186,6 +2228,9 @@ def admit_delivery(root, base, reports, native, context):
             "private_touch_followup": verified["lock"]["private_touch_followup"],
             "private_touch_inverse_place": verified["lock"]["private_touch_followup"]["parent_place"],
             "private_touch_inverse_archive": digest(read(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE)),
+            "portrait_followup": verified["lock"]["portrait_followup"],
+            "portrait_inverse_place": verified["lock"]["portrait_followup"]["parent_place"],
+            "portrait_inverse_archive": digest(read(root / compose.PORTRAIT_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2212,6 +2257,7 @@ def admit_delivery(root, base, reports, native, context):
             "mage_contact": runtime["mage_contact"],
             "relay_eligibility": runtime["relay_eligibility"],
             "private_touch": runtime["private_touch"],
+            "portrait": runtime["portrait"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

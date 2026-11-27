@@ -106,9 +106,12 @@ def source_contract(root, profile, input_lock):
     eligibility = profile["relay_eligibility_followup"]
     moguron = profile["moguron_followup"]
     private_touch = profile["private_touch_followup"]
+    portrait = profile["portrait_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    touch_parent_pins = current_pins | {
+    portrait_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in portrait["rows"].items()}
+    touch_parent_pins = portrait_parent_pins | {
         name: row["parent"]["after"] for name, row in private_touch["rows"].items()}
     moguron_parent_pins = touch_parent_pins | {name: row["parent"]["after"] for name, row in moguron["rows"].items()}
     eligibility_parent_pins = moguron_parent_pins | {
@@ -133,6 +136,7 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.PORTRAIT_OFF / "sources") == portrait_parent_pins
                    and native.source_snapshot(root / compose.PRIVATE_TOUCH_OFF / "sources") == touch_parent_pins
                    and native.source_snapshot(root / compose.MOGURON_OFF / "sources") == moguron_parent_pins
                    and native.source_snapshot(root / compose.RELAY_ELIGIBILITY_OFF / "sources") == eligibility_parent_pins
@@ -158,7 +162,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == private_touch["repaired_place"]
+                   == portrait["repaired_place"]
+                   and native.identity(native.read(root / compose.PORTRAIT_OFF / compose.PLACE))
+                   == portrait["parent_place"] == private_touch["repaired_place"]
                    and native.identity(native.read(root / compose.PRIVATE_TOUCH_OFF / compose.PLACE))
                    == private_touch["parent_place"] == moguron["repaired_place"]
                    and native.identity(native.read(root / compose.MOGURON_OFF / compose.PLACE))
