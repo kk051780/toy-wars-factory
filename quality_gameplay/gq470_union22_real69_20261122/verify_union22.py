@@ -526,9 +526,18 @@ def verify_core(root, base, reports, context):
     private_touch = lock["private_touch_followup"]
     portrait = lock["portrait_followup"]
     shorefoam = lock["shorefoam_followup"]
+    team_win = lock["team_win_rule_followup"]
+    require(set(team_win["rows"]) == {compose.VAULT_SOURCE}
+            and team_win["feedback"] == {"id": "FB-003", "issue": 364, "queue": "TEAM"}, "TEAM_WIN_RULE_SCOPE")
+    team_row = team_win["rows"][compose.VAULT_SOURCE]
+    require(len(team_row["forward"]) == len(team_row["inverse"]) == 1, "TEAM_WIN_RULE_SINGLE_HUNK")
+    expected_team_win_off, team_win_off_lock, team_win_off = verify_source_rollback(
+        root, root, lock, current, team_win, team_win["rows"], shorefoam["repaired_place"],
+        compose.TEAM_WIN_RULE_OFF, compose.TEAM_WIN_RULE_OFF_ARCHIVE, "TEAM_WIN_RULE")
     require(set(shorefoam["rows"]) == {compose.SHOREFOAM_SOURCE}, "SHOREFOAM_SOURCE_SET")
     expected_shorefoam_off, shorefoam_off_lock, shorefoam_off = verify_source_rollback(
-        root, root, lock, current, shorefoam, shorefoam["rows"], portrait["repaired_place"],
+        root, root / compose.TEAM_WIN_RULE_OFF, team_win_off_lock, team_win_off,
+        shorefoam, shorefoam["rows"], portrait["repaired_place"],
         compose.SHOREFOAM_OFF, compose.SHOREFOAM_OFF_ARCHIVE, "SHOREFOAM")
     author = shorefoam["author"]
     transform = visual_author(author["path"], author["identity"], "SHOREFOAM_EXACT_AUTHOR")
@@ -727,6 +736,8 @@ def verify_core(root, base, reports, context):
         "portrait_rollback_archive": digest(read(root / compose.PORTRAIT_OFF_ARCHIVE)),
         "shorefoam_followup": shorefoam,
         "shorefoam_rollback_archive": digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE)),
+        "team_win_rule_followup": team_win,
+        "team_win_rule_rollback_archive": digest(read(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -737,7 +748,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
-            and core.get("compile_count") == 178 and core.get("rojo_build_count") == 25
+            and core.get("compile_count") == 179 and core.get("rojo_build_count") == 26
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -756,6 +767,7 @@ def verify_core(root, base, reports, context):
             and core.get("private_touch_parent_place") == touch_off_lock["final_place"]
             and core.get("portrait_parent_place") == portrait_off_lock["final_place"]
             and core.get("shorefoam_parent_place") == shorefoam_off_lock["final_place"]
+            and core.get("team_win_rule_parent_place") == team_win_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -825,6 +837,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.PORTRAIT_OFF_ARCHIVE] = digest(read(root / compose.PORTRAIT_OFF_ARCHIVE))
     expected_stage.update({compose.SHOREFOAM_OFF + "/" + name: pin for name, pin in expected_shorefoam_off.items()})
     expected_stage[compose.SHOREFOAM_OFF_ARCHIVE] = digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE))
+    expected_stage.update({compose.TEAM_WIN_RULE_OFF + "/" + name: pin for name, pin in expected_team_win_off.items()})
+    expected_stage[compose.TEAM_WIN_RULE_OFF_ARCHIVE] = digest(read(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -833,11 +847,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 203 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 205 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 178 and len(rojo_commands) == 25, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 179 and len(rojo_commands) == 26, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -864,6 +878,7 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.PRIVATE_TOUCH_OFF / "sources" / compose.PRIVATE_TOUCH_SOURCE))
     expected_compile.add(str(Path(stage) / compose.PORTRAIT_OFF / "sources" / compose.PORTRAIT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.SHOREFOAM_OFF / "sources" / compose.SHOREFOAM_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.TEAM_WIN_RULE_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -887,7 +902,7 @@ def verify_core(root, base, reports, context):
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
-                               compose.SHOREFOAM_OFF)},
+                               compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -917,7 +932,8 @@ def verify_core(root, base, reports, context):
                         compose.MOGURON_OFF: [compose.MOGURON_SOURCE],
                         compose.PRIVATE_TOUCH_OFF: [compose.PRIVATE_TOUCH_SOURCE],
                         compose.PORTRAIT_OFF: [compose.PORTRAIT_SOURCE],
-                        compose.SHOREFOAM_OFF: [compose.SHOREFOAM_SOURCE]}
+                        compose.SHOREFOAM_OFF: [compose.SHOREFOAM_SOURCE],
+                        compose.TEAM_WIN_RULE_OFF: [compose.VAULT_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1168,7 +1184,9 @@ def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
     profile = compose.load_lock()
     old_policy = profile["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
     old_traversal = profile["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
-    source_pins = pins["sources"] | {compose.PORTRAIT_SOURCE: old_policy, compose.SHOREFOAM_SOURCE: old_traversal}
+    old_host = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
+    source_pins = pins["sources"] | {compose.PORTRAIT_SOURCE: old_policy, compose.SHOREFOAM_SOURCE: old_traversal,
+                                    compose.VAULT_SOURCE: old_host}
     source_stage = root / compose.PORTRAIT_OFF / "sources"
     contract = pins["selected_hud_layout"]
     relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
@@ -1925,6 +1943,19 @@ def verify_portrait_native(native, root, lock, build, aggregate, context):
     return expected, {"portrait/" + name for name in contract.FILES}
 
 
+def verify_team_win_rule_native(native, root, lock, build, aggregate, context):
+    spec = importlib.util.spec_from_file_location("union22_team_win_rule_verify", HERE / "native/team_win_rule_native.py")
+    contract = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(contract)
+    folder = native / "team_win_rule"
+    receipt = folder / "receipt.json"
+    expected = contract.observe(root / "sources", folder, Path(build["binary_path"]),
+                                build["binary_before_suites"], context, lock, compose)
+    require(set(files(folder)) == contract.FILES and data(receipt) == expected
+            and digest(read(receipt)) == aggregate["team_win_rule"], "TEAM_WIN_RULE_EXACT_RECEIPT")
+    return expected, {"team_win_rule/" + name for name in contract.FILES}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1987,7 +2018,7 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 97 and aggregate.get("native_evidence_file_count") == 308,
+            and aggregate.get("native_process_count") == 98 and aggregate.get("native_evidence_file_count") == 312,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2081,8 +2112,10 @@ def verify_native(native, root, lock, context):
     expected_files |= touch_files
     portrait, portrait_files = verify_portrait_native(native, root, lock, build, aggregate, context)
     expected_files |= portrait_files
+    team_win_rule, team_win_rule_files = verify_team_win_rule_native(native, root, lock, build, aggregate, context)
+    expected_files |= team_win_rule_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 308 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 312 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -2100,6 +2133,7 @@ def verify_native(native, root, lock, context):
             "relay_eligibility": relay_eligibility,
             "private_touch": private_touch,
             "portrait": portrait,
+            "team_win_rule": team_win_rule,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2146,6 +2180,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, compose.MOGURON_OFF_ARCHIVE,
                             compose.PRIVATE_TOUCH_OFF_ARCHIVE,
                             compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
+                            compose.TEAM_WIN_RULE_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2256,6 +2291,9 @@ def admit_delivery(root, base, reports, native, context):
             "shorefoam_followup": verified["lock"]["shorefoam_followup"],
             "shorefoam_inverse_place": verified["lock"]["shorefoam_followup"]["parent_place"],
             "shorefoam_inverse_archive": digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE)),
+            "team_win_rule_followup": verified["lock"]["team_win_rule_followup"],
+            "team_win_rule_inverse_place": verified["lock"]["team_win_rule_followup"]["parent_place"],
+            "team_win_rule_inverse_archive": digest(read(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2283,6 +2321,7 @@ def admit_delivery(root, base, reports, native, context):
             "relay_eligibility": runtime["relay_eligibility"],
             "private_touch": runtime["private_touch"],
             "portrait": runtime["portrait"],
+            "team_win_rule": runtime["team_win_rule"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
