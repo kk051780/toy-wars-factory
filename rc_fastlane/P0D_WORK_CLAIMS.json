@@ -37483,6 +37483,128 @@
           "trusted_queue_job": 140530188505
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-ACTIVE-MODE-397-20261127",
+      "feature_id": "GQ910_ACTIVE_MODE_START_397",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 910,
+      "source_issue": 397,
+      "integration_issue": 220,
+      "pr": 397,
+      "base_rc_sha": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+      "base_rc_tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
+      "prep_branch": "feature/p0d-prep-solo-roster-path-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Existing #395/#397 eligible human roster rule for ACTIVE rich51 SCORE5 only with two participants and solo fallback to Classic, coordinated Game vote/projection and existing two mode HUD buttons. Preserve current results recovery, existing role/egg/score/authority, #395 branch, same private companion and old author history. No AI activation scope.",
+      "resources": [
+        "ACTIVE66_MODEVOTE_ELIGIBILITY_AND_KICKOFF",
+        "ACTIVE66_HUD_MODE_BUTTON",
+        "GQ910_ACTIVE_MODE_START_397"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_mode_start.py",
+        "rc_fastlane/features/active_mode_start/mode_vote.json",
+        "rc_fastlane/features/active_mode_start/source_lock.json",
+        "rc_fastlane/verify_active_mode_start_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/397",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "9690a14c-9556-4f32-9809-5474fcf81ed6",
+      "issued_at": "2026-11-27T13:25:05.299Z",
+      "expires_at": "2026-11-27T15:25:05.299Z",
+      "actual_metadata_lease": {
+        "ref": "856e2c67916bf0f44d7b408fd386f715392dca22",
+        "blob": "6d8959a42dbbe39dad11f36b3b8a2f487104c9aa",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "9690a14c-9556-4f32-9809-5474fcf81ed6",
+          "task_id": null,
+          "epoch": 923,
+          "acquired_at": "2026-11-27T13:24:51.731Z",
+          "expires_at": "2026-11-27T13:54:51.731Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 397,
+        "branch": "feature/p0d-prep-solo-roster-path-20261114",
+        "old_pr_head": "e6b9b002fd343451f6af475709ad38bf2d3fac62",
+        "old_base_ref": "feature/p0d-prep-solo-raid-guard-20261114",
+        "formal_parent": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+        "local_head": "950c5fd8c0a7efeae8446a062266e74d8ce2c8c1",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "1232ad0a6f78ff299a4596a26a1195b336fce144",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 207708
+          },
+          {
+            "mode": "100644",
+            "blob": "1efd8e82ff4a682607010691d42c0990262404b6",
+            "path": "rc_fastlane/apply_active_mode_start.py",
+            "bytes": 3006
+          },
+          {
+            "mode": "100644",
+            "blob": "ff8cbf40efbdb1f0fb27dedbcc626845e6b56757",
+            "path": "rc_fastlane/features/active_mode_start/mode_vote.json",
+            "bytes": 8729
+          },
+          {
+            "mode": "100644",
+            "blob": "d6b4c87c429b3f9e25392cdccb0e2f22ce11cfb4",
+            "path": "rc_fastlane/features/active_mode_start/source_lock.json",
+            "bytes": 600
+          },
+          {
+            "mode": "100644",
+            "blob": "639c4a247dccaf84971245f4d2e8736a2baee9b9",
+            "path": "rc_fastlane/verify_active_mode_start_native.py",
+            "bytes": 8984
+          },
+          {
+            "mode": "100644",
+            "blob": "22a4c2f5ff6cd8f1e0ef8983bafa8cc791cf750b",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 110045
+          }
+        ],
+        "expires_at": "2026-11-27T14:25:05.299Z",
+        "issued_from": {
+          "lease": "856e2c67916bf0f44d7b408fd386f715392dca22",
+          "owner": "9690a14c-9556-4f32-9809-5474fcf81ed6"
+        },
+        "local_qa": {
+          "place_bytes": 610958,
+          "off_bytes": 610358,
+          "place_sha256": "7cfa98cc5f3270a75cb0445fb2edb5ac953eec88217b8ddd27f3bc410e1c7c0b",
+          "mounted_sources": 66,
+          "changes": 2,
+          "native_server": 10,
+          "native_hud": true,
+          "native_results_preserved": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
