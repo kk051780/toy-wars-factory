@@ -662,6 +662,573 @@
     "studio_proven": false,
     "unchanged_sources_from_hud_parent": 68
   },
+  "br_canyon_followup": {
+    "native_case": {
+      "bytes": 3007,
+      "sha256": "3ccc9cabec6ffda739c66f9ce92fcd97a71f7a7cd5da71c2f39c0c83b8f1878d"
+    },
+    "origin_commit": "1a2d1dc5ab8bcf7455171a2ad934b5b3605692b3",
+    "parent_head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+    "parent_place": {
+      "bytes": 842005,
+      "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+    },
+    "repaired_place": {
+      "bytes": 842354,
+      "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+        "forward": [
+          {
+            "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+            "new_identity": {
+              "bytes": 203,
+              "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 41,
+            "stop": 41
+          },
+          {
+            "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+            "new_identity": {
+              "bytes": 66,
+              "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+            },
+            "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+            "old_identity": {
+              "bytes": 64,
+              "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+            },
+            "start": 58,
+            "stop": 59
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+            "old_identity": {
+              "bytes": 73,
+              "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+            },
+            "start": 165,
+            "stop": 166
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+            "old_identity": {
+              "bytes": 203,
+              "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+            },
+            "start": 41,
+            "stop": 44
+          },
+          {
+            "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+            "new_identity": {
+              "bytes": 64,
+              "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+            },
+            "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+            "old_identity": {
+              "bytes": 66,
+              "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+            },
+            "start": 61,
+            "stop": 62
+          },
+          {
+            "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+            "new_identity": {
+              "bytes": 73,
+              "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 168,
+            "stop": 168
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 10202,
+            "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+          },
+          "before": {
+            "bytes": 9829,
+            "sha256": "7139110080ff6aec1cabc2acf8a722ba2efb3b26c5ab4fcd596ce167bd80ffc3"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "new_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 11,
+              "stop": 11
+            },
+            {
+              "new": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
+              "new_identity": {
+                "bytes": 268,
+                "sha256": "8156a6bcf698c8376c8d30ad78df5d24522ed131af3056fefff5909953564987"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 70,
+              "stop": 70
+            },
+            {
+              "new": "  if p.Parent~=Players or not activeRound()\n",
+              "new_identity": {
+                "bytes": 44,
+                "sha256": "390552e06ac553aaaeda5d983c1048462a734902e030e5e9b13678277dd7ed42"
+              },
+              "old": "  if p.Parent~=Players or not live()\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "ed6e6e51749380a2f564149ba04afd5ca7b0c187d8e45fd3cdafc8f4465b12bd"
+              },
+              "start": 71,
+              "stop": 72
+            },
+            {
+              "new": "  return (hit==nil or not hit.Instance.CanCollide) and activeRound()\n",
+              "new_identity": {
+                "bytes": 69,
+                "sha256": "a33ee77d5bc3ae995fafbaa7763f8a319f7ad6307dab2e0bdf89512589d74bcf"
+              },
+              "old": "  return hit==nil or not hit.Instance.CanCollide\n",
+              "old_identity": {
+                "bytes": 49,
+                "sha256": "6bbd03523426195a52a747f928ec8bf942aa684d80c1b0c0621e4753682825ac"
+              },
+              "start": 91,
+              "stop": 92
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "old_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "start": 11,
+              "stop": 12
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
+              "old_identity": {
+                "bytes": 268,
+                "sha256": "8156a6bcf698c8376c8d30ad78df5d24522ed131af3056fefff5909953564987"
+              },
+              "start": 71,
+              "stop": 77
+            },
+            {
+              "new": "  if p.Parent~=Players or not live()\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "ed6e6e51749380a2f564149ba04afd5ca7b0c187d8e45fd3cdafc8f4465b12bd"
+              },
+              "old": "  if p.Parent~=Players or not activeRound()\n",
+              "old_identity": {
+                "bytes": 44,
+                "sha256": "390552e06ac553aaaeda5d983c1048462a734902e030e5e9b13678277dd7ed42"
+              },
+              "start": 78,
+              "stop": 79
+            },
+            {
+              "new": "  return hit==nil or not hit.Instance.CanCollide\n",
+              "new_identity": {
+                "bytes": 49,
+                "sha256": "6bbd03523426195a52a747f928ec8bf942aa684d80c1b0c0621e4753682825ac"
+              },
+              "old": "  return (hit==nil or not hit.Instance.CanCollide) and activeRound()\n",
+              "old_identity": {
+                "bytes": 69,
+                "sha256": "a33ee77d5bc3ae995fafbaa7763f8a319f7ad6307dab2e0bdf89512589d74bcf"
+              },
+              "start": 98,
+              "stop": 99
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+        "forward": [
+          {
+            "new": " core.Name=CORE_NAME\n -- The linked legacy routes must leave the front BR castle row clear.\n local legacyCanyonZ=if mode==\"BATTLE_ROYALE\" then -305 else -175\n core:SetAttribute(\"LegacyCanyonOffsetZ\",legacyCanyonZ)\n core.Parent=world\n",
+            "new_identity": {
+              "bytes": 233,
+              "sha256": "d929b2f2b45f35e75f901ac65be94b7c7fe2f4e86761e48f52081344c77c569b"
+            },
+            "old": " core.Name=CORE_NAME;core.Parent=world\n",
+            "old_identity": {
+              "bytes": 39,
+              "sha256": "755f815093e480fac433b39a5b146bf0245a5122ce43202ed9729eba6f42b5ee"
+            },
+            "start": 159,
+            "stop": 160
+          },
+          {
+            "new": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ)\n",
+            "new_identity": {
+              "bytes": 51,
+              "sha256": "31c20d2b9e878cfeed135999b86fe9ad97ee2023513a1be9eb92e5b4e0ff335d"
+            },
+            "old": "  local center=Vector3.new(x,y+12,z-175)\n",
+            "old_identity": {
+              "bytes": 41,
+              "sha256": "10ea975e30f4381b7f459078956bf57fd5b630425a66ac2dc58bfe866b6e5cdf"
+            },
+            "start": 182,
+            "stop": 183
+          },
+          {
+            "new": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ+30)\n",
+            "new_identity": {
+              "bytes": 54,
+              "sha256": "b8f0ec6021fbfaa93d6bfb00afb8a30f1aa245a672f72254005632e94d21fa19"
+            },
+            "old": "  local center=Vector3.new(x,y+12,z-145)\n",
+            "old_identity": {
+              "bytes": 41,
+              "sha256": "d762bac26f2b73d458eef3fdbb907e2488bb89f55eb827e5980a22ddbf6e5b7b"
+            },
+            "start": 294,
+            "stop": 295
+          }
+        ],
+        "inverse": [
+          {
+            "new": " core.Name=CORE_NAME;core.Parent=world\n",
+            "new_identity": {
+              "bytes": 39,
+              "sha256": "755f815093e480fac433b39a5b146bf0245a5122ce43202ed9729eba6f42b5ee"
+            },
+            "old": " core.Name=CORE_NAME\n -- The linked legacy routes must leave the front BR castle row clear.\n local legacyCanyonZ=if mode==\"BATTLE_ROYALE\" then -305 else -175\n core:SetAttribute(\"LegacyCanyonOffsetZ\",legacyCanyonZ)\n core.Parent=world\n",
+            "old_identity": {
+              "bytes": 233,
+              "sha256": "d929b2f2b45f35e75f901ac65be94b7c7fe2f4e86761e48f52081344c77c569b"
+            },
+            "start": 159,
+            "stop": 164
+          },
+          {
+            "new": "  local center=Vector3.new(x,y+12,z-175)\n",
+            "new_identity": {
+              "bytes": 41,
+              "sha256": "10ea975e30f4381b7f459078956bf57fd5b630425a66ac2dc58bfe866b6e5cdf"
+            },
+            "old": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ)\n",
+            "old_identity": {
+              "bytes": 51,
+              "sha256": "31c20d2b9e878cfeed135999b86fe9ad97ee2023513a1be9eb92e5b4e0ff335d"
+            },
+            "start": 186,
+            "stop": 187
+          },
+          {
+            "new": "  local center=Vector3.new(x,y+12,z-145)\n",
+            "new_identity": {
+              "bytes": 41,
+              "sha256": "d762bac26f2b73d458eef3fdbb907e2488bb89f55eb827e5980a22ddbf6e5b7b"
+            },
+            "old": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ+30)\n",
+            "old_identity": {
+              "bytes": 54,
+              "sha256": "b8f0ec6021fbfaa93d6bfb00afb8a30f1aa245a672f72254005632e94d21fa19"
+            },
+            "start": 298,
+            "stop": 299
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 35282,
+            "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+          },
+          "before": {
+            "bytes": 33443,
+            "sha256": "e9716febc5046ffc81707cb7cd0ef1332d992e813a6bbe2bdd1678b77a9de6ed"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "new_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 2,
+              "stop": 2
+            },
+            {
+              "new": " local state=scenes[world]\n if not state or state.active~=true or state.mode~=mode\n  or world.Name~=mode..\"_Arena\" or world.Parent~=state.lobby\n  or state.lobby.Parent~=Workspace or state.lobby.Name~=LOBBY_NAME\n  or state.core.Parent~=world or not Rules.isRuntimeWorldActive(world,mode) then return false end\n",
+              "new_identity": {
+                "bytes": 309,
+                "sha256": "ea73c56877fb8afd02502282c0f9da0b5951624c70214d60521bd3745a391368"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 81,
+              "stop": 81
+            },
+            {
+              "new": "  or world:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\"\n",
+              "new_identity": {
+                "bytes": 58,
+                "sha256": "5e5400deb176a3320daa49c952f86ca757e72147069b890140b2efa85872006c"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 83,
+              "stop": 83
+            },
+            {
+              "new": " local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
+              "new_identity": {
+                "bytes": 85,
+                "sha256": "ff5db7553b62a6bf22b58b8cfe14c4fc162bdea75aeb4a877288df504da3651a"
+              },
+              "old": " local state={mode=mode,world=world,core=core,started=os.clock(),\n",
+              "old_identity": {
+                "bytes": 66,
+                "sha256": "ed675c9970cf09782396e6f91e34663d831441bd2fbf38d13f20994981598d93"
+              },
+              "start": 153,
+              "stop": 154
+            },
+            {
+              "new": " local heartbeat,controlConnection,ancestryConnection\n local function retireRealm()\n  state.active=false\n  state.pendingLightning=nil\n  if core.Parent then core:SetAttribute(\"LightningWarning\",false) end\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  if ancestryConnection then ancestryConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n  -- Keep the inactive scene tombstone until Destroying: reparenting is not restart.\n end\n ancestryConnection=world.AncestryChanged:Connect(function(child,parent)\n  if child==world and parent~=state.lobby\n   or child==state.lobby and parent~=Workspace then retireRealm() end\n end)\n",
+              "new_identity": {
+                "bytes": 773,
+                "sha256": "89815448d57a43b58ffdebdbd627093e3bda29199a77e8887767b274cfb51170"
+              },
+              "old": " local controlConnection\n",
+              "old_identity": {
+                "bytes": 25,
+                "sha256": "5890296f3d1eb3bd209244b96495066fc0977c4cfc724e3472204e589cdbc228"
+              },
+              "start": 599,
+              "stop": 600
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local heartbeat\n",
+              "old_identity": {
+                "bytes": 17,
+                "sha256": "2973f99b4190135f1ee78023e604b67c956d381e224b1069c629b22e800dc4cb"
+              },
+              "start": 629,
+              "stop": 630
+            },
+            {
+              "new": "  if not state.active or world.Parent~=state.lobby or state.lobby.Parent~=Workspace\n   or state.lobby.Name~=LOBBY_NAME or world.Name~=mode..\"_Arena\" or core.Parent~=world then\n   retireRealm()\n   return\n  end\n  -- Query the real Rules object before any weather, aircraft or subsea effect.\n  -- LOBBY/unregistered startup waits safely; terminal rounds keep their decor/result hold.\n  if not Rules.isRuntimeWorldActive(world,mode) then\n   elapsed=0;state.pendingLightning=nil\n   core:SetAttribute(\"LightningWarning\",false)\n   for p in pairs(state.controls) do state.controls[p]=nil end\n   return\n  end\n  -- The Host retains the finished arena for the result display.\n  -- Pause combat/motion without retiring a scene still preparing to start.\n  if world:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\" then\n   elapsed=0\n   state.pendingLightning=nil\n   core:SetAttribute(\"LightningWarning\",false)\n   for player in pairs(state.controls) do state.controls[player]=nil end\n",
+              "new_identity": {
+                "bytes": 967,
+                "sha256": "345e1bbe6a36bb55664f9064a440cf0d35bf70e5083c150ba13fde1a5e1e9341"
+              },
+              "old": "  if not state.active or not world.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
+              "old_identity": {
+                "bytes": 95,
+                "sha256": "51c9040e883c7a560dce5c60e28bad60e901ca79fddbc53648581573bde1d76b"
+              },
+              "start": 631,
+              "stop": 633
+            },
+            {
+              "new": "  retireRealm()\n",
+              "new_identity": {
+                "bytes": 16,
+                "sha256": "64f33f1acf6cdd3cf10b555d73a393caee23c7f3831c3c20b3b9d8f9e8504b3a"
+              },
+              "old": "  state.active=false\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n",
+              "old_identity": {
+                "bytes": 244,
+                "sha256": "35ec5c27a66cb875916e13f92d93dd8b6e515afedc7af1ef354c78089d23a4a6"
+              },
+              "start": 756,
+              "stop": 761
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "old_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "start": 2,
+              "stop": 3
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local state=scenes[world]\n if not state or state.active~=true or state.mode~=mode\n  or world.Name~=mode..\"_Arena\" or world.Parent~=state.lobby\n  or state.lobby.Parent~=Workspace or state.lobby.Name~=LOBBY_NAME\n  or state.core.Parent~=world or not Rules.isRuntimeWorldActive(world,mode) then return false end\n",
+              "old_identity": {
+                "bytes": 309,
+                "sha256": "ea73c56877fb8afd02502282c0f9da0b5951624c70214d60521bd3745a391368"
+              },
+              "start": 82,
+              "stop": 87
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  or world:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\"\n",
+              "old_identity": {
+                "bytes": 58,
+                "sha256": "5e5400deb176a3320daa49c952f86ca757e72147069b890140b2efa85872006c"
+              },
+              "start": 89,
+              "stop": 90
+            },
+            {
+              "new": " local state={mode=mode,world=world,core=core,started=os.clock(),\n",
+              "new_identity": {
+                "bytes": 66,
+                "sha256": "ed675c9970cf09782396e6f91e34663d831441bd2fbf38d13f20994981598d93"
+              },
+              "old": " local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
+              "old_identity": {
+                "bytes": 85,
+                "sha256": "ff5db7553b62a6bf22b58b8cfe14c4fc162bdea75aeb4a877288df504da3651a"
+              },
+              "start": 160,
+              "stop": 161
+            },
+            {
+              "new": " local controlConnection\n",
+              "new_identity": {
+                "bytes": 25,
+                "sha256": "5890296f3d1eb3bd209244b96495066fc0977c4cfc724e3472204e589cdbc228"
+              },
+              "old": " local heartbeat,controlConnection,ancestryConnection\n local function retireRealm()\n  state.active=false\n  state.pendingLightning=nil\n  if core.Parent then core:SetAttribute(\"LightningWarning\",false) end\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  if ancestryConnection then ancestryConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n  -- Keep the inactive scene tombstone until Destroying: reparenting is not restart.\n end\n ancestryConnection=world.AncestryChanged:Connect(function(child,parent)\n  if child==world and parent~=state.lobby\n   or child==state.lobby and parent~=Workspace then retireRealm() end\n end)\n",
+              "old_identity": {
+                "bytes": 773,
+                "sha256": "89815448d57a43b58ffdebdbd627093e3bda29199a77e8887767b274cfb51170"
+              },
+              "start": 606,
+              "stop": 622
+            },
+            {
+              "new": " local heartbeat\n",
+              "new_identity": {
+                "bytes": 17,
+                "sha256": "2973f99b4190135f1ee78023e604b67c956d381e224b1069c629b22e800dc4cb"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 651,
+              "stop": 651
+            },
+            {
+              "new": "  if not state.active or not world.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
+              "new_identity": {
+                "bytes": 95,
+                "sha256": "51c9040e883c7a560dce5c60e28bad60e901ca79fddbc53648581573bde1d76b"
+              },
+              "old": "  if not state.active or world.Parent~=state.lobby or state.lobby.Parent~=Workspace\n   or state.lobby.Name~=LOBBY_NAME or world.Name~=mode..\"_Arena\" or core.Parent~=world then\n   retireRealm()\n   return\n  end\n  -- Query the real Rules object before any weather, aircraft or subsea effect.\n  -- LOBBY/unregistered startup waits safely; terminal rounds keep their decor/result hold.\n  if not Rules.isRuntimeWorldActive(world,mode) then\n   elapsed=0;state.pendingLightning=nil\n   core:SetAttribute(\"LightningWarning\",false)\n   for p in pairs(state.controls) do state.controls[p]=nil end\n   return\n  end\n  -- The Host retains the finished arena for the result display.\n  -- Pause combat/motion without retiring a scene still preparing to start.\n  if world:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\" then\n   elapsed=0\n   state.pendingLightning=nil\n   core:SetAttribute(\"LightningWarning\",false)\n   for player in pairs(state.controls) do state.controls[player]=nil end\n",
+              "old_identity": {
+                "bytes": 967,
+                "sha256": "345e1bbe6a36bb55664f9064a440cf0d35bf70e5083c150ba13fde1a5e1e9341"
+              },
+              "start": 652,
+              "stop": 672
+            },
+            {
+              "new": "  state.active=false\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n",
+              "new_identity": {
+                "bytes": 244,
+                "sha256": "35ec5c27a66cb875916e13f92d93dd8b6e515afedc7af1ef354c78089d23a4a6"
+              },
+              "old": "  retireRealm()\n",
+              "old_identity": {
+                "bytes": 16,
+                "sha256": "64f33f1acf6cdd3cf10b555d73a393caee23c7f3831c3c20b3b9d8f9e8504b3a"
+              },
+              "start": 795,
+              "stop": 796
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_RealmBattleCore"
+        }
+      }
+    },
+    "source_issue": 910
+  },
   "castle_release_stock_followup": {
     "forward": [
       {
@@ -2542,8 +3109,8 @@
   },
   "feature_id": "GQ470_EXISTING_FIX_UNION22_REAL69",
   "final_place": {
-    "bytes": 842005,
-    "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+    "bytes": 842354,
+    "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
   },
   "followup_repair": {
     "author_contexts": [
@@ -6874,8 +7441,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
       "after": {
-        "bytes": 10202,
-        "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+        "bytes": 10334,
+        "sha256": "681ad5b6e74c8371ca5c3c25e54daef92c33026e7593097af48017548a044530"
       },
       "before": {
         "bytes": 9829,
@@ -6896,6 +7463,34 @@
           },
           "start": 11,
           "stop": 11
+        },
+        {
+          "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+          "new_identity": {
+            "bytes": 203,
+            "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 40,
+          "stop": 40
+        },
+        {
+          "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+          "new_identity": {
+            "bytes": 66,
+            "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+          },
+          "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+          "old_identity": {
+            "bytes": 64,
+            "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+          },
+          "start": 57,
+          "stop": 58
         },
         {
           "new": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
@@ -6938,6 +7533,20 @@
           },
           "start": 91,
           "stop": 92
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+          },
+          "start": 158,
+          "stop": 159
         }
       ],
       "inverse": [
@@ -6961,13 +7570,41 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
+          "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+          "old_identity": {
+            "bytes": 203,
+            "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+          },
+          "start": 41,
+          "stop": 44
+        },
+        {
+          "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+          "new_identity": {
+            "bytes": 64,
+            "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+          },
+          "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+          "old_identity": {
+            "bytes": 66,
+            "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+          },
+          "start": 61,
+          "stop": 62
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "old": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
           "old_identity": {
             "bytes": 268,
             "sha256": "8156a6bcf698c8376c8d30ad78df5d24522ed131af3056fefff5909953564987"
           },
-          "start": 71,
-          "stop": 77
+          "start": 74,
+          "stop": 80
         },
         {
           "new": "  if p.Parent~=Players or not live()\n",
@@ -6980,8 +7617,8 @@
             "bytes": 44,
             "sha256": "390552e06ac553aaaeda5d983c1048462a734902e030e5e9b13678277dd7ed42"
           },
-          "start": 78,
-          "stop": 79
+          "start": 81,
+          "stop": 82
         },
         {
           "new": "  return hit==nil or not hit.Instance.CanCollide\n",
@@ -6994,8 +7631,22 @@
             "bytes": 69,
             "sha256": "a33ee77d5bc3ae995fafbaa7763f8a319f7ad6307dab2e0bdf89512589d74bcf"
           },
-          "start": 98,
-          "stop": 99
+          "start": 101,
+          "stop": 102
+        },
+        {
+          "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 168,
+          "stop": 168
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
@@ -9462,8 +10113,8 @@
     },
     "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
       "after": {
-        "bytes": 35282,
-        "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+        "bytes": 35499,
+        "sha256": "b3dece5fd6c927172d14f4cff648b1659d97234e2e2d639628cd9ff740150c1f"
       },
       "before": {
         "bytes": 33443,
@@ -9514,18 +10165,46 @@
           "stop": 83
         },
         {
-          "new": " local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
+          "new": " core.Name=CORE_NAME\n -- The linked legacy routes must leave the front BR castle row clear.\n local legacyCanyonZ=if mode==\"BATTLE_ROYALE\" then -305 else -175\n core:SetAttribute(\"LegacyCanyonOffsetZ\",legacyCanyonZ)\n core.Parent=world\n local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
           "new_identity": {
-            "bytes": 85,
-            "sha256": "ff5db7553b62a6bf22b58b8cfe14c4fc162bdea75aeb4a877288df504da3651a"
+            "bytes": 318,
+            "sha256": "bbf19fe0e08cc46d0dc4124af29dec66b6af4b961a594f2321eeafd5c2f96fef"
           },
-          "old": " local state={mode=mode,world=world,core=core,started=os.clock(),\n",
+          "old": " core.Name=CORE_NAME;core.Parent=world\n local state={mode=mode,world=world,core=core,started=os.clock(),\n",
           "old_identity": {
-            "bytes": 66,
-            "sha256": "ed675c9970cf09782396e6f91e34663d831441bd2fbf38d13f20994981598d93"
+            "bytes": 105,
+            "sha256": "8e23981280d56a15355f86a6220639645311f3f080f1d84b8cae3a4a87152023"
           },
-          "start": 153,
+          "start": 152,
           "stop": 154
+        },
+        {
+          "new": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ)\n",
+          "new_identity": {
+            "bytes": 51,
+            "sha256": "31c20d2b9e878cfeed135999b86fe9ad97ee2023513a1be9eb92e5b4e0ff335d"
+          },
+          "old": "  local center=Vector3.new(x,y+12,z-175)\n",
+          "old_identity": {
+            "bytes": 41,
+            "sha256": "10ea975e30f4381b7f459078956bf57fd5b630425a66ac2dc58bfe866b6e5cdf"
+          },
+          "start": 175,
+          "stop": 176
+        },
+        {
+          "new": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ+30)\n",
+          "new_identity": {
+            "bytes": 54,
+            "sha256": "b8f0ec6021fbfaa93d6bfb00afb8a30f1aa245a672f72254005632e94d21fa19"
+          },
+          "old": "  local center=Vector3.new(x,y+12,z-145)\n",
+          "old_identity": {
+            "bytes": 41,
+            "sha256": "d762bac26f2b73d458eef3fdbb907e2488bb89f55eb827e5980a22ddbf6e5b7b"
+          },
+          "start": 287,
+          "stop": 288
         },
         {
           "new": " local heartbeat,controlConnection,ancestryConnection\n local function retireRealm()\n  state.active=false\n  state.pendingLightning=nil\n  if core.Parent then core:SetAttribute(\"LightningWarning\",false) end\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  if ancestryConnection then ancestryConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n  -- Keep the inactive scene tombstone until Destroying: reparenting is not restart.\n end\n ancestryConnection=world.AncestryChanged:Connect(function(child,parent)\n  if child==world and parent~=state.lobby\n   or child==state.lobby and parent~=Workspace then retireRealm() end\n end)\n",
@@ -9628,18 +10307,46 @@
           "stop": 90
         },
         {
-          "new": " local state={mode=mode,world=world,core=core,started=os.clock(),\n",
+          "new": " core.Name=CORE_NAME;core.Parent=world\n local state={mode=mode,world=world,core=core,started=os.clock(),\n",
           "new_identity": {
-            "bytes": 66,
-            "sha256": "ed675c9970cf09782396e6f91e34663d831441bd2fbf38d13f20994981598d93"
+            "bytes": 105,
+            "sha256": "8e23981280d56a15355f86a6220639645311f3f080f1d84b8cae3a4a87152023"
           },
-          "old": " local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
+          "old": " core.Name=CORE_NAME\n -- The linked legacy routes must leave the front BR castle row clear.\n local legacyCanyonZ=if mode==\"BATTLE_ROYALE\" then -305 else -175\n core:SetAttribute(\"LegacyCanyonOffsetZ\",legacyCanyonZ)\n core.Parent=world\n local state={mode=mode,world=world,lobby=world.Parent,core=core,started=os.clock(),\n",
           "old_identity": {
-            "bytes": 85,
-            "sha256": "ff5db7553b62a6bf22b58b8cfe14c4fc162bdea75aeb4a877288df504da3651a"
+            "bytes": 318,
+            "sha256": "bbf19fe0e08cc46d0dc4124af29dec66b6af4b961a594f2321eeafd5c2f96fef"
           },
-          "start": 160,
-          "stop": 161
+          "start": 159,
+          "stop": 165
+        },
+        {
+          "new": "  local center=Vector3.new(x,y+12,z-175)\n",
+          "new_identity": {
+            "bytes": 41,
+            "sha256": "10ea975e30f4381b7f459078956bf57fd5b630425a66ac2dc58bfe866b6e5cdf"
+          },
+          "old": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ)\n",
+          "old_identity": {
+            "bytes": 51,
+            "sha256": "31c20d2b9e878cfeed135999b86fe9ad97ee2023513a1be9eb92e5b4e0ff335d"
+          },
+          "start": 186,
+          "stop": 187
+        },
+        {
+          "new": "  local center=Vector3.new(x,y+12,z-145)\n",
+          "new_identity": {
+            "bytes": 41,
+            "sha256": "d762bac26f2b73d458eef3fdbb907e2488bb89f55eb827e5980a22ddbf6e5b7b"
+          },
+          "old": "  local center=Vector3.new(x,y+12,z+legacyCanyonZ+30)\n",
+          "old_identity": {
+            "bytes": 54,
+            "sha256": "b8f0ec6021fbfaa93d6bfb00afb8a30f1aa245a672f72254005632e94d21fa19"
+          },
+          "start": 298,
+          "stop": 299
         },
         {
           "new": " local controlConnection\n",
@@ -9652,8 +10359,8 @@
             "bytes": 773,
             "sha256": "89815448d57a43b58ffdebdbd627093e3bda29199a77e8887767b274cfb51170"
           },
-          "start": 606,
-          "stop": 622
+          "start": 610,
+          "stop": 626
         },
         {
           "new": " local heartbeat\n",
@@ -9666,8 +10373,8 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 651,
-          "stop": 651
+          "start": 655,
+          "stop": 655
         },
         {
           "new": "  if not state.active or not world.Parent then\n   if heartbeat then heartbeat:Disconnect() end\n",
@@ -9680,8 +10387,8 @@
             "bytes": 967,
             "sha256": "345e1bbe6a36bb55664f9064a440cf0d35bf70e5083c150ba13fde1a5e1e9341"
           },
-          "start": 652,
-          "stop": 672
+          "start": 656,
+          "stop": 676
         },
         {
           "new": "  state.active=false\n  if heartbeat then heartbeat:Disconnect() end\n  if controlConnection then controlConnection:Disconnect() end\n  for p in pairs(state.divers) do clearDive(p) end\n  for p in pairs(state.controls) do state.controls[p]=nil end\n",
@@ -9694,8 +10401,8 @@
             "bytes": 16,
             "sha256": "64f33f1acf6cdd3cf10b555d73a393caee23c7f3831c3c20b3b9d8f9e8504b3a"
           },
-          "start": 795,
-          "stop": 796
+          "start": 799,
+          "stop": 800
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_RealmBattleCore"

@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "96074d3f1a09b0cc2a86f7768d6e23adfdd817a5f43394292b90f7fd3b797398"
+INPUT_LOCK_SHA256 = "13c78f40eb8a362d57ab8a8b0f4ef2a0896a44e2c68de078d52b7d9e520b6603"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -562,6 +562,73 @@ def run_relay_presentation(root, output, binary, binary_pin, context, profile, c
     print("relay_presentation: 22 Native cases PASS; physical Studio overlap remains separate", flush=True)
 
 
+BR_CANYON_STDOUT = (
+    b"PASS TEAM CENTER_AND_FOUR_LANES\n"
+    b"PASS TEAM 16_CASTLE_FRONT_APPROACHES\n"
+    b"PASS BATTLE_ROYALE CENTER_AND_FOUR_LANES\n"
+    b"PASS BATTLE_ROYALE 16_CASTLE_FRONT_APPROACHES\n"
+)
+
+
+def br_canyon_program(root, profile, compose):
+    canyon_path, realm_path = compose.BR_CANYON_SOURCES
+    bodies = {name: read(root / name) for name in (canyon_path, realm_path, compose.VAULT_SOURCE)}
+    pins = {name: identity(raw) for name, raw in bodies.items()}
+    require(all(pin == profile["sources"][name]["after"] for name, pin in pins.items()),
+            "BR_CANYON_SOURCE_PINS")
+    canyon, realm, host = (bodies[path] for path in (canyon_path, realm_path, compose.VAULT_SOURCE))
+
+    def between(raw, first, last):
+        require(raw.count(first) == 1, "BR_CANYON_FRAGMENT_START")
+        start = raw.index(first)
+        return raw[start:raw.index(last, start)]
+
+    def center_before(end):
+        tail = realm.index(end)
+        start = realm.rindex(b"  local center=", 0, tail)
+        return realm[start:tail].rstrip()
+
+    template = read(HERE / "br_canyon_cases.luau")
+    require(identity(template) == profile["br_canyon_followup"]["native_case"], "BR_CANYON_FIXTURE_PIN")
+    fragments = {
+        "CASTLE_POINTS": between(host, b"local function getCastlePoint(", b"-- GQ8_HUMAN_SIEGE_PACING_BEGIN"),
+        "BATTLEFIELD": between(host,
+                               b' local worldX=mode=="TEAM" and -620 or 620\n local floor=block(session.world,"TacticalBattlefield",',
+                               b" floor.Material=Enum.Material.Grass"),
+        "REALM_OFFSET": between(realm, b" core.Name=CORE_NAME", b" local state={mode=mode"),
+        "STARFALL_CENTER": center_before(b"  local bridge={}"),
+        "METEOR_CENTER": center_before(b"  local segments={}"),
+        "CANYON_OFFSET": between(canyon, b' if arena:FindFirstChild("GQ8_RC85_WCS_Canyon")',
+                                 b" installed[arena]=true").split(b"\n", 1)[1],
+        "CANYON_ORIGIN": between(canyon, b" local origin=floor.CFrame", b" local grass="),
+        "CANYON_PARTS": between(canyon, b' local west=block("WestBank"', b' block("CrystalCanyonBottom"')
+                         + between(canyon, b' local shortcut=block("ShortcutBridge"', b" local gate="),
+    }
+    for name, raw in fragments.items():
+        placeholder = b"-- @" + name.encode() + b"@"
+        require(template.count(placeholder) == 1, "BR_CANYON_FIXTURE_BOUNDARY:" + name)
+        template = template.replace(placeholder, raw.rstrip(), 1)
+    return template, pins
+
+
+def run_br_canyon(root, output, binary, binary_pin, context, profile, compose):
+    program, pins = br_canyon_program(root, profile, compose)
+    output.mkdir()
+    program_path = output / "generated.luau"
+    program_path.write_bytes(program)
+    result = subprocess.run([str(binary), str(program_path)], env=clean_environment(), capture_output=True, timeout=30)
+    (output / "stdout.log").write_bytes(result.stdout)
+    (output / "stderr.log").write_bytes(result.stderr)
+    require(result.returncode == 0 and not result.stderr
+            and result.stdout.replace(b"\r\n", b"\n") == BR_CANYON_STDOUT, "BR_CANYON_EXACT_VECTOR")
+    require(identity(read(binary)) == binary_pin and read(program_path) == program
+            and br_canyon_program(root, profile, compose) == (program, pins), "BR_CANYON_INPUT_DRIFT")
+    write_json(output / "receipt.json", {"sources": pins, "native": binary_pin,
+               "execution_context": context, "generated": identity(program), "stdout": identity(result.stdout),
+               "stderr": identity(result.stderr), "exit": result.returncode, "cases": 4})
+    print("br_canyon: TEAM and BR lane placements and 32 straight castle approaches PASS", flush=True)
+
+
 def run_score_regressions(root, output, binary, binary_pin, context, profile, compose):
     source = read(root / compose.SCORE_SOURCE)
     require(identity(source) == profile["sources"][compose.SCORE_SOURCE]["after"],
@@ -653,6 +720,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         print("bot_vault: 9 scenarios, 13 CASE, 43 CHECK PASS; same fresh F46; 30 distinct server bodies with dual28", flush=True)
         run_score_regressions(root, output / "score_relay", binary, pin, context, compose.load_lock(), compose)
         run_relay_presentation(root, output / "relay_presentation", binary, pin, context, compose.load_lock(), compose)
+        run_br_canyon(root, output / "br_canyon", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -687,13 +755,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "bot_vault_supplement": identity(read(output / "bot_vault/receipt.json")),
                    "score_relay_regressions": identity(read(output / "score_relay/receipt.json")),
                    "relay_presentation": identity(read(output / "relay_presentation/receipt.json")),
+                   "br_canyon": identity(read(output / "br_canyon/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 16,
-                   "native_evidence_file_count": 78,
+                   "native_process_count": 17,
+                   "native_evidence_file_count": 82,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile
