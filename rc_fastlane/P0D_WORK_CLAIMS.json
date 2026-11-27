@@ -34842,7 +34842,7 @@
         "GQ470_FB015_CASTLE_GUARDIAN_7_SILHOUETTES_REAL69_20261121",
         "GQ470_FB015_FIELDART_916_934_COMPOSITE_20261121"
       ],
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, reusing existing #940)",
       "parent_issue": 470,
@@ -34854,7 +34854,7 @@
       "prep_branch": "quality/gq470-skillfx-shard-flash-real69-20261121",
       "expected_source_branch": "625b2d2776d98a6205dede85334b51981707280d",
       "allowed_new_prs": 0,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
@@ -35094,6 +35094,148 @@
           "lease": "274e9a01b40fe48403785d80667722a0050af51f",
           "owner": "598f867e-dd8f-46dd-96e2-1c0bc5e2ba27"
         }
+      },
+      "source_head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+      "prepared_candidate_head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+      "prepared_candidate_tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py",
+          "mode": "100644",
+          "blob": "3e5b8a0355bfb255208b480ac7c47879385da268",
+          "bytes": 18669
+        },
+        {
+          "path": "quality_gameplay/gq470_fieldart_916_934_composite_20261121/compose.py",
+          "mode": "100644",
+          "blob": "a38b813f7e10527c60ff74aaf458b0795e7d9bd4",
+          "bytes": 13379
+        },
+        {
+          "path": "quality_gameplay/gq470_fortress_fairbudget_real69_20261121/patch_castle_fairbudget.py",
+          "mode": "100644",
+          "blob": "9fc1e50ab63d7537f361c52a0572cb740c54e223",
+          "bytes": 8177
+        },
+        {
+          "path": "quality_gameplay/gq470_guardian_shapes_real69_20261121/art_gate_guardian.py",
+          "mode": "100644",
+          "blob": "56ef50a67e0ff2867bfb0581b0835de91eadfcbb",
+          "bytes": 4258
+        },
+        {
+          "path": "quality_gameplay/gq470_guardian_shapes_real69_20261121/guardian_art.py",
+          "mode": "100644",
+          "blob": "58b12bb42e49f26df752b8c26d4c32c2057189fc",
+          "bytes": 9056
+        },
+        {
+          "path": "quality_gameplay/gq470_result_card_art_real69_20261121/RESULT_MATTE_REAL69.patch",
+          "mode": "100644",
+          "blob": "440347278ac42caf28d57399fef9197b29f36807",
+          "bytes": 1772
+        },
+        {
+          "path": "quality_gameplay/gq470_result_card_art_real69_20261121/gate.py",
+          "mode": "100644",
+          "blob": "f9b8c8acc90f4009332e2c21938fb802b79f8f9a",
+          "bytes": 11467
+        },
+        {
+          "path": "quality_gameplay/gq470_skillfx_shard_real69_20261121/patch_skillfx69.py",
+          "mode": "100644",
+          "blob": "b1757a9f5178ed271a653888807d6d647677c844",
+          "bytes": 9671
+        },
+        {
+          "path": "quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py",
+          "mode": "100644",
+          "blob": "f4b5f16a0f544e250faf0d673f48aa708d5cbdf0",
+          "bytes": 9439
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "5d160b9e4e345269e246f4e6bbcbfcdaa58d9d23",
+          "bytes": 57578
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "dbab0ba4a3b2d0e34704aa81e7a4f1f456a88e7a",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/art_polish_skillfx.py",
+          "mode": "100644",
+          "blob": "2fa86ba87daa52eff7ecca149b9bdf1a8c3edb86",
+          "bytes": 2906
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/art_polish_skillfx_cases.luau",
+          "mode": "100644",
+          "blob": "572919f6616d26741acf93e4d3eed2e9a8d06e57",
+          "bytes": 5412
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "70949eb5f97773c533744099c9abf753cda3f78c",
+          "bytes": 9574
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall.py",
+          "mode": "100644",
+          "blob": "3b588fe84ade49d8d3fa3a7b45a13debe36818ec",
+          "bytes": 4624
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "95bfc203585ecf91c8f226d17d955f309f1ad063",
+          "bytes": 18467
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "84f13ccf66fe3651c2cca10ec6a065442c6ac33d",
+          "bytes": 50457
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "9f675f5ba7afc53dc9e5945d303392c968af56df",
+          "bytes": 1311639
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "a8bae5ba1f87adcafb89359d15feee33e4bb35c6",
+          "bytes": 142896
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "fafb003d40933ce16402f7c49433a393682c5666",
+          "bytes": 105827
+        }
+      ],
+      "actual_candidate_readback": {
+        "head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+        "base": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "parent": "625b2d2776d98a6205dede85334b51981707280d",
+        "sourceLease": "d6504afba827fa0c4cb495f9d1926cdd1a37c664",
+        "sourceOperation": "6903293b-7bfd-4de8-8116-03564fa6c84c",
+        "initialPrBase": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+        "livePrBase": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "pr": 940,
+        "branch": "quality/gq470-skillfx-shard-flash-real69-20261121",
+        "sourceReturn": "100db7d10d618c01d6feae5fe6a0ef4f2f57ac0d"
+      },
+      "actual_binding_lease": {
+        "commit": "fb7cc735442ab8364433e1893be9cc1a1f39837e",
+        "operation_id": "bd1d771f-5f95-4ae4-b32e-4e17a2b03c0d"
       }
     }
   ],
