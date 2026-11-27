@@ -1,0 +1,27 @@
+name: P0D EGGRUMBLE V3 navigation and egg inventory source QA
+
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-v3-nav-egg-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v3-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check V3 source contracts and negative cases
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests \
+            -p 'test_*.py' -v
+      - name: Emit honest engine gate
+        run: |
+          echo "SOURCE_ONLY: Python contracts passed; Roblox Studio/Android/native Luau were not executed."

@@ -1,0 +1,77 @@
+name: P0D EGGRUMBLE V3 actual Luau syntax and castle rules VM tests
+
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**/*.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_rules_harness.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_round_replay_harness.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_item_harness.py'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_boss_session_harness.py'
+      - '.github/workflows/p0d-eggrumble-v3-native-luau.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-luau-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build official open-source Luau CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/eggrumble-luau
+          cmake -S /tmp/eggrumble-luau -B /tmp/eggrumble-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/eggrumble-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          test -x /tmp/eggrumble-luau/build/luau
+          test -x /tmp/eggrumble-luau/build/luau-compile
+      - name: Parse all isolated Luau game source with a native compiler
+        run: |
+          set -euo pipefail
+          find handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            -type f -name '*.luau' -print0 |
+            while IFS= read -r -d '' source; do
+              echo "Native parse: $source"
+              /tmp/eggrumble-luau/build/luau-compile "$source" >/dev/null
+            done
+      - name: Execute castle/egg/TEAM/BR with actual Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_rules_harness.py \
+            --out /tmp/eggrumble-v3-native-castle-smoke.luau
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-castle-smoke.luau
+      - name: Execute 21 role skill balance profiles in actual Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_combat_harness.py \
+            --out /tmp/eggrumble-v3-native-balance.luau
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-balance.luau
+      - name: Execute real round replay schedule and reset in native Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_round_replay_harness.py \
+            --out /tmp/eggrumble-v3-native-round-replay.luau
+          /tmp/eggrumble-luau/build/luau-compile /tmp/eggrumble-v3-native-round-replay.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-round-replay.luau
+      - name: Validate balanced real item intake across both modes in Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_raid_item_harness.py \
+            --out /tmp/eggrumble-v3-native-raid-item.luau
+          /tmp/eggrumble-luau/build/luau-compile /tmp/eggrumble-v3-native-raid-item.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-raid-item.luau
+      - name: Execute TEAM/BR neutral-boss session fencing with actual Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_boss_session_harness.py \
+            --out /tmp/eggrumble-v3-native-boss-fence.luau
+          /tmp/eggrumble-luau/build/luau-compile /tmp/eggrumble-v3-native-boss-fence.luau >/dev/null
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-boss-fence.luau
+      - name: State precise QA limit
+        run: |
+          echo "NATIVE_LUAU_SOURCE_AND_PURE_GAME_RULES_QA: code executed in Luau VM."
+          echo "REAL_STUDIO_WORLD/ANDROID/RC_INTEGRATION: NOT_TESTED."
