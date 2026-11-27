@@ -2513,7 +2513,7 @@
       "source_scope_granted": false,
       "scope_only": true,
       "source_reconciliation_v21": "Reuse reviewed score source from original PR #1017 and preserve every existing PR commit and six donor blobs. Modify exactly seven current producer, profile and QA paths in detached preparation. Any authenticated publication uses a later finite source lease, fast-forward to updated existing PR only, and no RC write.",
-      "source_expected_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
+      "source_expected_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
       "original_target_paths": [
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
         "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json",
@@ -2567,15 +2567,15 @@
         }
       },
       "source_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
-      "prepared_candidate_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
-      "prepared_candidate_tree": "e346ed1ccaca7428a9e7096761f5f2b63ac6980c",
+      "prepared_candidate_head": "7ad4055bd28e6aaf0ba6183796912503812de416",
+      "prepared_candidate_tree": "bbf0b4dc888dc2269d21940e5a5a7667f86abf0d",
       "prepared_source_blobs": {
         "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "1218ceb0bd9eec434906d4662512d7c44defc452",
         "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "7e60daff49eecb6d2417b5f9877dd7a0ec496b16",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "d820f685c22d9064a197568a26b0a473960624bd",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "bf9943173d77106190db81715d25854969d9a969",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "3f7ee23956b4e9131053b6a4ccb674562f2157ad",
-        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "0a973e5454e64e47fd5bd824f2a86433e68561cf",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "5ab720eb927438d77f1c69491836f4603bbf411d",
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py": "ab7896afb48c683518c93e56e8f60c56a9674f02",
         "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau": "366e254408030afea3a002a20070a15c38a8c8c2",
         "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau": "5056a296e88f96393c60b24c1b971bff0e534c3d",
@@ -2630,21 +2630,21 @@
         }
       },
       "repair_only_paths": [
-        "tests/test_gq470_union22_real69_20261122.py"
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py"
       ],
-      "repair_only_expected_blob": "01f33586953cee85fcaba67222d12e763320e498",
-      "source_fix_for_ci_run": 45922329591,
-      "repair_cause": "Existing three late mutation probes still targeted 154 commands; immediate score rollback adds one compile and one Rojo build. Keep all probes, switch to final exact command 156.",
+      "repair_only_expected_blob": "5ab720eb927438d77f1c69491836f4603bbf411d",
+      "source_fix_for_ci_run": 45922704191,
+      "repair_cause": "Donor exact specs remain inside authenticated checkout; the legacy original Bot contract-directory isolation must not relocate sibling donor paths. Check imported donor files for late drift.",
       "actual_test_repair_scope_lease": {
-        "ref": "35ab303ad90e0b8d30608c3d575507a774410e89",
-        "blob": "207df3fe721d2846522c8e79bef0c402c2b1f7bd",
+        "ref": "ce04c5cf00907ed8ae316cfd70ec8690920498d0",
+        "blob": "d88e95f2cc306b052e6224b5c8d17765382c5eb9",
         "holder": {
           "kind": "CONTROLLER",
-          "owner_id": "58a39d0d-0a64-4a5a-9c3a-9e4108dca606",
+          "owner_id": "02a71b4d-0dfd-4b04-918f-5c35daad0d49",
           "task_id": null,
-          "epoch": 786,
-          "acquired_at": "2026-11-27T01:26:18.281Z",
-          "expires_at": "2026-11-27T01:56:18.281Z",
+          "epoch": 789,
+          "acquired_at": "2026-11-27T01:34:03.730Z",
+          "expires_at": "2026-11-27T02:04:03.730Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
@@ -2665,7 +2665,8 @@
           "origin": "controller"
         }
       },
-      "no_source_changes_after_fixed_head_without_new_scope": true
+      "no_source_changes_after_fixed_head_without_new_scope": true,
+      "pre_verifier_fix_binding": "ea2b8f19257c2b15b7bfdb8e0d1880d5abac3e02"
     },
     {
       "PREP_READY": false,
