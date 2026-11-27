@@ -44249,7 +44249,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-MAGE-PROJECTILE-BATCH-20261128",
       "feature_id": "GQ219_PRIVATE_MAGE_PROJECTILE_AND_ROLE_GROWTH_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -44263,7 +44263,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Selected V4.2 PRIVATE trial profile. Reuse the existing authoritative Swarm/Combat, lobby and tool activation for role growth and fixed MAGE-033, MAGE-051, MAGE-071, one path from lobby to confirmed neutral hit and KO, exact hunk inverse. Keep prior B1-B3, legacy skill slots and no cross-world target. Author-index corrections under V4.2 tied to the game diff. No ACTIVE, Store, winner-rule, public, new Remote or main scope.",
       "resources": [
@@ -44638,7 +44638,7 @@
         "operation_id": "b8e2d8a7-156b-462a-9389-e5d3105039fa"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "843180dc0daaf54da840f900282cbcaa77301372",
         "permitted_head": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
@@ -44669,7 +44669,38 @@
           "review": 6093981441,
           "trusted_queue_run": 46077758500,
           "trusted_queue_job": 140769380015
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "8a6b30126610dd621d16dbbb1b4312f535d0413b",
+        "writer_return": "530b8770fe22c0babf63513e2391f0ee0ad2cfe3",
+        "adopted_head": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "adopted_at": "2026-11-27T22:39:09.843Z"
+      },
+      "actual_official_rc": {
+        "head": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "previous": "843180dc0daaf54da840f900282cbcaa77301372",
+        "tree": "71727e384fa6b073152cb81efef37c3b2d41d337",
+        "active_baseline_head": "843180dc0daaf54da840f900282cbcaa77301372",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46077933465,
+        "private_job": 140769950952,
+        "private_steps": 48,
+        "private_artifact": 15234994402,
+        "private_zip_bytes": 29338558,
+        "private_zip_digest": "sha256:7e6d303ab3bc66e5d786c6fab406419961c9d1bc54a162801241e4256b35b126",
+        "private_place_bytes": 921208,
+        "private_place_sha256": "4bbc7a88c52313fa0f67ee1e56ab1b94ef1bb3a43af0d6fd6bf92ea8be4ba305",
+        "private_off_place_bytes": 895935,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7229643577",
+        "device_evidence": "NOT_TESTED_PER_V42",
+        "independent_context": "/root/p0_offer_review26",
+        "trial_profile": "PRIVATE_COMPANION REAL69_UNION22",
+        "trial_entry": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
       }
     },
     {
@@ -44680,7 +44711,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1051,
       "base_rc_sha": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
       "base_rc_tree": "71727e384fa6b073152cb81efef37c3b2d41d337",
       "prep_branch": "quality/gq219-private-mage-water-chain-combo004-20261128",
@@ -44744,7 +44775,7 @@
       },
       "authority_basis": "#1011 V4.2 (効果契約量産), genuine #218/#220 and #219 fixed design. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-mage-water-chain-combo004-20261128",
         "formal_parent": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
         "tree": "f2350a27bd7e8d1b6b6d71267bf2b4553ff35586",
@@ -44838,6 +44869,92 @@
           "mage_hud_two_rounds": true,
           "device": "NOT_TESTED_V4.2"
         }
+      },
+      "source_head": "d69486222fd699a690c836efe820d392f88dff60",
+      "prepared_candidate_head": "d69486222fd699a690c836efe820d392f88dff60",
+      "prepared_candidate_tree": "f2350a27bd7e8d1b6b6d71267bf2b4553ff35586",
+      "source_blob_submissions": [
+        {
+          "blob": "517aaeb037d456e42f224fbe88fd85533fa224b0",
+          "bytes": 72363,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "9df32540744e727662582922d0f5de2326af13c0",
+          "bytes": 35256,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644"
+        },
+        {
+          "blob": "55a676a45f40b16b4ee71f68b0d938817f5baf8b",
+          "bytes": 10668,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "744be0664a287d81a1f2dc05dab9c76b81a87dce",
+          "bytes": 8066,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "933fa8d3105259ecfbd946dcc28dac8be3e29557",
+          "bytes": 10891,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "22b6f0e72b5ab11e27e934c965bb45bdf7df68b0",
+          "bytes": 15043,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/cases.luau",
+          "mode": "100644"
+        },
+        {
+          "blob": "89c81f5086df989f637d9e032243f6f752a86901",
+          "bytes": 23229,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "1100c074996c3f5facdf4cd088144b77dbc52150",
+          "bytes": 55536,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "f33bd3599e9b4ea6395863b142ede3c0d5575e4e",
+          "bytes": 2537221,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644"
+        },
+        {
+          "blob": "d84beeb4fb5d4c44d84827bf592768f583d76490",
+          "bytes": 171924,
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644"
+        },
+        {
+          "blob": "f4980ea8270f62ecbadc43d846e770143b890a60",
+          "bytes": 129263,
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644"
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1051,
+        "exact_head": "d69486222fd699a690c836efe820d392f88dff60",
+        "exact_tree": "f2350a27bd7e8d1b6b6d71267bf2b4553ff35586",
+        "exact_parent": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "ccbadddcf7a62653ae76d49064fa74cba4277f3a",
+        "source_lease_return": "68f184b1db7bd78a2a7088fc01644ee7c32f9984",
+        "prepared_at": "2026-11-27T22:50:31.226Z"
+      },
+      "actual_binding_lease": {
+        "commit": "f4b97f9f2dd20ffb491146ee310f8133de21348a",
+        "operation_id": "90560318-54e2-4717-9ab3-487c86ea09d7"
       }
     }
   ],
