@@ -40562,20 +40562,20 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 297,
         "branch": "feature/p0d-rc-seven-jobs-pve-v1-20261114-01",
-        "old_pr_head": "e70dbed0c9b3565b13a5a8130150abb5a7aa03c0",
+        "old_pr_head": "cc7be458713c56a87f83c54fe6d5c469c87b5400",
         "old_base_ref": "rc/p0d-s1-kids-rc01",
         "formal_parent": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
-        "tree": "2c49b123aea21ab8766f16388b1e0d37595aaaf2",
-        "local_head": "706ff3ca5cfb45f92af2e7bf65ee4309064276a4",
+        "tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+        "local_head": "8ae715ba054de748c0a3f7f27ab7c8a4dddf261e",
         "allowed_changed_files": [
           {
-            "mode": "100644",
-            "blob": "be5356dbcb0224358f468d8d347007928ffb7d9f",
             "path": ".github/workflows/p0d-rc-fastlane.yml",
-            "bytes": 241393
+            "blob": "f2f9b8f40363554f268b220bc9426a85013955c1",
+            "mode": "100644",
+            "bytes": 241574
           },
           {
             "mode": "100644",
@@ -40620,10 +40620,10 @@
             "bytes": 116286
           }
         ],
-        "expires_at": "2026-11-27T18:14:43.610Z",
+        "expires_at": "2026-11-27T18:20:01.761Z",
         "issued_from": {
-          "lease": "5478c7502272c1a5c0273551da106d430077587d",
-          "owner": "3d4305bf-2bc4-4ab8-a1f4-17214a382643"
+          "lease": "78eb51074f57cbe42c0cd5ce04b209f1c3f1377b",
+          "owner": "8ca700a2-5934-4cf7-9697-c01f32a6741b"
         },
         "local_qa": {
           "on": 687144,
@@ -40645,8 +40645,23 @@
           "explicit_selected_role": true,
           "reserve_before_cast": true,
           "design_effect_bodies_only": true,
-          "studio": "NOT_TESTED"
-        }
+          "studio": "NOT_TESTED",
+          "legacy_single_horde_call": true,
+          "role_growth_single_original_horde_call_with_reach_and_target_cap": true,
+          "real_source_and_place_unchanged_for_repair": true
+        },
+        "repair_changed_paths_from_red": [
+          ".github/workflows/p0d-rc-fastlane.yml"
+        ]
+      },
+      "first_candidate": {
+        "head": "cc7be458713c56a87f83c54fe6d5c469c87b5400",
+        "tree": "2c49b123aea21ab8766f16388b1e0d37595aaaf2",
+        "source_lease": "8249683b72e481e97a29623cbef5e11b9e25927e",
+        "source_return": "f871ebd881c4a8107143d42af24bc4e7204fb3ba",
+        "author_parent": "e70dbed0c9b3565b13a5a8130150abb5a7aa03c0",
+        "failed_job": 140646642394,
+        "reason": "SEVEN_JOBS_SINGLE_HORDE_CALL_EXACT_FORM_NOT_UPDATED_FOR_GROWTH"
       }
     }
   ],
