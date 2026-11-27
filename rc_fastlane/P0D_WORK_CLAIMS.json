@@ -35801,8 +35801,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Two source-only changes in PRIVATE_COMPANION. Existing TEAM relay prompt presentation reserves ready for both endpoints based on existing seat, capacity and clock, while the actual Enabled and transaction body remain equivalent. Preserve Rules, authoritative inventory, score, cooldown, no new remotes. #1036 was merged, do not edit it.",
       "resources": [
@@ -36119,6 +36119,35 @@
         "actual_candidate": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
         "source_lease": "104cbe589097f34b923dd2f70b9e37eda9cc27b9",
         "source_return": "8c6e28e9b710a359aada7e8920fb5afe64d23984"
+      },
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1040#pullrequestreview-6087506373",
+        "review_id": 6087506373,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "scope_registration": "6683afa590fffe47a38563ce31e8ae27d9822ae4",
+        "review_is_comment": true,
+        "author_self_approval": false,
+        "canonical_ci_run": 45990465139,
+        "canonical_job": 140476676999,
+        "canonical_steps": 48
+      },
+      "local_and_hosted_quality": {
+        "candidate_run": 45990465139,
+        "job": 140476676999,
+        "steps": 48,
+        "artifact": 15193364817,
+        "zip_bytes": 25131242,
+        "zip_digest": "sha256:c9a5b5e8559bf6acbda501a93ed09fb6e604a4a8e7b64713e2104b5dc0188d2f",
+        "place_bytes": 890487,
+        "immediate_off_bytes": 889649,
+        "older_rollbacks_verified": 19,
+        "source_lock": "69c9968f8138ad3558e174c112b4341488c4b4bc37aa8619163846882d226277",
+        "studio": "NOT_TESTED_V3.0"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "2804bf0375c9ea543695ae95437879b0b1530cab",
+        "operation_id": "0786c097-0211-4b60-8f69-bf50b2ae43fe"
       }
     }
   ],
