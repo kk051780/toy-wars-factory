@@ -38672,7 +38672,7 @@
     {
       "claim_id": "P0D-FB007-ACTIVE-SAFE-LOBBY-376-20261128",
       "feature_id": "FB007_LOBBY_DOJO_PHYSICAL_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 910,
@@ -38687,7 +38687,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Studio-only existing author #376 physically isolated team lobby, #396 team-rebalance move and existing bounded late spectator correction after engine spawn override. Active rich51 Game/V4TrainingBridge plus one exact authored LobbyDojoIsland; keep current Ready, #391 result/dead guard, #407 bot, #395 Score5, #1016 persistence, existing WCS/Twin/Realm and every Private source. No other places or device claims.",
       "resources": [
@@ -38884,7 +38884,7 @@
         "operation_id": "d6d45952-754f-439b-8809-3f59d826adc1"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "f14491be5ffe8a65681bf9329880609042d8e6b1",
         "permitted_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
@@ -38915,7 +38915,35 @@
           "review": 6090226181,
           "trusted_queue_run": 46023539016,
           "trusted_queue_job": 140588973679
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "6ec9d4884a735ed780125b0b18c888bb252e2b09",
+        "writer_return": "df238ae6ce6367d0fd2f08bb8ba229d65d5a9d90",
+        "adopted_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "adopted_at": "2026-11-27T15:19:49.794Z"
+      },
+      "actual_official_rc": {
+        "head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+        "previous": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "active_ci": 46023932394,
+        "active_job": 140590337948,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15211385916,
+        "active_zip_bytes": 194278,
+        "active_zip_digest": "sha256:4b6303f38d904e868e9410e511ddec08c1b2de3b69437ab515271ea4f788d95f",
+        "active_place_bytes": 653907,
+        "active_place_sha256": "3e5ac7b22b388fcdb928a38c0f0cdd27c942fb80f34ff1d8b1c8c744d17d85d9",
+        "active_off_place_bytes": 646032,
+        "private_ci": 46023932391,
+        "private_job": 140590337357,
+        "private_steps": 48,
+        "private_artifact": 15211446806,
+        "private_zip_bytes": 25129784,
+        "private_zip_digest": "sha256:940793b620e2574cb2ceec1bb11a902f615d64a449c58a0d43d9b740a58830e6",
+        "device_evidence": "NOT_TESTED_V3.5",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7222093760"
       }
     },
     {
@@ -38978,7 +39006,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 423,
         "branch": "feature/p0d-fb019-server-ack-v2-nativeQA-20261115",
         "old_pr_head": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
@@ -39050,6 +39078,67 @@
           "new_negative_groups": 2,
           "actual_snapshot_identical": true
         }
+      },
+      "source_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+      "prepared_candidate_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+      "prepared_candidate_tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "2a0dcb7819f5c75c463ce09bd60e2b2b2ed6cc19",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 226540
+        },
+        {
+          "mode": "100644",
+          "blob": "fff493711c3c6e37f503b63c8baae6291b17ed72",
+          "path": "rc_fastlane/apply_active_confirmed_hit.py",
+          "bytes": 4423
+        },
+        {
+          "mode": "100644",
+          "blob": "19730a5d160dd9c49e4970bc70b3a4385e05e7ac",
+          "path": "rc_fastlane/features/active_confirmed_hit/cue.json",
+          "bytes": 8945
+        },
+        {
+          "mode": "100644",
+          "blob": "77a20dee8577dd4aa6d1ff7568cf408af65fe950",
+          "path": "rc_fastlane/features/active_confirmed_hit/original_native.py",
+          "bytes": 13197
+        },
+        {
+          "mode": "100644",
+          "blob": "950923738ad133090e657d1568bebab790981214",
+          "path": "rc_fastlane/features/active_confirmed_hit/source_lock.json",
+          "bytes": 866
+        },
+        {
+          "mode": "100644",
+          "blob": "a5fdd8550e0db587edfa978460f31bc85a8efd64",
+          "path": "rc_fastlane/verify_active_confirmed_hit_native.py",
+          "bytes": 4093
+        },
+        {
+          "mode": "100644",
+          "blob": "ad1949c940462d0daad7786c6e29c191cfbb38be",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 112511
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 423,
+        "exact_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "exact_tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+        "exact_parent": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "preserved_author_parent": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
+        "source_lease": "897307779cdc603688244403c976381279f443c4",
+        "source_lease_return": "ec5e1de22b4131ccde403e19186fd94902866555",
+        "prepared_at": "2026-11-27T15:32:17.929Z"
+      },
+      "actual_binding_lease": {
+        "commit": "18f3153c8bbedd720ac0fe8333edf3a33cd057a7",
+        "operation_id": "a67c2d59-b041-4c8f-8fb4-75ad11982298"
       }
     }
   ],
