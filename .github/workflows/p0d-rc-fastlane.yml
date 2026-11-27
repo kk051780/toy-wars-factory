@@ -867,6 +867,19 @@ jobs:
                                 grep -Fx ACTIVE_WIND_BASELINE_NINJA_MISSING_LEGACY_RAIDER_PASS /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_BASELINE.log
                                 /tmp/p0d_new_luau/luau /tmp/p0d_active_assassin_wind-after.luau | tee /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_NATIVE.log
                                 test "$(grep -c '^ACTIVE_WIND_.*_PASS$' /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_NATIVE.log)" -eq 3
+                                TOUCH_CONFIG=rc_fastlane/features/active_touch_attack/source_lock.json
+                                if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$TOUCH_CONFIG"; then
+                                  TOUCH_OFF=/tmp/p0d_rc_active_touch_attack_off.rbxlx
+                                  /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$TOUCH_OFF"
+                                  python3 -B rc_fastlane/apply_active_touch_attack.py --profile "$PROFILE" --dist "$DIST" \
+                                    --off-place "$TOUCH_OFF" | tee /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_OFF.log
+                                  grep -Fx ACTIVE_TOUCH_ATTACK_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_OFF.log
+                                  /tmp/p0d_new_luau/luau-compile "$DIST/src/client/HUD.client.luau" >/dev/null
+                                  python3 -B rc_fastlane/verify_active_touch_attack_native.py --dist "$DIST" --out /tmp/p0d_active_touch_attack.luau
+                                  /tmp/p0d_new_luau/luau /tmp/p0d_active_touch_attack.luau | tee /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
+                                  grep -Fx ACTIVE_TOUCH_Q_F_JUMP_AND_FEEDBACK_TIMER_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
+                                  grep -Fx ACTIVE_TOUCH_ROTATION_RELAY_DESKTOP_AND_LOBBY_PASS /tmp/p0d_rc_out/ACTIVE_TOUCH_ATTACK_NATIVE.log
+                                fi
                               fi
                             fi
                           fi
@@ -916,8 +929,11 @@ jobs:
           undead_enabled=p=='rich51' and json.loads(undead_lock.read_bytes())['enabled']
           assassin_wind_lock=pathlib.Path('rc_fastlane/features/active_assassin_wind/source_lock.json')
           assassin_wind_enabled=p=='rich51' and json.loads(assassin_wind_lock.read_bytes())['enabled']
+          touch_lock=pathlib.Path('rc_fastlane/features/active_touch_attack/source_lock.json')
+          touch_enabled=p=='rich51' and json.loads(touch_lock.read_bytes())['enabled']
           assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
           assert not assassin_wind_enabled or undead_enabled, 'ASSASSIN_WIND_REQUIRES_EXACT_UNDEAD_PARENT'
+          assert not touch_enabled or assassin_wind_enabled, 'TOUCH_REQUIRES_EXACT_ASSASSIN_WIND_PARENT'
           expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
@@ -963,6 +979,7 @@ jobs:
               assert ('rc_active_confirmed_hit' in active_receipt)==hit_enabled
               assert ('rc_active_undead_squad' in active_receipt)==undead_enabled
               assert ('rc_active_assassin_wind' in active_receipt)==assassin_wind_enabled
+              assert ('rc_active_touch_attack' in active_receipt)==touch_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -1017,7 +1034,14 @@ jobs:
                       assert wind['studio_alias_only'] and wind['routes']['server/Game.server.luau']['before']==final_game
                       assert wind['routes']['client/HUD.client.luau']['before']==hit['routes']['client/HUD.client.luau']['after']
                       assert lock['blobs']['server/S1RaiderWindRules.luau']==wind['rules_git_blob']
-                      assert lock['blobs']['client/HUD.client.luau']==wind['routes']['client/HUD.client.luau']['after']
+                      wind_hud=wind['routes']['client/HUD.client.luau']['after']
+                      if touch_enabled:
+                          touch=active_receipt['rc_active_touch_attack']
+                          assert lock['rc_active_touch_attack']==touch and touch['feature']=='ACTIVE_TOUCH_ATTACK_LAYOUT_V2'
+                          assert touch['source']=='client/HUD.client.luau' and touch['before']==wind_hud
+                          assert lock['blobs']['client/HUD.client.luau']==touch['after']
+                      else:
+                          assert lock['blobs']['client/HUD.client.luau']==wind_hud
                       final_game=wind['routes']['server/Game.server.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
@@ -1235,6 +1259,7 @@ jobs:
           if hit_enabled: overlay_ids.append('FB019_ATTACK_RESPONSE_V1')
           if undead_enabled: overlay_ids.append('FB026_UNDEAD_SIEGE_ACTIVE_V1')
           if assassin_wind_enabled: overlay_ids.append('FB020_ASSASSIN_WIND_ACTIVE_V1')
+          if touch_enabled: overlay_ids.append('ACTIVE_TOUCH_ATTACK_LAYOUT_V2')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)

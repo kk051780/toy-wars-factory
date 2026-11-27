@@ -218,6 +218,14 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(wind["routes"]["client/HUD.client.luau"]["before"],
                          hit["routes"]["client/HUD.client.luau"]["after"])
         self.assertTrue(private_blobs.isdisjoint(row["after"] for row in wind["routes"].values()))
+        touch_dir = active / "features/active_touch_attack"
+        touch = verify.data(touch_dir / "source_lock.json")
+        self.assertEqual(touch["profile"], selection["active_profile"])
+        touch_hud = touch["routes"]["client/HUD.client.luau"]
+        self.assertEqual(touch_hud["before"], wind["routes"]["client/HUD.client.luau"]["after"])
+        self.assertNotIn(touch_hud["after"], private_blobs)
+        for name in ("touch-layout.luau","touch-ui.luau"):
+            self.assertEqual(hashlib.sha256((touch_dir / name).read_bytes()).hexdigest(), touch["original"][name])
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
