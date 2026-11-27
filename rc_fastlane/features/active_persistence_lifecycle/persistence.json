@@ -75,6 +75,18 @@
     {
       "anchor": "            local ok,record=PersistentHatch.settleSixSkill(studioHatchStore,player.UserId,ticket)\n            if ok and record then acknowledged=true;updated=record;break end\n            if attempt<3 then task.wait(attempt*.5) end\n        end\n        if acknowledged and updated and player.Parent==Players then\n            local previous=persistentProfiles[player]\n",
       "replace": "            local ok,record=PersistentHatch.settleSixSkill(studioHatchStore,player.UserId,ticket)\n            if ok and record then acknowledged=true;updated=record;break end\n            if attempt<3 then task.wait(attempt*.5) end\n        end\n        if player.Parent~=Players or h2Ids[player]~=uid then\n            outstandingWrites-=1\n            return\n        end\n        if acknowledged and updated and player.Parent==Players then\n            local previous=persistentProfiles[player]\n"
+    },
+    {
+      "anchor": "local equipNotice: {[Player]: {uid: number, needsReselect: boolean}} = {}",
+      "replace": "local equipNotice: {[Player]: {uid: number, needsReselect: boolean, confirmedRevision: number?}} = {}"
+    },
+    {
+      "anchor": "    local notice={uid=uid,needsReselect=previousNotice~=nil\n        and previousNotice.uid==uid and previousNotice.needsReselect==true}\n",
+      "replace": "    local notice={uid=uid,needsReselect=previousNotice~=nil\n        and previousNotice.uid==uid and previousNotice.needsReselect==true,\n        confirmedRevision=nil :: number?}\n"
+    },
+    {
+      "anchor": "                    notice.needsReselect=PersistentHatch.validate(current)\n                        and current.equipped~=item\n                end\n            else\n                markProfileUnconfirmed(player,true)\n                warn(\"EGG_RUMBLE_EQUIP_SAVE_UNCONFIRMED\",player.UserId)\n            end\n",
+      "replace": "                    local currentValid=PersistentHatch.validate(current)\n                    notice.needsReselect=currentValid and current.equipped~=item\n                    if confirmed and currentValid and current.equipped==item then\n                        notice.confirmedRevision=profile.revision\n                    end\n                end\n            else\n                local latest=equipNotice[player]\n                local current=persistentProfiles[player]\n                local confirmedRevision=latest and latest.confirmedRevision\n                -- The superseded write was fenced by a strictly newer durable equip.\n                local superseded=latest~=nil and latest~=notice and latest.uid==uid\n                    and persistenceState[player]==\"SAVED\" and confirmedRevision~=nil\n                    and confirmedRevision>expectedRevision and PersistentHatch.validate(current)\n                    and current.revision>=confirmedRevision\n                if not superseded then\n                    markProfileUnconfirmed(player,true)\n                    warn(\"EGG_RUMBLE_EQUIP_SAVE_UNCONFIRMED\",player.UserId)\n                end\n            end\n"
     }
   ],
   "server/PersistentHatchStore.luau": [

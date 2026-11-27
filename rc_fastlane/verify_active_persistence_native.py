@@ -121,10 +121,10 @@ def main():
     assert sha256(probe).hexdigest() == config["native_regression_sha256"], "REGRESSION_SOURCE"
     program, _ = runner.render_equipment_contract("ui10", mounted, continuation[2])
     program = bind_current_fixture(program, "ui10", mounted, runner)
-    invoke = bytes([10]).join((b"", b"pendingRecovery(true)", b"settledRound(true)", b""))
+    invoke = bytes([10]).join((b"", b"pendingRecovery(true)", b"settledRound(true)", b"supersededFailure()", b""))
     logs = run("late_ack_and_round_settlement", program + probe + invoke)
     measured = [line for line in logs.splitlines() if line.startswith(("RECOVERY_", "SETTLEMENT"))]
-    assert len(measured) == 7, measured
+    assert len(measured) == 11, measured
     print("ACTIVE_RICH51_PERSISTENCE_NATIVE_AUTHOR_112_PASS", json.dumps(results, sort_keys=True))
     for line in measured:
         print(line)
