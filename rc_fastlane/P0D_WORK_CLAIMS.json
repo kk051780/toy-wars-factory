@@ -42490,7 +42490,7 @@
     {
       "claim_id": "P0D-GQ470-FB008-ACTIVE-CROWD-CAP-382-20261128",
       "feature_id": "GQ470_FB008_ACTIVE_MINION_PER_PLAYER_CAP_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 470,
@@ -42505,7 +42505,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Exact original #382 per-player ordinary neutral impact cap only in ACTIVE rich51 (allocation, guard and increment). One MusouHorde source +158 B, max two ordinary impacts per player per tick, 3 HP per hit, unchanged elite and next tick. Preserve 9 neutrals, routes, positions, damage authority, Game/HUD, PRIVATE69, no whole old #382 or overlapping #408 cohort import.",
       "resources": [
@@ -42718,7 +42718,7 @@
         "operation_id": "71830632-246c-40c1-9a1d-d0b7d1b94776"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "f1a60110360ccd708aaaf8276695fd161c7869bb",
         "permitted_head": "5386557c98ca600ccd77a2198ef279a93714c858",
@@ -42749,7 +42749,38 @@
           "review": 6092834296,
           "trusted_queue_run": 46060491899,
           "trusted_queue_job": 140713293286
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "cf2543ad291289a1a803be698b9d799caa7df0db",
+        "writer_return": "705b47be08a4c80359f6c1fe8495d975aab947eb",
+        "adopted_head": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "adopted_at": "2026-11-27T20:01:52.933Z"
+      },
+      "actual_official_rc": {
+        "head": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "previous": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+        "active_ci": 46060786148,
+        "active_job": 140714241237,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15228676661,
+        "active_zip_bytes": 223617,
+        "active_zip_digest": "sha256:7c69498d836b444ca8a6525d9bfa4f4f49e95ff1fe399469b6fce119c8a22fef",
+        "active_place_bytes": 718628,
+        "active_place_sha256": "708c77549d59dadf24545e29fcc68883245489045a3c05ea1f66cabb207a4825",
+        "active_off_place_bytes": 718470,
+        "private_ci": 46060786150,
+        "private_job": 140714241027,
+        "private_steps": 48,
+        "private_artifact": 15228812757,
+        "private_zip_bytes": 26775560,
+        "private_zip_digest": "sha256:3c94e541f5a2b0be304a3a3ef58a4fe41e1157477c8f8336190fb2c62dd32d5f",
+        "private_place_bytes": 895073,
+        "private_place_sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7227226390",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -42760,7 +42791,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1047,
       "base_rc_sha": "5386557c98ca600ccd77a2198ef279a93714c858",
       "base_rc_tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
       "prep_branch": "quality/gq219-active-mage-chain-025-20261128",
@@ -42822,7 +42853,7 @@
       },
       "authority_basis": "#1011 V3.5, #218/#220 and linked #219 fixed design scope. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-active-mage-chain-025-20261128",
         "formal_parent": "5386557c98ca600ccd77a2198ef279a93714c858",
         "tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
@@ -42920,6 +42951,98 @@
           "existing_private_contract_core_pass": true,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+      "prepared_candidate_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+      "prepared_candidate_tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "de1dcd24cb457d6319ecf8d13861c9b4904366a2",
+          "bytes": 263055
+        },
+        {
+          "path": "rc_fastlane/apply_active_mage_chain.py",
+          "mode": "100644",
+          "blob": "1f4df1c6ece32412f1d4891f8862d033668db041",
+          "bytes": 11685
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/MageChain.luau",
+          "mode": "100644",
+          "blob": "330c1b5653ea1f962f4792200c228806dba4565c",
+          "bytes": 1737
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/game.luau",
+          "mode": "100644",
+          "blob": "6c7fcdda4cff8ff509e14eaf85c3206e0bfb46bb",
+          "bytes": 3863
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/horde.luau",
+          "mode": "100644",
+          "blob": "dbf7f5889b68e307d27bb64cb1f446b152f0a07f",
+          "bytes": 1750
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/native_cases.luau",
+          "mode": "100644",
+          "blob": "f550908b72142953a92e71bd6f25b38d6aaddb4d",
+          "bytes": 5454
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/native_touch.luau",
+          "mode": "100644",
+          "blob": "9c12a39dddedb60ad9fafeab1fcebc670d2b5467",
+          "bytes": 1889
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_chain/source_lock.json",
+          "mode": "100644",
+          "blob": "8e9aa5bf284bba8c5c58b291655b12b45880cae4",
+          "bytes": 1267
+        },
+        {
+          "path": "rc_fastlane/verify_active_mage_chain_native.py",
+          "mode": "100644",
+          "blob": "4a7fcc58447cdcdc5d13d391c49ccf19433fb6cd",
+          "bytes": 3213
+        },
+        {
+          "path": "rc_fastlane/verify_active_mage_water_native.py",
+          "mode": "100644",
+          "blob": "d3b3b00521211499f9545a6f14124f4a30d70713",
+          "bytes": 1998
+        },
+        {
+          "path": "rc_fastlane/verify_active_touch_attack_native.py",
+          "mode": "100644",
+          "blob": "e623ba04eeaa08b6266765bbd198fd804f861c16",
+          "bytes": 1213
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "11333311327787cf4c196ba3aa4c858042eb71af",
+          "bytes": 123127
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1047,
+        "exact_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "exact_tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
+        "exact_parent": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "9e81347c55697d515eb7b0b3c51d42edf1045e2b",
+        "source_lease_return": "4f6ad1db7a8ef240810a8da150129a29ab3fbc60",
+        "prepared_at": "2026-11-27T20:09:44.726Z"
+      },
+      "actual_binding_lease": {
+        "commit": "8d855c58a8e536bd617fef78ae5527e3414ae690",
+        "operation_id": "eef0bc4a-5a46-4eb6-b03d-24f96320c4d8"
       }
     }
   ],
