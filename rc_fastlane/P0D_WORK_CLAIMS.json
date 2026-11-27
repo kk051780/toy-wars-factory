@@ -41885,7 +41885,7 @@
       },
       "authority_basis": "#1011 V3.5, #218,#220 and fixed #219 design for NINJA-031. Existing selected Active collision maths reused for Active only; exact bounded single draft.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "branch": "quality/gq219-active-ninja-blink-031-20261128",
         "formal_parent": "63d6092d876325b16e540708d3ec992d8bd9540d",
         "tree": "db391980f1224e82028e84a2e033c6218e154871",
@@ -41963,9 +41963,9 @@
         ],
         "independent_same_head_requested_correction": "https://github.com/kk051780/toy-wars-factory/pull/1046#pullrequestreview-6092254864"
       },
-      "source_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
-      "prepared_candidate_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
-      "prepared_candidate_tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
+      "source_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+      "prepared_candidate_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+      "prepared_candidate_tree": "db391980f1224e82028e84a2e033c6218e154871",
       "source_blob_submissions": [
         {
           "path": ".github/workflows/p0d-rc-fastlane.yml",
@@ -41976,25 +41976,25 @@
         {
           "path": "rc_fastlane/apply_active_ninja_blink.py",
           "mode": "100644",
-          "blob": "374ea036f3073c9363679ba8e4b8d9853d7e53f8",
-          "bytes": 10166
+          "blob": "12cba51cfb693c8b979ff074a86567f8adff239b",
+          "bytes": 10471
         },
         {
           "path": "rc_fastlane/features/active_ninja_blink/NinjaBlink.luau",
           "mode": "100644",
-          "blob": "c02355b0c88b8c82011b89c69bc7e7b21bf7e247",
-          "bytes": 4617
+          "blob": "c296d402afebea882e7adfcc73ef7e77ec32b616",
+          "bytes": 4679
         },
         {
           "path": "rc_fastlane/features/active_ninja_blink/native_cases.luau",
           "mode": "100644",
-          "blob": "1fed66884187f2aae2e10b69400ebcc7a4ef56c8",
-          "bytes": 6600
+          "blob": "4fd066021fb909f2d4d348c4c45d51709429bf0b",
+          "bytes": 8097
         },
         {
           "path": "rc_fastlane/features/active_ninja_blink/source_lock.json",
           "mode": "100644",
-          "blob": "c68f6d6e3a1ef602df3815647378cb48619a516c",
+          "blob": "484c293f62c46dce5329669e6ef81920e4856258",
           "bytes": 1239
         },
         {
@@ -42012,17 +42012,17 @@
       ],
       "actual_candidate_readback": {
         "pr": 1046,
-        "exact_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
-        "exact_tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
+        "exact_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "exact_tree": "db391980f1224e82028e84a2e033c6218e154871",
         "exact_parent": "63d6092d876325b16e540708d3ec992d8bd9540d",
-        "previous_candidate": null,
-        "source_lease": "d3f7f61cf000b55aa28b303aeb90b0ec740cfcb9",
-        "source_lease_return": "fc7d0cdb0fd72d39f4d7d41fd55e9623933587a9",
-        "prepared_at": "2026-11-27T18:47:27.582Z"
+        "previous_candidate": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
+        "source_lease": "fc0a4a110222dcb0970011e7b786e154f037cf89",
+        "source_lease_return": "42ae3ac6127355165c008e5e916efb0871d8fbaa",
+        "prepared_at": "2026-11-27T18:58:32.133Z"
       },
       "actual_binding_lease": {
-        "commit": "3dfe9f67e7ae271279e8b8347970bc3d6327b5d0",
-        "operation_id": "f7794488-52c1-4eb3-8fe5-7f19d7bf12a0"
+        "commit": "90ed0810a3786440954da9372dcf5137ab568925",
+        "operation_id": "ac6967af-b0a9-4085-92db-59fd5d85b279"
       },
       "first_candidate": {
         "head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
