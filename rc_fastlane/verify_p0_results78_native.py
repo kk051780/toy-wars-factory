@@ -10,7 +10,7 @@ import argparse
 import re
 from pathlib import Path
 
-def verify(dist: Path, output: Path) -> None:
+def verify(dist: Path, output: Path, active_rich51=False) -> None:
     src=(dist/"src/server/Game.server.luau").read_text("utf8")
     assert src.count('local function stopRound(')==1
     assert src.count('local function resetRound()')==1
@@ -29,27 +29,44 @@ def verify(dist: Path, output: Path) -> None:
     results=src[a:b]
     assert results.count('match.phase = "LOBBY"')==1
     assert 'if now >= match.phaseUntil then' in results
-    assert 'root.CFrame=LobbyIsland.spawn(team)' in results
     assert 'if not refreshed then' in results
     assert 'p:LoadCharacter()' in results
     assert 'p.Parent~=Players or match.phase~="LOBBY"' in results
     assert 'P0D_LOBBY_RESPAWN_FAIL' in results
     assert 'modeVotes' in results and 'lastModeVote' in results
     assert 'match.winner = ""' in results and 'match.reason = ""' in results
-    assert 'RunService:IsStudio()' in results
+    if active_rich51:
+        assert 'root.CFrame=map.teams[team].spawn + Vector3.new(0, 2, 0)' in results
+        assert 'match.serial~=endedRound' in results and 'local currentTeam=getTeamName(p)' in results
+        assert 'root.CFrame = map.teams[team].spawn + Vector3.new(0, 2, 0)' in src
+    else:
+        assert 'root.CFrame=LobbyIsland.spawn(team)' in results
+        assert 'RunService:IsStudio()' in results
     assert len(results)<3000, "RESULTS_BRANCH_UNEXPECTEDLY_LARGE"
     # The 'elseif' comes from the real tick phase switch; new wrapper provides
     # if and a test clock while preserving the EXACT inner match transitions.
     result_function=results.replace(
         'elseif match.phase == "RESULTS" then',
         'if match.phase == "RESULTS" then',1)
-    native=(MOCK+"\nlocal function realRevokeReady()\n"+
+    mock = MOCK
+    cases = CASES
+    if active_rich51:
+        mock = mock.replace('local Vector3={zero="ZERO"}', 'local Vector3={zero="ZERO"}\nfunction Vector3.new() return 0 end')
+        mock = mock.replace('local scheduled={}', '''local map={teams={}}
+for _,team in ipairs({"RED","BLUE"}) do
+  map.teams[team]={spawn=setmetatable({team=team},{__add=function(a) return "LOBBY_"..a.team end})}
+end
+local scheduled={}''')
+        cases = cases.replace("P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS",
+                              "P0_RICH51_RESULTS_LOBBY_15_NATIVE_CASES_PASS") + ACTIVE_CASES
+    native=(mock+"\nlocal function realRevokeReady()\n"+
             clear.group(0)+"\nend\n"+
             "local function realResultsStep(now)\n"+result_function+"\nend\n"+
-            CASES)
+            cases)
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(native,"utf8")
-    print("P0_PRIVATE78_RESULTS_REAL_GAME_SOURCE_LOCK_PASS",len(results))
+    label = "P0_RICH51" if active_rich51 else "P0_PRIVATE78"
+    print(label + "_RESULTS_REAL_GAME_SOURCE_LOCK_PASS", len(results))
 
 MOCK=r'''
 --!nocheck
@@ -143,9 +160,24 @@ check(blue.loadCount==1,"AUTO_RESPAWN_NOT_DUPLICATED")
 check(warnings==0,"NO_FORCED_STUDIO_WARNINGS")
 print("P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS")
 '''
+ACTIVE_CASES=r'''
+match.phase="RESULTS"; match.phaseUntil=12;match.serial=4
+blue.alive=false
+realResultsStep(12)
+match.serial=5
+flush()
+check(blue.loadCount==1,"STALE_MATCH_DOES_NOT_RESPAWN")
+match.phase="RESULTS";match.phaseUntil=13
+realResultsStep(13)
+blue.Team=nil
+flush()
+check(blue.loadCount==1,"NEW_OBSERVER_DOES_NOT_RESPAWN")
+print("ACTIVE_RESULTS_ROUND_AND_TEAM_FENCE_PASS")
+'''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--dist",type=Path,required=True)
     p.add_argument("--out",type=Path,required=True)
+    p.add_argument("--active-rich51",action="store_true")
     args=p.parse_args()
-    verify(args.dist,args.out)
+    verify(args.dist,args.out,args.active_rich51)
