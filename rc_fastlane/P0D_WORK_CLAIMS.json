@@ -38964,7 +38964,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #423 Game/HUD actual server HIT/MISS on current ACTIVE rich51 existing normal attack. Players/Bot/neutral Horde/castle gain feedback only on actual authority results; existing damage, Remote, snapshot cadence, keyboard F, cooldown and mode untouched. Only Game/HUD paths; no legacy gesture/extra effects, no Private/device claims.",
       "resources": [
@@ -39139,6 +39139,72 @@
       "actual_binding_lease": {
         "commit": "18f3153c8bbedd720ac0fe8333edf3a33cd057a7",
         "operation_id": "a67c2d59-b041-4c8f-8fb4-75ad11982298"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/423#pullrequestreview-6090435193",
+        "review_id": 6090435193,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46024483637,
+        "active_job": 140592216867,
+        "active_executed_steps": 95,
+        "active_place_bytes": 656824,
+        "active_place_sha256": "184498f6732783f8fcf954ee2d7bac150295008fe96132e90d768ce823005bd0",
+        "immediate_off_bytes": 653907,
+        "active_artifact": 15211971325,
+        "active_zip_bytes": 195859,
+        "active_zip_digest": "sha256:619d674d1a5f5f58eb337482707ac71acc93b39ed41810814bbac9a2b3768058",
+        "private_ci": 46024483676,
+        "private_job": 140592217020,
+        "private_steps": 48,
+        "private_artifact": 15210793722,
+        "private_zip_bytes": 25131163,
+        "private_zip_digest": "sha256:530cc1c0f360cb985d27f36f95675217e62d63ba1f5748671b7d050aadc68e27",
+        "source_lock": "ea6ef408ee78c479839e4ab0f7aa06e32123f77258e09e69fcede931d49409ca",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "96166a5d8b1392a9d6deccb2e24fb8575f815b1c",
+        "operation_id": "f8b76bb6-6259-4a28-b04d-1f19044915c9"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "permitted_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "permitted_tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+        "permitted_pr": 423,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T15:58:09.219Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact #423 current ACTIVE rich51: actual authorized player/Bot/neutral Horde/castle combat results drive existing short attack feedback. Preserve Game/HUD roots, old Remote and state sends; only 2 changed Luau sources. PRIVATE selected data unchanged; no release, device, publish or workflow-dispatch claims.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "96166a5d8b1392a9d6deccb2e24fb8575f815b1c",
+          "owner": "f8b76bb6-6259-4a28-b04d-1f19044915c9",
+          "review": 6090435193,
+          "trusted_queue_run": 46026373133,
+          "trusted_queue_job": 140598699358
+        }
       }
     }
   ],
