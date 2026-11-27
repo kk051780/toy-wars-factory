@@ -1,0 +1,151 @@
+name: P0D GQ8 Affinity HUD official Core36 to private38 Native Rojo OFF36
+on:
+  push:
+    branches: ['feature/gq8-affinity-hud-20261118-1240']
+    paths:
+      - 'quality_gameplay/gq8_affinity_hud_20261118/**'
+      - 'handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/**'
+      - '.github/workflows/p0d-gq8-affinity-hud-core38.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'quality_gameplay/gq8_affinity_hud_20261118/**'
+      - 'handoffs/EGGRUMBLE-AFFINITY-HUD-20261118/**'
+      - '.github/workflows/p0d-gq8-affinity-hud-core38.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  official-selected36-to-guide38:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 8f7984c1a9db2c016321d16d47a3ea8d1b5081df
+          path: _qa780
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c51de1ed4feb7a7500ada95d21282402053ef988
+          path: _realm764
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 5b82f300e6dee08ea1ac20ccd1449db0cd73dbc3
+          path: _regen775
+          persist-credentials: false
+      - name: Assert latest exact current official Core36 and current HEAD CI
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -B -m py_compile quality_gameplay/gq8_affinity_hud_20261118/compose_core38.py
+          python3 -B -m unittest discover -v -s _qa780/quality_gameplay/gq8_crosslane_20261118 -p 'test_*.py'
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          [[ "$CURRENT" =~ ^[a-f0-9]{40}$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/contents/rc_fastlane/ACTIVE.json?ref=$CURRENT" --jq '.content' | base64 --decode > /tmp/gq8-active.json
+          python3 - <<'PY'
+          import json
+          a=json.load(open('/tmp/gq8-active.json'))
+          assert a['active_profile']=='rich51','RED_MAIN_S1_CHANGED'
+          v=a['source_profiles'].get('eggrumble_v3_core36',{})
+          assert v.get('source_count')==36 and v.get('selected_for_private_v3_studio_build') is True,'RED_CORE36_NOT_SELECTED'
+          assert v.get('selected_for_roblox_publish') is False,'RED_PUBLICATION'
+          print('GQ8_SELECTED_OFFICIAL_PRIVATE_CORE36_PROFILE_CONFIRMED')
+          PY
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-core36.yml --branch rc/p0d-s1-kids-rc01 --limit 100 --json databaseId,headSha,status,conclusion > /tmp/official36.json
+          CORE_RUN="$(jq -r --arg sha "$CURRENT" '[.[] | select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official36.json)"
+          test -n "$CORE_RUN" || { echo RED_NO_CURRENT_CORE36_SAME_HEAD_SUCCESS; exit 1; }
+          echo "$CURRENT" > /tmp/gq8-core-current-sha
+          echo "$CORE_RUN" > /tmp/gq8-core-run-id
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-31.yml --branch rc/p0d-s1-kids-rc01 --limit 110 --json databaseId,headSha,status,conclusion > /tmp/official31.json
+          BASE=261b75d0a7093db5c13db3b95dad9a2911f78689
+          BASE_RUN="$(jq -r --arg sha "$BASE" '[.[] | select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official31.json)"
+          test -n "$BASE_RUN" || { echo RED_PINNED31_CI_MISSING; exit 1; }
+          echo "$BASE_RUN" > /tmp/gq8-original31-run-id
+      - name: Download actual official selected36 and pinned original31 artifact
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/original31 artifacts/actual36
+          gh run download "$(cat /tmp/gq8-original31-run-id)" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO --dir artifacts/original31
+          gh run download "$(cat /tmp/gq8-core-run-id)" --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO --dir artifacts/actual36
+          test -s artifacts/original31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          find artifacts/actual36 -name EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx | grep -q .
+      - name: Restore original fixed sources, recompose actual core36 and extra HUD scripts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py extract --place artifacts/original31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx --template artifacts/original31/gq515_official_select/GQ510_MAGE_SELECTED31.project.json --receipt artifacts/original31/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json --out artifacts/current31 --head 261b75d0a7093db5c13db3b95dad9a2911f78689
+          python3 _realm764/handoffs/EGGRUMBLE-REALM-CORE-20261118/compose_core34.py --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --lss-source handoffs/EGGRUMBLE-LAND-SEA-SKY-20261117/EGGRUMBLE_LandSeaSkyTraversal.server.luau --out artifacts/realm34/REALM34.project.json
+          python3 _regen775/handoffs/EGGRUMBLE-HP-REGEN-20261118/compose_regen32.py --current31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --out artifacts/regen33/REGEN33.project.json
+          python3 _qa780/quality_gameplay/gq8_crosslane_20261118/compose_rehearsal36.py --original31 artifacts/current31/CURRENT31_REAL_SOURCE.project.json --regen33 artifacts/regen33/REGEN33.project.json --realm34 artifacts/realm34/REALM34.project.json --out artifacts/combined36/COMBINED36.project.json
+          python3 quality_gameplay/gq8_affinity_hud_20261118/compose_core38.py --current36 artifacts/combined36/COMBINED36.project.json --out artifacts/hud38/ON38.project.json
+          python3 quality_gameplay/gq8_affinity_hud_20261118/compose_core38.py --current36 artifacts/combined36/COMBINED36.project.json --out artifacts/hud38/OFF36.project.json --off
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq8_luau
+          persist-credentials: false
+      - name: Compile actual 38/36 Luau source from selected official Core36
+        run: |
+          set -euo pipefail
+          cmake -S _gq8_luau -B /tmp/gq8-hud38-cli -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-hud38-cli --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          from quality_gameplay.gq8_lss_real31_20261117.rehydrate_real31 import flat_project
+          for name,count in [('ON38',38),('OFF36',36)]:
+              project=Path('artifacts/hud38')/(name+'.project.json')
+              sources=flat_project(json.loads(project.read_text()))
+              assert len(sources)==count,'RED_SCRIPT_COUNT'
+              for node in sources.values():
+                  file=(project.parent/node['$path']).resolve(strict=True)
+                  subprocess.run(['/tmp/gq8-hud38-cli/luau-compile','--text',str(file)],check=True,stdout=subprocess.DEVNULL)
+              print('GQ8_AFFINITY_HUD_CORE36_ALL_TRUE_NATIVE',name,count)
+          PY
+      - name: Pinned Rojo and actual source class consistency for original36 plus added2
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-hud38-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-hud38-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq8-hud38-rojo.zip') as z:
+              arr=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(arr)==1
+              f=Path('/tmp/gq8-hud38-rojo');f.write_bytes(z.read(arr[0]));f.chmod(0o755)
+          PY
+          /tmp/gq8-hud38-rojo build artifacts/hud38/ON38.project.json -o artifacts/hud38/ON38.rbxlx
+          /tmp/gq8-hud38-rojo build artifacts/hud38/OFF36.project.json -o artifacts/hud38/OFF36.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/hud38/ON38.project.json --place artifacts/hud38/ON38.rbxlx --count 38
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project artifacts/hud38/OFF36.project.json --place artifacts/hud38/OFF36.rbxlx --count 36
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          matches=list(Path('artifacts/actual36').rglob('EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx'))
+          assert len(matches)==1,'RED_CURRENT_OFFICIAL36_ARTIFACT_COUNT'
+          subprocess.run(['python3','quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py','verify','--project','artifacts/combined36/COMBINED36.project.json','--place',str(matches[0]),'--count','36'],check=True)
+          print('GQ8_EXACT_OFFICIAL_CORE36_SOURCE_CLASS_MATCH_PASS')
+          PY
+          H_AFTER="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$H_AFTER" = "$(cat /tmp/gq8-core-current-sha)" || { echo RED_RC_MOVED_DURING_REHEARSAL; exit 1; }
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}" || { echo RED_CANDIDATE_DRIFT; exit 1; }
+          echo GQ8_AFFINITY_HUD_LANE3_OFFICIAL_SELECTED36_TO38_EXACT_NATIVE_ROJO_OFF36_PASS "$H_AFTER"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ8-AFFINITY-HUD-CORE38-PRIVATE-CANDIDATE-NOT-RC
+          path: artifacts/hud38/
+          retention-days: 3
+          if-no-files-found: error
