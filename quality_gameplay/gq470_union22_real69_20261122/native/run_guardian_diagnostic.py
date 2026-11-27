@@ -91,12 +91,15 @@ def source_contract(root, profile, input_lock):
     repair = profile["guardian_followup_repair"]
     item = profile["item_cleanup_followup"]
     vault = profile["empty_vault_followup"]
+    castle = profile["castle_release_stock_followup"]
+    castle_parent_pins = current_pins | {compose.VAULT_SOURCE: castle["parent_host_row"]["after"]}
     vault_parent_pins = current_pins | {compose.VAULT_SOURCE: vault["parent_host_row"]["after"]}
     item_parent_pin = item["parent_item_row"]["after"]
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     rel = compose.GUARDIAN_SOURCE
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == repair["repaired_guardian"]
+                   and native.source_snapshot(root / compose.CASTLE_OFF / "sources") == castle_parent_pins
                    and native.source_snapshot(root / compose.VAULT_OFF / "sources") == vault_parent_pins
                    and native.source_snapshot(item_parent) == item_parent_pins
                    and previous_pins == (item_parent_pins | {rel: repair["parent_guardian"]}),
@@ -105,7 +108,9 @@ def source_contract(root, profile, input_lock):
     bodies = {path: native.read(previous / path) for path in previous_pins}
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(current_raw) == current_pins[rel], "GUARDIAN_SOURCE_READ_DRIFT")
-    native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"] == vault["repaired_place"]
+    native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"] == castle["repaired_place"]
+                   and native.identity(native.read(root / compose.CASTLE_OFF / compose.PLACE))
+                   == castle["parent_place"] == vault["repaired_place"]
                    and native.identity(native.read(root / compose.VAULT_OFF / compose.PLACE))
                    == vault["parent_place"] == item["repaired_place"]
                    and native.identity(native.read(root / compose.ITEM_OFF / compose.PLACE))

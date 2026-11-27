@@ -386,8 +386,13 @@ def verify_core(root, base, reports, context):
     archive = verify_archive(root / compose.OFF_ARCHIVE, expected_off)
     vault = lock["empty_vault_followup"]
     item = lock["item_cleanup_followup"]
+    castle = lock["castle_release_stock_followup"]
+    expected_castle_off, castle_off_lock, castle_off = verify_single_source_rollback(
+        root, root, lock, current, compose.VAULT_SOURCE, castle, castle["parent_host_row"], vault["repaired_place"],
+        compose.CASTLE_OFF, compose.CASTLE_OFF_ARCHIVE, "CASTLE_RELEASE_STOCK")
     expected_vault_off, vault_off_lock, vault_off = verify_single_source_rollback(
-        root, root, lock, current, compose.VAULT_SOURCE, vault, vault["parent_host_row"], item["repaired_place"],
+        root, root / compose.CASTLE_OFF, castle_off_lock, castle_off, compose.VAULT_SOURCE, vault,
+        vault["parent_host_row"], item["repaired_place"],
         compose.VAULT_OFF, compose.VAULT_OFF_ARCHIVE, "EMPTY_VAULT")
     expected_item_off, item_off_lock, item_off = verify_single_source_rollback(
         root, root / compose.VAULT_OFF, vault_off_lock, vault_off, compose.ITEM_SOURCE, item, item["parent_item_row"],
@@ -429,6 +434,8 @@ def verify_core(root, base, reports, context):
         "item_cleanup_only_rollback_archive": digest(read(root / compose.ITEM_OFF_ARCHIVE)),
         "empty_vault_followup": vault,
         "empty_vault_only_rollback_archive": digest(read(root / compose.VAULT_OFF_ARCHIVE)),
+        "castle_release_stock_followup": castle,
+        "castle_release_stock_rollback_archive": digest(read(root / compose.CASTLE_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -439,9 +446,10 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 23 and core.get("unchanged_sources") == 46
-            and core.get("compile_count") == 144 and core.get("rojo_build_count") == 8
+            and core.get("compile_count") == 145 and core.get("rojo_build_count") == 9
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
+            and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -477,6 +485,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.ITEM_OFF_ARCHIVE] = digest(read(root / compose.ITEM_OFF_ARCHIVE))
     expected_stage.update({compose.VAULT_OFF + "/" + name: pin for name, pin in expected_vault_off.items()})
     expected_stage[compose.VAULT_OFF_ARCHIVE] = digest(read(root / compose.VAULT_OFF_ARCHIVE))
+    expected_stage.update({compose.CASTLE_OFF + "/" + name: pin for name, pin in expected_castle_off.items()})
+    expected_stage[compose.CASTLE_OFF_ARCHIVE] = digest(read(root / compose.CASTLE_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -485,11 +495,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 152 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 154 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 144 and len(rojo_commands) == 8, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 145 and len(rojo_commands) == 9, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -503,17 +513,19 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.GUARDIAN_OFF / "sources" / compose.GUARDIAN_SOURCE))
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
                 for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF,
-                               compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF)},
+                               compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
                         compose.BOT_OFF: [compose.BOT_SOURCE], compose.HUD_OFF: [compose.HUD_SOURCE],
                         compose.BEAST_OFF: [compose.BEAST_SOURCE], compose.GUARDIAN_OFF: [compose.GUARDIAN_SOURCE],
-                        compose.ITEM_OFF: [compose.ITEM_SOURCE], compose.VAULT_OFF: [compose.VAULT_SOURCE]}
+                        compose.ITEM_OFF: [compose.ITEM_SOURCE], compose.VAULT_OFF: [compose.VAULT_SOURCE],
+                        compose.CASTLE_OFF: [compose.VAULT_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1318,7 +1330,7 @@ def admit_delivery(root, base, reports, native, context):
     retained_build_files = (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE,
                             compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE,
                             compose.GUARDIAN_OFF_ARCHIVE, compose.ITEM_OFF_ARCHIVE, compose.VAULT_OFF_ARCHIVE,
-                            "CORE_BUILD_REPORT.json")
+                            compose.CASTLE_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
                       or name in retained_build_files}
@@ -1365,6 +1377,10 @@ def admit_delivery(root, base, reports, native, context):
             "empty_vault_only_inverse_place": verified["lock"]["empty_vault_followup"]["parent_place"],
             "empty_vault_only_inverse_archive": digest(read(root / compose.VAULT_OFF_ARCHIVE)),
             "empty_vault_only_inverse_archive_members": 71,
+            "castle_release_stock_followup": verified["lock"]["castle_release_stock_followup"],
+            "castle_release_stock_inverse_place": verified["lock"]["castle_release_stock_followup"]["parent_place"],
+            "castle_release_stock_inverse_archive": digest(read(root / compose.CASTLE_OFF_ARCHIVE)),
+            "castle_release_stock_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
