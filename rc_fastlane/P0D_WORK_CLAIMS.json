@@ -36578,7 +36578,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Re-use existing ACTIVE rich51 source bodies for human egg return from sky, dock and canyon. No new game script, authority or PRIVATE_COMPANION changes. Independent review and both canonical workflow receipts before finite RC writer.",
       "resources": [
@@ -36779,6 +36779,72 @@
         "applied_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
         "applied_lease": "231a4eff776c47d20a661540f9bc630433a9b020",
         "lease_returned_at_ref": "78743ca978798978d7af89771f40d4551b7ec0d1"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1041#pullrequestreview-6087930252",
+        "review_id": 6087930252,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 45995762077,
+        "active_job": 140494629286,
+        "active_executed_steps": 93,
+        "active_place_bytes": 602614,
+        "active_place_sha256": "8d0774c778b593f1f791729eec603663ca5ae2e9ed188de8d7811dc026e391d3",
+        "immediate_off_bytes": 602236,
+        "active_artifact": 15196225792,
+        "active_zip_bytes": 174434,
+        "active_zip_digest": "sha256:0701678e92ab7e26aa4d9f24f1c0a921712ae6a7f352c6f2a6f2e70fd245cd71",
+        "private_ci": 45995762039,
+        "private_job": 140494628929,
+        "private_steps": 48,
+        "private_artifact": 15195997361,
+        "private_zip_bytes": 25131171,
+        "private_zip_digest": "sha256:97491cb2c16de9d377075e93c27205a0886c2933eafc523073c56d239eaecc62",
+        "source_lock": "4380620a49dbf3b6a9d940048f9f704f01e93987600a4e537a58e1be80b5cd4a",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "de84d3f11233af191b3a53901f781b6ba5ec836d",
+        "operation_id": "d5cb6ec4-466e-46c1-bbbe-a278be6c312d"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "permitted_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "permitted_tree": "a504747453e9f2a1df088884cfe3708e648c644f",
+        "permitted_pr": 1041,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T12:34:35.962Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "ACTIVE rich51 human egg return through ground, sky dock and canyon. No changes to default selection or PRIVATE_COMPANION sources, and pinned private owner profiles untouched. Both same-head official CI and Active Place required, Studio timed per #1011 Dec path.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Compulsory ACTIVE and PRIVATE exact CI, distinct review and trusted ready queue under current #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "de84d3f11233af191b3a53901f781b6ba5ec836d",
+          "owner": "d5cb6ec4-466e-46c1-bbbe-a278be6c312d",
+          "review": 6087930252,
+          "trusted_queue_run": 45996791771,
+          "trusted_queue_job": 140498074057
+        }
       }
     }
   ],
