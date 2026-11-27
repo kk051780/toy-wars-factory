@@ -29,8 +29,9 @@ jobs:
         run: |
           set -euo pipefail
           cd quality_gameplay/gq219_ability_combo_20261127
-          for source in ComboRecipes.luau ComboSequence.luau test_combo.luau; do
+          for source in ComboRecipes.luau ComboSequence.luau test_combo.luau AbilityNormalData.luau AbilityPremiumData.luau AbilityCatalog.luau test_catalog.luau; do
             /tmp/gq219/luau-compile --text "$source" >/dev/null
           done
-          sha256sum ComboRecipes.luau ComboSequence.luau test_combo.luau
+          sha256sum ComboRecipes.luau ComboSequence.luau test_combo.luau AbilityNormalData.luau AbilityPremiumData.luau AbilityCatalog.luau test_catalog.luau
           /tmp/gq219/luau test_combo.luau
+          /tmp/gq219/luau test_catalog.luau
