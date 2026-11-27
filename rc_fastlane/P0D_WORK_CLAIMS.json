@@ -45128,11 +45128,11 @@
       },
       "authority_basis": "#1011 V4.2 (next game batch with exact #220 runtime QA repair), genuine #218/#220 and #219 fixed design. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq219-private-ninja-combo008-s4-20261128",
         "formal_parent": "d69486222fd699a690c836efe820d392f88dff60",
-        "tree": "a4ff599cdf74659aadb378f29060950fb14688d7",
-        "local_head": "2bdc3abc2bea34f09369fd446dab6dfe802d3a03",
+        "tree": "c07af585318b463500c63e429df6bbcbb5534132",
+        "local_head": "f812aae159042930695be2b511e7f26ab4a917c3",
         "permitted_create_draft": 1,
         "allowed_changed_files": [
           {
@@ -45192,8 +45192,8 @@
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
-            "blob": "2230e816493277f136001ee2eaf974fd6f132e2f",
-            "bytes": 176054
+            "blob": "e83f6651673643fc4a322b0ffe487a0bc1698d82",
+            "bytes": 176073
           },
           {
             "path": "tests/test_gq470_union22_real69_20261122.py",
@@ -45201,10 +45201,10 @@
             "bytes": 131985
           }
         ],
-        "expires_at": "2026-11-28T00:15:02.842Z",
+        "expires_at": "2026-11-28T00:25:32.779Z",
         "issued_from": {
-          "lease": "d0ba31e2da15e698faa6bc2e336129d3159a136c",
-          "owner": "eae8f679-6bfd-4e71-8eae-606cb3889b8d"
+          "lease": "0dbed6242fb6e0a04260458a5f0ca3712ac7f6de",
+          "owner": "9d0110c7-7e77-4252-a898-6f6a23e3357b"
         },
         "local_qa": {
           "place_bytes": 987760,
@@ -45227,16 +45227,18 @@
           "actual_composed_native_receipt_sha256": "00c3e648ccb482355af0e18a24efc4b129204498dd4ab522808a5096d18e994c",
           "unchanged_place_and_profile": true,
           "windows_active_path_replay": "9 fixed Bot/Vault native pass, LOCAL_SOURCE_REVIEW",
-          "snapshot_normal_and_o": "one genuine core and six fresh restores per interpreter"
+          "snapshot_normal_and_o": "one genuine core and six fresh restores per interpreter",
+          "step43_completed": true,
+          "verified_native_binary_binding": "build[\"binary_before_suites\"] exact existing same-head pin; no check weakened"
         },
-        "old_pr_head": "315bf9ef469515821271000b1ff31d73447598ec",
+        "old_pr_head": "9a24febe3da1474bea7961a096595b727bf7a5fe",
         "repair_changed_paths_from_red": [
-          "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py"
+          "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py"
         ]
       },
-      "source_head": "9a24febe3da1474bea7961a096595b727bf7a5fe",
-      "prepared_candidate_head": "9a24febe3da1474bea7961a096595b727bf7a5fe",
-      "prepared_candidate_tree": "a4ff599cdf74659aadb378f29060950fb14688d7",
+      "source_head": null,
+      "prepared_candidate_head": null,
+      "prepared_candidate_tree": null,
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -45304,7 +45306,12 @@
           "bytes": 131985
         }
       ],
-      "actual_candidate_readback": {
+      "actual_candidate_readback": null,
+      "actual_binding_lease": {
+        "commit": "91eaf58186ff8ee202cc9871b83b900cdf2a8f2b",
+        "operation_id": "d72955ef-6e74-4e3b-b19e-5c2f550e3d7d"
+      },
+      "superseded_binding": {
         "pr": 1052,
         "exact_head": "9a24febe3da1474bea7961a096595b727bf7a5fe",
         "exact_tree": "a4ff599cdf74659aadb378f29060950fb14688d7",
@@ -45315,28 +45322,14 @@
         "source_lease_return": "a02617943f6bed40e00376dce3f2aefba8741025",
         "prepared_at": "2026-11-27T23:18:32.408Z"
       },
-      "actual_binding_lease": {
-        "commit": "91eaf58186ff8ee202cc9871b83b900cdf2a8f2b",
-        "operation_id": "d72955ef-6e74-4e3b-b19e-5c2f550e3d7d"
-      },
-      "superseded_binding": {
-        "pr": 1052,
-        "exact_head": "315bf9ef469515821271000b1ff31d73447598ec",
-        "exact_tree": "3ee1a8c7a94c081b34b5adda3aaeb563205ef50d",
-        "exact_parent": "d69486222fd699a690c836efe820d392f88dff60",
-        "previous_candidate": null,
-        "preserved_author_parent": null,
-        "source_lease": "f455c749ecd7a0e91a0cd533bffd3e3d40793dd7",
-        "source_lease_return": "1d6842b50461c5e999ebf8c6b49bd664137468ad",
-        "prepared_at": "2026-11-27T23:10:55.389Z"
-      },
       "first_candidate": {
-        "head": "315bf9ef469515821271000b1ff31d73447598ec",
-        "tree": "3ee1a8c7a94c081b34b5adda3aaeb563205ef50d",
-        "source_lease": "f455c749ecd7a0e91a0cd533bffd3e3d40793dd7",
-        "source_return": "1d6842b50461c5e999ebf8c6b49bd664137468ad",
-        "failed_job": 140778697167,
-        "reason": "Ninja/s4 QA adapter incorrectly reads synthetic stage row 'after'; actual composed lock nests 'parent' before/after fields."
+        "head": "9a24febe3da1474bea7961a096595b727bf7a5fe",
+        "tree": "a4ff599cdf74659aadb378f29060950fb14688d7",
+        "source_lease": "22ce6baae4b0e64cb84ac5f104591f8002cb1dad",
+        "source_return": "a02617943f6bed40e00376dce3f2aefba8741025",
+        "author_parent": "315bf9ef469515821271000b1ff31d73447598ec",
+        "failed_job": 140781394625,
+        "reason": "Final verifier referenced undefined Ninja observer argument instead of the actual previously validated build.binary_before_suites."
       }
     }
   ],
