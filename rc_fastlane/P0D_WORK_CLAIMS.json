@@ -31869,9 +31869,9 @@
       "base_rc_sha": "36c14af432e7221301a9cec6dea75ab54d4daadf",
       "prep_branch": "feature/p0d-br-canyon-castle-approach-20261127",
       "expected_source_branch": "ABSENT",
-      "allowed_new_prs": 0,
-      "source_scope_granted": false,
-      "scope_only": true,
+      "allowed_new_prs": 1,
+      "source_scope_granted": true,
+      "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
       "PREP_READY": false,
@@ -31953,7 +31953,51 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Authenticated #1011 V2.1 bounded delegated preparation for existing #910 Studio correction, under current unique coordinator lease. No RC write, transport, merge or art scope granted."
+      "authority_basis": "Authenticated #1011 V2.1 bounded delegated preparation for existing #910 Studio correction, under current unique coordinator lease. No RC write, transport, merge or art scope granted.",
+      "source_writes_allowed_only_under_bound_scope": true,
+      "source_grant": {
+        "status": "EXACT_PREVIEW_BRANCH_AND_ONE_DRAFT_PR",
+        "branch": "feature/p0d-br-canyon-castle-approach-20261127",
+        "expected_branch_before": "ABSENT",
+        "fixed_tree": "d4b4e2f35015e77fe422b6708325832a4e1c96ae",
+        "local_commit": "74a49bf3d23902688bde0317f9178bef6871e1e1",
+        "parent": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "max_new_draft_prs": 1,
+        "existing_pr_exception": "Original #891 is merged and fixes lane separation. #970/#967 are open independent historical art proposals; repurposing them for this narrow current RC functional bug would combine unaccepted art, break existing provenance, and exceed product scope.",
+        "original_pc_studio": "https://github.com/kk051780/toy-wars-factory/issues/910#issuecomment-7183767533",
+        "windows_candidate": {
+          "bytes": 842354,
+          "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+        },
+        "windows_exact_off": {
+          "bytes": 842005,
+          "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+        },
+        "formal_rc_write": false,
+        "force": false,
+        "expires_at": "2026-11-27T04:46:19.808Z",
+        "authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "1097a955-220a-4e24-89b9-8a517bfbb66d",
+          "acquire_commit": "7709cf0971a3dc4e4e4e153c40dfec046ed08c54",
+          "acquire_blob": "f2c237759f02dc4d291a7e404c2393c8344ca262",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "1097a955-220a-4e24-89b9-8a517bfbb66d",
+            "task_id": null,
+            "epoch": 803,
+            "acquired_at": "2026-11-27T02:56:20.378Z",
+            "expires_at": "2026-11-27T03:26:20.378Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "registry_parent": "611680e28240e4421da21fa4fa34605a2b7e1381"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
