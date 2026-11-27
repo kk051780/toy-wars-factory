@@ -528,7 +528,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 154:
+            if calls == 156:
                 stage = Path(command[-1]).parent.parent
                 path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
                         else (prior if target == "input" else stage) / "sources" / self.first)
@@ -537,7 +537,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 154)
+        self.assertEqual(calls, 156)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
