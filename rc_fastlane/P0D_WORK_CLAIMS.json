@@ -41210,6 +41210,143 @@
           "trusted_queue_job": 140668514063
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB020-ACTIVE-MAGE-M1-20261128",
+      "feature_id": "GQ470_FB020_ACTIVE_MAGE_ARMAMENT_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent scoped Active combat)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "236d26bb284d7653f4ed572236701acec8ecde6c",
+      "base_rc_tree": "cb1c203129eb8bf50318ce498708fe9c0b9ac8b0",
+      "prep_branch": "quality/gq470-active-mage-armament-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Exact #471 FB020 author weapon/combo donor, mounted for selected ACTIVE rich51 MAGE only. Reuse original Game/Horde F authority, true avatar LOS, <=18 stud near support, <=6 distinct neutrals, 3 stages, no new Remote/player HP/datastore/castle behavior. Selected staff lifecycle and visual clipping. Existing warrior Q, other jobs, Private selected vector and all other 69 existing files unchanged.",
+      "resources": [
+        "ACTIVE_RICH51_MAGE_M1_ARMAMENT_NEUTRAL_ONLY_FB020"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_mage_armament.py",
+        "rc_fastlane/features/active_mage_armament/SevenJobArmamentM1.luau",
+        "rc_fastlane/features/active_mage_armament/native_cases.luau",
+        "rc_fastlane/features/active_mage_armament/source_lock.json",
+        "rc_fastlane/verify_active_mage_armament_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/297#issuecomment-6892546420",
+      "protected_overlap": {
+        "author_pr": 471,
+        "author_head": "886d8f243eced1ef949ee94ec6123831ce29ae75",
+        "owner_handoff": 6892546420,
+        "previous_scoped_features": [
+          297,
+          423,
+          1039
+        ],
+        "partition": "Keep broad original draft and exact #471 module origin; #297 WARRIOR Q remains intact, #423 confirmation reused, #1039 stays PRIVATE. Local branch modifies ACTIVE Game F/equip and shared Horde optional argument only; comparator verifies all other active scripts and all private inputs."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "e57954ca-d1d8-43b1-8296-f80e3562c1f7",
+      "issued_at": "2026-11-27T18:10:18.558Z",
+      "expires_at": "2026-11-27T20:10:18.558Z",
+      "actual_metadata_lease": {
+        "ref": "fb2c5fec441abb71ec57b5fbb527c355eb29fc19",
+        "blob": "31dda61604a66a6cd4573bca2577645e29a06baa",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "e57954ca-d1d8-43b1-8296-f80e3562c1f7",
+          "task_id": null,
+          "epoch": 1000,
+          "acquired_at": "2026-11-27T18:10:04.978Z",
+          "expires_at": "2026-11-27T18:40:04.978Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5, #218 and #220. Exact #471 authored armament module reuses the #297 retarget handoff. Broad existing #471 draft stays registered and untouched. One isolated scoped ACTIVE source draft, no formal writer grant.",
+      "source_grant": {
+        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "branch": "quality/gq470-active-mage-armament-20261128",
+        "formal_parent": "236d26bb284d7653f4ed572236701acec8ecde6c",
+        "tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
+        "local_head": "e70d9478bbf68d51fa46e750e1f4f6655d8de6ea",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "15f15e4e6b5fc21134569e639e7b01a8cd7d7c42",
+            "bytes": 245737
+          },
+          {
+            "path": "rc_fastlane/apply_active_mage_armament.py",
+            "mode": "100644",
+            "blob": "62a133ee481bc2e726ef91ac5e5e1162d25862a0",
+            "bytes": 13668
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_armament/SevenJobArmamentM1.luau",
+            "mode": "100644",
+            "blob": "7468f143ef801ebc7bdeab75f13bb5b16f66b103",
+            "bytes": 8719
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_armament/native_cases.luau",
+            "mode": "100644",
+            "blob": "186ae86b6a350bf87bc9c81be6c50b265e1a8919",
+            "bytes": 5841
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_armament/source_lock.json",
+            "mode": "100644",
+            "blob": "0d91bb846260d813e8818d546956b4962dac7685",
+            "bytes": 971
+          },
+          {
+            "path": "rc_fastlane/verify_active_mage_armament_native.py",
+            "mode": "100644",
+            "blob": "7b9fb11a0fd4551a625200a0aff109fce80c0604",
+            "bytes": 4201
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "18557eb767d819a2a4c4d424f1d8dc90e86d6474",
+            "bytes": 118206
+          }
+        ],
+        "expires_at": "2026-11-27T19:10:18.558Z",
+        "issued_from": {
+          "lease": "fb2c5fec441abb71ec57b5fbb527c355eb29fc19",
+          "owner": "e57954ca-d1d8-43b1-8296-f80e3562c1f7"
+        },
+        "local_qa": {
+          "place_bytes": 700116,
+          "place_sha256": "4bc6a0b61fcc784c52de5cc5c9a5ddbefac0e16564cdc33b89484d942d6c604d",
+          "off_bytes": 687144,
+          "off_sha256": "4efab0dc6dffd4d5ca488ae5e78375b5a371c733ab334e8803c70d0a8818a7db",
+          "scripts": 72,
+          "unchanged_selected_sources": 69,
+          "native_mage_groups": 3,
+          "native_growth_groups": 4,
+          "native_touch_groups": 2,
+          "device": "NOT_TESTED_V3.5"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
