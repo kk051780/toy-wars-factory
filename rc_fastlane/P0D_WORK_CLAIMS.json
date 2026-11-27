@@ -35786,18 +35786,18 @@
     {
       "claim_id": "P0D-GQ470-RELAY-ELIGIBILITY-20261127",
       "feature_id": "GQ470_TEAM_RELAY_ELIGIBILITY",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped follow-up to #1036)",
       "parent_issue": 470,
       "source_issue": 1036,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1040,
       "base_rc_sha": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
       "base_rc_tree": "101c5aa63b79612bc284b243199ec686f32bce60",
       "prep_branch": "quality/gq470-team-relay-eligibility-20261127",
       "allowed_new_prs": 1,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
@@ -35971,6 +35971,116 @@
           "lease": "6b7e0bbfa14e6fff48cdb29f2a6c8928951c2815",
           "owner": "dda9bb30-44bf-4569-8e90-43bc9825300f"
         }
+      },
+      "source_head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
+      "prepared_candidate_head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
+      "prepared_candidate_tree": "4bb9ca5a6d0aed60dcd62597e81b53bbaa8db9f5",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_relay_eligibility_20261127/client_cases.luau",
+          "mode": "100644",
+          "blob": "b4bd0cb10398be0ecb0a08837807d856303bafa2",
+          "bytes": 1208
+        },
+        {
+          "path": "quality_gameplay/gq470_relay_eligibility_20261127/relay_eligibility.patch",
+          "mode": "100644",
+          "blob": "e390f806e6881d01e87a96432e4c1b42f3ef96ee",
+          "bytes": 4489
+        },
+        {
+          "path": "quality_gameplay/gq470_relay_eligibility_20261127/rules_boundary.luau",
+          "mode": "100644",
+          "blob": "e045fc07db9f6c1462e105b646e0fb34f7b3206e",
+          "bytes": 3662
+        },
+        {
+          "path": "quality_gameplay/gq470_relay_eligibility_20261127/server_cases.luau",
+          "mode": "100644",
+          "blob": "98129f0e7e037c6cf6e1b38abee4ef92aa38c62e",
+          "bytes": 1264
+        },
+        {
+          "path": "quality_gameplay/gq470_relay_eligibility_20261127/server_context.luau",
+          "mode": "100644",
+          "blob": "a65aa40561cbef3080cf9a0cc7f1add26afe9042",
+          "bytes": 725
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "5b8cfe16b9eea26fe97056fac387dd3c1cdde992",
+          "bytes": 60646
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "0c3128372330bffb4a8b80e56d6eea1ac3633711",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "525e1eb048dffb1e49a99c93f6e078d5d538edc9",
+          "bytes": 9790
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "a63b84559f3f13e5ac32bcfb9bd32f4beafe55e4",
+          "bytes": 7084
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/relay_eligibility_native.py",
+          "mode": "100644",
+          "blob": "113c6d411cbc71c277e061f162be39111afdb29b",
+          "bytes": 6457
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "74435b8fd926a22aeac51b06b7e8912d91f68aec",
+          "bytes": 19403
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "4828336480628c8aae57f5391c0e366a4883bc5a",
+          "bytes": 51391
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "0fea3d1c5170aa78e3c70876fbb2f6919ef13a86",
+          "bytes": 1504503
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "165925c0b100c8cd7a991b9e3ea1d7f2c7a3ea57",
+          "bytes": 150124
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "25b4c10841068b206c2974b640d9b9ea5c89019c",
+          "bytes": 107863
+        }
+      ],
+      "actual_candidate_readback": {
+        "head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
+        "tree": "4bb9ca5a6d0aed60dcd62597e81b53bbaa8db9f5",
+        "base": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "branch": "quality/gq470-team-relay-eligibility-20261127",
+        "sourceLease": "797dc6de8cf0dbf9ae1c4e543f282e0ac128e76d",
+        "sourceOperation": "b10092bd-2722-4d7d-839c-fadff2e9d2e3",
+        "pr": 1040,
+        "livePrBase": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "sourceReturn": "eb41e62793a03aeb989c0f12a82a48d5180252f0"
+      },
+      "actual_binding_lease": {
+        "commit": "969e798dbeea2b605a11f8ddf323b7fd0d5591b0",
+        "operation_id": "1d25055c-a9cf-4312-9fd5-35a5b7913554"
       }
     }
   ],
