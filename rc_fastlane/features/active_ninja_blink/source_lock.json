@@ -1,0 +1,33 @@
+{
+  "feature": "GQ219_NINJA_031_ACTIVE_BLINK_V1",
+  "profile": "rich51",
+  "enabled": true,
+  "off_place": {
+    "bytes": 709077,
+    "sha256": "1c42a55ba536537779e61ad1079fd0cb2c7098bab1fa7d7f33459f86c59482d5"
+  },
+  "source_origin": {
+    "catalog_blob": "c587469d2b12dfd67d655022b5733f00d861542b",
+    "catalog_row": "NINJA-031",
+    "catalog_commit": "3b96ac3bc4284afa5d3907733f0d64b4c5470685",
+    "movement_private_selected_gitblob": "d09ca70159a65d08ec664ca2a5e76c160ee5ff37",
+    "movement_private_route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "movement_method": "safeMove",
+    "continuous_sweep_private_blob": "0a2468d57fbb3b70d4c2eae680ce4981bf2a5c0c",
+    "continuous_sweep_private_route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau"
+  },
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "f193b4b814a98a085effa976853e2a4eaab51a1b",
+      "after": "f2570502807c9e5ee271b87815214e2b9c10e628"
+    },
+    "client/HUD.client.luau": {
+      "before": "0fb0935ee927ad279111ef45a887feb97a226dde",
+      "after": "2f740e51aefdea39349c11ecf31e3675d20de7bd"
+    },
+    "server/NinjaBlink.luau": {
+      "before": null,
+      "after": "c02355b0c88b8c82011b89c69bc7e7b21bf7e247"
+    }
+  }
+}

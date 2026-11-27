@@ -258,6 +258,15 @@ class UnionBoundary(unittest.TestCase):
         catalog = (water_dir / "MageWaterCatalog.luau").read_bytes()
         self.assertEqual(hashlib.sha256(catalog).hexdigest(), water["source_origin"]["selected_catalog_sha256"])
         self.assertTrue(private_blobs.isdisjoint(route["after"] for route in water["routes"].values()))
+        blink_dir = active / "features/active_ninja_blink"
+        blink = verify.data(blink_dir / "source_lock.json")
+        self.assertEqual(blink["profile"], selection["active_profile"])
+        for relative in ("server/Game.server.luau", "client/HUD.client.luau"):
+            self.assertEqual(blink["routes"][relative]["before"], water["routes"][relative]["after"])
+        blink_body = (blink_dir / "NinjaBlink.luau").read_bytes()
+        blink_blob = hashlib.sha1(b"blob " + str(len(blink_body)).encode() + bytes([0]) + blink_body).hexdigest()
+        self.assertEqual(blink_blob, blink["routes"]["server/NinjaBlink.luau"]["after"])
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in blink["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
