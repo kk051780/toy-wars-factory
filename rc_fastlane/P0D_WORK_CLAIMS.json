@@ -33634,6 +33634,87 @@
           "lease": "60d4103d844afa585732b9bc069550bf3c12a546",
           "owner": "e777773b-61a6-4b41-89c5-fd7957023fb6"
         }
+      },
+      "source_head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+      "prepared_candidate_head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+      "prepared_candidate_tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "bytes": 52747,
+          "blob": "9e9458c0038146b087a28d687d22739f30111f0d"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "bytes": 35087,
+          "blob": "7db4b7588f5f0a01efb64338a772ab5bbaa5d6a8"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/guardian_wall_geometry.luau",
+          "mode": "100644",
+          "bytes": 2516,
+          "blob": "05296f491c941ffdc3942f77987c27716a04a11e"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall.py",
+          "mode": "100644",
+          "bytes": 4339,
+          "blob": "251ff5a17d70fec0c7083c3c1a0ea119f8556327"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall_cases.luau",
+          "mode": "100644",
+          "bytes": 5321,
+          "blob": "dc272adab2e33c30d20464869375b7297cab19e6"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "bytes": 17132,
+          "blob": "7cd96c055a6d4870e90d809b662347c3c1118a0b"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "bytes": 49090,
+          "blob": "10b63d44abc66e110e9633dd1d71ccf899eeeb08"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "bytes": 910030,
+          "blob": "7c8c7e74b51c6da59184abfe6211a1a7cebd24d3"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "bytes": 122889,
+          "blob": "b35c5d2db49752f183257c285209f4d6961c4afc"
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "bytes": 101621,
+          "blob": "cdab74d85bc64be0c818e3e784e34f2a00e9f7ee"
+        }
+      ],
+      "actual_candidate_readback": {
+        "commit": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+        "branch": "quality/gq8-subsea-melee-los-20261118",
+        "source_lease": "67409a54dfe85b6f56120b59397d272b8d67796e",
+        "return": "1f2df9bde5c227fcad8395b6146d9def1eac67f7",
+        "existing_pr": 796,
+        "old_author_parent": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+        "formal_parent": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "refresh_prior_base": "f77b4d4393d9e9b19b65566413432a7a9f13962b",
+        "observed_pr_base_after": "720dbfb8eba9c3f79efe61a3a592f53e0888e168"
+      },
+      "actual_binding_lease": {
+        "commit": "9c1a37a7ac15c67ac8afc6f6563bc52d0e1cb189",
+        "operation_id": "0697a058-86e7-4a32-9c6b-9a949fb7f2c4"
       }
     }
   ],
