@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 887813,
-    "sha256": "7143dd44abd692ffb632438c3966a2d806868175bda642aaa1541d1725dff242"
+    "bytes": 889649,
+    "sha256": "e963ef81a41dfdfadc5fd5cb529c0a1ca5180dd727372ad5b7d7ee570a4e4efb"
   },
   "followup_repair": {
     "author_contexts": [
@@ -9498,6 +9498,1274 @@
   "luau_source": {
     "commit": "f46d879e28302a430029304f7f6a162aed66f103",
     "tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746"
+  },
+  "mage_contact_followup": {
+    "author_evidence": "https://github.com/kk051780/toy-wars-factory/issues/1028#issuecomment-7185494343",
+    "author_patch": {
+      "identity": {
+        "bytes": 4977,
+        "sha256": "57f9a85dd1ccd17f69928297cafc11c62bb3b895536468a6f1aa1bd297359ec9"
+      },
+      "path": "quality_gameplay/gq470_mage_contact_20261127/mage_close_v3.patch"
+    },
+    "native_fixtures": {
+      "cases.luau": {
+        "bytes": 6524,
+        "sha256": "7a1a15453c2eb331d11a8a66b375fad2a711321fd93b1a6aa61f0c10055ccee9"
+      },
+      "mage_close_v3.patch": {
+        "bytes": 4977,
+        "sha256": "57f9a85dd1ccd17f69928297cafc11c62bb3b895536468a6f1aa1bd297359ec9"
+      },
+      "priority.luau": {
+        "bytes": 3231,
+        "sha256": "2095cb2c94f6c4ca59ebc9ee9a02709ac27a0c91b5ccdc266cf04d38e349bcc8"
+      },
+      "role.luau": {
+        "bytes": 4658,
+        "sha256": "69db0fe04fc92e4a6184bb61a53d92d5e403d0f2fd21c4c18eaeba16f6f075d1"
+      },
+      "ties.luau": {
+        "bytes": 3365,
+        "sha256": "062028d1b04dc9582cf1b3e5ccb76c7172c698bbd3f9a6f0c0951bf53a22e097"
+      },
+      "vectors.json": {
+        "bytes": 7544,
+        "sha256": "1999d75e3d858dcb21ba6065f02139d12ddd97da8eca8782dd2661ae3817619a"
+      }
+    },
+    "parent_head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+    "parent_place": {
+      "bytes": 887813,
+      "sha256": "7143dd44abd692ffb632438c3966a2d806868175bda642aaa1541d1725dff242"
+    },
+    "parent_tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+    "repaired_place": {
+      "bytes": 889649,
+      "sha256": "e963ef81a41dfdfadc5fd5cb529c0a1ca5180dd727372ad5b7d7ee570a4e4efb"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
+        "forward": [
+          {
+            "new": " if session.swarm then\n  local wandBasic=stageBasic==true and root.Parent==p.Character and shape==\"CRYSTAL\"\n  count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape,wandBasic)\n end\n",
+            "new_identity": {
+              "bytes": 202,
+              "sha256": "a4e6950add644f14f01aa28a9d1868103fc1c2608c1a95c3efcced7bab78ffdd"
+            },
+            "old": " if session.swarm then count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape) end\n",
+            "old_identity": {
+              "bytes": 104,
+              "sha256": "a7ae66534a899a336afbdbb6f74f3e3cddc75fab7d10483ad7dfaf9538a915ac"
+            },
+            "start": 737,
+            "stop": 738
+          }
+        ],
+        "inverse": [
+          {
+            "new": " if session.swarm then count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape) end\n",
+            "new_identity": {
+              "bytes": 104,
+              "sha256": "a7ae66534a899a336afbdbb6f74f3e3cddc75fab7d10483ad7dfaf9538a915ac"
+            },
+            "old": " if session.swarm then\n  local wandBasic=stageBasic==true and root.Parent==p.Character and shape==\"CRYSTAL\"\n  count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape,wandBasic)\n end\n",
+            "old_identity": {
+              "bytes": 202,
+              "sha256": "a4e6950add644f14f01aa28a9d1868103fc1c2608c1a95c3efcced7bab78ffdd"
+            },
+            "start": 737,
+            "stop": 741
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 73889,
+            "sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a"
+          },
+          "before": {
+            "bytes": 71356,
+            "sha256": "2b5f7a5889ab2994b54517cd522050c2569d827b65ea5ec0e76a5d8f94e3ddfa"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape,root,char) end\n",
+              "new_identity": {
+                "bytes": 108,
+                "sha256": "078d3dfffa893e7bdcd81cc7054a533ee531841d97b55418690745bb14a33162"
+              },
+              "old": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape) end\n",
+              "old_identity": {
+                "bytes": 98,
+                "sha256": "233059e6cf0f882d92b8d6f04ac5699ffba811e1e186b1fd8c2b1b039a6cb069"
+              },
+              "start": 739,
+              "stop": 740
+            },
+            {
+              "new": "-- Apply only a data-policy result belonging to this exact current avatar.\n-- Shared slow attributes remain compatible with the original Host snare.\nlocal function applyWalkResult(player:Player,character:Model,hum:Humanoid,\n speed:number?,slowActive:boolean?):()\n if type(speed)~=\"number\" or not player.Parent or player.Character~=character\n  or hum.Parent~=character or hum.Health<=0 then return end\n hum.WalkSpeed=speed\n if slowActive==false then\n  hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n end\nend\nlocal function walkBaseline(session:any,player:Player,fallback:number):number\n local original=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n return if type(original)==\"number\" and original==original and original>=8 and original<=32\n  then original else fallback\nend\n",
+              "new_identity": {
+                "bytes": 850,
+                "sha256": "176759a56e03b5a615a3d9a12e0e27f2819274fbfb2113b5c8e5594fee640bd2"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 819,
+              "stop": 819
+            },
+            {
+              "new": "  -- New human status effects obey the same bound policy as pre-hit immunity.\n  -- Existing DoT/slow timers below keep their original lifetime and tick owner.\n  if not bot then\n   local targetPlayer=Players:GetPlayerByUserId(tonumber(targetId) or -1)\n   if not targetPlayer or targetPlayer.Character~=h.Parent\n    or not InvulRuntime.allowNewStatus(session,targetPlayer) then return end\n  end\n",
+              "new_identity": {
+                "bytes": 393,
+                "sha256": "4334efdc2a94ac7e2c42b273c1f017c0502b2028e61e353462a319547f93c810"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 831,
+              "stop": 831
+            },
+            {
+              "new": "    local slowPlayer=game:GetService(\"Players\"):GetPlayerByUserId(tonumber(targetId) or -1)\n    local slowCharacter=slowPlayer and slowPlayer.Character\n    if not slowPlayer or not slowCharacter or h.Parent~=slowCharacter then return end\n    applyWalkResult(slowPlayer,slowCharacter,h,\n     CoreAction.walkCurrent(slowPlayer,slowCharacter,h,session,now))\n",
+              "new_identity": {
+                "bytes": 355,
+                "sha256": "39ca1f64db755fb51e42de2e0cfd59c915d58fdfe2d50d3515aa3e2da2019840"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 838,
+              "stop": 838
+            },
+            {
+              "new": "    local slowed=math.max(8,base*(if effect==\"PUSH\" then .58 else .72))\n    local slowToken=CoreAction.walkEffect(slowPlayer,slowCharacter,h,session,\n     \"SLOW\",slowed,now+duration,walkBaseline(session,slowPlayer,base),now)\n    if not slowToken then return end\n",
+              "new_identity": {
+                "bytes": 262,
+                "sha256": "7917c8e116aad4033ce4f016df5155dcb986a597cb3c890fde0e91bb0a981564"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 840,
+              "stop": 840
+            },
+            {
+              "new": "    h.WalkSpeed=slowed\n",
+              "new_identity": {
+                "bytes": 23,
+                "sha256": "f31015451a117598b34bb0833b58d7bd393c7c1745565152fd0455cf37cf564c"
+              },
+              "old": "    h.WalkSpeed=math.max(8,base*(if effect==\"PUSH\" then .58 else .72))\n",
+              "old_identity": {
+                "bytes": 71,
+                "sha256": "bb0791b40a60fb133a7b3c52e559d7620fb1eb5609995ed1d7ce6a9ce59507a0"
+              },
+              "start": 842,
+              "stop": 843
+            },
+            {
+              "new": "     applyWalkResult(slowPlayer,slowCharacter,h,\n      CoreAction.walkRelease(slowPlayer,slowCharacter,h,session,slowToken,os.clock()))\n",
+              "new_identity": {
+                "bytes": 136,
+                "sha256": "a44b2cdda5fad2d1dbd8bdecbdaadcf4cd8eb83fc0b784a87f5ab4c75efe6ec6"
+              },
+              "old": "     if h.Parent and os.clock()>=(h:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge) then\n      h.WalkSpeed=base\n      h:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n     end\n",
+              "old_identity": {
+                "bytes": 180,
+                "sha256": "20582b6b4de14b24b7f0128e3aaaa950e5807fe1d6281ed986f75ba887c5d0fe"
+              },
+              "start": 844,
+              "stop": 848
+            },
+            {
+              "new": "    if v:GetAttribute(\"EGGRUMBLE_NeutralFriendlyOwnerId\") == nil then consider(v) end\n",
+              "new_identity": {
+                "bytes": 86,
+                "sha256": "363c45a0254018a2c27b7ad5446bf2e1d4c86d49153b6b3f3f5252f97c9e875d"
+              },
+              "old": "    consider(v)\n",
+              "old_identity": {
+                "bytes": 16,
+                "sha256": "13e8b1bd6d6dbdc01a5731836e45bbfac781fc65024362a28c179cacf526eed4"
+              },
+              "start": 1009,
+              "stop": 1010
+            },
+            {
+              "new": "   and currentHumanMember(session, other)\n   and humanCombatTargetable(session.rules.castles[tostring(other.UserId)], other) then\n",
+              "new_identity": {
+                "bytes": 130,
+                "sha256": "11c8e174ef5698ec7c6f85985741d401910b93d22896524318215a11d1644ff7"
+              },
+              "old": "   and (session.isCurrentHuman == nil or session.isCurrentHuman(other) == true) then\n",
+              "old_identity": {
+                "bytes": 85,
+                "sha256": "de7ff6c6cb5d00a24e90658215bf0bb06e4189fc76441d05e7553fc782bc2e6a"
+              },
+              "start": 1018,
+              "stop": 1019
+            },
+            {
+              "new": " if not currentHumanMember(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 54,
+                "sha256": "89e8f0e299cbdef5ff73098aa849a39a4860004d4ff7d6631a79405ccbaefa23"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1084,
+              "stop": 1084
+            },
+            {
+              "new": "  if not safeMove(session,char,root,spec.distance) then return end\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "46a977f9b10d161ac616b593b0d911ce91754f07aabd59ffcf272be2e9a9f553"
+              },
+              "old": "  if not safeMove(char,root,spec.distance) then return end\n",
+              "old_identity": {
+                "bytes": 59,
+                "sha256": "c6de12f829cb67698df44415a65bbf5c0858e1fc644ebfd325bae092e8e24630"
+              },
+              "start": 1115,
+              "stop": 1116
+            },
+            {
+              "new": " local basicMultiplier=InvulRuntime.attackMultiplier(session,p,\"BASIC\")\n if basicMultiplier<=0 then return end\n",
+              "new_identity": {
+                "bytes": 111,
+                "sha256": "1ea1173698bd62170616377c2e7d1c5b2e2d8f5ebb5f2cd15786d7e81b33b040"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1123,
+              "stop": 1123
+            },
+            {
+              "new": "  spec.radius,spec.damage*basicMultiplier,JOBS[role].color,spec.shape,true)\n",
+              "new_identity": {
+                "bytes": 76,
+                "sha256": "4ed58ff5e4f038df722abaa5203ca05ea91dc0f269c6e2a868a2538b72cfc276"
+              },
+              "old": "  spec.radius,spec.damage,JOBS[role].color,spec.shape,true)\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "c841fcb0de75436e523977c3cb9a7d50775f1e95ff04515728a0c0feb9a32b75"
+              },
+              "start": 1127,
+              "stop": 1128
+            },
+            {
+              "new": "      applyWalkResult(p,char,h,CoreAction.walkCurrent(p,char,h,session,now))\n",
+              "new_identity": {
+                "bytes": 77,
+                "sha256": "543a1aecdd8fb3739ca7cdf53051029cdbd937daeba8f6451c3a9bd6aa25891f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1217,
+              "stop": 1217
+            },
+            {
+              "new": "      local windToken=CoreAction.walkEffect(p,char,h,session,\"WIND\",windSpeed,\n       now+2.5,walkBaseline(session,p,h:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\") or oldSpeed),now)\n      if not windToken then return end\n",
+              "new_identity": {
+                "bytes": 220,
+                "sha256": "adca7e49328fca0c9d7c1dad5d7db700364db510ee9ebaedff5edee38e011f47"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1219,
+              "stop": 1219
+            },
+            {
+              "new": "        applyWalkResult(p,char,h,CoreAction.walkRelease(p,char,h,session,windToken,os.clock(),true))\n",
+              "new_identity": {
+                "bytes": 101,
+                "sha256": "e82503accd94cd1dc5a4a6caf8a465bd5fcd181ab4ece425fdb1a6c7d26c0024"
+              },
+              "old": "        if h.Parent and h.WalkSpeed==windSpeed then h.WalkSpeed=oldSpeed end\n",
+              "old_identity": {
+                "bytes": 77,
+                "sha256": "07a564dd9d187564a8a327d214ec3e92cc5990e659980679e067a4b336e46871"
+              },
+              "start": 1233,
+              "stop": 1234
+            },
+            {
+              "new": " if c then\n  c:SetAttribute(\"EGGRUMBLE_GiantFeedUntil\",0)\n  local hum=c:FindFirstChildOfClass(\"Humanoid\")\n  if hum then applyWalkResult(p,c,hum,CoreAction.walkReset(p,c,hum),false) end\n end\n",
+              "new_identity": {
+                "bytes": 190,
+                "sha256": "4898a3a9ed18fde02447fa5d6afbca7e7c28bad904734699f2af30d1c1c7d8a6"
+              },
+              "old": " if c then c:SetAttribute(\"EGGRUMBLE_GiantFeedUntil\",0) end\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "6d813e52c4759b1c660989af033b7603df23984f36a8a4d1292b05489236ce9c"
+              },
+              "start": 1521,
+              "stop": 1522
+            }
+          ],
+          "inverse": [
+            {
+              "new": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape) end\n",
+              "new_identity": {
+                "bytes": 98,
+                "sha256": "233059e6cf0f882d92b8d6f04ac5699ffba811e1e186b1fd8c2b1b039a6cb069"
+              },
+              "old": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape,root,char) end\n",
+              "old_identity": {
+                "bytes": 108,
+                "sha256": "078d3dfffa893e7bdcd81cc7054a533ee531841d97b55418690745bb14a33162"
+              },
+              "start": 739,
+              "stop": 740
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- Apply only a data-policy result belonging to this exact current avatar.\n-- Shared slow attributes remain compatible with the original Host snare.\nlocal function applyWalkResult(player:Player,character:Model,hum:Humanoid,\n speed:number?,slowActive:boolean?):()\n if type(speed)~=\"number\" or not player.Parent or player.Character~=character\n  or hum.Parent~=character or hum.Health<=0 then return end\n hum.WalkSpeed=speed\n if slowActive==false then\n  hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n end\nend\nlocal function walkBaseline(session:any,player:Player,fallback:number):number\n local original=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n return if type(original)==\"number\" and original==original and original>=8 and original<=32\n  then original else fallback\nend\n",
+              "old_identity": {
+                "bytes": 850,
+                "sha256": "176759a56e03b5a615a3d9a12e0e27f2819274fbfb2113b5c8e5594fee640bd2"
+              },
+              "start": 819,
+              "stop": 836
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- New human status effects obey the same bound policy as pre-hit immunity.\n  -- Existing DoT/slow timers below keep their original lifetime and tick owner.\n  if not bot then\n   local targetPlayer=Players:GetPlayerByUserId(tonumber(targetId) or -1)\n   if not targetPlayer or targetPlayer.Character~=h.Parent\n    or not InvulRuntime.allowNewStatus(session,targetPlayer) then return end\n  end\n",
+              "old_identity": {
+                "bytes": 393,
+                "sha256": "4334efdc2a94ac7e2c42b273c1f017c0502b2028e61e353462a319547f93c810"
+              },
+              "start": 848,
+              "stop": 855
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    local slowPlayer=game:GetService(\"Players\"):GetPlayerByUserId(tonumber(targetId) or -1)\n    local slowCharacter=slowPlayer and slowPlayer.Character\n    if not slowPlayer or not slowCharacter or h.Parent~=slowCharacter then return end\n    applyWalkResult(slowPlayer,slowCharacter,h,\n     CoreAction.walkCurrent(slowPlayer,slowCharacter,h,session,now))\n",
+              "old_identity": {
+                "bytes": 355,
+                "sha256": "39ca1f64db755fb51e42de2e0cfd59c915d58fdfe2d50d3515aa3e2da2019840"
+              },
+              "start": 862,
+              "stop": 867
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    local slowed=math.max(8,base*(if effect==\"PUSH\" then .58 else .72))\n    local slowToken=CoreAction.walkEffect(slowPlayer,slowCharacter,h,session,\n     \"SLOW\",slowed,now+duration,walkBaseline(session,slowPlayer,base),now)\n    if not slowToken then return end\n",
+              "old_identity": {
+                "bytes": 262,
+                "sha256": "7917c8e116aad4033ce4f016df5155dcb986a597cb3c890fde0e91bb0a981564"
+              },
+              "start": 869,
+              "stop": 873
+            },
+            {
+              "new": "    h.WalkSpeed=math.max(8,base*(if effect==\"PUSH\" then .58 else .72))\n",
+              "new_identity": {
+                "bytes": 71,
+                "sha256": "bb0791b40a60fb133a7b3c52e559d7620fb1eb5609995ed1d7ce6a9ce59507a0"
+              },
+              "old": "    h.WalkSpeed=slowed\n",
+              "old_identity": {
+                "bytes": 23,
+                "sha256": "f31015451a117598b34bb0833b58d7bd393c7c1745565152fd0455cf37cf564c"
+              },
+              "start": 875,
+              "stop": 876
+            },
+            {
+              "new": "     if h.Parent and os.clock()>=(h:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge) then\n      h.WalkSpeed=base\n      h:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n     end\n",
+              "new_identity": {
+                "bytes": 180,
+                "sha256": "20582b6b4de14b24b7f0128e3aaaa950e5807fe1d6281ed986f75ba887c5d0fe"
+              },
+              "old": "     applyWalkResult(slowPlayer,slowCharacter,h,\n      CoreAction.walkRelease(slowPlayer,slowCharacter,h,session,slowToken,os.clock()))\n",
+              "old_identity": {
+                "bytes": 136,
+                "sha256": "a44b2cdda5fad2d1dbd8bdecbdaadcf4cd8eb83fc0b784a87f5ab4c75efe6ec6"
+              },
+              "start": 877,
+              "stop": 879
+            },
+            {
+              "new": "    consider(v)\n",
+              "new_identity": {
+                "bytes": 16,
+                "sha256": "13e8b1bd6d6dbdc01a5731836e45bbfac781fc65024362a28c179cacf526eed4"
+              },
+              "old": "    if v:GetAttribute(\"EGGRUMBLE_NeutralFriendlyOwnerId\") == nil then consider(v) end\n",
+              "old_identity": {
+                "bytes": 86,
+                "sha256": "363c45a0254018a2c27b7ad5446bf2e1d4c86d49153b6b3f3f5252f97c9e875d"
+              },
+              "start": 1040,
+              "stop": 1041
+            },
+            {
+              "new": "   and (session.isCurrentHuman == nil or session.isCurrentHuman(other) == true) then\n",
+              "new_identity": {
+                "bytes": 85,
+                "sha256": "de7ff6c6cb5d00a24e90658215bf0bb06e4189fc76441d05e7553fc782bc2e6a"
+              },
+              "old": "   and currentHumanMember(session, other)\n   and humanCombatTargetable(session.rules.castles[tostring(other.UserId)], other) then\n",
+              "old_identity": {
+                "bytes": 130,
+                "sha256": "11c8e174ef5698ec7c6f85985741d401910b93d22896524318215a11d1644ff7"
+              },
+              "start": 1049,
+              "stop": 1051
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " if not currentHumanMember(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 54,
+                "sha256": "89e8f0e299cbdef5ff73098aa849a39a4860004d4ff7d6631a79405ccbaefa23"
+              },
+              "start": 1116,
+              "stop": 1117
+            },
+            {
+              "new": "  if not safeMove(char,root,spec.distance) then return end\n",
+              "new_identity": {
+                "bytes": 59,
+                "sha256": "c6de12f829cb67698df44415a65bbf5c0858e1fc644ebfd325bae092e8e24630"
+              },
+              "old": "  if not safeMove(session,char,root,spec.distance) then return end\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "46a977f9b10d161ac616b593b0d911ce91754f07aabd59ffcf272be2e9a9f553"
+              },
+              "start": 1148,
+              "stop": 1149
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local basicMultiplier=InvulRuntime.attackMultiplier(session,p,\"BASIC\")\n if basicMultiplier<=0 then return end\n",
+              "old_identity": {
+                "bytes": 111,
+                "sha256": "1ea1173698bd62170616377c2e7d1c5b2e2d8f5ebb5f2cd15786d7e81b33b040"
+              },
+              "start": 1156,
+              "stop": 1158
+            },
+            {
+              "new": "  spec.radius,spec.damage,JOBS[role].color,spec.shape,true)\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "c841fcb0de75436e523977c3cb9a7d50775f1e95ff04515728a0c0feb9a32b75"
+              },
+              "old": "  spec.radius,spec.damage*basicMultiplier,JOBS[role].color,spec.shape,true)\n",
+              "old_identity": {
+                "bytes": 76,
+                "sha256": "4ed58ff5e4f038df722abaa5203ca05ea91dc0f269c6e2a868a2538b72cfc276"
+              },
+              "start": 1162,
+              "stop": 1163
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "      applyWalkResult(p,char,h,CoreAction.walkCurrent(p,char,h,session,now))\n",
+              "old_identity": {
+                "bytes": 77,
+                "sha256": "543a1aecdd8fb3739ca7cdf53051029cdbd937daeba8f6451c3a9bd6aa25891f"
+              },
+              "start": 1252,
+              "stop": 1253
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "      local windToken=CoreAction.walkEffect(p,char,h,session,\"WIND\",windSpeed,\n       now+2.5,walkBaseline(session,p,h:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\") or oldSpeed),now)\n      if not windToken then return end\n",
+              "old_identity": {
+                "bytes": 220,
+                "sha256": "adca7e49328fca0c9d7c1dad5d7db700364db510ee9ebaedff5edee38e011f47"
+              },
+              "start": 1255,
+              "stop": 1258
+            },
+            {
+              "new": "        if h.Parent and h.WalkSpeed==windSpeed then h.WalkSpeed=oldSpeed end\n",
+              "new_identity": {
+                "bytes": 77,
+                "sha256": "07a564dd9d187564a8a327d214ec3e92cc5990e659980679e067a4b336e46871"
+              },
+              "old": "        applyWalkResult(p,char,h,CoreAction.walkRelease(p,char,h,session,windToken,os.clock(),true))\n",
+              "old_identity": {
+                "bytes": 101,
+                "sha256": "e82503accd94cd1dc5a4a6caf8a465bd5fcd181ab4ece425fdb1a6c7d26c0024"
+              },
+              "start": 1272,
+              "stop": 1273
+            },
+            {
+              "new": " if c then c:SetAttribute(\"EGGRUMBLE_GiantFeedUntil\",0) end\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "6d813e52c4759b1c660989af033b7603df23984f36a8a4d1292b05489236ce9c"
+              },
+              "old": " if c then\n  c:SetAttribute(\"EGGRUMBLE_GiantFeedUntil\",0)\n  local hum=c:FindFirstChildOfClass(\"Humanoid\")\n  if hum then applyWalkResult(p,c,hum,CoreAction.walkReset(p,c,hum),false) end\n end\n",
+              "old_identity": {
+                "bytes": 190,
+                "sha256": "4898a3a9ed18fde02447fa5d6afbca7e7c28bad904734699f2af30d1c1c7d8a6"
+              },
+              "start": 1560,
+              "stop": 1565
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+        "forward": [
+          {
+            "new": " -- Ordinary wand contact has its own horizontal approach; the original impact circle keeps its aim and height.\n local function closeWandTest(pose:CFrame?,center:Vector3,radius:number):((Vector3)->boolean)?\n  if not pose or radius~=5 then return nil end\n  local look=pose.LookVector\n  local length=math.sqrt(look.X*look.X+look.Z*look.Z)\n  if length<.01 then return nil end\n  local ux,uz=look.X/length,look.Z/length\n  local start=pose.Position\n  -- At this point a level radius-five circle already covers the full two-stud half-width.\n  -- The existing neutral-only weapon pickup adds at most 3.5 to the wand's 11-stud reach.\n  local limit=math.min((center-start).Magnitude,14.5)-math.sqrt(21)\n  return function(target:Vector3):boolean\n   if math.abs(target.Y-start.Y)>5 then return false end\n   local x,z=target.X-start.X,target.Z-start.Z\n   local forward=x*ux+z*uz\n   return forward>=1 and forward<=limit and math.abs(z*ux-x*uz)<=math.min(2,forward*.5)\n  end\n end\n\n local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string,wandPose:CFrame?):number\n",
+            "new_identity": {
+              "bytes": 1106,
+              "sha256": "1c56bdd9654205cd7e7705f0a7546979ec3c3bdd7d9e5e7195832232a9a2c63e"
+            },
+            "old": " local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number\n",
+            "old_identity": {
+              "bytes": 123,
+              "sha256": "36f5e6750b94ffc1f4d60a1e9245ad6eb163e56d14d9c9331512a40d13ef6e41"
+            },
+            "start": 590,
+            "stop": 591
+          },
+          {
+            "new": "  local closeWand=closeWandTest(wandPose,at,radius)\n",
+            "new_identity": {
+              "bytes": 52,
+              "sha256": "ce49d5c461e0bc1003e095aaeab364d9086e6cabd2d753d1047b5946e63041b9"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 594,
+            "stop": 594
+          },
+          {
+            "new": "  local approach=if closeWand then {} else nil\n",
+            "new_identity": {
+              "bytes": 47,
+              "sha256": "cc4f002fc91c7fc51a1fb7dc164fb5ae16229a0732e9af69e1fca2c2555a1f3c"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 595,
+            "stop": 595
+          },
+          {
+            "new": "    elseif approach and closeWand and closeWand(m.PrimaryPart.Position) then\n     table.insert(approach,{target=h,dist=dis})\n",
+            "new_identity": {
+              "bytes": 125,
+              "sha256": "b485b460c046155d366c47add34f9baa758ca8091098f9817eaead36c6587985"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 601,
+            "stop": 601
+          },
+          {
+            "new": "  local function nearer(x,y)return x.dist<y.dist end\n  table.sort(nearest,nearer)\n  -- Keep original candidates first even when tilted; only remaining ray slots can reach approach targets.\n  if approach and #approach>0 and #nearest<MAX_LOS_RAYS_PER_ATTACK then\n   table.sort(approach,nearer)\n   local remaining=MAX_LOS_RAYS_PER_ATTACK-#nearest\n   table.move(approach,1,math.min(remaining,#approach),#nearest+1,nearest)\n  end\n",
+            "new_identity": {
+              "bytes": 425,
+              "sha256": "ae62aad19dae4898f06b014ddcb53440f6eed4757e8e0b0c8d1b27444a3e8c83"
+            },
+            "old": "  table.sort(nearest,function(x,y)return x.dist<y.dist end)\n",
+            "old_identity": {
+              "bytes": 60,
+              "sha256": "e168725cf20218580a8ae5a1b013eead4c609c0f7243dd6b74681cca02551247"
+            },
+            "start": 604,
+            "stop": 605
+          },
+          {
+            "new": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?,wandBasic:boolean?):number\n",
+            "new_identity": {
+              "bytes": 122,
+              "sha256": "cda943e9d65bdb44f85a3dabada9d1e849d8c911d28e29047722cad631a4c041"
+            },
+            "old": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n",
+            "old_identity": {
+              "bytes": 103,
+              "sha256": "b0611d90408de85cf149afde09c3dad26f69d5211efbb9259d2767298eee1e7f"
+            },
+            "start": 715,
+            "stop": 716
+          },
+          {
+            "new": "   local wandPose=if wandBasic==true and shape==\"CRYSTAL\" and player:GetAttribute(\"EGGRUMBLE_Role\")==\"MAGE\"\n    then root.CFrame else nil\n",
+            "new_identity": {
+              "bytes": 138,
+              "sha256": "a8877ae56f059d5f96d5170238b400adf4bb2e1644aee1c112834511714e38dd"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 728,
+            "stop": 728
+          },
+          {
+            "new": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\",wandPose)\n",
+            "new_identity": {
+              "bytes": 75,
+              "sha256": "ce4c09f68cd30e65d8a209251286f5792d2c95cbdd432637e6bf2f77125df754"
+            },
+            "old": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\")\n",
+            "old_identity": {
+              "bytes": 66,
+              "sha256": "9f36ae95a9ed29fe459893e8312c46f86bf5131fceecdecc5c173f723a302516"
+            },
+            "start": 729,
+            "stop": 730
+          }
+        ],
+        "inverse": [
+          {
+            "new": " local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number\n",
+            "new_identity": {
+              "bytes": 123,
+              "sha256": "36f5e6750b94ffc1f4d60a1e9245ad6eb163e56d14d9c9331512a40d13ef6e41"
+            },
+            "old": " -- Ordinary wand contact has its own horizontal approach; the original impact circle keeps its aim and height.\n local function closeWandTest(pose:CFrame?,center:Vector3,radius:number):((Vector3)->boolean)?\n  if not pose or radius~=5 then return nil end\n  local look=pose.LookVector\n  local length=math.sqrt(look.X*look.X+look.Z*look.Z)\n  if length<.01 then return nil end\n  local ux,uz=look.X/length,look.Z/length\n  local start=pose.Position\n  -- At this point a level radius-five circle already covers the full two-stud half-width.\n  -- The existing neutral-only weapon pickup adds at most 3.5 to the wand's 11-stud reach.\n  local limit=math.min((center-start).Magnitude,14.5)-math.sqrt(21)\n  return function(target:Vector3):boolean\n   if math.abs(target.Y-start.Y)>5 then return false end\n   local x,z=target.X-start.X,target.Z-start.Z\n   local forward=x*ux+z*uz\n   return forward>=1 and forward<=limit and math.abs(z*ux-x*uz)<=math.min(2,forward*.5)\n  end\n end\n\n local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string,wandPose:CFrame?):number\n",
+            "old_identity": {
+              "bytes": 1106,
+              "sha256": "1c56bdd9654205cd7e7705f0a7546979ec3c3bdd7d9e5e7195832232a9a2c63e"
+            },
+            "start": 590,
+            "stop": 610
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  local closeWand=closeWandTest(wandPose,at,radius)\n",
+            "old_identity": {
+              "bytes": 52,
+              "sha256": "ce49d5c461e0bc1003e095aaeab364d9086e6cabd2d753d1047b5946e63041b9"
+            },
+            "start": 613,
+            "stop": 614
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  local approach=if closeWand then {} else nil\n",
+            "old_identity": {
+              "bytes": 47,
+              "sha256": "cc4f002fc91c7fc51a1fb7dc164fb5ae16229a0732e9af69e1fca2c2555a1f3c"
+            },
+            "start": 615,
+            "stop": 616
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "    elseif approach and closeWand and closeWand(m.PrimaryPart.Position) then\n     table.insert(approach,{target=h,dist=dis})\n",
+            "old_identity": {
+              "bytes": 125,
+              "sha256": "b485b460c046155d366c47add34f9baa758ca8091098f9817eaead36c6587985"
+            },
+            "start": 622,
+            "stop": 624
+          },
+          {
+            "new": "  table.sort(nearest,function(x,y)return x.dist<y.dist end)\n",
+            "new_identity": {
+              "bytes": 60,
+              "sha256": "e168725cf20218580a8ae5a1b013eead4c609c0f7243dd6b74681cca02551247"
+            },
+            "old": "  local function nearer(x,y)return x.dist<y.dist end\n  table.sort(nearest,nearer)\n  -- Keep original candidates first even when tilted; only remaining ray slots can reach approach targets.\n  if approach and #approach>0 and #nearest<MAX_LOS_RAYS_PER_ATTACK then\n   table.sort(approach,nearer)\n   local remaining=MAX_LOS_RAYS_PER_ATTACK-#nearest\n   table.move(approach,1,math.min(remaining,#approach),#nearest+1,nearest)\n  end\n",
+            "old_identity": {
+              "bytes": 425,
+              "sha256": "ae62aad19dae4898f06b014ddcb53440f6eed4757e8e0b0c8d1b27444a3e8c83"
+            },
+            "start": 627,
+            "stop": 635
+          },
+          {
+            "new": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n",
+            "new_identity": {
+              "bytes": 103,
+              "sha256": "b0611d90408de85cf149afde09c3dad26f69d5211efbb9259d2767298eee1e7f"
+            },
+            "old": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?,wandBasic:boolean?):number\n",
+            "old_identity": {
+              "bytes": 122,
+              "sha256": "cda943e9d65bdb44f85a3dabada9d1e849d8c911d28e29047722cad631a4c041"
+            },
+            "start": 745,
+            "stop": 746
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "   local wandPose=if wandBasic==true and shape==\"CRYSTAL\" and player:GetAttribute(\"EGGRUMBLE_Role\")==\"MAGE\"\n    then root.CFrame else nil\n",
+            "old_identity": {
+              "bytes": 138,
+              "sha256": "a8877ae56f059d5f96d5170238b400adf4bb2e1644aee1c112834511714e38dd"
+            },
+            "start": 758,
+            "stop": 760
+          },
+          {
+            "new": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\")\n",
+            "new_identity": {
+              "bytes": 66,
+              "sha256": "9f36ae95a9ed29fe459893e8312c46f86bf5131fceecdecc5c173f723a302516"
+            },
+            "old": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\",wandPose)\n",
+            "old_identity": {
+              "bytes": 75,
+              "sha256": "ce4c09f68cd30e65d8a209251286f5792d2c95cbdd432637e6bf2f77125df754"
+            },
+            "start": 761,
+            "stop": 762
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 43552,
+            "sha256": "2f27a24a5a6dc97fabc1dc5f90f547813bdb23c71267011cf66073e14622dbe4"
+          },
+          "before": {
+            "bytes": 38508,
+            "sha256": "cc40d9902834b63db15bc8ff63a0be0f092cdc17e5a962d9669784f4e15dd75a"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+              "new_identity": {
+                "bytes": 244,
+                "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 116,
+              "stop": 116
+            },
+            {
+              "new": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+              "new_identity": {
+                "bytes": 71,
+                "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 117,
+              "stop": 117
+            },
+            {
+              "new": "-- S1A match-only awakening is a view of the original KO ledger.\n-- Concrete Player tokens contain no XP/score and cannot clear a newer round.\nlocal growthPublishedBy:{[Player]:any}=setmetatable({}, {__mode=\"k\"}) :: any\nlocal function battleGrowthSnapshot(neutralKOs:number):any\n return {\n  stage=if neutralKOs>=4 then 3 elseif neutralKOs>=1 then 2 else 1,\n  xp=10*math.min(neutralKOs,8),\n  neutralKOs=neutralKOs,\n }\nend\n",
+              "new_identity": {
+                "bytes": 421,
+                "sha256": "01d2084450e33b885b6aac949d7bf425f4a16b22badd9bed56a4a5d1db57b45e"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 159,
+              "stop": 159
+            },
+            {
+              "new": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
+              "new_identity": {
+                "bytes": 585,
+                "sha256": "8b0e8d54aa1f27a861dcb1b991cb7659dbb4171c5e87ac55968d7cd031297be3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 173,
+              "stop": 173
+            },
+            {
+              "new": " -- Own lifecycle connections independently: Host disconnects lifeConnections\n -- before Destroy, which would cancel pending Deferred cleanup callbacks.\n local growthWorld=session.world\n local growthLease={}\n local growthPlayers:{[string]:Player}={}\n local growthConnections:{RBXScriptConnection}={}\n local growthRetired=false\n local function growthRoundLive():boolean\n  return not growthRetired and session.world==growthWorld\n   and session.rules.phase==\"ACTIVE\" and session.rules.winner==nil\n   and growthWorld.Parent~=nil and growthWorld:IsDescendantOf(workspace)\n   and all.Parent==growthWorld\n end\n local function growthCurrentPlayer(id:string):Player?\n  local player=growthPlayers[id]\n  if not growthRoundLive() or not player or growthPublishedBy[player]~=growthLease\n   or player.Parent~=Players or Players:GetPlayerByUserId(player.UserId)~=player\n   or currentHumanForId(id)~=player then return nil end\n  return player\n end\n local function growthCreditAllowed(id:string):boolean\n  if not growthRoundLive() then return false end\n  local castle=session.rules.castles[id]\n  -- Preserve the existing real AI/takeover KO ledger; never publish it to\n  -- a replacement human who happens to reuse this numeric UserId.\n  return castle~=nil and (castle.isAI==true or growthCurrentPlayer(id)~=nil)\n end\n local function growthRetirePlayer(id:string,player:Player)\n  if growthPlayers[id]~=player then return end\n  growthPlayers[id]=nil\n  if growthPublishedBy[player]~=growthLease then return end\n  growthPublishedBy[player]=nil\n  if player.Parent==Players and Players:GetPlayerByUserId(player.UserId)==player then\n   player:SetAttribute(\"EGGRUMBLE_GrowthActive\",false)\n   player:SetAttribute(\"EGGRUMBLE_BattleStage\",1)\n   player:SetAttribute(\"EGGRUMBLE_BattleXP\",0)\n   labelKo(player,0)\n  end\n end\n local function growthRetire()\n  if growthRetired then return end\n  growthRetired=true\n  for _,connection in ipairs(growthConnections) do connection:Disconnect() end\n  table.clear(growthConnections)\n  for id,player in pairs(growthPlayers) do growthRetirePlayer(id,player) end\n end\n local function publishBattleGrowth(id:string)\n  local player=growthCurrentPlayer(id)\n  if not player then return end\n  local snapshot=battleGrowthSnapshot(kills[id] or 0)\n  player:SetAttribute(\"EGGRUMBLE_BattleStage\",snapshot.stage)\n  player:SetAttribute(\"EGGRUMBLE_BattleXP\",snapshot.xp)\n end\n if growthRoundLive() then\n  for _,player in ipairs(Players:GetPlayers()) do\n   local id=tostring(player.UserId)\n   if currentHumanForId(id)==player then\n    growthPlayers[id]=player\n    growthPublishedBy[player]=growthLease\n    labelKo(player,0)\n    publishBattleGrowth(id)\n    player:SetAttribute(\"EGGRUMBLE_GrowthActive\",true)\n   end\n  end\n  table.insert(growthConnections,growthWorld:GetAttributeChangedSignal(\"EGGRUMBLE_MatchPhase\"):Connect(function()\n   if growthWorld:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\"\n    or not growthRoundLive() then growthRetire() end\n  end))\n  table.insert(growthConnections,growthWorld.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,growthWorld.AncestryChanged:Connect(function(changed:Instance,parent:Instance?)\n   if (changed==growthWorld and parent==nil)\n    or not growthWorld:IsDescendantOf(workspace) then growthRetire() end\n  end))\n  table.insert(growthConnections,all.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,Players.PlayerRemoving:Connect(function(player:Player)\n   growthRetirePlayer(tostring(player.UserId),player)\n  end))\n else\n  growthRetired=true\n end\n",
+              "new_identity": {
+                "bytes": 3524,
+                "sha256": "ac030caa893f37c663d877938ca2154a108aa123736ae237707a560b522cfea8"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 184,
+              "stop": 184
+            },
+            {
+              "new": "  if not growthCreditAllowed(id) then return end\n",
+              "new_identity": {
+                "bytes": 49,
+                "sha256": "59a1845c7cae08fc01aa3f32d10410431fc9b023440f8a311a6378b175fee46a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 280,
+              "stop": 280
+            },
+            {
+              "new": "  local p=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 32,
+                "sha256": "931c4ed541b6d670c3c3680825338e13b5ab26b5b7537a9dc55453fc5e88e1b9"
+              },
+              "old": "  local p=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 56,
+                "sha256": "c495c396a9e50a185f3c2d7ac14238bf15f6399a50eb7b952de7864a0a70633e"
+              },
+              "start": 288,
+              "stop": 289
+            },
+            {
+              "new": "   publishBattleGrowth(id)\n",
+              "new_identity": {
+                "bytes": 27,
+                "sha256": "1089246bd7bc3982086104ab86b60eb4a549dd9741b392fdb8528afed59e0cf2"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 291,
+              "stop": 291
+            },
+            {
+              "new": "    if live[m]~=h then return end\n    live[m]=nil\n",
+              "new_identity": {
+                "bytes": 50,
+                "sha256": "5b31cf7af6bf06c40f41c003fe6b3232c97cd337920ccd5bd1d9851ae60948f2"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 382,
+              "stop": 382
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    live[m]=nil\n",
+              "old_identity": {
+                "bytes": 16,
+                "sha256": "d5b9db34183771586cae374dad3a7fd83936fbddab994ce036371d050528b9dc"
+              },
+              "start": 383,
+              "stop": 384
+            },
+            {
+              "new": "    and KoFence.mayCredit(session,id,m,all) and growthCreditAllowed(id) then\n    local attacker=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 118,
+                "sha256": "b1cb96d41eaf63d90a996ade356d7ac3cf07b6b8c80c6b01d47cf5b4a4cc3a12"
+              },
+              "old": "    and KoFence.mayCredit(session,id,m,all) then\n    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 114,
+                "sha256": "c41bb618477cd379a856a169131febe7e77b258d571ee3a74e5563b8f651bfd5"
+              },
+              "start": 391,
+              "stop": 393
+            },
+            {
+              "new": "    local directUser=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 43,
+                "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
+              },
+              "old": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "96bd199dd7141aac83c86897ebfa7e0e7bf7e5f35625f84452293f2dc91ce85f"
+              },
+              "start": 509,
+              "stop": 510
+            },
+            {
+              "new": "    local user=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
+              },
+              "old": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 61,
+                "sha256": "5c8062e373e1b4954fd2ae28c085298ef99f31b7985d09db02297bcc724ebc0a"
+              },
+              "start": 522,
+              "stop": 523
+            },
+            {
+              "new": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n",
+              "new_identity": {
+                "bytes": 104,
+                "sha256": "218118c4b77ba8a523880b4d4d3b3eda48397ab5adf0a63c61c72e6f9952aff8"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 604,
+              "stop": 604
+            },
+            {
+              "new": "   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+              "new_identity": {
+                "bytes": 77,
+                "sha256": "0b70f73ddc70bc5a09a402ed2d87cd72768efab11697fc7cfcce0000cfacb6f2"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 605,
+              "stop": 605
+            },
+            {
+              "new": "    local user=currentHumanForId(ownerId)\n",
+              "new_identity": {
+                "bytes": 42,
+                "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
+              },
+              "old": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
+              "old_identity": {
+                "bytes": 66,
+                "sha256": "a3a83bfccfacf45ccfe5b5ba80896acc0fe47139c42b131cee58ed521120849a"
+              },
+              "start": 770,
+              "stop": 771
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+              "old_identity": {
+                "bytes": 244,
+                "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+              },
+              "start": 116,
+              "stop": 119
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+              "old_identity": {
+                "bytes": 71,
+                "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+              },
+              "start": 120,
+              "stop": 121
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- S1A match-only awakening is a view of the original KO ledger.\n-- Concrete Player tokens contain no XP/score and cannot clear a newer round.\nlocal growthPublishedBy:{[Player]:any}=setmetatable({}, {__mode=\"k\"}) :: any\nlocal function battleGrowthSnapshot(neutralKOs:number):any\n return {\n  stage=if neutralKOs>=4 then 3 elseif neutralKOs>=1 then 2 else 1,\n  xp=10*math.min(neutralKOs,8),\n  neutralKOs=neutralKOs,\n }\nend\n",
+              "old_identity": {
+                "bytes": 421,
+                "sha256": "01d2084450e33b885b6aac949d7bf425f4a16b22badd9bed56a4a5d1db57b45e"
+              },
+              "start": 163,
+              "stop": 173
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
+              "old_identity": {
+                "bytes": 585,
+                "sha256": "8b0e8d54aa1f27a861dcb1b991cb7659dbb4171c5e87ac55968d7cd031297be3"
+              },
+              "start": 187,
+              "stop": 198
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Own lifecycle connections independently: Host disconnects lifeConnections\n -- before Destroy, which would cancel pending Deferred cleanup callbacks.\n local growthWorld=session.world\n local growthLease={}\n local growthPlayers:{[string]:Player}={}\n local growthConnections:{RBXScriptConnection}={}\n local growthRetired=false\n local function growthRoundLive():boolean\n  return not growthRetired and session.world==growthWorld\n   and session.rules.phase==\"ACTIVE\" and session.rules.winner==nil\n   and growthWorld.Parent~=nil and growthWorld:IsDescendantOf(workspace)\n   and all.Parent==growthWorld\n end\n local function growthCurrentPlayer(id:string):Player?\n  local player=growthPlayers[id]\n  if not growthRoundLive() or not player or growthPublishedBy[player]~=growthLease\n   or player.Parent~=Players or Players:GetPlayerByUserId(player.UserId)~=player\n   or currentHumanForId(id)~=player then return nil end\n  return player\n end\n local function growthCreditAllowed(id:string):boolean\n  if not growthRoundLive() then return false end\n  local castle=session.rules.castles[id]\n  -- Preserve the existing real AI/takeover KO ledger; never publish it to\n  -- a replacement human who happens to reuse this numeric UserId.\n  return castle~=nil and (castle.isAI==true or growthCurrentPlayer(id)~=nil)\n end\n local function growthRetirePlayer(id:string,player:Player)\n  if growthPlayers[id]~=player then return end\n  growthPlayers[id]=nil\n  if growthPublishedBy[player]~=growthLease then return end\n  growthPublishedBy[player]=nil\n  if player.Parent==Players and Players:GetPlayerByUserId(player.UserId)==player then\n   player:SetAttribute(\"EGGRUMBLE_GrowthActive\",false)\n   player:SetAttribute(\"EGGRUMBLE_BattleStage\",1)\n   player:SetAttribute(\"EGGRUMBLE_BattleXP\",0)\n   labelKo(player,0)\n  end\n end\n local function growthRetire()\n  if growthRetired then return end\n  growthRetired=true\n  for _,connection in ipairs(growthConnections) do connection:Disconnect() end\n  table.clear(growthConnections)\n  for id,player in pairs(growthPlayers) do growthRetirePlayer(id,player) end\n end\n local function publishBattleGrowth(id:string)\n  local player=growthCurrentPlayer(id)\n  if not player then return end\n  local snapshot=battleGrowthSnapshot(kills[id] or 0)\n  player:SetAttribute(\"EGGRUMBLE_BattleStage\",snapshot.stage)\n  player:SetAttribute(\"EGGRUMBLE_BattleXP\",snapshot.xp)\n end\n if growthRoundLive() then\n  for _,player in ipairs(Players:GetPlayers()) do\n   local id=tostring(player.UserId)\n   if currentHumanForId(id)==player then\n    growthPlayers[id]=player\n    growthPublishedBy[player]=growthLease\n    labelKo(player,0)\n    publishBattleGrowth(id)\n    player:SetAttribute(\"EGGRUMBLE_GrowthActive\",true)\n   end\n  end\n  table.insert(growthConnections,growthWorld:GetAttributeChangedSignal(\"EGGRUMBLE_MatchPhase\"):Connect(function()\n   if growthWorld:GetAttribute(\"EGGRUMBLE_MatchPhase\")~=\"ACTIVE\"\n    or not growthRoundLive() then growthRetire() end\n  end))\n  table.insert(growthConnections,growthWorld.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,growthWorld.AncestryChanged:Connect(function(changed:Instance,parent:Instance?)\n   if (changed==growthWorld and parent==nil)\n    or not growthWorld:IsDescendantOf(workspace) then growthRetire() end\n  end))\n  table.insert(growthConnections,all.Destroying:Connect(growthRetire))\n  table.insert(growthConnections,Players.PlayerRemoving:Connect(function(player:Player)\n   growthRetirePlayer(tostring(player.UserId),player)\n  end))\n else\n  growthRetired=true\n end\n",
+              "old_identity": {
+                "bytes": 3524,
+                "sha256": "ac030caa893f37c663d877938ca2154a108aa123736ae237707a560b522cfea8"
+              },
+              "start": 209,
+              "stop": 289
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  if not growthCreditAllowed(id) then return end\n",
+              "old_identity": {
+                "bytes": 49,
+                "sha256": "59a1845c7cae08fc01aa3f32d10410431fc9b023440f8a311a6378b175fee46a"
+              },
+              "start": 385,
+              "stop": 386
+            },
+            {
+              "new": "  local p=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 56,
+                "sha256": "c495c396a9e50a185f3c2d7ac14238bf15f6399a50eb7b952de7864a0a70633e"
+              },
+              "old": "  local p=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 32,
+                "sha256": "931c4ed541b6d670c3c3680825338e13b5ab26b5b7537a9dc55453fc5e88e1b9"
+              },
+              "start": 394,
+              "stop": 395
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   publishBattleGrowth(id)\n",
+              "old_identity": {
+                "bytes": 27,
+                "sha256": "1089246bd7bc3982086104ab86b60eb4a549dd9741b392fdb8528afed59e0cf2"
+              },
+              "start": 397,
+              "stop": 398
+            },
+            {
+              "new": "    if ticket then session.neutralBudget:release(ticket) end\n",
+              "new_identity": {
+                "bytes": 61,
+                "sha256": "3f51f303566d3d116d7142129bcfbb621e92a4e02e22bdd193cb1ceac121c69c"
+              },
+              "old": "    if live[m]~=h then return end\n",
+              "old_identity": {
+                "bytes": 34,
+                "sha256": "f893a6e76b23a4fed9ed6348465a39ddc56a0302eeace7f748dce5329519ab73"
+              },
+              "start": 489,
+              "stop": 490
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    if ticket then session.neutralBudget:release(ticket) end\n",
+              "old_identity": {
+                "bytes": 61,
+                "sha256": "3f51f303566d3d116d7142129bcfbb621e92a4e02e22bdd193cb1ceac121c69c"
+              },
+              "start": 491,
+              "stop": 492
+            },
+            {
+              "new": "    and KoFence.mayCredit(session,id,m,all) then\n    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 114,
+                "sha256": "c41bb618477cd379a856a169131febe7e77b258d571ee3a74e5563b8f651bfd5"
+              },
+              "old": "    and KoFence.mayCredit(session,id,m,all) and growthCreditAllowed(id) then\n    local attacker=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 118,
+                "sha256": "b1cb96d41eaf63d90a996ade356d7ac3cf07b6b8c80c6b01d47cf5b4a4cc3a12"
+              },
+              "start": 499,
+              "stop": 501
+            },
+            {
+              "new": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "96bd199dd7141aac83c86897ebfa7e0e7bf7e5f35625f84452293f2dc91ce85f"
+              },
+              "old": "    local directUser=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 43,
+                "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
+              },
+              "start": 617,
+              "stop": 618
+            },
+            {
+              "new": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 61,
+                "sha256": "5c8062e373e1b4954fd2ae28c085298ef99f31b7985d09db02297bcc724ebc0a"
+              },
+              "old": "    local user=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
+              },
+              "start": 630,
+              "stop": 631
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n",
+              "old_identity": {
+                "bytes": 104,
+                "sha256": "218118c4b77ba8a523880b4d4d3b3eda48397ab5adf0a63c61c72e6f9952aff8"
+              },
+              "start": 712,
+              "stop": 715
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+              "old_identity": {
+                "bytes": 77,
+                "sha256": "0b70f73ddc70bc5a09a402ed2d87cd72768efab11697fc7cfcce0000cfacb6f2"
+              },
+              "start": 716,
+              "stop": 717
+            },
+            {
+              "new": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
+              "new_identity": {
+                "bytes": 66,
+                "sha256": "a3a83bfccfacf45ccfe5b5ba80896acc0fe47139c42b131cee58ed521120849a"
+              },
+              "old": "    local user=currentHumanForId(ownerId)\n",
+              "old_identity": {
+                "bytes": 42,
+                "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
+              },
+              "start": 882,
+              "stop": 883
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_SwarmCombat"
+        }
+      }
+    }
   },
   "neutral_names_followup": {
     "author_transform": {
@@ -19123,8 +20391,8 @@
     },
     "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau": {
       "after": {
-        "bytes": 73889,
-        "sha256": "ba37d904cc9a5529ffaae7602ae25830a65abb4634fe3e3cdbfa95a767c87f4a"
+        "bytes": 73987,
+        "sha256": "da9f312031c39b7fd94251f35325f5238c4df2d337d5016242c96762a7e733a4"
       },
       "before": {
         "bytes": 71356,
@@ -19132,6 +20400,20 @@
       },
       "class": "ModuleScript",
       "forward": [
+        {
+          "new": " if session.swarm then\n  local wandBasic=stageBasic==true and root.Parent==p.Character and shape==\"CRYSTAL\"\n  count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape,wandBasic)\n end\n",
+          "new_identity": {
+            "bytes": 202,
+            "sha256": "a4e6950add644f14f01aa28a9d1868103fc1c2608c1a95c3efcced7bab78ffdd"
+          },
+          "old": " if session.swarm then count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape) end\n",
+          "old_identity": {
+            "bytes": 104,
+            "sha256": "a7ae66534a899a336afbdbb6f74f3e3cddc75fab7d10483ad7dfaf9538a915ac"
+          },
+          "start": 737,
+          "stop": 738
+        },
         {
           "new": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape,root,char) end\n",
           "new_identity": {
@@ -19373,6 +20655,20 @@
       ],
       "inverse": [
         {
+          "new": " if session.swarm then count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape) end\n",
+          "new_identity": {
+            "bytes": 104,
+            "sha256": "a7ae66534a899a336afbdbb6f74f3e3cddc75fab7d10483ad7dfaf9538a915ac"
+          },
+          "old": " if session.swarm then\n  local wandBasic=stageBasic==true and root.Parent==p.Character and shape==\"CRYSTAL\"\n  count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape,wandBasic)\n end\n",
+          "old_identity": {
+            "bytes": 202,
+            "sha256": "a4e6950add644f14f01aa28a9d1868103fc1c2608c1a95c3efcced7bab78ffdd"
+          },
+          "start": 737,
+          "stop": 741
+        },
+        {
           "new": " if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape) end\n",
           "new_identity": {
             "bytes": 98,
@@ -19383,8 +20679,8 @@
             "bytes": 108,
             "sha256": "078d3dfffa893e7bdcd81cc7054a533ee531841d97b55418690745bb14a33162"
           },
-          "start": 739,
-          "stop": 740
+          "start": 742,
+          "stop": 743
         },
         {
           "new": "",
@@ -19397,8 +20693,8 @@
             "bytes": 850,
             "sha256": "176759a56e03b5a615a3d9a12e0e27f2819274fbfb2113b5c8e5594fee640bd2"
           },
-          "start": 819,
-          "stop": 836
+          "start": 822,
+          "stop": 839
         },
         {
           "new": "",
@@ -19411,8 +20707,8 @@
             "bytes": 393,
             "sha256": "4334efdc2a94ac7e2c42b273c1f017c0502b2028e61e353462a319547f93c810"
           },
-          "start": 848,
-          "stop": 855
+          "start": 851,
+          "stop": 858
         },
         {
           "new": "",
@@ -19425,8 +20721,8 @@
             "bytes": 355,
             "sha256": "39ca1f64db755fb51e42de2e0cfd59c915d58fdfe2d50d3515aa3e2da2019840"
           },
-          "start": 862,
-          "stop": 867
+          "start": 865,
+          "stop": 870
         },
         {
           "new": "",
@@ -19439,8 +20735,8 @@
             "bytes": 262,
             "sha256": "7917c8e116aad4033ce4f016df5155dcb986a597cb3c890fde0e91bb0a981564"
           },
-          "start": 869,
-          "stop": 873
+          "start": 872,
+          "stop": 876
         },
         {
           "new": "    h.WalkSpeed=math.max(8,base*(if effect==\"PUSH\" then .58 else .72))\n",
@@ -19453,8 +20749,8 @@
             "bytes": 23,
             "sha256": "f31015451a117598b34bb0833b58d7bd393c7c1745565152fd0455cf37cf564c"
           },
-          "start": 875,
-          "stop": 876
+          "start": 878,
+          "stop": 879
         },
         {
           "new": "     if h.Parent and os.clock()>=(h:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge) then\n      h.WalkSpeed=base\n      h:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n     end\n",
@@ -19467,8 +20763,8 @@
             "bytes": 136,
             "sha256": "a44b2cdda5fad2d1dbd8bdecbdaadcf4cd8eb83fc0b784a87f5ab4c75efe6ec6"
           },
-          "start": 877,
-          "stop": 879
+          "start": 880,
+          "stop": 882
         },
         {
           "new": "    consider(v)\n",
@@ -19481,8 +20777,8 @@
             "bytes": 86,
             "sha256": "363c45a0254018a2c27b7ad5446bf2e1d4c86d49153b6b3f3f5252f97c9e875d"
           },
-          "start": 1040,
-          "stop": 1041
+          "start": 1043,
+          "stop": 1044
         },
         {
           "new": "   and (session.isCurrentHuman == nil or session.isCurrentHuman(other) == true) then\n",
@@ -19495,8 +20791,8 @@
             "bytes": 130,
             "sha256": "11c8e174ef5698ec7c6f85985741d401910b93d22896524318215a11d1644ff7"
           },
-          "start": 1049,
-          "stop": 1051
+          "start": 1052,
+          "stop": 1054
         },
         {
           "new": "",
@@ -19509,8 +20805,8 @@
             "bytes": 54,
             "sha256": "89e8f0e299cbdef5ff73098aa849a39a4860004d4ff7d6631a79405ccbaefa23"
           },
-          "start": 1116,
-          "stop": 1117
+          "start": 1119,
+          "stop": 1120
         },
         {
           "new": "  if not safeMove(char,root,spec.distance) then return end\n",
@@ -19523,8 +20819,8 @@
             "bytes": 67,
             "sha256": "46a977f9b10d161ac616b593b0d911ce91754f07aabd59ffcf272be2e9a9f553"
           },
-          "start": 1148,
-          "stop": 1149
+          "start": 1151,
+          "stop": 1152
         },
         {
           "new": "",
@@ -19537,8 +20833,8 @@
             "bytes": 111,
             "sha256": "1ea1173698bd62170616377c2e7d1c5b2e2d8f5ebb5f2cd15786d7e81b33b040"
           },
-          "start": 1156,
-          "stop": 1158
+          "start": 1159,
+          "stop": 1161
         },
         {
           "new": "  spec.radius,spec.damage,JOBS[role].color,spec.shape,true)\n",
@@ -19551,8 +20847,8 @@
             "bytes": 76,
             "sha256": "4ed58ff5e4f038df722abaa5203ca05ea91dc0f269c6e2a868a2538b72cfc276"
           },
-          "start": 1162,
-          "stop": 1163
+          "start": 1165,
+          "stop": 1166
         },
         {
           "new": "",
@@ -19565,8 +20861,8 @@
             "bytes": 77,
             "sha256": "543a1aecdd8fb3739ca7cdf53051029cdbd937daeba8f6451c3a9bd6aa25891f"
           },
-          "start": 1252,
-          "stop": 1253
+          "start": 1255,
+          "stop": 1256
         },
         {
           "new": "",
@@ -19579,8 +20875,8 @@
             "bytes": 220,
             "sha256": "adca7e49328fca0c9d7c1dad5d7db700364db510ee9ebaedff5edee38e011f47"
           },
-          "start": 1255,
-          "stop": 1258
+          "start": 1258,
+          "stop": 1261
         },
         {
           "new": "        if h.Parent and h.WalkSpeed==windSpeed then h.WalkSpeed=oldSpeed end\n",
@@ -19593,8 +20889,8 @@
             "bytes": 101,
             "sha256": "e82503accd94cd1dc5a4a6caf8a465bd5fcd181ab4ece425fdb1a6c7d26c0024"
           },
-          "start": 1272,
-          "stop": 1273
+          "start": 1275,
+          "stop": 1276
         },
         {
           "new": " if c then c:SetAttribute(\"EGGRUMBLE_GiantFeedUntil\",0) end\n",
@@ -19607,8 +20903,8 @@
             "bytes": 190,
             "sha256": "4898a3a9ed18fde02447fa5d6afbca7e7c28bad904734699f2af30d1c1c7d8a6"
           },
-          "start": 1560,
-          "stop": 1565
+          "start": 1563,
+          "stop": 1568
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_SevenRoleCombat"
@@ -19701,8 +20997,8 @@
     },
     "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
       "after": {
-        "bytes": 43552,
-        "sha256": "2f27a24a5a6dc97fabc1dc5f90f547813bdb23c71267011cf66073e14622dbe4"
+        "bytes": 45290,
+        "sha256": "b76bb4178e895f5a883d021d28904327b82bc205e359004a2f537b89d69a524c"
       },
       "before": {
         "bytes": 38508,
@@ -19865,6 +21161,76 @@
           "stop": 393
         },
         {
+          "new": " -- Ordinary wand contact has its own horizontal approach; the original impact circle keeps its aim and height.\n local function closeWandTest(pose:CFrame?,center:Vector3,radius:number):((Vector3)->boolean)?\n  if not pose or radius~=5 then return nil end\n  local look=pose.LookVector\n  local length=math.sqrt(look.X*look.X+look.Z*look.Z)\n  if length<.01 then return nil end\n  local ux,uz=look.X/length,look.Z/length\n  local start=pose.Position\n  -- At this point a level radius-five circle already covers the full two-stud half-width.\n  -- The existing neutral-only weapon pickup adds at most 3.5 to the wand's 11-stud reach.\n  local limit=math.min((center-start).Magnitude,14.5)-math.sqrt(21)\n  return function(target:Vector3):boolean\n   if math.abs(target.Y-start.Y)>5 then return false end\n   local x,z=target.X-start.X,target.Z-start.Z\n   local forward=x*ux+z*uz\n   return forward>=1 and forward<=limit and math.abs(z*ux-x*uz)<=math.min(2,forward*.5)\n  end\n end\n\n local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string,wandPose:CFrame?):number\n",
+          "new_identity": {
+            "bytes": 1106,
+            "sha256": "1c56bdd9654205cd7e7705f0a7546979ec3c3bdd7d9e5e7195832232a9a2c63e"
+          },
+          "old": " local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number\n",
+          "old_identity": {
+            "bytes": 123,
+            "sha256": "36f5e6750b94ffc1f4d60a1e9245ad6eb163e56d14d9c9331512a40d13ef6e41"
+          },
+          "start": 482,
+          "stop": 483
+        },
+        {
+          "new": "  local closeWand=closeWandTest(wandPose,at,radius)\n",
+          "new_identity": {
+            "bytes": 52,
+            "sha256": "ce49d5c461e0bc1003e095aaeab364d9086e6cabd2d753d1047b5946e63041b9"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 486,
+          "stop": 486
+        },
+        {
+          "new": "  local approach=if closeWand then {} else nil\n",
+          "new_identity": {
+            "bytes": 47,
+            "sha256": "cc4f002fc91c7fc51a1fb7dc164fb5ae16229a0732e9af69e1fca2c2555a1f3c"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 487,
+          "stop": 487
+        },
+        {
+          "new": "    elseif approach and closeWand and closeWand(m.PrimaryPart.Position) then\n     table.insert(approach,{target=h,dist=dis})\n",
+          "new_identity": {
+            "bytes": 125,
+            "sha256": "b485b460c046155d366c47add34f9baa758ca8091098f9817eaead36c6587985"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 493,
+          "stop": 493
+        },
+        {
+          "new": "  local function nearer(x,y)return x.dist<y.dist end\n  table.sort(nearest,nearer)\n  -- Keep original candidates first even when tilted; only remaining ray slots can reach approach targets.\n  if approach and #approach>0 and #nearest<MAX_LOS_RAYS_PER_ATTACK then\n   table.sort(approach,nearer)\n   local remaining=MAX_LOS_RAYS_PER_ATTACK-#nearest\n   table.move(approach,1,math.min(remaining,#approach),#nearest+1,nearest)\n  end\n",
+          "new_identity": {
+            "bytes": 425,
+            "sha256": "ae62aad19dae4898f06b014ddcb53440f6eed4757e8e0b0c8d1b27444a3e8c83"
+          },
+          "old": "  table.sort(nearest,function(x,y)return x.dist<y.dist end)\n",
+          "old_identity": {
+            "bytes": 60,
+            "sha256": "e168725cf20218580a8ae5a1b013eead4c609c0f7243dd6b74681cca02551247"
+          },
+          "start": 496,
+          "stop": 497
+        },
+        {
           "new": "    local directUser=currentHumanForId(id)\n",
           "new_identity": {
             "bytes": 43,
@@ -19893,32 +21259,46 @@
           "stop": 523
         },
         {
-          "new": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n",
+          "new": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?,wandBasic:boolean?):number\n   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
           "new_identity": {
-            "bytes": 104,
-            "sha256": "218118c4b77ba8a523880b4d4d3b3eda48397ab5adf0a63c61c72e6f9952aff8"
+            "bytes": 303,
+            "sha256": "112c2ff40b1dce4fc0542db2f58208524d3007f0f37d8854e76feefcdc41e21c"
           },
-          "old": "",
+          "old": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n",
           "old_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            "bytes": 103,
+            "sha256": "b0611d90408de85cf149afde09c3dad26f69d5211efbb9259d2767298eee1e7f"
           },
           "start": 604,
-          "stop": 604
+          "stop": 605
         },
         {
-          "new": "   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+          "new": "   local wandPose=if wandBasic==true and shape==\"CRYSTAL\" and player:GetAttribute(\"EGGRUMBLE_Role\")==\"MAGE\"\n    then root.CFrame else nil\n",
           "new_identity": {
-            "bytes": 77,
-            "sha256": "0b70f73ddc70bc5a09a402ed2d87cd72768efab11697fc7cfcce0000cfacb6f2"
+            "bytes": 138,
+            "sha256": "a8877ae56f059d5f96d5170238b400adf4bb2e1644aee1c112834511714e38dd"
           },
           "old": "",
           "old_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 605,
-          "stop": 605
+          "start": 616,
+          "stop": 616
+        },
+        {
+          "new": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\",wandPose)\n",
+          "new_identity": {
+            "bytes": 75,
+            "sha256": "ce4c09f68cd30e65d8a209251286f5792d2c95cbdd432637e6bf2f77125df754"
+          },
+          "old": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\")\n",
+          "old_identity": {
+            "bytes": 66,
+            "sha256": "9f36ae95a9ed29fe459893e8312c46f86bf5131fceecdecc5c173f723a302516"
+          },
+          "start": 617,
+          "stop": 618
         },
         {
           "new": "    local user=currentHumanForId(ownerId)\n",
@@ -20091,6 +21471,76 @@
           "stop": 501
         },
         {
+          "new": " local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number\n",
+          "new_identity": {
+            "bytes": 123,
+            "sha256": "36f5e6750b94ffc1f4d60a1e9245ad6eb163e56d14d9c9331512a40d13ef6e41"
+          },
+          "old": " -- Ordinary wand contact has its own horizontal approach; the original impact circle keeps its aim and height.\n local function closeWandTest(pose:CFrame?,center:Vector3,radius:number):((Vector3)->boolean)?\n  if not pose or radius~=5 then return nil end\n  local look=pose.LookVector\n  local length=math.sqrt(look.X*look.X+look.Z*look.Z)\n  if length<.01 then return nil end\n  local ux,uz=look.X/length,look.Z/length\n  local start=pose.Position\n  -- At this point a level radius-five circle already covers the full two-stud half-width.\n  -- The existing neutral-only weapon pickup adds at most 3.5 to the wand's 11-stud reach.\n  local limit=math.min((center-start).Magnitude,14.5)-math.sqrt(21)\n  return function(target:Vector3):boolean\n   if math.abs(target.Y-start.Y)>5 then return false end\n   local x,z=target.X-start.X,target.Z-start.Z\n   local forward=x*ux+z*uz\n   return forward>=1 and forward<=limit and math.abs(z*ux-x*uz)<=math.min(2,forward*.5)\n  end\n end\n\n local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string,wandPose:CFrame?):number\n",
+          "old_identity": {
+            "bytes": 1106,
+            "sha256": "1c56bdd9654205cd7e7705f0a7546979ec3c3bdd7d9e5e7195832232a9a2c63e"
+          },
+          "start": 590,
+          "stop": 610
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  local closeWand=closeWandTest(wandPose,at,radius)\n",
+          "old_identity": {
+            "bytes": 52,
+            "sha256": "ce49d5c461e0bc1003e095aaeab364d9086e6cabd2d753d1047b5946e63041b9"
+          },
+          "start": 613,
+          "stop": 614
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  local approach=if closeWand then {} else nil\n",
+          "old_identity": {
+            "bytes": 47,
+            "sha256": "cc4f002fc91c7fc51a1fb7dc164fb5ae16229a0732e9af69e1fca2c2555a1f3c"
+          },
+          "start": 615,
+          "stop": 616
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "    elseif approach and closeWand and closeWand(m.PrimaryPart.Position) then\n     table.insert(approach,{target=h,dist=dis})\n",
+          "old_identity": {
+            "bytes": 125,
+            "sha256": "b485b460c046155d366c47add34f9baa758ca8091098f9817eaead36c6587985"
+          },
+          "start": 622,
+          "stop": 624
+        },
+        {
+          "new": "  table.sort(nearest,function(x,y)return x.dist<y.dist end)\n",
+          "new_identity": {
+            "bytes": 60,
+            "sha256": "e168725cf20218580a8ae5a1b013eead4c609c0f7243dd6b74681cca02551247"
+          },
+          "old": "  local function nearer(x,y)return x.dist<y.dist end\n  table.sort(nearest,nearer)\n  -- Keep original candidates first even when tilted; only remaining ray slots can reach approach targets.\n  if approach and #approach>0 and #nearest<MAX_LOS_RAYS_PER_ATTACK then\n   table.sort(approach,nearer)\n   local remaining=MAX_LOS_RAYS_PER_ATTACK-#nearest\n   table.move(approach,1,math.min(remaining,#approach),#nearest+1,nearest)\n  end\n",
+          "old_identity": {
+            "bytes": 425,
+            "sha256": "ae62aad19dae4898f06b014ddcb53440f6eed4757e8e0b0c8d1b27444a3e8c83"
+          },
+          "start": 627,
+          "stop": 635
+        },
+        {
           "new": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
           "new_identity": {
             "bytes": 67,
@@ -20101,8 +21551,8 @@
             "bytes": 43,
             "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
           },
-          "start": 617,
-          "stop": 618
+          "start": 647,
+          "stop": 648
         },
         {
           "new": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
@@ -20115,8 +21565,22 @@
             "bytes": 37,
             "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
           },
-          "start": 630,
-          "stop": 631
+          "start": 660,
+          "stop": 661
+        },
+        {
+          "new": "  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number\n",
+          "new_identity": {
+            "bytes": 103,
+            "sha256": "b0611d90408de85cf149afde09c3dad26f69d5211efbb9259d2767298eee1e7f"
+          },
+          "old": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?,wandBasic:boolean?):number\n   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+          "old_identity": {
+            "bytes": 303,
+            "sha256": "112c2ff40b1dce4fc0542db2f58208524d3007f0f37d8854e76feefcdc41e21c"
+          },
+          "start": 742,
+          "stop": 747
         },
         {
           "new": "",
@@ -20124,27 +21588,27 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  getBattleGrowthSnapshot=function(id:string):any\n   return battleGrowthSnapshot(kills[id] or 0)\n  end,\n",
+          "old": "   local wandPose=if wandBasic==true and shape==\"CRYSTAL\" and player:GetAttribute(\"EGGRUMBLE_Role\")==\"MAGE\"\n    then root.CFrame else nil\n",
           "old_identity": {
-            "bytes": 104,
-            "sha256": "218118c4b77ba8a523880b4d4d3b3eda48397ab5adf0a63c61c72e6f9952aff8"
+            "bytes": 138,
+            "sha256": "a8877ae56f059d5f96d5170238b400adf4bb2e1644aee1c112834511714e38dd"
           },
-          "start": 712,
-          "stop": 715
+          "start": 758,
+          "stop": 760
         },
         {
-          "new": "",
+          "new": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\")\n",
           "new_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            "bytes": 66,
+            "sha256": "9f36ae95a9ed29fe459893e8312c46f86bf5131fceecdecc5c173f723a302516"
           },
-          "old": "   if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end\n",
+          "old": "    root.Position+Vector3.new(0,1,0),character,shape or \"CIRCLE\",wandPose)\n",
           "old_identity": {
-            "bytes": 77,
-            "sha256": "0b70f73ddc70bc5a09a402ed2d87cd72768efab11697fc7cfcce0000cfacb6f2"
+            "bytes": 75,
+            "sha256": "ce4c09f68cd30e65d8a209251286f5792d2c95cbdd432637e6bf2f77125df754"
           },
-          "start": 716,
-          "stop": 717
+          "start": 761,
+          "stop": 762
         },
         {
           "new": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
@@ -20157,8 +21621,8 @@
             "bytes": 42,
             "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
           },
-          "start": 882,
-          "stop": 883
+          "start": 914,
+          "stop": 915
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_SwarmCombat"

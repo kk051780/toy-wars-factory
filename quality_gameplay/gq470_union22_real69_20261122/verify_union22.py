@@ -429,7 +429,7 @@ def verify_art_polish_donors(root, art):
         row = inputs[name]
         return visual_author(row["path"], row["identity"], "ART_POLISH_AUTHOR_" + name)
 
-    current = root / "sources"
+    current = root / compose.MAGE_CONTACT_OFF / "sources"
     prior = root / compose.ART_POLISH_OFF / "sources"
     routes = sorted(art["rows"])
     guard, field, twin, result, skill = routes
@@ -467,6 +467,25 @@ def verify_art_polish_donors(root, art):
     require(expected == actual[result], "ART_POLISH_RESULT_EXACT")
 
 
+def verify_mage_contact_donor(root, mage):
+    author = mage["author_patch"]
+    patch = REPO / author["path"]
+    require(digest(read(patch)) == author["identity"], "MAGE_CONTACT_AUTHOR_PATCH")
+    prior = root / compose.MAGE_CONTACT_OFF / "sources"
+    with tempfile.TemporaryDirectory(prefix="union22-mage-author-") as directory:
+        base = Path(directory) / "patch"
+        for relative in compose.MAGE_CONTACT_SOURCES:
+            target = base / "sources" / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(read(prior / relative))
+        operation = ["git", "-c", "core.autocrlf=false", "apply", "--no-index", "--directory=sources", str(patch)]
+        result = subprocess.run(operation, cwd=base, env={**os.environ, "GIT_CEILING_DIRECTORIES": directory},
+                                capture_output=True, timeout=20)
+        require(result.returncode == 0, "MAGE_CONTACT_AUTHOR_PATCH_FAILED:" + result.stderr.decode(errors="replace"))
+        require(all(read(base / "sources" / relative) == read(root / "sources" / relative)
+                    for relative in compose.MAGE_CONTACT_SOURCES), "MAGE_CONTACT_AUTHOR_PATCH_DRIFT")
+
+
 def verify_core(root, base, reports, context):
     lock = compose.load_lock()
     root = Path(root).resolve()
@@ -502,9 +521,15 @@ def verify_core(root, base, reports, context):
     combat = lock["combat_visual_followup"]
     growth = lock["growth_musou_followup"]
     art_polish = lock["art_polish_followup"]
+    mage = lock["mage_contact_followup"]
+    require(set(mage["rows"]) == set(compose.MAGE_CONTACT_SOURCES), "MAGE_CONTACT_SOURCE_SET")
+    expected_mage_off, mage_off_lock, mage_off = verify_source_rollback(
+        root, root, lock, current, mage, mage["rows"], art_polish["repaired_place"],
+        compose.MAGE_CONTACT_OFF, compose.MAGE_CONTACT_OFF_ARCHIVE, "MAGE_CONTACT")
+    verify_mage_contact_donor(root, mage)
     require(set(art_polish["rows"]) == set(compose.ART_POLISH_SOURCES), "ART_POLISH_SOURCE_SET")
     expected_art_off, art_off_lock, art_off = verify_source_rollback(
-        root, root, lock, current, art_polish, art_polish["rows"], growth["repaired_place"],
+        root, root / compose.MAGE_CONTACT_OFF, mage_off_lock, mage_off, art_polish, art_polish["rows"], growth["repaired_place"],
         compose.ART_POLISH_OFF, compose.ART_POLISH_OFF_ARCHIVE, "ART_POLISH")
     verify_art_polish_donors(root, art_polish)
     require(set(growth["rows"]) == set(compose.GROWTH_MUSOU_SOURCES), "GROWTH_MUSOU_SOURCE_SET")
@@ -640,6 +665,8 @@ def verify_core(root, base, reports, context):
         "growth_musou_rollback_archive": digest(read(root / compose.GROWTH_MUSOU_OFF_ARCHIVE)),
         "art_polish_followup": art_polish,
         "art_polish_rollback_archive": digest(read(root / compose.ART_POLISH_OFF_ARCHIVE)),
+        "mage_contact_followup": mage,
+        "mage_contact_rollback_archive": digest(read(root / compose.MAGE_CONTACT_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -650,7 +677,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 33 and core.get("unchanged_sources") == 36
-            and core.get("compile_count") == 170 and core.get("rojo_build_count") == 19
+            and core.get("compile_count") == 172 and core.get("rojo_build_count") == 20
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -664,6 +691,7 @@ def verify_core(root, base, reports, context):
             and core.get("combat_visual_parent_place") == combat_off_lock["final_place"]
             and core.get("growth_musou_parent_place") == growth_off_lock["final_place"]
             and core.get("art_polish_parent_place") == art_off_lock["final_place"]
+            and core.get("mage_contact_parent_place") == mage_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -721,6 +749,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.GROWTH_MUSOU_OFF_ARCHIVE] = digest(read(root / compose.GROWTH_MUSOU_OFF_ARCHIVE))
     expected_stage.update({compose.ART_POLISH_OFF + "/" + name: pin for name, pin in expected_art_off.items()})
     expected_stage[compose.ART_POLISH_OFF_ARCHIVE] = digest(read(root / compose.ART_POLISH_OFF_ARCHIVE))
+    expected_stage.update({compose.MAGE_CONTACT_OFF + "/" + name: pin for name, pin in expected_mage_off.items()})
+    expected_stage[compose.MAGE_CONTACT_OFF_ARCHIVE] = digest(read(root / compose.MAGE_CONTACT_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -729,11 +759,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 189 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 192 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 170 and len(rojo_commands) == 19, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 172 and len(rojo_commands) == 20, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -752,6 +782,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.GROWTH_MUSOU_SOURCES)
     expected_compile.update(str(Path(stage) / compose.ART_POLISH_OFF / "sources" / name)
                             for name in compose.ART_POLISH_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.MAGE_CONTACT_OFF / "sources" / name)
+                            for name in compose.MAGE_CONTACT_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -773,7 +805,7 @@ def verify_core(root, base, reports, context):
                                compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
                                compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
-                               compose.ART_POLISH_OFF)},
+                               compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -795,7 +827,9 @@ def verify_core(root, base, reports, context):
                         compose.GROWTH_MUSOU_OFF: [name for name in lock["sources"]
                                                 if name in compose.GROWTH_MUSOU_SOURCES],
                         compose.ART_POLISH_OFF: [name for name in lock["sources"]
-                                               if name in compose.ART_POLISH_SOURCES]}
+                                               if name in compose.ART_POLISH_SOURCES],
+                        compose.MAGE_CONTACT_OFF: [name for name in lock["sources"]
+                                                 if name in compose.MAGE_CONTACT_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1416,6 +1450,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["mage_contact_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["art_polish_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["growth_musou_followup"]["rows"].items()
@@ -1736,6 +1772,21 @@ def verify_art_polish_skillfx(native, root, lock, build, aggregate, context):
     return expected, {"art_polish_skillfx/" + name for name in contract.FILES}
 
 
+def verify_mage_contact_native(native, root, lock, build, aggregate, context):
+    folder = native / "mage_contact"
+    sys.path.insert(0, str(HERE / "native"))
+    try:
+        from mage_contact_native import collect
+
+        expected, evidence = collect(root, folder, build["binary_before_suites"], context, lock, compose)
+    finally:
+        sys.path.pop(0)
+    receipt = folder / "receipt.json"
+    require(set(files(folder)) == evidence and data(receipt) == expected
+            and digest(read(receipt)) == aggregate["mage_contact"], "MAGE_CONTACT_EXACT_RECEIPT")
+    return expected, {"mage_contact/" + name for name in evidence}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1798,7 +1849,7 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 54 and aggregate.get("native_evidence_file_count") == 213,
+            and aggregate.get("native_process_count") == 92 and aggregate.get("native_evidence_file_count") == 290,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -1884,8 +1935,10 @@ def verify_native(native, root, lock, context):
     expected_files |= growth_files
     art_polish_skillfx, skillfx_files = verify_art_polish_skillfx(native, root, lock, build, aggregate, context)
     expected_files |= skillfx_files
+    mage_contact, mage_files = verify_mage_contact_native(native, root, lock, build, aggregate, context)
+    expected_files |= mage_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 213 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 290 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -1899,6 +1952,7 @@ def verify_native(native, root, lock, context):
             "combat_visual": combat_visual,
             "growth_musou": growth_musou,
             "art_polish_skillfx": art_polish_skillfx,
+            "mage_contact": mage_contact,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1941,6 +1995,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.GUARDIAN_WALL_OFF_ARCHIVE, compose.COMBAT_VISUAL_OFF_ARCHIVE,
                             compose.GROWTH_MUSOU_OFF_ARCHIVE,
                             compose.ART_POLISH_OFF_ARCHIVE,
+                            compose.MAGE_CONTACT_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2032,6 +2087,10 @@ def admit_delivery(root, base, reports, native, context):
             "art_polish_inverse_place": verified["lock"]["art_polish_followup"]["parent_place"],
             "art_polish_inverse_archive": digest(read(root / compose.ART_POLISH_OFF_ARCHIVE)),
             "art_polish_inverse_archive_members": 71,
+            "mage_contact_followup": verified["lock"]["mage_contact_followup"],
+            "mage_contact_inverse_place": verified["lock"]["mage_contact_followup"]["parent_place"],
+            "mage_contact_inverse_archive": digest(read(root / compose.MAGE_CONTACT_OFF_ARCHIVE)),
+            "mage_contact_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -2054,6 +2113,7 @@ def admit_delivery(root, base, reports, native, context):
             "combat_visual": runtime["combat_visual"],
             "growth_musou": runtime["growth_musou"],
             "art_polish_skillfx": runtime["art_polish_skillfx"],
+            "mage_contact": runtime["mage_contact"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

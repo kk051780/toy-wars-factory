@@ -38,7 +38,8 @@ INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
 def restore_combat(on, lock):
-    return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(on, lock)))
+    mage_off = compose.mage_contact_parent(on, lock)
+    return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(*mage_off)))
 
 
 def restore_canyon(on, lock):
@@ -51,6 +52,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["mage_contact_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["art_polish_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["growth_musou_followup"]["rows"].items()
@@ -330,8 +333,15 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        polish_off, polish_lock = compose.art_polish_parent(final, self.lock)
-        self.assertEqual({name for name in polish_off if polish_off[name] != final[name]},
+        mage_off, mage_lock = compose.mage_contact_parent(final, self.lock)
+        self.assertEqual({name for name in mage_off if mage_off[name] != final[name]},
+                         set(compose.MAGE_CONTACT_SOURCES))
+        self.assertEqual(mage_lock["final_place"], self.lock["art_polish_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.ART_POLISH_OFF_ARCHIVE, root / compose.MAGE_CONTACT_OFF_ARCHIVE)
+        self.reject_core(root)
+        polish_off, polish_lock = compose.art_polish_parent(mage_off, mage_lock)
+        self.assertEqual({name for name in polish_off if polish_off[name] != mage_off[name]},
                          set(compose.ART_POLISH_SOURCES))
         self.assertEqual(polish_lock["final_place"], self.lock["growth_musou_followup"]["repaired_place"])
         root = self.current_copy()
@@ -1473,7 +1483,9 @@ class UnionOfflineContract(unittest.TestCase):
         combat = self.lock["combat_visual_followup"]
         growth = self.lock["growth_musou_followup"]
         polish = self.lock["art_polish_followup"]
-        growth_sources = self.lock["sources"] | {name: row["parent"] for name, row in polish["rows"].items()}
+        mage = self.lock["mage_contact_followup"]
+        polish_sources = self.lock["sources"] | {name: row["parent"] for name, row in mage["rows"].items()}
+        growth_sources = polish_sources | {name: row["parent"] for name, row in polish["rows"].items()}
         combat_sources = growth_sources | {name: row["parent"] for name, row in growth["rows"].items()}
         wall_sources = combat_sources | {name: row["parent"] for name, row in combat["rows"].items()}
         visual_sources = wall_sources | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
@@ -1511,7 +1523,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(wall["repaired_place"], combat["parent_place"])
         self.assertEqual(combat["repaired_place"], growth["parent_place"])
         self.assertEqual(growth["repaired_place"], polish["parent_place"])
-        self.assertEqual(polish["repaired_place"], self.lock["final_place"])
+        self.assertEqual(polish["repaired_place"], mage["parent_place"])
+        self.assertEqual(mage["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(mage["rows"]), set(compose.MAGE_CONTACT_SOURCES))
         self.assertEqual(set(polish["rows"]), set(compose.ART_POLISH_SOURCES))
         self.assertEqual(set(growth["rows"]), set(compose.GROWTH_MUSOU_SOURCES))
         self.assertEqual(set(combat["rows"]), set(compose.COMBAT_VISUAL_SOURCES))
