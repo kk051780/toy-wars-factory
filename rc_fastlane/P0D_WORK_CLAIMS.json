@@ -2565,6 +2565,69 @@
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
         }
+      },
+      "source_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
+      "prepared_candidate_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
+      "prepared_candidate_tree": "51233be95fc02cd0fc7e4c239171d7286da2e1b7",
+      "prepared_source_blobs": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "1218ceb0bd9eec434906d4662512d7c44defc452",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "7e60daff49eecb6d2417b5f9877dd7a0ec496b16",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "d820f685c22d9064a197568a26b0a473960624bd",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "bf9943173d77106190db81715d25854969d9a969",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "3f7ee23956b4e9131053b6a4ccb674562f2157ad",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "0a973e5454e64e47fd5bd824f2a86433e68561cf",
+        "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py": "ab7896afb48c683518c93e56e8f60c56a9674f02",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau": "366e254408030afea3a002a20070a15c38a8c8c2",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau": "5056a296e88f96393c60b24c1b971bff0e534c3d",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py": "f568c359cee1b3479b2df4f83d1bab9ccbf993cb",
+        "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json": "685b9ae878e4ff34a046e0d8be45a954b8ca05a1",
+        "tests/test_gq470_union22_real69_20261122.py": "99ed1e6a35f3c43c53edeca49859bb65528560f0",
+        "tests/test_gq487_relay_score_real69_20261122.py": "92d714e899be25aa23817cfd149ca17c94d3b622"
+      },
+      "actual_candidate_readback": {
+        "pr": 1017,
+        "head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
+        "tree": "51233be95fc02cd0fc7e4c239171d7286da2e1b7",
+        "base": "cc6fed686214596eb717cc5827856311338999ad",
+        "source_lease": "73f989dc08e83d3a3c871d5678bd3184f608a501",
+        "original_source_preserved": "547fd7d56ef0c1e0a688135e789df0f79e0358c6",
+        "paths": 13
+      },
+      "local_native_score": {
+        "legacy_specs": 123,
+        "rule_sequences": 5,
+        "old_control_rejected": true,
+        "new_positive_score": [
+          320,
+          490
+        ],
+        "roundtrip_score": [
+          490,
+          320
+        ]
+      },
+      "candidate_place": {
+        "bytes": 832059,
+        "sha256": "8566439a006f4d0193ffd6c415574ed20e17878b31f510b5822b457bab143d9d"
+      },
+      "rollback_place": {
+        "bytes": 831348,
+        "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
+      },
+      "actual_binding_lease": {
+        "ref": "98a0fe670b4d62df167f8a7f6a787e42f09c5f68",
+        "blob": "89a3454d7ea1ac44d794e8123d4fcf7cc1d47f0f",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "e84dcfd3-3c78-4893-ad58-e415b35ff3b6",
+          "task_id": null,
+          "epoch": 785,
+          "acquired_at": "2026-11-27T01:24:23.151Z",
+          "expires_at": "2026-11-27T01:54:23.151Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
       }
     },
     {
