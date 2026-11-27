@@ -43145,7 +43145,7 @@
     {
       "claim_id": "P0D-GQ470-FB011-FB015-PRIVATE-SHOREFOAM-942-20261128",
       "feature_id": "GQ470_FB011_FB015_LSS_SHORE_FOAM_FACETS_REAL69_20261121",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 470,
@@ -43160,7 +43160,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Preserve and reuse exact author #942 six decorative foam shapes, only the one existing PRIVATE REAL69 LandSeaSkyTraversal source. Keep dock space, parts 6-to-6, no physics/interaction/gameplay changes, unchanged 68 selected sources and prior 23 rollback archives. Current route LOS and vehicle sweep ignore noncollidable decoration; no ACTIVE paths. #250 source conditions and V3.5 engine/ART pending.",
       "resources": [
@@ -43446,7 +43446,7 @@
         "operation_id": "7a7f28f4-4e6c-48a1-ad51-d804bf42f189"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "f9412f6931cd0153e56bd0955f9e780381702ad4",
         "permitted_head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
@@ -43477,7 +43477,36 @@
           "review": 6093186236,
           "trusted_queue_run": 46065759493,
           "trusted_queue_job": 140730546992
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "6612dae7d25306919a70a299784542aac9fa02bb",
+        "writer_return": "739d541350609d0c8c8d07d334fd7af4d95abbcb",
+        "adopted_head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "adopted_at": "2026-11-27T20:46:56.358Z"
+      },
+      "actual_official_rc": {
+        "head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "previous": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
+        "active_baseline_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46065951776,
+        "private_job": 140731176941,
+        "private_steps": 48,
+        "private_artifact": 15230902127,
+        "private_zip_bytes": 27304097,
+        "private_zip_digest": "sha256:050287c61726c2333b4638cec7717b486ff31a1f707c93be1d18a980ea23e69e",
+        "private_place_bytes": 895840,
+        "private_place_sha256": "805cea73d632b54629c3cd775efa2aff284e2d98601725de3662af7379d493ef",
+        "private_off_place_bytes": 895073,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7227960360",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -43488,7 +43517,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 364,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1048,
       "base_rc_sha": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
       "base_rc_tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
       "prep_branch": "quality/gq470-private-fb003-team-win-gate-20261128",
@@ -43549,7 +43578,7 @@
       },
       "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq470-private-fb003-team-win-gate-20261128",
         "formal_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
         "tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
@@ -43643,6 +43672,92 @@
           "old_guard_boundary_negatives": 6,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "5000f077dc900000aa772092b085f930ef503e89",
+      "prepared_candidate_head": "5000f077dc900000aa772092b085f930ef503e89",
+      "prepared_candidate_tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "33844a658502e1243a10e3c991edfb438637d8b7",
+          "bytes": 67608
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "b2d3ad21cbcd540b53fb47735d6333abe28ba590",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "7a725db920425f856e2cc6a26f4ddf8f814d8939",
+          "bytes": 10330
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "b2ff1cf386a02630a2515f231d6dd101db1c8381",
+          "bytes": 7689
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "99cc053fa5bde3794346f404bd80e4d624ee2cff",
+          "bytes": 21749
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "15219ec90f874bfa30c62d04ca88114cfa2baf48",
+          "bytes": 53286
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py",
+          "mode": "100644",
+          "blob": "efd9785a39fdccdcc3eb7dd6eb0884da78f25de9",
+          "bytes": 3418
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_scene.luau",
+          "mode": "100644",
+          "blob": "6030abf25c20afb0986ed4cecb5aa1f24f410b30",
+          "bytes": 1585
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "5c75f81ad10a6a7eaf70b4a94050186f8685e392",
+          "bytes": 1700692
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "2bb79b25cea512768dc2df8e6d8db36ee4498b93",
+          "bytes": 162661
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "4321be320868b99336e9fa5808d8341071697936",
+          "bytes": 125890
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1048,
+        "exact_head": "5000f077dc900000aa772092b085f930ef503e89",
+        "exact_tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
+        "exact_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "5863ee7040701f1929d9e4079844c99d50b8897a",
+        "source_lease_return": "515b756144716c6d86cca5933f42f9600ae53a97",
+        "prepared_at": "2026-11-27T20:58:55.945Z"
+      },
+      "actual_binding_lease": {
+        "commit": "f3a2fe0858c1c01394ccc9401bb283eb7e83ed25",
+        "operation_id": "4dc09999-97d5-4c8d-bbc1-1d725229fbb4"
       }
     }
   ],
