@@ -36587,12 +36587,12 @@
         "ACTIVE_RICH51_SKY_RETURN"
       ],
       "target_paths": [
-        "rc_fastlane/apply_active_sky_routes.py",
-        "rc_fastlane/apply_wcs_f01_c01.py",
         "rc_fastlane/features/active_sky_routes/H1FunWorld.server.luau",
         "rc_fastlane/features/active_sky_routes/WCS_CrystalCanyon.server.luau",
         "rc_fastlane/features/active_sky_routes/source_lock.json",
-        "tests/test_gq470_union22_real69_20261122.py"
+        "tests/test_gq470_union22_real69_20261122.py",
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_sky_routes.py"
       ],
       "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/910#issuecomment-7156417269",
       "independent_reviewer_context": "/root/p0_offer_review26",
@@ -36680,22 +36680,10 @@
           "compile": 132
         }
       },
-      "source_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
-      "prepared_candidate_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
-      "prepared_candidate_tree": "5947455c6f979b54bf3fb5908f8c9f82762a2c07",
+      "source_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+      "prepared_candidate_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+      "prepared_candidate_tree": "a504747453e9f2a1df088884cfe3708e648c644f",
       "source_blob_submissions": [
-        {
-          "path": "rc_fastlane/apply_active_sky_routes.py",
-          "mode": "100644",
-          "blob": "004c72e80155a511a8e603e0f5c225af5bf3c1de",
-          "bytes": 3890
-        },
-        {
-          "path": "rc_fastlane/apply_wcs_f01_c01.py",
-          "mode": "100644",
-          "blob": "9f0c08e2b8070553ce68d86a4dacaa2a765cee5a",
-          "bytes": 5644
-        },
         {
           "path": "rc_fastlane/features/active_sky_routes/H1FunWorld.server.luau",
           "mode": "100644",
@@ -36719,23 +36707,36 @@
           "mode": "100644",
           "blob": "b5bd017ed2fdfe7295cefbb1cf7d9358e896b439",
           "bytes": 108821
+        },
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "226895f74bf2cd5b34735091d3d230b962a836f3",
+          "bytes": 204501
+        },
+        {
+          "path": "rc_fastlane/apply_active_sky_routes.py",
+          "mode": "100644",
+          "blob": "f225466d3986a537bada094cdf9b4c7e3a34b71f",
+          "bytes": 4428
         }
       ],
       "actual_candidate_readback": {
         "pr": 1041,
-        "exact_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
-        "exact_tree": "5947455c6f979b54bf3fb5908f8c9f82762a2c07",
+        "exact_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "exact_tree": "a504747453e9f2a1df088884cfe3708e648c644f",
         "exact_parent": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
-        "source_lease": "6b8790e27d083c871b0047e66f0da487d159bdf7",
-        "source_lease_return": "142eb9a89edb8189b788662e6952bd545e9bb590",
-        "prepared_at": "2026-11-27T11:58:22.716Z"
+        "prior_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
+        "source_lease": "231a4eff776c47d20a661540f9bc630433a9b020",
+        "source_lease_return": "78743ca978798978d7af89771f40d4551b7ec0d1",
+        "prepared_at": "2026-11-27T12:07:00.686Z"
       },
       "actual_binding_lease": {
-        "commit": "e4d6ea6b2a7dceaa1e51200e152a1a6e2cabc59f",
-        "operation_id": "6e2370d8-aebb-4346-914a-461d73993570"
+        "commit": "e98e6a141ee4593bfa4a1c78b82e78728ed74784",
+        "operation_id": "6d088b0c-ea6d-4aaf-9c74-7cacf121e6c7"
       },
       "qa_correction_grant": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "status": "CONSUMED_EXACT_BUILDER_ISOLATION",
         "permitted_pr": 1041,
         "branch": "quality/gq910-active-sky-routes-20261127",
         "prior_remote_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
@@ -36774,7 +36775,10 @@
         },
         "grant_lease": "377b868aa5255d9367207707ade6278e7aa9a1eb",
         "grant_operation": "4cf5ccfe-6961-4bf6-9198-8ea3345d33b8",
-        "expires_at": "2026-11-27T13:04:10.732Z"
+        "expires_at": "2026-11-27T13:04:10.732Z",
+        "applied_head": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "applied_lease": "231a4eff776c47d20a661540f9bc630433a9b020",
+        "lease_returned_at_ref": "78743ca978798978d7af89771f40d4551b7ec0d1"
       }
     }
   ],
