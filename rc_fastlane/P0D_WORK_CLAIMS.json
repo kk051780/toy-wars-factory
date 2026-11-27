@@ -2492,7 +2492,7 @@
         "static_Score_build_evaluations": 55,
         "unit_tests": 15
       },
-      "state": "RELEASED_SOURCE_ADOPTION_STUDIO_PENDING",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "sub_scope": "EXISTING_711_RELAY_ACCOUNTING_PREP_TRANSPORT",
       "target_paths": [
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
@@ -2759,13 +2759,24 @@
           "bytes": 831348,
           "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
         },
-        "studio_scope": "IN_PROGRESS",
+        "studio_scope": "PASS_SOLO_DIRECT_RAID_NATURAL_RESULT_LOBBY_PERSONAL_REPLAY",
         "studio_case": "rc1017score27a",
         "studio_pid": 48756,
-        "studio_closure": "PENDING_LOCAL_STUDIO_EXIT",
+        "studio_closure": "STUDIO_CLOSED_VERIFIED",
         "registered_postpush_independent_context": "/root/p0_offer_review26",
         "same_team_relay": "NOT_TESTED",
-        "art_mobile_fun": "NOT_TESTED"
+        "art_mobile_fun": "NOT_TESTED",
+        "studio_proof_sha256": "31b3793052503b40c4972a982bff70d0651bc1c8bb30598344f8cfa96588e5d4",
+        "studio_packet_sha256": "4bdf1065429a12869bf06b8b39bcc388a97b1a52f4a9dcb8e6cb8933e7142c0a",
+        "studio_packet_bytes": 3564064,
+        "studio_packet_github": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE",
+        "direct_points": 490,
+        "native_custody_cases": 5,
+        "lobby_without_input_seconds": 41.031,
+        "owned_pids_closed": [
+          48756,
+          40588
+        ]
       },
       "actual_consumption_metadata_lease": {
         "ref": "32f1fa6cb5ac367735daf0321311397354e9740c",
@@ -2777,6 +2788,21 @@
           "epoch": 794,
           "acquired_at": "2026-11-27T01:49:35.694Z",
           "expires_at": "2026-11-27T02:19:35.694Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "actual_studio_acceptance_metadata_lease": {
+        "ref": "58244e9d38dc436325505db26c249366bdcaf937",
+        "blob": "60965d170cc8c274883658d97928b13b402682ba",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "ef561b19-5661-4bf5-844c-2f9689b337da",
+          "task_id": null,
+          "epoch": 797,
+          "acquired_at": "2026-11-27T02:05:59.669Z",
+          "expires_at": "2026-11-27T02:35:59.669Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
@@ -31613,7 +31639,7 @@
       "base_rc_sha": "7ad4055bd28e6aaf0ba6183796912503812de416",
       "prep_branch": "feature/p0d-relay-presentation-v2-existing-20261127",
       "expected_source_branch": "ABSENT",
-      "allowed_new_prs": 1,
+      "allowed_new_prs": 0,
       "source_scope_granted": false,
       "scope_only": true,
       "source_write_requires_separate_live_source_lease": true,
@@ -31671,7 +31697,56 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Current authenticated OWNER #1011 V2.1 and bounded delegated coordination. Original #894 and #218 evidence are reused; this records expanded local preparation scope, not prior grant or RC authority."
+      "authority_basis": "Current authenticated OWNER #1011 V2.1 and bounded delegated coordination. Original #894 and #218 evidence are reused; this records expanded local preparation scope, not prior grant or RC authority.",
+      "pr": 1036,
+      "source_head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+      "prepared_candidate_head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+      "prepared_candidate_tree": "522d267ad325b5152df17e9268163ba3764f31f5",
+      "prepared_source_blobs": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "3d67b4950a0f14812badc1abb9a3740e78a8a499",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "a02b7e1954ad79ef2169f6a29da335c5b557077d",
+        "quality_gameplay/gq470_union22_real69_20261122/native/relay_presentation_cases.luau": "6f6face05c276fed960ad4e07186adf0aba13498",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "d421ecc6062cc64a2dba8baca2a6980e4660c621",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "229a15ceb73897026a0bf7027bab3b1e2e8bb55e",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "49f679360576496a75819ce6b7ecc6500063e030",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "bab43d6b9589188cea28742099757e6d66fb1dac",
+        "tests/test_gq470_union22_real69_20261122.py": "492492e17a2834b973a45430062a9c8820e75f6a"
+      },
+      "actual_candidate_readback": {
+        "pr": 1036,
+        "head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "tree": "522d267ad325b5152df17e9268163ba3764f31f5",
+        "base": "7ad4055bd28e6aaf0ba6183796912503812de416",
+        "source_lease": "9b9911de30728ad5792f1fcd2515dd248d5c322e",
+        "paths": 8
+      },
+      "local_native_relay_cases": {
+        "client": 22,
+        "host": 1
+      },
+      "candidate_place": {
+        "bytes": 842005,
+        "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+      },
+      "rollback_place": {
+        "bytes": 832059,
+        "sha256": "8566439a006f4d0193ffd6c415574ed20e17878b31f510b5822b457bab143d9d"
+      },
+      "actual_binding_lease": {
+        "ref": "58244e9d38dc436325505db26c249366bdcaf937",
+        "blob": "60965d170cc8c274883658d97928b13b402682ba",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "ef561b19-5661-4bf5-844c-2f9689b337da",
+          "task_id": null,
+          "epoch": 797,
+          "acquired_at": "2026-11-27T02:05:59.669Z",
+          "expires_at": "2026-11-27T02:35:59.669Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
