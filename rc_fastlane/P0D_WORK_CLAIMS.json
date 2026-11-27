@@ -40546,7 +40546,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Current rich51 real #297 existing seven-role PvE path, mount fixed #219 WARRIOR-001 mechanical vertical slice for explicitly selected WARRIOR, 180 active sec Lv1, S0–4 6/7/8/9/10 reach and 2/3/4/5/6 neutral caps, CD15/energy30/100 and old Game/Horde/Remote authority. Author TimePremiumRules naturalGrowth exact reuse; time premium not activated. Game/HUD/Horde and two modules only, PRIVATE unchanged, no ART/device acceptance.",
       "resources": [
@@ -40759,6 +40759,72 @@
       "actual_binding_lease": {
         "commit": "f742b6137f2eeb3ee03d15f0194d0c5610f4aef6",
         "operation_id": "bf3d53b6-a32d-4433-9454-930ea9bfcbc8"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/297#pullrequestreview-6091612054",
+        "review_id": 6091612054,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46041172211,
+        "active_job": 140648980417,
+        "active_executed_steps": 95,
+        "active_place_bytes": 687144,
+        "active_place_sha256": "4efab0dc6dffd4d5ca488ae5e78375b5a371c733ab334e8803c70d0a8818a7db",
+        "immediate_off_bytes": 674623,
+        "active_artifact": 15219912193,
+        "active_zip_bytes": 209607,
+        "active_zip_digest": "sha256:e0698dbd6ccb0c4c39c10fd45802c09306ba786753fe0f9596a7072106c942b6",
+        "private_ci": 46041172205,
+        "private_job": 140648980069,
+        "private_steps": 48,
+        "private_artifact": 15219922857,
+        "private_zip_bytes": 25667474,
+        "private_zip_digest": "sha256:9a21ab0345d80ace1412965653e4c18f1e888a0138da2550fc3cd3334f5a079e",
+        "source_lock": "725f7e9746e6d948c85254f897db0ab49c70da20ed2ff54f315b2a64ac81ca9b",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "b2a38c25051e9dc080b046636b8772b4e8a59c7b",
+        "operation_id": "4ea07f91-1f61-4d67-8e11-289c2457b03e"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "permitted_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "permitted_tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+        "permitted_pr": 297,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T17:56:59.054Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Current rich51 real #297 existing seven-role PvE path, mount fixed #219 WARRIOR-001 mechanical vertical slice for explicitly selected WARRIOR, 180 active sec Lv1, S0–4 6/7/8/9/10 reach and 2/3/4/5/6 neutral caps, CD15/energy30/100 and old Game/Horde/Remote authority. Author TimePremiumRules naturalGrowth exact reuse; time premium not activated. Game/HUD/Horde and two modules only, PRIVATE unchanged, no ART/device acceptance.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "b2a38c25051e9dc080b046636b8772b4e8a59c7b",
+          "owner": "4ea07f91-1f61-4d67-8e11-289c2457b03e",
+          "review": 6091612054,
+          "trusted_queue_run": 46043074090,
+          "trusted_queue_job": 140655423676
+        }
       }
     }
   ],
