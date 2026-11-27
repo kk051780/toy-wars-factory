@@ -36999,15 +36999,15 @@
           "host_actual_remote_observer_boundaries": true
         }
       },
-      "source_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
-      "prepared_candidate_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
-      "prepared_candidate_tree": "43555e6a79358ae3100b66e2289f420fd9e6c86f",
+      "source_head": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+      "prepared_candidate_head": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+      "prepared_candidate_tree": "4bca19eaba9e3964fb7509c210dc1d56dcd4555a",
       "source_blob_submissions": [
         {
-          "path": ".github/workflows/p0d-rc-fastlane.yml",
           "mode": "100644",
-          "blob": "b35b7539d60e33450c621845000c3f8c22872a6e",
-          "bytes": 205385
+          "blob": "1291258ac6046c02a9837bde44b9c397f3b67587",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 205571
         },
         {
           "path": "rc_fastlane/apply_active_ready.py",
@@ -37016,22 +37016,22 @@
           "bytes": 4069
         },
         {
+          "mode": "100644",
+          "blob": "959bdf671c75c769af59b21e8a3a2466c7138052",
           "path": "rc_fastlane/features/active_ready/coach_spectator_layout.json",
-          "mode": "100644",
-          "blob": "cd3dee809bd8f4bd5f430b55450cca9c0d0eb6d5",
-          "bytes": 18958
+          "bytes": 19676
         },
         {
+          "mode": "100644",
+          "blob": "daa95c179d6cce72e78f28e514a00f5b65aec209",
           "path": "rc_fastlane/features/active_ready/source_lock.json",
-          "mode": "100644",
-          "blob": "60608022bccde9b6c5d0bbe64bb9b69f786719f8",
-          "bytes": 924
+          "bytes": 1105
         },
         {
-          "path": "rc_fastlane/test_p0_ready_composed_native.py",
           "mode": "100644",
-          "blob": "af7df6f969a0c4593548f7b7009faa30642b9d11",
-          "bytes": 6806
+          "blob": "b0c98ee8730368d467c5a74652b7fe5f3d454084",
+          "path": "rc_fastlane/test_p0_ready_composed_native.py",
+          "bytes": 8230
         },
         {
           "path": "tests/test_gq470_union22_real69_20261122.py",
@@ -37042,19 +37042,20 @@
       ],
       "actual_candidate_readback": {
         "pr": 1042,
-        "exact_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
-        "exact_tree": "43555e6a79358ae3100b66e2289f420fd9e6c86f",
+        "exact_head": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "exact_tree": "4bca19eaba9e3964fb7509c210dc1d56dcd4555a",
         "exact_parent": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
-        "source_lease": "ec7d7182f84b13e4d0fd9d5682db4b38fe03f71c",
-        "source_lease_return": "f877174aded00c1d9f80855eebb316a59b9bff70",
-        "prepared_at": "2026-11-27T12:21:12.427Z"
+        "prior_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
+        "source_lease": "218d3a0478e32e95313656a846658c6d4682aac1",
+        "source_lease_return": "ef539d5c201d55e04781e42a840f0817b76e9c56",
+        "prepared_at": "2026-11-27T12:32:43.457Z"
       },
       "actual_binding_lease": {
-        "commit": "38137c02b97c6cdc3d47d6f507dbb0c1cb56b9a6",
-        "operation_id": "0331c2aa-73f7-4017-8fc9-a6cddecab90a"
+        "commit": "9fb4cc580fd24bded35b3a2cdfb26179b2d0df81",
+        "operation_id": "9ddcfe37-4302-4386-b7e4-a8c43fb0714b"
       },
       "qa_correction_grant": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "status": "CONSUMED_EXACT_SPECTATOR_GUIDANCE",
         "permitted_pr": 1042,
         "branch": "quality/gq910-active-voluntary-ready-20261127",
         "prior_remote_head": "7c54838ea59ce7ceaf7c06a113c465bad3fd0b54",
@@ -37097,7 +37098,10 @@
         },
         "grant_lease": "b962911e7d5716564427d4f782152259bdfc49be",
         "grant_operation": "3954e085-bf83-4409-9142-c6d65635d162",
-        "expires_at": "2026-11-27T13:30:15.181Z"
+        "expires_at": "2026-11-27T13:30:15.181Z",
+        "applied_head": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "applied_lease": "218d3a0478e32e95313656a846658c6d4682aac1",
+        "lease_returned_at_ref": "ef539d5c201d55e04781e42a840f0817b76e9c56"
       }
     }
   ],
