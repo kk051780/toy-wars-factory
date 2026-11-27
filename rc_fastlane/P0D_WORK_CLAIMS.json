@@ -34697,6 +34697,31 @@
         "actual_candidate": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
         "source_lease": "e2b182e5589e6b36b23a1ed2612a4349b70abbb3",
         "source_return": "4d4357cb570d7590e1826ad3c7331148177c56b2"
+      },
+      "evidence_count_correction_grant": {
+        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "pr": 1028,
+        "branch": "quality/gq470-match-growth-817bc984-20261123",
+        "old_candidate": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
+        "formal_parent": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "tree": "7dd71263d1637e2e8a8ed850e36d476c3a750218",
+        "local_head": "d4361b057fdc0d6380735d992e2815104be92c46",
+        "changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "bytes": 50047,
+            "blob": "c0e87e08725eada8139de0a408f24ad956e09db9"
+          }
+        ],
+        "reason": "Existing 105 pre-aggregate files plus 103 newly verified growth evidence files must total 208. Retain exact older count, explicit new count and subsequent 209 inventory, unchanged runtime sources and tests.",
+        "source_runtime_changed": false,
+        "prior_exact_failed_run": 45956097500,
+        "expires_at": "2026-11-27T07:41:25.663Z",
+        "metadata": {
+          "lease": "810c80ca8d21caa8b6baf9898b5c0cd4490a0569",
+          "owner": "9724d4be-bcc3-42f7-8b3b-505a59b1c0a2"
+        }
       }
     }
   ],
