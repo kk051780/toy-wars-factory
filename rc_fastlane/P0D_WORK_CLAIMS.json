@@ -40241,7 +40241,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Continue existing #320 ACTIVE Android HUD work with the actual previously tested #220 local touch layout. One ACTIVE HUD only. Position and size move away from native Jump/Thumbstick and occupied Q/T/R/etc controls, keep #423 HIT/MISS across resizes/ticks and restore PC F. Roles/Game/Remote/score and PRIVATE vector unchanged; actual Android/Studio not tested this head.",
       "resources": [
@@ -40431,6 +40431,72 @@
       "actual_binding_lease": {
         "commit": "175724cd69b7e67012787a9717a0f8a20eebebb8",
         "operation_id": "93ca0e05-851e-4f63-9dcc-c530a1f5174f"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/320#pullrequestreview-6091380102",
+        "review_id": 6091380102,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46037816436,
+        "active_job": 140637588745,
+        "active_executed_steps": 95,
+        "active_place_bytes": 674623,
+        "active_place_sha256": "7f178413a5291c8f8cafe2cb9cdc728251f85b198483d0de588a78588230dc6d",
+        "immediate_off_bytes": 669180,
+        "active_artifact": 15219121226,
+        "active_zip_bytes": 204190,
+        "active_zip_digest": "sha256:8ca16959ca3f640646a5b04f8a0046174377eaa1f7d5ccea677849fea26e572b",
+        "private_ci": 46037816336,
+        "private_job": 140637588207,
+        "private_steps": 48,
+        "private_artifact": 15218767699,
+        "private_zip_bytes": 25667274,
+        "private_zip_digest": "sha256:2c40d02023ae65b4ce08dd547f289e5ecde0a0a2086eb6af5b22735d766da923",
+        "source_lock": "cba462452e68d59bf313b7560fad6442177efe11897264f7d02d624f6106e4bb",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "5f47ad70dc52d47e5d0854e58f50497e321f66b1",
+        "operation_id": "45b36743-e3c0-4a53-9b17-00669ea0fc63"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "permitted_head": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "permitted_tree": "4fd30321e3f381648e74e5da581a8d4076af0238",
+        "permitted_pr": 320,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T17:31:57.434Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Only current ACTIVE HUD source. Reuse actual prior ACTIVE native jump/button rectangles. Touch attack placement, hit/miss timer and desktop behavior. No Game, role timing, Remote, existing files, score or PRIVATE source change. No Android engine/ART/owner release claim.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "5f47ad70dc52d47e5d0854e58f50497e321f66b1",
+          "owner": "45b36743-e3c0-4a53-9b17-00669ea0fc63",
+          "review": 6091380102,
+          "trusted_queue_run": 46039569863,
+          "trusted_queue_job": 140643547068
+        }
       }
     }
   ],
