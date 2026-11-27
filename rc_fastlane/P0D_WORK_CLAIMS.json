@@ -39570,6 +39570,149 @@
           "trusted_queue_job": 140618223515
         }
       }
+    },
+    {
+      "claim_id": "P0D-FB026-ACTIVE-UNDEAD-479-20261128",
+      "feature_id": "FB026_UNDEAD_SIEGE_ACTIVE_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 219,
+      "source_issue": 479,
+      "integration_issue": 220,
+      "pr": 479,
+      "base_rc_sha": "349d45f868b1594f3cb5f058e42c02b614278236",
+      "base_rc_tree": "2031bda70eac4db20202cbe2d4b4114ee027ed32",
+      "prep_branch": "feature/p0d-fb026-undead-siege-native85-20261115",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Existing #479 FB026 undead summon, authenticated bounded ACTIVE P0D-015 vertical route. Selected role NECROMANCER uses original Game and neutral Horde owner HP/KO with three authored companions; no alternate P0D-015 module, no FB029/loot composite, no new Remote/Store/Score. Retain 18s cooldown and fixed Game authority; gate-safe spawn/wall, expired-task-safe recast. PRIVATE companion untouched.",
+      "resources": [
+        "FB026_UNDEAD_SIEGE_ACTIVE_V1",
+        "P0D-015_NECROMANCER_ACTIVE_RICH51",
+        "ACTIVE69_NECROMANCER_USE_SEVEN_JOB",
+        "ACTIVE69_UNDEAD_SQUAD_CUSTOM_ACTION"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_undead_squad.py",
+        "rc_fastlane/features/active_undead_squad/UndeadSquad.luau",
+        "rc_fastlane/features/active_undead_squad/adapter.json",
+        "rc_fastlane/features/active_undead_squad/native.luau",
+        "rc_fastlane/features/active_undead_squad/source_lock.json",
+        "rc_fastlane/verify_active_undead_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/commit/331ac279bff58105aa393be5358af50fcedd46de",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "a5031fd1-bea0-44b6-a438-8184634d87b7",
+      "issued_at": "2026-11-27T16:18:43.634Z",
+      "expires_at": "2026-11-27T18:18:43.634Z",
+      "actual_metadata_lease": {
+        "ref": "64093a0fd2425ddb80568b92c63dfded738de3d0",
+        "blob": "dc093d01dc575dc5123ffa72ee0d77d39d555bdf",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "a5031fd1-bea0-44b6-a438-8184634d87b7",
+          "task_id": null,
+          "epoch": 968,
+          "acquired_at": "2026-11-27T16:18:27.801Z",
+          "expires_at": "2026-11-27T16:48:27.801Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 479,
+        "branch": "feature/p0d-fb026-undead-siege-native85-20261115",
+        "old_pr_head": "3541e5106001fc89ef9a507825f395d63be8f603",
+        "old_base_ref": "feature/p0d-product-quality-gate-20261115",
+        "formal_parent": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "tree": "baa35166b3dc019a47b46d330a928ea74f731970",
+        "local_head": "3ec1b79977b0c154d547f0a1880c7a2174106a2d",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "b21ed2e62bee26eeee3b23812065723948a28f36",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 230596
+          },
+          {
+            "mode": "100644",
+            "blob": "8001b4958fb2d892a535bd88cae7633784845fa7",
+            "path": "rc_fastlane/apply_active_undead_squad.py",
+            "bytes": 4409
+          },
+          {
+            "mode": "100644",
+            "blob": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341",
+            "path": "rc_fastlane/features/active_undead_squad/UndeadSquad.luau",
+            "bytes": 9048
+          },
+          {
+            "mode": "100644",
+            "blob": "43a301bf4c2e0c5bd42519fd3d738d4eceeb59f6",
+            "path": "rc_fastlane/features/active_undead_squad/adapter.json",
+            "bytes": 5605
+          },
+          {
+            "mode": "100644",
+            "blob": "24ce88f034d4a825c9c81d8199be2791b80e0407",
+            "path": "rc_fastlane/features/active_undead_squad/native.luau",
+            "bytes": 11272
+          },
+          {
+            "mode": "100644",
+            "blob": "2a0714638c08960ed2896dd802e9e191fe07ca19",
+            "path": "rc_fastlane/features/active_undead_squad/source_lock.json",
+            "bytes": 882
+          },
+          {
+            "mode": "100644",
+            "blob": "bc5a636e29ef67c11a26f9b0bbf0aace80f44370",
+            "path": "rc_fastlane/verify_active_undead_native.py",
+            "bytes": 2471
+          },
+          {
+            "mode": "100644",
+            "blob": "ab721e3306a7315b5165ddd0053b7621e229d4d8",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 114240
+          }
+        ],
+        "expires_at": "2026-11-27T17:18:43.634Z",
+        "issued_from": {
+          "lease": "64093a0fd2425ddb80568b92c63dfded738de3d0",
+          "owner": "a5031fd1-bea0-44b6-a438-8184634d87b7"
+        },
+        "local_qa": {
+          "on": 668223,
+          "off": 656824,
+          "on_sha256": "8752083f42edd699d994b99250388d7f17e4f059990bebbe21df8d82c3cea93d",
+          "off_sha256": "184498f6732783f8fcf954ee2d7bac150295008fe96132e90d768ce823005bd0",
+          "game_delta": 1447,
+          "new_module": 9742,
+          "inherited_other_67_exact": true,
+          "native_compile": 69,
+          "candidate_native_groups": 7,
+          "original_negative_center_overlap": true,
+          "baseline_no_bodies_proved": true,
+          "spatial_wall_block_closed_hp64": true,
+          "expiry_recast_48_01_owner_three": true,
+          "preserve_original_module": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
