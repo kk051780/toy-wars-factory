@@ -42505,7 +42505,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Exact original #382 per-player ordinary neutral impact cap only in ACTIVE rich51 (allocation, guard and increment). One MusouHorde source +158 B, max two ordinary impacts per player per tick, 3 HP per hit, unchanged elite and next tick. Preserve 9 neutrals, routes, positions, damage authority, Game/HUD, PRIVATE69, no whole old #382 or overlapping #408 cohort import.",
       "resources": [
@@ -42684,6 +42684,72 @@
       "actual_binding_lease": {
         "commit": "17ec8d4dabcd4d1d45e186012267e7802567bcbd",
         "operation_id": "85b86960-49bb-47fb-8c3a-cb753d2b7473"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/382#pullrequestreview-6092834296",
+        "review_id": 6092834296,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46059009484,
+        "active_job": 140708422275,
+        "active_executed_steps": 95,
+        "active_place_bytes": 718628,
+        "active_place_sha256": "708c77549d59dadf24545e29fcc68883245489045a3c05ea1f66cabb207a4825",
+        "immediate_off_bytes": 718470,
+        "active_artifact": 15226894686,
+        "active_zip_bytes": 223618,
+        "active_zip_digest": "sha256:434ffccfe27895916503aee385b3cb849162e8ecb5439db85e98d75af639ad62",
+        "private_ci": 46059009478,
+        "private_job": 140708422386,
+        "private_steps": 48,
+        "private_artifact": 15228670503,
+        "private_zip_bytes": 26761752,
+        "private_zip_digest": "sha256:5b3a2b3efdceed4dd51c38c20827a2a697dcc707be3e9e2d93dc539de3c8e695",
+        "source_lock": "4720292f33c72c320959a7dabc2def7d57b0189becc1a7120f3150728af314a7",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "704702fff6644a44443507d2ae9260c4affab82d",
+        "operation_id": "71830632-246c-40c1-9a1d-d0b7d1b94776"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "permitted_head": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "permitted_tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+        "permitted_pr": 382,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T20:20:49.044Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact original #382 per-player ordinary neutral impact cap only in ACTIVE rich51 (allocation, guard and increment). One MusouHorde source +158 B, max two ordinary impacts per player per tick, 3 HP per hit, unchanged elite and next tick. Preserve 9 neutrals, routes, positions, damage authority, Game/HUD, PRIVATE69, no whole old #382 or overlapping #408 cohort import.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "704702fff6644a44443507d2ae9260c4affab82d",
+          "owner": "71830632-246c-40c1-9a1d-d0b7d1b94776",
+          "review": 6092834296,
+          "trusted_queue_run": 46060491899,
+          "trusted_queue_job": 140713293286
+        }
       }
     }
   ],
