@@ -31088,7 +31088,7 @@
     {
       "claim_id": "P0D-GQ482-CASTLE-RELEASE-STOCK-20261127",
       "feature_id": "GQ470_FB015_CASTLE_RELEASE_STOCK",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP",
       "owner": "/root (Codex parent, original #482 castle release handoff)",
       "parent_issue": 470,
@@ -31154,12 +31154,12 @@
         "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe"
       },
       "independent_reviewer_context": "/root/p0_offer_review26",
-      "scope_only": true,
+      "scope_only": false,
       "source_scope_granted": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "no_main_or_publish": true,
       "issuer": "kk051780",
@@ -31206,6 +31206,59 @@
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
+        }
+      },
+      "no_source_changes_after_fixed_head_without_new_scope": true,
+      "independent_source_receipt": {
+        "review": 6082075110,
+        "reviewer_context": "/root/p0_offer_review26",
+        "head": "cc6fed686214596eb717cc5827856311338999ad",
+        "hosted_run": 45918522846,
+        "trusted_queue_run": 45919039958,
+        "trusted_queue_artifact": 15163367211,
+        "artifact": 15163104616
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "permitted_head": "cc6fed686214596eb717cc5827856311338999ad",
+        "permitted_tree": "2ee10df7cbf619a0cefe8b5e5f35dc017c13a4f2",
+        "permitted_pr": 1035,
+        "sole_executor": "/root (Codex parent, B coordinator for #1035)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T01:23:59.951Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Existing #482 fall-release layout and numeric RELEASE noncollision, plus observed current remaining stock. Development RC only.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "74151831-9dc5-4b05-8e4a-19ba8319738c",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "74151831-9dc5-4b05-8e4a-19ba8319738c",
+            "task_id": null,
+            "epoch": 780,
+            "acquired_at": "2026-11-27T00:53:38.701Z",
+            "expires_at": "2026-11-27T01:23:38.701Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "b98104eb5ca24595944480b19c87b3f4851f1f3a",
+          "acquire_blob": "674ed9f3765dd21d92741711633c5df1ba0f8307",
+          "registry_parent": "702d2fddc9667015ca82d056615530fcbfd3ff6e",
+          "registry_blob": "fadec5750812d933b8a2fe0deab013b9b653c39a",
+          "authority_basis": "Authenticated delegated OWNER #1011 V2.1, #220 7202869642, active #218 narrow #482 scoped successor, registered exact independent 6082075110 and trusted green fixed candidate."
         }
       }
     }
