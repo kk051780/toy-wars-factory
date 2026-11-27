@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 890487,
-    "sha256": "eeed5523b7e8ef2fcccdcdc49385bd9ce6910c71312a2ff030d82044ddb0233a"
+    "bytes": 891450,
+    "sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc"
   },
   "followup_repair": {
     "author_contexts": [
@@ -10766,6 +10766,375 @@
         }
       }
     }
+  },
+  "moguron_followup": {
+    "author_patch": {
+      "identity": {
+        "bytes": 2124,
+        "sha256": "1fdd0d4753d3ef0e79c99340141a90bf636bc014ef892cd8377a97097948b9bd"
+      },
+      "path": "quality_gameplay/gq470_moguron_visual_20261127/moguron.patch"
+    },
+    "gameplay_contract": {
+      "cooldown_seconds": 4,
+      "old_prompt_and_rules_preserved": true,
+      "open_seconds": 14
+    },
+    "origin": {
+      "existing_geometry_only": true,
+      "historical_donor_head": "89719973047c13dde5ba64732231814a4db32f42",
+      "old_donor_artifact": 14681793640,
+      "pr": 967,
+      "transform_git_blob": "d90577cbbd776fe9a9625b7942e17bbdbd5f5705"
+    },
+    "parent_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+    "parent_place": {
+      "bytes": 890487,
+      "sha256": "eeed5523b7e8ef2fcccdcdc49385bd9ce6910c71312a2ff030d82044ddb0233a"
+    },
+    "parent_tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+    "part_count": {
+      "after_per_guide": 8,
+      "before_per_guide": 2,
+      "max_increase_both_modes": 24
+    },
+    "repaired_place": {
+      "bytes": 891450,
+      "sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121\n",
+            "new_identity": {
+              "bytes": 57,
+              "sha256": "c13acefda5366fd306a4381a125710d3a63b82c2b0d6c0155f5be675b77aa42b"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 152,
+            "stop": 152
+          },
+          {
+            "new": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4.8,3.4,3.8),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)\n",
+            "new_identity": {
+              "bytes": 159,
+              "sha256": "d53e266e3a0ffe0442389aa2b5459c44dd3b3d4e635d70dfb72cf2efd390aa40"
+            },
+            "old": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4,3,4),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)\n",
+            "old_identity": {
+              "bytes": 154,
+              "sha256": "e0527a511b927688f2ab19d3a6cc5fe58a76d638891836fcc33c7b69bcaa6324"
+            },
+            "start": 153,
+            "stop": 155
+          },
+          {
+            "new": "  torso.CastShadow=false\n  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.85,1.35,1.35),\n   Vector3.new(x,2.6,-17.1),Color3.fromRGB(203,159,116),Enum.Material.SmoothPlastic,false)\n",
+            "new_identity": {
+              "bytes": 190,
+              "sha256": "94e31342606b00e4a3067b2a8dd92074a3ecef5d1af9d98c873dfd1b2d023129"
+            },
+            "old": "  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.5,1.2,1.5),\n   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)\n",
+            "old_identity": {
+              "bytes": 129,
+              "sha256": "16371597a4f564783d45370c9dce4821008e0a8a6c0b8f2daae9e9a596583185"
+            },
+            "start": 156,
+            "stop": 158
+          },
+          {
+            "new": "  nose.CastShadow=false\n  for _,sign in ipairs({-1,1}) do\n   local eye=block(\"Moguron_\"..side..\"_Eye\"..sign,Vector3.new(.32,.4,.26),\n    Vector3.new(x+sign*.9,3.14,-16.72),Color3.fromRGB(38,49,55),Enum.Material.SmoothPlastic,false)\n   eye.Shape=Enum.PartType.Ball\n   eye.CastShadow=false\n   local ear=block(\"Moguron_\"..side..\"_Ear\"..sign,Vector3.new(.88,1.05,.64),\n    Vector3.new(x+sign*2.0,3.55,-14.8),Color3.fromRGB(173,119,88),Enum.Material.SmoothPlastic,false)\n   ear.Shape=Enum.PartType.Ball\n   ear.CastShadow=false\n   local paw=block(\"Moguron_\"..side..\"_Paw\"..sign,Vector3.new(1.2,.6,1.15),\n    Vector3.new(x+sign*1.48,1.08,-16.38),Color3.fromRGB(111,78,64),Enum.Material.SmoothPlastic,false)\n   paw.Shape=Enum.PartType.Ball\n   paw.CastShadow=false\n  end\n  -- Keep exactly the original torso prompt: no duplicate activation surface.\n",
+            "new_identity": {
+              "bytes": 840,
+              "sha256": "40b4c13263bf469c506aa48204c47dd8a7f37d358b39f372ec07f1ae4e714b5b"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 159,
+            "stop": 159
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121\n",
+            "old_identity": {
+              "bytes": 57,
+              "sha256": "c13acefda5366fd306a4381a125710d3a63b82c2b0d6c0155f5be675b77aa42b"
+            },
+            "start": 152,
+            "stop": 153
+          },
+          {
+            "new": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4,3,4),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)\n",
+            "new_identity": {
+              "bytes": 154,
+              "sha256": "e0527a511b927688f2ab19d3a6cc5fe58a76d638891836fcc33c7b69bcaa6324"
+            },
+            "old": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4.8,3.4,3.8),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)\n",
+            "old_identity": {
+              "bytes": 159,
+              "sha256": "d53e266e3a0ffe0442389aa2b5459c44dd3b3d4e635d70dfb72cf2efd390aa40"
+            },
+            "start": 154,
+            "stop": 156
+          },
+          {
+            "new": "  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.5,1.2,1.5),\n   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)\n",
+            "new_identity": {
+              "bytes": 129,
+              "sha256": "16371597a4f564783d45370c9dce4821008e0a8a6c0b8f2daae9e9a596583185"
+            },
+            "old": "  torso.CastShadow=false\n  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.85,1.35,1.35),\n   Vector3.new(x,2.6,-17.1),Color3.fromRGB(203,159,116),Enum.Material.SmoothPlastic,false)\n",
+            "old_identity": {
+              "bytes": 190,
+              "sha256": "94e31342606b00e4a3067b2a8dd92074a3ecef5d1af9d98c873dfd1b2d023129"
+            },
+            "start": 157,
+            "stop": 160
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  nose.CastShadow=false\n  for _,sign in ipairs({-1,1}) do\n   local eye=block(\"Moguron_\"..side..\"_Eye\"..sign,Vector3.new(.32,.4,.26),\n    Vector3.new(x+sign*.9,3.14,-16.72),Color3.fromRGB(38,49,55),Enum.Material.SmoothPlastic,false)\n   eye.Shape=Enum.PartType.Ball\n   eye.CastShadow=false\n   local ear=block(\"Moguron_\"..side..\"_Ear\"..sign,Vector3.new(.88,1.05,.64),\n    Vector3.new(x+sign*2.0,3.55,-14.8),Color3.fromRGB(173,119,88),Enum.Material.SmoothPlastic,false)\n   ear.Shape=Enum.PartType.Ball\n   ear.CastShadow=false\n   local paw=block(\"Moguron_\"..side..\"_Paw\"..sign,Vector3.new(1.2,.6,1.15),\n    Vector3.new(x+sign*1.48,1.08,-16.38),Color3.fromRGB(111,78,64),Enum.Material.SmoothPlastic,false)\n   paw.Shape=Enum.PartType.Ball\n   paw.CastShadow=false\n  end\n  -- Keep exactly the original torso prompt: no duplicate activation surface.\n",
+            "old_identity": {
+              "bytes": 840,
+              "sha256": "40b4c13263bf469c506aa48204c47dd8a7f37d358b39f372ec07f1ae4e714b5b"
+            },
+            "start": 161,
+            "stop": 177
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 10334,
+            "sha256": "681ad5b6e74c8371ca5c3c25e54daef92c33026e7593097af48017548a044530"
+          },
+          "before": {
+            "bytes": 9829,
+            "sha256": "7139110080ff6aec1cabc2acf8a722ba2efb3b26c5ab4fcd596ce167bd80ffc3"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "new_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 11,
+              "stop": 11
+            },
+            {
+              "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+              "new_identity": {
+                "bytes": 203,
+                "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 40,
+              "stop": 40
+            },
+            {
+              "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+              "new_identity": {
+                "bytes": 66,
+                "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+              },
+              "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+              "old_identity": {
+                "bytes": 64,
+                "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+              },
+              "start": 57,
+              "stop": 58
+            },
+            {
+              "new": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
+              "new_identity": {
+                "bytes": 268,
+                "sha256": "8156a6bcf698c8376c8d30ad78df5d24522ed131af3056fefff5909953564987"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 70,
+              "stop": 70
+            },
+            {
+              "new": "  if p.Parent~=Players or not activeRound()\n",
+              "new_identity": {
+                "bytes": 44,
+                "sha256": "390552e06ac553aaaeda5d983c1048462a734902e030e5e9b13678277dd7ed42"
+              },
+              "old": "  if p.Parent~=Players or not live()\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "ed6e6e51749380a2f564149ba04afd5ca7b0c187d8e45fd3cdafc8f4465b12bd"
+              },
+              "start": 71,
+              "stop": 72
+            },
+            {
+              "new": "  return (hit==nil or not hit.Instance.CanCollide) and activeRound()\n",
+              "new_identity": {
+                "bytes": 69,
+                "sha256": "a33ee77d5bc3ae995fafbaa7763f8a319f7ad6307dab2e0bdf89512589d74bcf"
+              },
+              "old": "  return hit==nil or not hit.Instance.CanCollide\n",
+              "old_identity": {
+                "bytes": 49,
+                "sha256": "6bbd03523426195a52a747f928ec8bf942aa684d80c1b0c0621e4753682825ac"
+              },
+              "start": 91,
+              "stop": 92
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+              "old_identity": {
+                "bytes": 73,
+                "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+              },
+              "start": 158,
+              "stop": 159
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "old_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "start": 11,
+              "stop": 12
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n local offset=originalRealm and originalRealm:GetAttribute(\"LegacyCanyonOffsetZ\")\n if type(offset)~=\"number\" then offset=-175 end\n",
+              "old_identity": {
+                "bytes": 203,
+                "sha256": "0c27b42ce8acb3aacd2e73dce084edb5602b600ea080feecec024bc1086784c7"
+              },
+              "start": 41,
+              "stop": 44
+            },
+            {
+              "new": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,-175)\n",
+              "new_identity": {
+                "bytes": 64,
+                "sha256": "a3f15867b43ce91b46831324aea9249e0769c1b44593cfb62fb165f54c6f187c"
+              },
+              "old": " local origin=floor.CFrame*CFrame.new(0,floor.Size.Y/2+12,offset)\n",
+              "old_identity": {
+                "bytes": 66,
+                "sha256": "c9a2dad8de62902d65378075faa88d8c6fb06519721e9c1c66dd1d5d0cc51b29"
+              },
+              "start": 61,
+              "stop": 62
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local function activeRound():boolean\n  -- Only prompt eligibility uses phase; structural gate timing stays alive.\n  return live() and lobby.Parent==Workspace\n   and type(Rules.isRuntimeWorldActive)==\"function\"\n   and Rules.isRuntimeWorldActive(arena,mode)==true\n end\n",
+              "old_identity": {
+                "bytes": 268,
+                "sha256": "8156a6bcf698c8376c8d30ad78df5d24522ed131af3056fefff5909953564987"
+              },
+              "start": 74,
+              "stop": 80
+            },
+            {
+              "new": "  if p.Parent~=Players or not live()\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "ed6e6e51749380a2f564149ba04afd5ca7b0c187d8e45fd3cdafc8f4465b12bd"
+              },
+              "old": "  if p.Parent~=Players or not activeRound()\n",
+              "old_identity": {
+                "bytes": 44,
+                "sha256": "390552e06ac553aaaeda5d983c1048462a734902e030e5e9b13678277dd7ed42"
+              },
+              "start": 81,
+              "stop": 82
+            },
+            {
+              "new": "  return hit==nil or not hit.Instance.CanCollide\n",
+              "new_identity": {
+                "bytes": 49,
+                "sha256": "6bbd03523426195a52a747f928ec8bf942aa684d80c1b0c0621e4753682825ac"
+              },
+              "old": "  return (hit==nil or not hit.Instance.CanCollide) and activeRound()\n",
+              "old_identity": {
+                "bytes": 69,
+                "sha256": "a33ee77d5bc3ae995fafbaa7763f8a319f7ad6307dab2e0bdf89512589d74bcf"
+              },
+              "start": 101,
+              "stop": 102
+            },
+            {
+              "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
+              "new_identity": {
+                "bytes": 73,
+                "sha256": "8a810a05f4e1b894e345fa0ec05661f08f33542689c9e8eb0cacf0d9f35ed0ad"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 168,
+              "stop": 168
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
+        }
+      }
+    },
+    "studio": "NOT_TESTED_ON_CURRENT_SHA"
   },
   "neutral_names_followup": {
     "author_transform": {
@@ -18375,8 +18744,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
       "after": {
-        "bytes": 10334,
-        "sha256": "681ad5b6e74c8371ca5c3c25e54daef92c33026e7593097af48017548a044530"
+        "bytes": 11297,
+        "sha256": "a123b27d77248ef443f9817fe626f564adc2eab15135607b22d6bd17ef1a0ad4"
       },
       "before": {
         "bytes": 9829,
@@ -18467,6 +18836,62 @@
           },
           "start": 91,
           "stop": 92
+        },
+        {
+          "new": " -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121\n",
+          "new_identity": {
+            "bytes": 57,
+            "sha256": "c13acefda5366fd306a4381a125710d3a63b82c2b0d6c0155f5be675b77aa42b"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 142,
+          "stop": 142
+        },
+        {
+          "new": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4.8,3.4,3.8),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)\n",
+          "new_identity": {
+            "bytes": 159,
+            "sha256": "d53e266e3a0ffe0442389aa2b5459c44dd3b3d4e635d70dfb72cf2efd390aa40"
+          },
+          "old": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4,3,4),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)\n",
+          "old_identity": {
+            "bytes": 154,
+            "sha256": "e0527a511b927688f2ab19d3a6cc5fe58a76d638891836fcc33c7b69bcaa6324"
+          },
+          "start": 143,
+          "stop": 145
+        },
+        {
+          "new": "  torso.CastShadow=false\n  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.85,1.35,1.35),\n   Vector3.new(x,2.6,-17.1),Color3.fromRGB(203,159,116),Enum.Material.SmoothPlastic,false)\n",
+          "new_identity": {
+            "bytes": 190,
+            "sha256": "94e31342606b00e4a3067b2a8dd92074a3ecef5d1af9d98c873dfd1b2d023129"
+          },
+          "old": "  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.5,1.2,1.5),\n   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)\n",
+          "old_identity": {
+            "bytes": 129,
+            "sha256": "16371597a4f564783d45370c9dce4821008e0a8a6c0b8f2daae9e9a596583185"
+          },
+          "start": 146,
+          "stop": 148
+        },
+        {
+          "new": "  nose.CastShadow=false\n  for _,sign in ipairs({-1,1}) do\n   local eye=block(\"Moguron_\"..side..\"_Eye\"..sign,Vector3.new(.32,.4,.26),\n    Vector3.new(x+sign*.9,3.14,-16.72),Color3.fromRGB(38,49,55),Enum.Material.SmoothPlastic,false)\n   eye.Shape=Enum.PartType.Ball\n   eye.CastShadow=false\n   local ear=block(\"Moguron_\"..side..\"_Ear\"..sign,Vector3.new(.88,1.05,.64),\n    Vector3.new(x+sign*2.0,3.55,-14.8),Color3.fromRGB(173,119,88),Enum.Material.SmoothPlastic,false)\n   ear.Shape=Enum.PartType.Ball\n   ear.CastShadow=false\n   local paw=block(\"Moguron_\"..side..\"_Paw\"..sign,Vector3.new(1.2,.6,1.15),\n    Vector3.new(x+sign*1.48,1.08,-16.38),Color3.fromRGB(111,78,64),Enum.Material.SmoothPlastic,false)\n   paw.Shape=Enum.PartType.Ball\n   paw.CastShadow=false\n  end\n  -- Keep exactly the original torso prompt: no duplicate activation surface.\n",
+          "new_identity": {
+            "bytes": 840,
+            "sha256": "40b4c13263bf469c506aa48204c47dd8a7f37d358b39f372ec07f1ae4e714b5b"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 149,
+          "stop": 149
         },
         {
           "new": "",
@@ -18569,6 +18994,62 @@
           "stop": 102
         },
         {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121\n",
+          "old_identity": {
+            "bytes": 57,
+            "sha256": "c13acefda5366fd306a4381a125710d3a63b82c2b0d6c0155f5be675b77aa42b"
+          },
+          "start": 152,
+          "stop": 153
+        },
+        {
+          "new": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4,3,4),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(155,106,72),Enum.Material.SmoothPlastic,false)\n",
+          "new_identity": {
+            "bytes": 154,
+            "sha256": "e0527a511b927688f2ab19d3a6cc5fe58a76d638891836fcc33c7b69bcaa6324"
+          },
+          "old": "  local torso=block(\"Moguron_\"..side..\"_Body\",Vector3.new(4.8,3.4,3.8),\n   Vector3.new(x,2.4,-15),Color3.fromRGB(142,99,73),Enum.Material.SmoothPlastic,false)\n",
+          "old_identity": {
+            "bytes": 159,
+            "sha256": "d53e266e3a0ffe0442389aa2b5459c44dd3b3d4e635d70dfb72cf2efd390aa40"
+          },
+          "start": 154,
+          "stop": 156
+        },
+        {
+          "new": "  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.5,1.2,1.5),\n   Vector3.new(x,2.65,-17),gold,Enum.Material.Neon,false)\n",
+          "new_identity": {
+            "bytes": 129,
+            "sha256": "16371597a4f564783d45370c9dce4821008e0a8a6c0b8f2daae9e9a596583185"
+          },
+          "old": "  torso.CastShadow=false\n  local nose=block(\"Moguron_\"..side..\"_Nose\",Vector3.new(1.85,1.35,1.35),\n   Vector3.new(x,2.6,-17.1),Color3.fromRGB(203,159,116),Enum.Material.SmoothPlastic,false)\n",
+          "old_identity": {
+            "bytes": 190,
+            "sha256": "94e31342606b00e4a3067b2a8dd92074a3ecef5d1af9d98c873dfd1b2d023129"
+          },
+          "start": 157,
+          "stop": 160
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  nose.CastShadow=false\n  for _,sign in ipairs({-1,1}) do\n   local eye=block(\"Moguron_\"..side..\"_Eye\"..sign,Vector3.new(.32,.4,.26),\n    Vector3.new(x+sign*.9,3.14,-16.72),Color3.fromRGB(38,49,55),Enum.Material.SmoothPlastic,false)\n   eye.Shape=Enum.PartType.Ball\n   eye.CastShadow=false\n   local ear=block(\"Moguron_\"..side..\"_Ear\"..sign,Vector3.new(.88,1.05,.64),\n    Vector3.new(x+sign*2.0,3.55,-14.8),Color3.fromRGB(173,119,88),Enum.Material.SmoothPlastic,false)\n   ear.Shape=Enum.PartType.Ball\n   ear.CastShadow=false\n   local paw=block(\"Moguron_\"..side..\"_Paw\"..sign,Vector3.new(1.2,.6,1.15),\n    Vector3.new(x+sign*1.48,1.08,-16.38),Color3.fromRGB(111,78,64),Enum.Material.SmoothPlastic,false)\n   paw.Shape=Enum.PartType.Ball\n   paw.CastShadow=false\n  end\n  -- Keep exactly the original torso prompt: no duplicate activation surface.\n",
+          "old_identity": {
+            "bytes": 840,
+            "sha256": "40b4c13263bf469c506aa48204c47dd8a7f37d358b39f372ec07f1ae4e714b5b"
+          },
+          "start": 161,
+          "stop": 177
+        },
+        {
           "new": " local originalRealm=arena:FindFirstChild(\"EGGRUMBLE_REALM_BATTLE_CORE\")\n",
           "new_identity": {
             "bytes": 73,
@@ -18579,8 +19060,8 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 168,
-          "stop": 168
+          "start": 186,
+          "stop": 186
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes"
