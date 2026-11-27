@@ -1,0 +1,36 @@
+name: EGGRUMBLE fixed combo candidate native checks
+on:
+  push:
+    branches: [quality/gq219-fixed-ability-combo-20261127]
+    paths:
+      - 'quality_gameplay/gq219_ability_combo_20261127/**'
+      - '.github/workflows/p0d-gq219-fixed-combo-candidate.yml'
+permissions:
+  contents: read
+jobs:
+  native-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Build pinned native interpreter and compiler
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq219 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq219 --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Compile and run exact candidate source tests
+        run: |
+          set -euo pipefail
+          cd quality_gameplay/gq219_ability_combo_20261127
+          for source in ComboRecipes.luau ComboSequence.luau test_combo.luau; do
+            /tmp/gq219/luau-compile --text "$source" >/dev/null
+          done
+          sha256sum ComboRecipes.luau ComboSequence.luau test_combo.luau
+          /tmp/gq219/luau test_combo.luau
