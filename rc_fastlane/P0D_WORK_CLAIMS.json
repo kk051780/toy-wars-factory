@@ -42487,7 +42487,8 @@
         "rc_fastlane/apply_active_crowd_cap.py",
         "rc_fastlane/features/active_crowd_cap/native_scene.luau",
         "rc_fastlane/features/active_crowd_cap/source_lock.json",
-        "rc_fastlane/verify_active_crowd_cap_native.py"
+        "rc_fastlane/verify_active_crowd_cap_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
       ],
       "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/382#issuecomment-6887359772",
       "independent_reviewer_context": "/root/p0_offer_review26",
@@ -42514,14 +42515,14 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 382,
         "branch": "feature/p0d-private71-five-art-composite-20261114",
-        "old_pr_head": "1e9e7ea4a07582d9d2843f0af66bcdd5b086930c",
+        "old_pr_head": "38d01f80a1a81836593e4c1b214e1384c3c32a53",
         "old_base_ref": "rc/p0d-s1-kids-rc01",
         "formal_parent": "f1a60110360ccd708aaaf8276695fd161c7869bb",
-        "tree": "c4ca4d255f1ff55b7be01749df6fccad27b4afaa",
-        "local_head": "46dbb5d0c9e91cae620dbbf358aaa83c6bc2d73b",
+        "tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+        "local_head": "6fc3fd7173af262c2d253dc2ebc23a84ff5253c0",
         "allowed_changed_files": [
           {
             "path": ".github/workflows/p0d-rc-fastlane.yml",
@@ -42552,12 +42553,18 @@
             "mode": "100644",
             "blob": "a15dab4134db3e522a1bb70807949a4e1a04da18",
             "bytes": 4348
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "f6821d8f5119876e786ae67a476ac7e4244f5388",
+            "bytes": 122187
           }
         ],
-        "expires_at": "2026-11-27T20:39:23.192Z",
+        "expires_at": "2026-11-27T20:45:02.627Z",
         "issued_from": {
-          "lease": "b73d090fbc99e9b91847b4a358116ce79ea287e9",
-          "owner": "6f0021b4-2873-47ff-818d-8f0343fa7d1f"
+          "lease": "c47b6b82f2e590454c9ffb28ef000a59bdd195dd",
+          "owner": "aa0c9a39-1972-43d9-ae10-70460f66fb1f"
         },
         "local_qa": {
           "place_bytes": 718628,
@@ -42572,8 +42579,26 @@
           "actual_selected_sole_and_dual_ticks": true,
           "negative_mutants": 4,
           "retained_blink_water_groups": 6,
-          "device": "NOT_TESTED_V3.5"
-        }
+          "device": "NOT_TESTED_V3.5",
+          "active_initial_success_job": 140706279997,
+          "initial_private_pr_ci_absent_due_paths": true,
+          "exact_real69_artifact_required_by_existing_queue": true,
+          "private_actual_core_and_new_boundary_pass_local": true,
+          "source_same_horde_blob": true
+        },
+        "repair_changed_paths_from_red": [
+          "tests/test_gq470_union22_real69_20261122.py"
+        ]
+      },
+      "first_candidate": {
+        "head": "38d01f80a1a81836593e4c1b214e1384c3c32a53",
+        "tree": "c4ca4d255f1ff55b7be01749df6fccad27b4afaa",
+        "source_lease": "4e30cd9eaeed3c2e5cc02fa2bdc4319a2856061e",
+        "source_return": "2212ac70e7f08dca9a2a44614671cc85c6ad2c4a",
+        "author_parent": "1e9e7ea4a07582d9d2843f0af66bcdd5b086930c",
+        "active_success_job": 140706279997,
+        "required_private_pr_run": "MISSING_PATH_TRIGGER",
+        "reason": "First ACTIVE actual cap CI passed, but exact candidate had no PRIVATE pull_request check because its paths only trigger ACTIVE. The actual #220 intake gate requires the exact-head REAL69 PR artifact. Added one byte-backed active/private boundary assertion to the existing artifact QA, with no changes to the cap or Private game."
       }
     }
   ],
