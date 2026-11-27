@@ -47,7 +47,8 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    hp_on, hp_on_lock = compose.mage_projectile_parent(*compose.mage_water_chain_parent(on, lock))
+    water_on = compose.ninja_s4_parent(on, lock)
+    hp_on, hp_on_lock = compose.mage_projectile_parent(*compose.mage_water_chain_parent(*water_on))
     return compose.team_win_rule_parent(*compose.fractional_hp_parent(hp_on, hp_on_lock))
 
 
@@ -61,6 +62,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["ninja_s4_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["mage_water_chain_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["mage_projectile_followup"]["rows"].items()
@@ -510,8 +513,11 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        projectile_on, projectile_on_lock = compose.mage_water_chain_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != projectile_on[name]},
+        water_on, water_lock = compose.ninja_s4_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != water_on[name]}, set(compose.NINJA_S4_SOURCES))
+        self.assertEqual(water_lock["final_place"], self.lock["mage_water_chain_followup"]["repaired_place"])
+        projectile_on, projectile_on_lock = compose.mage_water_chain_parent(water_on, water_lock)
+        self.assertEqual({name for name in water_on if water_on[name] != projectile_on[name]},
                          set(compose.MAGE_WATER_CHAIN_SOURCES))
         self.assertEqual(projectile_on_lock["final_place"], self.lock["mage_projectile_followup"]["repaired_place"])
         hp_on, hp_on_lock = compose.mage_projectile_parent(projectile_on, projectile_on_lock)
@@ -688,7 +694,9 @@ class UnionBoundary(unittest.TestCase):
                 self.reject_core(root)
 
     def test_missing_or_reordered_bot_build_commands_rejected(self):
-        for mutation, reason in (("missing", "CORE_COMMAND_COMPLETION"), ("order", "CORE_BUILD_STAGE_ORDER")):
+        for mutation, reason in (("missing", "CORE_COMMAND_COMPLETION"),
+                                 ("order", "CORE_BUILD_STAGE_ORDER"),
+                                 ("forged_reuse", "CORE_COMPILE_REUSE_PRIOR_BR_SET")):
             with self.subTest(mutation=mutation):
                 root = self.current_copy()
                 report = verify.data(root / "CORE_BUILD_REPORT.json")
@@ -706,6 +714,10 @@ class UnionBoundary(unittest.TestCase):
                 ])
                 if mutation == "missing":
                     del commands[bot_index:bot_index + 2]
+                elif mutation == "forged_reuse":
+                    reused = report["compile_reuse_prior_br"]
+                    self.assertTrue(reused)
+                    reused.pop(next(iter(reused)))
                 else:
                     commands[bot_index:bot_index + 4] = commands[bot_index + 2:bot_index + 4] + commands[bot_index:bot_index + 2]
                 compose.write_json(root / "CORE_BUILD_REPORT.json", report)
@@ -1215,6 +1227,7 @@ class FinalAdmissionBoundary(unittest.TestCase):
         _, paths = artifact_environment(cls.ARTIFACT_STAGE)
         cls.native = paths["UNION22_TEST_NATIVE"]
         verify.verify_native(cls.native, cls.current, cls.lock, cls.context)
+        cls._core_snapshot = None
 
     def temporary(self):
         context = tempfile.TemporaryDirectory(prefix="union22-final-negative-")
@@ -1222,11 +1235,44 @@ class FinalAdmissionBoundary(unittest.TestCase):
         return Path(context.name)
 
     def fresh_core(self):
-        output = self.temporary() / "candidate"
-        commands = verify.data(self.current / "CORE_BUILD_REPORT.json")["commands"]
-        compiler = Path(next(c["command"][0] for c in commands if c["command"][1] == "--text"))
-        rojo = Path(next(c["command"][0] for c in commands if c["command"][1] == "build"))
-        compose.build_source_candidate(self.prior, self.reports, output, compiler, rojo, self.context)
+        # One genuine build per interpreter; restore only to the original root.
+        # Normal/-O remain separate. No receipt or executed path is rewritten.
+        cls = type(self)
+        if cls._core_snapshot is None:
+            context = tempfile.TemporaryDirectory(prefix="union22-final-negative-core-")
+            cls.addClassCleanup(context.cleanup)
+            base = Path(context.name).resolve()
+            work = base / "work"
+            snapshot = base / "snapshot"
+            output = work / "candidate"
+            work.mkdir()
+            self.addCleanup(shutil.rmtree, work)
+            commands = verify.data(self.current / "CORE_BUILD_REPORT.json")["commands"]
+            compiler = Path(next(c["command"][0] for c in commands if c["command"][1] == "--text"))
+            rojo = Path(next(c["command"][0] for c in commands if c["command"][1] == "build"))
+            compose.build_source_candidate(self.prior, self.reports, output, compiler, rojo, self.context)
+            verify.verify_core(output, self.prior, self.reports, self.context)
+            pin = verify.files(output)
+            if (output / "delivery").exists():
+                raise ValueError("RED_UNION22_NEGATIVE_SNAPSHOT_CONTAINS_DELIVERY")
+            shutil.copytree(output, snapshot)
+            if verify.files(snapshot) != pin:
+                raise ValueError("RED_UNION22_NEGATIVE_SNAPSHOT_COPY_DRIFT")
+            cls._core_snapshot = (base, pin)
+            return output
+        base, pin = cls._core_snapshot
+        work = base / "work"
+        snapshot = base / "snapshot"
+        output = work / "candidate"
+        if work.exists() or work.is_symlink():
+            raise ValueError("RED_UNION22_NEGATIVE_WORK_NOT_CLEAN")
+        if verify.files(snapshot) != pin:
+            raise ValueError("RED_UNION22_NEGATIVE_SNAPSHOT_DRIFT")
+        work.mkdir()
+        self.addCleanup(shutil.rmtree, work)
+        shutil.copytree(snapshot, output)
+        if verify.files(output) != pin:
+            raise ValueError("RED_UNION22_NEGATIVE_RESTORE_DRIFT")
         return output
 
     def check_failure(self, output, callback, native, reason):
@@ -1757,7 +1803,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["mage_water_chain_followup"], self.lock["mage_projectile_followup"],
+        for followup in (self.lock["ninja_s4_followup"], self.lock["mage_water_chain_followup"],
+                         self.lock["mage_projectile_followup"],
                          hp, team_win, shorefoam, portrait, private_touch, moguron):
             relay_eligibility_sources = relay_eligibility_sources | {
                 name: row["parent"] for name, row in followup["rows"].items()}
@@ -1813,7 +1860,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(hp["repaired_place"], projectiles["parent_place"])
         water_chain = self.lock["mage_water_chain_followup"]
         self.assertEqual(projectiles["repaired_place"], water_chain["parent_place"])
-        self.assertEqual(water_chain["repaired_place"], self.lock["final_place"])
+        ninja_s4 = self.lock["ninja_s4_followup"]
+        self.assertEqual(water_chain["repaired_place"], ninja_s4["parent_place"])
+        self.assertEqual(ninja_s4["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(ninja_s4["rows"]), set(compose.NINJA_S4_SOURCES))
         self.assertEqual(set(water_chain["rows"]), set(compose.MAGE_WATER_CHAIN_SOURCES))
         self.assertEqual(set(projectiles["rows"]), set(compose.MAGE_PROJECTILES_SOURCES))
         self.assertEqual(set(hp["rows"]), {compose.HUD_SOURCE})
