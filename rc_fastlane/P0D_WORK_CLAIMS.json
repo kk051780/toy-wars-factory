@@ -33858,6 +33858,7 @@
         "quality_gameplay/gq470_stonegiant_silhouette_real69_20261120/patch_stone_giant69.py",
         "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_suite.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/combat_visual_native.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
@@ -33916,8 +33917,8 @@
         "branch_expected_before": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
         "formal_parent": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
         "author_parent": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
-        "tree": "b9e7ac7e09450db5e33353049b3c78f1606673b6",
-        "local_head": "bf3e837c9e3659d6bc70d19283fb8fd9cb61b4b2",
+        "tree": "0a50c23c3a6d32cb45f0ac12271a8d85f7e15c64",
+        "local_head": "de1fbc7750e7e2d73eb069b140cc4b6e55116db7",
         "permitted_reclassify_draft": true,
         "allowed_changed_files": [
           {
@@ -33966,7 +33967,13 @@
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
             "mode": "100644",
             "bytes": 35087,
-            "blob": "f7ecbdb62c738e0e579b6036aeb3022fca40a168"
+            "blob": "a9ff4038bbe7af3f227c9c67c1ac0e78654c9f1d"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_suite.py",
+            "mode": "100644",
+            "bytes": 20273,
+            "blob": "153441cfc04d49b5b8163e5f0c66ab3155dbf8fe"
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/combat_visual_native.py",
@@ -33983,8 +33990,8 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
             "mode": "100644",
-            "bytes": 49357,
-            "blob": "dc053c546b4b1895d9fee34ddc6dbfc1c86ab8fb"
+            "bytes": 49468,
+            "blob": "7470b9a9f0156d9e12df12b53e1deb592c3041e7"
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
@@ -33995,14 +34002,14 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
             "mode": "100644",
-            "bytes": 126655,
-            "blob": "e705bbc50032720148c0edad7bda38382f074188"
+            "bytes": 126849,
+            "blob": "25478b2c349ba3f4512d8b32551bc65adedd7a7b"
           },
           {
             "path": "tests/test_gq470_union22_real69_20261122.py",
             "mode": "100644",
-            "bytes": 102963,
-            "blob": "842e4d5a0803c7cb55be6d086adf03f70b66d270"
+            "bytes": 103480,
+            "blob": "f29f8c375021ef1df98fc9979728109359103e41"
           }
         ],
         "local_qa": {
@@ -34011,12 +34018,34 @@
           "source_lock": "d07496dfb90c44eed654fc0bd43f8fe28b5c65f282bfb802e59cf42852472666",
           "parent_off_bytes": 854300,
           "changed_luau": 3,
-          "unchanged_luau": 66
+          "unchanged_luau": 66,
+          "compile": 160,
+          "rojo": 17,
+          "older_rollbacks": 15,
+          "native_ko_cases": 7,
+          "native_ko_immediate_fade_expected_red": 1,
+          "native_bot_scenarios": 9,
+          "native_bot_checks": 43,
+          "windows_exact_scope": 7
         },
         "expires_at": "2026-11-27T07:17:01.697Z",
         "issued_from": {
           "lease": "3e755039faa7ec259729b6501ff1bc20ee5d30f3",
           "owner": "d3eeadd4-1359-4705-98e3-d7790d136416"
+        }
+      },
+      "exact_scope_amendment": {
+        "prior_grant": "aed509be66bdf751fe6f44db5327b0c9c526586d",
+        "reason": "Freeze old Native nine scenarios and output vectors, rebind exact new BotActors presentation bytes while keeping exact existing route and authoritative gameplay source; reject even a substituted stale manifest.",
+        "added_test_path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_suite.py",
+        "observed_local_bot_native": {
+          "scenarios": 9,
+          "case_rows": 13,
+          "check_rows": 43
+        },
+        "metadata": {
+          "lease": "b86eccad13f0b035eed91f8edaee5e850a4beae5",
+          "owner": "da12e40a-8cb3-4a30-afa0-40685d72669a"
         }
       }
     }
