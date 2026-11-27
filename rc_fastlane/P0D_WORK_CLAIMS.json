@@ -38949,7 +38949,7 @@
     {
       "claim_id": "P0D-FB019-ACTIVE-HIT-423-20261128",
       "feature_id": "FB019_ATTACK_RESPONSE_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 910,
@@ -38964,7 +38964,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #423 Game/HUD actual server HIT/MISS on current ACTIVE rich51 existing normal attack. Players/Bot/neutral Horde/castle gain feedback only on actual authority results; existing damage, Remote, snapshot cadence, keyboard F, cooldown and mode untouched. Only Game/HUD paths; no legacy gesture/extra effects, no Private/device claims.",
       "resources": [
@@ -39173,7 +39173,7 @@
         "operation_id": "f8b76bb6-6259-4a28-b04d-1f19044915c9"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
         "permitted_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
@@ -39204,7 +39204,36 @@
           "review": 6090435193,
           "trusted_queue_run": 46026373133,
           "trusted_queue_job": 140598699358
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "152eff3def56cae2ea96830885495d633afd9c8d",
+        "writer_return": "3221e140be95e6a2f5968afd4bfb9ee5c949f32f",
+        "adopted_head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "adopted_at": "2026-11-27T15:39:11.101Z"
+      },
+      "actual_official_rc": {
+        "head": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+        "previous": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "active_ci": 46026807768,
+        "active_job": 140600200786,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15212965787,
+        "active_zip_bytes": 195858,
+        "active_zip_digest": "sha256:9ee1b762eb6a98d346b1ceb5c48a5c1fdcf85f3c50d7486f5ace8dc86872b372",
+        "active_place_bytes": 656824,
+        "active_place_sha256": "184498f6732783f8fcf954ee2d7bac150295008fe96132e90d768ce823005bd0",
+        "active_off_place_bytes": 653907,
+        "private_ci": 46026807690,
+        "private_job": 140600200834,
+        "private_steps": 48,
+        "private_artifact": 15213145600,
+        "private_zip_bytes": 25129825,
+        "private_zip_digest": "sha256:50bbf915f71781136d4becb30c1ae58cfa6fff5d50d6984dbf0dfae035261c05",
+        "private_place_bytes": 890487,
+        "device_evidence": "NOT_TESTED",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7222505131"
       }
     },
     {
@@ -39237,6 +39266,7 @@
         "quality_gameplay/gq470_moguron_visual_20261127/moguron.patch",
         "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
@@ -39268,14 +39298,14 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 967,
         "branch": "quality/gq470-moguron-lowpart-matte-real69-20261121",
-        "old_pr_head": "89719973047c13dde5ba64732231814a4db32f42",
+        "old_pr_head": "e2a515cc6895e33c465526f2b72ba522fb2b4027",
         "old_base_ref": "rc/p0d-s1-kids-rc01",
         "formal_parent": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
-        "tree": "1ee518e75149db31d760be06828cef17583f9fda",
-        "local_head": "90de9affe3ffea6b6de54c1342fc70dbf1466e8e",
+        "tree": "08b5b83c4901ec114b9de8be425af501955264b2",
+        "local_head": "f827df842eb66838aab66eca319b257557a020a7",
         "allowed_changed_files": [
           {
             "mode": "100644",
@@ -39294,6 +39324,12 @@
             "blob": "1d7b95d687c353d78738616f1fe4767da5efc453",
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
             "bytes": 35255
+          },
+          {
+            "mode": "100644",
+            "blob": "8efce7399e6c1dcf5981a5d62adaf94c283eb27c",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "bytes": 9895
           },
           {
             "mode": "100644",
@@ -39326,10 +39362,10 @@
             "bytes": 113427
           }
         ],
-        "expires_at": "2026-11-27T16:40:33.205Z",
+        "expires_at": "2026-11-27T16:53:26.530Z",
         "issued_from": {
-          "lease": "b7b578e209b8812002bfd33e1eaaee69a0941b74",
-          "owner": "ad96cd42-e955-4184-8469-30a4928f5582"
+          "lease": "b22f606b749b74a518dc4a1cb533fb0874ca72a0",
+          "owner": "c02b4f3f-38db-411a-91b5-2b98fd72006d"
         },
         "local_qa": {
           "on": 891450,
@@ -39342,8 +39378,25 @@
           "previous_native_compile": 175,
           "previous_rojo": 22,
           "old_archives_byte_exact": 20,
-          "pinned_linux_required_on_hosted": true
-        }
+          "pinned_linux_required_on_hosted": true,
+          "historical_growth_runs": 24,
+          "original_aura_runs": 2,
+          "expected_negative_controls_preserved": true,
+          "old_new_canyon_source_history_exact": true,
+          "failed_candidate_job": 140601691449
+        },
+        "repair_changed_paths_from_red": [
+          "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py"
+        ]
+      },
+      "first_candidate": {
+        "head": "e2a515cc6895e33c465526f2b72ba522fb2b4027",
+        "tree": "1ee518e75149db31d760be06828cef17583f9fda",
+        "author_parent": "89719973047c13dde5ba64732231814a4db32f42",
+        "source_lease": "8be3fa504cf8c62afa9ee4655a95edac8afa800d",
+        "source_return": "e96307fa1b982bb3f276ec4e833017c926ed9778",
+        "conclusion": "RED_ONLY_HISTORICAL_NATIVE_PROFILE_VECTOR",
+        "job": 140601691449
       }
     }
   ],
