@@ -35972,9 +35972,9 @@
           "owner": "dda9bb30-44bf-4569-8e90-43bc9825300f"
         }
       },
-      "source_head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
-      "prepared_candidate_head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
-      "prepared_candidate_tree": "4bb9ca5a6d0aed60dcd62597e81b53bbaa8db9f5",
+      "source_head": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+      "prepared_candidate_head": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+      "prepared_candidate_tree": "057939a9b6006e8ce491f54b2164573829424821",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_relay_eligibility_20261127/client_cases.luau",
@@ -36033,8 +36033,8 @@
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/relay_eligibility_native.py",
           "mode": "100644",
-          "blob": "113c6d411cbc71c277e061f162be39111afdb29b",
-          "bytes": 6457
+          "blob": "6da7d95c1ff853ec3ad91505649ac48f4a59df02",
+          "bytes": 6471
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
@@ -36063,27 +36063,31 @@
         {
           "path": "tests/test_gq470_union22_real69_20261122.py",
           "mode": "100644",
-          "blob": "25b4c10841068b206c2974b640d9b9ea5c89019c",
-          "bytes": 107863
+          "blob": "9b3871d9bef4d52a7720bdbad52acd68b0bbaee9",
+          "bytes": 107895
         }
       ],
       "actual_candidate_readback": {
-        "head": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
-        "tree": "4bb9ca5a6d0aed60dcd62597e81b53bbaa8db9f5",
+        "head": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "tree": "057939a9b6006e8ce491f54b2164573829424821",
         "base": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
         "branch": "quality/gq470-team-relay-eligibility-20261127",
         "sourceLease": "797dc6de8cf0dbf9ae1c4e543f282e0ac128e76d",
         "sourceOperation": "b10092bd-2722-4d7d-839c-fadff2e9d2e3",
         "pr": 1040,
         "livePrBase": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
-        "sourceReturn": "eb41e62793a03aeb989c0f12a82a48d5180252f0"
+        "sourceReturn": "eb41e62793a03aeb989c0f12a82a48d5180252f0",
+        "oldHead": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
+        "correctionLease": "104cbe589097f34b923dd2f70b9e37eda9cc27b9",
+        "correctionOperation": "08d3fdbc-ead2-4518-86f3-861c615c2f4f",
+        "correctionReturn": "8c6e28e9b710a359aada7e8920fb5afe64d23984"
       },
       "actual_binding_lease": {
-        "commit": "969e798dbeea2b605a11f8ddf323b7fd0d5591b0",
-        "operation_id": "1d25055c-a9cf-4312-9fd5-35a5b7913554"
+        "commit": "63bd212dc65a8531483fc2a4e3dea862251bc927",
+        "operation_id": "c2257fad-b532-4599-b5f0-79709f87ad46"
       },
       "qa_correction_grant": {
-        "status": "ONE_EXACT_NONFORCE_QA_UPDATE",
+        "status": "CONSUMED_EXACT_QA_ONLY",
         "pr": 1040,
         "branch": "quality/gq470-team-relay-eligibility-20261127",
         "old_candidate": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
@@ -36111,7 +36115,10 @@
         "metadata": {
           "lease": "c7231d89c7b8115de5a2f3eb6b78f240a69acb48",
           "owner": "6db6251c-9315-484c-b9f6-f47cafcb7015"
-        }
+        },
+        "actual_candidate": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "source_lease": "104cbe589097f34b923dd2f70b9e37eda9cc27b9",
+        "source_return": "8c6e28e9b710a359aada7e8920fb5afe64d23984"
       }
     }
   ],
