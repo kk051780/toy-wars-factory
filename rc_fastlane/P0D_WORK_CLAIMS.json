@@ -37720,7 +37720,7 @@
         "operation_id": "334b98c5-16eb-40e7-a5c1-2692847017a0"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "149181b6af88906e91369ec0b67d50a5a4d7f580",
         "permitted_head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
@@ -37733,7 +37733,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -37751,7 +37751,33 @@
           "review": 6089005031,
           "trusted_queue_run": 46009322138,
           "trusted_queue_job": 140540475146
-        }
+        },
+        "writer_acquire_ref": "c83a9e8cfd2467fc73aa9d8227a9128bd9665d63",
+        "writer_return_ref": "04ee84781658a15173703c6ff46d6682d7e962fd",
+        "exact_adoption_readback_at": "2026-11-27T13:43:53.472Z"
+      },
+      "actual_official_rc": {
+        "head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+        "previous": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "active_ci": 46009625488,
+        "active_job": 140541518377,
+        "active_success_steps": 107,
+        "active_conditional_skip": 14,
+        "active_artifact": 15203910854,
+        "active_zip_bytes": 177927,
+        "active_zip_digest": "sha256:dd851be44fa4c98f079bcedcf3e3d5cab62fe56468818c41850d9366e7ec14fa",
+        "active_place_bytes": 610958,
+        "active_place_sha256": "7cfa98cc5f3270a75cb0445fb2edb5ac953eec88217b8ddd27f3bc410e1c7c0b",
+        "active_off_place_bytes": 610358,
+        "private_ci": 46009625315,
+        "private_job": 140541518166,
+        "private_steps": 48,
+        "private_artifact": 15203706598,
+        "private_zip_bytes": 25144967,
+        "private_zip_digest": "sha256:63a562d0e9a300c75309f86e5e4c1b1fe16aa2c12ea951c91454d99bf8c27ca8",
+        "device_evidence": "NOT_TESTED_V3.5",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7220062361"
       }
     },
     {
@@ -37816,7 +37842,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 407,
         "branch": "feature/p0d-rc80-bot-405-safety-prep-20261114",
         "old_pr_head": "339e1bfcfb38fdd3a70a80c9f0ee4be53f84ca40",
@@ -37897,6 +37923,79 @@
           "native_game_sole_authority_fold": true,
           "wrong_input_rejected": true
         }
+      },
+      "source_head": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+      "prepared_candidate_head": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+      "prepared_candidate_tree": "c3445dba34d245ea807bd62c1a0024a307b94a05",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "8756c6e683dbae79820a55e343ea4ca7624929e8",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 211726
+        },
+        {
+          "mode": "100644",
+          "blob": "5a87971e7fd56baba98f0f82ef4036bb2b721dcd",
+          "path": "rc_fastlane/apply_active_solo_bots.py",
+          "bytes": 5669
+        },
+        {
+          "mode": "100644",
+          "blob": "9a08bb1f972f69ffa94d90ec59fd593d20dd97ed",
+          "path": "rc_fastlane/features/active_solo_bots/SoloTeamBots.luau",
+          "bytes": 21338
+        },
+        {
+          "mode": "100644",
+          "blob": "d2a81fb9eb7cc97c40354cadb4a79deee683365e",
+          "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_actor.py",
+          "bytes": 9142
+        },
+        {
+          "mode": "100644",
+          "blob": "627e25a1fe927b7b04625dde1674a294b70d1b72",
+          "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_lease.py",
+          "bytes": 7456
+        },
+        {
+          "mode": "100644",
+          "blob": "cafc4887a9d5be8ea47f82b602958e353b2c1f3c",
+          "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_move.py",
+          "bytes": 10320
+        },
+        {
+          "mode": "100644",
+          "blob": "c78f9319b0647f3a2b7b4e04979a49de4124a876",
+          "path": "rc_fastlane/features/active_solo_bots/source_lock.json",
+          "bytes": 1067
+        },
+        {
+          "mode": "100644",
+          "blob": "e39bf35a5b7f92d3efb048a527b9ab94782623b4",
+          "path": "rc_fastlane/verify_active_solo_bots_native.py",
+          "bytes": 6786
+        },
+        {
+          "mode": "100644",
+          "blob": "2de869161d515d29a3af27a60e84374302d82eb8",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 110680
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 407,
+        "exact_head": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+        "exact_tree": "c3445dba34d245ea807bd62c1a0024a307b94a05",
+        "exact_parent": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "preserved_author_parent": "339e1bfcfb38fdd3a70a80c9f0ee4be53f84ca40",
+        "source_lease": "ece76f24b47b02509c1327c8697045509eb63bed",
+        "source_lease_return": "06bec808f205fdbc55cdb3e7972766b90d3412ea",
+        "prepared_at": "2026-11-27T13:53:52.558Z"
+      },
+      "actual_binding_lease": {
+        "commit": "66eab4b1afc2cb24bebd694ec0b67505fad99917",
+        "operation_id": "12b9a9d7-6918-4115-a1d1-483f061fe33f"
       }
     }
   ],
