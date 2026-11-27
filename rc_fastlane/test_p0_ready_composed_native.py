@@ -154,12 +154,42 @@ assert(lastSeq[player]==before,"COUNTDOWN_LATE_READY_CONSUMED_SEQ")
 print("P0_COMPOSED_READY_NATIVE_6_SCENARIOS_PASS")
 ''',negatives])
 
+
+def coach_views(path):
+    return "\n".join(("local Coach = (function()",path.read_bytes().decode(),"end)()",r'''
+local function view(phase,team,ready)
+    local state=Coach.new()
+    assert(Coach.consume(state,{
+        kind="SNAPSHOT",serial=1,updateId=1,time=4,phase=phase,team=team,ready=ready,
+        scores={RED=1,BLUE=0},carrying="",role="RAIDER",
+    },8))
+    return Coach.view(state,8),state
+end
+for _, phase in ipairs({"LOBBY","COUNTDOWN","ACTIVE","RESULTS"}) do
+    local observer,state=view(phase,"NONE",false)
+    assert(observer.visible and observer.title=="観戦中", "SPECTATOR_COACH_PHASE:"..phase)
+    assert(not string.find(observer.detail,"自動",1,true), "SPECTATOR_COACH_FORCED_REMATCH")
+    Coach.setHidden(state,true)
+    assert(not Coach.view(state,8).visible, "SPECTATOR_COACH_DISMISS_IGNORED")
+end
+local redResult=view("RESULTS","RED",false)
+assert(string.find(redResult.detail,"「出撃する」",1,true), "TEAM_COACH_REQUIRES_READY")
+local blueActive=view("ACTIVE","BLUE",true)
+assert(blueActive.title=="敵のお城の卵をねらおう！", "TEAM_COACH_COMBAT_CHANGED")
+local legacyResult=view("RESULTS","NONE",nil)
+assert(string.find(legacyResult.detail,"自動で再戦",1,true), "LEGACY_COACH_PACKET_CHANGED")
+print("P0_ACTIVE_RICH51_COACH_SPECTATOR_AND_LEGACY_PASS")
+'''))
+
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--game",type=Path,required=True)
     p.add_argument("--emit",type=Path,required=True)
     p.add_argument("--active-rich51",action="store_true")
+    p.add_argument("--coach",type=Path)
     a=p.parse_args()
     content=generate(a.game,a.active_rich51)
-    a.emit.write_text(content,"utf8")
+    if a.coach is not None:
+        content+=coach_views(a.coach)
+    a.emit.write_bytes(content.encode())
     print("P0_COMPOSED_READY_NATIVE_SOURCE_EXTRACT_PASS",len(content))

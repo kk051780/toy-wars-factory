@@ -664,9 +664,11 @@ jobs:
             done
             if [ "$READY_STATUS" = ACTIVE_VOLUNTARY_READY_RICH51_EXACT_THREE_EXISTING_SOURCES_PASS ]; then
               python3 -B rc_fastlane/test_p0_ready_composed_native.py --active-rich51 \
-                --game "$DIST/src/server/Game.server.luau" --emit /tmp/p0d_active_rich51_ready.luau
+                --game "$DIST/src/server/Game.server.luau" --coach "$DIST/src/shared/FirstMinuteModel.luau" \
+                --emit /tmp/p0d_active_rich51_ready.luau
               /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_ready.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
               grep -Fx P0_ACTIVE_RICH51_READY_SPECTATOR_BOUNDARIES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
+              grep -Fx P0_ACTIVE_RICH51_COACH_SPECTATOR_AND_LEGACY_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
             fi
           elif [ "$PROFILE" = rich47 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
