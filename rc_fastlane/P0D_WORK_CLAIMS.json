@@ -40498,6 +40498,156 @@
           "trusted_queue_job": 140643547068
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-WARRIOR-001-ACTIVE-297-20261128",
+      "feature_id": "GQ219_WARRIOR_001_ACTIVE_GROWTH_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 219,
+      "source_issue": 297,
+      "integration_issue": 220,
+      "pr": 297,
+      "base_rc_sha": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+      "base_rc_tree": "4fd30321e3f381648e74e5da581a8d4076af0238",
+      "prep_branch": "feature/p0d-rc-seven-jobs-pve-v1-20261114-01",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Current rich51 real #297 existing seven-role PvE path, mount fixed #219 WARRIOR-001 mechanical vertical slice for explicitly selected WARRIOR, 180 active sec Lv1, S0–4 6/7/8/9/10 reach and 2/3/4/5/6 neutral caps, CD15/energy30/100 and old Game/Horde/Remote authority. Author TimePremiumRules naturalGrowth exact reuse; time premium not activated. Game/HUD/Horde and two modules only, PRIVATE unchanged, no ART/device acceptance.",
+      "resources": [
+        "GQ219_WARRIOR_001_ACTIVE_GROWTH_V1",
+        "ACTIVE71_ROLE_ACTIVITY_TIME_AND_ENERGY",
+        "ACTIVE71_WARRIOR_HALF_MOON_Q",
+        "ACTIVE71_NEUTRAL_HORDE_REACH_CAP",
+        "ACTIVE71_SELECTED_ROLE_HUD_RESOURCE"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_role_growth.py",
+        "rc_fastlane/features/active_role_growth/MatchRoleGrowth.luau",
+        "rc_fastlane/features/active_role_growth/TimePremiumRules.luau",
+        "rc_fastlane/features/active_role_growth/native_cases.luau",
+        "rc_fastlane/features/active_role_growth/source_lock.json",
+        "rc_fastlane/verify_active_role_growth_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7203941708",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "3d4305bf-2bc4-4ab8-a1f4-17214a382643",
+      "issued_at": "2026-11-27T17:14:43.610Z",
+      "expires_at": "2026-11-27T19:14:43.610Z",
+      "actual_metadata_lease": {
+        "ref": "5478c7502272c1a5c0273551da106d430077587d",
+        "blob": "0367c35f38fbd9efdbebdb4e2b858b62fa608941",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "3d4305bf-2bc4-4ab8-a1f4-17214a382643",
+          "task_id": null,
+          "epoch": 985,
+          "acquired_at": "2026-11-27T17:14:29.451Z",
+          "expires_at": "2026-11-27T17:44:29.451Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 297,
+        "branch": "feature/p0d-rc-seven-jobs-pve-v1-20261114-01",
+        "old_pr_head": "e70dbed0c9b3565b13a5a8130150abb5a7aa03c0",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "tree": "2c49b123aea21ab8766f16388b1e0d37595aaaf2",
+        "local_head": "706ff3ca5cfb45f92af2e7bf65ee4309064276a4",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "be5356dbcb0224358f468d8d347007928ffb7d9f",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 241393
+          },
+          {
+            "mode": "100644",
+            "blob": "291c201fb81a54233eef426244b1794873ced5a5",
+            "path": "rc_fastlane/apply_active_role_growth.py",
+            "bytes": 12743
+          },
+          {
+            "mode": "100644",
+            "blob": "03eb350bf4bf6d08eec98ff93847dae4c76a88f3",
+            "path": "rc_fastlane/features/active_role_growth/MatchRoleGrowth.luau",
+            "bytes": 4639
+          },
+          {
+            "mode": "100644",
+            "blob": "c4605187c23c959b420d06d27b40dea31f804ad3",
+            "path": "rc_fastlane/features/active_role_growth/TimePremiumRules.luau",
+            "bytes": 3133
+          },
+          {
+            "mode": "100644",
+            "blob": "2a803888b77d26b837bce557eeb185e7b9dffab0",
+            "path": "rc_fastlane/features/active_role_growth/native_cases.luau",
+            "bytes": 5306
+          },
+          {
+            "mode": "100644",
+            "blob": "46c2c82d69f98fc18b5adb8edd88fa83832718e6",
+            "path": "rc_fastlane/features/active_role_growth/source_lock.json",
+            "bytes": 1210
+          },
+          {
+            "mode": "100644",
+            "blob": "b48b492ff6cb5884b475f15b06f41b98a2869212",
+            "path": "rc_fastlane/verify_active_role_growth_native.py",
+            "bytes": 2942
+          },
+          {
+            "mode": "100644",
+            "blob": "e248082b5408fac3f5ca0bbb2f9b6bfbd8c40e8a",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 116286
+          }
+        ],
+        "expires_at": "2026-11-27T18:14:43.610Z",
+        "issued_from": {
+          "lease": "5478c7502272c1a5c0273551da106d430077587d",
+          "owner": "3d4305bf-2bc4-4ab8-a1f4-17214a382643"
+        },
+        "local_qa": {
+          "on": 687144,
+          "off": 674623,
+          "on_sha256": "4efab0dc6dffd4d5ca488ae5e78375b5a371c733ab334e8803c70d0a8818a7db",
+          "off_sha256": "7f178413a5291c8f8cafe2cb9cdc728251f85b198483d0de588a78588230dc6d",
+          "bytes_delta": {
+            "server/Game.server.luau": 3551,
+            "client/HUD.client.luau": 496,
+            "server/MusouHorde.luau": 273,
+            "server/MatchRoleGrowth.luau": 4639,
+            "server/TimePremiumRules.luau": 3133
+          },
+          "compiled": 71,
+          "old_66_source_exact": true,
+          "native_stage_groups": 4,
+          "native_inherited_touch_groups": 2,
+          "registered_probe_bounds_start_hud_freshness": true,
+          "explicit_selected_role": true,
+          "reserve_before_cast": true,
+          "design_effect_bodies_only": true,
+          "studio": "NOT_TESTED"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
