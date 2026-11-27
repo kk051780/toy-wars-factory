@@ -32274,8 +32274,8 @@
       "related_bundle_pr": 931,
       "related_bundle_head": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
       "allowed_new_prs": 0,
-      "source_scope_granted": false,
-      "scope_only": true,
+      "source_scope_granted": true,
+      "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
       "PREP_READY": false,
@@ -32324,7 +32324,148 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Current authenticated OWNER #1011 V2.1 bounded source preparation and authentic #218 work split. No source transport, independent approval or RC write granted."
+      "authority_basis": "Current authenticated OWNER #1011 V2.1 bounded source preparation and authentic #218 work split. No source transport, independent approval or RC write granted.",
+      "source_writes_allowed_only_under_bound_scope": true,
+      "source_grant": {
+        "status": "ONE_EXACT_NONFORCE_UPDATE_EXISTING_PR",
+        "pr": 943,
+        "branch": "feature/gq470-role-motion-readable-real69-20261121",
+        "branch_expected_before": "78a1296b400db9221d9cb4cda298acb02e51d5d1",
+        "formal_parent": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "author_parent": "78a1296b400db9221d9cb4cda298acb02e51d5d1",
+        "tree": "2577a1ebeb4d8579d2d879a278cf09995f326c9a",
+        "local_head": "25662507d4db20bb984ffbb8ccc61e96d9f38b4b",
+        "original_943_bytes_preserved": [
+          {
+            "path": ".github/workflows/gq470-role-motion-real69-prep.yml",
+            "blob": "85aefa97866b3731790df3a1a32a49259f97b796",
+            "bytes": 6289,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/README.md",
+            "blob": "06ee3c9cd770837d409135454c503075cf34c34f",
+            "bytes": 9157,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/ROLE_MOTION_REAL69.patch",
+            "blob": "096a9b7e0b3e590b53e0cebe36c01a5dd4cbc411",
+            "bytes": 8398,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/gate.py",
+            "blob": "8259a7c7109d7f019370a5ae3379a99aa8e6f39c",
+            "bytes": 19466,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/source_lock.json",
+            "blob": "6463076c3f102c306bbe729a9236edbe5b9096be",
+            "bytes": 15668,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/test_native_cast_wiring.py",
+            "blob": "91d7d49a08edee6ba6033bff9ca5c24c4e53649f",
+            "bytes": 33447,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_role_motion_real69_20261121/test_native_motion.py",
+            "blob": "3337ca293cdaf78cadf5df566a50d5c1d2547f57",
+            "bytes": 4211,
+            "mode": "100644"
+          }
+        ],
+        "canonical_paths": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "blob": "51d0a36d7e9fe24d0904ef1b27dbe02d9b59efd6",
+            "bytes": 48355,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "blob": "ec23a60da633385c1ff5ca04fc898b8f006996f1",
+            "bytes": 34938,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/role_readability_native.py",
+            "blob": "47ddfa45b670589c3e2047b151c2b3f1fe3696ba",
+            "bytes": 7071,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "blob": "052436a22d5027b63617ddb3b98efc40f1a00676",
+            "bytes": 15619,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "blob": "a3f1d233b2df0072d045942bc4b737440a15c9a3",
+            "bytes": 47924,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "blob": "345a3ce1a9a885c9cfce7353c7fdf89ccf6a70be",
+            "bytes": 745838,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "blob": "686b4fdcfb78953fc849db80beecda8ad75077b5",
+            "bytes": 113048,
+            "mode": "100644"
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "blob": "4059cdd111e7ce885d0a3eaf6c4f2f72f90f72f2",
+            "bytes": 97202,
+            "mode": "100644"
+          }
+        ],
+        "external_branch_updates_allowed": 0,
+        "additional_prs": 0,
+        "force": false,
+        "formal_rc_write": false,
+        "expires_at": "2026-11-27T05:46:41.745Z",
+        "actual_local_checks": {
+          "compile": 152,
+          "rojo": 13,
+          "canonical_motion_cases": 20,
+          "canonical_weapon_rows": 96,
+          "older_archives_exact": 11,
+          "focused_boundary_cases": 7,
+          "rollback_place_bytes": 842354,
+          "candidate_place_bytes": 848891,
+          "source_lock_sha256": "eb212d7179df381eb8ec5d046a0b78ee17bf6f86425cd363a6c0eff9e6d71412"
+        },
+        "authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "f8fe7348-c990-4599-b9f6-9eff1af35577",
+          "acquire_commit": "ffb73e809503324675ccc0137564cb2b37c7f969",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "f8fe7348-c990-4599-b9f6-9eff1af35577",
+            "task_id": null,
+            "epoch": 813,
+            "acquired_at": "2026-11-27T03:55:29.481Z",
+            "expires_at": "2026-11-27T04:25:29.481Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "registry_parent": "8bcd45d69684a8d143992ec13c4570b00a519dbe"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
