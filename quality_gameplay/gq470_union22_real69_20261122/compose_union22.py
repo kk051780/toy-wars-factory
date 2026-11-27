@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "233fe40093b34bde15d0f383c82acadbc6974b810d429c8ea06d15a04e41eaf2"
+LOCK_SHA256 = "d68e247ac47d92a115bf2717ce47c42bdf4ab98a2d344738305ca4798845af03"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -102,6 +102,8 @@ PORTRAIT_OFF_ARCHIVE = "OFF69_PORTRAIT_PRIVATE_TOUCH_PARENT_ROLLBACK.tar.gz"
 SHOREFOAM_SOURCE = "ServerScriptService/EGGRUMBLE_LandSeaSkyTraversal.server.luau"
 SHOREFOAM_OFF = "off69_shorefoam_portrait_parent"
 SHOREFOAM_OFF_ARCHIVE = "OFF69_SHOREFOAM_PORTRAIT_PARENT_ROLLBACK.tar.gz"
+TEAM_WIN_RULE_OFF = "off69_team_win_shorefoam_parent"
+TEAM_WIN_RULE_OFF_ARCHIVE = "OFF69_TEAM_WIN_SHOREFOAM_PARENT_ROLLBACK.tar.gz"
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -521,6 +523,11 @@ def shorefoam_parent(on, lock):
                                 lock["portrait_followup"]["repaired_place"], "SHOREFOAM")
 
 
+def team_win_rule_parent(on, lock):
+    return paired_source_parent(on, lock, lock["team_win_rule_followup"], (VAULT_SOURCE,),
+                                lock["shorefoam_followup"]["repaired_place"], "TEAM_WIN_RULE")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -688,7 +695,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    shorefoam_off, shorefoam_off_lock = shorefoam_parent(on, lock)
+    team_win_off, team_win_off_lock = team_win_rule_parent(on, lock)
+    shorefoam_off, shorefoam_off_lock = shorefoam_parent(team_win_off, team_win_off_lock)
     portrait_off, portrait_off_lock = portrait_parent(shorefoam_off, shorefoam_off_lock)
     private_touch_off, private_touch_off_lock = private_touch_parent(portrait_off, portrait_off_lock)
     moguron_off, moguron_off_lock = moguron_parent(private_touch_off, private_touch_off_lock)
@@ -746,7 +754,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / PRIVATE_TOUCH_OFF, private_touch_off, private_touch_off_lock["final_place"],
                    PRIVATE_TOUCH_SOURCE),
                   (stage / PORTRAIT_OFF, portrait_off, portrait_off_lock["final_place"], PORTRAIT_SOURCE),
-                  (stage / SHOREFOAM_OFF, shorefoam_off, shorefoam_off_lock["final_place"], SHOREFOAM_SOURCE))
+                  (stage / SHOREFOAM_OFF, shorefoam_off, shorefoam_off_lock["final_place"], SHOREFOAM_SOURCE),
+                  (stage / TEAM_WIN_RULE_OFF, team_win_off, team_win_off_lock["final_place"], VAULT_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -820,6 +829,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         portrait_archive_identity = identity(read_file(stage / PORTRAIT_OFF_ARCHIVE))
         make_archive(stage / SHOREFOAM_OFF, stage / SHOREFOAM_OFF_ARCHIVE, SHOREFOAM_OFF)
         shorefoam_archive_identity = identity(read_file(stage / SHOREFOAM_OFF_ARCHIVE))
+        make_archive(stage / TEAM_WIN_RULE_OFF, stage / TEAM_WIN_RULE_OFF_ARCHIVE, TEAM_WIN_RULE_OFF)
+        team_win_archive_identity = identity(read_file(stage / TEAM_WIN_RULE_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -924,6 +935,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({SHOREFOAM_OFF + "/" + PROJECT: lock["project"],
                                SHOREFOAM_OFF + "/" + PLACE: shorefoam_off_lock["final_place"],
                                SHOREFOAM_OFF_ARCHIVE: shorefoam_archive_identity})
+        expected_stage.update({TEAM_WIN_RULE_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in team_win_off.items()})
+        expected_stage.update({TEAM_WIN_RULE_OFF + "/" + PROJECT: lock["project"],
+                               TEAM_WIN_RULE_OFF + "/" + PLACE: team_win_off_lock["final_place"],
+                               TEAM_WIN_RULE_OFF_ARCHIVE: team_win_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -987,6 +1003,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "portrait_rollback_archive": portrait_archive_identity,
             "shorefoam_followup": lock["shorefoam_followup"],
             "shorefoam_rollback_archive": shorefoam_archive_identity,
+            "team_win_rule_followup": lock["team_win_rule_followup"],
+            "team_win_rule_rollback_archive": team_win_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -999,7 +1017,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 34, "unchanged_sources": 35,
-            "compile_count": 178, "rojo_build_count": 25, "instances": 75,
+            "compile_count": 179, "rojo_build_count": 26, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -1018,6 +1036,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "private_touch_parent_place": private_touch_off_lock["final_place"],
             "portrait_parent_place": portrait_off_lock["final_place"],
             "shorefoam_parent_place": shorefoam_off_lock["final_place"],
+            "team_win_rule_parent_place": team_win_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

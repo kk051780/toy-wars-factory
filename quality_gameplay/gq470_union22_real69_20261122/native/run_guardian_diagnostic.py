@@ -108,9 +108,12 @@ def source_contract(root, profile, input_lock):
     private_touch = profile["private_touch_followup"]
     portrait = profile["portrait_followup"]
     shorefoam = profile["shorefoam_followup"]
+    team_win = profile["team_win_rule_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    shorefoam_parent_pins = current_pins | {
+    team_win_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in team_win["rows"].items()}
+    shorefoam_parent_pins = team_win_parent_pins | {
         name: row["parent"]["after"] for name, row in shorefoam["rows"].items()}
     portrait_parent_pins = shorefoam_parent_pins | {
         name: row["parent"]["after"] for name, row in portrait["rows"].items()}
@@ -139,6 +142,7 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.TEAM_WIN_RULE_OFF / "sources") == team_win_parent_pins
                    and native.source_snapshot(root / compose.SHOREFOAM_OFF / "sources") == shorefoam_parent_pins
                    and native.source_snapshot(root / compose.PORTRAIT_OFF / "sources") == portrait_parent_pins
                    and native.source_snapshot(root / compose.PRIVATE_TOUCH_OFF / "sources") == touch_parent_pins
@@ -166,7 +170,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == shorefoam["repaired_place"]
+                   == team_win["repaired_place"]
+                   and native.identity(native.read(root / compose.TEAM_WIN_RULE_OFF / compose.PLACE))
+                   == team_win["parent_place"] == shorefoam["repaired_place"]
                    and native.identity(native.read(root / compose.SHOREFOAM_OFF / compose.PLACE))
                    == shorefoam["parent_place"] == portrait["repaired_place"]
                    and native.identity(native.read(root / compose.PORTRAIT_OFF / compose.PLACE))
