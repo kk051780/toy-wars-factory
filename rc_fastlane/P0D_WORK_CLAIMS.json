@@ -31997,6 +31997,93 @@
           },
           "registry_parent": "611680e28240e4421da21fa4fa34605a2b7e1381"
         }
+      },
+      "pr": 1037,
+      "source_head": "ebdaa5ea7a5a8cda590674e407b292bdd82d3998",
+      "prepared_candidate_head": "ebdaa5ea7a5a8cda590674e407b292bdd82d3998",
+      "prepared_candidate_tree": "d4b4e2f35015e77fe422b6708325832a4e1c96ae",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "blob": "076772175baed7d4ee755b1a1c62bca75c89896c",
+          "bytes": 46713
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "blob": "4b14c595fceba02c55a0045b169da1e0de94d4ff",
+          "bytes": 34937
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/br_canyon_cases.luau",
+          "blob": "8772e734e8284c3e9747e5f1e6850e5d65afd318",
+          "bytes": 3007
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "blob": "91ac15cd6f55f32d4de66cf3df18adcf256fda08",
+          "bytes": 15171
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "blob": "9295854b8d0f518e599c5b5dd2201c51b85e5848",
+          "bytes": 47427
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "blob": "670134deae33d3d78e7dad8a6e16160e3e518641",
+          "bytes": 645147
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "blob": "c41a4b6edb169bce6da43a853714a79bf0fd534d",
+          "bytes": 110083
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "blob": "11c419a79c5a03add7a1dfe288546e13f5e93f06",
+          "bytes": 95937
+        }
+      ],
+      "exact_product_pins": {
+        "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+          "before": {
+            "bytes": 35282,
+            "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+          },
+          "after": {
+            "bytes": 35499,
+            "sha256": "b3dece5fd6c927172d14f4cff648b1659d97234e2e2d639628cd9ff740150c1f"
+          }
+        },
+        "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+          "before": {
+            "bytes": 10202,
+            "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+          },
+          "after": {
+            "bytes": 10334,
+            "sha256": "681ad5b6e74c8371ca5c3c25e54daef92c33026e7593097af48017548a044530"
+          }
+        }
+      },
+      "local_native": {
+        "placement_case_rows": 4,
+        "old_br_failed_identically": true,
+        "compile": 150,
+        "rojo": 12,
+        "older_rollback_archives_byte_exact": 10,
+        "existing_core_windows": "64 pass, 2 Windows errors, 1 Windows POSIX mismatch; mandatory hosted runner pending"
+      },
+      "actual_candidate_readback": {
+        "commit": "ebdaa5ea7a5a8cda590674e407b292bdd82d3998",
+        "tree": "d4b4e2f35015e77fe422b6708325832a4e1c96ae",
+        "branch": "feature/p0d-br-canyon-castle-approach-20261127",
+        "source_lease": "fbf66631e29a2c43dc00874029d38cc8286e48fd",
+        "return": "4aef45f9e0e2f1c05aae586b40bfaf15814699af"
+      },
+      "actual_binding_lease": {
+        "commit": "202a3d00c610032b71b1bbde4e4abfb81a1e2fd8",
+        "operation_id": "76d14a30-0029-4451-b442-662f9d0bf5fa"
       }
     }
   ],
