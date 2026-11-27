@@ -32989,7 +32989,40 @@
           "digest": "sha256:525ff33f793e4fc8496e94c227a61677b0aecfc1b874d39e9907005851d32749"
         },
         "intake": {
-          "status": "AWAITING_PUBLISHED_READY_METADATA"
+          "run": 45943408069,
+          "job": 140322557787,
+          "artifact": 15174015581,
+          "status": "READY_FOR_SOLE_WRITER_REVIEW"
+        }
+      },
+      "bounded_rc_integration": {
+        "status": "ONE_EXACT_FAST_FORWARD_AUTHORIZED_PENDING_LIVE_LEASE",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "daa6b076ac3502de632220aea9d7aec494232694",
+        "permitted_head": "fb87f9f23d0a136da048804cef307a865483f133",
+        "permitted_tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+        "permitted_pr": 1038,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEx_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T05:34:16.755Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Canonical PRIVATE_COMPANION; prepared FieldEgg prompts only. Same-head official CI and adopted Studio required; no change to main, active_runtime selection, or Roblox publication or costs.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated owner #1011 V2.2 and #220 V2.1, after signed independent context and trusted intake for this one head",
+          "lease": "e6c9f4e16b72b35bd0424e2169ce0ef2b3e6df97",
+          "owner": "9ad67814-1894-4d2c-b246-fcec9556f17e"
         }
       }
     }
