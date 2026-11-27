@@ -42132,7 +42132,7 @@
     {
       "claim_id": "P0D-GQ470-FB015-PRIVATE-PORTRAIT-947-20261128",
       "feature_id": "GQ470_FB015_HUD_PORTRAIT_CLEARANCE_REAL69_20261121",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 470,
@@ -42147,7 +42147,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #947 exact author HudPresentationPolicy only, integrated into selected PRIVATE REAL69_UNION22. Separate narrow portrait invulnerability and musou controls by 21 px at 320x260; move item/skill menus clear of HP. Keep #1043 attack/jump, minimap, gameplay, Active profile and remaining 68 selected sources exact. Preserve prior 22 rollback archives.",
       "resources": [
@@ -42424,7 +42424,7 @@
         "operation_id": "00d3d1f4-82b4-42f0-ac1e-6ee1f0c07cea"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
         "permitted_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
@@ -42455,7 +42455,36 @@
           "review": 6092646472,
           "trusted_queue_run": 46057791079,
           "trusted_queue_job": 140704394733
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "02d4044df31f60536bf6a64ef2ea01cff23f96b7",
+        "writer_return": "cfa6444723925eb2afa7973b1a57124a35ca215b",
+        "adopted_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "adopted_at": "2026-11-27T19:37:33.526Z"
+      },
+      "actual_official_rc": {
+        "head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "previous": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+        "active_baseline_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "active_ci": 46054236754,
+        "active_job": 140692725969,
+        "active_place_bytes": 718470,
+        "active_zip_bytes": 222432,
+        "active_artifact": 15225373472,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46058019128,
+        "private_job": 140705147713,
+        "private_steps": 48,
+        "private_artifact": 15228335495,
+        "private_zip_bytes": 26760103,
+        "private_zip_digest": "sha256:f39d6fd260477066ddc7d8ed4916fcea0c425e636e69b5536b37497879d4ad1b",
+        "private_place_bytes": 895073,
+        "private_place_sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74",
+        "private_off_place_bytes": 894743,
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7226863774",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -42515,7 +42544,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 382,
         "branch": "feature/p0d-private71-five-art-composite-20261114",
         "old_pr_head": "38d01f80a1a81836593e4c1b214e1384c3c32a53",
@@ -42599,6 +42628,62 @@
         "active_success_job": 140706279997,
         "required_private_pr_run": "MISSING_PATH_TRIGGER",
         "reason": "First ACTIVE actual cap CI passed, but exact candidate had no PRIVATE pull_request check because its paths only trigger ACTIVE. The actual #220 intake gate requires the exact-head REAL69 PR artifact. Added one byte-backed active/private boundary assertion to the existing artifact QA, with no changes to the cap or Private game."
+      },
+      "source_head": "5386557c98ca600ccd77a2198ef279a93714c858",
+      "prepared_candidate_head": "5386557c98ca600ccd77a2198ef279a93714c858",
+      "prepared_candidate_tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "28eb588db5e647dd44d8fd864fd6dc9314d2922d",
+          "bytes": 257964
+        },
+        {
+          "path": "rc_fastlane/apply_active_crowd_cap.py",
+          "mode": "100644",
+          "blob": "eb66ec67aa044595b2be069be3268c20e8468d53",
+          "bytes": 3972
+        },
+        {
+          "path": "rc_fastlane/features/active_crowd_cap/native_scene.luau",
+          "mode": "100644",
+          "blob": "ec8308c54c467ba7d84c77444c3a50fdd1acbd6d",
+          "bytes": 2787
+        },
+        {
+          "path": "rc_fastlane/features/active_crowd_cap/source_lock.json",
+          "mode": "100644",
+          "blob": "933efd73075436cc94f2527e0f015992b5b7a3b8",
+          "bytes": 701
+        },
+        {
+          "path": "rc_fastlane/verify_active_crowd_cap_native.py",
+          "mode": "100644",
+          "blob": "a15dab4134db3e522a1bb70807949a4e1a04da18",
+          "bytes": 4348
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "f6821d8f5119876e786ae67a476ac7e4244f5388",
+          "bytes": 122187
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 382,
+        "exact_head": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "exact_tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+        "exact_parent": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "previous_candidate": "38d01f80a1a81836593e4c1b214e1384c3c32a53",
+        "preserved_author_parent": "1e9e7ea4a07582d9d2843f0af66bcdd5b086930c",
+        "source_lease": "0a085b30c463c709f3128dc182924a45bc8f199e",
+        "source_lease_return": "da70879cd568a089fd426f1eed4020cfe85b6edf",
+        "prepared_at": "2026-11-27T19:47:28.087Z"
+      },
+      "actual_binding_lease": {
+        "commit": "17ec8d4dabcd4d1d45e186012267e7802567bcbd",
+        "operation_id": "85b86960-49bb-47fb-8c3a-cb753d2b7473"
       }
     }
   ],
