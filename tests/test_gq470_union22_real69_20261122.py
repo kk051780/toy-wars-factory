@@ -38,7 +38,8 @@ INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
 def restore_canyon(on, lock):
-    neutral_off = compose.neutral_names_parent(*compose.guardian_wall_parent(on, lock))
+    wall_off = compose.guardian_wall_parent(*compose.combat_visual_parent(on, lock))
+    neutral_off = compose.neutral_names_parent(*wall_off)
     return compose.br_canyon_parent(*compose.role_readability_parent(*compose.field_prompt_parent(*neutral_off)))
 
 
@@ -46,6 +47,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["combat_visual_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["neutral_names_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["role_readability_followup"]["rows"].items()
@@ -275,7 +278,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_br_canyon_restores_exact_relay_parent_and_rejects_stale_pair(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        before_labels = compose.neutral_names_parent(*compose.guardian_wall_parent(on, self.lock))
+        wall_off = compose.guardian_wall_parent(*compose.combat_visual_parent(on, self.lock))
+        before_labels = compose.neutral_names_parent(*wall_off)
         on, post_canyon = compose.role_readability_parent(*compose.field_prompt_parent(*before_labels))
         prior, lock = compose.br_canyon_parent(on, post_canyon)
         self.assertEqual({name for name in on if on[name] != prior[name]}, set(compose.BR_CANYON_SOURCES))
@@ -290,7 +294,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_role_readability_parity_and_wrong_rollback_rejected(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        on, visual_lock = compose.guardian_wall_parent(on, self.lock)
+        on, visual_lock = compose.guardian_wall_parent(*compose.combat_visual_parent(on, self.lock))
         neutral_off, neutral_lock = compose.neutral_names_parent(on, visual_lock)
         self.assertEqual({name for name in on if on[name] != neutral_off[name]}, set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual(compose.identity((self.current / compose.NEUTRAL_NAMES_OFF / compose.PLACE).read_bytes()),
@@ -317,8 +321,15 @@ class UnionBoundary(unittest.TestCase):
         self.reject_core(root)
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
-        on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        parent, lock = compose.guardian_wall_parent(on, self.lock)
+        final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        on, combat_lock = compose.combat_visual_parent(final, self.lock)
+        self.assertEqual({name for name in on if on[name] != final[name]}, set(compose.COMBAT_VISUAL_SOURCES))
+        self.assertEqual(combat_lock["final_place"], self.lock["guardian_wall_followup"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.COMBAT_VISUAL_OFF / compose.PLACE).read_bytes()),
+                         combat_lock["final_place"])
+        with self.assertRaisesRegex(ValueError, "HUNK|COMBAT_VISUAL_TWO_WAY"):
+            compose.combat_visual_parent(on, self.lock)
+        parent, lock = compose.guardian_wall_parent(on, combat_lock)
         guard = compose.GUARDIAN_SOURCE
         self.assertEqual({name for name in on if on[name] != parent[name]}, {guard})
         self.assertEqual(compose.identity(on[guard]), {
@@ -328,7 +339,10 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(compose.identity((self.current / compose.GUARDIAN_WALL_OFF / compose.PLACE).read_bytes()),
                          lock["final_place"])
         with self.assertRaisesRegex(ValueError, "HUNK|GUARDIAN_WALL_TWO_WAY"):
-            compose.guardian_wall_parent(parent, self.lock)
+            compose.guardian_wall_parent(parent, combat_lock)
+        root = self.current_copy()
+        shutil.copyfile(root / compose.GUARDIAN_WALL_OFF_ARCHIVE, root / compose.COMBAT_VISUAL_OFF_ARCHIVE)
+        self.reject_core(root)
         root = self.current_copy()
         shutil.copyfile(root / compose.NEUTRAL_NAMES_OFF_ARCHIVE, root / compose.GUARDIAN_WALL_OFF_ARCHIVE)
         self.reject_core(root)
@@ -439,7 +453,14 @@ class UnionBoundary(unittest.TestCase):
                 root = self.current_copy()
                 if mutation == "stale_bot":
                     path = root / "sources" / compose.BOT_SOURCE
-                    path.write_bytes(compose.apply_hunks(path.read_bytes(), self.lock["bot_followup_repair"]["inverse"]))
+                    old = root / compose.COMBAT_VISUAL_OFF / "sources" / compose.BOT_SOURCE
+                    path.write_bytes(old.read_bytes())
+                    substituted = copy.deepcopy(self.native_lock)
+                    substituted["sources"][compose.BOT_SOURCE] = compose.identity(old.read_bytes())
+                    substituted["bot_vault_supplement"]["selected_sources"][compose.BOT_SOURCE] = (
+                        substituted["sources"][compose.BOT_SOURCE])
+                    with self.assertRaisesRegex(ValueError, "BOT_EXACT_DISPLAY_SOURCE"):
+                        verify.independent_bot_contract(substituted)
                 elif mutation == "wrong_router":
                     path = root / "sources/ServerScriptService/EGGRUMBLE_BotPathRouter.luau"
                     path.write_bytes(path.read_bytes() + b"\n-- wrong router\n")
@@ -1068,9 +1089,13 @@ class FinalAdmissionBoundary(unittest.TestCase):
                                 "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau")
                     body = (self.current / "sources" / relative).read_bytes()
                     self.assertEqual(program.count(body), 1)
-                    replacement = (compose.apply_hunks(body, self.lock["bot_followup_repair"]["inverse"])
-                                   if mutation == "stale_bot" else body + b"\n-- changed Router\n"
-                                   if mutation == "wrong_router" else body[:-20])
+                    if mutation == "stale_bot":
+                        before_labels = self.current / compose.COMBAT_VISUAL_OFF / "sources" / relative
+                        replacement = compose.apply_hunks(before_labels.read_bytes(), self.lock["bot_followup_repair"]["inverse"])
+                    elif mutation == "wrong_router":
+                        replacement = body + b"\n-- changed Router\n"
+                    else:
+                        replacement = body[:-20]
                     changed = program.replace(body, replacement, 1)
                 path.write_bytes(changed)
                 self.rebind_mutated_bot_evidence(copied, scenario)
@@ -1419,7 +1444,9 @@ class UnionOfflineContract(unittest.TestCase):
         field = self.lock["field_prompt_followup"]
         neutral_names = self.lock["neutral_names_followup"]
         wall = self.lock["guardian_wall_followup"]
-        visual_sources = self.lock["sources"] | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
+        combat = self.lock["combat_visual_followup"]
+        wall_sources = self.lock["sources"] | {name: row["parent"] for name, row in combat["rows"].items()}
+        visual_sources = wall_sources | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
         field_sources = visual_sources | {name: row["parent"] for name, row in neutral_names["rows"].items()}
         role_sources = field_sources | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]}
         canyon_sources = role_sources | {name: row["parent"] for name, row in role["rows"].items()}
@@ -1451,7 +1478,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(role["repaired_place"], field["parent_place"])
         self.assertEqual(field["repaired_place"], neutral_names["parent_place"])
         self.assertEqual(neutral_names["repaired_place"], wall["parent_place"])
-        self.assertEqual(wall["repaired_place"], self.lock["final_place"])
+        self.assertEqual(wall["repaired_place"], combat["parent_place"])
+        self.assertEqual(combat["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(combat["rows"]), set(compose.COMBAT_VISUAL_SOURCES))
         self.assertEqual(set(wall["rows"]), {compose.GUARDIAN_SOURCE})
         self.assertEqual(set(field["rows"]), {compose.VAULT_SOURCE})
         self.assertEqual(set(neutral_names["rows"]), set(compose.VISUAL_READABILITY_SOURCES))

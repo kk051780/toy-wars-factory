@@ -2204,6 +2204,510 @@
     "ModuleScript": 47,
     "Script": 12
   },
+  "combat_visual_followup": {
+    "ko_fade": {
+      "identity": {
+        "bytes": 1256,
+        "sha256": "315791e0b94c2fd03bbe36b25508436f50170336408121d38e7f0bccd31d53ac"
+      },
+      "path": "quality_gameplay/gq470_ko_slash_real69_20261120/apply_pinned_fade.py",
+      "provenance": "https://github.com/kk051780/toy-wars-factory/pull/928#issuecomment-7174979365"
+    },
+    "ko_fade_fixture": {
+      "identity": {
+        "bytes": 4309,
+        "sha256": "35e86a7c2f98d3ead0197234c1a926bfdb30b5baf0913a69899bf4b0c3566b00"
+      },
+      "path": "quality_gameplay/gq470_ko_slash_real69_20261120/fade_fixture.luau"
+    },
+    "ko_fixture": {
+      "git_blob": "a1a2641c22c453a58ad94513bdc909e0b977c4bc",
+      "identity": {
+        "bytes": 4837,
+        "sha256": "f50259c9a7b206b66819acef81b381563251ec436b9fcb8fa9bec74037d467e4"
+      },
+      "path": "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py"
+    },
+    "origins": {
+      "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+        "apply": "patch",
+        "git_blob": "d798716e89952d957ee00598e9956af5170b33b5",
+        "head": "0ba53653fd91f1bd0529ab2c21c349e14c47c0c8",
+        "path": "quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py",
+        "pr": 1007,
+        "python_bytes": {
+          "bytes": 8319,
+          "sha256": "ecc785db808299f60df4776d125fd34d8eb7789878e77f4eaaa69bdba7b1c5e7"
+        },
+        "selftest": "selftest"
+      },
+      "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+        "apply": "transform",
+        "git_blob": "37ad94d4648ff2321fd8451234df95abd8650b9b",
+        "head": "f181040d1febe4b0e1104090e6c4022235e96202",
+        "path": "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py",
+        "pr": 928,
+        "python_bytes": {
+          "bytes": 13141,
+          "sha256": "7fd062cedc14c9ceebc48ebfc04820f4f47f99510a739085279732b69f790925"
+        },
+        "selftest": "self_test"
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+        "apply": "transform",
+        "git_blob": "a040fa3e031930fae7304e404235bb79c8dd219c",
+        "head": "a721e7acbd78b6232bf1da39ab29e6e0df442f9b",
+        "path": "quality_gameplay/gq470_stonegiant_silhouette_real69_20261120/patch_stone_giant69.py",
+        "pr": 930,
+        "python_bytes": {
+          "bytes": 8961,
+          "sha256": "4fbf1a922ba1c0f224c5fdc0bd01d438b353ed3217ef35339f46e6fda2c3373d"
+        },
+        "selftest": "self_test"
+      }
+    },
+    "parent_head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+    "parent_place": {
+      "bytes": 854300,
+      "sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
+    },
+    "parent_tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+    "repaired_place": {
+      "bytes": 857678,
+      "sha256": "7a88b8aaa3fd472745d588c675545d3413a02677dba726e3e0e0d743af87459f"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_BotActors.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB015_NEAR_BOT_TAG_REAL69_20261120: hide long-range oversized developer ID, show only nearby tactics.\n label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(104,24)\n label.StudsOffset=Vector3.new(0,2.7,0);label.MaxDistance=22\n label.AlwaysOnTop=false;label.Parent=head\n",
+            "new_identity": {
+              "bytes": 279,
+              "sha256": "4074a50e56521852ebb112d31fe842e6e4f889201818a85888ed597a2bada7ad"
+            },
+            "old": " label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(180,50)\n label.StudsOffset=Vector3.new(0,3.3,0);label.AlwaysOnTop=false;label.Parent=head\n",
+            "old_identity": {
+              "bytes": 145,
+              "sha256": "d925dfc14a76c4726b8d1b45249761f3082cbd9363dc51a9512a2fd6beaae438"
+            },
+            "start": 108,
+            "stop": 110
+          },
+          {
+            "new": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=false\n text.BackgroundTransparency=1;text.TextStrokeTransparency=.45;text.TextStrokeColor3=Color3.fromRGB(5,12,20)\n",
+            "new_identity": {
+              "bytes": 185,
+              "sha256": "e92bf5d501ed63775878ee763c7c4d92f823b552c9dd3f6b82baa8beb08771d2"
+            },
+            "old": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=true\n text.BackgroundColor3=Color3.fromRGB(20,30,44);text.BackgroundTransparency=.25\n",
+            "old_identity": {
+              "bytes": 155,
+              "sha256": "d24fd538af4cb1fa31564168ba2d743e80a83756f76aafe4178e307a2ab0b8c9"
+            },
+            "start": 111,
+            "stop": 113
+          },
+          {
+            "new": " text.Text=(if team==\"RED\" then \"赤軍\" elseif team==\"BLUE\" then \"青軍\" else \"AI\");text.Parent=label\n",
+            "new_identity": {
+              "bytes": 104,
+              "sha256": "4e2d9807cc59967921f62db8bfaad4e9da5c33d75e83b0c6fd652612a8001f09"
+            },
+            "old": " text.Text=id..\"\\n出陣\";text.Parent=label\n",
+            "old_identity": {
+              "bytes": 44,
+              "sha256": "01d076b2a62526790dd292ca7f55024bb4847b28da4b6e3138743e2cb0e59450"
+            },
+            "start": 114,
+            "stop": 115
+          },
+          {
+            "new": " hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18\n",
+            "new_identity": {
+              "bytes": 121,
+              "sha256": "d3579c15ed3513d6909f97d6a2307f0a44795d0fc27cff963763b747435589fb"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 117,
+            "stop": 117
+          },
+          {
+            "new": "          ui.Text=(if me.team==\"RED\" then \"赤軍\" elseif me.team==\"BLUE\" then \"青軍\" else \"AI\")..\"・\"..\n           (if goHome then \"帰還\" elseif collectField then \"回収\" elseif hasEgg then \"潜入\" else \"攻城\")\n",
+            "new_identity": {
+              "bytes": 221,
+              "sha256": "0a538a150a6ab2c09cc284f04a0d00c5323f4dfa2f02ddecfc7b6381dd30c849"
+            },
+            "old": "          ui.Text=id..\"\\n\"..(if goHome then \"🥚 卵を帰還\" elseif collectField then \"🥚 野外卵を回収\" elseif hasEgg then \"🥚 敵城に潜入\" else \"⚔ 城攻め\")\n",
+            "old_identity": {
+              "bytes": 179,
+              "sha256": "e1072ba4413a992a43a3216d1745e4357069b65794e623f7583853b82371224b"
+            },
+            "start": 342,
+            "stop": 343
+          }
+        ],
+        "inverse": [
+          {
+            "new": " label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(180,50)\n label.StudsOffset=Vector3.new(0,3.3,0);label.AlwaysOnTop=false;label.Parent=head\n",
+            "new_identity": {
+              "bytes": 145,
+              "sha256": "d925dfc14a76c4726b8d1b45249761f3082cbd9363dc51a9512a2fd6beaae438"
+            },
+            "old": " -- GQ470_FB015_NEAR_BOT_TAG_REAL69_20261120: hide long-range oversized developer ID, show only nearby tactics.\n label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(104,24)\n label.StudsOffset=Vector3.new(0,2.7,0);label.MaxDistance=22\n label.AlwaysOnTop=false;label.Parent=head\n",
+            "old_identity": {
+              "bytes": 279,
+              "sha256": "4074a50e56521852ebb112d31fe842e6e4f889201818a85888ed597a2bada7ad"
+            },
+            "start": 108,
+            "stop": 112
+          },
+          {
+            "new": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=true\n text.BackgroundColor3=Color3.fromRGB(20,30,44);text.BackgroundTransparency=.25\n",
+            "new_identity": {
+              "bytes": 155,
+              "sha256": "d24fd538af4cb1fa31564168ba2d743e80a83756f76aafe4178e307a2ab0b8c9"
+            },
+            "old": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=false\n text.BackgroundTransparency=1;text.TextStrokeTransparency=.45;text.TextStrokeColor3=Color3.fromRGB(5,12,20)\n",
+            "old_identity": {
+              "bytes": 185,
+              "sha256": "e92bf5d501ed63775878ee763c7c4d92f823b552c9dd3f6b82baa8beb08771d2"
+            },
+            "start": 113,
+            "stop": 115
+          },
+          {
+            "new": " text.Text=id..\"\\n出陣\";text.Parent=label\n",
+            "new_identity": {
+              "bytes": 44,
+              "sha256": "01d076b2a62526790dd292ca7f55024bb4847b28da4b6e3138743e2cb0e59450"
+            },
+            "old": " text.Text=(if team==\"RED\" then \"赤軍\" elseif team==\"BLUE\" then \"青軍\" else \"AI\");text.Parent=label\n",
+            "old_identity": {
+              "bytes": 104,
+              "sha256": "4e2d9807cc59967921f62db8bfaad4e9da5c33d75e83b0c6fd652612a8001f09"
+            },
+            "start": 116,
+            "stop": 117
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18\n",
+            "old_identity": {
+              "bytes": 121,
+              "sha256": "d3579c15ed3513d6909f97d6a2307f0a44795d0fc27cff963763b747435589fb"
+            },
+            "start": 119,
+            "stop": 120
+          },
+          {
+            "new": "          ui.Text=id..\"\\n\"..(if goHome then \"🥚 卵を帰還\" elseif collectField then \"🥚 野外卵を回収\" elseif hasEgg then \"🥚 敵城に潜入\" else \"⚔ 城攻め\")\n",
+            "new_identity": {
+              "bytes": 179,
+              "sha256": "e1072ba4413a992a43a3216d1745e4357069b65794e623f7583853b82371224b"
+            },
+            "old": "          ui.Text=(if me.team==\"RED\" then \"赤軍\" elseif me.team==\"BLUE\" then \"青軍\" else \"AI\")..\"・\"..\n           (if goHome then \"帰還\" elseif collectField then \"回収\" elseif hasEgg then \"潜入\" else \"攻城\")\n",
+            "old_identity": {
+              "bytes": 221,
+              "sha256": "0a538a150a6ab2c09cc284f04a0d00c5323f4dfa2f02ddecfc7b6381dd30c849"
+            },
+            "start": 345,
+            "stop": 347
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 19625,
+            "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+          },
+          "before": {
+            "bytes": 19070,
+            "sha256": "b09627fd0995ba5938f8af5950a53462ab5df82ed91be776c9368da7a1164693"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+              "new_identity": {
+                "bytes": 571,
+                "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 314,
+              "stop": 314
+            },
+            {
+              "new": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+              "new_identity": {
+                "bytes": 73,
+                "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+              },
+              "old": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+              "old_identity": {
+                "bytes": 89,
+                "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+              },
+              "start": 326,
+              "stop": 327
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
+              "old_identity": {
+                "bytes": 571,
+                "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
+              },
+              "start": 314,
+              "stop": 322
+            },
+            {
+              "new": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
+              "new_identity": {
+                "bytes": 89,
+                "sha256": "3af293a06a4b31231e28d9e8a8506855a76ed7e7d2a57a9f0cd70ac104102c56"
+              },
+              "old": "          elseif hasEgg then (if raidApproach then innerGoal else front)\n",
+              "old_identity": {
+                "bytes": 73,
+                "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
+              },
+              "start": 334,
+              "stop": 335
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_BotActors"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
+        "forward": [
+          {
+            "new": "local TweenService=game:GetService(\"TweenService\")\n",
+            "new_identity": {
+              "bytes": 51,
+              "sha256": "a288fe00f527ed0f3f9a3bebdf6a1bb75b07c64e814bb945adc148fd93f0a0c2"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 5,
+            "stop": 5
+          },
+          {
+            "new": "local MAX_LIVE_KO_BURSTS=6\n",
+            "new_identity": {
+              "bytes": 27,
+              "sha256": "495f5f8ffd2eaf175076749c0f571ae64244ebe111d50cce561d804b21a2746d"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 9,
+            "stop": 9
+          },
+          {
+            "new": "-- A burst owns both fins until neither is parented. Bounded by the live cap,\n-- never by the number of KOs in a long match. No per-frame or timer loop.\nlocal liveKOBursts:{{BasePart}}={}\n",
+            "new_identity": {
+              "bytes": 188,
+              "sha256": "4318f8ca77af125faf40f128a41b2a0a039cc3d07584acf17d3da0c141fd8664"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 14,
+            "stop": 14
+          },
+          {
+            "new": " -- GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120\n -- Real server-confirmed KO only. Two solid asymmetrical 3D slash fins\n -- replace one expanding Neon sphere; no light, particles, Remote or audio.\n -- Original six-KOs-per-second budget applies to the whole two-fin burst.\n -- Art orientation follows horizontal victim facing; no camera-facing HUD.\n if not world.Parent or not target.PrimaryPart then return false end\n -- A fixed-second rate limiter alone permits two overlapping bursts of six\n -- around a second boundary. Reclaim only fully removed pairs (Debris or\n -- arena teardown); a single remaining fin still occupies the burst slot.\n for i=#liveKOBursts,1,-1 do\n  local live=false\n  for _,fin in ipairs(liveKOBursts[i]) do\n   if fin.Parent then live=true;break end\n  end\n  if not live then table.remove(liveKOBursts,i) end\n end\n if #liveKOBursts>=MAX_LIVE_KO_BURSTS or not budget(true) then return false end\n local pivot=target.PrimaryPart.CFrame\n local at=pivot.Position\n local flatLook=Vector3.new(pivot.LookVector.X,0,pivot.LookVector.Z)\n if flatLook.Magnitude<.001 then flatLook=Vector3.new(0,0,-1) end\n local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)\n local accent=colors[role] or colors.WARRIOR\n local burst:{BasePart}={}\n table.insert(liveKOBursts,burst)\n for side=-1,1,2 do\n  local fin=Instance.new(\"WedgePart\")\n  fin.Name=\"EGGRUMBLE_KO_BURST\"\n  fin.Size=Vector3.new(.34,1.65,.44)\n  fin.Material=Enum.Material.SmoothPlastic\n  fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false\n  fin.CanQuery=false;fin.CastShadow=false\n  fin.Color=if side==1 then accent else Color3.fromRGB(245,245,235)\n  fin.Transparency=.12\n  fin.CFrame=burstFrame*CFrame.new(side*.38,1.0,0)\n   *CFrame.Angles(0,math.rad(side*28),math.rad(side*37))\n  table.insert(burst,fin)\n  fin.Parent=world\n  local endAt=fin.CFrame*CFrame.new(side*.74,.7,0)\n  local tween=TweenService:Create(\n   fin,TweenInfo.new(.23,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n   {Size=Vector3.new(.8,3.5,.28),CFrame=endAt})\n  -- Leave time for both fins to replicate before fading the KO confirmation.\n  local fade=TweenService:Create(\n   fin,TweenInfo.new(.18,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0,false,.31),\n   {Transparency=1})\n  tween:Play()\n  fade:Play()\n  Debris:AddItem(fin,.53)\n end\n",
+            "new_identity": {
+              "bytes": 2283,
+              "sha256": "7dd823b272d90058ef91d240700317bf5b1a99239f82d94093b58199eff1213e"
+            },
+            "old": " -- One short radial burst per confirmed Humanoid.Died, not client-predicted KOs.\n if not world.Parent or not target.PrimaryPart or not budget(true) then return false end\n local at=target.PrimaryPart.Position\n local ring=Instance.new(\"Part\")\n ring.Name=\"EGGRUMBLE_KO_BURST\"\n ring.Shape=Enum.PartType.Ball\n ring.Size=Vector3.new(1,1,1)\n ring.Material=Enum.Material.Neon\n ring.Anchored=true;ring.CanCollide=false;ring.CanTouch=false\n ring.CanQuery=false;ring.CastShadow=false\n ring.Color=colors[role] or colors.WARRIOR\n ring.Transparency=.37;ring.Position=at\n ring.Parent=world\n local tween=game:GetService(\"TweenService\"):Create(\n  ring,TweenInfo.new(.24,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n  {Size=Vector3.new(6,3.2,6),Transparency=1})\n tween:Play()\n Debris:AddItem(ring,.32)\n",
+            "old_identity": {
+              "bytes": 789,
+              "sha256": "3330017d69f4fe394d2a8e3fd034e143942bc321aace33c9e5acabaf57117cc7"
+            },
+            "start": 62,
+            "stop": 80
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "local TweenService=game:GetService(\"TweenService\")\n",
+            "old_identity": {
+              "bytes": 51,
+              "sha256": "a288fe00f527ed0f3f9a3bebdf6a1bb75b07c64e814bb945adc148fd93f0a0c2"
+            },
+            "start": 5,
+            "stop": 6
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "local MAX_LIVE_KO_BURSTS=6\n",
+            "old_identity": {
+              "bytes": 27,
+              "sha256": "495f5f8ffd2eaf175076749c0f571ae64244ebe111d50cce561d804b21a2746d"
+            },
+            "start": 10,
+            "stop": 11
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- A burst owns both fins until neither is parented. Bounded by the live cap,\n-- never by the number of KOs in a long match. No per-frame or timer loop.\nlocal liveKOBursts:{{BasePart}}={}\n",
+            "old_identity": {
+              "bytes": 188,
+              "sha256": "4318f8ca77af125faf40f128a41b2a0a039cc3d07584acf17d3da0c141fd8664"
+            },
+            "start": 16,
+            "stop": 19
+          },
+          {
+            "new": " -- One short radial burst per confirmed Humanoid.Died, not client-predicted KOs.\n if not world.Parent or not target.PrimaryPart or not budget(true) then return false end\n local at=target.PrimaryPart.Position\n local ring=Instance.new(\"Part\")\n ring.Name=\"EGGRUMBLE_KO_BURST\"\n ring.Shape=Enum.PartType.Ball\n ring.Size=Vector3.new(1,1,1)\n ring.Material=Enum.Material.Neon\n ring.Anchored=true;ring.CanCollide=false;ring.CanTouch=false\n ring.CanQuery=false;ring.CastShadow=false\n ring.Color=colors[role] or colors.WARRIOR\n ring.Transparency=.37;ring.Position=at\n ring.Parent=world\n local tween=game:GetService(\"TweenService\"):Create(\n  ring,TweenInfo.new(.24,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n  {Size=Vector3.new(6,3.2,6),Transparency=1})\n tween:Play()\n Debris:AddItem(ring,.32)\n",
+            "new_identity": {
+              "bytes": 789,
+              "sha256": "3330017d69f4fe394d2a8e3fd034e143942bc321aace33c9e5acabaf57117cc7"
+            },
+            "old": " -- GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120\n -- Real server-confirmed KO only. Two solid asymmetrical 3D slash fins\n -- replace one expanding Neon sphere; no light, particles, Remote or audio.\n -- Original six-KOs-per-second budget applies to the whole two-fin burst.\n -- Art orientation follows horizontal victim facing; no camera-facing HUD.\n if not world.Parent or not target.PrimaryPart then return false end\n -- A fixed-second rate limiter alone permits two overlapping bursts of six\n -- around a second boundary. Reclaim only fully removed pairs (Debris or\n -- arena teardown); a single remaining fin still occupies the burst slot.\n for i=#liveKOBursts,1,-1 do\n  local live=false\n  for _,fin in ipairs(liveKOBursts[i]) do\n   if fin.Parent then live=true;break end\n  end\n  if not live then table.remove(liveKOBursts,i) end\n end\n if #liveKOBursts>=MAX_LIVE_KO_BURSTS or not budget(true) then return false end\n local pivot=target.PrimaryPart.CFrame\n local at=pivot.Position\n local flatLook=Vector3.new(pivot.LookVector.X,0,pivot.LookVector.Z)\n if flatLook.Magnitude<.001 then flatLook=Vector3.new(0,0,-1) end\n local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)\n local accent=colors[role] or colors.WARRIOR\n local burst:{BasePart}={}\n table.insert(liveKOBursts,burst)\n for side=-1,1,2 do\n  local fin=Instance.new(\"WedgePart\")\n  fin.Name=\"EGGRUMBLE_KO_BURST\"\n  fin.Size=Vector3.new(.34,1.65,.44)\n  fin.Material=Enum.Material.SmoothPlastic\n  fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false\n  fin.CanQuery=false;fin.CastShadow=false\n  fin.Color=if side==1 then accent else Color3.fromRGB(245,245,235)\n  fin.Transparency=.12\n  fin.CFrame=burstFrame*CFrame.new(side*.38,1.0,0)\n   *CFrame.Angles(0,math.rad(side*28),math.rad(side*37))\n  table.insert(burst,fin)\n  fin.Parent=world\n  local endAt=fin.CFrame*CFrame.new(side*.74,.7,0)\n  local tween=TweenService:Create(\n   fin,TweenInfo.new(.23,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n   {Size=Vector3.new(.8,3.5,.28),CFrame=endAt})\n  -- Leave time for both fins to replicate before fading the KO confirmation.\n  local fade=TweenService:Create(\n   fin,TweenInfo.new(.18,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0,false,.31),\n   {Transparency=1})\n  tween:Play()\n  fade:Play()\n  Debris:AddItem(fin,.53)\n end\n",
+            "old_identity": {
+              "bytes": 2283,
+              "sha256": "7dd823b272d90058ef91d240700317bf5b1a99239f82d94093b58199eff1213e"
+            },
+            "start": 67,
+            "stop": 117
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 3704,
+            "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+          },
+          "before": {
+            "bytes": 3704,
+            "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+          },
+          "class": "ModuleScript",
+          "forward": [],
+          "inverse": [],
+          "route": "ServerScriptService/EGGRUMBLE_ImpactFeedback"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB015_STONE_GIANT_SILHOUETTE_REAL69_20261120\n -- Four anchored matte rock wedges on existing model: broad shoulder caps and\n -- split crown prongs. Pure silhouette; leave core hitbox, boss LOS/HP/ring intact.\n -- Zero physics/collision/query/touch/shadows, no new animation listeners.\n for side=-1,1,2 do\n  local shoulder=Instance.new(\"WedgePart\")\n  shoulder.Name=\"BasaltShoulder_\"..tostring(side)\n  shoulder.Size=Vector3.new(4.6,2.6,3.8)\n  shoulder.CFrame=CFrame.new(at+Vector3.new(side*5.1,15.0,0))\n   *CFrame.Angles(0,0,math.rad(-side*21))\n  shoulder.Color=Color3.fromRGB(78,88,104)\n  shoulder.Material=Enum.Material.Slate\n  shoulder.Anchored=true\n  shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false\n  shoulder.CastShadow=false\n  shoulder.Parent=model\n  local crown=Instance.new(\"WedgePart\")\n  crown.Name=\"BasaltCrown_\"..tostring(side)\n  crown.Size=Vector3.new(2.0,3.7,2.9)\n  crown.CFrame=CFrame.new(at+Vector3.new(side*1.9,20.4,.4))\n   *CFrame.Angles(0,0,math.rad(side*15))\n  crown.Color=Color3.fromRGB(126,140,158)\n  crown.Material=Enum.Material.Slate\n  crown.Anchored=true\n  crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false\n  crown.CastShadow=false\n  crown.Parent=model\n end\n",
+            "new_identity": {
+              "bytes": 1231,
+              "sha256": "4f54b2ab118f022924cc20b49ed07da6f6d27023de7d4a0a5662f43757d3d4de"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 31,
+            "stop": 31
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- GQ470_FB015_STONE_GIANT_SILHOUETTE_REAL69_20261120\n -- Four anchored matte rock wedges on existing model: broad shoulder caps and\n -- split crown prongs. Pure silhouette; leave core hitbox, boss LOS/HP/ring intact.\n -- Zero physics/collision/query/touch/shadows, no new animation listeners.\n for side=-1,1,2 do\n  local shoulder=Instance.new(\"WedgePart\")\n  shoulder.Name=\"BasaltShoulder_\"..tostring(side)\n  shoulder.Size=Vector3.new(4.6,2.6,3.8)\n  shoulder.CFrame=CFrame.new(at+Vector3.new(side*5.1,15.0,0))\n   *CFrame.Angles(0,0,math.rad(-side*21))\n  shoulder.Color=Color3.fromRGB(78,88,104)\n  shoulder.Material=Enum.Material.Slate\n  shoulder.Anchored=true\n  shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false\n  shoulder.CastShadow=false\n  shoulder.Parent=model\n  local crown=Instance.new(\"WedgePart\")\n  crown.Name=\"BasaltCrown_\"..tostring(side)\n  crown.Size=Vector3.new(2.0,3.7,2.9)\n  crown.CFrame=CFrame.new(at+Vector3.new(side*1.9,20.4,.4))\n   *CFrame.Angles(0,0,math.rad(side*15))\n  crown.Color=Color3.fromRGB(126,140,158)\n  crown.Material=Enum.Material.Slate\n  crown.Anchored=true\n  crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false\n  crown.CastShadow=false\n  crown.Parent=model\n end\n",
+            "old_identity": {
+              "bytes": 1231,
+              "sha256": "4f54b2ab118f022924cc20b49ed07da6f6d27023de7d4a0a5662f43757d3d4de"
+            },
+            "start": 31,
+            "stop": 59
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 7075,
+            "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+          },
+          "before": {
+            "bytes": 7023,
+            "sha256": "c6a30beeeb2c9484870624ddc8f56a5437146c168cc6044ad8e942c1136b0240"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": "  health=math.max(0,health-amount*InvulRuntime.boundAttackMultiplier(player,\"NORMAL\"))\n",
+              "new_identity": {
+                "bytes": 87,
+                "sha256": "dd68ff9630ad2cd92c52aab7a8fbd8d9ba0d12bada9117297a87681948363862"
+              },
+              "old": "  health=math.max(0,health-amount)\n",
+              "old_identity": {
+                "bytes": 35,
+                "sha256": "f9b2bbf0e8a846d22ad970d7dd4b20345ca691c501d26ee33b1e2537f492b913"
+              },
+              "start": 79,
+              "stop": 80
+            }
+          ],
+          "inverse": [
+            {
+              "new": "  health=math.max(0,health-amount)\n",
+              "new_identity": {
+                "bytes": 35,
+                "sha256": "f9b2bbf0e8a846d22ad970d7dd4b20345ca691c501d26ee33b1e2537f492b913"
+              },
+              "old": "  health=math.max(0,health-amount*InvulRuntime.boundAttackMultiplier(player,\"NORMAL\"))\n",
+              "old_identity": {
+                "bytes": 87,
+                "sha256": "dd68ff9630ad2cd92c52aab7a8fbd8d9ba0d12bada9117297a87681948363862"
+              },
+              "start": 79,
+              "stop": 80
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_NeutralStoneGiant"
+        }
+      }
+    },
+    "source_composite_pr": 931
+  },
   "empty_vault_followup": {
     "forward": [
       {
@@ -4299,8 +4803,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 854300,
-    "sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
+    "bytes": 857678,
+    "sha256": "7a88b8aaa3fd472745d588c675545d3413a02677dba726e3e0e0d743af87459f"
   },
   "followup_repair": {
     "author_contexts": [
@@ -8601,8 +9105,8 @@
     },
     "ServerScriptService/EGGRUMBLE_BotActors.luau": {
       "after": {
-        "bytes": 19625,
-        "sha256": "c38bcf82df581d2d9f105f9d7843eef0eff8e8bd6315b8520765ee646e1c5051"
+        "bytes": 20012,
+        "sha256": "06e5197b826d1cd279d27ce019a92d9dcc5b9b651c6933587e69a6ecff5cdc23"
       },
       "before": {
         "bytes": 19070,
@@ -8610,6 +9114,62 @@
       },
       "class": "ModuleScript",
       "forward": [
+        {
+          "new": " -- GQ470_FB015_NEAR_BOT_TAG_REAL69_20261120: hide long-range oversized developer ID, show only nearby tactics.\n label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(104,24)\n label.StudsOffset=Vector3.new(0,2.7,0);label.MaxDistance=22\n label.AlwaysOnTop=false;label.Parent=head\n",
+          "new_identity": {
+            "bytes": 279,
+            "sha256": "4074a50e56521852ebb112d31fe842e6e4f889201818a85888ed597a2bada7ad"
+          },
+          "old": " label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(180,50)\n label.StudsOffset=Vector3.new(0,3.3,0);label.AlwaysOnTop=false;label.Parent=head\n",
+          "old_identity": {
+            "bytes": 145,
+            "sha256": "d925dfc14a76c4726b8d1b45249761f3082cbd9363dc51a9512a2fd6beaae438"
+          },
+          "start": 108,
+          "stop": 110
+        },
+        {
+          "new": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=false\n text.BackgroundTransparency=1;text.TextStrokeTransparency=.45;text.TextStrokeColor3=Color3.fromRGB(5,12,20)\n",
+          "new_identity": {
+            "bytes": 185,
+            "sha256": "e92bf5d501ed63775878ee763c7c4d92f823b552c9dd3f6b82baa8beb08771d2"
+          },
+          "old": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=true\n text.BackgroundColor3=Color3.fromRGB(20,30,44);text.BackgroundTransparency=.25\n",
+          "old_identity": {
+            "bytes": 155,
+            "sha256": "d24fd538af4cb1fa31564168ba2d743e80a83756f76aafe4178e307a2ab0b8c9"
+          },
+          "start": 111,
+          "stop": 113
+        },
+        {
+          "new": " text.Text=(if team==\"RED\" then \"赤軍\" elseif team==\"BLUE\" then \"青軍\" else \"AI\");text.Parent=label\n",
+          "new_identity": {
+            "bytes": 104,
+            "sha256": "4e2d9807cc59967921f62db8bfaad4e9da5c33d75e83b0c6fd652612a8001f09"
+          },
+          "old": " text.Text=id..\"\\n出陣\";text.Parent=label\n",
+          "old_identity": {
+            "bytes": 44,
+            "sha256": "01d076b2a62526790dd292ca7f55024bb4847b28da4b6e3138743e2cb0e59450"
+          },
+          "start": 114,
+          "stop": 115
+        },
+        {
+          "new": " hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18\n",
+          "new_identity": {
+            "bytes": 121,
+            "sha256": "d3579c15ed3513d6909f97d6a2307f0a44795d0fc27cff963763b747435589fb"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 117,
+          "stop": 117
+        },
         {
           "new": "         local innerGoal=enemyLoc+Vector3.new(0,3,-2)\n         local approachAt=actor:GetPivot().Position\n         -- Preserve nearFront for field-egg priority. Only the raid goal keeps\n         -- forward progress through the bounded entrance-to-inner-goal strip.\n         -- Its endpoint is already 8 studs from the vault (action radius 12.5).\n         -- Recompute for the live enemy; no target/life/round state is retained.\n         local raidApproach=nearFront or (approachAt.Z>=front.Z and approachAt.Z<=innerGoal.Z\n          and math.abs(approachAt.X-front.X)<18)\n",
           "new_identity": {
@@ -8637,9 +9197,79 @@
           },
           "start": 326,
           "stop": 327
+        },
+        {
+          "new": "          ui.Text=(if me.team==\"RED\" then \"赤軍\" elseif me.team==\"BLUE\" then \"青軍\" else \"AI\")..\"・\"..\n           (if goHome then \"帰還\" elseif collectField then \"回収\" elseif hasEgg then \"潜入\" else \"攻城\")\n",
+          "new_identity": {
+            "bytes": 221,
+            "sha256": "0a538a150a6ab2c09cc284f04a0d00c5323f4dfa2f02ddecfc7b6381dd30c849"
+          },
+          "old": "          ui.Text=id..\"\\n\"..(if goHome then \"🥚 卵を帰還\" elseif collectField then \"🥚 野外卵を回収\" elseif hasEgg then \"🥚 敵城に潜入\" else \"⚔ 城攻め\")\n",
+          "old_identity": {
+            "bytes": 179,
+            "sha256": "e1072ba4413a992a43a3216d1745e4357069b65794e623f7583853b82371224b"
+          },
+          "start": 334,
+          "stop": 335
         }
       ],
       "inverse": [
+        {
+          "new": " label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(180,50)\n label.StudsOffset=Vector3.new(0,3.3,0);label.AlwaysOnTop=false;label.Parent=head\n",
+          "new_identity": {
+            "bytes": 145,
+            "sha256": "d925dfc14a76c4726b8d1b45249761f3082cbd9363dc51a9512a2fd6beaae438"
+          },
+          "old": " -- GQ470_FB015_NEAR_BOT_TAG_REAL69_20261120: hide long-range oversized developer ID, show only nearby tactics.\n label.Name=\"BotObjective\";label.Size=UDim2.fromOffset(104,24)\n label.StudsOffset=Vector3.new(0,2.7,0);label.MaxDistance=22\n label.AlwaysOnTop=false;label.Parent=head\n",
+          "old_identity": {
+            "bytes": 279,
+            "sha256": "4074a50e56521852ebb112d31fe842e6e4f889201818a85888ed597a2bada7ad"
+          },
+          "start": 108,
+          "stop": 112
+        },
+        {
+          "new": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=true\n text.BackgroundColor3=Color3.fromRGB(20,30,44);text.BackgroundTransparency=.25\n",
+          "new_identity": {
+            "bytes": 155,
+            "sha256": "d24fd538af4cb1fa31564168ba2d743e80a83756f76aafe4178e307a2ab0b8c9"
+          },
+          "old": " text.Size=UDim2.fromScale(1,1);text.TextScaled=true;text.TextWrapped=false\n text.BackgroundTransparency=1;text.TextStrokeTransparency=.45;text.TextStrokeColor3=Color3.fromRGB(5,12,20)\n",
+          "old_identity": {
+            "bytes": 185,
+            "sha256": "e92bf5d501ed63775878ee763c7c4d92f823b552c9dd3f6b82baa8beb08771d2"
+          },
+          "start": 113,
+          "stop": 115
+        },
+        {
+          "new": " text.Text=id..\"\\n出陣\";text.Parent=label\n",
+          "new_identity": {
+            "bytes": 44,
+            "sha256": "01d076b2a62526790dd292ca7f55024bb4847b28da4b6e3138743e2cb0e59450"
+          },
+          "old": " text.Text=(if team==\"RED\" then \"赤軍\" elseif team==\"BLUE\" then \"青軍\" else \"AI\");text.Parent=label\n",
+          "old_identity": {
+            "bytes": 104,
+            "sha256": "4e2d9807cc59967921f62db8bfaad4e9da5c33d75e83b0c6fd652612a8001f09"
+          },
+          "start": 116,
+          "stop": 117
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " hum.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject;hum.NameDisplayDistance=0;hum.HealthDisplayDistance=18\n",
+          "old_identity": {
+            "bytes": 121,
+            "sha256": "d3579c15ed3513d6909f97d6a2307f0a44795d0fc27cff963763b747435589fb"
+          },
+          "start": 119,
+          "stop": 120
+        },
         {
           "new": "",
           "new_identity": {
@@ -8651,8 +9281,8 @@
             "bytes": 571,
             "sha256": "e06f3929575314077a31d1eef6b16f3886361035192d083e9effece44007f68a"
           },
-          "start": 314,
-          "stop": 322
+          "start": 317,
+          "stop": 325
         },
         {
           "new": "          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)\n",
@@ -8665,8 +9295,22 @@
             "bytes": 73,
             "sha256": "ae57f531ced2dc78283498a5497a2b949b2a5522389a0a5181f96bd10ef23446"
           },
-          "start": 334,
-          "stop": 335
+          "start": 337,
+          "stop": 338
+        },
+        {
+          "new": "          ui.Text=id..\"\\n\"..(if goHome then \"🥚 卵を帰還\" elseif collectField then \"🥚 野外卵を回収\" elseif hasEgg then \"🥚 敵城に潜入\" else \"⚔ 城攻め\")\n",
+          "new_identity": {
+            "bytes": 179,
+            "sha256": "e1072ba4413a992a43a3216d1745e4357069b65794e623f7583853b82371224b"
+          },
+          "old": "          ui.Text=(if me.team==\"RED\" then \"赤軍\" elseif me.team==\"BLUE\" then \"青軍\" else \"AI\")..\"・\"..\n           (if goHome then \"帰還\" elseif collectField then \"回収\" elseif hasEgg then \"潜入\" else \"攻城\")\n",
+          "old_identity": {
+            "bytes": 221,
+            "sha256": "0a538a150a6ab2c09cc284f04a0d00c5323f4dfa2f02ddecfc7b6381dd30c849"
+          },
+          "start": 345,
+          "stop": 347
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_BotActors"
@@ -10001,16 +10645,130 @@
     },
     "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau": {
       "after": {
-        "bytes": 3704,
-        "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
+        "bytes": 5464,
+        "sha256": "4c4b8034f7a910ca310046771a3987f8559041b95be1706f0bff3602703be7ba"
       },
       "before": {
         "bytes": 3704,
         "sha256": "d916a97af0efb3a8ec39aaa656a4e901aad520f20a8f3c7305700480936a306a"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "local TweenService=game:GetService(\"TweenService\")\n",
+          "new_identity": {
+            "bytes": 51,
+            "sha256": "a288fe00f527ed0f3f9a3bebdf6a1bb75b07c64e814bb945adc148fd93f0a0c2"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 5,
+          "stop": 5
+        },
+        {
+          "new": "local MAX_LIVE_KO_BURSTS=6\n",
+          "new_identity": {
+            "bytes": 27,
+            "sha256": "495f5f8ffd2eaf175076749c0f571ae64244ebe111d50cce561d804b21a2746d"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 9,
+          "stop": 9
+        },
+        {
+          "new": "-- A burst owns both fins until neither is parented. Bounded by the live cap,\n-- never by the number of KOs in a long match. No per-frame or timer loop.\nlocal liveKOBursts:{{BasePart}}={}\n",
+          "new_identity": {
+            "bytes": 188,
+            "sha256": "4318f8ca77af125faf40f128a41b2a0a039cc3d07584acf17d3da0c141fd8664"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 14,
+          "stop": 14
+        },
+        {
+          "new": " -- GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120\n -- Real server-confirmed KO only. Two solid asymmetrical 3D slash fins\n -- replace one expanding Neon sphere; no light, particles, Remote or audio.\n -- Original six-KOs-per-second budget applies to the whole two-fin burst.\n -- Art orientation follows horizontal victim facing; no camera-facing HUD.\n if not world.Parent or not target.PrimaryPart then return false end\n -- A fixed-second rate limiter alone permits two overlapping bursts of six\n -- around a second boundary. Reclaim only fully removed pairs (Debris or\n -- arena teardown); a single remaining fin still occupies the burst slot.\n for i=#liveKOBursts,1,-1 do\n  local live=false\n  for _,fin in ipairs(liveKOBursts[i]) do\n   if fin.Parent then live=true;break end\n  end\n  if not live then table.remove(liveKOBursts,i) end\n end\n if #liveKOBursts>=MAX_LIVE_KO_BURSTS or not budget(true) then return false end\n local pivot=target.PrimaryPart.CFrame\n local at=pivot.Position\n local flatLook=Vector3.new(pivot.LookVector.X,0,pivot.LookVector.Z)\n if flatLook.Magnitude<.001 then flatLook=Vector3.new(0,0,-1) end\n local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)\n local accent=colors[role] or colors.WARRIOR\n local burst:{BasePart}={}\n table.insert(liveKOBursts,burst)\n for side=-1,1,2 do\n  local fin=Instance.new(\"WedgePart\")\n  fin.Name=\"EGGRUMBLE_KO_BURST\"\n  fin.Size=Vector3.new(.34,1.65,.44)\n  fin.Material=Enum.Material.SmoothPlastic\n  fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false\n  fin.CanQuery=false;fin.CastShadow=false\n  fin.Color=if side==1 then accent else Color3.fromRGB(245,245,235)\n  fin.Transparency=.12\n  fin.CFrame=burstFrame*CFrame.new(side*.38,1.0,0)\n   *CFrame.Angles(0,math.rad(side*28),math.rad(side*37))\n  table.insert(burst,fin)\n  fin.Parent=world\n  local endAt=fin.CFrame*CFrame.new(side*.74,.7,0)\n  local tween=TweenService:Create(\n   fin,TweenInfo.new(.23,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n   {Size=Vector3.new(.8,3.5,.28),CFrame=endAt})\n  -- Leave time for both fins to replicate before fading the KO confirmation.\n  local fade=TweenService:Create(\n   fin,TweenInfo.new(.18,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0,false,.31),\n   {Transparency=1})\n  tween:Play()\n  fade:Play()\n  Debris:AddItem(fin,.53)\n end\n",
+          "new_identity": {
+            "bytes": 2283,
+            "sha256": "7dd823b272d90058ef91d240700317bf5b1a99239f82d94093b58199eff1213e"
+          },
+          "old": " -- One short radial burst per confirmed Humanoid.Died, not client-predicted KOs.\n if not world.Parent or not target.PrimaryPart or not budget(true) then return false end\n local at=target.PrimaryPart.Position\n local ring=Instance.new(\"Part\")\n ring.Name=\"EGGRUMBLE_KO_BURST\"\n ring.Shape=Enum.PartType.Ball\n ring.Size=Vector3.new(1,1,1)\n ring.Material=Enum.Material.Neon\n ring.Anchored=true;ring.CanCollide=false;ring.CanTouch=false\n ring.CanQuery=false;ring.CastShadow=false\n ring.Color=colors[role] or colors.WARRIOR\n ring.Transparency=.37;ring.Position=at\n ring.Parent=world\n local tween=game:GetService(\"TweenService\"):Create(\n  ring,TweenInfo.new(.24,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n  {Size=Vector3.new(6,3.2,6),Transparency=1})\n tween:Play()\n Debris:AddItem(ring,.32)\n",
+          "old_identity": {
+            "bytes": 789,
+            "sha256": "3330017d69f4fe394d2a8e3fd034e143942bc321aace33c9e5acabaf57117cc7"
+          },
+          "start": 62,
+          "stop": 80
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local TweenService=game:GetService(\"TweenService\")\n",
+          "old_identity": {
+            "bytes": 51,
+            "sha256": "a288fe00f527ed0f3f9a3bebdf6a1bb75b07c64e814bb945adc148fd93f0a0c2"
+          },
+          "start": 5,
+          "stop": 6
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local MAX_LIVE_KO_BURSTS=6\n",
+          "old_identity": {
+            "bytes": 27,
+            "sha256": "495f5f8ffd2eaf175076749c0f571ae64244ebe111d50cce561d804b21a2746d"
+          },
+          "start": 10,
+          "stop": 11
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- A burst owns both fins until neither is parented. Bounded by the live cap,\n-- never by the number of KOs in a long match. No per-frame or timer loop.\nlocal liveKOBursts:{{BasePart}}={}\n",
+          "old_identity": {
+            "bytes": 188,
+            "sha256": "4318f8ca77af125faf40f128a41b2a0a039cc3d07584acf17d3da0c141fd8664"
+          },
+          "start": 16,
+          "stop": 19
+        },
+        {
+          "new": " -- One short radial burst per confirmed Humanoid.Died, not client-predicted KOs.\n if not world.Parent or not target.PrimaryPart or not budget(true) then return false end\n local at=target.PrimaryPart.Position\n local ring=Instance.new(\"Part\")\n ring.Name=\"EGGRUMBLE_KO_BURST\"\n ring.Shape=Enum.PartType.Ball\n ring.Size=Vector3.new(1,1,1)\n ring.Material=Enum.Material.Neon\n ring.Anchored=true;ring.CanCollide=false;ring.CanTouch=false\n ring.CanQuery=false;ring.CastShadow=false\n ring.Color=colors[role] or colors.WARRIOR\n ring.Transparency=.37;ring.Position=at\n ring.Parent=world\n local tween=game:GetService(\"TweenService\"):Create(\n  ring,TweenInfo.new(.24,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n  {Size=Vector3.new(6,3.2,6),Transparency=1})\n tween:Play()\n Debris:AddItem(ring,.32)\n",
+          "new_identity": {
+            "bytes": 789,
+            "sha256": "3330017d69f4fe394d2a8e3fd034e143942bc321aace33c9e5acabaf57117cc7"
+          },
+          "old": " -- GQ470_FB015_CONFIRMED_KO_SLASH_REAL69_20261120\n -- Real server-confirmed KO only. Two solid asymmetrical 3D slash fins\n -- replace one expanding Neon sphere; no light, particles, Remote or audio.\n -- Original six-KOs-per-second budget applies to the whole two-fin burst.\n -- Art orientation follows horizontal victim facing; no camera-facing HUD.\n if not world.Parent or not target.PrimaryPart then return false end\n -- A fixed-second rate limiter alone permits two overlapping bursts of six\n -- around a second boundary. Reclaim only fully removed pairs (Debris or\n -- arena teardown); a single remaining fin still occupies the burst slot.\n for i=#liveKOBursts,1,-1 do\n  local live=false\n  for _,fin in ipairs(liveKOBursts[i]) do\n   if fin.Parent then live=true;break end\n  end\n  if not live then table.remove(liveKOBursts,i) end\n end\n if #liveKOBursts>=MAX_LIVE_KO_BURSTS or not budget(true) then return false end\n local pivot=target.PrimaryPart.CFrame\n local at=pivot.Position\n local flatLook=Vector3.new(pivot.LookVector.X,0,pivot.LookVector.Z)\n if flatLook.Magnitude<.001 then flatLook=Vector3.new(0,0,-1) end\n local burstFrame=CFrame.lookAt(at,at+flatLook.Unit)\n local accent=colors[role] or colors.WARRIOR\n local burst:{BasePart}={}\n table.insert(liveKOBursts,burst)\n for side=-1,1,2 do\n  local fin=Instance.new(\"WedgePart\")\n  fin.Name=\"EGGRUMBLE_KO_BURST\"\n  fin.Size=Vector3.new(.34,1.65,.44)\n  fin.Material=Enum.Material.SmoothPlastic\n  fin.Anchored=true;fin.CanCollide=false;fin.CanTouch=false\n  fin.CanQuery=false;fin.CastShadow=false\n  fin.Color=if side==1 then accent else Color3.fromRGB(245,245,235)\n  fin.Transparency=.12\n  fin.CFrame=burstFrame*CFrame.new(side*.38,1.0,0)\n   *CFrame.Angles(0,math.rad(side*28),math.rad(side*37))\n  table.insert(burst,fin)\n  fin.Parent=world\n  local endAt=fin.CFrame*CFrame.new(side*.74,.7,0)\n  local tween=TweenService:Create(\n   fin,TweenInfo.new(.23,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),\n   {Size=Vector3.new(.8,3.5,.28),CFrame=endAt})\n  -- Leave time for both fins to replicate before fading the KO confirmation.\n  local fade=TweenService:Create(\n   fin,TweenInfo.new(.18,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0,false,.31),\n   {Transparency=1})\n  tween:Play()\n  fade:Play()\n  Debris:AddItem(fin,.53)\n end\n",
+          "old_identity": {
+            "bytes": 2283,
+            "sha256": "7dd823b272d90058ef91d240700317bf5b1a99239f82d94093b58199eff1213e"
+          },
+          "start": 67,
+          "stop": 117
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_ImpactFeedback"
     },
     "ServerScriptService/EGGRUMBLE_InteractionGuard.luau": {
@@ -13363,8 +14121,8 @@
     },
     "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau": {
       "after": {
-        "bytes": 7075,
-        "sha256": "ddd22fae146fa7a6cc15d3193a29a723e98dfc5dd3cce931e4387ef17a5688be"
+        "bytes": 8306,
+        "sha256": "7286d40717be966f8833dfccf3227b81a7c6a1d9ba5c67647766596ed720b2b0"
       },
       "before": {
         "bytes": 7023,
@@ -13372,6 +14130,20 @@
       },
       "class": "ModuleScript",
       "forward": [
+        {
+          "new": " -- GQ470_FB015_STONE_GIANT_SILHOUETTE_REAL69_20261120\n -- Four anchored matte rock wedges on existing model: broad shoulder caps and\n -- split crown prongs. Pure silhouette; leave core hitbox, boss LOS/HP/ring intact.\n -- Zero physics/collision/query/touch/shadows, no new animation listeners.\n for side=-1,1,2 do\n  local shoulder=Instance.new(\"WedgePart\")\n  shoulder.Name=\"BasaltShoulder_\"..tostring(side)\n  shoulder.Size=Vector3.new(4.6,2.6,3.8)\n  shoulder.CFrame=CFrame.new(at+Vector3.new(side*5.1,15.0,0))\n   *CFrame.Angles(0,0,math.rad(-side*21))\n  shoulder.Color=Color3.fromRGB(78,88,104)\n  shoulder.Material=Enum.Material.Slate\n  shoulder.Anchored=true\n  shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false\n  shoulder.CastShadow=false\n  shoulder.Parent=model\n  local crown=Instance.new(\"WedgePart\")\n  crown.Name=\"BasaltCrown_\"..tostring(side)\n  crown.Size=Vector3.new(2.0,3.7,2.9)\n  crown.CFrame=CFrame.new(at+Vector3.new(side*1.9,20.4,.4))\n   *CFrame.Angles(0,0,math.rad(side*15))\n  crown.Color=Color3.fromRGB(126,140,158)\n  crown.Material=Enum.Material.Slate\n  crown.Anchored=true\n  crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false\n  crown.CastShadow=false\n  crown.Parent=model\n end\n",
+          "new_identity": {
+            "bytes": 1231,
+            "sha256": "4f54b2ab118f022924cc20b49ed07da6f6d27023de7d4a0a5662f43757d3d4de"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 31,
+          "stop": 31
+        },
         {
           "new": "  health=math.max(0,health-amount*InvulRuntime.boundAttackMultiplier(player,\"NORMAL\"))\n",
           "new_identity": {
@@ -13389,6 +14161,20 @@
       ],
       "inverse": [
         {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ470_FB015_STONE_GIANT_SILHOUETTE_REAL69_20261120\n -- Four anchored matte rock wedges on existing model: broad shoulder caps and\n -- split crown prongs. Pure silhouette; leave core hitbox, boss LOS/HP/ring intact.\n -- Zero physics/collision/query/touch/shadows, no new animation listeners.\n for side=-1,1,2 do\n  local shoulder=Instance.new(\"WedgePart\")\n  shoulder.Name=\"BasaltShoulder_\"..tostring(side)\n  shoulder.Size=Vector3.new(4.6,2.6,3.8)\n  shoulder.CFrame=CFrame.new(at+Vector3.new(side*5.1,15.0,0))\n   *CFrame.Angles(0,0,math.rad(-side*21))\n  shoulder.Color=Color3.fromRGB(78,88,104)\n  shoulder.Material=Enum.Material.Slate\n  shoulder.Anchored=true\n  shoulder.CanCollide=false;shoulder.CanTouch=false;shoulder.CanQuery=false\n  shoulder.CastShadow=false\n  shoulder.Parent=model\n  local crown=Instance.new(\"WedgePart\")\n  crown.Name=\"BasaltCrown_\"..tostring(side)\n  crown.Size=Vector3.new(2.0,3.7,2.9)\n  crown.CFrame=CFrame.new(at+Vector3.new(side*1.9,20.4,.4))\n   *CFrame.Angles(0,0,math.rad(side*15))\n  crown.Color=Color3.fromRGB(126,140,158)\n  crown.Material=Enum.Material.Slate\n  crown.Anchored=true\n  crown.CanCollide=false;crown.CanTouch=false;crown.CanQuery=false\n  crown.CastShadow=false\n  crown.Parent=model\n end\n",
+          "old_identity": {
+            "bytes": 1231,
+            "sha256": "4f54b2ab118f022924cc20b49ed07da6f6d27023de7d4a0a5662f43757d3d4de"
+          },
+          "start": 31,
+          "stop": 59
+        },
+        {
           "new": "  health=math.max(0,health-amount)\n",
           "new_identity": {
             "bytes": 35,
@@ -13399,8 +14185,8 @@
             "bytes": 87,
             "sha256": "dd68ff9630ad2cd92c52aab7a8fbd8d9ba0d12bada9117297a87681948363862"
           },
-          "start": 79,
-          "stop": 80
+          "start": 107,
+          "stop": 108
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_NeutralStoneGiant"
