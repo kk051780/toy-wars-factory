@@ -43204,14 +43204,14 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 942,
         "branch": "quality/gq470-lss-shorefoam-facets-20261121",
-        "old_pr_head": "2448dc4f0580462335b3b4777f94c641e38b3c65",
+        "old_pr_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
         "old_base_ref": "rc/p0d-s1-kids-rc01",
         "formal_parent": "f9412f6931cd0153e56bd0955f9e780381702ad4",
-        "tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
-        "local_head": "fad1dc52d7c8da2e6fdd03e1b0e4f91d9d1e41b2",
+        "tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
+        "local_head": "0f3026d2d52118552f4ed180d834fde5175eda93",
         "allowed_changed_files": [
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -43240,8 +43240,8 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
             "mode": "100644",
-            "blob": "e3ada966262eea5b8f77d843e26ba07d24c4c77e",
-            "bytes": 20957
+            "blob": "bdad18e99a940a283c985362137603710a4b4528",
+            "bytes": 21273
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
@@ -43280,10 +43280,10 @@
             "bytes": 124596
           }
         ],
-        "expires_at": "2026-11-27T21:18:05.023Z",
+        "expires_at": "2026-11-27T21:34:52.866Z",
         "issued_from": {
-          "lease": "bd79b02de712ae28738bc36095430bfdfeaa2bb6",
-          "owner": "d9b2492d-5dfb-4799-9f2c-dfa9dcd1e359"
+          "lease": "5fd192ca75d7c96f553f7c81578dc8719173fbc4",
+          "owner": "fbd7061e-3efd-4586-81bc-d60fa5d42e4a"
         },
         "local_qa": {
           "place_bytes": 895840,
@@ -43300,12 +43300,18 @@
           "archive_negative_test_cases": 4,
           "author_test_cases": 7,
           "latest_rebased_core_and_retention_local_pass": true,
-          "device": "NOT_TESTED_V3.5"
-        }
+          "device": "NOT_TESTED_V3.5",
+          "exact_guardian_current_and_history_pass_local": true,
+          "new_and_old_guardian_negatives": 4,
+          "game_sources_unchanged_from_initial_candidate": true
+        },
+        "repair_changed_paths_from_red": [
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py"
+        ]
       },
-      "source_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
-      "prepared_candidate_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
-      "prepared_candidate_tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
+      "source_head": null,
+      "prepared_candidate_head": null,
+      "prepared_candidate_tree": null,
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -43374,7 +43380,12 @@
           "bytes": 124596
         }
       ],
-      "actual_candidate_readback": {
+      "actual_candidate_readback": null,
+      "actual_binding_lease": {
+        "commit": "701de756b672542f4580319793013230e0e488b9",
+        "operation_id": "34f97f52-273c-4d0d-9e20-da3d02eb0770"
+      },
+      "superseded_binding": {
         "pr": 942,
         "exact_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
         "exact_tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
@@ -43385,9 +43396,14 @@
         "source_lease_return": "70beb32d2cf38e9316156b4677a79e2559db76fe",
         "prepared_at": "2026-11-27T20:26:46.912Z"
       },
-      "actual_binding_lease": {
-        "commit": "701de756b672542f4580319793013230e0e488b9",
-        "operation_id": "34f97f52-273c-4d0d-9e20-da3d02eb0770"
+      "first_candidate": {
+        "head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
+        "tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
+        "source_lease": "b9d8fad5964ca978a1c6111878706b10fdd8daf7",
+        "source_return": "70beb32d2cf38e9316156b4677a79e2559db76fe",
+        "author_parent": "2448dc4f0580462335b3b4777f94c641e38b3c65",
+        "failed_job": 140721018363,
+        "reason": "Guardian retained path incorrectly compared the new shoreline Place with the prior portrait Place. Bind both the exact new Place and the immediate shoreline OFF to their actual current/parent lock; retain every historical boundary, and bind the actual 69 previous source bytes."
       }
     }
   ],
