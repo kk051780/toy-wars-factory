@@ -34516,9 +34516,9 @@
           "owner": "d5ff1bbf-768d-4760-9f4f-6bfeb5443021"
         }
       },
-      "source_head": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
-      "prepared_candidate_head": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
-      "prepared_candidate_tree": "32ce6bcb70c081a0acccbafeb0d069472c5791ba",
+      "source_head": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+      "prepared_candidate_head": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+      "prepared_candidate_tree": "7dd71263d1637e2e8a8ed850e36d476c3a750218",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
@@ -34619,8 +34619,8 @@
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
           "mode": "100644",
-          "bytes": 49913,
-          "blob": "59b3d3e6473e2c7df9ceb3209a1a9d0a5296f44b"
+          "bytes": 50047,
+          "blob": "c0e87e08725eada8139de0a408f24ad956e09db9"
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
@@ -34642,21 +34642,21 @@
         }
       ],
       "actual_candidate_readback": {
-        "commit": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
-        "tree": "32ce6bcb70c081a0acccbafeb0d069472c5791ba",
+        "commit": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "tree": "7dd71263d1637e2e8a8ed850e36d476c3a750218",
         "branch": "quality/gq470-match-growth-817bc984-20261123",
-        "source_lease": "e2b182e5589e6b36b23a1ed2612a4349b70abbb3",
-        "return": "4d4357cb570d7590e1826ad3c7331148177c56b2",
+        "source_lease": "d9e66d7850b88a4fc528b71e47173aad4694b48e",
+        "return": "52bc53f1e1042856b2859bf446287a2239466070",
         "existing_pr": 1028,
         "old_author_parent": "785c4c546b0cb0af3efcdcad3a8ec52784e79c72",
         "formal_parent": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
         "observed_initial_pr_base": "93a1147561a531610ac1609ebc68cc0ecf546623",
         "observed_pr_base_after": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
-        "qa_only_predecessor": "db8943c2218fdfdd5a763657cdd3d8086b493953"
+        "qa_only_predecessor": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68"
       },
       "actual_binding_lease": {
-        "commit": "0451f4530cbc8f5d0e3aac20f981bb04edd54c2c",
-        "operation_id": "f2b0f009-4be4-4298-ac4d-d10dfed3683b"
+        "commit": "2f25758c8b0842d1b17b9fc7dd6240eb0f7c274e",
+        "operation_id": "4b24ec2b-c3cf-4d6f-9aee-e5491ca526e8"
       },
       "source_correction_grant": {
         "status": "CONSUMED_EXACT_QA_ONLY",
@@ -34699,7 +34699,7 @@
         "source_return": "4d4357cb570d7590e1826ad3c7331148177c56b2"
       },
       "evidence_count_correction_grant": {
-        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "status": "CONSUMED_EXACT_QA_ONLY",
         "pr": 1028,
         "branch": "quality/gq470-match-growth-817bc984-20261123",
         "old_candidate": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
@@ -34721,7 +34721,10 @@
         "metadata": {
           "lease": "810c80ca8d21caa8b6baf9898b5c0cd4490a0569",
           "owner": "9724d4be-bcc3-42f7-8b3b-505a59b1c0a2"
-        }
+        },
+        "actual_candidate": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "source_lease": "d9e66d7850b88a4fc528b71e47173aad4694b48e",
+        "source_return": "52bc53f1e1042856b2859bf446287a2239466070"
       }
     }
   ],
