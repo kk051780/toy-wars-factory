@@ -30738,7 +30738,7 @@
     {
       "claim_id": "P0D-GQ482-EMPTY-VAULT-CANONICAL-20261127",
       "feature_id": "GQ470_FB015_EMPTY_VAULT_PROMPT",
-      "state": "PREP_READY",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, original #482 empty-vault intake)",
       "parent_issue": 470,
@@ -30797,9 +30797,9 @@
       "source_write_requires_separate_live_source_lease": true,
       "scope_only": false,
       "source_scope_granted": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
+      "rc_write_authorized_by_this_claim": false,
       "no_main_or_publish": true,
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -30961,7 +30961,7 @@
         "studio": "NOT_TESTED"
       },
       "bounded_rc_integration": {
-        "status": "FINITE_AUTHORITY_EFFECTIVE_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
         "permitted_head": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
@@ -30969,7 +30969,7 @@
         "permitted_pr": 1034,
         "sole_executor": "/root (Codex parent, B coordinator for #1034)",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -31001,6 +31001,87 @@
           "registry_parent": "26da80c6a8d273f566fb5c03cf057c0009b2464f",
           "registry_blob": "6b9a1a91d4e99ca3c51ad92009fa05d7705145b7",
           "authority_basis": "Authenticated delegated OWNER #1011 V2.1, #220 7202869642, current #218 original-482 scoped binding, independent exact 6081904736 and trusted green candidate."
+        },
+        "writer_acquire_ref": "5d24e132855e120e7daf6786764b7d5a67fb9d09",
+        "writer_return_ref": "162dd165c524b5a111098217743eb252016b7b7b",
+        "recorded_formal_ref": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "actual_non_force_expected_sha": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "actual_readback_at": "2026-11-27T00:19:23.254Z"
+      },
+      "formal_rc_adoption": true,
+      "closed_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "closed_resources": [
+        "REAL69_SOURCE_EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "actual_postpush": {
+        "official_head": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "old_head": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "official_push_run": 45916041753,
+        "official_push_ci": "success",
+        "official_artifact": {
+          "id": 15162466704,
+          "bytes": 14431555,
+          "digest": "sha256:1b845862affdf8b044bcf43804c33be09de0d5242789e1caf47711c900873be1"
+        },
+        "local_studio_seed": {
+          "bytes": 830788,
+          "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe",
+          "source": "exact adopted clean Windows Rojo build"
+        },
+        "studio_solo_empty_vault": "PASS",
+        "native_and_studio_independently_verified": "/root/p0_offer_review26 verified first actual live case and same-head official CI",
+        "studio_receipt_sha256": "796418cdb14f2e97bcbb7c1848c16a23a99cbe291ae1122a7a4985b3a0f3073b",
+        "paired_image_receipt_sha256": "1c01a612a9f9677bb8c81434398ffe9eccbf38eefa5a0e982c065e13c576aed6",
+        "studio_close_gate": "STUDIO_CLOSED_VERIFIED",
+        "studio_closed_pids": [
+          [
+            36980,
+            37200
+          ],
+          [
+            35936,
+            41360
+          ]
+        ],
+        "successful_normal_egg_theft": 3,
+        "normal_egg_deposits": 3,
+        "empty_vault_receipt_seq": [
+          5,
+          5
+        ],
+        "local_sanitized_studio_packet": {
+          "bytes": 1732231,
+          "sha256": "8dd497abc740dc7e85c1938856e8ee355c7879f1670449f797b67b2146da50aa"
+        },
+        "studio_packet_GitHub": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE",
+        "new_defect": "With one egg left, the prompt subtitle says 卵3個から1個ずつ. The old static caption remains. Existing live stock wording candidate available.",
+        "two_client": "NOT_TESTED",
+        "android": "NOT_TESTED",
+        "fun": "NOT_TESTED"
+      },
+      "actual_consumption_metadata_lease": {
+        "ref": "044b0ff518c157c8fbefab85ab3eb53e6a23fdb8",
+        "blob": "607bfc9e6b6d72062933d40098bbfdf0c6821238",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "a23b8f45-1149-4cc2-bd39-2f6ef3c8b735",
+          "task_id": null,
+          "epoch": 776,
+          "acquired_at": "2026-11-27T00:33:23.291Z",
+          "expires_at": "2026-11-27T01:03:23.291Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
         }
       }
     }
