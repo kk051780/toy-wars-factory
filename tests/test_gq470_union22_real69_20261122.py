@@ -150,6 +150,15 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(len(result["archive_members"]), 75)
         active = compose.REPO / "rc_fastlane"
         selection = verify.data(active / "ACTIVE.json")
+        private_blobs = set()
+        for row in result["current"]["sources"].values():
+            source = row["source"]
+            blob = b"blob " + str(len(source)).encode() + b"\0" + source
+            private_blobs.add(hashlib.sha1(blob).hexdigest())
+        ready = verify.data(active / "features/active_ready/source_lock.json")
+        self.assertEqual(ready["profile"], selection["active_profile"])
+        self.assertEqual(ready["source_commit"], selection["active_source_commit"])
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in ready["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
@@ -159,7 +168,7 @@ class UnionBoundary(unittest.TestCase):
                 source = (packet / Path(relative).name).read_bytes()
                 blob = b"blob " + str(len(source)).encode() + b"\0" + source
                 self.assertEqual(hashlib.sha1(blob).hexdigest(), route["after"])
-                self.assertFalse(any(row["source"] == source for row in result["current"]["sources"].values()),
+                self.assertNotIn(route["after"], private_blobs,
                                  "ACTIVE rich51 geometry must stay outside the private companion")
 
     def test_hud_only_inverse_restores_current_rc_and_other68(self):
