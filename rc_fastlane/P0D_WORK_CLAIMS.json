@@ -32260,7 +32260,7 @@
       "claim_id": "P0D-GQ943-GQ929-MOTION-WEAPON-20261127",
       "feature_id": "GQ470_FB015_ROLE_MOTION_AND_WEAPON_READABILITY",
       "state": "SOURCE_WIP",
-      "role": "A_PREP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #943 and #929 reuse)",
       "parent_issue": 470,
       "integration_issue": 220,
@@ -32278,8 +32278,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Prepare the exact existing #943 two-stage 11568-byte ProceduralSkills and #929 latest exact 7547-byte WeaponSilhouettes on current private RC. Keep both original branches' selected scope and recorded history. Reuse current #943 PR under later live scope only. Weapon entry replaces #931's older weapon version once; no other #931 sources or changes. Exact two-route OFF and required CI/independent review.",
       "resources": [
@@ -32573,6 +32573,70 @@
       "actual_binding_lease": {
         "commit": "2ffd483aa795aaffefca4874b665ceff569a520c",
         "operation_id": "f1396225-892b-4bf8-8569-e82426225ec4"
+      },
+      "independent_source_receipt": {
+        "kind": "ACTUAL_REGISTERED_DISTINCT_CONTEXT_REVIEW_COMMENT",
+        "id": 6083403648,
+        "git_head": "daa6b076ac3502de632220aea9d7aec494232694",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/943#pullrequestreview-6083403648",
+        "context": "/root/p0_offer_review26",
+        "status": "PASS_EXACT_943_ROLE_MOTION_WEAPON_HOSTED_QA_ONLY",
+        "canonical_ci": {
+          "run": 45938002693,
+          "job": 140305563738,
+          "green_steps": 48,
+          "artifact": 15171088364,
+          "zip_bytes": 17102678,
+          "digest": "sha256:dfb2dfde18a280aa030397c8294d4bafed59e4197ee0f7132c8999a57a9378dc"
+        },
+        "intake": {
+          "run": 45938708567,
+          "job": 140307796323,
+          "status": "READY_FOR_SOLE_WRITER_REVIEW"
+        }
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "permitted_head": "daa6b076ac3502de632220aea9d7aec494232694",
+        "permitted_tree": "8815c853a683a0289c9fcac911265c917c078b2e",
+        "permitted_pr": 943,
+        "sole_executor": "/root (Codex parent, B coordinator for #943 and selected #929)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T04:45:31.225Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Development RC only, exact author's normal/skill motion and latest weapon silhouettes. Paired rollback and unchanged combat authority. #929 and #931 branches stay separate.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "36b12f20-87b6-45ff-adcb-684f8acb6b37",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "36b12f20-87b6-45ff-adcb-684f8acb6b37",
+            "task_id": null,
+            "epoch": 818,
+            "acquired_at": "2026-11-27T04:15:11.183Z",
+            "expires_at": "2026-11-27T04:45:11.183Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "2eeb4a6c04db18214f53d06a870c0491b8df6b9e",
+          "acquire_blob": "4ab94e57acb9001cbb4ba3062e0e760a9319521f",
+          "registry_parent": "649a2bb30b0ea51c4c4410cf9f5811f38b3aa09b",
+          "registry_blob": "6a51d4c206994fee76aba7c1b066ba51160dcc5b",
+          "authority_basis": "Authenticated owner #1011 V2.1 delegated role-pair preparation, #220 exclusive CAS, actual narrow #218, independent 6083403648 and trusted green exact #943."
+        }
       }
     }
   ],
