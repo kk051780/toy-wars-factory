@@ -44671,6 +44671,174 @@
           "trusted_queue_job": 140769380015
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-PRIVATE-MAGE-WATER-CHAIN-COMBO004-20261128",
+      "feature_id": "GQ219_PRIVATE_MAGE_WATER_CHAIN_COMBO004_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+      "base_rc_tree": "71727e384fa6b073152cb81efef37c3b2d41d337",
+      "prep_branch": "quality/gq219-private-mage-water-chain-combo004-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "V4.2 selected PRIVATE actual S0-S4 TEAM/BR. Opt-in water/lightning loadout reuses the exact six ACTIVE donors and current PRIVATE tool/Swarm/HP. A MAGE-041, C MAGE-025 and D COMBO-004, B preserved. Real water mark/traced lightning and atomic component cooldowns/energy, existing HUD returns from D when standard gear comes back. No new Remote/world/Store/PvP. Preserve #1050 immediate inverse and prior sources.",
+      "resources": [
+        "PRIVATE_MAGE_041_WATER_MARK",
+        "PRIVATE_MAGE_025_LIGHTNING_CHAIN",
+        "PRIVATE_MAGE_COMBO_004_EXACT_EFFECT"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7210878151",
+      "protected_overlap": {
+        "issues": [
+          1045,
+          1047,
+          1050,
+          1049
+        ],
+        "part": "Reuse authored ACTIVE donor exact selected code and #1050 PRIVATE shared authority. Physical opt-in before queue; normal A/B/C, previous MAGE projectiles, other 65 and 27 prior archives retained."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "7e4ba40d-61cd-42f1-893f-d68eb8bae8f9",
+      "issued_at": "2026-11-27T22:39:50.391Z",
+      "expires_at": "2026-11-28T00:39:50.391Z",
+      "actual_metadata_lease": {
+        "ref": "2815a5d38bc0d7fb3007b053411c4f71af3ea6dd",
+        "blob": "c8b4afe6ebe90771080bc38270831842ef496dbe",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "7e4ba40d-61cd-42f1-893f-d68eb8bae8f9",
+          "task_id": null,
+          "epoch": 1067,
+          "acquired_at": "2026-11-27T22:39:37.179Z",
+          "expires_at": "2026-11-27T23:09:37.179Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V4.2 (効果契約量産), genuine #218/#220 and #219 fixed design. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq219-private-mage-water-chain-combo004-20261128",
+        "formal_parent": "6e42cce20a7be09f3b8effeb137b60a40ef42685",
+        "tree": "f2350a27bd7e8d1b6b6d71267bf2b4553ff35586",
+        "local_head": "2be6282de8e2069908159c2ae6b9c25c17fc886c",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "blob": "517aaeb037d456e42f224fbe88fd85533fa224b0",
+            "bytes": 72363,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "9df32540744e727662582922d0f5de2326af13c0",
+            "bytes": 35256,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644"
+          },
+          {
+            "blob": "55a676a45f40b16b4ee71f68b0d938817f5baf8b",
+            "bytes": 10668,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "744be0664a287d81a1f2dc05dab9c76b81a87dce",
+            "bytes": 8066,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "933fa8d3105259ecfbd946dcc28dac8be3e29557",
+            "bytes": 10891,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "22b6f0e72b5ab11e27e934c965bb45bdf7df68b0",
+            "bytes": 15043,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/cases.luau",
+            "mode": "100644"
+          },
+          {
+            "blob": "89c81f5086df989f637d9e032243f6f752a86901",
+            "bytes": 23229,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "1100c074996c3f5facdf4cd088144b77dbc52150",
+            "bytes": 55536,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "f33bd3599e9b4ea6395863b142ede3c0d5575e4e",
+            "bytes": 2537221,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644"
+          },
+          {
+            "blob": "d84beeb4fb5d4c44d84827bf592768f583d76490",
+            "bytes": 171924,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644"
+          },
+          {
+            "blob": "f4980ea8270f62ecbadc43d846e770143b890a60",
+            "bytes": 129263,
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644"
+          }
+        ],
+        "expires_at": "2026-11-27T23:39:50.391Z",
+        "issued_from": {
+          "lease": "2815a5d38bc0d7fb3007b053411c4f71af3ea6dd",
+          "owner": "7e4ba40d-61cd-42f1-893f-d68eb8bae8f9"
+        },
+        "local_qa": {
+          "place_bytes": 963229,
+          "place_sha256": "643e2365926fd87ff2b79630c8b3cd44c0aa21a16dee880f253aa23e6d109f2d",
+          "off_bytes": 921208,
+          "off_sha256": "4bbc7a88c52313fa0f67ee1e56ab1b94ef1bb3a43af0d6fd6bf92ea8be4ba305",
+          "unchanged_selected_sources": 65,
+          "prior_archives_byte_exact": 27,
+          "windows_compiles": 189,
+          "windows_rojo": 29,
+          "actual_native_e2e_cases": 15,
+          "original_author_cases": 4332,
+          "receipt_files": 48,
+          "mage_hud_two_rounds": true,
+          "device": "NOT_TESTED_V4.2"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
