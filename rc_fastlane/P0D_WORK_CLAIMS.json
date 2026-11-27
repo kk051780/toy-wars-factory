@@ -42161,14 +42161,14 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "pr": 947,
         "branch": "feature/gq470-hud-portrait-clearance-real69-20261121",
-        "old_pr_head": "47eef95e1b824d3d196cc119174df8a9e7426ecf",
+        "old_pr_head": "5bece8c60a4a3600b821ff52d6d15b4508d23ec2",
         "old_base_ref": "rc/p0d-s1-kids-rc01",
         "formal_parent": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
-        "tree": "8905fc2224d87373f2cd18fbba99b7dd4590c251",
-        "local_head": "eecfbaaf72096aa37b00e99f269a98385a90e858",
+        "tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+        "local_head": "6915be86f049620601ffeb46cc4baff00e28405c",
         "allowed_changed_files": [
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -42233,14 +42233,14 @@
           {
             "path": "tests/test_gq470_union22_real69_20261122.py",
             "mode": "100644",
-            "blob": "3e18e1a8c8a68e3d8e365ce1c81544173be7786a",
-            "bytes": 120985
+            "blob": "186cb7570338f0b75718e4d32210ca2a7a5deef1",
+            "bytes": 121410
           }
         ],
-        "expires_at": "2026-11-27T20:09:01.966Z",
+        "expires_at": "2026-11-27T20:23:31.781Z",
         "issued_from": {
-          "lease": "fe40a5b6c978fb717cf3d6ea7be9a0edc76a5df9",
-          "owner": "e6c447a6-be43-4953-ba23-b4f287bac8a6"
+          "lease": "1e1ee7122ca8a0c2549a115ab718e17bd80f7c1d",
+          "owner": "2a0d23b5-0bfc-41c7-bede-4576e896dbf8"
         },
         "local_qa": {
           "place_bytes": 895073,
@@ -42256,8 +42256,26 @@
           "windows_core_case_pass": 4,
           "retained_mage_programs": 38,
           "retained_relay_cases": 82,
-          "device": "NOT_TESTED_V3.5"
-        }
+          "device": "NOT_TESTED_V3.5",
+          "historical_bot_reverse_exact_local_pass": true,
+          "historical_hud_generator_and_lost_anchor_local_pass": true,
+          "old_contract_assertions_unchanged": true,
+          "hosted_first_bootstrap_failure": 140694679670,
+          "first_hosted_core_failure": 140694635693,
+          "corrected_source_diff_tests_only": true
+        },
+        "repair_changed_paths_from_red": [
+          "tests/test_gq470_union22_real69_20261122.py"
+        ]
+      },
+      "first_candidate": {
+        "head": "5bece8c60a4a3600b821ff52d6d15b4508d23ec2",
+        "tree": "8905fc2224d87373f2cd18fbba99b7dd4590c251",
+        "source_lease": "f9e5ff795fc65ee19c8a945c167c4739883ee80f",
+        "source_return": "67b5a6bbfb88e67810c777fff716c34746090b84",
+        "author_parent": "47eef95e1b824d3d196cc119174df8a9e7426ecf",
+        "failed_job": 140694635693,
+        "reason": "Two historic tests used the current portrait policy: old BOT reverse lacked the portrait/attack parent steps, and the historical native generator was passed current 64px source instead of the pinned prior 62px policy. Existing condition/mutant assertions unchanged."
       }
     }
   ],
