@@ -59,12 +59,14 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
         compose.need(compose.identity(geometry) == load_lock()["fixtures"]["guardian_wall_geometry.luau"],
                      "MAGE_CONTACT_EXACT_PHYSICS")
         parts["SERVER_ENGINE"] += b"\n" + geometry
-        for arm, selected in (("OFF", root / compose.MAGE_CONTACT_OFF / "sources"), ("V3", root / "sources")):
+        for arm, selected in (("OFF", root / compose.MAGE_CONTACT_OFF / "sources"),
+                              ("V3", root / compose.RELAY_ELIGIBILITY_OFF / "sources")):
             before = arm == "OFF"
             identity = repair["parent_place" if before else "repaired_place"]
             compose.need(compose.identity(compose.read_file(selected.parent / compose.PLACE)) == identity,
                          "MAGE_CONTACT_PLACE")
             expected = {name: row["after"] for name, row in lock["sources"].items()}
+            expected.update({name: row["parent"]["after"] for name, row in lock["relay_eligibility_followup"]["rows"].items()})
             if before:
                 expected.update({name: row["parent"]["after"] for name, row in repair["rows"].items()})
             compose.need(source_snapshot(selected) == expected, "MAGE_CONTACT_ACTUAL_SOURCE_SNAPSHOT")

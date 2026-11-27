@@ -38,7 +38,7 @@ INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
 def restore_combat(on, lock):
-    mage_off = compose.mage_contact_parent(on, lock)
+    mage_off = compose.mage_contact_parent(*compose.relay_eligibility_parent(on, lock))
     return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(*mage_off)))
 
 
@@ -52,6 +52,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["relay_eligibility_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["mage_contact_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["art_polish_followup"]["rows"].items()
@@ -333,8 +335,15 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        mage_off, mage_lock = compose.mage_contact_parent(final, self.lock)
-        self.assertEqual({name for name in mage_off if mage_off[name] != final[name]},
+        eligibility_off, eligibility_lock = compose.relay_eligibility_parent(final, self.lock)
+        self.assertEqual({name for name in eligibility_off if eligibility_off[name] != final[name]},
+                         set(compose.RELAY_ELIGIBILITY_SOURCES))
+        self.assertEqual(eligibility_lock["final_place"], self.lock["mage_contact_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.MAGE_CONTACT_OFF_ARCHIVE, root / compose.RELAY_ELIGIBILITY_OFF_ARCHIVE)
+        self.reject_core(root)
+        mage_off, mage_lock = compose.mage_contact_parent(eligibility_off, eligibility_lock)
+        self.assertEqual({name for name in mage_off if mage_off[name] != eligibility_off[name]},
                          set(compose.MAGE_CONTACT_SOURCES))
         self.assertEqual(mage_lock["final_place"], self.lock["art_polish_followup"]["repaired_place"])
         root = self.current_copy()
@@ -1014,7 +1023,7 @@ class FinalAdmissionBoundary(unittest.TestCase):
         copied = self.bot_native_copy()
         evidence = copied / "relay_presentation"
         program_path = evidence / "generated.luau"
-        client = (self.current / "sources" / compose.HUD_SOURCE).read_bytes()
+        client = (self.current / compose.RELAY_ELIGIBILITY_OFF / "sources" / compose.HUD_SOURCE).read_bytes()
         repair = self.lock["relay_presentation_followup"]
         mounted = client[repair["client_start"]:repair["client_end"]]
         self.assertEqual(program_path.read_bytes().count(mounted),1)
@@ -1484,7 +1493,9 @@ class UnionOfflineContract(unittest.TestCase):
         growth = self.lock["growth_musou_followup"]
         polish = self.lock["art_polish_followup"]
         mage = self.lock["mage_contact_followup"]
-        polish_sources = self.lock["sources"] | {name: row["parent"] for name, row in mage["rows"].items()}
+        eligibility = self.lock["relay_eligibility_followup"]
+        mage_sources = self.lock["sources"] | {name: row["parent"] for name, row in eligibility["rows"].items()}
+        polish_sources = mage_sources | {name: row["parent"] for name, row in mage["rows"].items()}
         growth_sources = polish_sources | {name: row["parent"] for name, row in polish["rows"].items()}
         combat_sources = growth_sources | {name: row["parent"] for name, row in growth["rows"].items()}
         wall_sources = combat_sources | {name: row["parent"] for name, row in combat["rows"].items()}
@@ -1524,7 +1535,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(combat["repaired_place"], growth["parent_place"])
         self.assertEqual(growth["repaired_place"], polish["parent_place"])
         self.assertEqual(polish["repaired_place"], mage["parent_place"])
-        self.assertEqual(mage["repaired_place"], self.lock["final_place"])
+        self.assertEqual(mage["repaired_place"], eligibility["parent_place"])
+        self.assertEqual(eligibility["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(eligibility["rows"]), set(compose.RELAY_ELIGIBILITY_SOURCES))
         self.assertEqual(set(mage["rows"]), set(compose.MAGE_CONTACT_SOURCES))
         self.assertEqual(set(polish["rows"]), set(compose.ART_POLISH_SOURCES))
         self.assertEqual(set(growth["rows"]), set(compose.GROWTH_MUSOU_SOURCES))
