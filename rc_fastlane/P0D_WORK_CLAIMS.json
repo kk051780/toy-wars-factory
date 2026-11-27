@@ -32944,6 +32944,26 @@
       "actual_binding_lease": {
         "commit": "34cb6d0572c55dfb7839faa49693fd2517f30740",
         "operation_id": "c050c2ac-db67-4817-88e0-887cb56c021a"
+      },
+      "source_correction_grant": {
+        "status": "ONE_NONFORCE_TEST_ONLY_UPDATE_ON_EXISTING_PR",
+        "pr": 1038,
+        "branch": "feature/p0d-field-egg-terminal-20261127",
+        "parent": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
+        "formal_parent": "daa6b076ac3502de632220aea9d7aec494232694",
+        "failed_canonical_ci": 45941661352,
+        "job": 140317123803,
+        "actual_metadata_lease": "de08c08129dacd608761ea3e53687c4b0689a748",
+        "operator": "d12981f7-024d-4897-ac52-6700eced6168",
+        "expires_at": "2026-11-27T05:35:58.446Z",
+        "expected_tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+        "local_commit": "53475c6c9c3c38b95f86559d56bf791cff336c8c",
+        "only_changed_file": {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "blob": "56f065768928bab68e0c96e33a22066d1f27f789",
+          "bytes": 98583
+        },
+        "reason": "Existing mutation test injected at old ordinal 165; retain three negatives at final real Rojo invocation, now ordinal 167. No runtime or build changes. Re-run all unchanged required checks."
       }
     }
   ],
