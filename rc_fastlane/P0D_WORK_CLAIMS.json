@@ -36846,6 +36846,132 @@
           "trusted_queue_job": 140498074057
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-ACTIVE-VOLUNTARY-READY-20261127",
+      "feature_id": "GQ910_ACTIVE_VOLUNTARY_READY",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent)",
+      "parent_issue": 910,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+      "base_rc_tree": "a504747453e9f2a1df088884cfe3708e648c644f",
+      "prep_branch": "quality/gq910-active-voluntary-ready-20261127",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Existing #910 source for ACTIVE rich51 voluntary READY, countdown/observer, post-results reset and first-minute coaching/assassin label. Reuse existing main-Game/UI helpers. No persistence/reward authority changes, no new Remote/script. Locked separate output, exact older Private baseline and official profile preserved.",
+      "resources": [
+        "ACTIVE66_VOLUNTARY_READY_PHASE_AND_ROSTER",
+        "ACTIVE66_HUD_READY_STATUS_AND_ROLE_NAME",
+        "ACTIVE66_FIRST_MINUTE_OBJECTIVES"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_ready.py",
+        "rc_fastlane/features/active_ready/coach_spectator_layout.json",
+        "rc_fastlane/features/active_ready/source_lock.json",
+        "rc_fastlane/test_p0_ready_composed_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "protected_overlap": {
+        "pr": 1016,
+        "exact_head": "84b39ba8dab77a5bda67969fe380484b619f1e00",
+        "no_edit_or_transfer": true,
+        "partition": "Readiness/coach/observer and UI role heading only; #1016 persistence/revision rewards and original branch untouched. No concurrent source writer. Actual same-path three-way source proof showed zero overlapping hunks."
+      },
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/910#issuecomment-7162380479",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "c90468b8-6f77-4d0b-9ace-1e62a1052485",
+      "issued_at": "2026-11-27T12:17:56.205Z",
+      "expires_at": "2026-11-27T14:17:56.205Z",
+      "actual_metadata_lease": {
+        "ref": "dc3b81e259c385da38646be58151e7968516a897",
+        "blob": "54799e2d2023b7bd28b494bd0b6e00ede598b2fa",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "c90468b8-6f77-4d0b-9ace-1e62a1052485",
+          "task_id": null,
+          "epoch": 907,
+          "acquired_at": "2026-11-27T12:17:39.540Z",
+          "expires_at": "2026-11-27T12:47:39.540Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Current #1011 V3.5 December trial-critical existing P0, #218 source role and #220. Reuse existing #910 exact authored candidate, scoped function/hunks only with #1016 intact.",
+      "source_grant": {
+        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "branch": "quality/gq910-active-voluntary-ready-20261127",
+        "formal_parent": "3f2caec2ba8664eddfcfa5f11c0cb79602d8ddde",
+        "tree": "43555e6a79358ae3100b66e2289f420fd9e6c86f",
+        "local_head": "b0fc211935be42ab8f7ff7c024da31143e6794bc",
+        "permitted_create_draft": true,
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "b35b7539d60e33450c621845000c3f8c22872a6e",
+            "bytes": 205385
+          },
+          {
+            "path": "rc_fastlane/apply_active_ready.py",
+            "mode": "100644",
+            "blob": "8f0a6e9b7e2c56fe442e05f39e0f2881b4dc25da",
+            "bytes": 4069
+          },
+          {
+            "path": "rc_fastlane/features/active_ready/coach_spectator_layout.json",
+            "mode": "100644",
+            "blob": "cd3dee809bd8f4bd5f430b55450cca9c0d0eb6d5",
+            "bytes": 18958
+          },
+          {
+            "path": "rc_fastlane/features/active_ready/source_lock.json",
+            "mode": "100644",
+            "blob": "60608022bccde9b6c5d0bbe64bb9b69f786719f8",
+            "bytes": 924
+          },
+          {
+            "path": "rc_fastlane/test_p0_ready_composed_native.py",
+            "mode": "100644",
+            "blob": "af7df6f969a0c4593548f7b7009faa30642b9d11",
+            "bytes": 6806
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "e44815157899c0bf4845fc482745dc2c64c82321",
+            "bytes": 109370
+          }
+        ],
+        "expires_at": "2026-11-27T13:17:56.205Z",
+        "issued_from": {
+          "lease": "dc3b81e259c385da38646be58151e7968516a897",
+          "owner": "c90468b8-6f77-4d0b-9ace-1e62a1052485"
+        },
+        "local_qa": {
+          "profile": "ACTIVE_RUNTIME rich51",
+          "place_bytes": 608205,
+          "place_sha256": "d16802ea2341a79e286d7a34ebfc64451a2d56f92517100544daa06166d6a51d",
+          "parent_off_bytes": 602614,
+          "parent_off_sha256": "8d0774c778b593f1f791729eec603663ca5ae2e9ed188de8d7811dc026e391d3",
+          "changed_luau": 3,
+          "unchanged_luau": 63,
+          "old_and_new_native_six": true,
+          "host_actual_remote_observer_boundaries": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
