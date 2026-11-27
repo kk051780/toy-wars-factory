@@ -846,6 +846,28 @@ jobs:
                               grep -F AUTHOR_CENTER_OVERLAP /tmp/p0d_rc_out/ACTIVE_UNDEAD_EXPECTED_ORIGINAL.log
                               /tmp/p0d_new_luau/luau /tmp/p0d_active_undead_native-after.luau | tee /tmp/p0d_rc_out/ACTIVE_UNDEAD_NATIVE.log
                               test "$(grep -c '^ACTIVE_UNDEAD_.*_PASS$' /tmp/p0d_rc_out/ACTIVE_UNDEAD_NATIVE.log)" -eq 7
+                              WIND_CONFIG=rc_fastlane/features/active_assassin_wind/source_lock.json
+                              if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$WIND_CONFIG"; then
+                                WIND_OFF=/tmp/p0d_rc_active_assassin_wind_off.rbxlx
+                                GAME_BEFORE_WIND=/tmp/p0d_rc_active_before_assassin_wind.luau
+                                HUD_BEFORE_WIND=/tmp/p0d_rc_active_before_assassin_wind_hud.luau
+                                cp "$DIST/src/server/Game.server.luau" "$GAME_BEFORE_WIND"
+                                cp "$DIST/src/client/HUD.client.luau" "$HUD_BEFORE_WIND"
+                                /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$WIND_OFF"
+                                python3 -B rc_fastlane/apply_active_assassin_wind.py --profile "$PROFILE" --dist "$DIST" \
+                                  --off-place "$WIND_OFF" | tee /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_OFF.log
+                                grep -F ACTIVE_WIND_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_OFF.log
+                                grep -Fx ACTIVE_WIND_EXACT_GAME_HUD_EXISTING_RULES_PASS /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_OFF.log
+                                for route in server/Game.server client/HUD.client; do
+                                  /tmp/p0d_new_luau/luau-compile "$DIST/src/$route.luau" >/dev/null
+                                done
+                                python3 -B rc_fastlane/verify_active_assassin_wind_native.py --dist "$DIST" \
+                                  --before-game "$GAME_BEFORE_WIND" --before-hud "$HUD_BEFORE_WIND" --out /tmp/p0d_active_assassin_wind.luau
+                                /tmp/p0d_new_luau/luau /tmp/p0d_active_assassin_wind-before.luau | tee /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_BASELINE.log
+                                grep -Fx ACTIVE_WIND_BASELINE_NINJA_MISSING_LEGACY_RAIDER_PASS /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_BASELINE.log
+                                /tmp/p0d_new_luau/luau /tmp/p0d_active_assassin_wind-after.luau | tee /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_NATIVE.log
+                                test "$(grep -c '^ACTIVE_WIND_.*_PASS$' /tmp/p0d_rc_out/ACTIVE_ASSASSIN_WIND_NATIVE.log)" -eq 3
+                              fi
                             fi
                           fi
                         fi
@@ -892,7 +914,10 @@ jobs:
           hit_enabled=p=='rich51' and json.loads(hit_lock.read_bytes())['enabled']
           undead_lock=pathlib.Path('rc_fastlane/features/active_undead_squad/source_lock.json')
           undead_enabled=p=='rich51' and json.loads(undead_lock.read_bytes())['enabled']
+          assassin_wind_lock=pathlib.Path('rc_fastlane/features/active_assassin_wind/source_lock.json')
+          assassin_wind_enabled=p=='rich51' and json.loads(assassin_wind_lock.read_bytes())['enabled']
           assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
+          assert not assassin_wind_enabled or undead_enabled, 'ASSASSIN_WIND_REQUIRES_EXACT_UNDEAD_PARENT'
           expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
@@ -937,6 +962,7 @@ jobs:
               assert ('rc_active_safe_lobby' in active_receipt)==lobby_enabled
               assert ('rc_active_confirmed_hit' in active_receipt)==hit_enabled
               assert ('rc_active_undead_squad' in active_receipt)==undead_enabled
+              assert ('rc_active_assassin_wind' in active_receipt)==assassin_wind_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -974,6 +1000,8 @@ jobs:
                       assert hit['routes']['server/Game.server.luau']['before']==final_game
                       assert lock['blobs']['server/MusouHorde.luau']==hit['horde']
                       for route, pins in hit['routes'].items():
+                          if route=='client/HUD.client.luau' and assassin_wind_enabled:
+                              continue
                           if route!='server/Game.server.luau' or not undead_enabled:
                               assert lock['blobs'][route]==pins['after']
                       final_game=hit['routes']['server/Game.server.luau']['after']
@@ -983,6 +1011,14 @@ jobs:
                       assert undead['studio_only'] and undead['routes']['server/Game.server.luau']['before']==final_game
                       final_game=undead['routes']['server/Game.server.luau']['after']
                       assert lock['blobs']['server/UndeadSquad.luau']==undead['routes']['server/UndeadSquad.luau']['after']
+                  if assassin_wind_enabled:
+                      wind=active_receipt['rc_active_assassin_wind']
+                      assert lock['rc_active_assassin_wind']==wind and wind['feature']=='FB020_ASSASSIN_WIND_ACTIVE_V1'
+                      assert wind['studio_alias_only'] and wind['routes']['server/Game.server.luau']['before']==final_game
+                      assert wind['routes']['client/HUD.client.luau']['before']==hit['routes']['client/HUD.client.luau']['after']
+                      assert lock['blobs']['server/S1RaiderWindRules.luau']==wind['rules_git_blob']
+                      assert lock['blobs']['client/HUD.client.luau']==wind['routes']['client/HUD.client.luau']['after']
+                      final_game=wind['routes']['server/Game.server.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -1198,6 +1234,7 @@ jobs:
           if lobby_enabled: overlay_ids.append('FB007_LOBBY_DOJO_PHYSICAL_V1')
           if hit_enabled: overlay_ids.append('FB019_ATTACK_RESPONSE_V1')
           if undead_enabled: overlay_ids.append('FB026_UNDEAD_SIEGE_ACTIVE_V1')
+          if assassin_wind_enabled: overlay_ids.append('FB020_ASSASSIN_WIND_ACTIVE_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)

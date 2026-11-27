@@ -1,0 +1,26 @@
+{
+  "server/Game.server.luau": [
+    {
+      "anchor": "    local now = serverNow()\n    if not WindRules.canActivate({\n        phase = match.phase, team = team, role = roles[player] or \"RAIDER\",\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,",
+      "replace": "    local now = serverNow()\n    local windRole = roles[player] or \"RAIDER\"\n    local ninjaWind = windRole ~= \"RAIDER\" and RunService:IsStudio()\n        and sevenJobs[player] == \"NINJA\"\n        and ServerStorage:GetAttribute(\"P0D_RC_ENABLE_SEVEN_JOBS_PVE\") ~= false\n    if not WindRules.canActivate({\n        phase = match.phase, team = team, role = if ninjaWind then \"RAIDER\" else windRole,\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,"
+    },
+    {
+      "anchor": "    }) then return end\n    stopWind(player)\n    lastWind[player] = now",
+      "replace": "    }) then return end\n    if ninjaWind then\n        local params=RaycastParams.new()\n        params.FilterType=Enum.RaycastFilterType.Exclude\n        params.FilterDescendantsInstances={player.Character}\n        local floor=workspace:Raycast(root.Position+Vector3.new(0,1,0),Vector3.new(0,-8,0),params)\n        if not floor or floor.Normal.Y<0.65 or not floor.Instance:IsA(\"BasePart\")\n            or not floor.Instance.Anchored or not floor.Instance.CanCollide then return end\n    end\n    stopWind(player)\n    lastWind[player] = now"
+    }
+  ],
+  "client/HUD.client.luau": [
+    {
+      "anchor": "    trapButton.Visible = s.phase == \"ACTIVE\" and s.role == \"GUARDIAN\"\n    windButton.Visible = s.phase == \"ACTIVE\" and s.role == \"RAIDER\"",
+      "replace": "    trapButton.Visible = s.phase == \"ACTIVE\" and s.role == \"GUARDIAN\"\n    local ninjaWind=s.jobStudioPvE==true and s.job==\"NINJA\"\n    local dualWind=trapButton.Visible and ninjaWind\n    windButton.Position=UDim2.new(1,if dualWind then -265 else -140,1,-110)"
+    },
+    {
+      "anchor": "    local carryingEgg = type(s.carrying) == \"string\" and s.carrying ~= \"\"\n    relayButton.Visible",
+      "replace": "    local carryingEgg = type(s.carrying) == \"string\" and s.carrying ~= \"\"\n    windButton.Visible=s.phase==\"ACTIVE\" and (s.role==\"RAIDER\" or ninjaWind)\n        and (not dualWind or not carryingEgg)\n    relayButton.Visible"
+    },
+    {
+      "anchor": "    windButton.Active = s.phase == \"ACTIVE\" and s.role == \"RAIDER\"\n        and not carryingEgg and windCooldown == 0 and s.windActive ~= true",
+      "replace": "    windButton.Active = windButton.Visible and not carryingEgg and not currentNetBound\n        and windCooldown == 0 and s.windActive ~= true"
+    }
+  ]
+}

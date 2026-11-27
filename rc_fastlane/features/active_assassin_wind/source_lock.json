@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "feature": "FB020_ASSASSIN_WIND_ACTIVE_V1",
+  "source_origin": {
+    "pr": 476,
+    "commit": "915402105a88fe29b417e769003a8d8c9395ff22",
+    "patch_git_blob": "9aa7197b4fa178449a5a120ed2b8cf50b2ffa03f"
+  },
+  "adapter_sha256": "48118bc12c8815055779abffb735588b9a0df7cdc0c806383e82114c1240b5ba",
+  "rules_git_blob": "7d5706774b874759e7ab994dc0654c3ae9a46502",
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "12624ddc2e2583e2f0e471a5b947c7998ce484de",
+      "after": "283033324b5f66ae29b0d683dce3a1d5d7b62af9"
+    },
+    "client/HUD.client.luau": {
+      "before": "3befbdb137a02cbc7fbddda8c196eee993557b5b",
+      "after": "b72493fcec48a8d904f47074c4904f1734c8192a"
+    }
+  },
+  "off_place": {
+    "bytes": 668223,
+    "sha256": "8752083f42edd699d994b99250388d7f17e4f059990bebbe21df8d82c3cea93d"
+  }
+}
