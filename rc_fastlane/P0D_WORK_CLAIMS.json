@@ -31862,7 +31862,7 @@
       "claim_id": "P0D-GQ910-BR-CANYON-APPROACH-20261127",
       "feature_id": "GQ910_BR_CASTLE_ENTRANCE_CANYON_COLLISION",
       "state": "SOURCE_WIP",
-      "role": "A_PREP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent and existing #910 correction)",
       "parent_issue": 910,
       "integration_issue": 220,
@@ -31874,8 +31874,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_candidate": "1a2d1dc5ab8bcf7455171a2ad934b5b3605692b3",
       "original_product_source_pins": {
@@ -32123,6 +32123,70 @@
         "used_head": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
         "source_lease": "edca6487ef7fc932e973a4c0f80918c9e6f4619e",
         "source_return": "8283b5caa1faec1f915f35fe8b8e03692680d3c7"
+      },
+      "independent_source_receipt": {
+        "kind": "ACTUAL_REGISTERED_DISTINCT_CONTEXT_REVIEW_COMMENT",
+        "id": 6082978201,
+        "git_head": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/1037#pullrequestreview-6082978201",
+        "context": "/root/p0_offer_review26",
+        "status": "PASS_EXACT_1037_BR_CANYON_HOSTED_QA_ONLY",
+        "canonical_ci": {
+          "run": 45932316833,
+          "job": 140287496121,
+          "green_steps": 48,
+          "artifact": 15168064995,
+          "zip_bytes": 16501302,
+          "digest": "sha256:2103a666a77d4c09c09edf673ae4a948c29d5a3f35270da47781206ae7c9c6a4"
+        },
+        "intake": {
+          "run": 45932977113,
+          "job": 140289613520,
+          "status": "READY_FOR_SOLE_WRITER_REVIEW"
+        }
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "permitted_head": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "permitted_tree": "dec3aab9999d46a56aebd0896dd84551376717c1",
+        "permitted_pr": 1037,
+        "sole_executor": "/root (Codex parent, B coordinator for #1037)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T03:45:29.603Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Development RC only. Exact reused Realm and LegacyCanyon BR path fix, no art, no route/timer/authority change, current exact rollback.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "1ca94a1f-1454-4f41-9cd1-1c074333f1db",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "1ca94a1f-1454-4f41-9cd1-1c074333f1db",
+            "task_id": null,
+            "epoch": 809,
+            "acquired_at": "2026-11-27T03:15:13.140Z",
+            "expires_at": "2026-11-27T03:45:13.140Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "55f2009f692efa4e81bb6c7da5b0c7591b485046",
+          "acquire_blob": "903b5d75920409ad63a553a0a313062717b1e0d5",
+          "registry_parent": "9cc87cf60bb11500e3185be970f0ebcf6c42524d",
+          "registry_blob": "fd379c310e479355a32f0d9e9075e613b04b9d0e",
+          "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 exclusive CAS, authentic narrow #218, independent 6082978201 and trusted green fixed #1037."
+        }
       }
     }
   ],
