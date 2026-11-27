@@ -39600,7 +39600,7 @@
     {
       "claim_id": "P0D-FB026-ACTIVE-UNDEAD-479-20261128",
       "feature_id": "FB026_UNDEAD_SIEGE_ACTIVE_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 219,
@@ -39615,7 +39615,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing #479 FB026 undead summon, authenticated bounded ACTIVE P0D-015 vertical route. Selected role NECROMANCER uses original Game and neutral Horde owner HP/KO with three authored companions; no alternate P0D-015 module, no FB029/loot composite, no new Remote/Store/Score. Retain 18s cooldown and fixed Game authority; gate-safe spawn/wall, expired-task-safe recast. PRIVATE companion untouched.",
       "resources": [
@@ -39855,7 +39855,7 @@
         "operation_id": "97fd7240-f327-4646-bc62-b0a41259e821"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "349d45f868b1594f3cb5f058e42c02b614278236",
         "permitted_head": "376be660477492d0a6621d8ca7f28033da396260",
@@ -39886,7 +39886,36 @@
           "review": 6091037377,
           "trusted_queue_run": 46034742830,
           "trusted_queue_job": 140627186966
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "802d51c3b8d02155815d8d27235e31bf941ee272",
+        "writer_return": "05643265a3df608f43ae3a283b9eb0ad5645bd34",
+        "adopted_head": "376be660477492d0a6621d8ca7f28033da396260",
+        "adopted_at": "2026-11-27T16:36:31.292Z"
+      },
+      "actual_official_rc": {
+        "head": "376be660477492d0a6621d8ca7f28033da396260",
+        "tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+        "previous": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "active_ci": 46035053452,
+        "active_job": 140628226946,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15216471681,
+        "active_zip_bytes": 200349,
+        "active_zip_digest": "sha256:f518b3682832ed44d4d22d6fe90dd788e9a618cb7c02a20c60e91e98553be994",
+        "active_place_bytes": 668223,
+        "active_place_sha256": "8752083f42edd699d994b99250388d7f17e4f059990bebbe21df8d82c3cea93d",
+        "active_off_place_bytes": 656824,
+        "private_ci": 46035052987,
+        "private_job": 140628224661,
+        "private_steps": 48,
+        "private_artifact": 15216117981,
+        "private_zip_bytes": 25665483,
+        "private_zip_digest": "sha256:2b7265f7e5dc7fe8cec22dab16ad81e8d2ebb1f818f19551dea474ec41ae9518",
+        "private_place_bytes": 891450,
+        "device_evidence": "NOT_TESTED",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7223642361"
       }
     },
     {
@@ -39951,7 +39980,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 476,
         "branch": "feature/p0d-fb020-owner-studio-wind-repair-20261115",
         "old_pr_head": "915402105a88fe29b417e769003a8d8c9395ff22",
@@ -40030,6 +40059,73 @@
           "android_engine": "NOT_TESTED",
           "legacy_q_f_overlap_pending": true
         }
+      },
+      "source_head": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+      "prepared_candidate_head": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+      "prepared_candidate_tree": "15b8e3a1a0c096b35f2837fed6f99b76232b71f2",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "cbe95accaa2df0c4b613f171d3aa4ace71762a4e",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 234499
+        },
+        {
+          "mode": "100644",
+          "blob": "e8d35dbfbb00d889b84c354ed61773ddb69932b3",
+          "path": "rc_fastlane/apply_active_assassin_wind.py",
+          "bytes": 4364
+        },
+        {
+          "mode": "100644",
+          "blob": "e9f85ee154c01ba51656bceb23f2cafb37e7f4e5",
+          "path": "rc_fastlane/features/active_assassin_wind/adapter.json",
+          "bytes": 2712
+        },
+        {
+          "mode": "100644",
+          "blob": "55c54a99e76bdc16f4e0c42719f15365a3683cba",
+          "path": "rc_fastlane/features/active_assassin_wind/native.luau",
+          "bytes": 5596
+        },
+        {
+          "mode": "100644",
+          "blob": "9aa7197b4fa178449a5a120ed2b8cf50b2ffa03f",
+          "path": "rc_fastlane/features/active_assassin_wind/original_wind_patch.py",
+          "bytes": 5703
+        },
+        {
+          "mode": "100644",
+          "blob": "635fd54316f383e27f5712fc2a0eb8943cf0eaa3",
+          "path": "rc_fastlane/features/active_assassin_wind/source_lock.json",
+          "bytes": 864
+        },
+        {
+          "mode": "100644",
+          "blob": "2f3d9be7a27892a870529acbf9cb38de467219ff",
+          "path": "rc_fastlane/verify_active_assassin_wind_native.py",
+          "bytes": 2036
+        },
+        {
+          "mode": "100644",
+          "blob": "28706f4949e9ecb859ebaab594437467f97c5821",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 114805
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 476,
+        "exact_head": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "exact_tree": "15b8e3a1a0c096b35f2837fed6f99b76232b71f2",
+        "exact_parent": "376be660477492d0a6621d8ca7f28033da396260",
+        "preserved_author_parent": "915402105a88fe29b417e769003a8d8c9395ff22",
+        "source_lease": "8e80259e958cd70e01deb8aa21a40e99dc80f01b",
+        "source_lease_return": "5b8c001251c95910cc07e344a4380bc297427bde",
+        "prepared_at": "2026-11-27T16:47:21.639Z"
+      },
+      "actual_binding_lease": {
+        "commit": "6f6d88bde73c29addf93c6a9e5c5b7bbae02bfc0",
+        "operation_id": "ce19643e-79ea-48e8-97bc-cae2f9eb6694"
       }
     }
   ],
