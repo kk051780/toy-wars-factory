@@ -41790,6 +41790,138 @@
           "trusted_queue_job": 140681504371
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-NINJA-031-ACTIVE-BLINK-20261128",
+      "feature_id": "GQ219_NINJA_031_ACTIVE_BLINK_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent scoped Active companion)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "63d6092d876325b16e540708d3ec992d8bd9540d",
+      "base_rc_tree": "e190d093a79f249696a8cbff8c1604986b602cbb",
+      "prep_branch": "quality/gq219-active-ninja-blink-031-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Fixed #219 selected NINJA Q short Blink with 0.18s direction tell 5/7/9/11/13 studs, CD16/E30; server avatar/life/phase/role/pos controls, ground and seat guards, exact author Private movement sweep reuse, no collision bypass/iframe/damage. Preserve normal F, existing R Assassin Wind, other Q, PRIVATE and original map.",
+      "resources": [
+        "ACTIVE_RICH51_NINJA_031_Q_BLINK_SAFE_MOVEMENT_GQ219"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_ninja_blink.py",
+        "rc_fastlane/features/active_ninja_blink/NinjaBlink.luau",
+        "rc_fastlane/features/active_ninja_blink/native_cases.luau",
+        "rc_fastlane/features/active_ninja_blink/source_lock.json",
+        "rc_fastlane/verify_active_ninja_blink_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7204247109",
+      "protected_overlap": {
+        "issues": [
+          476,
+          1045
+        ],
+        "partition": "NINJA Q only, existing #476 R/Touch speed does not change, #1045 Mage Q retains exact gameplay, selected Private sources unchanged."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "ac8e1d43-a127-4a58-82d1-0d179d94cfdd",
+      "issued_at": "2026-11-27T18:42:01.841Z",
+      "expires_at": "2026-11-27T20:42:01.841Z",
+      "actual_metadata_lease": {
+        "ref": "3c7c22095cd0d4768d554ddeb2f369a2ed755ac1",
+        "blob": "597f4e1984b83bee01405f0f0b8f777f70a387cb",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "ac8e1d43-a127-4a58-82d1-0d179d94cfdd",
+          "task_id": null,
+          "epoch": 1010,
+          "acquired_at": "2026-11-27T18:41:48.422Z",
+          "expires_at": "2026-11-27T19:11:48.422Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5, #218,#220 and fixed #219 design for NINJA-031. Existing selected Active collision maths reused for Active only; exact bounded single draft.",
+      "source_grant": {
+        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "branch": "quality/gq219-active-ninja-blink-031-20261128",
+        "formal_parent": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
+        "local_head": "557421567af7f9215313329597cfdb54da8ccc9f",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "3bc77e46b67021d25f05fea458923e772ba230ec",
+            "bytes": 254570
+          },
+          {
+            "path": "rc_fastlane/apply_active_ninja_blink.py",
+            "mode": "100644",
+            "blob": "374ea036f3073c9363679ba8e4b8d9853d7e53f8",
+            "bytes": 10166
+          },
+          {
+            "path": "rc_fastlane/features/active_ninja_blink/NinjaBlink.luau",
+            "mode": "100644",
+            "blob": "c02355b0c88b8c82011b89c69bc7e7b21bf7e247",
+            "bytes": 4617
+          },
+          {
+            "path": "rc_fastlane/features/active_ninja_blink/native_cases.luau",
+            "mode": "100644",
+            "blob": "1fed66884187f2aae2e10b69400ebcc7a4ef56c8",
+            "bytes": 6600
+          },
+          {
+            "path": "rc_fastlane/features/active_ninja_blink/source_lock.json",
+            "mode": "100644",
+            "blob": "c68f6d6e3a1ef602df3815647378cb48619a516c",
+            "bytes": 1239
+          },
+          {
+            "path": "rc_fastlane/verify_active_ninja_blink_native.py",
+            "mode": "100644",
+            "blob": "f686726d3dce2f18fbd235c6d7b9eea219b9f4f6",
+            "bytes": 2094
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "1fe29cda2d3364782058ac390c022cfc4075496c",
+            "bytes": 119783
+          }
+        ],
+        "expires_at": "2026-11-27T19:42:01.841Z",
+        "issued_from": {
+          "lease": "3c7c22095cd0d4768d554ddeb2f369a2ed755ac1",
+          "owner": "ac8e1d43-a127-4a58-82d1-0d179d94cfdd"
+        },
+        "local_qa": {
+          "place_bytes": 718103,
+          "place_sha256": "f5f8f5e323dd7ff858264a051315ec64ae6d3512d52cb728fbe563559fb8ae36",
+          "off_bytes": 709077,
+          "off_sha256": "1c42a55ba536537779e61ad1079fd0cb2c7098bab1fa7d7f33459f86c59482d5",
+          "all_compile": 74,
+          "unchanged_previous_sources": 71,
+          "native_blink_groups": 3,
+          "old_groups": 12,
+          "device": "NOT_TESTED_V3.5"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
