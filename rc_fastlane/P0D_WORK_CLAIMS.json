@@ -2492,7 +2492,7 @@
         "static_Score_build_evaluations": 55,
         "unit_tests": 15
       },
-      "state": "PREP_READY",
+      "state": "RELEASED_SOURCE_ADOPTION_STUDIO_PENDING",
       "sub_scope": "EXISTING_711_RELAY_ACCOUNTING_PREP_TRANSPORT",
       "target_paths": [
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
@@ -2549,7 +2549,7 @@
         "head": "547fd7d56ef0c1e0a688135e789df0f79e0358c6"
       },
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "actual_metadata_lease": {
         "ref": "98a37ef6f473b231040f3b1357cd8084dc31e538",
@@ -2677,7 +2677,7 @@
         "artifact": 15165602137
       },
       "bounded_rc_integration": {
-        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "cc6fed686214596eb717cc5827856311338999ad",
         "permitted_head": "7ad4055bd28e6aaf0ba6183796912503812de416",
@@ -2685,7 +2685,7 @@
         "permitted_pr": 1017,
         "sole_executor": "/root (Codex parent, B coordinator for #1017)",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -2717,6 +2717,69 @@
           "registry_parent": "526437339e0618381af11fc0b4b393be5f1e9dd5",
           "registry_blob": "d40f2d86c7024b3dfbcd6e029cff70585e2aee21",
           "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 7202869642, exact original #1017 renewed #218 registration, independent 6082347693 and trusted green fixed candidate."
+        },
+        "writer_acquire_ref": "82f3e154cbb6dadf9040b9526dc6085d75e27f75",
+        "writer_return_ref": "9a45a45acbc4b35961ff199440d688305e3bcdc7",
+        "recorded_formal_ref": "7ad4055bd28e6aaf0ba6183796912503812de416",
+        "actual_non_force_expected_sha": "cc6fed686214596eb717cc5827856311338999ad",
+        "actual_readback_at": "2026-11-27T01:42:36.587Z"
+      },
+      "formal_rc_adoption": "7ad4055bd28e6aaf0ba6183796912503812de416",
+      "closed_paths": [
+        "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
+        "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_RelayScoreRegression.spec.luau",
+        "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau",
+        "tests/test_gq487_relay_score_real69_20261122.py",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "closed_resources": [
+        "SCORE_BALANCE",
+        "REAL69_SOURCE_EGGRUMBLE_SCOREBALANCE",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "actual_postpush": {
+        "run": 45924113369,
+        "artifact": 15165744227,
+        "official_zip_bytes": 15434325,
+        "official_zip_sha256": "d926bd00834375d81d136eea9b48a7d5d38147fcfb093038a4f84985563aa027",
+        "exact_source_windows_place": {
+          "bytes": 832059,
+          "sha256": "8566439a006f4d0193ffd6c415574ed20e17878b31f510b5822b457bab143d9d"
+        },
+        "immediate_off_place": {
+          "bytes": 831348,
+          "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
+        },
+        "studio_scope": "IN_PROGRESS",
+        "studio_case": "rc1017score27a",
+        "studio_pid": 48756,
+        "studio_closure": "PENDING_LOCAL_STUDIO_EXIT",
+        "registered_postpush_independent_context": "/root/p0_offer_review26",
+        "same_team_relay": "NOT_TESTED",
+        "art_mobile_fun": "NOT_TESTED"
+      },
+      "actual_consumption_metadata_lease": {
+        "ref": "32f1fa6cb5ac367735daf0321311397354e9740c",
+        "blob": "9a867a12fbcf2e50c67c8f468f7ee0c0dfad767c",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "758bf081-d774-437b-8abe-aee728a3ef93",
+          "task_id": null,
+          "epoch": 794,
+          "acquired_at": "2026-11-27T01:49:35.694Z",
+          "expires_at": "2026-11-27T02:19:35.694Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
         }
       }
     },
