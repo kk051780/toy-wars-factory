@@ -40226,7 +40226,7 @@
     {
       "claim_id": "P0D-ACTIVE-TOUCH-ATTACK-320-20261128",
       "feature_id": "ACTIVE_TOUCH_ATTACK_LAYOUT_V2",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 420,
@@ -40241,7 +40241,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Continue existing #320 ACTIVE Android HUD work with the actual previously tested #220 local touch layout. One ACTIVE HUD only. Position and size move away from native Jump/Thumbstick and occupied Q/T/R/etc controls, keep #423 HIT/MISS across resizes/ticks and restore PC F. Roles/Game/Remote/score and PRIVATE vector unchanged; actual Android/Studio not tested this head.",
       "resources": [
@@ -40465,7 +40465,7 @@
         "operation_id": "45b36743-e3c0-4a53-9b17-00669ea0fc63"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
         "permitted_head": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
@@ -40496,7 +40496,36 @@
           "review": 6091380102,
           "trusted_queue_run": 46039569863,
           "trusted_queue_job": 140643547068
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "08c27e150a12696b5ff56d8831e9c6500c8775c7",
+        "writer_return": "c0c2d03e3c390fe2708fb76ab7975c80f0044b60",
+        "adopted_head": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "adopted_at": "2026-11-27T17:12:48.701Z"
+      },
+      "actual_official_rc": {
+        "head": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "tree": "4fd30321e3f381648e74e5da581a8d4076af0238",
+        "previous": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "active_ci": 46040021886,
+        "active_job": 140645082945,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15220285060,
+        "active_zip_bytes": 204186,
+        "active_zip_digest": "sha256:299cea6ab8ed54e3cb265370fc029f8bc0a4e7200d1f9c66b669b344410beca4",
+        "active_place_bytes": 674623,
+        "active_place_sha256": "7f178413a5291c8f8cafe2cb9cdc728251f85b198483d0de588a78588230dc6d",
+        "active_off_place_bytes": 669180,
+        "private_ci": 46040021940,
+        "private_job": 140645082917,
+        "private_steps": 48,
+        "private_artifact": 15219861891,
+        "private_zip_bytes": 25665618,
+        "private_zip_digest": "sha256:5a39bad0378671751ff2c0e206b9be2047e7f7879df34a8aa6d31937160cb032",
+        "private_place_bytes": 891450,
+        "device_evidence": "NOT_TESTED",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7224317393"
       }
     },
     {
@@ -40562,7 +40591,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 297,
         "branch": "feature/p0d-rc-seven-jobs-pve-v1-20261114-01",
         "old_pr_head": "cc7be458713c56a87f83c54fe6d5c469c87b5400",
@@ -40662,6 +40691,74 @@
         "author_parent": "e70dbed0c9b3565b13a5a8130150abb5a7aa03c0",
         "failed_job": 140646642394,
         "reason": "SEVEN_JOBS_SINGLE_HORDE_CALL_EXACT_FORM_NOT_UPDATED_FOR_GROWTH"
+      },
+      "source_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+      "prepared_candidate_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+      "prepared_candidate_tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "blob": "f2f9b8f40363554f268b220bc9426a85013955c1",
+          "mode": "100644",
+          "bytes": 241574
+        },
+        {
+          "mode": "100644",
+          "blob": "291c201fb81a54233eef426244b1794873ced5a5",
+          "path": "rc_fastlane/apply_active_role_growth.py",
+          "bytes": 12743
+        },
+        {
+          "mode": "100644",
+          "blob": "03eb350bf4bf6d08eec98ff93847dae4c76a88f3",
+          "path": "rc_fastlane/features/active_role_growth/MatchRoleGrowth.luau",
+          "bytes": 4639
+        },
+        {
+          "mode": "100644",
+          "blob": "c4605187c23c959b420d06d27b40dea31f804ad3",
+          "path": "rc_fastlane/features/active_role_growth/TimePremiumRules.luau",
+          "bytes": 3133
+        },
+        {
+          "mode": "100644",
+          "blob": "2a803888b77d26b837bce557eeb185e7b9dffab0",
+          "path": "rc_fastlane/features/active_role_growth/native_cases.luau",
+          "bytes": 5306
+        },
+        {
+          "mode": "100644",
+          "blob": "46c2c82d69f98fc18b5adb8edd88fa83832718e6",
+          "path": "rc_fastlane/features/active_role_growth/source_lock.json",
+          "bytes": 1210
+        },
+        {
+          "mode": "100644",
+          "blob": "b48b492ff6cb5884b475f15b06f41b98a2869212",
+          "path": "rc_fastlane/verify_active_role_growth_native.py",
+          "bytes": 2942
+        },
+        {
+          "mode": "100644",
+          "blob": "e248082b5408fac3f5ca0bbb2f9b6bfbd8c40e8a",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 116286
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 297,
+        "exact_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "exact_tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+        "exact_parent": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "previous_candidate": "cc7be458713c56a87f83c54fe6d5c469c87b5400",
+        "preserved_author_parent": "e70dbed0c9b3565b13a5a8130150abb5a7aa03c0",
+        "source_lease": "bfa424aa8ea8b8d0efb086d610e7a4026471e2ec",
+        "source_lease_return": "c7cbd8d1d4b79709cf20e79cb0b13ae59ba43b35",
+        "prepared_at": "2026-11-27T17:22:45.693Z"
+      },
+      "actual_binding_lease": {
+        "commit": "f742b6137f2eeb3ee03d15f0194d0c5610f4aef6",
+        "operation_id": "bf3d53b6-a32d-4433-9454-930ea9bfcbc8"
       }
     }
   ],
