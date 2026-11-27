@@ -34,11 +34,11 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 68, "final": 21}
+INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
 def restore_canyon(on, lock):
-    neutral_off = compose.neutral_names_parent(on, lock)
+    neutral_off = compose.neutral_names_parent(*compose.guardian_wall_parent(on, lock))
     return compose.br_canyon_parent(*compose.role_readability_parent(*compose.field_prompt_parent(*neutral_off)))
 
 
@@ -275,7 +275,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_br_canyon_restores_exact_relay_parent_and_rejects_stale_pair(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        before_labels = compose.neutral_names_parent(on, self.lock)
+        before_labels = compose.neutral_names_parent(*compose.guardian_wall_parent(on, self.lock))
         on, post_canyon = compose.role_readability_parent(*compose.field_prompt_parent(*before_labels))
         prior, lock = compose.br_canyon_parent(on, post_canyon)
         self.assertEqual({name for name in on if on[name] != prior[name]}, set(compose.BR_CANYON_SOURCES))
@@ -290,7 +290,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_role_readability_parity_and_wrong_rollback_rejected(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        neutral_off, neutral_lock = compose.neutral_names_parent(on, self.lock)
+        on, visual_lock = compose.guardian_wall_parent(on, self.lock)
+        neutral_off, neutral_lock = compose.neutral_names_parent(on, visual_lock)
         self.assertEqual({name for name in on if on[name] != neutral_off[name]}, set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual(compose.identity((self.current / compose.NEUTRAL_NAMES_OFF / compose.PLACE).read_bytes()),
                          self.lock["field_prompt_followup"]["repaired_place"])
@@ -313,6 +314,23 @@ class UnionBoundary(unittest.TestCase):
         self.reject_core(root)
         root = self.current_copy()
         shutil.copyfile(root / compose.FIELD_PROMPT_OFF_ARCHIVE, root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
+        on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        parent, lock = compose.guardian_wall_parent(on, self.lock)
+        guard = compose.GUARDIAN_SOURCE
+        self.assertEqual({name for name in on if on[name] != parent[name]}, {guard})
+        self.assertEqual(compose.identity(on[guard]), {
+            "bytes": 15746, "sha256": "073c88a02e84d27c4f2cddd8ebd701c36e389f7050876b0551b4aa872301746c"})
+        self.assertEqual(compose.identity(parent[guard]), self.lock["guardian_followup_repair"]["repaired_guardian"])
+        self.assertEqual(lock["final_place"], self.lock["neutral_names_followup"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.GUARDIAN_WALL_OFF / compose.PLACE).read_bytes()),
+                         lock["final_place"])
+        with self.assertRaisesRegex(ValueError, "HUNK|GUARDIAN_WALL_TWO_WAY"):
+            compose.guardian_wall_parent(parent, self.lock)
+        root = self.current_copy()
+        shutil.copyfile(root / compose.NEUTRAL_NAMES_OFF_ARCHIVE, root / compose.GUARDIAN_WALL_OFF_ARCHIVE)
         self.reject_core(root)
 
     def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
@@ -1400,7 +1418,9 @@ class UnionOfflineContract(unittest.TestCase):
         role = self.lock["role_readability_followup"]
         field = self.lock["field_prompt_followup"]
         neutral_names = self.lock["neutral_names_followup"]
-        field_sources = self.lock["sources"] | {name: row["parent"] for name, row in neutral_names["rows"].items()}
+        wall = self.lock["guardian_wall_followup"]
+        visual_sources = self.lock["sources"] | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
+        field_sources = visual_sources | {name: row["parent"] for name, row in neutral_names["rows"].items()}
         role_sources = field_sources | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]}
         canyon_sources = role_sources | {name: row["parent"] for name, row in role["rows"].items()}
         relay_sources = canyon_sources | {name: row["parent"] for name, row in canyon["rows"].items()}
@@ -1430,13 +1450,15 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(canyon["repaired_place"], role["parent_place"])
         self.assertEqual(role["repaired_place"], field["parent_place"])
         self.assertEqual(field["repaired_place"], neutral_names["parent_place"])
-        self.assertEqual(neutral_names["repaired_place"], self.lock["final_place"])
+        self.assertEqual(neutral_names["repaired_place"], wall["parent_place"])
+        self.assertEqual(wall["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(wall["rows"]), {compose.GUARDIAN_SOURCE})
         self.assertEqual(set(field["rows"]), {compose.VAULT_SOURCE})
         self.assertEqual(set(neutral_names["rows"]), set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual([path for path in field_sources
                           if field_sources[path] != role_sources[path]], [compose.VAULT_SOURCE])
-        self.assertEqual({path for path in self.lock["sources"]
-                          if self.lock["sources"][path] != field_sources[path]}, set(compose.VISUAL_READABILITY_SOURCES))
+        self.assertEqual({path for path in visual_sources
+                          if visual_sources[path] != field_sources[path]}, set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual(len(castle["forward"]), 5)
         self.assertEqual(sum(len(r["forward"]) for r in castle_sources.values()), 190)
         self.assertEqual(sum(len(r["forward"]) for r in score_sources.values()), 191)

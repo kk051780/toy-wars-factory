@@ -4299,8 +4299,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 852755,
-    "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+    "bytes": 854300,
+    "sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
   },
   "followup_repair": {
     "author_contexts": [
@@ -4957,6 +4957,469 @@
     "runtime_delta_bytes": 494,
     "source_path": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "unchanged_sources_from_beast_parent": 68
+  },
+  "guardian_wall_followup": {
+    "native_case": {
+      "bytes": 5321,
+      "sha256": "b41993d6d972a9e9b50bd6fe43ede1a4f120b73ee8bba2fe2314cb2f7e1fd826"
+    },
+    "origin_commit": "f57d11b4b0715ac593285faebe9fe3dc39f10afc",
+    "parent_head": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+    "parent_place": {
+      "bytes": 852755,
+      "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+    },
+    "parent_tree": "748dbb66db9d4fd55fed3eb6fa74359aaf2adb17",
+    "repaired_place": {
+      "bytes": 854300,
+      "sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+        "forward": [
+          {
+            "new": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+            "new_identity": {
+              "bytes": 1008,
+              "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 162,
+            "stop": 162
+          },
+          {
+            "new": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+            "new_identity": {
+              "bytes": 168,
+              "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+            },
+            "old": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+            "old_identity": {
+              "bytes": 100,
+              "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+            },
+            "start": 223,
+            "stop": 225
+          },
+          {
+            "new": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+            "new_identity": {
+              "bytes": 409,
+              "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 240,
+            "stop": 240
+          },
+          {
+            "new": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+            "new_identity": {
+              "bytes": 60,
+              "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 241,
+            "stop": 241
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+            "old_identity": {
+              "bytes": 1008,
+              "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+            },
+            "start": 162,
+            "stop": 183
+          },
+          {
+            "new": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+            "new_identity": {
+              "bytes": 100,
+              "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+            },
+            "old": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+            "old_identity": {
+              "bytes": 168,
+              "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+            },
+            "start": 244,
+            "stop": 246
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+            "old_identity": {
+              "bytes": 409,
+              "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+            },
+            "start": 261,
+            "stop": 270
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+            "old_identity": {
+              "bytes": 60,
+              "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+            },
+            "start": 271,
+            "stop": 272
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 14201,
+            "sha256": "a6a4433966ba52212d42e12dc69e8bca7a63424fe31c25ade89724928d417ef2"
+          },
+          "before": {
+            "bytes": 13076,
+            "sha256": "3b8cf7e9b939213633fde964d81bb5e9508e4fe467ef932ddad0bfbe270bd96b"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": "local AttackGeometry=require(script.Parent:WaitForChild(\"EGGRUMBLE_AttackGeometry\"))\n",
+              "new_identity": {
+                "bytes": 85,
+                "sha256": "7fbe2e56a8a3ccdc83f7c35f98e146139ccab29c6c128ffd70a2334ce0f06a82"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 8,
+              "stop": 8
+            },
+            {
+              "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model,role:string):any\n",
+              "new_identity": {
+                "bytes": 104,
+                "sha256": "2b595c63ea0c9867325014a4034f926abe3655d4b3c3e5feff09227aee5cee45"
+              },
+              "old": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any\n",
+              "old_identity": {
+                "bytes": 92,
+                "sha256": "a106b40104d036730ff8d4051406af77b058299e469cdc4d54675c1206a821f2"
+              },
+              "start": 120,
+              "stop": 121
+            },
+            {
+              "new": "   and enemy(session,owner,id)\n   -- OWNER #804: only the NINJA guardian detects cloaked heroes.\n   -- An egg in the existing Rules state reveals a carrier to every role.\n   and (role==\"NINJA\" or session.rules.castles[id].heldEggs>0\n    or os.clock()>=(player:GetAttribute(\"EGGRUMBLE_StealthUntil\") or 0)) then\n",
+              "new_identity": {
+                "bytes": 311,
+                "sha256": "a1420031032748be80b6076c5b77ce9222a0180f143563c986849ca57d44588e"
+              },
+              "old": "   and enemy(session,owner,id) then\n",
+              "old_identity": {
+                "bytes": 36,
+                "sha256": "11442c81c3449af26b4a1ba4760234d676525cb9ecb6fb64f8d270c2e59ca9dc"
+              },
+              "start": 131,
+              "stop": 132
+            },
+            {
+              "new": "   ray.RespectCanCollide=true\n",
+              "new_identity": {
+                "bytes": 30,
+                "sha256": "05cf7095745ef03f531d64fa7ebefacffd486ffcf7596ff6b0696d873b77b5d9"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 150,
+              "stop": 150
+            },
+            {
+              "new": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
+              "new_identity": {
+                "bytes": 331,
+                "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 164,
+              "stop": 164
+            },
+            {
+              "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model,d.role)\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
+              },
+              "old": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "24192fc9cb98f65b0d3c393bfca96ffca733897dcb16f726aae696f5107bd655"
+              },
+              "start": 192,
+              "stop": 193
+            },
+            {
+              "new": "    local role=castleRoles[owner] or \"WARRIOR\"\n",
+              "new_identity": {
+                "bytes": 47,
+                "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
+              },
+              "old": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
+              "old_identity": {
+                "bytes": 208,
+                "sha256": "8a02bbbb59758f1d85299b33121bcea1ae88fa8f021a76a396b041f4901be2ae"
+              },
+              "start": 248,
+              "stop": 254
+            },
+            {
+              "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,shape:string,\n  attackRoot:BasePart,attackCharacter:Model):number\n",
+              "new_identity": {
+                "bytes": 147,
+                "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
+              },
+              "old": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
+              "old_identity": {
+                "bytes": 103,
+                "sha256": "18cf24d31a294ae93e7e0b499d67e551f994e3463bcd818d454e994c5a50d2b8"
+              },
+              "start": 265,
+              "stop": 266
+            },
+            {
+              "new": "  -- Combat supplies the actual human, beast or summoned-body origin.\n  -- Projected skill centers alone cannot establish line of sight.\n  if not attackRoot or not attackRoot:IsA(\"BasePart\") or not attackCharacter\n   or attackRoot.Parent~=attackCharacter\n   or (attackCharacter~=p.Character and not attackCharacter:IsDescendantOf(session.world)) then return 0 end\n",
+              "new_identity": {
+                "bytes": 364,
+                "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 271,
+              "stop": 271
+            },
+            {
+              "new": "    and AttackGeometry.allowed(attackRoot.Position,at,root.Position,radius,shape) then\n",
+              "new_identity": {
+                "bytes": 87,
+                "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
+              },
+              "old": "    and (root.Position-at).Magnitude<=radius then\n",
+              "old_identity": {
+                "bytes": 50,
+                "sha256": "a42ed12d77fc57bb07b21443449926e6299830b4d8ef15650bf4a4f3c62ba509"
+              },
+              "start": 277,
+              "stop": 278
+            },
+            {
+              "new": "    ray.FilterDescendantsInstances={attackCharacter,d.model}\n    ray.RespectCanCollide=true\n    local origin=attackRoot.Position+Vector3.new(0,1.5,0)\n    if workspace:Raycast(origin,root.Position-origin,ray)==nil then\n",
+              "new_identity": {
+                "bytes": 218,
+                "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
+              },
+              "old": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
+              "old_identity": {
+                "bytes": 117,
+                "sha256": "27d76db200b91666cd2bf8eaabcd7c803ae5daa9673c1cb63c1241291e40c916"
+              },
+              "start": 280,
+              "stop": 282
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local AttackGeometry=require(script.Parent:WaitForChild(\"EGGRUMBLE_AttackGeometry\"))\n",
+              "old_identity": {
+                "bytes": 85,
+                "sha256": "7fbe2e56a8a3ccdc83f7c35f98e146139ccab29c6c128ffd70a2334ce0f06a82"
+              },
+              "start": 8,
+              "stop": 9
+            },
+            {
+              "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any\n",
+              "new_identity": {
+                "bytes": 92,
+                "sha256": "a106b40104d036730ff8d4051406af77b058299e469cdc4d54675c1206a821f2"
+              },
+              "old": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model,role:string):any\n",
+              "old_identity": {
+                "bytes": 104,
+                "sha256": "2b595c63ea0c9867325014a4034f926abe3655d4b3c3e5feff09227aee5cee45"
+              },
+              "start": 121,
+              "stop": 122
+            },
+            {
+              "new": "   and enemy(session,owner,id) then\n",
+              "new_identity": {
+                "bytes": 36,
+                "sha256": "11442c81c3449af26b4a1ba4760234d676525cb9ecb6fb64f8d270c2e59ca9dc"
+              },
+              "old": "   and enemy(session,owner,id)\n   -- OWNER #804: only the NINJA guardian detects cloaked heroes.\n   -- An egg in the existing Rules state reveals a carrier to every role.\n   and (role==\"NINJA\" or session.rules.castles[id].heldEggs>0\n    or os.clock()>=(player:GetAttribute(\"EGGRUMBLE_StealthUntil\") or 0)) then\n",
+              "old_identity": {
+                "bytes": 311,
+                "sha256": "a1420031032748be80b6076c5b77ce9222a0180f143563c986849ca57d44588e"
+              },
+              "start": 132,
+              "stop": 137
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   ray.RespectCanCollide=true\n",
+              "old_identity": {
+                "bytes": 30,
+                "sha256": "05cf7095745ef03f531d64fa7ebefacffd486ffcf7596ff6b0696d873b77b5d9"
+              },
+              "start": 155,
+              "stop": 156
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
+              "old_identity": {
+                "bytes": 331,
+                "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
+              },
+              "start": 170,
+              "stop": 177
+            },
+            {
+              "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "24192fc9cb98f65b0d3c393bfca96ffca733897dcb16f726aae696f5107bd655"
+              },
+              "old": "  local foe,dist=targetOf(session,d.owner,at,c.range,model,d.role)\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
+              },
+              "start": 205,
+              "stop": 206
+            },
+            {
+              "new": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
+              "new_identity": {
+                "bytes": 208,
+                "sha256": "8a02bbbb59758f1d85299b33121bcea1ae88fa8f021a76a396b041f4901be2ae"
+              },
+              "old": "    local role=castleRoles[owner] or \"WARRIOR\"\n",
+              "old_identity": {
+                "bytes": 47,
+                "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
+              },
+              "start": 261,
+              "stop": 262
+            },
+            {
+              "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
+              "new_identity": {
+                "bytes": 103,
+                "sha256": "18cf24d31a294ae93e7e0b499d67e551f994e3463bcd818d454e994c5a50d2b8"
+              },
+              "old": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,shape:string,\n  attackRoot:BasePart,attackCharacter:Model):number\n",
+              "old_identity": {
+                "bytes": 147,
+                "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
+              },
+              "start": 273,
+              "stop": 275
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- Combat supplies the actual human, beast or summoned-body origin.\n  -- Projected skill centers alone cannot establish line of sight.\n  if not attackRoot or not attackRoot:IsA(\"BasePart\") or not attackCharacter\n   or attackRoot.Parent~=attackCharacter\n   or (attackCharacter~=p.Character and not attackCharacter:IsDescendantOf(session.world)) then return 0 end\n",
+              "old_identity": {
+                "bytes": 364,
+                "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
+              },
+              "start": 280,
+              "stop": 285
+            },
+            {
+              "new": "    and (root.Position-at).Magnitude<=radius then\n",
+              "new_identity": {
+                "bytes": 50,
+                "sha256": "a42ed12d77fc57bb07b21443449926e6299830b4d8ef15650bf4a4f3c62ba509"
+              },
+              "old": "    and AttackGeometry.allowed(attackRoot.Position,at,root.Position,radius,shape) then\n",
+              "old_identity": {
+                "bytes": 87,
+                "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
+              },
+              "start": 291,
+              "stop": 292
+            },
+            {
+              "new": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
+              "new_identity": {
+                "bytes": 117,
+                "sha256": "27d76db200b91666cd2bf8eaabcd7c803ae5daa9673c1cb63c1241291e40c916"
+              },
+              "old": "    ray.FilterDescendantsInstances={attackCharacter,d.model}\n    ray.RespectCanCollide=true\n    local origin=attackRoot.Position+Vector3.new(0,1.5,0)\n    if workspace:Raycast(origin,root.Position-origin,ray)==nil then\n",
+              "old_identity": {
+                "bytes": 218,
+                "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
+              },
+              "start": 294,
+              "stop": 298
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime"
+        }
+      }
+    },
+    "source_comment": 7188210015,
+    "source_pr": 796
   },
   "instance_count": 75,
   "item_cleanup_followup": {
@@ -8224,8 +8687,8 @@
     },
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
       "after": {
-        "bytes": 14201,
-        "sha256": "a6a4433966ba52212d42e12dc69e8bca7a63424fe31c25ade89724928d417ef2"
+        "bytes": 15746,
+        "sha256": "073c88a02e84d27c4f2cddd8ebd701c36e389f7050876b0551b4aa872301746c"
       },
       "before": {
         "bytes": 13076,
@@ -8290,6 +8753,20 @@
           "stop": 150
         },
         {
+          "new": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+          "new_identity": {
+            "bytes": 1008,
+            "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 156,
+          "stop": 156
+        },
+        {
           "new": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
           "new_identity": {
             "bytes": 331,
@@ -8316,6 +8793,48 @@
           },
           "start": 192,
           "stop": 193
+        },
+        {
+          "new": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+          "new_identity": {
+            "bytes": 168,
+            "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+          },
+          "old": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+          "old_identity": {
+            "bytes": 100,
+            "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+          },
+          "start": 210,
+          "stop": 212
+        },
+        {
+          "new": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+          "new_identity": {
+            "bytes": 409,
+            "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 227,
+          "stop": 227
+        },
+        {
+          "new": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+          "new_identity": {
+            "bytes": 60,
+            "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 228,
+          "stop": 228
         },
         {
           "new": "    local role=castleRoles[owner] or \"WARRIOR\"\n",
@@ -8451,13 +8970,27 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
+          "old": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+          "old_identity": {
+            "bytes": 1008,
+            "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+          },
+          "start": 162,
+          "stop": 183
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "old": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
           "old_identity": {
             "bytes": 331,
             "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
           },
-          "start": 170,
-          "stop": 177
+          "start": 191,
+          "stop": 198
         },
         {
           "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
@@ -8470,8 +9003,50 @@
             "bytes": 67,
             "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
           },
-          "start": 205,
-          "stop": 206
+          "start": 226,
+          "stop": 227
+        },
+        {
+          "new": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+          "new_identity": {
+            "bytes": 100,
+            "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+          },
+          "old": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+          "old_identity": {
+            "bytes": 168,
+            "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+          },
+          "start": 244,
+          "stop": 246
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+          "old_identity": {
+            "bytes": 409,
+            "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+          },
+          "start": 261,
+          "stop": 270
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+          "old_identity": {
+            "bytes": 60,
+            "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+          },
+          "start": 271,
+          "stop": 272
         },
         {
           "new": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
@@ -8484,8 +9059,8 @@
             "bytes": 47,
             "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
           },
-          "start": 261,
-          "stop": 262
+          "start": 292,
+          "stop": 293
         },
         {
           "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
@@ -8498,8 +9073,8 @@
             "bytes": 147,
             "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
           },
-          "start": 273,
-          "stop": 275
+          "start": 304,
+          "stop": 306
         },
         {
           "new": "",
@@ -8512,8 +9087,8 @@
             "bytes": 364,
             "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
           },
-          "start": 280,
-          "stop": 285
+          "start": 311,
+          "stop": 316
         },
         {
           "new": "    and (root.Position-at).Magnitude<=radius then\n",
@@ -8526,8 +9101,8 @@
             "bytes": 87,
             "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
           },
-          "start": 291,
-          "stop": 292
+          "start": 322,
+          "stop": 323
         },
         {
           "new": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
@@ -8540,8 +9115,8 @@
             "bytes": 218,
             "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
           },
-          "start": 294,
-          "stop": 298
+          "start": 325,
+          "stop": 329
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime"

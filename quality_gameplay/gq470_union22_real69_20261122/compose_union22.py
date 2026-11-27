@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "5f2dfebd163d37eea759f4a371332f08cbe620115f307ed314589f726cb8e1ad"
+LOCK_SHA256 = "325086d053c625a8f5dbc9b2bd62d2729ce1b33c72522d27d3cdc32f15f47694"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -73,6 +73,8 @@ FIELD_PROMPT_OFF = "off69_field_prompt_role_parent"
 FIELD_PROMPT_OFF_ARCHIVE = "OFF69_FIELD_PROMPT_ROLE_PARENT_ROLLBACK.tar.gz"
 NEUTRAL_NAMES_OFF = "off69_visual_readability_field_parent"
 NEUTRAL_NAMES_OFF_ARCHIVE = "OFF69_VISUAL_READABILITY_FIELD_PARENT_ROLLBACK.tar.gz"
+GUARDIAN_WALL_OFF = "off69_guardian_wall_visual_parent"
+GUARDIAN_WALL_OFF_ARCHIVE = "OFF69_GUARDIAN_WALL_VISUAL_PARENT_ROLLBACK.tar.gz"
 SWARM_SOURCE = "ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
 LOBBY_SOCIAL_SOURCE = "ServerScriptService/GQ8_LobbySocialPlaza.server.luau"
 FOLIAGE_LOD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau"
@@ -428,6 +430,11 @@ def neutral_names_parent(on, lock):
                                 lock["field_prompt_followup"]["repaired_place"], "VISUAL_READABILITY")
 
 
+def guardian_wall_parent(on, lock):
+    return paired_source_parent(on, lock, lock["guardian_wall_followup"], (GUARDIAN_SOURCE,),
+                                lock["neutral_names_followup"]["repaired_place"], "GUARDIAN_WALL")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -595,7 +602,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    neutral_off, neutral_off_lock = neutral_names_parent(on, lock)
+    wall_off, wall_off_lock = guardian_wall_parent(on, lock)
+    neutral_off, neutral_off_lock = neutral_names_parent(wall_off, wall_off_lock)
     field_off, field_off_lock = field_prompt_parent(neutral_off, neutral_off_lock)
     role_off, role_off_lock = role_readability_parent(field_off, field_off_lock)
     canyon_off, canyon_off_lock = br_canyon_parent(role_off, role_off_lock)
@@ -631,7 +639,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES),
                   (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES),
                   (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE),
-                  (stage / NEUTRAL_NAMES_OFF, neutral_off, neutral_off_lock["final_place"], VISUAL_READABILITY_SOURCES))
+                  (stage / NEUTRAL_NAMES_OFF, neutral_off, neutral_off_lock["final_place"], VISUAL_READABILITY_SOURCES),
+                  (stage / GUARDIAN_WALL_OFF, wall_off, wall_off_lock["final_place"], GUARDIAN_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -685,6 +694,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         field_prompt_archive_identity = identity(read_file(stage / FIELD_PROMPT_OFF_ARCHIVE))
         make_archive(stage / NEUTRAL_NAMES_OFF, stage / NEUTRAL_NAMES_OFF_ARCHIVE, NEUTRAL_NAMES_OFF)
         neutral_names_archive_identity = identity(read_file(stage / NEUTRAL_NAMES_OFF_ARCHIVE))
+        make_archive(stage / GUARDIAN_WALL_OFF, stage / GUARDIAN_WALL_OFF_ARCHIVE, GUARDIAN_WALL_OFF)
+        wall_archive_identity = identity(read_file(stage / GUARDIAN_WALL_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -744,6 +755,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({NEUTRAL_NAMES_OFF + "/" + PROJECT: lock["project"],
                                NEUTRAL_NAMES_OFF + "/" + PLACE: neutral_off_lock["final_place"],
                                NEUTRAL_NAMES_OFF_ARCHIVE: neutral_names_archive_identity})
+        expected_stage.update({GUARDIAN_WALL_OFF + "/sources/" + name: identity(raw) for name, raw in wall_off.items()})
+        expected_stage.update({GUARDIAN_WALL_OFF + "/" + PROJECT: lock["project"],
+                               GUARDIAN_WALL_OFF + "/" + PLACE: wall_off_lock["final_place"],
+                               GUARDIAN_WALL_OFF_ARCHIVE: wall_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -787,6 +802,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "field_prompt_rollback_archive": field_prompt_archive_identity,
             "neutral_names_followup": lock["neutral_names_followup"],
             "neutral_names_rollback_archive": neutral_names_archive_identity,
+            "guardian_wall_followup": lock["guardian_wall_followup"],
+            "guardian_wall_rollback_archive": wall_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -799,7 +816,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 28, "unchanged_sources": 41,
-            "compile_count": 156, "rojo_build_count": 15, "instances": 75,
+            "compile_count": 157, "rojo_build_count": 16, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -809,6 +826,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "role_readability_parent_place": role_off_lock["final_place"],
             "field_prompt_parent_place": field_off_lock["final_place"],
             "neutral_names_parent_place": neutral_off_lock["final_place"],
+            "guardian_wall_parent_place": wall_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

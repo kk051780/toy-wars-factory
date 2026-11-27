@@ -98,7 +98,11 @@ def source_contract(root, profile, input_lock):
     role = profile["role_readability_followup"]
     field = profile["field_prompt_followup"]
     neutral_names = profile["neutral_names_followup"]
-    neutral_parent_pins = current_pins | {
+    wall = profile["guardian_wall_followup"]
+    rel = compose.GUARDIAN_SOURCE
+    wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
+    wall_parent_pins = current_pins | {rel: wall["rows"][rel]["parent"]["after"]}
+    neutral_parent_pins = wall_parent_pins | {
         name: row["parent"]["after"] for name, row in neutral_names["rows"].items()}
     field_parent_pins = neutral_parent_pins | {
         compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]["after"]}
@@ -111,8 +115,9 @@ def source_contract(root, profile, input_lock):
     item_parent_pin = item["parent_item_row"]["after"]
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
-    rel = compose.GUARDIAN_SOURCE
-    native.require(current_pins == input_lock["sources"] and current_pins[rel] == repair["repaired_guardian"]
+    native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(wall_parent) == wall_parent_pins
+                   and wall_parent_pins[rel] == repair["repaired_guardian"]
                    and native.source_snapshot(root / compose.NEUTRAL_NAMES_OFF / "sources") == neutral_parent_pins
                    and native.source_snapshot(root / compose.FIELD_PROMPT_OFF / "sources") == field_parent_pins
                    and native.source_snapshot(root / compose.ROLE_READABILITY_OFF / "sources") == role_parent_pins
@@ -124,12 +129,14 @@ def source_contract(root, profile, input_lock):
                    and native.source_snapshot(item_parent) == item_parent_pins
                    and previous_pins == (item_parent_pins | {rel: repair["parent_guardian"]}),
                    "GUARDIAN_SOURCE69_CONTEXT")
-    current_raw = native.read(current / rel)
+    donor_candidate = native.read(wall_parent / rel)
     bodies = {path: native.read(previous / path) for path in previous_pins}
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
-                   and native.identity(current_raw) == current_pins[rel], "GUARDIAN_SOURCE_READ_DRIFT")
+                   and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == neutral_names["repaired_place"]
+                   == wall["repaired_place"]
+                   and native.identity(native.read(root / compose.GUARDIAN_WALL_OFF / compose.PLACE))
+                   == wall["parent_place"] == neutral_names["repaired_place"]
                    and native.identity(native.read(root / compose.NEUTRAL_NAMES_OFF / compose.PLACE))
                    == neutral_names["parent_place"] == field["repaired_place"]
                    and native.identity(native.read(root / compose.FIELD_PROMPT_OFF / compose.PLACE))
@@ -150,7 +157,7 @@ def source_contract(root, profile, input_lock):
                    == item["parent_place"] == repair["repaired_place"]
                    and native.identity(native.read(root / compose.GUARDIAN_OFF / compose.PLACE))
                    == repair["parent_place"], "GUARDIAN_PLACE_PAIR")
-    return current, previous, current_pins, previous_pins, bodies, current_raw
+    return current, previous, current_pins, previous_pins, bodies, donor_candidate
 
 
 def run(root, native_output, checkout, output, head, donor=checked_donor):
@@ -227,7 +234,7 @@ def run(root, native_output, checkout, output, head, donor=checked_donor):
                        "native_build_receipt": native.identity(built_raw),
                        "place": profile["guardian_followup_repair"]["repaired_place"],
                        "immediate_inverse_place": profile["guardian_followup_repair"]["parent_place"],
-                       "source_pin": current_pins[compose.GUARDIAN_SOURCE], "unchanged_other_sources": 68,
+                       "source_pin": native.identity(candidate), "unchanged_other_sources": 68,
                        "unique_scenarios": 13, "native_executions": len(results),
                        "counts": dict(counts), "results": results, "files": evidence,
                        "contract": native.identity(lock_raw),
