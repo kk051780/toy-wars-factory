@@ -31630,7 +31630,7 @@
     {
       "claim_id": "P0D-GQ894-RELAY-PRESENTATION-V2-20261127",
       "feature_id": "GQ8_RC86_EGG_RELAY_PRESENTATION_V2",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP",
       "owner": "/root (Codex parent, prior #894 followup)",
       "parent_issue": 470,
@@ -31641,11 +31641,11 @@
       "expected_source_branch": "ABSENT",
       "allowed_new_prs": 0,
       "source_scope_granted": false,
-      "scope_only": true,
+      "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_host_git_head": "467adbea0fe0a6095a9564602115b43fc2312dea",
       "original_client_git_head": "1d37a925555a46f7db86280dc4ad200958c5e664",
@@ -31745,6 +31745,59 @@
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
+        }
+      },
+      "no_source_changes_after_fixed_head_without_new_scope": true,
+      "independent_source_receipt": {
+        "review": 6082582302,
+        "reviewer_context": "/root/p0_offer_review26",
+        "head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "hosted_run": 45926164914,
+        "trusted_queue_run": 45926725176,
+        "trusted_queue_artifact": 15165974882,
+        "artifact": 15166198897
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "7ad4055bd28e6aaf0ba6183796912503812de416",
+        "permitted_head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "permitted_tree": "522d267ad325b5152df17e9268163ba3764f31f5",
+        "permitted_pr": 1036,
+        "sole_executor": "/root (Codex parent, B coordinator for #1036)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T02:41:25.058Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Original #894 relay presentation V2, two selected source bodies, no authority or score changes, no new runtime route. Development RC only.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "e27f2fbc-0c3a-47ff-b55c-64d477271e8a",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "e27f2fbc-0c3a-47ff-b55c-64d477271e8a",
+            "task_id": null,
+            "epoch": 798,
+            "acquired_at": "2026-11-27T02:11:08.998Z",
+            "expires_at": "2026-11-27T02:41:08.998Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "593e90f0874a2788f3103d09cff06cb4f182d635",
+          "acquire_blob": "a52a0f0721d5a9be50abc5ebc1479632ba12b29b",
+          "registry_parent": "4d02c2b7060a253eca0df4f90a23e84fbdb18819",
+          "registry_blob": "15cc079eb3e55ce132e4dd5336323bed296cb7e6",
+          "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 exclusive CAS, actual narrow #218 current #1036 binding, independent 6082582302 and trusted green fixed candidate."
         }
       }
     }
