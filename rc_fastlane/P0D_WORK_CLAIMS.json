@@ -35705,6 +35705,39 @@
       "actual_prep_ready_lease": {
         "commit": "77957cf27103968290d9ef3a97cd7c1c4eac2e63",
         "operation_id": "110e4271-0b9d-4d40-9768-1de64c8b24be"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "permitted_head": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "permitted_tree": "101c5aa63b79612bc284b243199ec686f32bce60",
+        "permitted_pr": 1039,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T11:29:26.321Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Existing two-source Mage V3 normal wand contact. PRIVATE_COMPANION only, existing authoritative LOS/cooldown/HP/team, same-head CI/actual Place/rollback mandatory. Studio later under #1011 V3.0.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated #1011 V3.0 #220; registered exact independent review plus same-head trusted queue",
+          "lease": "078950ecf8ab53ba7ca53d67bb70b40dfadcd225",
+          "owner": "638bb61f-a814-4df2-aabd-31f3a1fced64",
+          "review": 6087080778,
+          "trusted_queue_run": 45986443984,
+          "trusted_queue_job": 140463186914
+        }
       }
     }
   ],
