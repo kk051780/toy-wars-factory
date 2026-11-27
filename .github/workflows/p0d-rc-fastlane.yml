@@ -803,6 +803,26 @@ jobs:
                             --game "$DIST/src/server/Game.server.luau" --emit /tmp/p0d_active_safe_lobby_rebalance.luau
                           /tmp/p0d_new_luau/luau /tmp/p0d_active_safe_lobby_rebalance.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_SAFE_LOBBY_REBALANCE.log
                           grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SAFE_LOBBY_REBALANCE.log
+                          HIT_CONFIG=rc_fastlane/features/active_confirmed_hit/source_lock.json
+                          if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$HIT_CONFIG"; then
+                            HIT_OFF=/tmp/p0d_rc_active_confirmed_hit_off.rbxlx
+                            GAME_BEFORE_HIT=/tmp/p0d_rc_active_before_confirmed_hit.luau
+                            cp "$DIST/src/server/Game.server.luau" "$GAME_BEFORE_HIT"
+                            /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$HIT_OFF"
+                            python3 -B rc_fastlane/apply_active_confirmed_hit.py --profile "$PROFILE" --dist "$DIST" \
+                              --off-place "$HIT_OFF" | tee /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_OFF.log
+                            grep -F ACTIVE_RICH51_FB019_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_OFF.log
+                            grep -Fx ACTIVE_RICH51_FB019_EXACT_GAME_AND_HUD_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_OFF.log
+                            /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                            /tmp/p0d_new_luau/luau-compile "$DIST/src/client/HUD.client.luau" >/dev/null
+                            python3 -B rc_fastlane/verify_active_confirmed_hit_native.py --dist "$DIST" \
+                              --before-game "$GAME_BEFORE_HIT" --out /tmp/p0d_active_confirmed_hit_native.luau
+                            /tmp/p0d_new_luau/luau /tmp/p0d_active_confirmed_hit_native.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                            grep -F FB019_NATIVE_REAL_GAME_ATTACK_PATHS_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                            grep -F FB019_NATIVE_REAL_HUD_ACK_CUES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                            grep -Fx ACTIVE_FB019_REAL_SEQUENCE_CASTLE_WIN_AND_MODE_NEGATIVES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                            grep -Fx ACTIVE_FB019_HUD_BAD_PACKET_AND_EARLY_RESET_NEGATIVES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                          fi
                         fi
                       fi
                     fi
@@ -843,6 +863,8 @@ jobs:
           bots_enabled=p=='rich51' and json.loads(bot_lock.read_bytes())['enabled']
           lobby_lock=pathlib.Path('rc_fastlane/features/active_safe_lobby/source_lock.json')
           lobby_enabled=p=='rich51' and json.loads(lobby_lock.read_bytes())['enabled']
+          hit_lock=pathlib.Path('rc_fastlane/features/active_confirmed_hit/source_lock.json')
+          hit_enabled=p=='rich51' and json.loads(hit_lock.read_bytes())['enabled']
           expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
@@ -884,6 +906,7 @@ jobs:
               persistence_enabled=os.environ.get('ACTIVE_PERSISTENCE')=='true'
               assert ('rc_active_persistence_lifecycle' in active_receipt)==persistence_enabled
               assert ('rc_active_safe_lobby' in active_receipt)==lobby_enabled
+              assert ('rc_active_confirmed_hit' in active_receipt)==hit_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -902,7 +925,9 @@ jobs:
                           assert lock['rc_active_persistence_lifecycle']==persistence
                           assert persistence['routes']['server/Game.server.luau']['before']==final_game
                           for route, pins in persistence['routes'].items():
-                              if route!='server/Game.server.luau':
+                              if route=='client/HUD.client.luau' and hit_enabled:
+                                  assert active_receipt['rc_active_confirmed_hit']['routes'][route]['before']==pins['after']
+                              elif route!='server/Game.server.luau':
                                   assert lock['blobs'][route]==pins['after']
                           final_game=persistence['routes']['server/Game.server.luau']['after']
                   if lobby_enabled:
@@ -910,8 +935,17 @@ jobs:
                       assert lock['rc_active_safe_lobby']==lobby and lobby['feature']=='FB007_LOBBY_DOJO_PHYSICAL_V1'
                       assert lobby['routes']['server/Game.server.luau']['before']==final_game
                       for route, pins in lobby['routes'].items():
-                          assert lock['blobs'][route]==pins['after']
+                          if route!='server/Game.server.luau':
+                              assert lock['blobs'][route]==pins['after']
                       final_game=lobby['routes']['server/Game.server.luau']['after']
+                  if hit_enabled:
+                      hit=active_receipt['rc_active_confirmed_hit']
+                      assert lock['rc_active_confirmed_hit']==hit and hit['feature']=='FB019_ATTACK_RESPONSE_V1'
+                      assert hit['routes']['server/Game.server.luau']['before']==final_game
+                      assert lock['blobs']['server/MusouHorde.luau']==hit['horde']
+                      for route, pins in hit['routes'].items():
+                          assert lock['blobs'][route]==pins['after']
+                      final_game=hit['routes']['server/Game.server.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -1122,6 +1156,7 @@ jobs:
           if bots_enabled: overlay_ids.append('GQ910_ACTIVE_SOLO_TEAM_BOTS')
           if os.environ.get('ACTIVE_PERSISTENCE')=='true': overlay_ids.append('ACTIVE66_PERSISTENCE_LIFECYCLE_20261122')
           if lobby_enabled: overlay_ids.append('FB007_LOBBY_DOJO_PHYSICAL_V1')
+          if hit_enabled: overlay_ids.append('FB019_ATTACK_RESPONSE_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)

@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "patch_sha256": "485611d6f743f0e36525ffd2528d76286ddc7690396ee8b1858f4e0aecc3a322",
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "e31ab057e2a7dd8431f6fa14cededcdda42826a8",
+      "after": "1094da5339a2c9f63c512b89a91b01a7a7d1b32d"
+    },
+    "client/HUD.client.luau": {
+      "before": "5ae1063086e8f8ce7c69f006f25875d5184e75fd",
+      "after": "3befbdb137a02cbc7fbddda8c196eee993557b5b"
+    }
+  },
+  "horde": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
+  "off_place": {
+    "bytes": 653907,
+    "sha256": "3e5ac7b22b388fcdb928a38c0f0cdd27c942fb80f34ff1d8b1c8c744d17d85d9"
+  },
+  "source_origins": {
+    "pr": 423,
+    "head": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
+    "author_blob": "9821fcc3b7263205144a40946e694656a452124a",
+    "native_blob": "77a20dee8577dd4aa6d1ff7568cf408af65fe950"
+  }
+}
