@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "ac789d8b7910ada53a800864474c30e5d8cc18ae823ee81b317bb022d92be513"
+LOCK_SHA256 = "5aa5711d90e962b1d73f6d5ee80315a85c01524134623803e0f6545546e95dcf"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -110,6 +110,9 @@ MAGE_PROJECTILES_OFF = "off69_mage_projectiles_hp_parent"
 MAGE_PROJECTILES_OFF_ARCHIVE = "OFF69_MAGE_PROJECTILES_HP_PARENT_ROLLBACK.tar.gz"
 MAGE_PROJECTILES_SOURCES = (*MAGE_CONTACT_SOURCES, VAULT_SOURCE, HUD_SOURCE,
                             "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau")
+MAGE_WATER_CHAIN_OFF = "off69_mage_water_chain_projectile_parent"
+MAGE_WATER_CHAIN_OFF_ARCHIVE = "OFF69_MAGE_WATER_CHAIN_PROJECTILE_PARENT_ROLLBACK.tar.gz"
+MAGE_WATER_CHAIN_SOURCES = (*MAGE_CONTACT_SOURCES, VAULT_SOURCE, HUD_SOURCE)
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -544,6 +547,11 @@ def mage_projectile_parent(on, lock):
                                 lock["fractional_hp_followup"]["repaired_place"], "MAGE_PROJECTILES")
 
 
+def mage_water_chain_parent(on, lock):
+    return paired_source_parent(on, lock, lock["mage_water_chain_followup"], MAGE_WATER_CHAIN_SOURCES,
+                                lock["mage_projectile_followup"]["repaired_place"], "MAGE_WATER_CHAIN")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -711,7 +719,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    projectile_off, projectile_off_lock = mage_projectile_parent(on, lock)
+    water_chain_off, water_chain_off_lock = mage_water_chain_parent(on, lock)
+    projectile_off, projectile_off_lock = mage_projectile_parent(water_chain_off, water_chain_off_lock)
     hp_off, hp_off_lock = fractional_hp_parent(projectile_off, projectile_off_lock)
     team_win_off, team_win_off_lock = team_win_rule_parent(hp_off, hp_off_lock)
     shorefoam_off, shorefoam_off_lock = shorefoam_parent(team_win_off, team_win_off_lock)
@@ -776,7 +785,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / TEAM_WIN_RULE_OFF, team_win_off, team_win_off_lock["final_place"], VAULT_SOURCE),
                   (stage / FRACTIONAL_HP_OFF, hp_off, hp_off_lock["final_place"], HUD_SOURCE),
                   (stage / MAGE_PROJECTILES_OFF, projectile_off, projectile_off_lock["final_place"],
-                   MAGE_PROJECTILES_SOURCES))
+                   MAGE_PROJECTILES_SOURCES),
+                  (stage / MAGE_WATER_CHAIN_OFF, water_chain_off, water_chain_off_lock["final_place"],
+                   MAGE_WATER_CHAIN_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -856,6 +867,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         hp_archive_identity = identity(read_file(stage / FRACTIONAL_HP_OFF_ARCHIVE))
         make_archive(stage / MAGE_PROJECTILES_OFF, stage / MAGE_PROJECTILES_OFF_ARCHIVE, MAGE_PROJECTILES_OFF)
         projectile_archive_identity = identity(read_file(stage / MAGE_PROJECTILES_OFF_ARCHIVE))
+        make_archive(stage / MAGE_WATER_CHAIN_OFF, stage / MAGE_WATER_CHAIN_OFF_ARCHIVE, MAGE_WATER_CHAIN_OFF)
+        water_chain_archive_identity = identity(read_file(stage / MAGE_WATER_CHAIN_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -975,6 +988,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({MAGE_PROJECTILES_OFF + "/" + PROJECT: lock["project"],
                                MAGE_PROJECTILES_OFF + "/" + PLACE: projectile_off_lock["final_place"],
                                MAGE_PROJECTILES_OFF_ARCHIVE: projectile_archive_identity})
+        expected_stage.update({MAGE_WATER_CHAIN_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in water_chain_off.items()})
+        expected_stage.update({MAGE_WATER_CHAIN_OFF + "/" + PROJECT: lock["project"],
+                               MAGE_WATER_CHAIN_OFF + "/" + PLACE: water_chain_off_lock["final_place"],
+                               MAGE_WATER_CHAIN_OFF_ARCHIVE: water_chain_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1044,6 +1062,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "fractional_hp_rollback_archive": hp_archive_identity,
             "mage_projectile_followup": lock["mage_projectile_followup"],
             "mage_projectile_rollback_archive": projectile_archive_identity,
+            "mage_water_chain_followup": lock["mage_water_chain_followup"],
+            "mage_water_chain_rollback_archive": water_chain_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1080,6 +1100,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "team_win_rule_parent_place": team_win_off_lock["final_place"],
             "fractional_hp_parent_place": hp_off_lock["final_place"],
             "mage_projectile_parent_place": projectile_off_lock["final_place"],
+            "mage_water_chain_parent_place": water_chain_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

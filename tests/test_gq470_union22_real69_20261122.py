@@ -47,7 +47,7 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    hp_on, hp_on_lock = compose.mage_projectile_parent(on, lock)
+    hp_on, hp_on_lock = compose.mage_projectile_parent(*compose.mage_water_chain_parent(on, lock))
     return compose.team_win_rule_parent(*compose.fractional_hp_parent(hp_on, hp_on_lock))
 
 
@@ -61,6 +61,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["mage_water_chain_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["mage_projectile_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["fractional_hp_followup"]["rows"].items()
@@ -508,8 +510,12 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        hp_on, hp_on_lock = compose.mage_projectile_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != hp_on[name]},
+        projectile_on, projectile_on_lock = compose.mage_water_chain_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != projectile_on[name]},
+                         set(compose.MAGE_WATER_CHAIN_SOURCES))
+        self.assertEqual(projectile_on_lock["final_place"], self.lock["mage_projectile_followup"]["repaired_place"])
+        hp_on, hp_on_lock = compose.mage_projectile_parent(projectile_on, projectile_on_lock)
+        self.assertEqual({name for name in projectile_on if projectile_on[name] != hp_on[name]},
                          set(compose.MAGE_PROJECTILES_SOURCES))
         self.assertEqual(hp_on_lock["final_place"], self.lock["fractional_hp_followup"]["repaired_place"])
         hp_parent, hp_lock = compose.fractional_hp_parent(hp_on, hp_on_lock)
@@ -522,6 +528,10 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual({name for name in team_parent if team_parent[name] != parent[name]},
                          {compose.SHOREFOAM_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["portrait_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE, root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)
+        with self.assertRaisesRegex(ValueError, "ARCHIVE"):
+            verify.verify_core(root, self.prior, self.reports, self.context)
         root = self.current_copy()
         shutil.copyfile(root / compose.FRACTIONAL_HP_OFF_ARCHIVE, root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)
         with self.assertRaisesRegex(ValueError, "ARCHIVE"):
@@ -1747,7 +1757,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["mage_projectile_followup"], hp, team_win, shorefoam, portrait, private_touch, moguron):
+        for followup in (self.lock["mage_water_chain_followup"], self.lock["mage_projectile_followup"],
+                         hp, team_win, shorefoam, portrait, private_touch, moguron):
             relay_eligibility_sources = relay_eligibility_sources | {
                 name: row["parent"] for name, row in followup["rows"].items()}
         self.assertEqual(moguron["parent_place"], eligibility["repaired_place"])
@@ -1800,7 +1811,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(team_win["repaired_place"], hp["parent_place"])
         projectiles = self.lock["mage_projectile_followup"]
         self.assertEqual(hp["repaired_place"], projectiles["parent_place"])
-        self.assertEqual(projectiles["repaired_place"], self.lock["final_place"])
+        water_chain = self.lock["mage_water_chain_followup"]
+        self.assertEqual(projectiles["repaired_place"], water_chain["parent_place"])
+        self.assertEqual(water_chain["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(water_chain["rows"]), set(compose.MAGE_WATER_CHAIN_SOURCES))
         self.assertEqual(set(projectiles["rows"]), set(compose.MAGE_PROJECTILES_SOURCES))
         self.assertEqual(set(hp["rows"]), {compose.HUD_SOURCE})
         self.assertEqual(len(hp["rows"][compose.HUD_SOURCE]["forward"]), 1)

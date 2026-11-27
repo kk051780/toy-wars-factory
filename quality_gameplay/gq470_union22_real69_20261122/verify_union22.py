@@ -536,8 +536,18 @@ def verify_core(root, base, reports, context):
             and projectiles["ids"] == ["MAGE-033", "MAGE-051", "MAGE-071"]
             and projectiles["catalog_commit"] == "6810cefc345066ad465b981aabca045499add6d5",
             "MAGE_PROJECTILES_SCOPE")
+    water_chain = lock["mage_water_chain_followup"]
+    require(set(water_chain["rows"]) == set(compose.MAGE_WATER_CHAIN_SOURCES)
+            and water_chain["ability_ids"] == ["MAGE-041", "MAGE-025"]
+            and water_chain["combo_ids"] == ["COMBO-004"]
+            and water_chain["original_combo_sha"] == "3b96ac3bc4284afa5d3907733f0d64b4c5470685",
+            "MAGE_WATER_CHAIN_SCOPE")
+    expected_water_chain_off, water_chain_off_lock, water_chain_off = verify_source_rollback(
+        root, root, lock, current, water_chain, water_chain["rows"], projectiles["repaired_place"],
+        compose.MAGE_WATER_CHAIN_OFF, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE, "MAGE_WATER_CHAIN")
     expected_projectile_off, projectile_off_lock, projectile_off = verify_source_rollback(
-        root, root, lock, current, projectiles, projectiles["rows"], hp["repaired_place"],
+        root, root / compose.MAGE_WATER_CHAIN_OFF, water_chain_off_lock, water_chain_off,
+        projectiles, projectiles["rows"], hp["repaired_place"],
         compose.MAGE_PROJECTILES_OFF, compose.MAGE_PROJECTILES_OFF_ARCHIVE, "MAGE_PROJECTILES")
     team_win = lock["team_win_rule_followup"]
     expected_hp_off, hp_off_lock, hp_off = verify_source_rollback(
@@ -760,6 +770,8 @@ def verify_core(root, base, reports, context):
         "fractional_hp_rollback_archive": digest(read(root / compose.FRACTIONAL_HP_OFF_ARCHIVE)),
         "mage_projectile_followup": projectiles,
         "mage_projectile_rollback_archive": digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)),
+        "mage_water_chain_followup": water_chain,
+        "mage_water_chain_rollback_archive": digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -770,7 +782,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
-            and core.get("compile_count") == 185 and core.get("rojo_build_count") == 28
+            and core.get("compile_count") == 189 and core.get("rojo_build_count") == 29
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -792,6 +804,7 @@ def verify_core(root, base, reports, context):
             and core.get("team_win_rule_parent_place") == team_win_off_lock["final_place"]
             and core.get("fractional_hp_parent_place") == hp_off_lock["final_place"]
             and core.get("mage_projectile_parent_place") == projectile_off_lock["final_place"]
+            and core.get("mage_water_chain_parent_place") == water_chain_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -868,6 +881,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.MAGE_PROJECTILES_OFF + "/" + name: pin
                            for name, pin in expected_projectile_off.items()})
     expected_stage[compose.MAGE_PROJECTILES_OFF_ARCHIVE] = digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE))
+    expected_stage.update({compose.MAGE_WATER_CHAIN_OFF + "/" + name: pin
+                           for name, pin in expected_water_chain_off.items()})
+    expected_stage[compose.MAGE_WATER_CHAIN_OFF_ARCHIVE] = digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -876,11 +892,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 213 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 218 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 185 and len(rojo_commands) == 28, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 189 and len(rojo_commands) == 29, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -911,6 +927,8 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.FRACTIONAL_HP_OFF / "sources" / compose.HUD_SOURCE))
     expected_compile.update(str(Path(stage) / compose.MAGE_PROJECTILES_OFF / "sources" / name)
                             for name in compose.MAGE_PROJECTILES_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.MAGE_WATER_CHAIN_OFF / "sources" / name)
+                            for name in compose.MAGE_WATER_CHAIN_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -935,7 +953,7 @@ def verify_core(root, base, reports, context):
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
-                               compose.MAGE_PROJECTILES_OFF)},
+                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -969,7 +987,9 @@ def verify_core(root, base, reports, context):
                         compose.TEAM_WIN_RULE_OFF: [compose.VAULT_SOURCE],
                         compose.FRACTIONAL_HP_OFF: [compose.HUD_SOURCE],
                         compose.MAGE_PROJECTILES_OFF: [name for name in lock["sources"]
-                                                      if name in compose.MAGE_PROJECTILES_SOURCES]}
+                                                      if name in compose.MAGE_PROJECTILES_SOURCES],
+                        compose.MAGE_WATER_CHAIN_OFF: [name for name in lock["sources"]
+                                                      if name in compose.MAGE_WATER_CHAIN_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1598,6 +1618,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["fractional_hp_followup"]["rows"].items()
@@ -2022,6 +2044,10 @@ def verify_native(native, root, lock, context):
         "union22_mage_projectiles_verify", HERE / "native/mage_projectiles/__init__.py")
     projectiles = importlib.util.module_from_spec(projectile_spec)
     projectile_spec.loader.exec_module(projectiles)
+    water_chain_spec = importlib.util.spec_from_file_location(
+        "union22_mage_water_chain_verify", HERE / "native/mage_water_chain/__init__.py")
+    water_chain = importlib.util.module_from_spec(water_chain_spec)
+    water_chain_spec.loader.exec_module(water_chain)
     require(digest(read(input_lock_path))["sha256"] == adapter.INPUT_LOCK_SHA256, "NATIVE_LOCK_IDENTITY")
     pins = data(input_lock_path)
     require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
@@ -2076,8 +2102,8 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT
-            and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES),
+            and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT + water_chain.PROCESS_COUNT
+            and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES) + len(water_chain.FILES),
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2183,8 +2209,16 @@ def verify_native(native, root, lock, context):
             and data(projectile_receipt) == projectile_result
             and digest(read(projectile_receipt)) == aggregate["mage_projectiles"], "MAGE_PROJECTILES_EXACT_RECEIPT")
     expected_files |= {"mage_projectiles/" + name for name in projectiles.FILES}
+    water_chain_folder = native / "mage_water_chain"
+    water_chain_receipt = water_chain_folder / "receipt.json"
+    water_chain_result = water_chain.observe(root / "sources", water_chain_folder, Path(build["binary_path"]),
+                                             build["binary_before_suites"], context, lock, compose)
+    require(set(files(water_chain_folder)) == water_chain.FILES
+            and data(water_chain_receipt) == water_chain_result
+            and digest(read(water_chain_receipt)) == aggregate["mage_water_chain"], "MAGE_WATER_CHAIN_EXACT_RECEIPT")
+    expected_files |= {"mage_water_chain/" + name for name in water_chain.FILES}
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 316 + len(projectiles.FILES)
+    require(len(expected_files) == 316 + len(projectiles.FILES) + len(water_chain.FILES)
             and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
@@ -2206,6 +2240,7 @@ def verify_native(native, root, lock, context):
             "team_win_rule": team_win_rule,
             "fractional_hp": hp,
             "mage_projectiles": projectile_result,
+            "mage_water_chain": water_chain_result,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2253,7 +2288,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.PRIVATE_TOUCH_OFF_ARCHIVE,
                             compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
                             compose.TEAM_WIN_RULE_OFF_ARCHIVE, compose.FRACTIONAL_HP_OFF_ARCHIVE,
-                            compose.MAGE_PROJECTILES_OFF_ARCHIVE,
+                            compose.MAGE_PROJECTILES_OFF_ARCHIVE, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2373,6 +2408,9 @@ def admit_delivery(root, base, reports, native, context):
             "mage_projectile_followup": verified["lock"]["mage_projectile_followup"],
             "mage_projectile_inverse_place": verified["lock"]["mage_projectile_followup"]["parent_place"],
             "mage_projectile_inverse_archive": digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)),
+            "mage_water_chain_followup": verified["lock"]["mage_water_chain_followup"],
+            "mage_water_chain_inverse_place": verified["lock"]["mage_water_chain_followup"]["parent_place"],
+            "mage_water_chain_inverse_archive": digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2403,6 +2441,7 @@ def admit_delivery(root, base, reports, native, context):
             "team_win_rule": runtime["team_win_rule"],
             "fractional_hp": runtime["fractional_hp"],
             "mage_projectiles": runtime["mage_projectiles"],
+            "mage_water_chain": runtime["mage_water_chain"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

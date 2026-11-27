@@ -111,9 +111,12 @@ def source_contract(root, profile, input_lock):
     team_win = profile["team_win_rule_followup"]
     hp = profile["fractional_hp_followup"]
     projectiles = profile["mage_projectile_followup"]
+    water_chain = profile["mage_water_chain_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    projectile_parent_pins = current_pins | {
+    water_chain_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in water_chain["rows"].items()}
+    projectile_parent_pins = water_chain_parent_pins | {
         name: row["parent"]["after"] for name, row in projectiles["rows"].items()}
     hp_parent_pins = projectile_parent_pins | {
         name: row["parent"]["after"] for name, row in hp["rows"].items()}
@@ -148,6 +151,8 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.MAGE_WATER_CHAIN_OFF / "sources")
+                   == water_chain_parent_pins
                    and native.source_snapshot(root / compose.MAGE_PROJECTILES_OFF / "sources")
                    == projectile_parent_pins
                    and native.source_snapshot(root / compose.FRACTIONAL_HP_OFF / "sources") == hp_parent_pins
@@ -179,7 +184,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == projectiles["repaired_place"]
+                   == water_chain["repaired_place"]
+                   and native.identity(native.read(root / compose.MAGE_WATER_CHAIN_OFF / compose.PLACE))
+                   == water_chain["parent_place"] == projectiles["repaired_place"]
                    and native.identity(native.read(root / compose.MAGE_PROJECTILES_OFF / compose.PLACE))
                    == projectiles["parent_place"] == hp["repaired_place"]
                    and native.identity(native.read(root / compose.FRACTIONAL_HP_OFF / compose.PLACE))
