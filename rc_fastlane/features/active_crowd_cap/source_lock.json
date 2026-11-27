@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "feature": "GQ470_FB008_ACTIVE_MINION_PER_PLAYER_CAP_V1",
+  "profile": "rich51",
+  "source_origin": {
+    "pr": 382,
+    "head": "1e9e7ea4a07582d9d2843f0af66bcdd5b086930c",
+    "adapter_path": "rc_fastlane/apply_fb008_density.py",
+    "adapter_blob": "cb35806584ec7a7683fefbe5081906f3a9d695ad",
+    "scope": "Original impactsByPlayer allocation, guard and increment only."
+  },
+  "off_place": {
+    "bytes": 718470,
+    "sha256": "8668e2fb65b62b6f25865184bcbdeed36328df05a61dea43140b347804252d6a"
+  },
+  "routes": {
+    "server/MusouHorde.luau": {
+      "before": "e84ee6429a19562a10d497e1c165b21ec0533069",
+      "after": "c0a700509c950611d33651c20fca817ea9b324c0"
+    }
+  }
+}

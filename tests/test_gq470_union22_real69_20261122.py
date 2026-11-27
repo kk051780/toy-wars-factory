@@ -269,6 +269,16 @@ class UnionBoundary(unittest.TestCase):
         blink_blob = hashlib.sha1(b"blob " + str(len(blink_body)).encode() + bytes([0]) + blink_body).hexdigest()
         self.assertEqual(blink_blob, blink["routes"]["server/NinjaBlink.luau"]["after"])
         self.assertTrue(private_blobs.isdisjoint(route["after"] for route in blink["routes"].values()))
+        crowd = verify.data(active / "features/active_crowd_cap/source_lock.json")
+        self.assertEqual(crowd["profile"], selection["active_profile"])
+        horde = "server/MusouHorde.luau"
+        self.assertEqual(set(crowd["routes"]), {horde})
+        self.assertEqual(crowd["routes"][horde]["before"], water["routes"][horde]["after"])
+        self.assertNotEqual(crowd["routes"][horde]["before"], crowd["routes"][horde]["after"])
+        self.assertNotIn(crowd["routes"][horde]["after"], private_blobs)
+        adapter = (active.parent / crowd["source_origin"]["adapter_path"]).read_bytes()
+        header = b"blob " + str(len(adapter)).encode() + bytes([0])
+        self.assertEqual(hashlib.sha1(header + adapter).hexdigest(), crowd["source_origin"]["adapter_blob"])
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])

@@ -957,6 +957,24 @@ jobs:
                                           python3 -B rc_fastlane/verify_active_mage_water_native.py --dist "$DIST" --out /tmp/p0d_mage_water_after_blink.luau
                                           /tmp/p0d_new_luau/luau /tmp/p0d_mage_water_after_blink.luau | tee /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_AFTER_BLINK.log
                                           grep -Fx ACTIVE_MAGE_041_REAL_Q_RANGE_12S_ENERGY_AND_WATER_EXPIRY_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_AFTER_BLINK.log
+                                          CROWD_CONFIG=rc_fastlane/features/active_crowd_cap/source_lock.json
+                                          if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$CROWD_CONFIG"; then
+                                            CROWD_OFF=/tmp/p0d_rc_active_crowd_cap_off.rbxlx
+                                            CROWD_BEFORE=/tmp/p0d_rc_active_crowd_cap_before.luau
+                                            /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$CROWD_OFF"
+                                            cp "$DIST/src/server/MusouHorde.luau" "$CROWD_BEFORE"
+                                            python3 -B rc_fastlane/apply_active_crowd_cap.py --profile "$PROFILE" --dist "$DIST" \
+                                              --off-place "$CROWD_OFF" | tee /tmp/p0d_rc_out/ACTIVE_CROWD_CAP_OFF.log
+                                            grep -Fx ACTIVE_CROWD_CAP_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_CROWD_CAP_OFF.log
+                                            /tmp/p0d_new_luau/luau-compile "$DIST/src/server/MusouHorde.luau" >/dev/null
+                                            python3 -B rc_fastlane/verify_active_crowd_cap_native.py --dist "$DIST" \
+                                              --before "$CROWD_BEFORE" --luau /tmp/p0d_new_luau/luau --out /tmp/p0d_active_crowd_cap \
+                                              | tee /tmp/p0d_rc_out/ACTIVE_CROWD_CAP_NATIVE.log
+                                            grep -Fx ACTIVE_FB008_SOLO_DUAL_ELITE_AND_NEXT_TICK_NATIVE_PASS /tmp/p0d_rc_out/ACTIVE_CROWD_CAP_NATIVE.log
+                                            python3 -B rc_fastlane/verify_active_mage_water_native.py --dist "$DIST" --out /tmp/p0d_mage_water_after_crowd.luau
+                                            /tmp/p0d_new_luau/luau /tmp/p0d_mage_water_after_crowd.luau | tee /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_AFTER_CROWD.log
+                                            grep -Fx ACTIVE_MAGE_041_REAL_Q_RANGE_12S_ENERGY_AND_WATER_EXPIRY_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_AFTER_CROWD.log
+                                          fi
                                         fi
                                       fi
                                     fi
@@ -1021,6 +1039,8 @@ jobs:
           water_enabled=p=='rich51' and json.loads(water_lock.read_bytes())['enabled']
           blink_lock=pathlib.Path('rc_fastlane/features/active_ninja_blink/source_lock.json')
           blink_enabled=p=='rich51' and json.loads(blink_lock.read_bytes())['enabled']
+          crowd_lock=pathlib.Path('rc_fastlane/features/active_crowd_cap/source_lock.json')
+          crowd_enabled=p=='rich51' and json.loads(crowd_lock.read_bytes())['enabled']
           assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
           assert not assassin_wind_enabled or undead_enabled, 'ASSASSIN_WIND_REQUIRES_EXACT_UNDEAD_PARENT'
           assert not touch_enabled or assassin_wind_enabled, 'TOUCH_REQUIRES_EXACT_ASSASSIN_WIND_PARENT'
@@ -1028,6 +1048,7 @@ jobs:
           assert not mage_enabled or role_growth_enabled, 'MAGE_ARMAMENT_REQUIRES_EXACT_ROLE_GROWTH_PARENT'
           assert not water_enabled or mage_enabled, 'WATER_BOLT_REQUIRES_EXACT_MAGE_ARMAMENT_PARENT'
           assert not blink_enabled or water_enabled, 'NINJA_BLINK_REQUIRES_EXACT_WATER_PARENT'
+          assert not crowd_enabled or blink_enabled, 'CROWD_CAP_REQUIRES_EXACT_BLINK_PARENT'
           expected={'rich51':51+int(blink_enabled)+int(water_enabled)+int(mage_enabled)+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
@@ -1083,6 +1104,7 @@ jobs:
               assert ('rc_active_mage_armament' in active_receipt)==mage_enabled
               assert ('rc_active_mage_water' in active_receipt)==water_enabled
               assert ('rc_active_ninja_blink' in active_receipt)==blink_enabled
+              assert ('rc_active_crowd_cap' in active_receipt)==crowd_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -1177,6 +1199,7 @@ jobs:
                           assert water['routes'][route]['before']==growth['routes'][route]['after']
                       assert water['routes']['server/MageWaterCatalog.luau']['before'] is None
                       blink_replaced={'server/Game.server.luau','client/HUD.client.luau'} if blink_enabled else set()
+                      if crowd_enabled: blink_replaced.add('server/MusouHorde.luau')
                       assert all(lock['blobs'][r]==i['after'] for r,i in water['routes'].items() if r not in blink_replaced)
                       final_game=water['routes']['server/Game.server.luau']['after']
                   if blink_enabled:
@@ -1187,6 +1210,14 @@ jobs:
                       assert blink['routes']['server/NinjaBlink.luau']['before'] is None
                       assert all(lock['blobs'][r]==i['after'] for r,i in blink['routes'].items())
                       final_game=blink['routes']['server/Game.server.luau']['after']
+                  if crowd_enabled:
+                      crowd=active_receipt['rc_active_crowd_cap']
+                      assert lock['rc_active_crowd_cap']==crowd and crowd['feature']=='GQ470_FB008_ACTIVE_MINION_PER_PLAYER_CAP_V1'
+                      assert crowd['ordinary_per_player_per_tick']==2 and crowd['elite_excluded_from_cap']
+                      horde_route='server/MusouHorde.luau'
+                      assert list(crowd['routes'])==[horde_route]
+                      assert crowd['routes'][horde_route]['before']==water['routes'][horde_route]['after']
+                      assert lock['blobs'][horde_route]==crowd['routes'][horde_route]['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -1410,6 +1441,7 @@ jobs:
           if mage_enabled: overlay_ids.append('GQ470_FB020_ACTIVE_MAGE_ARMAMENT_V1')
           if water_enabled: overlay_ids.append('GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1')
           if blink_enabled: overlay_ids.append('GQ219_NINJA_031_ACTIVE_BLINK_V1')
+          if crowd_enabled: overlay_ids.append('GQ470_FB008_ACTIVE_MINION_PER_PLAYER_CAP_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
