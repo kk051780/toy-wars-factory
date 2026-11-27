@@ -1,0 +1,214 @@
+name: GQ8 actual Musou Real47 + Counter Invul Real46 = one Real49 Native Rojo OFF
+on:
+  push:
+    branches: ['feature/gq8-musou-fever-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-invul-real49.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-invul-real49.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-authoritative49:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f7d4a736fefe1b680ba8f0f1b39a53606531cd47
+          path: _pinned_real46
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 9e0da4259746086e3968ba4e3b19a18cddfb8e76
+          path: _pinned_invul823
+          persist-credentials: false
+      - name: Freeze actual 815/830/823 owner refs and real44 base / official RC
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq '.head.sha')" = d5c13082d4987a8c89588a12b81edc73adc945ce || { echo RED_REAL44_HEAD_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/830" --jq '.head.sha')" = f7d4a736fefe1b680ba8f0f1b39a53606531cd47 || { echo RED_INVUL_REAL46_HEAD_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/823" --jq '.head.sha')" = 9e0da4259746086e3968ba4e3b19a18cddfb8e76 || { echo RED_INVUL_POLICY_HEAD_MOVED; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_NOT_ADOPTED; exit 1; }
+          test "$(git hash-object _pinned_invul823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau)" = 1c38af7f0ed65a7a90b65bbc98b0ab35d54c971c || { echo RED_UPSTREAM_INVUL_V2_POLICY_BLOB; exit 1; }
+          mkdir -p artifacts/real44 artifacts/real46 artifacts/real47 artifacts/real49 artifacts/portable49
+          gh run download 44385257005 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/real44
+          test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          test -s artifacts/real44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/real44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json").read_text())
+          assert r["candidate_source_count"]==44
+          assert r["remaining_original43_byte_exact"]==42
+          print("GQ8_REAL49_ORIGINAL44_AND_V2_PARENT_PIN_PASS")
+          PY
+      - name: Compose exact private Real47 and source identical original Real46
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real47.py \
+            --real44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --policy handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau \
+            --aura handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau \
+            --controller handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraController.client.luau \
+            --out artifacts/real47/REAL47.project.json \
+            --receipt artifacts/real47/REAL47.receipt.json
+          python3 -B _pinned_real46/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real46.py \
+            --original44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --policy _pinned_invul823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau \
+            --out artifacts/real46/REAL46.project.json
+      - name: Compose 49 from actual 47 plus all13 prehit authentic 46 and two-way exclusive modes
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real49.py \
+            --original44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --real47 artifacts/real47/REAL47.project.json \
+            --invul-composer _pinned_real46/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/compose_real46.py \
+            --invul-policy _pinned_invul823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau \
+            --invul-runtime _pinned_real46/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/EGGRUMBLE_InvulRuntime.luau \
+            --out artifacts/real49/REAL49.project.json \
+            --receipt artifacts/real49/REAL49.receipt.json
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real49.py \
+            --original44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --real49 artifacts/real49/REAL49.project.json \
+            --out artifacts/portable49/REAL49.project.json \
+            --receipt artifacts/portable49/PORTABLE49.receipt.json
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/make_native_musou.py --out /tmp/musou-native
+          python3 -B _pinned_invul823/handoffs/EGGRUMBLE-INVUL-20261119/make_native_invul.py --out /tmp/invul-native
+          python3 -B _pinned_real46/handoffs/EGGRUMBLE-INVUL-BRIDGE-20261119/make_native_runtime.py \
+            --policy _pinned_invul823/handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau --out /tmp/invul-runtime-native
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile genuine 44 46 47 49 original Luau and execute both actual VM contracts
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/musou-invul49-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/musou-invul49-build --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"handoffs/EGGRUMBLE-MUSOU-FEVER-20261119")
+          from compose_real47 import flatten
+          projects=[
+           ("artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json",44),
+           ("artifacts/real46/REAL46.project.json",46),
+           ("artifacts/real47/REAL47.project.json",47),
+           ("artifacts/portable49/REAL49.project.json",49)]
+          for project,n in projects:
+           _,sources=flatten(Path(project))
+           assert len(sources)==n
+           for route,source in sorted(sources.items()):
+            subprocess.run(["/tmp/musou-invul49-build/luau-compile","--text",str(source)],
+                           check=True,stdout=subprocess.DEVNULL)
+           print("GQ8_COMBINED_REAL49_NATIVE_ALL_SOURCE_COMPILE_PASS",n)
+          _,files=flatten(Path(projects[-1][0]))
+          sw=files[("ServerScriptService","EGGRUMBLE_SwarmCombat")].read_text()
+          combat=files[("ServerScriptService","EGGRUMBLE_SevenRoleCombat")].read_text()
+          inv=files[("ServerScriptService","EGGRUMBLE_InvulRuntime")].read_text()
+          assert sw.count("function Swarm.start(session:any)")==1
+          assert sw.count("Musou.onConfirmedKO(")==1
+          assert sw.count("h:TakeDamage(InvulRuntime.filterDamage(")==1
+          assert combat.count("enemyHum:TakeDamage(InvulRuntime.filterDamage(")==1
+          assert inv.count("session.swarm.musouActive(p)")>=1
+          assert "local defense=InvulRuntime.currentPolicySnapshot(user)" in sw
+          assert len(files)==49
+          print("GQ8_COMBINED_REAL49_SINGLE_OWNER_MUTUAL_EXCLUSION_PROOF_PASS")
+          PY
+          CLI=/tmp/musou-invul49-build/luau
+          "$CLI" /tmp/musou-native/good.luau | tee /tmp/musou49.good.log
+          grep -qx GQ8_MUSOU_NATIVE_7ROLE_RECHARGE_RUSH_KAKUHEN_PVP_ROLLBACK_PASS /tmp/musou49.good.log
+          "$CLI" /tmp/invul-native/good.luau | tee /tmp/invul49.good.log
+          grep -qx GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_MULTISOURCE_COUNTER_PVP_GUARDS_PASS /tmp/invul49.good.log
+          "$CLI" /tmp/invul-runtime-native/good.luau | tee /tmp/invul49runtime.good.log
+          grep -qx GQ822_REAL_RUNTIME_NATIVE_FREE_TOOL_PREHIT_ZERO_REPEAT_ZERO_EXPIRY_PASS /tmp/invul49runtime.good.log
+          for mutant in replay pvp fever; do
+             if "$CLI" "/tmp/musou-native/$mutant""_mutant.luau" >"/tmp/musou49-$mutant.log" 2>&1; then
+                echo "RED_MUSOU_MUTANT_NOT_CAUGHT_$mutant"; exit 1
+             fi
+             grep -q RED_ "/tmp/musou49-$mutant.log"
+          done
+          if "$CLI" /tmp/invul-runtime-native/damage_mutant.luau >/tmp/invul49.damage.log 2>&1; then
+             echo RED_INVUL_DAMAGE_MUTANT_NOT_CAUGHT; exit 1
+          fi
+          grep -q RED_FIRST_DAMAGE_SHOULD_BE_ZERO /tmp/invul49.damage.log
+      - name: Actual Rojo portable49 and OFF44 OFF46 OFF47 identical to selected original games
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/musouinvul-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/musouinvul-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/musouinvul-rojo.zip") as z:
+            names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+            assert len(names)==1
+            d=Path("/tmp/musouinvul-rojo");d.write_bytes(z.read(names[0]));d.chmod(0o755)
+          PY
+          ROJO=/tmp/musouinvul-rojo
+          "$ROJO" build artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json -o artifacts/real49/OFF44.rbxlx
+          cmp artifacts/real49/OFF44.rbxlx artifacts/real44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          "$ROJO" build artifacts/real46/REAL46.project.json -o artifacts/real49/OFF46.rbxlx
+          "$ROJO" build artifacts/real47/REAL47.project.json -o artifacts/real49/OFF47.rbxlx
+          "$ROJO" build artifacts/real49/REAL49.project.json -o artifacts/real49/REAL49.rbxlx
+          "$ROJO" build artifacts/portable49/REAL49.project.json -o artifacts/portable49/REAL49.rbxlx
+          cmp artifacts/real49/REAL49.rbxlx artifacts/portable49/REAL49.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --place artifacts/real49/OFF44.rbxlx --count 44
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real46/REAL46.project.json \
+            --place artifacts/real49/OFF46.rbxlx --count 46
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real47/REAL47.project.json \
+            --place artifacts/real49/OFF47.rbxlx --count 47
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable49/REAL49.project.json \
+            --place artifacts/portable49/REAL49.rbxlx --count 49
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os,hashlib
+          p=Path("artifacts/portable49/REAL49.rbxlx")
+          receipt={
+            "head":os.environ["GITHUB_SHA"],"source_count":49,"original_unchanged":37,
+            "place_bytes":p.stat().st_size,
+            "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "original_off44_byte_exact":True,"off46":True,"off47":True,
+            "native49":"PASS","rojo49":"PASS","official_rc_adopted":False,
+            "studio_two_clients":"NOT_TESTED","android_15_minutes":"NOT_TESTED",
+            "full_invul_status_and_objectives":"NO_GO",
+          }
+          Path("artifacts/portable49/REAL49_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ8_MUSOU_INVUL_REAL49_NATIVE_ROJO_OFF44_OFF46_OFF47_PRIVATE_PASS",
+                receipt["place_bytes"],receipt["place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-MUSOU-INVUL-REAL49-COMPOSITE-NOT-OFFICIAL
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            artifacts/portable49/
+            artifacts/real49/REAL49.receipt.json
+            artifacts/real49/OFF44.rbxlx
+            artifacts/real49/OFF46.rbxlx
+            artifacts/real49/OFF47.rbxlx

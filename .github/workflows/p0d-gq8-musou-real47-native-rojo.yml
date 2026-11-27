@@ -1,0 +1,154 @@
+name: GQ8 Musou actual Real44 to Real47 Native Rojo OFF44 source gate
+on:
+  push:
+    branches: ['feature/gq8-musou-fever-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-real47-native-rojo.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/**'
+      - '.github/workflows/p0d-gq8-musou-real47-native-rojo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real47-single-owner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Pin official unchanged Core36 and immutable latest #815 Real44
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = f77b4d4393d9e9b19b65566413432a7a9f13962b || { echo RED_OFFICIAL_RC_MOVED_REFRESH; exit 1; }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/815" --jq .head.sha)" = d5c13082d4987a8c89588a12b81edc73adc945ce || { echo RED_REAL44_HEAD_MOVED_REFRESH; exit 1; }
+          mkdir -p artifacts/real44 artifacts/real47 artifacts/portable47
+          gh run download 44385257005 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir artifacts/real44
+          test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json
+          test -s artifacts/real44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          test -s artifacts/real44/portable44/B_PORTABLE44_SOURCE_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path("artifacts/real44/portable44")
+          j=json.loads((base/"B_PORTABLE44_SOURCE_RECEIPT.json").read_text())
+          assert j["candidate_source_count"]==44,j
+          assert j["remaining_original43_byte_exact"]==42,j
+          print("GQ8_MUSOU_REAL44_IMMUTABLE_BASE_LOCK_PASS")
+          PY
+      - name: Compose exact singleton Swarm and SevenRoleCombat with three new real modules
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/compose_real47.py \
+            --real44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --policy handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouFeverPolicy.luau \
+            --aura handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraClient.luau \
+            --controller handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/MusouAuraController.client.luau \
+            --out artifacts/real47/EGGRUMBLE_SOURCE47.project.json \
+            --receipt artifacts/real47/REAL47_SOURCE_RECEIPT.json
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/package_real47.py \
+            --original44 artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --real47 artifacts/real47/EGGRUMBLE_SOURCE47.project.json \
+            --out artifacts/portable47/EGGRUMBLE_SOURCE47.project.json \
+            --receipt artifacts/portable47/B_PORTABLE47_SOURCE_RECEIPT.json
+          python3 -B handoffs/EGGRUMBLE-MUSOU-FEVER-20261119/make_native_musou.py --out /tmp/gq8-musou-real47-native
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: True Native Luau compiler all 44 original and all 47 selected + policy VM mutation checks
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-musou47-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-musou47-build --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys,subprocess
+          from pathlib import Path
+          sys.path.insert(0,"handoffs/EGGRUMBLE-MUSOU-FEVER-20261119")
+          from compose_real47 import flatten,SWARM,COMBAT,NEW
+          base="artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json"
+          target="artifacts/portable47/EGGRUMBLE_SOURCE47.project.json"
+          for src,count in ((base,44),(target,47)):
+           _,all=flatten(Path(src))
+           assert len(all)==count
+           for route,path in sorted(all.items()):
+            subprocess.run(["/tmp/gq8-musou47-build/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+           print("GQ8_MUSOU_REAL_NATIVE_ALL_COMPILE_PASS",count)
+          _,live=flatten(Path(target))
+          sw=live[SWARM].read_text()
+          combat=live[COMBAT].read_text()
+          assert sw.count("function Swarm.start(session:any)")==1
+          assert sw.count("h:TakeDamage(effectiveDamage)")==1
+          assert sw.count("Musou.onConfirmedKO(")==1
+          assert sw.count("Musou.attackMultiplier(")==2
+          assert combat.count("enemyHum:TakeDamage(")==1
+          assert combat.count("EGGRUMBLE_MUSOU_AWAKEN")>=3
+          assert len(NEW)==3
+          for bad in ("RemoteEvent","DataStoreService","MarketplaceService","UpdateAsync"):
+           for route in NEW:
+            assert bad not in live[route].read_text(),"RED_NEW_MODULE_AUTHORITY_"+bad
+          print("GQ8_MUSOU_REAL47_EXISTING_SINGLE_DAMAGE_KO_NO_REMOTE_OWNER_PASS")
+          PY
+          /tmp/gq8-musou47-build/luau /tmp/gq8-musou-real47-native/good.luau | tee /tmp/gq8-musou-real47-native/test.log
+          grep -qx GQ8_MUSOU_NATIVE_7ROLE_RECHARGE_RUSH_KAKUHEN_PVP_ROLLBACK_PASS /tmp/gq8-musou-real47-native/test.log
+          for mutant in replay pvp fever; do
+             if /tmp/gq8-musou47-build/luau "/tmp/gq8-musou-real47-native/$mutant""_mutant.luau" > "/tmp/gq8-musou-real47-native/$mutant.log" 2>&1; then
+                echo "RED_UNDETECTED_MUTANT_$mutant"; exit 1
+             fi
+             grep -q "RED_" "/tmp/gq8-musou-real47-native/$mutant.log"
+          done
+      - name: Pinned real Rojo 47 Source/Class plus precise OFF44 Place byte equality
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq8-musou47-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq8-musou47-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq8-musou47-rojo.zip") as z:
+           files=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+           assert len(files)==1
+           dst=Path("/tmp/gq8-musou47-rojo")
+           dst.write_bytes(z.read(files[0]));dst.chmod(0o755)
+          PY
+          /tmp/gq8-musou47-rojo build artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json -o artifacts/real47/OFF44.rbxlx
+          cmp artifacts/real47/OFF44.rbxlx artifacts/real44/portable44/EGGRUMBLE_SOURCE44.rbxlx
+          /tmp/gq8-musou47-rojo build artifacts/real47/EGGRUMBLE_SOURCE47.project.json -o artifacts/real47/EGGRUMBLE_SOURCE47.rbxlx
+          /tmp/gq8-musou47-rojo build artifacts/portable47/EGGRUMBLE_SOURCE47.project.json -o artifacts/portable47/EGGRUMBLE_SOURCE47.rbxlx
+          cmp artifacts/real47/EGGRUMBLE_SOURCE47.rbxlx artifacts/portable47/EGGRUMBLE_SOURCE47.rbxlx
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/portable47/EGGRUMBLE_SOURCE47.project.json \
+            --place artifacts/portable47/EGGRUMBLE_SOURCE47.rbxlx --count 47
+          python3 -B quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/real44/portable44/EGGRUMBLE_SOURCE44.project.json \
+            --place artifacts/real47/OFF44.rbxlx --count 44
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          p=Path("artifacts/portable47/EGGRUMBLE_SOURCE47.rbxlx")
+          receipt={"actual_head":os.environ["GITHUB_SHA"],
+                   "official_rc_adopted":False,"source_count":47,
+                   "place_bytes":p.stat().st_size,
+                   "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+                   "rojo47":"PASS","off44_byte_exact":"PASS","studio":"NOT_TESTED","android":"NOT_TESTED"}
+          Path("artifacts/portable47/REAL47_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("GQ8_REAL47_NATIVE_ROJO_OFF44_PRIVATE_PASS",receipt["place_bytes"],receipt["place_sha256"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ8-MUSOU-REAL47-PORTABLE-NOT-OFFICIAL
+          path: |
+            artifacts/portable47/
+            artifacts/real47/REAL47_SOURCE_RECEIPT.json
+            artifacts/real47/OFF44.rbxlx
+          retention-days: 3
+          if-no-files-found: error

@@ -1,0 +1,71 @@
+name: GQ8 Musou latest Real44 source interface intake
+on:
+  push:
+    branches: ['feature/gq8-musou-fever-20261119']
+    paths:
+      - '.github/workflows/p0d-gq8-musou-real44-intake.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-interfaces:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Download exact verified #815 private Real44 source
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = f77b4d4393d9e9b19b65566413432a7a9f13962b
+          mkdir -p /tmp/gq8_real44
+          gh run download 44376856212 --repo "$GITHUB_REPOSITORY" \
+            --name GQ800-REAL44-CURSE-PRIVATE-NOT-OFFICIAL --dir /tmp/gq8_real44
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          p=Path("/tmp/gq8_real44")
+          choices=list(p.rglob("*SOURCE44*.project.json"))
+          assert len(choices)==1, [str(x) for x in choices]
+          root=choices[0].parent; data=json.loads(choices[0].read_text())
+          nodes={}
+          def walk(d,parts=()):
+            for k,v in d.items():
+              if k.startswith("$"):continue
+              q=parts+(k,)
+              if "$path" in v:
+                f=(root/v["$path"]).resolve()
+                assert f.is_file(),(q,str(f))
+                nodes[q]=f
+              else:walk(v,q)
+          walk(data["tree"])
+          assert len(nodes)==44, len(nodes)
+          print("REAL44_PROJECT",choices[0], "GAME_SOURCE_COUNT",len(nodes))
+          for route,f in sorted(nodes.items()):
+            t="/".join(route)
+            if "Host" in t or "Combat" in t or "Castle" in t or "Item" in t or "Client" in t or "HUD" in t or "Swarm" in t:
+              print("ROUTE",t,"BYTE_COUNT",f.stat().st_size,"SHA",hashlib.sha256(f.read_bytes()).hexdigest()[:12])
+              text=f.read_text()
+              lines=text.splitlines()
+              match=["EGGRUMBLE_Carry","CarryingEgg","eggCarrier","carryingEgg","hasEgg","CurrentHuman","isCurrentHuman","damageFromPlayer","Swarm","Activate","activate","OnServerEvent","RemoteEvent","phase","rules.mode","session.mode","attackerId","LastAttackerId","KoFence","scoreEligible","credit(id","credit("]
+              hits=[(i,l) for i,l in enumerate(lines,1) if any(m in l for m in match)]
+              if "Swarm" in t or "Host" in t or "Combat" in t or "Item" in t or "Castle" in t:
+                for i,l in hits[:85]:
+                  print("  LINE",i,l[:220])
+              windows=[]
+              if t.endswith("/EGGRUMBLE_SevenRoleCombat"):
+                windows=[(385,448),(770,815),(1020,1094)]
+              elif t.endswith("/EGGRUMBLE_SwarmCombat"):
+                windows=[(313,343),(402,456),(507,538)]
+              elif t.endswith("/EGGRUMBLE_LobbyCastleModesPreview"):
+                windows=[(1190,1240),(1260,1310),(1400,1470)]
+              elif t.endswith("/EGGRUMBLE_FieldItemPickups"):
+                windows=[(1,85)]
+              for aa,bb in windows:
+                print("CODE_WINDOW",t,aa,bb)
+                for pos in range(aa,min(bb,len(lines))+1):
+                  print("CODE",pos,lines[pos-1][:250])
+          PY
