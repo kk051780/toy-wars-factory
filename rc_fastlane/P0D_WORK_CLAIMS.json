@@ -32871,6 +32871,79 @@
           "focused_boundary_cases": 5,
           "native_receipt": "dbc9bc19d203ba7915c4409e8f2c53683aacd3b49c53ac6f7264dc2f55db9439"
         }
+      },
+      "pr": 1038,
+      "source_head": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
+      "prepared_candidate_head": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
+      "prepared_candidate_tree": "f3deac814d8ab6ee5b4c9f1d492de3bdf5829ca0",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "bytes": 49687,
+          "blob": "ef761df3c701f8f26c6bf4a9bbc925fbb8d64756",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "bytes": 34938,
+          "blob": "8bce3a414b03ca16f7a98d2a3cb9cfec3910cbb6",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_cases.luau",
+          "bytes": 11054,
+          "blob": "144c2bbebb0ce326cca5822970909584a34a2c35",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_native.py",
+          "bytes": 4727,
+          "blob": "1c744e2e3a03ca06b626a15bdaef27721aec3a8b",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "bytes": 16071,
+          "blob": "cba0bd1db9a08eb1dbb56350543168ab481454db",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "bytes": 48186,
+          "blob": "adf6cf803a7999ac7b372081c88d1d8379c8fa39",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "bytes": 815607,
+          "blob": "3c413a2bd44f0d7851f474481962dec52ab6f822",
+          "mode": "100644"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "bytes": 115503,
+          "blob": "e112781018858a3dbaa0ae1c0da078d4888e0bbf",
+          "mode": "100644"
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 98421,
+          "blob": "e1585a43b81ce2cbb75b80a7281ca87fd0b194b8",
+          "mode": "100644"
+        }
+      ],
+      "actual_candidate_readback": {
+        "commit": "ba6274c33f23b816fd52e5fff20f100fd648fd74",
+        "tree": "f3deac814d8ab6ee5b4c9f1d492de3bdf5829ca0",
+        "branch": "feature/p0d-field-egg-terminal-20261127",
+        "source_lease": "8e2a71a39a45d9560a4a8d0ae6681cd6c8a19a6f",
+        "return": "165776d4af205496338d08ad8728b501193d0044",
+        "existing_pr": 1038,
+        "rc_parent": "daa6b076ac3502de632220aea9d7aec494232694"
+      },
+      "actual_binding_lease": {
+        "commit": "34cb6d0572c55dfb7839faa49693fd2517f30740",
+        "operation_id": "c050c2ac-db67-4817-88e0-887cb56c021a"
       }
     }
   ],
