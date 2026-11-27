@@ -36081,6 +36081,37 @@
       "actual_binding_lease": {
         "commit": "969e798dbeea2b605a11f8ddf323b7fd0d5591b0",
         "operation_id": "1d25055c-a9cf-4312-9fd5-35a5b7913554"
+      },
+      "qa_correction_grant": {
+        "status": "ONE_EXACT_NONFORCE_QA_UPDATE",
+        "pr": 1040,
+        "branch": "quality/gq470-team-relay-eligibility-20261127",
+        "old_candidate": "f257071ca44d6812fd23f6d7b2ca60f85434c86c",
+        "formal_parent": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+        "tree": "057939a9b6006e8ce491f54b2164573829424821",
+        "local_head": "20c5603f1baf8238d0ab34aceafcbe3f598e124d",
+        "changed_paths": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/relay_eligibility_native.py",
+            "mode": "100644",
+            "blob": "6da7d95c1ff853ec3ad91505649ac48f4a59df02",
+            "bytes": 6471
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "9b3871d9bef4d52a7720bdbad52acd68b0bbaee9",
+            "bytes": 107895
+          }
+        ],
+        "reason": "Anchor the new fixture package to the verified checkout root during the existing isolated Bot mutation test, while retaining pinned fixture bytes. Point the existing stale relay evidence mutation at the exact historical HUD stage already selected by the producer and verifier. Both focused local checks now reach the intended predicates. Game bodies and positive vectors unchanged.",
+        "source_runtime_changed": false,
+        "previous_failed_run": 45989121525,
+        "expires_at": "2026-11-27T12:24:25.049Z",
+        "metadata": {
+          "lease": "c7231d89c7b8115de5a2f3eb6b78f240a69acb48",
+          "owner": "6db6251c-9315-484c-b9f6-f47cafcb7015"
+        }
       }
     }
   ],
