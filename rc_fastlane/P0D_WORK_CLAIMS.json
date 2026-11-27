@@ -41547,7 +41547,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Exact fixed GQ219 MAGE-041 catalog row and actual active selected Mage Q, only neutral combat. Reuse Growth, single original Game/Horde HP path, caster-root LOS, only actual living target marks, current role/round/avatar authority, existing 3-target budget, no extra mark damage. Real status range/time/UI, existing Mage F and Warrior Q preserved; no Combo activation, Store or additional Remote.",
       "resources": [
@@ -41723,6 +41723,72 @@
       "actual_binding_lease": {
         "commit": "5414f2a8d7d11666650096471dd28ecdb8f55111",
         "operation_id": "f2b05e40-bdf2-4970-8df0-291bd4b2e691"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1045#pullrequestreview-6092156398",
+        "review_id": 6092156398,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46049955014,
+        "active_job": 140678520816,
+        "active_executed_steps": 95,
+        "active_place_bytes": 709077,
+        "active_place_sha256": "1c42a55ba536537779e61ad1079fd0cb2c7098bab1fa7d7f33459f86c59482d5",
+        "immediate_off_bytes": 700116,
+        "active_artifact": 15224211565,
+        "active_zip_bytes": 218529,
+        "active_zip_digest": "sha256:904a71822bf704066ed89b232460551a132bef099c3f7935a3979ac292a9ee88",
+        "private_ci": 46049955037,
+        "private_job": 140678520716,
+        "private_steps": 48,
+        "private_artifact": 15224451246,
+        "private_zip_bytes": 26224686,
+        "private_zip_digest": "sha256:572740f1e03f70fe7ddf893e05d00eedd0ae66e89f83a689cf14c97782174cb2",
+        "source_lock": "70c0f8e9f8ec67b0d36d336e5bab05e53c5a1e768faddcd7afee652b246ba873",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "57e7904fe47d4dd300b99782c7e6c7dcff51a780",
+        "operation_id": "f7601ae5-bc3b-4314-924a-b45f71bd1cb9"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "permitted_head": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "permitted_tree": "e190d093a79f249696a8cbff8c1604986b602cbb",
+        "permitted_pr": 1045,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T18:58:15.224Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact fixed GQ219 MAGE-041 catalog row and actual active selected Mage Q, only neutral combat. Reuse Growth, single original Game/Horde HP path, caster-root LOS, only actual living target marks, current role/round/avatar authority, existing 3-target budget, no extra mark damage. Real status range/time/UI, existing Mage F and Warrior Q preserved; no Combo activation, Store or additional Remote.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "57e7904fe47d4dd300b99782c7e6c7dcff51a780",
+          "owner": "f7601ae5-bc3b-4314-924a-b45f71bd1cb9",
+          "review": 6092156398,
+          "trusted_queue_run": 46050858969,
+          "trusted_queue_job": 140681504371
+        }
       }
     }
   ],
