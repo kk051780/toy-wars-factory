@@ -1,0 +1,66 @@
+name: GQ8 Full Damage Invulnerability Seven-Role Policy Native QA
+on:
+  push:
+    branches: ['feature/gq8-invul-policy-20261119']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-20261119/**'
+      - '.github/workflows/p0d-gq8-invul-policy.yml'
+  pull_request:
+    branches: ['rc/p0d-s1-kids-rc01']
+    paths:
+      - 'handoffs/EGGRUMBLE-INVUL-20261119/**'
+      - '.github/workflows/p0d-gq8-invul-policy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-real-source-no-damage-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate authentic source-derived good and 3 attack mutants
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/EGGRUMBLE-INVUL-20261119/make_native_invul.py --out /tmp/gq8-invul
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path('handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau').read_text()
+          for bad in ('RemoteEvent', 'DataStoreService', 'UpdateAsync', 'TakeDamage(', 'Humanoid.Health=', 'SetAttribute(', 'Instance.new('):
+             assert bad not in src, 'RED_POLICY_NEW_HP_OWNER_OR_REMOTE_'+bad
+          print('GQ8_INVUL_NO_DUPLICATE_DAMAGE_OR_STORE_WRITER')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Actual Luau compile and runtime of exact source / reject mutated policies
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq8-invul-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq8-invul-build --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          CLI=/tmp/gq8-invul-build/luau
+          CC=/tmp/gq8-invul-build/luau-compile
+          for src in handoffs/EGGRUMBLE-INVUL-20261119/InvulnerabilityPolicy.luau /tmp/gq8-invul/*.luau; do
+             "$CC" --text "$src" >/dev/null
+          done
+          "$CLI" /tmp/gq8-invul/good.luau | tee /tmp/gq8-invul-good.log
+          grep -qx GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_MULTISOURCE_COUNTER_PVP_GUARDS_PASS /tmp/gq8-invul-good.log
+          if "$CLI" /tmp/gq8-invul/budget_mutant.luau > /tmp/gq8-invul-budget-mutant.log 2>&1; then
+             echo RED_UNLIMITED_DURATION_MUTANT_UNDETECTED; exit 1
+          fi
+          grep -q RED_24S_MATCH_BUDGET /tmp/gq8-invul-budget-mutant.log
+          if "$CLI" /tmp/gq8-invul/damage_mutant.luau > /tmp/gq8-invul-damage-mutant.log 2>&1; then
+             echo RED_DAMAGE_LEAK_MUTANT_UNDETECTED; exit 1
+          fi
+          grep -q RED_DAMAGE_LEAK /tmp/gq8-invul-damage-mutant.log
+          if "$CLI" /tmp/gq8-invul/charge_mutant.luau > /tmp/gq8-invul-charge-mutant.log 2>&1; then
+             echo RED_UNLIMITED_SKILL_CHARGES_MUTANT_UNDETECTED; exit 1
+          fi
+          grep -q RED_INFINITE_SKILL /tmp/gq8-invul-charge-mutant.log
+          echo GQ8_INVUL_REACTIVE_V2_NATIVE7ROLE_BUDGET_DAMAGE_CHARGE_MUTANTS_PASS
