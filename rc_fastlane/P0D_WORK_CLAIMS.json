@@ -43204,7 +43204,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 942,
         "branch": "quality/gq470-lss-shorefoam-facets-20261121",
         "old_pr_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
@@ -43309,9 +43309,9 @@
           "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py"
         ]
       },
-      "source_head": null,
-      "prepared_candidate_head": null,
-      "prepared_candidate_tree": null,
+      "source_head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+      "prepared_candidate_head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+      "prepared_candidate_tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -43340,8 +43340,8 @@
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
           "mode": "100644",
-          "blob": "e3ada966262eea5b8f77d843e26ba07d24c4c77e",
-          "bytes": 20957
+          "blob": "bdad18e99a940a283c985362137603710a4b4528",
+          "bytes": 21273
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
@@ -43380,10 +43380,20 @@
           "bytes": 124596
         }
       ],
-      "actual_candidate_readback": null,
+      "actual_candidate_readback": {
+        "pr": 942,
+        "exact_head": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "exact_tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
+        "exact_parent": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "previous_candidate": "56298b3f6503fba49be4d6f903be85ce98c4a386",
+        "preserved_author_parent": "2448dc4f0580462335b3b4777f94c641e38b3c65",
+        "source_lease": "362706bd261d46e65a83fc10eeb63ed642ff1517",
+        "source_lease_return": "83d0af5cd12d4db48b01746aabc779d2b63f00b0",
+        "prepared_at": "2026-11-27T20:37:10.783Z"
+      },
       "actual_binding_lease": {
-        "commit": "701de756b672542f4580319793013230e0e488b9",
-        "operation_id": "34f97f52-273c-4d0d-9e20-da3d02eb0770"
+        "commit": "25c60ed69f587449b28d872635cd95cb1a4baa58",
+        "operation_id": "8a91fd6e-ff88-441e-a6b2-ff06f662bc1e"
       },
       "superseded_binding": {
         "pr": 942,
