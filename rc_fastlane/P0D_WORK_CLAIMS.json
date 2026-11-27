@@ -31857,6 +31857,103 @@
         "metadata_lease_sha": "934ff781ca90fadc42e9156757d3e522bab8394d",
         "metadata_owner_id": "67af7031-491d-470c-a332-fda71c89c74d"
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-BR-CANYON-APPROACH-20261127",
+      "feature_id": "GQ910_BR_CASTLE_ENTRANCE_CANYON_COLLISION",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP",
+      "owner": "/root (Codex parent and existing #910 correction)",
+      "parent_issue": 910,
+      "integration_issue": 220,
+      "base_rc_sha": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+      "prep_branch": "feature/p0d-br-canyon-castle-approach-20261127",
+      "expected_source_branch": "ABSENT",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "original_candidate": "1a2d1dc5ab8bcf7455171a2ad934b5b3605692b3",
+      "original_product_source_pins": {
+        "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau": {
+          "before": {
+            "bytes": 35282,
+            "sha256": "8670511af9289ed6edcff8ffc244af997da4a24fa3e8b5a57da97c6459d0235e"
+          },
+          "after": {
+            "bytes": 35499,
+            "sha256": "b3dece5fd6c927172d14f4cff648b1659d97234e2e2d639628cd9ff740150c1f"
+          }
+        },
+        "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau": {
+          "before": {
+            "bytes": 10202,
+            "sha256": "ecfe2ede5b832f0a05cef8ba795eb890b04a9a342b4b678a0497dab724deab30"
+          },
+          "after": {
+            "bytes": 10334,
+            "sha256": "681ad5b6e74c8371ca5c3c25e54daef92c33026e7593097af48017548a044530"
+          }
+        }
+      },
+      "local_place": {
+        "bytes": 842354,
+        "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+      },
+      "rollback_place": {
+        "bytes": 842005,
+        "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+      },
+      "scope": "Exact previously implemented Realm and LegacyCanyon BR-only linked placement. Existing TEAM layout and gameplay timers preserved. Canonical exact-source build, paired rollback, mandatory CI and targeted geometry regression. Existing #970/#967 art scope preserved; offline compatibility proof exists, no cherry-pick of visual work or source edit to either PR. Prepare only, source transport requires further live authority.",
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/910#issuecomment-7183767533",
+      "design_dependency": "https://github.com/kk051780/toy-wars-factory/pull/891",
+      "art_candidates": [
+        970,
+        967
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_REALMBATTLECORE",
+        "REAL69_SOURCE_EGGRUMBLE_LEGACYCANYONROUTES",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "BR_CASTLE_2_3_GATE_APPROACH"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/br_canyon_cases.luau",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "13093340-a689-471f-a91e-851788541657",
+      "issued_at": "2026-11-27T02:46:19.808Z",
+      "expires_at": "2026-11-27T04:46:19.808Z",
+      "actual_metadata_lease": {
+        "ref": "9261993686189f4f4ed988de4bbf2f41ea62fe54",
+        "blob": "825ff18456f243a2041c9d90a880ca4f6e2e240d",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "13093340-a689-471f-a91e-851788541657",
+          "task_id": null,
+          "epoch": 802,
+          "acquired_at": "2026-11-27T02:46:03.719Z",
+          "expires_at": "2026-11-27T03:16:03.719Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated #1011 V2.1 bounded delegated preparation for existing #910 Studio correction, under current unique coordinator lease. No RC write, transport, merge or art scope granted."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
