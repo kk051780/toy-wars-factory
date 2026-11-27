@@ -40927,23 +40927,23 @@
       },
       "authority_basis": "#1011 V3.5 and #218/#220; #828 original authored local touch repair. #829 already merged, one bounded successor draft only; no RC writer grant.",
       "source_grant": {
-        "status": "CONSUMED_BRANCH_AND_DRAFT_SOURCE_ONLY",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq828-private-touch-attack-20261128",
         "formal_parent": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
-        "tree": "ea606397e4bab64ffe177d1b188b64ffab28f7d8",
-        "local_head": "bd86999ccdb3346a1459d6579f49b9380101e2e0",
+        "tree": "cb1c203129eb8bf50318ce498708fe9c0b9ac8b0",
+        "local_head": "c46b324aca941345a4e86b7a513cb6daa402a233",
         "permitted_create_draft": 1,
         "allowed_changed_files": [
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
             "mode": "100644",
-            "blob": "27a796fe2abb1caabefc1f81687e42c7048f8386",
+            "blob": "ba21f4882a62a21c5cec9aa027e8258b39b12f22",
             "bytes": 63408
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
             "mode": "100644",
-            "blob": "6d35d846c6d9747f25f6707e69942688a0773279",
+            "blob": "060d4140adb546e0eef1848ce23fa6140d7ac10c",
             "bytes": 35255
           },
           {
@@ -40961,8 +40961,8 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/private_touch_native.py",
             "mode": "100644",
-            "blob": "9117310313d0c6564aefc5f276a488f947a39741",
-            "bytes": 2965
+            "blob": "39b24a7509dcc9c82d64d24b6976092acf0a30cb",
+            "bytes": 2942
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
@@ -40973,26 +40973,26 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
             "mode": "100644",
-            "blob": "1beb9cb742a7ea3d31208321771a30b25a97291d",
+            "blob": "3554784410e02edbe2f38541fd45281e3bf81d0d",
             "bytes": 51808
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/hud.patch",
             "mode": "100644",
-            "blob": "93527ae789c11f51279613a78b1682377b0dff38",
-            "bytes": 3238
+            "blob": "caee79b909bce7d072f90554e9798ff1af54398d",
+            "bytes": 4249
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/layout_scene.luau",
             "mode": "100644",
-            "blob": "6348339a0c8cfec24bc6fcc312c78e4f37220696",
-            "bytes": 3187
+            "blob": "dcb79f0abd4fb45f17ab02dd41cd5d7d118b3c42",
+            "bytes": 4023
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
             "mode": "100644",
-            "blob": "4a65b265a89c097d74d7cccf2f9c52908a04bc10",
-            "bytes": 1578942
+            "blob": "d384ed43c4a54c098cf84cdeea93c95cfb659da6",
+            "bytes": 1582986
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
@@ -41003,14 +41003,14 @@
           {
             "path": "tests/test_gq470_union22_real69_20261122.py",
             "mode": "100644",
-            "blob": "f8d10e35c4a1f9480f41a38e5e0387bc0aa945cc",
-            "bytes": 117268
+            "blob": "c2b56c045fdd37f92dd04455b70560ec0c86f78c",
+            "bytes": 117502
           }
         ],
-        "expires_at": "2026-11-27T18:44:54.050Z",
+        "expires_at": "2026-11-27T18:55:36.260Z",
         "issued_from": {
-          "lease": "13f1c289b45a6995ba69d11e70ef69a8fae77994",
-          "owner": "bd26c68e-9b57-4a6d-aa81-d6a4a93d91dc"
+          "lease": "5eba28d78be3ab750d2f184299f9625cfc64e3c2",
+          "owner": "9ef23e73-3460-4e77-a8ec-d37cb04c6c56"
         },
         "local_qa": {
           "place_bytes": 893757,
@@ -41024,8 +41024,28 @@
           "touch_exact_native_pass": true,
           "old_mage_programs": 38,
           "old_relay_cases": 82,
-          "device": "NOT_TESTED_V3.5"
-        }
+          "device": "NOT_TESTED_V3.5",
+          "on_bytes": 894743,
+          "on_sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564",
+          "private_hud_bytes": 38939,
+          "independent_negative": "https://github.com/kk051780/toy-wars-factory/pull/1043#pullrequestreview-6091759458",
+          "old_overlap_area_px2": 858,
+          "corrected_geometry_overlap_px2": 0,
+          "previous_archives": 21,
+          "unchanged_selected": 68
+        },
+        "old_pr_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
+        "repair_changed_paths_from_red": [
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/private_touch_native.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "quality_gameplay/gq470_union22_real69_20261122/private_touch/hud.patch",
+          "quality_gameplay/gq470_union22_real69_20261122/private_touch/layout_scene.luau",
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "tests/test_gq470_union22_real69_20261122.py"
+        ],
+        "independent_same_head_requested_correction": "https://github.com/kk051780/toy-wars-factory/pull/1043#pullrequestreview-6091759458"
       },
       "source_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
       "prepared_candidate_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
@@ -41117,6 +41137,14 @@
       "actual_binding_lease": {
         "commit": "07b356ec3c78ca002a746c1f7dd7e74b375f0945",
         "operation_id": "9944ab34-e96f-4603-a3cd-e423e2e31cd4"
+      },
+      "first_candidate": {
+        "head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
+        "tree": "ea606397e4bab64ffe177d1b188b64ffab28f7d8",
+        "source_lease": "051b5a4122de69c20a6f4b54cf03d97fca42d479",
+        "source_return": "283afefc5ecfdeb006bfd0ed4fabbf89a19cb1bc",
+        "failed_job": 140659940159,
+        "reason": "Independent same-head negative 858px² after 8 fallbacks; Hosted final mutation verifies copied evidence without needing literal old output path; offline stale Moguron→final expectation now explicitly preserves new OFF."
       }
     }
   ],
