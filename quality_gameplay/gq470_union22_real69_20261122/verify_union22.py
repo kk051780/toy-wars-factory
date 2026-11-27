@@ -401,9 +401,14 @@ def verify_core(root, base, reports, context):
     relay = lock["relay_presentation_followup"]
     canyon = lock["br_canyon_followup"]
     role = lock["role_readability_followup"]
+    field_prompt = lock["field_prompt_followup"]
+    require(set(field_prompt["rows"]) == {compose.VAULT_SOURCE}, "FIELD_PROMPT_SOURCE_SET")
+    expected_field_off, field_off_lock, field_off = verify_source_rollback(
+        root, root, lock, current, field_prompt, field_prompt["rows"], role["repaired_place"],
+        compose.FIELD_PROMPT_OFF, compose.FIELD_PROMPT_OFF_ARCHIVE, "FIELD_PROMPT")
     require(set(role["rows"]) == set(compose.ROLE_READABILITY_SOURCES), "ROLE_READABILITY_SOURCE_SET")
     expected_role_off, role_off_lock, role_off = verify_source_rollback(
-        root, root, lock, current, role, role["rows"], canyon["repaired_place"],
+        root, root / compose.FIELD_PROMPT_OFF, field_off_lock, field_off, role, role["rows"], canyon["repaired_place"],
         compose.ROLE_READABILITY_OFF, compose.ROLE_READABILITY_OFF_ARCHIVE, "ROLE_READABILITY")
     require(set(canyon["rows"]) == set(compose.BR_CANYON_SOURCES), "BR_CANYON_SOURCE_SET")
     expected_canyon_off, canyon_off_lock, canyon_off = verify_source_rollback(
@@ -475,6 +480,8 @@ def verify_core(root, base, reports, context):
         "br_canyon_rollback_archive": digest(read(root / compose.BR_CANYON_OFF_ARCHIVE)),
         "role_readability_followup": role,
         "role_readability_rollback_archive": digest(read(root / compose.ROLE_READABILITY_OFF_ARCHIVE)),
+        "field_prompt_followup": field_prompt,
+        "field_prompt_rollback_archive": digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -485,7 +492,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 26 and core.get("unchanged_sources") == 43
-            and core.get("compile_count") == 152 and core.get("rojo_build_count") == 13
+            and core.get("compile_count") == 153 and core.get("rojo_build_count") == 14
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -493,6 +500,7 @@ def verify_core(root, base, reports, context):
             and core.get("relay_presentation_parent_place") == relay_off_lock["final_place"]
             and core.get("br_canyon_parent_place") == canyon_off_lock["final_place"]
             and core.get("role_readability_parent_place") == role_off_lock["final_place"]
+            and core.get("field_prompt_parent_place") == field_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -538,6 +546,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.BR_CANYON_OFF_ARCHIVE] = digest(read(root / compose.BR_CANYON_OFF_ARCHIVE))
     expected_stage.update({compose.ROLE_READABILITY_OFF + "/" + name: pin for name, pin in expected_role_off.items()})
     expected_stage[compose.ROLE_READABILITY_OFF_ARCHIVE] = digest(read(root / compose.ROLE_READABILITY_OFF_ARCHIVE))
+    expected_stage.update({compose.FIELD_PROMPT_OFF + "/" + name: pin for name, pin in expected_field_off.items()})
+    expected_stage[compose.FIELD_PROMPT_OFF_ARCHIVE] = digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -546,11 +556,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 165 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 167 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 152 and len(rojo_commands) == 13, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 153 and len(rojo_commands) == 14, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -572,13 +582,14 @@ def verify_core(root, base, reports, context):
                             for name in compose.BR_CANYON_SOURCES)
     expected_compile.update(str(Path(stage) / compose.ROLE_READABILITY_OFF / "sources" / name)
                             for name in compose.ROLE_READABILITY_SOURCES)
+    expected_compile.add(str(Path(stage) / compose.FIELD_PROMPT_OFF / "sources" / compose.VAULT_SOURCE))
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
                 for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF,
                                compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF,
                                compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
-                               compose.ROLE_READABILITY_OFF)},
+                               compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -590,7 +601,8 @@ def verify_core(root, base, reports, context):
                                                         if name in compose.RELAY_PRESENTATION_SOURCES],
                         compose.BR_CANYON_OFF: [name for name in lock["sources"] if name in compose.BR_CANYON_SOURCES],
                         compose.ROLE_READABILITY_OFF: [name for name in lock["sources"]
-                                                        if name in compose.ROLE_READABILITY_SOURCES]}
+                                                        if name in compose.ROLE_READABILITY_SOURCES],
+                        compose.FIELD_PROMPT_OFF: [compose.VAULT_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1347,6 +1359,18 @@ def verify_role_readability(native, root, profile, build, aggregate, context):
     }
 
 
+def verify_field_prompt(native, root, lock, build, aggregate, context):
+    spec = importlib.util.spec_from_file_location("union22_field_prompt_verify", HERE / "native/field_prompt_native.py")
+    contract = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(contract)
+    folder = native / "field_prompt"
+    receipt = folder / "receipt.json"
+    expected = contract.verify(root / "sources", folder, build["binary_before_suites"], context, lock, compose)
+    require(data(receipt) == expected and aggregate["field_prompt"] == digest(read(receipt))
+            and set(files(folder)) == contract.FILE_NAMES, "FIELD_PROMPT_EXACT_NATIVE")
+    return expected, {"field_prompt/" + name for name in contract.FILE_NAMES}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1408,7 +1432,7 @@ def verify_native(native, root, lock, context):
                 "original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16, "distinct_server_union": 30,
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed": False}
-            and aggregate.get("native_process_count") == 19 and aggregate.get("native_evidence_file_count") == 93,
+            and aggregate.get("native_process_count") == 21 and aggregate.get("native_evidence_file_count") == 100,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -1482,8 +1506,10 @@ def verify_native(native, root, lock, context):
     expected_files |= canyon_files
     role, role_files = verify_role_readability(native, root, lock, build, aggregate, context)
     expected_files |= role_files
+    field_prompt, field_files = verify_field_prompt(native, root, lock, build, aggregate, context)
+    expected_files |= field_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 93 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 100 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -1491,6 +1517,7 @@ def verify_native(native, root, lock, context):
             "relay_presentation": relay,
             "br_canyon": canyon,
             "role_readability": role,
+            "field_prompt": field_prompt,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1528,7 +1555,8 @@ def admit_delivery(root, base, reports, native, context):
                             compose.GUARDIAN_OFF_ARCHIVE, compose.ITEM_OFF_ARCHIVE, compose.VAULT_OFF_ARCHIVE,
                             compose.CASTLE_OFF_ARCHIVE, compose.SCORE_OFF_ARCHIVE,
                             compose.RELAY_PRESENTATION_OFF_ARCHIVE, compose.BR_CANYON_OFF_ARCHIVE,
-                            compose.ROLE_READABILITY_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")
+                            compose.ROLE_READABILITY_OFF_ARCHIVE, compose.FIELD_PROMPT_OFF_ARCHIVE,
+                            "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
                       or name in retained_build_files}
@@ -1595,6 +1623,10 @@ def admit_delivery(root, base, reports, native, context):
             "role_readability_inverse_place": verified["lock"]["role_readability_followup"]["parent_place"],
             "role_readability_inverse_archive": digest(read(root / compose.ROLE_READABILITY_OFF_ARCHIVE)),
             "role_readability_inverse_archive_members": 71,
+            "field_prompt_followup": verified["lock"]["field_prompt_followup"],
+            "field_prompt_inverse_place": verified["lock"]["field_prompt_followup"]["parent_place"],
+            "field_prompt_inverse_archive": digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE)),
+            "field_prompt_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -1611,6 +1643,7 @@ def admit_delivery(root, base, reports, native, context):
             "relay_presentation": runtime["relay_presentation"],
             "br_canyon": runtime["br_canyon"],
             "role_readability": runtime["role_readability"],
+            "field_prompt": runtime["field_prompt"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

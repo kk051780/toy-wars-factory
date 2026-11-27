@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "8841c4742c23c8654230e177a06765b2ff889c3d196a7045339021af72d3130c"
+LOCK_SHA256 = "6f76962b33682de03d951ac72c3670f935505a914397f54f65b6062b082a5703"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -69,6 +69,8 @@ BR_CANYON_SOURCES = (
 )
 ROLE_READABILITY_OFF = "off69_role_readability_canyon_parent"
 ROLE_READABILITY_OFF_ARCHIVE = "OFF69_ROLE_READABILITY_CANYON_PARENT_ROLLBACK.tar.gz"
+FIELD_PROMPT_OFF = "off69_field_prompt_role_parent"
+FIELD_PROMPT_OFF_ARCHIVE = "OFF69_FIELD_PROMPT_ROLE_PARENT_ROLLBACK.tar.gz"
 ROLE_MOTION_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau"
 ROLE_WEAPON_SOURCE = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau"
 ROLE_READABILITY_SOURCES = (ROLE_WEAPON_SOURCE, ROLE_MOTION_SOURCE)
@@ -410,6 +412,11 @@ def role_readability_parent(on, lock):
                                 lock["br_canyon_followup"]["repaired_place"], "ROLE_READABILITY")
 
 
+def field_prompt_parent(on, lock):
+    return paired_source_parent(on, lock, lock["field_prompt_followup"], (VAULT_SOURCE,),
+                                lock["role_readability_followup"]["repaired_place"], "FIELD_PROMPT")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -577,7 +584,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    role_off, role_off_lock = role_readability_parent(on, lock)
+    field_off, field_off_lock = field_prompt_parent(on, lock)
+    role_off, role_off_lock = role_readability_parent(field_off, field_off_lock)
     canyon_off, canyon_off_lock = br_canyon_parent(role_off, role_off_lock)
     relay_off, relay_off_lock = relay_presentation_parent(canyon_off, canyon_off_lock)
     score_off, score_off_lock = score_parent(relay_off, relay_off_lock)
@@ -609,7 +617,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE),
                   (stage / RELAY_PRESENTATION_OFF, relay_off, relay_off_lock["final_place"], RELAY_PRESENTATION_SOURCES),
                   (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES),
-                  (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES))
+                  (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES),
+                  (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -659,6 +668,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         canyon_archive_identity = identity(read_file(stage / BR_CANYON_OFF_ARCHIVE))
         make_archive(stage / ROLE_READABILITY_OFF, stage / ROLE_READABILITY_OFF_ARCHIVE, ROLE_READABILITY_OFF)
         role_archive_identity = identity(read_file(stage / ROLE_READABILITY_OFF_ARCHIVE))
+        make_archive(stage / FIELD_PROMPT_OFF, stage / FIELD_PROMPT_OFF_ARCHIVE, FIELD_PROMPT_OFF)
+        field_prompt_archive_identity = identity(read_file(stage / FIELD_PROMPT_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -710,6 +721,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({ROLE_READABILITY_OFF + "/" + PROJECT: lock["project"],
                                ROLE_READABILITY_OFF + "/" + PLACE: role_off_lock["final_place"],
                                ROLE_READABILITY_OFF_ARCHIVE: role_archive_identity})
+        expected_stage.update({FIELD_PROMPT_OFF + "/sources/" + name: identity(raw) for name, raw in field_off.items()})
+        expected_stage.update({FIELD_PROMPT_OFF + "/" + PROJECT: lock["project"],
+                               FIELD_PROMPT_OFF + "/" + PLACE: field_off_lock["final_place"],
+                               FIELD_PROMPT_OFF_ARCHIVE: field_prompt_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -749,6 +764,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "br_canyon_rollback_archive": canyon_archive_identity,
             "role_readability_followup": lock["role_readability_followup"],
             "role_readability_rollback_archive": role_archive_identity,
+            "field_prompt_followup": lock["field_prompt_followup"],
+            "field_prompt_rollback_archive": field_prompt_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -761,7 +778,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 26, "unchanged_sources": 43,
-            "compile_count": 152, "rojo_build_count": 13, "instances": 75,
+            "compile_count": 153, "rojo_build_count": 14, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -769,6 +786,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "relay_presentation_parent_place": relay_off_lock["final_place"],
             "br_canyon_parent_place": canyon_off_lock["final_place"],
             "role_readability_parent_place": role_off_lock["final_place"],
+            "field_prompt_parent_place": field_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

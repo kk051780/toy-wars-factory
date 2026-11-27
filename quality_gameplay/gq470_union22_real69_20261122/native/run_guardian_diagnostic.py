@@ -96,7 +96,9 @@ def source_contract(root, profile, input_lock):
     relay = profile["relay_presentation_followup"]
     canyon = profile["br_canyon_followup"]
     role = profile["role_readability_followup"]
-    role_parent_pins = current_pins | {name: row["parent"]["after"] for name, row in role["rows"].items()}
+    field = profile["field_prompt_followup"]
+    field_parent_pins = current_pins | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]["after"]}
+    role_parent_pins = field_parent_pins | {name: row["parent"]["after"] for name, row in role["rows"].items()}
     canyon_parent_pins = role_parent_pins | {name: row["parent"]["after"] for name, row in canyon["rows"].items()}
     relay_parent_pins = canyon_parent_pins | {name: row["parent"]["after"] for name, row in relay["rows"].items()}
     score_parent_pins = relay_parent_pins | {compose.SCORE_SOURCE: score["parent_score_row"]["after"]}
@@ -107,6 +109,7 @@ def source_contract(root, profile, input_lock):
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     rel = compose.GUARDIAN_SOURCE
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == repair["repaired_guardian"]
+                   and native.source_snapshot(root / compose.FIELD_PROMPT_OFF / "sources") == field_parent_pins
                    and native.source_snapshot(root / compose.ROLE_READABILITY_OFF / "sources") == role_parent_pins
                    and native.source_snapshot(root / compose.BR_CANYON_OFF / "sources") == canyon_parent_pins
                    and native.source_snapshot(root / compose.RELAY_PRESENTATION_OFF / "sources") == relay_parent_pins
@@ -120,7 +123,9 @@ def source_contract(root, profile, input_lock):
     bodies = {path: native.read(previous / path) for path in previous_pins}
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(current_raw) == current_pins[rel], "GUARDIAN_SOURCE_READ_DRIFT")
-    native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"] == role["repaired_place"]
+    native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"] == field["repaired_place"]
+                   and native.identity(native.read(root / compose.FIELD_PROMPT_OFF / compose.PLACE))
+                   == field["parent_place"] == role["repaired_place"]
                    and native.identity(native.read(root / compose.ROLE_READABILITY_OFF / compose.PLACE))
                    == role["parent_place"] == canyon["repaired_place"]
                    and native.identity(native.read(root / compose.BR_CANYON_OFF / compose.PLACE))
