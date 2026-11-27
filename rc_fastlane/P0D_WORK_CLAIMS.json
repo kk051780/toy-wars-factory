@@ -42786,7 +42786,7 @@
     {
       "claim_id": "P0D-GQ219-MAGE-025-ACTIVE-LIGHTNING-CHAIN-20261128",
       "feature_id": "GQ219_MAGE_025_ACTIVE_LIGHTNING_CHAIN_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -42800,7 +42800,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Fixed #219 MAGE-025 selected ACTIVE neutral chain: 1–5 distinct targets, each hop 4–8 studs, 20s independent cooldown and one 40E spend, 0.24s warning, real existing Horde HP/KO/LOS and safe new C/touch control. Keeps Water Q, staff F, all non-Mage roles and PRIVATE source unchanged. Stage sound/standalone lightning staff physical ART to be reviewed at the fixed milestone; no combo bundled.",
       "resources": [
@@ -43077,7 +43077,7 @@
         "operation_id": "3df43aef-963c-4c09-ace9-824b3dfb1a22"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "5386557c98ca600ccd77a2198ef279a93714c858",
         "permitted_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
@@ -43108,7 +43108,38 @@
           "review": 6092966884,
           "trusted_queue_run": 46062308525,
           "trusted_queue_job": 140719248216
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "915b50884afa1b75d6d9e4a673539343f85b2991",
+        "writer_return": "a8b8923ac8eebe64ff6a4eb1d508ae6cfd670276",
+        "adopted_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "adopted_at": "2026-11-27T20:16:30.875Z"
+      },
+      "actual_official_rc": {
+        "head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "previous": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15229761144,
+        "active_zip_bytes": 227522,
+        "active_zip_digest": "sha256:bec854b149050ef6bd064bd6fb0f62babea56f36535fb64f8d6c2d4cea8d2b77",
+        "active_place_bytes": 729423,
+        "active_place_sha256": "ac26ad336fc5c3c54c367f68d979be3ac0aec14c24c8180e717e1cc7d426ed85",
+        "active_off_place_bytes": 718628,
+        "private_ci": 46062505729,
+        "private_job": 140719887032,
+        "private_steps": 48,
+        "private_artifact": 15229577588,
+        "private_zip_bytes": 26760309,
+        "private_zip_digest": "sha256:b1eb1317856082f729a094f5d4eff04aa09d69206c6e4bce737f753ed98d57e3",
+        "private_place_bytes": 895073,
+        "private_place_sha256": "12a0a93ad58a98167acda07684b3a5a9096a1daa55d3b4623d3d325fa75b2e74",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7227506509",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -43173,7 +43204,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 942,
         "branch": "quality/gq470-lss-shorefoam-facets-20261121",
         "old_pr_head": "2448dc4f0580462335b3b4777f94c641e38b3c65",
@@ -43271,6 +43302,92 @@
           "latest_rebased_core_and_retention_local_pass": true,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
+      "prepared_candidate_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
+      "prepared_candidate_tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "931ccd2ee58a85bea63c47ea249694c03683cfe8",
+          "bytes": 66216
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "d82996ebbb72b276608fae569389f881777dcf42",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "c1bd8dba2c974f41a32d281a197c76caf1089ed4",
+          "bytes": 10219
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "ec3ec3a923b782831743637b0dc6f8f6b675e158",
+          "bytes": 7565
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "e3ada966262eea5b8f77d843e26ba07d24c4c77e",
+          "bytes": 20957
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "3f3849829d0c2e5110d2185806b717cdd74d6a9a",
+          "bytes": 52694
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "a90e7672ec2a686cc9fc2cf90407e235e1e9340f",
+          "bytes": 1628910
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/shorefoam/observe_native.py",
+          "mode": "100644",
+          "blob": "f8a5176ef03b81561f43156e5912ffbd2ff066a7",
+          "bytes": 4658
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/shorefoam/prepare.py",
+          "mode": "100644",
+          "blob": "f8829509ab3de56da8f5e205f0f85c2b8bd1bffb",
+          "bytes": 7892
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "ddc868cb8ac37ccf8079121cafd055b75831744d",
+          "bytes": 159729
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "446e35b728c46feb728fc928e4979c1d273417bc",
+          "bytes": 124596
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 942,
+        "exact_head": "56298b3f6503fba49be4d6f903be85ce98c4a386",
+        "exact_tree": "a2efc1f3ef4f9d2d119e94d7494d60beabe56a13",
+        "exact_parent": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "previous_candidate": null,
+        "preserved_author_parent": "2448dc4f0580462335b3b4777f94c641e38b3c65",
+        "source_lease": "b9d8fad5964ca978a1c6111878706b10fdd8daf7",
+        "source_lease_return": "70beb32d2cf38e9316156b4677a79e2559db76fe",
+        "prepared_at": "2026-11-27T20:26:46.912Z"
+      },
+      "actual_binding_lease": {
+        "commit": "701de756b672542f4580319793013230e0e488b9",
+        "operation_id": "34f97f52-273c-4d0d-9e20-da3d02eb0770"
       }
     }
   ],
