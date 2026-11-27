@@ -41533,7 +41533,7 @@
     {
       "claim_id": "P0D-GQ219-MAGE-041-ACTIVE-WATER-BOLT-20261128",
       "feature_id": "GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent scoped Active companion)",
       "parent_issue": 219,
@@ -41547,7 +41547,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Exact fixed GQ219 MAGE-041 catalog row and actual active selected Mage Q, only neutral combat. Reuse Growth, single original Game/Horde HP path, caster-root LOS, only actual living target marks, current role/round/avatar authority, existing 3-target budget, no extra mark damage. Real status range/time/UI, existing Mage F and Warrior Q preserved; no Combo activation, Store or additional Remote.",
       "resources": [
@@ -41757,7 +41757,7 @@
         "operation_id": "f7601ae5-bc3b-4314-924a-b45f71bd1cb9"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "fdc00d1c47796e6298088c0b08e0420298e32e05",
         "permitted_head": "63d6092d876325b16e540708d3ec992d8bd9540d",
@@ -41788,7 +41788,37 @@
           "review": 6092156398,
           "trusted_queue_run": 46050858969,
           "trusted_queue_job": 140681504371
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "c4f6413f22859ecbfa4630709e6b6f9457401b25",
+        "writer_return": "ed460a0b944015fcbe16de138852cbe2b3828f67",
+        "adopted_head": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "adopted_at": "2026-11-27T18:39:07.073Z"
+      },
+      "actual_official_rc": {
+        "head": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "tree": "e190d093a79f249696a8cbff8c1604986b602cbb",
+        "previous": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "active_ci": 46051057487,
+        "active_job": 140682173983,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15224028138,
+        "active_zip_bytes": 218527,
+        "active_zip_digest": "sha256:40092386d849067fb9df0b2f8ea1b85d842072a4f99021390a6632cb270fee2f",
+        "active_place_bytes": 709077,
+        "active_place_sha256": "1c42a55ba536537779e61ad1079fd0cb2c7098bab1fa7d7f33459f86c59482d5",
+        "active_off_place_bytes": 700116,
+        "private_ci": 46051057460,
+        "private_job": 140682173240,
+        "private_steps": 48,
+        "private_artifact": 15224083997,
+        "private_zip_bytes": 26223447,
+        "private_zip_digest": "sha256:63dcecbe9c4b549f32d45cce479a5a11b4c91bf3edcb85f869fcf154cd4684ed",
+        "private_place_bytes": 894743,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7225864219",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -41799,7 +41829,7 @@
       "owner": "/root (Codex parent scoped Active companion)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1046,
       "base_rc_sha": "63d6092d876325b16e540708d3ec992d8bd9540d",
       "base_rc_tree": "e190d093a79f249696a8cbff8c1604986b602cbb",
       "prep_branch": "quality/gq219-active-ninja-blink-031-20261128",
@@ -41855,7 +41885,7 @@
       },
       "authority_basis": "#1011 V3.5, #218,#220 and fixed #219 design for NINJA-031. Existing selected Active collision maths reused for Active only; exact bounded single draft.",
       "source_grant": {
-        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "status": "CONSUMED_BRANCH_AND_DRAFT_SOURCE_ONLY",
         "branch": "quality/gq219-active-ninja-blink-031-20261128",
         "formal_parent": "63d6092d876325b16e540708d3ec992d8bd9540d",
         "tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
@@ -41921,6 +41951,67 @@
           "old_groups": 12,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
+      "prepared_candidate_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
+      "prepared_candidate_tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "3bc77e46b67021d25f05fea458923e772ba230ec",
+          "bytes": 254570
+        },
+        {
+          "path": "rc_fastlane/apply_active_ninja_blink.py",
+          "mode": "100644",
+          "blob": "374ea036f3073c9363679ba8e4b8d9853d7e53f8",
+          "bytes": 10166
+        },
+        {
+          "path": "rc_fastlane/features/active_ninja_blink/NinjaBlink.luau",
+          "mode": "100644",
+          "blob": "c02355b0c88b8c82011b89c69bc7e7b21bf7e247",
+          "bytes": 4617
+        },
+        {
+          "path": "rc_fastlane/features/active_ninja_blink/native_cases.luau",
+          "mode": "100644",
+          "blob": "1fed66884187f2aae2e10b69400ebcc7a4ef56c8",
+          "bytes": 6600
+        },
+        {
+          "path": "rc_fastlane/features/active_ninja_blink/source_lock.json",
+          "mode": "100644",
+          "blob": "c68f6d6e3a1ef602df3815647378cb48619a516c",
+          "bytes": 1239
+        },
+        {
+          "path": "rc_fastlane/verify_active_ninja_blink_native.py",
+          "mode": "100644",
+          "blob": "f686726d3dce2f18fbd235c6d7b9eea219b9f4f6",
+          "bytes": 2094
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "1fe29cda2d3364782058ac390c022cfc4075496c",
+          "bytes": 119783
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1046,
+        "exact_head": "b7f9c5e183f8e2c834bce8ee291149f860fc368c",
+        "exact_tree": "0b1e2b78e889fdbb15b2f0e0bbb5fa9571c699ce",
+        "exact_parent": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "previous_candidate": null,
+        "source_lease": "d3f7f61cf000b55aa28b303aeb90b0ec740cfcb9",
+        "source_lease_return": "fc7d0cdb0fd72d39f4d7d41fd55e9623933587a9",
+        "prepared_at": "2026-11-27T18:47:27.582Z"
+      },
+      "actual_binding_lease": {
+        "commit": "3dfe9f67e7ae271279e8b8347970bc3d6327b5d0",
+        "operation_id": "f7794488-52c1-4eb3-8fe5-7f19d7bf12a0"
       }
     }
   ],
