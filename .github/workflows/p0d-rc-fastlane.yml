@@ -718,6 +718,20 @@ jobs:
                     grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_26_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
                     grep -Fx P0D_REAL_BOT_PATH_LEASE_25_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
                     grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_38_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    H2_CONFIG=rc_fastlane/features/active_h2_exit/source_lock.json
+                    if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$H2_CONFIG"; then
+                      H2_OFF=/tmp/p0d_active_h2_exit_off.rbxlx
+                      /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$H2_OFF"
+                      python3 -B rc_fastlane/apply_active_h2_exit.py --profile "$PROFILE" --dist "$DIST" \
+                        --off-place "$H2_OFF" | tee /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      grep -F ACTIVE_RICH51_H2_EXIT_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      grep -Fx ACTIVE_RICH51_H2_DEPARTURE_AND_FRESH_READY_EXACT_GAME_ONLY_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                      python3 -B rc_fastlane/verify_active_h2_exit_native.py --dist "$DIST" --out /tmp/p0d_active_h2_exit_native.luau
+                      /tmp/p0d_new_luau/luau /tmp/p0d_active_h2_exit_native.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log
+                      test "$(grep -c '^PASS:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log)" -eq 18
+                      if grep -q '^FAIL:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log; then exit 1; fi
+                    fi
                   fi
                 fi
               fi
@@ -795,7 +809,15 @@ jobs:
                   assert lock['rc_active_solo_bots']==solo
                   assert solo['actor_module']=='server/SoloTeamBots.luau' and solo['studio_classic_only'] is True
                   assert lock['blobs'][solo['actor_module']]==solo['bot_blob']
-                  assert lock['blobs']['server/Game.server.luau']==solo['game_after']
+                  h2_config=pathlib.Path('rc_fastlane/features/active_h2_exit/source_lock.json')
+                  h2_enabled=json.loads(h2_config.read_bytes())['enabled']
+                  assert ('rc_active_h2_exit' in active_receipt)==h2_enabled
+                  final_game=solo['game_after']
+                  if h2_enabled:
+                      h2=active_receipt['rc_active_h2_exit']
+                      assert lock['rc_active_h2_exit']==h2 and h2['before']==final_game and h2['studio_score5_only'] is True
+                      final_game=h2['after']
+                  assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
                         if e.findtext("./Properties/string[@name='Name']")=='SoloTeamBots']

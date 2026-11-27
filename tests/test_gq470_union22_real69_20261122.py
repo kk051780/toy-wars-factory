@@ -175,6 +175,10 @@ class UnionBoundary(unittest.TestCase):
         bot_gitblob = hashlib.sha1(b"blob " + str(len(bot_body)).encode() + b"\0" + bot_body).hexdigest()
         self.assertEqual(bot_gitblob, solo_bots["bot_blob"])
         self.assertTrue(private_blobs.isdisjoint((bot_gitblob, solo_bots["after_game"])))
+        h2_exit = verify.data(active / "features/active_h2_exit/source_lock.json")
+        self.assertEqual(h2_exit["profile"], selection["active_profile"])
+        self.assertEqual(h2_exit["before"], solo_bots["after_game"])
+        self.assertNotIn(h2_exit["after"], private_blobs)
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
