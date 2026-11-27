@@ -38641,6 +38641,133 @@
         "device_evidence": "NOT_TESTED_V3.5",
         "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7220815009"
       }
+    },
+    {
+      "claim_id": "P0D-FB007-ACTIVE-SAFE-LOBBY-376-20261128",
+      "feature_id": "FB007_LOBBY_DOJO_PHYSICAL_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 910,
+      "source_issue": 376,
+      "integration_issue": 220,
+      "pr": 376,
+      "base_rc_sha": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+      "base_rc_tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
+      "prep_branch": "feature/p0d-fb007-lobby-dojo-real-separation-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Studio-only existing author #376 physically isolated team lobby, #396 team-rebalance move and existing bounded late spectator correction after engine spawn override. Active rich51 Game/V4TrainingBridge plus one exact authored LobbyDojoIsland; keep current Ready, #391 result/dead guard, #407 bot, #395 Score5, #1016 persistence, existing WCS/Twin/Realm and every Private source. No other places or device claims.",
+      "resources": [
+        "ACTIVE68_FB007_PHYSICAL_LOBBY",
+        "ACTIVE68_DURABLE_DOJO_COORDINATES",
+        "ACTIVE68_SPECTATOR_AND_RESULTS_PLACEMENT"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_safe_lobby.py",
+        "rc_fastlane/features/active_safe_lobby/source_lock.json",
+        "rc_fastlane/features/active_safe_lobby/spectator_placement.luau",
+        "rc_fastlane/verify_active_safe_lobby_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/376",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "6ac3347c-b112-4591-b90b-ffa0c59c2ea7",
+      "issued_at": "2026-11-27T15:01:38.411Z",
+      "expires_at": "2026-11-27T17:01:38.411Z",
+      "actual_metadata_lease": {
+        "ref": "e5642c568a5aae06c0f504ee29fbc29b8cd0f1f3",
+        "blob": "79cf41295f401feda21d4591bc6fa2ddb57e3d86",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "6ac3347c-b112-4591-b90b-ffa0c59c2ea7",
+          "task_id": null,
+          "epoch": 948,
+          "acquired_at": "2026-11-27T15:01:23.565Z",
+          "expires_at": "2026-11-27T15:31:23.565Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 376,
+        "branch": "feature/p0d-fb007-lobby-dojo-real-separation-20261114",
+        "old_pr_head": "8d7dcfc6d623549915526ea434b6e39bb50f1200",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+        "local_head": "d27bc83425e2f95adc8a3b618196a415a23fbb2d",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "4924c8830bdd63ea78bfefb2c31208b986110970",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 223156
+          },
+          {
+            "mode": "100644",
+            "blob": "1931decfbcc33592b1cc29515d1a63b074f9215d",
+            "path": "rc_fastlane/apply_active_safe_lobby.py",
+            "bytes": 7939
+          },
+          {
+            "mode": "100644",
+            "blob": "052651243fd35126bcd21bd8507105dfc67743e3",
+            "path": "rc_fastlane/features/active_safe_lobby/source_lock.json",
+            "bytes": 1135
+          },
+          {
+            "mode": "100644",
+            "blob": "58186a874e5b35df8ee9c88a024c1871566d737e",
+            "path": "rc_fastlane/features/active_safe_lobby/spectator_placement.luau",
+            "bytes": 1367
+          },
+          {
+            "mode": "100644",
+            "blob": "bfba47b744904b56dc334087f7a574e080fac388",
+            "path": "rc_fastlane/verify_active_safe_lobby_native.py",
+            "bytes": 9728
+          },
+          {
+            "mode": "100644",
+            "blob": "2945f10ea15df97957a369ba5d0369df4c1f1962",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 111944
+          }
+        ],
+        "expires_at": "2026-11-27T16:01:38.411Z",
+        "issued_from": {
+          "lease": "e5642c568a5aae06c0f504ee29fbc29b8cd0f1f3",
+          "owner": "6ac3347c-b112-4591-b90b-ffa0c59c2ea7"
+        },
+        "local_qa": {
+          "on": 653907,
+          "off": 646032,
+          "place_sha256": "3e5ac7b22b388fcdb928a38c0f0cdd27c942fb80f34ff1d8b1c8c744d17d85d9",
+          "off_sha256": "6127dce8053431e31a5d3254bccb2f004bfbb3641f6d01dfcd26c8b278e5b7a2",
+          "mounts": 68,
+          "existing_game_delta": 2818,
+          "training_delta": 54,
+          "module_bytes": 4789,
+          "unchanged_original_sources": 65,
+          "groups": 5,
+          "author_rebalance": 7,
+          "older_lifecycle_functions_byte_exact": true,
+          "photo_device": "NOT_TESTED"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
