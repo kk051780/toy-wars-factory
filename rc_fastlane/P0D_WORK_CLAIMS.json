@@ -32791,7 +32791,87 @@
           "origin": "controller"
         }
       },
-      "authority_basis": "Authenticated #1011 V2.1 delegated narrow prepared source scope and authenticated #218 ledger. Does not grant transport, independent approval, RC writing or other sources."
+      "authority_basis": "Authenticated #1011 V2.1 delegated narrow prepared source scope and authenticated #218 ledger. Does not grant transport, independent approval, RC writing or other sources.",
+      "source_grant": {
+        "status": "EXACT_PREVIEW_BRANCH_AND_ONE_DRAFT_PR",
+        "branch": "feature/p0d-field-egg-terminal-20261127",
+        "expected_branch_before": "ABSENT",
+        "fixed_tree": "f3deac814d8ab6ee5b4c9f1d492de3bdf5829ca0",
+        "local_commit": "cfc92b3615ce3d05e7462c7e300ac3df57ce644b",
+        "parent": "daa6b076ac3502de632220aea9d7aec494232694",
+        "max_new_draft_prs": 1,
+        "allowed_source_change": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "bytes": 49687,
+            "blob": "ef761df3c701f8f26c6bf4a9bbc925fbb8d64756",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "bytes": 34938,
+            "blob": "8bce3a414b03ca16f7a98d2a3cb9cfec3910cbb6",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_cases.luau",
+            "bytes": 11054,
+            "blob": "144c2bbebb0ce326cca5822970909584a34a2c35",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_native.py",
+            "bytes": 4727,
+            "blob": "1c744e2e3a03ca06b626a15bdaef27721aec3a8b",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "bytes": 16071,
+            "blob": "cba0bd1db9a08eb1dbb56350543168ab481454db",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "bytes": 48186,
+            "blob": "adf6cf803a7999ac7b372081c88d1d8379c8fa39",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "bytes": 815607,
+            "blob": "3c413a2bd44f0d7851f474481962dec52ab6f822",
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "bytes": 115503,
+            "blob": "e112781018858a3dbaa0ae1c0da078d4888e0bbf",
+            "mode": "100644"
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 98421,
+            "blob": "e1585a43b81ce2cbb75b80a7281ca87fd0b194b8",
+            "mode": "100644"
+          }
+        ],
+        "existing_pr_exception": "Original #482 is open for vault/released egg scope and has no terminal FieldEgg behavior. #470 original +674 bytes handles only Siege and Released prompts. Original local 43bbc8b3 same prepared source reused; no duplicate open PR was found.",
+        "expires_at": "2026-11-27T05:34:49.295Z",
+        "issued_from": {
+          "lease": "0d65402b150a5a6492190adfadb56acb8f052fb3",
+          "owner": "fb2bfae3-74b2-49b9-b31d-911cb24d4d07"
+        },
+        "actual_local_qa": {
+          "compiled": 153,
+          "rojo": 14,
+          "older_rollbacks_byte_exact": 12,
+          "immediate_off_byte_exact": true,
+          "native_field_cases": 8,
+          "focused_boundary_cases": 5,
+          "native_receipt": "dbc9bc19d203ba7915c4409e8f2c53683aacd3b49c53ac6f7264dc2f55db9439"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
