@@ -1,0 +1,151 @@
+name: GQ470 P0 REAL69 compact AI hero tag source PREP (not official RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_bot_objective_tag_real69_20261120/**'
+      - '.github/workflows/gq470-bot-tag-real69-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-locked-bot-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify patch negative tests and current exact REAL69 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py
+          python3 -B quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py --self-test
+          test "$(gh api repos/$GITHUB_REPOSITORY/actions/runs/44695199140 --jq '.head_sha+" "+.conclusion')" = "e80973c354f14a0d0088577f3cc1a875454f0f8f success"
+          mkdir -p /tmp/gq470-bot-tag
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq470-bot-tag
+          test -s /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          test -s /tmp/gq470-bot-tag/REAL69_LEGACY_INTAKE_RECEIPT.json
+          python3 -B quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py --base /tmp/gq470-bot-tag
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/gq470-bot-tag/REAL69_LEGACY_INTAKE_RECEIPT.json').read_text())
+          x=r['gq470_fb015_bot_tag']
+          assert x['other_selected_routes_byte_exact']==68
+          assert x['tag_pixels']==[104,24] and x['tag_max_studs']==22
+          assert x['new_gameplay_authority'] is False and x['extra_ui_instances']==0
+          assert x['studio']=='NOT_TESTED' and not x['owner_accepted']
+          print('BOT_TAG_REAL69_SOURCE_ONLY_NOT_STUDIO_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Native Luau 69 ON and OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B /tmp/gq470-bot-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq470-bot-luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'quality_gameplay/gq470_bot_objective_tag_real69_20261120')
+          from patch_bot_tag69 import selected, TARGET
+          root=Path('/tmp/gq470-bot-tag')
+          on=selected(root)
+          off=selected(root/'off69_bot_tag')
+          assert len(on)==69 and set(on)==set(off)
+          assert {key for key in on if on[key].read_bytes()!=off[key].read_bytes()}=={TARGET}
+          for home,items in [(root,on),(root/'off69_bot_tag',off)]:
+              for key,p in items.items():
+                  subprocess.run(['/tmp/gq470-bot-luau/luau-compile','--text',str(p)],
+                                 check=True,stdout=subprocess.DEVNULL)
+          print('GQ470_TAG_NATIVE_ON69_OFF69_PASS')
+          PY
+      - name: Rojo 7.7.1 ON and OFF exact Place with source-only 17 and 48 audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq470-bot-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq470-bot-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile('/tmp/gq470-bot-rojo.zip') as z:
+              entries=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(entries)==1
+              p=Path('/tmp/gq470-bot-rojo')
+              p.write_bytes(z.read(entries[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq470-bot-rojo build /tmp/gq470-bot-tag/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          /tmp/gq470-bot-rojo build /tmp/gq470-bot-tag/off69_bot_tag/EGGRUMBLE_REAL69.project.json -o /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx
+          cmp /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx /tmp/gq470-bot-tag/off69_bot_tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-bot-tag/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq470-bot-tag/off69_bot_tag/EGGRUMBLE_REAL69.project.json --place /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx --count 69
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)"
+          test "$CURRENT" = "e80973c354f14a0d0088577f3cc1a875454f0f8f" || { echo RED_STALE_REAL69_PARENT; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            # GitHub pull_request.base.sha can lag the live canonical ref.
+            # Trust fresh ref + actual commit graph, never a stale event snapshot.
+            PR_HEAD="$(jq -r '.pull_request.head.sha // empty' "$GITHUB_EVENT_PATH")"
+            test -n "$PR_HEAD" && test "$PR_HEAD" = "$(git rev-parse HEAD)" || { echo RED_PR_HEAD_MISMATCH; exit 1; }
+            LINEAGE="$(gh api "repos/$GITHUB_REPOSITORY/compare/$CURRENT...$PR_HEAD" --jq .status)"
+            test "$LINEAGE" = ahead || { echo RED_PR_HEAD_NOT_CURRENT_RC_DESCENDANT; exit 1; }
+          fi
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('/tmp/gq470-bot-tag')
+          p=root/'REAL69_LEGACY_INTAKE_RECEIPT.json'
+          r=json.loads(p.read_text())
+          output=root/'EGGRUMBLE_REAL69_PRIVATE.rbxlx'
+          r['build_head']=__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip()
+          r['gq470_fb015_bot_tag']['native_rojo_off69']='PASS'
+          r['gq470_fb015_bot_tag']['studio']='NOT_TESTED'
+          r['private_place_bytes']=output.stat().st_size
+          r['private_place_sha256']=hashlib.sha256(output.read_bytes()).hexdigest()
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2,sort_keys=True)+'\n')
+          print('GQ470_TAG_ART_PRIVATE_CANDIDATE_PLACE_BYTES',output.stat().st_size)
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 - <<'PY'
+          import json,pathlib,sys
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          root=pathlib.Path('/tmp/gq470-bot-tag')
+          selected=project_scan(root,'EGGRUMBLE_REAL69.project.json')
+          off=project_scan(root/'off69_bot_tag','EGGRUMBLE_REAL69.project.json')
+          assert len(selected)==len(off)==69
+          assert {k for k in selected if selected[k]['sha256']!=off[k]['sha256']}=={'ServerScriptService/EGGRUMBLE_BotActors'}
+          families=marker_check(selected)
+          assert len(families)==17
+          (root/'BOT_TAG_LEGACY17_SOURCE_AUDIT.json').write_text(json.dumps({'families':families,'same_as_formal_except_bot_art':True,'gameplay':'NOT_TESTED'},ensure_ascii=False,indent=2)+'\n')
+          print('BOT_TAG_17_FAMILIES_MARKERS_PASS')
+          PY
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --base /tmp/gq470-bot-tag --report /tmp/gq470-bot-tag/BOT_TAG_LEGACY48_AUDIT.json
+          echo GQ470_TAG_ART_69_NATIVE_ROJO_OFF_17_48_PASS_NOT_STUDIO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-REAL69-BOT-TAG-PREP-NOT-FORMAL
+          path: |
+            /tmp/gq470-bot-tag/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-bot-tag/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-bot-tag/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-bot-tag/sources/**
+            /tmp/gq470-bot-tag/OFF69_BOT_TAG_REBUILT.rbxlx
+            /tmp/gq470-bot-tag/BOT_TAG_LEGACY17_SOURCE_AUDIT.json
+            /tmp/gq470-bot-tag/BOT_TAG_LEGACY48_AUDIT.json
+          if-no-files-found: error
+          retention-days: 7
