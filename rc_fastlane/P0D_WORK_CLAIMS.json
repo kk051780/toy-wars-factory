@@ -37169,6 +37169,125 @@
           "trusted_queue_job": 140511678182
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-ACTIVE-RESULTS-391-20261127",
+      "feature_id": "GQ910_ACTIVE_RESULTS_RETURN_391",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, bounded reuse of original #391)",
+      "parent_issue": 910,
+      "source_issue": 391,
+      "integration_issue": 220,
+      "pr": 391,
+      "base_rc_sha": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+      "base_rc_tree": "4bca19eaba9e3964fb7509c210dc1d56dcd4555a",
+      "prep_branch": "feature/p0d-prep-results-return-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Reuse original #391 RESULTS->LOBBY recovery on existing ACTIVE rich51 Game. Return living participants to existing team spawn and defer guarded dead participant LoadCharacter. Keep fresh Ready consent, old Private78 physical lobby, original author parent and #1016 persistence intact.",
+      "resources": [
+        "ACTIVE66_RESULTS_TEAM_SPAWN",
+        "ACTIVE66_DEFEAT_RETURN_LIFECYCLE",
+        "GQ910_ACTIVE_RESULTS_RETURN_391"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_results.py",
+        "rc_fastlane/features/active_results/source_lock.json",
+        "rc_fastlane/verify_p0_results78_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "protected_exclusion": {
+        "pr": 1016,
+        "head": "84b39ba8dab77a5bda67969fe380484b619f1e00",
+        "existing_persistence_remains_separate": true
+      },
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/391",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "466d26d8-55dc-4499-9be6-a7387551779c",
+      "issued_at": "2026-11-27T12:48:48.606Z",
+      "expires_at": "2026-11-27T14:48:48.606Z",
+      "actual_metadata_lease": {
+        "ref": "baf92dbf20bafd4c8ab8eac5a71e947e57401568",
+        "blob": "5273504f4c0797493abbed3bbd6726029aa356f4",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "466d26d8-55dc-4499-9be6-a7387551779c",
+          "task_id": null,
+          "epoch": 915,
+          "acquired_at": "2026-11-27T12:48:26.416Z",
+          "expires_at": "2026-11-27T13:18:26.416Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Current #1011 V3.5 priority before art, #218/#220 authenticated ordinary scope. Preserve both Git ancestors and existing author text. Exact branch update/retarget only; no formal authority.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 391,
+        "branch": "feature/p0d-prep-results-return-20261114",
+        "old_pr_head": "21ac3592eba4e6e3b027212fbb8e8c105cf83ac9",
+        "old_base_ref": "feature/p0d-prep-firstplay-composite73-20261114",
+        "formal_parent": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "tree": "4144f7dd79fe72b454417ea1c61724e1011642d8",
+        "local_head": "c5a7a65454ddc86d527d467aebe575020f018a34",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "208152355c709b0a4b6b890763b3851fe9a5b2cd",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 206450
+          },
+          {
+            "mode": "100644",
+            "blob": "40cb78c446c1b518d52cc2f6d33258bd80d543d5",
+            "path": "rc_fastlane/apply_active_results.py",
+            "bytes": 4369
+          },
+          {
+            "mode": "100644",
+            "blob": "0980a346cbf39f4a40780bff3ae31c16542420ed",
+            "path": "rc_fastlane/features/active_results/source_lock.json",
+            "bytes": 233
+          },
+          {
+            "mode": "100644",
+            "blob": "b0b70bf1e9affbd143db7a85453c292c4e725c7c",
+            "path": "rc_fastlane/verify_p0_results78_native.py",
+            "bytes": 7420
+          },
+          {
+            "mode": "100644",
+            "blob": "45b91306af908ebcdc51855ece0773b83fcb937e",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 109674
+          }
+        ],
+        "expires_at": "2026-11-27T13:48:48.606Z",
+        "issued_from": {
+          "lease": "baf92dbf20bafd4c8ab8eac5a71e947e57401568",
+          "owner": "466d26d8-55dc-4499-9be6-a7387551779c"
+        },
+        "local_qa": {
+          "place_bytes": 609959,
+          "off_bytes": 608571,
+          "sha256": "2759499b4a34fd664d46662586f69461652364f61ba94e85cd0b659310b620b6",
+          "official_off_exact": true,
+          "source_changes": 1,
+          "native_results": 15,
+          "additional_round_team_fence": 2
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
