@@ -32729,8 +32729,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_candidate": "43bbc8b3eb5ae5702bcb362f3a95f3db8fd16abf",
       "original_product_source_pins": {
@@ -32971,6 +32971,25 @@
           "lease": "79c69347523bb70bfa865759b6bbc1995fcc1909",
           "local_late_injection": "3/3 PASS",
           "source_unchanged": true
+        }
+      },
+      "independent_source_receipt": {
+        "kind": "ACTUAL_REGISTERED_DISTINCT_CONTEXT_REVIEW_COMMENT",
+        "id": 6083672639,
+        "git_head": "fb87f9f23d0a136da048804cef307a865483f133",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/1038#pullrequestreview-6083672639",
+        "context": "/root/p0_offer_review26",
+        "status": "PASS_EXACT_1038_FIELD_EGG_TERMINAL_HOSTED_QA_ONLY",
+        "canonical_ci": {
+          "run": 45942471183,
+          "job": 140319646834,
+          "green_steps": 48,
+          "artifact": 15173278547,
+          "zip_bytes": 17663615,
+          "digest": "sha256:525ff33f793e4fc8496e94c227a61677b0aecfc1b874d39e9907005851d32749"
+        },
+        "intake": {
+          "status": "AWAITING_PUBLISHED_READY_METADATA"
         }
       }
     }
