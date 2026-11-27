@@ -33818,6 +33818,207 @@
           "fun": "NOT_TESTED"
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-COMBAT-VISUAL-931-20261127",
+      "feature_id": "GQ470_COMBAT_VISUAL_READABILITY",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, existing #931 reused)",
+      "parent_issue": 470,
+      "art_gate_issue": 420,
+      "integration_issue": 220,
+      "base_rc_sha": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+      "base_rc_tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+      "pr": 931,
+      "prep_branch": "quality/gq470-art4-composite-prep-20261120",
+      "expected_source_branch": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
+      "allowed_new_prs": 0,
+      "source_scope_granted": true,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Three already authored leaves only: compact Subject-owned nearby Bot objective tag, confirmed KO fin cap and proven fade delay, stone giant noncolliding silhouette. Preserve original #931 and donor branches. Equal other 66. No #940, no training, skill effectiveness, growth, store, AI decisions, match control, active profile changes.",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_BOTACTORS",
+        "REAL69_SOURCE_EGGRUMBLE_IMPACTFEEDBACK",
+        "REAL69_SOURCE_EGGRUMBLE_NEUTRALSTONEGIANT",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "GQ470_COMBAT_VISUAL_READABILITY"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/apply_pinned_fade.py",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/fade_fixture.luau",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py",
+        "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py",
+        "quality_gameplay/gq470_stonegiant_silhouette_real69_20261120/patch_stone_giant69.py",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/combat_visual_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_donors": [
+        {
+          "pr": 924,
+          "head": "ea2882ae8c703bd987f2834ccb131959db34ffe2"
+        },
+        {
+          "pr": 1007,
+          "head": "0ba53653fd91f1bd0529ab2c21c349e14c47c0c8"
+        },
+        {
+          "pr": 928,
+          "head": "f181040d1febe4b0e1104090e6c4022235e96202",
+          "capped_fade_evidence": "https://github.com/kk051780/toy-wars-factory/pull/928#issuecomment-7174979365"
+        },
+        {
+          "pr": 930,
+          "head": "a721e7acbd78b6232bf1da39ab29e6e0df442f9b",
+          "exact_selected_sha256": "7286d40717be966f8833dfccf3227b81a7c6a1d9ba5c67647766596ed720b2b0"
+        }
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/928#issuecomment-7174979365",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "d3eeadd4-1359-4705-98e3-d7790d136416",
+      "issued_at": "2026-11-27T06:17:01.697Z",
+      "expires_at": "2026-11-27T08:17:01.697Z",
+      "actual_metadata_lease": {
+        "ref": "3e755039faa7ec259729b6501ff1bc20ee5d30f3",
+        "blob": "03b08e92490c87e38c8d01808b7736db1adb69bd",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d3eeadd4-1359-4705-98e3-d7790d136416",
+          "task_id": null,
+          "epoch": 848,
+          "acquired_at": "2026-11-27T06:16:42.569Z",
+          "expires_at": "2026-11-27T06:46:42.569Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated latest #1011 V3.0 and #220. Source PREP permission only. Require same-head canonical CI, scoped independent review and separately finite official writer.",
+      "source_grant": {
+        "status": "ONE_EXACT_NONFORCE_UPDATE_EXISTING_PR",
+        "pr": 931,
+        "branch": "quality/gq470-art4-composite-prep-20261120",
+        "branch_expected_before": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
+        "formal_parent": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "author_parent": "0d4fa636fc92dec5c90bc18fd674d21c22a7c909",
+        "tree": "b9e7ac7e09450db5e33353049b3c78f1606673b6",
+        "local_head": "bf3e837c9e3659d6bc70d19283fb8fd9cb61b4b2",
+        "permitted_reclassify_draft": true,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_bot_objective_tag_real69_20261120/patch_bot_tag69.py",
+            "mode": "100644",
+            "bytes": 8319,
+            "blob": "d798716e89952d957ee00598e9956af5170b33b5"
+          },
+          {
+            "path": "quality_gameplay/gq470_ko_slash_real69_20261120/apply_pinned_fade.py",
+            "mode": "100644",
+            "bytes": 1256,
+            "blob": "f1caf4eef5dff79ab9a5e4c893c0d3776b373622"
+          },
+          {
+            "path": "quality_gameplay/gq470_ko_slash_real69_20261120/fade_fixture.luau",
+            "mode": "100644",
+            "bytes": 4309,
+            "blob": "c2af55f8b14c92316306f724ee5a290106111f04"
+          },
+          {
+            "path": "quality_gameplay/gq470_ko_slash_real69_20261120/patch_ko_slash69.py",
+            "mode": "100644",
+            "bytes": 13141,
+            "blob": "37ad94d4648ff2321fd8451234df95abd8650b9b"
+          },
+          {
+            "path": "quality_gameplay/gq470_ko_slash_real69_20261120/test_live_cap_native.py",
+            "mode": "100644",
+            "bytes": 4837,
+            "blob": "a1a2641c22c453a58ad94513bdc909e0b977c4bc"
+          },
+          {
+            "path": "quality_gameplay/gq470_stonegiant_silhouette_real69_20261120/patch_stone_giant69.py",
+            "mode": "100644",
+            "bytes": 8961,
+            "blob": "a040fa3e031930fae7304e404235bb79c8dd219c"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "bytes": 54282,
+            "blob": "40d07ae1320d745f8f877c0d2e83f4210434a366"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "bytes": 35087,
+            "blob": "f7ecbdb62c738e0e579b6036aeb3022fca40a168"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/combat_visual_native.py",
+            "mode": "100644",
+            "bytes": 4014,
+            "blob": "adde2241e1e7900890920494d26b8f4c8f79c1a5"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "bytes": 17594,
+            "blob": "8ec268c9e312281cd757ed6040c15367bbc5d548"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "bytes": 49357,
+            "blob": "dc053c546b4b1895d9fee34ddc6dbfc1c86ab8fb"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "bytes": 961533,
+            "blob": "14f21a6feb71164847552946e47215972085ad8f"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "bytes": 126655,
+            "blob": "e705bbc50032720148c0edad7bda38382f074188"
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "bytes": 102963,
+            "blob": "842e4d5a0803c7cb55be6d086adf03f70b66d270"
+          }
+        ],
+        "local_qa": {
+          "place_bytes": 857678,
+          "place_sha256": "7a88b8aaa3fd472745d588c675545d3413a02677dba726e3e0e0d743af87459f",
+          "source_lock": "d07496dfb90c44eed654fc0bd43f8fe28b5c65f282bfb802e59cf42852472666",
+          "parent_off_bytes": 854300,
+          "changed_luau": 3,
+          "unchanged_luau": 66
+        },
+        "expires_at": "2026-11-27T07:17:01.697Z",
+        "issued_from": {
+          "lease": "3e755039faa7ec259729b6501ff1bc20ee5d30f3",
+          "owner": "d3eeadd4-1359-4705-98e3-d7790d136416"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
