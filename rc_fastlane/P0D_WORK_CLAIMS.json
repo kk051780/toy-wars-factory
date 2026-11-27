@@ -30796,7 +30796,7 @@
       "author_may_self_approve": false,
       "source_write_requires_separate_live_source_lease": true,
       "scope_only": true,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "PREP_READY": false,
       "registered_source_approval": false,
       "rc_write_authorized_by_this_claim": false,
@@ -30823,16 +30823,17 @@
         }
       },
       "authority_basis": "Authenticated owner standing ordinary-development delegation, current #1011 V2.1 and exact #220 sequence/empty-vault authorization in comment 7202869642; reused existing #218 requests.",
-      "source_head": "0065e204445db840861c4610770cd1b8cb470db6",
-      "credentialed_source_readback": "0065e204445db840861c4610770cd1b8cb470db6",
+      "source_head": "010e483767c30328ac3eb0fdd0a46c4e5c93a254",
+      "credentialed_source_readback": "010e483767c30328ac3eb0fdd0a46c4e5c93a254",
       "exact_head_source_branch": "feature/p0d-prep-482-empty-vault-20261127",
       "actual_candidate_readback": {
-        "head": "0065e204445db840861c4610770cd1b8cb470db6",
-        "tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb",
+        "head": "010e483767c30328ac3eb0fdd0a46c4e5c93a254",
+        "tree": "228e8b1f12e7232f46809017e51eae8ff45a39a4",
         "pr": 1034,
         "base": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
         "changed_file_count": 7,
-        "lease": "5892cde12456eadb127a01280587bef263adc3c8"
+        "lease": "767ddb2ec506f497ef2423a861c6730bb9173b7e",
+        "prior_scope": "f0b8b398fcf7228884e9adbdf890626a1a59bfb8"
       },
       "source_activity_note": "Initial git command returned a background session identifier before final ref visibility. Its controller lease was released before final proof was read. Subsequent GET and a newly acquired source-lane lease confirmed the registered exact commit/tree/diff and created the single approved draft. No official ref changed.",
       "no_source_changes_after_fixed_head_without_new_scope": true,
@@ -30875,6 +30876,21 @@
           "epoch": 768,
           "acquired_at": "2026-11-27T00:01:09.411Z",
           "expires_at": "2026-11-27T00:31:09.411Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "actual_repair_head_metadata_lease": {
+        "ref": "767ddb2ec506f497ef2423a861c6730bb9173b7e",
+        "blob": "55552610aeea70dacf28a1c70d88845f7aba9ac9",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "b73a3923-88cc-414e-8315-f36c3aa030e9",
+          "task_id": null,
+          "epoch": 770,
+          "acquired_at": "2026-11-27T00:04:10.528Z",
+          "expires_at": "2026-11-27T00:34:10.528Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
