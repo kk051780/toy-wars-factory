@@ -2513,7 +2513,7 @@
       "source_scope_granted": false,
       "scope_only": true,
       "source_reconciliation_v21": "Reuse reviewed score source from original PR #1017 and preserve every existing PR commit and six donor blobs. Modify exactly seven current producer, profile and QA paths in detached preparation. Any authenticated publication uses a later finite source lease, fast-forward to updated existing PR only, and no RC write.",
-      "source_expected_head": "547fd7d56ef0c1e0a688135e789df0f79e0358c6",
+      "source_expected_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
       "original_target_paths": [
         "quality_gameplay/gq487_relay_score_real69_20261122/compose_score_relay.py",
         "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json",
@@ -2567,8 +2567,8 @@
         }
       },
       "source_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
-      "prepared_candidate_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
-      "prepared_candidate_tree": "51233be95fc02cd0fc7e4c239171d7286da2e1b7",
+      "prepared_candidate_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
+      "prepared_candidate_tree": "e346ed1ccaca7428a9e7096761f5f2b63ac6980c",
       "prepared_source_blobs": {
         "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "1218ceb0bd9eec434906d4662512d7c44defc452",
         "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "7e60daff49eecb6d2417b5f9877dd7a0ec496b16",
@@ -2581,7 +2581,7 @@
         "quality_gameplay/gq487_relay_score_real69_20261122/native/EGGRUMBLE_ScoreBalance.spec.luau": "5056a296e88f96393c60b24c1b971bff0e534c3d",
         "quality_gameplay/gq487_relay_score_real69_20261122/native/run_regressions.py": "f568c359cee1b3479b2df4f83d1bab9ccbf993cb",
         "quality_gameplay/gq487_relay_score_real69_20261122/source_lock.json": "685b9ae878e4ff34a046e0d8be45a954b8ca05a1",
-        "tests/test_gq470_union22_real69_20261122.py": "99ed1e6a35f3c43c53edeca49859bb65528560f0",
+        "tests/test_gq470_union22_real69_20261122.py": "01f33586953cee85fcaba67222d12e763320e498",
         "tests/test_gq487_relay_score_real69_20261122.py": "92d714e899be25aa23817cfd149ca17c94d3b622"
       },
       "actual_candidate_readback": {
@@ -2624,6 +2624,27 @@
           "epoch": 785,
           "acquired_at": "2026-11-27T01:24:23.151Z",
           "expires_at": "2026-11-27T01:54:23.151Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "repair_only_paths": [
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "repair_only_expected_blob": "01f33586953cee85fcaba67222d12e763320e498",
+      "source_fix_for_ci_run": 45922329591,
+      "repair_cause": "Existing three late mutation probes still targeted 154 commands; immediate score rollback adds one compile and one Rojo build. Keep all probes, switch to final exact command 156.",
+      "actual_test_repair_scope_lease": {
+        "ref": "35ab303ad90e0b8d30608c3d575507a774410e89",
+        "blob": "207df3fe721d2846522c8e79bef0c402c2b1f7bd",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "58a39d0d-0a64-4a5a-9c3a-9e4108dca606",
+          "task_id": null,
+          "epoch": 786,
+          "acquired_at": "2026-11-27T01:26:18.281Z",
+          "expires_at": "2026-11-27T01:56:18.281Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
