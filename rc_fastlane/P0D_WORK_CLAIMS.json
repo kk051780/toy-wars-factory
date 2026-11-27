@@ -30738,8 +30738,8 @@
     {
       "claim_id": "P0D-GQ482-EMPTY-VAULT-CANONICAL-20261127",
       "feature_id": "GQ470_FB015_EMPTY_VAULT_PROMPT",
-      "state": "SOURCE_WIP",
-      "role": "A_PREP",
+      "state": "PREP_READY",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, original #482 empty-vault intake)",
       "parent_issue": 470,
       "integration_issue": 220,
@@ -30795,11 +30795,11 @@
       "independent_local_scope_review": "Actual separate context reviewed seven exact paths and current tree, old rollback, normal and optimized local tests. Exact hosted head review remains required.",
       "author_may_self_approve": false,
       "source_write_requires_separate_live_source_lease": true,
-      "scope_only": true,
+      "scope_only": false,
       "source_scope_granted": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
-      "rc_write_authorized_by_this_claim": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
+      "rc_write_authorized_by_this_claim": true,
       "no_main_or_publish": true,
       "issuer": "kk051780",
       "issuer_user_id": 233213370,
@@ -30926,6 +30926,81 @@
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
+        }
+      },
+      "independent_source_receipt": {
+        "author_not_reviewer": true,
+        "registered_review_id": 6081904736,
+        "state": "COMMENTED",
+        "reviewer_context": "/root/p0_offer_review26",
+        "source_review_is_github_approval": false,
+        "official_base": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "source_head": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "source_tree": "54ca79dd541bba0b10726f6cc9934926a9c1e982",
+        "candidate_checkout": "9d88e35131d3aa9222ee932c9e331c86f2be09d2",
+        "source_ci": 45915151085,
+        "bootstrap_ci": 45915151258,
+        "trusted_queue_run": 45915587651,
+        "trusted_queue_artifact": 15161783340,
+        "candidate_artifact": {
+          "id": 15162245852,
+          "bytes": 14422728,
+          "digest": "sha256:82d55a793c561d010bd1ec3bf2b565f7ab5fde5d896befc55ab5785fe5424ce8"
+        },
+        "candidate_place": {
+          "bytes": 830788,
+          "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe"
+        },
+        "source_lock_path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "immediate_off": {
+          "archive": "OFF69_EMPTY_VAULT_ITEM_PARENT_ROLLBACK.tar.gz",
+          "place_bytes": 830060,
+          "place_sha256": "0080dddb38dd9e551007e0526d81ba686aff5ad5fea0627f39caa04cda275bf3"
+        },
+        "sourcery": "SKIPPED_REVIEW_LIMIT",
+        "studio": "NOT_TESTED"
+      },
+      "bounded_rc_integration": {
+        "status": "FINITE_AUTHORITY_EFFECTIVE_AFTER_ACTUAL_REGISTRATION_READBACK",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "30f267b1c8b97f6ff04dca0e6e4982c5f41e9116",
+        "permitted_head": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+        "permitted_tree": "54ca79dd541bba0b10726f6cc9934926a9c1e982",
+        "permitted_pr": 1034,
+        "sole_executor": "/root (Codex parent, B coordinator for #1034)",
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T00:48:21.297Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Existing #482 empty-vault notice +728 B, canonical exact source and rollback. Development RC only.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "0d792342-10ba-4a18-a0a9-ef43facdf9ba",
+          "metadata_lease": {
+            "kind": "CONTROLLER",
+            "owner_id": "0d792342-10ba-4a18-a0a9-ef43facdf9ba",
+            "task_id": null,
+            "epoch": 774,
+            "acquired_at": "2026-11-27T00:18:01.112Z",
+            "expires_at": "2026-11-27T00:48:01.112Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "acquire_commit": "f7a24e02e688aa5497b9857bc1c6d90f7f0b7f74",
+          "acquire_blob": "ad401928bc7e9b6a0cf49160a06445f7d8127262",
+          "registry_parent": "26da80c6a8d273f566fb5c03cf057c0009b2464f",
+          "registry_blob": "6b9a1a91d4e99ca3c51ad92009fa05d7705145b7",
+          "authority_basis": "Authenticated delegated OWNER #1011 V2.1, #220 7202869642, current #218 original-482 scoped binding, independent exact 6081904736 and trusted green candidate."
         }
       }
     }
