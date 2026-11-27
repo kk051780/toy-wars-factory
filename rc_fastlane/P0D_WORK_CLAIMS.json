@@ -39206,6 +39206,145 @@
           "trusted_queue_job": 140598699358
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB015-MOGURON-967-20261128",
+      "feature_id": "GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 420,
+      "source_issue": 967,
+      "integration_issue": 220,
+      "pr": 967,
+      "base_rc_sha": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+      "base_rc_tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+      "prep_branch": "quality/gq470-moguron-lowpart-matte-real69-20261121",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Original #967 Private Companion Moguron 8 matte Parts in four authored bridge markers. One existing Luau source +963 bytes, 68 neighbors untouched, 20 inherited OFF archives exact. Retain interactive route/bridge timing, collision and actor semantics. ACTIVE inputs untouched. Current parent gate pinned, no Engine/ART/device/publish claim.",
+      "resources": [
+        "GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121",
+        "PRIVATE69_LEGACY_CANYON_ROUTES_MODEL_8PART",
+        "PRIVATE69_UNION22_COMPOSER_ART"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_moguron_visual_20261127/moguron.patch",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/967",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "ad96cd42-e955-4184-8469-30a4928f5582",
+      "issued_at": "2026-11-27T15:40:33.205Z",
+      "expires_at": "2026-11-27T17:40:33.205Z",
+      "actual_metadata_lease": {
+        "ref": "b7b578e209b8812002bfd33e1eaaee69a0941b74",
+        "blob": "e6f26f0f24c8720d0a870df7d5fd9c4601d58037",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "ad96cd42-e955-4184-8469-30a4928f5582",
+          "task_id": null,
+          "epoch": 958,
+          "acquired_at": "2026-11-27T15:40:13.272Z",
+          "expires_at": "2026-11-27T16:10:13.272Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 967,
+        "branch": "quality/gq470-moguron-lowpart-matte-real69-20261121",
+        "old_pr_head": "89719973047c13dde5ba64732231814a4db32f42",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "tree": "1ee518e75149db31d760be06828cef17583f9fda",
+        "local_head": "90de9affe3ffea6b6de54c1342fc70dbf1466e8e",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "02243b48efc22bec6f50b461ce461c464a98968d",
+            "path": "quality_gameplay/gq470_moguron_visual_20261127/moguron.patch",
+            "bytes": 2124
+          },
+          {
+            "mode": "100644",
+            "blob": "36fa3bd4d7aac879e55cacbe6c99801778f1016f",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "bytes": 61883
+          },
+          {
+            "mode": "100644",
+            "blob": "1d7b95d687c353d78738616f1fe4767da5efc453",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "bytes": 35255
+          },
+          {
+            "mode": "100644",
+            "blob": "d3b59a91b89518fee53cad9c5fbd13b16e2f6339",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "bytes": 19854
+          },
+          {
+            "mode": "100644",
+            "blob": "91a730bddad14f390a008733e8dc263ac9228255",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "bytes": 51391
+          },
+          {
+            "mode": "100644",
+            "blob": "8a1a3a8ebcf8769c98a4989e38ee37ec1cf3508c",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "bytes": 1528254
+          },
+          {
+            "mode": "100644",
+            "blob": "80583c8ef58a9d5a694727056b015c7fc670df61",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "bytes": 151551
+          },
+          {
+            "mode": "100644",
+            "blob": "f99efeeecf11b0426d1043bc33f5accec79e181f",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 113427
+          }
+        ],
+        "expires_at": "2026-11-27T16:40:33.205Z",
+        "issued_from": {
+          "lease": "b7b578e209b8812002bfd33e1eaaee69a0941b74",
+          "owner": "ad96cd42-e955-4184-8469-30a4928f5582"
+        },
+        "local_qa": {
+          "on": 891450,
+          "off": 890487,
+          "on_sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc",
+          "off_sha256": "eeed5523b7e8ef2fcccdcdc49385bd9ce6910c71312a2ff030d82044ddb0233a",
+          "transformed_exact_to_prior_local": 69,
+          "changed_sources": 1,
+          "changed_source_bytes": 963,
+          "previous_native_compile": 175,
+          "previous_rojo": 22,
+          "old_archives_byte_exact": 20,
+          "pinned_linux_required_on_hosted": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
