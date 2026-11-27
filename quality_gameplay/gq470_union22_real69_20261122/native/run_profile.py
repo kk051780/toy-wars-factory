@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "0055df463a162e62acc8ce22c6f548ddab576f9a156131305375c14180cf014e"
+INPUT_LOCK_SHA256 = "b1260214390181043b675c3d85bd472c170c19b669e81f926fe77c59ed0baa7b"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -728,6 +728,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                              pin, context, compose.load_lock(), compose)
         from field_prompt_native import run as run_field_prompt
         run_field_prompt(root, output / "field_prompt", binary, pin, context, compose.load_lock(), compose)
+        from foliage_readability import run as run_foliage
+        run_foliage(root, output / "foliage_readability", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -746,7 +748,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 99, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 100, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -765,13 +767,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "br_canyon": identity(read(output / "br_canyon/receipt.json")),
                    "role_readability": identity(read(output / "role_readability/receipt.json")),
                    "field_prompt": identity(read(output / "field_prompt/receipt.json")),
+                   "foliage_readability": identity(read(output / "foliage_readability/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 21,
-                   "native_evidence_file_count": 100,
+                   "native_process_count": 23,
+                   "native_evidence_file_count": 101,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

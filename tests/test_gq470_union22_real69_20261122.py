@@ -38,13 +38,16 @@ INTEGRATION_COUNTS = {"core": 68, "final": 21}
 
 
 def restore_canyon(on, lock):
-    return compose.br_canyon_parent(*compose.role_readability_parent(*compose.field_prompt_parent(on, lock)))
+    neutral_off = compose.neutral_names_parent(on, lock)
+    return compose.br_canyon_parent(*compose.role_readability_parent(*compose.field_prompt_parent(*neutral_off)))
 
 
 def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["neutral_names_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["role_readability_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["br_canyon_followup"]["rows"].items()
@@ -272,7 +275,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_br_canyon_restores_exact_relay_parent_and_rejects_stale_pair(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        on, post_canyon = compose.role_readability_parent(*compose.field_prompt_parent(on, self.lock))
+        before_labels = compose.neutral_names_parent(on, self.lock)
+        on, post_canyon = compose.role_readability_parent(*compose.field_prompt_parent(*before_labels))
         prior, lock = compose.br_canyon_parent(on, post_canyon)
         self.assertEqual({name for name in on if on[name] != prior[name]}, set(compose.BR_CANYON_SOURCES))
         self.assertEqual(lock["final_place"], self.lock["relay_presentation_followup"]["repaired_place"])
@@ -286,12 +290,16 @@ class UnionBoundary(unittest.TestCase):
 
     def test_role_readability_parity_and_wrong_rollback_rejected(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        prior, prior_lock = compose.field_prompt_parent(on, self.lock)
-        self.assertEqual({name for name in on if on[name] != prior[name]}, {compose.VAULT_SOURCE})
+        neutral_off, neutral_lock = compose.neutral_names_parent(on, self.lock)
+        self.assertEqual({name for name in on if on[name] != neutral_off[name]}, set(compose.VISUAL_READABILITY_SOURCES))
+        self.assertEqual(compose.identity((self.current / compose.NEUTRAL_NAMES_OFF / compose.PLACE).read_bytes()),
+                         self.lock["field_prompt_followup"]["repaired_place"])
+        prior, prior_lock = compose.field_prompt_parent(neutral_off, neutral_lock)
+        self.assertEqual({name for name in neutral_off if neutral_off[name] != prior[name]}, {compose.VAULT_SOURCE})
         self.assertEqual(compose.identity((self.current / compose.FIELD_PROMPT_OFF / compose.PLACE).read_bytes()),
                          self.lock["role_readability_followup"]["repaired_place"])
         with self.assertRaisesRegex(ValueError, "FIELD_PROMPT_TWO_WAY|HUNK"):
-            compose.field_prompt_parent(prior, self.lock)
+            compose.field_prompt_parent(prior, neutral_lock)
         restored, lock = compose.role_readability_parent(prior, prior_lock)
         self.assertEqual({name for name in prior if prior[name] != restored[name]}, set(compose.ROLE_READABILITY_SOURCES))
         self.assertEqual(lock["final_place"], self.lock["br_canyon_followup"]["repaired_place"])
@@ -302,6 +310,9 @@ class UnionBoundary(unittest.TestCase):
         self.reject_core(root)
         root = self.current_copy()
         shutil.copyfile(root / compose.ROLE_READABILITY_OFF_ARCHIVE, root / compose.FIELD_PROMPT_OFF_ARCHIVE)
+        self.reject_core(root)
+        root = self.current_copy()
+        shutil.copyfile(root / compose.FIELD_PROMPT_OFF_ARCHIVE, root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)
         self.reject_core(root)
 
     def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
@@ -1388,7 +1399,9 @@ class UnionOfflineContract(unittest.TestCase):
         canyon = self.lock["br_canyon_followup"]
         role = self.lock["role_readability_followup"]
         field = self.lock["field_prompt_followup"]
-        role_sources = self.lock["sources"] | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]}
+        neutral_names = self.lock["neutral_names_followup"]
+        field_sources = self.lock["sources"] | {name: row["parent"] for name, row in neutral_names["rows"].items()}
+        role_sources = field_sources | {compose.VAULT_SOURCE: field["rows"][compose.VAULT_SOURCE]["parent"]}
         canyon_sources = role_sources | {name: row["parent"] for name, row in role["rows"].items()}
         relay_sources = canyon_sources | {name: row["parent"] for name, row in canyon["rows"].items()}
         score_sources = relay_sources | {name: row["parent"] for name,row in relay["rows"].items()}
@@ -1416,10 +1429,14 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(relay["repaired_place"], canyon["parent_place"])
         self.assertEqual(canyon["repaired_place"], role["parent_place"])
         self.assertEqual(role["repaired_place"], field["parent_place"])
-        self.assertEqual(field["repaired_place"], self.lock["final_place"])
+        self.assertEqual(field["repaired_place"], neutral_names["parent_place"])
+        self.assertEqual(neutral_names["repaired_place"], self.lock["final_place"])
         self.assertEqual(set(field["rows"]), {compose.VAULT_SOURCE})
-        self.assertEqual([path for path in self.lock["sources"]
-                          if self.lock["sources"][path] != role_sources[path]], [compose.VAULT_SOURCE])
+        self.assertEqual(set(neutral_names["rows"]), set(compose.VISUAL_READABILITY_SOURCES))
+        self.assertEqual([path for path in field_sources
+                          if field_sources[path] != role_sources[path]], [compose.VAULT_SOURCE])
+        self.assertEqual({path for path in self.lock["sources"]
+                          if self.lock["sources"][path] != field_sources[path]}, set(compose.VISUAL_READABILITY_SOURCES))
         self.assertEqual(len(castle["forward"]), 5)
         self.assertEqual(sum(len(r["forward"]) for r in castle_sources.values()), 190)
         self.assertEqual(sum(len(r["forward"]) for r in score_sources.values()), 191)

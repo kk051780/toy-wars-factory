@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "6f76962b33682de03d951ac72c3670f935505a914397f54f65b6062b082a5703"
+LOCK_SHA256 = "5f2dfebd163d37eea759f4a371332f08cbe620115f307ed314589f726cb8e1ad"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -71,6 +71,12 @@ ROLE_READABILITY_OFF = "off69_role_readability_canyon_parent"
 ROLE_READABILITY_OFF_ARCHIVE = "OFF69_ROLE_READABILITY_CANYON_PARENT_ROLLBACK.tar.gz"
 FIELD_PROMPT_OFF = "off69_field_prompt_role_parent"
 FIELD_PROMPT_OFF_ARCHIVE = "OFF69_FIELD_PROMPT_ROLE_PARENT_ROLLBACK.tar.gz"
+NEUTRAL_NAMES_OFF = "off69_visual_readability_field_parent"
+NEUTRAL_NAMES_OFF_ARCHIVE = "OFF69_VISUAL_READABILITY_FIELD_PARENT_ROLLBACK.tar.gz"
+SWARM_SOURCE = "ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
+LOBBY_SOCIAL_SOURCE = "ServerScriptService/GQ8_LobbySocialPlaza.server.luau"
+FOLIAGE_LOD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau"
+VISUAL_READABILITY_SOURCES = (SWARM_SOURCE, LOBBY_SOCIAL_SOURCE, FOLIAGE_LOD_SOURCE)
 ROLE_MOTION_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau"
 ROLE_WEAPON_SOURCE = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau"
 ROLE_READABILITY_SOURCES = (ROLE_WEAPON_SOURCE, ROLE_MOTION_SOURCE)
@@ -356,7 +362,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 26, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 28, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -415,6 +421,11 @@ def role_readability_parent(on, lock):
 def field_prompt_parent(on, lock):
     return paired_source_parent(on, lock, lock["field_prompt_followup"], (VAULT_SOURCE,),
                                 lock["role_readability_followup"]["repaired_place"], "FIELD_PROMPT")
+
+
+def neutral_names_parent(on, lock):
+    return paired_source_parent(on, lock, lock["neutral_names_followup"], VISUAL_READABILITY_SOURCES,
+                                lock["field_prompt_followup"]["repaired_place"], "VISUAL_READABILITY")
 
 
 def castle_parent(on, lock):
@@ -584,7 +595,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    field_off, field_off_lock = field_prompt_parent(on, lock)
+    neutral_off, neutral_off_lock = neutral_names_parent(on, lock)
+    field_off, field_off_lock = field_prompt_parent(neutral_off, neutral_off_lock)
     role_off, role_off_lock = role_readability_parent(field_off, field_off_lock)
     canyon_off, canyon_off_lock = br_canyon_parent(role_off, role_off_lock)
     relay_off, relay_off_lock = relay_presentation_parent(canyon_off, canyon_off_lock)
@@ -618,7 +630,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / RELAY_PRESENTATION_OFF, relay_off, relay_off_lock["final_place"], RELAY_PRESENTATION_SOURCES),
                   (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES),
                   (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES),
-                  (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE))
+                  (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE),
+                  (stage / NEUTRAL_NAMES_OFF, neutral_off, neutral_off_lock["final_place"], VISUAL_READABILITY_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -670,6 +683,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         role_archive_identity = identity(read_file(stage / ROLE_READABILITY_OFF_ARCHIVE))
         make_archive(stage / FIELD_PROMPT_OFF, stage / FIELD_PROMPT_OFF_ARCHIVE, FIELD_PROMPT_OFF)
         field_prompt_archive_identity = identity(read_file(stage / FIELD_PROMPT_OFF_ARCHIVE))
+        make_archive(stage / NEUTRAL_NAMES_OFF, stage / NEUTRAL_NAMES_OFF_ARCHIVE, NEUTRAL_NAMES_OFF)
+        neutral_names_archive_identity = identity(read_file(stage / NEUTRAL_NAMES_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -725,6 +740,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({FIELD_PROMPT_OFF + "/" + PROJECT: lock["project"],
                                FIELD_PROMPT_OFF + "/" + PLACE: field_off_lock["final_place"],
                                FIELD_PROMPT_OFF_ARCHIVE: field_prompt_archive_identity})
+        expected_stage.update({NEUTRAL_NAMES_OFF + "/sources/" + name: identity(raw) for name, raw in neutral_off.items()})
+        expected_stage.update({NEUTRAL_NAMES_OFF + "/" + PROJECT: lock["project"],
+                               NEUTRAL_NAMES_OFF + "/" + PLACE: neutral_off_lock["final_place"],
+                               NEUTRAL_NAMES_OFF_ARCHIVE: neutral_names_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -733,7 +752,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 26, "unchanged_source_count": 43,
+            "selected_source_count": 69, "changed_source_count": 28, "unchanged_source_count": 41,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -766,6 +785,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "role_readability_rollback_archive": role_archive_identity,
             "field_prompt_followup": lock["field_prompt_followup"],
             "field_prompt_rollback_archive": field_prompt_archive_identity,
+            "neutral_names_followup": lock["neutral_names_followup"],
+            "neutral_names_rollback_archive": neutral_names_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -777,8 +798,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 26, "unchanged_sources": 43,
-            "compile_count": 153, "rojo_build_count": 14, "instances": 75,
+            "source_count": 69, "changed_sources": 28, "unchanged_sources": 41,
+            "compile_count": 156, "rojo_build_count": 15, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -787,6 +808,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "br_canyon_parent_place": canyon_off_lock["final_place"],
             "role_readability_parent_place": role_off_lock["final_place"],
             "field_prompt_parent_place": field_off_lock["final_place"],
+            "neutral_names_parent_place": neutral_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

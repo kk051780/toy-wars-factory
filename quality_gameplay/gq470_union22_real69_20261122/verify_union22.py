@@ -372,6 +372,21 @@ def verify_hud_current_rollback(root, lock, current):
     return expected
 
 
+def neutral_names_author(lock):
+    record = lock["neutral_names_followup"]
+    return visual_author("quality_gameplay/gq470_art16_p0_lobby_composite_20261121/neutral_name_visibility_fix.py",
+                         record["author_transform"], "NEUTRAL_NAMES_AUTHOR")
+
+
+def visual_author(relative, pin, label):
+    path = REPO / relative
+    require(digest(read(path)) == pin, label + "_IDENTITY")
+    spec = importlib.util.spec_from_file_location("union22_" + label.lower(), path)
+    original = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(original)
+    return original
+
+
 def verify_core(root, base, reports, context):
     lock = compose.load_lock()
     root = Path(root).resolve()
@@ -384,7 +399,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 26 and len(lock["sources"]) - len(changed) == 43, "CHANGE_COUNT")
+    require(len(changed) == 28 and len(lock["sources"]) - len(changed) == 41, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -402,9 +417,23 @@ def verify_core(root, base, reports, context):
     canyon = lock["br_canyon_followup"]
     role = lock["role_readability_followup"]
     field_prompt = lock["field_prompt_followup"]
+    neutral_names = lock["neutral_names_followup"]
+    require(set(neutral_names["rows"]) == set(compose.VISUAL_READABILITY_SOURCES), "VISUAL_READABILITY_SOURCE_SET")
+    expected_neutral_off, neutral_off_lock, neutral_off = verify_source_rollback(
+        root, root, lock, current, neutral_names, neutral_names["rows"], field_prompt["repaired_place"],
+        compose.NEUTRAL_NAMES_OFF, compose.NEUTRAL_NAMES_OFF_ARCHIVE, "NEUTRAL_NAMES")
+    selected = compose.SWARM_SOURCE
+    expected_swarm = neutral_names_author(lock).patch(read(root / compose.NEUTRAL_NAMES_OFF / "sources" / selected))
+    require(expected_swarm == read(root / "sources" / selected), "NEUTRAL_NAMES_EXACT_AUTHOR_TRANSFORM")
+    plaza = neutral_names["plaza"]
+    plaza_author = visual_author(plaza["author_file"], plaza["author_transform"], "LOBBY_PLAZA_AUTHOR")
+    selected = compose.LOBBY_SOCIAL_SOURCE
+    expected_plaza = plaza_author.transform(read(root / compose.NEUTRAL_NAMES_OFF / "sources" / selected).decode())
+    require(expected_plaza.encode() == read(root / "sources" / selected), "LOBBY_PLAZA_EXACT_AUTHOR_TRANSFORM")
     require(set(field_prompt["rows"]) == {compose.VAULT_SOURCE}, "FIELD_PROMPT_SOURCE_SET")
     expected_field_off, field_off_lock, field_off = verify_source_rollback(
-        root, root, lock, current, field_prompt, field_prompt["rows"], role["repaired_place"],
+        root, root / compose.NEUTRAL_NAMES_OFF, neutral_off_lock, neutral_off,
+        field_prompt, field_prompt["rows"], role["repaired_place"],
         compose.FIELD_PROMPT_OFF, compose.FIELD_PROMPT_OFF_ARCHIVE, "FIELD_PROMPT")
     require(set(role["rows"]) == set(compose.ROLE_READABILITY_SOURCES), "ROLE_READABILITY_SOURCE_SET")
     expected_role_off, role_off_lock, role_off = verify_source_rollback(
@@ -451,7 +480,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 26, "unchanged_source_count": 43,
+        "selected_source_count": 69, "changed_source_count": 28, "unchanged_source_count": 41,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -482,6 +511,8 @@ def verify_core(root, base, reports, context):
         "role_readability_rollback_archive": digest(read(root / compose.ROLE_READABILITY_OFF_ARCHIVE)),
         "field_prompt_followup": field_prompt,
         "field_prompt_rollback_archive": digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE)),
+        "neutral_names_followup": neutral_names,
+        "neutral_names_rollback_archive": digest(read(root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -491,8 +522,8 @@ def verify_core(root, base, reports, context):
     core = data(root / "CORE_BUILD_REPORT.json")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 26 and core.get("unchanged_sources") == 43
-            and core.get("compile_count") == 153 and core.get("rojo_build_count") == 14
+            and core.get("changed_sources") == 28 and core.get("unchanged_sources") == 41
+            and core.get("compile_count") == 156 and core.get("rojo_build_count") == 15
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -501,6 +532,7 @@ def verify_core(root, base, reports, context):
             and core.get("br_canyon_parent_place") == canyon_off_lock["final_place"]
             and core.get("role_readability_parent_place") == role_off_lock["final_place"]
             and core.get("field_prompt_parent_place") == field_off_lock["final_place"]
+            and core.get("neutral_names_parent_place") == neutral_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -548,6 +580,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.ROLE_READABILITY_OFF_ARCHIVE] = digest(read(root / compose.ROLE_READABILITY_OFF_ARCHIVE))
     expected_stage.update({compose.FIELD_PROMPT_OFF + "/" + name: pin for name, pin in expected_field_off.items()})
     expected_stage[compose.FIELD_PROMPT_OFF_ARCHIVE] = digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE))
+    expected_stage.update({compose.NEUTRAL_NAMES_OFF + "/" + name: pin for name, pin in expected_neutral_off.items()})
+    expected_stage[compose.NEUTRAL_NAMES_OFF_ARCHIVE] = digest(read(root / compose.NEUTRAL_NAMES_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -556,11 +590,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 167 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 171 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 153 and len(rojo_commands) == 14, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 156 and len(rojo_commands) == 15, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -583,13 +617,15 @@ def verify_core(root, base, reports, context):
     expected_compile.update(str(Path(stage) / compose.ROLE_READABILITY_OFF / "sources" / name)
                             for name in compose.ROLE_READABILITY_SOURCES)
     expected_compile.add(str(Path(stage) / compose.FIELD_PROMPT_OFF / "sources" / compose.VAULT_SOURCE))
+    expected_compile.update(str(Path(stage) / compose.NEUTRAL_NAMES_OFF / "sources" / name)
+                            for name in compose.VISUAL_READABILITY_SOURCES)
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
                 for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF,
                                compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF,
                                compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
-                               compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF)},
+                               compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -602,7 +638,9 @@ def verify_core(root, base, reports, context):
                         compose.BR_CANYON_OFF: [name for name in lock["sources"] if name in compose.BR_CANYON_SOURCES],
                         compose.ROLE_READABILITY_OFF: [name for name in lock["sources"]
                                                         if name in compose.ROLE_READABILITY_SOURCES],
-                        compose.FIELD_PROMPT_OFF: [compose.VAULT_SOURCE]}
+                        compose.FIELD_PROMPT_OFF: [compose.VAULT_SOURCE],
+                        compose.NEUTRAL_NAMES_OFF: [name for name in lock["sources"]
+                                                    if name in compose.VISUAL_READABILITY_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -622,6 +660,9 @@ def module(relative, name):
 
 
 def retention_reports(root, verified, context):
+    require(neutral_names_author(verified["lock"]).selftest() == 11, "NEUTRAL_NAMES_AUTHOR_NEGATIVE_CASES")
+    plaza = verified["lock"]["neutral_names_followup"]["plaza"]
+    visual_author(plaza["author_file"], plaza["author_transform"], "LOBBY_PLAZA_AUTHOR").self_test()
     for name, sha in HELPERS.items():
         require(digest(read(REPO / name))["sha256"] == sha, "HISTORICAL_GATE_OR_MANIFEST_CHANGED")
     gate17 = module("quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py", "union22_old17")
@@ -1187,6 +1228,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["neutral_names_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["role_readability_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["br_canyon_followup"]["rows"].items()
@@ -1371,6 +1414,18 @@ def verify_field_prompt(native, root, lock, build, aggregate, context):
     return expected, {"field_prompt/" + name for name in contract.FILE_NAMES}
 
 
+def verify_foliage_readability(native, root, lock, build, aggregate, context):
+    spec = importlib.util.spec_from_file_location("union22_foliage_verify", HERE / "native/foliage_readability.py")
+    contract = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(contract)
+    folder = native / "foliage_readability"
+    report = contract.check(root / "sources", folder, build["binary_before_suites"], context, lock, compose)
+    name = "receipt.json"
+    require(aggregate["foliage_readability"] == digest(read(folder / name))
+            and set(files(folder)) == {name}, "FOLIAGE_EXACT_NATIVE")
+    return report, {"foliage_readability/" + name}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1432,7 +1487,7 @@ def verify_native(native, root, lock, context):
                 "original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16, "distinct_server_union": 30,
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed": False}
-            and aggregate.get("native_process_count") == 21 and aggregate.get("native_evidence_file_count") == 100,
+            and aggregate.get("native_process_count") == 23 and aggregate.get("native_evidence_file_count") == 101,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -1508,8 +1563,10 @@ def verify_native(native, root, lock, context):
     expected_files |= role_files
     field_prompt, field_files = verify_field_prompt(native, root, lock, build, aggregate, context)
     expected_files |= field_files
+    foliage, foliage_files = verify_foliage_readability(native, root, lock, build, aggregate, context)
+    expected_files |= foliage_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 100 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 101 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -1518,6 +1575,7 @@ def verify_native(native, root, lock, context):
             "br_canyon": canyon,
             "role_readability": role,
             "field_prompt": field_prompt,
+            "foliage_readability": foliage,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1556,6 +1614,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.CASTLE_OFF_ARCHIVE, compose.SCORE_OFF_ARCHIVE,
                             compose.RELAY_PRESENTATION_OFF_ARCHIVE, compose.BR_CANYON_OFF_ARCHIVE,
                             compose.ROLE_READABILITY_OFF_ARCHIVE, compose.FIELD_PROMPT_OFF_ARCHIVE,
+                            compose.NEUTRAL_NAMES_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -1578,7 +1637,7 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 26, "unchanged_sources": 43, "instances": 75,
+            "source_count": 69, "changed_sources": 28, "unchanged_sources": 41, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
@@ -1627,6 +1686,10 @@ def admit_delivery(root, base, reports, native, context):
             "field_prompt_inverse_place": verified["lock"]["field_prompt_followup"]["parent_place"],
             "field_prompt_inverse_archive": digest(read(root / compose.FIELD_PROMPT_OFF_ARCHIVE)),
             "field_prompt_inverse_archive_members": 71,
+            "neutral_names_followup": verified["lock"]["neutral_names_followup"],
+            "neutral_names_inverse_place": verified["lock"]["neutral_names_followup"]["parent_place"],
+            "neutral_names_inverse_archive": digest(read(root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)),
+            "neutral_names_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -1644,6 +1707,7 @@ def admit_delivery(root, base, reports, native, context):
             "br_canyon": runtime["br_canyon"],
             "role_readability": runtime["role_readability"],
             "field_prompt": runtime["field_prompt"],
+            "foliage_readability": runtime["foliage_readability"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

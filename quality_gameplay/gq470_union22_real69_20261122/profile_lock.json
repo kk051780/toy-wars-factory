@@ -4299,8 +4299,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 849249,
-    "sha256": "9b40c14a44294464d2c86727c5347b14c6ff92b06c15ba248b7492fc89ccdeb0"
+    "bytes": 852755,
+    "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
   },
   "followup_repair": {
     "author_contexts": [
@@ -5165,6 +5165,637 @@
   "luau_source": {
     "commit": "f46d879e28302a430029304f7f6a162aed66f103",
     "tree": "2432c996fc9fa73680b5e2cfe172d36114fe3746"
+  },
+  "neutral_names_followup": {
+    "author_transform": {
+      "bytes": 6575,
+      "sha256": "b24240f24e25b44e2d653cd79c92ea483557680d8f40574cee07769150e0657a"
+    },
+    "author_transform_blob": "fd73112a51f6ac27c7ac65233d1ce853de2d17b3",
+    "foliage": {
+      "author_aabb_source": {
+        "bytes": 8919,
+        "sha256": "30c8c5c1946cef9d3ee194f70e2770b08f54e6ba91282b9d2048031eeb4b306a"
+      },
+      "author_head": "c8406ba5cdb195f700dfa171669f65a2ccefb3ff",
+      "native_after": {
+        "cases": [
+          "PASS\trotated_blocker",
+          "PASS\tnear_side_miss",
+          "PASS\tinside_canopy",
+          "PASS\tbehind_avatar",
+          "PASS\tbounded_scheduled_pass",
+          "PASS\tfar_dominates_and_near_resyncs",
+          "PASS\tonly_owned_art_is_touched",
+          "PASS\tmissing_camera_and_non_studio_start",
+          "PASS\timmediate_removal_restores",
+          "PASS\tdeferred_detach_restores",
+          "PASS\twedge_void_segment",
+          "PASS\twedge_void_camera",
+          "PASS\twedge_mirrored_calibration",
+          "PASS\tunavailable_closest_point_keeps_conservative_fade"
+        ],
+        "passed": 14,
+        "reproduced_expected_defects": 0,
+        "source_bytes": 10210,
+        "source_sha256": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd",
+        "unexpected": 0
+      },
+      "native_before": {
+        "cases": [
+          "REPRODUCED\trotated_blocker\t./case.luau:461: wanted alpha 0.76, got 0.93",
+          "REPRODUCED\tnear_side_miss\t./case.luau:461: wanted alpha 0.00, got 0.93",
+          "REPRODUCED\tinside_canopy\t./case.luau:461: wanted alpha 0.88, got 0.93",
+          "REPRODUCED\tbehind_avatar\t./case.luau:461: wanted alpha 0.00, got 0.93",
+          "REPRODUCED\tbounded_scheduled_pass\t./case.luau:505: unexpected per-frame listener",
+          "PASS\tfar_dominates_and_near_resyncs",
+          "PASS\tonly_owned_art_is_touched",
+          "PASS\tmissing_camera_and_non_studio_start",
+          "PASS\timmediate_removal_restores",
+          "REPRODUCED\tdeferred_detach_restores\t./case.luau:461: wanted alpha 0.00, got 0.93",
+          "REPRODUCED\twedge_void_segment\t./case.luau:461: wanted alpha 0.00, got 0.93",
+          "REPRODUCED\twedge_void_camera\t./case.luau:461: wanted alpha 0.00, got 0.93",
+          "REPRODUCED\twedge_mirrored_calibration\t./case.luau:461: wanted alpha 0.76, got 0.93",
+          "PASS\tunavailable_closest_point_keeps_conservative_fade"
+        ],
+        "passed": 5,
+        "reproduced_expected_defects": 9,
+        "source_bytes": 7937,
+        "source_sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d",
+        "unexpected": 0
+      },
+      "native_fixture": {
+        "bytes": 18926,
+        "sha256": "49e22083619aca51eabc64fcd8a7904fdff36a94f177e9781a42918b6878ca4a"
+      },
+      "pr": 926,
+      "selected_wedge_source": {
+        "bytes": 10210,
+        "sha256": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd"
+      }
+    },
+    "original_author_head": "0768a879173cb6cfa7cb1d4ab00b55bdd9abb09e",
+    "parent_head": "fb87f9f23d0a136da048804cef307a865483f133",
+    "parent_place": {
+      "bytes": 849249,
+      "sha256": "9b40c14a44294464d2c86727c5347b14c6ff92b06c15ba248b7492fc89ccdeb0"
+    },
+    "parent_tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+    "plaza": {
+      "author_blob": "daa7940970c3deb1c9b676705066743592626093",
+      "author_file": "quality_gameplay/gq470_social_plaza_art_real69_20261120/patch_social_art69.py",
+      "author_head": "a997fb5fc7ec6b7a40afa4c67667c6875483f00d",
+      "author_transform": {
+        "bytes": 8451,
+        "sha256": "9591dbd87feb21938d477a1514715a0ef82609377d6c7216b781f7813aa068b8"
+      },
+      "pr": 925
+    },
+    "repaired_place": {
+      "bytes": 852755,
+      "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+            "new_identity": {
+              "bytes": 244,
+              "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 116,
+            "stop": 116
+          },
+          {
+            "new": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+            "new_identity": {
+              "bytes": 71,
+              "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 117,
+            "stop": 117
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+            "old_identity": {
+              "bytes": 244,
+              "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+            },
+            "start": 116,
+            "stop": 119
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+            "old_identity": {
+              "bytes": 71,
+              "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+            },
+            "start": 120,
+            "stop": 121
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 38973,
+            "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+          },
+          "before": {
+            "bytes": 38508,
+            "sha256": "cc40d9902834b63db15bc8ff63a0be0f092cdc17e5a962d9669784f4e15dd75a"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
+              "new_identity": {
+                "bytes": 585,
+                "sha256": "8b0e8d54aa1f27a861dcb1b991cb7659dbb4171c5e87ac55968d7cd031297be3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 173,
+              "stop": 173
+            },
+            {
+              "new": "  local p=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 32,
+                "sha256": "931c4ed541b6d670c3c3680825338e13b5ab26b5b7537a9dc55453fc5e88e1b9"
+              },
+              "old": "  local p=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 56,
+                "sha256": "c495c396a9e50a185f3c2d7ac14238bf15f6399a50eb7b952de7864a0a70633e"
+              },
+              "start": 288,
+              "stop": 289
+            },
+            {
+              "new": "    local attacker=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 41,
+                "sha256": "a1eca4400d1d93e9351df80723f910456b16ebbaf8348793007183c51f71dd7f"
+              },
+              "old": "    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 65,
+                "sha256": "7c2a1a9aa55ef8fc89f0677e4c0624ce96d0b70669b5f6c44e9c6210316fc6d6"
+              },
+              "start": 392,
+              "stop": 393
+            },
+            {
+              "new": "    local directUser=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 43,
+                "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
+              },
+              "old": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "96bd199dd7141aac83c86897ebfa7e0e7bf7e5f35625f84452293f2dc91ce85f"
+              },
+              "start": 509,
+              "stop": 510
+            },
+            {
+              "new": "    local user=currentHumanForId(id)\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
+              },
+              "old": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "old_identity": {
+                "bytes": 61,
+                "sha256": "5c8062e373e1b4954fd2ae28c085298ef99f31b7985d09db02297bcc724ebc0a"
+              },
+              "start": 522,
+              "stop": 523
+            },
+            {
+              "new": "    local user=currentHumanForId(ownerId)\n",
+              "new_identity": {
+                "bytes": 42,
+                "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
+              },
+              "old": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
+              "old_identity": {
+                "bytes": 66,
+                "sha256": "a3a83bfccfacf45ccfe5b5ba80896acc0fe47139c42b131cee58ed521120849a"
+              },
+              "start": 770,
+              "stop": 771
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
+              "old_identity": {
+                "bytes": 585,
+                "sha256": "8b0e8d54aa1f27a861dcb1b991cb7659dbb4171c5e87ac55968d7cd031297be3"
+              },
+              "start": 173,
+              "stop": 184
+            },
+            {
+              "new": "  local p=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 56,
+                "sha256": "c495c396a9e50a185f3c2d7ac14238bf15f6399a50eb7b952de7864a0a70633e"
+              },
+              "old": "  local p=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 32,
+                "sha256": "931c4ed541b6d670c3c3680825338e13b5ab26b5b7537a9dc55453fc5e88e1b9"
+              },
+              "start": 299,
+              "stop": 300
+            },
+            {
+              "new": "    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 65,
+                "sha256": "7c2a1a9aa55ef8fc89f0677e4c0624ce96d0b70669b5f6c44e9c6210316fc6d6"
+              },
+              "old": "    local attacker=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 41,
+                "sha256": "a1eca4400d1d93e9351df80723f910456b16ebbaf8348793007183c51f71dd7f"
+              },
+              "start": 403,
+              "stop": 404
+            },
+            {
+              "new": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "96bd199dd7141aac83c86897ebfa7e0e7bf7e5f35625f84452293f2dc91ce85f"
+              },
+              "old": "    local directUser=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 43,
+                "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
+              },
+              "start": 520,
+              "stop": 521
+            },
+            {
+              "new": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
+              "new_identity": {
+                "bytes": 61,
+                "sha256": "5c8062e373e1b4954fd2ae28c085298ef99f31b7985d09db02297bcc724ebc0a"
+              },
+              "old": "    local user=currentHumanForId(id)\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
+              },
+              "start": 533,
+              "stop": 534
+            },
+            {
+              "new": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
+              "new_identity": {
+                "bytes": 66,
+                "sha256": "a3a83bfccfacf45ccfe5b5ba80896acc0fe47139c42b131cee58ed521120849a"
+              },
+              "old": "    local user=currentHumanForId(ownerId)\n",
+              "old_identity": {
+                "bytes": 42,
+                "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
+              },
+              "start": 781,
+              "stop": 782
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_SwarmCombat"
+        }
+      },
+      "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
+        "forward": [
+          {
+            "new": "    b.Size=UDim2.fromOffset(136,38)\n",
+            "new_identity": {
+              "bytes": 36,
+              "sha256": "98fd48ecce10ee1f1e4b57ffc1f8ba007e020a101c645e029ce5b35235c9ce26"
+            },
+            "old": "    b.Size=UDim2.fromOffset(180,50)\n",
+            "old_identity": {
+              "bytes": 36,
+              "sha256": "d8d5a94ed4355602f71c79f39ecf590bee943d499580857d861a5ce1f72eb027"
+            },
+            "start": 29,
+            "stop": 30
+          },
+          {
+            "new": "    b.MaxDistance=25;b.AlwaysOnTop=false;b.Parent=at\n",
+            "new_identity": {
+              "bytes": 53,
+              "sha256": "ab772787f0baba109af12793e6f6717c4615dc204789d04642adf5d3981b4345"
+            },
+            "old": "    b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at\n",
+            "old_identity": {
+              "bytes": 53,
+              "sha256": "d9654a0ef89e97fb5668d7ce932955def970caac8891aeac0678bb3d2c2d8699"
+            },
+            "start": 31,
+            "stop": 32
+          },
+          {
+            "new": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36;t.TextStrokeTransparency=.52;t.TextStrokeColor3=Color3.fromRGB(8,16,24)\n",
+            "new_identity": {
+              "bytes": 149,
+              "sha256": "3e877340179d526bc6031f7c8796e283c2e455842b21b6e5217449b01a867334"
+            },
+            "old": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.18\n",
+            "old_identity": {
+              "bytes": 77,
+              "sha256": "3e454a3fd02b31f5c29d6f94470d260f501b454f5f2b6a49ff14e5de95f9015f"
+            },
+            "start": 33,
+            "stop": 34
+          },
+          {
+            "new": "-- GQ470_FB015_SOCIAL_PLAZA_READABILITY_REAL69_20261120\n-- One extra static Part only; angled roof silhouette, no physics or query.\nlocal roofLeft=part(\"PhotoRoof_Left\",Vector3.new(-4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofLeft.CFrame=CFrame.new(center+Vector3.new(-4.4,9.2,0))*CFrame.Angles(0,0,math.rad(13))\nroofLeft.CastShadow=false\nlocal roofRight=part(\"PhotoRoof_Right\",Vector3.new(4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofRight.CFrame=CFrame.new(center+Vector3.new(4.4,9.2,0))*CFrame.Angles(0,0,math.rad(-13))\nroofRight.CastShadow=false\n-- The ridge cap hides the flat seam between both roof planes with one low-cost,\n-- nonphysical slate beam. It does not introduce another sign or prompt.\nlocal ridge=part(\"PhotoRoof_Ridge\",Vector3.new(0,10.25,0),Vector3.new(1.4,.85,12.5),Color3.fromRGB(52,91,122),Enum.Material.Slate,false)\nridge.CastShadow=false\n",
+            "new_identity": {
+              "bytes": 961,
+              "sha256": "63acb0b5b21fb9fdfa0244f08d818b29ec995cd6ed83b228f176883ca8184246"
+            },
+            "old": "part(\"PhotoRoof\",Vector3.new(0,8.8,0),Vector3.new(18,1.5,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\n",
+            "old_identity": {
+              "bytes": 115,
+              "sha256": "3b6b1bd0c9bc72882be4277c9893fb15e413bc0fb9ffc16734752efff54fe998"
+            },
+            "start": 89,
+            "stop": 90
+          }
+        ],
+        "inverse": [
+          {
+            "new": "    b.Size=UDim2.fromOffset(180,50)\n",
+            "new_identity": {
+              "bytes": 36,
+              "sha256": "d8d5a94ed4355602f71c79f39ecf590bee943d499580857d861a5ce1f72eb027"
+            },
+            "old": "    b.Size=UDim2.fromOffset(136,38)\n",
+            "old_identity": {
+              "bytes": 36,
+              "sha256": "98fd48ecce10ee1f1e4b57ffc1f8ba007e020a101c645e029ce5b35235c9ce26"
+            },
+            "start": 29,
+            "stop": 30
+          },
+          {
+            "new": "    b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at\n",
+            "new_identity": {
+              "bytes": 53,
+              "sha256": "d9654a0ef89e97fb5668d7ce932955def970caac8891aeac0678bb3d2c2d8699"
+            },
+            "old": "    b.MaxDistance=25;b.AlwaysOnTop=false;b.Parent=at\n",
+            "old_identity": {
+              "bytes": 53,
+              "sha256": "ab772787f0baba109af12793e6f6717c4615dc204789d04642adf5d3981b4345"
+            },
+            "start": 31,
+            "stop": 32
+          },
+          {
+            "new": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.18\n",
+            "new_identity": {
+              "bytes": 77,
+              "sha256": "3e454a3fd02b31f5c29d6f94470d260f501b454f5f2b6a49ff14e5de95f9015f"
+            },
+            "old": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36;t.TextStrokeTransparency=.52;t.TextStrokeColor3=Color3.fromRGB(8,16,24)\n",
+            "old_identity": {
+              "bytes": 149,
+              "sha256": "3e877340179d526bc6031f7c8796e283c2e455842b21b6e5217449b01a867334"
+            },
+            "start": 33,
+            "stop": 34
+          },
+          {
+            "new": "part(\"PhotoRoof\",Vector3.new(0,8.8,0),Vector3.new(18,1.5,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\n",
+            "new_identity": {
+              "bytes": 115,
+              "sha256": "3b6b1bd0c9bc72882be4277c9893fb15e413bc0fb9ffc16734752efff54fe998"
+            },
+            "old": "-- GQ470_FB015_SOCIAL_PLAZA_READABILITY_REAL69_20261120\n-- One extra static Part only; angled roof silhouette, no physics or query.\nlocal roofLeft=part(\"PhotoRoof_Left\",Vector3.new(-4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofLeft.CFrame=CFrame.new(center+Vector3.new(-4.4,9.2,0))*CFrame.Angles(0,0,math.rad(13))\nroofLeft.CastShadow=false\nlocal roofRight=part(\"PhotoRoof_Right\",Vector3.new(4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofRight.CFrame=CFrame.new(center+Vector3.new(4.4,9.2,0))*CFrame.Angles(0,0,math.rad(-13))\nroofRight.CastShadow=false\n-- The ridge cap hides the flat seam between both roof planes with one low-cost,\n-- nonphysical slate beam. It does not introduce another sign or prompt.\nlocal ridge=part(\"PhotoRoof_Ridge\",Vector3.new(0,10.25,0),Vector3.new(1.4,.85,12.5),Color3.fromRGB(52,91,122),Enum.Material.Slate,false)\nridge.CastShadow=false\n",
+            "old_identity": {
+              "bytes": 961,
+              "sha256": "63acb0b5b21fb9fdfa0244f08d818b29ec995cd6ed83b228f176883ca8184246"
+            },
+            "start": 89,
+            "stop": 101
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 12930,
+            "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+          },
+          "before": {
+            "bytes": 12930,
+            "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+          },
+          "class": "Script",
+          "forward": [],
+          "inverse": [],
+          "route": "ServerScriptService/GQ8_LobbySocialPlaza"
+        }
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
+        "forward": [
+          {
+            "new": " if instance.Parent then\n  instance.LocalTransparencyModifier=0\n elseif hidden[instance] or occluded[instance] then\n  -- Deferred delivery can see a still-live part after its Parent was cleared.\n  -- Also release tracking if the engine has already destroyed the part.\n  pcall(function() instance.LocalTransparencyModifier=0 end)\n end\n",
+            "new_identity": {
+              "bytes": 334,
+              "sha256": "00a818e4ff5f6eb151772fa9ff28c367983f5d1dcaee87593e8e5acb490e4359"
+            },
+            "old": " if instance.Parent then instance.LocalTransparencyModifier=0 end\n",
+            "old_identity": {
+              "bytes": 66,
+              "sha256": "7c6f5ad345c235331d74fdee7a45f57f77aca734d74d9e050780a3db5bac9690"
+            },
+            "start": 104,
+            "stop": 105
+          },
+          {
+            "new": "-- GQ470_FB016_FOLIAGE_TRUE_OCCLUSION_A01_REAL69_20261120\n-- A01 visual-only: preserve nearby forest; fade only when actually between\n-- camera and avatar, or enclosing camera; no extra Parts/Remote/render loop.\n-- 160 canopies, 1800 tracked art objects, 0.16-second capped sampling.\nlocal CANOPY_PADDING=.5\nlocal wedgeRiseSign:number?=nil\n\nlocal function wedgeRise(part:BasePart):number\n if not part:IsA(\"WedgePart\") then return 0 end\n if wedgeRiseSign~=nil then return wedgeRiseSign end\n -- Calibrate once with the engine's primitive shape. An interior sample is\n -- returned unchanged. Keep the original box when the API is unavailable or\n -- the two samples cannot distinguish the sloped ends.\n local ok,rise=pcall(function():number\n  local probe=part.Size.Z*.25\n  local positive=part.CFrame:PointToWorldSpace(Vector3.new(0,0,probe))\n  local negative=part.CFrame:PointToWorldSpace(Vector3.new(0,0,-probe))\n  local positiveInside=(part:GetClosestPointOnSurface(positive)-positive).Magnitude<.001\n  local negativeInside=(part:GetClosestPointOnSurface(negative)-negative).Magnitude<.001\n  if positiveInside==negativeInside then return 0 end\n  return if positiveInside then 1 else -1\n end)\n wedgeRiseSign=if ok then rise else 0\n return wedgeRiseSign\n",
+            "new_identity": {
+              "bytes": 1250,
+              "sha256": "9f6b8fd426d4a936318771538bbacee595048e19527509956b868e540d4f5190"
+            },
+            "old": "-- The original S1 FB016 used geometry projection, not client damage/Remote.\n-- Budget: at most 160 A01 canopies, sampled every 0.16 seconds.\nlocal function blocksAvatar(p:BasePart,eye:Vector3,avatar:Vector3):boolean\n local delta=avatar-eye\n local len=delta:Dot(delta)\n if len<.01 then return false end\n local t=(p.Position-eye):Dot(delta)/len\n if t<=0 or t>=1 then return false end\n local nearest=eye+delta*t\n local radius=math.max(p.Size.X,p.Size.Y,p.Size.Z)*.5\n return (p.Position-nearest).Magnitude<radius+2.5\n",
+            "old_identity": {
+              "bytes": 514,
+              "sha256": "5d66318441751b43e06916586918a9efdd57693fb7852870db36774c7a831b73"
+            },
+            "start": 147,
+            "stop": 158
+          },
+          {
+            "new": "\nlocal function canopyAlpha(part:BasePart,eye:Vector3,avatar:Vector3?):number\n local frame=part.CFrame\n local size=part.Size\n local start=frame:PointToObjectSpace(eye)\n local halfX,halfY,halfZ=size.X*.5+CANOPY_PADDING,size.Y*.5+CANOPY_PADDING,size.Z*.5+CANOPY_PADDING\n local rise=wedgeRise(part)\n local scaleY=if rise==0 then 0 else size.Z\n local scaleZ=rise*size.Y\n local roofPadding=if rise==0 then 0 else CANOPY_PADDING*math.sqrt(scaleY*scaleY+scaleZ*scaleZ)\n local startAbove=start.Y*scaleY-start.Z*scaleZ\n if math.abs(start.X)<=halfX and math.abs(start.Y)<=halfY and math.abs(start.Z)<=halfZ\n    and startAbove<=roofPadding then return .88 end\n if not avatar then return 0 end\n\n -- Clip to the rotated bounds, then test against the sloping half-space.\n local delta=frame:PointToObjectSpace(avatar)-start\n local tMin,tMax=0,1\n local function clipAxis(origin:number,step:number,radius:number):boolean\n  if math.abs(step)<.0001 then return math.abs(origin)<=radius end\n  local enter,leave=(-radius-origin)/step,(radius-origin)/step\n  if enter>leave then enter,leave=leave,enter end\n  tMin,tMax=math.max(tMin,enter),math.min(tMax,leave)\n  return tMin<=tMax\n end\n if not (clipAxis(start.X,delta.X,halfX) and clipAxis(start.Y,delta.Y,halfY)\n     and clipAxis(start.Z,delta.Z,halfZ)) then return 0 end\n local roofStep=delta.Y*scaleY-delta.Z*scaleZ\n if math.min(startAbove+roofStep*tMin,startAbove+roofStep*tMax)>roofPadding then return 0 end\n return .76\nend\ntask.spawn(function()\n while script.Parent and live do\n  task.wait(.16)\n  if not live or canopyCount==0 then continue end\n  local camera=workspace.CurrentCamera\n  if not camera then continue end\n  local eye=camera.CFrame.Position\n  local player=Players.LocalPlayer\n  local character=player and player.Character\n  local root=character and character:FindFirstChild(\"HumanoidRootPart\")\n  local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n  for part in pairs(canopies) do\n   if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n    local alpha=canopyAlpha(part,eye,avatar)\n    local fade=alpha>0\n    -- Distance LOD may have restored .93 on nearward transition; re-sync.\n    if occluded[part]~=fade or part.LocalTransparencyModifier~=alpha then\n     occluded[part]=fade\n     part.LocalTransparencyModifier=alpha\n    end\n   else\n    occluded[part]=nil -- far-distance A01 LOD remains authoritative\n",
+            "new_identity": {
+              "bytes": 2407,
+              "sha256": "89021ff6bda672f0f9fa981eef47a26cf69b2455b9e455f973f5cc62da134993"
+            },
+            "old": "local fadeTick=0\nlocal fadeConn=RunService.RenderStepped:Connect(function(dt:number)\n if not live or canopyCount==0 then return end\n fadeTick+=math.min(dt,.25)\n if fadeTick<.16 then return end\n fadeTick=0\n local camera=workspace.CurrentCamera\n if not camera then return end\n local eye=camera.CFrame.Position\n local localPlayer=Players.LocalPlayer\n local char=localPlayer and localPlayer.Character\n local root=char and char:FindFirstChild(\"HumanoidRootPart\")\n local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n for part in pairs(canopies) do\n  if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n   local radius=math.max(part.Size.X,part.Size.Y,part.Size.Z)*.5\n   local nearCamera=(part.Position-eye).Magnitude<radius+9\n   local hidesAvatar=if avatar then blocksAvatar(part,eye,avatar) else false\n   local fade=nearCamera or hidesAvatar\n   if occluded[part]~=fade then\n    occluded[part]=fade\n    part.LocalTransparencyModifier=if fade then .93 else 0\n",
+            "old_identity": {
+              "bytes": 1010,
+              "sha256": "46da4b36e06d5643d1be1c6ea338cd071fa0e08118840e9feee1ad7a8a6b5a27"
+            },
+            "start": 159,
+            "stop": 181
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "  else\n   -- Original distance-based LOD retains exclusive control of far objects.\n   occluded[part]=nil\n",
+            "old_identity": {
+              "bytes": 105,
+              "sha256": "ba7b6086aa2ffa3951de12655c891c1f704080f571e8edabe5b48b8340946060"
+            },
+            "start": 182,
+            "stop": 185
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " fadeConn:Disconnect()\n",
+            "old_identity": {
+              "bytes": 23,
+              "sha256": "577cec867ac3941b34bf7c3f44ab3de62c3649d82a681ebe834f9f8b7807c7fc"
+            },
+            "start": 190,
+            "stop": 191
+          }
+        ],
+        "inverse": [
+          {
+            "new": " if instance.Parent then instance.LocalTransparencyModifier=0 end\n",
+            "new_identity": {
+              "bytes": 66,
+              "sha256": "7c6f5ad345c235331d74fdee7a45f57f77aca734d74d9e050780a3db5bac9690"
+            },
+            "old": " if instance.Parent then\n  instance.LocalTransparencyModifier=0\n elseif hidden[instance] or occluded[instance] then\n  -- Deferred delivery can see a still-live part after its Parent was cleared.\n  -- Also release tracking if the engine has already destroyed the part.\n  pcall(function() instance.LocalTransparencyModifier=0 end)\n end\n",
+            "old_identity": {
+              "bytes": 334,
+              "sha256": "00a818e4ff5f6eb151772fa9ff28c367983f5d1dcaee87593e8e5acb490e4359"
+            },
+            "start": 104,
+            "stop": 111
+          },
+          {
+            "new": "-- The original S1 FB016 used geometry projection, not client damage/Remote.\n-- Budget: at most 160 A01 canopies, sampled every 0.16 seconds.\nlocal function blocksAvatar(p:BasePart,eye:Vector3,avatar:Vector3):boolean\n local delta=avatar-eye\n local len=delta:Dot(delta)\n if len<.01 then return false end\n local t=(p.Position-eye):Dot(delta)/len\n if t<=0 or t>=1 then return false end\n local nearest=eye+delta*t\n local radius=math.max(p.Size.X,p.Size.Y,p.Size.Z)*.5\n return (p.Position-nearest).Magnitude<radius+2.5\n",
+            "new_identity": {
+              "bytes": 514,
+              "sha256": "5d66318441751b43e06916586918a9efdd57693fb7852870db36774c7a831b73"
+            },
+            "old": "-- GQ470_FB016_FOLIAGE_TRUE_OCCLUSION_A01_REAL69_20261120\n-- A01 visual-only: preserve nearby forest; fade only when actually between\n-- camera and avatar, or enclosing camera; no extra Parts/Remote/render loop.\n-- 160 canopies, 1800 tracked art objects, 0.16-second capped sampling.\nlocal CANOPY_PADDING=.5\nlocal wedgeRiseSign:number?=nil\n\nlocal function wedgeRise(part:BasePart):number\n if not part:IsA(\"WedgePart\") then return 0 end\n if wedgeRiseSign~=nil then return wedgeRiseSign end\n -- Calibrate once with the engine's primitive shape. An interior sample is\n -- returned unchanged. Keep the original box when the API is unavailable or\n -- the two samples cannot distinguish the sloped ends.\n local ok,rise=pcall(function():number\n  local probe=part.Size.Z*.25\n  local positive=part.CFrame:PointToWorldSpace(Vector3.new(0,0,probe))\n  local negative=part.CFrame:PointToWorldSpace(Vector3.new(0,0,-probe))\n  local positiveInside=(part:GetClosestPointOnSurface(positive)-positive).Magnitude<.001\n  local negativeInside=(part:GetClosestPointOnSurface(negative)-negative).Magnitude<.001\n  if positiveInside==negativeInside then return 0 end\n  return if positiveInside then 1 else -1\n end)\n wedgeRiseSign=if ok then rise else 0\n return wedgeRiseSign\n",
+            "old_identity": {
+              "bytes": 1250,
+              "sha256": "9f6b8fd426d4a936318771538bbacee595048e19527509956b868e540d4f5190"
+            },
+            "start": 153,
+            "stop": 177
+          },
+          {
+            "new": "local fadeTick=0\nlocal fadeConn=RunService.RenderStepped:Connect(function(dt:number)\n if not live or canopyCount==0 then return end\n fadeTick+=math.min(dt,.25)\n if fadeTick<.16 then return end\n fadeTick=0\n local camera=workspace.CurrentCamera\n if not camera then return end\n local eye=camera.CFrame.Position\n local localPlayer=Players.LocalPlayer\n local char=localPlayer and localPlayer.Character\n local root=char and char:FindFirstChild(\"HumanoidRootPart\")\n local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n for part in pairs(canopies) do\n  if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n   local radius=math.max(part.Size.X,part.Size.Y,part.Size.Z)*.5\n   local nearCamera=(part.Position-eye).Magnitude<radius+9\n   local hidesAvatar=if avatar then blocksAvatar(part,eye,avatar) else false\n   local fade=nearCamera or hidesAvatar\n   if occluded[part]~=fade then\n    occluded[part]=fade\n    part.LocalTransparencyModifier=if fade then .93 else 0\n",
+            "new_identity": {
+              "bytes": 1010,
+              "sha256": "46da4b36e06d5643d1be1c6ea338cd071fa0e08118840e9feee1ad7a8a6b5a27"
+            },
+            "old": "\nlocal function canopyAlpha(part:BasePart,eye:Vector3,avatar:Vector3?):number\n local frame=part.CFrame\n local size=part.Size\n local start=frame:PointToObjectSpace(eye)\n local halfX,halfY,halfZ=size.X*.5+CANOPY_PADDING,size.Y*.5+CANOPY_PADDING,size.Z*.5+CANOPY_PADDING\n local rise=wedgeRise(part)\n local scaleY=if rise==0 then 0 else size.Z\n local scaleZ=rise*size.Y\n local roofPadding=if rise==0 then 0 else CANOPY_PADDING*math.sqrt(scaleY*scaleY+scaleZ*scaleZ)\n local startAbove=start.Y*scaleY-start.Z*scaleZ\n if math.abs(start.X)<=halfX and math.abs(start.Y)<=halfY and math.abs(start.Z)<=halfZ\n    and startAbove<=roofPadding then return .88 end\n if not avatar then return 0 end\n\n -- Clip to the rotated bounds, then test against the sloping half-space.\n local delta=frame:PointToObjectSpace(avatar)-start\n local tMin,tMax=0,1\n local function clipAxis(origin:number,step:number,radius:number):boolean\n  if math.abs(step)<.0001 then return math.abs(origin)<=radius end\n  local enter,leave=(-radius-origin)/step,(radius-origin)/step\n  if enter>leave then enter,leave=leave,enter end\n  tMin,tMax=math.max(tMin,enter),math.min(tMax,leave)\n  return tMin<=tMax\n end\n if not (clipAxis(start.X,delta.X,halfX) and clipAxis(start.Y,delta.Y,halfY)\n     and clipAxis(start.Z,delta.Z,halfZ)) then return 0 end\n local roofStep=delta.Y*scaleY-delta.Z*scaleZ\n if math.min(startAbove+roofStep*tMin,startAbove+roofStep*tMax)>roofPadding then return 0 end\n return .76\nend\ntask.spawn(function()\n while script.Parent and live do\n  task.wait(.16)\n  if not live or canopyCount==0 then continue end\n  local camera=workspace.CurrentCamera\n  if not camera then continue end\n  local eye=camera.CFrame.Position\n  local player=Players.LocalPlayer\n  local character=player and player.Character\n  local root=character and character:FindFirstChild(\"HumanoidRootPart\")\n  local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n  for part in pairs(canopies) do\n   if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n    local alpha=canopyAlpha(part,eye,avatar)\n    local fade=alpha>0\n    -- Distance LOD may have restored .93 on nearward transition; re-sync.\n    if occluded[part]~=fade or part.LocalTransparencyModifier~=alpha then\n     occluded[part]=fade\n     part.LocalTransparencyModifier=alpha\n    end\n   else\n    occluded[part]=nil -- far-distance A01 LOD remains authoritative\n",
+            "old_identity": {
+              "bytes": 2407,
+              "sha256": "89021ff6bda672f0f9fa981eef47a26cf69b2455b9e455f973f5cc62da134993"
+            },
+            "start": 178,
+            "stop": 231
+          },
+          {
+            "new": "  else\n   -- Original distance-based LOD retains exclusive control of far objects.\n   occluded[part]=nil\n",
+            "new_identity": {
+              "bytes": 105,
+              "sha256": "ba7b6086aa2ffa3951de12655c891c1f704080f571e8edabe5b48b8340946060"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 232,
+            "stop": 232
+          },
+          {
+            "new": " fadeConn:Disconnect()\n",
+            "new_identity": {
+              "bytes": 23,
+              "sha256": "577cec867ac3941b34bf7c3f44ab3de62c3649d82a681ebe834f9f8b7807c7fc"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 237,
+            "stop": 237
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 7937,
+            "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+          },
+          "before": {
+            "bytes": 7937,
+            "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+          },
+          "class": "LocalScript",
+          "forward": [],
+          "inverse": [],
+          "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
+        }
+      }
+    },
+    "source_pr": 1003
   },
   "origin_rc_head": "fa5f6588725a71ed50dd35c31d4d5ca37134c214",
   "place_name": "EGGRUMBLE_REAL69_PRIVATE.rbxlx",
@@ -13161,8 +13792,8 @@
     },
     "ServerScriptService/EGGRUMBLE_SwarmCombat.luau": {
       "after": {
-        "bytes": 38973,
-        "sha256": "7ee87efde9ba55d65a3d525361ee2864faa55f0bd48c31097fa61e50ab91b147"
+        "bytes": 39288,
+        "sha256": "7cf371fac5b7f65547cc7052ab15a40218ca0521c76ad18944dd9357261ea17e"
       },
       "before": {
         "bytes": 38508,
@@ -13170,6 +13801,34 @@
       },
       "class": "ModuleScript",
       "forward": [
+        {
+          "new": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+          "new_identity": {
+            "bytes": 244,
+            "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 116,
+          "stop": 116
+        },
+        {
+          "new": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+          "new_identity": {
+            "bytes": 71,
+            "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 117,
+          "stop": 117
+        },
         {
           "new": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
           "new_identity": {
@@ -13262,13 +13921,41 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
+          "old": " -- GQ470_FB001_008_015_NEUTRAL_SUBJECT_READABILITY_20261121: NPC-owned distances rather than viewer-owned distances.\n -- Retain only near-range damaged HP; no new world/UI Parts.\n h.DisplayDistanceType=Enum.HumanoidDisplayDistanceType.Subject\n",
+          "old_identity": {
+            "bytes": 244,
+            "sha256": "11b9f7246440bc2ab0550cf6d0e9f2c27f88de76c2f3343f439c4b379331ab36"
+          },
+          "start": 116,
+          "stop": 119
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " h.HealthDisplayType=Enum.HumanoidHealthDisplayType.DisplayWhenDamaged\n",
+          "old_identity": {
+            "bytes": 71,
+            "sha256": "77f3997562e03f5cc7c83ff99c7dd21df3da6c616706e3a67294feec8013afc0"
+          },
+          "start": 120,
+          "stop": 121
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "old": " -- A disconnected human's castle may remain ACTIVE under AI takeover.\n -- Keep that AI's session KO ledger, but never publish it to a rejoined human\n -- outside this session. Reuse the Host's existing membership authority.\n local function currentHumanForId(id:string):Player?\n  local userId=tonumber(id)\n  if not userId or type(session.isCurrentHuman)~=\"function\" then return nil end\n  local player=Players:GetPlayerByUserId(userId)\n  if not player then return nil end\n  local ok,current=pcall(session.isCurrentHuman,player)\n  return if ok and current==true then player else nil\n end\n",
           "old_identity": {
             "bytes": 585,
             "sha256": "8b0e8d54aa1f27a861dcb1b991cb7659dbb4171c5e87ac55968d7cd031297be3"
           },
-          "start": 173,
-          "stop": 184
+          "start": 177,
+          "stop": 188
         },
         {
           "new": "  local p=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
@@ -13281,8 +13968,8 @@
             "bytes": 32,
             "sha256": "931c4ed541b6d670c3c3680825338e13b5ab26b5b7537a9dc55453fc5e88e1b9"
           },
-          "start": 299,
-          "stop": 300
+          "start": 303,
+          "stop": 304
         },
         {
           "new": "    local attacker=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
@@ -13295,8 +13982,8 @@
             "bytes": 41,
             "sha256": "a1eca4400d1d93e9351df80723f910456b16ebbaf8348793007183c51f71dd7f"
           },
-          "start": 403,
-          "stop": 404
+          "start": 407,
+          "stop": 408
         },
         {
           "new": "    local directUser=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
@@ -13309,8 +13996,8 @@
             "bytes": 43,
             "sha256": "59a7e6f8c54f9a6fa4c2b22d50d0c88bed59e267b753e3a3e0169a171c1e82f1"
           },
-          "start": 520,
-          "stop": 521
+          "start": 524,
+          "stop": 525
         },
         {
           "new": "    local user=Players:GetPlayerByUserId(tonumber(id) or -1)\n",
@@ -13323,8 +14010,8 @@
             "bytes": 37,
             "sha256": "3230bef6477237b264e7ccfbf676ad694e66b6186b15ccadb81fa694eaec9138"
           },
-          "start": 533,
-          "stop": 534
+          "start": 537,
+          "stop": 538
         },
         {
           "new": "    local user=Players:GetPlayerByUserId(tonumber(ownerId) or -1)\n",
@@ -13337,8 +14024,8 @@
             "bytes": 42,
             "sha256": "e4d122be07abb17a96e6668773c92f93c50e1b13000f4d9fd918910e31917c2b"
           },
-          "start": 781,
-          "stop": 782
+          "start": 785,
+          "stop": 786
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_SwarmCombat"
@@ -13697,16 +14384,130 @@
     },
     "ServerScriptService/GQ8_LobbySocialPlaza.server.luau": {
       "after": {
-        "bytes": 12930,
-        "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
+        "bytes": 13848,
+        "sha256": "74003cb897f7bb09b87b098e0c0d03e721d08000f98a8a9c99a9b1ad970de1e5"
       },
       "before": {
         "bytes": 12930,
         "sha256": "5955ecb5df204bb97565b976ae688c96f54f865416d073911cd693bf58fa4edc"
       },
       "class": "Script",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "    b.Size=UDim2.fromOffset(136,38)\n",
+          "new_identity": {
+            "bytes": 36,
+            "sha256": "98fd48ecce10ee1f1e4b57ffc1f8ba007e020a101c645e029ce5b35235c9ce26"
+          },
+          "old": "    b.Size=UDim2.fromOffset(180,50)\n",
+          "old_identity": {
+            "bytes": 36,
+            "sha256": "d8d5a94ed4355602f71c79f39ecf590bee943d499580857d861a5ce1f72eb027"
+          },
+          "start": 29,
+          "stop": 30
+        },
+        {
+          "new": "    b.MaxDistance=25;b.AlwaysOnTop=false;b.Parent=at\n",
+          "new_identity": {
+            "bytes": 53,
+            "sha256": "ab772787f0baba109af12793e6f6717c4615dc204789d04642adf5d3981b4345"
+          },
+          "old": "    b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at\n",
+          "old_identity": {
+            "bytes": 53,
+            "sha256": "d9654a0ef89e97fb5668d7ce932955def970caac8891aeac0678bb3d2c2d8699"
+          },
+          "start": 31,
+          "stop": 32
+        },
+        {
+          "new": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36;t.TextStrokeTransparency=.52;t.TextStrokeColor3=Color3.fromRGB(8,16,24)\n",
+          "new_identity": {
+            "bytes": 149,
+            "sha256": "3e877340179d526bc6031f7c8796e283c2e455842b21b6e5217449b01a867334"
+          },
+          "old": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.18\n",
+          "old_identity": {
+            "bytes": 77,
+            "sha256": "3e454a3fd02b31f5c29d6f94470d260f501b454f5f2b6a49ff14e5de95f9015f"
+          },
+          "start": 33,
+          "stop": 34
+        },
+        {
+          "new": "-- GQ470_FB015_SOCIAL_PLAZA_READABILITY_REAL69_20261120\n-- One extra static Part only; angled roof silhouette, no physics or query.\nlocal roofLeft=part(\"PhotoRoof_Left\",Vector3.new(-4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofLeft.CFrame=CFrame.new(center+Vector3.new(-4.4,9.2,0))*CFrame.Angles(0,0,math.rad(13))\nroofLeft.CastShadow=false\nlocal roofRight=part(\"PhotoRoof_Right\",Vector3.new(4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofRight.CFrame=CFrame.new(center+Vector3.new(4.4,9.2,0))*CFrame.Angles(0,0,math.rad(-13))\nroofRight.CastShadow=false\n-- The ridge cap hides the flat seam between both roof planes with one low-cost,\n-- nonphysical slate beam. It does not introduce another sign or prompt.\nlocal ridge=part(\"PhotoRoof_Ridge\",Vector3.new(0,10.25,0),Vector3.new(1.4,.85,12.5),Color3.fromRGB(52,91,122),Enum.Material.Slate,false)\nridge.CastShadow=false\n",
+          "new_identity": {
+            "bytes": 961,
+            "sha256": "63acb0b5b21fb9fdfa0244f08d818b29ec995cd6ed83b228f176883ca8184246"
+          },
+          "old": "part(\"PhotoRoof\",Vector3.new(0,8.8,0),Vector3.new(18,1.5,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\n",
+          "old_identity": {
+            "bytes": 115,
+            "sha256": "3b6b1bd0c9bc72882be4277c9893fb15e413bc0fb9ffc16734752efff54fe998"
+          },
+          "start": 89,
+          "stop": 90
+        }
+      ],
+      "inverse": [
+        {
+          "new": "    b.Size=UDim2.fromOffset(180,50)\n",
+          "new_identity": {
+            "bytes": 36,
+            "sha256": "d8d5a94ed4355602f71c79f39ecf590bee943d499580857d861a5ce1f72eb027"
+          },
+          "old": "    b.Size=UDim2.fromOffset(136,38)\n",
+          "old_identity": {
+            "bytes": 36,
+            "sha256": "98fd48ecce10ee1f1e4b57ffc1f8ba007e020a101c645e029ce5b35235c9ce26"
+          },
+          "start": 29,
+          "stop": 30
+        },
+        {
+          "new": "    b.MaxDistance=42;b.AlwaysOnTop=false;b.Parent=at\n",
+          "new_identity": {
+            "bytes": 53,
+            "sha256": "d9654a0ef89e97fb5668d7ce932955def970caac8891aeac0678bb3d2c2d8699"
+          },
+          "old": "    b.MaxDistance=25;b.AlwaysOnTop=false;b.Parent=at\n",
+          "old_identity": {
+            "bytes": 53,
+            "sha256": "ab772787f0baba109af12793e6f6717c4615dc204789d04642adf5d3981b4345"
+          },
+          "start": 31,
+          "stop": 32
+        },
+        {
+          "new": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.18\n",
+          "new_identity": {
+            "bytes": 77,
+            "sha256": "3e454a3fd02b31f5c29d6f94470d260f501b454f5f2b6a49ff14e5de95f9015f"
+          },
+          "old": "    t.BackgroundColor3=Color3.fromRGB(22,35,50);t.BackgroundTransparency=.36;t.TextStrokeTransparency=.52;t.TextStrokeColor3=Color3.fromRGB(8,16,24)\n",
+          "old_identity": {
+            "bytes": 149,
+            "sha256": "3e877340179d526bc6031f7c8796e283c2e455842b21b6e5217449b01a867334"
+          },
+          "start": 33,
+          "stop": 34
+        },
+        {
+          "new": "part(\"PhotoRoof\",Vector3.new(0,8.8,0),Vector3.new(18,1.5,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\n",
+          "new_identity": {
+            "bytes": 115,
+            "sha256": "3b6b1bd0c9bc72882be4277c9893fb15e413bc0fb9ffc16734752efff54fe998"
+          },
+          "old": "-- GQ470_FB015_SOCIAL_PLAZA_READABILITY_REAL69_20261120\n-- One extra static Part only; angled roof silhouette, no physics or query.\nlocal roofLeft=part(\"PhotoRoof_Left\",Vector3.new(-4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofLeft.CFrame=CFrame.new(center+Vector3.new(-4.4,9.2,0))*CFrame.Angles(0,0,math.rad(13))\nroofLeft.CastShadow=false\nlocal roofRight=part(\"PhotoRoof_Right\",Vector3.new(4.4,9.2,0),Vector3.new(9.4,1.0,12),Color3.fromRGB(78,128,166),Enum.Material.Slate,false)\nroofRight.CFrame=CFrame.new(center+Vector3.new(4.4,9.2,0))*CFrame.Angles(0,0,math.rad(-13))\nroofRight.CastShadow=false\n-- The ridge cap hides the flat seam between both roof planes with one low-cost,\n-- nonphysical slate beam. It does not introduce another sign or prompt.\nlocal ridge=part(\"PhotoRoof_Ridge\",Vector3.new(0,10.25,0),Vector3.new(1.4,.85,12.5),Color3.fromRGB(52,91,122),Enum.Material.Slate,false)\nridge.CastShadow=false\n",
+          "old_identity": {
+            "bytes": 961,
+            "sha256": "63acb0b5b21fb9fdfa0244f08d818b29ec995cd6ed83b228f176883ca8184246"
+          },
+          "start": 89,
+          "stop": 101
+        }
+      ],
       "route": "ServerScriptService/GQ8_LobbySocialPlaza"
     },
     "ServerScriptService/GQ8_TradeEscrowReducer.luau": {
@@ -13739,16 +14540,158 @@
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau": {
       "after": {
-        "bytes": 7937,
-        "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
+        "bytes": 10210,
+        "sha256": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd"
       },
       "before": {
         "bytes": 7937,
         "sha256": "565a9e2e4e3ee794636116d802c887f799c685a7bedb5cf72d30a130165b147d"
       },
       "class": "LocalScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": " if instance.Parent then\n  instance.LocalTransparencyModifier=0\n elseif hidden[instance] or occluded[instance] then\n  -- Deferred delivery can see a still-live part after its Parent was cleared.\n  -- Also release tracking if the engine has already destroyed the part.\n  pcall(function() instance.LocalTransparencyModifier=0 end)\n end\n",
+          "new_identity": {
+            "bytes": 334,
+            "sha256": "00a818e4ff5f6eb151772fa9ff28c367983f5d1dcaee87593e8e5acb490e4359"
+          },
+          "old": " if instance.Parent then instance.LocalTransparencyModifier=0 end\n",
+          "old_identity": {
+            "bytes": 66,
+            "sha256": "7c6f5ad345c235331d74fdee7a45f57f77aca734d74d9e050780a3db5bac9690"
+          },
+          "start": 104,
+          "stop": 105
+        },
+        {
+          "new": "-- GQ470_FB016_FOLIAGE_TRUE_OCCLUSION_A01_REAL69_20261120\n-- A01 visual-only: preserve nearby forest; fade only when actually between\n-- camera and avatar, or enclosing camera; no extra Parts/Remote/render loop.\n-- 160 canopies, 1800 tracked art objects, 0.16-second capped sampling.\nlocal CANOPY_PADDING=.5\nlocal wedgeRiseSign:number?=nil\n\nlocal function wedgeRise(part:BasePart):number\n if not part:IsA(\"WedgePart\") then return 0 end\n if wedgeRiseSign~=nil then return wedgeRiseSign end\n -- Calibrate once with the engine's primitive shape. An interior sample is\n -- returned unchanged. Keep the original box when the API is unavailable or\n -- the two samples cannot distinguish the sloped ends.\n local ok,rise=pcall(function():number\n  local probe=part.Size.Z*.25\n  local positive=part.CFrame:PointToWorldSpace(Vector3.new(0,0,probe))\n  local negative=part.CFrame:PointToWorldSpace(Vector3.new(0,0,-probe))\n  local positiveInside=(part:GetClosestPointOnSurface(positive)-positive).Magnitude<.001\n  local negativeInside=(part:GetClosestPointOnSurface(negative)-negative).Magnitude<.001\n  if positiveInside==negativeInside then return 0 end\n  return if positiveInside then 1 else -1\n end)\n wedgeRiseSign=if ok then rise else 0\n return wedgeRiseSign\n",
+          "new_identity": {
+            "bytes": 1250,
+            "sha256": "9f6b8fd426d4a936318771538bbacee595048e19527509956b868e540d4f5190"
+          },
+          "old": "-- The original S1 FB016 used geometry projection, not client damage/Remote.\n-- Budget: at most 160 A01 canopies, sampled every 0.16 seconds.\nlocal function blocksAvatar(p:BasePart,eye:Vector3,avatar:Vector3):boolean\n local delta=avatar-eye\n local len=delta:Dot(delta)\n if len<.01 then return false end\n local t=(p.Position-eye):Dot(delta)/len\n if t<=0 or t>=1 then return false end\n local nearest=eye+delta*t\n local radius=math.max(p.Size.X,p.Size.Y,p.Size.Z)*.5\n return (p.Position-nearest).Magnitude<radius+2.5\n",
+          "old_identity": {
+            "bytes": 514,
+            "sha256": "5d66318441751b43e06916586918a9efdd57693fb7852870db36774c7a831b73"
+          },
+          "start": 147,
+          "stop": 158
+        },
+        {
+          "new": "\nlocal function canopyAlpha(part:BasePart,eye:Vector3,avatar:Vector3?):number\n local frame=part.CFrame\n local size=part.Size\n local start=frame:PointToObjectSpace(eye)\n local halfX,halfY,halfZ=size.X*.5+CANOPY_PADDING,size.Y*.5+CANOPY_PADDING,size.Z*.5+CANOPY_PADDING\n local rise=wedgeRise(part)\n local scaleY=if rise==0 then 0 else size.Z\n local scaleZ=rise*size.Y\n local roofPadding=if rise==0 then 0 else CANOPY_PADDING*math.sqrt(scaleY*scaleY+scaleZ*scaleZ)\n local startAbove=start.Y*scaleY-start.Z*scaleZ\n if math.abs(start.X)<=halfX and math.abs(start.Y)<=halfY and math.abs(start.Z)<=halfZ\n    and startAbove<=roofPadding then return .88 end\n if not avatar then return 0 end\n\n -- Clip to the rotated bounds, then test against the sloping half-space.\n local delta=frame:PointToObjectSpace(avatar)-start\n local tMin,tMax=0,1\n local function clipAxis(origin:number,step:number,radius:number):boolean\n  if math.abs(step)<.0001 then return math.abs(origin)<=radius end\n  local enter,leave=(-radius-origin)/step,(radius-origin)/step\n  if enter>leave then enter,leave=leave,enter end\n  tMin,tMax=math.max(tMin,enter),math.min(tMax,leave)\n  return tMin<=tMax\n end\n if not (clipAxis(start.X,delta.X,halfX) and clipAxis(start.Y,delta.Y,halfY)\n     and clipAxis(start.Z,delta.Z,halfZ)) then return 0 end\n local roofStep=delta.Y*scaleY-delta.Z*scaleZ\n if math.min(startAbove+roofStep*tMin,startAbove+roofStep*tMax)>roofPadding then return 0 end\n return .76\nend\ntask.spawn(function()\n while script.Parent and live do\n  task.wait(.16)\n  if not live or canopyCount==0 then continue end\n  local camera=workspace.CurrentCamera\n  if not camera then continue end\n  local eye=camera.CFrame.Position\n  local player=Players.LocalPlayer\n  local character=player and player.Character\n  local root=character and character:FindFirstChild(\"HumanoidRootPart\")\n  local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n  for part in pairs(canopies) do\n   if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n    local alpha=canopyAlpha(part,eye,avatar)\n    local fade=alpha>0\n    -- Distance LOD may have restored .93 on nearward transition; re-sync.\n    if occluded[part]~=fade or part.LocalTransparencyModifier~=alpha then\n     occluded[part]=fade\n     part.LocalTransparencyModifier=alpha\n    end\n   else\n    occluded[part]=nil -- far-distance A01 LOD remains authoritative\n",
+          "new_identity": {
+            "bytes": 2407,
+            "sha256": "89021ff6bda672f0f9fa981eef47a26cf69b2455b9e455f973f5cc62da134993"
+          },
+          "old": "local fadeTick=0\nlocal fadeConn=RunService.RenderStepped:Connect(function(dt:number)\n if not live or canopyCount==0 then return end\n fadeTick+=math.min(dt,.25)\n if fadeTick<.16 then return end\n fadeTick=0\n local camera=workspace.CurrentCamera\n if not camera then return end\n local eye=camera.CFrame.Position\n local localPlayer=Players.LocalPlayer\n local char=localPlayer and localPlayer.Character\n local root=char and char:FindFirstChild(\"HumanoidRootPart\")\n local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n for part in pairs(canopies) do\n  if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n   local radius=math.max(part.Size.X,part.Size.Y,part.Size.Z)*.5\n   local nearCamera=(part.Position-eye).Magnitude<radius+9\n   local hidesAvatar=if avatar then blocksAvatar(part,eye,avatar) else false\n   local fade=nearCamera or hidesAvatar\n   if occluded[part]~=fade then\n    occluded[part]=fade\n    part.LocalTransparencyModifier=if fade then .93 else 0\n",
+          "old_identity": {
+            "bytes": 1010,
+            "sha256": "46da4b36e06d5643d1be1c6ea338cd071fa0e08118840e9feee1ad7a8a6b5a27"
+          },
+          "start": 159,
+          "stop": 181
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "  else\n   -- Original distance-based LOD retains exclusive control of far objects.\n   occluded[part]=nil\n",
+          "old_identity": {
+            "bytes": 105,
+            "sha256": "ba7b6086aa2ffa3951de12655c891c1f704080f571e8edabe5b48b8340946060"
+          },
+          "start": 182,
+          "stop": 185
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " fadeConn:Disconnect()\n",
+          "old_identity": {
+            "bytes": 23,
+            "sha256": "577cec867ac3941b34bf7c3f44ab3de62c3649d82a681ebe834f9f8b7807c7fc"
+          },
+          "start": 190,
+          "stop": 191
+        }
+      ],
+      "inverse": [
+        {
+          "new": " if instance.Parent then instance.LocalTransparencyModifier=0 end\n",
+          "new_identity": {
+            "bytes": 66,
+            "sha256": "7c6f5ad345c235331d74fdee7a45f57f77aca734d74d9e050780a3db5bac9690"
+          },
+          "old": " if instance.Parent then\n  instance.LocalTransparencyModifier=0\n elseif hidden[instance] or occluded[instance] then\n  -- Deferred delivery can see a still-live part after its Parent was cleared.\n  -- Also release tracking if the engine has already destroyed the part.\n  pcall(function() instance.LocalTransparencyModifier=0 end)\n end\n",
+          "old_identity": {
+            "bytes": 334,
+            "sha256": "00a818e4ff5f6eb151772fa9ff28c367983f5d1dcaee87593e8e5acb490e4359"
+          },
+          "start": 104,
+          "stop": 111
+        },
+        {
+          "new": "-- The original S1 FB016 used geometry projection, not client damage/Remote.\n-- Budget: at most 160 A01 canopies, sampled every 0.16 seconds.\nlocal function blocksAvatar(p:BasePart,eye:Vector3,avatar:Vector3):boolean\n local delta=avatar-eye\n local len=delta:Dot(delta)\n if len<.01 then return false end\n local t=(p.Position-eye):Dot(delta)/len\n if t<=0 or t>=1 then return false end\n local nearest=eye+delta*t\n local radius=math.max(p.Size.X,p.Size.Y,p.Size.Z)*.5\n return (p.Position-nearest).Magnitude<radius+2.5\n",
+          "new_identity": {
+            "bytes": 514,
+            "sha256": "5d66318441751b43e06916586918a9efdd57693fb7852870db36774c7a831b73"
+          },
+          "old": "-- GQ470_FB016_FOLIAGE_TRUE_OCCLUSION_A01_REAL69_20261120\n-- A01 visual-only: preserve nearby forest; fade only when actually between\n-- camera and avatar, or enclosing camera; no extra Parts/Remote/render loop.\n-- 160 canopies, 1800 tracked art objects, 0.16-second capped sampling.\nlocal CANOPY_PADDING=.5\nlocal wedgeRiseSign:number?=nil\n\nlocal function wedgeRise(part:BasePart):number\n if not part:IsA(\"WedgePart\") then return 0 end\n if wedgeRiseSign~=nil then return wedgeRiseSign end\n -- Calibrate once with the engine's primitive shape. An interior sample is\n -- returned unchanged. Keep the original box when the API is unavailable or\n -- the two samples cannot distinguish the sloped ends.\n local ok,rise=pcall(function():number\n  local probe=part.Size.Z*.25\n  local positive=part.CFrame:PointToWorldSpace(Vector3.new(0,0,probe))\n  local negative=part.CFrame:PointToWorldSpace(Vector3.new(0,0,-probe))\n  local positiveInside=(part:GetClosestPointOnSurface(positive)-positive).Magnitude<.001\n  local negativeInside=(part:GetClosestPointOnSurface(negative)-negative).Magnitude<.001\n  if positiveInside==negativeInside then return 0 end\n  return if positiveInside then 1 else -1\n end)\n wedgeRiseSign=if ok then rise else 0\n return wedgeRiseSign\n",
+          "old_identity": {
+            "bytes": 1250,
+            "sha256": "9f6b8fd426d4a936318771538bbacee595048e19527509956b868e540d4f5190"
+          },
+          "start": 153,
+          "stop": 177
+        },
+        {
+          "new": "local fadeTick=0\nlocal fadeConn=RunService.RenderStepped:Connect(function(dt:number)\n if not live or canopyCount==0 then return end\n fadeTick+=math.min(dt,.25)\n if fadeTick<.16 then return end\n fadeTick=0\n local camera=workspace.CurrentCamera\n if not camera then return end\n local eye=camera.CFrame.Position\n local localPlayer=Players.LocalPlayer\n local char=localPlayer and localPlayer.Character\n local root=char and char:FindFirstChild(\"HumanoidRootPart\")\n local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n for part in pairs(canopies) do\n  if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n   local radius=math.max(part.Size.X,part.Size.Y,part.Size.Z)*.5\n   local nearCamera=(part.Position-eye).Magnitude<radius+9\n   local hidesAvatar=if avatar then blocksAvatar(part,eye,avatar) else false\n   local fade=nearCamera or hidesAvatar\n   if occluded[part]~=fade then\n    occluded[part]=fade\n    part.LocalTransparencyModifier=if fade then .93 else 0\n",
+          "new_identity": {
+            "bytes": 1010,
+            "sha256": "46da4b36e06d5643d1be1c6ea338cd071fa0e08118840e9feee1ad7a8a6b5a27"
+          },
+          "old": "\nlocal function canopyAlpha(part:BasePart,eye:Vector3,avatar:Vector3?):number\n local frame=part.CFrame\n local size=part.Size\n local start=frame:PointToObjectSpace(eye)\n local halfX,halfY,halfZ=size.X*.5+CANOPY_PADDING,size.Y*.5+CANOPY_PADDING,size.Z*.5+CANOPY_PADDING\n local rise=wedgeRise(part)\n local scaleY=if rise==0 then 0 else size.Z\n local scaleZ=rise*size.Y\n local roofPadding=if rise==0 then 0 else CANOPY_PADDING*math.sqrt(scaleY*scaleY+scaleZ*scaleZ)\n local startAbove=start.Y*scaleY-start.Z*scaleZ\n if math.abs(start.X)<=halfX and math.abs(start.Y)<=halfY and math.abs(start.Z)<=halfZ\n    and startAbove<=roofPadding then return .88 end\n if not avatar then return 0 end\n\n -- Clip to the rotated bounds, then test against the sloping half-space.\n local delta=frame:PointToObjectSpace(avatar)-start\n local tMin,tMax=0,1\n local function clipAxis(origin:number,step:number,radius:number):boolean\n  if math.abs(step)<.0001 then return math.abs(origin)<=radius end\n  local enter,leave=(-radius-origin)/step,(radius-origin)/step\n  if enter>leave then enter,leave=leave,enter end\n  tMin,tMax=math.max(tMin,enter),math.min(tMax,leave)\n  return tMin<=tMax\n end\n if not (clipAxis(start.X,delta.X,halfX) and clipAxis(start.Y,delta.Y,halfY)\n     and clipAxis(start.Z,delta.Z,halfZ)) then return 0 end\n local roofStep=delta.Y*scaleY-delta.Z*scaleZ\n if math.min(startAbove+roofStep*tMin,startAbove+roofStep*tMax)>roofPadding then return 0 end\n return .76\nend\ntask.spawn(function()\n while script.Parent and live do\n  task.wait(.16)\n  if not live or canopyCount==0 then continue end\n  local camera=workspace.CurrentCamera\n  if not camera then continue end\n  local eye=camera.CFrame.Position\n  local player=Players.LocalPlayer\n  local character=player and player.Character\n  local root=character and character:FindFirstChild(\"HumanoidRootPart\")\n  local avatar:Vector3?=if root and root:IsA(\"BasePart\") then root.Position else nil\n  for part in pairs(canopies) do\n   if records[part] and part:IsDescendantOf(workspace) and not hidden[part] then\n    local alpha=canopyAlpha(part,eye,avatar)\n    local fade=alpha>0\n    -- Distance LOD may have restored .93 on nearward transition; re-sync.\n    if occluded[part]~=fade or part.LocalTransparencyModifier~=alpha then\n     occluded[part]=fade\n     part.LocalTransparencyModifier=alpha\n    end\n   else\n    occluded[part]=nil -- far-distance A01 LOD remains authoritative\n",
+          "old_identity": {
+            "bytes": 2407,
+            "sha256": "89021ff6bda672f0f9fa981eef47a26cf69b2455b9e455f973f5cc62da134993"
+          },
+          "start": 178,
+          "stop": 231
+        },
+        {
+          "new": "  else\n   -- Original distance-based LOD retains exclusive control of far objects.\n   occluded[part]=nil\n",
+          "new_identity": {
+            "bytes": 105,
+            "sha256": "ba7b6086aa2ffa3951de12655c891c1f704080f571e8edabe5b48b8340946060"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 232,
+          "stop": 232
+        },
+        {
+          "new": " fadeConn:Disconnect()\n",
+          "new_identity": {
+            "bytes": 23,
+            "sha256": "577cec867ac3941b34bf7c3f44ab3de62c3649d82a681ebe834f9f8b7807c7fc"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 237,
+          "stop": 237
+        }
+      ],
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD"
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau": {
