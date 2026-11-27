@@ -45454,7 +45454,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Private opt-in Mage and Warrior effect batch. Distinct projectile BURN, actual neutral frost slow, icicle penetration and grounded flight-then-sweep. Two stable sequenced combos reuse current Swarm/HP/Growth; current Tool metadata feeds the original visual/audio path. No new purchase, authority, Remote, default profile, or new select source count.",
       "resources": [
@@ -45811,6 +45811,70 @@
       "actual_binding_lease": {
         "commit": "89f56dc3577fc11a62b73a4c21aab497d7a871dc",
         "operation_id": "0602a577-735a-47e5-b144-63593ae5fe22"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1053#pullrequestreview-6094433685",
+        "review_id": 6094433685,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 1035363,
+        "private_place_sha256": "3a90a0b0c4598312da2c7f5eba37bcfb661345d602e48a808216d149eaeb0918",
+        "private_immediate_off_bytes": 987760,
+        "private_ci": 46083774344,
+        "private_job": 140788532040,
+        "private_steps": 48,
+        "private_artifact": 15238856453,
+        "private_zip_bytes": 33252925,
+        "private_zip_digest": "sha256:42a519bce51edbcef8687f753515faabdc2d89714064849e66738714ca849208",
+        "source_lock": "8964c7f20da1e874f3197b527d6c6a0c8a16f13ea7faff6085ca2818f6ead68e",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "3bc60e3f7283e945ba86d600bba7ca99f5fbf7d8",
+        "operation_id": "20a97f9e-7c93-4b47-8e61-e35deb2db2a5"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "permitted_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "permitted_tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
+        "permitted_pr": 1053,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-28T00:13:38.257Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Seven fixed Mage and Warrior abilities with two actual sequenced combos and existing four-channel confirmed-cast cues. Same real PRIVATE role/HP/Swarm; ACTIVE untouched.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-27T22:41:21Z",
+          "lease": "3bc60e3f7283e945ba86d600bba7ca99f5fbf7d8",
+          "owner": "20a97f9e-7c93-4b47-8e61-e35deb2db2a5",
+          "review": 6094433685,
+          "trusted_queue_run": 46084873135,
+          "trusted_queue_job": 140791989381
+        }
       }
     }
   ],
