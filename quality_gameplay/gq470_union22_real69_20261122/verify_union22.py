@@ -1188,7 +1188,7 @@ def verify_score_regressions(native, root, lock, build, aggregate, context):
         "EGGRUMBLE_ScoreBalance": b"EGGRUMBLE_V3_MATCH_RESULTS_NATIVE_PASS assertions=107\n",
         "EGGRUMBLE_RelayScoreRegression": b"EGGRUMBLE_RELAY_SCORE_NATIVE_REGRESSION_PASS assertions=16\n",
     }
-    donor = HERE.parents[1] / compose.SCORE_REGRESSION_DONOR / "native"
+    donor = compose.REPO / compose.SCORE_REGRESSION_DONOR / "native"
     repair = lock["score_relay_followup"]
     require(set(repair["regression_specs"]) == {f"native/{item}.spec.luau" for item in expected},
             "SCORE_VERIFIED_SPEC_SET")
@@ -1366,10 +1366,13 @@ def admit_delivery(root, base, reports, native, context):
     verifier_before = read(Path(__file__))
     profile_before = read(HERE / "profile_lock.json")
     contract_before = files(HERE)
+    score_donor = compose.REPO / compose.SCORE_REGRESSION_DONOR / "native"
+    score_donor_before = files(score_donor)
     prior_before = compose.load_inputs(base, reports)["snapshot"]
     def unchanged(phase):
         require(files(root) == before and files(native) == native_before
                 and files(HERE) == contract_before
+                and files(score_donor) == score_donor_before
                 and compose.load_inputs(base, reports)["snapshot"] == prior_before,
                 "PAYLOAD_CHANGED_AFTER_" + phase)
     verified = verify_core(root, base, reports, context)
