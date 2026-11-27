@@ -10,7 +10,10 @@ import argparse
 import re
 from pathlib import Path
 
-def verify(dist: Path, output: Path) -> None:
+from test_p0_ready_composed_native import unique_function
+
+
+def verify(dist: Path, output: Path, active_rich51=False) -> None:
     src=(dist/"src/server/Game.server.luau").read_text("utf8")
     assert src.count('local function stopRound(')==1
     assert src.count('local function resetRound()')==1
@@ -29,27 +32,45 @@ def verify(dist: Path, output: Path) -> None:
     results=src[a:b]
     assert results.count('match.phase = "LOBBY"')==1
     assert 'if now >= match.phaseUntil then' in results
-    assert 'root.CFrame=LobbyIsland.spawn(team)' in results
-    assert 'if not refreshed then' in results
     assert 'p:LoadCharacter()' in results
-    assert 'p.Parent~=Players or match.phase~="LOBBY"' in results
     assert 'P0D_LOBBY_RESPAWN_FAIL' in results
     assert 'modeVotes' in results and 'lastModeVote' in results
     assert 'match.winner = ""' in results and 'match.reason = ""' in results
-    assert 'RunService:IsStudio()' in results
+    if active_rich51:
+        assert 'root.CFrame=map.teams[team].spawn + Vector3.new(0, 2, 0)' in results
+        assert 'p.Parent == Players and match.phase == "LOBBY" and match.serial == endedRound' in results
+        assert 'lobbyRecoveryRound[p] = endedRound' in results and 'local currentTeam = getTeamName(p)' in results
+        assert 'root.CFrame = map.teams[team].spawn + Vector3.new(0, 2, 0)' in src
+    else:
+        assert 'root.CFrame=LobbyIsland.spawn(team)' in results
+        assert 'if not refreshed then' in results and 'p.Parent~=Players or match.phase~="LOBBY"' in results
+        assert 'RunService:IsStudio()' in results
     assert len(results)<3000, "RESULTS_BRANCH_UNEXPECTEDLY_LARGE"
     # The 'elseif' comes from the real tick phase switch; new wrapper provides
     # if and a test clock while preserving the EXACT inner match transitions.
     result_function=results.replace(
         'elseif match.phase == "RESULTS" then',
         'if match.phase == "RESULTS" then',1)
-    native=(MOCK+"\nlocal function realRevokeReady()\n"+
+    mock = MOCK
+    cases = CASES
+    if active_rich51:
+        mock = mock.replace('local Vector3={zero="ZERO"}', 'local Vector3={zero="ZERO"}\nfunction Vector3.new() return 0 end')
+        mock = mock.replace('local scheduled={}', '''local map={teams={}}
+for _,team in ipairs({"RED","BLUE"}) do
+  map.teams[team]={spawn=setmetatable({team=team},{__add=function(a) return "LOBBY_"..a.team end})}
+end
+local scheduled={}''')
+        mock = mock.replace("local roundReady={}", "local roundReady={}\nlocal lobbyRecoveryRound={}\nmatch.serial=0")
+        cases = cases.replace("P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS",
+                              "P0_RICH51_RESULTS_LOBBY_15_NATIVE_CASES_PASS") + ACTIVE_CASES + ready_during_load(src)
+    native=(mock+"\nlocal function realRevokeReady()\n"+
             clear.group(0)+"\nend\n"+
             "local function realResultsStep(now)\n"+result_function+"\nend\n"+
-            CASES)
+            cases)
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(native,"utf8")
-    print("P0_PRIVATE78_RESULTS_REAL_GAME_SOURCE_LOCK_PASS",len(results))
+    label = "P0_RICH51" if active_rich51 else "P0_PRIVATE78"
+    print(label + "_RESULTS_REAL_GAME_SOURCE_LOCK_PASS", len(results))
 
 MOCK=r'''
 --!nocheck
@@ -143,9 +164,88 @@ check(blue.loadCount==1,"AUTO_RESPAWN_NOT_DUPLICATED")
 check(warnings==0,"NO_FORCED_STUDIO_WARNINGS")
 print("P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS")
 '''
+ACTIVE_CASES=r'''
+match.phase="RESULTS"; match.phaseUntil=12;match.serial=4
+blue.alive=false
+realResultsStep(12)
+match.serial=5
+flush()
+check(blue.loadCount==1,"STALE_MATCH_DOES_NOT_RESPAWN")
+match.phase="RESULTS";match.phaseUntil=13
+realResultsStep(13)
+blue.Team=nil
+flush()
+check(blue.loadCount==1,"NEW_OBSERVER_DOES_NOT_RESPAWN")
+print("ACTIVE_RESULTS_ROUND_AND_TEAM_FENCE_PASS")
+'''
+
+
+def ready_during_load(src):
+    eligible = unique_function(src, "local function eligibleSoloPlayers(): {Player}")
+    everybody = unique_function(src, "local function everybodyReady(): boolean")
+    ready = unique_function(src, "local function applyReady(player: Player, data)")
+    hook = "remote.OnServerEvent:Connect(function(player: Player, data)"
+    assert src.count(hook) == 1
+    dispatch = hook + src.split(hook, 1)[1].split("\nend)", 1)[0] + "\nend)"
+    counted = "    local count = #eligibleSoloPlayers()"
+    assert src.count(counted) == 1
+    phase = counted + src.split(counted, 1)[1].split('    elseif match.phase == "ACTIVE" then', 1)[0]
+    return "\n".join((r'''
+Players.online={red,blue}
+local lastSeq={}
+local Rules={validSeq=function(seq,last) return type(seq)=="number" and seq>last end}
+local function broadcast() end
+local function getAttribute() return nil end
+red.GetAttribute=getAttribute
+blue.GetAttribute=getAttribute
+local function teamCount() return 1 end
+local function rebalanceLobbyTeams() end
+local StudioSolo={canStart=function(_,count,r,b,m) return count>=m and r>0 and b>0 end}
+local Config={MinPlayers=2,IntermissionSeconds=7}
+local starts=0
+local function resetRound() starts+=1 match.phase="ACTIVE" end
+local requestReady
+local remote={OnServerEvent={}}
+function remote.OnServerEvent:Connect(handler) requestReady=handler end
+''', eligible, everybody, ready, dispatch, "local function advance(now)", phase, "    end\nend", r'''
+blue.Team={Name="BLUE"}
+blue.alive=false
+function blue:LoadCharacter()
+    coroutine.yield()
+    self.loadCount+=1
+    self.alive=true
+end
+match.phase="RESULTS";match.phaseUntil=20;match.serial=6
+realRevokeReady()
+realResultsStep(20)
+check(#scheduled==1 and lobbyRecoveryRound[blue]==6,"RESULTS_RESPAWN_PENDING")
+local worker=coroutine.create(table.remove(scheduled,1))
+check(coroutine.resume(worker) and coroutine.status(worker)=="suspended","RESULTS_RESPAWN_IN_FLIGHT")
+requestReady(red,{action="READY",ready=true,seq=1})
+requestReady(blue,{action="READY",ready=true,seq=1})
+check(lastSeq[blue]==nil and not roundReady[blue],"PENDING_READY_MUST_KEEP_INPUT_SEQ")
+roundReady[blue]=true
+advance(21)
+check(match.phase=="LOBBY" and starts==0,"PENDING_MUST_BLOCK_MATCH_START")
+match.phase="COUNTDOWN";match.phaseUntil=22
+advance(22)
+check(match.phase=="LOBBY" and starts==0,"PENDING_MUST_BLOCK_COUNTDOWN_COMPLETION")
+match.phase="COUNTDOWN"
+requestReady(blue,{action="READY",ready=false,seq=1})
+check(lastSeq[blue]==1 and not roundReady[blue] and match.phase=="LOBBY","PENDING_READY_MUST_ALLOW_CANCEL")
+check(coroutine.resume(worker) and coroutine.status(worker)=="dead" and blue.alive
+    and lobbyRecoveryRound[blue]==nil,"RESULTS_RESPAWN_MUST_RELEASE_FENCE")
+requestReady(blue,{action="READY",ready=true,seq=2})
+advance(23);advance(30)
+check(lastSeq[blue]==2 and starts==1 and match.phase=="ACTIVE","READY_AFTER_RECOVERY_MUST_ALLOW_MATCH")
+print("ACTIVE_RESULTS_IN_FLIGHT_READY_AND_COUNTDOWN_PASS")
+'''))
+
+
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--dist",type=Path,required=True)
     p.add_argument("--out",type=Path,required=True)
+    p.add_argument("--active-rich51",action="store_true")
     args=p.parse_args()
-    verify(args.dist,args.out)
+    verify(args.dist,args.out,args.active_rich51)

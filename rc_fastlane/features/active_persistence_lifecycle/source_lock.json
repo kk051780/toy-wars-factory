@@ -1,0 +1,32 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "patch_sha256": "6d0b37e2709ca67208fb94fc36266e1b094c6663e3b2abcdbfb745b231ab3aba",
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "1d6014975262a15270fd1972381215b1628193a1",
+      "after": "c9e879c04689efe5f13d7c4d44d35ea240acb39c"
+    },
+    "server/PersistentHatchStore.luau": {
+      "before": "6f7454460cd11a04896cc760c91c8b5e9cd8cd07",
+      "after": "319242dcc401aab3379ddcb56be03194e471d231"
+    },
+    "client/HUD.client.luau": {
+      "before": "e2afdfadfc7c96c7fe1654bb1685d44e9068d26c",
+      "after": "5ae1063086e8f8ce7c69f006f25875d5184e75fd"
+    }
+  },
+  "off_place": {
+    "bytes": 639340,
+    "sha256": "ba80cd2c5f8bad6f0ef2f233a5298c46ef58e119178f3f26c51f1cadae445cf6"
+  },
+  "source_origins": {
+    "pr": 1016,
+    "author_head": "84b39ba8dab77a5bda67969fe380484b619f1e00",
+    "settlement_repair_comment": 7095415751,
+    "author_game_sha256": "4c86aa2ec9a8d4ca9c2f67a8801dc3ecbb6e3366fc5e33bf8ad8f77a608ce833",
+    "author_store_sha256": "4315bc3307a0341a0023a4feb606d739575e277de601c88ccdc015ceac0ac858",
+    "author_hud_sha256": "6c676b855a74fb7f12607f470c1ae1a10c87fabf9769225fb75166975a049fd5"
+  },
+  "native_regression_sha256": "01b74acab4cf6137ed44b44324761962b5f82ed7b74c27b25077d257a7e6b3a1"
+}

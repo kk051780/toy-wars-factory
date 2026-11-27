@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "826235327ba98bbde81242661d0929e81e8dda6d69550e1d040586414c7a0b60"
+LOCK_SHA256 = "69c9968f8138ad3558e174c112b4341488c4b4bc37aa8619163846882d226277"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -34,6 +34,83 @@ PLACE = "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
 RECEIPT = "REAL69_LEGACY_INTAKE_RECEIPT.json"
 OFF = "off69_union22_prior_br"
 OFF_ARCHIVE = "OFF69_UNION22_PRIOR_BR_ROLLBACK.tar.gz"
+HUD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau"
+HUD_OFF = "off69_hud_context_current_rc"
+HUD_OFF_ARCHIVE = "OFF69_HUD_CONTEXT_CURRENT_RC_ROLLBACK.tar.gz"
+BOT_SOURCE = "ServerScriptService/EGGRUMBLE_BotActors.luau"
+BOT_OFF = "off69_bot_vault_hud_parent"
+BOT_OFF_ARCHIVE = "OFF69_BOT_VAULT_HUD_PARENT_ROLLBACK.tar.gz"
+BEAST_SOURCE = "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau"
+BEAST_OFF = "off69_beast_h72_parent"
+BEAST_OFF_ARCHIVE = "OFF69_BEAST_H72_PARENT_ROLLBACK.tar.gz"
+GUARDIAN_SOURCE = "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau"
+GUARDIAN_OFF = "off69_guardian_beast_parent"
+GUARDIAN_OFF_ARCHIVE = "OFF69_GUARDIAN_BEAST_PARENT_ROLLBACK.tar.gz"
+ITEM_SOURCE = "ServerScriptService/EGGRUMBLE_EncounterReadabilityArt.server.luau"
+ITEM_OFF = "off69_item_cleanup_guardian_parent"
+ITEM_OFF_ARCHIVE = "OFF69_ITEM_CLEANUP_GUARDIAN_PARENT_ROLLBACK.tar.gz"
+VAULT_SOURCE = "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+VAULT_OFF = "off69_empty_vault_item_parent"
+VAULT_OFF_ARCHIVE = "OFF69_EMPTY_VAULT_ITEM_PARENT_ROLLBACK.tar.gz"
+CASTLE_OFF = "off69_castle_release_stock_vault_parent"
+CASTLE_OFF_ARCHIVE = "OFF69_CASTLE_RELEASE_STOCK_VAULT_PARENT_ROLLBACK.tar.gz"
+SCORE_SOURCE = "ServerScriptService/EGGRUMBLE_ScoreBalance.luau"
+SCORE_OFF = "off69_score_relay_castle_parent"
+SCORE_OFF_ARCHIVE = "OFF69_SCORE_RELAY_CASTLE_PARENT_ROLLBACK.tar.gz"
+SCORE_REGRESSION_DONOR = "quality_gameplay/gq487_relay_score_real69_20261122"
+RELAY_PRESENTATION_OFF = "off69_relay_presentation_score_parent"
+RELAY_PRESENTATION_OFF_ARCHIVE = "OFF69_RELAY_PRESENTATION_SCORE_PARENT_ROLLBACK.tar.gz"
+RELAY_PRESENTATION_SOURCES = (VAULT_SOURCE, HUD_SOURCE)
+BR_CANYON_OFF = "off69_br_canyon_relay_parent"
+BR_CANYON_OFF_ARCHIVE = "OFF69_BR_CANYON_RELAY_PARENT_ROLLBACK.tar.gz"
+BR_CANYON_SOURCES = (
+    "ServerScriptService/EGGRUMBLE_LegacyCanyonRoutes.server.luau",
+    "ServerScriptService/EGGRUMBLE_RealmBattleCore.server.luau",
+)
+ROLE_READABILITY_OFF = "off69_role_readability_canyon_parent"
+ROLE_READABILITY_OFF_ARCHIVE = "OFF69_ROLE_READABILITY_CANYON_PARENT_ROLLBACK.tar.gz"
+FIELD_PROMPT_OFF = "off69_field_prompt_role_parent"
+FIELD_PROMPT_OFF_ARCHIVE = "OFF69_FIELD_PROMPT_ROLE_PARENT_ROLLBACK.tar.gz"
+NEUTRAL_NAMES_OFF = "off69_visual_readability_field_parent"
+NEUTRAL_NAMES_OFF_ARCHIVE = "OFF69_VISUAL_READABILITY_FIELD_PARENT_ROLLBACK.tar.gz"
+GUARDIAN_WALL_OFF = "off69_guardian_wall_visual_parent"
+GUARDIAN_WALL_OFF_ARCHIVE = "OFF69_GUARDIAN_WALL_VISUAL_PARENT_ROLLBACK.tar.gz"
+COMBAT_VISUAL_OFF = "off69_combat_visual_guardian_parent"
+COMBAT_VISUAL_OFF_ARCHIVE = "OFF69_COMBAT_VISUAL_GUARDIAN_PARENT_ROLLBACK.tar.gz"
+COMBAT_VISUAL_SOURCES = (BOT_SOURCE, "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau",
+                         "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau")
+GROWTH_MUSOU_OFF = "off69_growth_musou_combat_parent"
+GROWTH_MUSOU_OFF_ARCHIVE = "OFF69_GROWTH_MUSOU_COMBAT_PARENT_ROLLBACK.tar.gz"
+ART_POLISH_OFF = "off69_art_polish_growth_parent"
+ART_POLISH_OFF_ARCHIVE = "OFF69_ART_POLISH_GROWTH_PARENT_ROLLBACK.tar.gz"
+MAGE_CONTACT_OFF = "off69_mage_contact_art_parent"
+MAGE_CONTACT_OFF_ARCHIVE = "OFF69_MAGE_CONTACT_ART_PARENT_ROLLBACK.tar.gz"
+MAGE_CONTACT_SOURCES = ("ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+                        "ServerScriptService/EGGRUMBLE_SwarmCombat.luau")
+RELAY_ELIGIBILITY_OFF = "off69_relay_eligibility_mage_parent"
+RELAY_ELIGIBILITY_OFF_ARCHIVE = "OFF69_RELAY_ELIGIBILITY_MAGE_PARENT_ROLLBACK.tar.gz"
+RELAY_ELIGIBILITY_SOURCES = RELAY_PRESENTATION_SOURCES
+ART_POLISH_SOURCES = (
+    "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+    "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
+    "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau",
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+    "ServerScriptService/EGGRUMBLE_SkillFX.luau",
+)
+GROWTH_MUSOU_SOURCES = (
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+    "ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_MusouAuraController.client.luau",
+)
+SWARM_SOURCE = "ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
+LOBBY_SOCIAL_SOURCE = "ServerScriptService/GQ8_LobbySocialPlaza.server.luau"
+FOLIAGE_LOD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau"
+VISUAL_READABILITY_SOURCES = (SWARM_SOURCE, LOBBY_SOCIAL_SOURCE, FOLIAGE_LOD_SOURCE)
+ROLE_MOTION_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau"
+ROLE_WEAPON_SOURCE = "ServerScriptService/EGGRUMBLE_WeaponSilhouettes.luau"
+ROLE_READABILITY_SOURCES = (ROLE_WEAPON_SOURCE, ROLE_MOTION_SOURCE)
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -316,12 +393,215 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 22, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 33, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
+def single_source_parent(on, lock, name, repair, parent_row, prior_place, reason):
+    row = lock["sources"][name]
+    need(repair["source_path"] == name and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == prior_place
+         and parent_row["before"] == row["before"], reason + "_PARENT_PROFILE")
+    restored = apply_hunks(on[name], repair["inverse"])
+    need(identity(restored) == parent_row["after"] and restored != on[name]
+         and apply_hunks(restored, repair["forward"]) == on[name], reason + "_EXACT_TWO_WAY")
+    return on | {name: restored}, lock | {
+        "sources": lock["sources"] | {name: parent_row}, "final_place": repair["parent_place"],
+    }
+
+
+def score_parent(on, lock):
+    repair = lock["score_relay_followup"]
+    need(len(repair["forward"]) == 1 and repair["forward"][0]["old"] == ""
+         and repair["forward"][0]["new_identity"] == repair["fragment"], "SCORE_ORIGINAL_FRAGMENT")
+    return single_source_parent(on, lock, SCORE_SOURCE, repair, repair["parent_score_row"],
+                                lock["castle_release_stock_followup"]["repaired_place"], "SCORE_RELAY")
+
+
+def paired_source_parent(on, lock, repair, names, prior_place, reason):
+    need(set(repair["rows"]) == set(names)
+         and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == prior_place, reason + "_PARENT")
+    old = dict(on)
+    parent = {**lock, "sources": dict(lock["sources"]), "final_place": repair["parent_place"]}
+    for name, row in repair["rows"].items():
+        restored = apply_hunks(on[name], row["inverse"])
+        need(identity(restored) == row["parent"]["after"] and restored != on[name]
+             and row["parent"]["before"] == lock["sources"][name]["before"]
+             and apply_hunks(restored, row["forward"]) == on[name], reason + "_TWO_WAY:" + name)
+        old[name] = restored
+        parent["sources"][name] = row["parent"]
+    return old, parent
+
+
+def relay_presentation_parent(on, lock):
+    return paired_source_parent(on, lock, lock["relay_presentation_followup"], RELAY_PRESENTATION_SOURCES,
+                                lock["score_relay_followup"]["repaired_place"], "RELAY_PRESENTATION")
+
+
+def br_canyon_parent(on, lock):
+    return paired_source_parent(on, lock, lock["br_canyon_followup"], BR_CANYON_SOURCES,
+                                lock["relay_presentation_followup"]["repaired_place"], "BR_CANYON")
+
+
+def role_readability_parent(on, lock):
+    return paired_source_parent(on, lock, lock["role_readability_followup"], ROLE_READABILITY_SOURCES,
+                                lock["br_canyon_followup"]["repaired_place"], "ROLE_READABILITY")
+
+
+def field_prompt_parent(on, lock):
+    return paired_source_parent(on, lock, lock["field_prompt_followup"], (VAULT_SOURCE,),
+                                lock["role_readability_followup"]["repaired_place"], "FIELD_PROMPT")
+
+
+def neutral_names_parent(on, lock):
+    return paired_source_parent(on, lock, lock["neutral_names_followup"], VISUAL_READABILITY_SOURCES,
+                                lock["field_prompt_followup"]["repaired_place"], "VISUAL_READABILITY")
+
+
+def guardian_wall_parent(on, lock):
+    return paired_source_parent(on, lock, lock["guardian_wall_followup"], (GUARDIAN_SOURCE,),
+                                lock["neutral_names_followup"]["repaired_place"], "GUARDIAN_WALL")
+
+
+def combat_visual_parent(on, lock):
+    return paired_source_parent(on, lock, lock["combat_visual_followup"], COMBAT_VISUAL_SOURCES,
+                                lock["guardian_wall_followup"]["repaired_place"], "COMBAT_VISUAL")
+
+
+def growth_musou_parent(on, lock):
+    return paired_source_parent(on, lock, lock["growth_musou_followup"], GROWTH_MUSOU_SOURCES,
+                                lock["combat_visual_followup"]["repaired_place"], "GROWTH_MUSOU")
+
+
+def art_polish_parent(on, lock):
+    return paired_source_parent(on, lock, lock["art_polish_followup"], ART_POLISH_SOURCES,
+                                lock["growth_musou_followup"]["repaired_place"], "ART_POLISH")
+
+
+def mage_contact_parent(on, lock):
+    return paired_source_parent(on, lock, lock["mage_contact_followup"], MAGE_CONTACT_SOURCES,
+                                lock["art_polish_followup"]["repaired_place"], "MAGE_CONTACT")
+
+
+def relay_eligibility_parent(on, lock):
+    return paired_source_parent(on, lock, lock["relay_eligibility_followup"], RELAY_ELIGIBILITY_SOURCES,
+                                lock["mage_contact_followup"]["repaired_place"], "RELAY_ELIGIBILITY")
+
+
+def castle_parent(on, lock):
+    repair = lock["castle_release_stock_followup"]
+    return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
+                                lock["empty_vault_followup"]["repaired_place"], "CASTLE_RELEASE_STOCK")
+
+
+def vault_parent(on, lock):
+    repair = lock["empty_vault_followup"]
+    return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
+                                lock["item_cleanup_followup"]["repaired_place"], "VAULT")
+
+
+def item_parent(on, lock):
+    repair = lock["item_cleanup_followup"]
+    row = lock["sources"][ITEM_SOURCE]
+    parent_row = repair["parent_item_row"]
+    need(repair["source_path"] == ITEM_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["guardian_followup_repair"]["repaired_place"]
+         and parent_row["before"] == row["before"], "ITEM_CLEANUP_PARENT_PROFILE")
+    restored = apply_hunks(on[ITEM_SOURCE], repair["inverse"])
+    need(identity(restored) == parent_row["after"] and restored != on[ITEM_SOURCE]
+         and apply_hunks(restored, repair["forward"]) == on[ITEM_SOURCE], "ITEM_CLEANUP_EXACT_TWO_WAY")
+    return on | {ITEM_SOURCE: restored}, lock | {
+        "sources": lock["sources"] | {ITEM_SOURCE: parent_row}, "final_place": repair["parent_place"],
+    }
+
+
+def guardian_parent(on, lock):
+    repair = lock["guardian_followup_repair"]
+    row = lock["sources"][GUARDIAN_SOURCE]
+    need(repair["source_path"] == GUARDIAN_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["beast_followup_repair"]["repaired_place"]
+         and repair["repaired_guardian"] == row["after"]
+         and repair["parent_guardian_row"]["after"] == repair["parent_guardian"]
+         and repair["parent_guardian_row"]["before"] == row["before"],
+         "GUARDIAN_PARENT_PROFILE")
+    restored = apply_hunks(on[GUARDIAN_SOURCE], repair["inverse"])
+    need(identity(restored) == repair["parent_guardian"] and restored != on[GUARDIAN_SOURCE]
+         and apply_hunks(restored, repair["forward"]) == on[GUARDIAN_SOURCE], "GUARDIAN_EXACT_TWO_WAY")
+    return on | {GUARDIAN_SOURCE: restored}, lock | {
+        "sources": lock["sources"] | {GUARDIAN_SOURCE: repair["parent_guardian_row"]},
+        "final_place": repair["parent_place"],
+    }
+
+
+def beast_parent_profile(lock):
+    repair = lock["beast_followup_repair"]
+    need(repair["source_path"] == BEAST_SOURCE and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["bot_followup_repair"]["repaired_place"]
+         and repair["parent_combat_row"]["after"] == repair["parent_combat"]
+         and lock["sources"][BEAST_SOURCE]["after"] == repair["repaired_combat"]
+         and repair["changed_sources_from_h72_parent"] == 1
+         and repair["unchanged_sources_from_h72_parent"] == 68,
+         "BEAST_PARENT_PROFILE")
+    return lock | {
+        "sources": lock["sources"] | {BEAST_SOURCE: repair["parent_combat_row"]},
+        "final_place": repair["parent_place"],
+    }
+
+
+def beast_parent_sources(on, lock, parent_lock):
+    repair = lock["beast_followup_repair"]
+    parent = on | {BEAST_SOURCE: apply_hunks(on[BEAST_SOURCE], repair["inverse"])}
+    need(set(parent) == set(parent_lock["sources"])
+         and all(identity(raw) == parent_lock["sources"][p]["after"] for p, raw in parent.items())
+         and parent[BEAST_SOURCE] != on[BEAST_SOURCE]
+         and apply_hunks(parent[BEAST_SOURCE], repair["forward"]) == on[BEAST_SOURCE],
+         "BEAST_H72_PARENT_INVERSE")
+    return parent
+
+
+def bot_parent_sources(on, lock):
+    """Undo only BotActors, yielding the recorded HUD parent."""
+    repair = lock["bot_followup_repair"]
+    row = lock["sources"][BOT_SOURCE]
+    need(repair["source_path"] == BOT_SOURCE and set(on) == set(lock["sources"])
+         and repair["changed_sources_from_hud_parent"] == 1
+         and repair["unchanged_sources_from_hud_parent"] == 68, "BOT_PARENT_SOURCE_SET")
+    need(all(identity(raw) == lock["sources"][p]["after"] for p, raw in on.items()),
+         "BOT_PARENT_REQUIRES_EXACT_FINAL_SOURCES")
+    need(repair["parent_bot"] == row["before"] and repair["repaired_bot"] == row["after"]
+         and repair["forward"] == row["forward"] and repair["inverse"] == row["inverse"]
+         and repair["parent_place"] == lock["followup_repair"]["repaired_place"]
+         and repair["repaired_place"] == lock["final_place"], "BOT_PARENT_CONTRACT")
+    parent = dict(on)
+    parent[BOT_SOURCE] = apply_hunks(on[BOT_SOURCE], repair["inverse"])
+    need(identity(parent[BOT_SOURCE]) == repair["parent_bot"]
+         and apply_hunks(parent[BOT_SOURCE], repair["forward"]) == on[BOT_SOURCE],
+         "BOT_PARENT_INVERSE_NOT_EXACT")
+    need([p for p in on if on[p] != parent[p]] == [BOT_SOURCE], "BOT_PARENT_CHANGE_SCOPE")
+    return parent
+
+
+def hud_current_sources(on, lock):
+    """Undo HUD only after the Bot-only inverse has restored the HUD parent."""
+    repair = lock["followup_repair"]
+    need(repair["source_path"] == HUD_SOURCE and set(on) == set(lock["sources"]),
+         "HUD_CURRENT_SOURCE_SET")
+    need(all(identity(raw) == (lock["bot_followup_repair"]["parent_bot"] if p == BOT_SOURCE
+                              else lock["sources"][p]["after"]) for p, raw in on.items()),
+         "HUD_CURRENT_REQUIRES_EXACT_BOT_PARENT_SOURCES")
+    current = dict(on)
+    current[HUD_SOURCE] = apply_hunks(on[HUD_SOURCE], repair["inverse"])
+    need(identity(current[HUD_SOURCE]) == repair["current_hud"]
+         and identity(on[HUD_SOURCE]) == repair["repaired_hud"]
+         and apply_hunks(current[HUD_SOURCE], repair["forward"]) == on[HUD_SOURCE],
+         "HUD_CURRENT_INVERSE_NOT_EXACT")
+    need([p for p in on if on[p] != current[p]] == [HUD_SOURCE], "HUD_CURRENT_CHANGE_SCOPE")
+    return current
+
+
 def write_json(path, data):
-    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+    path.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def run_checked(command, log, timeout=60, quiet_stdout=False):
@@ -336,11 +616,11 @@ def run_checked(command, log, timeout=60, quiet_stdout=False):
     return row
 
 
-def make_archive(root, destination):
+def make_archive(root, destination, prefix=OFF):
     raw = io.BytesIO()
     with tarfile.open(fileobj=raw, mode="w", format=tarfile.USTAR_FORMAT) as archive:
         for file in sorted(p for p in root.rglob("*") if p.is_file()):
-            relative = OFF + "/" + file.relative_to(root).as_posix()
+            relative = prefix + "/" + file.relative_to(root).as_posix()
             content = read_file(file)
             info = tarfile.TarInfo(relative)
             info.size, info.mode, info.mtime, info.uid, info.gid = len(content), 0o644, 0, 0, 0
@@ -376,6 +656,26 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
+    eligibility_off, eligibility_off_lock = relay_eligibility_parent(on, lock)
+    mage_off, mage_off_lock = mage_contact_parent(eligibility_off, eligibility_off_lock)
+    art_off, art_off_lock = art_polish_parent(mage_off, mage_off_lock)
+    growth_off, growth_off_lock = growth_musou_parent(art_off, art_off_lock)
+    combat_off, combat_off_lock = combat_visual_parent(growth_off, growth_off_lock)
+    wall_off, wall_off_lock = guardian_wall_parent(combat_off, combat_off_lock)
+    neutral_off, neutral_off_lock = neutral_names_parent(wall_off, wall_off_lock)
+    field_off, field_off_lock = field_prompt_parent(neutral_off, neutral_off_lock)
+    role_off, role_off_lock = role_readability_parent(field_off, field_off_lock)
+    canyon_off, canyon_off_lock = br_canyon_parent(role_off, role_off_lock)
+    relay_off, relay_off_lock = relay_presentation_parent(canyon_off, canyon_off_lock)
+    score_off, score_off_lock = score_parent(relay_off, relay_off_lock)
+    castle_off, castle_off_lock = castle_parent(score_off, score_off_lock)
+    vault_off, vault_off_lock = vault_parent(castle_off, castle_off_lock)
+    item_off, item_off_lock = item_parent(vault_off, vault_off_lock)
+    guardian_off, guardian_off_lock = guardian_parent(item_off, item_off_lock)
+    parent_lock = beast_parent_profile(guardian_off_lock)
+    h72 = beast_parent_sources(guardian_off, guardian_off_lock, parent_lock)
+    bot_parent = bot_parent_sources(h72, parent_lock)
+    hud_off = hud_current_sources(bot_parent, parent_lock)
     compiler, rojo = Path(compiler).resolve(), Path(rojo).resolve()
     compiler_before, rojo_before = identity(read_file(compiler)), identity(read_file(rojo))
     need(os.access(compiler, os.X_OK) and os.access(rojo, os.X_OK), "TOOL_NOT_EXECUTABLE")
@@ -384,16 +684,39 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
     stage = Path(tempfile.mkdtemp(prefix=output.name + ".building-", dir=output.parent))
     logs = []
     try:
-        for folder, sources in ((stage, on), (stage / OFF, off)):
+        builds = ((stage, on, lock["final_place"], None),
+                  (stage / OFF, off, lock["prior_place"], None),
+                  (stage / BOT_OFF, bot_parent, lock["bot_followup_repair"]["parent_place"], BOT_SOURCE),
+                  (stage / HUD_OFF, hud_off, lock["followup_repair"]["current_place"], HUD_SOURCE),
+                  (stage / BEAST_OFF, h72, parent_lock["final_place"], BEAST_SOURCE),
+                  (stage / GUARDIAN_OFF, guardian_off, guardian_off_lock["final_place"], GUARDIAN_SOURCE),
+                  (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE),
+                  (stage / VAULT_OFF, vault_off, vault_off_lock["final_place"], VAULT_SOURCE),
+                  (stage / CASTLE_OFF, castle_off, castle_off_lock["final_place"], VAULT_SOURCE),
+                  (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE),
+                  (stage / RELAY_PRESENTATION_OFF, relay_off, relay_off_lock["final_place"], RELAY_PRESENTATION_SOURCES),
+                  (stage / BR_CANYON_OFF, canyon_off, canyon_off_lock["final_place"], BR_CANYON_SOURCES),
+                  (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES),
+                  (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE),
+                  (stage / NEUTRAL_NAMES_OFF, neutral_off, neutral_off_lock["final_place"], VISUAL_READABILITY_SOURCES),
+                  (stage / GUARDIAN_WALL_OFF, wall_off, wall_off_lock["final_place"], GUARDIAN_SOURCE),
+                  (stage / COMBAT_VISUAL_OFF, combat_off, combat_off_lock["final_place"], COMBAT_VISUAL_SOURCES),
+                  (stage / GROWTH_MUSOU_OFF, growth_off, growth_off_lock["final_place"], GROWTH_MUSOU_SOURCES),
+                  (stage / ART_POLISH_OFF, art_off, art_off_lock["final_place"], ART_POLISH_SOURCES),
+                  (stage / MAGE_CONTACT_OFF, mage_off, mage_off_lock["final_place"], MAGE_CONTACT_SOURCES),
+                  (stage / RELAY_ELIGIBILITY_OFF, eligibility_off, eligibility_off_lock["final_place"],
+                   RELAY_ELIGIBILITY_SOURCES))
+        for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
             for name, raw in sources.items():
                 path = folder / "sources" / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(raw)
-                run_checked([compiler, "--text", path], logs, quiet_stdout=True)
+                if (changed_source is None or name == changed_source
+                        or isinstance(changed_source, tuple) and name in changed_source):
+                    run_checked([compiler, "--text", path], logs, quiet_stdout=True)
             run_checked([rojo, "build", folder / PROJECT, "-o", folder / PLACE], logs)
-            wanted = lock["final_place"] if folder == stage else lock["prior_place"]
             place = read_file(folder / PLACE)
             need(identity(place) == wanted, "BUILT_PLACE_IDENTITY")
             embedded, non_source = place_inventory(place)
@@ -410,6 +733,44 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                 (stage / OFF / name).write_bytes(raw)
         make_archive(stage / OFF, stage / OFF_ARCHIVE)
         archive_identity = identity(read_file(stage / OFF_ARCHIVE))
+        make_archive(stage / HUD_OFF, stage / HUD_OFF_ARCHIVE, HUD_OFF)
+        hud_archive_identity = identity(read_file(stage / HUD_OFF_ARCHIVE))
+        make_archive(stage / BOT_OFF, stage / BOT_OFF_ARCHIVE, BOT_OFF)
+        bot_archive_identity = identity(read_file(stage / BOT_OFF_ARCHIVE))
+        make_archive(stage / BEAST_OFF, stage / BEAST_OFF_ARCHIVE, BEAST_OFF)
+        beast_archive_identity = identity(read_file(stage / BEAST_OFF_ARCHIVE))
+        make_archive(stage / GUARDIAN_OFF, stage / GUARDIAN_OFF_ARCHIVE, GUARDIAN_OFF)
+        field_archive_identity = identity(read_file(stage / GUARDIAN_OFF_ARCHIVE))
+        make_archive(stage / ITEM_OFF, stage / ITEM_OFF_ARCHIVE, ITEM_OFF)
+        item_archive_identity = identity(read_file(stage / ITEM_OFF_ARCHIVE))
+        make_archive(stage / VAULT_OFF, stage / VAULT_OFF_ARCHIVE, VAULT_OFF)
+        vault_archive_identity = identity(read_file(stage / VAULT_OFF_ARCHIVE))
+        make_archive(stage / CASTLE_OFF, stage / CASTLE_OFF_ARCHIVE, CASTLE_OFF)
+        castle_archive_identity = identity(read_file(stage / CASTLE_OFF_ARCHIVE))
+        make_archive(stage / SCORE_OFF, stage / SCORE_OFF_ARCHIVE, SCORE_OFF)
+        score_archive_identity = identity(read_file(stage / SCORE_OFF_ARCHIVE))
+        make_archive(stage / RELAY_PRESENTATION_OFF, stage / RELAY_PRESENTATION_OFF_ARCHIVE, RELAY_PRESENTATION_OFF)
+        relay_archive_identity = identity(read_file(stage / RELAY_PRESENTATION_OFF_ARCHIVE))
+        make_archive(stage / BR_CANYON_OFF, stage / BR_CANYON_OFF_ARCHIVE, BR_CANYON_OFF)
+        canyon_archive_identity = identity(read_file(stage / BR_CANYON_OFF_ARCHIVE))
+        make_archive(stage / ROLE_READABILITY_OFF, stage / ROLE_READABILITY_OFF_ARCHIVE, ROLE_READABILITY_OFF)
+        role_archive_identity = identity(read_file(stage / ROLE_READABILITY_OFF_ARCHIVE))
+        make_archive(stage / FIELD_PROMPT_OFF, stage / FIELD_PROMPT_OFF_ARCHIVE, FIELD_PROMPT_OFF)
+        field_prompt_archive_identity = identity(read_file(stage / FIELD_PROMPT_OFF_ARCHIVE))
+        make_archive(stage / NEUTRAL_NAMES_OFF, stage / NEUTRAL_NAMES_OFF_ARCHIVE, NEUTRAL_NAMES_OFF)
+        neutral_names_archive_identity = identity(read_file(stage / NEUTRAL_NAMES_OFF_ARCHIVE))
+        make_archive(stage / GUARDIAN_WALL_OFF, stage / GUARDIAN_WALL_OFF_ARCHIVE, GUARDIAN_WALL_OFF)
+        wall_archive_identity = identity(read_file(stage / GUARDIAN_WALL_OFF_ARCHIVE))
+        make_archive(stage / COMBAT_VISUAL_OFF, stage / COMBAT_VISUAL_OFF_ARCHIVE, COMBAT_VISUAL_OFF)
+        combat_archive_identity = identity(read_file(stage / COMBAT_VISUAL_OFF_ARCHIVE))
+        make_archive(stage / GROWTH_MUSOU_OFF, stage / GROWTH_MUSOU_OFF_ARCHIVE, GROWTH_MUSOU_OFF)
+        growth_archive_identity = identity(read_file(stage / GROWTH_MUSOU_OFF_ARCHIVE))
+        make_archive(stage / ART_POLISH_OFF, stage / ART_POLISH_OFF_ARCHIVE, ART_POLISH_OFF)
+        art_archive_identity = identity(read_file(stage / ART_POLISH_OFF_ARCHIVE))
+        make_archive(stage / MAGE_CONTACT_OFF, stage / MAGE_CONTACT_OFF_ARCHIVE, MAGE_CONTACT_OFF)
+        mage_archive_identity = identity(read_file(stage / MAGE_CONTACT_OFF_ARCHIVE))
+        make_archive(stage / RELAY_ELIGIBILITY_OFF, stage / RELAY_ELIGIBILITY_OFF_ARCHIVE, RELAY_ELIGIBILITY_OFF)
+        eligibility_archive_identity = identity(read_file(stage / RELAY_ELIGIBILITY_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -417,6 +778,83 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                                OFF + "/" + RECEIPT: identity(inputs["receipt_raw"]), OFF_ARCHIVE: archive_identity})
         expected_stage.update({"prior_boundary/" + name: identity(raw) for name, raw in inputs["evidence"].items()})
         expected_stage.update({OFF + "/" + name: identity(inputs["evidence"][name]) for name in lock["prior_report_names"]})
+        expected_stage.update({HUD_OFF + "/sources/" + name: identity(raw) for name, raw in hud_off.items()})
+        expected_stage.update({HUD_OFF + "/" + PROJECT: lock["project"],
+                               HUD_OFF + "/" + PLACE: lock["followup_repair"]["current_place"],
+                               HUD_OFF_ARCHIVE: hud_archive_identity})
+        expected_stage.update({BOT_OFF + "/sources/" + name: identity(raw) for name, raw in bot_parent.items()})
+        expected_stage.update({BOT_OFF + "/" + PROJECT: lock["project"],
+                               BOT_OFF + "/" + PLACE: lock["bot_followup_repair"]["parent_place"],
+                               BOT_OFF_ARCHIVE: bot_archive_identity})
+        expected_stage.update({BEAST_OFF + "/sources/" + name: identity(raw) for name, raw in h72.items()})
+        expected_stage.update({BEAST_OFF + "/" + PROJECT: lock["project"],
+                               BEAST_OFF + "/" + PLACE: parent_lock["final_place"],
+                               BEAST_OFF_ARCHIVE: beast_archive_identity})
+        expected_stage.update({GUARDIAN_OFF + "/sources/" + name: identity(raw) for name, raw in guardian_off.items()})
+        expected_stage.update({GUARDIAN_OFF + "/" + PROJECT: lock["project"],
+                               GUARDIAN_OFF + "/" + PLACE: guardian_off_lock["final_place"],
+                               GUARDIAN_OFF_ARCHIVE: field_archive_identity})
+        expected_stage.update({ITEM_OFF + "/sources/" + name: identity(raw) for name, raw in item_off.items()})
+        expected_stage.update({ITEM_OFF + "/" + PROJECT: lock["project"],
+                               ITEM_OFF + "/" + PLACE: item_off_lock["final_place"],
+                               ITEM_OFF_ARCHIVE: item_archive_identity})
+        expected_stage.update({VAULT_OFF + "/sources/" + name: identity(raw) for name, raw in vault_off.items()})
+        expected_stage.update({VAULT_OFF + "/" + PROJECT: lock["project"],
+                               VAULT_OFF + "/" + PLACE: vault_off_lock["final_place"],
+                               VAULT_OFF_ARCHIVE: vault_archive_identity})
+        expected_stage.update({CASTLE_OFF + "/sources/" + name: identity(raw) for name, raw in castle_off.items()})
+        expected_stage.update({CASTLE_OFF + "/" + PROJECT: lock["project"],
+                               CASTLE_OFF + "/" + PLACE: castle_off_lock["final_place"],
+                               CASTLE_OFF_ARCHIVE: castle_archive_identity})
+        expected_stage.update({SCORE_OFF + "/sources/" + name: identity(raw) for name, raw in score_off.items()})
+        expected_stage.update({SCORE_OFF + "/" + PROJECT: lock["project"],
+                               SCORE_OFF + "/" + PLACE: score_off_lock["final_place"],
+                               SCORE_OFF_ARCHIVE: score_archive_identity})
+        expected_stage.update({RELAY_PRESENTATION_OFF + "/sources/" + name: identity(raw) for name, raw in relay_off.items()})
+        expected_stage.update({RELAY_PRESENTATION_OFF + "/" + PROJECT: lock["project"],
+                               RELAY_PRESENTATION_OFF + "/" + PLACE: relay_off_lock["final_place"],
+                               RELAY_PRESENTATION_OFF_ARCHIVE: relay_archive_identity})
+        expected_stage.update({BR_CANYON_OFF + "/sources/" + name: identity(raw) for name, raw in canyon_off.items()})
+        expected_stage.update({BR_CANYON_OFF + "/" + PROJECT: lock["project"],
+                               BR_CANYON_OFF + "/" + PLACE: canyon_off_lock["final_place"],
+                               BR_CANYON_OFF_ARCHIVE: canyon_archive_identity})
+        expected_stage.update({ROLE_READABILITY_OFF + "/sources/" + name: identity(raw) for name, raw in role_off.items()})
+        expected_stage.update({ROLE_READABILITY_OFF + "/" + PROJECT: lock["project"],
+                               ROLE_READABILITY_OFF + "/" + PLACE: role_off_lock["final_place"],
+                               ROLE_READABILITY_OFF_ARCHIVE: role_archive_identity})
+        expected_stage.update({FIELD_PROMPT_OFF + "/sources/" + name: identity(raw) for name, raw in field_off.items()})
+        expected_stage.update({FIELD_PROMPT_OFF + "/" + PROJECT: lock["project"],
+                               FIELD_PROMPT_OFF + "/" + PLACE: field_off_lock["final_place"],
+                               FIELD_PROMPT_OFF_ARCHIVE: field_prompt_archive_identity})
+        expected_stage.update({NEUTRAL_NAMES_OFF + "/sources/" + name: identity(raw) for name, raw in neutral_off.items()})
+        expected_stage.update({NEUTRAL_NAMES_OFF + "/" + PROJECT: lock["project"],
+                               NEUTRAL_NAMES_OFF + "/" + PLACE: neutral_off_lock["final_place"],
+                               NEUTRAL_NAMES_OFF_ARCHIVE: neutral_names_archive_identity})
+        expected_stage.update({GUARDIAN_WALL_OFF + "/sources/" + name: identity(raw) for name, raw in wall_off.items()})
+        expected_stage.update({GUARDIAN_WALL_OFF + "/" + PROJECT: lock["project"],
+                               GUARDIAN_WALL_OFF + "/" + PLACE: wall_off_lock["final_place"],
+                               GUARDIAN_WALL_OFF_ARCHIVE: wall_archive_identity})
+        expected_stage.update({COMBAT_VISUAL_OFF + "/sources/" + name: identity(raw) for name, raw in combat_off.items()})
+        expected_stage.update({COMBAT_VISUAL_OFF + "/" + PROJECT: lock["project"],
+                               COMBAT_VISUAL_OFF + "/" + PLACE: combat_off_lock["final_place"],
+                               COMBAT_VISUAL_OFF_ARCHIVE: combat_archive_identity})
+        expected_stage.update({GROWTH_MUSOU_OFF + "/sources/" + name: identity(raw) for name, raw in growth_off.items()})
+        expected_stage.update({GROWTH_MUSOU_OFF + "/" + PROJECT: lock["project"],
+                               GROWTH_MUSOU_OFF + "/" + PLACE: growth_off_lock["final_place"],
+                               GROWTH_MUSOU_OFF_ARCHIVE: growth_archive_identity})
+        expected_stage.update({ART_POLISH_OFF + "/sources/" + name: identity(raw) for name, raw in art_off.items()})
+        expected_stage.update({ART_POLISH_OFF + "/" + PROJECT: lock["project"],
+                               ART_POLISH_OFF + "/" + PLACE: art_off_lock["final_place"],
+                               ART_POLISH_OFF_ARCHIVE: art_archive_identity})
+        expected_stage.update({MAGE_CONTACT_OFF + "/sources/" + name: identity(raw) for name, raw in mage_off.items()})
+        expected_stage.update({MAGE_CONTACT_OFF + "/" + PROJECT: lock["project"],
+                               MAGE_CONTACT_OFF + "/" + PLACE: mage_off_lock["final_place"],
+                               MAGE_CONTACT_OFF_ARCHIVE: mage_archive_identity})
+        expected_stage.update({RELAY_ELIGIBILITY_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in eligibility_off.items()})
+        expected_stage.update({RELAY_ELIGIBILITY_OFF + "/" + PROJECT: lock["project"],
+                               RELAY_ELIGIBILITY_OFF + "/" + PLACE: eligibility_off_lock["final_place"],
+                               RELAY_ELIGIBILITY_OFF_ARCHIVE: eligibility_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -425,7 +863,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 22, "unchanged_source_count": 47,
+            "selected_source_count": 69, "changed_source_count": 33, "unchanged_source_count": 36,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -434,6 +872,44 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "profile_lock": identity(read_file(HERE / "profile_lock.json")),
             "prior_evidence": {name: identity(raw) for name, raw in inputs["evidence"].items()},
             "runtime_rollback_archive": archive_identity,
+            "followup_repair": lock["followup_repair"],
+            "hud_only_current_rc_rollback_archive": hud_archive_identity,
+            "bot_followup_repair": lock["bot_followup_repair"],
+            "bot_only_hud_parent_rollback_archive": bot_archive_identity,
+            "beast_followup_repair": lock["beast_followup_repair"],
+            "beast_only_h72_parent_rollback_archive": beast_archive_identity,
+            "guardian_followup_repair": lock["guardian_followup_repair"],
+            "guardian_only_beast_parent_rollback_archive": field_archive_identity,
+            "item_cleanup_followup": lock["item_cleanup_followup"],
+            "item_cleanup_only_rollback_archive": item_archive_identity,
+            "empty_vault_followup": lock["empty_vault_followup"],
+            "empty_vault_only_rollback_archive": vault_archive_identity,
+            "castle_release_stock_followup": lock["castle_release_stock_followup"],
+            "castle_release_stock_rollback_archive": castle_archive_identity,
+            "score_relay_followup": lock["score_relay_followup"],
+            "score_relay_rollback_archive": score_archive_identity,
+            "relay_presentation_followup": lock["relay_presentation_followup"],
+            "relay_presentation_rollback_archive": relay_archive_identity,
+            "br_canyon_followup": lock["br_canyon_followup"],
+            "br_canyon_rollback_archive": canyon_archive_identity,
+            "role_readability_followup": lock["role_readability_followup"],
+            "role_readability_rollback_archive": role_archive_identity,
+            "field_prompt_followup": lock["field_prompt_followup"],
+            "field_prompt_rollback_archive": field_prompt_archive_identity,
+            "neutral_names_followup": lock["neutral_names_followup"],
+            "neutral_names_rollback_archive": neutral_names_archive_identity,
+            "guardian_wall_followup": lock["guardian_wall_followup"],
+            "guardian_wall_rollback_archive": wall_archive_identity,
+            "combat_visual_followup": lock["combat_visual_followup"],
+            "combat_visual_rollback_archive": combat_archive_identity,
+            "growth_musou_followup": lock["growth_musou_followup"],
+            "growth_musou_rollback_archive": growth_archive_identity,
+            "art_polish_followup": lock["art_polish_followup"],
+            "art_polish_rollback_archive": art_archive_identity,
+            "mage_contact_followup": lock["mage_contact_followup"],
+            "mage_contact_rollback_archive": mage_archive_identity,
+            "relay_eligibility_followup": lock["relay_eligibility_followup"],
+            "relay_eligibility_rollback_archive": eligibility_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -445,8 +921,36 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 22, "unchanged_sources": 47,
-            "compile_count": 138, "rojo_build_count": 2, "instances": 75,
+            "source_count": 69, "changed_sources": 33, "unchanged_sources": 36,
+            "compile_count": 174, "rojo_build_count": 21, "instances": 75,
+            "item_cleanup_only_parent_place": item_off_lock["final_place"],
+            "empty_vault_only_parent_place": vault_off_lock["final_place"],
+            "castle_release_stock_parent_place": castle_off_lock["final_place"],
+            "score_relay_parent_place": score_off_lock["final_place"],
+            "relay_presentation_parent_place": relay_off_lock["final_place"],
+            "br_canyon_parent_place": canyon_off_lock["final_place"],
+            "role_readability_parent_place": role_off_lock["final_place"],
+            "field_prompt_parent_place": field_off_lock["final_place"],
+            "neutral_names_parent_place": neutral_off_lock["final_place"],
+            "guardian_wall_parent_place": wall_off_lock["final_place"],
+            "combat_visual_parent_place": combat_off_lock["final_place"],
+            "growth_musou_parent_place": growth_off_lock["final_place"],
+            "art_polish_parent_place": art_off_lock["final_place"],
+            "mage_contact_parent_place": mage_off_lock["final_place"],
+            "relay_eligibility_parent_place": eligibility_off_lock["final_place"],
+            "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
+            "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
+            "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
+            "beast_only_compile_count": 1, "beast_only_rojo_build_count": 1,
+            "beast_only_h72_parent_place": parent_lock["final_place"],
+            "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
+            "historical_on_br_compile_count": 138, "historical_on_br_rojo_build_count": 2,
+            "hud_only_compile_count": 1, "hud_only_rojo_build_count": 1,
+            "hud_only_off_place": lock["followup_repair"]["current_place"],
+            "hud_stage_changed_sources_from_current_rc": 1, "hud_stage_unchanged_sources_from_current_rc": 68,
+            "bot_only_compile_count": 1, "bot_only_rojo_build_count": 1,
+            "bot_only_parent_place": lock["bot_followup_repair"]["parent_place"],
+            "changed_sources_from_hud_parent": 1, "unchanged_sources_from_hud_parent": 68,
             "prior_snapshot": inputs["snapshot"], "final_place": lock["final_place"],
             "off_place": lock["prior_place"], "actual_inverse_source_and_place_exact": True,
             "non_source_property_identity": identity(inputs["non_source"]),

@@ -14,7 +14,7 @@ def unique_function(src, header):
     assert end,("FUNCTION_END_MISSING",header)
     return header+text[:end.end()]
 
-def generate(game):
+def generate(game, active_rich51=False):
     src=game.read_text("utf8")
     ready=unique_function(src,"local function everybodyReady(): boolean")
     apply=unique_function(src,"local function applyReady(player: Player, data)")
@@ -24,10 +24,48 @@ def generate(game):
     assert src.count(needle)==1,("RESULTS_RESET_MISSING",src.count(needle))
     tick=src.split("local function tickRound()",1)
     assert len(tick)==2
-    m=re.search(r'(?m)^    if match.phase == "LOBBY" then$',tick[1])
-    n=re.search(r'(?m)^    elseif match.phase == "ACTIVE" then$',tick[1])
+    round_body=tick[1]
+    eligible=""
+    setup=""
+    negatives=""
+    dispatch="local requestReady=applyReady"
+    count="    local count=#Players:GetPlayers()"
+    if active_rich51:
+        count="    local count = #eligibleSoloPlayers()"
+        assert round_body.count(count)==1, "ACTIVE_READY_ROSTER_COUNT_DRIFT"
+        round_body=round_body.split(count,1)[1]
+        eligible=unique_function(src,"local function eligibleSoloPlayers(): {Player}")
+        remote_hook="remote.OnServerEvent:Connect(function(player: Player, data)"
+        assert src.count(remote_hook)==1, "ACTIVE_READY_REMOTE_HOOK_DRIFT"
+        remote_tail=src.split(remote_hook,1)[1]
+        assert "\nend)" in remote_tail, "ACTIVE_READY_REMOTE_HOOK_INCOMPLETE"
+        dispatch=r'''
+local requestReady
+local remote={OnServerEvent={}}
+function remote.OnServerEvent:Connect(callback) requestReady=callback end
+'''+remote_hook+remote_tail.split("\nend)",1)[0]+"\nend)"
+        setup=r'''
+player.Team={Name="RED"}
+function player:GetAttribute() return nil end
+local observer={Name="LateObserver"}
+function observer:GetAttribute(name) return name=="P0D_LateJoinSpectator" end
+table.insert(online, observer)
+'''
+        negatives=r'''
+local beforeObserver=broadcasts
+local observerSeq,observerReady=lastSeq[observer],roundReady[observer]
+requestReady(observer,{action="READY",ready=false,seq=6})
+assert(lastSeq[observer]==observerSeq and roundReady[observer]==observerReady and broadcasts==beforeObserver,
+    "SPECTATOR_READY_MUST_NOT_MUTATE")
+assert(match.phase=="COUNTDOWN","SPECTATOR_CANCELLED_COUNTDOWN")
+tickPhase(46)
+assert(match.phase=="ACTIVE","SPECTATOR_BLOCKED_SOLO_START")
+print("P0_ACTIVE_RICH51_READY_SPECTATOR_BOUNDARIES_PASS")
+'''
+    m=re.search(r'(?m)^    if match.phase == "LOBBY" then$',round_body)
+    n=re.search(r'(?m)^    elseif match.phase == "ACTIVE" then$',round_body)
     assert m and n and n.start()>m.end(), "COMPOSED_ROUND_PHASE_DRIFT"
-    branch=tick[1][m.start():n.start()]
+    branch=round_body[m.start():n.start()]
     assert "everybodyReady()" in branch
     assert "StudioSolo.canStart(" in branch
     assert 'match.phase = "LOBBY"' in branch
@@ -62,10 +100,8 @@ local function rebalanceLobbyTeams() end
 local function resetRound()
     match.phase="ACTIVE"
 end
-''',ready,apply,
-r'''local function tickPhase(now)
-    local count=#Players:GetPlayers()
-''',branch,
+''',setup,eligible,ready,apply,dispatch,
+"local function tickPhase(now)",count,branch,
 r'''    end
 end
 
@@ -78,26 +114,26 @@ tickPhase(10)
 assert(match.phase=="LOBBY" and broadcasts==0,"AUTO_START_WITHOUT_READY")
 
 -- SECOND: consent begins countdown, then rapid reversal cancels instantly.
-applyReady(player,{action="READY",ready=true,seq=1})
+requestReady(player,{action="READY",ready=true,seq=1})
 assert(roundReady[player] and broadcasts==1,"READY_NOT_ACCEPTED")
 tickPhase(11)
 assert(match.phase=="COUNTDOWN","OPT_IN_DID_NOT_START_COUNTDOWN")
 local old=broadcasts
-applyReady(player,{action="READY",ready=false,seq=2})
+requestReady(player,{action="READY",ready=false,seq=2})
 assert(match.phase=="LOBBY" and roundReady[player]==false,"CANCEL_DID_NOT_REVOKE")
 assert(broadcasts>old,"CANCEL_NOT_BROADCAST_TO_ALL")
 tickPhase(17)
 assert(match.phase=="LOBBY","RESTART_AFTER_CANCEL")
 
 -- THIRD: a new consent starts and enters real match.
-applyReady(player,{action="READY",ready=true,seq=3})
+requestReady(player,{action="READY",ready=true,seq=3})
 tickPhase(20)
 assert(match.phase=="COUNTDOWN","SECOND_READY_NOT_ACCEPTED")
 tickPhase(25)
 assert(match.phase=="ACTIVE","MATCH_DID_NOT_START_ON_COUNTDOWN")
 
 -- FOURTH: READY in ACTIVE must NOT burn combat seq used for ATTACK.
-applyReady(player,{action="READY",ready=false,seq=999999})
+requestReady(player,{action="READY",ready=false,seq=999999})
 assert(lastSeq[player]==3,"ACTIVE_READY_POISONED_COMBAT_SEQ")
 assert(Rules.validSeq(4,lastSeq[player]),"COMBAT_INPUT_BLOCKED")
 
@@ -109,20 +145,51 @@ tickPhase(40)
 assert(match.phase=="LOBBY","AUTO_REMATCH_WITHOUT_NEW_CONSENT")
 
 -- SIXTH: invalid late opt-in during countdown cannot burn seq.
-applyReady(player,{action="READY",ready=true,seq=5})
+requestReady(player,{action="READY",ready=true,seq=5})
 tickPhase(41)
 assert(match.phase=="COUNTDOWN","READY_TO_COUNTDOWN_FAILED")
 local before=lastSeq[player]
-applyReady(player,{action="READY",ready=true,seq=999998})
+requestReady(player,{action="READY",ready=true,seq=999998})
 assert(lastSeq[player]==before,"COUNTDOWN_LATE_READY_CONSUMED_SEQ")
 print("P0_COMPOSED_READY_NATIVE_6_SCENARIOS_PASS")
-'''])
+''',negatives])
+
+
+def coach_views(path):
+    return "\n".join(("local Coach = (function()",path.read_bytes().decode(),"end)()",r'''
+local function view(phase,team,ready)
+    local state=Coach.new()
+    assert(Coach.consume(state,{
+        kind="SNAPSHOT",serial=1,updateId=1,time=4,phase=phase,team=team,ready=ready,
+        scores={RED=1,BLUE=0},carrying="",role="RAIDER",
+    },8))
+    return Coach.view(state,8),state
+end
+for _, phase in ipairs({"LOBBY","COUNTDOWN","ACTIVE","RESULTS"}) do
+    local observer,state=view(phase,"NONE",false)
+    assert(observer.visible and observer.title=="観戦中", "SPECTATOR_COACH_PHASE:"..phase)
+    assert(not string.find(observer.detail,"自動",1,true), "SPECTATOR_COACH_FORCED_REMATCH")
+    Coach.setHidden(state,true)
+    assert(not Coach.view(state,8).visible, "SPECTATOR_COACH_DISMISS_IGNORED")
+end
+local redResult=view("RESULTS","RED",false)
+assert(string.find(redResult.detail,"「出撃する」",1,true), "TEAM_COACH_REQUIRES_READY")
+local blueActive=view("ACTIVE","BLUE",true)
+assert(blueActive.title=="敵のお城の卵をねらおう！", "TEAM_COACH_COMBAT_CHANGED")
+local legacyResult=view("RESULTS","NONE",nil)
+assert(string.find(legacyResult.detail,"自動で再戦",1,true), "LEGACY_COACH_PACKET_CHANGED")
+print("P0_ACTIVE_RICH51_COACH_SPECTATOR_AND_LEGACY_PASS")
+'''))
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--game",type=Path,required=True)
     p.add_argument("--emit",type=Path,required=True)
+    p.add_argument("--active-rich51",action="store_true")
+    p.add_argument("--coach",type=Path)
     a=p.parse_args()
-    content=generate(a.game)
-    a.emit.write_text(content,"utf8")
+    content=generate(a.game,a.active_rich51)
+    if a.coach is not None:
+        content+=coach_views(a.coach)
+    a.emit.write_bytes(content.encode())
     print("P0_COMPOSED_READY_NATIVE_SOURCE_EXTRACT_PASS",len(content))

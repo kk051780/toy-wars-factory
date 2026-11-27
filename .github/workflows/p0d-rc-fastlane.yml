@@ -52,6 +52,7 @@ jobs:
           path: _p0d_pinned_source
           persist-credentials: false
       - name: Validate selected official RC profile and freeze source
+        id: pinned_profile
         shell: bash
         run: |
           set -euo pipefail
@@ -67,8 +68,20 @@ jobs:
           assert actual==source==os.environ['EXPECTED_SOURCE'],(actual,source)
           assert x['active_profile']=='rich51'
           assert x['previous_official_rc_commit']=='1263a03701211a652b99b91d2339575dc8104eff'
+          from pathlib import Path
+          persistence=Path('rc_fastlane/features/active_persistence_lifecycle/source_lock.json')
+          enabled=p=='rich51' and json.loads(persistence.read_bytes())['enabled'] is True
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              print('active_persistence='+str(enabled).lower(),file=out)
           print('PINNED_RC_PROFILE_SOURCE_PASS',p,source)
           PY
+      - uses: actions/checkout@v4
+        if: steps.pinned_profile.outputs.active_persistence == 'true'
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 84b39ba8dab77a5bda67969fe380484b619f1e00
+          path: _p0d_h84_persistence
+          persist-credentials: false
       - name: Assemble original authored real game once (no reauthoring)
         shell: bash
         run: |
@@ -645,43 +658,135 @@ jobs:
           /tmp/p0d_rc_rojo --version | grep -F '7.7.1'
       - name: Produce playable RC Place and verify binary exact source
         shell: bash
+        env:
+          ACTIVE_PERSISTENCE: ${{ steps.pinned_profile.outputs.active_persistence }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/p0d_rc_out
           if [ "$PROFILE" = rich51 ]; then
-            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            export ORIGINAL_DIST="$DIST"
-            read -r GAME_FIXES EVOLUTION_RETRY EQUIP_RECOVERY PERSISTENCE_CONTINUATION_V1 < <(python3 -c "import json; x=json.load(open('rc_fastlane/ACTIVE_RUNTIME_REPAIRS.json')); assert x['schema']=='ACTIVE_RUNTIME_REPAIR_SWITCHES_V2' and x['source_profile']=='rich51'; flags=[x[k] for k in ('game_fixes','evolution_retry','equip_recovery','persistence_continuation_v1')]; assert all(type(flag) is bool for flag in flags); assert not x['equip_recovery'] or x['game_fixes']; assert not x['persistence_continuation_v1'] or all(flags[:3]); print(*(str(flag).lower() for flag in flags))")
-            if [ "$GAME_FIXES" = true ] || [ "$EVOLUTION_RETRY" = true ] || [ "$EQUIP_RECOVERY" = true ]; then
-              P0D_ACTIVE66_TEST_DIST="$ORIGINAL_DIST" python3 -B -m unittest discover -s rc_fastlane -p test_active_runtime_repairs.py -v
-            fi
-            python3 -B rc_fastlane/apply_active_runtime_repairs.py \
-              --dist "$ORIGINAL_DIST" --out /tmp/p0d_rc_active66_selected --profile "$PROFILE" \
-              --game-fixes "$GAME_FIXES" --evolution-retry "$EVOLUTION_RETRY" --equip-recovery "$EQUIP_RECOVERY" \
-              --persistence-continuation-v1 "$PERSISTENCE_CONTINUATION_V1" \
-              > /tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json
-            export DIST="$(python3 -c "import json; print(json.load(open('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'))['selected_dist'])")"
-            if [ "$DIST" != "$ORIGINAL_DIST" ]; then
-              n=0
-              while IFS= read -r -d '' file; do
-                /tmp/p0d_new_luau/luau-compile "$file" >/tmp/p0d_active_selected_compile.log 2>&1 || { cat /tmp/p0d_active_selected_compile.log; exit 1; }
-                n=$((n+1))
-              done < <(find "$DIST/src" -name '*.luau' -type f -print0)
-              test "$n" = 66
-              python3 -B rc_fastlane/features/active_runtime_repairs/regression/run_selected.py \
-                --dist "$DIST" --out /tmp/p0d_rc_out/ACTIVE_RUNTIME_REPAIR_REGRESSIONS \
-                --luau /tmp/p0d_new_luau/luau --runtime-profile ci-pinned-source-build \
-                --luau-source-dir _p0d_rc_luau --luau-build-dir /tmp/p0d_new_luau
-              python3 -B rc_fastlane/features/egg_relay_classic/tools/generate_native_game_harness.py \
-                --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/EggRelayPolicy.luau" --out /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau
-              /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau >/dev/null
-              /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
-              grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
-              python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
-                --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/TwinBondPolicy.luau" --out /tmp/P0D_ACTIVE_SELECTED_BOND27.luau
-              /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_BOND27.luau >/dev/null
-              /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_BOND27.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
-              grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
+            SOURCE_DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            # The later private profiles still consume the original pinned 66 bodies.
+            export DIST=/tmp/p0d_rc_active_playable
+            cp -a "$SOURCE_DIST" "$DIST"
+            python3 -B rc_fastlane/apply_active_sky_routes.py --profile "$PROFILE" --dist "$DIST"
+            for route in H1FunWorld WCS_CrystalCanyon; do
+              /tmp/p0d_new_luau/luau-compile "$DIST/src/server/${route}.server.luau" >/dev/null
+            done
+            READY_STATUS=$(python3 -B rc_fastlane/apply_active_ready.py --profile "$PROFILE" --dist "$DIST")
+            echo "$READY_STATUS"
+            for route in client/HUD.client server/Game.server shared/FirstMinuteModel; do
+              /tmp/p0d_new_luau/luau-compile "$DIST/src/${route}.luau" >/dev/null
+            done
+            if [ "$READY_STATUS" = ACTIVE_VOLUNTARY_READY_RICH51_EXACT_THREE_EXISTING_SOURCES_PASS ]; then
+              python3 -B rc_fastlane/test_p0_ready_composed_native.py --active-rich51 \
+                --game "$DIST/src/server/Game.server.luau" --coach "$DIST/src/shared/FirstMinuteModel.luau" \
+                --emit /tmp/p0d_active_rich51_ready.luau
+              /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_ready.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
+              grep -Fx P0_ACTIVE_RICH51_READY_SPECTATOR_BOUNDARIES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
+              grep -Fx P0_ACTIVE_RICH51_COACH_SPECTATOR_AND_LEGACY_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_READY_NATIVE.log
+              RESULTS_STATUS=$(python3 -B rc_fastlane/apply_active_results.py --profile "$PROFILE" --dist "$DIST")
+              echo "$RESULTS_STATUS"
+              if [ "$RESULTS_STATUS" = ACTIVE_RESULTS_RICH51_EXACT_GAME_ONLY_PASS ]; then
+                /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                python3 -B rc_fastlane/verify_p0_results78_native.py --active-rich51 \
+                  --dist "$DIST" --out /tmp/p0d_active_rich51_results.luau
+                /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_results.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                grep -Fx P0_RICH51_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                grep -Fx ACTIVE_RESULTS_ROUND_AND_TEAM_FENCE_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                grep -Fx ACTIVE_RESULTS_IN_FLIGHT_READY_AND_COUNTDOWN_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                MODE_STATUS=$(python3 -B rc_fastlane/apply_active_mode_start.py --profile "$PROFILE" --dist "$DIST")
+                echo "$MODE_STATUS"
+                if [ "$MODE_STATUS" = ACTIVE_RICH51_MODE_ELIGIBILITY_EXACT_GAME_AND_HUD_PASS ]; then
+                  /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                  /tmp/p0d_new_luau/luau-compile "$DIST/src/client/HUD.client.luau" >/dev/null
+                  python3 -B rc_fastlane/verify_active_mode_start_native.py --dist "$DIST" \
+                    --server /tmp/p0d_active_rich51_mode_server.luau --hud /tmp/p0d_active_rich51_mode_hud.luau
+                  /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_mode_server.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_SERVER.log
+                  /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_mode_hud.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_HUD.log
+                  grep -Fx PASS:TWO_HUMANS_SCORE_KICKOFF /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_SERVER.log
+                  grep -Fx PASS:HUD_SOLO_TWO_CLIENT_ACTIVE /tmp/p0d_rc_out/ACTIVE_RICH51_MODE_HUD.log
+                  BOT_CONFIG=rc_fastlane/features/active_solo_bots/source_lock.json
+                  if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$BOT_CONFIG"; then
+                    BOT_OFF=/tmp/p0d_rc_active_solo_bots_off.rbxlx
+                    /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$BOT_OFF"
+                    python3 -B - "$BOT_CONFIG" "$BOT_OFF" <<'PY'
+          import hashlib,json,pathlib,sys
+          expected=json.loads(pathlib.Path(sys.argv[1]).read_bytes())['off_place']
+          raw=pathlib.Path(sys.argv[2]).read_bytes()
+          actual={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+          assert actual==expected,('ACTIVE_BOT_OFF_PLACE',actual,expected)
+          (pathlib.Path('/tmp/p0d_rc_out')/'ACTIVE_RICH51_SOLO_BOTS_OFF.json').write_text(json.dumps(actual)+'\n')
+          print('ACTIVE_RICH51_SOLO_BOTS_OFF_EXACT',actual)
+          PY
+                  fi
+                  BOT_STATUS=$(python3 -B rc_fastlane/apply_active_solo_bots.py --profile "$PROFILE" --dist "$DIST")
+                  echo "$BOT_STATUS"
+                  if [ "$BOT_STATUS" = ACTIVE_RICH51_SOLO_CLASSIC_EXISTING_BOT_FIVE_SOURCE_PASS ]; then
+                    /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                    /tmp/p0d_new_luau/luau-compile "$DIST/src/server/SoloTeamBots.luau" >/dev/null
+                    python3 -B rc_fastlane/verify_active_solo_bots_native.py --dist "$DIST" --out /tmp/p0d_active_solo_bots_native
+                    for case in game rc80_verify_bot405_actor rc80_verify_bot405_lease rc80_verify_bot405_move; do
+                      /tmp/p0d_new_luau/luau "/tmp/p0d_active_solo_bots_native/$case.luau"
+                    done | tee /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    grep -Fx ACTIVE_RICH51_BOT_ROSTER_EPOCH_AND_FAIL_CLOSED_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    grep -Fx ACTIVE_RICH51_BOT_SINGLE_GAME_EGG_SCORE_AND_WINNER_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_26_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    grep -Fx P0D_REAL_BOT_PATH_LEASE_25_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_38_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_SOLO_BOTS_NATIVE.log
+                    H2_CONFIG=rc_fastlane/features/active_h2_exit/source_lock.json
+                    if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$H2_CONFIG"; then
+                      H2_OFF=/tmp/p0d_active_h2_exit_off.rbxlx
+                      /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$H2_OFF"
+                      python3 -B rc_fastlane/apply_active_h2_exit.py --profile "$PROFILE" --dist "$DIST" \
+                        --off-place "$H2_OFF" | tee /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      grep -F ACTIVE_RICH51_H2_EXIT_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      grep -Fx ACTIVE_RICH51_H2_DEPARTURE_AND_FRESH_READY_EXACT_GAME_ONLY_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_OFF.log
+                      /tmp/p0d_new_luau/luau-compile "$DIST/src/server/Game.server.luau" >/dev/null
+                      python3 -B rc_fastlane/verify_active_h2_exit_native.py --dist "$DIST" --out /tmp/p0d_active_h2_exit_native.luau
+                      /tmp/p0d_new_luau/luau /tmp/p0d_active_h2_exit_native.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log
+                      test "$(grep -c '^PASS:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log)" -eq 18
+                      if grep -q '^FAIL:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_EXIT_NATIVE.log; then exit 1; fi
+                      if [ "$ACTIVE_PERSISTENCE" = true ]; then
+                        P0D_ACTIVE66_TEST_DIST="$SOURCE_DIST" python3 -B -m unittest discover \
+                          -s _p0d_h84_persistence/rc_fastlane -p test_active_runtime_repairs.py -v
+                        PERSISTENCE_OFF=/tmp/p0d_active_persistence_off.rbxlx
+                        /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$PERSISTENCE_OFF"
+                        python3 -B rc_fastlane/apply_active_persistence_lifecycle.py --profile "$PROFILE" --dist "$DIST" \
+                          --off-place "$PERSISTENCE_OFF" | tee /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_OFF.log
+                        grep -F ACTIVE_RICH51_LIFECYCLE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_OFF.log
+                        grep -Fx ACTIVE_RICH51_DURABLE_LIFECYCLE_EXACT_THREE_EXISTING_SOURCES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_OFF.log
+                        for route in server/Game.server server/PersistentHatchStore client/HUD.client; do
+                          /tmp/p0d_new_luau/luau-compile "$DIST/src/$route.luau" >/dev/null
+                        done
+                        python3 -B rc_fastlane/verify_active_persistence_native.py --dist "$DIST" --author _p0d_h84_persistence \
+                          --luau /tmp/p0d_new_luau/luau --out /tmp/p0d_active_persistence_native \
+                          --reference-dist "$SOURCE_DIST" \
+                          | tee /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_NATIVE.log
+                        grep -F ACTIVE_RICH51_PERSISTENCE_NATIVE_AUTHOR_112_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_NATIVE.log
+                        grep -Fx ACTIVE_RICH51_PERSISTENCE_AUTHOR_V3_CONTROL_54_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_NATIVE.log
+                        grep -Fx ACTIVE_RICH51_PERSISTENCE_ORIGINAL_65_DIAGNOSTIC_51_PASS_14_EXPECTED_FAIL /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_NATIVE.log
+                        grep -Fx ACTIVE_RICH51_LIFECYCLE_LATEST_ACK_AND_MATCH_START_EQUIP_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_PERSISTENCE_NATIVE.log
+                        python3 -B rc_fastlane/features/egg_relay_classic/tools/generate_native_game_harness.py \
+                          --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/EggRelayPolicy.luau" \
+                          --out /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau
+                        /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau >/dev/null
+                        /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_RELAY31.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
+                        grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_RELAY31.log
+                        python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
+                          --game "$DIST/src/server/Game.server.luau" --policy "$DIST/src/server/TwinBondPolicy.luau" \
+                          --out /tmp/P0D_ACTIVE_SELECTED_BOND27.luau
+                        /tmp/p0d_new_luau/luau-compile /tmp/P0D_ACTIVE_SELECTED_BOND27.luau >/dev/null
+                        /tmp/p0d_new_luau/luau /tmp/P0D_ACTIVE_SELECTED_BOND27.luau | tee /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
+                        grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_rc_out/ACTIVE_SELECTED_BOND27.log
+                        python3 -B rc_fastlane/verify_active_h2_exit_native.py --dist "$DIST" --out /tmp/p0d_active_h2_with_persistence.luau
+                        /tmp/p0d_new_luau/luau /tmp/p0d_active_h2_with_persistence.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_H2_WITH_PERSISTENCE.log
+                        test "$(grep -c '^PASS:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_WITH_PERSISTENCE.log)" -eq 18
+                        if grep -q '^FAIL:' /tmp/p0d_rc_out/ACTIVE_RICH51_H2_WITH_PERSISTENCE.log; then exit 1; fi
+                      fi
+                    fi
+                  fi
+                fi
+              fi
             fi
           elif [ "$PROFILE" = rich47 ]; then
             export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -712,10 +817,13 @@ jobs:
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
           bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          bot_lock=pathlib.Path('rc_fastlane/features/active_solo_bots/source_lock.json')
+          bots_enabled=p=='rich51' and json.loads(bot_lock.read_bytes())['enabled']
+          expected={'rich51':51+int(bots_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
-          for e in ET.fromstring(target.read_bytes()).iter('Item'):
+          xml=ET.fromstring(target.read_bytes())
+          for e in xml.iter('Item'):
               if e.get('class') not in ('Script','LocalScript','ModuleScript'):continue
               c=e.find("./Properties/string[@name='Source']")
               if c is None:continue
@@ -744,6 +852,37 @@ jobs:
               else:
                   print('P0D_RC_FASTLANE_V4_SWITCH_OFF_ORIGINAL51_PASS')
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
+          assert titles[('ModuleScript','SoloTeamBots')]==int(bots_enabled),('BOT_MODULE_COUNT',titles)
+          if p=='rich51':
+              active_receipt=json.loads((base/'RC_FEATURE_LOCK.json').read_bytes())
+              assert ('rc_active_solo_bots' in active_receipt)==bots_enabled
+              persistence_enabled=os.environ.get('ACTIVE_PERSISTENCE')=='true'
+              assert ('rc_active_persistence_lifecycle' in active_receipt)==persistence_enabled
+              if bots_enabled:
+                  solo=active_receipt['rc_active_solo_bots']
+                  assert lock['rc_active_solo_bots']==solo
+                  assert solo['actor_module']=='server/SoloTeamBots.luau' and solo['studio_classic_only'] is True
+                  assert lock['blobs'][solo['actor_module']]==solo['bot_blob']
+                  h2_config=pathlib.Path('rc_fastlane/features/active_h2_exit/source_lock.json')
+                  h2_enabled=json.loads(h2_config.read_bytes())['enabled']
+                  assert ('rc_active_h2_exit' in active_receipt)==h2_enabled
+                  final_game=solo['game_after']
+                  if h2_enabled:
+                      h2=active_receipt['rc_active_h2_exit']
+                      assert lock['rc_active_h2_exit']==h2 and h2['before']==final_game and h2['studio_score5_only'] is True
+                      final_game=h2['after']
+                      if persistence_enabled:
+                          persistence=active_receipt['rc_active_persistence_lifecycle']
+                          assert lock['rc_active_persistence_lifecycle']==persistence
+                          assert persistence['routes']['server/Game.server.luau']['before']==final_game
+                          for route, pins in persistence['routes'].items():
+                              assert lock['blobs'][route]==pins['after']
+                          final_game=persistence['routes']['server/Game.server.luau']['after']
+                  assert lock['blobs']['server/Game.server.luau']==final_game
+                  containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
+                  bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
+                        if e.findtext("./Properties/string[@name='Name']")=='SoloTeamBots']
+                  assert len(bots)==1,('BOT_ACTIVE_SERVER_ROUTE',len(bots))
           if species_enabled:
               assert saved_beast_enabled and durable_enabled
               assert titles[('ModuleScript','ScoutSpeciesPolicy')]==1
@@ -943,6 +1082,8 @@ jobs:
             ['V4_IDLE_FRIEND_SAFE_FIX'] if p=='rich51' and json.load(
                 open('rc_fastlane/ACTIVE.json',encoding='utf8')
               )['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']['enabled'] else [])
+          if bots_enabled: overlay_ids.append('GQ910_ACTIVE_SOLO_TEAM_BOTS')
+          if os.environ.get('ACTIVE_PERSISTENCE')=='true': overlay_ids.append('ACTIVE66_PERSISTENCE_LIFECYCLE_20261122')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
@@ -953,12 +1094,12 @@ jobs:
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':(('CANONICAL_RC66_SOURCE_ADOPTED_STUDIO_NOT_TESTED' if bond_enabled
-                else 'CANONICAL_RC65_SOURCE_ADOPTED_STUDIO_NOT_TESTED')
+            'source_candidate_stage':(f'CANONICAL_RC{expected}_SOURCE_ADOPTED_STUDIO_NOT_TESTED'
                 if p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'
                 else 'PRIVATE_CANDIDATE_OR_FALLBACK_NOT_OFFICIAL_RC'),
             'canonical_rc_source_adopted':bool(
                 p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'),
+            'solo_team_bots_studio_classic':bots_enabled,
             'native_policy_cases_7jobs':33 if p=='rich51' else None,
             'native_policy_cases_relay':41 if p=='rich51' else None,
             'native_original_Game_relay_cases':31 if p=='rich51' else None,
@@ -999,15 +1140,6 @@ jobs:
             'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
-          if p=='rich51':
-              from rc_fastlane.apply_active_runtime_repairs import emit_artifact_metadata
-              identity=emit_artifact_metadata(base,target,pathlib.Path('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'),pathlib.Path('rc_fastlane/ACTIVE.json'))
-              receipt['active_runtime_identity']=identity
-              receipt['source_overlays'] += ['ACTIVE66_'+name.upper() for name in identity['selected_repairs']]
-              receipt['selected_source_compile_count']=66 if identity['selected_repairs'] else None
-              receipt['selected_Game_relay_cases']=31 if identity['selected_repairs'] else None
-              receipt['selected_Game_bond_cases']=27 if identity['selected_repairs'] else None
-              receipt['selected_repair_regressions']=identity['repair_regressions']
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
@@ -1016,7 +1148,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$PROFILE" = rich51 ]; then
-            DIST="$(python3 -c "import json; print(json.load(open('/tmp/p0d_rc_out/ACTIVE_RUNTIME_SELECTOR_RECEIPT.json'))['selected_dist'])")"
+            DIST=/tmp/p0d_rc_active_playable
             python3 -B rc_fastlane/verify_private63.py \
               --dist "$DIST" --place /tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx
           fi
@@ -1026,7 +1158,7 @@ jobs:
           set -euo pipefail
           python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
           grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
-      - name: Measure actual source-exact Place size and SHA with explicit Private64 source count
+      - name: Measure actual source-exact Place size, SHA and selected source count
         shell: bash
         run: |
           set -euo pipefail
@@ -1035,7 +1167,8 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          bots_enabled=json.load(open('rc_fastlane/features/active_solo_bots/source_lock.json'))['enabled']
+          assert x['native_source_count']==64+int(bots_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
