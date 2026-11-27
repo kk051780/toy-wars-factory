@@ -32712,6 +32712,86 @@
           "state": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FIELD-EGG-TERMINAL-20261127",
+      "feature_id": "GQ470_FIELD_EGG_FINISHED_PROMPT",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent; prepared field-egg patch reuse)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "base_rc_sha": "daa6b076ac3502de632220aea9d7aec494232694",
+      "prep_branch": "feature/p0d-field-egg-terminal-20261127",
+      "expected_source_branch": "ABSENT",
+      "allowed_new_prs": 1,
+      "source_scope_granted": true,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "original_candidate": "43bbc8b3eb5ae5702bcb362f3a95f3db8fd16abf",
+      "original_product_source_pins": {
+        "before": {
+          "bytes": 96933,
+          "sha256": "7fc3bbc303bdf8b1276d15cd453ac62e0246326da4e45897a7099487d37ef862"
+        },
+        "after": {
+          "bytes": 97291,
+          "sha256": "d536760bf28c29c9f552d50c79a60ea67c3679b45b5a9970fc7b8f35a31ff185"
+        }
+      },
+      "local_place": {
+        "bytes": 849249,
+        "sha256": "9b40c14a44294464d2c86727c5347b14c6ff92b06c15ba248b7492fc89ccdeb0"
+      },
+      "rollback_place": {
+        "bytes": 848891,
+        "sha256": "ab621dff32fe89b61e8b1c54164f0b74f0802667bc2f73fe3adcd3bb23523b8a"
+      },
+      "scope": "Reuse +358 byte prepared FieldEgg prompt teardown only when active round finishes. No changes for released castle/carrier eggs, siege, Rules, scoring or published locations. Existing source issue and prepared commit reused. Retain exact legacy ancestors, scope-native fixture, CI, and independently reviewed Studio on adopted head. One draft allowed because no open exact PR has been found; source transport and official writing each require further live role authentication.",
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-7191151370",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_LOBBYCASTLEMODESPREVIEW",
+        "FIELD_EGG_FINISHED_PROMPT",
+        "REAL69_UNION22_FINAL_RECEIPT"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/field_prompt_cases.luau",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "8b62f757-a6cf-41b1-80f8-5f56e8757ef2",
+      "issued_at": "2026-11-27T04:31:49.433Z",
+      "expires_at": "2026-11-27T06:31:49.433Z",
+      "actual_metadata_lease": {
+        "ref": "89fb061f912b55fc2c7136406cc96db7e66769fe",
+        "blob": "8cd0d4ccc21177ffd4dd3df095fc7dba16a5f33c",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "8b62f757-a6cf-41b1-80f8-5f56e8757ef2",
+          "task_id": null,
+          "epoch": 821,
+          "acquired_at": "2026-11-27T04:31:34.606Z",
+          "expires_at": "2026-11-27T05:01:34.606Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated #1011 V2.1 delegated narrow prepared source scope and authenticated #218 ledger. Does not grant transport, independent approval, RC writing or other sources."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
