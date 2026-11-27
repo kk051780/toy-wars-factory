@@ -39936,7 +39936,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #476 wind action only on ACTIVE rich51. Selected NINJA author alias, validated ground, existing speed 27 duration 2.5 cooldown 18 and original exact boundary. Preserve legacy RAIDER, underlying combat role GET, Game controls, existing Remote. Separate touch wind and trap, no art/Android claim, unsigned portfolio changes, no PRIVATE source effect.",
       "resources": [
@@ -40126,6 +40126,72 @@
       "actual_binding_lease": {
         "commit": "6f6d88bde73c29addf93c6a9e5c5b7bbae02bfc0",
         "operation_id": "ce19643e-79ea-48e8-97bc-cae2f9eb6694"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/476#pullrequestreview-6091205351",
+        "review_id": 6091205351,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46035342834,
+        "active_job": 140629209284,
+        "active_executed_steps": 95,
+        "active_place_bytes": 669180,
+        "active_place_sha256": "e989ca0c8ed56a47b2f269abaf18415f4517701a2afe6210e469f8bc2318100c",
+        "immediate_off_bytes": 668223,
+        "active_artifact": 15215189706,
+        "active_zip_bytes": 201553,
+        "active_zip_digest": "sha256:c81da36ec4a556eff72045882b0583f56f742aef2e7237d62c7c63a729d1e95d",
+        "private_ci": 46035342738,
+        "private_job": 140629208721,
+        "private_steps": 48,
+        "private_artifact": 15216193212,
+        "private_zip_bytes": 25667078,
+        "private_zip_digest": "sha256:a7e1273e40446e01a5068b105d7d59419139843e26dd0d1393b56dfe3d281f3c",
+        "source_lock": "52a390fbdc96e37f30824566b58d4d21e9f1f703d9a0e491f4ef92f811710207",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "fa9d45dd53ea671e4e4866b5d1ee2382a6035d01",
+        "operation_id": "5f05e361-0851-4ef2-82e3-c6b4b9fcea01"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "376be660477492d0a6621d8ca7f28033da396260",
+        "permitted_head": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "permitted_tree": "15b8e3a1a0c096b35f2837fed6f99b76232b71f2",
+        "permitted_pr": 476,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T17:13:26.874Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact original #476 ACTIVE rich51 selected NINJA wind path with existing server policy, grounded approval and dual touch position. Preserve old RAIDER role, Game/HUD two only, earlier original attack/Undead/Store/egg effects and Private sources unchanged. No engine/Android/release claim.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "fa9d45dd53ea671e4e4866b5d1ee2382a6035d01",
+          "owner": "5f05e361-0851-4ef2-82e3-c6b4b9fcea01",
+          "review": 6091205351,
+          "trusted_queue_run": 46037075662,
+          "trusted_queue_job": 140635071794
+        }
       }
     }
   ],
