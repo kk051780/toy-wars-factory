@@ -33822,7 +33822,7 @@
     {
       "claim_id": "P0D-GQ470-COMBAT-VISUAL-931-20261127",
       "feature_id": "GQ470_COMBAT_VISUAL_READABILITY",
-      "state": "PREP_READY",
+      "state": "RC_ADMISSION_AUTHORIZED",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #931 reused)",
       "parent_issue": 470,
@@ -33840,7 +33840,7 @@
       "author_may_self_approve": false,
       "PREP_READY": true,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": false,
+      "rc_write_authorized_by_this_claim": true,
       "scope": "Three already authored leaves only: compact Subject-owned nearby Bot objective tag, confirmed KO fin cap and proven fade delay, stone giant noncolliding silhouette. Preserve original #931 and donor branches. Equal other 66. No #940, no training, skill effectiveness, growth, store, AI decisions, match control, active profile changes.",
       "resources": [
         "REAL69_SOURCE_EGGRUMBLE_BOTACTORS",
@@ -34201,6 +34201,39 @@
       "actual_prep_ready_lease": {
         "commit": "2ccf72dc4be9d8bbf0aa866cb3638289f1e7bb39",
         "operation_id": "7a6db1b6-43b0-432f-9f96-69d74ab176d6"
+      },
+      "bounded_rc_integration": {
+        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "permitted_head": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "permitted_tree": "48a9e1a517b3351b965c45f3efe5b01f9905acda",
+        "permitted_pr": 931,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEx_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T07:14:29.090Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Three exact combat visual sources only. Known V3.0 deferred Studio. Same-head CI and Place required. No active runtime selection, main or publishing.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated #1011 V3.0 and #220, after exact independent review and trusted current queue",
+          "lease": "0e38d8ee5ae42ff7f431212111f798aa51628d1c",
+          "owner": "d75b6dc5-7458-4eab-b2cd-05958b2b5885",
+          "review": 6084456753,
+          "trusted_queue_run": 45953643445,
+          "trusted_queue_job": 140355005161
+        }
       }
     }
   ],
