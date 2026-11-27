@@ -387,6 +387,37 @@ def visual_author(relative, pin, label):
     return original
 
 
+def verify_growth_donor_sources(root, repair):
+    donor_files = repair["donor_files"]
+    require(len(donor_files) == 11 and all(digest(read(REPO / name)) == pin
+                                          for name, pin in donor_files.items()), "GROWTH_MUSOU_DONOR_PINS")
+    parent = root / compose.GROWTH_MUSOU_OFF / "sources"
+    current = root / "sources"
+    growth_path = repair["origins"]["growth"]["package"] + "/apply_growth.py"
+    source = visual_author(growth_path, donor_files[growth_path], "GROWTH_ORIGINAL")
+    _, patch = source.load_contract()
+    for entry in patch["files"]:
+        relative = entry["path"]
+        result = read(parent / relative)
+        for row in entry["hunks"]:
+            before, after = (row[p].encode("utf-8") for p in ("old", "new"))
+            require(result.count(before) == 1, "GROWTH_ORIGINAL_HUNK:" + row["name"])
+            result = result.replace(before, after, 1)
+        require(result == read(current / relative), "GROWTH_EXACT_REUSE:" + relative)
+    aura_dir = repair["origins"]["aura"]["package"]
+    aura_path = aura_dir + "/apply_lifecycle.py"
+    aura = visual_author(aura_path, donor_files[aura_path], "MUSOU_AURA_ORIGINAL")
+    aura_lock = aura.load_lock(REPO / aura_dir / "source_lock.json")
+    original = read(parent / aura.CONTROLLER.removeprefix("sources/"))
+    selected = read(current / aura.CONTROLLER.removeprefix("sources/"))
+    candidate = read(REPO / aura_dir / "MusouAuraController.client.luau")
+    client = aura.AURA.removeprefix("sources/")
+    require(aura.forward(original, candidate, aura_lock) == selected
+            and aura.inverse(selected, original, aura_lock) == original
+            and read(parent / client) == read(current / client)
+            and digest(read(current / client)) == aura.AURA_ID, "MUSOU_AURA_EXACT_REUSE")
+
+
 def verify_core(root, base, reports, context):
     lock = compose.load_lock()
     root = Path(root).resolve()
@@ -399,7 +430,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 29 and len(lock["sources"]) - len(changed) == 40, "CHANGE_COUNT")
+    require(len(changed) == 31 and len(lock["sources"]) - len(changed) == 38, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -420,10 +451,17 @@ def verify_core(root, base, reports, context):
     neutral_names = lock["neutral_names_followup"]
     wall = lock["guardian_wall_followup"]
     combat = lock["combat_visual_followup"]
+    growth = lock["growth_musou_followup"]
+    require(set(growth["rows"]) == set(compose.GROWTH_MUSOU_SOURCES), "GROWTH_MUSOU_SOURCE_SET")
+    expected_growth_off, growth_off_lock, growth_off = verify_source_rollback(
+        root, root, lock, current, growth, growth["rows"], combat["repaired_place"],
+        compose.GROWTH_MUSOU_OFF, compose.GROWTH_MUSOU_OFF_ARCHIVE, "GROWTH_MUSOU")
+    verify_growth_donor_sources(root, growth)
     require(set(combat["rows"]) == set(compose.COMBAT_VISUAL_SOURCES)
             and set(combat["origins"]) == set(combat["rows"]), "COMBAT_VISUAL_SOURCE_SET")
     expected_combat_off, combat_off_lock, combat_off = verify_source_rollback(
-        root, root, lock, current, combat, combat["rows"], wall["repaired_place"],
+        root, root / compose.GROWTH_MUSOU_OFF, growth_off_lock, growth_off,
+        combat, combat["rows"], wall["repaired_place"],
         compose.COMBAT_VISUAL_OFF, compose.COMBAT_VISUAL_OFF_ARCHIVE, "COMBAT_VISUAL")
     for source, origin in combat["origins"].items():
         author = visual_author(origin["path"], origin["python_bytes"], "COMBAT_VISUAL_ORIGINAL")
@@ -448,7 +486,8 @@ def verify_core(root, base, reports, context):
         compose.NEUTRAL_NAMES_OFF, compose.NEUTRAL_NAMES_OFF_ARCHIVE, "NEUTRAL_NAMES")
     selected = compose.SWARM_SOURCE
     expected_swarm = neutral_names_author(lock).patch(read(root / compose.NEUTRAL_NAMES_OFF / "sources" / selected))
-    require(expected_swarm == read(root / "sources" / selected), "NEUTRAL_NAMES_EXACT_AUTHOR_TRANSFORM")
+    require(expected_swarm == read(root / compose.GUARDIAN_WALL_OFF / "sources" / selected),
+            "NEUTRAL_NAMES_EXACT_AUTHOR_TRANSFORM")
     plaza = neutral_names["plaza"]
     plaza_author = visual_author(plaza["author_file"], plaza["author_transform"], "LOBBY_PLAZA_AUTHOR")
     selected = compose.LOBBY_SOCIAL_SOURCE
@@ -504,7 +543,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 29, "unchanged_source_count": 40,
+        "selected_source_count": 69, "changed_source_count": 31, "unchanged_source_count": 38,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -541,6 +580,8 @@ def verify_core(root, base, reports, context):
         "guardian_wall_rollback_archive": digest(read(root / compose.GUARDIAN_WALL_OFF_ARCHIVE)),
         "combat_visual_followup": combat,
         "combat_visual_rollback_archive": digest(read(root / compose.COMBAT_VISUAL_OFF_ARCHIVE)),
+        "growth_musou_followup": growth,
+        "growth_musou_rollback_archive": digest(read(root / compose.GROWTH_MUSOU_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -550,8 +591,8 @@ def verify_core(root, base, reports, context):
     core = data(root / "CORE_BUILD_REPORT.json")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 29 and core.get("unchanged_sources") == 40
-            and core.get("compile_count") == 160 and core.get("rojo_build_count") == 17
+            and core.get("changed_sources") == 31 and core.get("unchanged_sources") == 38
+            and core.get("compile_count") == 165 and core.get("rojo_build_count") == 18
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -563,6 +604,7 @@ def verify_core(root, base, reports, context):
             and core.get("neutral_names_parent_place") == neutral_off_lock["final_place"]
             and core.get("guardian_wall_parent_place") == wall_off_lock["final_place"]
             and core.get("combat_visual_parent_place") == combat_off_lock["final_place"]
+            and core.get("growth_musou_parent_place") == growth_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -616,6 +658,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.GUARDIAN_WALL_OFF_ARCHIVE] = digest(read(root / compose.GUARDIAN_WALL_OFF_ARCHIVE))
     expected_stage.update({compose.COMBAT_VISUAL_OFF + "/" + name: pin for name, pin in expected_combat_off.items()})
     expected_stage[compose.COMBAT_VISUAL_OFF_ARCHIVE] = digest(read(root / compose.COMBAT_VISUAL_OFF_ARCHIVE))
+    expected_stage.update({compose.GROWTH_MUSOU_OFF + "/" + name: pin for name, pin in expected_growth_off.items()})
+    expected_stage[compose.GROWTH_MUSOU_OFF_ARCHIVE] = digest(read(root / compose.GROWTH_MUSOU_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -624,11 +668,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 177 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 183 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 160 and len(rojo_commands) == 17, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 165 and len(rojo_commands) == 18, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -643,6 +687,8 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.GUARDIAN_WALL_OFF / "sources" / compose.GUARDIAN_SOURCE))
     expected_compile.update(str(Path(stage) / compose.COMBAT_VISUAL_OFF / "sources" / name)
                             for name in compose.COMBAT_VISUAL_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.GROWTH_MUSOU_OFF / "sources" / name)
+                            for name in compose.GROWTH_MUSOU_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -663,7 +709,7 @@ def verify_core(root, base, reports, context):
                                compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF,
                                compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
                                compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
-                               compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF)},
+                               compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -681,7 +727,9 @@ def verify_core(root, base, reports, context):
                                                     if name in compose.VISUAL_READABILITY_SOURCES],
                         compose.GUARDIAN_WALL_OFF: [compose.GUARDIAN_SOURCE],
                         compose.COMBAT_VISUAL_OFF: [name for name in lock["sources"]
-                                                  if name in compose.COMBAT_VISUAL_SOURCES]}
+                                                  if name in compose.COMBAT_VISUAL_SOURCES],
+                        compose.GROWTH_MUSOU_OFF: [name for name in lock["sources"]
+                                                if name in compose.GROWTH_MUSOU_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1282,6 +1330,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["growth_musou_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["combat_visual_followup"]["rows"].items()
     } | {
         guard_source: repair["repaired_guardian"],
@@ -1508,6 +1558,83 @@ def verify_combat_visual(native, root, lock, build, aggregate, context):
     return expected, {"combat_visual/receipt.json"}
 
 
+def verify_growth_musou_native(native, root, lock, build, aggregate, context):
+    spec = importlib.util.spec_from_file_location("union22_growth_musou_verify", HERE / "native/growth_musou.py")
+    adapter = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(adapter)
+    growth, aura, aura_fixture = adapter.load_contracts(lock, compose)
+    authored = growth.load_native_contract()
+    historic = growth.validate_historical_inputs(authored["historical_inputs"])
+    original = json.loads(historic[growth.HISTORICAL_PREFIX + "/INPUT_LOCK.json"])
+    binary = build["binary_before_suites"]
+    folder = native / "growth_musou"
+    packed = files(folder)
+    receipt = data(folder / "receipt.json")
+    require(digest(read(folder / "receipt.json")) == aggregate["growth_musou"], "GROWTH_MUSOU_AGGREGATE")
+    expected_files = {"receipt.json"}
+    aura_status = {}
+    count = 0
+    for label, sources, pins in adapter.profile_sources(root, lock, compose):
+        branch = "positive" if label == "ON" else "negative"
+        expected = {f"{label}_legacy_{name}": (
+                        {"exit": 0, "cases": [[case, "PASS"] for case in suite["expected_case_names"]]}, 28)
+                    for name, suite in original["suites"].items()}
+        for name in authored["server_profiles"][label]:
+            suite = authored["server_variants"][name]
+            expected[f"{label}_server_{name}"] = (suite[branch], 28 + len(suite.get("extra_modules", [])))
+        expected[f"{label}_ui"] = (authored["ui"][branch], 31)
+        for name, (vector, body_count) in expected.items():
+            result = folder / name
+            claim = data(result / "receipt.json")
+            program = read(result / "generated.luau")
+            stdout = read(result / "stdout.log")
+            stderr = read(result / "stderr.log")
+            lines = stdout.decode("utf-8").splitlines()
+            cases, _ = growth.vector(lines, "CASE")
+            assertions, _ = growth.vector(lines, "EXPECTATION")
+            failure = vector["exit"] != 0
+            require(claim["generated"] == digest(program) and claim["native"] == binary
+                    and claim["source_profile"] == pins and len(claim["full_body_byte_ranges"]) == body_count
+                    and claim["stdout"] == digest(stdout) and claim["stderr"] == digest(stderr)
+                    and claim["native_exit"] == claim["expected_exit"] == vector["exit"]
+                    and cases == claim["actual_cases"] == vector["cases"]
+                    and assertions == claim["actual_expectations"] == vector.get("expectations", [])
+                    and claim["status"] == ("PASS_FIXED_NEGATIVE_CONTROL" if failure else "PASS_NATIVE_ONLY")
+                    and not any(line.startswith("WARN\t") for line in lines), "GROWTH_MUSOU_VECTOR:" + name)
+            require(vector["failure_marker"].encode() in stdout + stderr if failure else not stderr,
+                    "GROWTH_MUSOU_NATIVE_EXIT_EVIDENCE:" + name)
+            end = 0
+            for relative, span in sorted(claim["full_body_byte_ranges"].items(), key=lambda item: item[1]["start"]):
+                lo, hi = span["start"], span["end"]
+                require(end <= lo < hi <= len(program) and program[lo:hi] == read(sources / relative)
+                        and digest(program[lo:hi]) == pins[relative], "GROWTH_MUSOU_BODY_SPAN:" + relative)
+                end = hi
+            expected_files.update(f"{name}/{file}" for file in
+                                  ("receipt.json", "generated.luau", "stdout.log", "stderr.log"))
+            count += 1
+        name = "candidate" if label == "ON" else "baseline"
+        prefix = "aura/" + name
+        client, controller = sources / adapter.CLIENT, sources / adapter.CONTROLLER
+        program, _ = aura.build_program(aura_fixture, read(client), read(controller), client, controller)
+        require(program == read(folder / (prefix + ".exact.luau")), "MUSOU_AURA_EXACT_PROGRAM")
+        output = read(folder / (prefix + ".stdout.txt")).decode("utf-8").splitlines()
+        stderr = read(folder / (prefix + ".stderr.txt"))
+        rows = [line.split("\t", 2) for line in output if line.startswith(("PASS\t", "FAIL\t"))]
+        names = [row[1] for row in rows]
+        failed = frozenset(row[1] for row in rows if row[0] == "FAIL")
+        require(len(names) == len(set(names)) and set(names) == aura.EXPECTED_CASES
+                and failed == (frozenset() if label == "ON" else aura.EXPECTED_BASELINE_FAILURES)
+                and (b"Lifecycle regression expectations failed" in stderr if failed else not stderr),
+                "MUSOU_AURA_EXPECTED_VECTOR")
+        aura_status[name] = {"passed": len(rows) - len(failed), "expected_failure": len(failed)}
+        expected_files.update(prefix + extension for extension in (".exact.luau", ".stdout.txt", ".stderr.txt"))
+    require(count == 24 and len(expected_files) == 103 and set(packed) == expected_files
+            and receipt == {"context": context, "binary": binary, "source_only": True, "growth_runs": count,
+                            "aura": aura_status, "files": {p: pin for p, pin in packed.items() if p != "receipt.json"}},
+            "GROWTH_MUSOU_NATIVE_COMPLETE")
+    return receipt, {"growth_musou/" + name for name in expected_files}
+
+
 def verify_native(native, root, lock, context):
     """Verify concrete body ranges, case logs and new-build receipt, not PASS alone."""
     native = Path(native).resolve()
@@ -1568,8 +1695,9 @@ def verify_native(native, root, lock, context):
             and aggregate.get("full_body_coverage") == {
                 "original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16, "distinct_server_union": 30,
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
-                "hud_client_runtime_executed": False}
-            and aggregate.get("native_process_count") == 27 and aggregate.get("native_evidence_file_count") == 106,
+                "hud_client_runtime_executed_in_original_suites": False,
+                "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
+            and aggregate.get("native_process_count") == 53 and aggregate.get("native_evidence_file_count") == 209,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -1651,8 +1779,10 @@ def verify_native(native, root, lock, context):
     expected_files |= wall_files
     combat_visual, visual_files = verify_combat_visual(native, root, lock, build, aggregate, context)
     expected_files |= visual_files
+    growth_musou, growth_files = verify_growth_musou_native(native, root, lock, build, aggregate, context)
+    expected_files |= growth_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 106 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 209 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -1664,6 +1794,7 @@ def verify_native(native, root, lock, context):
             "foliage_readability": foliage,
             "guardian_wall": wall,
             "combat_visual": combat_visual,
+            "growth_musou": growth_musou,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1704,6 +1835,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.ROLE_READABILITY_OFF_ARCHIVE, compose.FIELD_PROMPT_OFF_ARCHIVE,
                             compose.NEUTRAL_NAMES_OFF_ARCHIVE,
                             compose.GUARDIAN_WALL_OFF_ARCHIVE, compose.COMBAT_VISUAL_OFF_ARCHIVE,
+                            compose.GROWTH_MUSOU_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -1726,7 +1858,7 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 29, "unchanged_sources": 40, "instances": 75,
+            "source_count": 69, "changed_sources": 31, "unchanged_sources": 38, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
@@ -1787,6 +1919,10 @@ def admit_delivery(root, base, reports, native, context):
             "combat_visual_inverse_place": verified["lock"]["combat_visual_followup"]["parent_place"],
             "combat_visual_inverse_archive": digest(read(root / compose.COMBAT_VISUAL_OFF_ARCHIVE)),
             "combat_visual_inverse_archive_members": 71,
+            "growth_musou_followup": verified["lock"]["growth_musou_followup"],
+            "growth_musou_inverse_place": verified["lock"]["growth_musou_followup"]["parent_place"],
+            "growth_musou_inverse_archive": digest(read(root / compose.GROWTH_MUSOU_OFF_ARCHIVE)),
+            "growth_musou_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -1807,6 +1943,7 @@ def admit_delivery(root, base, reports, native, context):
             "foliage_readability": runtime["foliage_readability"],
             "guardian_wall": runtime["guardian_wall"],
             "combat_visual": runtime["combat_visual"],
+            "growth_musou": runtime["growth_musou"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
