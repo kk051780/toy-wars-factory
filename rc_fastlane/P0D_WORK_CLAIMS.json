@@ -33480,7 +33480,7 @@
     {
       "claim_id": "P0D-GQ796-GUARDIAN-WALL-PATROL-20261127",
       "feature_id": "GQ796_GUARDIAN_WALL_PATROL",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, original #796 and prepared wall fix reuse)",
       "parent_issue": 470,
@@ -33495,8 +33495,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "One existing guardian movement route, prepared exact f57d11b4 guard-body sweeps/tangent slide/end overlap, 1545 bytes, no new hostile target policy, castle rules, character HP, inventory, authority or art variant. Reuse existing open #796 and preserve original head. Preserve old 40 native exact historical context and run seven strict new cases. Shared canonical scope serialized; #957 excluded.",
       "resources": [
@@ -33715,6 +33715,32 @@
       "actual_binding_lease": {
         "commit": "9c1a37a7ac15c67ac8afc6f6563bc52d0e1cb189",
         "operation_id": "0697a058-86e7-4a32-9c6b-9a949fb7f2c4"
+      },
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/796#pullrequestreview-6084124229",
+        "review_id": 6084124229,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "scope_registration": "2c57ee2ddead01dff3f245e8d13106f89b791446",
+        "review_is_comment": true,
+        "author_self_approval": false,
+        "canonical_ci_run": 45948405969,
+        "canonical_job": 140338325371,
+        "canonical_steps": 48
+      },
+      "local_and_hosted_quality": {
+        "candidate_run": 45948405969,
+        "job": 140338325371,
+        "steps": 48,
+        "local_place_bytes": 854300,
+        "immediate_off_bytes": 852755,
+        "source_lock": "325086d053c625a8f5dbc9b2bd62d2729ce1b33c72522d27d3cdc32f15f47694",
+        "previous_off_archives": 14,
+        "studio": "NOT_TESTED_V3.0"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "56738ad4cc7a7c0ca9ef786c6b9e27c9995b646f",
+        "operation_id": "ddb6f374-4599-48a9-8a88-2369839c50c4"
       }
     }
   ],
