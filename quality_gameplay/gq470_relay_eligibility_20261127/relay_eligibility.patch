@@ -1,0 +1,81 @@
+--- a/sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau
++++ b/sources/ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau
+@@ -1617,15 +1617,18 @@
+   -- Each recipient triggers a server-only prompt on the current egg carrier.
+   -- No Remote, Tool, client-side quantity, second Game, Store, HUD or score.
+   session.eggRelayPrompts={}
+-  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)
+-   prompt.Enabled=ready
+-   if prompt:GetAttribute("EGGRUMBLE_RelayPresentationReady")~=ready then
+-    prompt:SetAttribute("EGGRUMBLE_RelayPresentationReady",ready)
++  local function publishRelayReady(prompt:ProximityPrompt,enabled:boolean,donorReady:boolean,receiverReady:boolean)
++   prompt.Enabled=enabled
++   if prompt:GetAttribute("EGGRUMBLE_RelayPresentationReady")~=donorReady then
++    prompt:SetAttribute("EGGRUMBLE_RelayPresentationReady",donorReady)
++   end
++   if prompt:GetAttribute("EGGRUMBLE_RelayPresentationReceiverReady")~=receiverReady then
++    prompt:SetAttribute("EGGRUMBLE_RelayPresentationReceiverReady",receiverReady)
+    end
+   end
+   session.eggRelayStop=function()
+    for _,relayPrompt in ipairs(session.eggRelayPrompts) do
+-    publishRelayReady(relayPrompt,false)
++    publishRelayReady(relayPrompt,false,false,false)
+     if relayPrompt.Parent then relayPrompt:Destroy() end
+    end
+    table.clear(session.eggRelayPrompts)
+@@ -1656,6 +1659,7 @@
+      relayPrompt:SetAttribute("EGGRUMBLE_RelayPresentationTeam",seat.team)
+      relayPrompt:SetAttribute("EGGRUMBLE_RelayPresentationHeight",Rules.RELAY_VERTICAL_STUDS)
+      relayPrompt:SetAttribute("EGGRUMBLE_RelayPresentationReady",false)
++     relayPrompt:SetAttribute("EGGRUMBLE_RelayPresentationReceiverReady",false)
+     end
+     relayPrompt.Parent=carrierRoot
+     table.insert(session.eggRelayPrompts,relayPrompt)
+@@ -1717,16 +1721,21 @@
+      while sessions[mode]==session and session.rules.phase=="ACTIVE"
+       and character.Parent and carrierPlayer.Character==character
+       and relayPrompt.Parent==carrierRoot do
+-      local c=session.rules.castles[tostring(carrierPlayer.UserId)]
++      local id=tostring(carrierPlayer.UserId)
++      local c=session.rules.castles[id]
+       local hum=character:FindFirstChildOfClass("Humanoid")
+-      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive
+-       and c.heldEggs>0 and hum~=nil and hum.Health>0
+-       and joined[carrierPlayer.UserId]==mode
+-       and carrierPlayer:GetAttribute("EGGRUMBLE_Eliminated")~=true)
++      local lastRelay=session.rules.eggRelayLastAt[id]
++      local eligible=c~=nil and c.isAI~=true and c.alive
++       and hum~=nil and hum.Health>0 and joined[carrierPlayer.UserId]==mode
++       and carrierPlayer:GetAttribute("EGGRUMBLE_Eliminated")~=true
++      local offCooldown=lastRelay==nil or os.clock()-lastRelay>=Rules.RELAY_COOLDOWN_SECONDS
++      local canDonate=eligible and c.heldEggs>0
++      -- The existing Rules transaction still checks both inventories and clocks.
++      publishRelayReady(relayPrompt,canDonate,canDonate and offCooldown,eligible and c.heldEggs<3 and offCooldown)
+       task.wait(.35)
+      end
+      if relayPrompt.Parent==carrierRoot then
+-      publishRelayReady(relayPrompt,false)
++      publishRelayReady(relayPrompt,false,false,false)
+      else
+       relayPrompt.Enabled=false
+      end
+--- a/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau
++++ b/sources/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau
+@@ -83,6 +83,7 @@
+ local teamAttribute = "EGGRUMBLE_RelayPresentationTeam"
+ local readyAttribute = "EGGRUMBLE_RelayPresentationReady"
+ local heightAttribute = "EGGRUMBLE_RelayPresentationHeight"
++local receiverReadyAttribute = "EGGRUMBLE_RelayPresentationReceiverReady"
+ local rayLift = Vector3.new(0, 1, 0)
+ local rayParams = RaycastParams.new()
+ rayParams.FilterType = Enum.RaycastFilterType.Exclude
+@@ -123,7 +124,7 @@
+ 	local arena = lobby and lobby:FindFirstChild("TEAM_Arena")
+ 	if not arena or arena:GetAttribute("EGGRUMBLE_MatchPhase") ~= "ACTIVE" then return nil end
+ 	local root, prompt = findRelay(character)
+-	if not root or not prompt then return nil end
++	if not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end
+ 	local round = prompt:GetAttribute(roundAttribute)
+ 	local team = prompt:GetAttribute(teamAttribute)
+ 	if type(round) ~= "number" or (team ~= "RED" and team ~= "BLUE") then return nil end

@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 889649,
-    "sha256": "e963ef81a41dfdfadc5fd5cb529c0a1ca5180dd727372ad5b7d7ee570a4e4efb"
+    "bytes": 890487,
+    "sha256": "eeed5523b7e8ef2fcccdcdc49385bd9ce6910c71312a2ff030d82044ddb0233a"
   },
   "followup_repair": {
     "author_contexts": [
@@ -11425,6 +11425,1634 @@
   },
   "project_name": "EGGRUMBLE_REAL69.project.json",
   "receipt_name": "REAL69_LEGACY_INTAKE_RECEIPT.json",
+  "relay_eligibility_followup": {
+    "author_patch": {
+      "identity": {
+        "bytes": 4489,
+        "sha256": "e8c55e7bd9195a2f11b764e36abf7d8dc69b4f1b9786929aee6c3dbef6ab06c1"
+      },
+      "path": "quality_gameplay/gq470_relay_eligibility_20261127/relay_eligibility.patch"
+    },
+    "native_fixtures": {
+      "client_cases.luau": {
+        "bytes": 1208,
+        "sha256": "2c9a18905c395d4dd46b3166793e079ad4522d84f56d5608138f94e8a0f10703"
+      },
+      "rules_boundary.luau": {
+        "bytes": 3662,
+        "sha256": "41f3c162abf3e5c7a152694b8a03104ce7cdcd60ecb26cca92afde6aa0116491"
+      },
+      "server_cases.luau": {
+        "bytes": 1264,
+        "sha256": "6c1ea33f54dbb6296c4522de8c5665a674294cc36fadea258374ca95becb7a0b"
+      },
+      "server_context.luau": {
+        "bytes": 725,
+        "sha256": "8b5253a84ace271dd66980fb995d15d650e46882b1ef92c4cbe15868261e7a30"
+      }
+    },
+    "native_programs": {
+      "candidate_client": {
+        "bytes": 28360,
+        "sha256": "b5a0dbb75b6d1381a5f0159f38964e9987341a4882058dd7768d9f44d3ab5841"
+      },
+      "server_display": {
+        "bytes": 3244,
+        "sha256": "0ec8a923785e9b1637c50d27fb88d94c10170bcb148cde31990958cab2e9f086"
+      },
+      "unchanged_rules": {
+        "bytes": 20490,
+        "sha256": "eb46fbc36d0aa9fee3e70519055b2bda14aae0fd8cab3bee7a01f6d806b92e71"
+      }
+    },
+    "native_stdout": {
+      "candidate_client": {
+        "bytes": 1753,
+        "sha256": "6e4966f9c08332776601e203b34797643e81d3a12db6e7adb2760d7d19f6e6c0"
+      },
+      "server_display": {
+        "bytes": 286,
+        "sha256": "3dbf785b89c4c31a8f3f8d8218bb11375f4a0a6f80f54f7ae5666d2b00216853"
+      },
+      "unchanged_rules": {
+        "bytes": 136,
+        "sha256": "179f5ded0f8eaefbf214fa525a7c13ffce7f7064b1f81d386e815f71b7a5444d"
+      }
+    },
+    "parent_head": "649f8a36b5f3529242f83cfbe2bd5cb24367f8e5",
+    "parent_place": {
+      "bytes": 889649,
+      "sha256": "e963ef81a41dfdfadc5fd5cb529c0a1ca5180dd727372ad5b7d7ee570a4e4efb"
+    },
+    "parent_tree": "101c5aa63b79612bc284b243199ec686f32bce60",
+    "repaired_place": {
+      "bytes": 890487,
+      "sha256": "eeed5523b7e8ef2fcccdcdc49385bd9ce6910c71312a2ff030d82044ddb0233a"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
+        "forward": [
+          {
+            "new": "  local function publishRelayReady(prompt:ProximityPrompt,enabled:boolean,donorReady:boolean,receiverReady:boolean)\n   prompt.Enabled=enabled\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=donorReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",donorReady)\n   end\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\")~=receiverReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",receiverReady)\n",
+            "new_identity": {
+              "bytes": 471,
+              "sha256": "e1567520bf9c48f04a6ec86e3c846e0940c093456833bb6ca33fc3e350decf9e"
+            },
+            "old": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n",
+            "old_identity": {
+              "bytes": 237,
+              "sha256": "1d0d8bc9b34d46fbd1762e7312781d3a25be8e3ef55d3bdc874656610f3c946c"
+            },
+            "start": 1619,
+            "stop": 1623
+          },
+          {
+            "new": "    publishRelayReady(relayPrompt,false,false,false)\n",
+            "new_identity": {
+              "bytes": 53,
+              "sha256": "2548d77423635daf3378413725faad7954cb1550cb8768e094496929d7c310b6"
+            },
+            "old": "    publishRelayReady(relayPrompt,false)\n",
+            "old_identity": {
+              "bytes": 41,
+              "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+            },
+            "start": 1627,
+            "stop": 1628
+          },
+          {
+            "new": "     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",false)\n",
+            "new_identity": {
+              "bytes": 80,
+              "sha256": "6dde006b60a8466217112faa6f4f42264772c607731cd2c04728fa86717abdd8"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 1658,
+            "stop": 1658
+          },
+          {
+            "new": "      local id=tostring(carrierPlayer.UserId)\n      local c=session.rules.castles[id]\n",
+            "new_identity": {
+              "bytes": 86,
+              "sha256": "92a86a6ce9913b2e18acfc6946fc0b2ed6809ed7383dc4d07820750b58ca19ee"
+            },
+            "old": "      local c=session.rules.castles[tostring(carrierPlayer.UserId)]\n",
+            "old_identity": {
+              "bytes": 68,
+              "sha256": "2590b0d7ae576d6522c77e7e0615d8ee48b5c2b1eab2dc8433b5dd03324bdacf"
+            },
+            "start": 1719,
+            "stop": 1720
+          },
+          {
+            "new": "      local lastRelay=session.rules.eggRelayLastAt[id]\n      local eligible=c~=nil and c.isAI~=true and c.alive\n       and hum~=nil and hum.Health>0 and joined[carrierPlayer.UserId]==mode\n       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n      local offCooldown=lastRelay==nil or os.clock()-lastRelay>=Rules.RELAY_COOLDOWN_SECONDS\n      local canDonate=eligible and c.heldEggs>0\n      -- The existing Rules transaction still checks both inventories and clocks.\n      publishRelayReady(relayPrompt,canDonate,canDonate and offCooldown,eligible and c.heldEggs<3 and offCooldown)\n",
+            "new_identity": {
+              "bytes": 594,
+              "sha256": "8f3ba4acb37637c8b62e221ecf6945419d46deda75972d439608afa1d9e8eed8"
+            },
+            "old": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n       and c.heldEggs>0 and hum~=nil and hum.Health>0\n       and joined[carrierPlayer.UserId]==mode\n       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
+            "old_identity": {
+              "bytes": 241,
+              "sha256": "23105258e51873de30294c31ec9b14cf9063ebc4f12abe51bae6b3d4fd130f95"
+            },
+            "start": 1721,
+            "stop": 1725
+          },
+          {
+            "new": "      publishRelayReady(relayPrompt,false,false,false)\n",
+            "new_identity": {
+              "bytes": 55,
+              "sha256": "c0792959031c3672dc4fbeda427ca858fd7fdfd37f8a6638bec2b9349a393b0e"
+            },
+            "old": "      publishRelayReady(relayPrompt,false)\n",
+            "old_identity": {
+              "bytes": 43,
+              "sha256": "a4ba22d3418eaeaba95b49890b0f81163e855908290115cf566abb2642206e23"
+            },
+            "start": 1728,
+            "stop": 1729
+          }
+        ],
+        "inverse": [
+          {
+            "new": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n",
+            "new_identity": {
+              "bytes": 237,
+              "sha256": "1d0d8bc9b34d46fbd1762e7312781d3a25be8e3ef55d3bdc874656610f3c946c"
+            },
+            "old": "  local function publishRelayReady(prompt:ProximityPrompt,enabled:boolean,donorReady:boolean,receiverReady:boolean)\n   prompt.Enabled=enabled\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=donorReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",donorReady)\n   end\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\")~=receiverReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",receiverReady)\n",
+            "old_identity": {
+              "bytes": 471,
+              "sha256": "e1567520bf9c48f04a6ec86e3c846e0940c093456833bb6ca33fc3e350decf9e"
+            },
+            "start": 1619,
+            "stop": 1626
+          },
+          {
+            "new": "    publishRelayReady(relayPrompt,false)\n",
+            "new_identity": {
+              "bytes": 41,
+              "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+            },
+            "old": "    publishRelayReady(relayPrompt,false,false,false)\n",
+            "old_identity": {
+              "bytes": 53,
+              "sha256": "2548d77423635daf3378413725faad7954cb1550cb8768e094496929d7c310b6"
+            },
+            "start": 1630,
+            "stop": 1631
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",false)\n",
+            "old_identity": {
+              "bytes": 80,
+              "sha256": "6dde006b60a8466217112faa6f4f42264772c607731cd2c04728fa86717abdd8"
+            },
+            "start": 1661,
+            "stop": 1662
+          },
+          {
+            "new": "      local c=session.rules.castles[tostring(carrierPlayer.UserId)]\n",
+            "new_identity": {
+              "bytes": 68,
+              "sha256": "2590b0d7ae576d6522c77e7e0615d8ee48b5c2b1eab2dc8433b5dd03324bdacf"
+            },
+            "old": "      local id=tostring(carrierPlayer.UserId)\n      local c=session.rules.castles[id]\n",
+            "old_identity": {
+              "bytes": 86,
+              "sha256": "92a86a6ce9913b2e18acfc6946fc0b2ed6809ed7383dc4d07820750b58ca19ee"
+            },
+            "start": 1723,
+            "stop": 1725
+          },
+          {
+            "new": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n       and c.heldEggs>0 and hum~=nil and hum.Health>0\n       and joined[carrierPlayer.UserId]==mode\n       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
+            "new_identity": {
+              "bytes": 241,
+              "sha256": "23105258e51873de30294c31ec9b14cf9063ebc4f12abe51bae6b3d4fd130f95"
+            },
+            "old": "      local lastRelay=session.rules.eggRelayLastAt[id]\n      local eligible=c~=nil and c.isAI~=true and c.alive\n       and hum~=nil and hum.Health>0 and joined[carrierPlayer.UserId]==mode\n       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n      local offCooldown=lastRelay==nil or os.clock()-lastRelay>=Rules.RELAY_COOLDOWN_SECONDS\n      local canDonate=eligible and c.heldEggs>0\n      -- The existing Rules transaction still checks both inventories and clocks.\n      publishRelayReady(relayPrompt,canDonate,canDonate and offCooldown,eligible and c.heldEggs<3 and offCooldown)\n",
+            "old_identity": {
+              "bytes": 594,
+              "sha256": "8f3ba4acb37637c8b62e221ecf6945419d46deda75972d439608afa1d9e8eed8"
+            },
+            "start": 1726,
+            "stop": 1734
+          },
+          {
+            "new": "      publishRelayReady(relayPrompt,false)\n",
+            "new_identity": {
+              "bytes": 43,
+              "sha256": "a4ba22d3418eaeaba95b49890b0f81163e855908290115cf566abb2642206e23"
+            },
+            "old": "      publishRelayReady(relayPrompt,false,false,false)\n",
+            "old_identity": {
+              "bytes": 55,
+              "sha256": "c0792959031c3672dc4fbeda427ca858fd7fdfd37f8a6638bec2b9349a393b0e"
+            },
+            "start": 1737,
+            "stop": 1738
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 97291,
+            "sha256": "d536760bf28c29c9f552d50c79a60ea67c3679b45b5a9970fc7b8f35a31ff185"
+          },
+          "before": {
+            "bytes": 91635,
+            "sha256": "8d8f6a63db5dd24740f787437b7aa88edfbaaa9c2aae062b07a884e59c06ad85"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "-- GQ470_P0_EARLY_EXISTING_LOBBY_SPAWN_REAL69_20261121\n-- Preserve the actual preexisting spawn/root; create exactly the original\n-- GQ646 floor+neutral SpawnLocation before potentially blocking module requires.\nlocal gqEarlyOriginalSpawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal gqEarlyRoot=gqEarlyOriginalSpawn and gqEarlyOriginalSpawn.Position or Vector3.new(0,4,0)\nlocal gqEarlyFolder=Instance.new(\"Folder\")\ngqEarlyFolder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\"\ngqEarlyFolder.Parent=workspace\nlocal gqEarlyGround=Instance.new(\"Part\")\ngqEarlyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\ngqEarlyGround.Anchored=true\ngqEarlyGround.Size=Vector3.new(154,2,156)\ngqEarlyGround.Position=gqEarlyRoot+Vector3.new(0,-5,21)\ngqEarlyGround.Material=Enum.Material.Grass\ngqEarlyGround.Color=Color3.fromRGB(88,139,104)\ngqEarlyGround.CanCollide=true\ngqEarlyGround.Parent=gqEarlyFolder\nlocal gqEarlySpawn=Instance.new(\"SpawnLocation\")\ngqEarlySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\ngqEarlySpawn.Anchored=true\ngqEarlySpawn.Size=Vector3.new(12,1,12)\ngqEarlySpawn.Position=gqEarlyRoot+Vector3.new(0,-2,-27)\ngqEarlySpawn.Neutral=true\ngqEarlySpawn.Enabled=true\ngqEarlySpawn.AllowTeamChangeOnTouch=false\ngqEarlySpawn.Duration=0\ngqEarlySpawn.Material=Enum.Material.SmoothPlastic\ngqEarlySpawn.Color=Color3.fromRGB(232,230,178)\ngqEarlySpawn.CanCollide=true\ngqEarlySpawn.Parent=gqEarlyFolder\n-- The same GQ646 binder also protects existing/joining characters while\n-- module initialization yields; later match code retains these same tables.\nlocal root=gqEarlyRoot\nlocal sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+              "new_identity": {
+                "bytes": 2695,
+                "sha256": "3ae1ed2d2d8fe0a000988d82a6c5fbb96323e9dcc1f9bb233d817e13c5221516"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 8,
+              "stop": 8
+            },
+            {
+              "new": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+              "new_identity": {
+                "bytes": 81,
+                "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 53,
+              "stop": 53
+            },
+            {
+              "new": "local WalkPolicy=require(script.Parent:WaitForChild(\"EGGRUMBLE_BasicMobilityPolicy\"))\n",
+              "new_identity": {
+                "bytes": 86,
+                "sha256": "72bcea99f1f94dedd47e433a920459096398d244b9d65bb52e213565ed00b4cc"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 176,
+              "stop": 176
+            },
+            {
+              "new": " -- Reuse original SevenRoleCombat slow attributes and shared data-only expiry.\n local player=Players:GetPlayerFromCharacter(model)\n if not player or player.Character~=model or hum.Parent~=model then return end\n local function applySpeed(speed:number?,slowActive:boolean?)\n  if type(speed)~=\"number\" or not player.Parent or player.Character~=model\n   or hum.Parent~=model or hum.Health<=0 then return end\n  hum.WalkSpeed=speed\n  if slowActive==false then\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n   hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n  end\n end\n applySpeed(WalkPolicy.walkCurrent(player,model,hum,session,now))\n",
+              "new_identity": {
+                "bytes": 635,
+                "sha256": "7b360ca44e0cff8a31d3e1fc9ef00c7808503fe49485b7ef17cfc16cf57a3e27"
+              },
+              "old": " -- Reuse original SevenRoleCombat slow attributes rather than create an\n -- independent speed authority. RoundReplay clears these after the match.\n",
+              "old_identity": {
+                "bytes": 148,
+                "sha256": "e88bbe80e8305456a57fff4d28ee914269cd53c42284836d412f2521f9b84b79"
+              },
+              "start": 184,
+              "stop": 186
+            },
+            {
+              "new": " local finalExpiry=math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires)\n local slowed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n local baseline=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n if type(baseline)~=\"number\" or baseline~=baseline or baseline<8 or baseline>32 then baseline=base end\n local slowToken=WalkPolicy.walkEffect(player,model,hum,session,\n  \"SLOW\",slowed,finalExpiry,baseline,now)\n if not slowToken then return end\n",
+              "new_identity": {
+                "bytes": 473,
+                "sha256": "927066d4781051fbbe9897cebfa9c873bd692cce0836d8122baf2468d06244f7"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 190,
+              "stop": 190
+            },
+            {
+              "new": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",finalExpiry)\n hum.WalkSpeed=slowed\n task.delay(finalExpiry-now+.1,function()\n  applySpeed(WalkPolicy.walkRelease(player,model,hum,session,slowToken,os.clock()))\n",
+              "new_identity": {
+                "bytes": 202,
+                "sha256": "ff5c6132cbc733443de47ccef03f2305870ede9820d9ae0070a2cc6ba5f34b4e"
+              },
+              "old": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",\n  math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires))\n hum.WalkSpeed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n task.delay(1.2,function()\n  -- A delayed callback must not overwrite a new round's movement baseline.\n  if session.rules.phase==\"ACTIVE\" and session.world.Parent\n   and hum.Parent and hum.Health>0\n   and os.clock()>=(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge)\n   and hum:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\")==base then\n   hum.WalkSpeed=base\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  end\n",
+              "old_identity": {
+                "bytes": 591,
+                "sha256": "40148abc8010e479a17b0bf79549c6f5f0c31600fa051425be4567cb46d399b7"
+              },
+              "start": 191,
+              "stop": 203
+            },
+            {
+              "new": "   local defenseDamage=InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\")\n   closest.hum:TakeDamage(defenseDamage)\n   if kind==\"TRAP\" and defenseDamage>0 and closest.hum.Health>0 then\n",
+              "new_identity": {
+                "bytes": 228,
+                "sha256": "d67f720e5f1263b373626c40930d6f44b2254135f7feb97d35032f8ea5ba51c9"
+              },
+              "old": "   closest.hum:TakeDamage(InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\"))\n   if kind==\"TRAP\" and closest.hum.Health>0 then\n",
+              "old_identity": {
+                "bytes": 171,
+                "sha256": "bfd52322fb34b52578b4735329c61f7c95e244f79091467390a0f63a61a775f2"
+              },
+              "start": 287,
+              "stop": 289
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+              "old_identity": {
+                "bytes": 81,
+                "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+              },
+              "start": 606,
+              "stop": 607
+            },
+            {
+              "new": "local spawn=gqEarlyOriginalSpawn\nlocal folder=gqEarlyFolder\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "67f15bc1d479bd00b3578c76515bf5874a65231001127b70cdb3705d704fcf5a"
+              },
+              "old": "local spawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal root=spawn and spawn.Position or Vector3.new(0,4,0)\nlocal folder=Instance.new(\"Folder\");folder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\";folder.Parent=workspace\n",
+              "old_identity": {
+                "bytes": 252,
+                "sha256": "193d75b34ff0440d2449714a0835961c9231ae5499c70c54ba64777e7769a854"
+              },
+              "start": 918,
+              "stop": 921
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "0775a7f78fa3eadcbaae6fadabf80b6cc50d4c4ec99771cf410127b7f2b9b53a"
+              },
+              "start": 922,
+              "stop": 924
+            },
+            {
+              "new": "local lobbyGround=gqEarlyGround\nlocal lobbySpawn=gqEarlySpawn\n",
+              "new_identity": {
+                "bytes": 62,
+                "sha256": "88a045d5c6e52cd4ae0d6050d2bfad7d2433c2eed17c53010e9359e1b11dc0ee"
+              },
+              "old": "local lobbyGround=Instance.new(\"Part\")\nlobbyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\nlobbyGround.Anchored=true\nlobbyGround.Size=Vector3.new(154,2,156)\nlobbyGround.Position=root+Vector3.new(0,-5,21)\nlobbyGround.Material=Enum.Material.Grass\nlobbyGround.Color=Color3.fromRGB(88,139,104)\nlobbyGround.CanCollide=true\nlobbyGround.Parent=folder\nlocal lobbySpawn=Instance.new(\"SpawnLocation\")\nlobbySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\nlobbySpawn.Anchored=true\nlobbySpawn.Size=Vector3.new(12,1,12)\nlobbySpawn.Position=root+Vector3.new(0,-2,-27)\nlobbySpawn.Neutral=true\nlobbySpawn.Enabled=true\nlobbySpawn.AllowTeamChangeOnTouch=false\nlobbySpawn.Duration=0\nlobbySpawn.Material=Enum.Material.SmoothPlastic\nlobbySpawn.Color=Color3.fromRGB(232,230,178)\nlobbySpawn.CanCollide=true\nlobbySpawn.Parent=folder\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+              "old_identity": {
+                "bytes": 1846,
+                "sha256": "1538cb2985e8f945dfa34b6ec8d9e1d30748e2502595d0b870c92f86750ad945"
+              },
+              "start": 935,
+              "stop": 980
+            },
+            {
+              "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+              "new_identity": {
+                "bytes": 128,
+                "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+              },
+              "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+              "old_identity": {
+                "bytes": 86,
+                "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+              },
+              "start": 1042,
+              "stop": 1043
+            },
+            {
+              "new": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
+              "new_identity": {
+                "bytes": 62,
+                "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1044,
+              "stop": 1044
+            },
+            {
+              "new": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n   if p.Enabled then\n    local label=(\"残り%d個｜1回1個\"):format(c.vaultEggs)\n    if p.ObjectText~=label then p.ObjectText=label end\n   end\n  end\n end\n",
+              "new_identity": {
+                "bytes": 629,
+                "sha256": "29385e7b2f1472caf62bc2060bf3433b2616d1d9b488ee29aa9ef203acbe7686"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1049,
+              "stop": 1049
+            },
+            {
+              "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1151,
+              "stop": 1151
+            },
+            {
+              "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1175,
+              "stop": 1175
+            },
+            {
+              "new": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"1回につき1個\",function(p)\n",
+              "new_identity": {
+                "bytes": 110,
+                "sha256": "91ae3c3b028f00ca887945bb1ded1fcf1544e9ded658beebe3bcf31b34617694"
+              },
+              "old": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+              "old_identity": {
+                "bytes": 73,
+                "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+              },
+              "start": 1195,
+              "stop": 1196
+            },
+            {
+              "new": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1199,
+              "stop": 1199
+            },
+            {
+              "new": " end,false)\n",
+              "new_identity": {
+                "bytes": 12,
+                "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+              },
+              "old": " end)\n",
+              "old_identity": {
+                "bytes": 6,
+                "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+              },
+              "start": 1206,
+              "stop": 1207
+            },
+            {
+              "new": " local fieldEggPrompts={}\n",
+              "new_identity": {
+                "bytes": 26,
+                "sha256": "054ea4e844050cde7315295ab429474d507e0c7251771ee4ad5d7e68d13e418f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1214,
+              "stop": 1214
+            },
+            {
+              "new": "  local realmWorldKey,realmRules=session.world,session.rules\n",
+              "new_identity": {
+                "bytes": 61,
+                "sha256": "cbf4fbe204b32641ae2182484b9dcb7879bf3eb51ea6275d01b695802c52c66b"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1225,
+              "stop": 1225
+            },
+            {
+              "new": " session.world.Name=mode..\"_Arena\"\n -- Publish the existing Rules phase before Realm can observe this world.\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n session.world.Parent=folder\n",
+              "new_identity": {
+                "bytes": 210,
+                "sha256": "ea5f8891a5ce4f780232cf2a1d8fd56f9938690026c930bbbad83ed73aaf7609"
+              },
+              "old": " session.world.Name=mode..\"_Arena\";session.world.Parent=folder\n",
+              "old_identity": {
+                "bytes": 63,
+                "sha256": "d1e688156396763e67e4ad6bf47a4f1d9ead0ed25093f1a5e1e739fd6f698a2d"
+              },
+              "start": 1231,
+              "stop": 1232
+            },
+            {
+              "new": "  -- Revoke this exact pair before optional cleanup can fail or yield.\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n",
+              "new_identity": {
+                "bytes": 124,
+                "sha256": "20e7f01de12b4673cf47a2991493cd792fe2d07f328344ca28a86cc2ac079356"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1285,
+              "stop": 1285
+            },
+            {
+              "new": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
+              "new_identity": {
+                "bytes": 104,
+                "sha256": "9f7980686bc8e98585deb3c4c57251a13b58c5c8236ce08ea38ed33dad280abf"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1286,
+              "stop": 1286
+            },
+            {
+              "new": "  -- Keep the Host's conserved 72 eggs over the existing castle foundation.\n  -- Nine columns avoid side stations/towers; 2.5-stud rows stay inside its front edge.\n  local columns=math.min(#eggIds,9)\n  local centerColumn=if #eggIds<=3 then 1 else (columns-1)*.5\n",
+              "new_identity": {
+                "bytes": 262,
+                "sha256": "d34c168c758824508346accbccc5f3829cadd14334e4cc76b4fda33ef176ab7f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1326,
+              "stop": 1326
+            },
+            {
+              "new": "   local column=(i-1)%columns\n   local row=math.floor((i-1)/columns)\n   local egg=block(session.world,\"ReleasedEgg_\"..eggId,at+Vector3.new((column-centerColumn)*3,4,-17-row*2.5),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))\n",
+              "new_identity": {
+                "bytes": 225,
+                "sha256": "15d306f9202e23b867554c220477ad0f929f095970498329fcdcaaac44db1cf8"
+              },
+              "old": "   local egg=block(session.world,\"ReleasedEgg_\"..eggId,at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))\n",
+              "old_identity": {
+                "bytes": 132,
+                "sha256": "143c7798d3e100aaf4a2fbf3c8ead2dd6ce68d15c2758576a6149802179bef6b"
+              },
+              "start": 1327,
+              "stop": 1328
+            },
+            {
+              "new": "   if eggId:match(\"^RELEASE_%d+$\") then egg.CanCollide=false end\n",
+              "new_identity": {
+                "bytes": 65,
+                "sha256": "300bdd586f4629d4d86a68765365fd4d4e87c6aa4a3f3a799d86cce29e658f19"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1329,
+              "stop": 1329
+            },
+            {
+              "new": "    if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 72,
+                "sha256": "2f78d6c27257835e2ec6ffcef22653aa81700ec0fc0565c00e8291475b0131f5"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1331,
+              "stop": 1331
+            },
+            {
+              "new": "  if session.rules.phase==\"FINISHED\" then\n   for _,fieldPrompt in ipairs(fieldEggPrompts) do\n    if fieldPrompt.Parent then fieldPrompt.Enabled=false end\n   end\n   table.clear(fieldEggPrompts)\n  end\n  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
+              "new_identity": {
+                "bytes": 374,
+                "sha256": "bba8e1e6ce45ee3356f5eb8f7b2da709a9806fd6d394f3cc5ea9a9e968c228fc"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1354,
+              "stop": 1354
+            },
+            {
+              "new": "   if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "new_identity": {
+                "bytes": 71,
+                "sha256": "7f3aa757f120c1ead7e3dfc9da29e3978ffd7a276b3b5fb18715ce7ef015ef65"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1423,
+              "stop": 1423
+            },
+            {
+              "new": "  local fieldPrompt=egg:FindFirstChildOfClass(\"ProximityPrompt\")\n  if fieldPrompt then table.insert(fieldEggPrompts,fieldPrompt) end\n",
+              "new_identity": {
+                "bytes": 133,
+                "sha256": "8e546a51edd2ea2a7ac4b3e57fd64f3fa1c1048209825695f5d8e92d61f82a07"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1425,
+              "stop": 1425
+            },
+            {
+              "new": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n refreshVaultPrompts(session)\n",
+              "new_identity": {
+                "bytes": 567,
+                "sha256": "df18dc7c0385004fa93bf211a325ff9776a851bac93b7ae03efdd77f63c11ddb"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1443,
+              "stop": 1443
+            },
+            {
+              "new": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n   end\n  end\n",
+              "new_identity": {
+                "bytes": 250,
+                "sha256": "0313b9d83bbf83cd9bfc35c1d3962da65bca871936914e2616bf9db8f1928d3f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1535,
+              "stop": 1535
+            },
+            {
+              "new": "    publishRelayReady(relayPrompt,false)\n",
+              "new_identity": {
+                "bytes": 41,
+                "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+              },
+              "old": "    relayPrompt.Enabled=false\n",
+              "old_identity": {
+                "bytes": 30,
+                "sha256": "9cf195c7b0b5a89314c811cc3660b50c4c582d3a31fac43746baf5a87e137a8c"
+              },
+              "start": 1537,
+              "stop": 1538
+            },
+            {
+              "new": "   local relayRound=queueEpoch[mode]\n",
+              "new_identity": {
+                "bytes": 37,
+                "sha256": "e29578680ed025e5ebd57cf2b8862890d4db85303cc96eacf8689946eae1876b"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1543,
+              "stop": 1543
+            },
+            {
+              "new": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n    end\n",
+              "new_identity": {
+                "bytes": 638,
+                "sha256": "0df926e263494bea0391f40be27cd5d176ba807be7d4ac4659f5852272c2ec01"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1559,
+              "stop": 1559
+            },
+            {
+              "new": "     if not InvulRuntime.allowObjectiveAction(session,receiver)\n      or not InvulRuntime.allowObjectiveAction(session,carrierPlayer) then return end\n",
+              "new_identity": {
+                "bytes": 150,
+                "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 1571,
+              "stop": 1571
+            },
+            {
+              "new": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n",
+              "new_identity": {
+                "bytes": 72,
+                "sha256": "13a3d05f76bb7607a2a5fcd9ac7ae1f39d98f7c6f904484ec1dcd68e32daadb7"
+              },
+              "old": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n",
+              "old_identity": {
+                "bytes": 62,
+                "sha256": "741b2b7552df76b83ccd66cad3a5fc9f8335ad29a4e149717b5aa95be8463bda"
+              },
+              "start": 1619,
+              "stop": 1620
+            },
+            {
+              "new": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
+              "new_identity": {
+                "bytes": 69,
+                "sha256": "337a4e09ca2faa27424bd4199388950554c5ed0f928880a8da960be4f808a780"
+              },
+              "old": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n",
+              "old_identity": {
+                "bytes": 68,
+                "sha256": "f968074f116c01124c419b92475d695d0035b05e312c419aaaf8e20cc9ed66e8"
+              },
+              "start": 1622,
+              "stop": 1623
+            },
+            {
+              "new": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
+              "new_identity": {
+                "bytes": 139,
+                "sha256": "7ec639f1abdcd5417015f9d16b38826585474479513a09dd7b00ed4dd888907d"
+              },
+              "old": "     relayPrompt.Enabled=false\n",
+              "old_identity": {
+                "bytes": 31,
+                "sha256": "f2c4a1f4407d4ee4bf107c2cec92f3065b63f32874346b52e1630b74154e0c39"
+              },
+              "start": 1625,
+              "stop": 1626
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- GQ470_P0_EARLY_EXISTING_LOBBY_SPAWN_REAL69_20261121\n-- Preserve the actual preexisting spawn/root; create exactly the original\n-- GQ646 floor+neutral SpawnLocation before potentially blocking module requires.\nlocal gqEarlyOriginalSpawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal gqEarlyRoot=gqEarlyOriginalSpawn and gqEarlyOriginalSpawn.Position or Vector3.new(0,4,0)\nlocal gqEarlyFolder=Instance.new(\"Folder\")\ngqEarlyFolder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\"\ngqEarlyFolder.Parent=workspace\nlocal gqEarlyGround=Instance.new(\"Part\")\ngqEarlyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\ngqEarlyGround.Anchored=true\ngqEarlyGround.Size=Vector3.new(154,2,156)\ngqEarlyGround.Position=gqEarlyRoot+Vector3.new(0,-5,21)\ngqEarlyGround.Material=Enum.Material.Grass\ngqEarlyGround.Color=Color3.fromRGB(88,139,104)\ngqEarlyGround.CanCollide=true\ngqEarlyGround.Parent=gqEarlyFolder\nlocal gqEarlySpawn=Instance.new(\"SpawnLocation\")\ngqEarlySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\ngqEarlySpawn.Anchored=true\ngqEarlySpawn.Size=Vector3.new(12,1,12)\ngqEarlySpawn.Position=gqEarlyRoot+Vector3.new(0,-2,-27)\ngqEarlySpawn.Neutral=true\ngqEarlySpawn.Enabled=true\ngqEarlySpawn.AllowTeamChangeOnTouch=false\ngqEarlySpawn.Duration=0\ngqEarlySpawn.Material=Enum.Material.SmoothPlastic\ngqEarlySpawn.Color=Color3.fromRGB(232,230,178)\ngqEarlySpawn.CanCollide=true\ngqEarlySpawn.Parent=gqEarlyFolder\n-- The same GQ646 binder also protects existing/joining characters while\n-- module initialization yields; later match code retains these same tables.\nlocal root=gqEarlyRoot\nlocal sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+              "old_identity": {
+                "bytes": 2695,
+                "sha256": "3ae1ed2d2d8fe0a000988d82a6c5fbb96323e9dcc1f9bb233d817e13c5221516"
+              },
+              "start": 8,
+              "stop": 66
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+              "old_identity": {
+                "bytes": 81,
+                "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+              },
+              "start": 111,
+              "stop": 112
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local WalkPolicy=require(script.Parent:WaitForChild(\"EGGRUMBLE_BasicMobilityPolicy\"))\n",
+              "old_identity": {
+                "bytes": 86,
+                "sha256": "72bcea99f1f94dedd47e433a920459096398d244b9d65bb52e213565ed00b4cc"
+              },
+              "start": 235,
+              "stop": 236
+            },
+            {
+              "new": " -- Reuse original SevenRoleCombat slow attributes rather than create an\n -- independent speed authority. RoundReplay clears these after the match.\n",
+              "new_identity": {
+                "bytes": 148,
+                "sha256": "e88bbe80e8305456a57fff4d28ee914269cd53c42284836d412f2521f9b84b79"
+              },
+              "old": " -- Reuse original SevenRoleCombat slow attributes and shared data-only expiry.\n local player=Players:GetPlayerFromCharacter(model)\n if not player or player.Character~=model or hum.Parent~=model then return end\n local function applySpeed(speed:number?,slowActive:boolean?)\n  if type(speed)~=\"number\" or not player.Parent or player.Character~=model\n   or hum.Parent~=model or hum.Health<=0 then return end\n  hum.WalkSpeed=speed\n  if slowActive==false then\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n   hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",nil)\n  end\n end\n applySpeed(WalkPolicy.walkCurrent(player,model,hum,session,now))\n",
+              "old_identity": {
+                "bytes": 635,
+                "sha256": "7b360ca44e0cff8a31d3e1fc9ef00c7808503fe49485b7ef17cfc16cf57a3e27"
+              },
+              "start": 244,
+              "stop": 257
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local finalExpiry=math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires)\n local slowed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n local baseline=session.walkBaseline and session.walkBaseline[tostring(player.UserId)]\n if type(baseline)~=\"number\" or baseline~=baseline or baseline<8 or baseline>32 then baseline=base end\n local slowToken=WalkPolicy.walkEffect(player,model,hum,session,\n  \"SLOW\",slowed,finalExpiry,baseline,now)\n if not slowToken then return end\n",
+              "old_identity": {
+                "bytes": 473,
+                "sha256": "927066d4781051fbbe9897cebfa9c873bd692cce0836d8122baf2468d06244f7"
+              },
+              "start": 261,
+              "stop": 268
+            },
+            {
+              "new": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",\n  math.max(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or 0,expires))\n hum.WalkSpeed=math.max(8,math.min(hum.WalkSpeed,base*.72))\n task.delay(1.2,function()\n  -- A delayed callback must not overwrite a new round's movement baseline.\n  if session.rules.phase==\"ACTIVE\" and session.world.Parent\n   and hum.Parent and hum.Health>0\n   and os.clock()>=(hum:GetAttribute(\"EGGRUMBLE_SlowExpiry\") or math.huge)\n   and hum:GetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\")==base then\n   hum.WalkSpeed=base\n   hum:SetAttribute(\"EGGRUMBLE_OriginalWalkSpeed\",nil)\n  end\n",
+              "new_identity": {
+                "bytes": 591,
+                "sha256": "40148abc8010e479a17b0bf79549c6f5f0c31600fa051425be4567cb46d399b7"
+              },
+              "old": " hum:SetAttribute(\"EGGRUMBLE_SlowExpiry\",finalExpiry)\n hum.WalkSpeed=slowed\n task.delay(finalExpiry-now+.1,function()\n  applySpeed(WalkPolicy.walkRelease(player,model,hum,session,slowToken,os.clock()))\n",
+              "old_identity": {
+                "bytes": 202,
+                "sha256": "ff5c6132cbc733443de47ccef03f2305870ede9820d9ae0070a2cc6ba5f34b4e"
+              },
+              "start": 269,
+              "stop": 273
+            },
+            {
+              "new": "   closest.hum:TakeDamage(InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\"))\n   if kind==\"TRAP\" and closest.hum.Health>0 then\n",
+              "new_identity": {
+                "bytes": 171,
+                "sha256": "bfd52322fb34b52578b4735329c61f7c95e244f79091467390a0f63a61a775f2"
+              },
+              "old": "   local defenseDamage=InvulRuntime.filterDamage(closest.hum,Policy.CONFIG[kind].damage,\"ENVIRONMENT\",\"LOBBY_HAZARD\")\n   closest.hum:TakeDamage(defenseDamage)\n   if kind==\"TRAP\" and defenseDamage>0 and closest.hum.Health>0 then\n",
+              "old_identity": {
+                "bytes": 228,
+                "sha256": "d67f720e5f1263b373626c40930d6f44b2254135f7feb97d35032f8ea5ba51c9"
+              },
+              "start": 357,
+              "stop": 360
+            },
+            {
+              "new": "local InvulRuntime=require(script.Parent:WaitForChild(\"EGGRUMBLE_InvulRuntime\"))\n",
+              "new_identity": {
+                "bytes": 81,
+                "sha256": "49c766665e166dfa6236bae83bc9bb56cd6caeeca1bae2544de8b5837bada981"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 677,
+              "stop": 677
+            },
+            {
+              "new": "local spawn=workspace:FindFirstChildWhichIsA(\"SpawnLocation\",true)::SpawnLocation?\nlocal root=spawn and spawn.Position or Vector3.new(0,4,0)\nlocal folder=Instance.new(\"Folder\");folder.Name=\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\";folder.Parent=workspace\n",
+              "new_identity": {
+                "bytes": 252,
+                "sha256": "193d75b34ff0440d2449714a0835961c9231ae5499c70c54ba64777e7769a854"
+              },
+              "old": "local spawn=gqEarlyOriginalSpawn\nlocal folder=gqEarlyFolder\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "67f15bc1d479bd00b3578c76515bf5874a65231001127b70cdb3705d704fcf5a"
+              },
+              "start": 988,
+              "stop": 990
+            },
+            {
+              "new": "local sessions:{[string]:any}={}\nlocal joined:{[number]:string}={}\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "0775a7f78fa3eadcbaae6fadabf80b6cc50d4c4ec99771cf410127b7f2b9b53a"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 991,
+              "stop": 991
+            },
+            {
+              "new": "local lobbyGround=Instance.new(\"Part\")\nlobbyGround.Name=\"GQ646_LOBBY_SAFE_GROUND\"\nlobbyGround.Anchored=true\nlobbyGround.Size=Vector3.new(154,2,156)\nlobbyGround.Position=root+Vector3.new(0,-5,21)\nlobbyGround.Material=Enum.Material.Grass\nlobbyGround.Color=Color3.fromRGB(88,139,104)\nlobbyGround.CanCollide=true\nlobbyGround.Parent=folder\nlocal lobbySpawn=Instance.new(\"SpawnLocation\")\nlobbySpawn.Name=\"GQ646_LOBBY_NEUTRAL_SPAWN\"\nlobbySpawn.Anchored=true\nlobbySpawn.Size=Vector3.new(12,1,12)\nlobbySpawn.Position=root+Vector3.new(0,-2,-27)\nlobbySpawn.Neutral=true\nlobbySpawn.Enabled=true\nlobbySpawn.AllowTeamChangeOnTouch=false\nlobbySpawn.Duration=0\nlobbySpawn.Material=Enum.Material.SmoothPlastic\nlobbySpawn.Color=Color3.fromRGB(232,230,178)\nlobbySpawn.CanCollide=true\nlobbySpawn.Parent=folder\nlocal function bindGQ646LobbyCharacter(player:Player)\n local function tryPlace(character:Model)\n  task.defer(function()\n   if not player.Parent or player.Character~=character then return end\n   -- The match's existing respawn handler owns every in-session character.\n   local mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   local hrp=character:FindFirstChild(\"HumanoidRootPart\") or character:WaitForChild(\"HumanoidRootPart\",6)\n   local humanoid=character:FindFirstChildOfClass(\"Humanoid\")\n   if not hrp or not hrp:IsA(\"BasePart\") or not humanoid or humanoid.Health<=0 then return end\n   if player.Character~=character then return end\n   mode=joined[player.UserId]\n   if mode and sessions[mode] then return end\n   hrp.CFrame=CFrame.new(root+Vector3.new(0,5,-27))\n  end)\n end\n player.CharacterAdded:Connect(tryPlace)\n if player.Character then tryPlace(player.Character) end\nend\nPlayers.PlayerAdded:Connect(bindGQ646LobbyCharacter)\nfor _,presentPlayer in ipairs(Players:GetPlayers()) do\n bindGQ646LobbyCharacter(presentPlayer)\nend\n",
+              "new_identity": {
+                "bytes": 1846,
+                "sha256": "1538cb2985e8f945dfa34b6ec8d9e1d30748e2502595d0b870c92f86750ad945"
+              },
+              "old": "local lobbyGround=gqEarlyGround\nlocal lobbySpawn=gqEarlySpawn\n",
+              "old_identity": {
+                "bytes": 62,
+                "sha256": "88a045d5c6e52cd4ae0d6050d2bfad7d2433c2eed17c53010e9359e1b11dc0ee"
+              },
+              "start": 1002,
+              "stop": 1004
+            },
+            {
+              "new": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())\n",
+              "new_identity": {
+                "bytes": 86,
+                "sha256": "e0d401b04235fa960538c8c4711ddc8f8c38ac31fe5939cfe7a1dba11f096bed"
+              },
+              "old": "local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->(),initiallyEnabled:boolean?):ProximityPrompt\n",
+              "old_identity": {
+                "bytes": 128,
+                "sha256": "af2fc849ceb8ec709b341dce34875d8c7c0219942a23261a9ac42370d5926ca6"
+              },
+              "start": 1066,
+              "stop": 1067
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " if initiallyEnabled~=nil then p.Enabled=initiallyEnabled end\n",
+              "old_identity": {
+                "bytes": 62,
+                "sha256": "afe4d3bc536db039c828d5feb2e4a83aa0e122bae3d323fb1eb19ec587515032"
+              },
+              "start": 1068,
+              "stop": 1069
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " return p\nend\n-- Display availability follows this session's Rules; interaction guards remain authoritative.\nlocal function refreshVaultPrompts(session:any)\n local state=session.rules\n local active=sessions[session.mode]==session and state.phase==\"ACTIVE\" and state.winner==nil\n for id,bits in pairs(session.castleModels) do\n  local p=bits.vaultPrompt\n  local c=state.castles[id]\n  if p and p.Parent then\n   p.Enabled=active and c~=nil and c.alive==true and c.vaultEggs>0\n   if p.Enabled then\n    local label=(\"残り%d個｜1回1個\"):format(c.vaultEggs)\n    if p.ObjectText~=label then p.ObjectText=label end\n   end\n  end\n end\n",
+              "old_identity": {
+                "bytes": 629,
+                "sha256": "29385e7b2f1472caf62bc2060bf3433b2616d1d9b488ee29aa9ef203acbe7686"
+              },
+              "start": 1074,
+              "stop": 1091
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "start": 1193,
+              "stop": 1194
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "start": 1218,
+              "stop": 1219
+            },
+            {
+              "new": " prompt(vault,\"敵の卵を奪取\",\"卵3個から1個ずつ\",function(p)\n",
+              "new_identity": {
+                "bytes": 73,
+                "sha256": "86e3b378c21e3c3d8ed1613df613362d8a0f65651fa00b608384af015ea1342c"
+              },
+              "old": " session.castleModels[entry.id].vaultPrompt=prompt(vault,\"敵の卵を奪取\",\"1回につき1個\",function(p)\n",
+              "old_identity": {
+                "bytes": 110,
+                "sha256": "91ae3c3b028f00ca887945bb1ded1fcf1544e9ded658beebe3bcf31b34617694"
+              },
+              "start": 1239,
+              "stop": 1240
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 70,
+                "sha256": "af01ee4fb1029bd8b9825bce290c6124c22280625fee4b3b320a53a859f3ce3a"
+              },
+              "start": 1243,
+              "stop": 1244
+            },
+            {
+              "new": " end)\n",
+              "new_identity": {
+                "bytes": 6,
+                "sha256": "0d66381e01e3edfacd1c8af3f60b12c040df88c7ad75062def8ef336befcde98"
+              },
+              "old": " end,false)\n",
+              "old_identity": {
+                "bytes": 12,
+                "sha256": "1586d366710f38f9f2e86aa251895b8cd7f0610034ed04aa67b2250570dba49e"
+              },
+              "start": 1251,
+              "stop": 1252
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " local fieldEggPrompts={}\n",
+              "old_identity": {
+                "bytes": 26,
+                "sha256": "054ea4e844050cde7315295ab429474d507e0c7251771ee4ad5d7e68d13e418f"
+              },
+              "start": 1259,
+              "stop": 1260
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  local realmWorldKey,realmRules=session.world,session.rules\n",
+              "old_identity": {
+                "bytes": 61,
+                "sha256": "cbf4fbe204b32641ae2182484b9dcb7879bf3eb51ea6275d01b695802c52c66b"
+              },
+              "start": 1271,
+              "stop": 1272
+            },
+            {
+              "new": " session.world.Name=mode..\"_Arena\";session.world.Parent=folder\n",
+              "new_identity": {
+                "bytes": 63,
+                "sha256": "d1e688156396763e67e4ad6bf47a4f1d9ead0ed25093f1a5e1e739fd6f698a2d"
+              },
+              "old": " session.world.Name=mode..\"_Arena\"\n -- Publish the existing Rules phase before Realm can observe this world.\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n session.world.Parent=folder\n",
+              "old_identity": {
+                "bytes": 210,
+                "sha256": "ea5f8891a5ce4f780232cf2a1d8fd56f9938690026c930bbbad83ed73aaf7609"
+              },
+              "start": 1278,
+              "stop": 1282
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- Revoke this exact pair before optional cleanup can fail or yield.\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n",
+              "old_identity": {
+                "bytes": 124,
+                "sha256": "20e7f01de12b4673cf47a2991493cd792fe2d07f328344ca28a86cc2ac079356"
+              },
+              "start": 1335,
+              "stop": 1337
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
+              "old_identity": {
+                "bytes": 104,
+                "sha256": "9f7980686bc8e98585deb3c4c57251a13b58c5c8236ce08ea38ed33dad280abf"
+              },
+              "start": 1338,
+              "stop": 1340
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- Keep the Host's conserved 72 eggs over the existing castle foundation.\n  -- Nine columns avoid side stations/towers; 2.5-stud rows stay inside its front edge.\n  local columns=math.min(#eggIds,9)\n  local centerColumn=if #eggIds<=3 then 1 else (columns-1)*.5\n",
+              "old_identity": {
+                "bytes": 262,
+                "sha256": "d34c168c758824508346accbccc5f3829cadd14334e4cc76b4fda33ef176ab7f"
+              },
+              "start": 1380,
+              "stop": 1384
+            },
+            {
+              "new": "   local egg=block(session.world,\"ReleasedEgg_\"..eggId,at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))\n",
+              "new_identity": {
+                "bytes": 132,
+                "sha256": "143c7798d3e100aaf4a2fbf3c8ead2dd6ce68d15c2758576a6149802179bef6b"
+              },
+              "old": "   local column=(i-1)%columns\n   local row=math.floor((i-1)/columns)\n   local egg=block(session.world,\"ReleasedEgg_\"..eggId,at+Vector3.new((column-centerColumn)*3,4,-17-row*2.5),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))\n",
+              "old_identity": {
+                "bytes": 225,
+                "sha256": "15d306f9202e23b867554c220477ad0f929f095970498329fcdcaaac44db1cf8"
+              },
+              "start": 1385,
+              "stop": 1388
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   if eggId:match(\"^RELEASE_%d+$\") then egg.CanCollide=false end\n",
+              "old_identity": {
+                "bytes": 65,
+                "sha256": "300bdd586f4629d4d86a68765365fd4d4e87c6aa4a3f3a799d86cce29e658f19"
+              },
+              "start": 1389,
+              "stop": 1390
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 72,
+                "sha256": "2f78d6c27257835e2ec6ffcef22653aa81700ec0fc0565c00e8291475b0131f5"
+              },
+              "start": 1392,
+              "stop": 1393
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  if session.rules.phase==\"FINISHED\" then\n   for _,fieldPrompt in ipairs(fieldEggPrompts) do\n    if fieldPrompt.Parent then fieldPrompt.Enabled=false end\n   end\n   table.clear(fieldEggPrompts)\n  end\n  -- All current castle/deadline finish paths refresh before yielding.\n  session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n  refreshVaultPrompts(session)\n",
+              "old_identity": {
+                "bytes": 374,
+                "sha256": "bba8e1e6ce45ee3356f5eb8f7b2da709a9806fd6d394f3cc5ea9a9e968c228fc"
+              },
+              "start": 1416,
+              "stop": 1425
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   if not InvulRuntime.allowObjectiveAction(session,p) then return end\n",
+              "old_identity": {
+                "bytes": 71,
+                "sha256": "7f3aa757f120c1ead7e3dfc9da29e3978ffd7a276b3b5fb18715ce7ef015ef65"
+              },
+              "start": 1494,
+              "stop": 1495
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  local fieldPrompt=egg:FindFirstChildOfClass(\"ProximityPrompt\")\n  if fieldPrompt then table.insert(fieldEggPrompts,fieldPrompt) end\n",
+              "old_identity": {
+                "bytes": 133,
+                "sha256": "8e546a51edd2ea2a7ac4b3e57fd64f3fa1c1048209825695f5d8e92d61f82a07"
+              },
+              "start": 1497,
+              "stop": 1499
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- GQ_REALM_RULES_BIND_BEGIN: after real start, before spawned runtime work.\n assert(sessions[mode]==session and session.rules==realmRules and session.world==realmWorldKey,\n  \"RED_REALM_HOST_SESSION_IDENTITY\")\n assert(Rules.bindRuntimeWorld(realmWorldKey,realmRules),\"RED_REALM_WORLD_BINDING\")\n table.insert(session.lifeConnections,realmWorldKey.Destroying:Connect(function()\n  Rules.unbindRuntimeWorld(realmWorldKey,realmRules)\n end))\n -- GQ_REALM_RULES_BIND_END\n session.world:SetAttribute(\"EGGRUMBLE_MatchPhase\",session.rules.phase)\n refreshVaultPrompts(session)\n",
+              "old_identity": {
+                "bytes": 567,
+                "sha256": "df18dc7c0385004fa93bf211a325ff9776a851bac93b7ae03efdd77f63c11ddb"
+              },
+              "start": 1517,
+              "stop": 1527
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n   end\n  end\n",
+              "old_identity": {
+                "bytes": 250,
+                "sha256": "0313b9d83bbf83cd9bfc35c1d3962da65bca871936914e2616bf9db8f1928d3f"
+              },
+              "start": 1619,
+              "stop": 1625
+            },
+            {
+              "new": "    relayPrompt.Enabled=false\n",
+              "new_identity": {
+                "bytes": 30,
+                "sha256": "9cf195c7b0b5a89314c811cc3660b50c4c582d3a31fac43746baf5a87e137a8c"
+              },
+              "old": "    publishRelayReady(relayPrompt,false)\n",
+              "old_identity": {
+                "bytes": 41,
+                "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+              },
+              "start": 1627,
+              "stop": 1628
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   local relayRound=queueEpoch[mode]\n",
+              "old_identity": {
+                "bytes": 37,
+                "sha256": "e29578680ed025e5ebd57cf2b8862890d4db85303cc96eacf8689946eae1876b"
+              },
+              "start": 1633,
+              "stop": 1634
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n    end\n",
+              "old_identity": {
+                "bytes": 638,
+                "sha256": "0df926e263494bea0391f40be27cd5d176ba807be7d4ac4659f5852272c2ec01"
+              },
+              "start": 1650,
+              "stop": 1659
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "     if not InvulRuntime.allowObjectiveAction(session,receiver)\n      or not InvulRuntime.allowObjectiveAction(session,carrierPlayer) then return end\n",
+              "old_identity": {
+                "bytes": 150,
+                "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
+              },
+              "start": 1671,
+              "stop": 1673
+            },
+            {
+              "new": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n",
+              "new_identity": {
+                "bytes": 62,
+                "sha256": "741b2b7552df76b83ccd66cad3a5fc9f8335ad29a4e149717b5aa95be8463bda"
+              },
+              "old": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n",
+              "old_identity": {
+                "bytes": 72,
+                "sha256": "13a3d05f76bb7607a2a5fcd9ac7ae1f39d98f7c6f904484ec1dcd68e32daadb7"
+              },
+              "start": 1721,
+              "stop": 1722
+            },
+            {
+              "new": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n",
+              "new_identity": {
+                "bytes": 68,
+                "sha256": "f968074f116c01124c419b92475d695d0035b05e312c419aaaf8e20cc9ed66e8"
+              },
+              "old": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
+              "old_identity": {
+                "bytes": 69,
+                "sha256": "337a4e09ca2faa27424bd4199388950554c5ed0f928880a8da960be4f808a780"
+              },
+              "start": 1724,
+              "stop": 1725
+            },
+            {
+              "new": "     relayPrompt.Enabled=false\n",
+              "new_identity": {
+                "bytes": 31,
+                "sha256": "f2c4a1f4407d4ee4bf107c2cec92f3065b63f32874346b52e1630b74154e0c39"
+              },
+              "old": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
+              "old_identity": {
+                "bytes": 139,
+                "sha256": "7ec639f1abdcd5417015f9d16b38826585474479513a09dd7b00ed4dd888907d"
+              },
+              "start": 1727,
+              "stop": 1732
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
+        }
+      },
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+        "forward": [
+          {
+            "new": "local receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\n",
+            "new_identity": {
+              "bytes": 74,
+              "sha256": "22336d2258ceb360650d3b2ff8a14fb2cafab58d8203ca6ef6ba23920d81c134"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 85,
+            "stop": 85
+          },
+          {
+            "new": "\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n",
+            "new_identity": {
+              "bytes": 102,
+              "sha256": "e32322d49350f454b78eee42d5bd1e0168f71b6100d6b01ba8276d02f4c233c6"
+            },
+            "old": "\tif not root or not prompt then return nil end\n",
+            "old_identity": {
+              "bytes": 47,
+              "sha256": "84e200a556f25ca2d67840edf670870339f874da98f7b6653be399cd72ea46e3"
+            },
+            "start": 125,
+            "stop": 126
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "local receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\n",
+            "old_identity": {
+              "bytes": 74,
+              "sha256": "22336d2258ceb360650d3b2ff8a14fb2cafab58d8203ca6ef6ba23920d81c134"
+            },
+            "start": 85,
+            "stop": 86
+          },
+          {
+            "new": "\tif not root or not prompt then return nil end\n",
+            "new_identity": {
+              "bytes": 47,
+              "sha256": "84e200a556f25ca2d67840edf670870339f874da98f7b6653be399cd72ea46e3"
+            },
+            "old": "\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n",
+            "old_identity": {
+              "bytes": 102,
+              "sha256": "e32322d49350f454b78eee42d5bd1e0168f71b6100d6b01ba8276d02f4c233c6"
+            },
+            "start": 126,
+            "stop": 127
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 35517,
+            "sha256": "1a5b47f3ea2eedbcdb545c5123fbdf20086a0f728a80f6ec7246f92c6d209858"
+          },
+          "before": {
+            "bytes": 24182,
+            "sha256": "fef035395ef803a74bedb95deace210a40ea5ab4b191a36422ea3acab192fbe8"
+          },
+          "class": "LocalScript",
+          "forward": [
+            {
+              "new": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+              "new_identity": {
+                "bytes": 8891,
+                "sha256": "e426f356a3917ef4e63e58afb320a2adbf8ccde8898b60b9bde10a5c8b41a512"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 3,
+              "stop": 3
+            },
+            {
+              "new": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
+              "new_identity": {
+                "bytes": 253,
+                "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 196,
+              "stop": 196
+            },
+            {
+              "new": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+              "new_identity": {
+                "bytes": 102,
+                "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 488,
+              "stop": 488
+            },
+            {
+              "new": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
+              "new_identity": {
+                "bytes": 629,
+                "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
+              },
+              "old": " local inMatch=mapSnapshot~=nil\n",
+              "old_identity": {
+                "bytes": 32,
+                "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
+              },
+              "start": 572,
+              "stop": 573
+            },
+            {
+              "new": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+              "new_identity": {
+                "bytes": 948,
+                "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 574,
+              "stop": 574
+            },
+            {
+              "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
+              "new_identity": {
+                "bytes": 544,
+                "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 587,
+              "stop": 587
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+              "old_identity": {
+                "bytes": 8891,
+                "sha256": "e426f356a3917ef4e63e58afb320a2adbf8ccde8898b60b9bde10a5c8b41a512"
+              },
+              "start": 3,
+              "stop": 225
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
+              "old_identity": {
+                "bytes": 253,
+                "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
+              },
+              "start": 418,
+              "stop": 422
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+              "old_identity": {
+                "bytes": 102,
+                "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
+              },
+              "start": 714,
+              "stop": 716
+            },
+            {
+              "new": " local inMatch=mapSnapshot~=nil\n",
+              "new_identity": {
+                "bytes": 32,
+                "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
+              },
+              "old": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
+              "old_identity": {
+                "bytes": 629,
+                "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
+              },
+              "start": 800,
+              "stop": 810
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+              "old_identity": {
+                "bytes": 948,
+                "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
+              },
+              "start": 811,
+              "stop": 823
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
+              "old_identity": {
+                "bytes": 544,
+                "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
+              },
+              "start": 836,
+              "stop": 846
+            }
+          ],
+          "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+        }
+      }
+    },
+    "rules_exact": {
+      "bytes": 16609,
+      "sha256": "1dc92a50633b123c8d0d90a6684098b680923fbe44e0e4646a6946675d8038aa"
+    },
+    "source_feedback": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7208379210"
+  },
   "relay_presentation_followup": {
     "client_end": 9092,
     "client_original_body": {
@@ -17521,8 +19149,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau": {
       "after": {
-        "bytes": 97291,
-        "sha256": "d536760bf28c29c9f552d50c79a60ea67c3679b45b5a9970fc7b8f35a31ff185"
+        "bytes": 98000,
+        "sha256": "720ca41ac4521073155b133423aab02bb65909760216db36ee13e75c18296f68"
       },
       "before": {
         "bytes": 91635,
@@ -17979,10 +19607,10 @@
           "stop": 1443
         },
         {
-          "new": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n   end\n  end\n",
+          "new": "  local function publishRelayReady(prompt:ProximityPrompt,enabled:boolean,donorReady:boolean,receiverReady:boolean)\n   prompt.Enabled=enabled\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=donorReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",donorReady)\n   end\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\")~=receiverReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",receiverReady)\n   end\n  end\n",
           "new_identity": {
-            "bytes": 250,
-            "sha256": "0313b9d83bbf83cd9bfc35c1d3962da65bca871936914e2616bf9db8f1928d3f"
+            "bytes": 484,
+            "sha256": "f55e2f238be203bebcde30bde0499363ebb0a0f18789974ab6a4618df01ebfe3"
           },
           "old": "",
           "old_identity": {
@@ -17993,10 +19621,10 @@
           "stop": 1535
         },
         {
-          "new": "    publishRelayReady(relayPrompt,false)\n",
+          "new": "    publishRelayReady(relayPrompt,false,false,false)\n",
           "new_identity": {
-            "bytes": 41,
-            "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+            "bytes": 53,
+            "sha256": "2548d77423635daf3378413725faad7954cb1550cb8768e094496929d7c310b6"
           },
           "old": "    relayPrompt.Enabled=false\n",
           "old_identity": {
@@ -18021,10 +19649,10 @@
           "stop": 1543
         },
         {
-          "new": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n    end\n",
+          "new": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",false)\n    end\n",
           "new_identity": {
-            "bytes": 638,
-            "sha256": "0df926e263494bea0391f40be27cd5d176ba807be7d4ac4659f5852272c2ec01"
+            "bytes": 718,
+            "sha256": "4fc82e5e5bd53fa52b1899cce65acadcffb24d8bc151e345b4989240e9715701"
           },
           "old": "",
           "old_identity": {
@@ -18049,38 +19677,52 @@
           "stop": 1571
         },
         {
-          "new": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n",
+          "new": "      local id=tostring(carrierPlayer.UserId)\n      local c=session.rules.castles[id]\n",
           "new_identity": {
-            "bytes": 72,
-            "sha256": "13a3d05f76bb7607a2a5fcd9ac7ae1f39d98f7c6f904484ec1dcd68e32daadb7"
+            "bytes": 86,
+            "sha256": "92a86a6ce9913b2e18acfc6946fc0b2ed6809ed7383dc4d07820750b58ca19ee"
           },
-          "old": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n",
-          "old_identity": {
-            "bytes": 62,
-            "sha256": "741b2b7552df76b83ccd66cad3a5fc9f8335ad29a4e149717b5aa95be8463bda"
-          },
-          "start": 1619,
-          "stop": 1620
-        },
-        {
-          "new": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
-          "new_identity": {
-            "bytes": 69,
-            "sha256": "337a4e09ca2faa27424bd4199388950554c5ed0f928880a8da960be4f808a780"
-          },
-          "old": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n",
+          "old": "      local c=session.rules.castles[tostring(carrierPlayer.UserId)]\n",
           "old_identity": {
             "bytes": 68,
-            "sha256": "f968074f116c01124c419b92475d695d0035b05e312c419aaaf8e20cc9ed66e8"
+            "sha256": "2590b0d7ae576d6522c77e7e0615d8ee48b5c2b1eab2dc8433b5dd03324bdacf"
           },
-          "start": 1622,
+          "start": 1617,
+          "stop": 1618
+        },
+        {
+          "new": "      local lastRelay=session.rules.eggRelayLastAt[id]\n      local eligible=c~=nil and c.isAI~=true and c.alive\n       and hum~=nil and hum.Health>0 and joined[carrierPlayer.UserId]==mode\n",
+          "new_identity": {
+            "bytes": 188,
+            "sha256": "5f3d37c05a1f70c047b1a2678484d077cc6affa69543c5c8b08db799ea42a11a"
+          },
+          "old": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n       and c.heldEggs>0 and hum~=nil and hum.Health>0\n       and joined[carrierPlayer.UserId]==mode\n",
+          "old_identity": {
+            "bytes": 162,
+            "sha256": "39e8274ac4ee025d379671435a718c08ba35e9b109b00e9958e49400cbb6c135"
+          },
+          "start": 1619,
+          "stop": 1622
+        },
+        {
+          "new": "      local offCooldown=lastRelay==nil or os.clock()-lastRelay>=Rules.RELAY_COOLDOWN_SECONDS\n      local canDonate=eligible and c.heldEggs>0\n      -- The existing Rules transaction still checks both inventories and clocks.\n      publishRelayReady(relayPrompt,canDonate,canDonate and offCooldown,eligible and c.heldEggs<3 and offCooldown)\n",
+          "new_identity": {
+            "bytes": 338,
+            "sha256": "14b5cd6e97a8c3ffdde8a02db525952073da926f31f131da605dc9c569b1f08d"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 1623,
           "stop": 1623
         },
         {
-          "new": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
+          "new": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false,false,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
           "new_identity": {
-            "bytes": 139,
-            "sha256": "7ec639f1abdcd5417015f9d16b38826585474479513a09dd7b00ed4dd888907d"
+            "bytes": 151,
+            "sha256": "a5bc8ce182f46401a6e8422878afb6cb0f8d7d604963670962b72259ea9c3a06"
           },
           "old": "     relayPrompt.Enabled=false\n",
           "old_identity": {
@@ -18546,13 +20188,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "  local function publishRelayReady(prompt:ProximityPrompt,ready:boolean)\n   prompt.Enabled=ready\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=ready then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",ready)\n   end\n  end\n",
+          "old": "  local function publishRelayReady(prompt:ProximityPrompt,enabled:boolean,donorReady:boolean,receiverReady:boolean)\n   prompt.Enabled=enabled\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReady\")~=donorReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",donorReady)\n   end\n   if prompt:GetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\")~=receiverReady then\n    prompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",receiverReady)\n   end\n  end\n",
           "old_identity": {
-            "bytes": 250,
-            "sha256": "0313b9d83bbf83cd9bfc35c1d3962da65bca871936914e2616bf9db8f1928d3f"
+            "bytes": 484,
+            "sha256": "f55e2f238be203bebcde30bde0499363ebb0a0f18789974ab6a4618df01ebfe3"
           },
           "start": 1619,
-          "stop": 1625
+          "stop": 1628
         },
         {
           "new": "    relayPrompt.Enabled=false\n",
@@ -18560,13 +20202,13 @@
             "bytes": 30,
             "sha256": "9cf195c7b0b5a89314c811cc3660b50c4c582d3a31fac43746baf5a87e137a8c"
           },
-          "old": "    publishRelayReady(relayPrompt,false)\n",
+          "old": "    publishRelayReady(relayPrompt,false,false,false)\n",
           "old_identity": {
-            "bytes": 41,
-            "sha256": "b44eaa8ad73d65e5f6a63ce144d053c5c85ecaaa530f13475a728546b7a200cd"
+            "bytes": 53,
+            "sha256": "2548d77423635daf3378413725faad7954cb1550cb8768e094496929d7c310b6"
           },
-          "start": 1627,
-          "stop": 1628
+          "start": 1630,
+          "stop": 1631
         },
         {
           "new": "",
@@ -18579,8 +20221,8 @@
             "bytes": 37,
             "sha256": "e29578680ed025e5ebd57cf2b8862890d4db85303cc96eacf8689946eae1876b"
           },
-          "start": 1633,
-          "stop": 1634
+          "start": 1636,
+          "stop": 1637
         },
         {
           "new": "",
@@ -18588,13 +20230,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n    end\n",
+          "old": "    -- A compatible client checks the avatars' actual ray for its own display.\n    -- The engine defaults and all server transfer checks still apply otherwise.\n    local seat=session.rules.castles[tostring(carrierPlayer.UserId)]\n    if seat and seat.isAI~=true and (seat.team==\"RED\" or seat.team==\"BLUE\") then\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationRoundV1\",relayRound)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationTeam\",seat.team)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationHeight\",Rules.RELAY_VERTICAL_STUDS)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReady\",false)\n     relayPrompt:SetAttribute(\"EGGRUMBLE_RelayPresentationReceiverReady\",false)\n    end\n",
           "old_identity": {
-            "bytes": 638,
-            "sha256": "0df926e263494bea0391f40be27cd5d176ba807be7d4ac4659f5852272c2ec01"
+            "bytes": 718,
+            "sha256": "4fc82e5e5bd53fa52b1899cce65acadcffb24d8bc151e345b4989240e9715701"
           },
-          "start": 1650,
-          "stop": 1659
+          "start": 1653,
+          "stop": 1663
         },
         {
           "new": "",
@@ -18607,36 +20249,50 @@
             "bytes": 150,
             "sha256": "44f9c36a3b2fa53ad67ea956d6726ff5bc2a83a4946d6c2ac56e39c33cf6a352"
           },
-          "start": 1671,
-          "stop": 1673
+          "start": 1675,
+          "stop": 1677
         },
         {
-          "new": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n",
-          "new_identity": {
-            "bytes": 62,
-            "sha256": "741b2b7552df76b83ccd66cad3a5fc9f8335ad29a4e149717b5aa95be8463bda"
-          },
-          "old": "      publishRelayReady(relayPrompt,c~=nil and c.isAI~=true and c.alive\n",
-          "old_identity": {
-            "bytes": 72,
-            "sha256": "13a3d05f76bb7607a2a5fcd9ac7ae1f39d98f7c6f904484ec1dcd68e32daadb7"
-          },
-          "start": 1721,
-          "stop": 1722
-        },
-        {
-          "new": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n",
+          "new": "      local c=session.rules.castles[tostring(carrierPlayer.UserId)]\n",
           "new_identity": {
             "bytes": 68,
-            "sha256": "f968074f116c01124c419b92475d695d0035b05e312c419aaaf8e20cc9ed66e8"
+            "sha256": "2590b0d7ae576d6522c77e7e0615d8ee48b5c2b1eab2dc8433b5dd03324bdacf"
           },
-          "old": "       and carrierPlayer:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true)\n",
+          "old": "      local id=tostring(carrierPlayer.UserId)\n      local c=session.rules.castles[id]\n",
           "old_identity": {
-            "bytes": 69,
-            "sha256": "337a4e09ca2faa27424bd4199388950554c5ed0f928880a8da960be4f808a780"
+            "bytes": 86,
+            "sha256": "92a86a6ce9913b2e18acfc6946fc0b2ed6809ed7383dc4d07820750b58ca19ee"
           },
-          "start": 1724,
+          "start": 1723,
           "stop": 1725
+        },
+        {
+          "new": "      relayPrompt.Enabled=c~=nil and c.isAI~=true and c.alive\n       and c.heldEggs>0 and hum~=nil and hum.Health>0\n       and joined[carrierPlayer.UserId]==mode\n",
+          "new_identity": {
+            "bytes": 162,
+            "sha256": "39e8274ac4ee025d379671435a718c08ba35e9b109b00e9958e49400cbb6c135"
+          },
+          "old": "      local lastRelay=session.rules.eggRelayLastAt[id]\n      local eligible=c~=nil and c.isAI~=true and c.alive\n       and hum~=nil and hum.Health>0 and joined[carrierPlayer.UserId]==mode\n",
+          "old_identity": {
+            "bytes": 188,
+            "sha256": "5f3d37c05a1f70c047b1a2678484d077cc6affa69543c5c8b08db799ea42a11a"
+          },
+          "start": 1726,
+          "stop": 1729
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "      local offCooldown=lastRelay==nil or os.clock()-lastRelay>=Rules.RELAY_COOLDOWN_SECONDS\n      local canDonate=eligible and c.heldEggs>0\n      -- The existing Rules transaction still checks both inventories and clocks.\n      publishRelayReady(relayPrompt,canDonate,canDonate and offCooldown,eligible and c.heldEggs<3 and offCooldown)\n",
+          "old_identity": {
+            "bytes": 338,
+            "sha256": "14b5cd6e97a8c3ffdde8a02db525952073da926f31f131da605dc9c569b1f08d"
+          },
+          "start": 1730,
+          "stop": 1734
         },
         {
           "new": "     relayPrompt.Enabled=false\n",
@@ -18644,13 +20300,13 @@
             "bytes": 31,
             "sha256": "f2c4a1f4407d4ee4bf107c2cec92f3065b63f32874346b52e1630b74154e0c39"
           },
-          "old": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
+          "old": "     if relayPrompt.Parent==carrierRoot then\n      publishRelayReady(relayPrompt,false,false,false)\n     else\n      relayPrompt.Enabled=false\n     end\n",
           "old_identity": {
-            "bytes": 139,
-            "sha256": "7ec639f1abdcd5417015f9d16b38826585474479513a09dd7b00ed4dd888907d"
+            "bytes": 151,
+            "sha256": "a5bc8ce182f46401a6e8422878afb6cb0f8d7d604963670962b72259ea9c3a06"
           },
-          "start": 1727,
-          "stop": 1732
+          "start": 1736,
+          "stop": 1741
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview"
@@ -22307,8 +23963,8 @@
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
       "after": {
-        "bytes": 35517,
-        "sha256": "1a5b47f3ea2eedbcdb545c5123fbdf20086a0f728a80f6ec7246f92c6d209858"
+        "bytes": 35646,
+        "sha256": "4c1a733908826e044fe5a75ac6e27922921199b375d3b2eff0f5c482e269da78"
       },
       "before": {
         "bytes": 24182,
@@ -22317,10 +23973,10 @@
       "class": "LocalScript",
       "forward": [
         {
-          "new": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+          "new": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
           "new_identity": {
-            "bytes": 8891,
-            "sha256": "e426f356a3917ef4e63e58afb320a2adbf8ccde8898b60b9bde10a5c8b41a512"
+            "bytes": 9020,
+            "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
           },
           "old": "",
           "old_identity": {
@@ -22408,13 +24064,13 @@
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+          "old": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
           "old_identity": {
-            "bytes": 8891,
-            "sha256": "e426f356a3917ef4e63e58afb320a2adbf8ccde8898b60b9bde10a5c8b41a512"
+            "bytes": 9020,
+            "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
           },
           "start": 3,
-          "stop": 225
+          "stop": 226
         },
         {
           "new": "",
@@ -22427,8 +24083,8 @@
             "bytes": 253,
             "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
           },
-          "start": 418,
-          "stop": 422
+          "start": 419,
+          "stop": 423
         },
         {
           "new": "",
@@ -22441,8 +24097,8 @@
             "bytes": 102,
             "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
           },
-          "start": 714,
-          "stop": 716
+          "start": 715,
+          "stop": 717
         },
         {
           "new": " local inMatch=mapSnapshot~=nil\n",
@@ -22455,8 +24111,8 @@
             "bytes": 629,
             "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
           },
-          "start": 800,
-          "stop": 810
+          "start": 801,
+          "stop": 811
         },
         {
           "new": "",
@@ -22469,8 +24125,8 @@
             "bytes": 948,
             "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
           },
-          "start": 811,
-          "stop": 823
+          "start": 812,
+          "stop": 824
         },
         {
           "new": "",
@@ -22483,8 +24139,8 @@
             "bytes": 544,
             "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
           },
-          "start": 836,
-          "stop": 846
+          "start": 837,
+          "stop": 847
         }
       ],
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"

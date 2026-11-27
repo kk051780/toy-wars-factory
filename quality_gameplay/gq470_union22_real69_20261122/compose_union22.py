@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "d93e2bc46ebbe3e973fe967d35f0f334d2b75206ab2e70202c3ec3d06556c917"
+LOCK_SHA256 = "69c9968f8138ad3558e174c112b4341488c4b4bc37aa8619163846882d226277"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -87,6 +87,9 @@ MAGE_CONTACT_OFF = "off69_mage_contact_art_parent"
 MAGE_CONTACT_OFF_ARCHIVE = "OFF69_MAGE_CONTACT_ART_PARENT_ROLLBACK.tar.gz"
 MAGE_CONTACT_SOURCES = ("ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
                         "ServerScriptService/EGGRUMBLE_SwarmCombat.luau")
+RELAY_ELIGIBILITY_OFF = "off69_relay_eligibility_mage_parent"
+RELAY_ELIGIBILITY_OFF_ARCHIVE = "OFF69_RELAY_ELIGIBILITY_MAGE_PARENT_ROLLBACK.tar.gz"
+RELAY_ELIGIBILITY_SOURCES = RELAY_PRESENTATION_SOURCES
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -481,6 +484,11 @@ def mage_contact_parent(on, lock):
                                 lock["art_polish_followup"]["repaired_place"], "MAGE_CONTACT")
 
 
+def relay_eligibility_parent(on, lock):
+    return paired_source_parent(on, lock, lock["relay_eligibility_followup"], RELAY_ELIGIBILITY_SOURCES,
+                                lock["mage_contact_followup"]["repaired_place"], "RELAY_ELIGIBILITY")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -648,7 +656,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    mage_off, mage_off_lock = mage_contact_parent(on, lock)
+    eligibility_off, eligibility_off_lock = relay_eligibility_parent(on, lock)
+    mage_off, mage_off_lock = mage_contact_parent(eligibility_off, eligibility_off_lock)
     art_off, art_off_lock = art_polish_parent(mage_off, mage_off_lock)
     growth_off, growth_off_lock = growth_musou_parent(art_off, art_off_lock)
     combat_off, combat_off_lock = combat_visual_parent(growth_off, growth_off_lock)
@@ -694,7 +703,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / COMBAT_VISUAL_OFF, combat_off, combat_off_lock["final_place"], COMBAT_VISUAL_SOURCES),
                   (stage / GROWTH_MUSOU_OFF, growth_off, growth_off_lock["final_place"], GROWTH_MUSOU_SOURCES),
                   (stage / ART_POLISH_OFF, art_off, art_off_lock["final_place"], ART_POLISH_SOURCES),
-                  (stage / MAGE_CONTACT_OFF, mage_off, mage_off_lock["final_place"], MAGE_CONTACT_SOURCES))
+                  (stage / MAGE_CONTACT_OFF, mage_off, mage_off_lock["final_place"], MAGE_CONTACT_SOURCES),
+                  (stage / RELAY_ELIGIBILITY_OFF, eligibility_off, eligibility_off_lock["final_place"],
+                   RELAY_ELIGIBILITY_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -758,6 +769,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         art_archive_identity = identity(read_file(stage / ART_POLISH_OFF_ARCHIVE))
         make_archive(stage / MAGE_CONTACT_OFF, stage / MAGE_CONTACT_OFF_ARCHIVE, MAGE_CONTACT_OFF)
         mage_archive_identity = identity(read_file(stage / MAGE_CONTACT_OFF_ARCHIVE))
+        make_archive(stage / RELAY_ELIGIBILITY_OFF, stage / RELAY_ELIGIBILITY_OFF_ARCHIVE, RELAY_ELIGIBILITY_OFF)
+        eligibility_archive_identity = identity(read_file(stage / RELAY_ELIGIBILITY_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -837,6 +850,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({MAGE_CONTACT_OFF + "/" + PROJECT: lock["project"],
                                MAGE_CONTACT_OFF + "/" + PLACE: mage_off_lock["final_place"],
                                MAGE_CONTACT_OFF_ARCHIVE: mage_archive_identity})
+        expected_stage.update({RELAY_ELIGIBILITY_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in eligibility_off.items()})
+        expected_stage.update({RELAY_ELIGIBILITY_OFF + "/" + PROJECT: lock["project"],
+                               RELAY_ELIGIBILITY_OFF + "/" + PLACE: eligibility_off_lock["final_place"],
+                               RELAY_ELIGIBILITY_OFF_ARCHIVE: eligibility_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -890,6 +908,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "art_polish_rollback_archive": art_archive_identity,
             "mage_contact_followup": lock["mage_contact_followup"],
             "mage_contact_rollback_archive": mage_archive_identity,
+            "relay_eligibility_followup": lock["relay_eligibility_followup"],
+            "relay_eligibility_rollback_archive": eligibility_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -902,7 +922,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 33, "unchanged_sources": 36,
-            "compile_count": 172, "rojo_build_count": 20, "instances": 75,
+            "compile_count": 174, "rojo_build_count": 21, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -917,6 +937,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "growth_musou_parent_place": growth_off_lock["final_place"],
             "art_polish_parent_place": art_off_lock["final_place"],
             "mage_contact_parent_place": mage_off_lock["final_place"],
+            "relay_eligibility_parent_place": eligibility_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
