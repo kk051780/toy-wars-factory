@@ -35638,6 +35638,31 @@
       "actual_binding_lease": {
         "commit": "cfbcc9c9106b6faeb6a0e244ac8d1b17c55e1abe",
         "operation_id": "a6dc076c-0b59-4ff2-9d14-7a61e1af9a79"
+      },
+      "qa_correction_grant": {
+        "status": "ONE_EXACT_NONFORCE_QA_UPDATE",
+        "pr": 1039,
+        "branch": "quality/gq470-mage-close-basic-v3-20261127",
+        "old_candidate": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
+        "formal_parent": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "tree": "101c5aa63b79612bc284b243199ec686f32bce60",
+        "local_head": "3f5e701f788a78287011a906c814652caae867c4",
+        "changed_paths": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "mode": "100644",
+            "blob": "5cae79bd1c955bb586cd721f8f2a712469bdd9c5",
+            "bytes": 9675
+          }
+        ],
+        "reason": "The existing 24 growth and two aura programs run on their actual stored historical Art OFF and Growth OFF pair. Restore the two new Mage pins at that boundary to their prior exact hashes. The local correctly composed inputs and original assertions all pass; independent growth verifier reconstructed 103 evidence files. Game bodies and case definitions remain same.",
+        "source_runtime_changed": false,
+        "previous_failed_run": 45983903844,
+        "expires_at": "2026-11-27T11:46:59.317Z",
+        "metadata": {
+          "lease": "d94cd4e732a31cda01c8a0a30b3f87259ed1ac44",
+          "owner": "b5eb1361-2be0-4bb5-9cd7-a1c7fd038da8"
+        }
       }
     }
   ],
