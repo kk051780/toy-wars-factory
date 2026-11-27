@@ -31084,6 +31084,106 @@
           "origin": "controller"
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ482-CASTLE-RELEASE-STOCK-20261127",
+      "feature_id": "GQ470_FB015_CASTLE_RELEASE_STOCK",
+      "state": "GRANTED",
+      "role": "A_PREP",
+      "owner": "/root (Codex parent, original #482 castle release handoff)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "canonical_parent": 482,
+      "pr": null,
+      "base_rc_sha": "84d589cf861795a07f13aac8bfa89af9f66d3aac",
+      "scope": "One narrow successor to the preserved #482 104-file draft and closed #1034. Only existing layout +355, RELEASE-only noncollision +65 and the existing stock display +140 on one Host. Seven scoped canonical paths, tests and immediate OFF rollback. No changes to old source branches, rules, score authority or workflows.",
+      "registered_scope_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7190532839",
+      "origin_layout": "https://github.com/kk051780/toy-wars-factory/pull/482#issuecomment-7077482453",
+      "origin_release": "https://github.com/kk051780/toy-wars-factory/pull/482#issuecomment-7187774178",
+      "current_caption_repro": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7206577602",
+      "layout_source_bytes": 95673,
+      "release_source_bytes": 95738,
+      "combined_source_bytes": 95878,
+      "prepared_candidate_head": "cc6fed686214596eb717cc5827856311338999ad",
+      "prepared_candidate_tree": "2ee10df7cbf619a0cefe8b5e5f35dc017c13a4f2",
+      "prepared_source_blobs": {
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py": "6a9a3f697258ef1e69fc8d16c00d0f8001c90b2e",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json": "1422386b5847aa4976fa57d4b556ae14aee1867b",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py": "550251ce5293ab47dd81adde5e62fcf6b99fa1f2",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "c57f4cbc72bda0711d351aed75e96c9baef0df62",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "f9c33038a907ebe30e22aca67592781748fd94e9",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "372faebc8fd81efa3d19cecd569decc8e90eeb78",
+        "tests/test_gq470_union22_real69_20261122.py": "8af2c62d0ab316a61c52fc292220ae5f60e10f52"
+      },
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE"
+      ],
+      "prep_branch": "feature/p0d-prep-482-castle-release-stock-20261127",
+      "allowed_new_prs": 1,
+      "expected_source_branch": "ABSENT",
+      "local_native_release": {
+        "cases": 24,
+        "checks": 3404,
+        "source_receipt_sha256": "c470eb20381d460d742658c144bb5335842e1d21c5b6d1842447730f8764b040"
+      },
+      "local_native_caption": {
+        "modes": [
+          "TEAM",
+          "BR"
+        ],
+        "expected_old_failures": 2
+      },
+      "local_core_targeted_test_count": 8,
+      "candidate_place": {
+        "bytes": 831348,
+        "sha256": "fa30d18ed795815c8cd796ce67c39213b1cff96a1ad4646273e65fdcf8e190f8"
+      },
+      "rollback_place": {
+        "bytes": 830788,
+        "sha256": "2d77944c3fda72f0e2969bfdc9ec630cff5590c0a5e1e4593d8c20f2420e10fe"
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "scope_only": true,
+      "source_scope_granted": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "no_main_or_publish": true,
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "43449529-e103-4fed-b2f1-b86dd8bbc6c3",
+      "issued_at": "2026-11-27T00:43:40.544Z",
+      "expires_at": "2026-11-27T06:43:40.544Z",
+      "actual_metadata_lease": {
+        "ref": "34ffecb86c908fc7f692c43b346e17889158de33",
+        "blob": "468afe5ab3bbda0eaf1ee99e1ec64f7e4b5cd56c",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "43449529-e103-4fed-b2f1-b86dd8bbc6c3",
+          "task_id": null,
+          "epoch": 777,
+          "acquired_at": "2026-11-27T00:43:21.373Z",
+          "expires_at": "2026-11-27T01:13:21.373Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Current #1011 V2.1 authenticated ordinary development delegation and existing #218 #482 scope, #220 orderly integration. Actual independent local verification in registered context."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
