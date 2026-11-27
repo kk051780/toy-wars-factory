@@ -35,11 +35,12 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 71, "final": 21}
+INTEGRATION_COUNTS = {"core": 72, "final": 21}
 
 
 def restore_combat(on, lock):
-    touch_off = compose.private_touch_parent(*compose.portrait_parent(on, lock))
+    shorefoam_off = compose.shorefoam_parent(on, lock)
+    touch_off = compose.private_touch_parent(*compose.portrait_parent(*shorefoam_off))
     relay_off = compose.relay_eligibility_parent(*compose.moguron_parent(*touch_off))
     mage_off = compose.mage_contact_parent(*relay_off)
     return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(*mage_off)))
@@ -55,6 +56,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["shorefoam_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["portrait_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["moguron_followup"]["rows"].items()
@@ -492,10 +495,21 @@ class UnionBoundary(unittest.TestCase):
         shutil.copyfile(root / compose.FIELD_PROMPT_OFF_ARCHIVE, root / compose.NEUTRAL_NAMES_OFF_ARCHIVE)
         self.reject_core(root)
 
+    def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
+        final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        parent, parent_lock = compose.shorefoam_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != parent[name]}, {compose.SHOREFOAM_SOURCE})
+        self.assertEqual(parent_lock["final_place"], self.lock["portrait_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.PORTRAIT_OFF_ARCHIVE, root / compose.SHOREFOAM_OFF_ARCHIVE)
+        with self.assertRaisesRegex(ValueError, "ARCHIVE"):
+            verify.verify_core(root, self.prior, self.reports, self.context)
+
     def test_portrait_inverse_changes_only_policy_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        parent, parent_lock = compose.portrait_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != parent[name]}, {compose.PORTRAIT_SOURCE})
+        previous, previous_lock = compose.shorefoam_parent(final, self.lock)
+        parent, parent_lock = compose.portrait_parent(previous, previous_lock)
+        self.assertEqual({name for name in previous if previous[name] != parent[name]}, {compose.PORTRAIT_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["private_touch_followup"]["repaired_place"])
         root = self.current_copy()
         shutil.copyfile(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE, root / compose.PORTRAIT_OFF_ARCHIVE)
@@ -504,7 +518,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_private_touch_inverse_changes_only_hud_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        previous, previous_lock = compose.portrait_parent(final, self.lock)
+        previous, previous_lock = compose.portrait_parent(*compose.shorefoam_parent(final, self.lock))
         parent, parent_lock = compose.private_touch_parent(previous, previous_lock)
         self.assertEqual({name for name in previous if previous[name] != parent[name]}, {compose.PRIVATE_TOUCH_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["moguron_followup"]["repaired_place"])
@@ -516,7 +530,8 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        touch_off, touch_lock = compose.private_touch_parent(*compose.portrait_parent(final, self.lock))
+        shorefoam_off = compose.shorefoam_parent(final, self.lock)
+        touch_off, touch_lock = compose.private_touch_parent(*compose.portrait_parent(*shorefoam_off))
         moguron_off, moguron_lock = compose.moguron_parent(touch_off, touch_lock)
         self.assertEqual({name for name in moguron_off if moguron_off[name] != touch_off[name]},
                          {compose.MOGURON_SOURCE})
@@ -1115,8 +1130,9 @@ class UnionBoundary(unittest.TestCase):
     def test_final_selected_hud_original_main_rejects_lost_anchor(self):
         historical_sources = self.current / compose.PORTRAIT_OFF / "sources"
         old_policy = self.lock["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
+        old_traversal = self.lock["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
         layout_lock = self.native_lock | {"sources": self.native_lock["sources"] | {
-            compose.PORTRAIT_SOURCE: old_policy}}
+            compose.PORTRAIT_SOURCE: old_policy, compose.SHOREFOAM_SOURCE: old_traversal}}
         good = self.temporary() / "good-layout"
         prepared = native.prepare_selected_hud_layout(
             historical_sources, good, layout_lock)
@@ -1691,7 +1707,8 @@ class UnionOfflineContract(unittest.TestCase):
         private_touch = self.lock["private_touch_followup"]
         portrait = self.lock["portrait_followup"]
         relay_eligibility_sources = self.lock["sources"]
-        for followup in (portrait, private_touch, moguron):
+        shorefoam = self.lock["shorefoam_followup"]
+        for followup in (shorefoam, portrait, private_touch, moguron):
             relay_eligibility_sources = relay_eligibility_sources | {
                 name: row["parent"] for name, row in followup["rows"].items()}
         self.assertEqual(moguron["parent_place"], eligibility["repaired_place"])
@@ -1739,7 +1756,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(mage["repaired_place"], eligibility["parent_place"])
         self.assertEqual(moguron["repaired_place"], private_touch["parent_place"])
         self.assertEqual(private_touch["repaired_place"], portrait["parent_place"])
-        self.assertEqual(portrait["repaired_place"], self.lock["final_place"])
+        self.assertEqual(portrait["repaired_place"], shorefoam["parent_place"])
+        self.assertEqual(shorefoam["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(shorefoam["rows"]), {compose.SHOREFOAM_SOURCE})
         self.assertEqual(set(portrait["rows"]), {compose.PORTRAIT_SOURCE})
         self.assertEqual(set(private_touch["rows"]), {compose.PRIVATE_TOUCH_SOURCE})
         self.assertEqual(set(eligibility["rows"]), set(compose.RELAY_ELIGIBILITY_SOURCES))

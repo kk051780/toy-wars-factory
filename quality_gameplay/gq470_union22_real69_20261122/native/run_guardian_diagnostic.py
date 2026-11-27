@@ -109,7 +109,9 @@ def source_contract(root, profile, input_lock):
     portrait = profile["portrait_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    portrait_parent_pins = current_pins | {
+    shorefoam_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in profile["shorefoam_followup"]["rows"].items()}
+    portrait_parent_pins = shorefoam_parent_pins | {
         name: row["parent"]["after"] for name, row in portrait["rows"].items()}
     touch_parent_pins = portrait_parent_pins | {
         name: row["parent"]["after"] for name, row in private_touch["rows"].items()}

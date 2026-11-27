@@ -525,9 +525,20 @@ def verify_core(root, base, reports, context):
     moguron = lock["moguron_followup"]
     private_touch = lock["private_touch_followup"]
     portrait = lock["portrait_followup"]
+    shorefoam = lock["shorefoam_followup"]
+    require(set(shorefoam["rows"]) == {compose.SHOREFOAM_SOURCE}, "SHOREFOAM_SOURCE_SET")
+    expected_shorefoam_off, shorefoam_off_lock, shorefoam_off = verify_source_rollback(
+        root, root, lock, current, shorefoam, shorefoam["rows"], portrait["repaired_place"],
+        compose.SHOREFOAM_OFF, compose.SHOREFOAM_OFF_ARCHIVE, "SHOREFOAM")
+    author = shorefoam["author"]
+    transform = visual_author(author["path"], author["identity"], "SHOREFOAM_EXACT_AUTHOR")
+    old_traversal = read(root / compose.SHOREFOAM_OFF / "sources" / compose.SHOREFOAM_SOURCE)
+    require(transform.patch(old_traversal.decode("utf-8")).encode("utf-8")
+            == read(root / "sources" / compose.SHOREFOAM_SOURCE), "SHOREFOAM_AUTHOR_TRANSFORM_DRIFT")
     require(set(portrait["rows"]) == {compose.PORTRAIT_SOURCE}, "PORTRAIT_SOURCE_SET")
     expected_portrait_off, portrait_off_lock, portrait_off = verify_source_rollback(
-        root, root, lock, current, portrait, portrait["rows"], private_touch["repaired_place"],
+        root, root / compose.SHOREFOAM_OFF, shorefoam_off_lock, shorefoam_off,
+        portrait, portrait["rows"], private_touch["repaired_place"],
         compose.PORTRAIT_OFF, compose.PORTRAIT_OFF_ARCHIVE, "PORTRAIT")
     author = portrait["author"]
     transform = visual_author(author["path"], author["identity"], "PORTRAIT_EXACT_AUTHOR")
@@ -714,6 +725,8 @@ def verify_core(root, base, reports, context):
         "private_touch_rollback_archive": digest(read(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE)),
         "portrait_followup": portrait,
         "portrait_rollback_archive": digest(read(root / compose.PORTRAIT_OFF_ARCHIVE)),
+        "shorefoam_followup": shorefoam,
+        "shorefoam_rollback_archive": digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -724,7 +737,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
-            and core.get("compile_count") == 177 and core.get("rojo_build_count") == 24
+            and core.get("compile_count") == 178 and core.get("rojo_build_count") == 25
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -742,6 +755,7 @@ def verify_core(root, base, reports, context):
             and core.get("relay_eligibility_parent_place") == eligibility_off_lock["final_place"]
             and core.get("private_touch_parent_place") == touch_off_lock["final_place"]
             and core.get("portrait_parent_place") == portrait_off_lock["final_place"]
+            and core.get("shorefoam_parent_place") == shorefoam_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -809,6 +823,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.PRIVATE_TOUCH_OFF_ARCHIVE] = digest(read(root / compose.PRIVATE_TOUCH_OFF_ARCHIVE))
     expected_stage.update({compose.PORTRAIT_OFF + "/" + name: pin for name, pin in expected_portrait_off.items()})
     expected_stage[compose.PORTRAIT_OFF_ARCHIVE] = digest(read(root / compose.PORTRAIT_OFF_ARCHIVE))
+    expected_stage.update({compose.SHOREFOAM_OFF + "/" + name: pin for name, pin in expected_shorefoam_off.items()})
+    expected_stage[compose.SHOREFOAM_OFF_ARCHIVE] = digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -817,11 +833,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 201 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 203 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 177 and len(rojo_commands) == 24, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 178 and len(rojo_commands) == 25, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -847,6 +863,7 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.MOGURON_OFF / "sources" / compose.MOGURON_SOURCE))
     expected_compile.add(str(Path(stage) / compose.PRIVATE_TOUCH_OFF / "sources" / compose.PRIVATE_TOUCH_SOURCE))
     expected_compile.add(str(Path(stage) / compose.PORTRAIT_OFF / "sources" / compose.PORTRAIT_SOURCE))
+    expected_compile.add(str(Path(stage) / compose.SHOREFOAM_OFF / "sources" / compose.SHOREFOAM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -869,7 +886,8 @@ def verify_core(root, base, reports, context):
                                compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
-                               compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF)},
+                               compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
+                               compose.SHOREFOAM_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -898,7 +916,8 @@ def verify_core(root, base, reports, context):
                                                        if name in compose.RELAY_ELIGIBILITY_SOURCES],
                         compose.MOGURON_OFF: [compose.MOGURON_SOURCE],
                         compose.PRIVATE_TOUCH_OFF: [compose.PRIVATE_TOUCH_SOURCE],
-                        compose.PORTRAIT_OFF: [compose.PORTRAIT_SOURCE]}
+                        compose.PORTRAIT_OFF: [compose.PORTRAIT_SOURCE],
+                        compose.SHOREFOAM_OFF: [compose.SHOREFOAM_SOURCE]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1148,7 +1167,8 @@ def verify_selected_hud_layout(native, root, pins, build, aggregate, context):
     result = data(folder / "receipt.json")
     profile = compose.load_lock()
     old_policy = profile["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
-    source_pins = pins["sources"] | {compose.PORTRAIT_SOURCE: old_policy}
+    old_traversal = profile["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
+    source_pins = pins["sources"] | {compose.PORTRAIT_SOURCE: old_policy, compose.SHOREFOAM_SOURCE: old_traversal}
     source_stage = root / compose.PORTRAIT_OFF / "sources"
     contract = pins["selected_hud_layout"]
     relative = "quality_gameplay/gq8_real63_ui_occlusion_20261119/native_layout.py"
@@ -1523,6 +1543,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["shorefoam_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["portrait_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["relay_eligibility_followup"]["rows"].items()
@@ -2123,7 +2145,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.MAGE_CONTACT_OFF_ARCHIVE,
                             compose.RELAY_ELIGIBILITY_OFF_ARCHIVE, compose.MOGURON_OFF_ARCHIVE,
                             compose.PRIVATE_TOUCH_OFF_ARCHIVE,
-                            compose.PORTRAIT_OFF_ARCHIVE,
+                            compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2231,6 +2253,9 @@ def admit_delivery(root, base, reports, native, context):
             "portrait_followup": verified["lock"]["portrait_followup"],
             "portrait_inverse_place": verified["lock"]["portrait_followup"]["parent_place"],
             "portrait_inverse_archive": digest(read(root / compose.PORTRAIT_OFF_ARCHIVE)),
+            "shorefoam_followup": verified["lock"]["shorefoam_followup"],
+            "shorefoam_inverse_place": verified["lock"]["shorefoam_followup"]["parent_place"],
+            "shorefoam_inverse_archive": digest(read(root / compose.SHOREFOAM_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
