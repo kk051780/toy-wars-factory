@@ -37753,6 +37753,151 @@
           "trusted_queue_job": 140540475146
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-ACTIVE-SOLO-BOTS-407-20261127",
+      "feature_id": "GQ910_ACTIVE_SOLO_TEAM_BOTS",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 910,
+      "source_issue": 407,
+      "integration_issue": 220,
+      "pr": 407,
+      "base_rc_sha": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+      "base_rc_tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+      "prep_branch": "feature/p0d-rc80-bot-405-safety-prep-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "FB005 and original #407 actor/path/stall/teardown into ACTIVE rich51 single-player Studio Classic; the existing Game owns captures, deposits, score, winner, damage. Preserve #391 fresh READY/results, human SCORE5, and every PRIVATE companion source. No round-disconnect changes.",
+      "resources": [
+        "ACTIVE67_SOLO_CLASSIC_BOT_MODULE",
+        "ACTIVE67_GAME_SOLO_BOT_ADAPTER",
+        "GQ910_ACTIVE_SOLO_TEAM_BOTS"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_solo_bots.py",
+        "rc_fastlane/features/active_solo_bots/SoloTeamBots.luau",
+        "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_actor.py",
+        "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_lease.py",
+        "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_move.py",
+        "rc_fastlane/features/active_solo_bots/source_lock.json",
+        "rc_fastlane/verify_active_solo_bots_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/407",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "d5822e7c-2966-4514-8d94-52e72429dd7e",
+      "issued_at": "2026-11-27T13:48:44.338Z",
+      "expires_at": "2026-11-27T15:48:44.338Z",
+      "actual_metadata_lease": {
+        "ref": "1f0fe668d001dbe145f11c35b7fbc9278be3c1c3",
+        "blob": "522fce62f5fdc0f6346005ac618a5bfd0ebc9c27",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d5822e7c-2966-4514-8d94-52e72429dd7e",
+          "task_id": null,
+          "epoch": 928,
+          "acquired_at": "2026-11-27T13:48:28.900Z",
+          "expires_at": "2026-11-27T14:18:28.900Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 407,
+        "branch": "feature/p0d-rc80-bot-405-safety-prep-20261114",
+        "old_pr_head": "339e1bfcfb38fdd3a70a80c9f0ee4be53f84ca40",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "tree": "c3445dba34d245ea807bd62c1a0024a307b94a05",
+        "local_head": "134a2b75266afa67f1ee99b03851bd071375ef71",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "8756c6e683dbae79820a55e343ea4ca7624929e8",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 211726
+          },
+          {
+            "mode": "100644",
+            "blob": "5a87971e7fd56baba98f0f82ef4036bb2b721dcd",
+            "path": "rc_fastlane/apply_active_solo_bots.py",
+            "bytes": 5669
+          },
+          {
+            "mode": "100644",
+            "blob": "9a08bb1f972f69ffa94d90ec59fd593d20dd97ed",
+            "path": "rc_fastlane/features/active_solo_bots/SoloTeamBots.luau",
+            "bytes": 21338
+          },
+          {
+            "mode": "100644",
+            "blob": "d2a81fb9eb7cc97c40354cadb4a79deee683365e",
+            "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_actor.py",
+            "bytes": 9142
+          },
+          {
+            "mode": "100644",
+            "blob": "627e25a1fe927b7b04625dde1674a294b70d1b72",
+            "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_lease.py",
+            "bytes": 7456
+          },
+          {
+            "mode": "100644",
+            "blob": "cafc4887a9d5be8ea47f82b602958e353b2c1f3c",
+            "path": "rc_fastlane/features/active_solo_bots/native/rc80_verify_bot405_move.py",
+            "bytes": 10320
+          },
+          {
+            "mode": "100644",
+            "blob": "c78f9319b0647f3a2b7b4e04979a49de4124a876",
+            "path": "rc_fastlane/features/active_solo_bots/source_lock.json",
+            "bytes": 1067
+          },
+          {
+            "mode": "100644",
+            "blob": "e39bf35a5b7f92d3efb048a527b9ab94782623b4",
+            "path": "rc_fastlane/verify_active_solo_bots_native.py",
+            "bytes": 6786
+          },
+          {
+            "mode": "100644",
+            "blob": "2de869161d515d29a3af27a60e84374302d82eb8",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 110680
+          }
+        ],
+        "expires_at": "2026-11-27T14:48:44.338Z",
+        "issued_from": {
+          "lease": "1f0fe668d001dbe145f11c35b7fbc9278be3c1c3",
+          "owner": "d5822e7c-2966-4514-8d94-52e72429dd7e"
+        },
+        "local_qa": {
+          "on": 638783,
+          "off": 610958,
+          "place_sha256": "f0bd729a813712bc959d57449fb9acf3375f8d1fef3d65c15fc7812dc5267225",
+          "off_sha256": "7cfa98cc5f3270a75cb0445fb2edb5ac953eec88217b8ddd27f3bc410e1c7c0b",
+          "mounts": 67,
+          "changed_existing_game_bytes": 6276,
+          "unmodified_author_bot_blob": "9a08bb1f972f69ffa94d90ec59fd593d20dd97ed",
+          "native_author_cases": 89,
+          "native_game_sole_authority_fold": true,
+          "wrong_input_rejected": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
