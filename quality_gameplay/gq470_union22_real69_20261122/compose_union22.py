@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "78cc00778cc229ffe333e9803a952efb045417443a9ef85b4f0f0c0a3e81105f"
+LOCK_SHA256 = "8964c7f20da1e874f3197b527d6c6a0c8a16f13ea7faff6085ca2818f6ead68e"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -121,6 +121,10 @@ NINJA_S4_SOURCES = (
     "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
 )
+WING_WARRIOR_OFF = "off69_wing_warrior_ninja_s4_parent"
+WING_WARRIOR_OFF_ARCHIVE = "OFF69_WING_WARRIOR_NINJA_S4_PARENT_ROLLBACK.tar.gz"
+WING_WARRIOR_SOURCES = (*MAGE_CONTACT_SOURCES, VAULT_SOURCE,
+                       "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau")
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -424,7 +428,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 34, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 35, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -563,6 +567,11 @@ def mage_water_chain_parent(on, lock):
 def ninja_s4_parent(on, lock):
     return paired_source_parent(on, lock, lock["ninja_s4_followup"], NINJA_S4_SOURCES,
                                 lock["mage_water_chain_followup"]["repaired_place"], "NINJA_S4")
+
+
+def wing_warrior_parent(on, lock):
+    return paired_source_parent(on, lock, lock["wing_warrior_followup"], WING_WARRIOR_SOURCES,
+                                lock["ninja_s4_followup"]["repaired_place"], "WING_WARRIOR")
 
 
 def castle_parent(on, lock):
@@ -732,7 +741,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    ninja_s4_off, ninja_s4_off_lock = ninja_s4_parent(on, lock)
+    wing_warrior_off, wing_warrior_off_lock = wing_warrior_parent(on, lock)
+    ninja_s4_off, ninja_s4_off_lock = ninja_s4_parent(wing_warrior_off, wing_warrior_off_lock)
     water_chain_off, water_chain_off_lock = mage_water_chain_parent(ninja_s4_off, ninja_s4_off_lock)
     projectile_off, projectile_off_lock = mage_projectile_parent(water_chain_off, water_chain_off_lock)
     hp_off, hp_off_lock = fractional_hp_parent(projectile_off, projectile_off_lock)
@@ -803,7 +813,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                    MAGE_PROJECTILES_SOURCES),
                   (stage / MAGE_WATER_CHAIN_OFF, water_chain_off, water_chain_off_lock["final_place"],
                    MAGE_WATER_CHAIN_SOURCES),
-                  (stage / NINJA_S4_OFF, ninja_s4_off, ninja_s4_off_lock["final_place"], NINJA_S4_SOURCES))
+                  (stage / NINJA_S4_OFF, ninja_s4_off, ninja_s4_off_lock["final_place"], NINJA_S4_SOURCES),
+                  (stage / WING_WARRIOR_OFF, wing_warrior_off, wing_warrior_off_lock["final_place"],
+                   WING_WARRIOR_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -893,6 +905,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         water_chain_archive_identity = identity(read_file(stage / MAGE_WATER_CHAIN_OFF_ARCHIVE))
         make_archive(stage / NINJA_S4_OFF, stage / NINJA_S4_OFF_ARCHIVE, NINJA_S4_OFF)
         ninja_s4_archive_identity = identity(read_file(stage / NINJA_S4_OFF_ARCHIVE))
+        make_archive(stage / WING_WARRIOR_OFF, stage / WING_WARRIOR_OFF_ARCHIVE, WING_WARRIOR_OFF)
+        wing_warrior_archive_identity = identity(read_file(stage / WING_WARRIOR_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1022,6 +1036,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({NINJA_S4_OFF + "/" + PROJECT: lock["project"],
                                NINJA_S4_OFF + "/" + PLACE: ninja_s4_off_lock["final_place"],
                                NINJA_S4_OFF_ARCHIVE: ninja_s4_archive_identity})
+        expected_stage.update({WING_WARRIOR_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in wing_warrior_off.items()})
+        expected_stage.update({WING_WARRIOR_OFF + "/" + PROJECT: lock["project"],
+                               WING_WARRIOR_OFF + "/" + PLACE: wing_warrior_off_lock["final_place"],
+                               WING_WARRIOR_OFF_ARCHIVE: wing_warrior_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1030,7 +1049,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 34, "unchanged_source_count": 35,
+            "selected_source_count": 69, "changed_source_count": 35, "unchanged_source_count": 34,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -1095,6 +1114,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_water_chain_rollback_archive": water_chain_archive_identity,
             "ninja_s4_followup": lock["ninja_s4_followup"],
             "ninja_s4_rollback_archive": ninja_s4_archive_identity,
+            "wing_warrior_followup": lock["wing_warrior_followup"],
+            "wing_warrior_rollback_archive": wing_warrior_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1106,7 +1127,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 34, "unchanged_sources": 35,
+            "source_count": 69, "changed_sources": 35, "unchanged_sources": 34,
             "compile_count": sum(row["command"][1] == "--text" for row in logs),
             "rojo_build_count": sum(row["command"][1] == "build" for row in logs),
             "instances": 75,
@@ -1133,6 +1154,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_projectile_parent_place": projectile_off_lock["final_place"],
             "mage_water_chain_parent_place": water_chain_off_lock["final_place"],
             "ninja_s4_parent_place": ninja_s4_off_lock["final_place"],
+            "wing_warrior_parent_place": wing_warrior_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

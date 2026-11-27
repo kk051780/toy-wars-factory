@@ -140,7 +140,9 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == profile["sources"][name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "NINJA_S4_PROFILE_SCOPE")
-    before = after | {name: row["parent"]["after"] for name, row in changed.items()}
+    later = profile["wing_warrior_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in later.items()}
+              | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.NINJA_S4_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     template = _fixture(fixture.decode("utf-8"), ui.decode("utf-8"), compose)

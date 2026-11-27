@@ -113,9 +113,12 @@ def source_contract(root, profile, input_lock):
     projectiles = profile["mage_projectile_followup"]
     water_chain = profile["mage_water_chain_followup"]
     ninja_s4 = profile["ninja_s4_followup"]
+    wing_warrior = profile["wing_warrior_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    ninja_s4_parent_pins = current_pins | {
+    wing_warrior_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in wing_warrior["rows"].items()}
+    ninja_s4_parent_pins = wing_warrior_parent_pins | {
         name: row["parent"]["after"] for name, row in ninja_s4["rows"].items()}
     water_chain_parent_pins = ninja_s4_parent_pins | {
         name: row["parent"]["after"] for name, row in water_chain["rows"].items()}
@@ -154,6 +157,7 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
                    and native.source_snapshot(root / compose.MAGE_WATER_CHAIN_OFF / "sources")
                    == water_chain_parent_pins
@@ -188,7 +192,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == ninja_s4["repaired_place"]
+                   == wing_warrior["repaired_place"]
+                   and native.identity(native.read(root / compose.WING_WARRIOR_OFF / compose.PLACE))
+                   == wing_warrior["parent_place"] == ninja_s4["repaired_place"]
                    and native.identity(native.read(root / compose.NINJA_S4_OFF / compose.PLACE))
                    == ninja_s4["parent_place"] == water_chain["repaired_place"]
                    and native.identity(native.read(root / compose.MAGE_WATER_CHAIN_OFF / compose.PLACE))

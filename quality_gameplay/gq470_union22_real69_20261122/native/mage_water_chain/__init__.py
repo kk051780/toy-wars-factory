@@ -115,7 +115,9 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "MAGE_WATER_CHAIN_PROFILE_SCOPE")
     previous_stage = profile["ninja_s4_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in previous_stage.items()}
+    later_stage = profile["wing_warrior_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in later_stage.items()}
+              | {name: row["parent"]["after"] for name, row in previous_stage.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.MAGE_WATER_CHAIN_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}

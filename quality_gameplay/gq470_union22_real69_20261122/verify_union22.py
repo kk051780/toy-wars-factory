@@ -510,7 +510,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 34 and len(lock["sources"]) - len(changed) == 35, "CHANGE_COUNT")
+    require(len(changed) == 35 and len(lock["sources"]) - len(changed) == 34, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -561,8 +561,17 @@ def verify_core(root, base, reports, context):
             and ninja_s4["combo_ids"] == ["COMBO-008"]
             and ninja_s4["s4_hero_roles"] == ["BEAST", "BUILDER", "MAGE", "NINJA",
                                               "TRAPPER", "WARRIOR", "ZOMBIE"], "NINJA_S4_SCOPE")
+    wing_warrior = lock["wing_warrior_followup"]
+    require(set(wing_warrior["rows"]) == set(compose.WING_WARRIOR_SOURCES)
+            and wing_warrior["ability_ids"] == ["MAGE-001", "MAGE-011", "MAGE-012", "MAGE-026",
+                                              "MAGE-040", "WARRIOR-016", "WARRIOR-071"]
+            and wing_warrior["combo_ids"] == ["COMBO-005", "COMBO-002"], "WING_WARRIOR_SCOPE")
+    expected_wing_warrior_off, wing_warrior_off_lock, wing_warrior_off = verify_source_rollback(
+        root, root, lock, current, wing_warrior, wing_warrior["rows"], ninja_s4["repaired_place"],
+        compose.WING_WARRIOR_OFF, compose.WING_WARRIOR_OFF_ARCHIVE, "WING_WARRIOR")
     expected_ninja_s4_off, ninja_s4_off_lock, ninja_s4_off = verify_source_rollback(
-        root, root, lock, current, ninja_s4, ninja_s4["rows"], water_chain["repaired_place"],
+        root, root / compose.WING_WARRIOR_OFF, wing_warrior_off_lock, wing_warrior_off,
+        ninja_s4, ninja_s4["rows"], water_chain["repaired_place"],
         compose.NINJA_S4_OFF, compose.NINJA_S4_OFF_ARCHIVE, "NINJA_S4")
     expected_water_chain_off, water_chain_off_lock, water_chain_off = verify_source_rollback(
         root, root / compose.NINJA_S4_OFF, ninja_s4_off_lock, ninja_s4_off,
@@ -734,7 +743,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 34, "unchanged_source_count": 35,
+        "selected_source_count": 69, "changed_source_count": 35, "unchanged_source_count": 34,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -797,6 +806,8 @@ def verify_core(root, base, reports, context):
         "mage_water_chain_rollback_archive": digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)),
         "ninja_s4_followup": ninja_s4,
         "ninja_s4_rollback_archive": digest(read(root / compose.NINJA_S4_OFF_ARCHIVE)),
+        "wing_warrior_followup": wing_warrior,
+        "wing_warrior_rollback_archive": digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -812,7 +823,7 @@ def verify_core(root, base, reports, context):
                 for name in expected_reuse), "CORE_COMPILE_REUSE_PRIOR_BR_BYTES")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
+            and core.get("changed_sources") == 35 and core.get("unchanged_sources") == 34
             and type(core.get("compile_count")) is int and type(core.get("rojo_build_count")) is int
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
@@ -837,6 +848,7 @@ def verify_core(root, base, reports, context):
             and core.get("mage_projectile_parent_place") == projectile_off_lock["final_place"]
             and core.get("mage_water_chain_parent_place") == water_chain_off_lock["final_place"]
             and core.get("ninja_s4_parent_place") == ninja_s4_off_lock["final_place"]
+            and core.get("wing_warrior_parent_place") == wing_warrior_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -920,6 +932,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.NINJA_S4_OFF + "/" + name: pin
                            for name, pin in expected_ninja_s4_off.items()})
     expected_stage[compose.NINJA_S4_OFF_ARCHIVE] = digest(read(root / compose.NINJA_S4_OFF_ARCHIVE))
+    expected_stage.update({compose.WING_WARRIOR_OFF + "/" + name: pin
+                           for name, pin in expected_wing_warrior_off.items()})
+    expected_stage[compose.WING_WARRIOR_OFF_ARCHIVE] = digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -970,6 +985,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.MAGE_WATER_CHAIN_SOURCES)
     expected_compile.update(str(Path(stage) / compose.NINJA_S4_OFF / "sources" / name)
                             for name in compose.NINJA_S4_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.WING_WARRIOR_OFF / "sources" / name)
+                            for name in compose.WING_WARRIOR_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -994,7 +1011,8 @@ def verify_core(root, base, reports, context):
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
-                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF)},
+                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
+                               compose.WING_WARRIOR_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -1032,7 +1050,9 @@ def verify_core(root, base, reports, context):
                         compose.MAGE_WATER_CHAIN_OFF: [name for name in lock["sources"]
                                                       if name in compose.MAGE_WATER_CHAIN_SOURCES],
                         compose.NINJA_S4_OFF: [name for name in lock["sources"]
-                                              if name in compose.NINJA_S4_SOURCES]}
+                                              if name in compose.NINJA_S4_SOURCES],
+                        compose.WING_WARRIOR_OFF: [name for name in lock["sources"]
+                                                   if name in compose.WING_WARRIOR_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
                               if prefix != compose.OFF or p not in expected_reuse)
@@ -1662,6 +1682,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
@@ -2098,6 +2120,15 @@ def verify_native(native, root, lock, context):
         "union22_ninja_s4_verify", HERE / "native/ninja_s4/__init__.py")
     ninja_s4 = importlib.util.module_from_spec(ninja_s4_spec)
     ninja_s4_spec.loader.exec_module(ninja_s4)
+    stage_native = {}
+    for name in ("wing_warrior", "fixed_cues"):
+        selected_spec = importlib.util.spec_from_file_location(
+            "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
+        contract = importlib.util.module_from_spec(selected_spec)
+        selected_spec.loader.exec_module(contract)
+        stage_native[name] = contract
+    stage_native_files = sum(len(contract.FILES) for contract in stage_native.values())
+    stage_native_runs = sum(contract.PROCESS_COUNT for contract in stage_native.values())
     require(digest(read(input_lock_path))["sha256"] == adapter.INPUT_LOCK_SHA256, "NATIVE_LOCK_IDENTITY")
     pins = data(input_lock_path)
     require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
@@ -2153,9 +2184,9 @@ def verify_native(native, root, lock, context):
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
             and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT
-            + water_chain.PROCESS_COUNT + ninja_s4.PROCESS_COUNT
+            + water_chain.PROCESS_COUNT + ninja_s4.PROCESS_COUNT + stage_native_runs
             and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES)
-            + len(water_chain.FILES) + len(ninja_s4.FILES),
+            + len(water_chain.FILES) + len(ninja_s4.FILES) + stage_native_files,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2277,8 +2308,19 @@ def verify_native(native, root, lock, context):
             and data(ninja_s4_receipt) == ninja_s4_result
             and digest(read(ninja_s4_receipt)) == aggregate["ninja_s4"], "NINJA_S4_EXACT_RECEIPT")
     expected_files |= {"ninja_s4/" + name for name in ninja_s4.FILES}
+    stage_native_results = {}
+    for name, contract in stage_native.items():
+        folder = native / name
+        receipt = folder / "receipt.json"
+        observed = contract.observe(root / "sources", folder, Path(build["binary_path"]),
+                                    build["binary_before_suites"], context, lock, compose)
+        require(set(files(folder)) == contract.FILES and data(receipt) == observed
+                and digest(read(receipt)) == aggregate[name], name.upper() + "_EXACT_RECEIPT")
+        expected_files |= {name + "/" + filename for filename in contract.FILES}
+        stage_native_results[name] = observed
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 316 + len(projectiles.FILES) + len(water_chain.FILES) + len(ninja_s4.FILES)
+    require(len(expected_files) == 316 + len(projectiles.FILES) + len(water_chain.FILES)
+            + len(ninja_s4.FILES) + stage_native_files
             and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
@@ -2302,6 +2344,7 @@ def verify_native(native, root, lock, context):
             "mage_projectiles": projectile_result,
             "mage_water_chain": water_chain_result,
             "ninja_s4": ninja_s4_result,
+            **stage_native_results,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2350,7 +2393,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
                             compose.TEAM_WIN_RULE_OFF_ARCHIVE, compose.FRACTIONAL_HP_OFF_ARCHIVE,
                             compose.MAGE_PROJECTILES_OFF_ARCHIVE, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE,
-                            compose.NINJA_S4_OFF_ARCHIVE,
+                            compose.NINJA_S4_OFF_ARCHIVE, compose.WING_WARRIOR_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2373,7 +2416,7 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 34, "unchanged_sources": 35, "instances": 75,
+            "source_count": 69, "changed_sources": 35, "unchanged_sources": 34, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
@@ -2476,6 +2519,9 @@ def admit_delivery(root, base, reports, native, context):
             "ninja_s4_followup": verified["lock"]["ninja_s4_followup"],
             "ninja_s4_inverse_place": verified["lock"]["ninja_s4_followup"]["parent_place"],
             "ninja_s4_inverse_archive": digest(read(root / compose.NINJA_S4_OFF_ARCHIVE)),
+            "wing_warrior_followup": verified["lock"]["wing_warrior_followup"],
+            "wing_warrior_inverse_place": verified["lock"]["wing_warrior_followup"]["parent_place"],
+            "wing_warrior_inverse_archive": digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2508,6 +2554,8 @@ def admit_delivery(root, base, reports, native, context):
             "mage_projectiles": runtime["mage_projectiles"],
             "mage_water_chain": runtime["mage_water_chain"],
             "ninja_s4": runtime["ninja_s4"],
+            "wing_warrior": runtime["wing_warrior"],
+            "fixed_cues": runtime["fixed_cues"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

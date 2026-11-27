@@ -47,7 +47,7 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    water_on = compose.ninja_s4_parent(on, lock)
+    water_on = compose.ninja_s4_parent(*compose.wing_warrior_parent(on, lock))
     hp_on, hp_on_lock = compose.mage_projectile_parent(*compose.mage_water_chain_parent(*water_on))
     return compose.team_win_rule_parent(*compose.fractional_hp_parent(hp_on, hp_on_lock))
 
@@ -62,6 +62,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["wing_warrior_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["ninja_s4_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["mage_water_chain_followup"]["rows"].items()
@@ -513,8 +515,11 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        water_on, water_lock = compose.ninja_s4_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != water_on[name]}, set(compose.NINJA_S4_SOURCES))
+        ninja_on, ninja_lock = compose.wing_warrior_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != ninja_on[name]},
+                         set(compose.WING_WARRIOR_SOURCES))
+        water_on, water_lock = compose.ninja_s4_parent(ninja_on, ninja_lock)
+        self.assertEqual({name for name in ninja_on if ninja_on[name] != water_on[name]}, set(compose.NINJA_S4_SOURCES))
         self.assertEqual(water_lock["final_place"], self.lock["mage_water_chain_followup"]["repaired_place"])
         projectile_on, projectile_on_lock = compose.mage_water_chain_parent(water_on, water_lock)
         self.assertEqual({name for name in water_on if water_on[name] != projectile_on[name]},
@@ -1803,7 +1808,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["ninja_s4_followup"], self.lock["mage_water_chain_followup"],
+        for followup in (self.lock["wing_warrior_followup"], self.lock["ninja_s4_followup"],
+                         self.lock["mage_water_chain_followup"],
                          self.lock["mage_projectile_followup"],
                          hp, team_win, shorefoam, portrait, private_touch, moguron):
             relay_eligibility_sources = relay_eligibility_sources | {
@@ -1862,7 +1868,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(projectiles["repaired_place"], water_chain["parent_place"])
         ninja_s4 = self.lock["ninja_s4_followup"]
         self.assertEqual(water_chain["repaired_place"], ninja_s4["parent_place"])
-        self.assertEqual(ninja_s4["repaired_place"], self.lock["final_place"])
+        wing_warrior = self.lock["wing_warrior_followup"]
+        self.assertEqual(ninja_s4["repaired_place"], wing_warrior["parent_place"])
+        self.assertEqual(wing_warrior["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(wing_warrior["rows"]), set(compose.WING_WARRIOR_SOURCES))
         self.assertEqual(set(ninja_s4["rows"]), set(compose.NINJA_S4_SOURCES))
         self.assertEqual(set(water_chain["rows"]), set(compose.MAGE_WATER_CHAIN_SOURCES))
         self.assertEqual(set(projectiles["rows"]), set(compose.MAGE_PROJECTILES_SOURCES))

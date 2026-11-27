@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "821190a3a2be2ecaeb27a310ad4542d5eb6902de8ad0a4509770ce07093c5791"
+INPUT_LOCK_SHA256 = "4799734cc3721ea6d65d21c867be637232725b26bd50cfaba5f33b6fa6d08e4b"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -715,6 +715,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         host_parent = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
         hud_parent = profile["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
         water_chain_parent_pins = lock["sources"] | {
+            name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
+        } | {
             name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
         } | {
             name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
@@ -791,6 +793,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from ninja_s4 import run as run_ninja_s4
         run_ninja_s4(root, output / "ninja_s4", binary, pin, context, profile,
                       compose, clean_environment())
+        from wing_warrior import FILES as wing_warrior_files, PROCESS_COUNT as wing_warrior_runs
+        from wing_warrior import run as run_wing_warrior
+        run_wing_warrior(root, output / "wing_warrior", binary, pin, context, profile,
+                         compose, clean_environment())
+        from fixed_cues import FILES as fixed_cue_files, PROCESS_COUNT as fixed_cue_runs
+        from fixed_cues import run as run_fixed_cues
+        run_fixed_cues(root, output / "fixed_cues", binary, pin, context, profile,
+                       compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -818,7 +828,13 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         portrait_files = sum(name.startswith("portrait/") for name in evidence)
         team_win_rule_files = sum(name.startswith("team_win_rule/") for name in evidence)
         hp_files = sum(name.startswith("fractional_hp/") for name in evidence)
+        current_stage_files = len(wing_warrior_files) + len(fixed_cue_files)
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
+                + current_stage_files
+                and {name.removeprefix("wing_warrior/") for name in evidence
+                     if name.startswith("wing_warrior/")} == wing_warrior_files
+                and {name.removeprefix("fixed_cues/") for name in evidence
+                     if name.startswith("fixed_cues/")} == fixed_cue_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -861,6 +877,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "mage_projectiles": identity(read(output / "mage_projectiles/receipt.json")),
                    "mage_water_chain": identity(read(output / "mage_water_chain/receipt.json")),
                    "ninja_s4": identity(read(output / "ninja_s4/receipt.json")),
+                   "wing_warrior": identity(read(output / "wing_warrior/receipt.json")),
+                   "fixed_cues": identity(read(output / "fixed_cues/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -868,8 +886,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_original_suites": False,
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
-                   "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs,
-                   "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files),
+                   "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs
+                   + wing_warrior_runs + fixed_cue_runs,
+                   "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
+                   + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

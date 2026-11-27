@@ -74,7 +74,16 @@ def _program(source_root, profile, compose):
         source_pins[route] = pin
         selected[route] = body
 
-    lines = _pure_program(selected[routes["SevenRoleCombat"]], fixtures["pure_cases.luau"],
+    # Keep the original pure recipe matrix on its exact rollback source.
+    # Every original Tool integration case below still loads the latest full body.
+    combat_route = routes["SevenRoleCombat"]
+    prior_name = compose.WING_WARRIOR_OFF + "/sources/" + combat_route
+    prior_combat = compose.read_file(source_root.parent / prior_name)
+    prior_pin = compose.identity(prior_combat)
+    compose.need(prior_pin == profile["wing_warrior_followup"]["rows"][combat_route]["parent"]["after"],
+                 "MAGE_PROJECTILES_NATIVE_ORIGINAL_PURE_PARENT")
+    source_pins[prior_name] = prior_pin
+    lines = _pure_program(prior_combat, fixtures["pure_cases.luau"],
                           inputs["pure_inline"], compose)
     ranges, declarations = {}, {}
     cases_inserted = False
