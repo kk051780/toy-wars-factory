@@ -13023,6 +13023,55 @@
       "actual_binding_lease": {
         "commit": "339f6c310f4dc44c3cfb7bff4ee2bd74976ea1e2",
         "operation_id": "7b7fb16e-e34a-4c65-8a35-76b283175d2b"
+      },
+      "qa_correction_grant": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "permitted_pr": 1016,
+        "branch": "feature/p0d-active66-persistence-20261122-d4d718",
+        "prior_remote_head": "aa85898a67287927d5c21ad3e88174c091414aba",
+        "formal_parent": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+        "local_head": "9a93f2c39b285529c64d2e4c3ac67af94d400c7a",
+        "tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "041983584ea706201fd995b473ec385abe8dc2fd",
+            "path": "rc_fastlane/features/active_persistence_lifecycle/persistence.json",
+            "bytes": 30527
+          },
+          {
+            "mode": "100644",
+            "blob": "d3af32e536b0df6dd381c24accb3951eddec5f1a",
+            "path": "rc_fastlane/features/active_persistence_lifecycle/regression.luau",
+            "bytes": 6715
+          },
+          {
+            "mode": "100644",
+            "blob": "cdcf7949542b67ab2d0c1ad509cb5292cc9dc5d9",
+            "path": "rc_fastlane/features/active_persistence_lifecycle/source_lock.json",
+            "bytes": 1285
+          },
+          {
+            "mode": "100644",
+            "blob": "96002fb98af3c80271d7e957ddc9293e51b02e9b",
+            "path": "rc_fastlane/verify_active_persistence_native.py",
+            "bytes": 7120
+          }
+        ],
+        "reason": "Registered independent exact aa85898 Native reproduced prior old unconfirmed equip response transitioning SAVED back to SAVE_FAILED after a newer confirmed durable equip at higher revision. Suppress only the superseded response when the latest matching player notice records a positive validated revision that fences the older expected revision. Current/no-confirmation/earlier-in-flight and unrelated failures retain conservative actual status and explicit retry.",
+        "local_scope_evidence": {
+          "previous_reproduced": true,
+          "actual": "Native current author112, distinct obsolete diagnostic 51/14, 11 selective observations, new Place646032 B",
+          "place_sha256": "6127dce8053431e31a5d3254bccb2f004bfbb3641f6d01dfcd26c8b278e5b7a2",
+          "off": 639340,
+          "changed_old_Game_bytes": 931,
+          "other65_runtime_sources_preserved_here": true,
+          "proof": "local-qa/eggrumble-20261127-cycle600/persistence-1016-obsolete-ack-npt8f414/REPRO_AND_FIX.json"
+        },
+        "independent_context": "/root/p0_offer_review26",
+        "grant_lease": "3a02ce7c00fb5d652d40fed1a3505f042d8a15c6",
+        "grant_operation": "364ed607-33d7-4363-981d-28c747abff49",
+        "expires_at": "2026-11-27T15:47:18.730Z"
       }
     },
     {
