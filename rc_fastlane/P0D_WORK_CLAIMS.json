@@ -38122,7 +38122,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 395,
         "branch": "feature/p0d-prep-solo-raid-guard-20261114",
         "old_pr_head": "3902d23ce87d5c0397b72e77fccad85b07c872ee",
@@ -38179,6 +38179,55 @@
           "true_baseline_failures": 3,
           "wrong_off_rejected": true
         }
+      },
+      "source_head": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+      "prepared_candidate_head": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+      "prepared_candidate_tree": "58f9559183125c5d9387b0ef0ad0f5f39f55d192",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "4275902702bb1c5018bdb013bad0f4ac52c7d3a3",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 213701
+        },
+        {
+          "mode": "100644",
+          "blob": "0052c3c599c6a1595205483d2faabeb8949ea41e",
+          "path": "rc_fastlane/apply_active_h2_exit.py",
+          "bytes": 4564
+        },
+        {
+          "mode": "100644",
+          "blob": "58d012e2abd288d9954d6584c2bafcbfbfbb997a",
+          "path": "rc_fastlane/features/active_h2_exit/source_lock.json",
+          "bytes": 495
+        },
+        {
+          "mode": "100644",
+          "blob": "f735de29b3c7e8b69cdc471e90fff239abba56b0",
+          "path": "rc_fastlane/verify_active_h2_exit_native.py",
+          "bytes": 9888
+        },
+        {
+          "mode": "100644",
+          "blob": "48a9c8c61bdc06f80f12deb6715a5bd636978b4e",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 110964
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 395,
+        "exact_head": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+        "exact_tree": "58f9559183125c5d9387b0ef0ad0f5f39f55d192",
+        "exact_parent": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+        "preserved_author_parent": "3902d23ce87d5c0397b72e77fccad85b07c872ee",
+        "source_lease": "7cbfedd7474c742a73e6103a7f2029f3e70be8f5",
+        "source_lease_return": "efd72410df1e883706377abf2c739a10188f7a59",
+        "prepared_at": "2026-11-27T14:10:33.657Z"
+      },
+      "actual_binding_lease": {
+        "commit": "24c9d10f5292da1a609104370fc27bf1db6b1eaf",
+        "operation_id": "bb6e9a87-af4b-43a1-b24b-6d26488eabbb"
       }
     }
   ],
