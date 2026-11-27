@@ -32259,7 +32259,7 @@
     {
       "claim_id": "P0D-GQ943-GQ929-MOTION-WEAPON-20261127",
       "feature_id": "GQ470_FB015_ROLE_MOTION_AND_WEAPON_READABILITY",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #943 and #929 reuse)",
       "parent_issue": 470,
@@ -32278,7 +32278,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Prepare the exact existing #943 two-stage 11568-byte ProceduralSkills and #929 latest exact 7547-byte WeaponSilhouettes on current private RC. Keep both original branches' selected scope and recorded history. Reuse current #943 PR under later live scope only. Weapon entry replaces #931's older weapon version once; no other #931 sources or changes. Exact two-route OFF and required CI/independent review.",
@@ -32596,7 +32596,7 @@
         }
       },
       "bounded_rc_integration": {
-        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
         "permitted_head": "daa6b076ac3502de632220aea9d7aec494232694",
@@ -32604,7 +32604,7 @@
         "permitted_pr": 943,
         "sole_executor": "/root (Codex parent, B coordinator for #943 and selected #929)",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -32636,6 +32636,80 @@
           "registry_parent": "649a2bb30b0ea51c4c4410cf9f5811f38b3aa09b",
           "registry_blob": "6a51d4c206994fee76aba7c1b066ba51160dcc5b",
           "authority_basis": "Authenticated owner #1011 V2.1 delegated role-pair preparation, #220 exclusive CAS, actual narrow #218, independent 6083403648 and trusted green exact #943."
+        },
+        "writer_acquire_ref": "23543a86861ad7ea94e63234e55746943dddd4ff",
+        "writer_return_ref": "448fd1087c11df6f55d3e5da86f0713cfe2be8ce",
+        "exact_adoption_readback_at": "2026-11-27T04:16:48.608Z"
+      },
+      "actual_postpush": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "before_sha": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "head": "daa6b076ac3502de632220aea9d7aec494232694",
+        "tree": "8815c853a683a0289c9fcac911265c917c078b2e",
+        "merged_pr": 943,
+        "donor_pr": 929,
+        "metadata_lease": {
+          "commit": "e92b6cb89ea7f6e20f1cee769d5b74f000f86bc0",
+          "owner": "2e36131a-7bd7-4aa7-93ce-e6045953c2c3"
+        },
+        "official_ci": {
+          "run": 45939010608,
+          "job": 140308742494,
+          "conclusion": "success",
+          "steps": 48,
+          "native_role_cases": 20,
+          "native_weapon_rows": 96,
+          "artifact": 15171229675,
+          "zip": {
+            "bytes": 17101584,
+            "sha256": "647cf9c4472f0c8606644e4861731bf854ef18d5ac339920daf23437b1850bc8"
+          }
+        },
+        "windows_rebuilt_place": {
+          "bytes": 848891,
+          "sha256": "ab621dff32fe89b61e8b1c54164f0b74f0802667bc2f73fe3adcd3bb23523b8a"
+        },
+        "immediate_off": {
+          "bytes": 842354,
+          "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+        },
+        "older_rollbacks_verified": 11,
+        "source_lock": "8841c4742c23c8654230e177a06765b2ff889c3d196a7045339021af72d3130c",
+        "studio": {
+          "runtime": "PRIVATE_COMPANION REAL69_UNION22",
+          "case": "WARRIOR TEAM PC Solo A/B",
+          "approved_by_registered_postpush_reviewer": "/root/p0_offer_review26",
+          "verdict": "PASS",
+          "server_normal_attack_serial_both": [
+            0,
+            1
+          ],
+          "baseline_shoulder_radian": 0.005777429789304733,
+          "new_shoulder_radian": 1.6075387001037598,
+          "recovered_shoulder_radian": 0.00831515435129404,
+          "weapon_part_count_both": 5,
+          "blade_before": "Part",
+          "blade_after": "WedgePart",
+          "baseline_pids": [
+            30096,
+            51320
+          ],
+          "adopted_pids": [
+            27208,
+            53056
+          ],
+          "closure": "STUDIO_CLOSED_VERIFIED",
+          "adopted_closure_verified_at": "2026-11-27T04:25:13.547Z",
+          "saved_source_routes_each": 69,
+          "proof_sha256": "cb9b51394823a4275078ee8fb8e96d786b2a2260e500947c0cce6880f10d7f17",
+          "baseline_image": "af68b035f0266b871047e5e1358bc6adaa35f2d4193ed3d3ef98622d71c07b6d",
+          "adopted_image": "64edc3d2fd2548482e5ba088266285744aa89889d2d4a12e582a680bc36ff9e4",
+          "scope_limit": "Stills show settled weapon; shoulder peak measured in the native log. Real hit damage, other six roles in Studio, Android and FUN remain NOT_TESTED."
+        },
+        "local_sanitized_pack": {
+          "bytes": 2779265,
+          "sha256": "d8f16047dcd091b1944692380a1a9fdb333a9df76b719b8ae57bbe11a1fc0768",
+          "state": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
         }
       }
     }
